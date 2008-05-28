@@ -1,0 +1,309 @@
+#wiring {
+  display: block;
+}
+
+#wiring_container {
+  width: 100%;
+}
+
+#wiring #channels_list {
+  margin: 2ex 0px;
+  padding: 0px;
+}
+
+#wiring .tableCell {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1ex;
+}
+
+#wiring .connectableColumn {
+  width: 25%;
+  vertical-align: top;
+}
+
+#wiring .eventColumn, #wiring .slotColumn {
+  width: 20%;
+  padding: 1ex 20px;
+  vertical-align: top;
+}
+
+#wiring .connectionColumn {
+  width: 20%;
+  vertical-align: top;
+}
+
+#wiring .inoutColumn {
+  width: 20%;
+  vertical-align: top;
+}
+
+#wiring .title {
+  font-weight: bold;
+  font-size: 120%;
+  text-align: center;
+  margin-bottom: 1ex;
+}
+
+#wiring .borderLeftCell {
+  border-collapse: collapse;
+  padding: 0 0 0 1ex;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid #AAA;
+  border-right: none;
+}
+
+#wiring .columnCell ul input[type="radio"] {
+  display: none;
+}
+
+#wiring .columnCell ul li {
+  padding: 2px;
+}
+
+#wiring .columnCell ul li div {
+  padding: 2px;
+}
+
+.form-row input[type="submit"] {
+  background-image: url(/ezweb/images/kgpg.png);
+  background-repeat: no-repeat;
+  padding-left: 18px;
+}
+
+#wiring #newChannelForm {
+    text-align: center;
+}
+
+#wiring .igadget {
+  border: 2px solid #2D6F9C;
+  background: transparent url(/ezweb/images/fond.gif) repeat;
+  margin: 2ex 0px;
+  position: relative;
+  font-weight: bold;
+  padding: 3px;
+}
+
+#wiring .igadget .igadgetContent {
+  padding: 0px 0px 5px 0px;
+  font-weight: normal;
+}
+
+#wiring .eventColumn .igadget .igadgetContent div {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .slotColumn .igadget .igadgetContent div {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .igadget.folded .igadgetContent {
+  display: none;
+}
+
+#wiring .igadget .igadgetContent div .chkItem {
+  position: absolute;
+  display: inline;
+  width: 18px;
+  height: 18px;
+  border: 0px;
+  background: url(/ezweb/js/wiring/checked.png);
+  padding: 0px;
+  top: -8px;
+}
+
+#wiring .igadget .igadgetContent div .unchkItem {
+  position: absolute;
+  display: inline;
+  width: 18px;
+  height: 18px;
+  border: 0px;
+  background: url(/ezweb/js/wiring/unchecked.png);
+  padding: 0px;
+  top: -8px;
+}
+
+#wiring .eventColumn .igadget .igadgetContent .chkItem {
+  right: -12px;
+}
+
+#wiring .eventColumn .igadget .igadgetContent .unchkItem {
+  right: -12px;
+}
+
+#wiring .slotColumn .igadget .chkItem {
+  left: -12px;
+}
+
+#wiring .slotColumn .igadget .igadgetContent .unchkItem {
+  left: -12px;
+}
+
+
+#wiring .tab {
+  border: 2px solid black;
+  background: #97A0A8;
+  margin: 2ex 0px;
+  position: relative;
+  color: white;
+  font-weight: bold;
+  padding: 3px;
+}
+
+#wiring .tab .tabContent {
+  padding: 0px 0px 5px 0px;
+  font-weight: normal;
+}
+
+#wiring .eventColumn .tab .tabContent div {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .slotColumn .tab .tabContent div {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .tab.folded .tabContent {
+  display: none;
+}
+
+#wiring .tab .tabContent div .chkItem {
+  position: absolute;
+  display: inline;
+  width: 18px;
+  height: 18px;
+  border: 0px;
+  background: url(/ezweb/js/wiring/checked.png);
+  padding: 0px;
+  top: -8px;
+}
+
+#wiring .tab .tabContent div .unchkItem {
+  position: absolute;
+  display: inline;
+  width: 18px;
+  height: 18px;
+  border: 0px;
+  background: url(/ezweb/js/wiring/unchecked.png);
+  padding: 0px;
+  top: -8px;
+}
+
+#wiring .eventColumn .tab .tabContent .chkItem {
+  right: -12px;
+}
+
+#wiring .eventColumn .tab .tabContent .unchkItem {
+  right: -12px;
+}
+
+#wiring .slotColumn .tab .chkItem {
+  left: -12px;
+}
+
+#wiring .slotColumn .tab .tabContent .unchkItem {
+  left: -12px;
+}
+
+#wiring #newChannelForm .addSubmit {
+  cursor: pointer; cursor: hand;
+  padding: 0px;
+  height: 16px;
+  width: 16px;
+  background: url(/ezweb/js/wiring/add.png);
+  border: 0px none;
+}
+
+#wiring .newChannel {
+  margin: 2ex 1ex;
+  cursor: pointer; cursor: hand;
+  color: #2D6F9C;
+  text-decoration: underline;
+}
+
+#wiring #channels_list .channel {
+  margin: 2ex 1ex; 
+  border: 1px solid #2D6F9C;
+  background: #97A0A8;
+  padding: 0px;
+  cursor: pointer; cursor: hand;
+}
+
+#wiring img {
+  margin: 2px;
+  vertical-align: middle;
+}
+
+#wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
+  border-top: 1px solid #525248;
+  display: none;
+  background: transparent url(/ezweb/images/fond.gif) repeat;
+  padding: 0.5ex 1ex;
+}
+
+#wiring #channels_list .channel.selected {
+  background: #2D6F9C;
+}
+
+#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
+  display: block;
+}
+
+#wiring #wiring_messages {
+  border: 1px solid orange;
+  background: lightyellow;
+  margin: 1ex 20px;
+  padding: 1ex 2ex;
+  display: none;
+}
+
+#wiring #newChannelForm .linkSubmit{
+   color: blue;
+   background-color:#E0E0E0;
+   border-style:none;
+   border-color:#FFFFFF;
+   cursor: pointer;
+   text-decoration: underline;
+}
+
+#wiring .newChannelInput {
+   border:1px solid #4C5054;
+   margin:0px 1ex;
+}
+
+#wiring .channelNameInput {
+   border:0px;
+   margin:0px 1ex;
+   background: #97A0A8;
+}
+
+#wiring .selected .channelNameInput {
+	background: transparent url(/ezweb/images/fond.gif) repeat;
+}
+
+.canvas div div{
+	z-index: 3;
+}
+
+.canvas .arrow{
+	position: absolute;
+	z-index: 3;
+	width: 19px;
+	height: 20px;
+	background: transparent url(/ezweb/images/wiringArrow.png) no-repeat;
+}
+
+

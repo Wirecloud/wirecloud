@@ -1,0 +1,254 @@
+﻿{% load i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+<title>EzWeb</title>
+<head>
+<title>{% trans "EzWeb Platform" %}</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css">
+<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+
+<!--[if IE]>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
+<![endif]-->
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+<script type="text/javascript" language="javascript">
+_URIConstants = function(){}
+_URIConstants.prototype.USER = '/user/{{ user.username }}';
+_URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
+_URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
+_URIConstants.prototype.GET_GADGET = new Template ('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}');
+_URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
+_URIConstants.prototype.GET_CONTEXT = '/user/{{ user.username }}/context';
+_URIConstants.prototype.GET_CONTEXT_VALUE = new Template ('/user/{{ user.username }}/context/#{concept}/value');
+_URIConstants.prototype.GET_POST_RESOURCES = '/user/{{ user.username }}/catalogue/resource';
+_URIConstants.prototype.GET_RESOURCES_BY_TAG = '/user/{{ user.username }}/catalogue/search/tag';
+_URIConstants.prototype.GET_RESOURCES_BY_WIRING = '/user/{{ user.username }}/catalogue/search';
+_URIConstants.prototype.DELETE_TAG = '/user/{{ user.username }}/catalogue/tag';
+_URIConstants.prototype.POST_RESOURCE_TAGS = '/user/{{ user.username }}/catalogue/tag';
+_URIConstants.prototype.POST_RESOURCE_VOTES = '/user/{{ user.username }}/catalogue/voting';
+_URIConstants.prototype.GET_RESOURCES_SEARCH_GENERIC = '/user/{{ user.username }}/catalogue/search/generic';
+_URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets');
+_URIConstants.prototype.PROXY = '/proxy';
+_URIConstants.prototype.GET_IGADGET_VARIABLES = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables');
+_URIConstants.prototype.GET_POST_GADGET_VARIABLE = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}');
+_URIConstants.prototype.GET_POST_CHANNEL = new Template ('/user/{{ user.username }}/channel/#{channelName}');
+_URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
+_URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
+_URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
+_URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}');
+_URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
+_URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
+
+var URIs = new _URIConstants();
+</script>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
+
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/XHtml.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/Gadget.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/log/LogManager.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/WorkSpace.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/OpManager.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariableGadget.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/showcase/showcase.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/showcase/util.js"></script>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextManager.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextPlatform.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/Adaptors.js"></script>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/iGadget.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/dragboard.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
+<!--<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiringInterface.js"></script>-->
+<script language="JavaScript" src="{{ MEDIA_URL}}js/wiring/wiringGUI.js"></script>
+<!--<script language="JavaScript" src="{{ MEDIA_URL}}js/wiring/color_scheme.js"></script>-->
+
+<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/lib/helpballoon/HelpBalloon.js"></script>
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Resource.js"></script>
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>
+		<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Tag.js"></script>
+		<script type="text/javascript">
+			window.onresize = UIUtils.setResourcesWidth;
+		</script>
+
+<script language="javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
+<script language="javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
+
+<!-- Initialization code -->
+<script language="JavaScript">
+	function setLanguage(language) {
+		var onSuccess = function() {
+			window.location.reload();
+		}
+		
+		var onError = function() {}
+		
+		var persistenceEngine = PersistenceEngineFactory.getInstance();
+		var params = {language: language};
+		persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
+		return false;
+	}
+
+	var opManager = OpManagerFactory.getInstance();
+</script>
+
+
+</head>
+
+<body onload="OpManagerFactory.getInstance().loadEnviroment()" onresize="LayoutManagerFactory.getInstance().resizeWrapper();">
+
+<!-- HIDDEN MENUS -->
+<div id="menu_layer" style="display:none">
+</div>
+<!--<div id="workspace_menu" class="drop_down_menu" style="display:none;">
+	<div class="option underlined" onclick="OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); LayoutManagerFactory.getInstance().hideCover();"><img src="/ezweb/images/rename.gif"/><span>{% trans "Rename"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/package.jpg"/><span>{% trans "Package"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/move.gif"/><span>{% trans "Mezclar con Workspace"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/pencil.png"/><span>{% trans "Preferences"%}</span></div> 
+	<div class="option underlined" onclick="OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();"><img src="/ezweb/images/cross.png"/><span>{% trans "Remove"%}</span></div>
+	<div class="option" onclick="LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');"><img src="/ezweb/images/list-add.png"/><span>{% trans "New workspace"%}</span></div>
+	<div id="changeWorkspace_menu" class="submenu"></div> 
+</div>
+<div id="tab_menu" class="drop_down_menu" style="display:none;">
+	<div class="option underlined" onclick="OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput(); LayoutManagerFactory.getInstance().hideCover();"><img src="/ezweb/images/rename.gif"/><span>{%trans "Rename"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/package.jpg"/><span>{% trans "Package"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/move.gif"/><span>{% trans "Copy to Workspace"%}</span></div>
+	<div class="option underlined"><img src="/ezweb/images/move.gif"/><span>{% trans "Move to Workspace"%}</span></div>
+	<div class="option" onclick="OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();"><img src="/ezweb/images/cross.png" /><span>{% trans "Remove"%}</span></div>
+</div>
+<div id="rename_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="rename_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<label>{% trans "New name"%}: </label><input id="rename_new_name" type="text" value = ""/>
+		<div id="rename_window_msg" class="window_msg_error"></div>
+	</div>
+	<div class="window_bottom">
+		<button id="rename_btn">{% trans "Rename"%}</button>
+		<button onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+	</div>
+</div> -->
+<div id="create_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="create_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<label>{% trans "Name"%}: </label><input id="create_name" type="text" value = ""/>
+		<div id="create_window_msg" class="window_msg_error"></div>
+	</div>
+	<div class="window_bottom">
+		<button id ="create_btn">{% trans "Create"%}</button>
+		<button onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+	</div>
+</div>
+<div id="alert_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="alert_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert">
+		<div id="alert_window_msg" class="window_msg"></div>
+	</div>
+	<div class="window_bottom">
+		<button id ="alert_btn1">{% trans "Accept"%}</button>
+		<button id = "alert_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+	</div>
+</div>
+<!-- <div id="changeWorkspace_menu" class="drop_down_menu" style="display:none;">
+</div> -->
+
+
+<!-- HEADER -->
+<div id="header">
+<div id="banner">
+  <div id="greeting">{% trans "Welcome" %}, {{ user.username }}{% for lang in LANGUAGES %} | <a href="/" onclick="return setLanguage('{{ lang.0 }}')" >{{ lang.1 }}</a>{% endfor %} | <a href="/logout">{% trans "Exit" %}</a>
+  </div>
+  <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
+</div>
+<div id="bar">
+<div id="tab_section" class="tab_section">
+	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.addTab();"/>
+
+</div>
+<div id="toolbar_section" class="toolbar_section">
+   		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/> 
+   		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
+		<div id="workspace_name"></div>
+<!--		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola',function(){alert('hola')});"/>	
+		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="var id=OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola2',function(){alert('hola')}); OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.removeOption(id,null,'adios',function(){alert('adios')});"/>	-->
+   		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>		
+		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked"onclick="OpManagerFactory.getInstance().showLogs()";></span>
+	</div>
+</div>
+</div>
+<div id="wrapper">
+  <!-- DRAGBOARD LAYER -->
+  <div id="dragboard_template">
+  	<div id="dragboard_template" class="container dragboard">
+    	<div class="container_content">
+    	</div>
+    </div>
+  </div>
+  <!-- SHOWCASE LAYER -->
+  
+  <!-- WIRING LAYER -->
+  <div id="wiring" class="container">
+      {% include "wiring.html" %}
+  </div>
+  <!-- WIRING LAYER -->
+  
+  <!-- SHOWCASE LAYER -->
+  <div id="showcase_container" class="container">
+     {% include "showcase.html" %}
+  </div>
+  <!-- SHOWCASE LAYER -->
+
+  <!-- LOGS LAYER -->
+  <div id="logs_container" class="container">
+    <div id="logs_console" class="container_content">
+    </div>
+  </div>
+  <!-- LOGS LAYER -->
+</div>
+</body>
+
+</html>

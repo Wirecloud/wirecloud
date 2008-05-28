@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+<resource>
+<vendor>Morfeo</vendor>
+<name>Escritor</name>
+<version>V_1.0</version>
+<description>Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1</description>
+<uriImage>http://www.arrakis.es/~cotton/hot/mapa.jpg</uriImage>
+<uriWiki>UriWiki1</uriWiki>
+<uriTemplate>http://europa.ls.fi.upm.es/ezweb/js/wGadgetTemplate.xml</uriTemplate>
+
+<tags>
+</tags>
+</resource>
+<resource>
+<vendor>Morfeo</vendor>
+<name>Lector_direcciones</name>
+<version>V_1.0</version>
+<description>Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1</description>
+<uriImage>http://www.arrakis.es/~cotton/hot/mapa.jpg</uriImage>
+<uriWiki>UriWiki1</uriWiki>
+<uriTemplate>http://europa.ls.fi.upm.es/ezweb/js/rGadgetTemplate.xml</uriTemplate>
+
+<tags>
+</tags>
+</resource>
+<resource>
+<vendor>Morfeo</vendor>
+<name>Arquitectura_ADSL</name>
+<version>1.0</version>
+<description>Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1</description>
+<uriImage>http://www.peluzzo.com/img/libro/gb_help.gif</uriImage>
+<uriWiki>http://www.image.com</uriWiki>
+<uriTemplate>http://europa.ls.fi.upm.es/ezweb/gadgets/adsl.xml</uriTemplate>
+
+<tags>
+</tags>
+</resource>
+<resource>
+<vendor>Morfeo</vendor>
+<name>Arquitectura_Imagenio</name>
+<version>1.1</version>
+<description>Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1</description>
+<uriImage>http://www.peluzzo.com/img/libro/gb_help.gif</uriImage>
+<uriWiki>http://www.image.com</uriWiki>
+<uriTemplate>http://europa.ls.fi.upm.es/ezweb/gadgets/imag.xml</uriTemplate>
+
+<tags>
+</tags>
+</resource>
+	<resource>
+		<vendor>Vendor1</vendor>
+		<name>Titulo largo de la Pizarra</name>
+		<version>1.0</version>
+		<description>Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1 Esta es la descripcion del recurso 1</description>
+
+		<uriImage>images/pizarra_pequea.jpg</uriImage>
+		<uriWiki>UriWiki1</uriWiki>
+		<uriTemplate>UriTemplate1</uriTemplate>
+		<tags>
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+
+			</tag>
+			<tag>
+				<value>tag2</value>
+				<appearances>20</appearances>
+			</tag>
+			<tag>
+				<value>tag3</value>
+
+				<appearances>34</appearances>
+			</tag>
+			<tag>
+				<value>tag4</value>
+				<appearances>2</appearances>
+			</tag>
+		</tags>
+
+	</resource>
+	<resource>
+		<vendor>Vendor2</vendor>
+		<name>Buzon</name>
+		<version>1.1</version>
+		<description>Description2</description>
+		<uriImage>images/buzon_pequeo.jpg</uriImage>
+
+		<uriWiki>UriWiki2</uriWiki>
+		<uriTemplate>UriTemplate2</uriTemplate>
+		<tags>
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+			</tag>
+
+			<tag>
+				<value>tag2</value>
+				<appearances>20</appearances>
+			</tag>
+			<tag>
+				<value>tag3</value>
+				<appearances>34</appearances>
+
+			</tag>
+		</tags>
+	</resource>
+	<resource>
+		<vendor>Vendor3</vendor>
+		<name>Localizador</name>
+		<version>2.1</version>
+
+		<description>Description3</description>
+		<uriImage>images/localizador_pequea.jpg</uriImage>
+		<uriWiki>UriWiki3</uriWiki>
+		<uriTemplate>UriTemplate3</uriTemplate>
+		<tags>
+			<tag>
+				<value>SuperTag</value>
+
+				<appearances>7</appearances>
+			</tag>
+			<tag>
+				<value>Taglargo</value>
+				<appearances>1</appearances>
+			</tag>
+			<tag>
+
+				<value>Largiiiiiiiisimo</value>
+				<appearances>34</appearances>
+			</tag>
+			<tag>
+				<value>TagMasLargoTodavia</value>
+				<appearances>50</appearances>
+			</tag>
+
+		</tags>
+	</resource>
+	<resource>
+		<vendor>Vendor4</vendor>
+		<name>Modalidades</name>
+		<version>2.0</version>
+		<description>Description4</description>
+
+		<uriImage>images/modalidades_pequea.jpg</uriImage>
+		<uriWiki>UriWiki4</uriWiki>
+		<uriTemplate>UriTemplate4</uriTemplate>
+		<tags>
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+
+			</tag>
+			<tag>
+				<value>tag2</value>
+				<appearances>20</appearances>
+			</tag>
+			<tag>
+				<value>tag3</value>
+
+				<appearances>34</appearances>
+			</tag>
+		</tags>
+	</resource>
+	<resource>
+		<vendor>Vendor5</vendor>
+		<name>Selector</name>
+
+		<version>1.0</version>
+		<description>Description5</description>
+		<uriImage>images/selector_queries_pequeo.jpg</uriImage>
+		<uriWiki>UriWiki5</uriWiki>
+		<uriTemplate>UriTemplate5</uriTemplate>
+		<tags>
+
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+			</tag>
+			<tag>
+				<value>tag2</value>
+				<appearances>20</appearances>
+
+			</tag>
+			<tag>
+				<value>tag3</value>
+				<appearances>34</appearances>
+			</tag>
+		</tags>
+	</resource>
+	<resource>
+
+		<vendor>Vendor6</vendor>
+		<name>Visor Datos</name>
+		<version>1.0</version>
+		<description>Description6</description>
+		<uriImage>images/visordatostarea_pequeo.jpg</uriImage>
+		<uriWiki>UriWiki6</uriWiki>
+
+		<uriTemplate>UriTemplate6</uriTemplate>
+		<tags>
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+			</tag>
+			<tag>
+
+				<value>tag2</value>
+				<appearances>20</appearances>
+			</tag>
+			<tag>
+				<value>tag3</value>
+				<appearances>34</appearances>
+			</tag>
+
+		</tags>
+	</resource>
+	<resource>
+		<vendor>vendedor</vendor>
+		<name>Nombre</name>
+		<version>V</version>
+		<description>Description6</description>
+
+		<uriImage>http://www.image.com</uriImage>
+		<uriWiki>http://www.image.com</uriWiki>
+		<uriTemplate>http://europa.ls.fi.upm.es/~mac/template4.xml</uriTemplate>
+		<tags>
+			<tag>
+				<value>tag1</value>
+				<appearances>7</appearances>
+
+			</tag>
+			<tag>
+				<value>tag2</value>
+				<appearances>20</appearances>
+			</tag>
+			<tag>
+				<value>tag3</value>
+
+				<appearances>34</appearances>
+			</tag>
+		</tags>
+	</resource>
+</resources>

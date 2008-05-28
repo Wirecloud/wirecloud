@@ -1,0 +1,720 @@
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:32:37] u'ERROR: Falta un atributo en el elemento Property'
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:32:51] u'ERROR: Falta un atributo en el elemento Property'
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:35:13] u'ERROR: Falta un atributo en el elemento Property'
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:35:41] u'ERROR: Falta un atributo en el elemento Property'
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:36:32] u'ERROR: Missing attribute at Property element'
+ERROR: POST user/id/resources admin
+[18/02/2008 16:41:47] ERROR:  llave duplicada viola restricción unique «resource_gadgetresource_short_name_key»
+
+INSERT INTO "resource_gadgetresource" ("short_name","vendor","version","added_by_user_id","author","mail","description","size","license","gadget_uri","creation_date","image_uri","wiki_page_uri","template_uri") VALUES ('AlarmPanel','Morfeo','1.2',1,'fabio','fabio@tid.es','Este gadget presenta el panel de alarmas',NULL,NULL,NULL,'2008-02-18 16:41:47.760397','http://demo.wasup.morfeo-project.org:8080/gadgets/images/AttentionSZ.jpg','http://forge.morfeo-project.org/wiki/index.php/Plataforma_WASUP','http://mac/~mike/guardarTexto2.xml')
+ERROR: POST user/id/gadgets admin
+[18/02/2008 16:53:14] <urlopen error (110, 'Connection timed out')>
+ERROR: POST user/id/resources admin
+[18/02/2008 17:00:23] ERROR:  llave duplicada viola restricción unique «resource_gadgetresource_short_name_key»
+
+INSERT INTO "resource_gadgetresource" ("short_name","vendor","version","added_by_user_id","author","mail","description","size","license","gadget_uri","creation_date","image_uri","wiki_page_uri","template_uri") VALUES ('AlarmPanel','Morfeo','1.2',1,'fabio','fabio@tid.es','Este gadget presenta el panel de alarmas',NULL,NULL,NULL,'2008-02-18 17:00:23.097250','http://demo.wasup.morfeo-project.org:8080/gadgets/images/AttentionSZ.jpg','http://forge.morfeo-project.org/wiki/index.php/Plataforma_WASUP','http://mac/~mike/guardarTexto3.xml')
+ERROR: POST user/id/gadgets admin
+[18/02/2008 17:26:46] <urlopen error (110, 'Connection timed out')>
+ERROR: POST user/id/resources admin
+[19/02/2008 12:00:32] ERROR:  llave duplicada viola restricción unique «resource_gadgetresource_short_name_key»
+
+INSERT INTO "resource_gadgetresource" ("short_name","vendor","version","added_by_user_id","author","mail","description","size","license","gadget_uri","creation_date","image_uri","wiki_page_uri","template_uri") VALUES ('Flickr','Morfeo','2.0',1,'jmostazo','jmostazo@pegaso.ls.fi.upm.es','Nueva version del gadget de flickr que permite enviar la ruta de la imagen seleccionada a un canal',NULL,NULL,NULL,'2008-02-19 12:00:32.029341','http://europa.ls.fi.upm.es/ezweb/gadgets/flickr.png','http://piccolo.ls.fi.upm.es:7000/flickr','http://europa.ls.fi.upm.es/ezweb/gadgets/flickr.xml')
+ERROR: POST user/id/resources admin
+[19/02/2008 12:04:45] <urlopen error (110, 'Connection timed out')>
+ERROR: POST /user/admin/gadgets admin
+[27/02/2008 13:04:39] El Gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[27/02/2008 13:05:52] El Gadget ya existe
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:47:58] TemplateHandler instance has no attribute '_flag'
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:51:00] TemplateHandler instance has no attribute '_user'
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:54:34] __init__() takes exactly 2 arguments (1 given)
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:55:22] TemplateHandler instance has no attribute '_uri'
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:56:26] __init__() takes exactly 3 arguments (2 given)
+ERROR: POST /user/admin/catalogue/resource admin
+[29/02/2008 12:57:31] parseString() takes at least 2 arguments (1 given)
+ERROR: POST /user/admin/catalogue/resource admin
+ERROR: POST /user/admin/gadgets admin
+[29/02/2008 13:20:57] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[29/02/2008 13:21:18] u"ERROR: No se puede leer el c\xf3digo XHTML - global name 'GadgetCodeParser' is not defined"
+ERROR: POST /user/admin/gadgets admin
+[29/02/2008 13:59:03] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:22:13] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:23:08] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:34:54] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:36:56] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:48:27] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 12:51:06] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 13:23:49] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 13:23:53] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 13:23:55] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[04/03/2008 15:14:08] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 11:52:11] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:22:20] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:22:59] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:23:02] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:19] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:24] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:27] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:35] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:35] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:39] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[07/03/2008 14:32:48] Gadget already exists
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 16:41:24] El gadget ya existe
+ERROR: POST /user/admin/catalogue/resource admin
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 17:00:41] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 17:08:24] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 17:14:01] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 18:31:41] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 18:35:36] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[31/03/2008 18:36:10] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 09:57:19] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 11:31:02] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 11:38:54] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 11:42:14] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 11:42:52] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 14:01:51] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:31:14] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:31:25] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:35:45] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:44:10] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:45:41] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:50:12] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:52:00] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:54:05] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 15:54:49] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 16:33:07] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 16:34:19] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 16:37:15] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[01/04/2008 19:24:33] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 09:03:04] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 09:59:19] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:09] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:12] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:13] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:13] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:14] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:15] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:15] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:16] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:16] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:16] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:16] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:21] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:21] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:21] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:22] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:24] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:24] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:24] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:01:24] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:02:52] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:02:59] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:08:23] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:09:16] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:10:20] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 10:11:54] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 11:44:28] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 11:46:40] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 17:24:15] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 17:26:21] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:04:31] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:07:03] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:11:06] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:11:33] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:11:56] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:22:27] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[02/04/2008 18:29:29] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:12:28] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:13:53] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:14:58] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:26:42] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:28:29] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:30:32] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:31:21] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:31:43] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:32:33] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:33:26] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:43:18] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:43:51] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:44:43] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:45:32] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 12:47:18] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:10:14] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:10:45] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:11:11] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:22:27] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:22:32] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 13:22:37] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 15:49:39] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 15:50:00] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 15:52:44] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[03/04/2008 16:02:53] El gadget ya existe
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:09:01] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:09:19] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:10:33] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:15:43] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:16:39] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:18:25] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:19:02] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:28:58] tab cannot be created: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:37:28] tab cannot be created: invalid syntax (<string>, line 1)
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:37:37] tab cannot be created: invalid syntax (<string>, line 1)
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:42:49] tab cannot be created: global name 'tab' is not defined
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:43:12] tab cannot be created: global name 'tab' is not defined
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:54:18] tab cannot be created: global name 'Variable' is not defined
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:54:18] tab cannot be created: global name 'Variable' is not defined
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:55:12] tab cannot be created: 'dict' object has no attribute 'id'
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:55:12] tab cannot be created: 'dict' object has no attribute 'id'
+ERROR: PUT /workspace/1/variables admin
+[28/04/2008 17:58:43] tab cannot be created: 'dict' object has no attribute 'value'
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:13:00] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:14:09] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:14:29] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:15:07] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:16:06] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:17:54] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 13:29:49] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 15:07:45] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 15:08:45] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:11:03] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:54:09] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:54:15] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:54:16] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:54:31] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[29/04/2008 16:54:32] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[30/04/2008 10:41:08] tab cannot be created: name 'null' is not defined
+ERROR: POST /workspace/1/tabs admin
+[30/04/2008 11:04:12] tab cannot be created: 'tab'
+ERROR: POST /workspace/1/tabs admin
+[30/04/2008 11:09:13] tab cannot be created: 'tab'
+ERROR: POST /workspaces admin
+[30/04/2008 12:31:52] workspace cannot be created: global name 'workspace_nam' is not defined
+ERROR: POST /workspaces admin
+[30/04/2008 12:31:54] workspace cannot be created: global name 'workspace_nam' is not defined
+ERROR: POST /workspaces admin
+[30/04/2008 13:03:00] workspace cannot be created: global name 'workspace_nam' is not defined
+ERROR: PUT /workspace/1/variables admin
+[30/04/2008 13:05:03] tab cannot be created: name 'null' is not defined
+ERROR: POST /workspaces admin
+[30/04/2008 17:19:35] workspace cannot be created: global name 'workspace_nam' is not defined
+ERROR: POST /workspaces admin
+[30/04/2008 17:28:28] workspace cannot be created: global name 'workspace_nam' is not defined
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[05/05/2008 12:19:19] No se pudo actualizar el IGadget: global name 'AbstractVar' is not defined
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[05/05/2008 12:21:05] No se pudo actualizar el IGadget: global name 'AbstractVar' is not defined
+ERROR: POST /workspaces admin
+[05/05/2008 15:42:42] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 15:49:07] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 15:51:21] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 15:52:09] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 16:03:42] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 16:17:03] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 16:18:14] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 16:25:12] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 16:36:42] workspace cannot be created: Out matching query does not exist.
+ERROR: POST /workspaces admin
+[05/05/2008 17:21:03] workspace cannot be created: Out matching query does not exist.
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:01:28] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:02:09] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:09:19] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:09:21] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:09:23] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 10:13:48] tab cannot be created: name 'null' is not defined
+ERROR: PUT /workspace/2/variables admin
+[06/05/2008 11:14:16] tab cannot be created: name 'null' is not defined
+ERROR: POST /workspace/1/tab/2/igadgets admin
+[07/05/2008 11:46:59] No se pudo actualizar el IGadget: 'Variable' object is not iterable
+ERROR: POST /workspace/1/tab/2/igadgets admin
+[07/05/2008 12:17:25] No se pudo actualizar el IGadget: {<cursor object at 0x88809d0>: 'ERROR:  inserci\xc3\xb3n o actualizaci\xc3\xb3n en la tabla \xc2\xabconnectable_out\xc2\xbb viola la llave for\xc3\xa1nea \xc2\xabconnectable_out_variable_id_fkey\xc2\xbb\nDETAIL:  La llave (variable_id)=(52) no est\xc3\xa1 presente en la tabla \xc2\xabworkspace_abstractvariable\xc2\xbb.\n'}
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:21:17] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:21:17] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:21:35] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:21:37] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:21:37] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:48:33] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[07/05/2008 13:48:54] cannot update variables: name 'null' is not defined
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 14:08:59] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 15:59:19] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:05:16] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:16:37] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:22:27] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:35:12] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:39:06] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 16:46:28] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /user/admin/catalogue/resource admin
+[07/05/2008 16:49:30] <unknown>:1:49: syntax error
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:01:00] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:05:23] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:12:38] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:52:24] No se pudo actualizar el IGadget: 'abstract_variable' is an invalid keyword argument for this function
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:56:06] No se pudo actualizar el IGadget: In matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 17:57:38] No se pudo actualizar el IGadget: In matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:00:11] No se pudo actualizar el IGadget: In matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:00:34] No se pudo actualizar el IGadget: Out matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:03:25] No se pudo actualizar el IGadget: Out matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:08:18] No se pudo actualizar el IGadget: Transaction managed block ended with pending COMMIT/ROLLBACK
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:13:11] No se pudo actualizar el IGadget: {<cursor object at 0x87f0f20>: 'ERROR:  inserci\xc3\xb3n o actualizaci\xc3\xb3n en la tabla \xc2\xabconnectable_in\xc2\xbb viola la llave for\xc3\xa1nea \xc2\xabconnectable_in_variable_id_fkey\xc2\xbb\nDETAIL:  La llave (variable_id)=(2) no est\xc3\xa1 presente en la tabla \xc2\xabigadget_variable\xc2\xbb.\n'}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:13:43] No se pudo actualizar el IGadget: Out matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:14:46] No se pudo actualizar el IGadget: {<cursor object at 0x888b700>: 'ERROR:  inserci\xc3\xb3n o actualizaci\xc3\xb3n en la tabla \xc2\xabconnectable_in\xc2\xbb viola la llave for\xc3\xa1nea \xc2\xabconnectable_in_variable_id_fkey\xc2\xbb\nDETAIL:  La llave (variable_id)=(4) no est\xc3\xa1 presente en la tabla \xc2\xabigadget_variable\xc2\xbb.\n'}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:22:51] No se pudo actualizar el IGadget: 'variable' is an invalid keyword argument for this function
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:32:57] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'abstract_variable__id': 1}
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:38:12] No se pudo actualizar el IGadget: get() returned more than one Out -- it returned 2! Lookup parameters were {'abstract_variable__id': 1}
+ERROR: POST /user/admin/catalogue/resource admin
+ERROR: POST /user/admin/catalogue/resource admin
+[07/05/2008 18:45:19] <unknown>:1:54: syntax error
+ERROR: POST /workspace/1/tab/2/igadgets admin
+[07/05/2008 18:46:12] No se pudo actualizar el IGadget: Out matching query does not exist.
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[07/05/2008 18:51:27] No se pudo actualizar el IGadget: Out matching query does not exist.
+ERROR: POST /workspaces/2/wiring admin
+[09/05/2008 15:43:23] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 10:25:43] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 10:41:31] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 10:42:13] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 10:42:32] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 10:43:23] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 11:23:43] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/2/wiring admin
+[12/05/2008 11:36:53] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[12/05/2008 18:07:16] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[12/05/2008 18:10:35] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:39] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:39] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:40] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:40] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:41] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[12/05/2008 18:10:41] cannot update variables: name 'null' is not defined
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 15:55:19] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 16:00:03] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 16:10:42] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 16:11:22] Fallo al guardar los connectables: 'iGadgetList'
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 17:55:42] Fallo al guardar los connectables: 'createdChannels'
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 17:58:47] Fallo al guardar los connectables: global name 'Abstract_Variable' is not defined
+ERROR: POST /workspaces/1/wiring admin
+[13/05/2008 18:00:40] Fallo al guardar los connectables: global name 'Abstract_Variable' is not defined
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 09:47:36] Fallo al guardar los connectables: 'dict' object has no attribute 'name'
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 09:49:35] Fallo al guardar los connectables: 'dict' object has no attribute 'name'
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 09:51:33] Fallo al guardar los connectables: 'dict' object has no attribute 'name'
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 13:28:29] Fallo al guardar los connectables: string indices must be integers
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 13:34:37] Fallo al guardar los connectables: string indices must be integers
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 13:46:01] Fallo al guardar los connectables: type object 'InOut' has no attribute 'objets'
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 14:06:20] Fallo al guardar los connectables: 'provisional_id'
+ERROR: POST /workspaces/1/wiring admin
+[14/05/2008 14:07:30] Fallo al guardar los connectables: 'provisional_id'
+ERROR: POST /user/admin/gadgets admin
+[19/05/2008 09:53:06] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[19/05/2008 09:57:15] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[19/05/2008 09:57:47] El gadget ya existe
+ERROR: POST /user/admin/gadgets admin
+[19/05/2008 10:00:46] El gadget ya existe
+ERROR: PUT /workspace/1/variables admin
+[19/05/2008 11:04:38] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[19/05/2008 11:04:38] cannot update variables: name 'null' is not defined
+ERROR: POST /workspaces/1/wiring admin
+[19/05/2008 12:31:20] Fallo al guardar los connectables: 'channelsForRemoving'
+ERROR: PUT /workspace/1/variables admin
+[19/05/2008 16:03:03] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[19/05/2008 16:07:02] cannot update variables: name 'null' is not defined
+ERROR: PUT /workspace/1/variables admin
+[19/05/2008 16:07:02] cannot update variables: name 'null' is not defined
+ERROR: POST /user/admin/catalogue/resource admin
+[20/05/2008 07:51:09] <unknown>:1:54: syntax error
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:38:20] Fallo al guardar los connectables: cannot fit 'long' into an index-sized integer
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:39:01] Fallo al guardar los connectables: cannot fit 'long' into an index-sized integer
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:39:31] Fallo al guardar los connectables: cannot fit 'long' into an index-sized integer
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:42:45] Fallo al guardar los connectables: cannot fit 'long' into an index-sized integer
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:47:23] Fallo al guardar los connectables: list assignment index out of range
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 11:49:05] Fallo al guardar los connectables: list indices must be integers
+ERROR: POST /workspaces/1/wiring admin
+[20/05/2008 16:09:07] Fallo al guardar los connectables: list indices must be integers
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:50:32] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:50:32] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:50:33] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:50:34] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:50:34] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:52:05] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:52:07] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[20/05/2008 16:52:09] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:44:31] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:44:33] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:44:35] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:45:13] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:45:15] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:45:17] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:45:18] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:46:47] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:47:08] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:47:10] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:47:16] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:47:18] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:47:19] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:54:47] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:54:52] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:54:53] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:54:53] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[21/05/2008 15:54:54] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:25:03] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:30:47] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:31:39] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:32:16] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:32:35] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:34:38] cannot update variables: Variable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 13:43:33] cannot update variables: Variable matching query does not exist.
+ERROR: POST /workspaces/1/wiring admin
+[22/05/2008 15:53:53] Fallo al guardar los connectables: In matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[22/05/2008 16:22:56] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:05:00] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:05:50] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:06:46] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:08:58] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:09:14] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:12:02] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:28:43] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:29:26] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:34:39] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:40:52] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:44:43] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:46:15] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:47:18] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:48:39] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:49:00] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:50:34] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:56:22] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:56:30] cannot update variables: 'id'
+ERROR: PUT /workspace/1/variables admin
+[23/05/2008 11:57:41] cannot update variables: 'id'
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin

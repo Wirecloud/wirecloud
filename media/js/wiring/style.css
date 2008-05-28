@@ -1,0 +1,147 @@
+tr {
+	height:16px;	
+}
+
+
+.left {
+	position: relative;
+	left: 0%;
+	width: 25%;
+}
+
+.container {
+	position: absolute;
+	top:20px;
+	left: 26%;
+	width: 50%
+}
+
+.right {
+	position: relative;
+	left: 76%;
+	width: 25%;
+}
+
+div#selector {
+	position: relative;
+	left: 20%;
+	top: 4%;
+	width: 80%;
+}
+
+fieldset {
+	position: relative;
+	top: 30%;
+	width:96%;
+	height: 400px;
+	background-color:#AACCFF;
+	border-bottom-style:outset;
+	border-right-style:outset;
+	border-width:3px;
+	
+}
+
+fieldset#two {
+	position:relative;
+	top: 40px;
+	height: 400px;
+}
+
+select {
+	position:relative;
+	left: 6px;
+}
+
+.header {
+	position:relative;
+	width:150px;
+	height: 16px;
+	font-family:"Book Antiqua";
+	font-size:smaller;;
+	border-style:inset;
+	border-color: #FFCCCC;
+	background-color:#AABBAA;
+}
+
+.bodier {
+	position:relative;
+	width:150px;
+	/*max-height: 210px;*/
+	font-family:"Book Antiqua";
+	font-size:smaller;
+	border-style:inset	;
+	border-color: #FFCCCC;
+	background-color:#99BBDD;
+}
+
+div#tab_one {
+	position: relative;
+	left:15%;
+	top: 65px;
+	width: 155px;
+	height: 350px;
+}
+
+div#tab_two {
+	position: relative;
+	left:70%;
+	top: -285px;
+	width: 155px;
+	height: 350px;
+}
+
+.contents {
+	position: relative;
+    max-height: 210px;
+    overflow:auto;
+	overflow-x:hidden;
+}
+
+div#view {
+	position:relative;
+	top: 100px;
+	left: 42%;
+}
+
+input#refreshbutton {
+	position:relative;
+	top: 320px;
+	left: 50%;
+	height: 5%;
+	width: 5%;
+}
+
+input#addChannel {
+	position: relative;
+	top: 80px;
+	left: -18%;
+	height: 4%;
+	width: 4%;
+}
+input#deleteChannel {
+	position: relative;
+	top: 80px;
+	left: -13%;
+	height: 4%;
+	width:4%;
+}
+
+input#actualiza {
+	position: relative;
+	top: 150px;
+	left: 45%;
+	
+}
+
+
+.imagen {
+	position: relative;
+	height: 25px;
+	width:25px;
+}
+
+div#bActualiza{
+	position: relative;
+	left: 65%;
+	top: -685px;
+}

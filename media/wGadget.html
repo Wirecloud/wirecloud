@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><html>
+<head>
+	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+	<title>writer Gadget</title>
+	<script language="javascript" src="/ezweb/EzWebAPI/EzWebAPI.js"></script>
+</head>
+
+<body>
+	<script>
+		var Calle = EzWebAPI.createRWGadgetVariable("calle");
+	</script>
+	<div>
+		<form onsubmit="return false;">
+			<input id="writer" type="text">
+			<input id="sendEvent" type="submit" value="send" onclick="Calle.set(document.getElementById('writer').value);">
+		</form>
+	</div>
+</body>
+</html>
+

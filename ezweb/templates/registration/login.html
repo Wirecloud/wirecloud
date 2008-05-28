@@ -1,0 +1,54 @@
+﻿{% load i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+<title>EzWeb</title>
+<head>
+<title>{% trans "EzWeb Platform" %}</title>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
+<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+
+
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
+
+
+{% if error_message %}
+<p class="errornote">{{ error_message }}</p>
+{% endif %}
+
+
+
+<div id="content-main">
+<form action="{{ app_path }}" method="post" id="login-form">
+  <div class="form-row">
+    <label for="id_username">{% trans 'Username:' %}</label> <input type="text" name="username" id="id_username" />
+    <label for="id_password">{% trans 'Password:' %}</label> <input type="password" name="password" id="id_password" />
+    <input type="hidden" name="this_is_the_login_form" value="1" />
+    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
+    <input type="submit" value="{% trans 'Log in' %}" />
+  </div>
+</form>
+
+<script type="text/javascript">
+document.getElementById('id_username').focus()
+</script>
+</div>
+</div>
+
+</body>
+
+</html>
+

@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Untitled Document</title>
+		<link rel="stylesheet" type="text/css" href="./style.css">
+
+		<script src = "./connectable.js" type = text/javascript></script>
+		<script src = "./wiring.js" type = text/javascript></script>
+		<script src = "./wiringInterface.js" type = text/javascript></script>
+		
+		<script src = "../lib/prototype.js" type = text/javascript></script>
+		<script src = "../persistenceEngine/PersistenceEngine.js" type = "text/javascript"></script>
+		<script src = "../varManager/varManager.js" type = "text/javascript"></script>
+	</head>
+	
+	<body>
+		<script>
+
+			var wI = new wiringInterface();
+			var w = WiringFactory.getInstance();
+
+		</script>
+		<div class = "left">
+
+			<input type = button 
+				   value = "renewInterface" 
+				   onclick = "wI.renewInterface(w,$('selectCanal'),$('gadgets'),$('canales'))">
+		<br>	
+		<br>
+		
+		<br>
+		<br>
+		<br>
+			<input id = "gadget9" type = text value = "id gadget...">
+			<input id = "event9"  type = text value = "name event...">
+			<input id = "value9"  type = text value = "value...">
+			<input type = button 
+				   value= "send event" 
+				   onclick = "w.sendEvent($F($('gadget9')),$F($('event9')), $F($('value9')));wI.renewChannel(w,$F($('selectCanal')),$('slotsConnection'),$('eventsConnection'))">
+					
+		</div>
+		<div class = "container">
+			<fieldset id = "one">
+				<div id = "selector">
+					<em>Seleccione un canal:</em>
+					<select id = "selectCanal"  onChange = "wI.renewChannel(w,$F($('selectCanal')),$('slotsConnection'),$('eventsConnection'))">
+						<option value = "" selected>----</option>
+				
+					</select>
+				</div>
+		
+				
+				<div id = "view">
+					<input id = "valor" type = "text" value = "">
+					<input id = "addChannel" type=image
+						src="/ezweb/js/wiring/add.png"
+					    title="Create Channel"
+					    alt= "create channel"
+					    onclick = "wI.anadirCanal(w,$('selectCanal'),$('canales'),$('slotsConnection'),$('eventsConnection'))">  
+					<input id = "deleteChannel" type=image
+						src="/ezweb/js/wiring/delete.png"
+						title="Delete Channel"
+					    alt= "Delete Channel"
+					    onclick = "wI.borrarCanal(w,$('selectCanal').value,$('selectCanal'),$('canales'),$('slotsConnection'),$('eventsConnection'))">
+				</div>		
+				<div id = "tab_one">
+					<table class = "header">
+						<tr><td> </td><td>Input connection</td></tr>
+					</table>
+				    <div class = "contents">
+        				<table class = "bodier" id = "eventsConnection">
+				          
+			
+				        </table>
+				      </div>
+				</div>
+				<div id = "tab_two">
+					<table class = "header">
+						<tr><td> </td><td>Output connection</td></tr>
+					</table>
+				    <div class = "contents">
+        				<table class = "bodier" id = "slotsConnection">
+						  
+				    
+				        </table>
+				      </div>
+				</div>
+
+			</fieldset>
+
+			<fieldset id = "two">
+				<div>
+				<input id = "refreshbutton" 
+					type = "image"
+					src = "/ezweb/js/wiring/disk.png"
+					title = "Save data" 
+					alt = "Actualizar"
+					onClick = "w.restaure()">	
+				</div>
+				<div id = "selector">
+					<em>Seleccione un item:</em>
+					<select id = "itemizer"  onChange = "wI.renewItem(w,$F($('itemizer')),$('slots'),$('events'))">
+						<option value = "" selected>----</option>
+						<optgroup id="canales">
+							<option value = "" disabled>Canales</option>
+							</optgroup>
+						<optgroup id ="gadgets">
+							<option value = "" disabled>Gadgets</option>
+						</optgroup>
+					</select>
+				</div>
+					<div id = "tab_one">
+					<table class = "header">
+						<tr><td> </td><td>Outputs</td></tr>
+					</table>
+				    <div class = "contents">
+        				<table class = "bodier" id = "events">
+				          
+						  
+				        </table>
+				      </div>
+				</div>
+				<div id = "tab_two">
+					<table class = "header">
+						<tr><td> </td><td>Inputs</td></tr>
+					</table>
+				    <div class = "contents">
+        				<table class = "bodier" id = "slots">
+				          
+				    
+				        </table>
+				      </div>
+				</div>
+				
+				</fieldset>
+			
+		</div>
+		<div class = "right">
+			
+		</div>
+	</body>
+</html>

@@ -1,0 +1,73 @@
+{
+   "igadgets":
+   [
+       {   "uri": "uri_igadget1",
+            "ins":
+            [
+                {"name": "in1", "variable: "uri_variable1", "inouts": ["uri_inout1", "uri_inout2"]},
+                {"name": "in2", "variable: "uri_variable2", "inouts": ["uri_inout3"]},
+                {"name": "in3", "variable: "uri_variable3", "inouts": ["uri_inout4", "uri_inout5"]},
+            ],
+            "outs":
+            [
+                {"name": "out1", "variable: "uri_variable1", "inouts": ["uri_inout4", "uri_inout5"]},
+                {"name": "out3", "variable: "uri_variable3", "inouts": ["uri_inout3"]},
+                {"name": "out4", "variable: "uri_variable4", "inouts": ["uri_inout1"]},
+                {"name": "out2", "variable: "uri_variable2", "inouts": ["uri_inout4", "uri_inout5"]}
+            ] 
+       },
+       {   "uri": "uri_igadget2",
+           "ins":
+           [
+                {"name": "in1", "variable: "uri_variable1", "inouts": ["uri_inout1", "uri_inout2"]},
+                {"name": "in2", "variable: "uri_variable2", "inouts": ["uri_inout3"]}
+           ],
+           "outs":
+           [
+                {"name": "out4", "variable: "uri_variable4", "inouts": ["uri_inout1"]},
+                {"name": "out2", "variable: "uri_variable2", "inouts": ["uri_inout4", "uri_inout5"]}
+           ]
+       }
+   ],
+
+   "inouts":
+   [
+       {  
+           "uri": "uri_inout1",
+           "friend_code": "fc_1",
+           "value": "value1",
+           "name": "channel1",
+           "ins":
+           [
+               {"variable": "uri_variable1"},
+               {"variable": "uri_variable2"},
+               {"variable": "uri_variable3"}
+           ],
+           "outs":
+           [
+               {"variable": "uri_variable1"},
+               {"variable": "uri_variable2"}
+           ]
+       },
+       {  
+           "uri": "uri_inout2",
+           "friend_code": "fc_2",
+           "value": "value2",
+           "name": "channel2",
+           "ins":
+           [
+               {"variable": "uri_variable1"},
+               {"variable": "uri_variable2"},
+               {"variable": "uri_variable3"},
+               {"variable": "uri_variable4"}
+           ],
+           "outs":
+           [
+               {"variable": "uri_variable1"},
+               {"variable": "uri_variable2"},
+               {"variable": "uri_variable3"},
+               {"variable": "uri_variable4"}
+           ]
+       }
+   ]
+} 

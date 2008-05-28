@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template schemaLocation="http://morfeo-project.org/2007/Template">
+<!-- Meta tags define gadgets properties -->
+−
+	<Catalog.ResourceDescription>
+		<Vendor>Morfeo</Vendor>
+		<Name>Escritor</Name>
+		<Version>V_1.0</Version>
+		<Author>rnogal</Author>
+		<Mail>rnogal@pegaso.fi.upm.es</Mail>
+		<Description>Escribe un dato en un canal</Description>
+		<ImageURI>www.arrakis.es/~cotton/hot/mapa.jpg</ImageURI>
+		<WikiURI>http://www.image.com</WikiURI>
+	</Catalog.ResourceDescription>
+	<!-- EzWeb Gadgets Tags -->
+	<Platform.Preferences>
+	</Platform.Preferences>
+	<!-- EzWeb Gadget Persistent State -->
+	<Platform.StateProperties>
+	</Platform.StateProperties>
+	<!-- EzWeb Gadget Data Wiring -->
+	<Platform.Wiring>
+		<Wire name="calle" type="text" label="Calle" friendcode = "address" wiring="in"/>
+	</Platform.Wiring>
+	<Platform.Link>
+		<XHTML href="http://europa.ls.fi.upm.es/ezweb/js/wGadget.html"/>
+	</Platform.Link>
+</Template>

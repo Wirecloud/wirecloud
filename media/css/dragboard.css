@@ -1,0 +1,184 @@
+div.dragboard {
+  overflow-x: hidden;
+}
+
+div.gadget_window {
+  position: absolute;
+  border: 1px solid #4c5054;
+  background: white;
+}
+
+div.gadget_window_locked {
+  position: absolute;
+  border: none;
+  background: white;
+}
+
+div.gadget_menu {
+  cursor: move;
+  padding: 1px 3px 1px 7px;
+  height: 16px;
+  font-weight: bold;
+  color: #FFF;
+  background: #97a0a8;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+div.dragboard.fixed div.gadget_menu {
+  display: none;
+}
+
+div.gadget_window div.gadget_menu input[type="button"] {
+  float: right;
+  display: inline;
+  margin: 0 0 0 5px;
+  padding: 0px;
+  width: 16px;
+  height: 16px;
+  border: 0px none;
+  outline: 0px none;
+  cursor: pointer;
+}
+
+div.gadget_window div.gadget_menu input[type="button"].closebutton {
+  background: url(/ezweb/images/close.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
+  background: url(/ezweb/images/close-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
+  background: url(/ezweb/images/minimize.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
+  background: url(/ezweb/images/minimize-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
+  background: url(/ezweb/images/maximize.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
+  background: url(/ezweb/images/maximize-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
+  background: url(/ezweb/images/settings.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
+  background: url(/ezweb/images/settings-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button {
+  background: url(/ezweb/images/settings2.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
+  background: url(/ezweb/images/settings2-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].errorbutton {
+  background: url(/ezweb/images/warning.png);
+}
+
+div.gadget_window div.gadget_wrapper {
+  width: 100%;
+  border-top: 1px solid #4c5054;
+}
+
+div.gadget_window div.gadget_wrapper object {
+  width: 100%;
+}
+
+div.floatclearer {
+  clear: both;
+}
+
+div.gadget_window div.resizeHandle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  bottom: -1px;
+  right: -1px;
+  cursor: se-resize;
+  background: transparent;
+}
+
+div.dragboard.fixed div.gadget_window div.resizeHandle {
+  display: none;
+}
+
+/*****
+ * config_interface
+ */
+ 
+div.gadget_window form.config_interface {
+  background: #DDD;
+  border-bottom: 1px solid #4c5054;
+  display: none;
+  padding: 1px 1ex;
+  margin: 0px;
+}
+
+form.config_interface div.buttons {
+  margin: 1ex 0px;
+  float: right;
+}
+
+form.config_interface table {
+  width: 100%;
+}
+
+form.config_interface label {
+  margin: 1ex;
+  display: block;
+}
+
+form.config_interface input, form.config_interface select {
+  border: 1px solid #4c5054;
+  margin: 0px 1ex;
+}
+
+form.config_interface table input {
+  width: 90%;
+  max-width: 100ex;
+  padding: 0px 0.5ex;
+}
+
+form.config_interface table input[type="checkbox"] {
+  width: auto;
+}
+
+form.config_interface select {
+  padding: 0px;
+}
+
+form.config_interface label.invalid {
+  color: red;
+}
+
+form.config_interface label.invalid input {
+  border: 1px solid red;
+}
+
+/***
+ *
+ */
+.floatleft {
+  float: left;
+}
+
+.floatright {
+  float: right;
+}
+
+#dragboardcursor {
+  position: absolute;
+  border: 2px dashed #97A0A8;
+  background: #F2F9FF;
+  z-index: 1;
+}

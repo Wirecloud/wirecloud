@@ -1,0 +1,388 @@
+# Spanish/Spain translation of EzWeb-Platform.
+# Copyright (C) 2008 Telefónica I+D
+# This file is distributed under the same license as the EzWeb-Platform package.
+# manuel <miglesia@pegaso.ls.fi.upm.es>, 2008.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: EzWeb-Platform 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-03-13 11:09+0100\n"
+"PO-Revision-Date: 2008-02-20 15:55+0100\n"
+"Last-Translator: manuel <miglesia@pegaso.ls.fi.upm.es>\n"
+"Language-Team: Spanish/Spain <es@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: media/js/catalogue/Catalogue.js:97 media/js/catalogue/UIUtils.js:72
+#: media/js/contextManager/Adaptors.js:56
+#: media/js/contextManager/Adaptors.js:90
+#: media/js/contextManager/Adaptors.js:125
+#: media/js/contextManager/Adaptors.js:159
+#: media/js/contextManager/Adaptors.js:193
+#: media/js/contextManager/Adaptors.js:225
+#: media/js/contextManager/ContextManager.js:107
+#: media/js/contextManager/ContextManager.js:144
+#: media/js/gadgetModel/Gadget.js:69
+msgid ""
+"JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %"
+"(errorDesc)s"
+msgstr ""
+"Excepción de Javascript en el fichero %(errorFile)s (line: %(errorLine)s): %"
+"(errorDesc)s"
+
+#: media/js/catalogue/Catalogue.js:106
+msgid "Error retrieving catalogue data: %(errorMsg)s."
+msgstr "Error al recibir los datos del catálogo: %(errorMsg)s"
+
+#: media/js/catalogue/Catalogue.js:109
+msgid ""
+"Error retrieving catalogue data, please check the logs for further info."
+msgstr ""
+"Error al recibir los datos del catálogo, por favor, compruebe los registros "
+"para obtener información más detallada"
+
+#: media/js/catalogue/Catalogue.js:145
+msgid "Gadgets per page: "
+msgstr "Gadgets por página: "
+
+#: media/js/catalogue/Catalogue.js:171
+msgid "Go to first page"
+msgstr "Ir a la primera página"
+
+#: media/js/catalogue/Catalogue.js:173
+msgid "Go to previous page"
+msgstr "Ir a la página anterior"
+
+#: media/js/catalogue/Catalogue.js:184
+msgid "Go to page "
+msgstr "Ir a la página "
+
+#: media/js/catalogue/Catalogue.js:195
+msgid "Go to next page"
+msgstr "Ir a la página siguiente"
+
+#: media/js/catalogue/Catalogue.js:197
+msgid "Go to last page"
+msgstr "Ir a la última página"
+
+#: media/js/catalogue/Catalogue.js:206
+msgid " Order by"
+msgstr " Ordenar por"
+
+#: media/js/catalogue/Catalogue.js:215
+msgid "Creation date"
+msgstr "Fecha de creación"
+
+#: media/js/catalogue/Catalogue.js:221
+msgid "Name"
+msgstr "Nombre"
+
+#: media/js/catalogue/Catalogue.js:227
+msgid "Vendor"
+msgstr "Distribuidor"
+
+#: media/js/catalogue/Catalogue.js:233
+msgid "Author"
+msgstr "Autor"
+
+#: media/js/catalogue/Resource.js:33
+msgid "Show description"
+msgstr "Mostrar descripción"
+
+#: media/js/catalogue/Resource.js:35
+msgid "Access to the wiki"
+msgstr "Acceder a la wiki"
+
+#: media/js/catalogue/Resource.js:38
+msgid "Show template"
+msgstr "Mostrar template"
+
+#: media/js/catalogue/Resource.js:42 media/js/catalogue/Resource.js.py:241
+msgid "Delete gadget"
+msgstr "Eliminar Gadget"
+
+#: media/js/catalogue/Resource.js:50
+msgid "Show resource details"
+msgstr "Mostrar detalles del recurso"
+
+#: media/js/catalogue/Resource.js:56
+msgid "Show resource tagcloud"
+msgstr "Mostrar la nube de etiquetas del concepto"
+
+#: media/js/catalogue/Resource.js:61 media/js/catalogue/Resource.js.py:113
+msgid "Add Instance"
+msgstr "Añadir instancia"
+
+#: media/js/catalogue/Resource.js:75
+msgid "Resource details"
+msgstr "Detalles del recurso"
+
+#: media/js/catalogue/Resource.js:81 media/js/catalogue/Resource.js.py:291
+#: media/js/catalogue/Resource.js:292
+msgid "Description"
+msgstr "Descripción"
+
+#: media/js/catalogue/Resource.js:82
+msgid "Gadget connectivity"
+msgstr "Conectividad del gadget"
+
+#: media/js/catalogue/Resource.js:83
+msgid "Events: "
+msgstr "Eventos: "
+
+#: media/js/catalogue/Resource.js:84
+msgid "Slots: "
+msgstr "Ranuras: "
+
+#: media/js/catalogue/Resource.js:85 media/js/catalogue/Resource.js.py:306
+#: media/js/catalogue/Resource.js:307
+msgid "Tagcloud"
+msgstr "Nube de etiquetas"
+
+#: media/js/catalogue/Resource.js:87 media/js/catalogue/Resource.js.py:161
+#: media/js/catalogue/Resource.js:166
+msgid "View my tags"
+msgstr "Ver mis etiquetas"
+
+#: media/js/catalogue/Resource.js:88 media/js/catalogue/Resource.js.py:154
+#: media/js/catalogue/Resource.js:167
+msgid "View others tags"
+msgstr "Ver otras etiquetas"
+
+#: media/js/catalogue/Resource.js:92
+msgid "New tags"
+msgstr "Nuevas etiquetas"
+
+#: media/js/catalogue/Resource.js:98
+msgid "Tag"
+msgstr "Etiquetar"
+
+#: media/js/catalogue/Resource.js:99
+msgid "Save & New"
+msgstr "Guardar & Nueva"
+
+#: media/js/catalogue/Resource.js:100 media/js/dragboard/dragboard.js:1096
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: media/js/catalogue/Resource.js:104
+msgid "Tag the resource"
+msgstr "Etiquetar el recurso"
+
+#: media/js/catalogue/Resource.js:105
+msgid "Access to the Wiki"
+msgstr "Acceder a la wiki"
+
+#: media/js/catalogue/Resource.js:107
+msgid "Access to the Template"
+msgstr "Acceder al template"
+
+#: media/js/catalogue/Resource.js:109
+msgid "Update gadget code"
+msgstr "Actualizar el código del gadget"
+
+#: media/js/catalogue/Resource.js:153 media/js/catalogue/Resource.js.py:160
+msgid "View all tags"
+msgstr "Ver todas las etiquetas"
+
+#: media/js/catalogue/Resource.js:230 media/js/catalogue/Resource.js.py:254
+#: media/js/catalogue/Tag.js:50 media/js/catalogue/Tag.js.py:62
+msgid "Search by "
+msgstr "Buscar por "
+
+#: media/js/catalogue/Resource.js:274
+msgid "Delete tag"
+msgstr "Eliminar etiqueta"
+
+#: media/js/catalogue/Tagger.js:47
+msgid "Tags must have at least three characters."
+msgstr "La etiquetas deben tener al menos tres carácteres"
+
+#: media/js/catalogue/Tagger.js:79
+msgid "Error POST"
+msgstr "Error de POST"
+
+#: media/js/catalogue/Tagger.js:112 media/js/catalogue/UIUtils.js:407
+msgid "Error DELETE"
+msgstr "Error de DELETE"
+
+#: media/js/catalogue/UIUtils.js:81
+msgid "The resource could not be added to the catalogue: %(errorMsg)s."
+msgstr "No se pudo añadir el recurso al catálogo: %(errorMsg)s."
+
+#: media/js/catalogue/UIUtils.js:83
+msgid ""
+"The resource could not be added to the catalogue, please check the logs for "
+"further info."
+msgstr ""
+"No se pudo añadir el gadget al showcase, por favor, consulte los registros "
+"para obtener información más detallada."
+
+#: media/js/catalogue/UIUtils.js:189
+msgid "Error PUT"
+msgstr "Error de PUT"
+
+#: media/js/catalogue/UIUtils.js:262 media/js/catalogue/UIUtils.js.py:354
+msgid "Indicate a criteria in search formulary"
+msgstr "Indique un criterio en el formulario de búsqueda"
+
+#: media/js/contextManager/Adaptors.js:62
+#: media/js/contextManager/Adaptors.js:96
+#: media/js/contextManager/Adaptors.js:131
+#: media/js/contextManager/Adaptors.js:165
+#: media/js/contextManager/Adaptors.js:199
+#: media/js/contextManager/Adaptors.js:231
+msgid "Error getting concept %(concept)s: %(errorMsg)s."
+msgstr "Error al recibir el concepto %(concept)s: %(errorMsg)s."
+
+#: media/js/contextManager/ContextManager.js:59
+msgid "Context variable"
+msgstr "Variable de contexto"
+
+#: media/js/contextManager/ContextManager.js:59
+msgid "without related concept. Its value cannot be established"
+msgstr "sin un concepto relacionado. Su valor no puede establecerse"
+
+#: media/js/contextManager/ContextManager.js:113
+msgid "Error getting gadgets variables: "
+msgstr "Error al obtener las variables del gadget: "
+
+#: media/js/contextManager/ContextManager.js:132
+msgid "WARNING: concept name"
+msgstr "ATENCIÓN: nombre de concepto"
+
+#: media/js/contextManager/ContextManager.js:132
+msgid "is already related to"
+msgstr "ya esta relacionado con"
+
+#: media/js/contextManager/ContextManager.js:132
+msgid "New related concept is"
+msgstr "El nuevo concepto relacionado es"
+
+#: media/js/contextManager/ContextManager.js:151
+msgid "Error receiving context manager data"
+msgstr "Error al recibir los datos del gestor de contexto"
+
+#: media/js/contextManager/ContextPlatform.js:103
+#: media/js/contextManager/ContextPlatform.js:124
+msgid "Concept does not have value, this is a Gadget Concept."
+msgstr "El concepto no tiene valor, este es un Concepto de Gadget"
+
+#: media/js/contextManager/ContextPlatform.js:110
+msgid "Unexpected change of concept type."
+msgstr "Cambio inesperado del tipo del concepto"
+
+#: media/js/contextManager/ContextPlatform.js:127
+#: media/js/contextManager/ContextPlatform.js:148
+#: media/js/contextManager/ContextPlatform.js:168
+msgid "Concept does not have type yet."
+msgstr "El concepto no tiene tipo aún."
+
+#: media/js/contextManager/ContextPlatform.js:162
+msgid "%(concept)s Concept is not related to IGadget number %(var)s."
+msgstr ""
+"El concepto %(concept)s no está relacionado con el IGadget número %(var)s."
+
+#: media/js/contextManager/ContextPlatform.js:165
+msgid "This is a External Concept, 'getIGadgetVar' is only for Gadget Concept."
+msgstr ""
+"Este es un Concepto Externo, 'getIGadgetVar' sólo es para Conceptos de Gadget"
+
+#: media/js/dragboard/dragboard.js:167
+msgid ""
+"Error retrieving dragboard data from persistence, please check the logs for "
+"further info."
+msgstr ""
+"Error al recibir los datos del dragboard desde la persistencia, por favor,"
+" consulte los registros para obtener información más detallada."
+
+#: media/js/dragboard/dragboard.js:478
+msgid "Error committing dragboard changes to persistence: %(errorMsg)s."
+msgstr "Error al almacenar los cambios en el servidor: %(errorMsg)s."
+
+#: media/js/dragboard/dragboard.js:481
+msgid ""
+"Error committing dragboard changes to persistence, please check the logs for "
+"further info."
+msgstr ""
+"Error al almacenar los cambios del dragboard en la persistencia, por favor,"
+" consulte los registros para obtener información más detallada."
+
+#: media/js/dragboard/dragboard.js:1011
+msgid "Error removing igadget from persistence: %(errorMsg)s."
+msgstr "Error al eliminar el igadget de la persistencia: %(errorMsg)s."
+
+#: media/js/dragboard/dragboard.js:1050
+msgid "This IGadget does not have user prefs"
+msgstr "Este IGadget no tiene preferencias de usuario"
+
+#: media/js/dragboard/dragboard.js:1082
+msgid "Set Defaults"
+msgstr "Predeterminados"
+
+#: media/js/dragboard/dragboard.js:1088
+msgid "Save"
+msgstr "Guardar"
+
+#: media/js/dragboard/dragboard.js:1123 media/js/dragboard/dragboard.js:1124
+msgid "Maximize"
+msgstr "Maximizar"
+
+#: media/js/dragboard/dragboard.js:941
+msgid "Close"
+msgstr "Cerrar"
+
+#: media/js/dragboard/dragboard.js:950
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: media/js/dragboard/dragboard.js:1131 media/js/dragboard/dragboard.js:1132
+msgid "Minimize"
+msgstr "Minimizar"
+
+#: media/js/dragboard/dragboard.js:1144 media/js/opManager/OpManager.js:162
+msgid "%(errorCount)s error"
+msgid_plural "%(errorCount)s errors"
+msgstr[0] "%(errorCount)s error"
+msgstr[1] "%(errorCount)s errores"
+
+#: media/js/gadgetModel/Gadget.js:78
+msgid "The gadget could not be added to the showcase: %(errorMsg)s."
+msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
+
+#: media/js/gadgetModel/Gadget.js:80
+msgid ""
+"The gadget could not be added to the showcase, please check the logs for "
+"further info."
+msgstr ""
+"No se pudo añadir el gadget al showcase, por favor, consulte los registros "
+"para obtener información más detallada."
+
+#: media/js/gadgetModel/Gadget.js:142
+msgid ""
+"[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]"
+msgstr ""
+
+#: media/js/varManager/VariablePlatform.js:130
+msgid ""
+"Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)"
+"s: %(exceptionMsg)s."
+msgstr ""
+"Error en el manejador de \"%(varName)s\" RVariable en el iGadget %(iGadgetId)"
+"s: %(exceptionMsg)s."
+
+#: media/js/varManager/varManager.js:157
+msgid ""
+"IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\n"
+"If you need it, please insert it into the gadget's template."
+msgstr ""
+"El IGadget %(iGadgetId)s no dispone de ninguna variable llamada \"%(varName)s"
+"\".\n"
+"Si la necesita, añádala al template del gadget."
+
+#: media/js/wiring/wiringGUI.js:60
+msgid "Wire_"
+msgstr ""

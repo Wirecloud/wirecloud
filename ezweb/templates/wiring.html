@@ -1,0 +1,32 @@
+{% load i18n %}
+  <div id="wiring_messages"></div>
+  <table class="tableCell"><tr>
+      <td class="eventColumn">
+          <div class="title">{% trans "EVENTS" %}</div>
+          <div id="events_list"></div>
+      </td>
+
+      <td class="connectionColumn">
+          
+      </td>
+
+      <td class="inoutColumn">
+          <div class="title">{% trans "CHANNELS" %}</div>
+          <div align="center" class="newChannel" id="newChannel">
+          	{% trans "new channel" %}
+          	<div class="channelContent">
+	            <input class="newChannelInput" type="text" id="channel_name" name="channel_name"/>
+	        </div>
+          </div>
+          <div id="channels_list"></div>
+      </td>
+
+      <td class="connectionColumn">
+
+      </td>
+
+      <td class="slotColumn">
+          <div class="title">{% trans "SLOTS" %}</div>
+          <div id="slots_list"></div>
+      </td></tr>
+  </tr></table>

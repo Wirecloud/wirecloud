@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object pk="1" model="workspace.workspacevariable">
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+        <field type="CharField" name="type"></field>
+        <field type="CharField" name="aspect">TAB</field>
+    </object>
+    <object pk="1" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="1" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+        <field type="TextField" name="value"></field>
+    </object>
+    <object pk="1" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+    </object>
+</django-objects>

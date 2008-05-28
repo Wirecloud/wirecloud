@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object pk="1" model="connectable.out">
+        <field type="CharField" name="name">tab_MyTab</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
+    </object>
+</django-objects>

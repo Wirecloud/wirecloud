@@ -1,0 +1,13 @@
+VERSION
+-------
+
+v0.0a2:
+- Revisión (actual) src/trunk
+- Descripción: Demo funcional e integrada en un único proyecto Django.
+- svn co http://morfeo.yaco.es/svn/ezweb-a3/ezweb/src/trunk ezweb
+
+v0.0a1:
+- Revisión 573 src/prealfa
+- Descripción: Primera demo funcional
+- svn co http://morfeo.yaco.es/svn/ezweb-a3/ezweb/prealfa ezweb -r573
+
