@@ -534,8 +534,8 @@ var CatalogueFactory  = function () {
 		} 
 		else {		
    	    	var max;
-   	    	if(items>20) {
-   	        	max = 20;
+   	    	if(items>24) {
+   	        	max = 24/4;
    	     	} else {
    	         	max = Math.ceil(items/4);
    	     	}
