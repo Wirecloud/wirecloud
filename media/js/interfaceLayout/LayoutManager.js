@@ -225,6 +225,7 @@ var LayoutManagerFactory = function () {
 		    this.currentView = wiring;			
 			this.currentViewType = 'wiring';
 			this.wiringLink.className = "toolbar_marked";
+			this.wiringLink.blur();
 			wiring.wiringContainer.setStyle({'zIndex' : this.showLevel, 'display': 'block', 'visibility': 'visible'});
 		}
 		
@@ -246,7 +247,7 @@ var LayoutManagerFactory = function () {
 			workSpace.menu.clearSubmenuOptions();
 			
 			if(workspaces.length >= 1){
-				workSpace.menu.submenu.className = "submenu border_top";
+				workSpace.menu.submenu.className = "submenu border_bottom";
 			}else{
 				workSpace.menu.submenu.className = "submenu";
 			}
@@ -282,27 +283,6 @@ var LayoutManagerFactory = function () {
 			}
 			this.showUnclickableCover();
 			switch (window){
-			case 'renameTab':
-				if(!this.menus['renameTabMenu']){
-					this.menus['renameTabMenu'] = new RenameWindowMenu('tab');
-				}
-				this.currentMenu = this.menus['renameTabMenu'];
-				this.currentMenu.show();
-				break;
-			case 'renameWorkSpace':
-				if(!this.menus['renameWorkSpaceMenu']){
-					this.menus['renameWorkSpaceMenu'] = new RenameWindowMenu('workSpace');
-				}
-				this.currentMenu = this.menus['renameWorkSpaceMenu'];
-				this.currentMenu.show();
-				break;
-			case 'createTab':
-				if(!this.menus['createTabMenu']){
-					this.menus['createTabMenu'] = new CreateWindowMenu('tab');
-				}
-				this.currentMenu = this.menus['createTabMenu'];
-				this.currentMenu.show();
-				break;
 			case 'createWorkSpace':
 				if(!this.menus['createWorkSpaceMenu']){
 					this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');

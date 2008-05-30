@@ -243,8 +243,8 @@ a:hover{
   padding: 2px;
 }
 
-.drop_down_menu .border_top{
-	border-top: 4px double #2D6F9C;
+.drop_down_menu .border_bottom{
+	border-bottom: 4px double #2D6F9C;
 }
 
 .drop_down_menu .submenu .submenu_title{

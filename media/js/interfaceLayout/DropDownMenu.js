@@ -85,7 +85,7 @@ function DropDownMenu(idMenu){
 				else
 					new Insertion.After(optionList[position-1], opHtml);
 			}else{
-				new Insertion.Top(this.menu, opHtml);
+				new Insertion.Bottom(this.menu, opHtml);
 			}
 			newOption = $(opId);
 			Event.observe(newOption, 'click', event);

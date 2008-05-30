@@ -209,7 +209,7 @@ function Tab (tabInfo, workSpace) {
 	var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
 	new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);
 	var tabOpsLauncherElement = $(this.tabOpsLauncher);
-	Event.observe(tabOpsLauncherElement, "click", function(e){Event.stop(e);
+	Event.observe(tabOpsLauncherElement, "click", function(e){e.target.blur();Event.stop(e);
 													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 

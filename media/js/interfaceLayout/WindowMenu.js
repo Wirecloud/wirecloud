@@ -46,7 +46,10 @@ function WindowMenu(){
 	this.operationHandler;	//window handler
 	this.title;				//title
 
-
+	//displays a message
+	WindowMenu.prototype.setMsg = function (msg){
+		this.msgElement.update(msg);
+	}
 	//Calculates a usable absolute position for the window
 	WindowMenu.prototype.calculatePosition = function(){
 		var coordenates = [];
@@ -60,101 +63,26 @@ function WindowMenu(){
 
 	WindowMenu.prototype.setHandler = function (handler){
 		this.operationHandler = handler;
-	}
-
+	}	
 	//displays the window in the correct position
 	WindowMenu.prototype.show = function (){
 		
-		this.calculatePosition();
-		Event.observe(this.button, "click", this.operationHandler);
+		this.calculatePosition();	
+		this.initObserving();
 		this.titleElement.update(this.title);
 		this.htmlElement.style.display = "block";
 		this.setFocus();
 	}
 
-	//abstract method
+	//abstract methods
+	WindowMenu.prototype.initObserving = function (){
+	}
+	WindowMenu.prototype.stopObserving = function (){
+	}
 	WindowMenu.prototype.hide = function (){		
 	}
-	
-	//displays a message
-	WindowMenu.prototype.setMsg = function (msg){
-		this.msgElement.update(msg);
-	}
 
 }
-
-//Especific class for the windows used for renaming
-function RenameWindowMenu (element) {
-
-	//constructor
-	this.htmlElement = $('rename_menu');		//rename-window HTML element
-	this.titleElement = $('rename_window_title');	//title gap
-	this.msgElement = $('rename_window_msg');	//error message gap
-	this.element = element;				//workspace or tab
-	this.button = $('rename_btn');
-	
-	this.operationHandler = function(){this.executeOperation()}.bind(this);
-
-	if(this.element == 'tab'){
-		this.title = gettext('Rename tab');
-	}else if(this.element == 'workSpace'){
-		this.title = gettext('Rename workSpace');
-	}
-
-	RenameWindowMenu.prototype.setFocus = function(){
-		$('rename_new_name').focus();
-	}
-
-	//Calls the Rename operation (the task the window is made for).
-	RenameWindowMenu.prototype.executeOperation = function(){
-
-		var newName = $('rename_new_name').value;
-/*		//is the new name correct? (no empty name)
-		if(newName.match(/^(\S|\S[\w\s\-_·¡È…ÌÕÛ”˙⁄Ò—]*\S)$/)){*/
-			switch (this.element){
-			case 'tab':
-/*				//is the name in use yet?
-				if(!OpManagerFactory.getInstance().activeWorkSpace.tabExists(newName)){*/
-					OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().updateInfo(newName, null);
-/*				}
-				else{
-					this.msgElement.update('name already in use');
-				}*/
-				break;
-			case 'workSpace':	
-/*				//is the name in use yet?
-				if(!OpManagerFactory.getInstance().workSpaceExists(newName)){*/
-					OpManagerFactory.getInstance().activeWorkSpace.updateInfo(newName, null);
-/*				}
-				else{
-					this.msgElement.update('name already in use');
-				}*/
-				break;
-			default:
-				break;
-			}
-/*		}
-		else{
-			this.msgElement.update('invalid name');
-		}*/
-
-	}
-
-	//hides the window and clears all the inputs
-	RenameWindowMenu.prototype.hide = function (){
-
-		var inputArray = $$('#rename_menu input:not([type=button])');
-		for (var i=0; i<inputArray.length; i++){
-			inputArray[i].value = '';
-		}
-		var msg = $('rename_window_msg');
-		msg.update();
-		Event.stopObserving(this.button, "click", this.operationHandler);
-		this.htmlElement.style.display = "none";		
-	}
-
-}
-RenameWindowMenu.prototype = new WindowMenu;
 
 
 //Especific class for the windows used for creating
@@ -166,17 +94,26 @@ function CreateWindowMenu (element) {
 	this.msgElement = $('create_window_msg');	//error message gap
 	this.element = element;				//workspace or tab
 	this.button = $('create_btn');
+	this.nameInput = $('create_name');
 	
-	this.operationHandler = function(){this.executeOperation()}.bind(this);
+	this.operationHandler = function(e){if(e.target == this.nameInput && e.keyCode == Event.KEY_RETURN || e.target == this.button)this.executeOperation()}.bind(this);
 
-	if(this.element == 'tab'){
-		this.title = gettext('Create tab');
-	}else if(this.element == 'workSpace'){
+	if(this.element == 'workSpace'){
 		this.title = gettext('Create workSpace');
 	}
+
+	CreateWindowMenu.prototype.initObserving = function(){	
+			Event.observe(this.button, "click", this.operationHandler);
+			Event.observe(this.nameInput, "keypress", this.operationHandler);
+	}
+	
+	CreateWindowMenu.prototype.stopObserving = function(){	
+			Event.stopObserving(this.button, "click", this.operationHandler);
+			Event.stopObserving(this.nameInput, "keypress", this.operationHandler);
+	}	
 	
 	CreateWindowMenu.prototype.setFocus = function(){
-		$('create_name').focus();
+		this.nameInput.focus();
 	}
 
 	//Calls the Create operation (the task the window is made for).
@@ -184,9 +121,6 @@ function CreateWindowMenu (element) {
 
 		var newName = $('create_name').value;
 		switch (this.element){
-		case 'tab':
-			OpManagerFactory.getInstance().activeWorkSpace.addTab(newName);
-			break;
 		case 'workSpace':
 			OpManagerFactory.getInstance().addWorkSpace(newName);
 			break;
@@ -205,7 +139,7 @@ function CreateWindowMenu (element) {
 		}
 		var msg = $('create_window_msg');
 		msg.update();
-	Event.stopObserving(this.button, "click", this.operationHandler);
+		this.stopObserving();
 		this.htmlElement.style.display = "none";		
 	}
 
@@ -226,6 +160,14 @@ function AlertWindowMenu (element) {
 
 	this.title = gettext('Warning');
 	
+	AlertWindowMenu.prototype.initObserving = function(){	
+			Event.observe(this.button, "click", this.operationHandler);
+		}
+	
+	AlertWindowMenu.prototype.stopObserving = function(){	
+			Event.stopObserving(this.button, "click", this.operationHandler);
+	}	
+	
 	AlertWindowMenu.prototype.setFocus = function(){
 		this.button.focus();
 	}
@@ -233,7 +175,7 @@ function AlertWindowMenu (element) {
 	//hides the window and clears all the inputs
 	AlertWindowMenu.prototype.hide = function (){
 		this.msgElement.update();
-		Event.stopObserving(this.button, "click", this.operationHandler);
+		this.stopObserving();
 		this.htmlElement.style.display = "none";		
 	}
 
