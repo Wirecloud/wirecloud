@@ -68,7 +68,7 @@ var CatalogueFactory  = function () {
 			}
 			this.emptyResourceList();
 			UIUtils.search = 'false';
-			opManager.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 		}
 		
 	 	this.emptyResourceList = function() {
