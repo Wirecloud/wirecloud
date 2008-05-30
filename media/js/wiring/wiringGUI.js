@@ -146,7 +146,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     channelNameInput.className="channelNameInput";
     
     channelElement.appendChild(channelNameInput);
-    
+    Event.observe(channelNameInput, 'click', function(e){if(this.wiringGUI.currentChannel==this.channel)Event.stop(e);}.bind(context)); //do not propagate to div.
+     
     var channelContent = document.createElement("div");
     channelContent.addClassName("channelContent");
     

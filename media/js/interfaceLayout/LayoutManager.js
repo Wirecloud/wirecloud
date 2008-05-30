@@ -259,7 +259,6 @@ var LayoutManagerFactory = function () {
 
 		//Shows the asked drop down menu 
 		LayoutManager.prototype.showDropDownMenu = function(menuType, owner, x, y){
-			this.showClickableCover();
 			switch (menuType){
 			case 'workSpaceOps':
 				this.currentMenu = owner.menu;
@@ -272,7 +271,7 @@ var LayoutManagerFactory = function () {
 			default:
 				break;
 			}
-			
+			this.showClickableCover();
 		}
 
 		//Shows the asked window menu

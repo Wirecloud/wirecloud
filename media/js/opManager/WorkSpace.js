@@ -188,10 +188,12 @@ function WorkSpace (workSpaceState) {
 		this.workSpaceNameHTMLElement.focus();	
 		Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
+					e.target.blur();}}.bind(this));						
 		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){Event.stop(e);
 					this.updateInfo(e.target.value, null);}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){Event.stop(e);
-					e.target.size = e.target.value.length;}.bind(this));
+					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
 	}
 	
 	
@@ -204,8 +206,8 @@ function WorkSpace (workSpaceState) {
 		o.name = workSpaceName;
 		if (active !=null)
 			o.active = active
-		workSpaceData = Object.toJSON(o);
-		params = 'workspace=' + workSpaceData;
+		var workSpaceData = Object.toJSON(o);
+		var params = {'workspace': workSpaceData};
 		PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
     }
     

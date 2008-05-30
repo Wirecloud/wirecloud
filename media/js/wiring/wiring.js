@@ -261,7 +261,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 	Wiring.prototype._insertChannel = function (channelName, channelVar, id, provisional_id) {
 		if (this.channels[channelName] != undefined) {
-			var msg = gettext("Error creating channel %(channelName)s: Channel already exists");
+			var msg = interpolate(gettext("Error creating channel %(channelName)s: Channel already exists"),{channelName: channelName}, true);
 			msg = interpolate(msg, {channelName: channelName});
 			LogManagerFactory.getInstance().log(msg);
 			return;

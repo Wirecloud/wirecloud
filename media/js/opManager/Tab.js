@@ -92,8 +92,8 @@ function Tab (tabInfo, workSpace) {
 		o.name = tabName;
 		if (visible !=null)
 			o.visible = visible
-		tabData = Object.toJSON(o);
-		params = 'tab=' + tabData;
+		var tabData = Object.toJSON(o);
+		var params = {'tab': tabData};
 		PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
 	}
 
@@ -123,10 +123,13 @@ function Tab (tabInfo, workSpace) {
 		this.tabNameHTMLElement.focus();	
 		Event.observe(this.tabNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
+		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
+					e.target.blur();}}.bind(this));					
 		Event.observe(this.tabNameHTMLElement, 'change', function(e){Event.stop(e);
 					this.updateInfo(e.target.value, null);}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){Event.stop(e);
-					e.target.size = e.target.value.length;}.bind(this));
+					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
+		Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.					
 	}
 	
 	Tab.prototype.unmark = function () {

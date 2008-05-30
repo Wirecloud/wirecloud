@@ -271,8 +271,8 @@ var OpManagerFactory = function () {
 		OpManager.prototype.addWorkSpace = function (newName) {
 			var o = new Object;
 			o.name = newName;
-			wsData = Object.toJSON(o);
-			params = 'workspace=' + wsData;
+			var wsData = Object.toJSON(o);
+			var params = {'workspace': wsData};
 			PersistenceEngineFactory.getInstance().send_post(URIs.GET_POST_WORKSPACES, params, this, createWSSuccess, createWSError);
 
 		}

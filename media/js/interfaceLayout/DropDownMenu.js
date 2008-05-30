@@ -46,7 +46,7 @@ function DropDownMenu(idMenu){
 	this.x; this.y;			//start position
 	this.submenu = $$('#'+this.idMenu+' .submenu')[0];
 	this.option_id = 0;		//identifier for options
-	this.margin = 10;
+	this.margin = 8;
 	
 	//Calculates the absolute position of the menu according to the point from which it is launched
 	//The menu can be displayed either on the right or left of the launcher point
