@@ -301,8 +301,8 @@
 .canvas .arrow{
 	position: absolute;
 	z-index: 3;
-	width: 19px;
-	height: 20px;
+	width: 20px;
+	height: 16px;
 	background: transparent url(/ezweb/images/wiringArrow.png) no-repeat;
 }
 
