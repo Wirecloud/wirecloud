@@ -57,7 +57,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">True</field>
-        <field type="DateTimeField" name="last_login">2008-05-28 16:28:07</field>
+        <field type="DateTimeField" name="last_login">2008-06-02 10:25:04</field>
         <field type="DateTimeField" name="date_joined">2008-05-28 16:19:23</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
