@@ -180,5 +180,31 @@ function AlertWindowMenu (element) {
 	}
 
 }
+
 AlertWindowMenu.prototype = new WindowMenu;
+
+//Especific class for alert windows
+function MessageWindowMenu (element) {
+
+	//constructor
+	this.htmlElement = $('message_menu');		//create-window HTML element
+	this.titleElement = $('message_window_title');	//title gap
+	this.msgElement = $('message_window_msg');	//error message gap
+	this.button = $('message_btn1');
+	this.title = gettext('Warning');
+	
+	MessageWindowMenu.prototype.setFocus = function(){
+		this.button.focus();
+	}
+
+	//hides the window and clears all the inputs
+	MessageWindowMenu.prototype.hide = function (){
+		this.msgElement.update();
+		this.stopObserving();
+		this.htmlElement.style.display = "none";		
+	}
+
+}
+
+MessageWindowMenu.prototype = new WindowMenu;
 

@@ -312,6 +312,22 @@ var LayoutManagerFactory = function () {
 				break;
 			}
 		}
+		
+		//Shows the message window menu
+		LayoutManager.prototype.showMessageMenu = function(msg){
+			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if(this.currentMenu != null){//only if the layer is displayed.
+				this.hideCover();
+			}
+			this.showUnclickableCover();
+			
+			if(!this.menus['messageMenu']){
+				this.menus['messageMenu'] = new MessageWindowMenu(null);
+			}
+			this.currentMenu = this.menus['messageMenu'];
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.show();			
+		}
 
 		//hides the disabling layer and so, the current menu
 		LayoutManager.prototype.hideCover = function(){

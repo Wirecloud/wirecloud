@@ -193,6 +193,19 @@ var URIs = new _URIConstants();
 		<button id = "alert_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
 	</div>
 </div>
+<div id="message_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="message_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert">
+		<div id="message_window_msg" class="window_msg"></div>
+	</div>
+	<div class="window_bottom">
+		<button id = "message_btn1" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Accept"%}</button>
+	</div>
+</div>
 <!-- <div id="changeWorkspace_menu" class="drop_down_menu" style="display:none;">
 </div> -->
 
