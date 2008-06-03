@@ -198,17 +198,25 @@ function WorkSpace (workSpaceState) {
 	
 	
     WorkSpace.prototype.updateInfo = function (workSpaceName, active) {
-		//If the server isn't working the changes will not be saved	
-		this.workSpaceState.name = workSpaceName;		
-
-		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
-		var o = new Object;
-		o.name = workSpaceName;
-		if (active !=null)
-			o.active = active
-		var workSpaceData = Object.toJSON(o);
-		var params = {'workspace': workSpaceData};
-		PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
+		//If the server isn't working the changes will not be saved
+		if(workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
+			var msg = interpolate(gettext("Error updating a workspace: invalid name"), true);
+			LogManagerFactory.getInstance().log(msg);
+		}else if(!OpManagerFactory.getInstance().workSpaceExists(workSpaceName)){
+			this.workSpaceState.name = workSpaceName;		
+	
+			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+			var o = new Object;
+			o.name = workSpaceName;
+			if (active !=null)
+				o.active = active
+			var workSpaceData = Object.toJSON(o);
+			var params = {'workspace': workSpaceData};
+			PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
+		}else{
+			var msg = interpolate(gettext("Error updating a workspace: the name %(workSpaceName)s is already in use."), {workSpaceName: workSpaceName}, true);
+			LogManagerFactory.getInstance().log(msg);
+		}
     }
     
     WorkSpace.prototype.deleteWorkSpace = function() {
@@ -354,20 +362,25 @@ function WorkSpace (workSpaceState) {
 	}
 */
 	
-/*	WorkSpace.prototype.tabExists = function(tabName){
-		var tabKeys = this.tabInstances.keys();
-		for(var i=0;i<tabKeys.length;i++){
-			if(this.tabInstances[tabKeys[i]].tabInfo.name == tabName)
+	WorkSpace.prototype.tabExists = function(tabName){
+		var tabValues = this.tabInstances.values();
+		for(var i=0;i<tabValues.length;i++){
+			if(tabValues[i].tabInfo.name == tabName)
 				return true;
 		}
 		return false;
-	}*/
+	}
 	
 	WorkSpace.prototype.addTab = function() {
-
+		var counter = this.tabInstances.keys().length + 1;
+		var tabName = "MyTab "+counter.toString();
+		//check if there is another tab with the same name
+		while (this.tabExists(tabName)){
+			tabName = "MyTab "+(counter++).toString();
+		}
 		var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': this.workSpaceState.id});
 		var o = new Object;
-		o.name = "MyTab "+(this.tabInstances.keys().length + 1).toString();
+		o.name = tabName;
 		tabData = Object.toJSON(o);
 		params = 'tab=' + tabData;
 		PersistenceEngineFactory.getInstance().send_post(tabsUrl, params, this, createTabSuccess, createTabError);

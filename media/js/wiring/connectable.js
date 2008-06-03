@@ -60,6 +60,10 @@ wConnectable.prototype.getName = function() {
   return this._name;
 }
 
+wConnectable.prototype.getId = function() {
+  return this.id;
+}
+
 wConnectable.prototype.getFriendCode = function() {
   return this._friendCode;
 }

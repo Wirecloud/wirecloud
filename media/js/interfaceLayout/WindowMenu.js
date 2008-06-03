@@ -122,7 +122,12 @@ function CreateWindowMenu (element) {
 		var newName = $('create_name').value;
 		switch (this.element){
 		case 'workSpace':
-			OpManagerFactory.getInstance().addWorkSpace(newName);
+			if(!OpManagerFactory.getInstance().workSpaceExists(newName)){
+					OpManagerFactory.getInstance().addWorkSpace(newName);
+			}
+			else{
+				this.msgElement.update(gettext('Invalid name: the name '+newName+' is already in use'));
+			}
 			break;
 		default:
 			break;

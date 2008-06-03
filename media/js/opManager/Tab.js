@@ -83,18 +83,25 @@ function Tab (tabInfo, workSpace) {
 	
 	Tab.prototype.updateInfo = function (tabName, visible){
 
-		//If the server isn't working the changes will not be saved	
-		this.tabInfo.name = tabName;
-		this.tabNameHTMLElement.update(tabName);
-
-		var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-		var o = new Object;
-		o.name = tabName;
-		if (visible !=null)
-			o.visible = visible
-		var tabData = Object.toJSON(o);
-		var params = {'tab': tabData};
-		PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
+		//If the server isn't working the changes will not be saved
+		if(tabName=="" || tabName.match(/^\s$/)){//empty name
+			var msg = interpolate(gettext("Error updating a tab: invalid name"), true);
+			LogManagerFactory.getInstance().log(msg);
+		}else if(!this.workSpace.tabExists(tabName)){
+			this.tabInfo.name = tabName;
+			this.tabNameHTMLElement.update(tabName);	
+			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+			var o = new Object;
+			o.name = tabName;
+			if (visible !=null)
+				o.visible = visible
+			var tabData = Object.toJSON(o);
+			var params = {'tab': tabData};
+			PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
+		}else{
+			var msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
+			LogManagerFactory.getInstance().log(msg);
+		}
 	}
 
 	Tab.prototype.deleteTab = function() {

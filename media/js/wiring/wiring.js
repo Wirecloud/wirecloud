@@ -139,7 +139,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		    }
 
 			// Save it on the channel list
-		    this.channels[varData.name] = channel;
+		    this.channels[channel.id] = channel;
 		}	
 	}
 	
@@ -258,11 +258,20 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	Wiring.prototype.getChannels = function() {
 		return this.channels.values();
 	}
+	
+	Wiring.prototype.channelExists = function(channelName){
+		var channelValues = this.channels.values();
+		for(var i=0;i<channelValues.length;i++){
+			if(channelValues[i].getName == channelName)
+				return true;
+		}
+		return false;
+	}
 
 	Wiring.prototype._insertChannel = function (channelName, channelVar, id, provisional_id) {
-		if (this.channels[channelName] != undefined) {
+		if (this.channelExists(channelName)) {
 			var msg = interpolate(gettext("Error creating channel %(channelName)s: Channel already exists"),{channelName: channelName}, true);
-			msg = interpolate(msg, {channelName: channelName});
+//			msg = interpolate(msg, {channelName: channelName});
 			LogManagerFactory.getInstance().log(msg);
 			return;
 		}		
@@ -271,7 +280,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			provisional_id=false;
 
 		var channel = new wChannel(channelVar, channelName, id, provisional_id);
-		this.channels[channelName] = channel;
+		this.channels[channel.id] = channel;
 					
 		return channel;
 	}
@@ -282,8 +291,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		return this._insertChannel(channelName, channelVar, channelId, true);
 	}
 
-	Wiring.prototype.removeChannel = function (channelName) {
-		var channel = this.channels[channelName];
+	Wiring.prototype.removeChannel = function (channelId) {
+		var channel = this.channels[channelId];
 
 		if (channel == undefined) {
 			var msg = gettext("Error removing channel %(channelName)s: Channel does not exists");
@@ -296,7 +305,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		
 		this.channelsForRemoving.push(channel.id);
 		
-		this.channels.remove(channelName);
+		this.channels.remove(channelId);
 	}
 
 	Wiring.prototype.serializationSuccess = function (transport){
@@ -305,19 +314,22 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var json = eval ('(' + response + ')');
 		
 		var mappings = json['ids'];
-		var channelList = this.channels.values();
 		for (var i=0; i<mappings.length; i++) {
 			var mapping = mappings[i];
-			
-			for (var j=0; j<channelList.length; j++) {
-				if (channelList[j].id == mapping.provisional_id) {
-					channelList[j].id = mapping.id;
-					channelList[j].provisional_id = false;
-					channelList[j].variable.id = mapping.var_id;
+			var channelKeys = this.channels.keys();
+			for (var j=0; j<channelKeys.length; j++) {
+				if (this.channels[channelKeys[j]].id == mapping.provisional_id) {
+					this.channels[mapping.id] = this.channels[channelKeys[j]];
+					this.channels.remove(channelKeys[j]);
+					this.channels[mapping.id].id = mapping.id;
+					this.channels[mapping.id].provisional_id = false;
+					this.channels[mapping.id].variable.id = mapping.var_id;
 					break;
 				}
 			}
 		}
+		//the channel indexes have changed. Notify to wiringGUI
+		this.workspace.wiringInterface.changeChannelListIndexes();
 		
 		// Channels has been sabed in db. Cleaning state variables!
 		delete this.channelsForRemoving;

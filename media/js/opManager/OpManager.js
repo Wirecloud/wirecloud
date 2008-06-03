@@ -267,6 +267,15 @@ var OpManagerFactory = function () {
 		}
 
 		//Operations on workspaces
+		
+		OpManager.prototype.workSpaceExists = function (newName){
+			var workSpaceValues = this.workSpaceInstances.values();
+			for(var i=0;i<workSpaceValues.length;i++){
+			if(workSpaceValues[i].workSpaceState.name == newName)
+				return true;
+			}
+			return false;
+		}
 
 		OpManager.prototype.addWorkSpace = function (newName) {
 			var o = new Object;

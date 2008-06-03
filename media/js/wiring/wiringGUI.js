@@ -103,7 +103,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   WiringInterface.prototype.saveWiring = function () {
     // Remove channels
     for (var i = 0; i < this.channelsForRemove.length; i++) {
-      this.wiring.removeChannel(this.channelsForRemove[i].getName());
+      this.wiring.removeChannel(this.channelsForRemove[i].channel.getId());
     }
 
     // Create & update channels
@@ -114,6 +114,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     
     // The wiring engine is notified in order to persist state!
     this.wiring.serialize();
+  }
+  //channel ids are no longer porvisional
+  //Change the channel hash to be indexed by the new channel ids.
+  WiringInterface.prototype.changeChannelListIndexes = function(){
+  	var channelKeys = this.channels.keys();
+  	for(var i=0; i<channelKeys.length; i++){
+  		this.channels[this.channels[channelKeys[i]].channel.getId()] = this.channels[channelKeys[i]];
+  		this.channels.remove(channelKeys[i]);
+  	}
   }
 
   WiringInterface.prototype._addChannelInterface = function (channel) {
@@ -147,6 +156,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     
     channelElement.appendChild(channelNameInput);
     Event.observe(channelNameInput, 'click', function(e){if(this.wiringGUI.currentChannel==this.channel)Event.stop(e);}.bind(context)); //do not propagate to div.
+    Event.observe(channelNameInput, 'change', function(e){if(this.wiringGUI.channelExists(e.target.value)){
+    														var msg = interpolate(gettext("Error updating a channel. %(channelName)s: Channel already exists"),{channelName: e.target.value}, true);
+															LogManagerFactory.getInstance().log(msg);
+															e.target.value=this.channel.getName();
+    														}else{
+    															this.channel.setName(e.target.value)
+    														}}.bind(context));
      
     var channelContent = document.createElement("div");
     channelContent.addClassName("channelContent");
@@ -162,7 +178,10 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.channels_list.appendChild(channelElement);
     channel.assignInterface(channelElement);
 
-    this.channels[channel.getName()] = channel;
+	if(channel.channel)
+		this.channels[channel.channel.getId()] = channel;
+	else
+	    this.channels[channel.provisional_id] = channel;
     channelNameInput.focus();
   }
 
@@ -396,6 +415,16 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     }
   }
 
+	WiringInterface.prototype.channelExists = function(channelName){
+		var channelValues = this.channels.values();
+		for(var i=0;i<channelValues.length;i++){
+			if(channelValues[i].getName() == channelName)
+				return true;
+		}
+		return false;
+	}
+
+
   WiringInterface.prototype._createChannel = function () {
     var result = null;
     var channelName = this.channel_name.value;
@@ -407,7 +436,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     }
 
     // Check if there is another channel with the same name
-    while (this.channels[channelName] != undefined) {
+    while (this.channelExists(channelName)) {
       // Build another channel name
       channelName = this.channelBaseName + "_" + this.channels_counter;
       this.channels_counter++;
@@ -420,8 +449,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   }
 
   WiringInterface.prototype._removeChannel = function (channel) {
-    var channelName = channel.getName()
-    if (this.channels[channelName] == null)
+
+    var channelId = (channel.channel)?channel.channel.getId():channel.provisional_id;
+    if (this.channels[channelId] == null)
       return; // Nothing to do
 
     // Check whether this channel exists in the current wiring model
@@ -442,7 +472,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       }
 	}
     
-    delete this.channels[channelName];
+    delete this.channels[channelId];
   }
 
   WiringInterface.prototype._changeChannel = function(newChannel) {
@@ -737,9 +767,9 @@ function ChannelInterface(channel) {
   // Draw the interface
 }
 
-//ChannelInterface.prototype.setName = function(newName) {
-//  this.name = newName;
-//}
+ChannelInterface.prototype.setName = function(newName) {
+  this.name = newName;
+}
 
 ChannelInterface.prototype.getInputs = function() {
   return this.inputs;
@@ -765,7 +795,7 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
   var changes = [];
   var keys, i;
 
-  this.name = this.interface.getElementsByClassName('channelNameInput')[0].value;
+  //this.name = this.interface.getElementsByClassName('channelNameInput')[0].value;
   
   if (this.channel == null) {
     // The channel don't exists
