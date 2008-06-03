@@ -54,10 +54,17 @@ from connectable.models import Out
 from igadget.models import Variable
 
 from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace
-from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
-from commons.get_data import get_workspace_variable_data
+from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
+from igadget.models import IGadget
+from igadget.views import deleteIGadget
 
 def deleteTab (tab):
+    
+    #Deleting igadgets
+    igadgets = IGadget.objects.filter(tab=tab)
+    for igadget in igadgets:
+        deleteIGadget(igadget)
+        
     #Deleting OUT connectable (wTab)
     Out.objects.get(abstract_variable = tab.abstract_variable).delete();
     
@@ -309,6 +316,7 @@ class TabEntry(Resource):
         
         return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
 
+    @transaction.commit_on_success
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -342,6 +350,7 @@ class TabEntry(Resource):
             log(msg, request)
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
+    @transaction.commit_on_success
     def delete(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
         

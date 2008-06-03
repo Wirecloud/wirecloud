@@ -179,7 +179,26 @@ def UpdateIGadget(igadget, user, tab):
             position.minimized = False
 
     # save the changes
-    position.save()  
+    position.save()
+
+def deleteIGadget(igadget):
+        
+    # Delete all IGadget's variables
+    variables = Variable.objects.filter(igadget=igadget)
+    for var in variables:
+        if (var.vardef.aspect == "SLOT"):
+            Out.objects.get(abstract_variable=var.abstract_variable).delete()
+        
+        if (var.vardef.aspect == "EVEN"):
+            In.objects.get(variable=var).delete()
+        
+        var.abstract_variable.delete()
+        var.delete()
+        # Delete IGadget and its position
+    
+    position = igadget.position
+    position.delete()
+    igadget.delete()
 
 class IGadgetCollection(Resource):
     def read(self, request, workspace_id, tab_id):
@@ -284,21 +303,8 @@ class IGadgetEntry(Resource):
         # Gets Igadget, if it does not exist, a http 404 error is returned
         igadget = get_object_or_404(IGadget, tab__workspace__user=user, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=igadget_id)
         
-        # Delete all IGadget's variables
-        variables = Variable.objects.filter(igadget=igadget)
-        for var in variables:
-            if (var.vardef.aspect == "SLOT"):
-                Out.objects.get(abstract_variable = var.abstract_variable).delete()
-            if (var.vardef.aspect == "EVEN"):
-                In.objects.get(variable = var).delete()
-            
-            var.abstract_variable.delete()
-            var.delete()
-        
-        # Delete IGadget and its position
-        position = igadget.position
-        position.delete()
-        igadget.delete()
+        deleteIGadget(igadget)
+
         return HttpResponse('ok')
         
 
