@@ -104,6 +104,9 @@ class Tab(models.Model):
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
 
+    class Meta:
+        unique_together = ('workspace', 'name')
+        
     class Admin:
         pass
 
