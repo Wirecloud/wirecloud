@@ -1153,7 +1153,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		Event.stopObserving (document, "mouseup", endresize);
 		Event.stopObserving (document, "mousemove", resize);
 
-		onFinish(data);
+		onFinish(resizableElement, handleElement, data);
 		resizableElement.style.zIndex = null;
 
 		for (var i = 0; i < objects.length; i++) {
@@ -1183,7 +1183,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		y = y - yDelta;
 		x = x - xDelta;
 
-		onResize(data, x, y);
+		onResize(resizableElement, handleElement, data, x, y);
 	}
 
 	// initiate the resizing
@@ -1214,7 +1214,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		}
 
 		resizableElement.style.zIndex = "200"; // TODO
-		onStart(data);
+		onStart(resizableElement, handleElement, data);
 
 		return false;
 	}
@@ -1234,10 +1234,11 @@ function IGadgetResizeHandle(handleElement, iGadget) {
 	                        IGadgetResizeHandle.prototype.finishFunc);
 }
 
-IGadgetResizeHandle.prototype.startFunc = function (iGadget) {
+IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, iGadget) {
+	handleElement.addClassName("inUse");
 }
 
-IGadgetResizeHandle.prototype.updateFunc = function (iGadget, x, y) {
+IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, iGadget, x, y) {
 	var position = iGadget.dragboard.getCellAt(x, y);
 
 	// Skip if the mouse is outside the dragboard
@@ -1257,7 +1258,7 @@ IGadgetResizeHandle.prototype.updateFunc = function (iGadget, x, y) {
 	}
 }
 
-IGadgetResizeHandle.prototype.finishFunc = function (iGadget) {
+IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, iGadget) {
 	iGadget._setSize(iGadget.getWidth(), iGadget.getHeight(), true);
+	handleElement.removeClassName("inUse");
 }
-

@@ -108,6 +108,13 @@ div.gadget_window div.resizeHandle {
   background: transparent;
 }
 
+div.gadget_window div.resizeHandle.inUse {
+  left: 0px;
+  top: 0px;
+  width: auto;
+  height: auto;
+}
+
 div.dragboard.fixed div.gadget_window div.resizeHandle {
   display: none;
 }
