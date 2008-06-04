@@ -184,15 +184,71 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	    this.channels[channel.provisional_id] = channel;
     channelNameInput.focus();
   }
+  
+  WiringInterface.prototype._addTab = function (tab) {
+  	// TODO mirar esto
+    var events = document.createElement("div");
+    events.addClassName("tab");
+    
+    var slots = document.createElement("div");
+    slots.addClassName("tab");
+    
+    //Tab events
+    var connectableElement = document.createElement("div");
+    connectableElement.addClassName("tabContent");
+	connectableElement.appendChild(document.createTextNode(tab.tabInfo.name));
+	events.appendChild(connectableElement);
+    
+    // Tab slot
+    connectableElement = document.createElement("div");
+    connectableElement.addClassName("tabContent");
+	connectableElement.appendChild(document.createTextNode(tab.tabInfo.name));
+	
+	var chkItem = document.createElement("div");
+	chkItem.addClassName("unchkItem");
+	connectableElement.appendChild(chkItem);
+	 
+	var connectable = tab.connectable;
+	var anchor = new ConnectionAnchor(tab.connectable, chkItem);
+	
+	var context = {anchor: anchor, wiringGUI:this};
+	Event.observe(chkItem, "click",
+	                         function () {
+	                           this.wiringGUI._changeConnectionStatus(this.anchor);
+	                         }.bind(context));
+	
+	// Cancel bubbling of _toggle
+	function cancelbubbling(e) {
+	   Event.stop(e);
+	}
+	
+	connectableElement.addEventListener("click", cancelbubbling, false);
 
-  WiringInterface.prototype._addIGadget = function (iGadget) {
+	slots.appendChild(connectableElement);
+	this.outputs[connectable.getQualifiedName()] = anchor;
+
+    
+    // Igadget slots
+    var igadgets = tab.dragboard.getIGadgets();
+    for (var i = 0; i < igadgets.length; i++){
+    	this._addIGadget(igadgets[i], events, slots);
+    }
+    
+    if (events.childNodes.length > 1){ //Elements without title
+  		this.event_list.appendChild(events);
+    }
+    
+  	this.slot_list.appendChild(slots);
+  }
+  
+  WiringInterface.prototype._addIGadget = function (igadget, events, slots) {
     // TODO mirar esto
     var ulEvents = document.createElement("div");
     ulEvents.addClassName("igadgetContent");
     var ulSlots = document.createElement("div");
     ulSlots.addClassName("igadgetContent");
 
-    var connectables = this.wiring.getIGadgetConnectables(iGadget);
+    var connectables = this.wiring.getIGadgetConnectables(igadget);
 
     // Events & Slots
     for (var i = 0; i < connectables.length; i++) {
@@ -252,24 +308,16 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     }
 
     // Generic information about the iGadget
-    var gadget = iGadget.getGadget();
-    var IGadgetName = gadget.getName() + " [" + iGadget.id + "]";
+    var gadget = igadget.getGadget();
+    var IGadgetName = gadget.getName() + " [" + igadget.id + "]";
 
     // Event column
     if (ulEvents.childNodes.length > 0) {
       var igadgetDiv = document.createElement("div");
       igadgetDiv.addClassName("igadget");
       igadgetDiv.appendChild(document.createTextNode(IGadgetName));
-
-//TODO:review toggle: commented because causes problems with highlighting friendcodes and drawing arrows
-/*      var context = {element: igadgetDiv, wiringGUI:this};
-      Event.observe(igadgetDiv,
-                    "click",
-                    function () {this.wiringGUI._toggle(this.element);}.bind(context));
-*/
-
       igadgetDiv.appendChild(ulEvents);
-      this.event_list.appendChild(igadgetDiv);
+      events.appendChild(igadgetDiv);
     }
 
     // Slot column
@@ -277,70 +325,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       var igadgetDiv = document.createElement("div");
       igadgetDiv.addClassName("igadget");
       igadgetDiv.appendChild(document.createTextNode(IGadgetName));
-
-//TODO:review toggle: commented because causes problems with highlighting friendcodes and drawing arrows
-/*      var context = {element: igadgetDiv, wiringGUI:this};
-      Event.observe(igadgetDiv,
-                    "click",
-                    function () {this.wiringGUI._toggle(this.element);}.bind(context));
-*/
       igadgetDiv.appendChild(ulSlots);
-      this.slot_list.appendChild(igadgetDiv);
-    }
-  }
-  
-  WiringInterface.prototype._addTabs = function (workspace) {
-    // TODO mirar esto
-    var ulSlots = document.createElement("div");
-    ulSlots.addClassName("tabContent");
-
-    var tabs = workspace.tabInstances.keys();
-
-    // Tabs
-    for (var i = 0; i < tabs.length; i++) {
-      var tab = workspace.tabInstances[tabs[i]];
-      var connectableElement = document.createElement("div");
-      connectableElement.appendChild(document.createTextNode(tab.tabInfo.name));
-
-      var chkItem = document.createElement("div");
-      chkItem.addClassName("unchkItem");
-      connectableElement.appendChild(chkItem);
-      
-      var connectable = tab.connectable;
-      var anchor = new ConnectionAnchor(tab.connectable, chkItem);
-
-      var context = {anchor: anchor, wiringGUI:this};
-      Event.observe(chkItem, "click",
-                             function () {
-                               this.wiringGUI._changeConnectionStatus(this.anchor);
-                             }.bind(context));
-
-      // Cancel bubbling of _toggle
-      function cancelbubbling(e) {
-        Event.stop(e);
-      }
-
-      connectableElement.addEventListener("click", cancelbubbling, false);
-
-      ulSlots.appendChild(connectableElement);
-      this.outputs[connectable.getQualifiedName()] = anchor;
-    }
-
-    // Slot column
-    if (ulSlots.childNodes.length > 0) {
-      var igadgetDiv = document.createElement("div");
-      igadgetDiv.addClassName("tab");
-      igadgetDiv.appendChild(document.createTextNode(gettext ('Tabs')));
-
-//TODO:review toggle: commented because causes problems with highlighting friendcodes and drawing arrows
-/*      var context = {element: igadgetDiv, wiringGUI:this};
-      Event.observe(igadgetDiv,
-                    "click",
-                    function () {this.wiringGUI._toggle(this.element);}.bind(context));
-
-*/  
-      igadgetDiv.appendChild(ulSlots);
-      this.slot_list.appendChild(igadgetDiv);
+      slots.appendChild(igadgetDiv);
     }
   }
 
@@ -365,15 +351,12 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
 
     // Build the interface
-    var iGadgets = this.workspace.getIGadgets();
-    var channels = this.wiring.getChannels();
-
-    for (var i = 0; i < iGadgets.length; i++) {
-      this._addIGadget(iGadgets[i]);
+    var tabs = this.workspace.tabInstances.keys();
+    for (var i = 0; i < tabs.length; i++) {
+    	this._addTab(this.workspace.tabInstances[tabs[i]]);
     }
     
-    this._addTabs(this.workspace);
-
+    var channels = this.wiring.getChannels();
     for (var j = 0; j < channels.length; j++) {
       this._addChannelInterface(new ChannelInterface(channels[j]));
     }
@@ -414,16 +397,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       }
     }
   }
-
-	WiringInterface.prototype.channelExists = function(channelName){
-		var channelValues = this.channels.values();
-		for(var i=0;i<channelValues.length;i++){
-			if(channelValues[i].getName() == channelName)
-				return true;
-		}
-		return false;
+  
+  WiringInterface.prototype.channelExists = function(channelName){
+	var channelValues = this.channels.values();
+	for(var i=0;i<channelValues.length;i++){
+		if(channelValues[i].getName() == channelName)
+			return true;
 	}
-
+	return false;
+  }
 
   WiringInterface.prototype._createChannel = function () {
     var result = null;
@@ -718,8 +700,8 @@ ConnectionAnchor.prototype.setConnectionStatus = function(newStatus, inChannelPo
 	  }
 	  var coordinates = Position.cumulativeOffset(this.htmlElement);
 	  var wiringPosition = Position.cumulativeOffset($('wiring'));
-	  coordinates[0] = coordinates[0] - wiringPosition[0]-1; //-1px of img border
-	  coordinates[1] = coordinates[1] - wiringPosition[1] +(this.htmlElement.getHeight())/2;  
+	  coordinates[0] = coordinates[0] - wiringPosition[0] - 1; //-1px of img border
+	  coordinates[1] = coordinates[1] - wiringPosition[1] +(this.htmlElement.getHeight())/2 + 2;  
 	  if (this.connectable instanceof wIn){
 		  coordinates[0] = coordinates[0] + this.htmlElement.getWidth();
 		  this.drawPolyLine(coordinates[0],coordinates[1], inChannelPos[0], inChannelPos[1], true);

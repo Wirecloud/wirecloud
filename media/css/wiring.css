@@ -79,14 +79,15 @@
 #wiring .igadget {
   border: 2px solid #2D6F9C;
   background: transparent url(/ezweb/images/fond.gif) repeat;
-  margin: 2ex 0px;
+  margin: 3px 0px;
   position: relative;
   font-weight: bold;
   padding: 3px;
+  color: black;
 }
 
 #wiring .igadget .igadgetContent {
-  padding: 0px 0px 5px 0px;
+  padding: 0px 0px 1px 0px;
   font-weight: normal;
 }
 
@@ -131,56 +132,22 @@
 }
 
 #wiring .eventColumn .igadget .igadgetContent .chkItem {
-  right: -12px;
+  right: -13px;
 }
 
 #wiring .eventColumn .igadget .igadgetContent .unchkItem {
-  right: -12px;
+  right: -13px;
 }
 
 #wiring .slotColumn .igadget .chkItem {
-  left: -12px;
+  left: -13px;
 }
 
 #wiring .slotColumn .igadget .igadgetContent .unchkItem {
-  left: -12px;
+  left: -13px;
 }
 
-
-#wiring .tab {
-  border: 2px solid black;
-  background: #97A0A8;
-  margin: 2ex 0px;
-  position: relative;
-  color: white;
-  font-weight: bold;
-  padding: 3px;
-}
-
-#wiring .tab .tabContent {
-  padding: 0px 0px 5px 0px;
-  font-weight: normal;
-}
-
-#wiring .eventColumn .tab .tabContent div {
-  padding: 0px 14px 0px 0px;
-  text-align: right;
-  position: relative;
-  margin: 6px 0px;
-}
-
-#wiring .slotColumn .tab .tabContent div {
-  padding: 0px 0px 0px 14px;
-  text-align: left;
-  position: relative;
-  margin: 6px 0px;
-}
-
-#wiring .tab.folded .tabContent {
-  display: none;
-}
-
-#wiring .tab .tabContent div .chkItem {
+#wiring .tab .tabContent .chkItem {
   position: absolute;
   display: inline;
   width: 18px;
@@ -188,10 +155,9 @@
   border: 0px;
   background: url(/ezweb/js/wiring/checked.png);
   padding: 0px;
-  top: -8px;
 }
 
-#wiring .tab .tabContent div .unchkItem {
+#wiring .tab .tabContent .unchkItem {
   position: absolute;
   display: inline;
   width: 18px;
@@ -199,23 +165,42 @@
   border: 0px;
   background: url(/ezweb/js/wiring/unchecked.png);
   padding: 0px;
-  top: -8px;
 }
 
-#wiring .eventColumn .tab .tabContent .chkItem {
-  right: -12px;
-}
-
-#wiring .eventColumn .tab .tabContent .unchkItem {
-  right: -12px;
-}
-
-#wiring .slotColumn .tab .chkItem {
-  left: -12px;
+#wiring .slotColumn .tab .tabContent .chkItem {
+  left: -9px;
 }
 
 #wiring .slotColumn .tab .tabContent .unchkItem {
-  left: -12px;
+  left: -9px;
+}
+
+#wiring .tab {
+  border: 2px solid black;
+  margin: 2px 0px;
+  position: relative;
+  padding: 3px;
+  background: #97A0A8;
+}
+
+#wiring .tab .tabContent {
+  padding: 0px 0px 5px 0px;
+  color: white;
+  font-weight: bold;
+  margin: 2px 0px;
+}
+
+#wiring .eventColumn .tab .tabContent {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  position: relative;
+}
+
+#wiring .slotColumn .tab .tabContent {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
+  position: relative;
+  
 }
 
 #wiring #newChannelForm .addSubmit {
