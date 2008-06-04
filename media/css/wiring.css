@@ -77,12 +77,11 @@
 }
 
 #wiring .igadget {
-  border: 2px solid #2D6F9C;
   background: transparent url(/ezweb/images/fond.gif) repeat;
-  margin: 3px 0px;
+  margin:3px 2px;
   position: relative;
   font-weight: bold;
-  padding: 3px;
+  padding: 3px 3px 0px;
   color: black;
 }
 
@@ -153,7 +152,7 @@
   width: 18px;
   height: 18px;
   border: 0px;
-  background: url(/ezweb/js/wiring/checked.png);
+  background: url(/ezweb/js/wiring/checkedtab.png);
   padding: 0px;
 }
 
@@ -169,17 +168,19 @@
 
 #wiring .slotColumn .tab .tabContent .chkItem {
   left: -9px;
+  top: -1px;
 }
 
 #wiring .slotColumn .tab .tabContent .unchkItem {
   left: -9px;
+  top: -1px;
 }
 
 #wiring .tab {
   border: 2px solid black;
-  margin: 2px 0px;
+  margin: 5px 0px;
   position: relative;
-  padding: 3px;
+  padding: 2px;
   background: #97A0A8;
 }
 
