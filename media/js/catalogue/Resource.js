@@ -132,6 +132,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
             title: gettext('Show resource details')
         }));
 		image_link.observe("click", function(event){
+			UIUtils.sendPendingTags();
+			UIUtils.sendingTags = false;
 			UIUtils.clickOnResource(id_);
 		});
 		image_div.appendChild(image_link);
@@ -328,7 +330,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'tagcloud'
 		}));
 		fieldset.appendChild(tagcloud);
-		connect.appendChild(UIUtils.createHTMLElement("span", $H({ 
+		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Tagcloud') + ':'
 		})));
 		var tag_links = UIUtils.createHTMLElement("div", $H({ 
@@ -407,14 +409,6 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			UIUtils.sendTags();
 		});
 		buttons.appendChild(link_tag);
-		var link_save = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Save & New')
-		}));
-		link_save.observe("click", function(event){
-			UIUtils.addTag($('new_tag_text_input'));
-		});
-		buttons.appendChild(link_save);
 		var link_delete = UIUtils.createHTMLElement("a", $H({
 			class_name: 'submit_link',
 			innerHTML: gettext('Delete all')
@@ -504,7 +498,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		_tagsToMoreImportantTags($(id + "_important_tags"), 3);
 		if ((id == UIUtils.selectedResource) &&  ($(id + "_tagcloud") != null))
 		{
-				_tagsToTagcloud($(id + "_tagcloud"), 'description' , {tags:'mytags'});
+			_tagsToTagcloud($(id + "_tagcloud"), 'description' , {tags:'mytags'});
 		}
 	}
 

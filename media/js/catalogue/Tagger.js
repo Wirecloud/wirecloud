@@ -40,6 +40,7 @@ function Tagger(){
 	
 	var _this = this;
 	var tags  = $H();
+	var new_tag_id = 0;
 	
 	this.addTag = function(tag_) {
 		if (tag_.length < 3) {
@@ -48,10 +49,13 @@ function Tagger(){
 		}
 		else {
 			if (!containsTag(tag_)) {
-				var id = 'new_tag_' + tags.keys().length;
+				var id = 'new_tag_' + new_tag_id;
+				new_tag_id++;
 				tags[id] = tag_;
-				paintTag(id, tag_);
-				$("tag_alert").style.display='none';
+				if(!UIUtils.sendingTags){
+					paintTag(id, tag_);
+					$("tag_alert").style.display='none';
+				}
 			}
 		}
 	}
@@ -74,6 +78,7 @@ function Tagger(){
 	
 	this.removeAll = function() {
 		tags = $H();
+		new_tag_id = 0;
 		if(!UIUtils.tagmode)eraserAll();
 	}
 
@@ -91,7 +96,8 @@ function Tagger(){
 				var responseJSON = transport.responseText;
 				var jsonResourceList = eval ('(' + responseJSON + ')');
 				resource.setTags(jsonResourceList.tagList);
-				resource.updateTags();
+				if (!UIUtils.sendingTags) resource.updateTags();
+				UIUtils.sendingTags=false;
 				if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
 			}
 			
@@ -110,8 +116,8 @@ function Tagger(){
 				tagsXML.appendChild(tagXML);
 			}
 			var param = {tags_xml: (new XMLSerializer()).serializeToString(xmlDoc)};
-	
-			PersistenceEngineFactory.getInstance().send_post(url + resourceURI, param, this, loadTags, onError);
+
+			PersistenceEngineFactory.getInstance().send_post(url + resourceURI, param, this, loadTags, onError)
 			_this.removeAll();
 		}
 	}

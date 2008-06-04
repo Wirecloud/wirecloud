@@ -123,6 +123,7 @@ var OpManagerFactory = function () {
 		// ****************
 			
 		OpManager.prototype.showCatalogue = function () {
+			UIUtils.sendPendingTags();
 			this.catalogue.show();
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
 			if (UIUtils.isInfoResourcesOpen) {

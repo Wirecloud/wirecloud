@@ -42,15 +42,22 @@ from xml.sax import make_parser
 
 class TagsXMLHandler(saxutils.handler.ContentHandler): 
 
-    _tags = []
-
-    def resetTags(self):
+    def __init__(self):
         self._tags = []
+        self._accumulator = ""
+
+    def resetAccumulator(self):
+        self._accumulator = ""
 
     def characters(self, text):
-        self._tags.append(text)
+        self._accumulator += text
 
     def startElement(self, name, attrs):
-        if (name == 'Tags'):
-            self.resetTags()
+        if (name == 'Tag'):
+            self.resetAccumulator()
+            return
+
+    def endElement(self, name):
+        if (name == 'Tag'):
+            self._tags.append(self._accumulator)
             return

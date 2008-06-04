@@ -62,6 +62,7 @@ var CatalogueFactory  = function () {
 		// ********************
 		
 		this.reloadCompleteCatalogue = function() {
+			UIUtils.sendPendingTags();
 			if (UIUtils.isInfoResourcesOpen) {
 				UIUtils.isInfoResourcesOpen = false;
 				UIUtils.SlideInfoResourceOutOfView('info_resource');

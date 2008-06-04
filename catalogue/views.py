@@ -64,7 +64,7 @@ from commons.utils import get_xml_error
 
 class GadgetsCollection(Resource):
 
-    #@transaction.commit_manually
+    @transaction.commit_manually
     def create(self,request, user_name):
 
         user = user_authentication(request, user_name)
@@ -75,7 +75,7 @@ class GadgetsCollection(Resource):
         try:
             templateParser = TemplateParser(template_uri, user)
             templateParser.parse()
-            #transaction.commit()
+            transaction.commit()
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
             transaction.rollback()
@@ -256,6 +256,7 @@ class GadgetTagsCollection(Resource):
         # Get the xml containing the tags from the request
         tags_xml = request.__getitem__('tags_xml')
         tags_xml = tags_xml.encode("utf-8")
+
         # Parse the xml containing the tags
         parser = make_parser()
         handler = TagsXMLHandler()
@@ -317,8 +318,9 @@ class GadgetTagsCollection(Resource):
         except:
             format = 'default'
 
+        userTag = tag.replace('&amp;','&')
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version).id
-        tag = get_object_or_404(UserTag, idUser=user, idResource=gadget, tag=tag)
+        tag = get_object_or_404(UserTag, idUser=user, idResource=gadget, tag=userTag)
 
         tag.delete()
 

@@ -130,7 +130,7 @@ var URIs = new _URIConstants();
 
 </head>
 
-<body onload="OpManagerFactory.getInstance().loadEnviroment()" onresize="LayoutManagerFactory.getInstance().resizeWrapper();">
+<body onload="OpManagerFactory.getInstance().loadEnviroment()" onresize="LayoutManagerFactory.getInstance().resizeWrapper();" onunload="UIUtils.sendPendingTags();">
 
 <!-- HIDDEN MENUS -->
 <div id="menu_layer" style="display:none">
@@ -213,7 +213,7 @@ var URIs = new _URIConstants();
 <!-- HEADER -->
 <div id="header">
 <div id="banner">
-  <div id="greeting">{% trans "Welcome" %}, {{ user.username }}{% for lang in LANGUAGES %} | <a href="/" onclick="return setLanguage('{{ lang.0 }}')" >{{ lang.1 }}</a>{% endfor %} | <a href="/logout">{% trans "Exit" %}</a>
+  <div id="greeting">{% trans "Welcome" %}, {{ user.username }}{% for lang in LANGUAGES %} | <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" >{{ lang.1 }}</a>{% endfor %} | <a href="/logout" onclick="UIUtils.sendPendingTags();">{% trans "Exit" %}</a>
   </div>
   <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
 </div>

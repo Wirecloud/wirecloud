@@ -100,7 +100,7 @@
 			<!--<div class="bottom"></div>-->
 		</div></div>
 		<div id="tab_info_resource" class="tab_info_resource">
-			<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
+			<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.sendPendingTags();UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
 			<img  id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png"></img>
 			</a>
 		</div>

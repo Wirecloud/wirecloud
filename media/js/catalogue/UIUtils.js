@@ -45,6 +45,7 @@ function UIUtils()
 }
 
 UIUtils.tagmode = false;
+UIUtils.sendingTags=false;
 UIUtils.selectedResource = null;
 UIUtils.balloonResource = null;
 UIUtils.imageBottom = '';
@@ -85,7 +86,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 		LogManagerFactory.getInstance().log(msg);
 	}
 	
-	var persistenceEngine = PersistenceEngineFactory.getInstance();	
+	var persistenceEngine = PersistenceEngineFactory.getInstance();
 
 	var params = new Hash();
 	params[paramName] = paramValue;
@@ -245,6 +246,7 @@ UIUtils.changeImage = function(elementId_, newImage_) {
 }
 
 UIUtils.searchByTag = function(url, tag) {
+	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
 
@@ -268,6 +270,7 @@ UIUtils.searchByTag = function(url, tag) {
 }
 
 UIUtils.searchByWiring = function(url, value, wiring) {
+	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
 
@@ -291,6 +294,7 @@ UIUtils.searchByWiring = function(url, value, wiring) {
 }
 
 UIUtils.cataloguePaginate = function(url, offset, pag, items) {
+	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	UIUtils.off=offset;
 	UIUtils.num_items=items;
@@ -361,6 +365,7 @@ UIUtils.getNum_items = function() {
 }
 
 UIUtils.searchGeneric = function(url, param1, param2, param3) {
+	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
 	var param1=UIUtils.filterString(param1);
@@ -465,6 +470,19 @@ UIUtils.removeGlobalTagUser = function(tag) {
 	}
 }
 
+UIUtils.sendPendingTags = function() {
+  if (UIUtils.selectedResource!=null)
+  {
+    UIUtils.sendingTags=true;
+    var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+    var tagger = resource.getTagger();
+
+    if (tagger.getTags().size() != 0 || $('new_tag_text_input').value.length>= 3) {
+      UIUtils.sendTags();
+    }
+  }
+}
+
 UIUtils.sendTags = function() {
 	var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
 	var tagger = resource.getTagger();
@@ -508,10 +526,8 @@ UIUtils.sendGlobalTags = function() {
 UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
 	var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
-	if (UIUtils.selectedResource == id)
-	{
-		UIUtils.closeInfoResource();
-	}
+	UIUtils.sendPendingTags();
+	UIUtils.closeInfoResource();
 	
 	var onError = function(transport) {
 				var msg = interpolate(gettext("Error deleting the Gadget: %(errorMsg)s."), {errorMsg: transport.status}, true);
@@ -519,10 +535,10 @@ UIUtils.deleteGadget = function(id) {
 				// Process
 			}
 			
-	var loadTags = function(transport) {
+	var loadCatalogue = function(transport) {
 				CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 			}
-	PersistenceEngineFactory.getInstance().send_delete(resourceURI, this, loadTags, onError);
+	PersistenceEngineFactory.getInstance().send_delete(resourceURI, this, loadCatalogue, onError);
 }
 
 UIUtils.addTag = function(inputText_) {
@@ -635,6 +651,7 @@ UIUtils.SlideInfoResourceIntoView = function(element) {
 }
 
 UIUtils.SlideInfoResourceOutOfView = function(element) {
+  UIUtils.selectedResource= null;
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
   Element.show(element);
@@ -871,6 +888,7 @@ UIUtils.SlideAdvancedSearchOutOfView = function(element) {
 UIUtils.activateTagMode = function() {
 	UIUtils.tagmode = true;
 	UIUtils.removeAllGlobalTags();
+	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	$("global_tagcloud").innerHTML = '';
 	$("my_global_tags").childNodes[0].style.display="none";
