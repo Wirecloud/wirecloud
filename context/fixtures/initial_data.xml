@@ -57,8 +57,64 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">True</field>
-        <field type="DateTimeField" name="last_login">2008-06-02 10:25:04</field>
+        <field type="DateTimeField" name="last_login">2008-06-03 21:02:48</field>
         <field type="DateTimeField" name="date_joined">2008-05-28 16:19:23</field>
+        <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
+        <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="2" model="auth.user">
+        <field type="CharField" name="username">iptv</field>
+        <field type="CharField" name="first_name"></field>
+        <field type="CharField" name="last_name"></field>
+        <field type="CharField" name="email"></field>
+        <field type="CharField" name="password">sha1$1b219$455bcacb1e081507a382b3ad99f2cf8c57d3f26f</field>
+        <field type="BooleanField" name="is_staff">True</field>
+        <field type="BooleanField" name="is_active">True</field>
+        <field type="BooleanField" name="is_superuser">False</field>
+        <field type="DateTimeField" name="last_login">2008-06-03 21:00:07</field>
+        <field type="DateTimeField" name="date_joined">2008-06-03 19:50:49</field>
+        <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
+        <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="5" model="auth.user">
+        <field type="CharField" name="username">jhierro</field>
+        <field type="CharField" name="first_name"></field>
+        <field type="CharField" name="last_name"></field>
+        <field type="CharField" name="email"></field>
+        <field type="CharField" name="password">sha1$53e87$d68b50755ad62367aeaaaa556b84dbe58260a636</field>
+        <field type="BooleanField" name="is_staff">False</field>
+        <field type="BooleanField" name="is_active">True</field>
+        <field type="BooleanField" name="is_superuser">False</field>
+        <field type="DateTimeField" name="last_login">2008-06-03 20:59:08</field>
+        <field type="DateTimeField" name="date_joined">2008-06-03 20:59:08</field>
+        <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
+        <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="4" model="auth.user">
+        <field type="CharField" name="username">mru</field>
+        <field type="CharField" name="first_name"></field>
+        <field type="CharField" name="last_name"></field>
+        <field type="CharField" name="email"></field>
+        <field type="CharField" name="password">sha1$7e21b$6221def5446a8bc3acb26092ea22c0766846299e</field>
+        <field type="BooleanField" name="is_staff">False</field>
+        <field type="BooleanField" name="is_active">True</field>
+        <field type="BooleanField" name="is_superuser">False</field>
+        <field type="DateTimeField" name="last_login">2008-06-03 20:58:39</field>
+        <field type="DateTimeField" name="date_joined">2008-06-03 20:58:39</field>
+        <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
+        <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="3" model="auth.user">
+        <field type="CharField" name="username">oss</field>
+        <field type="CharField" name="first_name"></field>
+        <field type="CharField" name="last_name"></field>
+        <field type="CharField" name="email"></field>
+        <field type="CharField" name="password">sha1$6f3c4$4d66bdb871526b999729825b9f39ed91f2e5b29b</field>
+        <field type="BooleanField" name="is_staff">True</field>
+        <field type="BooleanField" name="is_active">True</field>
+        <field type="BooleanField" name="is_superuser">False</field>
+        <field type="DateTimeField" name="last_login">2008-06-03 21:03:08</field>
+        <field type="DateTimeField" name="date_joined">2008-06-03 19:51:07</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
     </object>
@@ -511,5 +567,59 @@
         <field type="CharField" name="name">Can delete concept name</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">30</field>
         <field type="CharField" name="codename">delete_conceptname</field>
+    </object>
+    <object pk="6" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 21:02:49</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="object_id">5</field>
+        <field type="CharField" name="object_repr">jhierro</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Changed last login and date joined.</field>
+    </object>
+    <object pk="5" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 20:58:49</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="object_id">4</field>
+        <field type="CharField" name="object_repr">mru</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Changed last login and date joined.</field>
+    </object>
+    <object pk="4" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 19:51:13</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="object_id">3</field>
+        <field type="CharField" name="object_repr">oss</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado es staff, Último registro y fecha de creación.</field>
+    </object>
+    <object pk="3" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 19:50:56</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="object_id">2</field>
+        <field type="CharField" name="object_repr">iptv</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado es staff, Último registro y fecha de creación.</field>
+    </object>
+    <object pk="2" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 17:32:52</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">11</field>
+        <field type="TextField" name="object_id">1</field>
+        <field type="CharField" name="object_repr">/gadgets/Morfeo/Map Viewer/1.2</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado imagenURI, Anchura y Última actualización.</field>
+    </object>
+    <object pk="1" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-03 13:42:32</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">28</field>
+        <field type="TextField" name="object_id">7</field>
+        <field type="CharField" name="object_repr">Map Viewer</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">3</field>
+        <field type="TextField" name="change_message"></field>
     </object>
 </django-objects>
