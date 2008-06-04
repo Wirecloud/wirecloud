@@ -242,11 +242,12 @@ var OpManagerFactory = function () {
 		}
 	
 		OpManager.prototype.logIGadgetError = function(iGadgetId, msg, level) {
-			var gadgetInfo = this.activeWorkSpace.getVisibleTab().getDragboard().getIGadget(iGadgetId).getGadget().getInfoString();
+			var iGadget = this.activeWorkSpace.getIgadget(iGadgetId);
+			var gadgetInfo = iGadget.getGadget().getInfoString();
 			msg = msg + "\n" + gadgetInfo;
 
 			this.logs.log(msg, level);
-			this.activeWorkSpace.getVisibleTab().getDragboard().notifyErrorOnIGadget(iGadgetId);
+			iGadget.notifyError();
 		}
 
 		//Operations on workspaces
