@@ -117,6 +117,13 @@ IGadget.prototype.getContentHeight = function() {
 }
 
 /**
+ * Return the Tab of the IGadget
+ */
+IGadget.prototype.getTab = function() {
+	return this.dragboard.tab;
+}
+
+/**
  * Return the actual width of the gadget in cells. This depends in the status of
  * the gadget (minimized, with the configuration dialog, etc...)
  */

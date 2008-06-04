@@ -634,8 +634,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
 	    this.igadgetsToLoad--;
-	    if (this.igadgetsToLoad == 0)
-	    	this.workSpace.getWiring().propagateInitialValues();
+	}
+	
+	
+	Dragboard.prototype.getRemainingIGadgets = function (iGadgetId) {
+	    return this.igadgetsToLoad;
 	}
 
 

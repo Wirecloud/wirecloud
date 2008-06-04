@@ -152,20 +152,8 @@ var OpManagerFactory = function () {
 		    this.activeWorkSpace = workSpace;
 		    if(!this.activeWorkSpace.loaded){
 				// Total information of the active workspace must be downloaded!
-				this.activeWorkSpace.downloadWorkSpaceInfo();	
-/*				this.activeDragboard = this.activeWorkSpace.getVisibleTab().getDragboard();
-				this.activeWiring = this.activeWorkSpace.getWiring();
-		    	this.activeVarManager = this.activeWorkSpace.getVarManager();
-				this.activeContextManager = this.activeWorkSpace.getContextManager();
-*/
-		    					    
-		    }else{
-/*				this.activeDragboard = this.activeWorkSpace.getVisibleTab().getDragboard();
-			    this.activeWiring = this.activeWorkSpace.getWiring();
-			    this.activeVarManager = this.activeWorkSpace.getVarManager();
-				this.activeContextManager = this.activeWorkSpace.getContextManager();
-*/
-		    
+				this.activeWorkSpace.downloadWorkSpaceInfo();			    					    
+		    }else{		    
 			    this.showActiveWorkSpace();
 		    }
 		}			
@@ -200,8 +188,8 @@ var OpManagerFactory = function () {
 			this.logs = LogManagerFactory.getInstance();
 		}
 
-		OpManager.prototype.igadgetLoaded = function () {
-	 	    this.activeWorkSpace.getVisibleTab().getDragboard().igadgetLoaded();
+		OpManager.prototype.igadgetLoaded = function (igadgetId) {
+			this.activeWorkSpace.igadgetLoaded(igadgetId);
 		}
 				
 		OpManager.prototype.showActiveWorkSpace = function () {
@@ -215,14 +203,8 @@ var OpManagerFactory = function () {
 					j++;
 				}
 				
-				/*if (workSpace == this.activeWorkSpace) {
-					workSpace.show();
-				} else {
-					workSpace.hide();
-					disabledWorkSpaces[j] = workSpace;					
-					j++;
-				}*/
 			}
+			
 			this.activeWorkSpace.show();
 			LayoutManagerFactory.getInstance().refreshChangeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
 		}

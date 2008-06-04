@@ -52,7 +52,7 @@ function _EzWebAPI() {
 }
 
 _EzWebAPI.prototype.addOnLoadNotifier = function() {
-    window.parent.Event.observe(window, 'load', function () {EzWebAPI.platform.opManager.igadgetLoaded()}, true);	
+    window.parent.Event.observe(window, 'load', function () {EzWebAPI.platform.opManager.igadgetLoaded(EzWebAPI.getId())}, true);	
 }
 
 

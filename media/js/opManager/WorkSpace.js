@@ -167,6 +167,17 @@ function WorkSpace (workSpaceState) {
 	// PUBLIC METHODS
 	// ****************
 	
+	WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
+	    var igadget = this.getIgadget(igadgetId);
+ 	    var tab = igadget.getTab();
+ 	    
+ 	    tab.getDragboard().igadgetLoaded();
+ 	    
+ 	    if (this._allIgadgetsLoaded()) {
+ 	    	this.wiring.propagateInitialValues();
+ 	    }
+	}
+	
 	WorkSpace.prototype.fillWithLabel = function() {
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
 		if(this.workSpaceNameHTMLElement != null){
@@ -263,30 +274,16 @@ function WorkSpace (workSpaceState) {
 		this.wiringInterface.show();
 	}
 	
-/*	WorkSpace.prototype.hideAndUnmark = function() {
-		if (!this.loaded)
-			return;
-		
-		this.wiringInterface.hide();
-		
-		var tabList = this.tabInstances.keys();
-		
-		for (var i=0; i<tabList.length; i++) {
-			var tab = this.tabInstances[tabList[i]];
+	WorkSpace.prototype.getIgadget = function(igadgetId) {
+		var tabs = this.tabInstances.keys();	
+		for (var i = 0; i < tabs.length; i++) {
+			var tab = tabs[i];
+			var igadget = this.tabInstances[tab].getDragboard().getIGadget(igadgetId);
 			
-			tab.hideAndUnmark();
+			if (igadget)
+				return igadget;
 		}
 	}
-*/
-	
-/*	//hide only the information in the wrapper. The tabs remain inalterable
-	WorkSpace.prototype.hideContent = function() {
-		this.visibleTab.markAsCurrent();
-		this.wiringInterface.hide();
-		this.visibleTab.hideDragboard();
-		
-	}
-*/
 
 	//hide all information about a workspace (wiring, tabs)
 	WorkSpace.prototype.hide = function() {
@@ -329,15 +326,6 @@ function WorkSpace (workSpaceState) {
 		return this.tabInstances[tabId];
 	}
 	
-/*	WorkSpace.prototype.selectTab = function(tab) {
-		LayoutManagerFactory.getInstance().unMarkGlobalTabs();
-		if(this.visibleTab == tab){ //allow renaming
-			this.visibleTab.fillWithInput();
-		}else{ //first click on this tab -> mark as current
-			this.setTab(tab);
-		}			
-	}*/
-	
 	WorkSpace.prototype.setTab = function(tab) {
 		if (!this.loaded)
 			return;
@@ -355,12 +343,6 @@ function WorkSpace (workSpaceState) {
 		
 		return this.visibleTab;
 	}
-	
-/*	WorkSpace.prototype.showVisibleTab = function() {
-		this.hideAndUnmark();
-		this.visibleTab.show();
-	}
-*/
 	
 	WorkSpace.prototype.tabExists = function(tabName){
 		var tabValues = this.tabInstances.values();
@@ -537,4 +519,16 @@ function WorkSpace (workSpaceState) {
 		return numRemoved;
 	}.bind(this);
 	
+	this._allIgadgetsLoaded = function() {
+		var tabs = this.tabInstances.keys();	
+		for (var i = 0; i < tabs.length; i++) {
+			var tab = tabs[i];
+			var remainingIgadgets = this.tabInstances[tab].getDragboard().getRemainingIGadgets();
+			
+			if (remainingIgadgets != 0)
+				return false;
+		}	
+		
+		return true;
+	}
 }
