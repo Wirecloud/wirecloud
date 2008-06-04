@@ -144,18 +144,13 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	}
 	
 	Wiring.prototype.propagateInitialValues = function () {
-		
-		var planInitialPropagation = function () {
-			var keys = this.channels.keys();
-			for (var i = 0; i < keys.length; i++) {
-				var key = keys[i];
-				var channel = this.channels[key];
-				
-				channel.propagate(channel.variable.value);
-			}
+		var keys = this.channels.keys();
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			var channel = this.channels[key];
+			
+			channel.propagate(channel.variable.value);
 		}
-		
-		setTimeout(planInitialPropagation.bind(this), 500);
 	}
 
 	Wiring.prototype.loadWiring = function (workSpaceData) {

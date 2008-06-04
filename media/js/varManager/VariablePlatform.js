@@ -127,29 +127,6 @@ RVariable.prototype.setHandler = function (handler_) {
 	this.handler = handler_;
 } 
 
-
-RVariable.prototype._notifyNewValue = function (newValue, retryCount) {
-	if (this.handler) {
-		try {
-			this.handler(newValue);
-		} catch (e) {
-			var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
-			var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-			OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
-		}
-	} else if (retryCount < 5) {
-		// There is no handler registered! Perhaps it's the last igadget of a
-		// Tab and it haven't have enough time to load. Trying again!
-		var timeout = retryCount * 150;
-		var context = {newValue: newValue, variable: this, retryCount: ++retryCount};
-		setTimeout(function() {this.variable._notifyNewValue(this.newValue, this.retryCount);}.bind(context), timeout);
-	} else {
-		var transObj = {iGadgetId: this.iGadget, varName: this.name};
-		var msg = interpolate(gettext("IGadget %(iGadgetId)s doesn't provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-		OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
-	}
-}
-
 RVariable.prototype.set = function (newValue) {
 	var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
 	switch (this.aspect){
@@ -160,7 +137,22 @@ RVariable.prototype.set = function (newValue) {
 			this.varManager.markVariablesAsModified(varInfo);
 			
 			this.value = newValue;
-			this._notifyNewValue(newValue, 1);
+			
+			if (this.handler) {
+				try {
+					this.handler(newValue);
+				} catch (e) {
+					var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
+					var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
+					OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+				}
+			}
+			else {
+				var transObj = {iGadgetId: this.iGadget, varName: this.name};
+				var msg = interpolate(gettext("IGadget %(iGadgetId)s doesn't provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+				OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+			}
+			
 			break;
 		case Variable.prototype.TAB:
 			this.varManager.markVariablesAsModified(varInfo);

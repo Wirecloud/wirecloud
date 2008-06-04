@@ -44,13 +44,15 @@ function _EzWebAPI() {
 	tmp = tmp[1].split("=");
 	this.id = tmp[1];
 
-       if (document.addEventListener) 
+    if (document.addEventListener) 
            document.addEventListener("DOMContentLoaded", this.addOnLoadNotifier, false);
-           //Event.observe(document, "DOMContentLoaded", this.addOnLoadNotifier); //W3C and IE compliant
+    
+    // Prototype 1.6
+    //Event.observe(document, "DOMContentLoaded", this.addOnLoadNotifier); //W3C and IE compliant
 }
 
 _EzWebAPI.prototype.addOnLoadNotifier = function() {
-        EzWebAPI.platform.opManager.igadgetLoaded();	
+    window.parent.Event.observe(window, 'load', function () {EzWebAPI.platform.opManager.igadgetLoaded()}, true);	
 }
 
 
