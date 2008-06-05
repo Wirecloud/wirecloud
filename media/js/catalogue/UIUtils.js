@@ -45,7 +45,7 @@ function UIUtils()
 }
 
 UIUtils.tagmode = false;
-UIUtils.sendingTags=false;
+UIUtils.sendingPendingTags=false;
 UIUtils.selectedResource = null;
 UIUtils.balloonResource = null;
 UIUtils.imageBottom = '';
@@ -471,15 +471,23 @@ UIUtils.removeGlobalTagUser = function(tag) {
 }
 
 UIUtils.sendPendingTags = function() {
-  if (UIUtils.selectedResource!=null)
+  if (UIUtils.tagmode)
   {
-    UIUtils.sendingTags=true;
-    var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
-    var tagger = resource.getTagger();
+    UIUtils.sendingPendingTags=true;
+    UIUtils.sendGlobalTags();
+    UIUtils.sendingPendingTags=false;
+  } else {
+	if (UIUtils.selectedResource!=null)
+	{
+		var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+		var tagger = resource.getTagger();
 
-    if (tagger.getTags().size() != 0 || $('new_tag_text_input').value.length>= 3) {
-      UIUtils.sendTags();
-    }
+		if (tagger.getTags().size() != 0) {
+			UIUtils.sendingPendingTags=true;
+			UIUtils.sendTags();
+			UIUtils.sendingPendingTags=false;
+		}
+	}
   }
 }
 
@@ -488,7 +496,7 @@ UIUtils.sendTags = function() {
 	var tagger = resource.getTagger();
 	var resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
 
-	if (tagger.getTags().size() == 0 || $('new_tag_text_input').value.length!= 0)
+	if ((tagger.getTags().size() == 0 || $('new_tag_text_input').value.length!= 0) && !UIUtils.sendingPendingTags)
 	{
 		UIUtils.addTag($('new_tag_text_input'));
 	}
@@ -507,7 +515,7 @@ UIUtils.sendGlobalTags = function() {
 		tagger = resource.getTagger();
 		resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
 		
-		if (tagger.getTags().size() == 0 || $('new_global_tag_text_input').value.length!= 0)
+		if ((tagger.getTags().size() == 0 || $('new_global_tag_text_input').value.length!= 0) && !UIUtils.sendingPendingTags)
 		{
 			//TODO control de errores
 			UIUtils.addGlobalTag($('new_global_tag_text_input'));
@@ -572,15 +580,15 @@ UIUtils.addGlobalTag = function(inputText_) {
 }
 
 UIUtils.paintGlobalTag = function(id_, tag_) {
-	$("my_global_tags").innerHTML = "";
+	//$("my_global_tags").innerHTML = "";
 	var newTag = UIUtils.createHTMLElement("div", $H({
 		id: id_,
 		class_name: 'new_global_tag'
 	}));
-	$("my_global_tags").appendChild(newTag);
-	newTag.appendChild("span", $H({
+	//$("my_global_tags").appendChild(newTag);
+	newTag.appendChild(UIUtils.createHTMLElement("span", $H({
 		innerHTML: tag_
-	}));
+	})));
 	var image_div = UIUtils.createHTMLElement("div", $H());
 	newTag.appendChild(image_div);
 	var image_link = UIUtils.createHTMLElement("a", $H({
@@ -600,6 +608,7 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 		this.src = '/ezweb/images/cancel_gray.png';
 	});
 	image_link.appendChild(image);
+	$("my_global_tags").insertBefore(newTag, $("new_global_tag_text"));
 }
 
 UIUtils.setResourcesWidth = function() {
@@ -895,6 +904,7 @@ UIUtils.activateTagMode = function() {
 }
 
 UIUtils.deactivateTagMode = function() {
+	UIUtils.sendPendingTags();
 	UIUtils.tagmode = false;
 	selectedResources=CatalogueFactory.getInstance().getSelectedResources();
 	for(var i=0; i<selectedResources.length;i++){

@@ -52,10 +52,8 @@ function Tagger(){
 				var id = 'new_tag_' + new_tag_id;
 				new_tag_id++;
 				tags[id] = tag_;
-				if(!UIUtils.sendingTags){
-					paintTag(id, tag_);
-					$("tag_alert").style.display='none';
-				}
+				paintTag(id, tag_);
+				$("tag_alert").style.display='none';
 			}
 		}
 	}
@@ -96,9 +94,10 @@ function Tagger(){
 				var responseJSON = transport.responseText;
 				var jsonResourceList = eval ('(' + responseJSON + ')');
 				resource.setTags(jsonResourceList.tagList);
-				if (!UIUtils.sendingTags) resource.updateTags();
-				UIUtils.sendingTags=false;
-				if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
+				if (!UIUtils.sendingPendingTags){ 
+					resource.updateTags();
+					if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
+				}
 			}
 			
 			var elements = tags.values();

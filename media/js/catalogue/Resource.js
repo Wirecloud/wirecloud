@@ -133,7 +133,6 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         }));
 		image_link.observe("click", function(event){
 			UIUtils.sendPendingTags();
-			UIUtils.sendingTags = false;
 			UIUtils.clickOnResource(id_);
 		});
 		image_div.appendChild(image_link);
