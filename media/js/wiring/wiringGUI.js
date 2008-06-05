@@ -49,9 +49,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
   this.opmanager = OpManagerFactory.getInstance();
   this.currentChannel = null;
-  this.inputs = new Hash(); // Input connections (events & inouts)
-  this.outputs = new Hash(); // Output connections (slots & inouts)
-  this.channels = new Hash();
+  this.inputs = new Array(); // Input connections (events & inouts)
+  this.outputs = new Array(); // Output connections (slots & inouts)
+  this.channels = new Array();
   this.channelsForRemove = new Array();
   this.enabled = false;
   this.friend_codes = {};
@@ -59,7 +59,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.friend_codes_counter = 0;
   this.channels_counter = 1;
   this.channelBaseName = gettext("Channel");
-  this.anchors = new Hash();
+  //this.anchors = new Hash();
   this.visible = false; // TODO temporal workarround
 
   this.event_list = $('events_list');//wiringContainer.getElementById('events_list');
@@ -96,6 +96,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 		this.uncheckChannel(this.currentChannel);
     }
     this.saveWiring();
+    this.channels.clear();
     Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
     LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
   }
@@ -107,22 +108,12 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     }
 
     // Create & update channels
-    var keys = this.channels.keys();
-    for (var i = 0; i < keys.length; i++) {
-      this.channels[keys[i]].commitChanges(this.wiring);
+    for (var i = 0; i < this.channels.length; i++) {
+      this.channels[i].commitChanges(this.wiring);
     }
     
     // The wiring engine is notified in order to persist state!
     this.wiring.serialize();
-  }
-  //channel ids are no longer porvisional
-  //Change the channel hash to be indexed by the new channel ids.
-  WiringInterface.prototype.changeChannelListIndexes = function(){
-  	var channelKeys = this.channels.keys();
-  	for(var i=0; i<channelKeys.length; i++){
-  		this.channels[this.channels[channelKeys[i]].channel.getId()] = this.channels[channelKeys[i]];
-  		this.channels.remove(channelKeys[i]);
-  	}
   }
 
   WiringInterface.prototype._addChannelInterface = function (channel) {
@@ -156,13 +147,21 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     
     channelElement.appendChild(channelNameInput);
     Event.observe(channelNameInput, 'click', function(e){if(this.wiringGUI.currentChannel==this.channel)Event.stop(e);}.bind(context)); //do not propagate to div.
-    Event.observe(channelNameInput, 'change', function(e){if(this.wiringGUI.channelExists(e.target.value)){
-    														var msg = interpolate(gettext("Error updating a channel. %(channelName)s: Channel already exists"),{channelName: e.target.value}, true);
-															LogManagerFactory.getInstance().log(msg);
-															e.target.value=this.channel.getName();
-    														}else{
-    															this.channel.setName(e.target.value)
-    														}}.bind(context));
+    
+    var checkName = function(e){
+    	if(e.target.value == "" || e.target.value.match(/^\s$/)){
+	    	var msg = gettext("Error updating a channel. Invalid name");
+			LogManagerFactory.getInstance().log(msg);
+    		e.target.value=this.channel.getName();
+    	}else if(this.wiringGUI.channelExists(e.target.value)){
+    		var msg = interpolate(gettext("Error updating a channel. %(channelName)s: Channel already exists"),{channelName: e.target.value}, true);
+			LogManagerFactory.getInstance().log(msg);
+			e.target.value=this.channel.getName();
+    	}else{
+    		this.channel.setName(e.target.value)
+    	}
+    }
+    Event.observe(channelNameInput, 'change', checkName.bind(context));
      
     var channelContent = document.createElement("div");
     channelContent.addClassName("channelContent");
@@ -178,10 +177,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.channels_list.appendChild(channelElement);
     channel.assignInterface(channelElement);
 
-	if(channel.channel)
-		this.channels[channel.channel.getId()] = channel;
-	else
-	    this.channels[channel.provisional_id] = channel;
+	this.channels.push(channel);
     channelNameInput.focus();
   }
   
@@ -225,7 +221,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	connectableElement.addEventListener("click", cancelbubbling, false);
 
 	slots.appendChild(connectableElement);
-	this.outputs[connectable.getQualifiedName()] = anchor;
+	this.outputs.push(anchor);
 
     
     // Igadget slots
@@ -300,10 +296,10 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       // Insert it on the correct list of connectables
       if (connectable instanceof wIn) {
         ulEvents.appendChild(connectableElement);
-        this.inputs[connectable.getQualifiedName()] = anchor;
+        this.inputs.push(anchor);
       } else if (connectable instanceof wOut) {
         ulSlots.appendChild(connectableElement);
-        this.outputs[connectable.getQualifiedName()] = anchor;
+        this.outputs.push(anchor);
       }
     }
 
@@ -344,8 +340,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     // Clean data structures
     this.friend_codes_counter = 0;
     this.friend_codes = {};
-    this.inputs = new Hash();
-    this.outputs = new Hash();
+    this.inputs.clear();
+    this.outputs.clear();
     this.currentChannel = null;
     this.channelsForRemove = new Array();
 
@@ -366,7 +362,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
   WiringInterface.prototype._changeConnectionStatus = function (anchor) {
     if (this.currentChannel == null) {
-      if (this.channels.size() == 0) {
+      if (this.channels.length == 0) {
         this.msgsDiv.innerHTML = gettext("Please, create a new channel before creating connections.");
       } else {
         this.msgsDiv.innerHTML = gettext("Please, select a channel before creating connections.");
@@ -397,15 +393,12 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       }
     }
   }
-  
-  WiringInterface.prototype.channelExists = function(channelName){
-	var channelValues = this.channels.values();
-	for(var i=0;i<channelValues.length;i++){
-		if(channelValues[i].getName() == channelName)
+
+	WiringInterface.prototype.channelExists = function(channelName){
+		if(this.channels.getElementByName(channelName))
 			return true;
+		return false;
 	}
-	return false;
-  }
 
   WiringInterface.prototype._createChannel = function () {
     var result = null;
@@ -432,8 +425,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
   WiringInterface.prototype._removeChannel = function (channel) {
 
-    var channelId = (channel.channel)?channel.channel.getId():channel.provisional_id;
-    if (this.channels[channelId] == null)
+    if (!this.channels.elementExists(channel))
       return; // Nothing to do
 
     // Check whether this channel exists in the current wiring model
@@ -454,7 +446,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       }
 	}
     
-    delete this.channels[channelId];
+    this.channels.remove(channel);
   }
 
   WiringInterface.prototype._changeChannel = function(newChannel) {
@@ -536,28 +528,53 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     channel.uncheck();
 
     var connectables = channel.getInputs();
-    var keys = connectables.keys();
-    for (var i = 0; i < keys.length; ++i)
-      this.inputs[keys[i]].setConnectionStatus(false, null, null);
+    for (var i = 0; i < connectables.length; ++i){
+    	var connectable = connectables[i];
+    	for(var j = 0; j < this.inputs.length; j++){
+    		if(connectable.getId() == this.inputs[j].connectable.getId()){
+    			this.inputs[j].setConnectionStatus(false, null, null);
+    			break;
+    		}
+    	}
+    }
 
     var connectables = channel.getOutputs();
-    var keys = connectables.keys();
-    for (var i = 0; i < keys.length; ++i)
-      this.outputs[keys[i]].setConnectionStatus(false, null, null);
+    for (var i = 0; i < connectables.length; ++i){
+    	var connectable = connectables[i];
+    	for(var j = 0; j < this.outputs.length; j++){
+    		if(connectable.getId() == this.outputs[j].connectable.getId()){
+    			this.outputs[j].setConnectionStatus(false, null, null);
+    			break;
+    		}
+    	}
+    }
+ 
   }
 
   WiringInterface.prototype.highlightChannel = function (channel) {
     channel.check();
 
     var connectables = channel.getInputs();
-    var keys = connectables.keys();
-    for (var i = 0; i < keys.length; ++i)
-      this.inputs[keys[i]].setConnectionStatus(true, channel.inPosition, null);
+    for (var i = 0; i < connectables.length; ++i){
+    	var connectable = connectables[i];
+    	for(var j = 0; j < this.inputs.length; j++){
+    		if(connectable.getId() == this.inputs[j].connectable.getId()){
+    			this.inputs[j].setConnectionStatus(true, channel.inPosition, null);
+    			break;
+    		}
+    	}
+    }
 
     var connectables = channel.getOutputs();
-    var keys = connectables.keys();
-    for (var i = 0; i < keys.length; ++i)
-      this.outputs[keys[i]].setConnectionStatus(true, null, channel.outPosition);
+    for (var i = 0; i < connectables.length; ++i){
+       	var connectable = connectables[i];
+    	for(var j = 0; j < this.outputs.length; j++){
+    		if(connectable.getId() == this.outputs[j].connectable.getId()){
+    			this.outputs[j].setConnectionStatus(true, null, channel.outPosition);
+    			break;
+    		}
+    	}
+    }	
   }
 
   WiringInterface.prototype._setEnableStatus = function(enabled) {
@@ -734,15 +751,15 @@ function ChannelInterface(channel) {
     // New channel
     this.channel = null;
     this.name = channel;
-    this.inputs = new Hash();
-    this.outputs = new Hash();
+    this.inputs = new Array();
+    this.outputs = new Array();
     this.provisional_id = new Date().getTime();
   }
 
-  this.inputsForAdding = new Hash();
-  this.inputsForRemoving = new Hash();
-  this.outputsForAdding = new Hash();
-  this.outputsForRemoving = new Hash();
+  this.inputsForAdding = new Array();
+  this.inputsForRemoving = new Array();
+  this.outputsForAdding = new Array();
+  this.outputsForRemoving = new Array();
   this.inPosition = new Array();		//coordinates of the point where the channel input arrow ends
   this.outPosition = new Array();		//coordinates of the point where the channel output arrow starts
 
@@ -775,7 +792,7 @@ ChannelInterface.prototype.getValue = function() {
 
 ChannelInterface.prototype.commitChanges = function(wiring) {
   var changes = [];
-  var keys, i;
+  var i;
 
   //this.name = this.interface.getElementsByClassName('channelNameInput')[0].value;
   
@@ -788,32 +805,28 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
   }
 
   // Inputs for removing
-  keys = this.inputsForRemoving.keys();
-  for (i = 0; i < keys.length; i++) {
-    this.inputsForRemoving[keys[i]].disconnect(this.channel);
+  for (i = 0; i < this.inputsForRemoving.length; i++) {
+    this.inputsForRemoving[i].disconnect(this.channel);
   }
-  this.inputsForRemoving = new Hash();
+  this.inputsForRemoving.clear();
 
   // Outputs for removing
-  keys = this.outputsForRemoving.keys();
-  for (i = 0; i < keys.length; i++) {
-    this.channel.disconnect(this.outputsForRemoving[keys[i]]);
+  for (i = 0; i < this.outputsForRemoving.length; i++) {
+    this.channel.disconnect(this.outputsForRemoving[i]);
   }
-  this.outputsForRemoving = new Hash();
+  this.outputsForRemoving.clear();
 
   // Outputs for adding
-  keys = this.outputsForAdding.keys();
-  for (i = 0; i < keys.length; i++) {
-    this.channel.connect(this.outputsForAdding[keys[i]]);
+  for (i = 0; i < this.outputsForAdding.length; i++) {
+    this.channel.connect(this.outputsForAdding[i]);
   }
-  this.outputsForAdding = new Hash();
+  this.outputsForAdding.clear();
 
   // Inputs for adding
-  keys = this.inputsForAdding.keys();
-  for (i = 0; i < keys.length; i++) {
-    this.inputsForAdding[keys[i]].connect(this.channel);
+  for (i = 0; i < this.inputsForAdding.length; i++) {
+    this.inputsForAdding[i].connect(this.channel);
   }
-  this.inputsForAdding = new Hash();
+  this.inputsForAdding.clear();
 
   return changes;
 }
@@ -849,40 +862,40 @@ ChannelInterface.prototype.getInterface = function() {
 
 ChannelInterface.prototype.connectInput = function(wIn) {
   if (this.channel != null &&
-      this.channel.inputs[wIn.getQualifiedName()] != undefined) {
-    delete this.inputsForRemoving[wIn.getQualifiedName()];
+      this.channel.inputs.elementExists(wIn)) {
+    	this.inputsForRemoving.remove(wIn);
   } else {
-    this.inputsForAdding[wIn.getQualifiedName()] = wIn;
+    this.inputsForAdding.push(wIn);
   }
-  this.inputs[wIn.getQualifiedName()] = wIn;
+  this.inputs.push(wIn);
 }
 
 ChannelInterface.prototype.disconnectInput = function(wIn) {
   if (this.channel != null &&
-      this.channel.inputs[wIn.getQualifiedName()] != undefined) {
-    this.inputsForRemoving[wIn.getQualifiedName()] = wIn;
+      this.channel.inputs.elementExists(wIn)) {
+	    this.inputsForRemoving.push(wIn);
   } else {
-    delete this.inputsForAdding[wIn.getQualifiedName()];
+   		this.inputsForAdding.remove(wIn);
   }
-  delete this.inputs[wIn.getQualifiedName()];
+  this.inputs.remove(wIn);
 }
 
 ChannelInterface.prototype.connectOutput = function(connectable) {
   if (this.channel != null &&
-      this.channel.outputs[connectable.getQualifiedName()] != undefined) {
-    delete this.outputsForRemoving[connectable.getQualifiedName()];
+      this.channel.outputs.elementExists(connectable)) {
+	    this.outputsForRemoving.remove(connectable);
   } else {
-    this.outputsForAdding[connectable.getQualifiedName()] = connectable;
+	    this.outputsForAdding.push(connectable);
   }
-  this.outputs[connectable.getQualifiedName()] = connectable;
+  this.outputs.push(connectable);
 }
 
 ChannelInterface.prototype.disconnectOutput = function(connectable) {
   if (this.channel != null &&
-      this.channel.outputs[connectable.getQualifiedName()] != undefined) {
-    this.outputsForRemoving[connectable.getQualifiedName()] = connectable;
+      this.channel.outputs.elementExists(connectable)) {
+	    this.outputsForRemoving.push(connectable);
   } else {
-    delete this.outputsForAdding[connectable.getQualifiedName()];
+    	this.outputsForAdding.remove(connectable);
   }
-  delete this.outputs[connectable.getQualifiedName()];
+  this.outputs.remove(connectable);
 }

@@ -139,18 +139,16 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		    }
 
 			// Save it on the channel list
-		    this.channels[channel.id] = channel;
+		    this.channels.push(channel);
 		}	
 	}
 	
 	Wiring.prototype.propagateInitialValues = function () {
-		var keys = this.channels.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			var channel = this.channels[key];
-			
-			channel.propagate(channel.variable.value);
-		}
+
+			for (var i = 0; i < this.channels.length; i++) {
+				var channel = this.channels[i];
+				channel.propagate(channel.variable.value);
+			}
 	}
 
 	Wiring.prototype.loadWiring = function (workSpaceData) {
@@ -180,9 +178,9 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			LogManagerFactory.getInstance().log(msg);
 		}
 
-		gadgetEntry.events = new Hash();
-		gadgetEntry.slots = new Hash();
-		gadgetEntry.connectables = new Hash();
+		gadgetEntry.events = new Array();
+		gadgetEntry.slots = new Array();
+		gadgetEntry.connectables = new Array();
 
 		// IGadget variables
 		for (var i = 0; i < variables.length; i++) {
@@ -193,16 +191,16 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 				var connectableId = variableData.connectable.id;
 			    var connectable = new wEvent(variable, variableData.type, variableData.friend_code, connectableId);
 			    
-			    gadgetEntry.events[variableData.name] = connectable;
-			    gadgetEntry.connectables["event_" + variableData.name] = connectable;
+			    gadgetEntry.events.push(connectable);
+			    gadgetEntry.connectables.push(connectable);
 			}
 			
 			if (variable.aspect == "SLOT" && variableData.connectable) {
 			    var connectableId = variableData.connectable.id;
 			    var connectable = new wSlot(variable, variableData.type, variableData.friend_code, connectableId);
 
-			    gadgetEntry.slots[variableData.name] = connectable;
-			    gadgetEntry.connectables["slot_" + variableData.name] = connectable;
+			    gadgetEntry.slots.push(connectable);
+			    gadgetEntry.connectables.push(connectable);
 			}
 			
 			this.iGadgets[iGadgetId] = gadgetEntry;
@@ -219,21 +217,13 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			return;
 		}
 		
-		var keys = entry.events.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			entry.events[key].fullDisconnect();
-			
-			delete entry.events[key];
-		}
+		for (var i = 0; i < entry.events.length; i++)
+			entry.events[i].fullDisconnect();
+		entry.events.clear();
 		
-		var keys = entry.slots.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			entry.slots[key].fullDisconnect();
-			
-			delete entry.slots[key];
-		}
+		for (var i = 0; i < entry.slots.length; i++)
+			entry.slots[i].fullDisconnect();
+		entry.slots.clear();
 
 		this.iGadgets.remove(iGadgetId)
 	}
@@ -247,19 +237,16 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			return;
 		}
 
-		return iGadgetEntry.connectables.values();
+		return iGadgetEntry.connectables;
 	}
 
 	Wiring.prototype.getChannels = function() {
-		return this.channels.values();
+		return this.channels;
 	}
 	
 	Wiring.prototype.channelExists = function(channelName){
-		var channelValues = this.channels.values();
-		for(var i=0;i<channelValues.length;i++){
-			if(channelValues[i].getName == channelName)
-				return true;
-		}
+		if(this.channels.getElementByName(channelName))
+			return true;
 		return false;
 	}
 
@@ -275,7 +262,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			provisional_id=false;
 
 		var channel = new wChannel(channelVar, channelName, id, provisional_id);
-		this.channels[channel.id] = channel;
+		this.channels.push(channel);
 					
 		return channel;
 	}
@@ -287,7 +274,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	}
 
 	Wiring.prototype.removeChannel = function (channelId) {
-		var channel = this.channels[channelId];
+		var channel = this.channels.getElementById(channelId);
 
 		if (channel == undefined) {
 			var msg = gettext("Error removing channel %(channelName)s: Channel does not exists");
@@ -300,7 +287,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		
 		this.channelsForRemoving.push(channel.id);
 		
-		this.channels.remove(channelId);
+		this.channels.removeById(channelId);
 	}
 
 	Wiring.prototype.serializationSuccess = function (transport){
@@ -311,20 +298,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var mappings = json['ids'];
 		for (var i=0; i<mappings.length; i++) {
 			var mapping = mappings[i];
-			var channelKeys = this.channels.keys();
-			for (var j=0; j<channelKeys.length; j++) {
-				if (this.channels[channelKeys[j]].id == mapping.provisional_id) {
-					this.channels[mapping.id] = this.channels[channelKeys[j]];
-					this.channels.remove(channelKeys[j]);
-					this.channels[mapping.id].id = mapping.id;
-					this.channels[mapping.id].provisional_id = false;
-					this.channels[mapping.id].variable.id = mapping.var_id;
+			for (var j=0; j<this.channels.length; j++) {
+				if (this.channels[j].getId() == mapping.provisional_id) {
+					this.channels[j].id = mapping.id;
+					this.channels[j].provisional_id = false;
+					this.channels[j].variable.id = mapping.var_id;
 					break;
 				}
 			}
 		}
-		//the channel indexes have changed. Notify to wiringGUI
-		this.workspace.wiringInterface.changeChannelListIndexes();
 		
 		// Channels has been sabed in db. Cleaning state variables!
 		delete this.channelsForRemoving;
@@ -342,11 +324,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var serialized_channels = [];
 		
 		// Channels
-		var channel_keys = this.channels.keys();
-		for (var i = 0; i < channel_keys.length; i++) {
-			var key = channel_keys[i];
-			var channel = this.channels[key];
-			
+		for (var i = 0; i < this.channels.length; i++) {
+			var channel = this.channels[i];
 			var serialized_channel = new Object();
 			
 			// Filling channel info!!!
@@ -361,11 +340,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			                              
 			var serialized_inputs = serialized_channel.ins;
 
-			var input_keys = channel.inputs.keys()
-			for (var j = 0; j < input_keys.length; j++) {
-				var key = input_keys[j];
-				var input = channel.inputs[key];
-				
+			for (var j = 0; j < channel.inputs.length; j++) {
+				var input = channel.inputs[j];
 				var serialized_input = new Object();
 				
 				serialized_input['id'] = input.id;
@@ -378,11 +354,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			
 			var serialized_outputs = serialized_channel.outs;
 			
-			var output_keys = channel.outputs.keys()
-			for (var j = 0; j < output_keys.length; j++) {
-				var key = output_keys[j];
-				var output = channel.outputs[key];
-				
+			for (var j = 0; j < channel.outputs.length; j++) {
+				var output = channel.outputs[j];
 				var serialized_output = new Object();
 				
 				serialized_output['id'] = output.id;
@@ -415,7 +388,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	this.loaded = false;
 	this.persistenceEngine = PersistenceEngineFactory.getInstance();
 	this.iGadgets = new Hash();
-	this.channels = new Hash();
+	this.channels = new Array();
 	this.channelsForRemoving = [];
 	
 	

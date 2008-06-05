@@ -74,25 +74,25 @@ wConnectable.prototype.getFriendCode = function() {
 function wOut(name, type, friendCode, id) {
    wConnectable.call(this, name, type, friendCode, id);
    this.connectableType = "out";
-   this.inouts = new Hash();
+   this.inouts = new Array();
 }
 
 wOut.prototype = new wConnectable();
 
 wOut.prototype.addInOut = function(inout) {
-	this.inouts[inout.getQualifiedName()] = inout;
+	this.inouts.push(inout);
 }
 
 wOut.prototype.disconnect = function(inout) {
 	inout._removeOutput(this);
-    delete this.inouts[inout.getQualifiedName()];
+    this.inouts.remove(inout);
 }
 
 wOut.prototype.fullDisconnect = function() {
   // Disconnecting inouts
-  var keys = this.inouts.keys();
-  for (var i = 0; i < keys.length; ++i)
-    this.disconnect(this.inouts[keys[i]]);
+  var inouts = this.inouts.clone();
+  for (var i = 0; i < inouts.length; ++i)
+    this.disconnect(inouts[i]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,38 +100,37 @@ wOut.prototype.fullDisconnect = function() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 function wIn(name, type, friendCode, id) {
   wConnectable.call(this, name, type, friendCode, id);
-  this.outputs = new Hash();
+  this.outputs = new Array();
   this.connectableType = "in";
 }
 
 wIn.prototype = new wConnectable();
 
 wIn.prototype.connect = function(out) {
-  this.outputs[out.getQualifiedName()] = out;
+  this.outputs.push(out);
   if (out instanceof wInOut)
     out._addInput(this);
 }
 
 wIn.prototype.disconnect = function(out) {
-  if (this.outputs[out.getQualifiedName()] == out) {
+  if (this.outputs.getElementById(out.getId()) == out) {
     if (out instanceof wInOut)
       out._removeInput(this);
 
-    delete this.outputs[out.getQualifiedName()];
+    this.outputs.remove(out);
   }
 }
 
 wIn.prototype.fullDisconnect = function() {
   // Outputs
-  var keys = this.outputs.keys();
-  for (var i = 0; i < keys.length; ++i)
-    this.disconnect(this.outputs[keys[i]]);
+  var outputs = this.outputs.clone();
+  for (var i = 0; i < outputs.length; ++i)
+    this.disconnect(outputs[i]);
 }
 
 wIn.prototype.propagate = function(value) {
-  var keys = this.outputs.keys();
-  for (var i = 0; i < keys.length; ++i)
-    this.outputs[keys[i]].propagate(value);
+  for (var i = 0; i < this.outputs.length; ++i)
+    this.outputs[i].propagate(value);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -140,7 +139,7 @@ wIn.prototype.propagate = function(value) {
 function wInOut(name, type, friendCode, id) {
   wIn.call(this, name, type, friendCode, id);
 
-  this.inputs = new Hash();
+  this.inputs = new Array();
   this.connectableType = "inout";
 }
 
@@ -153,29 +152,29 @@ wInOut.prototype.connect = function(out) {
 }
 
 wInOut.prototype._addInput = function(wIn) {
-  this.inputs[wIn.getQualifiedName()] = wIn;
+  this.inputs.push(wIn);
 }
 
 wInOut.prototype._removeInput = function(wIn) {
-  if (this.inputs[wIn.getQualifiedName()] == wIn)
-    delete this.inputs[wIn.getQualifiedName()];
+  if (this.inputs.getElementById(wIn.getId()) == wIn)
+	    this.inputs.remove(wIn);
 }
 
 wInOut.prototype._removeOutput = function(wOut) {
-  if (this.outputs[wOut.getQualifiedName()] == wOut)
-    delete this.outputs[wOut.getQualifiedName()];
+  if (this.outputs.getElementById(wOut.getId()) == wOut)
+    this.outputs.remove(wOut);
 }
 
 wInOut.prototype.fullDisconnect = function() {
   // Inputs
-  var keys = this.inputs.keys();
-  for (var i = 0; i < keys.length; ++i)
-    this.inputs[keys[i]].disconnect(this);
+  var inputs = this.inputs.clone();
+  for (var i = 0; i < inputs.length; ++i)
+    inputs[i].disconnect(this);
 
   // Outputs
-  var keys = this.outputs.keys();
-  for (var i = 0; i < keys.length; ++i)
-    this.disconnect(this.outputs[keys[i]]);
+  var outputs = this.outputs.clone();
+  for (var i = 0; i < outputs.length; ++i)
+    this.disconnect(outputs[i]);
 }
 
 // TODO implement this function
@@ -222,7 +221,7 @@ wChannel.prototype.propagate = function(newValue) {
 }
 
 wChannel.prototype.getQualifiedName = function () {
-  return "channel_" + this._name;
+  return "channel_" + this.id;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +241,7 @@ wTab.prototype.propagate = function(newValue) {
 }
 
 wTab.prototype.getQualifiedName = function () {
-  return "tab_" + this._name;
+  return "tab_" + this.id;
 }
 
 wTab.prototype.destroy = function () {

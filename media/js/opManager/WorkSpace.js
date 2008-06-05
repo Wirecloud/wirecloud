@@ -411,12 +411,14 @@ function WorkSpace (workSpaceState) {
 		//LayoutManagerFactory.getInstance().unMarkGlobalTabs();
 		this.visibleTab.show();
 	}
-	
-	WorkSpace.prototype.removeIGadget = function(iGadgetId) {
-			this.visibleTab.getDragboard().removeInstance(iGadgetId); // TODO split into hideInstance and removeInstance
+	WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
 			this.varManager.removeInstance(iGadgetId);
 			this.wiring.removeInstance(iGadgetId);
-			this.contextManager.removeInstance(iGadgetId);
+			this.contextManager.removeInstance(iGadgetId);	
+	}
+	WorkSpace.prototype.removeIGadget = function(iGadgetId) {
+			this.visibleTab.getDragboard().removeInstance(iGadgetId); // TODO split into hideInstance and removeInstance
+			this.removeIGadgetData(iGadgetId);
 	}
 
 	WorkSpace.prototype.getIGadgets = function() {

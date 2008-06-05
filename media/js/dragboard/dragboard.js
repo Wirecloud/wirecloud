@@ -508,7 +508,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	Dragboard.prototype.destroy = function () {
 		Element.remove(this.dragboardElement);
-		//TODO: remove all references and delete the object
+		var keys = this.iGadgets.keys();
+		//disconect and delete the connectables and variables of all tab iGadgets
+		for (var i = 0; i < keys.length; i++) {
+			this.workSpace.removeIGadgetData(keys[i]);
+			delete this.iGadgets[keys[i]];
+		}
+		//TODO: have all references been removed?,delete the object
 	}
 
 	/**
