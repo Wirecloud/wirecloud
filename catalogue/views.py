@@ -60,6 +60,7 @@ from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.logs import log
 from commons.utils import get_xml_error
+from commons.http_utils import PUT_parameter
 
 
 class GadgetsCollection(Resource):
@@ -410,14 +411,14 @@ class GadgetVotesCollection(Resource):
     def update(self,request,user_name,vendor,name,version):
 
         try:
-            format = request.__getitem__('format')
+            format = PUT_parameter(request, 'format')
         except:
             format = 'default'
 
         user = user_authentication(request, user_name)
 
         # Get the vote from the request
-        vote = request.PUT['vote']
+        vote = PUT_parameter(request, 'vote') 
 
         # Get the gadget's id for those vendor, name and version
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
