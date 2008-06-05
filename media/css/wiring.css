@@ -131,19 +131,19 @@
 }
 
 #wiring .eventColumn .igadget .igadgetContent .chkItem {
-  right: -13px;
+  right: -14px;
 }
 
 #wiring .eventColumn .igadget .igadgetContent .unchkItem {
-  right: -13px;
+  right: -14px;
 }
 
 #wiring .slotColumn .igadget .chkItem {
-  left: -13px;
+  left: -14px;
 }
 
 #wiring .slotColumn .igadget .igadgetContent .unchkItem {
-  left: -13px;
+  left: -14px;
 }
 
 #wiring .tab .tabContent .chkItem {
