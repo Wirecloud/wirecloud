@@ -49,6 +49,7 @@ from commons.authentication import get_user_authentication
 from commons.get_data import *
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
+from commons.http_utils import PUT_parameter
 
 from connectable.models import Out
 from igadget.models import Variable
@@ -222,11 +223,10 @@ class WorkSpaceEntry(Resource):
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        if not request.PUT.has_key('workspace'):
-            return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
+        received_json = PUT_parameter(request, 'workspace')
 
-        #TODO we can make this with deserializers (simplejson)
-        received_json = request.PUT['workspace']
+        if not received_json:
+            return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
             ts = eval(received_json)
@@ -319,12 +319,11 @@ class TabEntry(Resource):
     @transaction.commit_on_success
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
+        
+        received_json = PUT_parameter(request, 'tab')
 
-        if not request.PUT.has_key('tab'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        #TODO we can make this with deserializers (simplejson)
-        received_json = request.PUT['tab']
 
         try:
             t = eval(received_json)
@@ -379,12 +378,11 @@ class WorkSpaceVariableCollection(Resource):
     @transaction.commit_on_success
     def update(self, request, workspace_id):  
         user = get_user_authentication(request)
+        
+        received_json = PUT_parameter(request, 'variables') 
 
-        if not request.PUT.has_key('variables'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("variables JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        #TODO we can make this with deserializers (simplejson)
-        received_json = request.PUT['variables']
 
         try:
             variables = eval(received_json)

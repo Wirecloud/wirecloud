@@ -57,7 +57,7 @@ from django.utils.translation import ugettext as _
 from commons.logs import log
 from commons.utils import get_xml_error
 from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
+from commons.http_utils import *
 
 from gadget.models import Gadget
 

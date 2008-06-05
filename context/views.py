@@ -50,6 +50,8 @@ from commons.utils import get_xml_error, json_encode
 from commons.get_data import get_concept_data, get_concept_value
 from context.models import Concept, ConceptName
 
+from commons.http_utils import PUT_parameter
+
 
 
 class ContextCollection(Resource):
@@ -142,10 +144,10 @@ class ContextEntry(Resource):
     @transaction.commit_on_success
     def update(self, request, user_name, concept_name):
         user = user_authentication(request, user_name)
+        
+        received_json = PUT_parameter(request, 'json') 
 
-        if request.POST.has_key('json'):
-            received_json = request.POST['json']
-        else:
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("JSON parameter not specified")))
 
         try:

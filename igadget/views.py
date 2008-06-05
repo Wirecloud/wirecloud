@@ -50,6 +50,7 @@ from commons.authentication import get_user_authentication
 from commons.get_data import get_igadget_data, get_variable_data
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
+from commons.http_utils import PUT_parameter
 
 from gadget.models import Gadget, VariableDef
 from workspace.models import Tab, WorkSpace
@@ -238,12 +239,11 @@ class IGadgetCollection(Resource):
     @transaction.commit_manually
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
+        
+        received_json = PUT_parameter(request, 'igadgets')
 
-        if not request.PUT.has_key('igadgets'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        #TODO we can make this with deserializers (simplejson)      
-        received_json = request.PUT['igadgets']
         
         try:
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
@@ -275,12 +275,13 @@ class IGadgetEntry(Resource):
     @transaction.commit_on_success
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
+        
+        received_json = PUT_argument(request, 'igadget')
 
-        if not request.PUT.has_key('igadget'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            received_json = request.PUT['igadget']
             igadget = eval(received_json)
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
             UpdateIGadget(igadget, user, tab)
@@ -321,15 +322,16 @@ class IGadgetVariableCollection(Resource):
     @transaction.commit_manually
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
+        
+        received_json = PUT_parameter(request, 'variables')
 
         # Gets JSON parameter from request
-        if not request.PUT.has_key('variables'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget variables JSON expected")), mimetype='application/xml; charset=UTF-8')
-
-        variables_JSON = request.PUT['variables']
         
         try:
-            received_variables = eval(variables_JSON)
+            received_variables = eval(received_json)
+            
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
             server_variables = Variable.objects.filter(igadget__tab=tab)
             
@@ -368,11 +370,13 @@ class IGadgetVariable(Resource):
     def update(self, request, workspace_id, tab_id, igadget_id, var_id):
         user = get_user_authentication(request)
         
+        received_json = PUT_parameter(request, 'value')
+        
         # Gets value parameter from request
-        if not request.PUT.has_key('value'):
+        if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
         
-        new_value = request.PUT['value']
+        new_value = received_json
         
         tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
         variable = get_object_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)

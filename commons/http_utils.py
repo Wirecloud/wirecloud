@@ -64,3 +64,14 @@ def download_http_content (uri):
     else:
         return urlopen(uri).read()
 
+
+def PUT_parameter (request, parameter_name):
+    # Checking PUT space!
+    value = request.PUT[parameter_name]
+    
+    if (value):
+        return value
+    
+    # Checking GET and POST space!
+    return request.REQUEST[parameter_name]
+
