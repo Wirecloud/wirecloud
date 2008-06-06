@@ -89,7 +89,6 @@ function Tab (tabInfo, workSpace) {
 			LogManagerFactory.getInstance().log(msg);
 		}else if(!this.workSpace.tabExists(tabName)){
 			this.tabInfo.name = tabName;
-			this.tabNameHTMLElement.update(tabName);	
 			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
 			var o = new Object;
 			o.name = tabName;
@@ -120,7 +119,6 @@ function Tab (tabInfo, workSpace) {
     	new Insertion.Top(this.tabHTMLElement, spanHTML);
 		this.tabNameHTMLElement = this.tabHTMLElement.firstDescendant();
     }
-
 
 	Tab.prototype.fillWithInput = function () {
 		this.tabNameHTMLElement.remove();

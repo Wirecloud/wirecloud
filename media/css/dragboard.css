@@ -19,7 +19,6 @@ div.gadget_menu {
   padding: 1px 3px 1px 7px;
   height: 16px;
   font-weight: bold;
-  color: #FFF;
   background: #97a0a8;
   font-size: 12px;
   overflow: hidden;
@@ -117,6 +116,22 @@ div.gadget_window div.resizeHandle.inUse {
 
 div.dragboard.fixed div.gadget_window div.resizeHandle {
   display: none;
+}
+
+.gadget_menu span{
+  margin-right:5px;
+  cursor: pointer;
+  color:#FFFFFF;
+}
+
+.gadget_menu .igadget_name {
+  float:left;
+  background:transparent none repeat scroll 0%;
+  color:#FFFFFF;
+  border: 0px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline;
 }
 
 /*****

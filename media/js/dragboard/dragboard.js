@@ -590,7 +590,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			minimized = curIGadget.minimized == "true" ? true : false;
 
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, this.dragboardStyle, position, width, height, minimized, this);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this.dragboardStyle, position, width, height, minimized, this);
 			this.iGadgets[curIGadget.id] = igadget;
 
 			if (curIGadget.code >= this.currentCode)
@@ -612,9 +612,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Search a position for the gadget
 		var position = this._searchFreeSpace(width, height + this.dragboardStyle.getTitlebarSize());
+		
+		var igadgetName = gadget.getName() + ' (' +this.currentCode + ')';
 
 		// Create the instance
-		var iGadget = new IGadget(gadget, null, this.currentCode, this.dragboardStyle, position, width, height, false, this);
+		var iGadget = new IGadget(gadget, null, this.currentCode, igadgetName, this.dragboardStyle, position, width, height, false, this);
 		this.currentCode++;
 
 		// TODO this can cause problems if errors are raised on the server
@@ -1198,6 +1200,8 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 	// initiate the resizing
 	function startresize(e) {
 		e = e || window.event; // needed for IE
+		
+		data.igadgetNameHTMLElement.blur();
 
 		// Only attend to left button (or right button for left-handed persons) events
 		if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))

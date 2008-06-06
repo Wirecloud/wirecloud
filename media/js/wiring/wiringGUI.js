@@ -305,7 +305,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
     // Generic information about the iGadget
     var gadget = igadget.getGadget();
-    var IGadgetName = gadget.getName() + " [" + igadget.id + "]";
+    var IGadgetName = igadget.name;
 
     // Event column
     if (ulEvents.childNodes.length > 0) {

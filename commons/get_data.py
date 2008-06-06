@@ -358,6 +358,7 @@ def get_igadget_data(data):
 
     data_ret['id'] = data['pk']
     data_ret['code'] = data_fields['code']
+    data_ret['name'] = data_fields['name']
     data_ret['tab'] = data_fields['tab']
     data_ret['gadget'] = gadget.uri
     data_ret['top'] = position.posY 

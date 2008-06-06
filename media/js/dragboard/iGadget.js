@@ -39,9 +39,10 @@
  * This class represents a instance of a Gadget.
  * @author aarranz
  */
-function IGadget(gadget, iGadgetId, iGadgetCode, layoutStyle, position, width, height, minimized, dragboard) {
+function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, layoutStyle, position, width, height, minimized, dragboard) {
 	this.id = iGadgetId;
 	this.code = iGadgetCode;
+	this.name = iGadgetName;
 	this.gadget = gadget;
 	this.layoutStyle = layoutStyle;
 	this.position = position;
@@ -66,6 +67,8 @@ function IGadget(gadget, iGadgetId, iGadgetCode, layoutStyle, position, width, h
 	this.settingsButtonElement = null;
 	this.minimizeButtonElement = null;
 	this.errorButtonElement = null;
+	this.igadgetNameHTMLElement = null;
+	
 
 	this.errorCount = 0;
 }
@@ -185,18 +188,19 @@ IGadget.prototype.paint = function(where) {
 	if (this.element != null) // exit if the igadgets is already visible
 		return; // TODO exception
 
-	var gadgetElement, gadgetMenu;
 	var contentHeight = this.layoutStyle.fromVCellsToPixels(this.contentHeight) + "px";
 
-	gadgetElement = document.createElement("div");
-	this.element = gadgetElement;
-	gadgetElement.setAttribute("class", "gadget_window");
-	gadgetElement.setAttribute("className", "gadget_window"); //IE hack
+	this.element = document.createElement("div");
+	this.element.setAttribute("class", "gadget_window");
+	this.element.setAttribute("className", "gadget_window"); //IE hack
 
 	// Gadget Menu
 	this.gadgetMenu = document.createElement("div");
 	this.gadgetMenu.setAttribute("class", "gadget_menu");
 	this.gadgetMenu.setAttribute("className", "gadget_menu"); //IE hack
+	
+	// Gadget title
+	this.gadgetMenu.setAttribute("title", this.name);
 
 	// buttons. Inserted from right to left
 	var button;
@@ -247,18 +251,16 @@ IGadget.prototype.paint = function(where) {
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, true);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
-
-	// Gadget title
-	var title = this.gadget.getName() + " (Gadget " + this.id + ")"; // TODO
-	this.gadgetMenu.appendChild(document.createTextNode(title));
-	this.gadgetMenu.setAttribute("title", title);
-	gadgetElement.appendChild(this.gadgetMenu);
+	
+	this.fillWithLabel();
+	
+	this.element.appendChild(this.gadgetMenu);
 
 	// Content wrapper
 	this.contentWrapper = document.createElement("div");
 	this.contentWrapper.setAttribute("class", "gadget_wrapper");
 	this.contentWrapper.setAttribute("className", "gadget_wrapper"); //IE hack
-	gadgetElement.appendChild(this.contentWrapper);
+	this.element.appendChild(this.contentWrapper);
 
 	// Gadget configuration (Initially empty and hidden)
 	this.configurationElement = document.createElement("form");
@@ -298,15 +300,15 @@ IGadget.prototype.paint = function(where) {
 
 	// TODO use setStyle from prototype
 	// Position
-	gadgetElement.style.left = this.layoutStyle.getColumnOffset(this.position.x) + "px";
-	gadgetElement.style.top = this.layoutStyle.getRowOffset(this.position.y) + "px";
+	this.element.style.left = this.layoutStyle.getColumnOffset(this.position.x) + "px";
+	this.element.style.top = this.layoutStyle.getRowOffset(this.position.y) + "px";
 
 	// Notify Context Manager of igadget's position
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x); 
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
 
 	// Sizes
-	gadgetElement.style.width = this.layoutStyle.getWidthInPixels(this.contentWidth) + "px";
+	this.element.style.width = this.layoutStyle.getWidthInPixels(this.contentWidth) + "px";
 	if (this.minimized) {
 		this.contentWrapper.style.height = "0px";
 		this.contentWrapper.style.borderTop = "0px";
@@ -320,13 +322,89 @@ IGadget.prototype.paint = function(where) {
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
 
 	// Insert it on the dragboard
-	where.appendChild(gadgetElement);
+	where.appendChild(this.element);
 
 	// Mark as draggable
 	new IGadgetDraggable(this);
 
 	return this.element;
 }
+
+IGadget.prototype.fillWithLabel = function() {
+	if(this.igadgetNameHTMLElement != null){
+		this.igadgetNameHTMLElement.remove();
+	}
+	var nameToShow = this.name;
+	if(nameToShow.length>30){
+		nameToShow = nameToShow.substring(0, 30)+"...";	
+	}
+	
+	this.igadgetNameHTMLElement = document.createElement("span");
+	this.igadgetNameHTMLElement.innerHTML = nameToShow;
+	this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
+	//var spanHTML = nameToShow;
+	//new Insertion.Top(this.gadgetMenu, spanHTML);
+	//this.igadgetNameHTMLElement = this.gadgetMenu.firstDescendant();
+	
+	Event.observe(this.igadgetNameHTMLElement, 'click', function(e){Event.stop(e);this.fillWithInput();}.bind(this)); //do not propagate to div.	
+}
+
+
+IGadget.prototype.fillWithInput = function () {
+	this.igadgetNameHTMLElement.remove();
+	this.igadgetNameHTMLElement = document.createElement("input");
+	this.igadgetNameHTMLElement.setAttribute("class", "igadget_name");
+	this.igadgetNameHTMLElement.setAttribute("className", "igadget_name");
+	this.igadgetNameHTMLElement.setAttribute("type", "text");
+	this.igadgetNameHTMLElement.setAttribute("value", this.name);
+	this.igadgetNameHTMLElement.setAttribute("size", this.name.length+5);
+	this.igadgetNameHTMLElement.setAttribute("maxlength", 30);
+	
+	this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
+	
+	//var inputHTML = "<input class='igadget_name' type='text' value='"+this.name+"' size='"+this.name.length+"' maxlength='30' />";
+	//new Insertion.Bottom(this.gadgetMenu, inputHTML);
+	//this.igadgetNameHTMLElement =  this.gadgetMenu.firstDescendant();
+	
+	this.igadgetNameHTMLElement.focus();	
+	Event.observe(this.igadgetNameHTMLElement, 'blur', function(e){Event.stop(e);
+				this.fillWithLabel()}.bind(this));
+	Event.observe(this.igadgetNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
+				e.target.blur();}}.bind(this));					
+	Event.observe(this.igadgetNameHTMLElement, 'change', function(e){Event.stop(e);
+				this.updateName(e.target.value);}.bind(this));
+	Event.observe(this.igadgetNameHTMLElement, 'keyup', function(e){Event.stop(e);
+				e.target.size = (e.target.value.length==0)?1:e.target.value.length+5;}.bind(this));
+	Event.observe(this.igadgetNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.
+}
+
+IGadget.prototype.updateName = function (igadgetName){
+	function onSuccess() {}
+	function onError(transport, e) {
+		var msg;
+
+		if (transport.responseXML) {
+        	msg = transport.responseXML.documentElement.textContent;
+		} else {
+           	msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+	}
+		
+	if(igadgetName!=null && igadgetName.length>0){
+		this.name = igadgetName;
+		this.gadgetMenu.setAttribute("title", igadgetName);
+		var o = new Object;
+		o.name = igadgetName;
+		o.id = this.id;
+		var igadgetData = Object.toJSON(o);
+		var params = {'igadget': igadgetData};
+		var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.dragboard.workSpaceId, tabId: this.dragboard.tabId, iGadgetId: this.id});
+		PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+	}
+}
+
 
 /**
  * Removes this igadget form the dragboard. Also this notify EzWeb Platform for remove the igadget form persistence.
@@ -336,20 +414,19 @@ IGadget.prototype.destroy = function() {
 		function onSuccess() {}
 		function onError(transport, e) {
 			var msg;
-
 			if (transport.responseXML) {
-                                msg = transport.responseXML.documentElement.textContent;
+               msg = transport.responseXML.documentElement.textContent;
 			} else {
-                                msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+               msg = "HTTP Error " + transport.status + " - " + transport.statusText;
 			}
-
 			msg = interpolate(gettext("Error removing igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 			LogManagerFactory.getInstance().log(msg);
 		}
+		
 		this.element.parentNode.removeChild(this.element);
 		this.element = null;
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
-		var uri = URIs.GET_IGADGET.evaluate({workspaceId: this.dragboard.workSpaceId, tabId: this.dragboard.tabId, iGadgetId: this.id})
+		var uri = URIs.GET_IGADGET.evaluate({workspaceId: this.dragboard.workSpaceId, tabId: this.dragboard.tabId, iGadgetId: this.id});
 		persistenceEngine.send_delete(uri, this, onSuccess, onError);
 	}
 }
@@ -747,6 +824,7 @@ IGadget.prototype.save = function() {
 	data['width'] = this.contentWidth;
 	data['height'] = this.contentHeight;
 	data['code'] = this.code;
+	data['name'] = this.name;
 	
 	var uri = URIs.POST_IGADGET.evaluate({tabId: this.dragboard.tabId, workspaceId: this.dragboard.workSpaceId});
 	

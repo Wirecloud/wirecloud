@@ -85,6 +85,7 @@ def SaveIGadget(igadget, user, tab):
     
     gadget_uri = igadget.get('gadget')
     igadget_code = igadget.get('code')
+    igadget_name = igadget.get('name')
     width = igadget.get('width')
     height = igadget.get('height')
     top = igadget.get('top')
@@ -103,7 +104,7 @@ def SaveIGadget(igadget, user, tab):
         
         gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-        new_igadget = IGadget(code=igadget_code, gadget=gadget, tab=tab, position=position)
+        new_igadget = IGadget(code=igadget_code, name=igadget_name, gadget=gadget, tab=tab, position=position)
         new_igadget.save()
                 
         variableDefs = VariableDef.objects.filter(gadget=gadget)
@@ -144,9 +145,15 @@ def UpdateIGadget(igadget, user, tab):
     # Checks
     ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)  
     
+    if igadget.has_key('name'):
+        name = igadget.get('name')
+        ig.name = name
+    
+    ig.save()
+        
     # get IGadget's position
     position = ig.position
-
+        
     # update the requested attributes
     if igadget.has_key('width'):
         width = igadget.get('width')
@@ -276,7 +283,7 @@ class IGadgetEntry(Resource):
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
         
-        received_json = PUT_parameter(request, parameter_name)(request, 'igadget')
+        received_json = PUT_parameter(request, 'igadget')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
