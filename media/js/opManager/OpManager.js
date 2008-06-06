@@ -142,7 +142,8 @@ var OpManagerFactory = function () {
 		
 
 		OpManager.prototype.showLogs = function () {
-			this.activeWorkSpace.getVisibleTab().unmark();
+			if(this.activeWorkSpace && this.activeWorkSpace.getVisibleTab())
+				this.activeWorkSpace.getVisibleTab().unmark();
 			LogManagerFactory.getInstance().show();
 		}
 		

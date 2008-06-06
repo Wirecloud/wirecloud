@@ -246,6 +246,7 @@
 
 #wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
   display: block;
+  overflow-x: auto;
 }
 
 #wiring #wiring_messages {
