@@ -276,7 +276,7 @@ class IGadgetEntry(Resource):
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
         
-        received_json = PUT_argument(request, 'igadget')
+        received_json = PUT_parameter(request, parameter_name)(request, 'igadget')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
