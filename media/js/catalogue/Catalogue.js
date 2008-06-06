@@ -53,6 +53,8 @@ var CatalogueFactory  = function () {
 		var selectedResources = [];
 		var globalTags = [];
 		var _this = this;
+		var max_gadgets_per_page = 40;
+		var min_offset = 10;
 		
 		this.catalogueElement = $('showcase_container');
 		    
@@ -62,6 +64,7 @@ var CatalogueFactory  = function () {
 		// ********************
 		
 		this.reloadCompleteCatalogue = function() {
+			UIUtils.repaintCatalogue=true;
 			UIUtils.sendPendingTags();
 			if (UIUtils.isInfoResourcesOpen) {
 				UIUtils.isInfoResourcesOpen = false;
@@ -355,6 +358,7 @@ var CatalogueFactory  = function () {
 				this.paginate(items);
 				this.orderby(items);
 				$('global_tagcloud').innerHTML = '';
+				UIUtils.repaintCatalogue=false;
 				
 			}
 
@@ -535,18 +539,18 @@ var CatalogueFactory  = function () {
 		} 
 		else {		
    	    	var max;
-   	    	if(items>24) {
-   	        	max = 24/4;
+   	    	if(items>max_gadgets_per_page) {
+   	        	max = max_gadgets_per_page/min_offset;
    	     	} else {
-   	         	max = Math.ceil(items/4);
+   	         	max = Math.ceil(items/min_offset);
    	     	}
    	     	var some_selected = false;
 			for (var i=1; i<=max; i++){
 				var option = UIUtils.createHTMLElement("option", $H({
-					value: "" + (i*4),
-					innerHTML: "" + (i*4)
+					value: "" + (i*min_offset),
+					innerHTML: "" + (i*min_offset)
 				}));
-				if(UIUtils.getOffset() == i*4){
+				if(UIUtils.getOffset() == i*min_offset){
 					option.setAttribute("selected", "selected");
 					some_selected=true;
 				}

@@ -123,6 +123,7 @@ var OpManagerFactory = function () {
 		// ****************
 			
 		OpManager.prototype.showCatalogue = function () {
+			UIUtils.repaintCatalogue=true;
 			UIUtils.sendPendingTags();
 			this.catalogue.show();
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
@@ -133,7 +134,7 @@ var OpManagerFactory = function () {
 			
 			// Load catalogue data!
 			this.catalogue.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
-					
+
 			UIUtils.setResourcesWidth();
 			
 			$('simple_search_text').focus();

@@ -45,7 +45,7 @@ function UIUtils()
 }
 
 UIUtils.tagmode = false;
-UIUtils.sendingPendingTags=false;
+UIUtils.repaintCatalogue=false;
 UIUtils.selectedResource = null;
 UIUtils.balloonResource = null;
 UIUtils.imageBottom = '';
@@ -55,7 +55,7 @@ UIUtils.imageConnectableContent = '';
 UIUtils.infoResourcesWidth = 400;
 UIUtils.isInfoResourcesOpen = false;
 UIUtils.page = 1;
-UIUtils.off = 8;
+UIUtils.off = 10;
 UIUtils.orderby = '-creation_date';
 UIUtils.num_items = 0;
 UIUtils.search = 'false';
@@ -65,6 +65,7 @@ UIUtils.counter=0;
 UIUtils.globalTags='all';
 
 UIUtils.addResource = function(url, paramName, paramValue) {
+	UIUtils.repaintCatalogue=true;
 	var newResourceOnSuccess = function (response) {
 		UIUtils.orderby = '-creation_date';
 		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
@@ -246,6 +247,7 @@ UIUtils.changeImage = function(elementId_, newImage_) {
 }
 
 UIUtils.searchByTag = function(url, tag) {
+	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
@@ -270,6 +272,7 @@ UIUtils.searchByTag = function(url, tag) {
 }
 
 UIUtils.searchByWiring = function(url, value, wiring) {
+	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
@@ -294,6 +297,7 @@ UIUtils.searchByWiring = function(url, value, wiring) {
 }
 
 UIUtils.cataloguePaginate = function(url, offset, pag, items) {
+	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	UIUtils.off=offset;
@@ -365,6 +369,7 @@ UIUtils.getNum_items = function() {
 }
 
 UIUtils.searchGeneric = function(url, param1, param2, param3) {
+	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
@@ -473,9 +478,7 @@ UIUtils.removeGlobalTagUser = function(tag) {
 UIUtils.sendPendingTags = function() {
   if (UIUtils.tagmode)
   {
-    UIUtils.sendingPendingTags=true;
     UIUtils.sendGlobalTags();
-    UIUtils.sendingPendingTags=false;
   } else {
 	if (UIUtils.selectedResource!=null)
 	{
@@ -483,9 +486,7 @@ UIUtils.sendPendingTags = function() {
 		var tagger = resource.getTagger();
 
 		if (tagger.getTags().size() != 0) {
-			UIUtils.sendingPendingTags=true;
 			UIUtils.sendTags();
-			UIUtils.sendingPendingTags=false;
 		}
 	}
   }
@@ -521,7 +522,7 @@ UIUtils.sendGlobalTags = function() {
 			UIUtils.addGlobalTag($('new_global_tag_text_input'));
 		}
 		//TODO Aviso de si todo ha ido bien o no
-		
+
 		tagger.sendTags(URIs.POST_RESOURCE_TAGS, resourceURI, resource);
 	}
 	var parentHTML = $("my_global_tags");
@@ -534,6 +535,7 @@ UIUtils.sendGlobalTags = function() {
 UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
 	var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
+	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	
@@ -710,7 +712,7 @@ UIUtils.SlideAdvanced = function(element,container) {
     var queue = Effect.Queues.get('menuScope');
     var aux = '';
     var tab = '';
-    
+    UIUtils.sendPendingTags();
     if(queue.toArray().length<1){
         if(Element.visible(element)==false){
             for(i=0;i<nodeList.length;i++){
@@ -897,7 +899,6 @@ UIUtils.SlideAdvancedSearchOutOfView = function(element) {
 UIUtils.activateTagMode = function() {
 	UIUtils.tagmode = true;
 	UIUtils.removeAllGlobalTags();
-	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	$("global_tagcloud").innerHTML = '';
 	$("my_global_tags").childNodes[0].style.display="none";

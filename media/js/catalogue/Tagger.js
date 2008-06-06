@@ -94,10 +94,8 @@ function Tagger(){
 				var responseJSON = transport.responseText;
 				var jsonResourceList = eval ('(' + responseJSON + ')');
 				resource.setTags(jsonResourceList.tagList);
-				if (!UIUtils.sendingPendingTags){ 
-					resource.updateTags();
-					if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
-				}
+				if (!UIUtils.repaintCatalogue) resource.updateTags();
+				if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
 			}
 			
 			var elements = tags.values();
