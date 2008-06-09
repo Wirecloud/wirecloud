@@ -266,14 +266,14 @@ function PasswordUserPref(name_, label_, desc_, defaultValue_) {
 
 PasswordUserPref.prototype = new UserPref();
 
-PasswordUserPref.prototype.makeInterface = function (IGadgetId) {
+PasswordUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
 	var element;
 
 	element = document.createElement("input");
 	element.setAttribute("name", this.varName);
 	element.setAttribute("type", "password");
 
-	var currentValue = this.getCurrentValue(IGadgetId);
+	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue != null)
 		element.setAttribute("value", currentValue);
 
