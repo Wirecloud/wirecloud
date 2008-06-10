@@ -100,6 +100,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
     LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
   }
+  
+  WiringInterface.prototype.unload = function () {
+	    this.channels.clear();
+	    Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
+	    
+	    delete this;
+  }
 
   WiringInterface.prototype.saveWiring = function () {
     // Remove channels

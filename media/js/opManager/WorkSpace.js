@@ -1,5 +1,5 @@
-/* 
- * MORFEO Project 
+ /*
+ *  MORFEO Project 
  * http://morfeo-project.org 
  * 
  * Component: EzWeb
@@ -174,7 +174,7 @@ function WorkSpace (workSpaceState) {
  	    tab.getDragboard().igadgetLoaded();
  	    
  	    if (this._allIgadgetsLoaded()) {
- 	    	this.wiring.propagateInitialValues();
+ 	    	//this.wiring.propagateInitialValues();
  	    }
 	}
 	
@@ -228,15 +228,15 @@ function WorkSpace (workSpaceState) {
 			var msg = interpolate(gettext("Error updating a workspace: the name %(workSpaceName)s is already in use."), {workSpaceName: workSpaceName}, true);
 			LogManagerFactory.getInstance().log(msg);
 		}
-    }
+    }  
     
     WorkSpace.prototype.deleteWorkSpace = function() {
-		if(OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)==true){
+		if(OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)){
 			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
 			PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);		
 		}
 	}
-
+    
     WorkSpace.prototype.getName = function () {
     	return this.workSpaceState.name;
 	}
@@ -379,14 +379,38 @@ function WorkSpace (workSpaceState) {
 			LayoutManagerFactory.getInstance().hideCover();
 			return false;
 		}
-		this.tabInstances.remove(tabId);
-		this.varManager.removeWorkspaceVariable(tabId);
-		this.visibleTab.connectable.destroy();
-		this.visibleTab.destroy();
-		this.visibleTab = null;
+		
+		this.unloadTab(tabId);
+		
 		//set the first tab as current
 		this.setTab(this.tabInstances.values()[0]);
-		return true;
+		
+		return true
+	}
+	
+	WorkSpace.prototype.unloadTab = function(tabId){
+		var tab = this.tabInstances[tabId];
+		
+		this.tabInstances.remove(tabId);
+		
+		this.varManager.removeWorkspaceVariable(tab.connectable.variable.id);
+		
+		tab.connectable.destroy();
+		tab.destroy();
+		
+		this.visibleTab = null;
+	}
+	
+	WorkSpace.prototype.unload = function(){
+		var tabKeys = this.tabInstances.keys();
+		
+		for (var i=0; i<tabKeys.length; i++) {
+			this.unloadTab(tabKeys[i]);
+		}
+		
+		this.wiring.unload();
+		this.contextManager.unload();
+		this.wiringInterface.unload();
 	}
 	
 
@@ -411,11 +435,13 @@ function WorkSpace (workSpaceState) {
 		//LayoutManagerFactory.getInstance().unMarkGlobalTabs();
 		this.visibleTab.show();
 	}
+	
 	WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
 			this.varManager.removeInstance(iGadgetId);
 			this.wiring.removeInstance(iGadgetId);
 			this.contextManager.removeInstance(iGadgetId);	
 	}
+	
 	WorkSpace.prototype.removeIGadget = function(iGadgetId) {
 			this.visibleTab.getDragboard().removeInstance(iGadgetId); // TODO split into hideInstance and removeInstance
 			this.removeIGadgetData(iGadgetId);
@@ -468,7 +494,8 @@ function WorkSpace (workSpaceState) {
 		this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
 							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
 		this.unlockEntryPos = optionPosition;
-		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
+		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().
+Cover(); this._lockFunc(false);}.bind(this), optionPosition++);
 		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
 		var res = this._checkLock();
 		optionPosition -= res;

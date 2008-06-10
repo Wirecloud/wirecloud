@@ -218,11 +218,11 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		}
 		
 		for (var i = 0; i < entry.events.length; i++)
-			entry.events[i].fullDisconnect();
+			entry.events[i].destroy();
 		entry.events.clear();
 		
 		for (var i = 0; i < entry.slots.length; i++)
-			entry.slots[i].fullDisconnect();
+			entry.slots[i].destroy();
 		entry.slots.clear();
 
 		this.iGadgets.remove(iGadgetId)
@@ -313,6 +313,19 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		this.channelsForRemoving = [];
 	}
 
+	Wiring.prototype.unload = function () {	
+		var varManager = this.workspace.getVarManager();
+		
+		for (var i=0; i<this.channels.length; i++) {
+			var channel = this.channels[i];
+			
+			varManager.removeWorkspaceVariable(channel.variable.id);
+			
+			channel.destroy();
+		}
+
+	}
+	
 	Wiring.prototype.serializationError = function (response) {
 		var p = response.responseText;
 		msg = interpolate(gettext("Error : %(errorMsg)s."), {errorMsg: p}, true);

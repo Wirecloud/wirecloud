@@ -144,20 +144,18 @@ var OpManagerFactory = function () {
 		OpManager.prototype.showLogs = function () {
 			if(this.activeWorkSpace && this.activeWorkSpace.getVisibleTab())
 				this.activeWorkSpace.getVisibleTab().unmark();
+			
 			LogManagerFactory.getInstance().show();
 		}
 		
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
 			if(this.activeWorkSpace != null){
-				this.activeWorkSpace.hide();
+				this.unloadWorkSpace(this.activeWorkSpace.getId());
 			}
+			
 		    this.activeWorkSpace = workSpace;
-		    if(!this.activeWorkSpace.loaded){
-				// Total information of the active workspace must be downloaded!
-				this.activeWorkSpace.downloadWorkSpaceInfo();			    					    
-		    }else{		    
-			    this.showActiveWorkSpace();
-		    }
+		    
+		    this.activeWorkSpace.downloadWorkSpaceInfo();			    					    
 		}			
 
 		OpManager.prototype.addInstance = function (gadgetId) {
@@ -272,20 +270,33 @@ var OpManagerFactory = function () {
 
 		}
 		
-		OpManager.prototype.removeWorkSpace = function(workSpaceId){
-		if(this.workSpaceInstances.keys().length <= 1){
-			var msg;			
-			msg = "there must be one workspace at least";
-			msg = interpolate(gettext("Error removing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-			LayoutManagerFactory.getInstance().hideCover();
-			return false;
+		OpManager.prototype.unloadWorkSpace = function(workSpaceId){		
+			//Unloading the Workspace
+			this.workSpaceInstances[workSpaceId].unload();
+			
+			// Removing reference 
+			//this.workSpaceInstances.remove(workSpaceId);
 		}
-		this.workSpaceInstances.remove(workSpaceId);
-		//set the first workspace as current
-		this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
-		return true;
-	}
+		
+		OpManager.prototype.removeWorkSpace = function(workSpaceId){
+			if(this.workSpaceInstances.keys().length <= 1){
+				var msg;			
+				msg = "there must be one workspace at least";
+				msg = interpolate(gettext("Error removing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
+				
+				LogManagerFactory.getInstance().log(msg);
+				LayoutManagerFactory.getInstance().hideCover();
+				return false;
+			}
+			
+			//Unloading the Workspace
+			this.unloadWorkSpace(workSpaceId);
+				
+			//set the first workspace as current
+			this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
+			
+			return true;
+		}
 
 
 	}

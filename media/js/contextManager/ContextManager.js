@@ -172,6 +172,10 @@ function ContextManager (workspace_, workSpaceInfo_) {
 		this._concepts[concept_].setValue(value_);
 	}
 	
+	ContextManager.prototype.unload = function () {
+		delete this;
+	}
+	
 	ContextManager.prototype.notifyModifiedGadgetConcept = function (igadgetid, concept, value) {
 		if (! this._loaded)
 		    return;

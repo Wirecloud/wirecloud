@@ -153,8 +153,25 @@ function VarManager (_workSpace) {
 		this.parseIGadgetVariables(igadgetInfo);
 	}
 	
-	VarManager.prototype.removeInstance = function (iGadgetId) {
+	VarManager.prototype.removeInstance = function (iGadgetId) {		
 		delete this.iGadgets[iGadgetId];
+		
+		this.removeIGadgetVariables(iGadgetId);
+	}
+	
+	
+	VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {	
+		var variables_ids = this.variables.keys()
+		
+		for (var i=0; i<variables_ids.length; i++) {			
+			if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
+				delete this.variables[variables_ids[i]];
+			}
+		}
+	}
+	
+	VarManager.prototype.unload = function () {	
+		delete this;
 	}
 
 	VarManager.prototype.commitModifiedVariables = function() {
