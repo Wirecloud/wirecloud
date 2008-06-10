@@ -166,6 +166,12 @@ function DropDownMenu(idMenu){
 
 		this.menu.style.display="none";	
 	}
+	
+	DropDownMenu.prototype.remove = function (){
+
+		Element.remove(this.menu);	
+		delete this;
+	}
 
 	//shows the menu (calling showMenu function)	
 	DropDownMenu.prototype.show = function (position, x, y){

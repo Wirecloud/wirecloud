@@ -411,6 +411,8 @@ function WorkSpace (workSpaceState) {
 		this.wiring.unload();
 		this.contextManager.unload();
 		this.wiringInterface.unload();
+		
+		this.menu.remove();
 	}
 	
 

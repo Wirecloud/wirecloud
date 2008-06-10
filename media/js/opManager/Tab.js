@@ -77,7 +77,11 @@ function Tab (tabInfo, workSpace) {
 
 	Tab.prototype.destroy = function(){
 		Element.remove(this.tabHTMLElement);
+		
+		this.menu.remove();
+		
 		this.dragboard.destroy();
+		
 		delete this;
 	}
 	
