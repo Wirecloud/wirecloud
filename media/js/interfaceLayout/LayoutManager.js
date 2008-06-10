@@ -365,17 +365,22 @@ var LayoutManagerFactory = function () {
 				}, FADE_HOLD);
 		}
 		
-		LayoutManager.prototype.fadeTab = function(tabId, currentColour, endColour){	
-			if(currentColour[0]==endColour[0] && currentColour[1]==endColour[1] && currentColour[2] == endColour[2]){
-				document.getElementById(tabId).removeAttribute("style");
+		LayoutManager.prototype.fadeTab = function(tabId, currentColour, endColour){
+			var element = document.getElementById(tabId);
+			if(!element){
 				return;
-			} 
+			}
+			
+			if(currentColour[0]==endColour[0] && currentColour[1]==endColour[1] && currentColour[2] == endColour[2]){
+				element.style.background = "";
+				return;
+			}
 			
 			currentColour[0] = this.fadeColour(currentColour[0], endColour[0], FADE_STEP);
 			currentColour[1] = this.fadeColour(currentColour[1], endColour[1], FADE_STEP);
 			currentColour[2] = this.fadeColour(currentColour[2], endColour[2], FADE_STEP);
 			
-			document.getElementById(tabId).style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
+			element.style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
 			setTimeout(function(){self.fadeTab(tabId, currentColour, endColour);}, FADE_SPEED);
 		}
 		
