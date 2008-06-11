@@ -69,6 +69,16 @@ ContextVar.prototype.setVarManager = function (varManager_) {
 	this._varManager = varManager_;
 }
 
+ContextVar.prototype.unload = function () {
+	delete this._igadgetId;
+	delete this._varName;
+	delete this._conceptName;
+	delete this._varManager;
+	delete this._value;
+	
+	delete this;
+}
+
 //////////////////////////////////////////////////////////
 // Concept
 //////////////////////////////////////////////////////////
@@ -217,4 +227,35 @@ Concept.prototype.getIGadgetVar = function (igadgetId_) {
 			throw gettext("Concept does not have type yet.");
 	}
 }
+
+Concept.prototype.unload = function () {
+	
+	// Delete all the igadget variables related to this concept
+	var keys = this._igadgetVars.keys();
+	for (var i=0; i<keys.length; i++) {
+		this._igadgetVars[keys[i]].unload();
+		delete this._igadgetVars[keys[i]];
+	}
+	
+	// Delete all the Concept attributes
+	delete this._semanticConcept;
+	delete this._adaptor;
+	delete this._type;
+	delete this._value;
+	delete this._initialValue;
+	
+	delete this.EXTERNAL;
+	delete this.IGADGET;
+	delete this.USERNAME;
+	delete this.LANGUAGE;
+	delete this.WIDTH;
+	delete this.HEIGHT;
+	delete this.XPOSITION;
+	delete this.YPOSITION;
+	
+	delete this;
+
+}
+
+
 
