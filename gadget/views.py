@@ -41,8 +41,8 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseServerError
 from django.core import serializers
 
-from django_restapi.resource import Resource
-from django_restapi.responder import *
+from commons.resource import Resource
+#from django_restapi.responder import 
 
 from commons.authentication import get_user_authentication
 from commons.get_data import get_gadget_data
@@ -139,14 +139,6 @@ class GadgetEntry(Resource):
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         gadget.delete()
         return HttpResponse('ok')
-
-
-#class GadgetTemplateEntry(Resource):
-#    def read(self, request, vendor, name, version):
-#        user = get_user_authentication(request)
-#        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
-#        template = get_object_or_404(gadget.template, id=gadget.template.id)
-#        return HttpResponse(json_encode(template), mimetype='application/json; charset=UTF-8')
 
 
 class GadgetCodeEntry(Resource):

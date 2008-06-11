@@ -42,7 +42,7 @@ from django.core import serializers
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
-from django_restapi.resource import Resource
+from commons.resource import Resource
 
 from commons.authentication import user_authentication
 from commons.utils import get_xml_error, json_encode

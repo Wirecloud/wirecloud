@@ -41,7 +41,7 @@ from django.core import serializers
 
 from django.utils.translation import ugettext as _
 
-from django_restapi.resource import Resource
+from commons.resource import Resource
 
 from django.db import transaction
 

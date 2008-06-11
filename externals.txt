@@ -1,7 +1,0 @@
-#
-# Create this file: svn propget svn:externals . > externals.txt
-# Apply this file:  svn propset svn:externals -F externals.txt .
-#
-
-django_restapi http://django-rest-interface.googlecode.com/svn/trunk/django_restapi
-#tagging http://django-tagging.googlecode.com/svn/trunk/tagging

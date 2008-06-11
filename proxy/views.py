@@ -39,6 +39,9 @@
 import httplib
 import urlparse
 from django_restapi.resource import Resource
+
+from commons.resource import Resource
+
 from proxy.utils import encode_query, is_valid_header
 
 from django.utils.translation import gettext_lazy as _

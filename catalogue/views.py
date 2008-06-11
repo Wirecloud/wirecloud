@@ -47,7 +47,7 @@ from django.db.models import Q
 
 from django.utils.translation import ugettext as _
 
-from django_restapi.resource import Resource
+from commons.resource import Resource
 
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource

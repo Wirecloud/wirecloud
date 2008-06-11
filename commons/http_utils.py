@@ -65,13 +65,7 @@ def download_http_content (uri):
         return urlopen(uri).read()
 
 
-def PUT_parameter (request, parameter_name):
-    # Checking PUT space!
-    value = request.PUT[parameter_name]
-    
-    if (value):
-        return value
-    
+def PUT_parameter (request, parameter_name):    
     # Checking GET and POST space!
-    return request.REQUEST[parameter_name]
+    return request.POST[parameter_name]
 
