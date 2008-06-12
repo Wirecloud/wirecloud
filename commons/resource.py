@@ -45,9 +45,8 @@ class HttpMethodNotAllowed(Exception):
     the list of permitted methods.
     """    
 
-class Resource():
-    def __init__(self, authentication=None, permitted_methods=None,
-                 mimetype=None):
+class Resource:
+    def __init__(self, authentication=None, permitted_methods=None, mimetype=None):
         
         if not permitted_methods:
             permitted_methods = ["GET"]
