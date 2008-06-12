@@ -42,7 +42,6 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.core import serializers
 
 from commons.resource import Resource
-#from django_restapi.responder import 
 
 from commons.authentication import get_user_authentication
 from commons.get_data import get_gadget_data
