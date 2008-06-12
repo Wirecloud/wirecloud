@@ -38,7 +38,6 @@
 
 import httplib
 import urlparse
-from django_restapi.resource import Resource
 
 from commons.resource import Resource
 
