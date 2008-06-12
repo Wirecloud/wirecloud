@@ -164,7 +164,7 @@ function DropDownMenu(idMenu){
 	//hides the menu and changes the image of the launcher (in case it has to)
 	DropDownMenu.prototype.hide = function (){
 
-		this.menu.style.display="none";	
+		this.menu.style.display="none";
 	}
 	
 	DropDownMenu.prototype.remove = function (){

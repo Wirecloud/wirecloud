@@ -238,6 +238,7 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.showUnclickableCover = function(){
 			this.coverLayerElement.addClassName('disabled_background');
 			this.coverLayerElement.style.display="block";
+	
 			Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
 		}
 
@@ -335,8 +336,8 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.hide();
 			}
 			this.currentMenu = null;
-			this.coverLayerElement.removeClassName('disabled_background');
-			this.coverLayerElement.style.display="none";
+			this.coverLayerElement.style.display="none";		
+			this.coverLayerElement.removeClassName('disabled_background');			
 		}
 		
 		var FADE_RED_INI = 240;
