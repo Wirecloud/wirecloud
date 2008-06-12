@@ -35,11 +35,8 @@
 # 
 #   http://morfeo-project.org/
 #
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns
 from catalogue.views import *
-
-from django_restapi.model_resource import Collection
-from django_restapi.responder import *
 
 urlpatterns = patterns('catalogue.views',
 
