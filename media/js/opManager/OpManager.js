@@ -150,7 +150,7 @@ var OpManagerFactory = function () {
 		
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
 			if(this.activeWorkSpace != null){
-				this.unloadWorkSpace(this.activeWorkSpace.getId());
+				this.activeWorkSpace.unload();
 			}
 			
 		    this.activeWorkSpace = workSpace;
@@ -289,10 +289,10 @@ var OpManagerFactory = function () {
 				return false;
 			}
 			
-			//Unloading the Workspace
-			this.unloadWorkSpace(workSpaceId);
+			// Removing reference 
+			this.workSpaceInstances.remove(workSpaceId);
 				
-			//set the first workspace as current
+			//set the first workspace as current (and unload the former)
 			this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
 			
 			return true;
