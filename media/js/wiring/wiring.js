@@ -143,11 +143,11 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		}	
 	}
 	
-	Wiring.prototype.propagateInitialValues = function () {
+	Wiring.prototype.propagateInitialValues = function (initial) {
 
 			for (var i = 0; i < this.channels.length; i++) {
 				var channel = this.channels[i];
-				channel.propagate(channel.variable.value);
+				channel.propagate(channel.variable.value, initial);
 			}
 	}
 

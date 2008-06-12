@@ -200,7 +200,7 @@ RWVariable.prototype.set = function (value_) {
     switch (this.aspect){
 		case Variable.prototype.EVENT:   
 			if (this.connectable != null) {
-				this.connectable.propagate(this.value);
+				this.connectable.propagate(this.value, false);
 				break;
 			}
 		default:

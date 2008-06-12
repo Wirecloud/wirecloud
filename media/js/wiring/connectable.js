@@ -133,9 +133,9 @@ wIn.prototype.fullDisconnect = function() {
     this.disconnect(outputs[i]);
 }
 
-wIn.prototype.propagate = function(value) {
+wIn.prototype.propagate = function(value, initial) {
   for (var i = 0; i < this.outputs.length; ++i)
-    this.outputs[i].propagate(value);
+    this.outputs[i].propagate(value, initial);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -220,9 +220,9 @@ wChannel.prototype.getValue = function() {
   return this.variable.get();
 }
 
-wChannel.prototype.propagate = function(newValue) {
+wChannel.prototype.propagate = function(newValue, initial) {
   this.variable.set(newValue);
-  wInOut.prototype.propagate.call(this, newValue);
+  wInOut.prototype.propagate.call(this, newValue, initial);
 }
 
 wChannel.prototype.getQualifiedName = function () {
@@ -241,8 +241,10 @@ function wTab (variable, name, tab, id) {
 
 wTab.prototype = new wOut();
 
-wTab.prototype.propagate = function(newValue) {
-  this.variable.set(newValue);
+wTab.prototype.propagate = function(newValue, initial) {
+  if(!initial){
+  	this.variable.set(newValue);
+  }
 }
 
 wTab.prototype.getQualifiedName = function () {
@@ -260,7 +262,7 @@ function wSlot(variable, type, friendCode, id) {
 
 wSlot.prototype = new wOut();
 
-wSlot.prototype.propagate = function(newValue) {
+wSlot.prototype.propagate = function(newValue, initial) {
   this.variable.set(newValue);
 }
 
