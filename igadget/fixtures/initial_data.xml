@@ -353,197 +353,197 @@
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="2" model="igadget.position">
-        <field type="IntegerField" name="posX">10</field>
+        <field type="IntegerField" name="posX">2</field>
         <field type="IntegerField" name="posY">28</field>
-        <field type="IntegerField" name="height">25</field>
-        <field type="IntegerField" name="width">10</field>
+        <field type="IntegerField" name="height">27</field>
+        <field type="IntegerField" name="width">9</field>
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="6" model="igadget.position">
         <field type="IntegerField" name="posX">0</field>
         <field type="IntegerField" name="posY">0</field>
-        <field type="IntegerField" name="height">53</field>
+        <field type="IntegerField" name="height">55</field>
         <field type="IntegerField" name="width">2</field>
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="9" model="igadget.position">
-        <field type="IntegerField" name="posX">13</field>
-        <field type="IntegerField" name="posY">0</field>
-        <field type="IntegerField" name="height">26</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="BooleanField" name="minimized">False</field>
-    </object>
-    <object pk="10" model="igadget.position">
         <field type="IntegerField" name="posX">2</field>
         <field type="IntegerField" name="posY">0</field>
         <field type="IntegerField" name="height">26</field>
+        <field type="IntegerField" name="width">8</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="10" model="igadget.position">
+        <field type="IntegerField" name="posX">11</field>
+        <field type="IntegerField" name="posY">28</field>
+        <field type="IntegerField" name="height">27</field>
         <field type="IntegerField" name="width">4</field>
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="16" model="igadget.position">
-        <field type="IntegerField" name="posX">2</field>
+        <field type="IntegerField" name="posX">15</field>
         <field type="IntegerField" name="posY">28</field>
-        <field type="IntegerField" name="height">25</field>
-        <field type="IntegerField" name="width">8</field>
+        <field type="IntegerField" name="height">27</field>
+        <field type="IntegerField" name="width">5</field>
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="39" model="igadget.position">
-        <field type="IntegerField" name="posX">6</field>
+        <field type="IntegerField" name="posX">10</field>
         <field type="IntegerField" name="posY">0</field>
         <field type="IntegerField" name="height">26</field>
-        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="width">10</field>
         <field type="BooleanField" name="minimized">False</field>
     </object>
     <object pk="1" model="igadget.igadget">
         <field type="IntegerField" name="code">1</field>
-        <field type="IntegerField" name="name">Bandeja de Averías</field>
+        <field type="CharField" name="name">Bandeja de Averías</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">1</field>
     </object>
-    <object pk="2" model="igadget.igadget">
-        <field type="IntegerField" name="code">1</field>
-        <field type="IntegerField" name="name">Mapa</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">2</field>
-    </object>
     <object pk="4" model="igadget.igadget">
         <field type="IntegerField" name="code">2</field>
-        <field type="IntegerField" name="name">Configuración de Red</field>
+        <field type="CharField" name="name">Configuración de Red</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">4</field>
     </object>
-    <object pk="6" model="igadget.igadget">
-        <field type="IntegerField" name="code">4</field>
-        <field type="IntegerField" name="name">Fotos</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">6</field>
-    </object>
     <object pk="7" model="igadget.igadget">
         <field type="IntegerField" name="code">3</field>
-        <field type="IntegerField" name="name">Datos de Usuario</field>
+        <field type="CharField" name="name">Datos de Usuario</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="9" model="igadget.igadget">
-        <field type="IntegerField" name="code">6</field>
-        <field type="IntegerField" name="name">Youtube Browser</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="10" model="igadget.igadget">
-        <field type="IntegerField" name="code">7</field>
-        <field type="IntegerField" name="name">Amazon</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">10</field>
-    </object>
     <object pk="12" model="igadget.igadget">
         <field type="IntegerField" name="code">5</field>
-        <field type="IntegerField" name="name">Datos Equipo</field>
+        <field type="CharField" name="name">Datos Equipo</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">12</field>
     </object>
     <object pk="13" model="igadget.igadget">
         <field type="IntegerField" name="code">6</field>
-        <field type="IntegerField" name="name">Dirección Avería</field>
+        <field type="CharField" name="name">Dirección Avería</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">13</field>
     </object>
     <object pk="14" model="igadget.igadget">
         <field type="IntegerField" name="code">7</field>
-        <field type="IntegerField" name="name">Dirección Equipo</field>
+        <field type="CharField" name="name">Dirección Equipo</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">14</field>
     </object>
-    <object pk="15" model="igadget.igadget">
-        <field type="IntegerField" name="code">1</field>
-        <field type="IntegerField" name="name">Visor de Fotos</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">15</field>
-    </object>
-    <object pk="16" model="igadget.igadget">
-        <field type="IntegerField" name="code">8</field>
-        <field type="IntegerField" name="name">Yahoo! Trip</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="26" model="igadget.igadget">
-        <field type="IntegerField" name="code">2</field>
-        <field type="IntegerField" name="name">Fotos</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
-        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
-        <field to="igadget.position" name="position" rel="ManyToOneRel">26</field>
-    </object>
     <object pk="30" model="igadget.igadget">
         <field type="IntegerField" name="code">1</field>
-        <field type="IntegerField" name="name">Bandeja de Averías</field>
+        <field type="CharField" name="name">Bandeja de Averías</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">30</field>
     </object>
     <object pk="31" model="igadget.igadget">
         <field type="IntegerField" name="code">2</field>
-        <field type="IntegerField" name="name">Red Avería</field>
+        <field type="CharField" name="name">Red Avería</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">31</field>
     </object>
     <object pk="33" model="igadget.igadget">
         <field type="IntegerField" name="code">4</field>
-        <field type="IntegerField" name="name">Datos Usuario Avería</field>
+        <field type="CharField" name="name">Datos Usuario Avería</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">33</field>
     </object>
     <object pk="34" model="igadget.igadget">
         <field type="IntegerField" name="code">5</field>
-        <field type="IntegerField" name="name">Mapa Avería</field>
+        <field type="CharField" name="name">Mapa Avería</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">34</field>
     </object>
     <object pk="35" model="igadget.igadget">
         <field type="IntegerField" name="code">1</field>
-        <field type="IntegerField" name="name">Mapa Equipo</field>
+        <field type="CharField" name="name">Mapa Equipo</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">12</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">35</field>
     </object>
     <object pk="36" model="igadget.igadget">
         <field type="IntegerField" name="code">2</field>
-        <field type="IntegerField" name="name">Equipo Avería</field>
+        <field type="CharField" name="name">Equipo Avería</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">12</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">36</field>
     </object>
     <object pk="37" model="igadget.igadget">
         <field type="IntegerField" name="code">6</field>
-        <field type="IntegerField" name="name">Notas</field>
+        <field type="CharField" name="name">Notas</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">37</field>
     </object>
     <object pk="38" model="igadget.igadget">
         <field type="IntegerField" name="code">7</field>
-        <field type="IntegerField" name="name">Feed RSS</field>
+        <field type="CharField" name="name">Feed RSS</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">13</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">10</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">38</field>
     </object>
+    <object pk="15" model="igadget.igadget">
+        <field type="IntegerField" name="code">1</field>
+        <field type="CharField" name="name">Visor de Fotos</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">15</field>
+    </object>
+    <object pk="26" model="igadget.igadget">
+        <field type="IntegerField" name="code">2</field>
+        <field type="CharField" name="name">Fotos</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">26</field>
+    </object>
+    <object pk="2" model="igadget.igadget">
+        <field type="IntegerField" name="code">1</field>
+        <field type="CharField" name="name">Mapa</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="6" model="igadget.igadget">
+        <field type="IntegerField" name="code">4</field>
+        <field type="CharField" name="name">Fotos</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="9" model="igadget.igadget">
+        <field type="IntegerField" name="code">6</field>
+        <field type="CharField" name="name">Youtube Browser</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="10" model="igadget.igadget">
+        <field type="IntegerField" name="code">7</field>
+        <field type="CharField" name="name">Amazon</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="16" model="igadget.igadget">
+        <field type="IntegerField" name="code">8</field>
+        <field type="CharField" name="name">Yahoo! Trip</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">16</field>
+    </object>
     <object pk="39" model="igadget.igadget">
         <field type="IntegerField" name="code">10</field>
-        <field type="IntegerField" name="name">Youtube Video Player</field>
+        <field type="CharField" name="name">Youtube Video Player</field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
         <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
         <field to="igadget.position" name="position" rel="ManyToOneRel">39</field>

@@ -57,7 +57,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">True</field>
-        <field type="DateTimeField" name="last_login">2008-06-03 21:02:48</field>
+        <field type="DateTimeField" name="last_login">2008-06-12 17:18:48</field>
         <field type="DateTimeField" name="date_joined">2008-05-28 16:19:23</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -71,7 +71,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">False</field>
-        <field type="DateTimeField" name="last_login">2008-06-03 21:00:07</field>
+        <field type="DateTimeField" name="last_login">2008-06-12 17:30:53</field>
         <field type="DateTimeField" name="date_joined">2008-06-03 19:50:49</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -99,7 +99,7 @@
         <field type="BooleanField" name="is_staff">False</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">False</field>
-        <field type="DateTimeField" name="last_login">2008-06-03 20:58:39</field>
+        <field type="DateTimeField" name="last_login">2008-06-12 17:20:13</field>
         <field type="DateTimeField" name="date_joined">2008-06-03 20:58:39</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -113,7 +113,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">False</field>
-        <field type="DateTimeField" name="last_login">2008-06-03 21:03:08</field>
+        <field type="DateTimeField" name="last_login">2008-06-12 17:12:57</field>
         <field type="DateTimeField" name="date_joined">2008-06-03 19:51:07</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -567,6 +567,33 @@
         <field type="CharField" name="name">Can delete concept name</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">30</field>
         <field type="CharField" name="codename">delete_conceptname</field>
+    </object>
+    <object pk="9" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-12 17:01:54</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field>
+        <field type="TextField" name="object_id">12</field>
+        <field type="CharField" name="object_repr">12 Equipos</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado Visible.</field>
+    </object>
+    <object pk="8" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-12 16:58:49</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field>
+        <field type="TextField" name="object_id">10</field>
+        <field type="CharField" name="object_repr">10 Actuaciones</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado Visible.</field>
+    </object>
+    <object pk="7" model="admin.logentry">
+        <field type="DateTimeField" name="action_time">2008-06-12 16:58:21</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field>
+        <field type="TextField" name="object_id">3</field>
+        <field type="CharField" name="object_repr">3 IPTV</field>
+        <field type="PositiveSmallIntegerField" name="action_flag">2</field>
+        <field type="TextField" name="change_message">Modificado Visible.</field>
     </object>
     <object pk="6" model="admin.logentry">
         <field type="DateTimeField" name="action_time">2008-06-03 21:02:49</field>

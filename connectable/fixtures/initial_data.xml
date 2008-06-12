@@ -85,35 +85,40 @@
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">94</field>
         <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
+    <object pk="57" model="connectable.out">
+        <field type="CharField" name="name">tab_MyTab</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">99</field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
+    </object>
     <object pk="43" model="connectable.out">
         <field type="CharField" name="name">serviceHired</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">73</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="11"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="46" model="connectable.out">
         <field type="CharField" name="name">phoneNumber</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">77</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="12"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="49" model="connectable.out">
         <field type="CharField" name="name">tab_MyTab 2</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">85</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="13"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="53" model="connectable.out">
         <field type="CharField" name="name">equipo</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">89</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="13"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="48" model="connectable.out">
         <field type="CharField" name="name">address</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">80</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="14"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="51" model="connectable.out">
         <field type="CharField" name="name">address</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">87</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="15"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="22" model="connectable.out">
         <field type="CharField" name="name">poi</field>
@@ -155,6 +160,11 @@
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">43</field>
         <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="10"></object></field>
     </object>
+    <object pk="60" model="connectable.out">
+        <field type="CharField" name="name">tab_MyTab</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">112</field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
+    </object>
     <object pk="1" model="connectable.inout">
         <field type="CharField" name="name">servicio</field>
         <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">4</field>
@@ -180,31 +190,6 @@
         <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">8</field>
         <field type="CharField" name="friend_code"></field>
     </object>
-    <object pk="11" model="connectable.inout">
-        <field type="CharField" name="name">Servicio</field>
-        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">22</field>
-        <field type="CharField" name="friend_code"></field>
-    </object>
-    <object pk="12" model="connectable.inout">
-        <field type="CharField" name="name">Telefono</field>
-        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">23</field>
-        <field type="CharField" name="friend_code"></field>
-    </object>
-    <object pk="13" model="connectable.inout">
-        <field type="CharField" name="name">Equipo</field>
-        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">24</field>
-        <field type="CharField" name="friend_code"></field>
-    </object>
-    <object pk="14" model="connectable.inout">
-        <field type="CharField" name="name">Direccion</field>
-        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">25</field>
-        <field type="CharField" name="friend_code"></field>
-    </object>
-    <object pk="15" model="connectable.inout">
-        <field type="CharField" name="name">DireccionEquipo</field>
-        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">27</field>
-        <field type="CharField" name="friend_code"></field>
-    </object>
     <object pk="6" model="connectable.inout">
         <field type="CharField" name="name">poi</field>
         <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">9</field>
@@ -228,6 +213,31 @@
     <object pk="10" model="connectable.inout">
         <field type="CharField" name="name">image</field>
         <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">13</field>
+        <field type="CharField" name="friend_code"></field>
+    </object>
+    <object pk="11" model="connectable.inout">
+        <field type="CharField" name="name">Servicio</field>
+        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">22</field>
+        <field type="CharField" name="friend_code"></field>
+    </object>
+    <object pk="12" model="connectable.inout">
+        <field type="CharField" name="name">Telefono</field>
+        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">23</field>
+        <field type="CharField" name="friend_code"></field>
+    </object>
+    <object pk="13" model="connectable.inout">
+        <field type="CharField" name="name">Equipo</field>
+        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">24</field>
+        <field type="CharField" name="friend_code"></field>
+    </object>
+    <object pk="14" model="connectable.inout">
+        <field type="CharField" name="name">Direccion</field>
+        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">25</field>
+        <field type="CharField" name="friend_code"></field>
+    </object>
+    <object pk="15" model="connectable.inout">
+        <field type="CharField" name="name">DireccionEquipo</field>
+        <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">27</field>
         <field type="CharField" name="friend_code"></field>
     </object>
     <object pk="3" model="connectable.in">
@@ -273,27 +283,27 @@
     <object pk="17" model="connectable.in">
         <field type="CharField" name="name">servicio</field>
         <field to="igadget.variable" name="variable" rel="ManyToOneRel">48</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="11"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="18" model="connectable.in">
         <field type="CharField" name="name">telefono</field>
         <field to="igadget.variable" name="variable" rel="ManyToOneRel">49</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="12"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="20" model="connectable.in">
         <field type="CharField" name="name">deviceId</field>
         <field to="igadget.variable" name="variable" rel="ManyToOneRel">51</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="13"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="22" model="connectable.in">
         <field type="CharField" name="name">address</field>
         <field to="igadget.variable" name="variable" rel="ManyToOneRel">57</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="14"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="23" model="connectable.in">
         <field type="CharField" name="name">dir_equipo</field>
         <field to="igadget.variable" name="variable" rel="ManyToOneRel">64</field>
-        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="15"></object></field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
     </object>
     <object pk="8" model="connectable.in">
         <field type="CharField" name="name">poi</field>

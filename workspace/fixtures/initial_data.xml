@@ -126,17 +126,17 @@
         <field type="CharField" name="type"></field>
         <field type="CharField" name="aspect">CHANNEL</field>
     </object>
+    <object pk="30" model="workspace.workspacevariable">
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">6</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">112</field>
+        <field type="CharField" name="type"></field>
+        <field type="CharField" name="aspect">TAB</field>
+    </object>
     <object pk="1" model="workspace.tab">
         <field type="CharField" name="name">MyTab</field>
         <field type="BooleanField" name="visible">True</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="3" model="workspace.tab">
-        <field type="CharField" name="name">IPTV</field>
-        <field type="BooleanField" name="visible">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
     </object>
     <object pk="2" model="workspace.tab">
         <field type="CharField" name="name">OSS</field>
@@ -146,21 +146,33 @@
     </object>
     <object pk="4" model="workspace.tab">
         <field type="CharField" name="name">Visor Imágenes</field>
-        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="visible">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">43</field>
     </object>
+    <object pk="10" model="workspace.tab">
+        <field type="CharField" name="name">Actuaciones</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">67</field>
+    </object>
+    <object pk="3" model="workspace.tab">
+        <field type="CharField" name="name">IPTV</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
+    </object>
     <object pk="12" model="workspace.tab">
         <field type="CharField" name="name">Equipos</field>
-        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="visible">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">85</field>
     </object>
-    <object pk="10" model="workspace.tab">
-        <field type="CharField" name="name">Actuaciones</field>
-        <field type="BooleanField" name="visible">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">67</field>
+    <object pk="15" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">6</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">112</field>
     </object>
     <object pk="1" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
@@ -196,26 +208,6 @@
         <field type="CharField" name="type">IGADGET</field>
         <field type="CharField" name="name">utmCoord</field>
         <field type="TextField" name="value"></field>
-    </object>
-    <object pk="35" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">equipo</field>
-        <field type="TextField" name="value">device4</field>
-    </object>
-    <object pk="37" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">dir_equipo</field>
-        <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
-    </object>
-    <object pk="10" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">deviceId</field>
-        <field type="TextField" name="value">device4</field>
-    </object>
-    <object pk="28" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">dir_equipo</field>
-        <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
     </object>
     <object pk="45" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -262,25 +254,25 @@
         <field type="CharField" name="name">rssPref</field>
         <field type="TextField" name="value">http://morfeo-project.org/?feed=rss2</field>
     </object>
-    <object pk="83" model="workspace.abstractvariable">
+    <object pk="34" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">Equipo</field>
-        <field type="TextField" name="value">device2</field>
+        <field type="CharField" name="name">telefono</field>
+        <field type="TextField" name="value">915334432</field>
     </object>
-    <object pk="96" model="workspace.abstractvariable">
+    <object pk="36" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">DireccionEquipo</field>
-        <field type="TextField" name="value">Calle de Triana 4, 28100 Alcobendas</field>
+        <field type="CharField" name="name">dir_usuario</field>
+        <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
     </object>
-    <object pk="72" model="workspace.abstractvariable">
+    <object pk="5" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">deviceId</field>
-        <field type="TextField" name="value">device2</field>
+        <field type="CharField" name="name">telefono</field>
+        <field type="TextField" name="value">915334432</field>
     </object>
-    <object pk="90" model="workspace.abstractvariable">
+    <object pk="17" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">dir_equipo</field>
-        <field type="TextField" name="value">Calle de Triana 4, 28100 Alcobendas</field>
+        <field type="CharField" name="name">address</field>
+        <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
     </object>
     <object pk="91" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -288,42 +280,96 @@
         <field type="TextField" name="value">*averia-10 	916432233 	
   Fernandez Bartolome, Rodrigo
 *averia-0 	913933233 	    
-  Gonzalez Perez, Alejandro
-</field>
+  Gonzalez Perez, Alejandro</field>
     </object>
-    <object pk="22" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">rssUrl</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2Ffc3O8a8-BM4%26rel%3D1</field>
-    </object>
-    <object pk="20" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">title</field>
-        <field type="TextField" name="value">king Kong</field>
-    </object>
-    <object pk="21" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">place</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="19" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">poi</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="82" model="workspace.abstractvariable">
+    <object pk="35" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">Telefono</field>
-        <field type="TextField" name="value">917294723</field>
+        <field type="CharField" name="name">equipo</field>
+        <field type="TextField" name="value">device10</field>
     </object>
-    <object pk="84" model="workspace.abstractvariable">
+    <object pk="37" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">Direccion</field>
-        <field type="TextField" name="value">Francisco Silvela, 105, 5 B, Madrid</field>
+        <field type="CharField" name="name">dir_equipo</field>
+        <field type="TextField" name="value">Calle de Paris 37, 28820 Coslada</field>
+    </object>
+    <object pk="10" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">deviceId</field>
+        <field type="TextField" name="value">device10</field>
+    </object>
+    <object pk="28" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">dir_equipo</field>
+        <field type="TextField" name="value">Calle de Paris 37, 28820 Coslada</field>
+    </object>
+    <object pk="112" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+        <field type="TextField" name="value"></field>
+    </object>
+    <object pk="33" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">servicio</field>
+        <field type="TextField" name="value">TV</field>
+    </object>
+    <object pk="4" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">servicio</field>
+        <field type="TextField" name="value">TV</field>
+    </object>
+    <object pk="99" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+        <field type="TextField" name="value"></field>
+    </object>
+    <object pk="14" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3116/2573099348_cabff353d7.jpg</field>
+    </object>
+    <object pk="44" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">imageUrl</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3134/2567737275_958bd5cdde.jpg</field>
+    </object>
+    <object pk="96" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">DireccionEquipo</field>
+        <field type="TextField" name="value">Calle de Triana 4, 28100 Alcobendas</field>
+    </object>
+    <object pk="43" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab 2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3134/2567737275_958bd5cdde.jpg</field>
+    </object>
+    <object pk="60" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3134/2567737275_958bd5cdde.jpg</field>
+    </object>
+    <object pk="90" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">dir_equipo</field>
+        <field type="TextField" name="value">Calle de Triana 4, 28100 Alcobendas</field>
+    </object>
+    <object pk="42" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">image</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3134/2567737275_958bd5cdde.jpg</field>
+    </object>
+    <object pk="69" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">servicio</field>
+        <field type="TextField" name="value">INTERNET</field>
     </object>
     <object pk="70" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
         <field type="CharField" name="name">telefono</field>
+        <field type="TextField" name="value">917294723</field>
+    </object>
+    <object pk="77" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">phoneNumber</field>
         <field type="TextField" name="value">917294723</field>
     </object>
     <object pk="78" model="workspace.abstractvariable">
@@ -331,20 +377,10 @@
         <field type="CharField" name="name">address</field>
         <field type="TextField" name="value">Francisco Silvela, 105, 5 B, Madrid</field>
     </object>
-    <object pk="81" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">Servicio</field>
-        <field type="TextField" name="value">INTERNET</field>
-    </object>
-    <object pk="69" model="workspace.abstractvariable">
+    <object pk="80" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">servicio</field>
-        <field type="TextField" name="value">INTERNET</field>
-    </object>
-    <object pk="60" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-        <field type="TextField" name="value">http://farm3.static.flickr.com/2171/2545730381_ca2eab812d.jpg</field>
+        <field type="CharField" name="name">address</field>
+        <field type="TextField" name="value">Francisco Silvela, 105, 5 B, Madrid</field>
     </object>
     <object pk="73" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -356,14 +392,14 @@
         <field type="CharField" name="name">deviceStatus</field>
         <field type="TextField" name="value">OK</field>
     </object>
-    <object pk="77" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">phoneNumber</field>
-        <field type="TextField" name="value">917294723</field>
-    </object>
     <object pk="85" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
         <field type="CharField" name="name">MyTab 2</field>
+        <field type="TextField" name="value">device2</field>
+    </object>
+    <object pk="72" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">deviceId</field>
         <field type="TextField" name="value">device2</field>
     </object>
     <object pk="89" model="workspace.abstractvariable">
@@ -376,130 +412,25 @@
         <field type="CharField" name="name">address</field>
         <field type="TextField" name="value">Calle de Triana 4, 28100 Alcobendas</field>
     </object>
-    <object pk="80" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
+    <object pk="81" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">Servicio</field>
+        <field type="TextField" name="value">INTERNET</field>
+    </object>
+    <object pk="82" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">Telefono</field>
+        <field type="TextField" name="value">917294723</field>
+    </object>
+    <object pk="83" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">Equipo</field>
+        <field type="TextField" name="value">device2</field>
+    </object>
+    <object pk="84" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">Direccion</field>
         <field type="TextField" name="value">Francisco Silvela, 105, 5 B, Madrid</field>
-    </object>
-    <object pk="46" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">poi</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="23" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-        <field type="TextField" name="value">king Kong</field>
-    </object>
-    <object pk="7" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="15" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="61" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="97" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">RSSYurl</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2Ffc3O8a8-BM4%26rel%3D1</field>
-    </object>
-    <object pk="38" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">poi</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="39" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">title</field>
-        <field type="TextField" name="value">king Kong</field>
-    </object>
-    <object pk="40" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">place</field>
-        <field type="TextField" name="value">Nueva York</field>
-    </object>
-    <object pk="41" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">video</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2Ffc3O8a8-BM4%26rel%3D1</field>
-    </object>
-    <object pk="42" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">image</field>
-        <field type="TextField" name="value">http://farm3.static.flickr.com/2171/2545730381_ca2eab812d.jpg</field>
-    </object>
-    <object pk="43" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">MyTab 2</field>
-        <field type="TextField" name="value">http://farm3.static.flickr.com/2171/2545730381_ca2eab812d.jpg</field>
-    </object>
-    <object pk="14" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-        <field type="TextField" name="value">http://farm3.static.flickr.com/2171/2545730381_ca2eab812d.jpg</field>
-    </object>
-    <object pk="44" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">imageUrl</field>
-        <field type="TextField" name="value">http://farm3.static.flickr.com/2171/2545730381_ca2eab812d.jpg</field>
-    </object>
-    <object pk="27" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">equipo</field>
-        <field type="TextField" name="value">device4</field>
-    </object>
-    <object pk="32" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-        <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
-    </object>
-    <object pk="34" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">telefono</field>
-        <field type="TextField" name="value">917744331</field>
-    </object>
-    <object pk="36" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">dir_usuario</field>
-        <field type="TextField" name="value">Camarena, 2, 4 A, Madrid</field>
-    </object>
-    <object pk="5" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">telefono</field>
-        <field type="TextField" name="value">917744331</field>
-    </object>
-    <object pk="16" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">phoneNumber</field>
-        <field type="TextField" name="value">917744331</field>
-    </object>
-    <object pk="17" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-        <field type="TextField" name="value">Camarena, 2, 4 A, Madrid</field>
-    </object>
-    <object pk="30" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-        <field type="TextField" name="value">Camarena, 2, 4 A, Madrid</field>
-    </object>
-    <object pk="33" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">servicio</field>
-        <field type="TextField" name="value">TV</field>
-    </object>
-    <object pk="4" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">servicio</field>
-        <field type="TextField" name="value">TV</field>
     </object>
     <object pk="11" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -509,7 +440,97 @@
     <object pk="9" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
         <field type="CharField" name="name">deviceStatus</field>
-        <field type="TextField" name="value">NO_OK</field>
+        <field type="TextField" name="value">OK</field>
+    </object>
+    <object pk="16" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">phoneNumber</field>
+        <field type="TextField" name="value">915334432</field>
+    </object>
+    <object pk="27" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">equipo</field>
+        <field type="TextField" name="value">device10</field>
+    </object>
+    <object pk="32" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+        <field type="TextField" name="value">Calle de Paris 37, 28820 Coslada</field>
+    </object>
+    <object pk="30" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+        <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
+    </object>
+    <object pk="41" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">video</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FFnHj8LxkcU0%26rel%3D1</field>
+    </object>
+    <object pk="22" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">rssUrl</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FFnHj8LxkcU0%26rel%3D1</field>
+    </object>
+    <object pk="97" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">RSSYurl</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FFnHj8LxkcU0%26rel%3D1</field>
+    </object>
+    <object pk="40" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">place</field>
+        <field type="TextField" name="value">Llanes, Asturias</field>
+    </object>
+    <object pk="21" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">place</field>
+        <field type="TextField" name="value">Llanes, Asturias</field>
+    </object>
+    <object pk="7" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+        <field type="TextField" name="value">Llanes, Asturias</field>
+    </object>
+    <object pk="15" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+        <field type="TextField" name="value">Llanes, Asturias</field>
+    </object>
+    <object pk="61" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+        <field type="TextField" name="value">Llanes, Asturias</field>
+    </object>
+    <object pk="39" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">title</field>
+        <field type="TextField" name="value">El Orfanato</field>
+    </object>
+    <object pk="20" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">title</field>
+        <field type="TextField" name="value">El Orfanato</field>
+    </object>
+    <object pk="23" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+        <field type="TextField" name="value">El Orfanato</field>
+    </object>
+    <object pk="38" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">poi</field>
+        <field type="TextField" name="value">Asturias</field>
+    </object>
+    <object pk="19" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">poi</field>
+        <field type="TextField" name="value">Asturias</field>
+    </object>
+    <object pk="46" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">poi</field>
+        <field type="TextField" name="value">Asturias</field>
     </object>
     <object pk="1" model="workspace.workspace">
         <field type="CharField" name="name">MyWorkSpace</field>
@@ -530,5 +551,10 @@
         <field type="CharField" name="name">Oss</field>
         <field type="BooleanField" name="active">True</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="6" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">4</field>
     </object>
 </django-objects>
