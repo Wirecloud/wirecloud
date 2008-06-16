@@ -178,6 +178,10 @@ function WorkSpace (workSpaceState) {
  	    }
 	}
 	
+	WorkSpace.prototype.sendBufferedVars = function () {
+		this.varManager.sendBufferedVars();
+	}
+	
 	WorkSpace.prototype.fillWithLabel = function() {
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
 		if(this.workSpaceNameHTMLElement != null){

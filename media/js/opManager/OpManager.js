@@ -148,6 +148,10 @@ var OpManagerFactory = function () {
 			LogManagerFactory.getInstance().show();
 		}
 		
+		OpManager.prototype.sendBufferedVars = function () {
+			this.activeWorkSpace.sendBufferedVars();
+		}
+		
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
 			if(this.activeWorkSpace != null){
 				this.activeWorkSpace.unload();

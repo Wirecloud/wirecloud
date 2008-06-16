@@ -38,6 +38,8 @@
 
 function VarManager (_workSpace) {
 	
+	VarManager.prototype.MAX_BUFFERED_REQUESTS = 10 
+	
 	// ****************
 	// PUBLIC METHODS 
 	// ****************
@@ -66,6 +68,43 @@ function VarManager (_workSpace) {
 		for (var i = 0; i<ws_vars.length; i++) {
 			this.parseWorkspaceVariable(ws_vars[i]);
 		}		
+	}
+	
+	VarManager.prototype.sendBufferedVars = function () {
+		// Asynchronous handlers 
+		function onSuccess(transport) {
+			//varManager.resetModifiedVariables(); Race Condition
+		}
+
+		function onError(transport, e) {
+			var msg;
+			if (e) {
+				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+				                  true);
+			} else {
+				msg = transport.status + " " + transport.statusText;
+			}
+			msg = interpolate(gettext("Error saving variables to persistence: %(errorMsg)s."),
+			                          {errorMsg: msg}, true);
+			LogManagerFactory.getInstance().log(msg);
+		}
+		
+		// Max lenght of buffered requests have been reached. Uploading to server!
+		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
+						
+			var variables = {};
+			
+			variables['igadgetVars'] = this.igadgetModifiedVars;
+			variables['workspaceVars'] = this.workspaceModifiedVars;
+			
+			var param = {variables: Object.toJSON(variables)};
+			
+			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
+
+			PersistenceEngineFactory.getInstance().send_update(uri, param, this, onSuccess, onError);
+			this.resetModifiedVariables();
+		}
 	}
 	
 	VarManager.prototype.parseWorkspaceVariable = function (ws_var) {
@@ -174,40 +213,14 @@ function VarManager (_workSpace) {
 		delete this;
 	}
 
-	VarManager.prototype.commitModifiedVariables = function() {
-		// Asynchronous handlers 
-		function onSuccess(transport) {
-			//varManager.resetModifiedVariables(); Race Condition
+	VarManager.prototype.commitModifiedVariables = function() {		
+		//If it have not been buffered all the requests, it's not time to send a PUT request
+		if (this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
+			this.buffered_requests++;
+			return
 		}
 
-		function onError(transport, e) {
-			var msg;
-			if (e) {
-				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-				                  true);
-			} else {
-				msg = transport.status + " " + transport.statusText;
-			}
-			msg = interpolate(gettext("Error saving variables to persistence: %(errorMsg)s."),
-			                          {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-		}
-
-		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
-						
-			var variables = {};
-			
-			variables['igadgetVars'] = this.igadgetModifiedVars;
-			variables['workspaceVars'] = this.workspaceModifiedVars;
-			
-			var param = {variables: Object.toJSON(variables)};
-			
-			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
-
-			PersistenceEngineFactory.getInstance().send_update(uri, param, this, onSuccess, onError);
-			this.resetModifiedVariables();
-		}
+		this.sendBufferedVars();
 	}
 
 	VarManager.prototype.createWorkspaceVariable = function(name) {
@@ -297,6 +310,7 @@ function VarManager (_workSpace) {
 
 	VarManager.prototype.resetModifiedVariables = function () {
 	    this.nestingLevel = 0;
+	    this.buffered_requests = 0;
 	    this.igadgetModifiedVars = [];
 	    this.workspaceModifiedVars = [];
 	}
@@ -332,6 +346,8 @@ function VarManager (_workSpace) {
 	this.workspaceModifiedVars = []
 	
 	this.nestingLevel = 0;
+	
+	this.buffered_requests = 0;
 	
 	// Creation of ALL EzWeb variables regarding one workspace
 	this.parseVariables(this.workSpace.workSpaceGlobalInfo);
