@@ -206,13 +206,13 @@ function WorkSpace (workSpaceState) {
 		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
 					e.target.blur();}}.bind(this));						
 		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){Event.stop(e);
-					this.updateInfo(e.target.value, null);}.bind(this));
+					this.updateInfo(e.target.value);}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){Event.stop(e);
 					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
 	}
 	
 	
-    WorkSpace.prototype.updateInfo = function (workSpaceName, active) {
+    WorkSpace.prototype.updateInfo = function (workSpaceName) {
 		//If the server isn't working the changes will not be saved
 		if(workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
 			var msg = interpolate(gettext("Error updating a workspace: invalid name"), true);
@@ -223,8 +223,6 @@ function WorkSpace (workSpaceState) {
 			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
 			var o = new Object;
 			o.name = workSpaceName;
-			if (active !=null)
-				o.active = active
 			var workSpaceData = Object.toJSON(o);
 			var params = {'workspace': workSpaceData};
 			PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
@@ -505,6 +503,9 @@ Cover(); this._lockFunc(false);}.bind(this), optionPosition++);
 		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
 		var res = this._checkLock();
 		optionPosition -= res;
+		if (this.workSpaceGlobalInfo.workspace.active != "true") {
+			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", gettext("Mark as Active"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),1);
+		}
 		this.menu.addOption("/ezweb/images/remove.png",gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		this.menu.addOption("/ezweb/images/list-add.png",gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
@@ -552,6 +553,36 @@ Cover(); this._lockFunc(false);}.bind(this), optionPosition++);
 			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
 		}
 		return numRemoved;
+	}.bind(this);
+	
+	this.markAsActive = function (){
+		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+		var o = new Object;
+		o.active = "true"
+		var workSpaceData = Object.toJSON(o);
+		var params = {'workspace': workSpaceData};
+		PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, this.markAsActiveSuccess, this.markAsActiveError);
+	}.bind(this);
+	
+	this.markAsActiveSuccess = function() {
+		this.workSpaceGlobalInfo.workspace.active = "true";
+		this.workSpaceState.active = "true";
+		if(this.activeEntryId!=null){
+			this.menu.removeOption(this.activeEntryId);
+			this.activeEntryId = null;
+		}
+	}.bind(this);
+	
+	this.markAsActiveError = function(transport, e){
+		var msg;
+		if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
+		} else {
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+
+		msg = interpolate(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
 	}.bind(this);
 	
 	this._allIgadgetsLoaded = function() {

@@ -92,11 +92,14 @@ def createTab (tab_name, user,  workspace):
     connectable = Out(name=connectableName, abstract_variable=abstractVariable)
     connectable.save()
     
-    # Creating tab
-    tab = Tab (name=tab_name, visible=False, workspace=workspace, abstract_variable=abstractVariable)
-    tab.save()
+    visible = False
+    tabs = Tab.objects.filter(workspace=workspace, visible=True)
+    if tabs.count()==0:
+        visible = True
     
-    setVisibleTab(user, workspace.pk, tab)
+    # Creating tab
+    tab = Tab (name=tab_name, visible=visible, workspace=workspace, abstract_variable=abstractVariable)
+    tab.save()
     
     # Returning created Ids
     ids = {}
@@ -119,12 +122,15 @@ def setVisibleTab(user, workspace_id, tab):
     tab.save()
    
 def createWorkSpace (workSpaceName, user):
+    active = False
+    workspaces = WorkSpace.objects.filter(user=user, active=True)
+    if workspaces.count()==0:
+        active = True
+        
     #Workspace creation
-    workspace = WorkSpace(name=workSpaceName, active=False, user=user)
+    workspace = WorkSpace(name=workSpaceName, active=active, user=user)
     workspace.save()
-    
-    setActiveWorkspace(user, workspace)
-    
+   
     #Tab creation
     tab_ids = createTab ('MyTab', user, workspace)
     

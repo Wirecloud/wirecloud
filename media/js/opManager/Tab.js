@@ -85,7 +85,7 @@ function Tab (tabInfo, workSpace) {
 		delete this;
 	}
 	
-	Tab.prototype.updateInfo = function (tabName, visible){
+	Tab.prototype.updateInfo = function (tabName){
 
 		//If the server isn't working the changes will not be saved
 		if(tabName=="" || tabName.match(/^\s$/)){//empty name
@@ -96,8 +96,6 @@ function Tab (tabInfo, workSpace) {
 			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
 			var o = new Object;
 			o.name = tabName;
-			if (visible !=null)
-				o.visible = visible
 			var tabData = Object.toJSON(o);
 			var params = {'tab': tabData};
 			PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
@@ -135,7 +133,7 @@ function Tab (tabInfo, workSpace) {
 		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
 					e.target.blur();}}.bind(this));					
 		Event.observe(this.tabNameHTMLElement, 'change', function(e){Event.stop(e);
-					this.updateInfo(e.target.value, null);}.bind(this));
+					this.updateInfo(e.target.value);}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){Event.stop(e);
 					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.					
@@ -143,7 +141,6 @@ function Tab (tabInfo, workSpace) {
 	
 	Tab.prototype.unmark = function () {
 		//this.hideDragboard();
-		this.visible=false;
 		LayoutManagerFactory.getInstance().unmarkTab(this.tabHTMLElement, this.tabOpsLauncher, this.changeTabHandler, this.renameTabHandler);
 
 	}
@@ -157,7 +154,6 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	Tab.prototype.markAsCurrent = function (){
-	    this.visible=true;
 		LayoutManagerFactory.getInstance().markTab(this.tabHTMLElement, this.tabOpsLauncher, this.renameTabHandler, this.changeTabHandler);
 	}
 	
@@ -248,5 +244,70 @@ function Tab (tabInfo, workSpace) {
 	} else {
 		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
 	}
+	
+	this.markAsVisibleSuccess = function() {
+		var tabIds = this.workSpace.tabInstances.keys();
+		for(var i = 0; i < tabIds.length; i++){
+			var tab = this.workSpace.tabInstances[tabIds[i]];
+			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
+				tab.firstVisible = false;
+				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", gettext("First Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
+			}
+		}
+		this.firstVisible = true;
+		if(this.visibleEntryId!=null){
+			this.menu.removeOption(this.visibleEntryId);
+			this.visibleEntryId = null;
+		}
+	}.bind(this);
+	
+	this.markAsVisible = function (){
+		var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
+		var o = new Object;
+		o.visible = "true";
+		var tabData = Object.toJSON(o);
+		var params = {'tab': tabData};
+		PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, this.markAsVisibleSuccess, this.markAsVisibleError);
+	}.bind(this);
+	
+	this.markAsVisibleSuccess = function() {
+		var tabIds = this.workSpace.tabInstances.keys();
+		for(var i = 0; i < tabIds.length; i++){
+			var tab = this.workSpace.tabInstances[tabIds[i]];
+			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
+				tab.addMarkAsVisible();	
+			}
+		}
+		this.firstVisible = true;
+		if(this.visibleEntryId!=null){
+			this.menu.removeOption(this.visibleEntryId);
+			this.visibleEntryId = null;
+		}
+	}.bind(this);
+	
+	this.markAsVisibleError = function(transport, e){
+		var msg;
+		if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
+		} else {
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+
+		msg = interpolate(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+	}.bind(this);
+	
+	this.addMarkAsVisible = function (){
+		this.firstVisible = false;
+		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", gettext("Mark as Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
+	}.bind(this);
+	
+	if (this.tabInfo.visible != "true") {
+		this.addMarkAsVisible();
+	} else {
+		this.firstVisible = true;
+		this.visibleEntryId = null;
+	}
+	
 	this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');},2);
 }
