@@ -52,7 +52,7 @@ from commons.resource import Resource
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
-from catalogue.models import GadgetResource, GadgetWiring, UserTag, UserVote
+from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, UserVote
 from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
@@ -61,7 +61,6 @@ from commons.exceptions import TemplateParseException
 from commons.logs import log
 from commons.utils import get_xml_error
 from commons.http_utils import PUT_parameter
-
 
 class GadgetsCollection(Resource):
 
@@ -113,11 +112,11 @@ class GadgetsCollection(Resource):
         a= int(pag)
         b= int(offset)
 
-        items = GadgetResource.objects.count()
+        items = get_resources_that_must_be_shown(user=user).count()
 
         # Get all the gadgets in the catalogue
         if a == 0 or b == 0:
-            gadgetlist = GadgetResource.objects.order_by(orderby)
+            gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)
         # Get the requested gadgets
         else:
             c=((a-1)*b)
@@ -125,17 +124,67 @@ class GadgetsCollection(Resource):
 
             if a==1:
                 c=0
-            gadgetlist = GadgetResource.objects.order_by(orderby)[c:d]
+            gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)[c:d]
 
         return get_resource_response(gadgetlist, format, items, user)
 
 
-    def delete(self, request, user_name, vendor, name, version):
+    def delete(self, request, user_name, vendor, name, version=None):
 
         user = user_authentication(request, user_name)
+        
+        if version != None:
+            #Delete only the specified version of the gadget 
+            resource=get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
+            deleteOneGadget(resource, user)
+        else:
+            #Delete all versions of the gadget
+            resources=get_list_or_404(GadgetResource, short_name=name,vendor=vendor)
+            for resource in resources:
+                deleteOneGadget(resource, user)
+        
+        xml_ok = '<ResponseOK>OK</ResponseOK>'
+        return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
+    
+    def update(self, request, user_name, vendor, name, version):
+        user = user_authentication(request, user_name)
+        
+        # Get the gadget data from the request
+        preferred = PUT_parameter(request, 'preferred')
+        
+        if preferred != None:
+            # Set all version of this gadget as no preferred 
+            old_preferred_versions = UserRelatedToGadgetResource.objects.filter( 
+                gadget__vendor=vendor, gadget__short_name=name, user=user, preferred_by=True)
+            for old_version in old_preferred_versions:
+                old_version.preferred_by = False
+                old_version.save()
+            
+            new_preferred_versions = UserRelatedToGadgetResource.objects.filter(gadget__vendor=vendor, gadget__short_name=name, gadget__version=version, user=user)
+            
+            userRelated = None
+            if len(new_preferred_versions) == 0:
+                resource = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
+                userRelated = UserRelatedToGadgetResource ()
+                userRelated.gadget = resource;
+                userRelated.user = user
+                userRelated.added_by = False
+            else:
+                userRelated = new_preferred_versions[0]
+            
+            userRelated.preferred_by = True
+            userRelated.save()
+            
+            xml_ok = '<ResponseOK>OK</ResponseOK>'
+            return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
 
-        resource=get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
 
+def deleteOneGadget(resource, user):
+    try:
+        # Delete the gadget only if this user is the owner
+        userReleted = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
+        # Delete the related user information to that gadget
+        userReleted.delete()
         # Delete the related wiring information for that gadget
         GadgetWiring.objects.filter(idResource=resource.id).delete()
         # Delete the related tags for that gadget
@@ -144,9 +193,9 @@ class GadgetsCollection(Resource):
         UserVote.objects.filter(idResource=resource.id).delete()
         # Delete the object
         resource.delete()
-
-        xml_ok = '<ResponseOK>OK</ResponseOK>'
-        return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
+    except UserRelatedToGadgetResource.DoesNotExist:
+        #Do nothing, the user is not the owner
+        pass
 
 
 class GadgetsCollectionByGenericSearch(Resource):
@@ -173,13 +222,13 @@ class GadgetsCollectionByGenericSearch(Resource):
         fields = 0
 
         if (and_criteria != "_"):
-            andlist = get_and_list(and_criteria)
+            andlist = get_and_list(and_criteria, user)
             fields = fields+1
         if (or_criteria != "_"):
-            orlist = get_or_list(or_criteria)
+            orlist = get_or_list(or_criteria, user)
             fields = fields+1
         if (not_criteria != "_"):
-            notlist = get_not_list(not_criteria)
+            notlist = get_not_list(not_criteria, user)
             fields = fields+1
 
         gadgetlist = andlist+orlist+notlist
@@ -213,27 +262,27 @@ class GadgetsCollectionByCriteria(Resource):
             #get all the gadgets that match any of the given events
             criteria_value = criteria_value.split()
             for e in criteria_value:
-                gadgetlist += GadgetResource.objects.filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
 
         elif criteria == 'slot':
             #get all the gadgets that match any of the given slots
             criteria_value = criteria_value.split()
             for e in criteria_value:
-                gadgetlist += GadgetResource.objects.filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
 
         elif criteria == 'tag':
             #get all the gadgets that match any of the given tags
             criteria_value = criteria_value.split()
             for e in criteria_value:
-                gadgetlist += GadgetResource.objects.filter(usertag__tag__icontains = e)
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
 
         elif criteria == 'connectSlot':
             #get all the gadgets compatible with the given event
-            gadgetlist = GadgetResource.objects.filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'out'))
+            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'out'))
 
         elif criteria == 'connectEvent':
             #get all the gadgets compatible with the given slot
-            gadgetlist = GadgetResource.objects.filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'in'))
+            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'in'))
 
         gadgetlist = get_uniquelist(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)

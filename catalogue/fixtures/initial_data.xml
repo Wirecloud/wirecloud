@@ -799,11 +799,100 @@
         <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
     </object>
+	<object pk="7" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">7</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="6" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">6</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="1" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">1</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="3" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">3</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="5" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">5</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="4" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">4</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="13" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">13</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="16" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">16</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="11" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">11</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="8" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">8</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="10" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">10</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="12" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">12</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="2" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">2</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="9" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">9</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+	<object pk="14" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">14</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
     <object pk="14" model="catalogue.gadgetresource">
         <field type="CharField" name="short_name">RSSReader</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">2.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">2</field>
         <field type="CharField" name="author">jlopez</field>
         <field type="CharField" name="mail">jlopez@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget muestra un feed RSS 2.0</field>
@@ -820,7 +909,6 @@
         <field type="CharField" name="short_name">Visor Datos de Usuario</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
@@ -837,7 +925,6 @@
         <field type="CharField" name="short_name">YouTube Video Search</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.4</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field type="CharField" name="description">buscador de videos youtube y selector de peliculas</field>
@@ -854,7 +941,6 @@
         <field type="CharField" name="short_name">Localizame</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.3</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">pjm</field>
         <field type="CharField" name="mail">pjm@tid.es</field>
         <field type="CharField" name="description">'Lozalizame' service from Telefonica Movistar</field>
@@ -871,7 +957,6 @@
         <field type="CharField" name="short_name">Map Viewer</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.2</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">fabio</field>
         <field type="CharField" name="mail">fabio@tid.es</field>
         <field type="CharField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
@@ -888,7 +973,6 @@
         <field type="CharField" name="short_name">Visor Datos de Equipo</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
@@ -905,7 +989,6 @@
         <field type="CharField" name="short_name">SMS Sender</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.3</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">pjm</field>
         <field type="CharField" name="mail">pjm@tid.es</field>
         <field type="CharField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
@@ -922,7 +1005,6 @@
         <field type="CharField" name="short_name">Notepad</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field type="CharField" name="description">Este gadget permite anadir una nota personal</field>
@@ -939,7 +1021,6 @@
         <field type="CharField" name="short_name">Bandeja de Averias</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
@@ -956,7 +1037,6 @@
         <field type="CharField" name="short_name">Configuracion de Red</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
@@ -973,7 +1053,6 @@
         <field type="CharField" name="short_name">YouTube Video Player</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.3</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field type="CharField" name="description">Reproductor de videos de Youtube</field>
@@ -990,7 +1069,6 @@
         <field type="CharField" name="short_name">Amazon</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field type="CharField" name="description">Busqueda de productos en Amazon</field>
@@ -1007,7 +1085,6 @@
         <field type="CharField" name="short_name">Yahoo Trip Search</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.1</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field type="CharField" name="description">buscador de planes de viajes de yahoo</field>
@@ -1024,7 +1101,6 @@
         <field type="CharField" name="short_name">Visor Imágenes</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
@@ -1041,7 +1117,6 @@
         <field type="CharField" name="short_name">Flickr</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">2.0</field>
-        <field to="auth.user" name="added_by_user" rel="ManyToOneRel">1</field>
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>

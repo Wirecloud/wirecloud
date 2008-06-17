@@ -791,6 +791,27 @@
 	padding-bottom:5px;	
 }
 
+
+#catalogue .center .info_resource .content .versions
+{
+	margin-top:15px;
+	display:block;
+	font-size:12px;
+	width:100%;
+}
+
+#catalogue .center .info_resource .content .versions .version_panel
+{
+	border:1px solid #bbbbbb;
+	margin-top:3px;
+	overflow:auto;
+	padding:5px;
+	background-color:#ddeeff;
+	height:auto;
+	min-height:1em;
+	max-height:6em;
+}
+
 #catalogue .center .info_resource .content .tagcloud
 {
 	margin-top:15px;

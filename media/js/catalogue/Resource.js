@@ -11,6 +11,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getVendor = function() { return state.getVendor(); }
 	this.getName = function() { return state.getName(); }
 	this.getVersion = function() { return state.getVersion(); }
+	this.getAllVersions = function() { return state.getAllVersions(); }
 	this.getDescription = function() { return state.getDescription(); }
 	this.getUriImage = function() { return state.getUriImage(); }
 	this.getUriTemplate = function() { return state.getUriTemplate(); }
@@ -30,6 +31,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getVotes = function() {return state.getVotes();}
 	this.getUserVote = function() {return state.getUserVote();}
 	this.getPopularity = function() {return state.getPopularity();}
+	this.getSelectedVersion = function() {return versionSelected;}
+	this.setSelectedVersion = function(version_) {versionSelected = version_;}
 	
 	this.paint = function(){
 		var newResource = UIUtils.createHTMLElement("div", $H({
@@ -99,7 +102,9 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				title: gettext('Delete gadget')
 			}));
 			deleteResource.observe("click", function(event){
-				UIUtils.deleteGadget(id_);
+				UIUtils.selectedResource = id;
+				UIUtils.selectedVersion = null;
+				LayoutManagerFactory.getInstance().showWindowMenu('deleteAllResourceVersions');
 			});
 			content_toolbar.appendChild(deleteResource);
 			var delete_img = UIUtils.createHTMLElement("img", $H({
@@ -325,9 +330,32 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Slots') + ': '
 		})));
 		_slots(slots);
+		var versions = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'versions'
+		}));
+		fieldset.appendChild(versions);
+		versions.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('Selected version') + ': '
+		})));
+		var change_version_link = UIUtils.createHTMLElement("a", $H({
+			id: 'version_link',
+			class_name: 'submit_link',
+			innerHTML: 'v' + this.getVersion()
+		}));
+		change_version_link.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeVersion();
+		});
+		versions.appendChild(change_version_link);
+		var version_panel = UIUtils.createHTMLElement("div", $H({
+			id: 'version_panel',
+			class_name: 'version_panel',
+			style: 'display:none;'
+		}));
+		versions.appendChild(version_panel);
+		_addVersionsToPanel (version_panel);
 		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'tagcloud'
-		}));
+		}));		
 		fieldset.appendChild(tagcloud);
 		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Tagcloud') + ':'
@@ -579,6 +607,14 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}
 	}
 
+	this.changeVersion = function(){
+		if ($("version_panel").style.display == 'none'){
+			$("version_panel").style.display = 'block';
+		}else{
+			$("version_panel").style.display = 'none'
+		}
+	}
+
 	// *******************
 	//  PRIVATE FUNCTIONS
 	// *******************
@@ -608,7 +644,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		
 		for (var i=0; i<((tagsNumber_<tagsAux.length)?tagsNumber_:tagsAux.length); i++)
 		{
-			if (firstTag =_getFirstTagNonRepeat(tagsAux, moreImportantTags)){
+			if (firstTag == _getFirstTagNonRepeat(tagsAux, moreImportantTags)){
 				moreImportantTags[i] = firstTag;
 				for (var j=0; j<tagsAux.length; j++)
 			    {
@@ -653,6 +689,67 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			tag.appendChild(UIUtils.createHTMLElement("span", $H({ 
 				innerHTML: ((i<(eventsAux.length-1))?",":"")
 			})));
+		}
+	}
+	
+	var _addVersionsToPanel = function (parent){
+		
+		var sortByMin = function (a, b){
+			var x = parseFloat(a);
+			var y = parseFloat(b);
+			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+		} 
+		parent.innerHMTL = '';
+		var versions = state.getAllVersions().sort(sortByMin);
+		for (var i=0; i<versions.length; i++){
+			var ver_element = UIUtils.createHTMLElement("span", $H({ 
+			}));
+			parent.appendChild(ver_element);
+			if (versions[i] == state.getVersion()){
+				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
+					innerHTML: 'v' + versions[i]
+				})));					
+			}else{
+				var ver_link = UIUtils.createHTMLElement("a", $H({ 
+					title: gettext('Selet this version as preferred version'),
+					innerHTML: 'v' + versions[i]
+				}));
+				ver_link.observe("click", function(event){
+					UIUtils.selectedVersion = event.currentTarget.innerHTML.substring(1);
+					UIUtils.setPreferredGadgetVersion(UIUtils.selectedVersion);
+				});
+				ver_element.appendChild(ver_link);
+			}
+			if (state.getAddedBy() == 'Yes') {
+				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
+					innerHTML: " "
+				})));
+				var delete_img = UIUtils.createHTMLElement("img", $H({
+					title: gettext('Delete this version of the gadget'),
+					id: "deleteIcon_v" + versions[i],
+					src: '/ezweb/images/cancel_gray.png',
+					style: 'border:none;',
+					name: versions[i]
+				}));
+				delete_img.observe("click", function(event){
+					UIUtils.selectedVersion = event.currentTarget.getAttribute('name')
+					LayoutManagerFactory.getInstance().showWindowMenu('deleteAllResourceVersions');
+				});
+				delete_img.observe("mouseover", function(event){
+					this.src='/ezweb/images/delete.png';
+				});
+				delete_img.observe("mouseout", function(event){
+					this.src='/ezweb/images/cancel_gray.png';
+				});
+				ver_element.appendChild(delete_img);
+				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
+					innerHTML: " "
+				})));
+			}else{
+				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
+					innerHTML: ((i<(versions.length-1))?", ":"")
+				})));
+			}
 		}
 	}
 	
@@ -843,6 +940,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	var state = null;
 	var id = id_;
 	var tagger = new Tagger();
+	var versionSelected = null;
 	
 	if (urlTemplate_ != null) {
 		_createResource(urlTemplate_);
@@ -870,13 +968,15 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	var uriImage = null;
 	var uriWiki = null;
 	var uriTemplate = null;
+	var addedBy = null;
+	var allVersions = [];
 	var tags = [];
 	var slots = [];
 	var events = [];
 	var votes = null;
 	var popularity = null;
 	var userVote = null;
-	
+
 	// ******************
 	//  PUBLIC FUNCTIONS
 	// ******************
@@ -884,6 +984,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getVendor = function() { return vendor; }
 	this.getName = function() { return name; }
 	this.getVersion = function() { return version; }
+	this.getAllVersions = function() { return allVersions; }
 	this.getDescription = function() { return description; }
 	this.getUriImage = function() { return uriImage; }
 	this.getUriTemplate = function() { return uriTemplate; }
@@ -935,10 +1036,11 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	vendor = resourceJSON_.vendor;
 	name = resourceJSON_.name;
 	version = resourceJSON_.version;
+	allVersions = resourceJSON_.versions;
 	description = resourceJSON_.description;
 	uriImage = resourceJSON_.uriImage;
 	uriWiki = resourceJSON_.uriWiki;
-	addedBy = resourceJSON_.added_by;
+	addedBy = resourceJSON_.added_by_user;
 	uriTemplate = resourceJSON_.uriTemplate;
 	this.setEvents(resourceJSON_.events);
 	this.setSlots(resourceJSON_.slots);

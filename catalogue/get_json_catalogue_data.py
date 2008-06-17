@@ -5,8 +5,8 @@
 # 
 # Component: EzWeb
 # 
-# (C) Copyright 2004 Telefónica Investigación y Desarrollo 
-#     S.A.Unipersonal (Telefónica I+D) 
+# (C) Copyright 2004 Telefï¿½nica Investigaciï¿½n y Desarrollo 
+#     S.A.Unipersonal (Telefï¿½nica I+D) 
 # 
 # Info about members and contributors of the MORFEO project 
 # is available at: 
@@ -37,7 +37,7 @@
 #
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote
 
 
 # This function gets the vote for a given user and gadget. 
@@ -114,7 +114,30 @@ def get_slot_data (gadget_id):
         all_slots.append(slot_data)
     return all_slots
 
+# This function gets data associated with the relationship between user and gadget
 
+def get_related_user_data(gadget_id, user_id):
+    data_ret = {}
+    
+    try:
+        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)
+        
+        if len(user_related_data_list) == 0:
+            data_ret['added_by_user'] = 'No'
+            return data_ret
+        
+        user_related_data = user_related_data_list[0]
+        if user_related_data.added_by:
+            data_ret['added_by_user'] = 'Yes'
+        else:
+            data_ret['added_by_user'] = 'No'
+    
+    except UserRelatedToGadgetResource.DoesNotExist:
+        data_ret['added_by_user'] = 'No'
+        
+    return data_ret
+    
+    
 # This function gets all the information related to the given gadget.
 
 def get_gadgetresource_data(data, user):
@@ -129,12 +152,13 @@ def get_gadgetresource_data(data, user):
     data_ret['uriImage'] = data_fields['image_uri']
     data_ret['uriWiki'] = data_fields['wiki_page_uri']
     data_ret['uriTemplate'] = data_fields['template_uri']
-    
-    if data_fields['added_by_user'] == user.id:
-        data_ret['added_by'] = 'Yes'
-    else:
-        data_ret['added_by'] = 'No'
 
+    user_related_data = get_related_user_data (gadget_id=data['pk'], user_id=user.id)
+    data_ret['added_by_user'] = user_related_data['added_by_user'] 
+
+    versions_data = GadgetResource.objects.filter(vendor=data_fields['vendor'], short_name=data_fields['short_name']).values('version')
+    data_ret['versions'] = ["%s" % (v['version']) for v in versions_data]    
+    
     data_tags = get_tag_data(gadget_id=data['pk'], user_id=user.id)
     data_ret['tags'] = [d for d in data_tags]
 

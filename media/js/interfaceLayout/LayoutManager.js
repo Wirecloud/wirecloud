@@ -309,6 +309,19 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();});
 				this.currentMenu.show();
 				break;					
+			case 'deleteAllResourceVersions':
+				if(!this.menus['alertMenu']){
+					this.menus['alertMenu'] = new AlertWindowMenu(null);
+				}				
+				this.currentMenu = this.menus['alertMenu'];
+				if (UIUtils.selectedVersion != null){
+					this.currentMenu.setMsg(gettext('Do you really want to remove this version of the gadget?'));
+				}else{
+					this.currentMenu.setMsg(gettext('WARNING! All versions of this gadget will be removed too! Do you really want to remove this gadget?'));
+				}
+				this.currentMenu.setHandler(function(){UIUtils.deleteGadget(UIUtils.selectedResource);});
+				this.currentMenu.show();
+				break;
 			default:
 				break;
 			}

@@ -55,31 +55,28 @@ def get_xml_description(gadgetlist, user):
         xml_event = get_events_by_resource(e.id)
         xml_slot = get_slots_by_resource(e.id)
         xml_vote = get_vote_by_resource(e, user)
+        xml_user_data = get_related_user_by_resource(e.id, user)
 
         if e.added_by_user_id == user.id:
             added_by_user='Yes'
         else:
             added_by_user='No'
 
-        xml_resource += "".join(['<resource>\n',
-            '<vendor>'+str(e.vendor)+'</vendor>\n',
-            '<name>'+str(e.short_name)+'</name>\n',
-            '<version>'+str(e.version)+'</version>\n',
-            '<Author>'+str(e.author)+'</Author>\n',
-            '<Mail>'+str(e.mail)+'</Mail>\n',
-            '<description>'+str(e.description)+'</description>\n',
-            '<uriImage>'+str(e.image_uri)+'</uriImage>\n',
-            '<uriWiki>'+str(e.wiki_page_uri)+'</uriWiki>\n',
-            '<uriTemplate>'+str(e.template_uri)+'</uriTemplate>\n',
-            '<Added_by_User>'+added_by_user+'</Added_by_User>\n',
-            xml_tag+'\n',
-            xml_event+'\n',
-            xml_slot+'\n',
-            xml_vote+'\n',
+        xml_resource += "\n".join(['<resource>',
+            '<vendor>%s</vendor>' % str(e.vendor),
+            '<name>%s</name>' % str(e.short_name),
+            '<version>%s</version>' % str(e.version),
+            '<Author>%s</Author>' % str(e.author),
+            '<Mail>%s</Mail>' % str(e.mail),
+            '<description>%s</description>' % str(e.description),
+            '<uriImage>%s</uriImage>' % str(e.image_uri),
+            '<uriWiki>%s</uriWiki>' % str(e.wiki_page_uri),
+            '<uriTemplate>%s</uriTemplate>' % str(e.template_uri),
+            xml_user_data, xml_tag, xml_event, xml_slot, xml_vote, 
             '</resource>'])
 
-    response = "".join(['<?xml version="1.0" encoding="UTF-8" ?>\n',
-        '<resources>'+xml_resource+'</resources>'])
+    response = "\n".join(['<?xml version="1.0" encoding="UTF-8" ?>',
+        '<resources>%s</resources>' % xml_resource])
     return response
 
 
@@ -103,6 +100,33 @@ def get_slots_by_resource(gadget_id):
 
     response='<Slots>'+xml_slot+'</Slots>'
     return response
+
+def get_related_user_by_resource(gadget_id, user):
+    
+    added_by_user = ''
+    preferred_by_user = ''
+    
+    try:
+        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)[0]
+        
+        if len(user_related_data_list) == 0:
+            data_ret['added_by_user'] = 'No'
+            return data_ret
+        
+        user_related_data = user_related_data_list[0]
+        if user_related_to_data.added_by:
+            added_by_user = 'Yes'
+        else:
+            added_by_user = 'No'
+            
+    except UserRelatedToGadgetResource.DoesNotExist:
+        added_by_user = 'No'
+        
+    return "<Added_by_User>%s</Added_by_User>" % added_by_user
+
+def get_all_versions(gadget_id, user_id):
+    versions_data = GadgetResource.objects.filter(vendor=vendor, short_name=name).values('version')
+    return '\n'.join(["<version>%s</version>" % v['version'] for v in versions_data])
 
 
 def get_tags_by_resource(gadget_id, user_id):

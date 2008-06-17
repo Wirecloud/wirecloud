@@ -77,7 +77,6 @@ var CatalogueFactory  = function () {
 		
 	 	this.emptyResourceList = function() {
 			$("resources").innerHTML="";
-			//$("info_resource_content").innerHTML="";
 			_this.clearSelectedResources();
 			resources = $H();
 		}	
@@ -89,6 +88,10 @@ var CatalogueFactory  = function () {
 		this.getResource = function(id_) {
 			return resources[id_];
 		}
+		
+		this.getVersionManager = function(id_) {
+			return verManager;
+		}
 
 		this.addSelectedResource = function(id_) {
 			if(!_this.isSelectedResource(id_)) {
@@ -98,10 +101,10 @@ var CatalogueFactory  = function () {
 
 		this.isSelectedResource = function(id_) {
 			for (var i=0; i<selectedResources.length; i++){
-					if (selectedResources[i] == id_) {
-						return true;
-					}
+				if (selectedResources[i] == id_) {
+					return true;
 				}
+			}
 			return false;
 		}
 
@@ -130,7 +133,8 @@ var CatalogueFactory  = function () {
 		}
 
 		this.addResource = function(resourceJSON_, urlTemplate_) { 
-			resources["resource_" + resources.keys().length] = new Resource("resource_" + resources.keys().length, resourceJSON_, urlTemplate_); 
+			var resourceKey = "resource_" + resources.keys().length;
+			resources[resourceKey] = new Resource(resourceKey, resourceJSON_, urlTemplate_);
 		}
 
 		this.addResourceToShowCase = function(resourceId_) {

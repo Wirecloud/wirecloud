@@ -431,6 +431,7 @@ def get_concept_data(data, concept_values):
     
     return data_ret
 
+# Only for extenal context values (no igadget context values)
 def get_concept_value(concept_name, values):
     res = ''    
 

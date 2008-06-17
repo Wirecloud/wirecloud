@@ -44,7 +44,7 @@ from commons.utils import json_encode
 from commons.utils import get_xml_error
 from catalogue.get_json_catalogue_data import get_gadgetresource_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
-from catalogue.models import GadgetResource, UserTag
+from catalogue.models import GadgetResource, UserTag, UserRelatedToGadgetResource
 
 from django.utils.translation import ugettext as _
 
@@ -90,7 +90,7 @@ def get_paginatedlist(gadgetlist, pag, offset):
     return gadgetlist
 
 # This function returns a list of gadgets that match all the criteria in the list passed as parameter.
-def get_and_list(criterialist):
+def get_and_list(criterialist, user):
     #List of the gadgets that match the criteria in the database table GadgetResource
     gadgetlist = []
     #List of the gadgets that match the criteria in the database table UserTag
@@ -102,8 +102,8 @@ def get_and_list(criterialist):
     # This loop gets a result list of the gadgets that match any of the criteria
     for e in criterialist:
         # Get a list of elements that match the given criteria
-        gadgetlist = GadgetResource.objects.filter(Q(short_name__icontains = e) | Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
-        taglist = GadgetResource.objects.filter(usertag__tag__icontains = e)
+        gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) | Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
+        taglist = get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
         if taglist:
             gadgetlist = gadgetlist | taglist
         gadgetlist = get_uniquelist(gadgetlist)
@@ -118,7 +118,7 @@ def get_and_list(criterialist):
     return gadgetlist
 
 # This function returns a list of gadgets that match any of the criteria in the list passed as parameter.
-def get_or_list(criterialist):
+def get_or_list(criterialist, user):
 
     gadgetlist = []
     taglist = []
@@ -126,14 +126,14 @@ def get_or_list(criterialist):
 
     for e in criterialist:
         # Get a list of elements that match the given value
-        gadgetlist += GadgetResource.objects.filter(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
-        taglist += GadgetResource.objects.filter(usertag__tag__icontains = e)
+        gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
+        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
     gadgetlist += taglist
     gadgetlist = get_uniquelist(gadgetlist)
     return gadgetlist
 
 # This function returns a list of gadgets that don't match any of the criteria in the list passed as parameter.
-def get_not_list(criterialist):
+def get_not_list(criterialist, user):
 
     gadgetlist = []
     taglist = []
@@ -143,12 +143,12 @@ def get_not_list(criterialist):
     for e in criterialist:
         # Get the list of elements that don't match the given criteria in the GadgetResource table
         if is_first_element:
-            gadgetlist = GadgetResource.objects.exclude(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
+            gadgetlist = get_resources_that_must_be_shown(user=user).exclude(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
             is_first_element = False
         else:
             gadgetlist = gadgetlist.exclude(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
         #Get the list of gadgets that match any of the criteria in the UserTag database table
-        taglist += GadgetResource.objects.filter(usertag__tag__icontains = e)
+        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
     gadgetlist = list(gadgetlist)
     # Remove the gadgets in taglist of gadgetlist
     for b in taglist:
@@ -207,3 +207,41 @@ def get_vote_response(gadget, user, format):
         return HttpResponse(response,mimetype='text/xml; charset=UTF-8')
     else:
         return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
+    
+# This function returns all the versions of a specified gadget name (formed by vendor and name)
+def get_all_gadget_versions (vendor, name):
+    versions = GadgetResource.objects.filter(vendor=vendor, short_name=name).values('version')
+    return ["%s" % (v['version']) for v in versions]
+    
+
+# This function obtains all the resources that the catalog must show to the user.
+# "The resources that must be shown" are the preferred version, which was selected by the user, or
+# the latest version of the resource
+def get_resources_that_must_be_shown (user):
+    # Gets the names (without version) of all gadget from catalog
+    gadget_names_without_version = [(gn['vendor'], gn['short_name']) for gn in GadgetResource.objects.values('vendor', 'short_name').distinct()]
+
+    # Gets the gadget with preferred version what were selected by the user
+    preferred_gadgets = GadgetResource.objects.filter(
+            userrelatedtogadgetresource__user=user, 
+            userrelatedtogadgetresource__preferred_by=True
+        ).values('id', 'vendor', 'short_name')
+    
+    # The preferred version of the gadgets will be shown in the catalog
+    shown_gadget_ids = [pg['id'] for pg in preferred_gadgets]
+    
+    # Remove all gadget with preferred version from 'gadget names without version' list 
+    for pref_gadget in preferred_gadgets:
+        gadget_with_preferred_version = (pref_gadget['vendor'], pref_gadget['short_name'])
+        gadget_names_without_version.remove(gadget_with_preferred_version)  
+    
+    # All gadget in 'gadget names without version' list have not preferred version. Latest version is the preferred version by default
+    for gadget_name in gadget_names_without_version:
+        versions_list = get_all_gadget_versions(vendor=gadget_name[0], name=gadget_name[1])
+        gadget_max_version = GadgetResource.objects.get(vendor=gadget_name[0], short_name=gadget_name[1], version=max(versions_list))
+        # Adds the identifier of the latest version of the current gadget to the list of the gadgets that will be displayed in the catalog
+        shown_gadget_ids.append(gadget_max_version.id)
+    
+    # Gets all the gadgets that will appear in the catalog (preferred and latest version)
+    return GadgetResource.objects.extra(where=['id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])    
+    

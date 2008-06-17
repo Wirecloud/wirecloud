@@ -139,7 +139,6 @@ class GadgetEntry(Resource):
         gadget.delete()
         return HttpResponse('ok')
 
-
 class GadgetCodeEntry(Resource):
     def read(self, request, vendor, name, version, user_name=None):
         user = get_user_authentication(request)

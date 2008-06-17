@@ -47,6 +47,7 @@ function UIUtils()
 UIUtils.tagmode = false;
 UIUtils.repaintCatalogue=false;
 UIUtils.selectedResource = null;
+UIUtils.selectedVersion = null;
 UIUtils.balloonResource = null;
 UIUtils.imageBottom = '';
 UIUtils.imageContent = '';
@@ -534,18 +535,26 @@ UIUtils.sendGlobalTags = function() {
 
 UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
-	var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
+	if (UIUtils.selectedVersion == null){
+		// Removes all versions of the gadget
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName();	
+	}else{
+		// Removes only the specified version of the gadget
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + UIUtils.selectedVersion;
+	}
 	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	
 	var onError = function(transport) {
+				LayoutManagerFactory.getInstance().hideCover();
 				var msg = interpolate(gettext("Error deleting the Gadget: %(errorMsg)s."), {errorMsg: transport.status}, true);
 				LogManagerFactory.getInstance().log(msg);
 				// Process
 			}
 			
 	var loadCatalogue = function(transport) {
+				LayoutManagerFactory.getInstance().hideCover();
 				CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 			}
 	PersistenceEngineFactory.getInstance().send_delete(resourceURI, this, loadCatalogue, onError);
@@ -1080,4 +1089,24 @@ UIUtils.createHTMLElement = function(type_, attributes_){
 		});
 	}
 	return newElement;
+}
+
+UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
+
+    var onError = function(transport) {
+		var	msg = interpolate(gettext("Error updating the preferred version: %(errorMsg)s."), {errorMsg: transport.status}, true);
+		LogManagerFactory.getInstance().log(msg);
+    }
+			
+    var onSuccess = function(transport) {
+    	UIUtils.repaintCatalogue=true;
+		UIUtils.sendPendingTags();
+		UIUtils.closeInfoResource();
+		CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+	}
+    
+	var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+	var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + preferredVersion_;
+	var data = {preferred: true};
+    PersistenceEngineFactory.getInstance().send_update(resourceURI, data, this, onSuccess, onError);
 }

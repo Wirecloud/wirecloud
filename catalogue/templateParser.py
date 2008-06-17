@@ -46,7 +46,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from xml.sax import parseString, handler
-from catalogue.models import GadgetWiring, GadgetResource
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource
 
 
 class TemplateParser:
@@ -138,7 +138,6 @@ class TemplateHandler(handler.ContentHandler):
             gadget=GadgetResource()
             gadget.short_name=self._name
             gadget.vendor=self._vendor
-            gadget.added_by_user = self._user
             gadget.version=self._version
             gadget.author=self._author
             gadget.description=self._description
@@ -150,7 +149,14 @@ class TemplateHandler(handler.ContentHandler):
             gadget.popularity = 0.0
 
             gadget.save()
-
+            
+            userRelated = UserRelatedToGadgetResource ()
+            userRelated.gadget = gadget;
+            userRelated.user = self._user
+            userRelated.added_by = True
+            
+            userRelated.save()
+            
             self._gadget_added = True
         elif (self._gadget_added):
             return

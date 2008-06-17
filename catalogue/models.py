@@ -40,14 +40,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-
 class GadgetResource(models.Model):
 
      short_name = models.CharField(_('Name'), max_length=250)
      vendor= models.CharField(_('Vendor'), max_length=250)
      version = models.CharField(_('Version'), max_length=150)
-
-     added_by_user = models.ForeignKey(User)
 
      author = models.CharField(_('Author'), max_length=250)
      mail = models.CharField(_('Mail'), max_length=30)
@@ -65,13 +62,29 @@ class GadgetResource(models.Model):
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
 
      class Meta:
-         unique_together = ("short_name", "vendor","version")
+         unique_together = ("short_name", "vendor", "version")
 
      class Admin:
          pass
 
      def __unicode__(self):
          return self.short_name
+
+class UserRelatedToGadgetResource(models.Model):
+    gadget = models.ForeignKey(GadgetResource)
+    user = models.ForeignKey(User)
+    added_by = models.BooleanField(_('Added by'), null = True)
+    preferred_by = models.BooleanField(_('Preferred by'), null = True)
+    
+    class Meta:
+        unique_together = ("gadget", "user")
+
+    class Admin:
+        pass
+
+    def __unicode__(self):
+        return str(self.added_by) + " " + str(self.preferred_by)
+
 
 class GadgetWiring(models.Model):
 
