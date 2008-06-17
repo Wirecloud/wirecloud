@@ -3212,8 +3212,7 @@ function createSMS(f){
 &lt;/form&gt;
 &lt;!--FONT size="2" &gt;&lt;I&gt;Fields with (*) are mandatory&lt;/I&gt;&lt;/FONT--&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.html</field>
     </object>
 </django-objects>
