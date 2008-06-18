@@ -112,6 +112,13 @@ var LayoutManagerFactory = function () {
 			
 		}
 		
+		LayoutManager.prototype.unloadCurrentView = function () {
+			if (this.currentView) {
+				this.currentView.hide();
+				this.currentView = null;
+			}
+		}
+		
 		LayoutManager.prototype.unMarkGlobalTabs = function () {
 			if (!this.catalogue) {
 				this.catalogueLink = $('catalogue_link');

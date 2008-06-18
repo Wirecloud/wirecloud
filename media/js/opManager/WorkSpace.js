@@ -404,6 +404,14 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype.unload = function(){
+		// First of all, wiring interface structure is managed!
+		// (Changing to another workspace from wiring)
+		this.wiringInterface.unload();
+		delete this.wiringInterface;
+		
+		LayoutManagerFactory.getInstance().unloadCurrentView();
+		
+		// After that, tab info is managed
 		var tabKeys = this.tabInstances.keys();
 		
 		for (var i=0; i<tabKeys.length; i++) {
@@ -412,7 +420,6 @@ function WorkSpace (workSpaceState) {
 		
 		this.wiring.unload();
 		this.contextManager.unload();
-		this.wiringInterface.unload();
 		
 		this.menu.remove();
 	}

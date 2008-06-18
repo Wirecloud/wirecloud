@@ -95,15 +95,17 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     if(this.currentChannel){
 		this.uncheckChannel(this.currentChannel);
     }
+    
     this.saveWiring();
     this.channels.clear();
+    
     Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
     LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
   }
   
   WiringInterface.prototype.unload = function () {
-	    this.channels.clear();
-	    Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
+	    // Saving wiring structure and hiding!
+	    //this.wiringContainer.update();
 	    
 	    delete this;
   }
