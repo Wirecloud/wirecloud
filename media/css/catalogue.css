@@ -812,6 +812,12 @@
 	max-height:6em;
 }
 
+#catalogue .center .info_resource .content .versions .version_title
+{
+	padding-top:5px;
+	padding-bottom:5px;
+}
+
 #catalogue .center .info_resource .content .tagcloud
 {
 	margin-top:15px;

@@ -337,22 +337,40 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		versions.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Selected version') + ': '
 		})));
-		var change_version_link = UIUtils.createHTMLElement("a", $H({
+		versions.appendChild(UIUtils.createHTMLElement("span", $H({
 			id: 'version_link',
-			class_name: 'submit_link',
+			style: 'color:#0000ff;',
 			innerHTML: 'v' + this.getVersion()
-		}));
-		change_version_link.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeVersion();
-		});
-		versions.appendChild(change_version_link);
+		})));
 		var version_panel = UIUtils.createHTMLElement("div", $H({
 			id: 'version_panel',
 			class_name: 'version_panel',
 			style: 'display:none;'
 		}));
 		versions.appendChild(version_panel);
+		var title_versions_div = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'version_title'
+		}));
+		title_versions_div.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('Choose the version you want to view') + ': '
+		})));
+		version_panel.appendChild(title_versions_div);
 		_addVersionsToPanel (version_panel);
+		var show_versions_div = UIUtils.createHTMLElement("div", $H({
+			id: 'view_versions_div',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		fieldset.appendChild(show_versions_div);
+		var show_versions_link = UIUtils.createHTMLElement("a", $H({
+			id: 'view_versions_link',
+			class_name: 'submit_link',
+			innerHTML: gettext('Show all versions')
+		}));
+		show_versions_link.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showVersionPanel();
+		});
+		show_versions_div.appendChild(show_versions_link);
 		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'tagcloud'
 		}));		
@@ -607,11 +625,13 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}
 	}
 
-	this.changeVersion = function(){
+	this.showVersionPanel = function(){
 		if ($("version_panel").style.display == 'none'){
 			$("version_panel").style.display = 'block';
+			$("view_versions_link").innerHTML = gettext('Hide all versions'); 
 		}else{
 			$("version_panel").style.display = 'none'
+			$("view_versions_link").innerHTML = gettext('Show all versions');
 		}
 	}
 
