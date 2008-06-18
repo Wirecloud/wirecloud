@@ -123,7 +123,7 @@ def get_or_list(criterialist, user):
     gadgetlist = []
     taglist = []
     criterialist = criterialist.split()
-
+    print(criterialist)
     for e in criterialist:
         # Get a list of elements that match the given value
         gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
@@ -157,7 +157,7 @@ def get_not_list(criterialist, user):
     gadgetlist = get_uniquelist(gadgetlist)
     return gadgetlist
 
-# This function obtains the all the information related to a gadget encoded in
+# This function obtains all the information related to a gadget encoded in
 # the properly format (json or xml)
 def get_resource_response(gadgetlist, format, items, user):
 
@@ -243,5 +243,5 @@ def get_resources_that_must_be_shown (user):
         shown_gadget_ids.append(gadget_max_version.id)
     
     # Gets all the gadgets that will appear in the catalog (preferred and latest version)
-    return GadgetResource.objects.extra(where=['id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])    
+    return GadgetResource.objects.extra(where=['catalogue_gadgetresource.id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])    
     

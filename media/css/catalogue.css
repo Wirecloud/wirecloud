@@ -136,6 +136,7 @@
 	margin-top:5px;
 	margin-bottom:0px;
 	padding: 3px;
+	position: relative;
 }
 
 #catalogue .message_error .warning {
@@ -152,6 +153,8 @@
 	margin-left:5px;
 	width:13px;
 	cursor:pointer;
+	position: absolute;
+	right: 1%
 }
 
 #catalogue .head .advanced_search {

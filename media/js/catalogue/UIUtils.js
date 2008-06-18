@@ -46,9 +46,9 @@ function UIUtils()
 
 UIUtils.tagmode = false;
 UIUtils.repaintCatalogue=false;
+UIUtils.sendingPendingTags = false;
 UIUtils.selectedResource = null;
 UIUtils.selectedVersion = null;
-UIUtils.balloonResource = null;
 UIUtils.imageBottom = '';
 UIUtils.imageContent = '';
 UIUtils.imageConnectableBottom = '';
@@ -253,10 +253,6 @@ UIUtils.searchByTag = function(url, tag) {
 	UIUtils.closeInfoResource();
 	var opManager = OpManagerFactory.getInstance();
 
-	if (UIUtils.balloonResource)
-	{
-		CatalogueFactory.getInstance().getResource(UIUtils.balloonResource).closeTagcloudBalloon();
-	}
 	tag=UIUtils.filterString(tag);
 	if (tag == ""){
   		$('header_always_error').style.display="block";
@@ -284,10 +280,6 @@ UIUtils.searchByWiring = function(url, value, wiring) {
 		$('header_always_error').style.display="block";
 		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
 	}else{
-		if (UIUtils.balloonResource)
-		{
-			CatalogueFactory.getInstance().getResource(UIUtils.balloonResource).closeTagcloudBalloon();
-		}
 		$('header_always_error').style.display = 'none';
 		UIUtils.setPage(1);
 		UIUtils.search = 'wiring';
@@ -387,10 +379,6 @@ UIUtils.searchGeneric = function(url, param1, param2, param3) {
 	}
 	else{
 		$('header_always_error').style.display = 'none';
-		if (UIUtils.balloonResource)
-		{
-			CatalogueFactory.getInstance().getResource(UIUtils.balloonResource).closeTagcloudBalloon();
-		}
 
 		UIUtils.setPage(1);
 		UIUtils.searchValue = param1+"/"+param2+"/"+param3;
@@ -477,6 +465,7 @@ UIUtils.removeGlobalTagUser = function(tag) {
 }
 
 UIUtils.sendPendingTags = function() {
+  UIUtils.sendingPendingTags = true;
   if (UIUtils.tagmode)
   {
     UIUtils.sendGlobalTags();
@@ -491,6 +480,7 @@ UIUtils.sendPendingTags = function() {
 		}
 	}
   }
+  UIUtils.sendingPendingTags = false;
 }
 
 UIUtils.sendTags = function() {
@@ -999,6 +989,7 @@ UIUtils.getError = function(element, error) {
 	close.observe('click', function(event){
 		$(element.id).style.display = "none";
 	});
+	element.appendChild(close);
 	new Effect.Highlight(element,{duration:0.5, startcolor:'#FF0000', endcolor:'#FFFF00', restorecolor:'#FFFF00'});
 }
 

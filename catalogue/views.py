@@ -305,8 +305,8 @@ class GadgetTagsCollection(Resource):
         
         # Get the xml containing the tags from the request
         tags_xml = request.__getitem__('tags_xml')
+        print(tags_xml)
         tags_xml = tags_xml.encode("utf-8")
-
         # Parse the xml containing the tags
         parser = make_parser()
         handler = TagsXMLHandler()
@@ -367,7 +367,7 @@ class GadgetTagsCollection(Resource):
             format = request.__getitem__('format')
         except:
             format = 'default'
-
+        print(tag)
         userTag = tag.replace('&amp;','&')
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version).id
         tag = get_object_or_404(UserTag, idUser=user, idResource=gadget, tag=userTag)

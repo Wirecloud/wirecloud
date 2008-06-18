@@ -47,17 +47,17 @@ urlpatterns = patterns('catalogue.views',
     (r'^resource$', GadgetsCollection(permitted_methods=('GET', 'POST',))),
 
     # Search Gadgets
-    (r'^search/generic/(?P<and_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<or_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<not_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<pag>\d+)/(?P<offset>\d+)$',
+    (r'^search/generic/(?P<and_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<or_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<not_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<pag>\d+)/(?P<offset>\d+)$',
         GadgetsCollectionByGenericSearch(permitted_methods=('GET',))),
-    (r'^search/generic/(?P<and_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<or_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<not_criteria>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
+    (r'^search/generic/(?P<and_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<or_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<not_criteria>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
         GadgetsCollectionByGenericSearch(permitted_methods=('GET',))),
-    (r'^search/(?P<criteria>\w+)/(?P<criteria_value>[\@_\%_\._\-_\!_\s_\|_\&_\(_\)_\w]+)$',
+    (r'^search/(?P<criteria>\w+)/(?P<criteria_value>[\+\=\$\#\@_\%_\._\-_\!_\s_\|_\&_\(_\)_\w]+)$',
         GadgetsCollectionByCriteria(permitted_methods=('GET',))),
-    (r'^search/(?P<criteria>\w+)/(?P<criteria_value>[\@_\%_\._\-_\!_\s_\|_\&_\(_\)_\w]+)/(?P<pag>\d+)/(?P<offset>\d+)$',
+    (r'^search/(?P<criteria>\w+)/(?P<criteria_value>[\+\=\$\#\@_\%_\._\-_\!_\s_\|_\&_\(_\)_\w]+)/(?P<pag>\d+)/(?P<offset>\d+)$',
         GadgetsCollectionByCriteria(permitted_methods=('GET',))),
 
     # Tags
-    (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<tag>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\;_\(_\)_\w]+)$',
+    (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<tag>[\+\=\$\#\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\;_\(_\)_\w]+)$',
         GadgetTagsCollection(permitted_methods=('DELETE',))),
     (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
         GadgetTagsCollection(permitted_methods=('GET','POST',))),
