@@ -606,6 +606,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		if ((gadget == null) || !(gadget instanceof Gadget))
 			return; // TODO exception
 
+		if (this.isLocked()) {
+			var msg = gettext("The destination tab (%(tabName)s) is locked. Try to unlock it or select an unlocked tab.");
+			msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
+			LayoutManagerFactory.getInstance().showMessageMenu(msg);
+			return;
+		}
+
 		var template = gadget.getTemplate();
 		var width = template.getWidth();
 		var height = template.getHeight();

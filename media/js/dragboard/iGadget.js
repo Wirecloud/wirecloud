@@ -812,11 +812,6 @@ IGadget.prototype.save = function() {
 		LogManagerFactory.getInstance().log(msg);
 	}
 	
-	if(this.dragboard.isLocked()){
-		LayoutManagerFactory.getInstance().showMessageMenu(interpolate(gettext("The destination tab (%(tabName)s) is locked. Try to unlock it or select an unlocked tab."), {'tabName': this.dragboard.tab.tabInfo.name}, true));
-		return;
-	}
-
 	var persistenceEngine = PersistenceEngineFactory.getInstance();
 	var data = new Hash();
 	data['left'] = this.position.x;
