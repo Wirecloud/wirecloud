@@ -660,14 +660,17 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		var tagsHTML = '';
 		var tagsAux = state.getTags();
 		var moreImportantTags = [];
-		var firstTag;
 		
-		for (var i=0; i<((tagsNumber_<tagsAux.length)?tagsNumber_:tagsAux.length); i++)
-		{
-			if (firstTag == _getFirstTagNonRepeat(tagsAux, moreImportantTags)){
+		var tagNumber = tagsNumber_;
+		if(tagNumber>tagsAux.length){
+			tagNumber = tagsAux.length	
+		}
+		
+		for (var i=0; i<tagNumber; i++){
+			var firstTag = _getFirstTagNonRepeat(tagsAux, moreImportantTags);
+			if (firstTag){
 				moreImportantTags[i] = firstTag;
-				for (var j=0; j<tagsAux.length; j++)
-			    {
+				for (var j=0; j<tagsAux.length; j++){
 				    if ((!_containsTag(tagsAux[j], moreImportantTags)) && (moreImportantTags[i].compareTo(tagsAux[j]) < 0)) {
 					    moreImportantTags[i] = tagsAux[j];
 				    }
