@@ -251,7 +251,17 @@ IGadget.prototype.paint = function(where) {
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, true);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
-	
+
+	if (this.errorCount > 0) {
+		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
+		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
+		                   this.errorCount);
+		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
+		LogManagerFactory.getInstance().log(msg);
+		this.errorButtonElement.removeClassName("disabled");
+		this._updateErrorInfo();
+	}
+
 	this.fillWithLabel();
 	
 	this.element.appendChild(this.gadgetMenu);
@@ -680,16 +690,24 @@ IGadget.prototype.toggleMinimizeStatus = function () {
 	this.setMinimizeStatus(!this.minimized);
 }
 
+IGadget.prototype._updateErrorInfo = function () {
+	label = ngettext("%(errorCount)s error", "%(errorCount)s errors", this.errorCount);
+	label = interpolate(label, {errorCount: this.errorCount}, true);
+	this.errorButtonElement.setAttribute("title", label);
+}
+
 /**
  * Increment the error counter of this igadget
  */
 IGadget.prototype.notifyError = function() {
-	if (this.errorCount++ == 0) { // First time
-	    this.errorButtonElement.removeClassName("disabled");
+	this.errorCount++
+	
+	if (this.isVisible()) {
+		if (this.errorCount == 1) { // First time
+			this.errorButtonElement.removeClassName("disabled");
+		}
+		this._updateErrorInfo();
 	}
-	label = ngettext("%(errorCount)s error", "%(errorCount)s errors", this.errorCount);
-	label = interpolate(label, {errorCount: this.errorCount}, true);
-	this.errorButtonElement.setAttribute("title", label);
 }
 
 /**

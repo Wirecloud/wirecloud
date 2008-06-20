@@ -247,6 +247,13 @@ var OpManagerFactory = function () {
 	
 		OpManager.prototype.logIGadgetError = function(iGadgetId, msg, level) {
 			var iGadget = this.activeWorkSpace.getIgadget(iGadgetId);
+			if (iGadget == null) {
+				var msg2 = gettext("Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when it did not exist or it was not loaded yet. This is an error in EzWeb Platform, please notify it.\nError Message: %(errorMsg)s");
+				msg2 = interpolate(msg2, {iGadgetId: iGadgetId, errorMsg: msg}, true);
+				this.logs.log(msg2);
+				return;
+			}
+
 			var gadgetInfo = iGadget.getGadget().getInfoString();
 			msg = msg + "\n" + gadgetInfo;
 
