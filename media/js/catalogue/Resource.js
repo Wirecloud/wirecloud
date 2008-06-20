@@ -661,11 +661,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		var tagsAux = state.getTags();
 		var moreImportantTags = [];
 		
-		var tagNumber = tagsNumber_;
-		if(tagNumber>tagsAux.length){
-			tagNumber = tagsAux.length	
-		}
-		
+		var tagNumber = Math.min(tagsNumber_, tagsAux.length);
 		for (var i=0; i<tagNumber; i++){
 			var firstTag = _getFirstTagNonRepeat(tagsAux, moreImportantTags);
 			if (firstTag){
@@ -679,6 +675,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				break;
 			}
 		}
+		
 		parent.innerHTML='';
 		for (var i=0; i<moreImportantTags.length; i++)
 		{
