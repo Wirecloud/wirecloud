@@ -40,6 +40,7 @@ function Tag(tagJSON_)
 {
 	var state = new StateTag(tagJSON_);
 	
+	this.getIdentifier = function() { return state.getIdentifier(); }
 	this.getValue = function() { return state.getValue(); }
 	this.getAdded_by = function() { return state.getAdded_by(); }
 	this.getAppearances = function() { return state.getAppearances(); }
@@ -87,10 +88,12 @@ function Tag(tagJSON_)
 
 function StateTag(tagJSON_) 
 {
+	var identifier = tagJSON_.id;
     var value = tagJSON_.value;
 	var appearances = tagJSON_.appearances;
 	var added_by = tagJSON_.added_by;
 	
+	this.getIdentifier = function() {return identifier;}
 	this.getValue = function() { return value; }
 	this.getAppearances = function() { return appearances; } 
 	this.getAdded_by = function() { return added_by; }

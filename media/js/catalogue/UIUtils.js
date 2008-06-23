@@ -439,9 +439,17 @@ UIUtils.removeAllGlobalTags = function() {
 UIUtils.removeTagUser = function(tag,id) {	
 	
 	var resource = CatalogueFactory.getInstance().getResource(id);
-
+    var tags = resource.getTags();
+	var tag_id = null;
+	for (var j=0;j<tags.length ; j++)
+	{
+		if (tags[j].getValue()==tag) {
+			tag_id = tags[j].getIdentifier();
+			break;
+		}
+	}
     var tagger = resource.getTagger();
-    var resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion() + "/" + tag;
+    var resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion() + "/" + tag_id;
 	tagger.removeTagUser(URIs.DELETE_TAG, resourceURI,id);		
 }
 
@@ -455,8 +463,9 @@ UIUtils.removeGlobalTagUser = function(tag) {
 		{
 			if (tag == tags[j].getValue())
 			{
+				var tag_id = tags[j].getIdentifier();
 				var tagger = resource.getTagger();
-				var resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion() + "/" + tag;
+				var resourceURI = "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion() + "/" + tag_id;
 				tagger.removeTagUser(URIs.DELETE_TAG, resourceURI,resources[i]);
 				//break;
 			}

@@ -367,10 +367,9 @@ class GadgetTagsCollection(Resource):
             format = request.__getitem__('format')
         except:
             format = 'default'
-        print(tag)
-        userTag = tag.replace('&amp;','&')
+
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version).id
-        tag = get_object_or_404(UserTag, idUser=user, idResource=gadget, tag=userTag)
+        tag = get_object_or_404(UserTag, id=tag)
 
         tag.delete()
 

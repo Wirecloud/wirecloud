@@ -70,6 +70,7 @@ def get_tag_data(gadget_id, user_id):
     tags = UserTag.objects.filter(idResource=gadget_id,idUser=user_id)
     for t in tags:
         tag_data = {}
+        tag_data['id'] = t.id
         tag_data['value'] = t.tag
         tag_data['appearances'] = tags.filter(tag=t.tag).count()
         tag_data['added_by'] = 'Yes'
@@ -83,7 +84,8 @@ def get_tag_data(gadget_id, user_id):
                 is_in_list= True
         if not is_in_list:
             tag_data = {}
-	    tag_data['value'] = t.tag
+            tag_data['id'] = t.id
+            tag_data['value'] = t.tag
             tag_data['appearances'] = tags.filter(tag=t.tag).count()
             tag_data['added_by'] = 'No'
             all_tags.append(tag_data)
