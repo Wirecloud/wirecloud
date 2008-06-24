@@ -35,8 +35,13 @@
 # 
 #   http://morfeo-project.org/
 
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, QueryDict
+import sys
+import traceback
 
+from commons.logs import log
+from commons.utils import get_xml_error
+
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, QueryDict
 from django.utils import datastructures
 
 class HttpMethodNotAllowed(Exception):
@@ -62,6 +67,16 @@ class Resource:
             response = HttpResponseNotAllowed(self.permitted_methods)
             response.mimetype = self.mimetype
             return response
+        except:
+            exc_info = sys.exc_info()
+            msg_array = traceback.format_exception(exc_info[0], exc_info[1], exc_info[2])
+            msg = ""
+            for line in msg_array:
+              msg += line
+            log(msg, request)
+
+            msg = unicode("[" + exc_info[0]) + "] " + unicode(exc_info[1])
+            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
     
     def adaptRequest(self, request):
         request._post, request._files = QueryDict(request.raw_post_data, encoding=request._encoding), datastructures.MultiValueDict()

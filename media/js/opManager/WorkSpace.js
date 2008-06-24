@@ -89,10 +89,12 @@ function WorkSpace (workSpaceState) {
 		var msg;
 		if (e) {
 			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
- 			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
 			                  true);
+		} else if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
 		} else {
-			msg = transport.status + " " + transport.statusText;
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
 		}
 		msg = interpolate(gettext("Error retreiving workspace data: %(errorMsg)s."),
 		                          {errorMsg: msg}, true);
