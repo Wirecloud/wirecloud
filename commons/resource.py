@@ -75,7 +75,7 @@ class Resource:
               msg += line
             log(msg, request)
 
-            msg = unicode("[" + exc_info[0]) + "] " + unicode(exc_info[1])
+            msg = "[" + unicode(exc_info[0]) + "] " + unicode(exc_info[1])
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
     
     def adaptRequest(self, request):
