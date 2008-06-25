@@ -243,5 +243,8 @@ def get_resources_that_must_be_shown (user):
         shown_gadget_ids.append(gadget_max_version.id)
     
     # Gets all the gadgets that will appear in the catalog (preferred and latest version)
-    return GadgetResource.objects.extra(where=['catalogue_gadgetresource.id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])    
-    
+    if len(shown_gadget_ids) > 0:
+      return GadgetResource.objects.extra(where=['catalogue_gadgetresource.id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])
+    else:
+      return GadgetResource.objects.none()
+
