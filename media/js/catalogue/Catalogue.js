@@ -338,7 +338,7 @@ var CatalogueFactory  = function () {
 				}
 
 				msg = interpolate(gettext("Error retrieving catalogue data: %(errorMsg)s."), {errorMsg: msg}, true);
-				LogManagerFactory.getInstance().log();(msg);
+				LogManagerFactory.getInstance().log(msg);
 
 			}
 			
