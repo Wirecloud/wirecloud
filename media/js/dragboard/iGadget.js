@@ -68,7 +68,6 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, layoutStyle, posit
 	this.minimizeButtonElement = null;
 	this.errorButtonElement = null;
 	this.igadgetNameHTMLElement = null;
-	
 
 	this.errorCount = 0;
 }
@@ -191,14 +190,21 @@ IGadget.prototype.paint = function(where) {
 	var contentHeight = this.layoutStyle.fromVCellsToPixels(this.contentHeight) + "px";
 
 	this.element = document.createElement("div");
-	this.element.setAttribute("class", "gadget_window");
-	this.element.setAttribute("className", "gadget_window"); //IE hack
+
+	// Sync lock status
+	if (this.dragboard.isLocked()) {
+		this.element.class = "gadget_window_locked";
+		this.element.className = "gadget_window_locked"; //IE hack
+	} else {
+		this.element.class = "gadget_window";
+		this.element.className = "gadget_window"; //IE hack
+	}
 
 	// Gadget Menu
 	this.gadgetMenu = document.createElement("div");
 	this.gadgetMenu.setAttribute("class", "gadget_menu");
 	this.gadgetMenu.setAttribute("className", "gadget_menu"); //IE hack
-	
+
 	// Gadget title
 	this.gadgetMenu.setAttribute("title", this.name);
 
@@ -313,10 +319,6 @@ IGadget.prototype.paint = function(where) {
 	this.element.style.left = this.layoutStyle.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layoutStyle.getRowOffset(this.position.y) + "px";
 
-	// Notify Context Manager of igadget's position
-	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x); 
-	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
-
 	// Sizes
 	this.element.style.width = this.layoutStyle.getWidthInPixels(this.contentWidth) + "px";
 	if (this.minimized) {
@@ -326,16 +328,20 @@ IGadget.prototype.paint = function(where) {
 	} else {
 		this.contentWrapper.style.height = contentHeight;
 	}
-	
-	// Notify Context Manager of igadget's size
-	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
-	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
 
-	// Insert it on the dragboard
+	// Insert it into the dragboard
 	where.appendChild(this.element);
 
 	// Mark as draggable
 	new IGadgetDraggable(this);
+
+	// Notify Context Manager of igadget's position
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x);
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
+
+	// Notify Context Manager of igadget's size
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
 
 	return this.element;
 }
@@ -576,11 +582,10 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
  * This function is called when the dragboard is locked or unlocked.
  */
 IGadget.prototype._notifyLockEvent = function(newLockStatus) {
-	if (!this.element){
+	if (!this.element)
 		return;
-	}
 
-	if(newLockStatus){
+	if (newLockStatus) {
 		this.element.class = "gadget_window_locked";
 		this.element.className = "gadget_window_locked"; //IE hack
 	} else {

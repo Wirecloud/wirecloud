@@ -77,8 +77,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 			position = iGadget.getPosition();
 			if (this._hasSpaceFor(this.matrix, position.x, position.y, iGadget.getWidth(), iGadget.getHeight())) {
-				iGadget.paint(this.dragboardElement);
 				this._reserveSpace(this.matrix, iGadget);
+				iGadget.paint(this.dragboardElement);
 			} else {
 				iGadgetsToReinsert.push(iGadget);
 			}
@@ -535,7 +535,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype.setLock = function (newLockStatus) {
 		if (this.fixed == newLockStatus)
 			return; // No change in status => nothing to do
-		
+
 		this.fixed = newLockStatus;
 		if (this.fixed)
 			this.dragboardElement.addClassName("fixed");
@@ -552,7 +552,29 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 
 		// Save to persistence
-		this._commitChanges();
+		var onSuccess = function (transport) {}
+
+		var onError = function (transport, e) {
+			var msg;
+			if (e) {
+				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+				                  true);
+			} else if (transport.responseXML) {
+				msg = transport.responseXML.documentElement.textContent;
+			} else {
+				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+			}
+			msg = interpolate(gettext("Error changing tab lock status: %(errorMsg)s."),
+			                          {errorMsg: msg}, true);
+			LogManagerFactory.getInstance().log(msg);
+		}
+
+		var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabId});
+		var data = new Hash();
+		data.locked = newLockStatus ? "true" : "false";
+		var params = {'tab': data.toJSON()};
+		PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, onSuccess, onError);
 	}
 
 	/**
@@ -569,6 +591,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		this.currentCode = 1;
 		this.iGadgets = new Hash();
+
+		if (tabInfo.locked == "true") {
+			this.fixed = true;
+			this.dragboardElement.addClassName("fixed");
+		}
 
 		// For controlling when the igadgets are totally loaded!
 		this.igadgets = tabInfo.igadgetList;

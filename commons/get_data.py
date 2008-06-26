@@ -347,6 +347,12 @@ def get_tab_data(data):
         data_ret['visible'] = "true"
     else:
         data_ret['visible'] = "false"
+
+    if data_fields['locked']:
+        data_ret['locked'] = "true"
+    else:
+        data_ret['locked'] = "false"
+
     return data_ret
 
 def get_igadget_data(data):
