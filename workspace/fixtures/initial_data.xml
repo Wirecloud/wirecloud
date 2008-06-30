@@ -135,42 +135,49 @@
     <object pk="1" model="workspace.tab">
         <field type="CharField" name="name">MyTab</field>
         <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
     </object>
     <object pk="2" model="workspace.tab">
         <field type="CharField" name="name">OSS</field>
         <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
     </object>
     <object pk="4" model="workspace.tab">
         <field type="CharField" name="name">Visor Imágenes</field>
         <field type="BooleanField" name="visible">False</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">43</field>
     </object>
     <object pk="10" model="workspace.tab">
         <field type="CharField" name="name">Actuaciones</field>
         <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">67</field>
     </object>
     <object pk="3" model="workspace.tab">
         <field type="CharField" name="name">IPTV</field>
         <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
     </object>
     <object pk="12" model="workspace.tab">
         <field type="CharField" name="name">Equipos</field>
         <field type="BooleanField" name="visible">False</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">85</field>
     </object>
     <object pk="15" model="workspace.tab">
         <field type="CharField" name="name">MyTab</field>
         <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">6</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">112</field>
     </object>
