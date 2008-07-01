@@ -39,7 +39,14 @@
 from urllib import unquote
 from django.utils.http import urlencode
 
+import re
 
+def is_localhost (host):
+    localhostMatcher = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))(:\d*)?$')
+    if localhostMatcher.match(host) == None:
+        return False
+    return True
+    
 def is_valid_header (header):
     if (header == 'connection') or (header== 'keep-alive') or (header == 'proxy-authenticate') or (header == 'proxy-authorization') or (header == 'te') or (header == 'trailers') or (header == 'transfer-encoding') or (header == 'upgrade'):
         return False

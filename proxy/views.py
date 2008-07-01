@@ -41,7 +41,7 @@ import urlparse
 
 from commons.resource import Resource
 
-from proxy.utils import encode_query, is_valid_header
+from proxy.utils import encode_query, is_valid_header, is_localhost
 
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import string_concat
@@ -52,7 +52,7 @@ from django.conf import settings
 import string
 
 def getConnection(protocol, proxy, host):
-    if (proxy != ""):
+    if (proxy != "" and not is_localhost(host)):
         return httplib.HTTPConnection(proxy)
     else:
         return httplib.HTTPConnection(host)
