@@ -64,7 +64,7 @@ var LayoutManagerFactory = function () {
 			
 		// Container managed by LayOutManager: {showcase_tab}
 		// Remaining containers managed by WorkSpaces!!
-			this.catalogue = CatalogueFactory.getInstance();
+			this.catalogue = null;
 			this.logs = LogManagerFactory.getInstance();
 			this.logsLink = $('logs_link');
 			
@@ -205,7 +205,12 @@ var LayoutManagerFactory = function () {
 			if(this.currentView != null){
 				this.currentView.hide();
 			}			
-		    this.currentView = this.catalogue;
+				
+			if (!this.catalogue) {
+				this.catalogue = CatalogueFactory.getInstance();
+			}
+
+			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
 			this.catalogueLink.className = 'toolbar_marked';
 			this.catalogue.catalogueElement.setStyle({'zIndex': this.showLevel, 'display': 'block', 'visibility': 'visible'});
