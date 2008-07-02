@@ -57,7 +57,7 @@ var CatalogueFactory  = function () {
 		var min_offset = 10;
 		
 		this.catalogueElement = $('showcase_container');
-		    
+		
 		
 		// ********************
 		//  PRIVILEGED METHODS
@@ -71,7 +71,7 @@ var CatalogueFactory  = function () {
 				UIUtils.SlideInfoResourceOutOfView('info_resource');
 			}
 			this.emptyResourceList();
-			UIUtils.search = 'false';
+			UIUtils.search = false;
 			this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 		}
 		
@@ -79,7 +79,7 @@ var CatalogueFactory  = function () {
 			$("resources").innerHTML="";
 			_this.clearSelectedResources();
 			resources = $H();
-		}	
+		}
 
 		this.getResources = function() {
 			return resources;
@@ -299,32 +299,32 @@ var CatalogueFactory  = function () {
                 _globalTagsToTagcloud($("global_tagcloud"));
             }
         }
-		
+
 		this.getGlobalTags = function() {
 			return globalTags;
 		}
-		
+
 		this.repaintCatalogue = function (url) {
 	 	    this.emptyResourceList();
 		    this.loadCatalogue(url);
 		}
-		
+
 		this.show = function(){
 			LayoutManagerFactory.getInstance().showCatalogue();
 		}
-		
+
 		this.hide = function(){
 			LayoutManagerFactory.getInstance().hideView(this.catalogueElement);
 		}
-		
+
 		this.loadCatalogue = function(urlCatalogue_) {
-		
+
 			// ******************
 			//  CALLBACK METHODS 
 			// ******************
-		
+
 			//Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-			
+
 			var onError = function(transport, e) {
 				var msg;
 				if (e) {
@@ -341,7 +341,7 @@ var CatalogueFactory  = function () {
 				LogManagerFactory.getInstance().log(msg);
 
 			}
-			
+
 			var loadResources = function(transport) {
 				var response = Try.these(
 									function() { 	return new DOMParser().parseFromString(transport.responseText, 'text/xml'); },
@@ -349,7 +349,7 @@ var CatalogueFactory  = function () {
 													xmldom.loadXML(transport.responseText); 
 													return xmldom; }
 								);
-								
+
 				var responseJSON = transport.responseText;
 				var items = transport.getResponseHeader('items');
 			    var jsonResourceList = eval ('(' + responseJSON + ')');
@@ -363,152 +363,242 @@ var CatalogueFactory  = function () {
 				this.orderby(items);
 				$('global_tagcloud').innerHTML = '';
 				UIUtils.repaintCatalogue=false;
-				
+
 			}
 
-			var param = {orderby: UIUtils.orderby};
-			
+			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue};
+
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
-			
-			var auxiliar = urlCatalogue_.toString().split("/");
+
 			$('header_always_status').innerHTML = "";
 			$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
 				innerHTML: urlCatalogue_
 			})));
-			for (var i=0;i<auxiliar.length;i++){
-				switch(auxiliar[i]){
-					case "catalogue":
-						switch(auxiliar[i+1]){
-							case "search":
-								var text = "";
-								switch(auxiliar[i+2]){
-									case "generic":
-										text = gettext('Generic Search') + ': ';
-										break;
-									case "tag":
-										text = gettext('Search by Tag') + ': ';
-										break;
-									case "event":
-										text = gettext('Search by Event') + ': ';
-										break;	
-									case "slot":
-										text = gettext('Search by Slot') + ': ';
-										break;
-									case "connectSlot":
-										text = gettext('Search by Slot connectivity') + ': ';
-										break;
-									case "connectEvent":
-										text = gettext('Search by Event connectivity') + ': ';
-										break;
-								}
-								if (text != "") {
-									$('header_always_status').innerHTML = "";
-									$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-										innerHTML: text
-									})));
-								}
-								var searching='';
-								switch(auxiliar[i+2]){
-									case "generic":
-										var auxiliar_and=[""];
-										var auxiliar_and_bool=true;
-										var auxiliar_or=[""];
-										var auxiliar_or_bool=true;
-										var auxiliar_not=[""];
-										var auxiliar_not_bool=true;
-										
-										if(auxiliar[i+3]=="_"){
-											auxiliar_and_bool=false;
-										}else{
-											auxiliar_and=UIUtils.splitString(auxiliar[i+3]);
-										}
-										if(auxiliar[i+4]=="_"){
-											auxiliar_or_bool=false;
-										}else{
-											auxiliar_or=UIUtils.splitString(auxiliar[i+4]);
-										}
-										if(auxiliar[i+5]=="_"){
-											auxiliar_not_bool=false;
-										}else{
-											auxiliar_not=UIUtils.splitString(auxiliar[i+5]);
-										}
-										if(auxiliar_and_bool){
-											for (var j=0;j<auxiliar_and.length;j++){
-												if(j==auxiliar_and.length-1){
-													searching += auxiliar_and[j] + ((auxiliar_or_bool||auxiliar_not_bool)?" AND ":".");
-												}else if(j==auxiliar_and.length-2){
-													searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
-												}else{
-													searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
-												}									
-											}
-										}
-										if(auxiliar_or_bool){
-											for (var j=0;j<auxiliar_or.length;j++){
-												if(j==auxiliar_or.length-1){
-													searching += auxiliar_or[j] + ((auxiliar_not_bool)?" AND ":".");	
-												}else if(j==auxiliar_or.length-2){
-													searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
-												}else{
-													searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
-												}
-											}
-										}
-										if(auxiliar_not_bool){
-											for (var j=0;j<auxiliar_not.length;j++){
-												if(j==0){
-													if(auxiliar_not.length==1){
-														searching += gettext('not') + ' ' + auxiliar_not[j] + ".";
-													}else{
-														searching += gettext('neither') + ' ' + auxiliar_not[j] + ' ' + gettext('nor') + ' ';
-													}
-												}else if(j==auxiliar_not.length-1){
-													searching += auxiliar_not[j] + ".";
-												}else{
-													searching += auxiliar_not[j] + ' ' + gettext('nor') + ' ';
-												}						
-											}
-										}
-										break;
-									case "tag":
-									case "event":
-									case "slot":
-									case "connectEvent":
-									case "connectSlot":
-										var auxiliar_or=UIUtils.splitString(auxiliar[i+3]);
-										for (var j=0;j<auxiliar_or.length;j++){
-											if(j==auxiliar_or.length-1){
-												searching += auxiliar_or[j];
-											}else if(j==auxiliar_or.length-2){
-												searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
-											}else{
-												searching += auxiliar_or[j] + ', ';
-											}
-										}
-										break;
-								}
-								$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-									innerHTML: searching
-								})));
-								var reload_link = UIUtils.createHTMLElement("a", $H({
-									innerHTML: gettext("Reload")
-								}));
-								reload_link.observe("click", function(event){
-									CatalogueFactory.getInstance().emptyResourceList();
-									CatalogueFactory.getInstance().loadCatalogue(urlCatalogue_);
-								});
-								$('header_always_status').appendChild(reload_link);
-								break;
-							case "resource":
-								$('header_always_status').innerHTML = "";
-								$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-									innerHTML: gettext('Complete Catalogue')
-								})));
-								break;
+
+			var text = "";
+			switch(UIUtils.searchCriteria){
+				case "and":
+					text = gettext('Search') + ': ';
+					break;
+				case "or":
+				case "simple_or":
+					text = gettext('Search') + ': ';
+					break;
+				case "not":
+					text = gettext('Search') + ': ';
+					break;
+				case "tag":
+					text = gettext('Search by Tag') + ': ';
+					break;
+				case "event":
+					text = gettext('Search by Event') + ': ';
+					break;
+				case "slot":
+					text = gettext('Search by Slot') + ': ';
+					break;
+				case "connectSlot":
+					text = gettext('Search by Slot connectivity') + ': ';
+					break;
+				case "connectEvent":
+					text = gettext('Search by Event connectivity') + ': ';
+					break;
+				case "global":
+					text = gettext('Global Search') + ': ';
+					break;
+			}
+			if (text != "") {
+				$('header_always_status').innerHTML = "";
+				$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
+					innerHTML: text
+				})));
+			}
+			var searching='';
+			switch(UIUtils.searchCriteria){
+				case "global":
+					var auxiliar_and=[""];
+					var auxiliar_and_bool = true;
+					var auxiliar_or=[""];
+					var auxiliar_or_bool = true;
+					var auxiliar_not=[""];
+					var auxiliar_not_bool = true;
+					var auxiliar_tag=[""];
+					var auxiliar_tag_bool = true;
+					var auxiliar_event=[""];
+					var auxiliar_event_bool = true;
+					var auxiliar_slot=[""];
+					var auxiliar_slot_bool = true;
+					if (UIUtils.searchValue[0]=="") auxiliar_and_bool = false;
+					if (UIUtils.searchValue[1]=="") auxiliar_or_bool = false;
+					if (UIUtils.searchValue[2]=="") auxiliar_not_bool = false;
+					if (UIUtils.searchValue[3]=="") auxiliar_tag_bool = false;
+					if (UIUtils.searchValue[4]=="") auxiliar_event_bool = false;
+					if (UIUtils.searchValue[5]=="") auxiliar_slot_bool = false;
+
+					if (auxiliar_and_bool) {
+						auxiliar_and=UIUtils.splitString(UIUtils.searchValue[0]);
+						for (var j=0;j<auxiliar_and.length;j++){
+							if(j==auxiliar_and.length-1){
+								searching += auxiliar_and[j] + ((auxiliar_or_bool||auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+							}else if(j==auxiliar_and.length-2){
+								searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
+							}else{
+								searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
+							}
 						}
-						break;
+					}
+					if (auxiliar_or_bool) {
+						auxiliar_or=UIUtils.splitString(UIUtils.searchValue[1]);
+						for (var j=0;j<auxiliar_or.length;j++){
+							if(j==auxiliar_or.length-1){
+								searching += auxiliar_or[j] + ((auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+							}else if(j==auxiliar_or.length-2){
+								searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
+							}
+						}
+					}
+					if (auxiliar_not_bool) {
+						auxiliar_not=UIUtils.splitString(UIUtils.searchValue[2]);
+						for (var j=0;j<auxiliar_not.length;j++){
+							if(j==0){
+								if(auxiliar_not.length==1){
+									searching += gettext('not') + ' ' + auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+								}else{
+									searching += gettext('neither') + ' ' + auxiliar_not[j] + ' ' + gettext('nor') + ' ';
+								}
+							}else if(j==auxiliar_not.length-1){
+								searching += auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+							}else{
+								searching += auxiliar_not[j] + ' ' + gettext('nor') + ' ';
+							}
+						}
+					}
+					if (auxiliar_tag_bool) {
+						auxiliar_tag=UIUtils.splitString(UIUtils.searchValue[3]);
+						searching += gettext('Tags: ');
+						for (var j=0;j<auxiliar_tag.length;j++){
+							if(j==auxiliar_tag.length-1){
+								searching += auxiliar_tag[j] + ((auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+							}else if(j==auxiliar_tag.length-2){
+								searching += auxiliar_tag[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_tag[j] + ', ';
+							}
+						}
+					}
+					if (auxiliar_event_bool) {
+						auxiliar_event=UIUtils.splitString(UIUtils.searchValue[4]);
+						searching += gettext('Events: ');
+						for (var j=0;j<auxiliar_event.length;j++){
+							if(j==auxiliar_event.length-1){
+								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?" AND ":".");;
+							}else if(j==auxiliar_or.length-2){
+								searching += auxiliar_event[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_event[j] + ', ';
+							}
+						}
+					}
+					if (auxiliar_slot_bool) {
+						auxiliar_slot=UIUtils.splitString(UIUtils.searchValue[5]);
+						searching += gettext('Slots: ');
+						for (var j=0;j<auxiliar_slot.length;j++){
+							if(j==auxiliar_slot.length-1){
+								searching += auxiliar_slot[j] + ".";
+							}else if(j==auxiliar_slot.length-2){
+								searching += auxiliar_slot[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_slot[j] + ', ';
+							}
+						}
+					}
+					break;
+				case "and":
+					var auxiliar_and=[""];
+					auxiliar_and=UIUtils.splitString(UIUtils.searchValue[0]);
+					for (var j=0;j<auxiliar_and.length;j++){
+						if(j==auxiliar_and.length-1){
+							searching += auxiliar_and[j] + ".";
+						}else if(j==auxiliar_and.length-2){
+							searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
+						}else{
+							searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
+						}
+					}
+					break;
+				case "or":
+				case "simple_or":
+					var auxiliar_or=[""];
+					auxiliar_or=UIUtils.splitString(UIUtils.searchValue[0]);
+					for (var j=0;j<auxiliar_or.length;j++){
+						if(j==auxiliar_or.length-1){
+							searching += auxiliar_or[j] + ".";
+						}else if(j==auxiliar_or.length-2){
+							searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
+						}else{
+							searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
+						}
+					}
+					break;
+				case "not":
+					var auxiliar_not=[""];
+					auxiliar_not=UIUtils.splitString(UIUtils.searchValue[0]);
+					for (var j=0;j<auxiliar_not.length;j++){
+						if(j==0){
+							if(auxiliar_not.length==1){
+								searching += gettext('not') + ' ' + auxiliar_not[j] + ".";
+							}else{
+								searching += gettext('neither') + ' ' + auxiliar_not[j] + ' ' + gettext('nor') + ' ';
+							}
+						}else if(j==auxiliar_not.length-1){
+							searching += auxiliar_not[j] + ".";
+						}else{
+							searching += auxiliar_not[j] + ' ' + gettext('nor') + ' ';
+						}
+					}
+					break;
+				case "tag":
+				case "event":
+				case "slot":
+				case "connectEvent":
+				case "connectSlot":
+					var auxiliar_or=UIUtils.splitString(UIUtils.searchValue[0]);
+					for (var j=0;j<auxiliar_or.length;j++){
+						if(j==auxiliar_or.length-1){
+							searching += auxiliar_or[j];
+						}else if(j==auxiliar_or.length-2){
+							searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
+						}else{
+							searching += auxiliar_or[j] + ', ';
+						}
+					}
+					break;
+			}
+			var auxiliar = urlCatalogue_.toString().split("/");
+			for (var i=0;i<auxiliar.length;i++){
+				if (auxiliar[i] == 'resource') {
+					$('header_always_status').innerHTML = "";
+					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
+						innerHTML: gettext('Complete Catalogue')
+					})));
+					break;
+				} else if (auxiliar[i] == 'search' || auxiliar[i]=='globalsearch') {
+					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
+						innerHTML: searching
+					})));
+					var reload_link = UIUtils.createHTMLElement("a", $H({
+						innerHTML: gettext("Reload")
+					}));
+					reload_link.observe("click", function(event){
+						CatalogueFactory.getInstance().emptyResourceList();
+						CatalogueFactory.getInstance().loadCatalogue(urlCatalogue_);
+					});
+					$('header_always_status').appendChild(reload_link);
+					break;
 				}
 			}
+
 
 			var reload_catalogue_link = UIUtils.createHTMLElement("a", $H({
 				id: 'reload_catalogue_link',
@@ -540,15 +630,15 @@ var CatalogueFactory  = function () {
 		parent.appendChild(select);
 		if(items<=0) {
 			select.setAttribute("disabled", "disabled");
-		} 
-		else {		
-   	    	var max;
-   	    	if(items>max_gadgets_per_page) {
-   	        	max = max_gadgets_per_page/min_offset;
-   	     	} else {
-   	         	max = Math.ceil(items/min_offset);
-   	     	}
-   	     	var some_selected = false;
+		}
+		else {
+			var max;
+			if(items>max_gadgets_per_page) {
+				max = max_gadgets_per_page/min_offset;
+			} else {
+				max = Math.ceil(items/min_offset);
+			}
+			var some_selected = false;
 			for (var i=1; i<=max; i++){
 				var option = UIUtils.createHTMLElement("option", $H({
 					value: "" + (i*min_offset),
@@ -622,7 +712,7 @@ var CatalogueFactory  = function () {
             if(UIUtils.getPage()!=i)
             {
 				var page_span = UIUtils.createHTMLElement("span", $H({
-		   			class_name: 'pagination_button'
+					class_name: 'pagination_button'
 				}));
 				parent.appendChild(page_span);
 				var page_link = UIUtils.createHTMLElement('a', $H({
@@ -643,7 +733,7 @@ var CatalogueFactory  = function () {
 		}
 
 		var next_span = UIUtils.createHTMLElement("span", $H({
-		   	class_name: 'pagination_button'
+			class_name: 'pagination_button'
 		}));
 		parent.appendChild(next_span);
 		var last_span = UIUtils.createHTMLElement("span", $H({
@@ -661,7 +751,7 @@ var CatalogueFactory  = function () {
 				src: '/ezweb/images/go-next-dim.png'
 			}));
 			next_span.appendChild(next_img);
-        } 
+        }
 		else {
 			var last_link = UIUtils.createHTMLElement("a", $H({
 				title: gettext('Go to last page')
@@ -739,7 +829,7 @@ var CatalogueFactory  = function () {
 			select.appendChild(popularity);
 		}
 	}
-	
+
     var _globalTagsToTagcloud = function(parent){
         parent.innerHTML = "";
         for (var i = 0; i < globalTags.length; i++) {

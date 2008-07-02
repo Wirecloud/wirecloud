@@ -703,7 +703,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				innerHTML: eventsAux[i]
 			}));
 			tag_link.observe("click", function(event){
-				UIUtils.searchByWiring(URIs.GET_RESOURCES_BY_WIRING, this.innerHTML, 'connectEvent');
+				UIUtils.searchByConnectivity(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'connectEvent', this.innerHTML);
 			});
 			tag.appendChild(tag_link);
 			tag.appendChild(UIUtils.createHTMLElement("span", $H({ 
@@ -803,7 +803,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				innerHTML: slotsAux[i]
 			}));
 			tag_link.observe("click", function(event){
-				UIUtils.searchByWiring(URIs.GET_RESOURCES_BY_WIRING, this.innerHTML, 'connectSlot');
+				UIUtils.searchByConnectivity(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'connectSlot', this.innerHTML);
 			});
 			tag.appendChild(tag_link);
 			tag.appendChild(UIUtils.createHTMLElement("span", $H({ 

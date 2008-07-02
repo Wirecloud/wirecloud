@@ -198,9 +198,9 @@ def deleteOneGadget(resource, user):
         pass
 
 
-class GadgetsCollectionByGenericSearch(Resource):
+class GadgetsCollectionBySimpleSearch(Resource):
 
-    def read(self, request, user_name, and_criteria, or_criteria, not_criteria, pag=0, offset=0):
+    def read(self, request, user_name,criteria, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
 
@@ -214,25 +214,43 @@ class GadgetsCollectionByGenericSearch(Resource):
         except:
             format = 'default'
 
-        andlist = []
-        orlist = []
-        notlist = []
-        # This variable counts the number of criteria for the search to be passed as a parameter to the function
-        # get_uniquelist in order to get the gadgets that match the number of criteria
-        fields = 0
+        search_criteria = request.__getitem__('search_criteria')
 
-        if (and_criteria != "_"):
-            andlist = get_and_list(and_criteria, user)
-            fields = fields+1
-        if (or_criteria != "_"):
-            orlist = get_or_list(or_criteria, user)
-            fields = fields+1
-        if (not_criteria != "_"):
-            notlist = get_not_list(not_criteria, user)
-            fields = fields+1
+        gadgetlist = []
 
-        gadgetlist = andlist+orlist+notlist
-        gadgetlist = get_uniquelist(gadgetlist,fields)
+        if criteria == 'and':
+            gadgetlist= get_and_list(search_criteria, user)
+        elif (criteria == 'or' or criteria=='simple_or'):
+            gadgetlist= get_or_list(search_criteria, user)
+        elif criteria == 'not':
+            gadgetlist= get_not_list(search_criteria, user)
+        elif criteria == 'event':
+            #get all the gadgets that match any of the given events
+            search_criteria = search_criteria.split()
+            for e in search_criteria:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+
+        elif criteria == 'slot':
+            #get all the gadgets that match any of the given slots
+            search_criteria = search_criteria.split()
+            for e in search_criteria:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+
+        elif criteria == 'tag':
+            #get all the gadgets that match any of the given tags
+            search_criteria = search_criteria.split()
+            for e in search_criteria:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+
+        elif criteria == 'connectSlot':
+            #get all the gadgets compatible with the given event
+            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = search_criteria), Q(gadgetwiring__wiring = 'out'))
+
+        elif criteria == 'connectEvent':
+            #get all the gadgets compatible with the given slot
+            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = search_criteria), Q(gadgetwiring__wiring = 'in'))
+
+        gadgetlist = get_uniquelist(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
         items = len(gadgetlist)
@@ -240,51 +258,67 @@ class GadgetsCollectionByGenericSearch(Resource):
         return get_resource_response(gadgetlist, format, items, user)
 
 
-class GadgetsCollectionByCriteria(Resource):
+class GadgetsCollectionByGlobalSearch(Resource):
 
-    def read(self, request, user_name, criteria, criteria_value, pag=0, offset=0):
+    def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
-
-        try:
-            format = request.__getitem__('format')
-        except:
-            format = 'default'
 
         try:
             orderby = request.__getitem__('orderby')
         except:
             orderby = '-creation_date'
 
-        gadgetlist = []
+        try:
+            format = request.__getitem__('format')
+        except:
+            format = 'default'
 
-        if criteria == 'event':
-            #get all the gadgets that match any of the given events
-            criteria_value = criteria_value.split()
-            for e in criteria_value:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+        search_criteria = request.GET.getlist('search_criteria')
 
-        elif criteria == 'slot':
-            #get all the gadgets that match any of the given slots
-            criteria_value = criteria_value.split()
-            for e in criteria_value:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+        andlist = []
+        orlist = []
+        notlist = []
+        taglist = []
+        eventlist = []
+        slotlist = []
+        # This variable counts the number of criteria for the search to be passed as a parameter to the function
+        # get_uniquelist in order to get the gadgets that match the number of criteria
+        fields = 0
 
-        elif criteria == 'tag':
+        if (search_criteria[0] != ""):
+            andlist = get_and_list(search_criteria[0], user)
+            fields = fields+1
+        if (search_criteria[1] != ""):
+            orlist = get_or_list(search_criteria[1], user)
+            fields = fields+1
+        if (search_criteria[2] != ""):
+            notlist = get_not_list(search_criteria[2], user)
+            fields = fields+1
+        if (search_criteria[3] != ""):
             #get all the gadgets that match any of the given tags
-            criteria_value = criteria_value.split()
-            for e in criteria_value:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+            criteria = search_criteria[3].split()
+            for e in criteria:
+                taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+            taglist = get_uniquelist(taglist)
+            fields = fields+1
+        if (search_criteria[4] != ""):
+            #get all the gadgets that match any of the given events
+            criteria = search_criteria[4].split()
+            for e in criteria:
+                eventlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+            eventlist = get_uniquelist(eventlist)
+            fields = fields+1
+        if (search_criteria[5] != ""):
+            #get all the gadgets that match any of the given slots
+            criteria = search_criteria[5].split()
+            for e in criteria:
+                slotlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+            slotlist = get_uniquelist(slotlist)
+            fields = fields+1
 
-        elif criteria == 'connectSlot':
-            #get all the gadgets compatible with the given event
-            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'out'))
-
-        elif criteria == 'connectEvent':
-            #get all the gadgets compatible with the given slot
-            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = criteria_value), Q(gadgetwiring__wiring = 'in'))
-
-        gadgetlist = get_uniquelist(gadgetlist)
+        gadgetlist = andlist+orlist+notlist+taglist+eventlist+slotlist
+        gadgetlist = get_uniquelist(gadgetlist,fields)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
         items = len(gadgetlist)
@@ -305,7 +339,7 @@ class GadgetTagsCollection(Resource):
         
         # Get the xml containing the tags from the request
         tags_xml = request.__getitem__('tags_xml')
-        print(tags_xml)
+
         tags_xml = tags_xml.encode("utf-8")
         # Parse the xml containing the tags
         parser = make_parser()

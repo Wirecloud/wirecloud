@@ -47,6 +47,10 @@
 	outline: none;
 }
 
+#catalogue .head #global_search_links {
+	text-align: center;
+}
+
 #catalogue .head .header_link {
    background-color: transparent;
    border: none;
@@ -158,7 +162,7 @@
 }
 
 #catalogue .head .advanced_search {
-	height: 95px;
+	height: 110px;
 	border-top: 1px solid #EFEFEF;
 }
 
