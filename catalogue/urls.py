@@ -47,12 +47,9 @@ urlpatterns = patterns('catalogue.views',
     (r'^resource$', GadgetsCollection(permitted_methods=('GET', 'POST',))),
 
     # Search Gadgets
-    (r'^globalsearch',
-        GadgetsCollectionByGlobalSearch(permitted_methods=('GET',))),
+
     (r'^globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$',
         GadgetsCollectionByGlobalSearch(permitted_methods=('GET',))),
-    (r'^search/(?P<criteria>\w+)$',
-        GadgetsCollectionBySimpleSearch(permitted_methods=('GET',))),
     (r'^search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$',
         GadgetsCollectionBySimpleSearch(permitted_methods=('GET',))),
 

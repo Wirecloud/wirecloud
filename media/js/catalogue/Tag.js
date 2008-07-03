@@ -51,7 +51,7 @@ function Tag(tagJSON_)
             innerHTML: state.getValue()
         }));
         link.observe("click", function(event){
-            UIUtils.searchByTag(URIs.GET_RESOURCES_BY_TAG, state.getValue());
+            UIUtils.searchByTag(URIs.GET_RESOURCES_SIMPLE_SEARCH, state.getValue());
         });
         return link;
     }
@@ -70,7 +70,7 @@ function Tag(tagJSON_)
 		
 		var link = UIUtils.createHTMLElement("a", $H({ class_name: className_, title: title_, innerHTML: value_ }));
 		link.observe("click", function(event) {
-			UIUtils.searchByTag(URIs.GET_RESOURCES_BY_TAG, state.getValue());
+			UIUtils.searchByTag(URIs.GET_RESOURCES_SIMPLE_SEARCH, state.getValue());
 		});
 		return link;
 	}

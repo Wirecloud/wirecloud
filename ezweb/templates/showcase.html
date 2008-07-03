@@ -61,6 +61,10 @@
 			</div>
 			<div id="global_search_links">
 				<a href="#" class="submit_link" id="global_search_link" title="{% trans  'Search by all the fields of the formulary' %}" onclick="UIUtils.globalSearch(URIs.GET_RESOURCES_GLOBAL_SEARCH);">{% trans  "Global Search" %}</a>
+				<select name="global_search_boolean" id="global_search_boolean">
+					<option value="AND">{% trans  "AND" %}</option>
+					<option value="OR">{% trans  "OR" %}</option>
+				</select>
 				<a href="#" class="submit_link" id="clear_search_formulary_link"  onclick="UIUtils.clearSearchForm();">{% trans  "Clear Search Form" %}</a>
 			</div>
 		</div>

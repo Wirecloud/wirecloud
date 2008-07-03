@@ -74,6 +74,8 @@ def get_sortedlist(list, orderby):
         list.sort(lambda x,y: cmp(x.vendor.lower(),y.vendor.lower()))
     elif orderby=='author':
         list.sort(lambda x,y: cmp(x.author.lower(),y.author.lower()))
+    elif orderby=='-popularity':
+        list.sort(lambda x,y: cmp(y.popularity,x.popularity))
     return list
 
 # This function returns a list paginated with the parameters pag and offset.

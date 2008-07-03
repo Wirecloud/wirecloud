@@ -251,9 +251,9 @@ class GadgetsCollectionBySimpleSearch(Resource):
             gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = search_criteria), Q(gadgetwiring__wiring = 'in'))
 
         gadgetlist = get_uniquelist(gadgetlist)
+        items = len(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
-        items = len(gadgetlist)
 
         return get_resource_response(gadgetlist, format, items, user)
 
@@ -275,6 +275,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
             format = 'default'
 
         search_criteria = request.GET.getlist('search_criteria')
+        search_boolean = request.__getitem__('search_boolean')
 
         andlist = []
         orlist = []
@@ -318,10 +319,13 @@ class GadgetsCollectionByGlobalSearch(Resource):
             fields = fields+1
 
         gadgetlist = andlist+orlist+notlist+taglist+eventlist+slotlist
-        gadgetlist = get_uniquelist(gadgetlist,fields)
+        if search_boolean=="AND":
+            gadgetlist = get_uniquelist(gadgetlist,fields)
+        else:
+            gadgetlist = get_uniquelist(gadgetlist)
+        items = len(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
-        items = len(gadgetlist)
 
         return get_resource_response(gadgetlist, format, items, user)
 

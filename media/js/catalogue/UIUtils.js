@@ -346,6 +346,24 @@ UIUtils.searchByConnectivity = function(url, criteria, search_value) {
 	}
 }
 
+UIUtils.searchByTag = function(url, search_value) {
+	UIUtils.repaintCatalogue=true;
+	UIUtils.sendPendingTags();
+	UIUtils.closeInfoResource();
+	UIUtils.searchValue = [];
+	if (search_value == ""){
+		$('header_always_error').style.display="block";
+		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
+	}else{
+		$('header_always_error').style.display = 'none';
+		UIUtils.setPage(1);
+		UIUtils.search = true;
+		UIUtils.searchValue[0] = search_value;
+		UIUtils.searchCriteria = 'tag';
+		CatalogueFactory.getInstance().repaintCatalogue(url + "/tag/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+	}
+}
+
 
 UIUtils.cataloguePaginate = function(url, offset, pag, items) {
 	UIUtils.repaintCatalogue=true;
@@ -358,6 +376,8 @@ UIUtils.cataloguePaginate = function(url, offset, pag, items) {
 
 	if (!UIUtils.search){
 		url = URIs.GET_POST_RESOURCES;
+	} else if(UIUtils.searchCriteria=="global"){
+		url = URIs.GET_RESOURCES_GLOBAL_SEARCH;
 	} else {
 		url = URIs.GET_RESOURCES_SIMPLE_SEARCH + "/" + UIUtils.searchCriteria;
 	}

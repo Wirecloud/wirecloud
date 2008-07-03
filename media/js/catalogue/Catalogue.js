@@ -366,7 +366,7 @@ var CatalogueFactory  = function () {
 
 			}
 
-			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue};
+			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
 
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
 
@@ -438,7 +438,7 @@ var CatalogueFactory  = function () {
 						auxiliar_and=UIUtils.splitString(UIUtils.searchValue[0]);
 						for (var j=0;j<auxiliar_and.length;j++){
 							if(j==auxiliar_and.length-1){
-								searching += auxiliar_and[j] + ((auxiliar_or_bool||auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+								searching += auxiliar_and[j] + ((auxiliar_or_bool||auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");
 							}else if(j==auxiliar_and.length-2){
 								searching += auxiliar_and[j] + ' ' + gettext('and') + ' ';
 							}else{
@@ -450,7 +450,7 @@ var CatalogueFactory  = function () {
 						auxiliar_or=UIUtils.splitString(UIUtils.searchValue[1]);
 						for (var j=0;j<auxiliar_or.length;j++){
 							if(j==auxiliar_or.length-1){
-								searching += auxiliar_or[j] + ((auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+								searching += auxiliar_or[j] + ((auxiliar_not_bool||auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");
 							}else if(j==auxiliar_or.length-2){
 								searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
 							}else{
@@ -463,12 +463,12 @@ var CatalogueFactory  = function () {
 						for (var j=0;j<auxiliar_not.length;j++){
 							if(j==0){
 								if(auxiliar_not.length==1){
-									searching += gettext('not') + ' ' + auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+									searching += gettext('not') + ' ' + auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");
 								}else{
 									searching += gettext('neither') + ' ' + auxiliar_not[j] + ' ' + gettext('nor') + ' ';
 								}
 							}else if(j==auxiliar_not.length-1){
-								searching += auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+								searching += auxiliar_not[j] + ((auxiliar_tag_bool||auxiliar_event_bool||auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");
 							}else{
 								searching += auxiliar_not[j] + ' ' + gettext('nor') + ' ';
 							}
@@ -479,7 +479,7 @@ var CatalogueFactory  = function () {
 						searching += gettext('Tags: ');
 						for (var j=0;j<auxiliar_tag.length;j++){
 							if(j==auxiliar_tag.length-1){
-								searching += auxiliar_tag[j] + ((auxiliar_event_bool||auxiliar_slot_bool)?" AND ":".");
+								searching += auxiliar_tag[j] + ((auxiliar_event_bool||auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");
 							}else if(j==auxiliar_tag.length-2){
 								searching += auxiliar_tag[j] + ' ' + gettext('or') + ' ';
 							}else{
@@ -492,7 +492,7 @@ var CatalogueFactory  = function () {
 						searching += gettext('Events: ');
 						for (var j=0;j<auxiliar_event.length;j++){
 							if(j==auxiliar_event.length-1){
-								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?" AND ":".");;
+								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");;
 							}else if(j==auxiliar_or.length-2){
 								searching += auxiliar_event[j] + ' ' + gettext('or') + ' ';
 							}else{
@@ -778,7 +778,7 @@ var CatalogueFactory  = function () {
 		}
 	}
 
-    var _orderby = function(parent, items) {
+	var _orderby = function(parent, items) {
 		parent.innerHTML = '';
 		parent.appendChild(UIUtils.createHTMLElement("label", $H({
 			for_: 'combo_order_by',
