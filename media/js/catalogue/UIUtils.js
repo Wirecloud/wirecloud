@@ -329,21 +329,19 @@ UIUtils.clearSearchForm = function() {
 }
 
 UIUtils.searchByConnectivity = function(url, criteria, search_value) {
+	var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+	var name = resource.getName();
+	var version = resource.getVersion();
 	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	UIUtils.searchValue = [];
-	if (search_value == ""){
-		$('header_always_error').style.display="block";
-		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
-	}else{
-		$('header_always_error').style.display = 'none';
-		UIUtils.setPage(1);
-		UIUtils.search = true;
-		UIUtils.searchValue[0] = search_value;
-		UIUtils.searchCriteria = criteria;
-		CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
-	}
+	$('header_always_error').style.display = 'none';
+	UIUtils.setPage(1);
+	UIUtils.search = true;
+	UIUtils.searchValue[0] = search_value;
+	UIUtils.searchCriteria = criteria;
+	CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset(), name, version);
 }
 
 UIUtils.searchByTag = function(url, search_value) {

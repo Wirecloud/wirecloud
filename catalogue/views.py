@@ -243,12 +243,16 @@ class GadgetsCollectionBySimpleSearch(Resource):
                 gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
 
         elif criteria == 'connectSlot':
-            #get all the gadgets compatible with the given event
-            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = search_criteria), Q(gadgetwiring__wiring = 'out'))
+            #get all the gadgets compatible with the given events
+            search_criteria = search_criteria.split()
+            for e in search_criteria:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
 
         elif criteria == 'connectEvent':
-            #get all the gadgets compatible with the given slot
-            gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = search_criteria), Q(gadgetwiring__wiring = 'in'))
+            #get all the gadgets compatible with the given slots
+            search_criteria = search_criteria.split()
+            for e in search_criteria:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
 
         gadgetlist = get_uniquelist(gadgetlist)
         items = len(gadgetlist)

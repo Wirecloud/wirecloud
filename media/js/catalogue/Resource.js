@@ -8,23 +8,23 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	//  PUBLIC FUNCTIONS
 	// ******************
 	
-	this.getVendor = function() { return state.getVendor(); }
-	this.getName = function() { return state.getName(); }
-	this.getVersion = function() { return state.getVersion(); }
-	this.getAllVersions = function() { return state.getAllVersions(); }
-	this.getDescription = function() { return state.getDescription(); }
-	this.getUriImage = function() { return state.getUriImage(); }
-	this.getUriTemplate = function() { return state.getUriTemplate(); }
-	this.getUriWiki = function() { return state.getUriWiki(); }
-	this.getAddedBy = function() { return state.getAddedBy(); }
-	this.getTags = function() { return state.getTags(); }
-	this.setTags = function(tags_) { state.setTags(tags_); }
-	this.getSlots = function() { return state.getSlots(); }
-	this.setSlots = function(slots_) { state.setSlots(slots_); }
-	this.getEvents = function() { return state.getEvents(); }
-	this.setEvents = function(events_) { state.setEvents(events_); }
-	this.getTagger = function() { return tagger; }
-	this.setVotes = function(voteData_) { 
+	this.getVendor = function() { return state.getVendor();}
+	this.getName = function() { return state.getName();}
+	this.getVersion = function() { return state.getVersion();}
+	this.getAllVersions = function() { return state.getAllVersions();}
+	this.getDescription = function() { return state.getDescription();}
+	this.getUriImage = function() { return state.getUriImage();}
+	this.getUriTemplate = function() { return state.getUriTemplate();}
+	this.getUriWiki = function() { return state.getUriWiki();}
+	this.getAddedBy = function() { return state.getAddedBy();}
+	this.getTags = function() { return state.getTags();}
+	this.setTags = function(tags_) { state.setTags(tags_);}
+	this.getSlots = function() { return state.getSlots();}
+	this.setSlots = function(slots_) { state.setSlots(slots_);}
+	this.getEvents = function() { return state.getEvents();}
+	this.setEvents = function(events_) { state.setEvents(events_);}
+	this.getTagger = function() { return tagger;}
+	this.setVotes = function(voteData_) {
 		state.setVotes(voteData_);
 		_rateResource();
 	}
@@ -318,17 +318,43 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'events'
 		}));
 		connect_text.appendChild(events);
-		events.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('Events') + ': '
-		})));
+		if (state.getEvents().length != 0)
+		{
+			var events_link = UIUtils.createHTMLElement("a",$H({
+				class_name: 'submit_link',
+				title: gettext('Search by all compatible events'),
+				innerHTML: gettext('Events') + ':'
+			}));
+			events_link.observe("click", function(event){
+				UIUtils.searchByConnectivity(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'connectEvent', state.getEvents().join(" "));
+			});
+			events.appendChild(events_link);
+		} else {
+			events.appendChild(UIUtils.createHTMLElement("span", $H({ 
+				innerHTML: gettext('Events') + ': '
+			})));
+		}
 		_events(events);
 		var slots = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'slots'
 		}));
 		connect_text.appendChild(slots);
-		slots.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('Slots') + ': '
-		})));
+		if (state.getSlots().length != 0)
+		{
+			var slots_link = UIUtils.createHTMLElement("a",$H({
+				class_name: 'submit_link',
+				title: gettext('Search by all compatible slots'),
+				innerHTML: gettext('Slots') + ':'
+			}));
+			slots_link.observe("click", function(event){
+				UIUtils.searchByConnectivity(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'connectSlot', state.getSlots().join(" "));
+			});
+			slots.appendChild(slots_link);
+		} else {
+			slots.appendChild(UIUtils.createHTMLElement("span", $H({ 
+				innerHTML: gettext('Slots') + ': '
+			})));
+		}
 		_slots(slots);
 		var versions = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'versions'
@@ -373,7 +399,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		show_versions_div.appendChild(show_versions_link);
 		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'tagcloud'
-		}));		
+		}));
 		fieldset.appendChild(tagcloud);
 		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Tagcloud') + ':'
@@ -1001,15 +1027,15 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	//  PUBLIC FUNCTIONS
 	// ******************
 	
-	this.getVendor = function() { return vendor; }
-	this.getName = function() { return name; }
-	this.getVersion = function() { return version; }
-	this.getAllVersions = function() { return allVersions; }
-	this.getDescription = function() { return description; }
-	this.getUriImage = function() { return uriImage; }
-	this.getUriTemplate = function() { return uriTemplate; }
-	this.getUriWiki = function() { return uriWiki; }
-	this.getAddedBy = function() { return addedBy; }
+	this.getVendor = function() { return vendor;}
+	this.getName = function() { return name;}
+	this.getVersion = function() { return version;}
+	this.getAllVersions = function() { return allVersions;}
+	this.getDescription = function() { return description;}
+	this.getUriImage = function() { return uriImage;}
+	this.getUriTemplate = function() { return uriTemplate;}
+	this.getUriWiki = function() { return uriWiki;}
+	this.getAddedBy = function() { return addedBy;}
 
 	this.setTags = function(tagsJSON_) {
 		tags.clear();
@@ -1043,12 +1069,12 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	}
 
 	
-	this.getTags = function() { return tags; }
-	this.getSlots = function() { return slots; }
-	this.getEvents = function() { return events; }
-	this.getVotes = function() {return votes; }
-	this.getUserVote = function() {return userVote; }
-	this.getPopularity = function() {return popularity; }
+	this.getTags = function() { return tags;}
+	this.getSlots = function() { return slots;}
+	this.getEvents = function() { return events;}
+	this.getVotes = function() {return votes;}
+	this.getUserVote = function() {return userVote;}
+	this.getPopularity = function() {return popularity;}
 	
 	// Parsing JSON Resource
 	// Constructing the structure

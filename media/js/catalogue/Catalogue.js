@@ -55,6 +55,8 @@ var CatalogueFactory  = function () {
 		var _this = this;
 		var max_gadgets_per_page = 40;
 		var min_offset = 10;
+		var selectedResourceName = "";
+		var selectedResourceVersion = "";
 		
 		this.catalogueElement = $('showcase_container');
 		
@@ -305,6 +307,8 @@ var CatalogueFactory  = function () {
 		}
 
 		this.repaintCatalogue = function (url) {
+			selectedResourceName = arguments[1];
+			selectedResourceVersion = arguments[2];
 	 	    this.emptyResourceList();
 		    this.loadCatalogue(url);
 		}
@@ -397,10 +401,10 @@ var CatalogueFactory  = function () {
 					text = gettext('Search by Slot') + ': ';
 					break;
 				case "connectSlot":
-					text = gettext('Search by Slot connectivity') + ': ';
+					text = gettext('Search by Slot connectivity ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
 					break;
 				case "connectEvent":
-					text = gettext('Search by Event connectivity') + ': ';
+					text = gettext('Search by Event connectivity ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
 					break;
 				case "global":
 					text = gettext('Global Search') + ': ';
