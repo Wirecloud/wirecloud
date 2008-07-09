@@ -214,7 +214,10 @@ class GadgetsCollectionBySimpleSearch(Resource):
         except:
             format = 'default'
 
-        search_criteria = request.__getitem__('search_criteria')
+        if criteria == 'connectEventSlot':
+            search_criteria = request.GET.getlist('search_criteria')
+        else:
+            search_criteria = request.__getitem__('search_criteria')
 
         gadgetlist = []
 
@@ -253,6 +256,16 @@ class GadgetsCollectionBySimpleSearch(Resource):
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
+
+        elif criteria == 'connectEventSlot':
+            #get all the gadgets compatible with the given slots
+            search_criteria[0] = search_criteria[0].split()
+            for e in search_criteria[0]:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
+            #get all the gadgets compatible with the given events
+            search_criteria[1] = search_criteria[1].split()
+            for e in search_criteria[1]:
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
 
         gadgetlist = get_uniquelist(gadgetlist)
         items = len(gadgetlist)

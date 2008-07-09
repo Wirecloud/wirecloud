@@ -344,6 +344,23 @@ UIUtils.searchByConnectivity = function(url, criteria, search_value) {
 	CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset(), name, version);
 }
 
+UIUtils.searchByGlobalConnectivity = function(url, search_events, search_slots) {
+	var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+	var name = resource.getName();
+	var version = resource.getVersion();
+	UIUtils.repaintCatalogue=true;
+	UIUtils.sendPendingTags();
+	UIUtils.closeInfoResource();
+	UIUtils.searchValue = [];
+	$('header_always_error').style.display = 'none';
+	UIUtils.setPage(1);
+	UIUtils.search = true;
+	UIUtils.searchValue[0] = search_events;
+	UIUtils.searchValue[1] = search_slots;
+	UIUtils.searchCriteria = 'connectEventSlot';
+	CatalogueFactory.getInstance().repaintCatalogue(url + "/connectEventSlot/" + UIUtils.getPage() + "/" + UIUtils.getOffset(), name, version);
+}
+
 UIUtils.searchByTag = function(url, search_value) {
 	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();

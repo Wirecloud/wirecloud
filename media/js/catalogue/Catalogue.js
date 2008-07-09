@@ -309,8 +309,8 @@ var CatalogueFactory  = function () {
 		this.repaintCatalogue = function (url) {
 			selectedResourceName = arguments[1];
 			selectedResourceVersion = arguments[2];
-	 	    this.emptyResourceList();
-		    this.loadCatalogue(url);
+			this.emptyResourceList();
+			this.loadCatalogue(url);
 		}
 
 		this.show = function(){
@@ -401,10 +401,13 @@ var CatalogueFactory  = function () {
 					text = gettext('Search by Slot') + ': ';
 					break;
 				case "connectSlot":
-					text = gettext('Search by Slot connectivity ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					text = gettext('Search by Slot connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
 					break;
 				case "connectEvent":
-					text = gettext('Search by Event connectivity ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					text = gettext('Search by Event connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					break;
+				case "connectEventSlot":
+					text = gettext('Search by Event and Slot connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
 					break;
 				case "global":
 					text = gettext('Global Search') + ': ';
@@ -575,6 +578,40 @@ var CatalogueFactory  = function () {
 							searching += auxiliar_or[j] + ' ' + gettext('or') + ' ';
 						}else{
 							searching += auxiliar_or[j] + ', ';
+						}
+					}
+					break;
+				case "connectEventSlot":
+					var auxiliar_event=[""];
+					var auxiliar_event_bool = true;
+					var auxiliar_slot=[""];
+					var auxiliar_slot_bool = true;
+					if (UIUtils.searchValue[0]=="") auxiliar_event_bool = false;
+					if (UIUtils.searchValue[1]=="") auxiliar_slot_bool = false;
+					if (auxiliar_event_bool) {
+						auxiliar_event=UIUtils.splitString(UIUtils.searchValue[0]);
+						searching += gettext('Events: ');
+						for (var j=0;j<auxiliar_event.length;j++){
+							if(j==auxiliar_event.length-1){
+								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?' OR ':".");;
+							}else if(j==auxiliar_or.length-2){
+								searching += auxiliar_event[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_event[j] + ', ';
+							}
+						}
+					}
+					if (auxiliar_slot_bool) {
+						auxiliar_slot=UIUtils.splitString(UIUtils.searchValue[1]);
+						searching += gettext('Slots: ');
+						for (var j=0;j<auxiliar_slot.length;j++){
+							if(j==auxiliar_slot.length-1){
+								searching += auxiliar_slot[j] + ".";
+							}else if(j==auxiliar_slot.length-2){
+								searching += auxiliar_slot[j] + ' ' + gettext('or') + ' ';
+							}else{
+								searching += auxiliar_slot[j] + ', ';
+							}
 						}
 					}
 					break;

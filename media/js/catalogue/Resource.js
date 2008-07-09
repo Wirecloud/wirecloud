@@ -356,6 +356,23 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			})));
 		}
 		_slots(slots);
+		if (state.getSlots().length != 0 || state.getEvents().length != 0) {
+			var search_events_slots_div = UIUtils.createHTMLElement("div", $H({
+				id: 'search_events_slots_div',
+				class_name: 'link',
+				style: 'text-align:right;'
+			}));
+			fieldset.appendChild(search_events_slots_div);
+			var search_events_slots_link = UIUtils.createHTMLElement("a", $H({
+				id: 'search_events_slots_link',
+				class_name: 'submit_link',
+				innerHTML: gettext('Search all connectable gadgets')
+			}));
+			search_events_slots_link.observe("click", function(event){
+				UIUtils.searchByGlobalConnectivity(URIs.GET_RESOURCES_SIMPLE_SEARCH, state.getEvents().join(" "), state.getSlots().join(" "));
+			});
+			search_events_slots_div.appendChild(search_events_slots_link);
+		}
 		var versions = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'versions'
 		}));
