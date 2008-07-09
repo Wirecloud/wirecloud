@@ -775,6 +775,12 @@
 	width:100%;
 }
 
+#catalogue .center .info_resource .content .connect img
+{
+	margin-right: 5px;
+	vertical-align:middle;
+}
+
 #catalogue .center .info_resource .content .connect .text
 {
 	border:1px solid #bbbbbb;

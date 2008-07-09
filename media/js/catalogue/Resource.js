@@ -318,6 +318,10 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'events'
 		}));
 		connect_text.appendChild(events);
+		events.appendChild(UIUtils.createHTMLElement("img", $H({
+			title: gettext('All compatible gadgets by events are highlighted in this color'),
+			src: '/ezweb/images/resource_compatible_event.png'
+		})));
 		if (state.getEvents().length != 0)
 		{
 			var events_link = UIUtils.createHTMLElement("a",$H({
@@ -339,6 +343,10 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'slots'
 		}));
 		connect_text.appendChild(slots);
+		slots.appendChild(UIUtils.createHTMLElement("img", $H({
+			title: gettext('All compatible gadgets by slots are highlighted in this color'),
+			src: '/ezweb/images/resource_compatible_slot.png'
+		})));
 		if (state.getSlots().length != 0)
 		{
 			var slots_link = UIUtils.createHTMLElement("a",$H({
