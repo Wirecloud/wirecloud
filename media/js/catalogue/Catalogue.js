@@ -500,7 +500,7 @@ var CatalogueFactory  = function () {
 						for (var j=0;j<auxiliar_event.length;j++){
 							if(j==auxiliar_event.length-1){
 								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?' '+$("global_search_boolean").value+' ':".");;
-							}else if(j==auxiliar_or.length-2){
+							}else if(j==auxiliar_event.length-2){
 								searching += auxiliar_event[j] + ' ' + gettext('or') + ' ';
 							}else{
 								searching += auxiliar_event[j] + ', ';
@@ -594,7 +594,7 @@ var CatalogueFactory  = function () {
 						for (var j=0;j<auxiliar_event.length;j++){
 							if(j==auxiliar_event.length-1){
 								searching += auxiliar_event[j] + ((auxiliar_slot_bool)?' OR ':".");;
-							}else if(j==auxiliar_or.length-2){
+							}else if(j==auxiliar_event.length-2){
 								searching += auxiliar_event[j] + ' ' + gettext('or') + ' ';
 							}else{
 								searching += auxiliar_event[j] + ', ';
