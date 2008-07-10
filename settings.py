@@ -1,4 +1,4 @@
-﻿ # -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 # MORFEO Project 
 # http://morfeo-project.org 
@@ -146,3 +146,11 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 #Set the proxy server here if needed
 PROXY_SERVER = 'nube.hi.inet:8080'
 
+#Authentication
+AUTHENTICATION_BACKENDS = (  
+#'authentication.ldapaccess.LDAPBackend',
+'django.contrib.auth.backends.ModelBackend',  
+)
+#LDAP Backend
+#AD_LDAP_URL = 'ldap://host:port'
+#AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
