@@ -1039,6 +1039,7 @@ DragboardCursor.prototype.setPosition = function (position) {
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	var xDelta = 0, yDelta = 0;
 	var xStart = 0, yStart = 0;
+	var yScroll = 0;
 	var xOffset = 0, yOffset = 0;
 	var x, y;
 	var dragboardCover;
@@ -1055,6 +1056,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		Event.stopObserving (document, "mouseup", enddrag);
 		Event.stopObserving (document, "mousemove", drag);
 
+		dragboardCover.parentNode.stopObserving("scroll", scroll);
 		dragboardCover.parentNode.removeChild(dragboardCover);
 		dragboardCover = null;
 
@@ -1113,7 +1115,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		dragboardCover.setAttribute("class", "cover");
 		dragboardCover.observe("mouseup" , enddrag, true);
 		dragboardCover.observe("mousemove", drag, true);
-		//dragboardCover.style.background = "#FFAAAA";
+
 		dragboardCover.style.zIndex = "201";
 		dragboardCover.style.position = "absolute";
 		dragboardCover.style.top = "0";
@@ -1121,11 +1123,30 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		dragboardCover.style.width = "100%";
 		dragboardCover.style.height = dragboard.scrollHeight + "px";
 
+		yScroll = parseInt(dragboard.scrollTop);
+
+		dragboard.observe("scroll", scroll);
+
 		dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
 		draggableElement.style.zIndex = "200";
 
 		return false;
+	}
+
+	// fire each time the dragboard is scrolled while dragging
+	function scroll() {
+		var dragboard = dragboardCover.parentNode;
+		dragboardCover.style.height = dragboard.scrollHeight + "px";
+		var scrollTop = parseInt(dragboard.scrollTop);
+		var scrollDelta = yScroll - scrollTop;
+		y -= scrollDelta;
+		yScroll = scrollTop;
+
+		draggableElement.style.top = y + 'px';
+		draggableElement.style.left = x + 'px';
+
+		onDrag(draggable, data, x + xOffset, y + yOffset);
 	}
 
 	function findDragboardElement(draggable) {
