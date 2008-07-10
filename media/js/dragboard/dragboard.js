@@ -1041,7 +1041,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	var xStart = 0, yStart = 0;
 	var xOffset = 0, yOffset = 0;
 	var x, y;
-	var objects;
+	var dragboardCover;
 	var draggable = this;
 
 	// remove the events
@@ -1055,18 +1055,14 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		Event.stopObserving (document, "mouseup", enddrag);
 		Event.stopObserving (document, "mousemove", drag);
 
-		for (var i = 0; i < objects.length; i++) {
-			if (objects[i].contentDocument) {
-				Event.stopObserving(objects[i].contentDocument, "mouseup", enddrag, true);
-				Event.stopObserving(objects[i].contentDocument, "mousemove", drag, true);
-			}
-		}
-	
+		dragboardCover.parentNode.removeChild(dragboardCover);
+		dragboardCover = null;
+
 		onFinish(draggable, data);
 		draggableElement.style.zIndex = "";
-	
+
 		Event.observe (handler, "mousedown", startdrag);
-	
+
 		document.onmousedown = null; // reenable context menu
 		document.oncontextmenu = null; // reenable text selection
 
@@ -1110,18 +1106,42 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		Event.observe (document, "mouseup", enddrag);
 		Event.observe (document, "mousemove", drag);
 
-		objects = document.getElementsByTagName("object");
-		for (var i = 0; i < objects.length; i++) {
-			if (objects[i].contentDocument) {
-				Event.observe(objects[i].contentDocument, "mouseup" , enddrag, true);
-				Event.observe(objects[i].contentDocument, "mousemove", drag, true);
-			}
-		}
-
-		draggableElement.style.zIndex = "200"; // TODO
 		onStart(draggable, data);
 
+		var dragboard = findDragboardElement(draggableElement);
+		dragboardCover = document.createElement("div");
+		dragboardCover.setAttribute("class", "cover");
+		dragboardCover.observe("mouseup" , enddrag, true);
+		dragboardCover.observe("mousemove", drag, true);
+		//dragboardCover.style.background = "#FFAAAA";
+		dragboardCover.style.zIndex = "201";
+		dragboardCover.style.position = "absolute";
+		dragboardCover.style.top = "0";
+		dragboardCover.style.left = "0";
+		dragboardCover.style.width = "100%";
+		dragboardCover.style.height = dragboard.scrollHeight + "px";
+
+		dragboard.insertBefore(dragboardCover, dragboard.firstChild);
+
+		draggableElement.style.zIndex = "200";
+
 		return false;
+	}
+
+	function findDragboardElement(draggable) {
+		var tmp = draggable.parentNode;
+		while (tmp) {
+			var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
+			switch (position) {
+			case "relative":
+			case "absolute":
+			case "fixed":
+				return tmp;
+			}
+
+			tmp = tmp.parentNode;
+		}
+		return null; // Not found
 	}
 
 	// cancels the call to startdrag function
