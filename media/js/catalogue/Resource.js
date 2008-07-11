@@ -782,7 +782,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				})));					
 			}else{
 				var ver_link = UIUtils.createHTMLElement("a", $H({ 
-					title: gettext('Selet this version as preferred version'),
+					title: gettext('Select this version as preferred version'),
 					innerHTML: 'v' + versions[i]
 				}));
 				ver_link.observe("click", function(event){

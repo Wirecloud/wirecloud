@@ -41,7 +41,7 @@ from django.db import models
 class UserProfile(models.Model):
     
     username = models.CharField(_('username'), maxlength=30, unique=True, validator_list=[validators.isAlphaNumeric], help_text=_("Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores)."))
-    password = models.CharField(_('password'), maxlength=128, help_text=_("Use '[algo]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+    password = models.CharField(_('password'), maxlength=128, help_text=_("Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
 
     class Admin:
         pass

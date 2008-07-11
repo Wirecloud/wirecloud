@@ -149,7 +149,7 @@ RVariable.prototype.set = function (newValue) {
 			}
 			else {
 				var transObj = {iGadgetId: this.iGadget, varName: this.name};
-				var msg = interpolate(gettext("IGadget %(iGadgetId)s doesn't provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+				var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
 				OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
 			}
 			

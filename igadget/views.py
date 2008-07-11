@@ -233,7 +233,7 @@ class IGadgetCollection(Resource):
             ids = SaveIGadget(igadget, user, tab)
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist:
-            msg = _('refered workspace %(workspace_id)s does not exist.')
+            msg = _('referred workspace %(workspace_id)s does not exist.')
             log(msg, request)
             return HttpResponseBadRequest(get_xml_error(msg))
         except Exception, e:
@@ -261,7 +261,7 @@ class IGadgetCollection(Resource):
             transaction.commit()
             return HttpResponse('ok')
         except Tab.DoesNotExist:
-            msg = _('refered tab %(tab_id)s does not exist.')
+            msg = _('referred tab %(tab_id)s does not exist.')
             log(msg, request)
             return HttpResponseBadRequest(get_xml_error(msg))
         except Exception, e:
@@ -294,7 +294,7 @@ class IGadgetEntry(Resource):
             UpdateIGadget(igadget, user, tab)
             return HttpResponse('ok')
         except Tab.DoesNotExist:
-            msg = _('refered tab %(tab_id)s does not exist.')
+            msg = _('referred tab %(tab_id)s does not exist.')
             log(msg, request)
             return HttpResponseBadRequest(get_xml_error(msg))
         except Exception, e:
@@ -351,7 +351,7 @@ class IGadgetVariableCollection(Resource):
             
             transaction.commit()
         except Tab.DoesNotExist:
-            msg = _('refered tab %(tab_id)s does not exist.')
+            msg = _('referred tab %(tab_id)s does not exist.')
             log(msg, request)
             return HttpResponseBadRequest(get_xml_error(msg))
         except Exception, e:

@@ -163,7 +163,7 @@ class ContextEntry(Resource):
                 concept.save()
                  
             except Concept.DoesNotExist:
-                return HttpResponseBadRequest(get_xml_error(_("Concept doesn't exist. You must use POST HTTP method in this case")))
+                return HttpResponseBadRequest(get_xml_error(_("Concept does not exist. You must use POST HTTP method in this case")))
 
             cname = ConceptName (name=received_concept['name'], concept=concept)
             cname.save()

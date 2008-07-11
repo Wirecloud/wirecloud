@@ -212,7 +212,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var entry = this.iGadgets[iGadgetId];
 
 		if (!entry) {
-			var msg = gettext("Wiring error: Trying to remove an inexistant igadget.");
+			var msg = gettext("Wiring error: Trying to remove an inexistent igadget.");
 			LogManagerFactory.getInstance().log(msg);
 			return;
 		}
@@ -232,7 +232,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var iGadgetEntry = this.iGadgets[iGadget.id];
 
 		if (iGadgetEntry == null) {
-			var msg = gettext("Wiring error: Trying to retreive the connectables of an inexistant igadget.");
+			var msg = gettext("Wiring error: Trying to retreive the connectables of an inexistent igadget.");
 			LogManagerFactory.getInstance().log(msg);
 			return;
 		}
@@ -277,7 +277,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var channel = this.channels.getElementById(channelId);
 
 		if (channel == undefined) {
-			var msg = gettext("Error removing channel %(channelName)s: Channel does not exists");
+			var msg = gettext("Error removing channel %(channelName)s: Channel does not exist");
 			msg = interpolate(msg, {channelName: channelName});
 			LogManagerFactory.getInstance().log(msg);
 			return;

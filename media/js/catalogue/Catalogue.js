@@ -401,13 +401,16 @@ var CatalogueFactory  = function () {
 					text = gettext('Search by Slot') + ': ';
 					break;
 				case "connectSlot":
-					text = gettext('Search by Slot connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					text = gettext('Search by Slot connectivity for %(resourceName)s %(resourceVersion)s');
+					text = interpolate(text, {resourceName: selectedResourceName, resourceVersion: selectedResourceVersion}, true);
 					break;
 				case "connectEvent":
-					text = gettext('Search by Event connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					text = gettext('Search by Event connectivity for %(resourceName)s %(resourceVersion)s');
+					text = interpolate(text, {resourceName: selectedResourceName, resourceVersion: selectedResourceVersion}, true);
 					break;
 				case "connectEventSlot":
-					text = gettext('Search by Event and Slot connectivity for ') + selectedResourceName + ' ' + selectedResourceVersion + ': ';
+					text = gettext('Search by Event and Slot connectivity for %(resourceName)s %(resourceVersion)s');
+					text = interpolate(text, {resourceName: selectedResourceName, resourceVersion: selectedResourceVersion}, true);
 					break;
 				case "global":
 					text = gettext('Global Search') + ': ';
@@ -621,7 +624,7 @@ var CatalogueFactory  = function () {
 				if (auxiliar[i] == 'resource') {
 					$('header_always_status').innerHTML = "";
 					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-						innerHTML: gettext('Complete Catalogue')
+						innerHTML: gettext('Full Catalogue')
 					})));
 					break;
 				} else if (auxiliar[i] == 'search' || auxiliar[i]=='globalsearch') {
