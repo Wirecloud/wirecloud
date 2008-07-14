@@ -27,6 +27,25 @@ a:hover{
 	height: 70px;
 	z-index: 2;
 }
+.form-row {
+	width: 300px;
+	margin: auto;
+	text-align: center;
+	padding: 10px;
+}
+
+.form-row input[type="submit"]{
+	padding: 0px;
+	background: transparent url(/ezweb/images/button.gif) no-repeat scroll 0% 50%;
+	color: white;
+	border: none;
+	margin-top: 5px;
+}
+
+.form-row table {
+	text-align: left;
+}
+
 #banner {
   position:relative;
   overflow:hidden;

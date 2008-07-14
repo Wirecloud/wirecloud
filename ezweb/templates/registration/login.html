@@ -23,19 +23,27 @@
 <!-- HEADER -->
 <div id="header">
   <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
-
-
 {% if error_message %}
 <p class="errornote">{{ error_message }}</p>
 {% endif %}
 
-
+</div>
 
 <div id="content-main">
 <form action="{{ app_path }}" method="post" id="login-form">
   <div class="form-row">
-    <label for="id_username">{% trans 'Username:' %}</label> <input type="text" name="username" id="id_username" />
-    <label for="id_password">{% trans 'Password:' %}</label> <input type="password" name="password" id="id_password" />
+  	<table>
+  		<tr><td>
+    		<label for="id_username">{% trans 'Username:' %}</label> 
+    	</td><td>
+    		<input type="text" name="username" id="id_username" />
+    	</td></tr>
+    	<tr><td>
+    		<label for="id_password">{% trans 'Password:' %}</label> 
+    	</td><td>	
+    		<input type="password" name="password" id="id_password" />
+    	</td></tr>
+    </table>
     <input type="hidden" name="this_is_the_login_form" value="1" />
     <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
     <input type="submit" value="{% trans 'Log in' %}" />
@@ -45,7 +53,6 @@
 <script type="text/javascript">
 document.getElementById('id_username').focus()
 </script>
-</div>
 </div>
 
 </body>
