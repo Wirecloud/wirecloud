@@ -291,7 +291,8 @@ IGadget.prototype.paint = function(where) {
 		this.content.setAttribute("class", "gadget_object"); 
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
 		this.content.setAttribute("src", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
-		this.content.setAttribute("standby", "Loading..."); 
+		this.content.setAttribute("standby", "Loading...");
+		this.content.setAttribute("onload", "OpManagerFactory.getInstance().igadgetLoaded("+this.id+")");
 //		this.content.innerHTML = "Loading...."; // TODO add an animation ?
 
 		this.content.setAttribute("width", "100%");
@@ -301,9 +302,10 @@ IGadget.prototype.paint = function(where) {
 		this.content.setAttribute("class", "gadget_object"); 
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
 		this.content.setAttribute("data", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
-		this.content.setAttribute("standby", "Loading..."); 
+		this.content.setAttribute("standby", "Loading...");
+		this.content.setAttribute("onload", "OpManagerFactory.getInstance().igadgetLoaded("+this.id+")");  
 		this.content.innerHTML = "Loading...."; // TODO add an animation ?
-
+	
 		this.content.setStyle({"width": "100%", "height": contentHeight});
 	}
 	this.contentWrapper.appendChild(this.content);

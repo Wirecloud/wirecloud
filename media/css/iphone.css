@@ -1,0 +1,306 @@
+
+body{
+	background:#fcfcfc ;
+	/*background-color: rgb(197,204,211) !important;
+	background-image: url(/ezweb/images/iphone/stripes.png);*/
+	margin: 0;
+    font-family: Helvetica;
+    color:#4C5054;
+    /*color: #4C566C;*/
+}
+
+a, a:link, a:visited, a:hover{
+	text-decoration: none;
+	color: #2D6F9C;
+	/*color: #4C566C;*/
+}
+
+img{
+	border: none;
+}
+
+/**** GENERAL STYLES ***/
+
+.block{
+	display: block;
+}
+
+/**** HEADER SECTION ****/
+
+#header {
+	display: none;
+}
+
+/**** MAIN SECTION ****/
+body[orient="portrait"] .container {
+    height: 416px;
+	width: 320px;        
+}
+    
+body[orient="landscape"] .container {
+    height: 268px;
+    width: 480px;
+}
+
+wrapper{
+	position: relative;
+}
+
+/* IGADGETS MENU */
+
+.toolbar {
+    position: absolute;
+    padding: 10px 0;
+    height: 20px;
+    background: url(/ezweb/images/iphone/iPhoneToolbar.png) #8191AA repeat-x;
+    color: #fcfcfc;
+    font-family: Helvetica;
+    text-align: center;
+}
+
+.toolbar h1{
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: #3F4E63 0px -1px 1px;
+    margin: 0;
+}
+
+.toolbar .logout{
+	font-size: 11pt;
+	position: absolute;
+	right: 5px;
+	top: 0;
+	color: #fcfcfc;
+}
+
+body[orient="portrait"] .toolbar {
+    width: 320px;
+}
+
+body[orient="landscape"] .toolbar {
+    width: 480px;
+}
+
+.toolbar {
+    font-size: 20px;
+}
+
+.anchorTop {
+    top: 0;
+}
+.tabs_container{
+	display: block;
+	width: 100%;
+}
+
+body[orient="portrait"] .tabs_container {
+    height: 416px;
+}
+
+body[orient="landscape"] .tabs_container {
+    height: 268px;
+}
+
+.tab {
+	position: absolute;
+	top: 0px;
+}
+
+.tab_content {
+    position: absolute;
+    top: 50px;
+	text-align: center;
+	padding: 0 5px;      
+}
+
+body[orient="portrait"] .tab_content {
+    width: 310px;
+}
+
+body[orient="landscape"] .tab_content {
+    width: 470px;
+}
+
+body[orient="portrait"] .igadget_item{
+	width: 75px;	/* 4 igadget_icon per line */
+} 
+
+body[orient="landscape"] .igadget_item{
+	width: 92px;   /* 5 igadget_icon per line */
+} 
+
+.igadget_item{
+	float: left;
+	padding: 1px;
+}
+.igadget_item a{
+	display: block;
+	font-size: 8pt;
+}
+.igadget_icon { 
+	width: 48px; 
+	height: 48px; 
+	margin: 0; 
+	border: 0; 
+	padding: 3px 3px 0px 3px; 
+}
+
+
+/* DRAGBOARD SECTION */
+
+.dragboard{
+	display:none;
+	width: 100%;
+	position: absolute;
+}
+
+body[orient="portrait"] .dragboard {
+    height: 416px;
+}
+
+body[orient="landscape"] .dragboard {
+    height: 268px;
+}
+/**** Bar Section ****/
+#mymw-nav {
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	top: 19px;
+	left: 1px;
+	z-index: 2;
+}
+body[orient="landscape"] #mymw-nav {
+	left: 3px;
+}
+#mymw-nav li {	
+	padding: 2px 4px;
+	border: 2px solid #4C5054;
+	border-bottom: none;
+	background: #4C5054;
+	display: inline;
+	color: white;
+	margin: 0 6px 0 0px;
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+}
+
+#mymw-nav li a {
+	color: white;
+	text-decoration: none;
+	font-size: 10pt;
+}
+
+#mymw-nav li.mymw-selected {
+	background: white;
+}
+
+#mymw-nav li.mymw-selected a {	
+	color: #4C5054;
+}
+
+#mymw-nav li.mymw-inactive {
+	visibility: hidden;
+}
+
+.bar{
+	position: relative;
+	width: 100%;
+	height: 30px;
+	padding-top: 7px;
+}
+.tab_name{
+	position: absolute;
+	right: 5px;
+	top: 0pt;
+	font-size: 10pt;
+}
+/**** iGadget Section ****/
+
+.igadget_section{
+	border: 2px solid #4C5054;
+	margin: auto;
+	display: block;
+	width: 98%;
+	position: relative;
+}
+.igadget_section>div {
+	position: absolute;
+	width: 100%;
+}
+.igadget_section div.mymw-inactive {
+	visibility: hidden;
+}
+
+body[orient="portrait"] .igadget_section{
+	height: 358px; /* 416 -37(bar+padding)-17(menu_link)-4(border) */
+}
+
+body[orient="landscape"] .igadget_section{
+	height: 210px; /* 268 -37(bar+padding)-17(menu_link)-4(border) */
+}
+
+.gadget_content{
+	display: block;
+}
+
+body[orient="portrait"] .gadget_content{
+	height: 308px; /* 358 (igadget_section) - 50 (related) */
+}
+
+body[orient="landscape"] .gadget_content{
+	height: 160px; /* 210 (igadget_section) - 50 (related) */
+}
+
+.gadget_content_full{
+	display: block;
+}
+
+body[orient="portrait"] .gadget_content_full{
+	height: 358px; /* without related section */
+}
+
+body[orient="landscape"] .gadget_content_full{
+	height: 210px; /* without related section */
+}
+
+.gadget_object{
+	width: 100%;
+	height: 100%;
+}
+
+/**** Related Gadget Section ****/
+.related_gadgets{
+	border: 1px solid #E0E0E0;
+	width: 95%;
+	height: 36px;
+	padding: 0px;
+	margin: 2px auto;
+	text-align: center;
+	display: block;
+	padding: 2px 0;
+}
+.related_gadget_div{
+	display: inline;
+}
+
+.related_gadget{
+	margin: 0 5px;
+	height: 35px;
+	width: 35px;
+	cursor: pointer;
+}
+
+.related_gadgets .active{
+	border: 1px solid red;
+}
+
+/*  MENU LINK  */
+.menu_link{
+	font-size: 12pt;
+}
+
+/*** OTHER SECTIONS ***/
+.menu_icon{
+	padding: 0px 3px 0px 5px;
+}

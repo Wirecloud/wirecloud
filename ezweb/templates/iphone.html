@@ -1,0 +1,132 @@
+﻿{% load i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+<meta name="viewport" content="width=320; height=416; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
+<title>{% trans "EzWeb Platform" %}</title>
+<head>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/iphone.css" />
+<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+
+</head>
+
+<body onload="initialLoad();"  onorientationchange="updateLayout();" >
+
+<!-- HEADER -->
+<div id="header">
+	<div id="banner">
+	  <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
+	</div>
+</div>
+
+<!-- MAIN SECTION -->
+<div id="wrapper">
+
+	<!-- IGADGETS MENU -->
+    <div id="tabs_container" class="tabs_container">
+    </div>
+    
+    
+	<!-- IGADGET SECTION --> 
+	<div id="dragboard" class="container dragboard">
+		<!-- TABS BAR -->
+		<div id="bar" class="bar">
+			<ul id="mymw-nav" class="igadget_tab_section">
+			</ul>
+			<span id="tab_name" class="tab_name">
+			</span>
+		</div>
+	  	<!-- DRAGBOARD -->
+	  	<div id="mymw-content" class="igadget_section">
+	    </div>
+	    <a class="menu_link" href="javascript:OpManagerFactory.getInstance().showGadgetsMenu()"><img src="{{ MEDIA_URL }}images/iphone/gadgets_menu.png" class="menu_icon" /><span>Gadgets List</span></a>
+	</div>
+</div>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/lib/mymw/mymw-core.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/lib/mymw/mymw-tabs.js"></script>
+
+<script type="text/javascript" language="javascript">
+_URIConstants = function(){}
+_URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
+_URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
+_URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
+_URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets');
+_URIConstants.prototype.PROXY = '/proxy';
+_URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
+_URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
+_URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
+_URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}');
+_URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
+_URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
+
+var URIs = new _URIConstants();
+</script>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/common/utils.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/XHtml.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/gadgetModel/Gadget.js"></script>
+
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/opManager/WorkSpace.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/opManager/Tab.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/opManager/OpManager.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariableGadget.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/showcase/showcase.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/showcase/util.js"></script>
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextManager.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextPlatform.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/Adaptors.js"></script> 
+
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/dragboard/iGadget.js"></script>
+<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/dragboard/dragboard.js"></script>
+<!--<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>-->
+
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/add-ons/wiring.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/add-ons/connectable.js"></script>
+
+<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+
+
+<!-- Initialization code -->
+<script language="JavaScript">
+    
+    function initialLoad(){
+    	this.showcaseModule = ShowcaseFactory.getInstance();
+    	this.showcaseModule.init();
+    	checkInterval = setInterval(checkTab, 400);
+    	updateInterval = setInterval(updateLayout, 300);
+    }
+    var loaded = false;
+    var updateInterval;
+    var checkInterval;
+	var tabview; //TO REMOVE EARLY
+	var opManager = OpManagerFactory.getInstance();
+    var _currentWidth = 0;
+    
+</script>
+</body>
+</html>
