@@ -171,14 +171,14 @@ function WorkSpace (workSpaceState) {
 	
 	WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
 	    var igadget = this.getIgadget(igadgetId);
- 	    var tab = igadget.getTab();
- 	    
- 	    tab.getDragboard().igadgetLoaded();
- 	    
- 	    if (this._allIgadgetsLoaded()) {
+	    var tab = igadget.getTab();
+	    
+	    tab.getDragboard().igadgetLoaded(igadgetId);
+	    
+	    if (this._allIgadgetsLoaded()) {
 			this.wiring.propagateInitialValues(true);
-			this.contextManager.propagateInitialValues(null);
- 	    }
+			//this.contextManager.propagateInitialValues(null);
+	    }
 	}
 	
 	WorkSpace.prototype.sendBufferedVars = function () {

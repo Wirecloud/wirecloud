@@ -674,11 +674,19 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 
-	Dragboard.prototype.igadgetLoaded = function () {
-	    this.igadgetsToLoad--;
+	Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
+		var igadget = this.iGadgets[iGadgetId];
+
+		if (!igadget) {
+			// TODO log
+			return;
+		}
+
+		igadget._notifyLoaded();
+		this.igadgetsToLoad--;
 	}
-	
-	
+
+
 	Dragboard.prototype.getRemainingIGadgets = function () {
 	    return this.igadgetsToLoad;
 	}

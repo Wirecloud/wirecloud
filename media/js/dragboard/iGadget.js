@@ -48,7 +48,8 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, layoutStyle, posit
 	this.position = position;
 	this.contentWidth = width;
 	this.contentHeight = height;
-	
+	this.loaded = false;
+
 	this.dragboard = dragboard;
 
 	this.height = layoutStyle.getTitlebarSize();
@@ -91,7 +92,7 @@ IGadget.prototype.setPosition = function(position) {
 		this.element.style.top = this.layoutStyle.getRowOffset(position.y) + "px";
 
 		// Notify Context Manager of igadget's position
-		this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x); 
+		this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x);
 		this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
 	}
 }
@@ -257,16 +258,6 @@ IGadget.prototype.paint = function(where) {
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, true);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
-
-	if (this.errorCount > 0) {
-		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
-		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
-		                   this.errorCount);
-		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
-		LogManagerFactory.getInstance().log(msg);
-		this.errorButtonElement.removeClassName("disabled");
-		this._updateErrorInfo();
-	}
 
 	this.fillWithLabel();
 	
@@ -605,6 +596,30 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 }
 
 /**
+ * This function is called when the content of the igadget has been loaded completly
+ */
+IGadget.prototype._notifyLoaded = function() {
+	if (this.loaded) {
+		// TODO log
+	}
+
+	this.loaded = true;
+
+	if (this.errorCount > 0) {
+		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
+		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
+		                   this.errorCount);
+		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
+		LogManagerFactory.getInstance().log(msg);
+		this.errorButtonElement.removeClassName("disabled");
+		this._updateErrorInfo();
+	}
+
+	// Notify to the context manager the igadget has been loaded
+	this.dragboard.getWorkspace().getContextManager().propagateInitialValues(this.id);
+}
+
+/**
  * Sets the absolute size of the igadget. See setContentSize for resizing the area for the igadget content.
  *
  * @param newWidth the new width of this igadget in cells. This will be the
@@ -819,13 +834,6 @@ IGadget.prototype.save = function() {
 		var igadgetInfo = eval ('(' + transport.responseText + ')');
 		this.id = igadgetInfo['id'];
 		this.dragboard.addIGadget(this, igadgetInfo);
-		
-		// Notify Context Manager of igadget is saved
-		setTimeout(
-			function(){
-				this.dragboard.getWorkspace().getContextManager().propagateInitialValues(this.id);			
-			}.bind(this)
-			,500);
 	}
 
 	function onError(transport, e) {
