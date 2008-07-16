@@ -5,6 +5,7 @@ body{
 	background-image: url(/ezweb/images/iphone/stripes.png);*/
 	margin: 0;
     font-family: Helvetica;
+    -webkit-text-size-adjust: none;
     color:#4C5054;
     /*color: #4C566C;*/
 }

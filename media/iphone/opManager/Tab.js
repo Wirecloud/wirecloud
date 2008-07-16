@@ -62,7 +62,7 @@ function Tab (tabInfo, workSpace) {
 	    //var handler = function(){this.dragboard.setVisibleIGadget(iGadgets[i]);this.dragboard.paint();}.bind(this);
 	    
 	    html+= '<div class="container tab" id="'+this.tabName+'" style="left:'+scrollLeft+'px">';
-		html+= '<div class="toolbar anchorTop"><h1>'+ nameToShow +'</h1><a href="/accounts/login/?next=/iphone" class="logout">Exit</span></div>';
+		html+= '<div class="toolbar anchorTop"><h1>'+ nameToShow +'</h1><a href="/accounts/login/?next=/" class="logout">Exit</span></div>';
 		html+= '<div class="tab_content">';
 		for(i=0;i<iGadgets.length;i++){
 			html+= '<div class="igadget_item">';
