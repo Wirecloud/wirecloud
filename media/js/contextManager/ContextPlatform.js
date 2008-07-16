@@ -41,6 +41,7 @@ function ContextVar(igadgetId_, varName_, conceptName_) {
 	this._conceptName = conceptName_;
 	this._varManager = null;
 	this._value = null;
+	this._gadgetLoaded = false;
 }
 
 ContextVar.prototype.getName = function () {
@@ -59,9 +60,17 @@ ContextVar.prototype.getValue = function () {
 	return this._value;
 }
 
+ContextVar.prototype.propagateValue = function () {
+	if (this._gadgetLoaded)
+		return;
+	
+	this._gadgetLoaded = true;
+	this.setValue(this._value);
+}
+
 ContextVar.prototype.setValue = function (newValue_) {
 	this._value = newValue_;
-	if (this._varManager !=null)
+	if ((this._varManager !=null) && this._gadgetLoaded)
 		this._varManager.getVariableByName(this._igadgetId, this._varName).set(newValue_);
 }
 
@@ -170,8 +179,12 @@ Concept.prototype.setInitialValue = function (newValue_) {
 	this._initialValue = newValue_;
 }
 
-Concept.prototype.getInitialValue = function () {
-	return this._initialValue;
+Concept.prototype.propagateIGadgetVarValues = function (iGadget_) {
+	for (var i = 0; i < this._igadgetVars.length; i++){
+		var ivar = this._igadgetVars[i];
+		if ((iGadget_ == null) || (ivar.getIGadgetId() == iGadget_))
+			ivar.propagateValue();
+	} 
 }
 
 Concept.prototype.addIGadgetVar = function (ivar_) {

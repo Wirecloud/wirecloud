@@ -176,7 +176,8 @@ function WorkSpace (workSpaceState) {
  	    tab.getDragboard().igadgetLoaded();
  	    
  	    if (this._allIgadgetsLoaded()) {
- 	    	this.wiring.propagateInitialValues(true);
+			this.wiring.propagateInitialValues(true);
+			this.contextManager.propagateInitialValues(null);
  	    }
 	}
 	

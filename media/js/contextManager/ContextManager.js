@@ -151,6 +151,18 @@ function ContextManager (workspace_, workSpaceInfo_) {
 		this._addContextVarsFromTemplate(template_.getGadgetContextVars(iGadget_.id), Concept.prototype.IGADGET);
 	}
 	
+	
+	ContextManager.prototype.propagateInitialValues = function (iGadgetId_) {
+		if (! this._loaded)
+		    return;
+	
+		var keys = this._concepts.keys();
+		for (i = 0; i < keys.length; i++) {
+			var key = keys[i];
+			this._concepts[key].propagateIGadgetVarValues(iGadgetId_);
+		}
+	}
+
 	ContextManager.prototype.removeInstance = function (iGadgetId_) {
 		if (! this._loaded)
 		    return;
@@ -172,6 +184,29 @@ function ContextManager (workspace_, workSpaceInfo_) {
 		this._concepts[concept_].setValue(value_);
 	}
 	
+	ContextManager.prototype.notifyModifiedGadgetConcept = function (igadgetid_, concept_, value_, preLoaded_) {
+		if (! this._loaded)
+		    return;
+			
+		if (! this._concepts[concept_])
+			return;
+			
+		try{
+			if (preLoaded_){
+				this._concepts[concept_].getIGadgetVar(igadgetid_).setPreloadedValue(value_);
+			}else{
+				this._concepts[concept_].getIGadgetVar(igadgetid_).setValue(value_);	
+			}
+		}catch(e){
+			// Do nothing, igadget has not variables related to this concept
+		}
+	}
+	
+	ContextManager.prototype.getWorkspace = function () {
+		return this._workspace;
+	}	
+
+
 	ContextManager.prototype.unload = function () {
 
 		// Delete all concept names
@@ -195,24 +230,7 @@ function ContextManager (workspace_, workSpaceInfo_) {
 
 		delete this;
 	}
-	
-	ContextManager.prototype.notifyModifiedGadgetConcept = function (igadgetid, concept, value) {
-		if (! this._loaded)
-		    return;
-			
-		if (! this._concepts[concept])
-			return;
-			
-		try{
-			this._concepts[concept].getIGadgetVar(igadgetid).setValue(value);
-		}catch(e){
-			// Do nothing, igadget has not variables related to this concept
-		}
-	}
-	
-	ContextManager.prototype.getWorkspace = function () {
-		return this._workspace;
-	}	
+
 
 	// *********************************************
 	// PRIVATE VARIABLES AND CONSTRUCTOR OPERATIONS

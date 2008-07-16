@@ -344,7 +344,7 @@ IGadget.prototype.paint = function(where) {
 	// Notify Context Manager of igadget's size
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
-
+	
 	return this.element;
 }
 
@@ -819,6 +819,13 @@ IGadget.prototype.save = function() {
 		var igadgetInfo = eval ('(' + transport.responseText + ')');
 		this.id = igadgetInfo['id'];
 		this.dragboard.addIGadget(this, igadgetInfo);
+		
+		// Notify Context Manager of igadget is saved
+		setTimeout(
+			function(){
+				this.dragboard.getWorkspace().getContextManager().propagateInitialValues(this.id);			
+			}.bind(this)
+			,500);
 	}
 
 	function onError(transport, e) {

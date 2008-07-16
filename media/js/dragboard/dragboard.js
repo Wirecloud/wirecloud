@@ -674,12 +674,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 
-	Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
+	Dragboard.prototype.igadgetLoaded = function () {
 	    this.igadgetsToLoad--;
 	}
 	
 	
-	Dragboard.prototype.getRemainingIGadgets = function (iGadgetId) {
+	Dragboard.prototype.getRemainingIGadgets = function () {
 	    return this.igadgetsToLoad;
 	}
 
