@@ -335,7 +335,10 @@ IGadget.prototype.paint = function(where) {
 	// Notify Context Manager of igadget's size
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
-	
+
+	// Notify Context Manager of the current lock status
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, this.dragboard.isLocked());
+
 	return this.element;
 }
 
@@ -590,6 +593,9 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 	var oldHeight = this.getHeight();
 
 	this.height = null;
+
+	// Notify Context Manager
+	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, newLockStatus);
 
 	// Notify resize event
 	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);

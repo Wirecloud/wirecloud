@@ -24,6 +24,10 @@
         <field type="CharField" name="source">PLAT</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
+    <object pk="lockStatus" model="context.concept">
+        <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="adaptor"><None></None></field>
+    </object>
     <object pk="1" model="context.conceptname">
         <field type="CharField" name="name">user_name</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">username</field>
@@ -47,6 +51,10 @@
     <object pk="6" model="context.conceptname">
         <field type="CharField" name="name">language</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">language</field>
+    </object>
+    <object pk="7" model="context.conceptname">
+        <field type="CharField" name="name">lockStatus</field>
+        <field to="context.concept" name="concept" rel="ManyToOneRel">lockStatus</field>
     </object>
     <object pk="1" model="auth.user">
         <field type="CharField" name="username">admin</field>

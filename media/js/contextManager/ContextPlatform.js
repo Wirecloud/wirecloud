@@ -123,6 +123,7 @@ Concept.prototype.WIDTH = "width";
 Concept.prototype.HEIGHT = "height";
 Concept.prototype.XPOSITION = "xPosition";
 Concept.prototype.YPOSITION = "yPosition";
+Concept.prototype.LOCKSTATUS = "lockStatus";
 
 Concept.prototype.getSemanticConcept = function () {
 	return this._semanticConcept;
@@ -265,6 +266,7 @@ Concept.prototype.unload = function () {
 	delete this.HEIGHT;
 	delete this.XPOSITION;
 	delete this.YPOSITION;
+	delete this.LOCKSTATUS;
 	
 	delete this;
 
