@@ -914,7 +914,7 @@ function DragboardStyle(dragboardElement, columns, cellHeight, verticalMargin, h
 		this.rightMargin = Math.floor(horizontalMargin / 2) + 1;
 	}
 
-	this.recomputeSize;
+	this.recomputeSize();
 }
 
 DragboardStyle.prototype.recomputeSize = function() {
