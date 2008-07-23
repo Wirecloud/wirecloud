@@ -70,7 +70,7 @@ ContextVar.prototype.propagateValue = function () {
 
 ContextVar.prototype.setValue = function (newValue_) {
 	this._value = newValue_;
-	if ((this._varManager !=null) && this._gadgetLoaded)
+	if (this._varManager !=null)
 		this._varManager.getVariableByName(this._igadgetId, this._varName).set(newValue_);
 }
 
@@ -180,6 +180,7 @@ Concept.prototype.setValue = function (value_) {
 
 Concept.prototype.setInitialValue = function (newValue_) {
 	this._initialValue = newValue_;
+	this._value = newValue_;
 }
 
 Concept.prototype.propagateIGadgetVarValues = function (iGadget_) {

@@ -49,7 +49,6 @@ function WorkSpace (workSpaceState) {
 		this.workSpaceGlobalInfo = eval ('(' + response + ')');
 
 		this.varManager = new VarManager(this);
-		this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 		
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 
@@ -67,6 +66,7 @@ function WorkSpace (workSpaceState) {
 			}
 		}
 
+		this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 		this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 		this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 

@@ -121,8 +121,9 @@ function ContextManager (workspace_, workSpaceInfo_) {
 						contextVar.setVarManager(this._workspace.getVarManager());
 						var relatedConcept = this._concepts[this._name2Concept[currentVar.concept]];
 						if (relatedConcept){
+							contextVar.setValue(relatedConcept._initialValue);
 							relatedConcept.setType(currentVar.aspect);
-							relatedConcept.addIGadgetVar(contextVar);								
+							relatedConcept.addIGadgetVar(contextVar);
 						}
 						break;
 					default:
@@ -132,7 +133,7 @@ function ContextManager (workspace_, workSpaceInfo_) {
 			}
 		}
 		
-		// Continues loading next module								
+		// Continues loading next module
 		this._loaded = true;
 	}
 	
