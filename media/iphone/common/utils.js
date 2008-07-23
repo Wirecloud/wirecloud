@@ -145,7 +145,6 @@ function checkTab()
 {
 	if (OpManagerFactory.getInstance().visibleLayer == "tabs_container"){
 		var xoffset = window.pageXOffset;
-		var yoffset = window.pageYOffset;
 	
 		var tabWidth = window.innerWidth;	
 		var halfTabWidth = tabWidth / 2;
@@ -169,13 +168,7 @@ function checkTab()
 			OpManagerFactory.getInstance().activeWorkSpace.updateVisibleTab(Math.round(window.pageXOffset / tabWidth));
 		}
 	}
-	/*if (yoffset > 0)
-	{
-		var STEP_V = 2;
-		var steps = yoffset / STEP_V;
-		for (var i=0; i<steps; i++) {
-			window.scrollBy(0, -STEP_V);
-		}
-		window.scrollTo(xoffset + scroll, 1);
-	}*/
+	else{ // dragboard
+		window.scrollTo(0, 1);
+	}
 }
