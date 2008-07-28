@@ -45,7 +45,6 @@ from commons.resource import Resource
 
 from commons.authentication import get_user_authentication
 from commons.get_data import get_gadget_data
-from commons.utils import json_encode
 
 from gadget.templateParser import TemplateParser
 
@@ -54,7 +53,7 @@ from django.db import transaction
 from django.utils.translation import ugettext as _
 
 from commons.logs import log
-from commons.utils import get_xml_error
+from commons.utils import get_xml_error, json_encode
 from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 

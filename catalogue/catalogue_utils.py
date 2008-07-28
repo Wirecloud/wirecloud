@@ -40,8 +40,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
 
-from commons.utils import json_encode
-from commons.utils import get_xml_error
+from commons.utils import get_xml_error, json_encode
 from catalogue.get_json_catalogue_data import get_gadgetresource_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from catalogue.models import GadgetResource, UserTag, UserRelatedToGadgetResource

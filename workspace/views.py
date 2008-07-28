@@ -40,6 +40,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServer
 from django.core import serializers
 
 from django.utils.translation import ugettext as _
+from django.utils import simplejson
 
 from commons.resource import Resource
 
@@ -187,7 +188,7 @@ class WorkSpaceCollection(Resource):
         received_json = request.POST['workspace']
 
         try:
-            ts = eval(received_json)
+            ts = simplejson.loads(received_json)
             
             if not ts.has_key('name'):
                 raise Exception(_('Malformed workspace JSON: expecting workspace uri.'))
@@ -235,7 +236,7 @@ class WorkSpaceEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            ts = eval(received_json)
+            ts = simplejson.loads(received_json)
             workspace = WorkSpace.objects.get(user=user, pk=workspace_id)
             
             if ts.has_key('active'):
@@ -245,10 +246,10 @@ class WorkSpaceEntry(Resource):
                     setActiveWorkspace(user, workspace)
                 else:
                     workspace.active = False
-                    
+            
             if ts.has_key('name'):
                 workspace.name = ts.get('name')
-                
+            
             workspace.save()
             
             return HttpResponse('ok')
@@ -278,8 +279,8 @@ class WorkSpaceEntry(Resource):
         activeWorkspace=workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
         return HttpResponse('ok')
-    
-    
+
+
 class TabCollection(Resource):
     @transaction.commit_on_success
     def create(self, request, workspace_id):
@@ -292,7 +293,7 @@ class TabCollection(Resource):
         received_json = request.POST['tab']    
 
         try:
-            t = eval(received_json)
+            t = simplejson.loads(received_json)
             
             if not t.has_key('name'):
                 raise Exception(_('Malformed tab JSON: expecting tab name.'))
@@ -310,7 +311,6 @@ class TabCollection(Resource):
             log(msg, request)
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-    
 
 class TabEntry(Resource):
     def read(self, request, workspace_id, tab_id):
@@ -332,7 +332,7 @@ class TabEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            t = eval(received_json)
+            t = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id)
             
             if t.has_key('visible'):
@@ -388,17 +388,17 @@ class TabEntry(Resource):
 class WorkSpaceVariableCollection(Resource):
     
     @transaction.commit_on_success
-    def update(self, request, workspace_id):  
+    def update(self, request, workspace_id):
         user = get_user_authentication(request)
         
-        received_json = PUT_parameter(request, 'variables') 
-
+        received_json = PUT_parameter(request, 'variables')
+        
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("variables JSON expected")), mimetype='application/xml; charset=UTF-8')
-
+        
         try:
-            variables = eval(received_json)
-                    
+            variables = simplejson.loads(received_json)
+            
             igadgetVariables = variables['igadgetVars']
             workSpaceVariables = variables['workspaceVars']
             
@@ -407,10 +407,10 @@ class WorkSpaceVariableCollection(Resource):
                    
                 wsVarDAO.abstract_variable.value=wsVar['value'];
                 wsVarDAO.abstract_variable.save();   
-               
+            
             for igVar in igadgetVariables:
                 igVarDAO = Variable.objects.get(pk=igVar['id'])
-   
+                
                 igVarDAO.abstract_variable.value=igVar['value'];
                 igVarDAO.abstract_variable.save(); 
             

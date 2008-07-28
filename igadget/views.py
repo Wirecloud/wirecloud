@@ -41,6 +41,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServer
 from django.core import serializers
 
 from django.utils.translation import ugettext as _
+from django.utils import simplejson
 
 from commons.resource import Resource
 
@@ -68,7 +69,7 @@ def createConnectable(var):
         connectable = Out(name=name, abstract_variable=var.abstract_variable)
     if (aspect == 'EVEN'):
         connectable = In(name=name, variable=var)
-        
+    
     if (connectable == None):
         return {}
     
@@ -76,10 +77,10 @@ def createConnectable(var):
     
     connectableId = {}
     
-    connectableId['id'] = connectable.id    
+    connectableId['id'] = connectable.id
     connectableId['name'] = name
-        
-    return connectableId   
+    
+    return connectableId
 
 def SaveIGadget(igadget, user, tab):
     
@@ -90,7 +91,7 @@ def SaveIGadget(igadget, user, tab):
     height = igadget.get('height')
     top = igadget.get('top')
     left = igadget.get('left')
-        
+    
     # Creates IGadget position
     position = Position(posX=left, posY=top, height=height, width=width, minimized=False)
     position.save()
@@ -106,7 +107,7 @@ def SaveIGadget(igadget, user, tab):
 
         new_igadget = IGadget(code=igadget_code, name=igadget_name, gadget=gadget, tab=tab, position=position)
         new_igadget.save()
-                
+        
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
             # Sets the default value of variable
@@ -114,10 +115,10 @@ def SaveIGadget(igadget, user, tab):
                 var_value = varDef.default_value
             else:
                 var_value = ''
-                
+            
             abstractVar = AbstractVariable(type="IGADGET", value=var_value, name=varDef.name)  
-            abstractVar.save()  
-                
+            abstractVar.save()
+            
             var = Variable(vardef=varDef, igadget=new_igadget, abstract_variable=abstractVar)
             var.save()
             
@@ -150,10 +151,10 @@ def UpdateIGadget(igadget, user, tab):
         ig.name = name
     
     ig.save()
-        
+    
     # get IGadget's position
     position = ig.position
-        
+    
     # update the requested attributes
     if igadget.has_key('width'):
         width = igadget.get('width')
@@ -172,7 +173,7 @@ def UpdateIGadget(igadget, user, tab):
         if top < 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.posY = top
-    
+
     if igadget.has_key('left'):
         left = igadget.get('left')
         if left < 0:
@@ -228,7 +229,7 @@ class IGadgetCollection(Resource):
 
         try:
             received_json = request.POST['igadget']
-            igadget = eval(received_json)
+            igadget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
             ids = SaveIGadget(igadget, user, tab)
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
@@ -254,7 +255,7 @@ class IGadgetCollection(Resource):
         
         try:
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
-            received_data = eval(received_json)
+            received_data = simplejson.loads(received_json)
             igadgets = received_data.get('iGadgets')
             for igadget in igadgets:
                 UpdateIGadget(igadget, user, tab)
@@ -289,7 +290,7 @@ class IGadgetEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            igadget = eval(received_json)
+            igadget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
             UpdateIGadget(igadget, user, tab)
             return HttpResponse('ok')
@@ -337,7 +338,7 @@ class IGadgetVariableCollection(Resource):
             return HttpResponseBadRequest(get_xml_error(_("iGadget variables JSON expected")), mimetype='application/xml; charset=UTF-8')
         
         try:
-            received_variables = eval(received_json)
+            received_variables = simplejson.loads(received_json)
             
             tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id) 
             server_variables = Variable.objects.filter(igadget__tab=tab)

@@ -41,6 +41,7 @@ from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from django.utils import simplejson
 
 from commons.resource import Resource
 
@@ -75,7 +76,7 @@ class ContextCollection(Resource):
             return HttpResponseBadRequest(get_xml_error(_("JSON parameter not specified")))
 
         try:
-            received_data = eval(received_json)
+            received_data = simplejson.loads(received_json)
         except:
             return HttpResponseBadRequest(get_xml_error(_("Expecting data in JSON format.")))
 
@@ -122,7 +123,7 @@ class ContextEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(_("JSON parameter not specified")))
 
         try:
-            received_concept = eval(received_json)
+            received_concept = simplejson.loads(received_json)
         except:
             return HttpResponseBadRequest(get_xml_error(_("Expecting data in JSON format.")))
 
@@ -151,7 +152,7 @@ class ContextEntry(Resource):
             return HttpResponseBadRequest(get_xml_error(_("JSON parameter not specified")))
 
         try:
-            received_data = eval(received_json)
+            received_data = simplejson.loads(received_json)
         except:
             return HttpResponseBadRequest(get_xml_error(_("Expecting data in JSON format.")))
 
