@@ -74,7 +74,7 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, layoutStyle, posit
 }
 
 /**
- * Returns the associated Gadget class.
+ * Returns the associated Gadget.
  */
 IGadget.prototype.getGadget = function() {
 	return this.gadget;
@@ -301,11 +301,20 @@ IGadget.prototype.paint = function(where) {
 	}
 	this.contentWrapper.appendChild(this.content);
 
-	// resize handle
-	var resizeHandle = document.createElement("div");
-	resizeHandle.setAttribute("class", "resizeHandle");
+	// resize handles
+	var resizeHandle;
+
+	// Left one
+	resizeHandle = document.createElement("div");
+	resizeHandle.setAttribute("class", "leftResizeHandle");
 	this.contentWrapper.appendChild(resizeHandle);
-	new IGadgetResizeHandle(resizeHandle, this);
+	new IGadgetResizeHandle(resizeHandle, this, true);
+
+	// Right one
+	resizeHandle = document.createElement("div");
+	resizeHandle.setAttribute("class", "rightResizeHandle");
+	this.contentWrapper.appendChild(resizeHandle);
+	new IGadgetResizeHandle(resizeHandle, this, false);
 
 	// TODO use setStyle from prototype
 	// Position
@@ -640,11 +649,13 @@ IGadget.prototype._notifyLoaded = function() {
  * @param newHeight the new height of this igadget in cells. This will be the
  *                  final height for this gadget (that is, counting the
  *                  igadget's title bar, the configuration form, etc)
+ * @param resizeLeftSide true if the gadget will be resized using the topRight
+ *                       as base point.
  * @param persist true if is needed to send the new widths/positions of the
  *                igadgets (the resize operation can move other igadgets) to
  *                persistence.
  */
-IGadget.prototype._setSize = function(newWidth, newHeight, persist) {
+IGadget.prototype._setSize = function(newWidth, newHeight, resizeLeftSide, persist) {
 	var oldWidth = this.getWidth();
 	var oldHeight = this.getHeight();
 
@@ -674,7 +685,7 @@ IGadget.prototype._setSize = function(newWidth, newHeight, persist) {
 	}
 
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, persist);
+	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
 }
 
 /**

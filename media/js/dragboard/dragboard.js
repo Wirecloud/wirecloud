@@ -76,7 +76,18 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadget = this.iGadgets[key];
 
 			position = iGadget.getPosition();
-			if (this._hasSpaceFor(this.matrix, position.x, position.y, iGadget.getWidth(), iGadget.getHeight())) {
+
+			if (iGadget.getWidth() > this.dragboardStyle.getColumns())
+				iGadget.contentWidth = this.dragboardStyle.getColumns();
+
+			if (iGadget.getWidth() + position.x > this.dragboardStyle.getColumns()) {
+				var guessedWidth = this.dragboardStyle.getColumns() - position.x;
+				if (this._hasSpaceFor(this.matrix, position.x, position.y, guessedWidth, iGadget.getHeight())) {
+					iGadget.contentWidth = guessedWidth;
+					this._reserveSpace(this.matrix, iGadget);
+					iGadget.paint(this.dragboardElement);
+				}
+			} else if (this._hasSpaceFor(this.matrix, position.x, position.y, iGadget.getWidth(), iGadget.getHeight())) {
 				this._reserveSpace(this.matrix, iGadget);
 				iGadget.paint(this.dragboardElement);
 			} else {
@@ -340,68 +351,115 @@ function Dragboard(tab, workSpace, dragboardElement) {
 				delete _matrix[positionX + x][positionY + y];
 	}
 
-	this._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, persist) {
+	this._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
 		var x, y;
 		var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
 		var position = iGadget.getPosition();
+		var step2X;
+		step2X = position.x;
 
 		// First Step
 		if (newWidth > oldWidth) {
 			// Calculate the width for the next step
 			step2Width = oldWidth;
 
-			// Move affected igadgets
 			var finalYPos = position.y + newHeight;
 
-			for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
-			  for (y = 0; y < newHeight; ++y) {
-			    var iGadgetToMove = this.matrix[x][position.y + y];
-			    if (iGadgetToMove != null) {
-			      this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
-			      break; // Continue with the next column
-			    }
-			  }
+			if (resizeLeftSide) {
+				// Move affected igadgets
+				var widthDiff = newWidth - oldWidth;
+				for (x = position.x - widthDiff; x < position.x; ++x) {
+				  for (y = 0; y < newHeight; ++y) {
+				    var iGadgetToMove = this.matrix[x][position.y + y];
+				    if (iGadgetToMove != null) {
+				      this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
+				      break; // Continue with the next column
+				    }
+				  }
+				}
+
+				// Move the gadget
+				position.x -= widthDiff;
+				if (persist)
+					iGadget.setPosition(position);
+
+				// Reserve the new space
+				this._reserveSpace2(this.matrix, iGadget,
+				                                 position.x, position.y,
+				                                 widthDiff, newHeight);
+			} else {
+				// Move affected igadgets
+				for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
+				  for (y = 0; y < newHeight; ++y) {
+				    var iGadgetToMove = this.matrix[x][position.y + y];
+				    if (iGadgetToMove != null) {
+				      this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
+				      break; // Continue with the next column
+				    }
+				  }
+				}
+
+				// Reserve this space
+				this._reserveSpace2(this.matrix, iGadget,
+				                                 position.x + oldWidth, position.y,
+				                                 newWidth - oldWidth, newHeight);
 			}
 
-			// Reserve this space
-			this._reserveSpace2(this.matrix, iGadget,
-			                                 position.x + oldWidth, position.y,
-			                                 newWidth - oldWidth, newHeight);
-			
 		} else if (newWidth < oldWidth) {
 			// Calculate the width for the next step
 			step2Width = newWidth;
 
-			// Clear space
-			this._clearSpace2(this.matrix, position.x + newWidth, position.y, oldWidth - newWidth, oldHeight);
+			var widthDiff = oldWidth - newWidth;
+			if (resizeLeftSide) {
 
-			// Move affected igadgets
-			y = position.y + oldHeight;
-			var limitX = position.x + oldWidth;
-			for (x = position.x + newWidth; x < limitX; ++x)
-				if (this.matrix[x][y] != null)
-					this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+				// Clear space
+				this._clearSpace2(this.matrix, position.x, position.y, widthDiff, oldHeight);
+
+				// Move affected igadgets
+				y = position.y + oldHeight;
+				var limitX = position.x + widthDiff;
+				for (x = position.x; x < limitX; ++x)
+					if (this.matrix[x][y] != null)
+						this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+
+				// Move the gadget
+				position.x += widthDiff;
+				if (persist)
+					iGadget.setPosition(position);
+
+				step2X = position.x;
+			} else {
+				// Clear space
+				this._clearSpace2(this.matrix, position.x + newWidth, position.y, widthDiff, oldHeight);
+
+				// Move affected igadgets
+				y = position.y + oldHeight;
+				var limitX = position.x + oldWidth;
+				for (x = position.x + newWidth; x < limitX; ++x)
+					if (this.matrix[x][y] != null)
+						this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+			}
 		}
 
 
 		// Second Step
 		if (newHeight > oldHeight) {
-			var limitY = position.y + newHeight ;
-			var limitX = position.x + step2Width;
+			var limitY = position.y + newHeight;
+			var limitX = step2X + step2Width;
 			for (y = position.y + oldHeight; y < limitY; y++)
-				for (x = position.x; x < limitX; x++)
+				for (x = step2X; x < limitX; x++)
 					if (this.matrix[x][y] != null)
 						this._moveSpaceDown(this.matrix, this.matrix[x][y], limitY - y);
 
 			// Reserve Space
-			this._reserveSpace2(this.matrix, iGadget, position.x, position.y + oldHeight, step2Width, newHeight - oldHeight);
+			this._reserveSpace2(this.matrix, iGadget, step2X, position.y + oldHeight, step2Width, newHeight - oldHeight);
 		} else if (newHeight < oldHeight) {
 			// Clear freed space
-			this._clearSpace2(this.matrix, position.x, position.y + newHeight, step2Width, oldHeight - newHeight);
+			this._clearSpace2(this.matrix, step2X, position.y + newHeight, step2Width, oldHeight - newHeight);
 
 			y = position.y + oldHeight;
-			var limitX = position.x + step2Width;
-			for (x = position.x; x < limitX; x++)
+			var limitX = step2X + step2Width;
+			for (x = step2X; x < limitX; x++)
 				if (this.matrix[x][y] != null)
 					this._moveSpaceUp(this.matrix, this.matrix[x][y]);
 		}
@@ -1044,6 +1102,23 @@ DragboardCursor.prototype.setPosition = function (position) {
 /////////////////////////////////////
 // Drag and drop support
 /////////////////////////////////////
+EzWebEffectBase = new Object();
+EzWebEffectBase.findDragboardElement = function(element) {
+	var tmp = element.parentNode;
+	while (tmp) {
+		var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
+		switch (position) {
+		case "relative":
+		case "absolute":
+		case "fixed":
+			return tmp;
+		}
+
+		tmp = tmp.parentNode;
+	}
+	return null; // Not found
+}
+
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	var xDelta = 0, yDelta = 0;
 	var xStart = 0, yStart = 0;
@@ -1118,7 +1193,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 
 		onStart(draggable, data);
 
-		var dragboard = findDragboardElement(draggableElement);
+		var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
 		dragboardCover = document.createElement("div");
 		dragboardCover.setAttribute("class", "cover");
 		dragboardCover.observe("mouseup" , enddrag, true);
@@ -1155,22 +1230,6 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 		draggableElement.style.left = x + 'px';
 
 		onDrag(draggable, data, x + xOffset, y + yOffset);
-	}
-
-	function findDragboardElement(draggable) {
-		var tmp = draggable.parentNode;
-		while (tmp) {
-			var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
-			switch (position) {
-			case "relative":
-			case "absolute":
-			case "fixed":
-				return tmp;
-			}
-
-			tmp = tmp.parentNode;
-		}
-		return null; // Not found
 	}
 
 	// cancels the call to startdrag function
@@ -1233,7 +1292,7 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish) {
 	var xDelta = 0, yDelta = 0;
 	var xStart = 0, yStart = 0;
-	var objects;
+	var dragboardCover;
 	var x, y;
 
 	// remove the events
@@ -1244,21 +1303,21 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
 			return false;
 
-		Event.stopObserving (document, "mouseup", endresize);
-		Event.stopObserving (document, "mousemove", resize);
+		Event.stopObserving(document, "mouseup", endresize);
+		Event.stopObserving(document, "mousemove", resize);
+
+		dragboardCover.parentNode.stopObserving("scroll", scroll);
+		dragboardCover.parentNode.removeChild(dragboardCover);
+		dragboardCover = null;
+
+		handleElement.stopObserving("mouseup", endresize, true);
+		handleElement.stopObserving("mousemove", resize, true);
 
 		onFinish(resizableElement, handleElement, data);
 		resizableElement.style.zIndex = null;
 
-		for (var i = 0; i < objects.length; i++) {
-			if (objects[i].contentDocument) {
-				Event.stopObserving(objects[i].contentDocument, "mouseup", endresize, true);
-				Event.stopObserving(objects[i].contentDocument, "mousemove", resize, true);
-			}
-		}
-
 		// Restore start event listener
-		Event.observe (handleElement, "mousedown", startresize);
+		handleElement.observe("mousedown", startresize);
 
 		document.onmousedown = null; // reenable context menu
 		document.oncontextmenu = null; // reenable text selection
@@ -1280,11 +1339,21 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		onResize(resizableElement, handleElement, data, x, y);
 	}
 
+	// fire each time the dragboard is scrolled while dragging
+	function scroll() {
+		var dragboard = dragboardCover.parentNode;
+		dragboardCover.style.height = dragboard.scrollHeight + "px";
+		var scrollTop = parseInt(dragboard.scrollTop);
+		var scrollDelta = yScroll - scrollTop;
+		y -= scrollDelta;
+		yScroll = scrollTop;
+
+		onResize(resizableElement, handleElement, data, x, y);
+	}
+
 	// initiate the resizing
 	function startresize(e) {
 		e = e || window.event; // needed for IE
-		
-		data.igadgetNameHTMLElement.blur();
 
 		// Only attend to left button (or right button for left-handed persons) events
 		if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
@@ -1292,24 +1361,39 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 
 		document.oncontextmenu = function() { return false; }; // disable context menu
 		document.onmousedown = function() { return false; }; // disable text selection
-		Event.stopObserving (handleElement, "mousedown", startresize);
+		handleElement.stopObserving("mousedown", startresize);
 
 		xStart = parseInt(e.screenX);
 		yStart = parseInt(e.screenY);
-		x = resizableElement.offsetLeft + resizableElement.offsetWidth;
-		y = resizableElement.offsetTop + resizableElement.offsetHeight;
+		x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
+		y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
 		Event.observe (document, "mouseup", endresize);
 		Event.observe (document, "mousemove", resize);
 
-		objects = document.getElementsByTagName("object");
-		for (var i = 0; i < objects.length; i++) {
-			if (objects[i].contentDocument) {
-				Event.observe(objects[i].contentDocument, "mouseup" , endresize, true);
-				Event.observe(objects[i].contentDocument, "mousemove", resize, true);
-			}
-		}
+		var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
+		dragboardCover = document.createElement("div");
+		dragboardCover.setAttribute("class", "cover");
+		dragboardCover.observe("mouseup" , endresize, true);
+		dragboardCover.observe("mousemove", resize, true);
+
+		dragboardCover.style.zIndex = "201";
+		dragboardCover.style.position = "absolute";
+		dragboardCover.style.top = "0";
+		dragboardCover.style.left = "0";
+		dragboardCover.style.width = "100%";
+		dragboardCover.style.height = dragboard.scrollHeight + "px";
+
+		yScroll = parseInt(dragboard.scrollTop);
+
+		dragboard.observe("scroll", scroll);
+
+		dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
 		resizableElement.style.zIndex = "200"; // TODO
+
+		handleElement.observe("mouseup", endresize, true);
+		handleElement.observe("mousemove", resize, true);
+
 		onStart(resizableElement, handleElement, data);
 
 		return false;
@@ -1319,28 +1403,36 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 	Event.observe (handleElement, "mousedown", startresize);
 }
 
-
 /////////////////////////////////////
 // IGadget resize support
 /////////////////////////////////////
-function IGadgetResizeHandle(handleElement, iGadget) {
-	ResizeHandle.call(this, iGadget.element, handleElement, iGadget,
+function IGadgetResizeHandle(handleElement, iGadget, resizeLeftSide) {
+	ResizeHandle.call(this, iGadget.element, handleElement,
+	                        {iGadget: iGadget, resizeLeftSide: resizeLeftSide},
 	                        IGadgetResizeHandle.prototype.startFunc,
 	                        IGadgetResizeHandle.prototype.updateFunc,
 	                        IGadgetResizeHandle.prototype.finishFunc);
 }
 
-IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, iGadget) {
+IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, data) {
 	handleElement.addClassName("inUse");
+	data.iGadget.igadgetNameHTMLElement.blur();
 }
 
-IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, iGadget, x, y) {
+IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, data, x, y) {
+	var iGadget = data.iGadget;
 	var position = iGadget.dragboard.getCellAt(x, y);
 
 	// Skip if the mouse is outside the dragboard
 	if (position != null) {
-		var currentPosition = iGadget.position;
-		var width = position.x - currentPosition.x + 1;
+		var currentPosition = iGadget.getPosition();
+		var width;
+
+		if (data.resizeLeftSide) {
+			width = currentPosition.x + iGadget.getWidth() - position.x;
+		} else {
+			width = position.x - currentPosition.x + 1;
+		}
 		var height = position.y - currentPosition.y + 1;
 
 		if (width < 1)  // Minimum width = 1 cells
@@ -1350,11 +1442,12 @@ IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleEle
 		  height = 3;
 
 		if (width != iGadget.getWidth() || height != iGadget.getHeight())
-		  iGadget._setSize(width, height, false);
+		  iGadget._setSize(width, height, data.resizeLeftSide, false);
 	}
 }
 
-IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, iGadget) {
-	iGadget._setSize(iGadget.getWidth(), iGadget.getHeight(), true);
+IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, data) {
+	var iGadget = data.iGadget;
+	iGadget._setSize(iGadget.getWidth(), iGadget.getHeight(), data.resizeLeftSide, true);
 	handleElement.removeClassName("inUse");
 }
