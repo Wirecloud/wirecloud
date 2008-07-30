@@ -465,9 +465,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 
 		this._notifyWindowResizeEvent();
-		// Save new positions into persistence
-		if (persist)
-		  this._commitChanges();
+		if (persist) {
+			this._moveSpaceUp(this.matrix, iGadget);
+			// Save new positions into persistence
+			this._commitChanges();
+		}
 	}
 
 	this._insertAt = function(iGadget, x, y) {
