@@ -39,7 +39,10 @@
 import os
 import codecs
 from datetime import datetime
+
 from django.conf import settings
+from django.utils.translation import ugettext as _
+
 
 def log(exception, request, file_name='logs'):
     """Prints msg to file_name log file"""

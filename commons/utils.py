@@ -36,13 +36,24 @@
 #   http://morfeo-project.org/
 #
 
+import os
 import types
 from decimal import Decimal
-from django.db import models
-from django.utils import simplejson
-from django.core.serializers.json import DateTimeAwareJSONEncoder
-
 from xml.dom.minidom import getDOMImplementation
+
+from django.db import models
+from django.conf import settings
+from django.core.serializers.json import DateTimeAwareJSONEncoder
+from django.contrib.auth.models import User
+from django.utils import simplejson
+
+from commons.http_utils import download_http_content
+from catalogue.models import GadgetResource
+from catalogue.templateParser import TemplateParser as CatalogueTemplateParser
+from gadget.models import XHTML
+from gadget.templateParser import TemplateParser as GadgetTemplateParser
+
+
 
 def json_encode(data, ensure_ascii=False):
     """
@@ -108,3 +119,43 @@ def get_xml_error(value):
     doc.unlink()
 
     return errormsg
+
+def get_gadgets_files():
+    gadgets_dir = []
+    gadgets_files = []
+    for directory in os.listdir(settings.GADGETS_ROOT):
+        if not directory.startswith('.'):
+            gadget_dir = os.path.join(settings.GADGETS_ROOT, directory)
+            if os.path.isdir(gadget_dir):
+                gadgets_dir.append(gadget_dir)
+                for fil in os.listdir(gadget_dir):
+                    if fil.endswith('.xml') or fil.endswith('.html'):
+                        gadget_file = os.path.join(gadget_dir, fil)
+                        if os.path.isfile(gadget_file):
+                            gadgets_files.append(gadget_file)
+            elif gadget_dir.endswith('.xml') or gadget_dir.endswith('.html'):
+                if os.path.isfile(gadget_dir):
+                    gadgets_files.append(gadget_dir)
+    return gadgets_files
+
+def load_gadgets():
+    user = User.objects.all()[0]
+    gadgets_files = (g for g in get_gadgets_files() if g.endswith('.xml'))
+    for gadget_file in gadgets_files:
+        template_uri = gadget_file
+        template_uri = "file://%s" % gadget_file
+
+        gadget_resources = GadgetResource.objects.filter(template_uri=template_uri)
+        for gadget_resource in gadget_resources:
+            gadget_resource.delete()
+
+        catalogue_template_parser = CatalogueTemplateParser(template_uri, user)
+        catalogue_template_parser.parse()
+    code_files = (g for g in get_gadgets_files() if g.endswith('.html'))
+    for code_file in code_files:
+        code_url = "file://%s" % code_file
+        xhtmls = XHTML.objects.filter(url=code_url)
+        for xhtml in xhtmls:
+            xhtml.code = download_http_content(xhtml.url)
+            xhtml.save()
+    print "0 errors found"

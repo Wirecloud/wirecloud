@@ -144,7 +144,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
 #Set the proxy server here if needed
-PROXY_SERVER = 'nube.hi.inet:8080'
+#PROXY_SERVER = 'nube.hi.inet:8080'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
@@ -154,3 +154,6 @@ AUTHENTICATION_BACKENDS = (
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
+
+# Absolute path to the directory that holds in development gadgets.
+GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')

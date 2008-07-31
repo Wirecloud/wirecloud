@@ -85,6 +85,7 @@ class GadgetCollection(Resource):
             # Gadget is created only once
             templateParser = TemplateParser(templateURL)
             gadget_uri = templateParser.getGadgetUri()
+
             try:
                 gadget = Gadget.objects.get(uri=gadget_uri)
             except Gadget.DoesNotExist:

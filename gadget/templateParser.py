@@ -36,16 +36,20 @@
 #   http://morfeo-project.org/
 #
 
+from os import path
 from xml.sax import parseString, handler
+
+from django.conf import settings
+from django.db import transaction
+from django.template import Context, Template
+from django.utils.translation import ugettext as _
+
+from gadgetCodeParser import GadgetCodeParser
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML
 
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 
-from django.utils.translation import ugettext as _
-from django.db import transaction
-
-from gadgetCodeParser import GadgetCodeParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget
 
 class TemplateParser:
     def __init__(self, uri):
@@ -415,7 +419,6 @@ class TemplateHandler(handler.ContentHandler):
         else:
             raise TemplateParseException(_("ERROR: missing attribute at External Context element"))            
 
-    
     def processXHTML (self, attrs):
         _href=""
 
@@ -425,9 +428,11 @@ class TemplateHandler(handler.ContentHandler):
         if (_href != ""):
             try:
                 # Gadget Code Parsing
+                if hasattr(settings, 'GADGETS_ROOT'):
+                    if path.isfile(path.join(settings.GADGETS_ROOT, _href)):
+                        _href = "file://%s" % path.join(settings.GADGETS_ROOT, _href)
                 gadgetParser = GadgetCodeParser()
                 gadgetParser.parse(_href, self._gadgetURI)
-
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:
                 raise TemplateParseException(_("ERROR: XHTML could not be read") + " - " + unicode(e))
