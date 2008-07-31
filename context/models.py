@@ -54,7 +54,7 @@ class Concept(models.Model):
         pass
 
     def __unicode__(self):
-        return self.concept + ' ' + self.adaptor 
+        return unicode(self.concept) + ' ' + unicode(self.adaptor) 
 
 class ConceptName(models.Model):
     name = models.CharField(_('Name'), max_length=256)
