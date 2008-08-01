@@ -36,7 +36,7 @@
 #   http://morfeo-project.org/
 #
 
-from os import path
+from os import path, environ
 from xml.sax import parseString, handler
 
 from django.conf import settings
@@ -428,7 +428,7 @@ class TemplateHandler(handler.ContentHandler):
         if (_href != ""):
             try:
                 # Gadget Code Parsing
-                if hasattr(settings, 'GADGETS_ROOT'):
+                if environ.get("RUN_MAIN_DEV") == "true" and hasattr(settings, 'GADGETS_ROOT'):
                     if path.isfile(path.join(settings.GADGETS_ROOT, _href)):
                         _href = "file://%s" % path.join(settings.GADGETS_ROOT, _href)
                 gadgetParser = GadgetCodeParser()
