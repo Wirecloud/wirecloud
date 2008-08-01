@@ -65,10 +65,7 @@ class IGadget(models.Model):
     gadget = models.ForeignKey(Gadget, verbose_name=_('Gadget'))
     tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
     position = models.ForeignKey(Position, verbose_name=_('Position'))
-    
-    class Meta:
-        unique_together = ('gadget', 'tab', 'code')
-    
+        
     class Admin:
         pass
 

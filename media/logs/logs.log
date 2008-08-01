@@ -718,3 +718,1616 @@ ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
 ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
 ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
 ERROR: POST /user/admin/catalogue/voting/Morfeo/Bandeja_de_Averias/1.0 admin
+ERROR: POST /user/admin/catalogue/resource admin
+ERROR: GET /workspaces/1 admin
+[23/07/2008 12:17:51] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 224, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 311, in get_global_workspace_data
+    data = serializers.serialize('python', tabs, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/django/core/serializers/__init__.py", line 67, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/django/core/serializers/base.py", line 35, in serialize
+    for obj in queryset:
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 189, in iterator
+    cursor.execute("SELECT " + (self._distinct and "DISTINCT " or "") + ",".join(select) + sql, params)
+  File "/usr/lib/python2.5/site-packages/django/db/backends/util.py", line 18, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/django/db/backends/postgresql/base.py", line 47, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna workspace_tab.locked
+LINE 1: ...,"workspace_tab"."name","workspace_tab"."visible","workspace...
+                                                             ^
+
+SELECT "workspace_tab"."id","workspace_tab"."name","workspace_tab"."visible","workspace_tab"."locked","workspace_tab"."workspace_id","workspace_tab"."abstract_variable_id" FROM "workspace_tab" WHERE ("workspace_tab"."workspace_id" = 1) ORDER BY "workspace_tab"."id" ASC
+
+ERROR: GET /workspaces admin
+[23/07/2008 12:37:49] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 177, in read
+    data = serializers.serialize('python', workspaces, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/django/core/serializers/__init__.py", line 67, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/django/core/serializers/base.py", line 35, in serialize
+    for obj in queryset:
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 12:40:29] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 223, in read
+    workspaces = get_list_or_404(WorkSpace, user=user, pk=workspace_id)
+  File "/usr/lib/python2.5/site-packages/django/shortcuts/__init__.py", line 59, in get_list_or_404
+    obj_list = list(queryset.filter(*args, **kwargs))
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 12:41:23] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 223, in read
+    workspaces = get_list_or_404(WorkSpace, user=user, pk=workspace_id)
+  File "/usr/lib/python2.5/site-packages/django/shortcuts/__init__.py", line 59, in get_list_or_404
+    obj_list = list(queryset.filter(*args, **kwargs))
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 12:42:19] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 223, in read
+    workspaces = get_list_or_404(WorkSpace, user=user, pk=workspace_id)
+  File "/usr/lib/python2.5/site-packages/django/shortcuts/__init__.py", line 59, in get_list_or_404
+    obj_list = list(queryset.filter(*args, **kwargs))
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 12:42:59] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 223, in read
+    workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+  File "/usr/lib/python2.5/site-packages/django/shortcuts/__init__.py", line 59, in get_list_or_404
+    obj_list = list(queryset.filter(*args, **kwargs))
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[23/07/2008 13:12:37] No se pudo actualizar el IGadget: Cannot resolve keyword 'user' into field. Choices are: users, workspacevariable, tab, id, name, active
+ERROR: GET /workspaces admin
+[23/07/2008 15:15:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 175, in read
+    return HttpResponseBadRequest(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 29: ordinal not in range(128)
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:17:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 227, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 324, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d) for d in tabs_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 237, in get_workspace_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:31:28] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d) for d in tabs_data]
+TypeError: get_workspace_variable_data() takes exactly 2 arguments (1 given)
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:32:22] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d) for d in tabs_data]
+TypeError: get_workspace_variable_data() takes exactly 2 arguments (1 given)
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:35:12] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 238, in get_workspace_variable_data
+    variable_value = VariableValues.objects.get(abstract_variable=abstract_var)
+NameError: global name 'VariableValues' is not defined
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:36:12] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 238, in get_workspace_variable_data
+    variable_value = VariableValue.objects.get(abstract_variable=abstract_var)
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 263, in get
+    raise self.model.DoesNotExist, "%s matching query does not exist." % self.model._meta.object_name
+DoesNotExist: VariableValue matching query does not exist.
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:36:16] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 238, in get_workspace_variable_data
+    variable_value = VariableValue.objects.get(abstract_variable=abstract_var)
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 263, in get
+    raise self.model.DoesNotExist, "%s matching query does not exist." % self.model._meta.object_name
+DoesNotExist: VariableValue matching query does not exist.
+
+ERROR: GET /workspaces/1 admin
+[23/07/2008 15:41:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 228, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 327, in get_global_workspace_data
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 207, in get_workspace_variables_data
+    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 240, in get_workspace_variable_data
+    data_ret['value'] = variable_value.value
+AttributeError: '_QuerySet' object has no attribute 'value'
+
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 11:21:24] No se pudo actualizar el IGadget: 'value' is an invalid keyword argument for this function
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 11:26:29] No se pudo actualizar el IGadget: global name 'VariableValue' is not defined
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 11:38:40] No se pudo actualizar el IGadget: 'AbstractVariable' object has no attribute 'value'
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:39:42] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:39:52] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:39:58] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:40:06] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:40:26] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:40:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d) for d in igadget_data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 384, in get_igadget_data
+    data_ret['variables'] = [get_variable_data(d) for d in data]
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 402, in get_variable_data
+    data_ret['value'] = abstract_var.value
+AttributeError: 'AbstractVariable' object has no attribute 'value'
+
+ERROR: GET /workspaces/1 admin
+[24/07/2008 11:47:53] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 233, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/get_data.py", line 323, in get_global_workspace_data
+    igadget_data = [get_igadget_data(d, user) for d in igadget_data]
+TypeError: get_igadget_data() takes exactly 1 argument (2 given)
+
+ERROR: DELETE /workspace/1/tab/6 admin
+[24/07/2008 11:49:38] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 388, in delete
+    deleteTab(tab, user)
+TypeError: deleteTab() takes exactly 1 argument (2 given)
+
+ERROR: DELETE /workspace/1/tab/6 admin
+[24/07/2008 12:17:52] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 388, in delete
+    deleteTab(tab, user)
+TypeError: deleteTab() takes exactly 1 argument (2 given)
+
+ERROR: DELETE /workspace/1/tab/2 admin
+[24/07/2008 12:18:53] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 388, in delete
+    deleteTab(tab, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 76, in deleteTab
+    VariableValues.objects.get(abstract_variable=tab.abstract_variable, user=user).delete();
+NameError: global name 'VariableValues' is not defined
+
+ERROR: DELETE /workspace/1/tab/1 admin
+[24/07/2008 12:19:54] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 388, in delete
+    deleteTab(tab, user)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 67, in deleteTab
+    deleteIGadget(igadget, user)
+TypeError: deleteIGadget() takes exactly 1 argument (2 given)
+
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 12:24:37] No se pudo actualizar el IGadget: get_igadget_data() takes exactly 2 arguments (1 given)
+ERROR: DELETE /workspace/1/tab/1/igadgets/4 admin
+[24/07/2008 12:27:21] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/igadget/views.py", line 322, in delete
+    deleteIGadget(igadget)
+TypeError: deleteIGadget() takes exactly 2 arguments (1 given)
+
+ERROR: DELETE /workspace/1/tab/1/igadgets/4 admin
+[24/07/2008 12:28:01] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 112, in dispatch
+    return target.delete(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/igadget/views.py", line 322, in delete
+    deleteIGadget(igadget)
+TypeError: deleteIGadget() takes exactly 2 arguments (1 given)
+
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 12:28:44] No se pudo actualizar el IGadget: get_igadget_data() takes exactly 2 arguments (1 given)
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 12:30:23] No se pudo actualizar el IGadget: get_igadget_data() takes exactly 2 arguments (1 given)
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 12:30:43] No se pudo actualizar el IGadget: get_igadget_data() takes exactly 2 arguments (1 given)
+ERROR: POST /workspace/1/tab/1/igadgets admin
+[24/07/2008 12:31:35] No se pudo actualizar el IGadget: get_igadget_data() takes exactly 2 arguments (1 given)
+ERROR: POST /workspaces/1/wiring admin
+[24/07/2008 12:36:38] Fallo al guardar los connectables: 'value' is an invalid keyword argument for this function
+ERROR: PUT /workspace/1/variables admin
+[24/07/2008 12:46:04] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 109, in dispatch
+    return target.update(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 429, in update
+    msg = _("cannot update variables: ") + unicode(e)
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 17: ordinal not in range(128)
+
+ERROR: PUT /workspace/1/variables admin
+[24/07/2008 13:46:10] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[24/07/2008 13:48:06] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
+ERROR: PUT /workspace/1/variables admin
+[24/07/2008 14:04:55] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
+ERROR: GET /workspace/1/link admin
+[29/07/2008 09:59:03] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+AttributeError: WorkSpaceLinkerEntry instance has no attribute 'read'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 09:59:56] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 449, in read
+    return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
+NameError: global name 'variable_data' is not defined
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:00:17] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 454, in read
+    workspace = get_or_404(WorkSpace, id=workspace_id)
+NameError: global name 'get_or_404' is not defined
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:00:53] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 456, in read
+    cloned_ws = Workspace(workspace)
+NameError: global name 'Workspace' is not defined
+
+ERROR: GET /workspace/1/copy admin
+ERROR: GET /workspace/1/copy admin
+ERROR: GET /workspace/1/copy admin
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:07:44] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 456, in read
+    cloned_ws = workspace.clone()
+AttributeError: 'WorkSpace' object has no attribute 'clone'
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:14:45] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 456, in read
+    cloned_ws = Workspace(name=workspace.name, active=False)
+NameError: global name 'Workspace' is not defined
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:14:48] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 456, in read
+    cloned_ws = Workspace(name=workspace.name, active=False)
+NameError: global name 'Workspace' is not defined
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 10:15:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
+NameError: global name 'variable_data' is not defined
+
+ERROR: GET /workspace/1/copy admin
+[29/07/2008 11:47:35] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 460, in read
+    tabs = Tabs.objects.filter(workspace=workspace)
+NameError: global name 'Tabs' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 12:53:31] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 455, in read
+    position_new['field.attname'] = position.attname
+AttributeError: 'Position' object has no attribute 'attname'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 12:54:20] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 455, in read
+    position_new[field.attname] = position[field.attname]
+AttributeError: 'Position' object has no attribute 'attname'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:34:47] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 455, in read
+    eval('position_new.' + field.attname + '= field.attname')
+  File "<string>", line 1
+    position_new.id= field.attname
+                   ^
+SyntaxError: invalid syntax
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:37:36] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 456, in read
+    eval(exp)
+  File "<string>", line 1
+    position_new.id= field.attname
+                   ^
+SyntaxError: invalid syntax
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:38:12] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 457, in read
+    eval(exp)
+  File "<string>", line 1
+    position_new.id= field.attname
+                   ^
+SyntaxError: invalid syntax
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:39:38] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 457, in read
+    eval(exp)
+  File "<string>", line 1
+    position_new.id=field.attname
+                   ^
+SyntaxError: invalid syntax
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:40:40] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 458, in read
+    eval(exp)
+  File "<string>", line 1
+    position_new.id=field.attname
+                   ^
+SyntaxError: invalid syntax
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:56:44] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 455, in read
+    meta = positiion._meta
+NameError: name 'positiion' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 13:57:00] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    if (field != meta.autofield):
+AttributeError: 'Options' object has no attribute 'autofield'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:03:13] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 461, in read
+    exec(stm)
+  File "<string>", line 1, in <module>
+AttributeError: 'Position' object has no attribute 'attname'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:07:36] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 466, in read
+    exec(stm)
+  File "<string>", line 1
+    position_new.
+                ^
+SyntaxError: unexpected EOF while parsing
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:07:54] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 468, in read
+    exec(stm)
+  File "<string>", line 1
+    position_new.
+                ^
+SyntaxError: unexpected EOF while parsing
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:10:01] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 468, in read
+    exec(stm)
+  File "<string>", line 1, in <module>
+NameError: name 'pposition_new' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:11:48] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 460, in read
+    stm = "%s.%s = %s.%s" % 'position_new', field.attname, position, field.attname
+TypeError: not enough arguments for format string
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:15:24] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 469, in read
+    return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
+NameError: name 'variable_data' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 14:16:11] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 469, in read
+    return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
+NameError: name 'variable_data' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 15:36:58] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 473, in read
+    cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 66, in cloneTuple
+    meta = tuple._meta
+AttributeError: '_QuerySet' object has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 15:37:37] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 471, in read
+    workspace = WorkSpace.objects.get_object_or_404(id=workspace_id)
+AttributeError: 'Manager' object has no attribute 'get_object_or_404'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 15:38:09] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 471, in read
+    workspace = WorkSpace.objects.get_object_or_404(id=workspace_id)
+AttributeError: 'Manager' object has no attribute 'get_object_or_404'
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 15:39:09] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 473, in read
+    cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 67, in cloneTuple
+    model = _meta.jiki
+NameError: name '_meta' is not defined
+
+ERROR: GET /workspace/1/link admin
+[29/07/2008 15:43:18] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 473, in read
+    cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 67, in cloneTuple
+    model_name = _meta.object_name
+NameError: name '_meta' is not defined
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 09:43:57] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+TypeError: cloneTuple() takes exactly 1 argument (2 given)
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 09:44:20] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 9, in cloneTuple
+    model = eval(model_name)
+  File "<string>", line 1, in <module>
+NameError: name 'WorkSpace' is not defined
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 10:54:53] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 42, in cloneTuple
+    new_id = self.getMapping(table_name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 33, in getMapping
+    return self.mapping.getMapping(table_name, old_id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 8, in getMapping
+    mapping = self.tables[table_name]
+KeyError: 'WorkSpace'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 10:56:08] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 42, in cloneTuple
+    new_id = self.getMapping(table_name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 33, in getMapping
+    return self.mapping.getMapping(table_name, old_id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 8, in getMapping
+    mapping = self.tables[table_name]
+KeyError: 'WorkSpace'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 11:01:04] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 64, in cloneTuple
+    self.addMapping(table_name, tuple.id, cloned_tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 39, in addMapping
+    return self.mapping.addMapping(table_name, old_id. new_id)
+AttributeError: 'int' object has no attribute 'new_id'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 11:01:22] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 64, in cloneTuple
+    self.addMapping(table_name, tuple.id, cloned_tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 39, in addMapping
+    return self.mapping.addMapping(table_name, old_id. new_id)
+AttributeError: 'int' object has no attribute 'new_id'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 12:19:25] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 78, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 47, in cloneTuple
+    new_id = self.getMapping(table_name, tuple.id)
+AttributeError: type object 'Tab' has no attribute 'id'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 12:23:47] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 78, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 47, in cloneTuple
+    new_id = self.getMapping(table_name, tuple.id)
+AttributeError: type object 'Tab' has no attribute 'id'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 13:39:34] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 76, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 44, in cloneTuple
+    meta = tuple._meta
+AttributeError: 'RelatedObject' object has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 14:38:49] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 76, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 44, in cloneTuple
+    meta = tuple._meta
+AttributeError: 'RelatedObject' object has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 14:46:33] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 76, in cloneTuple
+    related_tuple = related_table.model
+NameError: name 'related_table' is not defined
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:07:12] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 90, in cloneTuple
+    related_tuple = self.get_tuple(related_table_name, related_table.field.attname, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 48, in get_tuple
+    exec(stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 261, in get
+    obj_list = list(clone)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'workspace_id' into field. Choices are: igadget, id, name, visible, locked, workspace, abstract_variable
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:08:45] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 90, in cloneTuple
+    related_tuple = self.get_tuple(related_table_name, related_table.field.name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 48, in get_tuple
+    exec(stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 264, in get
+    assert len(obj_list) == 1, "get() returned more than one %s -- it returned %s! Lookup parameters were %s" % (self.model._meta.object_name, len(obj_list), kwargs)
+AssertionError: get() returned more than one Tab -- it returned 3! Lookup parameters were {'workspace': 1}
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:30:50] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 94, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 75, in cloneTuple
+    stm = "%s.%s.id = %s" % ('cloned_tuple', field.name, self.getMapping(related_table_name, tuple.workspace.id))
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 38, in getMapping
+    return self.mapping.getMapping(table_name, old_id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 18, in getMapping
+    new_id = mapping[odl_id]
+NameError: global name 'odl_id' is not defined
+
+ERROR: GET /workspace/1/link admin
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:39:51] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 97, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 72, in cloneTuple
+    exec(stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/fields/related.py", line 167, in __get__
+    raise self.field.rel.to.DoesNotExist
+DoesNotExist
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:41:23] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 97, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 72, in cloneTuple
+    exec(stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/fields/related.py", line 167, in __get__
+    raise self.field.rel.to.DoesNotExist
+DoesNotExist
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:47:54] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 108, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 83, in cloneTuple
+    exec(stm)
+  File "<string>", line 1
+    cloned_tuple.workspace = 39 MyWorkSpace
+                                          ^
+SyntaxError: unexpected EOF while parsing
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 15:50:00] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 108, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 79, in cloneTuple
+    cloned_related_object = self.get_related_tuple(related_table_name, cloned_related_object_id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 55, in get_related_tuple
+    tuple = model.objects.get(id=tuple_id)
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 263, in get
+    raise self.model.DoesNotExist, "%s matching query does not exist." % self.model._meta.object_name
+DoesNotExist: AbstractVariable matching query does not exist.
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:10:56] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 84, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple)
+TypeError: get_related_tuple() takes exactly 3 arguments (4 given)
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:17:40] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 84, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple)
+TypeError: get_related_tuple() takes exactly 3 arguments (4 given)
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:19:05] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 84, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple)
+TypeError: get_related_tuple() takes exactly 3 arguments (4 given)
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:19:30] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 84, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple)
+TypeError: get_related_tuple() takes exactly 3 arguments (4 given)
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:21:09] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 114, in cloneTuple
+    for related_tuple in related_tuples:
+TypeError: 'type' object is not iterable
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:22:29] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 86, in cloneTuple
+    cloned_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 67, in cloneTuple
+    meta = tuple._meta
+AttributeError: type object 'tuple' has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:23:32] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 86, in cloneTuple
+    cloned_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 67, in cloneTuple
+    meta = tuple._meta
+AttributeError: type object 'tuple' has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:26:40] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 115, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 86, in cloneTuple
+    cloned_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 67, in cloneTuple
+    meta = tuple._meta
+AttributeError: type object 'tuple' has no attribute '_meta'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:33:43] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 117, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 86, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 64, in get_related_tuple
+    exec (stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 261, in get
+    obj_list = list(clone)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'workspace' into field. Choices are: users, tab, workspacevariable, id, name, active
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:42:34] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 117, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 86, in cloneTuple
+    related_tuple = self.get_related_tuple(related_table_name, field.name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 64, in get_related_tuple
+    exec (stm)
+  File "<string>", line 1, in <module>
+  File "/usr/lib/python2.5/site-packages/django/db/models/manager.py", line 69, in get
+    return self.get_query_set().get(*args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 261, in get
+    obj_list = list(clone)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 114, in __iter__
+    return iter(self._get_data())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 482, in _get_data
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 180, in iterator
+    select, sql, params = self._get_sql_clause()
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 497, in _get_sql_clause
+    joins2, where2, params2 = self._filters.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 719, in get_sql
+    joins2, where2, params2 = val.get_sql(opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 770, in get_sql
+    return parse_lookup(self.kwargs.items(), opts)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 925, in parse_lookup
+    joins2, where2, params2 = lookup_inner(path, lookup_type, value, opts, opts.db_table, None)
+  File "/usr/lib/python2.5/site-packages/django/db/models/query.py", line 1043, in lookup_inner
+    raise TypeError, "Cannot resolve keyword '%s' into field. Choices are: %s" % (name, ", ".join(choices))
+TypeError: Cannot resolve keyword 'workspace' into field. Choices are: users, tab, workspacevariable, id, name, active
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:57:23] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 130, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 97, in cloneTuple
+    fk_id = self.get_tuple_fk(tuple, field_name)
+NameError: name 'field_name' is not defined
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 16:57:58] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 130, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 97, in cloneTuple
+    fk_id = self.get_tuple_fk(tuple, field.name)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 47, in get_tuple_fk
+    exec(stm)
+  File "<string>", line 1, in <module>
+AttributeError: 'Tab' object has no attribute 'fk_field'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 17:01:07] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 127, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 98, in cloneTuple
+    cloned_tuple = self.cloneTuple(related_tuple)
+UnboundLocalError: local variable 'related_tuple' referenced before assignment
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 17:02:06] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 127, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 98, in cloneTuple
+    cloned_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 84, in cloneTuple
+    return self.get_tuple(table_name, new_id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 53, in get_tuple
+    tuple = model.filter.get(id=tuple_id)
+AttributeError: type object 'WorkSpace' has no attribute 'filter'
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 17:08:35] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 125, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 96, in cloneTuple
+    cloned_related_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 122, in cloneTuple
+    related_tuples = self.get_related_tuples(related_table_name, related_table.field.name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 58, in get_related_tuples
+    model = eval(table_name)
+  File "<string>", line 1, in <module>
+NameError: name 'Out' is not defined
+
+ERROR: GET /workspace/1/link admin
+[30/07/2008 17:12:52] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 127, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 98, in cloneTuple
+    cloned_related_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 124, in cloneTuple
+    related_tuples = self.get_related_tuples(related_table_name, related_table.field.name, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 60, in get_related_tuples
+    model = eval(table_name)
+  File "<string>", line 1, in <module>
+NameError: name 'Out' is not defined
+
+ERROR: GET /workspace/1/link admin
+ERROR: GET /workspace/1/link admin
+ERROR: GET /workspace/1/link admin
+ERROR: GET /workspace/1/link admin
+ERROR: GET /workspace/1/link admin
+ERROR: PUT /workspace/1/variables admin
+[31/07/2008 12:32:56] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
+ERROR: GET /workspace/1/link [Anónimo]
+[01/08/2008 12:02:24] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 197, in cloneTuple
+    self.update_foreign_keys(cloned_tuple, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 120, in update_foreign_keys
+    for pending_fk in pending_fks:
+TypeError: 'NoneType' object is not iterable
+
+ERROR: GET /workspace/1/link [Anónimo]
+[01/08/2008 12:03:28] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 227, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 194, in cloneTuple
+    self.mark_pending_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 138, in mark_pending_fk
+    this.pendingFks.addPending(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+NameError: global name 'this' is not defined
+
+ERROR: GET /workspace/1/link [Anónimo]
+[01/08/2008 12:05:23] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 92, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 459, in read
+    packageManager.cloneTuple(workspace)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 227, in cloneTuple
+    self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 204, in cloneTuple
+    cloned_related_tuple = self.cloneTuple(related_tuple)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 197, in cloneTuple
+    self.update_foreign_keys(cloned_tuple, tuple.id)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/packageManager.py", line 131, in update_foreign_keys
+    exec(stm)
+  File "<string>", line 1
+    linker_tuple.abstract_variable=cloned_tuple)
+                                               ^
+SyntaxError: unexpected EOF while parsing
+
+ERROR: PUT /workspace/1/variables [Anónimo]
+[01/08/2008 13:40:03] Traceback (most recent call last):
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 65, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/resource.py", line 109, in dispatch
+    return target.update(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/django/db/transaction.py", line 194, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/workspace/views.py", line 406, in update
+    user = get_user_authentication(request)
+  File "/home/mac/eclipse/workspace/EzWebTrunk/commons/authentication.py", line 57, in get_user_authentication
+    raise Http403 (_("You must be logged"))
+Http403: Debe registrarse
+

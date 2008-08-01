@@ -44,7 +44,7 @@ from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption
 from igadget.models import Variable, VariableDef, Position, IGadget
 from connectable.models import In, Out, InOut
 from context.models import Concept, ConceptName
-from workspace.models import Tab, WorkSpaceVariable, AbstractVariable
+from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue
 from django.utils.translation import get_language
 
 def get_abstract_variable(id):    
@@ -201,14 +201,14 @@ def get_workspace_data(data):
         data_ret['active'] = "false"
     return data_ret
 
-def get_workspace_variables_data(workSpaceDAO):
+def get_workspace_variables_data(workSpaceDAO, user):
     tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')  
     tabs_data = serializers.serialize('python', tab_variables, ensure_ascii=False)
-    ws_variables_data = [get_workspace_variable_data(d) for d in tabs_data]
+    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
     
     inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')  
     inouts_data = serializers.serialize('python', inout_variables, ensure_ascii=False)
-    ws_inout_variables_data = [get_workspace_variable_data(d) for d in inouts_data]
+    ws_inout_variables_data = [get_workspace_variable_data(d, user) for d in inouts_data]
     
     for inout in ws_inout_variables_data:
         ws_variables_data.append(inout)
@@ -222,7 +222,7 @@ def get_workspace_channels_data(workSpaceDAO):
     
     return ws_variables_data
 
-def get_workspace_variable_data(data):
+def get_workspace_variable_data(data, user):
     data_ret = {}
     data_fields = data['fields']
     
@@ -234,7 +234,10 @@ def get_workspace_variable_data(data):
     data_ret['abstract_var_id'] = abstract_var_id
     
     data_ret['aspect'] = data_fields['aspect']
-    data_ret['value'] = abstract_var.value
+    
+    variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
+    
+    data_ret['value'] = variable_value.value
     data_ret['name'] = abstract_var.name
     data_ret['type'] = data_fields['type']
     
@@ -302,7 +305,7 @@ def get_connectable_data(connectable):
     return res_data
 
 
-def get_global_workspace_data(data, workSpaceDAO, concept_values):
+def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(data)  
     
@@ -317,11 +320,11 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values):
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
         igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
-        igadget_data = [get_igadget_data(d) for d in igadget_data]
+        igadget_data = [get_igadget_data(d, user) for d in igadget_data]
         tab['igadgetList'] = igadget_data
         
     #WorkSpace variables processing
-    workspace_variables_data = get_workspace_variables_data(workSpaceDAO)
+    workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
     data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
     
     #Context information
@@ -355,7 +358,7 @@ def get_tab_data(data):
 
     return data_ret
 
-def get_igadget_data(data):
+def get_igadget_data(data, user):
     data_ret = {}
     data_fields = data['fields']
 
@@ -378,11 +381,11 @@ def get_igadget_data(data):
     
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
-    data_ret['variables'] = [get_variable_data(d) for d in data]
+    data_ret['variables'] = [get_variable_data(d, user) for d in data]
    
     return data_ret
 
-def get_variable_data(data):
+def get_variable_data(data, user):
     data_ret = {}
     data_fields = data['fields']
     
@@ -392,11 +395,13 @@ def get_variable_data(data):
     abstract_var_id = data['fields']['abstract_variable']
     
     abstract_var = get_abstract_variable(abstract_var_id) 
+    
+    variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
 
     data_ret['id'] = data['pk']
     
     data_ret['aspect'] = var_def.aspect
-    data_ret['value'] = abstract_var.value
+    data_ret['value'] = variable_value.value
     data_ret['type'] = var_def.type
     data_ret['igadgetId'] = data_fields['igadget']
     data_ret['vardefId'] = var_def.pk

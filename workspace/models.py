@@ -45,17 +45,14 @@ class WorkSpace(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     active = models.BooleanField(_('Active'))
     
-    user = models.ForeignKey(User, verbose_name=_('User'))
-
-    class Meta:
-        unique_together = ('user', 'name')
+    users = models.ManyToManyField(User, verbose_name=_('Users'))
 
     class Admin:
         pass
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name
-    
+        return str(self.pk) + " " + self.name  
+
 class AbstractVariable(models.Model):
     
     VAR_TYPES = (
@@ -64,13 +61,24 @@ class AbstractVariable(models.Model):
     )
     type = models.CharField(_('Type'), max_length=10, choices=VAR_TYPES)
     name = models.CharField(_('Name'), max_length=30)
-    value = models.TextField(_('Value'))
 
     class Admin:
         pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
+
+class VariableValue(models.Model):
+    
+    user = models.ForeignKey(User, verbose_name=_('User'))
+    value = models.TextField(_('Value'))
+    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+
+    class Admin:
+        pass
+
+    def __unicode__(self):
+        return self.abstract_variable.name + self.value
     
 class WorkSpaceVariable(models.Model):
     
@@ -104,9 +112,6 @@ class Tab(models.Model):
     locked = models.BooleanField(_('Locked'))
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-
-    class Meta:
-        unique_together = ('workspace', 'name')
         
     class Admin:
         pass

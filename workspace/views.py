@@ -55,17 +55,22 @@ from commons.http_utils import PUT_parameter
 from connectable.models import Out
 from igadget.models import Variable
 
-from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
-from igadget.models import IGadget
+
+from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue
+from gadget.models import Gadget, VariableDef
+from igadget.models import IGadget, Position
+
 from igadget.views import deleteIGadget
 
-def deleteTab (tab):
+from packageManager import PackageManager
+
+def deleteTab (tab, user):
     
     #Deleting igadgets
     igadgets = IGadget.objects.filter(tab=tab)
     for igadget in igadgets:
-        deleteIGadget(igadget)
+        deleteIGadget(igadget, user)
         
     #Deleting OUT connectable (wTab)
     Out.objects.get(abstract_variable = tab.abstract_variable).delete();
@@ -74,6 +79,7 @@ def deleteTab (tab):
     WorkSpaceVariable.objects.get(abstract_variable=tab.abstract_variable).delete();
     
     #Deleting abstract variable
+    VariableValue.objects.get(abstract_variable=tab.abstract_variable, user=user).delete();
     tab.abstract_variable.delete()
     
     #Deleting tab
@@ -83,6 +89,10 @@ def createTab (tab_name, user,  workspace):
     # Creating Entry in AbstractVariable table for polimorphic access from Connectable hierarchy
     abstractVariable =  AbstractVariable (name=tab_name, type='WORKSPACE')
     abstractVariable.save()
+    
+    # Creating Value for Abstract Variable
+    variableValue =  VariableValue (user=user, value="", abstract_variable=abstractVariable)
+    variableValue.save()
     
     # Creating implicit workspace variable    
     wsVariable = WorkSpaceVariable (workspace=workspace, aspect='TAB', abstract_variable=abstractVariable)
@@ -109,12 +119,12 @@ def createTab (tab_name, user,  workspace):
     ids['name'] = tab.name
 
     data = serializers.serialize('python', [wsVariable], ensure_ascii=False)
-    ids['workspaceVariables'] = [get_workspace_variable_data(d) for d in data]
+    ids['workspaceVariables'] = [get_workspace_variable_data(d, user) for d in data]
     
     return ids
 
 def setVisibleTab(user, workspace_id, tab):
-    visibleTabs = Tab.objects.filter(workspace__user=user, workspace__pk=workspace_id, visible=True).exclude(pk=tab.pk)
+    visibleTabs = Tab.objects.filter(workspace__users__id=user.id, workspace__pk=workspace_id, visible=True).exclude(pk=tab.pk)
     for visibleTab in visibleTabs:
         visibleTab.visible = False
         visibleTab.save()
@@ -124,13 +134,16 @@ def setVisibleTab(user, workspace_id, tab):
    
 def createWorkSpace (workSpaceName, user):
     active = False
-    workspaces = WorkSpace.objects.filter(user=user, active=True)
+    workspaces = WorkSpace.objects.filter(users__id=user.id, active=True)
     if workspaces.count()==0:
         active = True
         
     #Workspace creation
-    workspace = WorkSpace(name=workSpaceName, active=active, user=user)
+    workspace = WorkSpace(name=workSpaceName, active=active)
     workspace.save()
+    
+    #Adding user reference to workspace in the many to many relationship
+    workspace.users.add(user)
    
     #Tab creation
     tab_ids = createTab ('MyTab', user, workspace)
@@ -149,7 +162,7 @@ def createWorkSpace (workSpaceName, user):
 
 
 def setActiveWorkspace(user, workspace):
-    activeWorkSpaces = WorkSpace.objects.filter(user=user, active=True).exclude(pk=workspace.pk)
+    activeWorkSpaces = WorkSpace.objects.filter(users__id=user.id, active=True).exclude(pk=workspace.pk)
     for activeWorkSpace in activeWorkSpaces:
         activeWorkSpace.active = False
         activeWorkSpace.save()
@@ -159,16 +172,17 @@ def setActiveWorkspace(user, workspace):
     workspace.save()
 
 class WorkSpaceCollection(Resource):
+    @transaction.commit_on_success
     def read(self, request):
         user = get_user_authentication(request)
         
         data_list = {}
         try:
-            workspaces = WorkSpace.objects.filter(user=user)
+            workspaces = WorkSpace.objects.filter(users__id=user.id)
             if workspaces.count()==0:
                 createWorkSpace('MyWorkSpace', user)
                 
-                workspaces = WorkSpace.objects.filter(user=user)
+                workspaces = WorkSpace.objects.filter(users__id=user.id)
         except Exception, e:
             return HttpResponseBadRequest(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
             
@@ -197,7 +211,7 @@ class WorkSpaceCollection(Resource):
 
             ids = createWorkSpace (workspace_name, user)          
             
-            workspaces = get_list_or_404(WorkSpace, user=user, pk=ids['workspace']['id'])
+            workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=ids['workspace']['id'])
             data = serializers.serialize('python', workspaces, ensure_ascii=False)
             
             
@@ -218,11 +232,11 @@ class WorkSpaceEntry(Resource):
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
         
-        workspaces = get_list_or_404(WorkSpace, user=user, pk=workspace_id)
+        workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
         concept_data = {}
         concept_data['user'] = user
-        workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+        workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
         
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
@@ -237,7 +251,7 @@ class WorkSpaceEntry(Resource):
 
         try:
             ts = simplejson.loads(received_json)
-            workspace = WorkSpace.objects.get(user=user, pk=workspace_id)
+            workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
             
             if ts.has_key('active'):
                 active = ts.get('active')
@@ -264,7 +278,7 @@ class WorkSpaceEntry(Resource):
     def delete(self, request, workspace_id):
         user = get_user_authentication(request)
         
-        workspaces = WorkSpace.objects.filter(user=user).exclude(pk=workspace_id)
+        workspaces = WorkSpace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
         
         if workspaces.count()==0:
             msg = _("workspace cannot be deleted")
@@ -272,7 +286,7 @@ class WorkSpaceEntry(Resource):
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
             
         # Gets Igadget, if it does not exist, a http 404 error is returned
-        workspace = get_object_or_404(WorkSpace, user=user, pk=workspace_id)
+        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
         
         workspace.delete()
         #set a new active workspace (first workspace by default)
@@ -299,7 +313,7 @@ class TabCollection(Resource):
                 raise Exception(_('Malformed tab JSON: expecting tab name.'))
             
             tab_name = t.get('name')
-            workspace = WorkSpace.objects.get(user=user, pk=workspace_id)   
+            workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)   
             
             ids = createTab(tab_name, user, workspace)
             
@@ -316,7 +330,7 @@ class TabEntry(Resource):
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
         
-        tab = get_list_or_404(Tab, workspace__user=user, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_list_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
         data = serializers.serialize('python', tab, ensure_ascii=False)
         tab_data = get_tab_data(data[0])
         
@@ -333,7 +347,7 @@ class TabEntry(Resource):
 
         try:
             t = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__user=user, workspace__pk=workspace_id, pk=tab_id)
+            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
             
             if t.has_key('visible'):
                 visible = t.get('visible')
@@ -376,7 +390,7 @@ class TabEntry(Resource):
         tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
         
         #Delete WorkSpace variables too!
-        deleteTab(tab)
+        deleteTab(tab, user)
         
         #set a new visible tab (first tab by default)
         activeTab=tabs[0]
@@ -404,15 +418,19 @@ class WorkSpaceVariableCollection(Resource):
             
             for wsVar in workSpaceVariables:
                 wsVarDAO = WorkSpaceVariable.objects.get(pk=wsVar['id'])
+                
+                variable_value = VariableValue.objects.get(user=user, abstract_variable=wsVarDAO.abstract_variable)
                    
-                wsVarDAO.abstract_variable.value=wsVar['value'];
-                wsVarDAO.abstract_variable.save();   
-            
+                variable_value.value=wsVar['value']
+                variable_value.save()
+               
             for igVar in igadgetVariables:
                 igVarDAO = Variable.objects.get(pk=igVar['id'])
                 
-                igVarDAO.abstract_variable.value=igVar['value'];
-                igVarDAO.abstract_variable.save(); 
+                variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
+   
+                variable_value.value=igVar['value']
+                variable_value.save()
             
             return HttpResponse(str('OK'))
         except Exception, e:
@@ -425,8 +443,30 @@ class WorkSpaceChannelCollection(Resource):
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
         
-        workspaces = get_list_or_404(WorkSpace, user=user, pk=workspace_id)
+        workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
         variable_data = get_workspace_channels_data(workspaces[0])
         
         return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
+
+class  WorkSpaceLinkerEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, workspace_id):
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        
+        packageManager = PackageManager()
+        
+        packageManager.cloneTuple(workspace)
+        
+        return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
+
+class  WorkSpaceClonerEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, workspace_id):
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        
+        packageManager = PackageManager()
+        
+        packageManager.cloneTuple(workspace)
+        
+        return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')

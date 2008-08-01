@@ -39,10 +39,10 @@
 from django.conf.urls.defaults import patterns
 
 from connectable.views import ConnectableEntry
-from workspace.views import WorkSpaceVariableCollection, WorkSpaceChannelCollection, TabEntry, TabCollection, WorkSpaceEntry, WorkSpaceCollection
+from workspace.views import WorkSpaceVariableCollection, WorkSpaceChannelCollection, \
+                            TabEntry, TabCollection, WorkSpaceEntry, WorkSpaceCollection, WorkSpaceClonerEntry, WorkSpaceLinkerEntry
 
 urlpatterns = patterns('workspace.views',
-
     # WorkSpace
     (r'^[/]?$', WorkSpaceCollection(permitted_methods=('GET','POST', ))),
     (r'^/((?P<workspace_id>\d+)[/]?)?$',
@@ -64,4 +64,12 @@ urlpatterns = patterns('workspace.views',
     # Wiring info for the whole workspace
     (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
         ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
+        
+    # Coping workspace structure when adding package
+    (r'^/((?P<workspace_id>\d+)/copy?[/]?)?$', 
+        WorkSpaceClonerEntry(permitted_methods=('GET', ))),
+        
+     # Linking workspace structure when adding package   
+    (r'^/((?P<workspace_id>\d+)/link?[/]?)?$', 
+        WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
 )

@@ -51,7 +51,7 @@ from commons.logs import log
 from commons.utils import json_encode, get_xml_error
 
 from igadget.models import IGadget, Variable
-from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable
+from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
 from connectable.models import In, Out, InOut
 
 class ConnectableEntry(Resource):
@@ -94,15 +94,18 @@ class ConnectableEntry(Resource):
             
             #Mapping between provisional ids and database-generated ids!!!
             ids_mapping = []
-            
-            
+        
             # Erasing variables associated with channels deleted explicitly by the user
             channelsDeletedByUser = json['channelsForRemoving']
             for deleted_channel_id in channelsDeletedByUser:
                 #Removing workspace_variable and abstract_variable of channels deleted explicitly by user
                 deleted_channel = InOut.objects.get(id=deleted_channel_id)
                 
-                deleted_channel.workspace_variable.abstract_variable.delete()
+                abstract_variable = deleted_channel.workspace_variable.abstract_variable
+                
+                VariableValue.objects.get(user=user, abstract_variable=abstract_variable).delete()
+                
+                abstract_variable.delete()
                 deleted_channel.workspace_variable.delete()
             
             # Erasing all channels of the workspace!!
@@ -115,8 +118,14 @@ class ConnectableEntry(Resource):
             for new_channel_data in new_channels:
                 if (new_channel_data['provisional_id']):
                     #It's necessary to create all objects!
-                    new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'], value="")
+                    
+                    #Creating abstract variable
+                    new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'])
                     new_abstract_variable.save()
+                    
+                    #Creating variable value
+                    new_variable_value = VariableValue(user=user, value="", abstract_variable=new_abstract_variable)
+                    new_variable_value.save()
                     
                     new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
                     new_ws_variable.save()
