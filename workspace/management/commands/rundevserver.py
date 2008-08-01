@@ -46,7 +46,7 @@ class Command(BaseCommand):
             print "Validating models..."
             self.validate(display_num_errors=True)
             if hasattr(settings, 'GADGETS_ROOT'):
-                print "Loading gadgets..."
+                print "\nLoading gadgets..."
                 from commons.utils import load_gadgets
                 load_gadgets()
             print "\nDjango version %s, using settings %r" % (django.get_version(), settings.SETTINGS_MODULE)

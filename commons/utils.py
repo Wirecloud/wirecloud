@@ -54,7 +54,6 @@ from gadget.models import XHTML
 from gadget.templateParser import TemplateParser as GadgetTemplateParser
 
 
-
 def json_encode(data, ensure_ascii=False):
     """
     The main issues with django's default json serializer is that properties that
@@ -108,6 +107,7 @@ def json_encode(data, ensure_ascii=False):
     
     return simplejson.dumps(ret, cls=DateTimeAwareJSONEncoder, ensure_ascii=ensure_ascii)
 
+
 def get_xml_error(value):
     dom = getDOMImplementation()
 
@@ -121,26 +121,27 @@ def get_xml_error(value):
     return errormsg
 
 def get_gadgets_files():
-    gadgets_dir = []
     gadgets_files = []
-    for directory in os.listdir(settings.GADGETS_ROOT):
-        if not directory.startswith('.'):
-            gadget_dir = os.path.join(settings.GADGETS_ROOT, directory)
-            if os.path.isdir(gadget_dir):
-                gadgets_dir.append(gadget_dir)
-                for fil in os.listdir(gadget_dir):
-                    if fil.endswith('.xml') or fil.endswith('.html'):
-                        gadget_file = os.path.join(gadget_dir, fil)
-                        if os.path.isfile(gadget_file):
-                            gadgets_files.append(gadget_file)
-            elif gadget_dir.endswith('.xml') or gadget_dir.endswith('.html'):
-                if os.path.isfile(gadget_dir):
-                    gadgets_files.append(gadget_dir)
+    if hasattr(settings, 'GADGETS_ROOT'):
+        for walk_files in os.walk(settings.GADGETS_ROOT):
+            files = walk_files[2]
+            for fil in files:
+                if fil.endswith('.xml') or fil.endswith('.html'):
+                    gadgets_files.append(os.path.join(walk_files[0], fil))
     return gadgets_files
 
+
 def load_gadgets():
+    errors = 0
     user = User.objects.all()[0]
-    gadgets_files = (g for g in get_gadgets_files() if g.endswith('.xml'))
+    gadgets_files = []
+    code_files = []
+    for fil in get_gadgets_files():
+        if fil.endswith('.xml'):
+            gadgets_files.append(fil)
+        else:
+            code_files.append(fil)
+
     for gadget_file in gadgets_files:
         template_uri = gadget_file
         template_uri = "file://%s" % gadget_file
@@ -148,14 +149,21 @@ def load_gadgets():
         gadget_resources = GadgetResource.objects.filter(template_uri=template_uri)
         for gadget_resource in gadget_resources:
             gadget_resource.delete()
+        try:
+            catalogue_template_parser = CatalogueTemplateParser(template_uri, user)
+            catalogue_template_parser.parse()
+        except Exception, e:
+            print "The file '%s' is not a valid XML template: %s." % (gadget_file, e)
+            errors += 1
 
-        catalogue_template_parser = CatalogueTemplateParser(template_uri, user)
-        catalogue_template_parser.parse()
-    code_files = (g for g in get_gadgets_files() if g.endswith('.html'))
     for code_file in code_files:
         code_url = "file://%s" % code_file
         xhtmls = XHTML.objects.filter(url=code_url)
         for xhtml in xhtmls:
-            xhtml.code = download_http_content(xhtml.url)
-            xhtml.save()
-    print "0 errors found"
+            try:
+                xhtml.code = download_http_content(xhtml.url)
+                xhtml.save()
+            except Exception, e:
+                print "Unable get contents of %s (%s)." % (code_file, e)
+
+    print "%s errors found" % errors
