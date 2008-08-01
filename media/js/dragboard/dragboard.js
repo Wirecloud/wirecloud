@@ -190,48 +190,88 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	this._searchInsertPoint = function(_matrix, x, y, width, height) {
 		// Search the topmost position for the gadget
-
-//		// First check if there is an instance of a gadget in that position
-//		if (_matrix[x][y] != null) {
-//				// In this case, we can use their position as start point
-//				y = this._getPositionOn(_matrix, _matrix[x][y]).y;
-//		}
+		var lastY;
 
 		/* Check for special cases
 		   y == 0                             => we are on the topmost position
 		                                      so this is the insert point
-		   _matrix[x][y - 1] != _matrix[x][y] => this is the topmost cell of the
-		                                      igadget at (x,y). Replace it
+		   _matrix[x][y - 1] != _matrix[x][y] => we are in a edge, so this is
+		                                      the insert point.
+		   _matrix[x][y] != null              => there is already a gadget in
+		                                      this position, so we have to
+						      search an insert point ignoring
+						      it.
 		*/
-		if ((y == 0) || ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] != _matrix[x][y]))) {
-			y;
-		} else {
-			var originalY = y;
-			var lastY;
-			var found = false;
-			while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
-				found = true;
-				lastY = y;
-				y--;
-			}
-			if (found) {
-				y = lastY;
+		if (y == 0) {
+			return 0;
+		} else if ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] != _matrix[x][y])) {
+			return y;
+		} else if (_matrix[x][y]) {
+			var widthDiff = _matrix[x][y].getWidth() - width;
+			widthDiff -= x - this._getPositionOn(_matrix, _matrix[x][y]).x;
+			if (widthDiff > 0) {
+				// The gadget at (x,y) has the same or a bigger width
+				// than the gadget to move, so as the gadget to move
+				// fits there, so at least we can insert here.
+				y = this._getPositionOn(_matrix, _matrix[x][y]).y;
+				while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
+					y--;
+				}
+				return y;
 			} else {
-				// Search collisions with gadgets on other columns
-				var curGadget;
-				var offsetX;
-				lastY = 0;
-				for (offsetX = 1; offsetX < width; offsetX++) {
-					curGadget = _matrix[x + offsetX][originalY];
-					if ((curGadget != null)) {
-						y = this._getPositionOn(_matrix, curGadget).y;
+				widthDiff = -widthDiff;
+				// There is a gadget in this position, we can use their position as start point
+				lastY = this._getPositionOn(_matrix, _matrix[x][y]).y;
+				if (lastY == 0)
+				  lastY = 1;
 
-						if (y > lastY) lastY = y;
+				var startX = this._getPositionOn(_matrix, _matrix[x][y]).x + _matrix[x][y].getWidth();
+				var offsetX;
+				for (;y > lastY; y--) {
+					for (offsetX = 0; offsetX < widthDiff; offsetX++) {
+						if (_matrix[startX + offsetX][y] != _matrix[startX + offsetX][y - 1]) {
+						        // Edge detected
+							return y;
+						}
 					}
 				}
 
-				y = lastY;
+				// Not edge found, check if we can go to a higher position
+				if (y == 1) {
+					return 0;
+				} else if ((y >= 1) && this._hasSpaceFor(_matrix, x, y - 1, width, 1)) {
+					// If we can go to a higher position, we have to chek 
+					y--;
+				} else { // If not, this is the insert point
+					return y;
+				}
 			}
+		}
+
+		var originalY = y;
+		var found = false;
+		while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
+			found = true;
+			lastY = y;
+			y--;
+		}
+		if (found) {
+			y = lastY;
+		} else {
+			// Search collisions with gadgets on other columns
+			var curGadget;
+			var offsetX;
+			lastY = 0;
+			for (offsetX = 1; offsetX < width; offsetX++) {
+				curGadget = _matrix[x + offsetX][originalY];
+				if ((curGadget != null)) {
+					y = this._getPositionOn(_matrix, curGadget).y;
+
+					if (y > lastY) lastY = y;
+				}
+			}
+
+			y = lastY;
 		}
 		return y;
 	}
