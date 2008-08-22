@@ -50,7 +50,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		for (i=0; i<variables.length; i++) {
 			var variable = variables[i];
 			
-			if (variable.name = name && variable.igadgetId == igadgetId) {
+			if ((variable.name == name) && (variable.igadgetId == igadgetId)) {
 				return variable.connectable.id;
 			}
 		}
@@ -203,8 +203,9 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			    gadgetEntry.connectables.push(connectable);
 			}
 			
-			this.iGadgets[iGadgetId] = gadgetEntry;
 		}
+		
+		this.iGadgets[iGadgetId] = gadgetEntry;
 	}
 	
 	// TODO
