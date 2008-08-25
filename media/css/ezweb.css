@@ -77,13 +77,32 @@ a:hover{
 }
 
 #tab_section {
- position: absolute;
+ position: absolute; 
  top: 6px;
  display: block;
  right:4px;
- margin-left:25%;
+/* margin-left:25%;*/
+ width:100%;
  z-index: 3;
 
+}
+
+#tab_section #fixed_bar{
+ position:relative;
+ right:0pt;
+ float:right;
+ height:25px;
+ overflow:hidden;
+ display:inline;
+ max-width:70%;
+}
+
+#tab_section #scroll_bar{
+ position:absolute;
+ top:0;
+ right:0;
+ float:right;
+ white-space:nowrap;
 }
 
 #toolbar_section {
@@ -97,7 +116,7 @@ a:hover{
 
 }
 
-.toolbar_section input[type=button], #add_tab_link {
+.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
   position: relative;
   margin-right: 3px;
   margin-left: 3px;
@@ -119,6 +138,21 @@ a:hover{
   margin-right: 0px;
   margin-left: 3px;
   color:#2D6F9C;
+}
+
+#left_slider{
+ margin-top:2px;
+ margin-left:3px;
+ float:right;
+ width: 10px;
+ background: transparent url(/ezweb/images/sliderL21px.png) no-repeat;
+}
+
+#right_slider{
+ margin-top:2px;
+ float:right;
+ width: 10px;
+ background: transparent url(/ezweb/images/sliderR21px.png) no-repeat;
 }
 
 #add_tab_link {
@@ -181,12 +215,13 @@ a:hover{
 #tab_section .tab {
   position: relative;
   float: right;
+  display: block;
   border: 2px solid #4c5054;
   color: #FFF;
   background: #97a0a8;
   font-weight: bold;
   padding: 2px 9px;
-  margin: 0px 0.5em;
+  margin: 0px 6px;
   cursor: pointer;
   z-index: 3;
   height: 18px;

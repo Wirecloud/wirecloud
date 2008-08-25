@@ -72,6 +72,25 @@ var LayoutManagerFactory = function () {
 			this.currentMenu = null;							//current menu (either dropdown or window)
 			this.coverLayerElement = $('menu_layer');					//disabling background layer
 			this.coverLayerEvent = function () {this.hideCover()}.bind(this);	//disabling layer onclick event (by default)
+			
+		// Tab bar section: to make the section scroll 2 divs are needed: one which limits the whole room and
+		//another which is absolutely positioned each time a slider button is clicked
+			this.tabBarStep = 20;
+			this.tabImgSize = 14; //launcher width
+			this.extraGap = 15;	// 15px to ensure that a new character has enough room in the scroll bar
+			this.tabMarginRight = 6	;	//6px
+			this.rightSlider = $('right_slider');
+			this.leftSlider = $('left_slider');
+			this.leftTimeOut;
+			this.rightTimeOut;			
+			//fixed section
+			this.fixedTabBar = $('fixed_bar');
+			this.fixedTabBarMaxWidth = BrowserUtilsFactory.getInstance().getWidth()*0.70;
+			
+			//scroll bar
+			this.scrollTabBar = $('scroll_bar');
+			//initial width (there is always a launcher (of the current tab))
+			this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 	
 			this.menus = new Array();
 					
@@ -424,6 +443,88 @@ var LayoutManagerFactory = function () {
 		}
 		
 	}
+	
+	/*Tab scroll bar size management*/
+	/*Insert tab in the tab bar*/
+	LayoutManager.prototype.addToTabBar = function(tabId){
+		new Insertion.Top(this.scrollTabBar, "<div id='"+tabId+"' class='tab' style='display:none'></div>");
+		var tabHTMLElement = this.scrollTabBar.firstDescendant();
+		var tabBorder= parseInt(tabHTMLElement.getStyle('border-left-width'));
+		this.changeTabBarSize(2*(this.tabMarginRight + tabBorder));
+		this.scrollTabBar.setStyle({right: 0, left:''});
+		return tabHTMLElement;
+	}
+
+	/*remove a tab from the tab bar*/
+	LayoutManager.prototype.removeFromTabBar = function(tabHTMLElement){
+		var tabWidth = -1 * (tabHTMLElement.getWidth()-this.tabImgSize +2*this.tabMarginRight);
+		Element.remove(tabHTMLElement);
+		this.changeTabBarSize(tabWidth);
+		this.scrollTabBar.setStyle({right: (this.fixedTabBarWidth - this.scrollTabBarWidth) + 'px', left:''});
+	}
+	
+	/*change the width of the tab bar*/
+	LayoutManager.prototype.changeTabBarSize = function(tabSize){
+		
+		this.scrollTabBarWidth += tabSize;
+		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		if(this.scrollTabBarWidth <= this.fixedTabBarMaxWidth){
+			this.scrollTabBar.setStyle({right: 0 + "px"});
+			//we don't need arrows
+			this.rightSlider.style.display = "none";
+			this.leftSlider.style.display = "none";			
+		}else{ //if the scrollTabBar is bigger than the fixed tab, we need arrows
+			this.rightSlider.style.display = "inline";
+			this.leftSlider.style.display = "inline";
+			
+		}
+		
+	}
+	/*change the left position of the scroll tab bar */
+	LayoutManager.prototype.changeScrollBarRightPosition = function(difference){
+		var newRight = parseInt(this.scrollTabBar.getStyle('right')) + difference;
+		var minRight = this.fixedTabBarMaxWidth-this.scrollTabBarWidth;
+		if (newRight > 0)
+			newRight = 0;
+		else if(newRight < minRight)
+			newRight = minRight;
+			
+		this.scrollTabBar.setStyle({'right': newRight + "px"});
+	}
+	
+	/* get the left position of the fixed tab bar */
+	
+	LayoutManager.prototype.getFixedBarLeftPosition = function(){
+		return parseInt(this.fixedTabBar.offsetLeft);
+	}
+	
+	/*get the width of te fixed bar */
+	LayoutManager.prototype.getFixedBarWidth = function(){
+		return parseInt(this.fixedTabBar.getWidth());
+	}
+	
+	/*scroll tab bar sliders*/
+	LayoutManager.prototype.goLeft = function(){
+		this.rightSlider.blur();
+		var minLeft = this.fixedTabBarMaxWidth-this.scrollTabBarWidth;
+		if (parseInt(this.scrollTabBar.offsetLeft)>minLeft){
+			this.changeScrollBarRightPosition(this.tabBarStep);
+			var leftMethod = function(){this.goLeft()}.bind(this);
+			this.leftTimeOut=setTimeout(leftMethod,50);
+		}			
+	}
+
+	LayoutManager.prototype.goRight = function(){
+		this.leftSlider.blur();	
+		if (parseInt(this.scrollTabBar.offsetLeft)<0){
+			this.changeScrollBarRightPosition(-1*this.tabBarStep);
+
+			var rightMethod = function(){this.goRight()}.bind(this);
+			this.rightTimeOut=setTimeout(rightMethod,50);
+		}		
+	}
+	
 	
 	// *********************************
 	// SINGLETON GET INSTANCE

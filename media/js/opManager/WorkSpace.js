@@ -324,6 +324,8 @@ function WorkSpace (workSpaceState) {
 			else
 				tab.unmark();
 		}
+		//show the current tab in the tab bar if it isn't within the visible area
+		this.visibleTab.makeVisibleInTabBar();
 
 	}
 	
