@@ -200,6 +200,14 @@ body[orient="landscape"] #mymw-nav {
 	color: #4C5054;
 }
 
+#mymw-nav li.mymw-highlight {
+	background: #ebabab;
+}
+
+#mymw-nav li.mymw-highlight a {
+	color: #4C5054;
+}
+
 #mymw-nav li.mymw-inactive {
 	visibility: hidden;
 }
@@ -293,7 +301,7 @@ body[orient="landscape"] .gadget_content_full{
 }
 
 .related_gadgets .active{
-	border: 1px solid red;
+	border: 1px solid #ebabab;
 }
 
 /*  MENU LINK  */

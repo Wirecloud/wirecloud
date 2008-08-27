@@ -116,7 +116,7 @@ IGadget.prototype.paint = function() {
 }
 
 IGadget.prototype.getTabId = function() {
-	return "mymwtab_"+this.name;
+	return "mymwtab_"+this.id;
 }
 
 /**

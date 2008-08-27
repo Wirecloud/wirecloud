@@ -87,7 +87,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype.paintRelatedIGadget = function (iGadgetId) {
 		var tabId = this.getIGadget(iGadgetId).getTabId();
 		var tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
-		if (tabIndex){ // the tab is already visible
+		if (tabIndex != null){ // the tab is already visible
 			this.setVisibleIGadget(iGadgetId);
 			this.workSpace.tabView.set('activeTab', this.workSpace.tabView.getTab(tabIndex));
 		}
@@ -114,6 +114,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	Dragboard.prototype.markRelatedIgadget = function(iGadgetId){
 		$("related_"+iGadgetId).addClassName("active");
+		
+		// highlight related tabs
+		var tabId = this.getIGadget(iGadgetId).getTabId();
+		var tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
+		if (tabIndex != null){ // the tab is already visible			
+			this.workSpace.tabView.getTab(tabIndex).set('highlight', true);
+		}		
 	}
 	
 	Dragboard.prototype.parseTab = function(tabInfo) {
