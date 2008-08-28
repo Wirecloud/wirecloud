@@ -5,7 +5,7 @@ from gadget.models import VariableDef, Gadget
 
 from django.db import models
 
-class PendingFk():
+class PendingFkCollection():
     def __init__(self):
         self.table_tuple = {}
     
@@ -64,10 +64,10 @@ class IdsMapping():
         
         mapping[old_id] = new_id
 
-class PackageManager():
+class PackageCloner():
     def __init__(self):
         self.mapping = IdsMapping()
-        self.pendingFks = PendingFk()
+        self.pendingFks = PendingFkCollection()
         self.final_tables = ['User', 'VariableValue', 'VariableDef', 'Gadget']
     
     def getMapping(self, table_name, old_id):
@@ -136,6 +136,9 @@ class PackageManager():
         self.pendingFks.addPending(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
 
     def delete_pending_fk(self, table_name, fk_id):
+        pass
+    
+    def linkTuple(self, tuple, user):
         pass
     
     def cloneTuple(self, tuple):
