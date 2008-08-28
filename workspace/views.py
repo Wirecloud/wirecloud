@@ -217,7 +217,7 @@ class WorkSpaceCollection(Resource):
             
             concept_data = {}
             concept_data['user'] = user
-            workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data)
+            workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
             
             return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
             
