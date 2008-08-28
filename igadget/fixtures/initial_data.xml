@@ -1,3 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
+    <object pk="1" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">1</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">4</field>
+    </object>
+    <object pk="2" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">3</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="3" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">2</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="4" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">7</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="5" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">6</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="6" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">5</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="7" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">4</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="12" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">8</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">5</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">16</field>
+    </object>
+    <object pk="13" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">9</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">6</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="14" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">9</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">7</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="15" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">11</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">8</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">19</field>
+    </object>
+    <object pk="16" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">10</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">8</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">20</field>
+    </object>
+    <object pk="17" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">13</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">9</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">21</field>
+    </object>
+    <object pk="18" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">12</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">9</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">22</field>
+    </object>
+    <object pk="19" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">3</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">10</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">23</field>
+    </object>
+    <object pk="20" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">2</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">10</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">24</field>
+    </object>
+    <object pk="21" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">15</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">11</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">30</field>
+    </object>
+    <object pk="22" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">14</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">11</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">31</field>
+    </object>
+    <object pk="23" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">13</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">12</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">33</field>
+    </object>
+    <object pk="24" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">12</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">12</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">34</field>
+    </object>
+    <object pk="25" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">18</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">13</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">35</field>
+    </object>
+    <object pk="26" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">17</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">13</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">36</field>
+    </object>
+    <object pk="27" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">16</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">13</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">37</field>
+    </object>
+    <object pk="28" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">20</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">14</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">38</field>
+    </object>
+    <object pk="29" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">19</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">14</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">39</field>
+    </object>
+    <object pk="30" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">23</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">15</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">40</field>
+    </object>
+    <object pk="31" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">22</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">15</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">41</field>
+    </object>
+    <object pk="32" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">21</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">15</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">42</field>
+    </object>
+    <object pk="33" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">13</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">16</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">43</field>
+    </object>
+    <object pk="34" model="igadget.variable">
+        <field to="gadget.variabledef" name="vardef" rel="ManyToOneRel">12</field>
+        <field to="igadget.igadget" name="igadget" rel="ManyToOneRel">16</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">44</field>
+    </object>
+    <object pk="2" model="igadget.position">
+        <field type="IntegerField" name="posX">0</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">52</field>
+        <field type="IntegerField" name="width">2</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="3" model="igadget.position">
+        <field type="IntegerField" name="posX">2</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="5" model="igadget.position">
+        <field type="IntegerField" name="posX">8</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="6" model="igadget.position">
+        <field type="IntegerField" name="posX">2</field>
+        <field type="IntegerField" name="posY">28</field>
+        <field type="IntegerField" name="height">24</field>
+        <field type="IntegerField" name="width">5</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="7" model="igadget.position">
+        <field type="IntegerField" name="posX">7</field>
+        <field type="IntegerField" name="posY">28</field>
+        <field type="IntegerField" name="height">24</field>
+        <field type="IntegerField" name="width">5</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="8" model="igadget.position">
+        <field type="IntegerField" name="posX">15</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="IntegerField" name="width">5</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="9" model="igadget.position">
+        <field type="IntegerField" name="posX">12</field>
+        <field type="IntegerField" name="posY">28</field>
+        <field type="IntegerField" name="height">24</field>
+        <field type="IntegerField" name="width">8</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="1" model="igadget.position">
+        <field type="IntegerField" name="posX">2</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">51</field>
+        <field type="IntegerField" name="width">18</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="10" model="igadget.position">
+        <field type="IntegerField" name="posX">0</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">51</field>
+        <field type="IntegerField" name="width">2</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="11" model="igadget.position">
+        <field type="IntegerField" name="posX">7</field>
+        <field type="IntegerField" name="posY">15</field>
+        <field type="IntegerField" name="height">14</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="12" model="igadget.position">
+        <field type="IntegerField" name="posX">1</field>
+        <field type="IntegerField" name="posY">31</field>
+        <field type="IntegerField" name="height">25</field>
+        <field type="IntegerField" name="width">9</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="13" model="igadget.position">
+        <field type="IntegerField" name="posX">13</field>
+        <field type="IntegerField" name="posY">15</field>
+        <field type="IntegerField" name="height">14</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="14" model="igadget.position">
+        <field type="IntegerField" name="posX">0</field>
+        <field type="IntegerField" name="posY">0</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="IntegerField" name="width">20</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="15" model="igadget.position">
+        <field type="IntegerField" name="posX">0</field>
+        <field type="IntegerField" name="posY">15</field>
+        <field type="IntegerField" name="height">14</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="16" model="igadget.position">
+        <field type="IntegerField" name="posX">10</field>
+        <field type="IntegerField" name="posY">31</field>
+        <field type="IntegerField" name="height">25</field>
+        <field type="IntegerField" name="width">9</field>
+        <field type="BooleanField" name="minimized">False</field>
+    </object>
+    <object pk="2" model="igadget.igadget">
+        <field type="IntegerField" name="code">1</field>
+        <field type="CharField" name="name">Flickr (1)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="3" model="igadget.igadget">
+        <field type="IntegerField" name="code">2</field>
+        <field type="CharField" name="name">YouTube Video Search (2)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="5" model="igadget.igadget">
+        <field type="IntegerField" name="code">4</field>
+        <field type="CharField" name="name">YouTube Video Player (4)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">5</field>
+    </object>
+    <object pk="6" model="igadget.igadget">
+        <field type="IntegerField" name="code">5</field>
+        <field type="CharField" name="name">Amazon (5)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="7" model="igadget.igadget">
+        <field type="IntegerField" name="code">6</field>
+        <field type="CharField" name="name">Amazon (6)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="8" model="igadget.igadget">
+        <field type="IntegerField" name="code">7</field>
+        <field type="CharField" name="name">Yahoo Trip Search (7)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="9" model="igadget.igadget">
+        <field type="IntegerField" name="code">8</field>
+        <field type="CharField" name="name">Map Viewer (8)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">4</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="1" model="igadget.igadget">
+        <field type="IntegerField" name="code">1</field>
+        <field type="CharField" name="name">Visor Imágenes (1)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="10" model="igadget.igadget">
+        <field type="IntegerField" name="code">2</field>
+        <field type="CharField" name="name">Flickr (2)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">2</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="11" model="igadget.igadget">
+        <field type="IntegerField" name="code">1</field>
+        <field type="CharField" name="name">Visor Datos de Usuario (1)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="12" model="igadget.igadget">
+        <field type="IntegerField" name="code">2</field>
+        <field type="CharField" name="name">Map Viewer (2)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="13" model="igadget.igadget">
+        <field type="IntegerField" name="code">3</field>
+        <field type="CharField" name="name">Visor Datos de Equipo (3)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">13</field>
+    </object>
+    <object pk="14" model="igadget.igadget">
+        <field type="IntegerField" name="code">4</field>
+        <field type="CharField" name="name">Bandeja de Averias (4)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">14</field>
+    </object>
+    <object pk="15" model="igadget.igadget">
+        <field type="IntegerField" name="code">5</field>
+        <field type="CharField" name="name">Configuracion de Red (5)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">15</field>
+    </object>
+    <object pk="16" model="igadget.igadget">
+        <field type="IntegerField" name="code">6</field>
+        <field type="CharField" name="name">Map Viewer (6)</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+        <field to="workspace.tab" name="tab" rel="ManyToOneRel">3</field>
+        <field to="igadget.position" name="position" rel="ManyToOneRel">16</field>
+    </object>
 </django-objects>

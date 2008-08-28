@@ -799,94 +799,94 @@
         <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
     </object>
-	<object pk="7" model="catalogue.userrelatedtogadgetresource">
+    <object pk="7" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">7</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="6" model="catalogue.userrelatedtogadgetresource">
+    <object pk="6" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">6</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="1" model="catalogue.userrelatedtogadgetresource">
+    <object pk="1" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">1</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="3" model="catalogue.userrelatedtogadgetresource">
+    <object pk="3" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">3</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="5" model="catalogue.userrelatedtogadgetresource">
+    <object pk="5" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">5</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="4" model="catalogue.userrelatedtogadgetresource">
+    <object pk="4" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">4</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="13" model="catalogue.userrelatedtogadgetresource">
+    <object pk="13" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">13</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="16" model="catalogue.userrelatedtogadgetresource">
+    <object pk="16" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">16</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="11" model="catalogue.userrelatedtogadgetresource">
+    <object pk="11" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">11</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="8" model="catalogue.userrelatedtogadgetresource">
+    <object pk="8" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">8</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="10" model="catalogue.userrelatedtogadgetresource">
+    <object pk="10" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">10</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="12" model="catalogue.userrelatedtogadgetresource">
+    <object pk="12" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">12</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="2" model="catalogue.userrelatedtogadgetresource">
+    <object pk="2" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">2</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="9" model="catalogue.userrelatedtogadgetresource">
+    <object pk="9" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">9</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-	<object pk="14" model="catalogue.userrelatedtogadgetresource">
+    <object pk="14" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">14</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="BooleanField" name="added_by">1</field>
+        <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
     <object pk="14" model="catalogue.gadgetresource">

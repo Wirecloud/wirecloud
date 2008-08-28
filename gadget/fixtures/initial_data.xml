@@ -1,3 +1,2560 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
+    <object pk="1" model="gadget.variabledef">
+        <field type="CharField" name="name">imageUrl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">imageUrl</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">imageUrl</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="2" model="gadget.variabledef">
+        <field type="CharField" name="name">keyword</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">keyword</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">keyword</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="3" model="gadget.variabledef">
+        <field type="CharField" name="name">urlImage</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">urlImage</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">urlImage</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="4" model="gadget.variabledef">
+        <field type="CharField" name="name">rssUrl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">rssUrl</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">youtube_url</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="5" model="gadget.variabledef">
+        <field type="CharField" name="name">place</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">place</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="6" model="gadget.variabledef">
+        <field type="CharField" name="name">title</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">title</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">title</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="7" model="gadget.variabledef">
+        <field type="CharField" name="name">poi</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">poi</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">poi</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="8" model="gadget.variabledef">
+        <field type="CharField" name="name">RSSYurl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">url</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">youtube_url</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
+    </object>
+    <object pk="9" model="gadget.variabledef">
+        <field type="CharField" name="name">keyword</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">keyword</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">keyword</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
+    </object>
+    <object pk="10" model="gadget.variabledef">
+        <field type="CharField" name="name">poi</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">poi</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">poi</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="11" model="gadget.variabledef">
+        <field type="CharField" name="name">travel</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">travel</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">yahoo_travel</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="12" model="gadget.variabledef">
+        <field type="CharField" name="name">address</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="13" model="gadget.variabledef">
+        <field type="CharField" name="name">utmCoord</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">UTM Coord.</field>
+        <field type="CharField" name="description">UTM X Y Coordinates and precision (optional), comma separated</field>
+        <field type="CharField" name="friend_code">utmCoord</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="14" model="gadget.variabledef">
+        <field type="CharField" name="name">address</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="15" model="gadget.variabledef">
+        <field type="CharField" name="name">phoneNumber</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">PhoneNumber</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">phone</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="16" model="gadget.variabledef">
+        <field type="CharField" name="name">dir_equipo</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="17" model="gadget.variabledef">
+        <field type="CharField" name="name">equipo</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">deviceId</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceId</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="18" model="gadget.variabledef">
+        <field type="CharField" name="name">estado</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">deviceStatus</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceStatus</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="19" model="gadget.variabledef">
+        <field type="CharField" name="name">telefono</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">PhoneNumber</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">phone</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="20" model="gadget.variabledef">
+        <field type="CharField" name="name">servicio</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">ServiceHired</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">service</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="21" model="gadget.variabledef">
+        <field type="CharField" name="name">serviceHired</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">ServiceHired</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">service</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="22" model="gadget.variabledef">
+        <field type="CharField" name="name">deviceId</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">deviceId</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceId</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="23" model="gadget.variabledef">
+        <field type="CharField" name="name">deviceStatus</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">deviceStatus</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceStatus</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="1" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Imágenes</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">1</field>
+        <field type="CharField" name="author">jmostazo</field>
+        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">30</field>
+        <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="2" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Flickr</field>
+        <field type="CharField" name="version">2.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">2</field>
+        <field type="CharField" name="author">jmostazo</field>
+        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">18</field>
+        <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="3" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Search/1.4</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">YouTube Video Search</field>
+        <field type="CharField" name="version">1.4</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">3</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">buscador de videos youtube y selector de peliculas</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="4" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Player/1.3</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">YouTube Video Player</field>
+        <field type="CharField" name="version">1.3</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">4</field>
+        <field type="CharField" name="author">jmartin</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">Reproductor de videos de Youtube</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="5" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Amazon/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Amazon</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">5</field>
+        <field type="CharField" name="author">jmartin</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">Busqueda de productos en Amazon</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="6" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Yahoo Trip Search/1.1</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Yahoo Trip Search</field>
+        <field type="CharField" name="version">1.1</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">6</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">buscador de planes de viajes de yahoo</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="7" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Map Viewer/1.2</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Map Viewer</field>
+        <field type="CharField" name="version">1.2</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">7</field>
+        <field type="CharField" name="author">fabio</field>
+        <field type="CharField" name="mail">fabio@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
+        <field type="IntegerField" name="width">9</field>
+        <field type="IntegerField" name="height">25</field>
+        <field type="CharField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object><object pk="3"></object></field>
+    </object>
+    <object pk="8" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Usuario/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Datos de Usuario</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">8</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="9" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Equipo/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Datos de Equipo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">9</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="10" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Bandeja de Averias/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Bandeja de Averias</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">10</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
+        <field type="IntegerField" name="width">20</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="11" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Configuracion de Red/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Configuracion de Red</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">11</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="1" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head&gt;
+  &lt;meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" /&gt;
+  &lt;title&gt;Visor Imagenes&lt;/title&gt;
+  &lt;script type="text/javascript" language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+  &lt;script language="javascript" src="http://europa.ls.fi.upm.es/svn/ezweb/releases/lib/js/ezwebext/v1.0/ezweb_ext.js"&gt;&lt;/script&gt;
+  &lt;script language="javascript" src="http://europa.ls.fi.upm.es/svn/ezweb/releases/lib/js/json2.js"&gt;&lt;/script&gt;
+		&lt;style type="text/css"&gt;
+			
+			html {
+				margin:0px;
+				padding:0px;
+				height:100%;
+				width:100%;
+			}
+			
+			body {
+				margin:0px;
+				padding:0px;
+				height:100%;
+				width:100%;
+				font-family:"Trebuchet MS","Bitstream Vera Sans",Verdana,Helvetica,sans-serif;
+				font-size:14px;
+				overflow-y:hidden;
+			}
+						
+			#header {
+				background:#dddddd;
+				padding-left:2px;
+				height:7%;
+				border-bottom:1px solid #888888;
+				min-width:295px;
+				min-height:30px;
+			}
+			
+			#header .image {
+				cursor:pointer;
+				margin-bottom:3px;
+				padding:3px 1px 0px 2px;
+				width:23px;
+				height:23px;
+				display:block;
+				float:left;
+			}
+			
+			#header .text {
+				margin-top:3px;
+				margin-right:4px;
+				margin-left:4px;
+				float:left;
+			}
+			
+			#header .button {
+				margin-bottom:3px;
+				padding:3px 0px 0px 0px;
+				float:left;
+				overflow:hidden;
+			}
+			
+			#header #group {
+				width:120px;
+			}
+			
+			#content  {
+				width:100%;
+				height:93%;
+				overflow:hidden;
+			}
+			
+			#content #image_container {
+				width:100%;
+				height:100%;
+				text-align:center;
+				overflow: auto;
+			}
+			
+			.error {
+				width:10px;
+				height:15px;
+				display:block;
+				margin:7px 0px 0px 5px;
+				float:left;
+				font-size:12px;
+				color:red;
+				overflow:hidden;
+			}
+			
+			#error {
+				font-family:"Bookman Old Style";
+				color:red;
+				font-style:italic;
+				display:none;
+			}
+		&lt;/style&gt;
+		&lt;script type="text/javascript" language="javascript"&gt;	
+        				
+			var MAX_ZOOM = 200;
+			var MIN_ZOOM = 10;
+			var DEFAULT_ZOOM = 100;
+			var INC = 10;
+			
+			var actualZoom = DEFAULT_ZOOM;
+			
+			var urlSlot = EzWebAPI.createRGadgetVariable("imageUrl", setNewImage);
+			
+			function init ()
+			{
+				//document.getElementById('content').style.height = (document.getElementById('content').parentNode.offsetHeight - document.getElementById('header').offsetHeight - document.getElementById('default_footer').offsetHeight) + 'px';
+				//document.getElementById('image_container').style.height = document.getElementById('content').offsetHeight + 'px';
+			}
+						
+			function setNewImage(value)
+			{
+				if (value != "" &amp;&amp; value != undefined &amp;&amp; value != null){
+					document.getElementById('image').src = value;
+					//document.getElementById('label').innerHTML = value;
+					//setSize(DEFAULT_ZOOM);
+				}
+			}
+			
+			function setSize(value)
+			{
+				var content = document.getElementById('content');
+				var container = document.getElementById('image_container');
+				var image = document.getElementById('image');
+				image.style.width = value + '%';
+			}
+
+			function expandZoom()
+			{
+				setSize((((actualZoom + INC) &lt; MAX_ZOOM)?(actualZoom+=INC):(actualZoom=MAX_ZOOM)))
+			}
+			
+			function reduceZoom()
+			{
+				setSize((((actualZoom - INC) &gt; MIN_ZOOM)?(actualZoom-=INC):(actualZoom=MIN_ZOOM)))
+			}
+			
+			function defaultZoom()
+			{
+				setSize(actualZoom = DEFAULT_ZOOM);
+			}
+			
+			function nextImage()
+			{
+				if (actualImage &lt; (selectedImages.length-1))
+				{
+					setSelectedImage(++actualImage);
+				}
+			}
+/*
+  var dragging = false;
+  var x = 0;
+  var y = 0;
+
+  document.addEventListener("mousedown",startDragScroll,false);
+  
+  document.addEventListener("mouseup",stopDragScroll,false);
+
+  document.addEventListener("mousemove",dragScroll,false);
+
+  function startDragScroll(e){
+    if (e.button == 0) {
+      dragging=true;
+      x=e.clientX;
+      y=e.clientY;
+    }
+  }
+
+  function stopDragScroll(e){ 
+    dragging=false;
+  }
+
+  function dragScroll(e) {
+    if (dragging) {
+      document.getElementById("image_container").scrollTop += y-e.clientY;
+      document.getElementById("image_container").scrollLeft += x-e.clientX;
+    }
+  }*/
+		&lt;/script&gt;
+	&lt;/head&gt;
+	&lt;body onload="init();"&gt;
+		&lt;div id="header"&gt;
+			&lt;div class="image"&gt;&lt;img id="reduce" title="Reducir" onclick="reduceZoom();" src="http://europa.ls.fi.upm.es/svn/ezweb/releases/visorImagenes/images/zoom-out.png"&gt;&lt;/img&gt;&lt;/div&gt;
+			&lt;div class="image"&gt;&lt;img id="expand" title="Ampliar" onclick="expandZoom();" src="http://europa.ls.fi.upm.es/svn/ezweb/releases/visorImagenes/images/zoom-in.png"&gt;&lt;/img&gt;&lt;/div&gt;
+			&lt;div class="image"&gt;&lt;img id="default" title="Ajustar ancho" onclick="defaultZoom();" src="http://europa.ls.fi.upm.es/svn/ezweb/releases/visorImagenes/images/zoom-best-fit.png"&gt;&lt;/img&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;div id="content"&gt;
+			&lt;div id="image_container"&gt;&lt;img id="image" src="" onload="defaultZoom();"&gt;&lt;/img&gt;&lt;/div&gt;
+		&lt;/div&gt;
+		&lt;!--&lt;div id="default_footer" class="footer"&gt;
+			&lt;div id="label"&gt;Esperando una imagen ...&lt;/div&gt;
+		&lt;/div&gt;--&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.html</field>
+    </object>
+    <object pk="2" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.0/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;&lt;head&gt;
+&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+&lt;style type="text/css"&gt;
+body,td,div,span,p{font-family:arial,sans-serif;}
+a {color:#0000cc; }
+a:visited { color:#551a8b; }a:active { color:#ff0000; }
+body {margin: 0px;padding: 0px;   background-color: white;   }
+.t { width: 75px; height: 75px; margin: 0; border:0; padding: 3px; } 
+.t:hover { padding:1px; border: 2px solid #0063DC; border-right-color: #FF0084; }
+#logo { width:100px;}
+&lt;/style&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+
+var vkey = EzWebAPI.createRGadgetVariable("keyword", displayMenu);
+var urlImage = EzWebAPI.createRWGadgetVariable("urlImage");
+
+function displayMenu(keyword) {
+	if (keyword=="")
+		feedUrl = "http://api.flickr.com/services/feeds/photos_public.gne?tags=flickr&amp;lang=en-us&amp;format=rss_200";
+	else
+		feedUrl = "http://api.flickr.com/services/feeds/photos_public.gne?tags="+keyword+"&amp;lang=en-us&amp;format=rss_200";
+	feedUrl = encodeURI(feedUrl);
+	EzWebAPI.send_get(feedUrl, this, displayOk, displayError);
+}
+
+function displayOk(resp){
+	var response = resp.responseXML;
+
+	var html = "";
+	var items = response.getElementsByTagName("item");
+	for (var i = 0; i &lt; items.length ; i++) {
+		var itemNodes = items.item(i).childNodes;
+		for (var j = 0; j &lt; itemNodes.length ; j++) {
+			var node = itemNodes.item(j);
+			if (node.nodeName=="media:thumbnail")
+				var urlT = node.getAttribute("url");
+			else if (node.nodeName=="link")
+				var url = node.firstChild.nodeValue;
+			else if (node.nodeName=="title") 
+				if (node.firstChild)
+					var t = node.firstChild.nodeValue;
+				else var t = "";
+			else if (node.nodeName=="author")
+				var a = node.firstChild.nodeValue;
+		}
+		if (t!="")
+			t = '\''+t+'\' by '+a.substring(a.indexOf('(')+1, a.lastIndexOf(')'));
+		else 
+			t = 'Photo by '+a.substring(a.indexOf('(')+1, a.lastIndexOf(')'));
+		html += '&lt;a href="javascript:sendImage(\''+urlT+'\');" title="'+t+'"&gt;&lt;img src="'+urlT+'" class="t" alt="'+t+'"&gt;&lt;/a&gt;';
+		//html += '&lt;a href="'+url+'" title="'+t+'" target="_blank"&gt;&lt;img src="'+urlT+'" class="t" alt="'+t+'"&gt;&lt;/a&gt;';
+	}
+	document.getElementById('content_div').innerHTML = html;
+}
+
+function sendImage(urlImage_)
+{
+	urlImage.set(urlImage_.substr(0, urlImage_.length - 6) + urlImage_.substr(urlImage_.length - 4, 4));
+}
+
+function displayError(res){
+         
+}
+
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;img id="logo" src="http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png"/&gt;
+&lt;body onload="javascript:displayMenu(vkey.get());"&gt;
+	&lt;div id="content_div" style="margin:0 auto; text-align: center;"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.html</field>
+    </object>
+    <object pk="3" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Search/1.4/xhtml</field>
+        <field type="TextField" name="code">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body,td,div,span,p{font-family:arial,sans-serif;}a {color:#0000cc; }a:visited { color:#551a8b; }a:active { color:#ff0000; }body {margin: 0px;padding: 0px;   background-color: white;   }
+--&gt;
+&lt;/style&gt;
+&lt;style&gt;
+
+  .slot {
+
+    cursor:hand;
+
+    cursor:pointer;
+
+    width: 89px;
+
+    display:none;
+
+    text-align: center;
+
+    margin-left: auto;
+
+    margin-right: auto;
+
+    padding-top:2px;
+
+    vertical-align: middle;
+
+  }
+
+
+
+  .browseitemtitle {
+
+    margin-left:2px;
+
+    font-size: 8pt;
+
+    text-align: left;
+
+    white-space: nowrap;
+
+  }
+
+
+body {
+   overflow-x: hidden;
+}
+
+
+  .browseitemduration {
+
+    margin-left:2px;
+
+    font-size: 8pt;
+
+    text-align: left;
+
+  }
+
+ 
+
+  .infowatch{
+
+    font-size: 8pt;
+
+  }
+
+
+
+  .videotitle {
+
+    font-size: 9pt;
+
+    font-weight: bold;
+
+  }
+
+
+
+  .videoinfolabel {
+
+    font-size: 8pt;
+
+  }
+
+
+
+  .videoinfo {
+
+    font-size: 8pt;
+
+    overflow:scroll;
+
+    font-weight: bold;
+
+  }
+
+
+
+  .description {
+
+    font-size: 8pt;
+
+    overflow:auto;
+
+  }
+
+ 
+
+  .thumb {
+
+    width: 85px;
+
+    height: 64px;
+
+    padding: 1px;
+
+    border: 1px solid #666666;
+
+    text-align: middle;
+
+  }
+
+  
+
+  .player { 
+
+    margin-top:2px; 
+
+    margin-bottom: 2px; 
+
+    width: 100%;
+
+    height:200px;
+
+
+
+  }
+
+
+
+  .videobar{
+
+    background:#F6F6F6 none repeat scroll 0%;
+
+    border: 1px solid #CCCCCC;
+
+    voice-family: "\"}\"";
+
+    voice-family: inherit;
+
+    padding: 2px;
+
+  }
+
+
+
+  .contentpane {
+
+    clear:both;
+
+    margin-top: 2px; 
+
+    padding-left: 2px; 
+
+    padding-right: 2px; 
+
+    font-size: 8pt;
+
+    font-family: arial,helvetica;
+
+    height: 248px;
+
+  }
+
+
+
+  .infopane {
+
+    clear:both;
+
+    font-size: 8pt;
+
+    font-family: arial,helvetica;
+
+    vertical-align: middle;
+
+    border-top: solid 1px #cccccc;
+
+    border-right: solid 1px #cccccc;
+
+    border-left: solid 1px #cccccc;
+
+    height:201;
+
+    overflow:auto;
+
+  }
+
+ 
+
+  .pager {
+
+    font-size: 8pt; 
+
+    margin-top: -2px;
+
+    text-align: right;
+
+    white-space: nowrap; 
+
+    display: none;
+
+  }
+
+
+
+  .hbar {
+
+    width:100%; 
+
+    white-space:nowrap;
+
+    clear:both;
+
+  }
+
+
+
+  .loading {
+
+    visibility:hidden;
+
+    position: absolute; 
+
+    font-family:arial, helvetica; 
+
+    font-size: 8pt; 
+
+    padding:0px;
+
+    margin:0px;
+
+    margin-left:4px;
+
+  }
+
+
+
+  .message {
+
+    text-align: center; 
+
+    display:none; 
+
+    font-family:arial, helvetica; 
+
+    font-size: 10pt;
+
+    padding-top: 30px;
+
+    height: 208px; 
+
+    vertical-align:middle;
+
+    white-space:normal;
+
+  }
+
+
+
+  wbr:after { content: "\00200B" }
+
+
+
+  * html .thumb {
+
+    border: 1px solid white;
+
+  }
+
+
+
+  * html .thumbSpan {
+
+    border: 1px solid #666666;
+
+  }
+
+&lt;/style&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+
+function URLEncode( url )
+{
+	// The Javascript escape and unescape functions do not correspond
+	// with what browsers actually do...
+	var SAFECHARS = "0123456789" +					// Numeric
+					"ABCDEFGHIJKLMNOPQRSTUVWXYZ" +	// Alphabetic
+					"abcdefghijklmnopqrstuvwxyz" +
+					"-_.!~*'()";					// RFC2396 Mark characters
+	var HEX = "0123456789ABCDEF";
+
+	var plaintext = url;
+	var encoded = "";
+	for (var i = 0; i &lt; plaintext.length; i++ ) {
+		var ch = plaintext.charAt(i);
+	    if (ch == " ") {
+		    encoded += "+";				// x-www-urlencoded, rather than %20
+		} else if (SAFECHARS.indexOf(ch) != -1) {
+		    encoded += ch;
+		} else {
+		    var charCode = ch.charCodeAt(0);
+			if (charCode &gt; 255) {
+			    alert( "Unicode Character '" 
+                        + ch 
+                        + "' cannot be encoded using standard URL encoding.\n" +
+				          "(URL encoding only supports 8-bit characters.)\n" +
+						  "A space (+) will be substituted." );
+				encoded += "+";
+			} else {
+				encoded += "%";
+				encoded += HEX.charAt((charCode &gt;&gt; 4) &amp; 0xF);
+				encoded += HEX.charAt(charCode &amp; 0xF);
+			}
+		}
+	} // for
+
+	return encoded;
+}
+
+
+	var rssUrl = EzWebAPI.createRWGadgetVariable("rssUrl");
+	var place = EzWebAPI.createRWGadgetVariable("place");
+	var vtitle = EzWebAPI.createRWGadgetVariable("title");
+	var bsoartist = EzWebAPI.createRWGadgetVariable("bsoartist");
+	var poi = EzWebAPI.createRWGadgetVariable("poi");
+
+	
+	/* Channels */
+    var currentChannelId = 6;
+	/*movie channel*/
+	movies = new Array();
+	movie = new Object();
+
+	//movie 0
+	url = "http://www.youtube.com/v/fc3O8a8-BM4&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 130;
+	movie.thumbnail = "http://img.youtube.com/vi/fc3O8a8-BM4/default.jpg";
+	movie.title = "king Kong";
+	movie.location = "Nueva York";
+	movie.poi = "Nueva York";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+	//movie 1
+	movie = new Object();
+	url = "http://www.youtube.com/v/sECzJY07oK4&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 102;
+	movie.thumbnail = "http://img.youtube.com/vi/sECzJY07oK4/default.jpg";
+	movie.title = "Amelie";
+	movie.location = "Paris, Francia";
+	movie.poi = "Paris";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+	//movie 2
+
+	movie = new Object();
+	url = "http://www.youtube.com/v/P8nD2KB0a_E&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 139;
+	movie.thumbnail = "http://img.youtube.com/vi/P8nD2KB0a_E/default.jpg";
+	movie.title = "The Queen";
+	movie.location = "Londres";
+	movie.poi = "Londres";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+	//movie 3
+
+	movie = new Object();
+	url = "http://www.youtube.com/v/PxXb_YZ-CQI&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 126;
+	movie.thumbnail = "http://img.youtube.com/vi/PxXb_YZ-CQI/default.jpg";
+	movie.title = "Mar adentro";
+	movie.location = "Boiro, Galicia";
+	movie.poi = "Galicia";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+	//movie 4
+
+	movie = new Object();
+	url = "http://www.youtube.com/v/FnHj8LxkcU0&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 41;
+	movie.thumbnail = "http://img.youtube.com/vi/fXN3nADMhh0/default.jpg";
+	movie.title = "El Orfanato";
+	movie.location = "Llanes, Asturias";
+	movie.poi = "Asturias";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+	//movie 5
+
+	movie = new Object();
+	url = "http://www.youtube.com/v/2I4-Uec6XJM&amp;rel=1";
+	movie.swf = url;
+	movie.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+	movie.index = movies.length;
+	movie.duration = 56;
+	movie.thumbnail = "http://img.youtube.com/vi/2I4-Uec6XJM/default.jpg";
+	movie.title = "Ciudad de Dios";
+	movie.location = "Rio de Janeiro";
+	movie.poi = "Rio de Janeiro";
+	movie.bsoartist = "";
+
+	movies.push(movie);
+
+
+    var channels = [
+      ["Ultimos destacados", "http://youtube.com/rss/global/recently_featured_es_ES.rss"],
+      ["Superfavoritos", "http://youtube.com/rss/global/top_favorites_es_ES.rss"],
+      ["Mas valorados", "http://youtube.com/rss/global/top_rated_es_ES.rss"],
+      ["Mas vistos hoy", "http://youtube.com/rss/global/top_viewed_today_es_ES.rss"],
+      ["Mas comentados hoy", "http://youtube.com/rss/global/most_discussed_today_es_ES.rss"],
+      ["Anadidos recientemente", "http://youtube.com/rss/global/recently_added_es_ES.rss"],
+      ["Peliculas",""]
+    ];
+    var defaultChannels = channels.length;
+	
+	/* User preference management */
+    //var prefs = new _IG_Prefs();
+    var MAX_SAVED_SEARCHES = 3;
+    var CURRENT_PREFS_VERSION = 2;
+    //var rawQuery = "";
+
+function load(){
+    rebuildChannelList();
+    document.getElementById("channellist").onchange();
+}
+
+/*
+	function loadPreferences() {
+      var prefs_version = prefs.getInt("prefs_version");
+      if (prefs_version &lt; CURRENT_PREFS_VERSION) {
+        // Do nothing.
+      } else if (prefs_version == CURRENT_PREFS_VERSION) {
+        var search_channels = prefs.getInt("search_channels");
+        for (var i = 0; i &lt; Math.min(MAX_SAVED_SEARCHES, search_channels); i++) {
+          var name = prefs.getString("search_channel_name" + i);
+          var url = prefs.getString("search_channel_url" + i);
+          channels[i + defaultChannels] = [name, url];
+        }
+        // If this channel number is no longer valid for whatever reason
+        // we'll just fallback when trying to set it as the current one
+        currentChannelId = prefs.getInt("current_channel_id");
+      }
+      
+      // host page requested initial search to run
+      rawQuery = prefs.getString("rawQuery");
+    }
+	*/
+	
+	/* DOM manipulation helpers */
+    function showElements() {
+      for (var i = 0; i &lt; arguments.length; i++) {
+        document.getElementById(arguments[i]).style.display = "block";
+      }
+    }
+
+    function hideElements() {
+      for (var i = 0; i &lt; arguments.length; i++) {
+        document.getElementById(arguments[i]).style.display = "none";
+      }
+    }
+ 
+    function clearElement(el) {
+      while(el.firstChild) {
+        el.removeChild(el.firstChild);
+      }
+    }
+    
+    function setElementText(element_id, text) {
+      el = document.getElementById(element_id);
+      clearElement(el);
+      el.appendChild(document.createTextNode(text));
+    }
+
+    function getDivHeight(div) {
+      if (div.clientHeight) {
+        return div.clientHeight;
+      } else if (div.offsetHeight) {
+        return div.offsetHeight;
+      }
+    }
+    
+    function getDivWidth(div) {
+      if (div.clientWidth) {
+        return div.clientWidth;
+      } else if (div.offsetWidth) {
+        return div.offsetWidth;
+      }
+    }
+
+    function addItemToList(list, id, text, value) {
+      var option = new Option(text, value);
+      option.id = id;
+      try {
+        list.add(option);
+      } catch (e) {
+        list.appendChild(option);
+      }
+    }
+	
+	// Gets the id of the listbox item for a particular channel
+    // index    
+    function channelNodeId(index) {
+      return "channel_" + index;
+    }
+ 
+     /* UI state management */
+    // Main gadget states
+    var GS_BROWSE = 0;
+    //var GS_WATCH = 1;
+    //var GS_INFO = 2;
+    var GS_LOADING = 3;
+    var GS_DISCONNECTED = 4;
+    var GS_NORESULTS = 5;
+    var GS_LOADING_INFO = 6;
+    var gadgetState = GS_LOADING;
+    //var MINI_WIDTH = 270;
+    var miniMode = false; 
+    function goToNewState(newState) {
+      if (newState == GS_LOADING) {
+        /*if (gadgetState == GS_INFO || gadgetState == GS_WATCH) {
+          goToNewState(GS_BROWSE);
+        }*/
+        document.getElementById("loading").style.visibility = "visible";
+      }/*else if (newState == GS_LOADING_INFO) {
+        setElementText("infoAdded",  "");
+        setElementText("infoFrom", "");
+        setElementText("infoViews", "");
+        setElementText("infoRatings", ""); 
+        setElementText("infoDescription", ""); 
+        document.getElementById("infoThumb").src = "";
+        document.getElementById("infoThumb").style.visibility = "hidden";
+        
+        hideElements("message", "infolink", "innerWatchVideos", "chooseVideos",
+            "pager");
+        showElements("hideLink", "infopane", "backlink");
+ 
+        document.getElementById("loadinginfo").style.visibility = "visible";
+      }*/else if (newState == GS_DISCONNECTED) {
+        hideElements("backlink", "pager", "watchVideos", "chooseVideos");
+        showElements("message");
+        displayMessage("No se puede conectar con YouTube, reintentando...");
+      }else if (newState == GS_NORESULTS) {
+        hideElements("watchVideos", "chooseVideos", "backlink", "pager");
+        showElements("message"); 
+        displayMessage("No se han encontrado resultados.");
+        document.getElementById("query").focus();
+      }/*else if (newState == GS_WATCH) {
+        hideElements("infopane", "message", "chooseVideos", "pager",
+            "hideLink");
+        showElements( "watchVideos", "innerWatchVideos", "backlink", 
+            "infolink");
+      }*/else if (newState == GS_BROWSE) {
+        hideElements("watchVideos", "message", "backlink", "infopane");
+        showElements("chooseVideos", "pager");
+      }/*else if (newState == GS_INFO) {
+        hideElements("message", "infolink", "innerWatchVideos", "chooseVideos",
+            "pager");
+        showElements("hideLink", "infopane", "backlink");
+
+        document.getElementById("infoThumb").style.visibility = "visible";
+      }
+      */
+      if (newState != GS_LOADING &amp;&amp; newState != GS_LOADING_INFO) {
+        document.getElementById("loading").style.visibility = "hidden";
+        document.getElementById("loadinginfo").style.visibility = "hidden";
+      }
+
+      gadgetState = newState;
+    }
+
+ 
+    // Called initially and whenever the list of channels changes
+    function rebuildChannelList() {
+      // add all channels
+      var list = document.getElementById("channellist");
+      clearElement(list);
+      
+      for (var i = 0; i &lt; channels.length; i++)  {
+        addItemToList(list, channelNodeId(i), channels[i][0], i);
+      }
+      
+      // go to the current visited channel
+      document.getElementById(channelNodeId(currentChannelId)).selected = true;
+    }
+	
+	// Search helper
+    function getSearchUrl(query) {
+      return "http://youtube.com/rss/search_by_relevance/" + 
+          encodeURI(query) + ".rss";
+    } 
+	
+	// Does a search by requesting the RSS feed for the query from YT
+	function doSearch(query) {
+      if (query == "") {
+        return;
+      }
+
+      var queryName = '"' + query + '"';
+      var queryUrl = getSearchUrl(query); 
+
+      var newChannelId = 0;
+      var alreadyInList = false;
+
+      // if this query is already in the channel list, just select it
+      for (var i = 0; i &lt; channels.length; i++) {
+        if (channels[i][0] == queryName &amp;&amp; channels[i][1] == queryUrl) {
+          newChannelId = i;
+          alreadyInList = true;
+          break;
+        }
+      }
+      
+      // otherwise add it
+      if (!alreadyInList) {
+        // keep the last MAX_SAVED_SEARCHES searches in the channel list
+        if (channels.length - defaultChannels == MAX_SAVED_SEARCHES) {
+          for (var i = 0; i &lt; MAX_SAVED_SEARCHES - 1; i++) {
+            channels[defaultChannels + i] = channels[defaultChannels + i + 1];
+          }
+          // replace last one
+          channels[channels.length - 1] = [queryName, queryUrl];
+        } else {
+          // append
+          channels[channels.length] = [queryName, queryUrl];
+        }
+        
+        rebuildChannelList();
+        newChannelId = channels.length - 1; 
+      }
+      document.getElementById(channelNodeId(newChannelId)).selected = true;
+      document.getElementById("channellist").onchange();
+    }
+	
+	// Handle channel change from UI or Search
+    function changeChannel(selected) { 
+      currentChannelId = selected.value
+      channelUrl = channels[currentChannelId][1];
+      if (currentChannelId &gt;= defaultChannels) {
+        var queryName = channels[currentChannelId][0];
+        var query = queryName.substr(1,queryName.length-2);
+        if(document.getElementById("query").value != query) {
+          document.getElementById("query").value = query;
+        }
+      }
+      
+      // Skip saving prefs if we're still loading
+      /*if (widgetLoaded) {
+        savePreferences();
+      }*/
+
+      goToNewState(GS_LOADING);
+      // TODO: move setp calls to here?
+      if (channelUrl == ""){//movie channel
+	videos = new Array();
+	videos = movies;
+	currentVideoIndex = 0;
+        renderBrowsePage(0);
+      }else{
+	EzWebAPI.send_get(channelUrl, this, handleChannelXml, handleChannelXmlError);
+      }
+    }
+	
+    // Callback once we've recieved channel data from YouTube
+    var CONNECTION_RETRY_SECONDS = 10;
+    var MAX_SEARCH_RESULTS = 24;
+
+    function handleChannelXmlError(response){
+        goToNewState(GS_DISCONNECTED);
+        setTimeout(rebuildChannelList, CONNECTION_RETRY_SECONDS * 1000);
+        return;
+    }
+
+    function handleChannelXml(response) {
+
+      var items = response.responseXML.getElementsByTagName("item");
+      videos = new Array();
+try{
+      for (var i = 0; i &lt; items.length &amp;&amp; 
+          videos.length &lt;= MAX_SEARCH_RESULTS; i++) {
+        var video = new Object();
+        for (var j = 0; j &lt; items[i].childNodes.length; j++) {
+          if (items[i].childNodes[j].nodeName == "enclosure") {
+            var url = items[i].childNodes[j].getAttribute("url");
+            var duration = items[i].childNodes[j].getAttribute("duration");
+            video.swf = url;
+            video.id = url.replace(/.*\/v\/(.*)\.swf/, "$1");
+            video.index = videos.length;
+            video.duration = duration;
+          }
+          if (items[i].childNodes[j].nodeName == "media:thumbnail") {
+            var url = items[i].childNodes[j].getAttribute("url");
+            video.thumbnail = url;
+          }
+          if (items[i].childNodes[j].nodeName == "title") {
+            video.title = getXmlNodeText(items[i].childNodes[j])
+          }
+        }
+        videos.push(video);
+      }
+      
+      if (videos.length &gt; 0) {
+        currentVideoIndex = 0;
+        renderBrowsePage(0);
+      } else {
+        goToNewState(GS_NORESULTS);
+      }
+
+}catch (e){
+alert("excepcion");
+}
+    }
+
+
+   // Start playback of a particular video
+//    var currentPlayerDivId = 0;
+    function loadVideo(video) {
+	rssUrl.set (URLEncode(video.swf));
+	currentChannelId = document.getElementById("channellist").value;
+	channelUrl = channels[currentChannelId][1];
+	if(channelUrl == ""){//movies
+		place.set(video.location);
+		vtitle.set(video.title);
+		//bsoartist.set(video.bsoartist);
+		poi.set(video.poi);
+	}
+      
+    }
+
+   function loadVideoLater(video) {
+      return function() {loadVideo(video);};
+    }
+
+    /* Browse page */
+    var VIDEO_SLOTS = 6; 
+    var VIDEO_SLOTS_PER_ROW = 3; 
+    var miniMode = false;
+    var currentPage = 0;
+    
+    function videosPerPage() {
+      return miniMode ? 4 : 6;
+    }
+
+    function renderBrowsePage(newPage) {
+      // Clear and hide video slots
+      for (var i = 0; i &lt; VIDEO_SLOTS; i++) {
+         clearElement(document.getElementById("link" + i));
+        document.getElementById("slot" + i).style.display = "none";
+      }
+      
+      // Decide on videos per page and current page
+      var lastPage = Math.floor(videos.length/videosPerPage());
+      currentPage = newPage;
+      if (currentPage &gt; lastPage) {
+        currentPage = lastPage;
+      } 
+
+      if(miniMode) {
+        document.getElementById("cell0").style.width = "50%";
+        document.getElementById("cell1").style.width = "50%";
+        document.getElementById("cell2").style.width = "0px";
+      } else {
+        document.getElementById("cell0").style.width = "33%";
+        document.getElementById("cell1").style.width = "33%";
+        document.getElementById("cell2").style.width = "33%";
+      }
+      
+      // Fill the slots
+      for (var i = 0; i &lt; videosPerPage(); i++) {
+        var videoId = currentPage * videosPerPage() + i;
+
+        // Stop if out of videos 
+        if (videoId &gt;= videos.length) {
+          break;
+        }
+ 
+        var slotId = i + (miniMode ? Math.floor(i/(VIDEO_SLOTS_PER_ROW-1)) : 0);
+        var video = videos[videoId];
+
+        // set up slot
+        document.getElementById("slot" + slotId).style.display = "block";
+        document.getElementById("slot" + slotId).onclick = loadVideoLater(video);
+        
+        // insert thumb
+        var thumb = document.createElement("img");
+        thumb.id = "thumb" + i;
+        thumb.className = "thumb";
+        thumb.src = video.thumbnail;
+        thumb.title = video.title;
+       
+        var span = document.createElement("span");
+        span.className = "thumbSpan";
+        span.appendChild(thumb);
+       
+        clearElement(document.getElementById("link" + slotId));
+        document.getElementById("link" + slotId).appendChild(span);
+        
+        // fill in title and duration
+        clearElement(document.getElementById("title" + slotId));
+        clearElement(document.getElementById("duration" + slotId));
+        title = document.createTextNode(truncate(video.title, 15));
+        duration = document.createTextNode("" + renderDuration(video.duration));
+        document.getElementById("title" + slotId).appendChild(title);
+        document.getElementById("duration" + slotId).appendChild(duration);
+      }
+
+      renderPager(currentPage);
+      goToNewState(GS_BROWSE); 
+    }
+
+    /* Pager */ 
+    function renderBrowsePageLater(newPage) {
+      return function() {renderBrowsePage(newPage);};
+    }
+
+    function getPageLink(page, selected) {
+      var node = document.createTextNode("" + (page + 1));
+      var inner;
+      if (selected) {
+        inner = node;
+      } else {
+        var link = document.createElement('a');
+        link.href = "#";
+        link.onclick = renderBrowsePageLater(page);
+        link.appendChild(node);
+        inner = link;
+      }
+
+      var span = document.createElement('span');
+      span.appendChild(inner);
+      span.appendChild(document.createTextNode("\u00A0\u00A0"));
+      return span;
+    }
+
+   // approximate char width, based on code used in AdWords (awCreateAdUtil)
+
+    function charWidth(ch) {
+
+      if (ch &lt;= '\u04f9' ||
+
+          ch == '\u05be' ||
+
+          (ch &gt;= '\u05d0' &amp;&amp; ch &lt;= '\u05ea') ||
+
+          ch == '\u05F3' ||
+
+          ch == '\u05f4' ||
+
+          (ch &gt;= '\u0e00' &amp;&amp; ch &lt;= '\u0e7f') ||
+
+          (ch &gt;= '\u1e00' &amp;&amp; ch &lt;= '\u20af') ||
+
+          (ch &gt;= '\u2100' &amp;&amp; ch &lt;= '\u213a') ||
+
+          (ch &gt;= '\uff61' &amp;&amp; ch &lt;= '\uffdc')) {
+
+        return 1;
+
+      }
+
+      return 2;
+
+    }
+
+   var TRUNCATION_STRING = "...";
+
+    function displayLength(string) {
+
+      var count = 0;
+
+      for (var i = 0; i &lt; string.length; i++) {
+
+        var character = string.substr(i, 1);
+
+        count += charWidth(character);
+
+      }
+
+      return count;
+
+    }
+
+    function truncateByWidth(string, maxLen) {
+
+      var count = 0;
+
+      var truncated = "";
+
+      for (var i = 0; i &lt; string.length &amp;&amp; count &lt; maxLen; i++) {
+
+        var character = string.substr(i, 1);
+
+        truncated += character;
+
+        count += charWidth(character);
+
+      }
+
+      return truncated;
+
+    }
+
+
+
+    // Truncate string to maxLen, in number of half-width (latin) characters.
+
+    //   CJK and other languages include characters that are wider
+
+    //   than standard latin characters, so we need to take this into account.
+
+    function truncate(string, maxLen) {
+
+      if (displayLength(string) &gt; maxLen) {
+
+        string = truncateByWidth(string, maxLen - TRUNCATION_STRING.length);
+
+        string += TRUNCATION_STRING;
+
+      }
+
+      return string;
+
+    }
+
+    function renderDuration(duration) {
+
+      minutes = Math.floor(duration / 60);
+
+      seconds = (duration % 60) + "";
+
+      seconds = seconds.substr(0, 2);
+
+      if (seconds.length == 0) {
+
+        seconds = "00";
+
+      } else if (seconds.length == 1) {
+
+        seconds = "0" + seconds;
+
+      }
+
+      return minutes + ":" + seconds;
+
+    }
+
+    function renderPager(page) {
+      var linksDiv = document.getElementById("pagelinks");
+      clearElement(linksDiv);
+      
+      for (var i = 0; i &lt; videos.length; i += videosPerPage()) {
+        linksDiv.appendChild(
+            getPageLink(i/videosPerPage(), i == (page * videosPerPage())));
+      }
+    }
+    
+    // XML DOM helper
+    function getXmlNodeText(node) {
+      if (node.text) {
+        // ie
+        return node.text;
+      } else if (node.textContent) {
+        // firefox
+        return node.textContent; 
+      } else if (node.firstChild &amp;&amp; node.firstChild.nodeValue) {
+        // safari
+        return node.firstChild.nodeValue;
+      } else {
+        return "";
+      }
+    }	
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="javascript:load();"&gt;
+&lt;div id="uppernav" class="hbar"&gt;
+
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;td&gt;
+        &lt;a href="http://es.youtube.com" target="_top"&gt;&lt;img
+            height="22" width="51" border="0"
+          src="http://img0.gmodules.com/ig/modules/youtube_videos_content/ytlogo_51x22.gif" /&gt;&lt;/a&gt;
+      &lt;/td&gt;
+      &lt;td width="100%"&gt;
+        &lt;form style="display:inline;"&gt;
+          &lt;select id="channellist" onchange="changeChannel(this)"&gt;&lt;/select&gt;
+        &lt;/form&gt;
+
+      &lt;/td&gt;
+      &lt;td align="right" valign="middle"&gt;
+        &lt;div id="pager" class="pager"&gt;
+          &lt;span&gt;Pagina: &lt;/span&gt;
+          &lt;span id="pagelinks"&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div id="backlink" class="pager" &gt; 
+          &lt;a href="javascript:void(0)" onclick="renderBrowsePage(currentPage)"
+            &gt;volver a la lista&lt;/a&gt;
+
+        &lt;/div&gt;
+      &lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/div&gt;
+
+&lt;div id="middle" class="hbar"&gt;
+  &lt;div id="loading" class="loading" &gt;Cargando...&lt;/div&gt;
+
+  &lt;div id="message" class="message"&gt;&lt;/div&gt;
+
+  &lt;div id="watchVideos" class="contentpane" &gt;
+    &lt;div id="innerWatchVideos"&gt;
+      &lt;div id="video0" class="player"&gt;&lt;/div&gt;
+      &lt;div id="video1" class="player"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div id="infopane" class="infopane" style="display:none"&gt;
+
+      &lt;table width=100%&gt;
+        &lt;tr valign=top&gt; 
+          &lt;td&gt;
+
+            &lt;span class="thumbSpan" style="float:right" &gt;
+              &lt;a href="javascript:void(0)" onclick="closeInfo()"&gt;&lt;img 
+                  class="thumb" style="padding-top:2px;" id="infoThumb"/&gt;&lt;/a&gt;
+            &lt;/span&gt;
+            &lt;span id="infoTitle" class="videotitle"&gt;&lt;/span&gt;&lt;br/&gt;
+            &lt;div style="height:5px;"&gt;&lt;/div&gt;
+            &lt;span class="videoinfolabel"&gt;Subidos: &lt;/span&gt;
+            &lt;span id="infoAdded" class="videoinfo"&gt;&lt;/span&gt;&lt;br/&gt;
+            &lt;span class="videoinfolabel"&gt;De: &lt;/span&gt;          
+            &lt;a target="_top" id="infoFrom" href="" class="videoinfo"&gt;&lt;/a&gt;&lt;br/&gt;
+
+            &lt;span class="videoinfolabel"&gt;Reproducciones: &lt;/span&gt; 
+            &lt;span id="infoViews" class="videoinfo"&gt;&lt;/span&gt;&lt;br/&gt;
+            &lt;span class="videoinfolabel"&gt;Puntuados: &lt;/span&gt;
+            &lt;span id="infoRatings" class="videoinfo"&gt;&lt;/span&gt;&lt;br/&gt;
+         &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;/tr&gt;
+        &lt;tr&gt;
+
+          &lt;td colspan=2&gt;
+            &lt;div id="loadinginfo" class="loading" &gt;Cargando...&lt;/div&gt;
+            &lt;div id="infoDescription" class="description"&gt;&lt;/div&gt;
+          &lt;/td&gt;
+      &lt;/table&gt;
+    &lt;/div&gt; 
+
+    &lt;div class="videobar" id="videobar"&gt;
+      &lt;table&gt;
+        &lt;tr&gt;
+
+          &lt;td align=left&gt;
+            &lt;div&gt;
+              &lt;a href="javascript:void(0)" onclick="previousVideo()"&gt;&lt;img 
+                  border="0" width="17" height="17"
+                  src="http://img2.gmodules.com/ig/modules/youtube_videos_content/left_17x17.gif"/&gt;&lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/td&gt;
+          &lt;td width=99%&gt;
+            &lt;div id="videoTitle" class="videotitle"&gt;&lt;/div&gt;
+            &lt;span id="videoDuration" class="videoinfo"&gt;&lt;/span&gt;
+          &lt;/td&gt;
+
+          &lt;td&gt;
+            &lt;div id="videoMetadata" style="font-size:8pt; white-space:nowrap;"&gt;
+              &lt;div id="infolink" class="infowatch"&gt;
+                &lt;a href="javascript:void(0)" onclick="showInfo()"&gt;informacion&lt;/a&gt;
+              &lt;/div&gt;
+              &lt;div id="hideLink" class="infowatch" style="display:none;"&gt;
+                &lt;a href="javascript:void(0)"
+                  onclick="closeInfo()"&gt;ver&lt;/a&gt;
+              &lt;/div&gt;
+
+            &lt;/div&gt;
+          &lt;/td&gt;
+          &lt;td align=right&gt;
+            &lt;div&gt;
+              &lt;a href="javascript:void(0)" onclick="nextVideo()"&gt;&lt;img 
+                  border="0" width="17" height="17"
+                  src="http://img0.gmodules.com/ig/modules/youtube_videos_content/right_17x17.gif"/&gt;&lt;/a&gt;
+            &lt;/div&gt;
+          &lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/table&gt;
+
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div id="chooseVideos" class="contentpane"&gt;
+    &lt;table id="browse" style="width:100%; height:100%;"&gt;
+      &lt;tr height="50%" align="center"&gt;
+        &lt;td id="cell0" width="33%"&gt;
+          &lt;div id="slot0" class="slot"&gt;
+            &lt;a id="link0" href="javascript:void(0)"&gt;&lt;/a&gt;
+
+            &lt;div id="title0" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration0" class="browseitemduration"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        &lt;td id="cell1" width="33%"&gt;
+          &lt;div id="slot1" class="slot"&gt;
+            &lt;a id="link1" href="javascript:void(0)"&gt;&lt;/a&gt;
+            &lt;div id="title1" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration1" class="browseitemduration"&gt;&lt;/div&gt;
+
+          &lt;/div&gt;
+        &lt;/td&gt;
+        &lt;td id="cell2" width="33%"&gt;
+          &lt;div id="slot2" class="slot"&gt;
+            &lt;a id="link2" href="javascript:void(0)"&gt;&lt;/a&gt;
+            &lt;div id="title2" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration2" class="browseitemduration"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+      &lt;/tr&gt;
+      &lt;tr align="center"&gt;
+        &lt;td&gt;
+          &lt;div id="slot3" class="slot"&gt;
+            &lt;a id="link3" href="javascript:void(0)"&gt;&lt;/a&gt;
+            &lt;div id="title3" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration3" class="browseitemduration"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+
+        &lt;td&gt;
+          &lt;div id="slot4" class="slot"&gt;
+            &lt;a id="link4" href="javascript:void(0)"&gt;&lt;/a&gt;
+            &lt;div id="title4" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration4" class="browseitemduration"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+        &lt;td&gt;
+          &lt;div id="slot5" class="slot"&gt;
+
+            &lt;a id="link5" href="javascript:void(0)"&gt;&lt;/a&gt;
+            &lt;div id="title5" class="browseitemtitle"&gt;&lt;/div&gt;
+            &lt;div id="duration5" class="browseitemduration"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="searchFooter" class="hbar"&gt;
+  &lt;form name="searchForm" onsubmit="doSearch(this.query.value); return false;"&gt;
+    &lt;table&gt;
+      &lt;tr&gt;
+        &lt;td width="100%"&gt;
+          &lt;input name="query" id="query" type="text" style="width:100%"/&gt;
+        &lt;/td&gt;
+        &lt;td&gt; 
+          &lt;input name="search" value="Buscar" type="button"
+            onclick="this.form.onsubmit();"/&gt;
+
+        &lt;/td&gt;
+      &lt;/tr&gt;
+    &lt;/table&gt;
+  &lt;/form&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tube_iptv_search.html</field>
+    </object>
+    <object pk="4" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Player/1.3/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;
+&lt;head&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+
+function URLDecode( url )
+{
+   // Replace + with ' '
+   // Replace %xx with equivalent character
+   // Put [ERROR] in output if %xx is invalid.
+   var HEXCHARS = "0123456789ABCDEFabcdef"; 
+   var encoded = url;
+   var plaintext = "";
+   var i = 0;
+   while (i &lt; encoded.length) {
+       var ch = encoded.charAt(i);
+          if (ch == "+") {
+	         plaintext += " ";
+		    i++;
+		       } else if (ch == "%") {
+		       if (i &lt; (encoded.length-2) 
+		       &amp;&amp; HEXCHARS.indexOf(encoded.charAt(i+1)) != -1 
+		       &amp;&amp; HEXCHARS.indexOf(encoded.charAt(i+2)) != -1 ) {
+		       plaintext += unescape( encoded.substr(i,3) );
+		       i += 3;
+		       } else {
+		       alert( 'Bad escape combination near ...' + encoded.substr(i) );
+		       plaintext += "%[ERROR]";
+		       i++;
+		       }
+		       } else {
+		          plaintext += ch;
+			     i++;
+			     }
+			     } // while
+   
+   return plaintext;
+}
+
+var url = EzWebAPI.createRGadgetVariable("RSSYurl", loadVideo);
+
+
+function loadVideo(url_){
+
+ url_ = URLDecode (url_);
+
+ var embed = document.createElement('embed');
+ embed.setAttribute('src',url_);
+ embed.setAttribute('width',"100%");
+ embed.setAttribute('height',"100%");
+ embed.id="rep";
+
+ var divAnt = document.getElementById("video");
+ var divVideo = document.createElement("div");
+ divVideo.id="video";
+ divVideo.appendChild(embed);
+ document.body.replaceChild(divVideo,divAnt);
+ }
+
+
+&lt;/script&gt;
+
+&lt;div id="video"&gt;&lt;embed id="rep" width="100%" height="100%" src="http://www.youtube.com/v/d6C0bNDqf3Y&amp;rel=1" type="application/x-shockwave-flash" wmode="transparent"&gt;&lt;/embed&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.html</field>
+    </object>
+    <object pk="5" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Amazon/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+.res {
+	border: 0px solid;
+	padding: 3px;
+	margin: 4px 0 4px 0;
+	background: #fee8c6;
+}
+.title{
+	font-size: 10pt;
+	display:block;
+        font-family: "Verdana";
+}
+.product{
+	font-weight: bold;
+	font-size: 9pt;
+	display: inline;
+}
+img{
+       margin-bottom: 5px;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var vtitle = EzWebAPI.createRGadgetVariable("keyword", searchResults);
+
+
+function searchResults(title){
+
+        var url=encodeURI("http://ecs.amazonaws.com/onca/xml?Service=AWSECommerceService&amp;AWSAccessKeyId=1VK3V6F9870HX6VTS5R2&amp;Operation=ItemSearch&amp;Keywords="+ title +"&amp;SearchIndex=All");
+	EzWebAPI.send_get(url,this,searchOk, searchFail);
+ }
+
+function searchOk(res){
+//extract the search result information
+	var xml = res.responseXML.documentElement;
+	var item;
+	
+	divres = document.getElementById("resultados");
+	items = xml.getElementsByTagName('Item');
+	divres.innerHTML="";
+	for (i = 0; i &lt; items.length; i++){ 
+		item = items[i];
+		url = item.getElementsByTagName("DetailPageURL")[0].firstChild.nodeValue;
+		itematt = item.getElementsByTagName('ItemAttributes')[0];
+		title = itematt.getElementsByTagName("Title")[0].firstChild.nodeValue;
+		product = itematt.getElementsByTagName("ProductGroup")[0].firstChild.nodeValue;
+		
+		newdiv = document.createElement('div');
+		newdiv.className = "res";
+		newdiv.innerHTML= "&lt;div class='title'&gt;" + title + "&lt;/div&gt;&lt;div class='product'&gt;" + product + "&lt;/div&gt; " + "&lt;a href='" + url + "' target='_blank'&gt;&lt;small&gt;detalles&lt;/small&gt;&lt;/a&gt;";
+		divres.appendChild(newdiv);
+		 
+	}
+}
+
+function searchFail(res){
+	
+}
+
+&lt;/script&gt;
+&lt;img src="http://g-ecx.images-amazon.com/images/G/01/gno/images/general/navAmazonLogoFooter._V28232323_.gif"/&gt;
+&lt;div id="resultados"&gt;A la espera...&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.html</field>
+    </object>
+    <object pk="6" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Yahoo Trip Search/1.1/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;
+&lt;head&gt;
+&lt;style&gt;
+img {
+	border: 0px;
+}
+.res {
+	border: 0px solid;
+	padding: 5px;
+	margin: 4px 0 4px 0;
+	background: #D7E1E8;
+	clear:both;
+	overflow:hidden;
+}
+.res a{
+	float:left;
+	text-decoration:none;
+	padding-right:5px;
+}
+.info{
+	padding-left:5px;
+	vertical-align:top;
+}
+.info a{
+	font-size: 7pt;
+	text-align:right;
+}
+.title{
+	font-size: 11pt;
+	font-style: italic;
+        font-family: "Verdana";
+	padding-bottom: 3px;
+}
+.desc{
+	font-size: 8pt;
+	padding-bottom: 3px;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+var poi = EzWebAPI.createRGadgetVariable("poi", searchResults);
+var travel = EzWebAPI.createRWGadgetVariable("travel");
+
+function loadplan(idplan){
+
+	travel.set(idplan);
+}
+
+function searchResults(place){
+
+        var url=encodeURI("http://travel.yahooapis.com/TripService/V1.1/tripSearch?appid=YahooDemo&amp;query="+ place);
+	EzWebAPI.send_get(url,this,searchOk, searchFail);
+ }
+
+function searchOk(res){
+//extract the search result information
+	var xml = res.responseXML.documentElement;
+	var result;
+	
+	divres = document.getElementById("resultados");
+	results = xml.getElementsByTagName('Result');
+	divres.innerHTML="";
+	for (i = 0; i &lt; results.length; i++){ 
+		result = results[i];
+		id = result.getAttribute("id");
+		thumbnail = result.getElementsByTagName("Image")[0].getElementsByTagName("Url")[0].firstChild.nodeValue;
+		title = result.getElementsByTagName("Title")[0].firstChild.nodeValue;
+		if (result.getElementsByTagName("Summary")[0].firstChild != null){
+			summary = result.getElementsByTagName("Summary")[0].firstChild.nodeValue;
+			summary = summary.substring(0,Math.min(summary.length, 150))+"...";
+			summary = "&lt;div class='desc'&gt;"+ summary + "&lt;/div&gt;";
+		}
+		else{
+			summary = "";
+		}
+
+		newdiv = document.createElement('div');
+		newdiv.className = "res";
+		newdiv.innerHTML= "&lt;a href='javascript:loadplan("+id+");'&gt;&lt;img src='"+thumbnail+"'/&gt;&lt;/a&gt;&lt;div class='info'&gt;&lt;div class='title'&gt;" + title + "&lt;/div&gt;"+summary+"&lt;a href='javascript:loadplan("+id+");'&gt;+ info&lt;/a&gt;&lt;/div&gt;";
+		divres.appendChild(newdiv);
+		 
+	}
+}
+
+function searchFail(res){
+
+}
+
+&lt;/script&gt;
+&lt;img src="http://europa.ls.fi.upm.es/ezweb/gadgets/trip_search.gif"/&gt;
+&lt;div id="resultados"&gt;A la espera...&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/yahootripsearch.html</field>
+    </object>
+    <object pk="7" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Map Viewer/1.2/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;&lt;head&gt;
+
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script language="javascript" src="/repository/localizador/coordinates.js"&gt;&lt;/script&gt;
+&lt;title&gt;Localizador&lt;/title&gt;
+
+&lt;!--script src="localizadorPequeno_files/maps" type="text/javascript"&gt;&lt;/script&gt;&lt;script src="localizadorPequeno_files/main.js" type="text/javascript"&gt;&lt;/script&gt;&lt;style type="text/css" media="screen"&gt;.gmnoscreen{display:none}&lt;/style&gt;&lt;style type="text/css" media="print"&gt;.gmnoprint{display:none}&lt;/style--&gt;
+
+&lt;script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAMJVkXB8jBN4248w-bynRWhSxhvi8A6os512mS0A0OawqTqajIxS1lNIlAhUXxHYMUv946XERqG8djg" type="text/javascript"&gt;&lt;/script&gt;
+
+&lt;script&gt;
+var map=null;
+var geocoder=null;
+var marker=null;
+var circleLine = null;
+var address = new EzWebAPI.createRGadgetVariable("address",_addressHandler);
+var utmCoord = new EzWebAPI.createRGadgetVariable("utmCoord",_utmHandler);
+
+function _initialize() {
+	if (GBrowserIsCompatible()) {
+		map = new GMap2(document.getElementById("map"));
+		map.addControl(new GLargeMapControl());
+		map.addControl(new GMapTypeControl());
+		map.addControl(new GScaleControl());
+		map.setCenter(new GLatLng(34, 0), 1);
+		geocoder = new GClientGeocoder();
+	}
+}
+
+function _addressHandler(add) {
+
+	if ((add == null || add == undefined)) {
+	  return;
+	}
+
+	if (geocoder) {
+		geocoder.getLatLng(add, function(point) {
+			if (!point) {
+				//_initialize();
+				return;
+			} else {
+				if(marker!=null){
+					map.removeOverlay(marker);
+				}
+				if(circleLine!=null){
+					map.removeOverlay(circleLine);
+				}
+				map.setCenter(point, 16);
+				marker = new GMarker(point);
+				map.addOverlay(marker);
+				marker.openInfoWindowHtml(add);
+				GEvent.addListener(marker, "click", function() {marker.openInfoWindowHtml(add);});
+			}
+		}
+		);
+	}
+}
+
+function _utmHandler(utm) {
+	if ((utm == null || utm == undefined)) {
+		return;
+	}
+
+	var values = utm.split(",");
+	if(values.length&gt;=2){
+		if(circleLine){
+			map.removeOverlay(circleLine);
+		}
+		if(marker){
+			map.removeOverlay(marker);
+		}
+		var info ="";
+		var x = values[0]*1;
+		var y = values[1]*1;
+		if (x!='' &amp;&amp; y!=''){
+			info += '&lt;b&gt;UTM X: &lt;/b&gt;'+ x;
+			info += '&lt;br/&gt;&lt;b&gt;UTM Y: &lt;/b&gt;'+ y;
+						
+			if(values.length&gt;=3){
+				var precision = values[2]*1;
+				if(precision!=''){
+					info += '&lt;br/&gt;&lt;b&gt;Precision: &lt;/b&gt;+/- '+ precision+'m.';
+
+					var latlon = new Array();
+					var latlonPrec = new Array();
+					var lonPrec = new Array();
+					var latPrec = new Array();
+					var circlePoints = new Array();
+					
+			        var coordinates = new Coordinates(Coordinates.DATUM_ED50);
+			        //var coordinates = new Coordinates(Coordinates.DATUM_WGS84);
+			        coordinates.utmToGeoDeg (x, y, 30, false, latlon);
+					
+					coordinates.utmToGeoDeg (x + precision, y, 30, false, latlonPrec);
+					lonPrec = Math.abs(latlon[1] - latlonPrec[1]);
+					coordinates.utmToGeoDeg (x, y + precision, 30, false, latlonPrec);
+					latPrec = Math.abs(latlon[0] - latlonPrec[0]);
+					
+					for (var a = 0 ; a &lt; 361 ; a+=10 ) {
+						var aRad = a*(Math.PI/180);
+						var lat = latlon[0] + latPrec * Math.sin(aRad);
+						var lon = latlon[1] + lonPrec * Math.cos(aRad);
+						var point = new GLatLng(lat, lon);
+						circlePoints.push(point);
+					}
+					
+					circleLine = new GPolygon(circlePoints,  '#000000',  2,  0.5,  'Red',  0.25);
+					map.addOverlay(circleLine);
+				}
+			}
+			
+			marker = createPointUTM(x, y, info, true);
+		}
+	}
+}
+
+function createMarker(point, info, center) {
+    var marker = new GMarker(point);
+	map.addOverlay(marker);
+	GEvent.addListener(marker, "click", function() {marker.openInfoWindowHtml(info);});
+	marker.openInfoWindowHtml(info);
+	if(center){
+       map.setCenter(point, 16);
+	   //window.setTimeout(function(){map.panTo(point);}, 2000);
+	}
+	return marker;
+}
+
+function createPointGeo(lat, lon, info, center){
+    if(lat!='' &amp;&amp; lon!=''){
+        //alert(lat + ", " + lon);
+        var point = new GLatLng(lat, lon);
+        return createMarker(point, info, center);
+    }
+    return null;
+}
+
+function createPointUTM(utmx, utmy, info, center){
+    if(utmx!='' &amp;&amp; utmy!=''){
+        var latlon = new Array();
+        var coordinates = new Coordinates(Coordinates.DATUM_ED50);
+        //var coordinates = new Coordinates(Coordinates.DATUM_WGS84);
+        coordinates.utmToGeoDeg (utmx, utmy, 30, false, latlon);
+        //alert(utmx + ", " + utmy);
+        return createPointGeo(latlon[0], latlon[1], info, center)
+    }
+    return null;
+}
+
+&lt;/script&gt;
+
+&lt;/head&gt;&lt;body style="margin: 0px; padding: 0px;" onload="_initialize();"&gt;
+&lt;div style="width: 100%; height: 100%;" id="map"&gt;&lt;/div&gt;
+&lt;/body&gt;&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/localizador/localizadorPequeno1.2.html</field>
+    </object>
+    <object pk="8" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Usuario/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;title&gt;Visor de datos de usuario&lt;/title&gt;
+&lt;script&gt;
+var phoneNumber = EzWebAPI.createRGadgetVariable("phoneNumber",_phoneHandler);
+var address = EzWebAPI.createRWGadgetVariable("address");
+/*Temporary data for the demo*/
+var users = [];
+var user = ["Alejandro","Rodriguez Perez","07688357J","Santa Engracia, 25, 1 B, Madrid","35.50","2"];
+users["913933233"] = user;
+user = ["Marta","Lopez Romero","34788114L","Marcelo Usera, 46, 3 C, Madrid","40.74","1"];
+users["915334432"] = user;
+user = ["Rodrigo","Fernandez Bartolome","53333236P","Gran Via, 25, 2 A, Madrid","55.29","8"];
+users["916432233"] = user;
+user = ["Maria","Perez Casas","34788114L","Francisco Silvela, 105, 5 B, Madrid","66.15","3"];
+users["917294723"] = user;
+user = ["Alberto","Garcia Casas","34788114L","Camarena, 2, 4 A, Madrid","36.00","3"];
+users["917744331"] = user;
+
+function _phoneHandler(phone){
+if (phone!=null &amp;&amp; phone!=undefined){
+var content="";
+content+="&lt;p id='title' style=\"font-size: 22px; font-weight: bold; color: #000077; margin-top: 5px; margin-bottom: 5px;\"&gt;Tabla de Datos de Usuario&lt;/p&gt;&lt;table style=\"padding: 1px;\"&gt;";
+content+="&lt;tr&gt;&lt;th&gt;Datos del Usuario&lt;/th&gt;&lt;th&gt;Valor&lt;/th&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Nombre&lt;/td&gt;&lt;td&gt;"+users[phone][0]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Apellidos&lt;/td&gt;&lt;td&gt;"+users[phone][1]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;DNI&lt;/td&gt;&lt;td&gt;"+users[phone][2]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Direccion&lt;/td&gt;&lt;td&gt;"+users[phone][3]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Factura media&lt;/td&gt;&lt;td&gt;"+users[phone][4]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Antiguedad&lt;/td&gt;&lt;td&gt;"+users[phone][5]+"&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;";
+document.getElementById("info").innerHTML=content;
+address.set(users[phone][3]);
+}
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body style="font-family: Arial; font-size: 14px; text-align: left; width: 100%; margin: 0px;"&gt;
+&lt;div id='info'&gt;&lt;i&gt;A la espera de seleccionar una averia...&lt;/i&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/visorDatosUsuario.html</field>
+    </object>
+    <object pk="9" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Equipo/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;title&gt;Visor de datos de equipo&lt;/title&gt;
+&lt;script&gt;
+var deviceId = EzWebAPI.createRGadgetVariable("equipo",_deviceHandler);
+var deviceStatus = EzWebAPI.createRGadgetVariable("estado",_statusHandler);
+var address = EzWebAPI.createRWGadgetVariable("dir_equipo");
+var workingStatus = "OK";
+
+/*Temporary data for the demo*/
+var devices = [];
+var deviceData = ["DSLAM-ALCORCON-2","11111111","Fernandez Perez, Rodrigo","10.7.4.12","dslam1","transmision","MXF","ADSL","FSP","Calle Mayor 25, 28921 Alcorcon"];
+devices["device1"] = deviceData;
+deviceData = ["CONM-ALCOBENDAS-8","11112222","Rodriguez Fernandez, Alberto","10.6.7.144","conmuter4","conmutacion","DSL","ADSL","FSP","Calle de Triana 4, 28100 Alcobendas"];
+devices["device2"] = deviceData;
+deviceData = ["CONM-LEGANES-12","11111111","Fernandez Perez, Rodrigo","192.168.5.2","conmuter6","conmutacion","DSL","ADSL","XD","Calle de Antonio Machado 24, 28905 Getafe"];
+devices["device3"] = deviceData;
+deviceData = ["ESR-ALUCHE-10","11112222","Rodriguez Ferna&amp;aacute;ndez, Alberto","10.6.7.12","esr2","conmutacion","DSL","ADSL","XD","Calle de Camarena 253, 28047 Madrid"];
+devices["device4"] = deviceData;
+deviceData = ["DSLAM-ROZAS-6","11111111","Fernandez Perez, Rodrigo","10.5.5.12","dslam2","transmision","DSL","ADSL","FSP","Calle del Ebro 20, 28230 Las Rozas de Madrid"];
+devices["device5"] = deviceData;
+deviceData = ["CONM-ALCOBENDAS-8","11112222","Rodriguez Fernandez, Alberto","10.6.7.144","conmuter4","conmutacion","DSL","ADSL","FSP","Calle de Triana 4, 28100 Alcobendas"];
+devices["device6"] = deviceData;
+deviceData = ["CONM-MOSTOLES-7","11111111","Fernandez Perez, Rodrigo","10.6.3.12","conmuter3","conmutacion","DSL","ADSL","XD","Calle Ricardo Medem 12, 28931 Mostoles"];
+devices["device7"] = deviceData;
+deviceData = ["CONM-RIOSROSAS-1","11112222","Rodriguez Fernandez, Alberto","10.0.5.56","commuter1","conmutacion","DSL","ADSL","FS","Calle de Rios Rosas 46, 28003 Madrid"];
+devices["device8"] = deviceData;
+deviceData = ["ERX-GETAFE-3","11112222","Rodriguez Fernandez, Alberto","10.3.6.33","erx1","conmutacion","DSL","IMAG","XD","Calle Villaverde 25, 28902 Getafe"];
+devices["device9"] = deviceData;
+deviceData = ["ESR-COSLADA-4","11111111","Fernandez Perez, Rodrigo","192.6.7.3","esr1","conmutacion","DSL","ADSL","FS","Calle de Paris 37, 28820 Coslada"];
+devices["device10"] = deviceData;
+
+function _statusHandler(status){
+workingStatus = status;
+}
+
+function _deviceHandler(device){
+if (device!=null &amp;&amp; device!=undefined){
+var content="";
+content+="&lt;p id='title' style=\"font-family: Arial; font-size: 22px; font-weight: bold; margin-top: 5px; margin-bottom: 5px; color: #000077;\"&gt;Datos del Equipo&lt;/p&gt;";
+content+="&lt;table style=\"font-family: Arial; font-size: 12px; padding: 1px;\" &gt;";
+content+="&lt;tr&gt;&lt;th align='left'&gt;Propiedad del Equipo&lt;/th&gt;&lt;th align='left'&gt;Valor&lt;/th&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Codigo del Equipo:&lt;/td&gt;&lt;td&gt;"+devices[device][0]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Estado:&lt;/td&gt;&lt;td&gt;"+workingStatus+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Codigo del Responsable:&lt;/td&gt;&lt;td&gt;"+devices[device][1]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Nombre del Responsable:&lt;/td&gt;&lt;td&gt;"+devices[device][2]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;IP:&lt;/td&gt;&lt;td&gt;"+devices[device][3]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Nombre:&lt;/td&gt;&lt;td&gt;"+devices[device][4]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Area:&lt;/td&gt;&lt;td&gt;"+devices[device][5]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Tipo:&lt;/td&gt;&lt;td&gt;"+devices[device][6]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Especificador:&lt;/td&gt;&lt;td&gt;"+devices[device][7]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Modelo:&lt;/td&gt;&lt;td&gt;"+devices[device][8]+"&lt;/td&gt;&lt;/tr&gt;";
+content+="&lt;tr&gt;&lt;td&gt;Direccion:&lt;/td&gt;&lt;td&gt;"+devices[device][9]+"&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;";
+document.getElementById("info").innerHTML=content;
+address.set(devices[device][9]);
+}
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id='info'&gt;&lt;i&gt;A la espera de seleccionar un equipo...&lt;/i&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/visorDatosEquipo.html</field>
+    </object>
+    <object pk="10" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Bandeja de Averias/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;
+
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;&lt;title&gt;Bandeja de Averias&lt;/title&gt;
+
+&lt;script&gt;
+var phoneNumber = EzWebAPI.createRWGadgetVariable("telefono");
+var serviceHired = EzWebAPI.createRWGadgetVariable("servicio");
+
+function sendData(row){
+var rows = document.getElementsByTagName("td");
+phoneNumber.set(rows[row*5+1].innerHTML);
+serviceHired.set(rows[row*5+4].innerHTML);
+}
+&lt;/script&gt;&lt;/head&gt;&lt;body&gt;
+&lt;!-- This table will disappear in following version --&gt;
+&lt;table style="margin: 0px; padding: 0px; font-family: Arial; font-size: 14px; text-align: center; width: 100%;" cellspacing="0"&gt;
+&lt;tbody&gt;&lt;tr&gt;
+&lt;th id="th0" style="border: 1px outset rgb(221, 221, 221); background-color: rgb(0, 0, 119); color: rgb(255, 255, 255); width: 12%;"&gt;Identificador de averia&lt;/th&gt;
+&lt;th id="th1" style="border: 1px outset rgb(221, 221, 221); background-color: rgb(0, 0, 119); color: rgb(255, 255, 255); width: 12%;"&gt;Telefono&lt;/th&gt;
+&lt;th id="th2" style="border: 1px outset rgb(221, 221, 221); background-color: rgb(0, 0, 119); color: rgb(255, 255, 255); width: 32%;"&gt;Usuario&lt;/th&gt;
+&lt;th id="th3" style="border: 1px outset rgb(221, 221, 221); background-color: rgb(0, 0, 119); color: rgb(255, 255, 255); width: 32%;"&gt;Descripcion del sintoma&lt;/th&gt;
+&lt;th id="th4" style="border: 1px outset rgb(221, 221, 221); background-color: rgb(0, 0, 119); color: rgb(255, 255, 255); width: 12%;"&gt;Servicio contratado&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(0)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-0&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;913933233&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;Gonzalez Perez, Alejandro&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;El usuario no es capaz de navegar por Internet&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;INTERNET&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(1)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-1&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);" align="center" valign="middle"&gt;915334432&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);" align="center" valign="middle"&gt;Lopez Romero, Marta&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);" align="center" valign="middle"&gt;No puede comprar contenidos v PPV&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);" align="center" valign="middle"&gt;TV&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(2)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-10&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;916432233&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;Fernandez Bartolome, Rodrigo&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;El usuario navega mas lento que la velocidad contratada&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;INTERNET&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(3)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-11&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;917294723&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;Perez Casas, Maria&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;El usuario no es capaz de navegar por Internet&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;INTERNET&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(4)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-2&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;917744331&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;Garcia Casas, Alberto&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;El usuario ve la television pixelada&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;TV&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td class="breakDown" onclick="sendData(5)" style="border: 1px outset rgb(221, 221, 221); color: rgb(0, 0, 119); text-decoration: underline; cursor: pointer;" align="center" valign="middle"&gt;averia-8&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;917744331&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;Garcia Casas, Alberto&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;El usuario no es capaz de navegar por Internet&lt;/td&gt;
+&lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;TV&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;&lt;/table&gt;
+&lt;/body&gt;&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/bandeja/bandejaAverias.html</field>
+    </object>
+    <object pk="11" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Configuracion de Red/1.0/xhtml</field>
+        <field type="TextField" name="code">&lt;HTML&gt;&lt;HEAD&gt;
+
+&lt;META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;TITLE&gt;Configuracion de Red&lt;/TITLE&gt;
+
+&lt;SCRIPT&gt;
+var serviceHired = EzWebAPI.createRGadgetVariable("serviceHired",_serviceHandler);
+var deviceId = EzWebAPI.createRWGadgetVariable("deviceId");
+var deviceStatus = EzWebAPI.createRWGadgetVariable("deviceStatus");
+
+/*Random states for a demo*/
+function _getState(){
+if (Math.floor(Math.random()*2+1)&gt;1.8){
+deviceStatus.set("NO_OK");
+return "http://europa.ls.fi.upm.es/~semillero/html/mapaRed/equis.gif";
+} else {
+deviceStatus.set("OK");
+return "http://europa.ls.fi.upm.es/~semillero/html/mapaRed/stick.gif";
+}
+}
+
+function _serviceHandler(service){
+var oFragment = document.createDocumentFragment();
+var oDiv = document.createElement("div");
+oDiv.id = "visorConfRed";
+var content = "";
+if (service=="INTERNET"){
+content+="&lt;img src=\"http://europa.ls.fi.upm.es/~lmayllon/img/adsl.png\"/&gt;\n&lt;br&gt;";
+content+="&lt;img onClick=\"deviceId.set('device1')\" style=\"position:relative; top:-55px; left:50px;\" id=\"dslamADSLRed\" name=\"dslamADSL\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device2')\" style=\"position:relative; top:-35px; left:105px;\" id=\"conmutador1ADSLRed\" name=\"conmutador1ADSL\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device3')\" style=\"position:relative; top:-36px; left:175px;\" id=\"conmutador2ADSLRed\" name=\"conmutador2ADSL\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device4')\" style=\"position:relative; top:-38px; left:210px;\" id=\"esrADSLRed\" name=\"esrADSL\"  src=\""+_getState()+"\" /&gt;\n";
+} else {
+content+="&lt;img src=\"http://europa.ls.fi.upm.es/~lmayllon/img/imag.png\"/&gt;&lt;br&gt;";
+content+="&lt;img onClick=\"deviceId.set('device5')\" style=\"position:relative; top: -72px; left: 54px;\" id=\"dslamTVRed\" name=\"dslamTV\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device6')\" style=\"position:relative; top: -52px; left: 100px;\" id=\"conmutador1TVRed\" name=\"conmutador1TV\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device7')\" style=\"position:relative; top: -78px; left: 155px;\" id=\"conmutador2TVRed\" name=\"conmutador2TV\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device8')\" style=\"position:relative; top: -50px; left: 135px;\" id=\"conmutador3TVRed\" name=\"conmutador3TV\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device9')\" style=\"position:relative; top: -90px; left: 158px;\" id=\"esrTVRed\" name=\"esrTV\"  src=\""+_getState()+"\" /&gt;\n";
+content+="&lt;img onClick=\"deviceId.set('device10')\" style=\"position:relative; top: -37px; left: 138px;\" id=\"erxTVRed\" name=\"erxTV\"  src=\""+_getState()+"\" /&gt;\n";
+}
+
+oDiv.innerHTML = content;
+oFragment.appendChild(oDiv);
+document.body.replaceChild(oFragment,document.getElementById("visorConfRed"));
+}
+
+&lt;/SCRIPT&gt;&lt;/HEAD&gt;&lt;BODY&gt;
+&lt;DIV id="visorConfRed"&gt;&lt;I&gt;A la espera de seleccionar una averia...&lt;/I&gt;&lt;/DIV&gt;
+&lt;/BODY&gt;&lt;/HTML&gt;</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/configuracionRed.html</field>
+    </object>
 </django-objects>

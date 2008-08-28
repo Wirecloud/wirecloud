@@ -81,7 +81,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">True</field>
-        <field type="DateTimeField" name="last_login">2008-06-17 13:28:02</field>
+        <field type="DateTimeField" name="last_login">2008-08-28 12:40:41</field>
         <field type="DateTimeField" name="date_joined">2008-05-28 16:19:23</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -95,7 +95,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">False</field>
-        <field type="DateTimeField" name="last_login">2008-06-17 13:31:49</field>
+        <field type="DateTimeField" name="last_login">2008-08-28 12:41:19</field>
         <field type="DateTimeField" name="date_joined">2008-06-03 19:50:49</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -137,7 +137,7 @@
         <field type="BooleanField" name="is_staff">True</field>
         <field type="BooleanField" name="is_active">True</field>
         <field type="BooleanField" name="is_superuser">False</field>
-        <field type="DateTimeField" name="last_login">2008-06-17 12:31:45</field>
+        <field type="DateTimeField" name="last_login">2008-08-28 12:53:14</field>
         <field type="DateTimeField" name="date_joined">2008-06-03 19:51:07</field>
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
@@ -590,6 +590,36 @@
     <object pk="90" model="auth.permission">
         <field type="CharField" name="name">Can delete concept name</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">30</field>
+        <field type="CharField" name="codename">delete_conceptname</field>
+    </object>
+    <object pk="91" model="auth.permission">
+        <field type="CharField" name="name">Can add concept</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">31</field>
+        <field type="CharField" name="codename">add_concept</field>
+    </object>
+    <object pk="92" model="auth.permission">
+        <field type="CharField" name="name">Can change concept</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">31</field>
+        <field type="CharField" name="codename">change_concept</field>
+    </object>
+    <object pk="93" model="auth.permission">
+        <field type="CharField" name="name">Can delete concept</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">31</field>
+        <field type="CharField" name="codename">delete_concept</field>
+    </object>
+    <object pk="94" model="auth.permission">
+        <field type="CharField" name="name">Can add concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">32</field>
+        <field type="CharField" name="codename">add_conceptname</field>
+    </object>
+    <object pk="95" model="auth.permission">
+        <field type="CharField" name="name">Can change concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">32</field>
+        <field type="CharField" name="codename">change_conceptname</field>
+    </object>
+    <object pk="96" model="auth.permission">
+        <field type="CharField" name="name">Can delete concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">32</field>
         <field type="CharField" name="codename">delete_conceptname</field>
     </object>
     <object pk="9" model="admin.logentry">
