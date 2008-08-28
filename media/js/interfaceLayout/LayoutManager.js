@@ -444,7 +444,17 @@ var LayoutManagerFactory = function () {
 		
 	}
 	
-	/*Tab scroll bar size management*/
+	/*Tab scroll bar management*/
+	/*Reset the tab bar values*/
+	LayoutManager.prototype.resetTabBar = function(tabId){
+		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
+		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		//we don't need arrows
+		this.rightSlider.style.display = "none";
+		this.leftSlider.style.display = "none";		
+	}
+	
 	/*Insert tab in the tab bar*/
 	LayoutManager.prototype.addToTabBar = function(tabId){
 		new Insertion.Top(this.scrollTabBar, "<div id='"+tabId+"' class='tab' style='display:none'></div>");
@@ -481,7 +491,7 @@ var LayoutManagerFactory = function () {
 		}
 		
 	}
-	/*change the left position of the scroll tab bar */
+	/*change the right position of the scroll tab bar */
 	LayoutManager.prototype.changeScrollBarRightPosition = function(difference){
 		var newRight = parseInt(this.scrollTabBar.getStyle('right')) + difference;
 		var minRight = this.fixedTabBarMaxWidth-this.scrollTabBarWidth;

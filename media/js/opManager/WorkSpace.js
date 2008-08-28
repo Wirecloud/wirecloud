@@ -422,7 +422,8 @@ function WorkSpace (workSpaceState) {
 		for (var i=0; i<tabKeys.length; i++) {
 			this.unloadTab(tabKeys[i]);
 		}
-		
+		// reset the values used to figure out the size of the tabBar
+		LayoutManagerFactory.getInstance().resetTabBar();		
 		this.wiring.unload();
 		this.contextManager.unload();
 		
