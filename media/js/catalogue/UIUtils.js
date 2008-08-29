@@ -67,6 +67,7 @@ UIUtils.globalTags='all';
 
 UIUtils.addResource = function(url, paramName, paramValue) {
 	UIUtils.repaintCatalogue=true;
+	UIUtils.search = false;
 	var newResourceOnSuccess = function (response) {
 		UIUtils.orderby = '-creation_date';
 		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
@@ -595,7 +596,7 @@ UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
 	if (UIUtils.selectedVersion == null){
 		// Removes all versions of the gadget
-		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName();	
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName();
 	}else{
 		// Removes only the specified version of the gadget
 		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + UIUtils.selectedVersion;
