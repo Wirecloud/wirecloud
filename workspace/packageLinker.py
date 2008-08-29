@@ -3,7 +3,7 @@ from igadget.models import Variable
 
 from django.db import models
 
-class PackageLinker():
+class PackageLinker:
     def link_workspace(self, workspace, user):
         # Linking user to workspace
         self.add_user_to_workspace(workspace, user)

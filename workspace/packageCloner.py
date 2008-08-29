@@ -5,7 +5,7 @@ from gadget.models import VariableDef, Gadget
 
 from django.db import models
 
-class PendingFkCollection():
+class PendingFkCollection:
     def __init__(self):
         self.table_tuple = {}
     
@@ -33,7 +33,7 @@ class PendingFkCollection():
         if (linker_table, linker_field, linker_tuple_id) in pendings:
             pendings.remove((linker_table, linker_field, linker_tuple_id))
     
-class IdsMapping():
+class IdsMapping:
     def __init__(self):
         self.tables = {}
     
@@ -64,7 +64,7 @@ class IdsMapping():
         
         mapping[old_id] = new_id
 
-class PackageCloner():
+class PackageCloner:
     def __init__(self):
         self.mapping = IdsMapping()
         self.pendingFks = PendingFkCollection()
