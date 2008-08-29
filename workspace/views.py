@@ -63,7 +63,8 @@ from igadget.models import IGadget, Position
 
 from igadget.views import deleteIGadget
 
-from packageManager import PackageManager
+from packageCloner import PackageCloner
+from packageLinker import PackageLinker
 
 def deleteTab (tab, user):
     
@@ -454,9 +455,11 @@ class  WorkSpaceLinkerEntry(Resource):
     def read(self, request, workspace_id):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
-        packageManager = PackageManager()
+        user = get_user_authentication(request)
         
-        packageManager.cloneTuple(workspace)
+        packageLinker = PackageLinker()
+        
+        packageLinker.link_workspace(workspace, user)
         
         return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
 
@@ -465,8 +468,8 @@ class  WorkSpaceClonerEntry(Resource):
     def read(self, request, workspace_id):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
-        packageManager = PackageManager()
+        packageCloner = PackageCloner()
         
-        packageManager.cloneTuple(workspace)
+        packageCloner.cloneTuple(workspace)
         
         return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
