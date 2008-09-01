@@ -55,7 +55,7 @@ function Tab (tabInfo, workSpace) {
 	/*																		*
 	 *  Paint the igadget list of this tab. It is used in the first charge.	*
 	 *																		*/
-	Tab.prototype.show = function (scrollLeft) {
+	Tab.prototype.show = function (scrollLeft, index) {
 		var iGadgets = this.dragboard.getIGadgets();
 	    var html="";
 	    var nameToShow = (this.tabInfo.name.length>15)?this.tabInfo.name.substring(0, 15)+"..." : this.tabInfo.name;
@@ -67,12 +67,24 @@ function Tab (tabInfo, workSpace) {
 		for(i=0;i<iGadgets.length;i++){
 			html+= '<div class="igadget_item">';
 			html+= '<a href="javascript:OpManagerFactory.getInstance().showDragboard('+iGadgets[i].id+');">';
-			html+= '<img class="igadget_icon" src="'+iGadgets[i].getGadget().getImageURI()+'" />'
+			html+= '<img class="igadget_icon" src="'+iGadgets[i].getGadget().getIPhoneImageURI()+'" />'
 			html+= '</a>';
 			html+= '<a href="javascript:OpManagerFactory.getInstance().showDragboard('+iGadgets[i].id+');">'+iGadgets[i].getVisibleName()+'</a>';
 			html+= '</div>';
 		}
-		html+= '</div></div>';
+		html+= '</div>';
+		var tabsLength = this.workSpace.getNumberOfTabs();
+		if (tabsLength > 1){
+			html += '<div class="navbar">';
+			for(i=0;i<tabsLength;i++){
+				if (i!=index)
+					html += '<img src="/ezweb/images/iphone/greyball.png"></img>'
+				else
+					html += '<img src="/ezweb/images/iphone/whiteball.png"></img>'
+			}
+			html+= '</div>';
+		}	
+		html+= '</div>';
 	    new Insertion.Bottom(this.tabsContainer, html);
 	    this.tabElement = $(this.tabName);
 	}

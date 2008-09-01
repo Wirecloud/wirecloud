@@ -192,7 +192,7 @@ function WorkSpace (workSpaceState) {
 			step = this.scrollLandscape;
 		
 		for(var i=0;i<this.tabInstances.length;i++){
-			this.tabInstances[i].show(scrolling);
+			this.tabInstances[i].show(scrolling, i);
 			scrolling += step;
 		}
 		//show the menu
@@ -238,6 +238,10 @@ function WorkSpace (workSpaceState) {
 			return;
 		
 		return this.visibleTab;
+	}
+	
+	WorkSpace.prototype.getNumberOfTabs = function() {
+		return this.tabInstances.length;
 	}
 	
 	WorkSpace.prototype.updateVisibleTab = function(index) {

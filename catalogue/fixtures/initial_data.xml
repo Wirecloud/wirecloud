@@ -901,6 +901,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 20:47:49</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rss.jpg</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssIPhone.jpg</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/RSSReader</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssReaderGadget.xml</field>
         <field type="DecimalField" name="popularity">4.0</field>
@@ -917,6 +918,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:49:09</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuarioIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/visorDatosUsuarioGadget.xml</field>
         <field type="DecimalField" name="popularity">2.0</field>
@@ -933,6 +935,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:15</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearchIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tube_iptv_search_gadget.xml</field>
         <field type="DecimalField" name="popularity">4.0</field>
@@ -965,6 +968,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:49:10</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_mapsIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/localizadorPequeno1.2.xml</field>
         <field type="DecimalField" name="popularity">4.5</field>
@@ -981,6 +985,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:49:21</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipoIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/visorDatosEquipoGadget.xml</field>
         <field type="DecimalField" name="popularity">2.5</field>
@@ -1013,6 +1018,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:49:38</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepad.jpg</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Notepad</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadGadget.xml</field>
         <field type="DecimalField" name="popularity">4.5</field>
@@ -1029,6 +1035,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:26</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averiasIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/bandejaAveriasGadget.xml</field>
         <field type="DecimalField" name="popularity">2.5</field>
@@ -1045,6 +1052,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:37</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/redIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/configuracionRedGadget.xml</field>
         <field type="DecimalField" name="popularity">3.0</field>
@@ -1061,6 +1069,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:25</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberepIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep_gadget.xml</field>
         <field type="DecimalField" name="popularity">4.5</field>
@@ -1077,6 +1086,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:14</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonGadget.xml</field>
         <field type="DecimalField" name="popularity">3.0</field>
@@ -1093,6 +1103,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:38</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_searchIPhone.gif</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/yahootripsearch_gadget.xml</field>
         <field type="DecimalField" name="popularity">2.5</field>
@@ -1109,6 +1120,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:49</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIphone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.xml</field>
         <field type="DecimalField" name="popularity">4.5</field>
@@ -1125,6 +1137,7 @@
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:48:49</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickrIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.xml</field>
         <field type="DecimalField" name="popularity">3.5</field>

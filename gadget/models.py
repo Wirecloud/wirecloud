@@ -78,6 +78,7 @@ class Gadget(models.Model):
    
     wikiURI = models.URLField(_('wikiURI'))
     imageURI = models.URLField(_('imageURI'))
+    iPhoneImageURI = models.URLField(_('iPhoneImageURI'))
 
     width = models.IntegerField(_('Width'), default=1)
     height = models.IntegerField(_('Height'), default=1)

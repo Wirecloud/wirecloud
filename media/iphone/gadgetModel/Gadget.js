@@ -59,6 +59,7 @@ function Gadget(gadget_, url_) {
 	this.setImage = function(image_) { state.setImage(image_); }
 	
 	this.getImageURI = function() { return state.getImageURI(); }
+	this.getIPhoneImageURI = function() { return state.getIPhoneImageURI(); }
 	
 	
 	// *******************
@@ -137,6 +138,7 @@ function GadgetState(gadget_) {
 	var xhtml = null;
 	var image = null;
 	var imageURI = null;
+	var iPhoneImageURI = null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -147,7 +149,7 @@ function GadgetState(gadget_) {
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
 	imageURI = gadget_.imageURI;
-	
+	iPhoneImageURI = gadget_.iPhoneImageURI;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -168,4 +170,5 @@ function GadgetState(gadget_) {
 	this.setImage = function(image_) { image = image_; }
 	
 	this.getImageURI = function() { return imageURI; }
+	this.getIPhoneImageURI = function() {return (iPhoneImageURI!="") ? iPhoneImageURI :  imageURI; }
 }

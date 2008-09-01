@@ -164,6 +164,7 @@ class TemplateHandler(handler.ContentHandler):
         self._gadgetVersion = ""
         self._gadgetVendor = ""
         self._gadgetImage = ""
+        self._gadgetIPhoneImage = ""
         self._gadgetWiki = ""
         self._gadgetAuthor = ""
         self._gadgetMail = ""
@@ -476,7 +477,7 @@ class TemplateHandler(handler.ContentHandler):
 
     def startElement(self, name, attrs):
         # Catalogue
-        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='ImageURI') or (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author'):
+        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author'):
             self.reset_Accumulator()
             return
 
@@ -544,7 +545,11 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'ImageURI'):
             self._gadgetImage = self._accumulator
             return
-
+        
+        if (name == 'iPhoneImageURI'):
+            self._gadgetIPhoneImage = self._accumulator
+            return
+        
         if (name == 'WikiURI'):
             self._gadgetWiki = self._accumulator
             return
@@ -614,6 +619,7 @@ class TemplateHandler(handler.ContentHandler):
         self._gadget.mail=self._gadgetMail
         self._gadget.wikiURI=self._gadgetWiki
         self._gadget.imageURI=self._gadgetImage
+        self._gadget.iPhoneImageURI=self._gadgetIPhoneImage
         self._gadget.width=self._gadgetWidth
         self._gadget.height=self._gadgetHeight
         self._gadget.description=self._gadgetDesc

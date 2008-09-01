@@ -70,6 +70,7 @@ class TemplateHandler(handler.ContentHandler):
         self._description = ""
         self._mail = ""
         self._imageURI = ""
+        self._iPhoneImageURI = ""
         self._wikiURI = ""
         self._gadget_added = False
         self._user = user
@@ -129,6 +130,9 @@ class TemplateHandler(handler.ContentHandler):
             else:
                 self._imageURI = self._accumulator[0]
             return
+        if (name == 'iPhoneImageURI'):
+            self._iPhoneImageURI = self._accumulator[0]
+            return
         if (name == 'WikiURI'):
             self._wikiURI = self._accumulator[0]
             return
@@ -143,6 +147,7 @@ class TemplateHandler(handler.ContentHandler):
             gadget.description=self._description
             gadget.mail=self._mail
             gadget.image_uri=self._imageURI
+            gadget.iphone_image_uri=self._iPhoneImageURI
             gadget.wiki_page_uri=self._wikiURI
             gadget.template_uri=self._uri
             gadget.creation_date=datetime.today()
@@ -167,7 +172,7 @@ class TemplateHandler(handler.ContentHandler):
         self._accumulator.append(text)
 
     def startElement(self, name, attrs):
-        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='Author') or (name=='Description') or (name=='Mail') or (name=='ImageURI') or (name=='WikiURI'):
+        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='Author') or (name=='Description') or (name=='Mail') or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI'):
             self.resetAccumulator()
             return
 

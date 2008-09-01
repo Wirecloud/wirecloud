@@ -89,7 +89,7 @@ IGadget.prototype.paint = function() {
 		relatedhtml +='<div id="related_gadgets" class="related_gadgets">';
 		for (i=0;i<related.length;i++){
 			relatedhtml += '<div class="related_gadget_div" onclick="OpManagerFactory.getInstance().showRelatedIgadget('+related[i].id+','+related[i].dragboard.tab.tabInfo.id+')" >';
-			relatedhtml += '<img id="related_'+related[i].getId()+'" class="related_gadget" src="'+related[i].getGadget().getImageURI()+'" />';
+			relatedhtml += '<img id="related_'+related[i].getId()+'" class="related_gadget" src="'+related[i].getGadget().getIPhoneImageURI()+'" />';
 			relatedhtml += '</div>';
 		}
 		relatedhtml +='</div>'
