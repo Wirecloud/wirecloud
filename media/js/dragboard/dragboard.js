@@ -744,6 +744,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var width = template.getWidth();
 		var height = template.getHeight();
 
+		// Check if the gadget doesn't fit in the dragboard
+		var maxColumns = this.dragboardStyle.getColumns();
+		if (width > maxColumns) {
+			// TODO warning
+			width = maxColumns;
+		}
+
 		// Search a position for the gadget
 		var position = this._searchFreeSpace(width, height + this.dragboardStyle.getTitlebarSize());
 		
