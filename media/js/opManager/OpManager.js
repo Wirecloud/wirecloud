@@ -125,6 +125,9 @@ var OpManagerFactory = function () {
 		OpManager.prototype.showCatalogue = function () {
 			UIUtils.repaintCatalogue=true;
 			UIUtils.sendPendingTags();
+			if (LayoutManagerFactory.getInstance().getCurrentViewType() == 'catalogue') { 
+				UIUtils.search = false;
+			}
 			this.catalogue.show();
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
 			if (UIUtils.isInfoResourcesOpen) {
@@ -133,7 +136,15 @@ var OpManagerFactory = function () {
 			}
 			
 			// Load catalogue data!
-			this.catalogue.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			var url = null;
+			if (!UIUtils.search){
+				url = URIs.GET_POST_RESOURCES;
+			} else if(UIUtils.searchCriteria=="global"){
+				url = URIs.GET_RESOURCES_GLOBAL_SEARCH;
+			} else {
+				url = URIs.GET_RESOURCES_SIMPLE_SEARCH + "/" + UIUtils.searchCriteria;
+			}
+			this.catalogue.repaintCatalogue(url + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 
 			UIUtils.setResourcesWidth();
 			
@@ -159,8 +170,8 @@ var OpManagerFactory = function () {
 			
 		    this.activeWorkSpace = workSpace;
 		    
-		    this.activeWorkSpace.downloadWorkSpaceInfo();			    					    
-		}			
+		    this.activeWorkSpace.downloadWorkSpaceInfo();
+		}
 
 		OpManager.prototype.addInstance = function (gadgetId) {
 		    if (!this.loadCompleted)

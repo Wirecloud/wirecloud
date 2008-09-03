@@ -97,7 +97,10 @@ var LayoutManagerFactory = function () {
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
-		
+		LayoutManager.prototype.getCurrentViewType = function () {
+			return this.currentViewType;
+		}
+
 		LayoutManager.prototype.resizeWrapper = function () {
 			// We have to take into account the bottom margin and border widths.
 			// Bottom margin = 4px
