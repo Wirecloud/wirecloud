@@ -321,7 +321,7 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
         igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
-        igadget_data = [get_igadget_data(d, user) for d in igadget_data]
+        igadget_data = [get_igadget_data(d, user, workSpaceDAO) for d in igadget_data]
         tab['igadgetList'] = igadget_data
         
     #WorkSpace variables processing
@@ -359,7 +359,7 @@ def get_tab_data(data):
 
     return data_ret
 
-def get_igadget_data(data, user):
+def get_igadget_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
 
@@ -382,11 +382,11 @@ def get_igadget_data(data, user):
     
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
-    data_ret['variables'] = [get_variable_data(d, user) for d in data]
+    data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
    
     return data_ret
 
-def get_variable_data(data, user):
+def get_variable_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
     

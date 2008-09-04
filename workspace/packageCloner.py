@@ -5,39 +5,115 @@ from gadget.models import VariableDef, Gadget
 
 from django.db import models
 
-class PendingFkCollection:
+
+#########################################
+# Auxiliar functions
+#########################################
+
+def get_fk_tuple (tuple, fk_field):
+    stm = "fk_id = tuple.%s" % fk_field 
+        
+    exec(stm)
+        
+    return fk_id
+    
+def get_tuple(table_name, tuple_id):
+    model = eval(table_name)
+    
+    tuple = model.objects.get(id=tuple_id)
+        
+    return tuple
+    
+def get_related_tuples(table_name, field_name, tuple_id):
+    model = eval(table_name)
+        
+    stm = "tuple_list = model.objects.filter(%s=tuple_id)" % (field_name) 
+        
+    exec(stm)
+        
+    return tuple_list
+
+#################################################
+## Logic classes
+#################################################
+
+class FKCollection:
     def __init__(self):
         self.table_tuple = {}
     
-    def get_pending_fks(self, table_name, old_id):
+    def get_fks(self, table_name, old_id):
         if (table_name, old_id) in self.table_tuple:
             return self.table_tuple[(table_name, old_id)]
 
         return []
+    
+    def update_fks(self, cloned_tuple, old_pk):
+        table_name = cloned_tuple._meta.object_name
+        pending_fks = self.get_fks(table_name, old_pk)
+        
+        for (linker_table, linker_field, linker_tuple_id) in pending_fks:    
+            model = eval(linker_table)
+        
+            linker_tuple = model.objects.get(id=linker_tuple_id)
+        
+            stm = "linker_tuple.%s=cloned_tuple" % (linker_field)
 
-    def addPending(self, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
+            exec(stm)
+            
+            linker_tuple.save() 
+
+    def add_fk(self, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
         if not (referenced_table, referenced_tuple) in self.table_tuple:
             self.table_tuple[(referenced_table, referenced_tuple)] = []
         
-        pendings = self.table_tuple[(referenced_table, referenced_tuple)]
+        fks = self.table_tuple[(referenced_table, referenced_tuple)]
         
-        if not (linker_table, linker_field, linker_tuple_id) in pendings:
-            pendings.append((linker_table, linker_field, linker_tuple_id))
-    
-    def delPendient(self, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
-        if not (referenced_table, referenced_tuple) in self.table_tuple:
-            self.table_tuple[(referenced_table, referenced_tuple)] = []
+        if not (linker_table, linker_field, linker_tuple_id) in fks:
+            fks.append((linker_table, linker_field, linker_tuple_id))
+        
 
-        pendings = self.table_tuple[(referenced_table, referenced_tuple)]
-
-        if (linker_table, linker_field, linker_tuple_id) in pendings:
-            pendings.remove((linker_table, linker_field, linker_tuple_id))
+class Many2ManyCollection:
+    def __init__(self):
+        self.many2many_list = {}
     
-class IdsMapping:
+    def get_m2ms(self, table_name, old_id):
+        if (table_name, old_id) in self.many2many_list:
+            return self.many2many_list[(table_name, old_id)]
+
+        return []
+
+    def add_m2m(self, from_tuple, from_field, to_table, to_tuple_id):
+        from_table = from_tuple._meta.object_name
+        from_tuple_id = from_tuple.id
+        
+        if not (to_table, to_tuple_id) in self.many2many_list:
+            self.many2many_list[(to_table, to_tuple_id)] = []
+        
+        m2ms = self.many2many_list[(to_table, to_tuple_id)]
+        
+        if not (from_table, from_field, from_tuple_id) in m2ms:
+            m2ms.append((from_table, from_field, from_tuple_id))
+       
+    def update_m2ms(self, cloned_tuple, to_tuple_id):
+        to_table = cloned_tuple._meta.object_name
+        m2ms = self.get_m2ms(to_table, to_tuple_id)
+        
+        for (from_table, from_field, from_tuple_id) in m2ms:    
+            model = eval(from_table)
+        
+            from_tuple = model.objects.get(id=from_tuple_id)
+        
+            stm = "from_tuple.%s.add(cloned_tuple)" % (from_field)
+
+            exec(stm)
+            
+            from_tuple.save() 
+    
+class MappingCollection:
     def __init__(self):
         self.tables = {}
     
-    def getMapping(self, table_name, old_id):
+    def get_mapping(self, table_name, old_id):
         if not table_name in self.tables:
             return None
         
@@ -56,7 +132,7 @@ class IdsMapping:
         
         return new_id
     
-    def addMapping(self, table_name, old_id, new_id):
+    def add_mapping(self, table_name, old_id, new_id):
         if not table_name in self.tables:
             self.tables[table_name] = {}
         
@@ -64,84 +140,18 @@ class IdsMapping:
         
         mapping[old_id] = new_id
 
+
 class PackageCloner:
     def __init__(self):
-        self.mapping = IdsMapping()
-        self.pendingFks = PendingFkCollection()
+        self.mapping = MappingCollection()
+        self.fks = FKCollection()
+        self.m2ms = Many2ManyCollection()
         self.final_tables = ['User', 'VariableValue', 'VariableDef', 'Gadget']
-    
-    def getMapping(self, table_name, old_id):
-        return self.mapping.getMapping(table_name, old_id)
-    
-    def addMapping(self, table_name, old_id, new_id):
-        return self.mapping.addMapping(table_name, old_id, new_id)
-    
-    def get_fk_tuple (self, tuple, fk_field):
-        stm = "fk_id = tuple.%s" % fk_field 
-        
-        exec(stm)
-        
-        return fk_id
-    
-    def get_tuple(self, table_name, tuple_id):
-        model = eval(table_name)
-    
-        tuple = model.objects.get(id=tuple_id)
-        
-        return tuple
-    
-    def get_related_tuples(self, table_name, field_name, tuple_id):
-        model = eval(table_name)
-        
-        stm = "tuple_list = model.objects.filter(%s=tuple_id)" % (field_name) 
-        
-        exec(stm)
-        
-        return tuple_list
-
-    def get_related_tuple(self, table_name, field_name, tuple_id):
-        model = eval(table_name)
-        
-        stm = "tuple = model.objects.get(%s=tuple_id)" % (field_name) 
-        
-        exec (stm)
-        
-        return tuple
     
     def is_final_table(self, table_name):
         return (table_name in self.final_tables)
     
-    def update_foreign_keys(self, cloned_tuple, old_pk):
-        table_name = cloned_tuple._meta.object_name
-        pending_fks = self.pendingFks.get_pending_fks(table_name, old_pk)
-        
-        for pending_fk in pending_fks:    
-            linker_table = pending_fk[0]
-            linker_field = pending_fk[1]
-            linker_tuple_id = pending_fk[2]
-
-            model = eval(linker_table)
-        
-            linker_tuple = model.objects.get(id=linker_tuple_id)
-        
-            stm = "linker_tuple.%s=cloned_tuple" % (linker_field)
-
-            exec(stm)
-            
-            linker_tuple.save()
-            
-            self.delete_pending_fk (table_name, old_pk) 
-    
-    def mark_pending_fk(self, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
-        self.pendingFks.addPending(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
-
-    def delete_pending_fk(self, table_name, fk_id):
-        pass
-    
-    def linkTuple(self, tuple, user):
-        pass
-    
-    def cloneTuple(self, tuple):
+    def clone_tuple(self, tuple):
         meta = tuple._meta
         table_name = meta.object_name
         
@@ -150,10 +160,10 @@ class PackageCloner:
             return tuple
         
         #Controlling when a tuple has been previously cloned!
-        new_id = self.getMapping(table_name, tuple.id)
+        new_id = self.mapping.get_mapping(table_name, tuple.id)
         
         if (new_id):
-            return self.get_tuple(table_name, new_id)
+            return get_tuple(table_name, new_id)
         else: 
             
             model = eval(table_name)
@@ -173,7 +183,7 @@ class PackageCloner:
             cloned_tuple.save()
             
             #Registering mapping between tuple and cloning tuple!
-            self.addMapping(table_name, tuple.id, cloned_tuple.id)
+            self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
 
             #Marking all cloned object fks to be updated when the referenced tuple is cloned!
             for field in fields:
@@ -188,17 +198,33 @@ class PackageCloner:
                     linker_field = field.name
                     linker_tuple_id = cloned_tuple.id
                     
-                    self.mark_pending_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+                    self.fks.add_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+            
+            #Marking many_to_many relationships to be updated when involved tuples are both cloned!
+            m2m_fields = meta.many_to_many
+                        
+            for m2m_field in m2m_fields:
+                field_name = m2m_field.attname
+                
+                stm = "m2m_objects = tuple.%s.all()" % (field_name) 
+                exec(stm)
+
+                for m2m_object in m2m_objects:
+                    referenced_model = m2m_object._meta.object_name
+                    referenced_tuple_id = m2m_object.id
+                    
+                    self.m2ms.add_m2m(cloned_tuple, field_name, referenced_model, referenced_tuple_id)
+
             
             #When a cloned tuple is saved, it's necessary to update pending foreign keys!
-            self.update_foreign_keys(cloned_tuple, tuple.id)
+            self.fks.update_fks(cloned_tuple, tuple.id)
             
             #Foreign keys fields must be cloned!
             for field in fields: 
                 if (isinstance(field, models.ForeignKey)):                     
-                    related_tuple = self.get_fk_tuple(tuple, field.name)
+                    related_tuple = get_fk_tuple(tuple, field.name)
                     
-                    cloned_related_tuple = self.cloneTuple(related_tuple)
+                    cloned_related_tuple = self.clone_tuple(related_tuple)
                     
                     stm = "%s.%s = cloned_related_tuple" % ('cloned_tuple', field.name)                 
                      
@@ -207,6 +233,9 @@ class PackageCloner:
             
             #Saving already cloned fks!
             cloned_tuple.save()
+            
+            #When a cloned tuple is saved, it's necessary to update pending many to many relationships!
+            self.m2ms.update_m2ms(cloned_tuple, tuple.id)
             
             #Continue iterating over data-model structure
             related_objects = meta._all_related_objects
@@ -217,9 +246,9 @@ class PackageCloner:
                 related_meta = related_model._meta
                 related_table_name = related_meta.object_name
                 
-                related_tuples = self.get_related_tuples(related_table_name, related_table.field.name, tuple.id)
+                related_tuples = get_related_tuples(related_table_name, related_table.field.name, tuple.id)
                 for related_tuple in related_tuples:
-                    self.cloneTuple(related_tuple)
+                    self.clone_tuple(related_tuple)
             
             return cloned_tuple
 

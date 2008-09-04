@@ -46,7 +46,7 @@ class WorkSpace(models.Model):
     active = models.BooleanField(_('Active'))
     
     users = models.ManyToManyField(User, verbose_name=_('Users'))
-
+    
     class Admin:
         pass
 
@@ -73,6 +73,9 @@ class VariableValue(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+    
+    class Meta:
+        unique_together = ('user', 'abstract_variable')
 
     class Admin:
         pass

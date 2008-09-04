@@ -457,6 +457,12 @@ class  WorkSpaceLinkerEntry(Resource):
         
         user = get_user_authentication(request)
         
+        #Checking if user is already linked to workspace
+        if (len(workspace.users.filter(id=user.id))>0):
+                msg = _("already linked workspace")
+                log(msg, request)
+                return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+        
         packageLinker = PackageLinker()
         
         packageLinker.link_workspace(workspace, user)
@@ -470,6 +476,9 @@ class  WorkSpaceClonerEntry(Resource):
         
         packageCloner = PackageCloner()
         
-        packageCloner.cloneTuple(workspace)
+        cloned_workspace = packageCloner.clone_tuple(workspace)
+        
+        cloned_workspace.active=False
+        cloned_workspace.save()
         
         return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
