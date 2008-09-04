@@ -191,7 +191,7 @@
 		}
 	}
 	
-	// name in ['active', 'label', 'content', 'dataSrc', 'cacheData', 'id', 'highlight']
+	// name in ['active', 'label', 'content', 'dataSrc', 'cacheData', 'id', 'highlight', 'onclick']
 	p.set = function(name, value) {
 		this._attr[name] = value;
 		switch (name) {
@@ -208,6 +208,7 @@
 				if (this._attr['active'] === true) {
 					this._attr['highlight'] = false;
 				}
+			case 'onclick' :
 			case 'label' :
 				this._renderHead();
 				break;
@@ -265,14 +266,14 @@
 			
 			try {
 				var onclick = this.get('onclick');
-				var id = this.get('id')
+				var tabid = this.get('id')
 				var fn = function() {				
-					if (onclick) {
+					if (onclick) {						
 						onclick();
 					}
 					// TODO the name of the variable "tabview" is hardcoded !
-					tabview.set("activeId", id);
-				}
+					tabview.set("activeId", tabid);
+				}			
 				id('mymw-link-' + this._slot).onclick = fn;
 			} catch (e) {
 				// browsers that do not allow dynamic binding for events will fail silently
@@ -298,7 +299,7 @@
 		// TODO the name of the variable "tabview" is hardcoded !
 		var onclick = 'javascript:tabview.set("activeId","' + this.get('id') + '");';
 		var label = this.get('label');
-		this._head = "<a href='#' onclick='" + onclick + "'>" + label + "</a>";
+		this._head = "<a id='mymw-link-" + this._slot + "' href='#' onclick='" + onclick + "'>" + label + "</a>";
 	}
 	
 	p.__updateBody = function() {
