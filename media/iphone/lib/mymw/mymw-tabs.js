@@ -2,7 +2,6 @@
 	var MAX_SLOTS = 5;
 	
 	MYMW.ui.TabView = function(nid, attr) {
-// console.log('NEW TabView ---------------------------');	
 		this._tabs = [];
 		this._attr = attr || {};
 		this._slots = [null, null, null, null, null]; // MAX_SLOTS
@@ -19,16 +18,13 @@
 
 		for (var i in attr) {
 			this.set(i, attr[i]);
-		}
-// console.log('---------------------------------------');			
+		}		
 	};
 	var p = MYMW.ui.TabView.prototype;
 	
 	p.addTab = function(tab) {
-// console.log('TabView.addTab ' + tab);
-		
+	
 		if (this._tabs.length === this.get('maxTabs')) {
-// console.log("remove LRU : " + this._LRU());
 			this.removeTab( this._LRU() );
 		}
 
@@ -37,7 +33,6 @@
 		// assign a free slot
 		for (var i=0; i<this._slots.length; i++) {
 			if (this._slots[i] === null) {
-// console.log('TabView assign slot ' + i);
 				this._slots[i] = tab;
 				tab.assignSlot(i);
 				break;
@@ -46,16 +41,14 @@
 		
 		// It this is the first tab, activate it
 		if (this._tabs.length === 1) {
-// console.log('TabView force activate first tab on add');
 			this.set('activeIndex', 0); // set includes rendering
 		}
 
-		this._renderHead();
-		this._renderBody();
+		// this._renderHead();
+		// this._renderBody();
 	}
 
 	p.removeTab = function(index) {
-// console.log('TabView.removeTab ' + index);
 		var tab = this._tabs[index];
 		this._slots[tab._slot] = null;
 		
@@ -65,12 +58,11 @@
 		
 		// If the active tab is removed, activate the first tab.
 		if (this.get('activeIndex') === index && this._tabs.length > 0) {
-// console.log('TabView force activate first tab on remove');		
 			this.set('activeIndex', 0); // set includes rendering
 		}
 		
-		this._renderHead();
-		this._renderBody();
+		// this._renderHead();
+		// this._renderBody();
 	}
 	
 	p.getTab = function(index) {
@@ -79,7 +71,6 @@
 
 	// name in ['activeId', 'activeTab', 'activeIndex', 'maxTabs']
 	p.set = function(name, value) {
-// console.log('TabView.set ' + name + " = " + value);	
 		this._attr[name] = value;
 		switch (name) {
 			case 'activeId' :
@@ -147,7 +138,6 @@
 	}
 		
 	p._renderHead = function() {
-// console.log('TabView._renderHead');
 		var innerHTML = "";
 		for (var i=0; i<this._tabs.length; i++) {
 			this._tabs[i]._renderHead(); // delegate rendering
@@ -155,7 +145,6 @@
 	}
 	
 	p._renderBody = function() {
-// console.log('TabView._renderBody');
 		for (var i=0; i<this._tabs.length; i++) {
 			this._tabs[i]._renderBody(); // delegate rendering
 		}				
@@ -174,7 +163,6 @@
 	}
 	
 	MYMW.ui.Tab = function(attr) {
-// console.log('Tab -----------------------------------');		
 		this._loaded = false;
 		this._disposed = false;
 		// this._head = "";
@@ -187,12 +175,10 @@
 		for (var i in attr) {
 			this.set(i, attr[i]);
 		}
-// console.log('---------------------------------------');			
 	};
 	var p = MYMW.ui.Tab.prototype;
 	
 	p.assignSlot = function(slot) {
-// console.log('Tab assign slot ' + slot);		
 		if (slot != undefined) {
 			this._slot = slot;
 			this._renderBody();
@@ -207,7 +193,6 @@
 	
 	// name in ['active', 'label', 'content', 'dataSrc', 'cacheData', 'id', 'highlight']
 	p.set = function(name, value) {
-// console.log('Tab.set ' + this._slot + " => " + name + ' = ' + value);	
 		this._attr[name] = value;
 		switch (name) {
 			case 'active' :				
@@ -233,7 +218,6 @@
 	}
 			
 	p.get = function(name) {
-// console.log("Tab get " + name);		
 		switch (name) {
 			case 'content':
 				var dataSrc = this.get('dataSrc');
@@ -266,21 +250,33 @@
 	
 	p.__hide = function() {
 		if (this._slot != undefined) {
-// console.log('Tab._hide');		
 			updateClass('mymw-slot-' + this._slot, 'mymw-inactive');
 			updateClass('mymw-nav-' + this._slot, '');
 		}
 	}
 	
 	p._renderHead = function() {
-// console.log('Tab._renderHead ' + this._slot );
 		if (this._disposed === false) {
 			if (this._slot != undefined) {
 				this.__updateHead();
-// console.log('Tab._renderHead DONE ' + this._slot );
 				update('mymw-nav-' + this._slot, this._head);
 				updateClass('mymw-nav-' + this._slot, this.get('active') ? 'mymw-selected' : this.get('highlight') ? 'mymw-highlight' : '');
 			}
+			
+			try {
+				var onclick = this.get('onclick');
+				var id = this.get('id')
+				var fn = function() {				
+					if (onclick) {
+						onclick();
+					}
+					// TODO the name of the variable "tabview" is hardcoded !
+					tabview.set("activeId", id);
+				}
+				id('mymw-link-' + this._slot).onclick = fn;
+			} catch (e) {
+				// browsers that do not allow dynamic binding for events will fail silently
+			}			
 		} else {			
 			update('mymw-nav-' + this._slot, "");
 			updateClass('mymw-nav-' + this._slot, 'mymw-inactive');
@@ -288,11 +284,9 @@
 	}
 	
 	p._renderBody = function() {
-// console.log('Tab._renderBody ' + this._slot );
 		if (this._disposed === false) {
 			if (this._slot != undefined) {
 				this.__updateBody();
-// console.log('Tab._renderBody DONE ' + this._slot );
 				update('mymw-slot-' + this._slot, this._body); // asynch call, so we sinchronize UI
 			}
 		} else {
