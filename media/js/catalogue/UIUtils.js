@@ -201,15 +201,15 @@ UIUtils.updateGadgetXHTML = function() {
     var resourceURI = URIs.GET_GADGET.evaluate(dict) + "/xhtml";
 
     var onError = function(transport) {
-		var	msg = interpolate(gettext("Error updating the XHTML: %(errorMsg)s."), {errorMsg: transport.status}, true);
+		var msg = interpolate(gettext("Error updating the XHTML: %(errorMsg)s."), {errorMsg: transport.status}, true);
 		LogManagerFactory.getInstance().log(msg);
 	// Process
     }
-			
+
     var onSuccess = function(transport) {
-	
+		LayoutManagerFactory.getInstance().showMessageMenu(gettext('The gadget code has been successfully updated'));
     }
-    
+
     PersistenceEngineFactory.getInstance().send_update(resourceURI, "", this, onSuccess, onError);
 
 }
