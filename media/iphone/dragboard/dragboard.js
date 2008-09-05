@@ -93,6 +93,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 		else
 			this.paint(iGadgetId)
+			
+		this.unmarkRelatedIgadget(iGadgetId);
 	}
 	
 	Dragboard.prototype.hide = function () {
@@ -116,11 +118,26 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		$("related_"+iGadgetId).addClassName("active");
 		
 		// highlight related tabs
-		var tabId = this.getIGadget(iGadgetId).getTabId();
-		var tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
-		if (tabIndex != null){ // the tab is already visible			
-			this.workSpace.tabView.getTab(tabIndex).set('highlight', true);
+		var igadget = this.getIGadget(iGadgetId);
+		if (igadget){
+			var tabId = igadget.getTabId();			
+			var tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
+			if (tabIndex != null){ // the tab is already visible
+				this.workSpace.tabView.getTab(tabIndex).set('highlight', true);
+			}
 		}		
+	}
+	
+	/**
+	 * Removes the mark on the related igadget. It has to be called at least:
+	 * - when the user clicks on the tab containing that igadget
+	 * - when the user clicks on the related gadget icon
+	 */
+	Dragboard.prototype.unmarkRelatedIgadget = function(iGadgetId){		
+		var r = $("related_"+iGadgetId);
+		if (r){
+			r.removeClassName("active");
+		}
 	}
 	
 	Dragboard.prototype.parseTab = function(tabInfo) {
@@ -135,7 +152,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.igadgets = tabInfo.igadgetList;
 		for (var i = 0; i < this.igadgets.length; i++) {
 			curIGadget = this.igadgets[i];
-
 			
 			// Parse gadget id
 			gadgetid = curIGadget.gadget.split("/");
@@ -152,7 +168,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 		this.loaded = true;
 	}
-
 
 	Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
 	    //DO NOTHING

@@ -106,11 +106,12 @@ IGadget.prototype.paint = function() {
 	html += '</object></div>';
 	
 	//create a new Tab and add the new content
+	var self = this;
 	tab = new MYMW.ui.Tab ({
 		id : this.getTabId(),
 		label : this.getVisibleName(),
 		content : html+relatedhtml,
-		// onclick : function() { alert('onclick event'); // TODO unhighlight }
+		onclick : function() { self.dragboard.unmarkRelatedIgadget( self.id ); }
 		});
 	this.dragboard.workSpace.tabView.addTab(tab);
 	this.dragboard.workSpace.tabView.set('activeTab', tab);
