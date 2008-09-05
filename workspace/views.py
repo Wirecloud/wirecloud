@@ -57,7 +57,7 @@ from igadget.models import Variable
 
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 
-from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue
+from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue, PublishedWorkSpace
 from gadget.models import Gadget, VariableDef
 from igadget.models import IGadget, Position
 
@@ -467,9 +467,22 @@ class  WorkSpaceLinkerEntry(Resource):
         
         packageLinker.link_workspace(workspace, user)
         
-        return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
+        return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
 
 class  WorkSpaceClonerEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, workspace_id):
+        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        
+        workspace = published_workspace.workspace
+        
+        packageCloner = PackageCloner()
+        
+        cloned_workspace = packageCloner.clone_tuple(workspace)
+        
+        return HttpResponse("{'result': 'ok', 'new_workspace_id': %s}" % (cloned_workspace.id), mimetype='application/json; charset=UTF-8')
+
+class  WorkSpacePublisherEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
@@ -481,4 +494,7 @@ class  WorkSpaceClonerEntry(Resource):
         cloned_workspace.active=False
         cloned_workspace.save()
         
-        return HttpResponse("<ok />", mimetype='application/json; charset=UTF-8')
+        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace)
+        published_workspace.save()
+        
+        return HttpResponse("{'result': 'ok', 'published_workspace_id': %s}" % (published_workspace.id), mimetype='application/json; charset=UTF-8')

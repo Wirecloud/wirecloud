@@ -39,7 +39,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as  _
-    
+
 class WorkSpace(models.Model):
     
     name = models.CharField(_('Name'), max_length=30)
@@ -52,6 +52,22 @@ class WorkSpace(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name  
+
+class PublishedWorkSpace(models.Model):
+    WORKSPACE_TYPES = (
+        ('CLONED', _('Cloned')),
+        ('SHARED', _('Shared')),
+    )
+    type = models.CharField(_('Type'), max_length=10, choices=WORKSPACE_TYPES)
+    credentials = models.CharField(_('Credentials'), max_length=30)
+    
+    workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
+    
+    class Admin:
+        pass
+
+    def __unicode__(self):
+        return str(self.pk) + " " + self.workspace.name  
 
 class AbstractVariable(models.Model):
     

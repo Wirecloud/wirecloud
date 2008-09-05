@@ -40,7 +40,8 @@ from django.conf.urls.defaults import patterns
 
 from connectable.views import ConnectableEntry
 from workspace.views import WorkSpaceVariableCollection, WorkSpaceChannelCollection, \
-                            TabEntry, TabCollection, WorkSpaceEntry, WorkSpaceCollection, WorkSpaceClonerEntry, WorkSpaceLinkerEntry
+                            TabEntry, TabCollection, WorkSpaceEntry, WorkSpaceCollection, \
+                            WorkSpaceClonerEntry, WorkSpaceLinkerEntry, WorkSpacePublisherEntry
 
 urlpatterns = patterns('workspace.views',
     # WorkSpace
@@ -72,4 +73,8 @@ urlpatterns = patterns('workspace.views',
      # Linking workspace structure when adding package   
     (r'^/((?P<workspace_id>\d+)/link?[/]?)?$', 
         WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
+    
+    # Publish workspace photo to PublishedWorkspaces  
+    (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$', 
+        WorkSpacePublisherEntry(permitted_methods=('GET', ))),
 )
