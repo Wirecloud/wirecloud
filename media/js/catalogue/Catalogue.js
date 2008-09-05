@@ -72,7 +72,6 @@ var CatalogueFactory  = function () {
 				UIUtils.isInfoResourcesOpen = false;
 				UIUtils.SlideInfoResourceOutOfView('info_resource');
 			}
-			this.emptyResourceList();
 			UIUtils.search = false;
 			this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 		}

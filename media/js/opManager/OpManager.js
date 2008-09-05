@@ -112,6 +112,8 @@ var OpManagerFactory = function () {
 		this.persistenceEngine = PersistenceEngineFactory.getInstance();
 		
 		this.loadCompleted = false;
+		this.firstAccessToTheCatalogue = true;
+		this.catalogueIsCurrentTab = false;
 		
 		// Variables for controlling the collection of wiring and dragboard instances of a user
 		this.workSpaceInstances = new Hash();
@@ -126,7 +128,7 @@ var OpManagerFactory = function () {
 			UIUtils.repaintCatalogue=true;
 			UIUtils.sendPendingTags();
 			if (LayoutManagerFactory.getInstance().getCurrentViewType() == 'catalogue') { 
-				UIUtils.search = false;
+				this.catalogueIsCurrentTab = true;
 			}
 			this.catalogue.show();
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
@@ -136,15 +138,13 @@ var OpManagerFactory = function () {
 			}
 			
 			// Load catalogue data!
-			var url = null;
-			if (!UIUtils.search){
-				url = URIs.GET_POST_RESOURCES;
-			} else if(UIUtils.searchCriteria=="global"){
-				url = URIs.GET_RESOURCES_GLOBAL_SEARCH;
-			} else {
-				url = URIs.GET_RESOURCES_SIMPLE_SEARCH + "/" + UIUtils.searchCriteria;
+
+			if (this.firstAccessToTheCatalogue || this.catalogueIsCurrentTab)
+			{
+				this.catalogue.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+				this.firstAccessToTheCatalogue = false;
+				this.catalogueIsCurrentTab = false;
 			}
-			this.catalogue.repaintCatalogue(url + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 
 			UIUtils.setResourcesWidth();
 			
