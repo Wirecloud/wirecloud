@@ -62,12 +62,19 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// ****************
 	// PUBLIC METHODS 
 	// ****************
+	
+	Dragboard.prototype.updateTab = function () {
+		//update the interface
+		this.tabNameElement.update(this.tab.tabInfo.name);
+		//update the internal data
+		this.workSpace.updateVisibleTab(this.tab.index);
+	}
 
 	Dragboard.prototype.paint = function (iGadgetId) {
 		this.setVisibleIGadget(iGadgetId);
 		
-		//update the tab name
-		this.tabNameElement.update(this.tab.tabInfo.name);
+		//update the tab name (the internal data is already up-to-date)
+		this.updateTab();
 		
 		//paints the visible igadget
 		if (this.visibleIGadget)
@@ -87,7 +94,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype.paintRelatedIGadget = function (iGadgetId) {
 		var tabId = this.getIGadget(iGadgetId).getTabId();
 		var tabIndex = this.workSpace.tabView.getTabIndexById(tabId);
-		if (tabIndex != null){ // the tab is already visible
+		if (tabIndex != null){ // the gadget-tab is already visible
 			this.setVisibleIGadget(iGadgetId);
 			this.workSpace.tabView.set('activeTab', this.workSpace.tabView.getTab(tabIndex));
 		}
@@ -104,13 +111,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			this.visibleIGadget =  null;
 		
 		//clean the bar and the content
-		//TODO: elimiar la variable a pelo "tabView"	
-		/*delete this.workSpace.tabView;
-		this.workSpace.tabView = new TabView("dragboard", { maxTabs : 3 });
-		tabView = this.workSpace.tabView;*/
 		this.workSpace.tabView.clear();
 		this.barElement.setStyle({display: "none"});
 	}
+	
 
 	Dragboard.prototype.markRelatedIgadget = function(iGadgetId){
 		$("related_"+iGadgetId).addClassName("active");

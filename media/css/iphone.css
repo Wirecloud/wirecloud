@@ -172,7 +172,7 @@ body[orient="landscape"] .dragboard {
 	margin: 0px;
 	padding: 0px;
 	position: absolute;
-	top: 19px;
+	top: 24px;
 	left: 1px;
 	z-index: 2;
 }
@@ -220,14 +220,20 @@ body[orient="landscape"] #mymw-nav {
 .bar{
 	position: relative;
 	width: 100%;
-	height: 30px;
+	height: 35px;
 	padding-top: 7px;
 }
 .tab_name{
 	position: absolute;
-	right: 5px;
-	top: 0pt;
+	top: 3px;
+	left: 10px;
 	font-size: 10pt;
+}
+.menu_link{
+	font-size: 12pt;
+	position: absolute;
+	top: 0;
+	right: 5px;
 }
 /**** iGadget Section ****/
 
@@ -248,11 +254,11 @@ body[orient="landscape"] #mymw-nav {
 }
 
 body[orient="portrait"] .igadget_section{
-	height: 358px; /* 416 -37(bar+padding)-17(menu_link)-4(border) */
+	height: 370px; /* 416 -42(bar+padding)-4(border) */
 }
 
 body[orient="landscape"] .igadget_section{
-	height: 210px; /* 268 -37(bar+padding)-17(menu_link)-4(border) */
+	height: 222px; /* 268 -42(bar+padding)-4(border) */
 }
 
 .gadget_content{
@@ -260,11 +266,11 @@ body[orient="landscape"] .igadget_section{
 }
 
 body[orient="portrait"] .gadget_content{
-	height: 308px; /* 358 (igadget_section) - 50 (related) */
+	height: 320px; /* 370 (igadget_section) - 50 (related) */
 }
 
 body[orient="landscape"] .gadget_content{
-	height: 160px; /* 210 (igadget_section) - 50 (related) */
+	height: 172px; /* 222 (igadget_section) - 50 (related) */
 }
 
 .gadget_content_full{
@@ -272,11 +278,11 @@ body[orient="landscape"] .gadget_content{
 }
 
 body[orient="portrait"] .gadget_content_full{
-	height: 358px; /* without related section */
+	height: 370px; /* without related section */
 }
 
 body[orient="landscape"] .gadget_content_full{
-	height: 210px; /* without related section */
+	height: 222px; /* without related section */
 }
 
 .gadget_object{
@@ -310,10 +316,6 @@ body[orient="landscape"] .gadget_content_full{
 	border: 1px solid #ebabab;
 }
 
-/*  MENU LINK  */
-.menu_link{
-	font-size: 12pt;
-}
 
 /*** OTHER SECTIONS ***/
 .menu_icon{

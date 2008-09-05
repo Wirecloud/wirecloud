@@ -58,7 +58,7 @@ function WorkSpace (workSpaceState) {
 		if (tabs.length>0) {
 			for (var i=0; i<tabs.length; i++) {
 				var tab = tabs[i];
-				this.tabInstances.push(new Tab(tab, this));
+				this.tabInstances.push(new Tab(tab, this, i));
 				
 				if (tab.visible == 'true') {
 					this.visibleTabIndex = i;
@@ -245,8 +245,10 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype.updateVisibleTab = function(index) {
-		this.visibleTabIndex = index;	
-		this.visibleTab = this.tabInstances[this.visibleTabIndex];
+		if (this.visibleTabIndex != index) {
+			this.visibleTabIndex = index;	
+			this.visibleTab = this.tabInstances[this.visibleTabIndex];
+		}
 	}
 	
 	WorkSpace.prototype.updateLayout = function(orient) {

@@ -101,17 +101,17 @@ IGadget.prototype.paint = function() {
 			html += 'gadget_content">';
 	else
 		html +='gadget_content_full">';
+	/*html += '<img src="'+this.getGadget().getIPhoneImageURI()+'" /></div>';*/
 	html += '<object onload=\'OpManagerFactory.getInstance().igadgetLoaded('+this.id+');\' class="gadget_object" type="text/html" data="'+this.gadget.getXHtml().getURICode()+'?id='+this.id+'" standby="Loading...">'; 
 	html += '"Loading...."';
 	html += '</object></div>';
 	
 	//create a new Tab and add the new content
-	var self = this;
 	tab = new MYMW.ui.Tab ({
 		id : this.getTabId(),
 		label : this.getVisibleName(),
 		content : html+relatedhtml,
-		onclick : function() { self.dragboard.unmarkRelatedIgadget( self.id ); }
+		onclick : function() { this.dragboard.unmarkRelatedIgadget(this.id ); this.dragboard.updateTab();}.bind(this)
 		});
 	this.dragboard.workSpace.tabView.addTab(tab);
 	this.dragboard.workSpace.tabView.set('activeTab', tab);

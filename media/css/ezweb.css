@@ -35,10 +35,10 @@ a:hover{
 }
 
 .form-row input[type="submit"]{
-	padding: 0px;
-	background: transparent url(/ezweb/images/button.gif) no-repeat scroll 0% 50%;
+	padding: 3px;
+	background: transparent url(/ezweb/images/header.gif) repeat;
 	color: white;
-	border: none;
+	border: 0;
 	margin-top: 5px;
 }
 
