@@ -208,6 +208,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype.setVisibleIGadget = function (iGadgetId) {
 		this.visibleIGadget = this.getIGadget(iGadgetId);
 		this.unmarkRelatedIgadget(iGadgetId);
+		this.updateTab();
 	}
 	
 	// *******************
