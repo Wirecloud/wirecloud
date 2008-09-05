@@ -93,8 +93,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 		else
 			this.paint(iGadgetId)
-			
-		this.unmarkRelatedIgadget(iGadgetId);
 	}
 	
 	Dragboard.prototype.hide = function () {
@@ -205,6 +203,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	
 	Dragboard.prototype.setVisibleIGadget = function (iGadgetId) {
 		this.visibleIGadget = this.getIGadget(iGadgetId);
+		this.unmarkRelatedIgadget(iGadgetId);
 	}
 	
 	// *******************
