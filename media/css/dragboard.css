@@ -99,7 +99,7 @@ div.floatclearer {
 
 div.gadget_window div.leftResizeHandle {
   position: absolute;
-  width: 16px;
+  width: 32px;
   height: 16px;
   bottom: -1px;
   left: -1px;
@@ -116,7 +116,7 @@ div.gadget_window div.leftResizeHandle.inUse {
 
 div.gadget_window div.rightResizeHandle {
   position: absolute;
-  width: 16px;
+  width: 32px;
   height: 16px;
   bottom: -1px;
   right: -1px;
@@ -131,7 +131,9 @@ div.gadget_window div.resizeHandle.inUse {
   height: auto;
 }
 
-div.dragboard.fixed div.gadget_window div.resizeHandle {
+div.dragboard.fixed div.gadget_window div.leftResizeHandle,
+  div.dragboard.fixed div.gadget_window div.rightResizeHandle
+{
   display: none;
 }
 
@@ -151,11 +153,23 @@ div.dragboard.fixed div.gadget_window div.resizeHandle {
   display:inline;
 }
 
+div.gadget_window div.statusBar {
+  border-top: 1px solid #4c5054;
+  background: #DDD;
+  height: 16px;
+}
+
+div.gadget_window_locked div.statusBar {
+  display: none;
+  height: 0;
+}
+
 /*****
  * config_interface
  */
 
-div.gadget_window form.config_interface {
+div.gadget_window form.config_interface,
+div.gadget_window_locked form.config_interface {
   background: #DDD;
   border-bottom: 1px solid #4c5054;
   display: none;

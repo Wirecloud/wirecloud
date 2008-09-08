@@ -752,9 +752,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 
 		// Search a position for the gadget
-		var position = this._searchFreeSpace(width, height + this.dragboardStyle.getTitlebarSize());
+		var position = this._searchFreeSpace(width, height + this.dragboardStyle.getExtraCells());
 		
-		var igadgetName = gadget.getName() + ' (' +this.currentCode + ')';
+		var igadgetName = gadget.getName() + ' (' + this.currentCode + ')';
 
 		// Create the instance
 		var iGadget = new IGadget(gadget, null, this.currentCode, igadgetName, this.dragboardStyle, position, width, height, false, this);
@@ -804,7 +804,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		try {
 			igadget.saveConfig();
 
-			this.setConfigurationVisible(igadget.getId(), false);
+			igadget.setConfigurationVisible(igadget.getId(), false);
 		} catch (e) {
 		}
 	}
@@ -962,10 +962,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	 * nº columns                         = 20
 	 * cell height                        = 12 pixels
 	 * vertical Margin between IGadgets   = 2 pixels
-	 * horizontal Margin between IGadgets = 5 pixels
+	 * horizontal Margin between IGadgets = 4 pixels
 	 * scroll bar reserved space          = 17 pixels
 	 */
-	this.dragboardStyle = new DragboardStyle(this.dragboardElement, 20, 12, 2, 5, 17);
+	this.dragboardStyle = new DragboardStyle(this.dragboardElement, 20, 12, 2, 4, 17);
 	Event.observe(window, 'resize', this._notifyWindowResizeEvent);
 
 	this._clearMatrix();
@@ -1036,8 +1036,21 @@ DragboardStyle.prototype.recomputeSize = function() {
 		this.dragboardWidth-= this.scrollbarSpace;
 }
 
-DragboardStyle.prototype.getTitlebarSize = function() {
-	return 2; // TODO calculate this
+DragboardStyle.prototype.getMenubarSize = function() {
+	return 18; // TODO calculate this
+}
+
+DragboardStyle.prototype.getMenubarSizeInCells = function() {
+	return Math.ceil(this.fromPixelsToVCells(this.getMenubarSize()));
+}
+
+DragboardStyle.prototype.getStatusbarSize = function() {
+	return 16; // TODO calculate this
+}
+
+DragboardStyle.prototype.getExtraCells = function() {
+	var sizeInPixels = this.getMenubarSize() + this.getStatusbarSize();
+	return Math.ceil(this.fromPixelsToVCells(sizeInPixels));
 }
 
 DragboardStyle.prototype.getWidth = function() {
