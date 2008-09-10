@@ -252,6 +252,8 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype.updateLayout = function(orient) {
+		//notify this to the ContextManager. The orient value may be "portrait" or "landscape".
+		this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
 		//TODO: change the tab labels according to the orientation
 		var step = 0;
 		var scrolling = 0;

@@ -36,6 +36,10 @@
         <field type="CharField" name="source">PLAT</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
+    <object pk="orientation" model="context.concept">
+        <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="adaptor"><None></None></field>
+    </object>
     <object pk="1" model="context.conceptname">
         <field type="CharField" name="name">user_name</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">username</field>
@@ -71,6 +75,10 @@
     <object pk="9" model="context.conceptname">
         <field type="CharField" name="name">heightInPixels</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">heightInPixels</field>
+    </object>
+    <object pk="10" model="context.conceptname">
+        <field type="CharField" name="name">orientation</field>
+        <field to="context.concept" name="concept" rel="ManyToOneRel">orientation</field>
     </object>
     <object pk="1" model="auth.user">
         <field type="CharField" name="username">admin</field>
