@@ -134,7 +134,7 @@ def SaveIGadget(igadget, user, tab):
         
         igadget_data =  serializers.serialize('python', [new_igadget], ensure_ascii=False)
         
-        ids = get_igadget_data(igadget_data[0], user)
+        ids = get_igadget_data(igadget_data[0], user, tab.workspace)
         
         return ids
 
