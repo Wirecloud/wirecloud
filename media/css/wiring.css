@@ -78,12 +78,13 @@
 }
 
 #wiring .igadget {
-  background: transparent url(/ezweb/images/fond.gif) repeat;
+  background: #F7F7F7;
   margin:3px 2px;
   position: relative;
   font-weight: bold;
   padding: 3px 3px 0px;
   color: black;
+  -moz-border-radius: 4px;
 }
 
 #wiring .igadget .igadgetContent {
@@ -183,6 +184,7 @@
   position: relative;
   padding: 2px;
   background: #97A0A8;
+  -moz-border-radius: 11px;
 }
 
 #wiring .tab .tabContent {
@@ -202,7 +204,6 @@
   padding: 0px 0px 0px 14px;
   text-align: left;
   position: relative;
-  
 }
 
 #wiring #newChannelForm .addSubmit {
@@ -222,11 +223,12 @@
 }
 
 #wiring #channels_list .channel {
-  margin: 2ex 1ex; 
+  margin: 2ex 1ex;
   border: 1px solid #2D6F9C;
   background: #97A0A8;
   padding: 0px;
   cursor: pointer; cursor: hand;
+  -moz-border-radius: 11px;
 }
 
 #wiring img {
@@ -237,8 +239,10 @@
 #wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
   border-top: 1px solid #525248;
   display: none;
-  background: transparent url(/ezweb/images/fond.gif) repeat;
+  background: #F7F7F7;
   padding: 0.5ex 1ex;
+  -moz-border-radius-bottomleft: 9px;
+  -moz-border-radius-bottomright: 9px;
 }
 
 #wiring #channels_list .channel.selected {
