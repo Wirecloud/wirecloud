@@ -65,9 +65,6 @@ class GadgetResource(models.Model):
      class Meta:
          unique_together = ("short_name", "vendor", "version")
 
-     class Admin:
-         pass
-
      def __unicode__(self):
          return self.short_name
 
@@ -80,9 +77,6 @@ class UserRelatedToGadgetResource(models.Model):
     class Meta:
         unique_together = ("gadget", "user")
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return str(self.added_by) + " " + str(self.preferred_by)
 
@@ -92,9 +86,6 @@ class GadgetWiring(models.Model):
      friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
      wiring  = models.CharField(_('Wiring'), max_length=5)
      idResource = models.ForeignKey(GadgetResource)
-
-     class Admin:
-         pass
 
      def __unicode__(self):
          return self.friendcode
@@ -110,9 +101,6 @@ class UserTag(models.Model):
 
     class Meta:
         unique_together = ("tag", "idUser","idResource")
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return self.tag
@@ -137,9 +125,6 @@ class UserVote(models.Model):
     class Meta:
         # One vote per user per object
         unique_together = (('idUser', 'idResource'),)
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return u'%s: %s on %s' % (self.idUser, self.vote, self.idResource)

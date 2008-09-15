@@ -185,8 +185,9 @@ class WorkSpaceCollection(Resource):
                 
                 workspaces = WorkSpace.objects.filter(users__id=user.id)
         except Exception, e:
+            log(e, request)
             return HttpResponseBadRequest(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
-            
+        
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
         data_list['workspaces'] = [get_workspace_data(d) for d in  data]
 
@@ -196,7 +197,7 @@ class WorkSpaceCollection(Resource):
     def create(self, request):
         user = get_user_authentication(request)
 
-        if not request.has_key('workspace'):
+        if not request.POST.has_key('workspace'):
             return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         #TODO we can make this with deserializers (simplejson)
@@ -301,11 +302,11 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        if not request.has_key('tab'):
+        if not request.POST.has_key('tab'):
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         #TODO we can make this with deserializers (simplejson)
-        received_json = request.POST['tab']    
+        received_json = request.POST['tab']
 
         try:
             t = simplejson.loads(received_json)

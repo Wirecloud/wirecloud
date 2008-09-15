@@ -46,9 +46,6 @@ class WorkSpace(models.Model):
     active = models.BooleanField(_('Active'))
     
     users = models.ManyToManyField(User, verbose_name=_('Users'))
-    
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name  
@@ -62,9 +59,6 @@ class PublishedWorkSpace(models.Model):
     credentials = models.CharField(_('Credentials'), max_length=30)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
-    
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.workspace.name  
@@ -78,9 +72,6 @@ class AbstractVariable(models.Model):
     type = models.CharField(_('Type'), max_length=10, choices=VAR_TYPES)
     name = models.CharField(_('Name'), max_length=30)
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
@@ -92,9 +83,6 @@ class VariableValue(models.Model):
     
     class Meta:
         unique_together = ('user', 'abstract_variable')
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return self.abstract_variable.name + self.value
@@ -117,9 +105,6 @@ class WorkSpaceVariable(models.Model):
         ('TAB', _('Tab')),
     )
     aspect = models.CharField(_('Aspect'), max_length=10, choices=ASPECTS)
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.aspect

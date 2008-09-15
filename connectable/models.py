@@ -47,9 +47,6 @@ class InOut(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'))
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
-        
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
@@ -60,9 +57,6 @@ class In(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     variable = models.ForeignKey(Variable, verbose_name=_('Variable'))  
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
-    
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
@@ -73,9 +67,6 @@ class Out(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
-    
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name

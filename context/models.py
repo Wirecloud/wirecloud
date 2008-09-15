@@ -50,18 +50,12 @@ class Concept(models.Model):
     source = models.CharField(_('Source'), max_length=4, choices=SOURCE)
     adaptor = models.CharField(_('Adaptor'), max_length=256, null=True)
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return unicode(self.concept) + ' ' + unicode(self.adaptor) 
 
 class ConceptName(models.Model):
     name = models.CharField(_('Name'), max_length=256)
     concept = models.ForeignKey(Concept, verbose_name=_('Concept'))    
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return self.name

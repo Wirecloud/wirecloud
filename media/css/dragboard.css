@@ -3,8 +3,6 @@ div.dragboard {
 }
 
 div.gadget_window {
-  -moz-border-radius-topleft:  6px;
-  -moz-border-radius-topright: 6px;
   position: absolute;
   border: 1px solid #4c5054;
   background: white;
@@ -19,11 +17,9 @@ div.gadget_window_locked {
 div.gadget_menu {
   cursor: move;
   padding: 1px 3px 1px 7px;
-  -moz-border-radius-topleft:  4px;
-  -moz-border-radius-topright: 4px;
   height: 16px;
   font-weight: bold;
-  background: #97A0A8 url(/ezweb/images/degradado.png) no-repeat scroll left top;
+  background: #97a0a8;
   font-size: 12px;
   overflow: hidden;
 }
@@ -238,6 +234,4 @@ form.config_interface label.invalid input {
   border: 2px dashed #97A0A8;
   background: #F2F9FF;
   z-index: 1;
-  -moz-border-radius-topleft:  6px;
-  -moz-border-radius-topright: 6px;
 }

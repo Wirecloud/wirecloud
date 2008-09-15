@@ -121,7 +121,7 @@ def get_gadget_data(data):
         data_vars.append(data_var)
     
     data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=data_fields['xhtml'])
-    print data_fields
+ 
     data_ret['name'] = data_fields['name']
     data_ret['vendor'] = data_fields['vendor']
     data_ret['description'] = data_fields['description']

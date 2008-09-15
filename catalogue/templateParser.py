@@ -151,7 +151,7 @@ class TemplateHandler(handler.ContentHandler):
             gadget.wiki_page_uri=self._wikiURI
             gadget.template_uri=self._uri
             gadget.creation_date=datetime.today()
-            gadget.popularity = 0.0
+            gadget.popularity = '0.0'
 
             gadget.save()
             

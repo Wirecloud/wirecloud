@@ -69,7 +69,7 @@ class GadgetsCollection(Resource):
 
         user = user_authentication(request, user_name)
 
-        template_uri = request.__getitem__('template_uri')
+        template_uri = request.POST.__getitem__('template_uri')
         templateParser = None
 
         try:
@@ -99,12 +99,12 @@ class GadgetsCollection(Resource):
         user = user_authentication(request, user_name)
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
         try:
-            orderby = request.__getitem__('orderby')
+            orderby = request.GET.__getitem__('orderby')
         except:
             orderby = '-creation_date'
 
@@ -205,19 +205,19 @@ class GadgetsCollectionBySimpleSearch(Resource):
         user = user_authentication(request, user_name)
 
         try:
-            orderby = request.__getitem__('orderby')
+            orderby = request.GET.__getitem__('orderby')
         except:
             orderby = '-creation_date'
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
         if criteria == 'connectEventSlot':
             search_criteria = request.GET.getlist('search_criteria')
         else:
-            search_criteria = request.__getitem__('search_criteria')
+            search_criteria = request.GET.__getitem__('search_criteria')
 
         gadgetlist = []
 
@@ -282,17 +282,17 @@ class GadgetsCollectionByGlobalSearch(Resource):
         user = user_authentication(request, user_name)
 
         try:
-            orderby = request.__getitem__('orderby')
+            orderby = request.GET.__getitem__('orderby')
         except:
             orderby = '-creation_date'
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
         search_criteria = request.GET.getlist('search_criteria')
-        search_boolean = request.__getitem__('search_boolean')
+        search_boolean = request.GET.__getitem__('search_boolean')
 
         andlist = []
         orlist = []
@@ -352,14 +352,14 @@ class GadgetTagsCollection(Resource):
     def create(self,request, user_name, vendor, name, version):
 
         try:
-            format = request.__getitem__('format')
+            format = request.POST.__getitem__('format')
         except:
             format = 'default'
         
         user = user_authentication(request, user_name)
         
         # Get the xml containing the tags from the request
-        tags_xml = request.__getitem__('tags_xml')
+        tags_xml = request.POST.__getitem__('tags_xml')
 
         tags_xml = tags_xml.encode("utf-8")
         # Parse the xml containing the tags
@@ -396,7 +396,7 @@ class GadgetTagsCollection(Resource):
     def read(self,request,user_name,vendor,name,version):
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
@@ -419,7 +419,7 @@ class GadgetTagsCollection(Resource):
             return HttpResponseForbidden(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
@@ -467,14 +467,14 @@ class GadgetVotesCollection(Resource):
     def create(self,request, user_name, vendor, name, version):
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 
         user = user_authentication(request, user_name)
 
         # Get the vote from the request
-        vote = request.__getitem__('vote')
+        vote = request.POST.__getitem__('vote')
 
         # Get the gadget's id for those vendor, name and version
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
@@ -498,7 +498,7 @@ class GadgetVotesCollection(Resource):
     def read(self,request,user_name,vendor,name,version):
 
         try:
-            format = request.__getitem__('format')
+            format = request.GET.__getitem__('format')
         except:
             format = 'default'
 

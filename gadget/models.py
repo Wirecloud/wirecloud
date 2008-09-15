@@ -57,9 +57,6 @@ class XHTML(models.Model):
     code = models.TextField(_('Code'))
     url = models.URLField(_('URL'), max_length=500)
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return self.uri
 
@@ -91,9 +88,6 @@ class Gadget(models.Model):
     class Meta:
         unique_together = ('vendor', 'name', 'version')
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return self.uri
 
@@ -122,9 +116,6 @@ class VariableDef(models.Model):
     default_value = models.TextField(_('Default value'), blank=True, null=True)
     gadget = models.ForeignKey(Gadget)
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return self.gadget.uri + " " + self.aspect
 
@@ -133,10 +124,7 @@ class UserPrefOption(models.Model):
     value = models.CharField(_('Value'), max_length=30)
     name = models.CharField(_('Name'), max_length=30)
     variableDef = models.ForeignKey(VariableDef)
-    
-    class Admin:
-        pass
-    
+        
     def __unicode__(self):
         return self.variableDef.gadget.uri + " " + self.name
 
@@ -146,18 +134,12 @@ class VariableDefAttr(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     variableDef = models.ForeignKey(VariableDef)
     
-    class Admin:
-        pass
-    
     def __unicode__(self):
         return self.variableDef + self.name
 
 class ContextOption(models.Model):
     concept = models.CharField(_('Concept'), max_length=256)
     varDef = models.ForeignKey(VariableDef, verbose_name=_('Variable'))
-        
-    class Admin:
-        pass
 
     def __unicode__(self):
         return self.concept

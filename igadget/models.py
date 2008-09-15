@@ -51,9 +51,6 @@ class Position(models.Model):
     width = models.IntegerField(_('Width'))
     minimized = models.BooleanField(_('Minimized'), default=False);
 
-    class Admin:
-        pass
-
     def __unicode__(self):
         return str(self.pk)
 
@@ -65,9 +62,6 @@ class IGadget(models.Model):
     gadget = models.ForeignKey(Gadget, verbose_name=_('Gadget'))
     tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
     position = models.ForeignKey(Position, verbose_name=_('Position'))
-        
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk)
@@ -77,9 +71,6 @@ class Variable(models.Model):
     vardef = models.ForeignKey(VariableDef, verbose_name=_('Variable definition'))
     igadget = models.ForeignKey(IGadget, verbose_name=_('IGadget'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-
-    class Admin:
-        pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name

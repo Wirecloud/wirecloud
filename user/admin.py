@@ -36,9 +36,7 @@
 #   http://morfeo-project.org/
 #
 
-from django.db import models
+from django.contrib import admin
+from user.models import UserProfile
 
-class UserProfile(models.Model):
-    
-    username = models.CharField(_('username'), max_length=30, unique=True, validator_list=[validators.isAlphaNumeric], help_text=_("Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores)."))
-    password = models.CharField(_('password'), max_length=128, help_text=_("Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+admin.site.register(UserProfile)

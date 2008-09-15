@@ -40,7 +40,8 @@ from os import path
 from django.conf.urls.defaults import patterns, include
 from django.conf import settings
 
-#from resource.views import addToPlatform
+from django.contrib import admin
+admin.autodiscover()
 
 #JavaScript translation
 js_info_dict = {
@@ -50,6 +51,9 @@ js_info_dict = {
 urlpatterns = patterns('',
     # Static content
      (r'^ezweb/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media')}),
+     
+    #Admin interface
+    (r'^admin/(.*)', admin.site.root),
 
     # EzWeb
     (r'^', include('ezweb.urls')),
@@ -81,7 +85,6 @@ urlpatterns = patterns('',
     #(r'^registration/login_form/$', 'registration.views.login_form'),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
     (r'^logout$', 'django.contrib.auth.views.logout'),
-    (r'^admin/', include('django.contrib.admin.urls')),
     
     # Django "set language" (internacionalitation)
     (r'^i18n/', include('django.conf.urls.i18n')),

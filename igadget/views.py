@@ -149,14 +149,14 @@ def UpdateIGadget(igadget, user, tab):
     igadget_pk = igadget.get('id')
     
     # Checks
-    ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)  
+    ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)
     
     if igadget.has_key('name'):
         name = igadget.get('name')
         ig.name = name
     
     ig.save()
-        
+    
     # get IGadget's position
     position = ig.position
         
@@ -221,10 +221,12 @@ class IGadgetCollection(Resource):
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
         
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        
         data_list = {}
         igadget = IGadget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
         data = serializers.serialize('python', igadget, ensure_ascii=False)
-        data_list['iGadgets'] = [get_igadget_data(d, user) for d in  data]
+        data_list['iGadgets'] = [get_igadget_data(d, user, workspace) for d in  data]
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
@@ -232,7 +234,7 @@ class IGadgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        if not request.has_key('igadget'):
+        if not request.POST.has_key('igadget'):
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
@@ -283,9 +285,11 @@ class IGadgetEntry(Resource):
     def read(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
         
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        
         igadget = get_list_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=igadget_id)
         data = serializers.serialize('python', igadget, ensure_ascii=False)
-        igadget_data = get_igadget_data(data[0], user)
+        igadget_data = get_igadget_data(data[0], user, workspace)
         return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success

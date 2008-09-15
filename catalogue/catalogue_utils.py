@@ -124,7 +124,7 @@ def get_or_list(criterialist, user):
     gadgetlist = []
     taglist = []
     criterialist = criterialist.split()
-    print(criterialist)
+
     for e in criterialist:
         # Get a list of elements that match the given value
         gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
