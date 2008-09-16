@@ -238,8 +238,8 @@ class PackageCloner:
             self.m2ms.update_m2ms(cloned_tuple, tuple.id)
             
             #Continue iterating over data-model structure
-            related_objects = meta._all_related_objects
-            
+            related_objects = meta._related_objects_cache.keys()
+                                   
             for related_table in related_objects:
                 related_model = related_table.model
                 
@@ -252,4 +252,29 @@ class PackageCloner:
             
             return cloned_tuple
 
-
+    def merge_workspaces(self, from_ws, to_ws):        
+        meta = from_ws._meta
+        table_name = meta.object_name
+        
+        #Registering mapping between tuple and cloning tuple!
+        self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
+        
+        #Continue iterating over data-model structure
+        related_objects = meta._related_objects_cache.keys()
+        
+        for related_table in related_objects:
+            related_model = related_table.model
+            
+            related_meta = related_model._meta
+            related_table_name = related_meta.object_name
+            
+            related_tuples = get_related_tuples(related_table_name, related_table.field.name, from_ws.id)
+            for related_tuple in related_tuples:
+                self.clone_tuple(related_tuple)
+        
+        # Linking merged workspace
+        packageLinker = PackageLinker()
+        
+        packageLinker.link_workspace(workspace, user)
+        
+        return to_ws
