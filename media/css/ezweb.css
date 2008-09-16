@@ -1,4 +1,4 @@
-body{
+body {
 	 margin:0;
 	 padding:0;
 	 color:#000;
@@ -218,7 +218,7 @@ a:hover{
   display: block;
   border: 2px solid #4c5054;
   color: #FFF;
-  background: #97a0a8;
+  background: #97A0A8 url(/ezweb/images/degradado.png) no-repeat scroll left top;
   font-weight: bold;
   padding: 2px 9px;
   margin: 0px 6px;
@@ -226,6 +226,8 @@ a:hover{
   z-index: 3;
   height: 18px;
   padding: 2px 5px 1px;
+  -moz-border-radius-topleft:10px;
+  -moz-border-radius-topright:4px;
 }
 
 .disabled {
@@ -279,7 +281,8 @@ a:hover{
   background: #FFFFFF;
   position:fixed;
   text-align: left;
-   z-index: 4;
+  z-index: 4;
+  -moz-border-radius: 6px;
 }
 
 .drop_down_menu {
@@ -481,6 +484,7 @@ button {
   border: 2px solid #4c5054;
   margin: 0 4px 4px 4px;
   z-index: 1;
+  -moz-border-radius: 6px;
 }
 
 .container {
@@ -493,6 +497,7 @@ button {
   overflow-y: auto;
   z-index: 1;
   visibility: hidden;
+  -moz-border-radius: 5px;
 }
 
 .container_content {
