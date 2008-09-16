@@ -451,18 +451,26 @@ class WorkSpaceChannelCollection(Resource):
         
         return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
 
+class  WorkSpaceMergerEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, from_ws_id, to_ws_id):
+        from_ws = get_object_or_404(WorkSpace, id=from_ws_id)
+        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        
+        user = get_user_authentication(request)
+        
+        packageCloner = PackageCloner()
+        
+        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
+        
+        return HttpResponse("{'result': 'ok', 'merged_workspace_id': %s}" % (to_workspace.id), mimetype='application/json; charset=UTF-8')
+
 class  WorkSpaceLinkerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
         user = get_user_authentication(request)
-        
-        #Checking if user is already linked to workspace
-        if (len(workspace.users.filter(id=user.id))>0):
-                msg = _("already linked workspace")
-                log(msg, request)
-                return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
         
         packageLinker = PackageLinker()
         

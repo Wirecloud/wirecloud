@@ -1,7 +1,7 @@
 from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue
 from igadget.models import Variable
 
-from django.db import models
+from django.db import models, IntegrityError
 
 class PackageLinker:
     def link_workspace(self, workspace, user):
@@ -28,11 +28,19 @@ class PackageLinker:
         self.add_user_to_abstract_variable_list(abstract_var_list, user)
 
     def add_user_to_workspace(self, workspace, user):
-        workspace.users.add(user)
-        workspace.save()
+         #Checking if user is already linked to workspace
+        if (len(workspace.users.filter(id=user.id))==0):
+            workspace.users.add(user)
+            workspace.save()
 
     def add_user_to_abstract_variable_list(self, abstract_var_list, user):
         for (abstract_var, variable) in abstract_var_list:
+            if (len(VariableValue.objects.filter(user=user, abstract_variable=abstract_var))>0):
+                #Can happen due to linking algorithm.
+                #With a proper inheritance scheme for Variables database models, this can be avoided!
+                # TO BE IMPROVED!
+                continue
+            
             variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
             
             # variable is the child element of the Variable inheritance

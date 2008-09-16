@@ -228,8 +228,8 @@ a:hover{
   padding: 2px 5px 1px;
   -moz-border-radius-topleft:10px;
   -moz-border-radius-topright:4px;
-  -webkit-border-top-left-radius: 10px
-  -webkit-border-top-right-radius: 4px
+  -webkit-border-top-left-radius: 10px;
+  -webkit-border-top-right-radius: 4px;
 }
 
 .disabled {
@@ -496,7 +496,7 @@ button {
   width:99.1%;
   height:100%;
   background: #e6f3ff;
-  background-color:#e0e0e0;
+  background-color:#FFFFFF;
 /*  overflow-x: auto;*/
   overflow-y: auto;
   z-index: 1;

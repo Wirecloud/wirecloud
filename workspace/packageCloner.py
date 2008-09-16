@@ -5,6 +5,8 @@ from gadget.models import VariableDef, Gadget
 
 from django.db import models
 
+from workspace.packageLinker import PackageLinker
+
 
 #########################################
 # Auxiliar functions
@@ -252,7 +254,7 @@ class PackageCloner:
             
             return cloned_tuple
 
-    def merge_workspaces(self, from_ws, to_ws):        
+    def merge_workspaces(self, from_ws, to_ws, user):        
         meta = from_ws._meta
         table_name = meta.object_name
         
@@ -275,6 +277,6 @@ class PackageCloner:
         # Linking merged workspace
         packageLinker = PackageLinker()
         
-        packageLinker.link_workspace(workspace, user)
+        packageLinker.link_workspace(to_ws, user)
         
         return to_ws

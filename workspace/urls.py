@@ -39,9 +39,7 @@
 from django.conf.urls.defaults import patterns
 
 from connectable.views import ConnectableEntry
-from workspace.views import WorkSpaceVariableCollection, WorkSpaceChannelCollection, \
-                            TabEntry, TabCollection, WorkSpaceEntry, WorkSpaceCollection, \
-                            WorkSpaceClonerEntry, WorkSpaceLinkerEntry, WorkSpacePublisherEntry
+from workspace.views import *
 
 urlpatterns = patterns('workspace.views',
     # WorkSpace
@@ -77,4 +75,8 @@ urlpatterns = patterns('workspace.views',
     # Publish workspace photo to PublishedWorkspaces  
     (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$', 
         WorkSpacePublisherEntry(permitted_methods=('GET', ))),
+    
+    # Merge workspaces   
+    (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$', 
+        WorkSpaceMergerEntry(permitted_methods=('GET', ))),
 )
