@@ -443,7 +443,7 @@ def update_popularity(gadget):
     #Calculate the gadget popularity
     popularity = get_popularity(votes_sum,votes_number)
     #Update the gadget in the database
-    gadget.popularity = popularity
+    gadget.popularity = unicode(popularity)
     gadget.save()
 
 
