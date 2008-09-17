@@ -66,6 +66,8 @@ from igadget.views import deleteIGadget
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 
+from os import path
+
 def deleteTab (tab, user):
     
     #Deleting igadgets
@@ -493,7 +495,23 @@ class  WorkSpaceClonerEntry(Resource):
 
 class  WorkSpacePublisherEntry(Resource):
     @transaction.commit_on_success
-    def read(self, request, workspace_id):
+    def create(self, request, workspace_id):
+        if not request.POST.has_key('data'):
+            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
+            
+        received_json = request.POST['data']
+        try:
+            mashup = simplejson.loads(received_json) 
+            if not mashup.has_key('name'):
+            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
+            mashup_name = mashup.get('name')
+
+        except Exception, e:
+            transaction.rollback()
+            msg = _("mashup cannot be published: ") + unicode(e)
+            log(msg, request)
+            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+        
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
         packageCloner = PackageCloner()
@@ -505,5 +523,9 @@ class  WorkSpacePublisherEntry(Resource):
         
         published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace)
         published_workspace.save()
+        #ask the template Generator for the template of the new mashup
+        baseURL="http://localhost:8000"
+        url= path.join(baseURL,"templateGenerator", str(published_workspace.id))
         
-        return HttpResponse("{'result': 'ok', 'published_workspace_id': %s}" % (published_workspace.id), mimetype='application/json; charset=UTF-8')
+        return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')
+
