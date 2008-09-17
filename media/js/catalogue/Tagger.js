@@ -94,8 +94,11 @@ function Tagger(){
 				var responseJSON = transport.responseText;
 				var jsonResourceList = eval ('(' + responseJSON + ')');
 				resource.setTags(jsonResourceList.tagList);
-				if (!UIUtils.repaintCatalogue) resource.updateTags();
-				if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
+				
+				if (!UIUtils.repaintCatalogue) 
+					resource.updateTags();
+				if (UIUtils.tagmode) 
+					CatalogueFactory.getInstance().updateGlobalTags();
 			}
 			
 			var elements = tags.values();
@@ -134,7 +137,8 @@ function Tagger(){
 			var jsonResourceList = eval ('(' + responseJSON + ')');
 			resource.setTags(jsonResourceList.tagList);
 			resource.updateTags();
-			if (UIUtils.tagmode) CatalogueFactory.getInstance().updateGlobalTags();
+			if (UIUtils.tagmode) 
+				CatalogueFactory.getInstance().updateGlobalTags();
 		}
 		
 		PersistenceEngineFactory.getInstance().send_delete(url + resourceURI, this, loadTags, onError);

@@ -68,6 +68,7 @@ UIUtils.globalTags='all';
 UIUtils.addResource = function(url, paramName, paramValue) {
 	UIUtils.repaintCatalogue=true;
 	UIUtils.search = false;
+	
 	var newResourceOnSuccess = function (response) {
 		UIUtils.orderby = '-creation_date';
 		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());

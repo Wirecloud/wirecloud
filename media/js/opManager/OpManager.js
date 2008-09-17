@@ -144,7 +144,11 @@ var OpManagerFactory = function () {
 				this.catalogue.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 				this.firstAccessToTheCatalogue = false;
 				this.catalogueIsCurrentTab = false;
+			} else {
+				UIUtils.repaintCatalogue=false;
 			}
+			
+			
 
 			UIUtils.setResourcesWidth();
 			
