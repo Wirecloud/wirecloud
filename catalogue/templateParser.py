@@ -72,6 +72,8 @@ class TemplateHandler(handler.ContentHandler):
         self._imageURI = ""
         self._iPhoneImageURI = ""
         self._wikiURI = ""
+        self._mashupId = ""
+        self._includedResources = []
         self._gadget_added = False
         self._user = user
         self._uri = uri
@@ -103,6 +105,17 @@ class TemplateHandler(handler.ContentHandler):
             wiring.save()
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Event or Slot element"))
+
+    def processMashupResource(self, attrs):
+
+        if (attrs.has_key('vendor')==True and attrs.has_key('name')==True and attrs.has_key('version')==True):
+            
+             resource_id = get_object_or_404(GadgetResource, 
+                short_name=attrs.get('name'),vendor=attrs.get('vendor'),version=attrs.get('version')).id
+
+             self._includedResources.append(resource_id)
+        else:
+            raise TemplateParseException(_("ERROR: missing attribute at Resource"))
 
 
     def endElement(self, name):
@@ -137,6 +150,7 @@ class TemplateHandler(handler.ContentHandler):
             self._wikiURI = self._accumulator[0]
             return
 
+
         if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and self._mail != '' and self._imageURI != '' and self._wikiURI != '' and not self._gadget_added):
 
             gadget=GadgetResource()
@@ -150,6 +164,7 @@ class TemplateHandler(handler.ContentHandler):
             gadget.iphone_image_uri=self._iPhoneImageURI
             gadget.wiki_page_uri=self._wikiURI
             gadget.template_uri=self._uri
+            gadget.mashup_id = self._mashupId
             gadget.creation_date=datetime.today()
             gadget.popularity = '0.0'
 
@@ -162,6 +177,7 @@ class TemplateHandler(handler.ContentHandler):
             
             userRelated.save()
             
+            #TODO: process the resources
             self._gadget_added = True
         elif (self._gadget_added):
             return
@@ -182,4 +198,13 @@ class TemplateHandler(handler.ContentHandler):
 
         if (name == 'Event'):
             self.processWire(attrs,'Event')
+            return
+        
+        if (name == 'IncludedResources'):
+            if (attrs.has_key('mashupId')==True):
+                self._mashupId = attrs.get('mashupId')
+            return
+        
+        if (name == 'Resource'):
+            self.processMashupResource(attrs)
             return

@@ -72,6 +72,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	var newResourceOnSuccess = function (response) {
 		UIUtils.orderby = '-creation_date';
 		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
+		LayoutManagerFactory.getInstance().hideCover();
 	}
 	
 	var newResourceOnError = function (transport, e) {

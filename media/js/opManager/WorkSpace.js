@@ -136,6 +136,25 @@ function WorkSpace (workSpaceState) {
 			LogManagerFactory.getInstance().log(msg);
 			LayoutManagerFactory.getInstance().hideCover();
 	}
+	var publishSuccess = function(transport) {
+		// JSON-coded new published workspace id and mashup url mapping
+		var response = transport.responseText;
+		var mashupInfo = eval ('(' + response + ')');		
+		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', mashupInfo.url);
+	}
+	var publishError = function(transport, e) {
+			var msg;
+			if (transport.responseXML) {
+				msg = transport.responseXML.documentElement.textContent;
+			} else {
+				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+			}
+
+			msg = interpolate(gettext("Error publishing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
+			LogManagerFactory.getInstance().log(msg);
+			LayoutManagerFactory.getInstance().hideCover();
+		
+	}
 	
 	//**** TAB CALLBACK*****
 	var createTabSuccess = function(transport) {
@@ -480,6 +499,15 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.getActiveDragboard = function() {
 		return this.visibleTab.getDragboard();
 	}
+	
+	WorkSpace.prototype.publish = function() {
+		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
+		var o = new Object;
+		o.name = this.workSpaceState.name;
+		publicationData = Object.toJSON(o);
+		params = 'data=' + publicationData;
+		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
+	}
 
     // *****************
     //  CONSTRUCTOR
@@ -521,6 +549,8 @@ Cover(); this._lockFunc(false);}.bind(this), optionPosition++);
 		}
 		this.menu.addOption("/ezweb/images/remove.png",gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		this.menu.addOption("/ezweb/images/list-add.png",gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
+		//TODO:Intermediate window to ask for data (name, description...)
+		//this.menu.addOption("/ezweb/images/list-add.png",gettext("Publish workspace"),function(){this.publish();}.bind(this), optionPosition++);
 	}
 		
 	

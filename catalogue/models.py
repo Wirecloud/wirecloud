@@ -59,6 +59,7 @@ class GadgetResource(models.Model):
      iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True)
      wiki_page_uri = models.URLField(_('wikiURI'))
      template_uri= models.URLField(_('templateURI'))
+     mashup_id = models.URLField(_('mashupId'), null=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
 
