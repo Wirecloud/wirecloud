@@ -65,6 +65,7 @@ from igadget.views import deleteIGadget
 
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
+from mashupTemplateGenerator import TemplateGenerator
 
 from os import path
 
@@ -524,8 +525,14 @@ class  WorkSpacePublisherEntry(Resource):
         published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace)
         published_workspace.save()
         #ask the template Generator for the template of the new mashup
-        baseURL="http://localhost:8000"
-        url= path.join(baseURL,"templateGenerator", str(published_workspace.id))
+        baseURL = "http://localhost:8000"
+        url= path.join(baseURL,"workspace","templateGenerator", str(published_workspace.id))
         
         return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')
 
+class  GeneratorURL(Resource):
+    def read(self, request, workspace_id):
+        templateGen = TemplateGenerator()
+        template=templateGen.getTemplate(workspace_id)
+        return HttpResponse(template,mimetype='application/xml; charset=UTF-8' )
+        

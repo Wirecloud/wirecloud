@@ -83,4 +83,8 @@ urlpatterns = patterns('workspace.views',
     # Merge workspaces   
     (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$', 
         WorkSpaceMergerEntry(permitted_methods=('GET', ))),
+    
+    # Create template for mashup   
+    (r'^/templateGenerator/((?P<workspace_id>\d+)[/]?)?$', 
+        GeneratorURL(permitted_methods=('GET', ))),
 )

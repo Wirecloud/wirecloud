@@ -36,11 +36,9 @@
 #   http://morfeo-project.org/
 #
 
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from commons.resource import Resource
 
-class TemplateGenerator(Resource):
-    def read(self, request, workspace_id):
+class TemplateGenerator:
+    def getTemplate(self, workspace_id):    
         xml = '<?xml version="1.0" encoding="utf-8"?>'
         xml += '<Template schemaLocation="http://morfeo-project.org/2007/Template">'
         xml += '<!-- Meta tags define gadgets properties -->'
@@ -65,5 +63,5 @@ class TemplateGenerator(Resource):
         xml += '</Platform.Link>'
         xml += '<Platform.Rendering width="0" height="0"/>'
         xml += '</Template>'
-
-        return HttpResponse(xml, mimetype='application/xml; charset=UTF-8')
+    
+        return xml
