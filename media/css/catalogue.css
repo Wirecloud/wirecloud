@@ -555,11 +555,16 @@
 }
 
 #catalogue .center .resources .resource .content button{
-	background: url("/ezweb/images/button.gif") top left;
 	color:white;
 	border:none;
 	font-size:100%;
 	cursor:pointer;
+}
+#catalogue .center .resources .resource .content button.add_gadget{
+	background: url("/ezweb/images/button.gif") top left;
+}
+#catalogue .center .resources .resource .content button.add_mashup{
+	background: url("/ezweb/images/button_mashup.gif") top left;
 }
 
 .description_balloon

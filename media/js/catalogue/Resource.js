@@ -162,12 +162,24 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         })); 
 		tags.appendChild(important_tags);
 		_tagsToMoreImportantTags(important_tags, 3);
-		var button = UIUtils.createHTMLElement("button", $H({
-            innerHTML: gettext('Add Instance')
-        })); 
-		button.observe("click", function(event){
-			CatalogueFactory.getInstance().addResourceToShowCase(id_);
-		});
+		//if (state.getMashupId()==""){ //Gadget
+			var button = UIUtils.createHTMLElement("button", $H({
+	            innerHTML: gettext('Add Gadget'),
+				class_name: 'add_gadget'
+	        })); 
+			button.observe("click", function(event){
+				CatalogueFactory.getInstance().addResourceToShowCase(id_);
+			});
+		/*}
+		else{ //Mashup
+			var button = UIUtils.createHTMLElement("button", $H({
+	            innerHTML: gettext('Add Mashup'),
+				class_name: 'add_mashup'
+	        })); 
+			button.observe("click", function(event){
+				CatalogueFactory.getInstance().addMashupResource(id_);
+			});
+		}*/
 		content.appendChild(button);
 		// BOTTOM
 		var bottom = UIUtils.createHTMLElement("div", $H({
@@ -551,19 +563,21 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Access to the Template')
 		}));
 		access_template_link.appendChild(access_template_submit_link);
-		var update_code_link = UIUtils.createHTMLElement("div", $H({
-			id: 'update_code_link',
-			class_name: 'link'
-		}));
-		fieldset.appendChild(update_code_link);
-		var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Update gadget code')
-		}));
-		update_code_submit_link.observe("click", function(event){
-			UIUtils.updateGadgetXHTML();
-		});
-		update_code_link.appendChild(update_code_submit_link);
+		//if (state.getMashupId()==""){ //it is a Gadget (not visible in Mashups)
+			var update_code_link = UIUtils.createHTMLElement("div", $H({
+				id: 'update_code_link',
+				class_name: 'link'
+			}));
+			fieldset.appendChild(update_code_link);
+			var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
+				class_name: 'submit_link',
+				innerHTML: gettext('Update gadget code')
+			}));
+			update_code_submit_link.observe("click", function(event){
+				UIUtils.updateGadgetXHTML();
+			});
+			update_code_link.appendChild(update_code_submit_link);
+		//}
 		var delete_gadget_link = UIUtils.createHTMLElement("div", $H({
 			id: 'delete_gadget_link',
 			class_name: 'link'
