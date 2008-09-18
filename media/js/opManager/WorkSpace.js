@@ -550,7 +550,7 @@ Cover(); this._lockFunc(false);}.bind(this), optionPosition++);
 		this.menu.addOption("/ezweb/images/remove.png",gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		this.menu.addOption("/ezweb/images/list-add.png",gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
-		//this.menu.addOption("/ezweb/images/list-add.png",gettext("Publish workspace"),function(){this.publish();}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/list-add.png",gettext("Publish workspace"),function(){this.publish();}.bind(this), optionPosition++);
 	}
 		
 	

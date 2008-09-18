@@ -63,8 +63,7 @@ var ShowcaseFactory = function () {
 		// CALLBACK METHODS 
 		// ****************
 
-		// Load gadgets from persistence system
-		loadGadgets = function (receivedData_) {
+		this.parseGadgets = function (receivedData_){
 			var response = receivedData_.responseText;
 			var jsonGadgetList = eval ('(' + response + ')');
 		
@@ -77,18 +76,55 @@ var ShowcaseFactory = function () {
 				// Insert gadget object in showcase object model
 				this.gadgets[gadgetId] = gadget;
 			}
+		}
+
+		Showcase.prototype.reload = function (workspace_id) {
 			
-			// Showcase loaded
-			this.loaded = true;
-			this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+			var id = workspace_id;
+			
+			this.gadgets = []
+			
+			var onSuccess = function (receivedData_) {
+
+				this.parseGadgets(receivedData_);
+				
+				opManager = OpManagerFactory.getInstance();
+	
+				opManager.changeActiveWorkSpace(opManager.workSpaceInstances[id]);
+			}
+			
+			var onError = function (receivedData_) {
+				alert("eerror en showcase")
+			}
+
+			// Initial load from persitence system
+			this.persistenceEngine.send_get(URIs.GET_GADGETS, this, onSuccess, onError);			
+		}
+		
+		Showcase.prototype.init = function () {
+
+			// Load gadgets from persistence system
+			var onSuccess = function (receivedData_) {
+
+				this.parseGadgets(receivedData_);
+				
+				// Showcase loaded
+				this.loaded = true;
+				this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+			
+			}
+		
+			// Error callback (empty gadget list)
+			var onError = function (receivedData_) {
+				this.loaded = true;
+				this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+			}
+			
+			// Initial load from persitence system
+			this.persistenceEngine.send_get(URIs.GET_GADGETS, this, onSuccess, onError);
 			
 		}
 		
-		// Error callback (empty gadget list)
-		onErrorCallback = function (receivedData_) {
-			this.loaded = true;
-			this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-		}
 		
 		// *******************************
 		// PRIVATE METHODS AND VARIABLES
@@ -160,11 +196,7 @@ var ShowcaseFactory = function () {
 			var gadget = this.gadgets[gadgetId_];
 			this.opManager.addInstance (gadget);
 		}
-		
-		Showcase.prototype.init = function () {
-			// Initial load from persitence system
-			this.persistenceEngine.send_get(URIs.GET_GADGETS, this, loadGadgets, onErrorCallback);
-		}
+
 		
 	}
 	

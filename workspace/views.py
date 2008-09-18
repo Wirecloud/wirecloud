@@ -187,6 +187,26 @@ def setActiveWorkspace(user, workspace):
     workspace.active = True
     
     workspace.save()
+    
+def cloneWorkspace(workspace_id):
+
+        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        
+        workspace = published_workspace.workspace
+        
+        packageCloner = PackageCloner()
+        
+        return packageCloner.clone_tuple(workspace)
+    
+def linkWorkspace(user, workspace_id):   
+        
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+                
+        packageLinker = PackageLinker()
+        
+        packageLinker.link_workspace(workspace, user)
+        
+        
 
 class WorkSpaceCollection(Resource):
     @transaction.commit_on_success
@@ -484,28 +504,34 @@ class  WorkSpaceMergerEntry(Resource):
 class  WorkSpaceLinkerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
-        
         user = get_user_authentication(request)
         
-        packageLinker = PackageLinker()
-        
-        packageLinker.link_workspace(workspace, user)
+        linkWorkspace(user, workspace_id) 
         
         return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
 
 class  WorkSpaceClonerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
         
-        workspace = published_workspace.workspace
-        
-        packageCloner = PackageCloner()
-        
-        cloned_workspace = packageCloner.clone_tuple(workspace)
-        
+        cloned_workspace = cloneWorkspace(workspace_id)
         return HttpResponse("{'result': 'ok', 'new_workspace_id': %s}" % (cloned_workspace.id), mimetype='application/json; charset=UTF-8')
+        
+    
+class  WorkSpaceAdderEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, workspace_id):
+        user = get_user_authentication(request)
+        
+        cloned_workspace = cloneWorkspace(workspace_id)
+        linkWorkspace(user, cloned_workspace.id)
+        
+        data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
+        concept_data = {}
+        concept_data['user'] = user
+        workspace_data = get_global_workspace_data(data[0], cloned_workspace, concept_data, user)
+        
+        return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
 class  WorkSpacePublisherEntry(Resource):
     @transaction.commit_on_success
@@ -514,21 +540,21 @@ class  WorkSpacePublisherEntry(Resource):
         
     @transaction.commit_on_success
     def create(self, request, workspace_id):
-#        if not request.REQUEST.has_key('data'):
-#            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
-#            
-#        received_json = request.REQUEST['data']
-#        try:
-#            mashup = simplejson.loads(received_json) 
-#            if not mashup.has_key('name'):
-#            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
-#            mashup_name = mashup.get('name')
-#
-#        except Exception, e:
-#            transaction.rollback()
-#            msg = _("mashup cannot be published: ") + unicode(e)
-#            log(msg, request)
-#            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+        if not request.REQUEST.has_key('data'):
+            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
+            
+        received_json = request.REQUEST['data']
+        try:
+            mashup = simplejson.loads(received_json) 
+            if not mashup.has_key('name'):
+            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
+            mashup_name = mashup.get('name')
+
+        except Exception, e:
+            transaction.rollback()
+            msg = _("mashup cannot be published: ") + unicode(e)
+            log(msg, request)
+            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
         
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
@@ -551,9 +577,9 @@ class  WorkSpacePublisherEntry(Resource):
         name = 'Mashup_' + workspace.name
         
         from time import time 
-        version = time()
+        version = unicode(time())
         
-        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=user, 
+        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=user.username, 
                                                  mail=mail, vendor=vendor, 
                                                  name=name, version=version, description=description,
                                                  imageURI=imageURI, wikiURI=wikiURI)

@@ -72,7 +72,7 @@ class TemplateHandler(handler.ContentHandler):
         self._imageURI = ""
         self._iPhoneImageURI = ""
         self._wikiURI = ""
-        self._mashupId = ""
+        self._mashupId = None
         self._includedResources = []
         self._gadget_added = False
         self._user = user
@@ -149,9 +149,13 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'WikiURI'):
             self._wikiURI = self._accumulator[0]
             return
+        if (name == 'IncludedResources'):
+            return            
+        if (name == 'Resource'):
+            return            
 
 
-        if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and self._mail != '' and self._imageURI != '' and self._wikiURI != '' and not self._gadget_added):
+        if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and self._mail != '' and self._imageURI != '' and self._wikiURI != '' and name == 'Catalog.ResourceDescription' and not self._gadget_added):
 
             gadget=GadgetResource()
             gadget.short_name=self._name

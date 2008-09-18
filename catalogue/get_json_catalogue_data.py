@@ -153,6 +153,7 @@ def get_gadgetresource_data(data, user):
     data_ret['description'] = data_fields['description']
     data_ret['uriImage'] = data_fields['image_uri']
     data_ret['uriWiki'] = data_fields['wiki_page_uri']
+    data_ret['mashupId'] = data_fields['mashup_id']
     data_ret['uriTemplate'] = data_fields['template_uri']
 
     user_related_data = get_related_user_data (gadget_id=data['pk'], user_id=user.id)

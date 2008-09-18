@@ -89,6 +89,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 
 		msg = interpolate(gettext("The resource could not be added to the catalogue: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
+		LayoutManagerFactory.getInstance().hideCover();
 	}
 	
 	var persistenceEngine = PersistenceEngineFactory.getInstance();

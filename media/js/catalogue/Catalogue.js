@@ -144,6 +144,41 @@ var CatalogueFactory  = function () {
 			ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
 		}
 
+		this.addMashupResource = function(resourceId_) {
+			/***CALLBACK methods***/
+			var cloneOk = function(transport){
+				var response = transport.responseText;
+				var wsInfo = eval ('(' + response + ')');
+				//create the new workspace and go to it
+				opManager = OpManagerFactory.getInstance();
+				opManager.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
+		
+				ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
+				
+			}
+			var cloneError = function(transport, e){
+				var msg;
+				if (e) {
+					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+					                  true);
+				} else if (transport.responseXML) {
+					msg = transport.responseXML.documentElement.textContent;
+				} else {
+					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+				}
+				msg = interpolate(gettext("Error cloning workspace: %(errorMsg)s."),
+				                          {errorMsg: msg}, true);
+				LogManagerFactory.getInstance().log(msg);				
+				
+			}
+			
+			var currentResource = this.getResource(resourceId_);
+			var workSpaceId = currentResource.getMashupId();
+			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId});
+			PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
+		}
+
 		this.paginate = function(items) {
 			_paginate_show($("paginate_show"), items);
 			_paginate($("paginate"), items);

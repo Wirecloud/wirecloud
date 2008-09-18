@@ -16,6 +16,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getUriImage = function() { return state.getUriImage();}
 	this.getUriTemplate = function() { return state.getUriTemplate();}
 	this.getUriWiki = function() { return state.getUriWiki();}
+	this.getMashupId = function() { return state.getMashupId();}	
 	this.getAddedBy = function() { return state.getAddedBy();}
 	this.getTags = function() { return state.getTags();}
 	this.setTags = function(tags_) { state.setTags(tags_);}
@@ -571,7 +572,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Access to the Template')
 		}));
 		access_template_link.appendChild(access_template_submit_link);
-		if (state.getMashupId()==""){ //it is a Gadget (not visible in Mashups)
+		if (state.getMashupId()==null){ //it is a Gadget (not visible in Mashups)
 			var update_code_link = UIUtils.createHTMLElement("div", $H({
 				id: 'update_code_link',
 				class_name: 'link'
@@ -1073,6 +1074,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	var description = null;
 	var uriImage = null;
 	var uriWiki = null;
+	var mashupId = null;
 	var uriTemplate = null;
 	var addedBy = null;
 	var allVersions = [];
@@ -1095,6 +1097,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getUriImage = function() { return uriImage;}
 	this.getUriTemplate = function() { return uriTemplate;}
 	this.getUriWiki = function() { return uriWiki;}
+	this.getMashupId = function() { return mashupId;}	
 	this.getAddedBy = function() { return addedBy;}
 
 	this.setTags = function(tagsJSON_) {
@@ -1146,6 +1149,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	description = resourceJSON_.description;
 	uriImage = resourceJSON_.uriImage;
 	uriWiki = resourceJSON_.uriWiki;
+	mashupId = resourceJSON_.mashupId;
 	addedBy = resourceJSON_.added_by_user;
 	uriTemplate = resourceJSON_.uriTemplate;
 	this.setEvents(resourceJSON_.events);
