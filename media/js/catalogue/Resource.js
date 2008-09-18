@@ -162,7 +162,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         })); 
 		tags.appendChild(important_tags);
 		_tagsToMoreImportantTags(important_tags, 3);
-		//if (state.getMashupId()==""){ //Gadget
+		if (state.getMashupId()==null){ //Gadget
 			var button = UIUtils.createHTMLElement("button", $H({
 	            innerHTML: gettext('Add Gadget'),
 				class_name: 'add_gadget'
@@ -170,7 +170,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			button.observe("click", function(event){
 				CatalogueFactory.getInstance().addResourceToShowCase(id_);
 			});
-		/*}
+		}
 		else{ //Mashup
 			var button = UIUtils.createHTMLElement("button", $H({
 	            innerHTML: gettext('Add Mashup'),
@@ -179,7 +179,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			button.observe("click", function(event){
 				CatalogueFactory.getInstance().addMashupResource(id_);
 			});
-		}*/
+		}
 		content.appendChild(button);
 		// BOTTOM
 		var bottom = UIUtils.createHTMLElement("div", $H({
@@ -191,10 +191,18 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	
 	this.showInfo = function() {
 		$("info_resource_content").innerHTML = '';
-		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'title_fieldset',
-			innerHTML: gettext('Resource details')
-		})));
+		if (state.getMashupId()==null){ //Gadget
+			$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({ 
+				class_name: 'title_fieldset',
+				innerHTML: gettext('Gadget details')
+			})));
+		}
+		else{ //Mashup
+			$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({ 
+				class_name: 'title_fieldset',
+				innerHTML: gettext('Mashup details')
+			})));
+		}
 		var fieldset = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'fieldset'
 		}));
@@ -320,7 +328,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}));
 		fieldset.appendChild(connect);
 		connect.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('Gadget connectivity') + ':'
+			innerHTML: gettext('Resource connectivity') + ':'
 		})));
 		var connect_text = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'text'
@@ -563,7 +571,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Access to the Template')
 		}));
 		access_template_link.appendChild(access_template_submit_link);
-		//if (state.getMashupId()==""){ //it is a Gadget (not visible in Mashups)
+		if (state.getMashupId()==""){ //it is a Gadget (not visible in Mashups)
 			var update_code_link = UIUtils.createHTMLElement("div", $H({
 				id: 'update_code_link',
 				class_name: 'link'
@@ -571,28 +579,41 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			fieldset.appendChild(update_code_link);
 			var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
 				class_name: 'submit_link',
-				innerHTML: gettext('Update gadget code')
+				innerHTML: gettext('Update code')
 			}));
 			update_code_submit_link.observe("click", function(event){
 				UIUtils.updateGadgetXHTML();
 			});
 			update_code_link.appendChild(update_code_submit_link);
-		//}
+		}
 		var delete_gadget_link = UIUtils.createHTMLElement("div", $H({
 			id: 'delete_gadget_link',
 			class_name: 'link'
 		}));
 		fieldset.appendChild(delete_gadget_link);
 		_deleteGadget(delete_gadget_link);
-		var add_gadget_button = UIUtils.createHTMLElement("button", $H({
-			id: 'add_gadget_button',
-			class_name: 'add_gadget_button',
-			style: 'text-align:center;',
-			innerHTML: gettext('Add Instance')
-		}));
-		add_gadget_button.observe("click", function(event){
-			CatalogueFactory.getInstance().addResourceToShowCase(UIUtils.getSelectedResource());
-		});
+		if (state.getMashupId()==null){ //add gadget button
+			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
+				id: 'add_gadget_button',
+				class_name: 'add_gadget',
+				style: 'text-align:center;',
+				innerHTML: gettext('Add Gadget')
+			}));
+			add_gadget_button.observe("click", function(event){
+				CatalogueFactory.getInstance().addResourceToShowCase(UIUtils.getSelectedResource());
+			});
+		}
+		else{ //add mashup button
+			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
+				id: 'add_gadget_button',
+				class_name: 'add_mashup',
+				style: 'text-align:center;',
+				innerHTML: gettext('Add Mashup')
+			}));
+			add_gadget_button.observe("click", function(event){
+				CatalogueFactory.getInstance().addMashupResource(UIUtils.getSelectedResource());
+			});
+		}
 		$("info_resource_content").appendChild(add_gadget_button);
 		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({
 			id: 'content_bottom_margin'

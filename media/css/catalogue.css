@@ -690,7 +690,7 @@
 #catalogue .center .info_resource .content .title_fieldset
 {
 	margin-top:15px;
-	font-size:15px;
+	font-size:14pt;
 	font-weight:bold;
 }
 
@@ -968,13 +968,21 @@
 	margin-top:5px;
 }
 
-#catalogue .center .info_resource .content .add_gadget_button
+#catalogue .center .info_resource .content .add_gadget
 {
-	background: url("/ezweb/images/button.gif") top left;
 	color:white;
 	border:none;
 	font-size:100%;
 	cursor:pointer;
+	background: url("/ezweb/images/button.gif") top left;
+}
+#catalogue .center .info_resource .content .add_mashup
+{
+	color:white;
+	border:none;
+	font-size:100%;
+	cursor:pointer;
+	background: url("/ezweb/images/button_mashup.gif") top left;
 }
 
 #catalogue .center .info_resource .content #rateStatus
