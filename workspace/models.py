@@ -56,7 +56,20 @@ class PublishedWorkSpace(models.Model):
         ('SHARED', _('Shared')),
     )
     type = models.CharField(_('Type'), max_length=10, choices=WORKSPACE_TYPES)
+    
     credentials = models.CharField(_('Credentials'), max_length=30)
+    
+    vendor = models.CharField(_('Vendor'), max_length=250)
+    name = models.CharField(_('Name'), max_length=250)
+    version = models.CharField(_('Version'), max_length=150)
+    
+    wikiURI = models.URLField(_('wikiURI'))
+    imageURI = models.URLField(_('imageURI'))
+    
+    description = models.CharField(_('Description'), max_length=250)
+    
+    author = models.CharField(_('Author'), max_length=250)
+    mail = models.CharField(_('Mail'), max_length=30)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
 

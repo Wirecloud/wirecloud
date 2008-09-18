@@ -90,6 +90,13 @@ class Gadget(models.Model):
 
     def __unicode__(self):
         return self.uri
+    
+    def get_related_events(self):
+        return VariableDef.objects.filter(gadget=self, aspect='EVEN')
+
+    def get_related_slots(self):
+        return VariableDef.objects.filter(gadget=self, aspect='SLOT')
+
 
 class VariableDef(models.Model):
     name = models.CharField(_('Name'), max_length=30)

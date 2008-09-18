@@ -69,6 +69,19 @@ from mashupTemplateGenerator import TemplateGenerator
 
 from os import path
 
+def get_workspace_description(workspace):    
+    included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+    
+    return get_igadgets_description(included_igadgets)
+
+def get_igadgets_description(included_igadgets):
+    description = "EzWeb Mashup composed of: "
+        
+    for igadget in included_igadgets:    
+        description += igadget.gadget.name + ' , '
+    
+    return description
+
 def deleteTab (tab, user):
     
     #Deleting igadgets
@@ -496,24 +509,30 @@ class  WorkSpaceClonerEntry(Resource):
 
 class  WorkSpacePublisherEntry(Resource):
     @transaction.commit_on_success
+    def read(self, request, workspace_id):
+        return self.create(request, workspace_id)
+        
+    @transaction.commit_on_success
     def create(self, request, workspace_id):
-        if not request.POST.has_key('data'):
-            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
-            
-        received_json = request.POST['data']
-        try:
-            mashup = simplejson.loads(received_json) 
-            if not mashup.has_key('name'):
-            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
-            mashup_name = mashup.get('name')
-
-        except Exception, e:
-            transaction.rollback()
-            msg = _("mashup cannot be published: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+#        if not request.REQUEST.has_key('data'):
+#            return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
+#            
+#        received_json = request.REQUEST['data']
+#        try:
+#            mashup = simplejson.loads(received_json) 
+#            if not mashup.has_key('name'):
+#            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
+#            mashup_name = mashup.get('name')
+#
+#        except Exception, e:
+#            transaction.rollback()
+#            msg = _("mashup cannot be published: ") + unicode(e)
+#            log(msg, request)
+#            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
         
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        
+        user = get_user_authentication(request)
         
         packageCloner = PackageCloner()
         
@@ -522,8 +541,25 @@ class  WorkSpacePublisherEntry(Resource):
         cloned_workspace.active=False
         cloned_workspace.save()
         
-        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace)
+        #Genrating info of new workspace
+        description = get_workspace_description(workspace)
+        
+        imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
+        wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
+        mail = 'morfeo@morfeo-project.org'
+        vendor = 'MORFEO'
+        name = 'Mashup_' + workspace.name
+        
+        from time import time 
+        version = time()
+        
+        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=user, 
+                                                 mail=mail, vendor=vendor, 
+                                                 name=name, version=version, description=description,
+                                                 imageURI=imageURI, wikiURI=wikiURI)
+        
         published_workspace.save()
+        
         #ask the template Generator for the template of the new mashup
         baseURL = "http://localhost:8000"
         url= path.join(baseURL,"workspace","templateGenerator", str(published_workspace.id))
