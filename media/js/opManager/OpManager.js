@@ -68,7 +68,7 @@ var OpManagerFactory = function () {
 			}
 			
 			// set handler for workspace options button
-			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace, Event.pointerX(e), Event.pointerY(e));}.bind(this));
+			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this));
 			
 			// Total information of the active workspace must be downloaded!
 			this.activeWorkSpace.downloadWorkSpaceInfo();
@@ -222,6 +222,7 @@ var OpManagerFactory = function () {
 			
 			this.activeWorkSpace.show();
 			LayoutManagerFactory.getInstance().refreshChangeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
+			LayoutManagerFactory.getInstance().refreshMergeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
 		}
 		
 		OpManager.prototype.continueLoadingGlobalModules = function (module) {

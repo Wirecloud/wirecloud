@@ -292,21 +292,39 @@ var LayoutManagerFactory = function () {
 			}
 		}
 
+		//merge Menu is dinamic so the different options must be added.
+		LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces){
+			
+			workSpace.mergeMenu.clearOptions();
+			
+			for (var i=0; i<workspaces.length; i++){
+				var context = {firstWK: workSpace, scndWK: workspaces[i]}
+				workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function (){this.firstWK.mergeWith(this.scndWK.workSpaceState.id)}.bind(context), i);
+
+			}
+		}		
+
 		//Shows the asked drop down menu 
-		LayoutManager.prototype.showDropDownMenu = function(menuType, owner, x, y){
+		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y){
 			switch (menuType){
 			case 'workSpaceOps':
-				this.currentMenu = owner.menu;
+				this.currentMenu = menu;
 				this.currentMenu.show('right', x, y);
+				this.showClickableCover();
 				break;
 			case 'tabOps':
-				this.currentMenu = owner.menu;
+				this.currentMenu = menu;
 				this.currentMenu.show('left', x, y);
+				this.showClickableCover();
+				break;
+			case 'workSpaceOpsSubMenu':
+				this.currentMenu = menu;
+				this.currentMenu.show('right', x, y);
 				break;
 			default:
 				break;
 			}
-			this.showClickableCover();
+
 		}
 
 		//Shows the asked window menu

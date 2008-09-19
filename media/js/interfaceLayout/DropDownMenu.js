@@ -37,7 +37,7 @@
 
 //Class for managing a drop down menu whose HTML code is in templates/index.html.
 //The options may be created either by default in the HTML code or dinamically with the addOption function
-function DropDownMenu(idMenu){
+function DropDownMenu(idMenu, parentMenu){
 
 	//Constructor
 	this.idMenu = idMenu;	//menu: menu element in the HTLM code (<div>)
@@ -45,8 +45,9 @@ function DropDownMenu(idMenu){
 	this.position;				//position related to the launcher
 	this.x; this.y;			//start position
 	this.submenu = $$('#'+this.idMenu+' .submenu')[0];
+	this.parentMenu = parentMenu;
 	this.option_id = 0;		//identifier for options
-	this.margin = 8;
+	this.margin = 5;
 	
 	//Calculates the absolute position of the menu according to the point from which it is launched
 	//The menu can be displayed either on the right or left of the launcher point
@@ -69,7 +70,8 @@ function DropDownMenu(idMenu){
 		if(position == optionList.length && position != 0){//new last option
 			optionList[optionList.length-1].className='option underlined';
 			optionClass = 'option';	
-		}
+		}else if(position == optionList.length && position == 0)
+			optionClass = 'option';
 				
 		//create the HTML code for the option and insert it in the menu
 		var opId='op_'+this.idMenu+'_'+this.option_id;
@@ -165,6 +167,9 @@ function DropDownMenu(idMenu){
 	DropDownMenu.prototype.hide = function (){
 
 		this.menu.style.display="none";
+		//if it's a submenu
+		if(this.parentMenu)
+			this.parentMenu.hide();
 	}
 	
 	DropDownMenu.prototype.remove = function (){

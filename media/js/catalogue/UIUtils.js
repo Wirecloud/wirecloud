@@ -689,8 +689,10 @@ UIUtils.setResourcesWidth = function() {
 	var head = $('head');
 	var resources = $('resources');
 	var center = $('center');
-	center.style.width = head.offsetWidth + 'px';
-	resources.style.width = (center.offsetWidth - (tab.offsetWidth + (UIUtils.isInfoResourcesOpen?UIUtils.infoResourcesWidth:0))) + 'px';
+	if (center){
+		center.style.width = head.offsetWidth + 'px';
+		resources.style.width = (center.offsetWidth - (tab.offsetWidth + (UIUtils.isInfoResourcesOpen?UIUtils.infoResourcesWidth:0))) + 'px';
+	}
 }
 
 UIUtils.openInfoResource = function() {

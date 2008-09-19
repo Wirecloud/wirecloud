@@ -46,7 +46,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from xml.sax import parseString, handler
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag
 
 
 class TemplateParser:
@@ -182,6 +182,14 @@ class TemplateHandler(handler.ContentHandler):
             userRelated.save()
             
             #TODO: process the resources
+            #workaround to add default tags
+            if self._mashupId!=None:
+                userTag = UserTag()
+                userTag.tag = "mashup"
+                userTag.idUser = self._user
+                userTag.idResource = gadget
+                userTag.save()
+             
             self._gadget_added = True
         elif (self._gadget_added):
             return

@@ -259,7 +259,7 @@ function Tab (tabInfo, workSpace) {
 	new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);
 	var tabOpsLauncherElement = $(this.tabOpsLauncher);
 	Event.observe(tabOpsLauncherElement, "click", function(e){e.target.blur();Event.stop(e);
-													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
+													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 
 	//fill the tab label with a span tag
