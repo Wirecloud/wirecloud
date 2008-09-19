@@ -578,6 +578,7 @@ class  WorkSpacePublisherEntry(Resource):
         
         from time import time 
         version = unicode(time())
+        version = version[len(version)-4:]
         
         published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=user.username, 
                                                  mail=mail, vendor=vendor, 
