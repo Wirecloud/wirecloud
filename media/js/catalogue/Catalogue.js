@@ -139,7 +139,6 @@ var CatalogueFactory  = function () {
 		}
 
 		this.addResourceToShowCase = function(resourceId_) {
-			UIUtils.showResourceInfo(resourceId_);
 			var currentResource = this.getResource(resourceId_);
 			ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
 		}

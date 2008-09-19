@@ -222,7 +222,6 @@ var LayoutManagerFactory = function () {
 		
 		// Catalogue operations
 		LayoutManager.prototype.showCatalogue = function(){
-			UIUtils.closeInfoResource();
 			this.unMarkGlobalTabs();
 			if(this.currentView != null){
 				this.currentView.hide();

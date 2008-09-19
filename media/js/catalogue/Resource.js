@@ -100,7 +100,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		template.appendChild(template_img);
 		if (state.getAddedBy() == 'Yes') {
 			var deleteResource = UIUtils.createHTMLElement("a", $H({
-				title: gettext('Delete gadget')
+				title: gettext('Delete')
 			}));
 			deleteResource.observe("click", function(event){
 				UIUtils.selectedResource = id;
@@ -216,10 +216,10 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'name',
 			innerHTML: state.getName()
 		})));
-		title.appendChild(UIUtils.createHTMLElement("span", $H({ 
+		/*title.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			class_name: 'version',
 			innerHTML: state.getVersion()
-		})));
+		})));*/
 		fieldset.appendChild(UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'vendor',
 			innerHTML: state.getVendor()
@@ -592,7 +592,9 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'link'
 		}));
 		fieldset.appendChild(delete_gadget_link);
-		_deleteGadget(delete_gadget_link);
+		if (state.getMashupId()==null)
+			_deleteGadget(delete_gadget_link);
+		// else TODO: add delete mashup function 
 		if (state.getMashupId()==null){ //add gadget button
 			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
 				id: 'add_gadget_button',

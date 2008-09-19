@@ -706,6 +706,7 @@
 	padding-bottom:15px;
 	padding-left:5px;
 	padding-right:5px;
+	overflow: hidden;
 }
 
 #catalogue .center .info_resource .content .title

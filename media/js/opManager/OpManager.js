@@ -132,10 +132,6 @@ var OpManagerFactory = function () {
 			}
 			this.catalogue.show();
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
-			if (UIUtils.isInfoResourcesOpen) {
-				UIUtils.isInfoResourcesOpen = false;
-				UIUtils.SlideInfoResourceOutOfView('info_resource');
-			}
 			
 			// Load catalogue data!
 
