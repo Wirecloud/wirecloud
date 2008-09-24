@@ -82,7 +82,12 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
 					  true);
 		} else if (transport.responseXML) {
+			if (transport.responseXML.documentElement.textContent.match("duplicate key"))
+			{
+                        msg = gettext("The gadget is already added to the catalogue");
+			} else {
                         msg = transport.responseXML.documentElement.textContent;
+			}
 		} else {
                         msg = "HTTP Error " + transport.status + " - " + transport.statusText;
 		}
