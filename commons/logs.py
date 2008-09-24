@@ -46,9 +46,11 @@ from django.utils.translation import ugettext as _
 
 def log(exception, request, file_name='logs'):
     """Prints msg to file_name log file"""
-    log_file = os.path.join(settings.MEDIA_ROOT, 'logs', file_name + '.log')
-    try: 
-        f = codecs.open(log_file, "a", "utf-8")
+    if !settings.has_key(LOG_FILE) or settings.LOG_FILE = '':
+        settings.LOG_FILE=os.path.join(settings.MEDIA_ROOT, 'logs', file_name + '.log')
+
+    try:
+        f = codecs.open(settings.LOG_FILE, "a", "utf-8")
         if request.user.username == "":
             user = "[" + _("Anonymous") + "]"
         else:

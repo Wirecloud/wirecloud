@@ -143,15 +143,16 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
-#Set the proxy server here if needed
-#PROXY_SERVER = 'nube.hi.inet:8080'
+# Set the log path
+# When empty, defaults to MEDIA_ROOT/logs/logs.log
+#LOG_FILE='/var/log/ezweb/logs.log'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
 #'authentication.ldapaccess.LDAPBackend',
 'django.contrib.auth.backends.ModelBackend',  
 )
-#LDAP Backend
+# LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
 
