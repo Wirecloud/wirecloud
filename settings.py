@@ -147,8 +147,8 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 #PROXY_SERVER = 'nube.hi.inet:8080'
 
 # Set the log path
-# When empty, defaults to MEDIA_ROOT/logs/logs.log
-#LOG_FILE='/var/log/ezweb/logs.log'
+# When empty, defaults to MEDIA_ROOT/logs
+#LOG_PATH='/var/log/ezweb'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
