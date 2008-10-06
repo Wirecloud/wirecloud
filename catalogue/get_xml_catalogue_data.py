@@ -38,7 +38,7 @@
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, UserTag, UserVote
+from catalogue.models import GadgetWiring, UserTag, UserVote, UserRelatedToGadgetResource
 
 
 def get_xml_description(gadgetlist, user):
@@ -55,28 +55,23 @@ def get_xml_description(gadgetlist, user):
         xml_event = get_events_by_resource(e.id)
         xml_slot = get_slots_by_resource(e.id)
         xml_vote = get_vote_by_resource(e, user)
-        xml_user_data = get_related_user_by_resource(e.id, user)
-
-        if e.added_by_user_id == user.id:
-            added_by_user='Yes'
-        else:
-            added_by_user='No'
+        xml_user_data = get_related_user_by_resource(e.id, user.id)
 
         xml_resource += "\n".join(['<resource>',
-            '<vendor>%s</vendor>' % str(e.vendor),
-            '<name>%s</name>' % str(e.short_name),
-            '<version>%s</version>' % str(e.version),
-            '<Author>%s</Author>' % str(e.author),
-            '<Mail>%s</Mail>' % str(e.mail),
-            '<description>%s</description>' % str(e.description),
-            '<uriImage>%s</uriImage>' % str(e.image_uri),
-            '<uriWiki>%s</uriWiki>' % str(e.wiki_page_uri),
+            '<vendor>%s</vendor>' % e.vendor,
+            '<name>%s</name>' % e.short_name,
+            '<version>%s</version>' % e.version,
+            '<Author>%s</Author>' % e.author,
+            '<Mail>%s</Mail>' % e.mail,
+            '<description>%s</description>' % e.description,
+            '<uriImage>%s</uriImage>' % e.image_uri,
+            '<uriWiki>%s</uriWiki>' % e.wiki_page_uri,
             '<mashupId>%s</mashupId>' % str(e.mashup_id),
-            '<uriTemplate>%s</uriTemplate>' % str(e.template_uri),
+            '<uriTemplate>%s</uriTemplate>' % e.template_uri,
             xml_user_data, xml_tag, xml_event, xml_slot, xml_vote, 
             '</resource>'])
 
-    response = "\n".join(['<?xml version="1.0" encoding="UTF-8" ?>',
+    response = "".join(['<?xml version="1.0" encoding="UTF-8" ?>',
         '<resources>%s</resources>' % xml_resource])
     return response
 
@@ -102,20 +97,20 @@ def get_slots_by_resource(gadget_id):
     response='<Slots>'+xml_slot+'</Slots>'
     return response
 
-def get_related_user_by_resource(gadget_id, user):
+def get_related_user_by_resource(gadget_id, user_id):
     
     added_by_user = ''
     preferred_by_user = ''
     
     try:
-        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)[0]
-        
+        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)
+
         if len(user_related_data_list) == 0:
-            data_ret['added_by_user'] = 'No'
-            return data_ret
+            added_by_user = 'No'
+            return "<Added_by_User>%s</Added_by_User>" % added_by_user
         
         user_related_data = user_related_data_list[0]
-        if user_related_to_data.added_by:
+        if user_related_data.added_by:
             added_by_user = 'Yes'
         else:
             added_by_user = 'No'
@@ -136,14 +131,14 @@ def get_tags_by_resource(gadget_id, user_id):
 
     for e in UserTag.objects.filter(idResource=gadget_id, idUser=user_id):
         xml_tag += "".join(['<Tag>\n'
-                            '<Identifier>'+e.id+'</Identifier>\n',
+                            '<Identifier>'+str(e.id)+'</Identifier>\n',
                             '<Value>'+e.tag+'</Value>\n',
                             '<Added_by>Yes</Added_by>\n',
                             '</Tag>'])
 
     for e in UserTag.objects.filter(idResource=gadget_id).exclude(idUser=user_id):
         xml_tag += "".join(['<Tag>\n',
-                            '<Identifier>'+e.id+'</Identifier>\n',
+                            '<Identifier>'+str(e.id)+'</Identifier>\n',
                             '<Value>'+e.tag+'</Value>\n',
                             '<Added_by>No</Added_by>\n',
                             '</Tag>'])
