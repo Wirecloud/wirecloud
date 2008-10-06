@@ -50,6 +50,26 @@ Object.extend(Event, {
 	keyPressed: function(event)
 	{
 		return Browser.isMSIE() ? window.event.keyCode : event.which;
+	},
+	/*
+	 * Event extension to manage user privileges 
+	 * */
+	observe: function(element, name, observer, useCapture, featureId){
+		if (featureId){
+			//check the user policies
+			if (!UserProfileFactory.getInstance().checkPolicy(featureId)){
+				//if the user isn't allowed
+				//TODO: set an error handler
+				return;
+			}
+		}
+		element = $(element);
+    	useCapture = useCapture || false;
+
+    	if (name == 'keypress' && (Prototype.Browser.WebKit || element.attachEvent))
+      		name = 'keydown';
+
+   		Event._observeAndCache(element, name, observer, useCapture);
 	}
 });
 
