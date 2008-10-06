@@ -604,7 +604,7 @@ UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
 	if (UIUtils.selectedVersion == null){
 		// Removes all versions of the gadget
-		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName();
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + escape(resource.getName());
 	}else{
 		// Removes only the specified version of the gadget
 		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + UIUtils.selectedVersion;
