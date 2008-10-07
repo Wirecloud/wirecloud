@@ -69,6 +69,8 @@ from mashupTemplateGenerator import TemplateGenerator
 
 from os import path
 
+from django.conf import settings
+
 def get_workspace_description(workspace):    
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
     
@@ -588,7 +590,9 @@ class  WorkSpacePublisherEntry(Resource):
         published_workspace.save()
         
         #ask the template Generator for the template of the new mashup
-        baseURL = "http://localhost:8000"
+        baseURL = "http://" + request.get_host()
+        if hasattr(settings,'TEMPLATE_GENERATOR_URL'):
+            baseURL = settings.TEMPLATE_GENERATOR_URL
         url= path.join(baseURL,"workspace","templateGenerator", str(published_workspace.id))
         
         return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')

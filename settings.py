@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+﻿ # -*- coding: utf-8 -*-
 
 # MORFEO Project 
 # http://morfeo-project.org 
@@ -161,3 +161,8 @@ AUTHENTICATION_BACKENDS = (
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
+
+# Template Generator URL. This URL is only needed to allow publishing
+# a Workspace when EzWeb is running with the develop server (manage.py)
+# PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
+#TEMPLATE_GENERATOR_URL = 'http://localhost:8000'
