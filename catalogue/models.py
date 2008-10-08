@@ -49,7 +49,7 @@ class GadgetResource(models.Model):
      author = models.CharField(_('Author'), max_length=250)
      mail = models.CharField(_('Mail'), max_length=30)
            
-     description = models.CharField(_('Description'), max_length=250)
+     description = models.TextField(_('Description'))
      size = models.CharField(_('Size'),max_length=10, null=True)
      license = models.CharField(_('License'),max_length=20, null=True)
 
