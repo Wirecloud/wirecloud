@@ -209,6 +209,30 @@ var URIs = new _URIConstants();
 		<button id = "message_btn1" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Accept"%}</button>
 	</div>
 </div>
+<div id="publish_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="publish_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<table>
+		<tr><td><label>{% trans "Mashup Name"%}</label> <span class="required_mark">*</span></td><td><input id="publish_name" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Vendor"%}</label> <span class="required_mark">*</span></td><td><input id="publish_vendor" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Version"%}</label> <span class="required_mark">*</span></td><td><input id="publish_version" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Author"%}</label></td><td><input id="publish_author" type="text" value = "{{ user.username }}"/></td></tr>
+		<tr><td><label>{% trans "Email"%}</label></td><td><input id="publish_email" type="text" value = "{{ user.email }}"/></td></tr>
+		<tr><td><label>{% trans "Description"%}</label></td><td><textarea id="publish_description" rows="5" cols="50" ></textarea></td></tr>
+		<tr><td><label>{% trans "Image URL"%}</label></td><td><input id="publish_imageURI" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Wiki URL"%}</label></td><td><input id="publish_wikiURI" type="text" value = ""/></td></tr>
+		</table>
+		<span class="required_mark">*</span> <span class="required_text">required</span>
+		<div id="publish_window_msg" class="window_msg"></div>
+	</div>
+	<div class="window_bottom">
+		<button id = "publish_btn1">{% trans "Accept"%}</button>
+		<button id = "publish_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+	</div>
+</div>
 <!-- <div id="changeWorkspace_menu" class="drop_down_menu" style="display:none;">
 </div> -->
 

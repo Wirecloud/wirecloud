@@ -592,9 +592,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			class_name: 'link'
 		}));
 		fieldset.appendChild(delete_gadget_link);
-		if (state.getMashupId()==null)
-			_deleteGadget(delete_gadget_link);
-		// else TODO: add delete mashup function 
+		_deleteGadget(delete_gadget_link);
 		if (state.getMashupId()==null){ //add gadget button
 			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
 				id: 'add_gadget_button',
@@ -868,7 +866,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		if (addedBy == 'Yes'){
 			var submit_link = UIUtils.createHTMLElement("a", $H({
 				class_name: 'submit_link',
-				innerHTML: gettext('Delete gadget')
+				innerHTML: gettext('Delete')
 			}));
 			submit_link.observe("click", function(event){
 				UIUtils.deleteGadget(id);

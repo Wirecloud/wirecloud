@@ -359,7 +359,14 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setMsg(gettext('Do you really want to remove this workspace?'));
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();});
 				this.currentMenu.show();
-				break;					
+				break;
+			case 'publishWorkSpace':
+				if(!this.menus['publishWorkSpaceMenu']){
+					this.menus['publishWorkSpaceMenu'] = new PublishWindowMenu(null);
+				}
+				this.currentMenu = this.menus['publishWorkSpaceMenu'];
+				this.currentMenu.show();
+				break;			
 			case 'deleteAllResourceVersions':
 				if(!this.menus['alertMenu']){
 					this.menus['alertMenu'] = new AlertWindowMenu(null);

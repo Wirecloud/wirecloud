@@ -369,6 +369,15 @@ a:hover{
   text-align: center;
 }
 
+.required_mark{
+	font-size: 100%;
+	color: red;
+}
+
+.required_text{
+	font-size: 85%;
+}
+
 .tabOps_launcher, .closebutton{
   border:0px none;
   cursor: pointer;

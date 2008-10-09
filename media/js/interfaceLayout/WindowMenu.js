@@ -54,7 +54,7 @@ function WindowMenu(){
 	WindowMenu.prototype.calculatePosition = function(){
 		var coordenates = [];
 		
-		coordenates[1] = BrowserUtilsFactory.getInstance().getHeight()/2 - this.htmlElement.getHeight();
+		coordenates[1] = BrowserUtilsFactory.getInstance().getHeight()/2 - this.htmlElement.getHeight()/2;
 		coordenates[0] = BrowserUtilsFactory.getInstance().getWidth()/2 - this.htmlElement.getWidth()/2;
 		
 		this.htmlElement.style.top = coordenates[1]+"px";
@@ -80,6 +80,8 @@ function WindowMenu(){
 	WindowMenu.prototype.stopObserving = function (){
 	}
 	WindowMenu.prototype.hide = function (){		
+	}
+	WindowMenu.prototype.setFocus = function (){		
 	}
 
 }
@@ -213,3 +215,66 @@ function MessageWindowMenu (element) {
 
 MessageWindowMenu.prototype = new WindowMenu;
 
+
+//Especific class for publish windows
+function PublishWindowMenu (element) {
+
+	//constructor
+	this.htmlElement = $('publish_menu');		//create-window HTML element
+	this.titleElement = $('publish_window_title');	//title gap
+	this.msgElement = $('publish_window_msg');	//error message gap
+	this.button = $('publish_btn1');
+	this.title = gettext('Publish Workspace');
+	
+	this.operationHandler = function(e){
+								if ($('publish_name').value!="" && $('publish_vendor').value!="" && $('publish_name').version!="") {
+									this.executeOperation();
+									LayoutManagerFactory.getInstance().hideCover();
+								}
+							}.bind(this);
+
+
+	PublishWindowMenu.prototype.initObserving = function(){	
+			Event.observe(this.button, "click", this.operationHandler);
+	}
+	
+	PublishWindowMenu.prototype.stopObserving = function(){	
+			Event.stopObserving(this.button, "click", this.operationHandler);
+	}	
+	
+	PublishWindowMenu.prototype.setFocus = function(){
+		$('publish_name').focus();
+	}
+	
+	PublishWindowMenu.prototype.executeOperation = function(){
+		var o = new Object;
+		o.name = $('publish_name').value;
+		o.vendor = $('publish_vendor').value;
+		o.version = $('publish_version').value;
+		o.author = $('publish_author').value;
+		o.email = $('publish_email').value;
+		o.description = $('publish_description').value;
+		o.imageURI = $('publish_imageURI').value;
+		o.wikiURI = $('publish_wikiURI').value;
+		OpManagerFactory.getInstance().activeWorkSpace.publish(o);
+	}
+	
+
+
+	//hides the window and clears all the inputs
+	PublishWindowMenu.prototype.hide = function (){
+
+		var inputArray = $$('#publish_menu input:not([type=button])');
+		for (var i=0; i<inputArray.length; i++){
+			inputArray[i].value = '';
+		}
+		$('publish_description').value="";
+		var msg = $('create_window_msg');
+		msg.update();
+		this.stopObserving();
+		this.htmlElement.style.display = "none";		
+	}
+
+}
+
+PublishWindowMenu.prototype = new WindowMenu;

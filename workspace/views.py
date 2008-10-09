@@ -82,7 +82,7 @@ def get_igadgets_description(included_igadgets):
     for igadget in included_igadgets:    
         description += igadget.gadget.name + ' , '
     
-    return description
+    return description[:-2]
 
 def deleteTab (tab, user):
     
@@ -550,7 +550,10 @@ class  WorkSpacePublisherEntry(Resource):
             mashup = simplejson.loads(received_json) 
             if not mashup.has_key('name'):
             	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
-            mashup_name = mashup.get('name')
+            if not mashup.has_key('vendor'):
+                raise Exception(_('Malformed mashup JSON: expecting mashup vendor.'))
+            if not mashup.has_key('version'):
+                raise Exception(_('Malformed mashup JSON: expecting mashup version.'))
 
         except Exception, e:
             transaction.rollback()
@@ -570,25 +573,36 @@ class  WorkSpacePublisherEntry(Resource):
         cloned_workspace.save()
         
         #Genrating info of new workspace
-        description = get_workspace_description(workspace)
+        vendor = mashup.get('vendor')
+        name = mashup.get('name')
+        version = mashup.get('version')
+        author = mashup.get('author')
+        email = mashup.get('email')
+        description = mashup.get('description') + " -- " +get_workspace_description(workspace)
+        imageURI = mashup.get('imageURI')
+        wikiURI = mashup.get('wikiURI')
         
-        imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
-        wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
-        mail = 'morfeo@morfeo-project.org'
-        vendor = 'MORFEO'
-        name = 'Mashup_' + workspace.name
-        
-        from time import time 
-        version = unicode(time())
-        version = version[len(version)-4:]
-        
-        published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=user.username, 
-                                                 mail=mail, vendor=vendor, 
-                                                 name=name, version=version, description=description,
-                                                 imageURI=imageURI, wikiURI=wikiURI)
-        
-        published_workspace.save()
-        
+        # set default values if the variable is empty
+        if imageURI == "":
+            imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
+        if wikiURI == "":
+            wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
+        if author == "":
+            author = user.username
+        if email == "":
+            email = user.email
+        try:
+            published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
+                                                     mail=email, vendor=vendor, 
+                                                     name=name, version=version, description=description,
+                                                     imageURI=imageURI, wikiURI=wikiURI)
+            
+            published_workspace.save()
+        except IntegrityError, e:
+            transaction.rollback()
+            msg = _("mashup cannot be published: ") + "duplicated mashup"
+            log(msg, request)
+            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
         #ask the template Generator for the template of the new mashup
         baseURL = "http://" + request.get_host()
         if hasattr(settings,'TEMPLATE_GENERATOR_URL'):

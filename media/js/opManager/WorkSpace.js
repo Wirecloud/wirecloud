@@ -525,11 +525,9 @@ function WorkSpace (workSpaceState) {
 		return this.visibleTab.getDragboard();
 	}
 	
-	WorkSpace.prototype.publish = function() {
+	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
-		var o = new Object;
-		o.name = this.workSpaceState.name;
-		publicationData = Object.toJSON(o);
+		publicationData = Object.toJSON(data);
 		params = 'data=' + publicationData;
 		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
 	}
@@ -592,7 +590,7 @@ function WorkSpace (workSpaceState) {
 
 		this.menu.addOption("/ezweb/images/remove.png",gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
-		this.menu.addOption("/ezweb/images/publish.png",gettext("Publish workspace"),function(){this.publish();}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/publish.png",gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
 		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
 			this.menu.addOption("/ezweb/images/merge.png",gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
 		}
