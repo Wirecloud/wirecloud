@@ -66,7 +66,7 @@ class PublishedWorkSpace(models.Model):
     wikiURI = models.URLField(_('wikiURI'))
     imageURI = models.URLField(_('imageURI'))
     
-    description = models.CharField(_('Description'), max_length=250)
+    description = models.TextField(_('Description'))
     
     author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=30)
