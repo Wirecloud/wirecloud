@@ -163,25 +163,21 @@ Concept.prototype.setType = function (type_) {
 
 Concept.prototype.setValue = function (value_) {
 	switch (this._type) {
-		case Concept.prototype.EXTERNAL:
+		case Concept.prototype.IGADGET:
+			throw gettext("Concept does not have value, this is a Gadget Concept.");
+			break;
+		default:
 			this._value = value_;
 			for (var i = 0; i < this._igadgetVars.length; i++){
 				var ivar = this._igadgetVars[i];
 				ivar.setValue(value_);
 			} 
 			break;
-		case Concept.prototype.IGADGET:
-			throw gettext("Concept does not have value, this is a Gadget Concept.");
-			break;
-		default:
-			throw gettext("Unexpected concept value. Please, check the concept type (is EXTERNAL?)");
-			break;
 	}
 }
 
 Concept.prototype.setInitialValue = function (newValue_) {
 	this._initialValue = newValue_;
-	this._value = newValue_;
 }
 
 Concept.prototype.propagateIGadgetVarValues = function (iGadget_) {
