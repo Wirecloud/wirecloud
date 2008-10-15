@@ -220,13 +220,13 @@ var URIs = new _URIConstants();
 		<tr><td><label>{% trans "Vendor"%}</label> <span class="required_mark">*</span></td><td><input id="publish_vendor" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "Version"%}</label> <span class="required_mark">*</span></td><td><input id="publish_version" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "Author"%}</label></td><td><input id="publish_author" type="text" value = "{{ user.username }}"/></td></tr>
-		<tr><td><label>{% trans "Email"%}</label></td><td><input id="publish_email" type="text" value = "{{ user.email }}"/></td></tr>
+		<tr><td><label>{% trans "Email"%}</label> <span class="required_mark">*</span></td><td><input id="publish_email" type="text" value = "{{ user.email }}"/></td></tr>
 		<tr><td><label>{% trans "Description"%}</label></td><td><textarea id="publish_description" rows="5" cols="50" ></textarea></td></tr>
 		<tr><td><label>{% trans "Image URL"%}</label></td><td><input id="publish_imageURI" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "Wiki URL"%}</label></td><td><input id="publish_wikiURI" type="text" value = ""/></td></tr>
 		</table>
-		<span class="required_mark">*</span> <span class="required_text">required</span>
-		<div id="publish_window_msg" class="window_msg"></div>
+		<div style="display:block;"><span class="required_mark">*</span> <span class="required_text">required</span></div>
+		<div id="publish_window_msg" class="window_msg_error"></div>
 	</div>
 	<div class="window_bottom">
 		<button id = "publish_btn1">{% trans "Accept"%}</button>

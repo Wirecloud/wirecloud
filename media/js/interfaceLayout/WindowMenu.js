@@ -227,9 +227,12 @@ function PublishWindowMenu (element) {
 	this.title = gettext('Publish Workspace');
 	
 	this.operationHandler = function(e){
-								if ($('publish_name').value!="" && $('publish_vendor').value!="" && $('publish_name').version!="") {
+								if ($('publish_name').value!="" && $('publish_vendor').value!="" && $('publish_name').version!="" && $('publish_email').value!="") {
 									this.executeOperation();
 									LayoutManagerFactory.getInstance().hideCover();
+								}
+								else{
+									this.msgElement.update("All the required fields must be filled");
 								}
 							}.bind(this);
 
@@ -272,6 +275,7 @@ function PublishWindowMenu (element) {
 		var msg = $('create_window_msg');
 		msg.update();
 		this.stopObserving();
+		this.msgElement.update();
 		this.htmlElement.style.display = "none";		
 	}
 
