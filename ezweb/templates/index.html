@@ -240,7 +240,12 @@ var URIs = new _URIConstants();
 <!-- HEADER -->
 <div id="header">
 <div id="banner">
-  <div id="greeting">{% trans "Welcome" %}, {{ user.username }}{% for lang in LANGUAGES %} | <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" >{{ lang.1 }}</a>{% endfor %} | <a href="/logout" onclick="UIUtils.sendPendingTags();OpManagerFactory.getInstance().sendBufferedVars();">{% trans "Exit" %}</a>
+  <div id="greeting">
+  {% if is_anonymous %}{% trans "anonymous" %} <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+  {% else %} {% trans "Welcome" %}, {{ user.username }}
+  {% endif %}
+  {% for lang in LANGUAGES %} | <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" >{{ lang.1 }}</a>{% endfor %}
+  {% if not is_anonymous %}| <a href="/logout" onclick="UIUtils.sendPendingTags();OpManagerFactory.getInstance().sendBufferedVars();">{% trans "Exit" %}</a> {% endif %}
   </div>
   <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
 </div>

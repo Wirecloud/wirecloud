@@ -35,18 +35,43 @@
 # 
 #   http://morfeo-project.org/
 #
+import time
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext as _
+from django.contrib.auth.models import User, Group
+from django.contrib.auth import authenticate, login, load_backend
 
-def logout(request, next_page=None, template_name='registration/logged_out.html'):
-    "Logs out the user and displays 'You are logged out' message."
-    request.session.clear()
-    request.session.delete()
-    if next_page is None:
-        return render_to_response(template_name, {'title': _('Logged out')}, context_instance=RequestContext(request))
+SESSION_KEY = '_auth_user_id'
+BACKEND_SESSION_KEY = '_auth_user_backend'
+
+ANONYMOUS_PWD = 'anonymous'
+ANONYMOUS_NAME = 'anonymous'
+ANONYMOUS_SESSION_COOKIE = 'anonymousid'
+
+def get_anonymous_user(request):
+    anonymous_id = request.anonymous_id
+    
+    if anonymous_id:
+        user = User.objects.get(id=anonymous_id)
     else:
-        # Redirect to this page until the session has been cleared.
-        return HttpResponseRedirect(next_page or request.path)
+        user_name = ANONYMOUS_NAME + unicode(time.time())
+        user_name = user_name.replace(".","1")
+        user = User(username=user_name)
+        user.set_password(ANONYMOUS_PWD)
+        user.save()
+        #user.groups.add(Group.objects.get(name=ANONYMOUS_GROUP))
+        request.anonymous_id = user.id
+    
+    user = authenticate(username=user.username, password=ANONYMOUS_PWD)
+    login(request, user)
+    
+    return user
+
+def get_user(request):
+    try:
+        user_id = request.session[SESSION_KEY]
+        backend_path = request.session[BACKEND_SESSION_KEY]
+        backend = load_backend(backend_path)
+        user = backend.get_user(user_id) or get_anonymous_user(request)
+    except KeyError, e:
+        user = get_anonymous_user(request)
+    return user

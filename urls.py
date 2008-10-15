@@ -51,9 +51,6 @@ js_info_dict = {
 urlpatterns = patterns('',
     # Static content
      (r'^ezweb/(.*)$', 'django.views.static.serve', {'document_root': path.join(settings.BASEDIR, 'media')}),
-     
-    #Admin interface
-    (r'^admin/(.*)', admin.site.root),
 
     # EzWeb
     (r'^', include('ezweb.urls')),
@@ -84,7 +81,13 @@ urlpatterns = patterns('',
     # Django contrib
     #(r'^registration/login_form/$', 'registration.views.login_form'),
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    (r'^logout$', 'django.contrib.auth.views.logout'),
+ #   (r'^logout$', 'django.contrib.auth.views.logout'),    
+    # custom logouts (to enable anonymous access)
+    (r'^logout$', 'authentication.logout', {'next_page': '/'}),
+    (r'^admin/logout/$', 'authentication.logout', {'next_page': '/'}),
+    
+    #Admin interface
+    (r'^admin/(.*)', admin.site.root),
     
     # Django "set language" (internacionalitation)
     (r'^i18n/', include('django.conf.urls.i18n')),

@@ -36,17 +36,15 @@
 #   http://morfeo-project.org/
 #
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
-from django.utils.translation import ugettext as _
+class LazyUser(object):
+    def __get__(self, request, obj_type=None):
+        if not hasattr(request, '_cached_user'):
+            from middleware import get_user
+            request._cached_user = get_user(request)
+        return request._cached_user
 
-def logout(request, next_page=None, template_name='registration/logged_out.html'):
-    "Logs out the user and displays 'You are logged out' message."
-    request.session.clear()
-    request.session.delete()
-    if next_page is None:
-        return render_to_response(template_name, {'title': _('Logged out')}, context_instance=RequestContext(request))
-    else:
-        # Redirect to this page until the session has been cleared.
-        return HttpResponseRedirect(next_page or request.path)
+class AuthenticationMiddleware(object):
+    def process_request(self, request):
+        assert hasattr(request, 'session'), "The Django authentication middleware requires session middleware to be installed. Edit your MIDDLEWARE_CLASSES setting to insert 'django.contrib.sessions.middleware.SessionMiddleware'."
+        request.__class__.user = LazyUser()
+        return None

@@ -110,12 +110,14 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.contrib.sessions.middleware.SessionMiddleware',
+ #   'django.contrib.sessions.middleware.SessionMiddleware',
+    'middleware.session_middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+#    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'middleware.auth_middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'middleware.ConsoleExceptionMiddleware',
+    'middleware.console_middleware.ConsoleExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -139,7 +141,9 @@ INSTALLED_APPS = (
     'context',
 )
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 5184000    #2 months
+#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
