@@ -12,7 +12,7 @@ def index(request, user_name=None):
         is_anonymous = True
     
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
-        return render_to_response('iphone.html', {}, context_instance=RequestContext(request))
+        return render_to_response('iphone.html', {}, context_instance=RequestContext(request, {'is_anonymous': is_anonymous}))
     else:
         return render_to_response('index.html', {'current_tab': 'dragboard'}, context_instance=RequestContext(request, {'is_anonymous': is_anonymous}))
 

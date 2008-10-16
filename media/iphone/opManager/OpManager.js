@@ -90,6 +90,10 @@ var OpManagerFactory = function () {
 		// Variables for controlling the collection of wiring and dragboard instances of a user
 		this.workSpaceInstances = new Hash();
 		this.activeWorkSpace = null;
+		
+		// workspace menu element
+		this.workspaceMenuElement = $('workspace_menu');
+		this.workspaceListElement = $('workspace_list');
 
 		
 		// ****************
@@ -157,8 +161,10 @@ var OpManagerFactory = function () {
 		    }		    
 		    if (module == Modules.prototype.ACTIVE_WORKSPACE) {
 		    	this.loadCompleted = true;
-		    	this.showActiveWorkSpace(this.activeWorkSpace);
-		    	this.visibleLayer= "tabs_container";
+		    	if (!this.visibleLayer){
+		    		this.showActiveWorkSpace(this.activeWorkSpace);
+		    		this.visibleLayer= "tabs_container";
+		    	}
 		    	//TODO: remove this variable when the MYMWTab Framework is updated
     			tabview = this.activeWorkSpace.tabView;
 		    	return;
@@ -190,8 +196,19 @@ var OpManagerFactory = function () {
 		}
 		
 		OpManager.prototype.showGadgetsMenu = function(){
+			if (this.visibleLayer=="workspace_menu")
+				this.workspaceMenuElement.setStyle({display: "none"});
 			this.visibleLayer= "tabs_container";
 			this.activeWorkSpace.show();
+		}
+		
+		OpManager.prototype.showGadgetsMenuFromWorskspaceMenu = function(){
+			if (!this.loadCompleted){
+				setTimeout(function(){OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu()}, 100);
+			}
+			this.workspaceMenuElement.setStyle({display: "none"});
+			this.showActiveWorkSpace(this.activeWorkSpace);
+		    this.visibleLayer= "tabs_container";
 		}
 		
 		OpManager.prototype.showRelatedIgadget = function(iGadgetId, tabId){
@@ -200,6 +217,42 @@ var OpManagerFactory = function () {
 		
 		OpManager.prototype.markRelatedIgadget = function(iGadgetId){
 			this.activeWorkSpace.getActiveDragboard().markRelatedIgadget(iGadgetId);
+		}
+		
+		OpManager.prototype.showWorkspaceMenu = function( ){
+			if (this.visibleLayer == "tabs_container")
+				this.activeWorkSpace.hide();
+			this.visibleLayer= "workspace_menu";
+			//show the workspace list and the "add mashup" option
+			this.workspaceMenuElement.setStyle({display: "block"});
+			
+			//generate the workspace list
+			var wkeys = this.workSpaceInstances.keys();
+						
+			var html ="<ul>";
+			for (i=0;i<wkeys.length;i++){
+				wname = this.workSpaceInstances[wkeys[i]].getName();
+				if (this.workSpaceInstances[wkeys[i]] == this.activeWorkSpace)
+					html += "<li id='"+this.workSpaceInstances[wkeys[i]].getId()+"_item' class='selected'>" + wname +"<small>★</small></li>";
+				else
+					html += "<li id='"+this.workSpaceInstances[wkeys[i]].getId()+"_item'><a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace("+wkeys[i]+");'>" + wname +"</a></li>";
+			}
+			html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
+			
+			this.workspaceListElement.update(html);
+		}
+		
+		OpManager.prototype.selectActiveWorkspace = function(workspaceKey){
+			var newWorkspace = this.workSpaceInstances[workspaceKey];
+			var newElement = $(newWorkspace.getId()+"_item");
+			var oldElement = $(this.activeWorkSpace.getId()+"_item");
+			
+			newElement.update(newWorkspace.getName() +"<small>★</small>");
+			newElement.className = "selected";
+			oldElement.update("<a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace("+this.activeWorkSpace.workSpaceGlobalInfo.workspace.id+");'>" + this.activeWorkSpace.getName() +"</a>");
+			oldElement.className = "";
+			this.loadCompleted = false;
+			this.changeActiveWorkSpace(newWorkspace);
 		}
 
 	}

@@ -85,7 +85,7 @@ IGadget.prototype.paint = function() {
 	//Generate the related gadgets html
 	var relatedhtml ="";
 	var related = this.dragboard.workSpace.getRelatedIGadgets(this.id);
-	if (related.length > 0){
+	//if (related.length > 0){
 		relatedhtml +='<div id="related_gadgets" class="related_gadgets">';
 		for (i=0;i<related.length;i++){
 			relatedhtml += '<div class="related_gadget_div" onclick="OpManagerFactory.getInstance().showRelatedIgadget('+related[i].id+','+related[i].dragboard.tab.tabInfo.id+')" >';
@@ -93,15 +93,14 @@ IGadget.prototype.paint = function() {
 			relatedhtml += '</div>';
 		}
 		relatedhtml +='</div>'
-	}
+	//}
 	
 	// Generate the Gadget html
 	var html = '<div id="gadget_content" class="';
-	if (related.length > 0)
+	//if (related.length > 0)
 			html += 'gadget_content">';
-	else
-		html +='gadget_content_full">';
-	/*html += '<img src="'+this.getGadget().getIPhoneImageURI()+'" /></div>';*/
+	//else
+	//	html +='gadget_content_full">';
 	html += '<object onload=\'OpManagerFactory.getInstance().igadgetLoaded('+this.id+');\' class="gadget_object" type="text/html" data="'+this.gadget.getXHtml().getURICode()+'?id='+this.id+'" standby="Loading...">'; 
 	html += '"Loading...."';
 	html += '</object></div>';

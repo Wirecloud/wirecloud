@@ -43,12 +43,7 @@ function Tab (tabInfo, workSpace, index) {
     // ****************
 
 	Tab.prototype.destroy = function(){
-		Element.remove(this.tabHTMLElement);
-		
-		this.menu.remove();
-		
-		this.dragboard.destroy();
-		
+		this.dragboard.destroy();		
 		delete this;
 	}
 	
@@ -62,7 +57,12 @@ function Tab (tabInfo, workSpace, index) {
 	    //var handler = function(){this.dragboard.setVisibleIGadget(iGadgets[i]);this.dragboard.paint();}.bind(this);
 	    
 	    html+= '<div class="container tab" id="'+this.tabName+'" style="left:'+scrollLeft+'px">';
-		html+= '<div class="toolbar anchorTop"><h1>'+ nameToShow +'</h1><a href="/accounts/login/?next=/" class="logout">Exit</span></div>';
+		html+= '<div class="toolbar anchorTop"><a href="javascript:OpManagerFactory.getInstance().showWorkspaceMenu()" class="back_button"><span class="menu_text">Menu</span></a>' +
+				'<h1>'+ nameToShow +'</h1>';
+		if (isAnonymousUser)
+			html +='<a href="/accounts/login/?next=/" class="logout">Sign-in</a></div>';
+		else
+			html +='<a href="/logout" class="logout">Exit</a></div>';
 		html+= '<div class="tab_content">';
 		for(i=0;i<iGadgets.length;i++){
 			html+= '<div class="igadget_item">';

@@ -27,6 +27,19 @@
 <!-- MAIN SECTION -->
 <div id="wrapper">
 
+	<!-- WORKSPACES MENU -->
+    <div id="workspace_menu" class="workspace_menu">
+    	<div class="toolbar anchorTop">
+    		<h1>Workspaces</h1>
+    		<a href="javascript:OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu()" class="next_button"><span class="menu_text">Gadgets</span></a>
+    	</div>
+    	<div id="workspace_list"></div>
+    </div>
+
+	<!-- CATALOGUE -->
+	<div class="mashup tabs_container" id="mashup_catalogue">
+	</div>
+	
 	<!-- IGADGETS MENU -->
     <div id="tabs_container" class="tabs_container">
     </div>
@@ -67,6 +80,8 @@ _URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wirin
 _URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}');
 _URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
 _URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
+_URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
+_URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
 
 var URIs = new _URIConstants();
 </script>
@@ -78,6 +93,8 @@ var URIs = new _URIConstants();
 <script language="JavaScript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
 
 <script language="JavaScript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
+
+<script language="JavaScript" src="{{ MEDIA_URL }}iphone/catalogue/Catalogue.js"></script>
 
 <script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/XHtml.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
@@ -125,6 +142,7 @@ var URIs = new _URIConstants();
     var updateInterval;
     var checkInterval;
 	var tabview; //TO REMOVE EARLY
+	var isAnonymousUser = {% if is_anonymous %}true;{% else %}false;{% endif %} 
 	var opManager = OpManagerFactory.getInstance();
     var _currentWidth = 0;
     

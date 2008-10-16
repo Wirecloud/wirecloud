@@ -168,7 +168,7 @@ function checkTab()
 			OpManagerFactory.getInstance().activeWorkSpace.updateVisibleTab(Math.round(window.pageXOffset / tabWidth));
 		}
 	}
-	else{ // dragboard
+	else if (OpManagerFactory.getInstance().visibleLayer == "dragboard"){ // dragboard
 		window.scrollTo(0, 1);
 	}
 }

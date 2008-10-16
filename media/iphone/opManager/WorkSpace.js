@@ -106,6 +106,34 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 	
+	WorkSpace.prototype.unload = function(){
+		
+		// After that, tab info is managed	
+		for (var i=0; i<this.tabInstances.length; i++) {
+			this.unloadTab(i);
+		}
+		this.tabInstances.length = 0;
+		this.wiring.unload();
+		this.contextManager.unload();
+	}
+	
+	WorkSpace.prototype.unloadTab = function(tabId){
+		var tab = this.tabInstances[tabId];
+		
+		this.varManager.removeWorkspaceVariable(tab.connectable.variable.id);
+		
+		tab.connectable.destroy();
+		tab.destroy();
+		
+		this.visibleTab = null;
+	}
+	
+	WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
+			this.varManager.removeInstance(iGadgetId);
+			this.wiring.removeInstance(iGadgetId);
+			this.contextManager.removeInstance(iGadgetId);	
+	}
+	
 	WorkSpace.prototype.sendBufferedVars = function () {
 		this.varManager.sendBufferedVars();
 	} 
@@ -180,6 +208,7 @@ function WorkSpace (workSpaceState) {
 	
 	/**** Display the IGadgets menu ***/
 	WorkSpace.prototype.paint = function() {
+		this.tabsContainerElement.update();
 		//initialize the list of igadget loaded identifiers
 		this.igadgetIdsLoaded = new Array();
 		

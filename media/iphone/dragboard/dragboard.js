@@ -83,8 +83,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		if (OpManagerFactory.getInstance().visibleLayer!="dragboard"){
 			//Paints the dragboard and the visibleIGadget and hide the gadget menu
 			this.workSpace.hide();
-			this.dragboardElement.setStyle({display: "block", left : "100%"});
-			slide(false, this.dragboardElement);
+			this.dragboardElement.setStyle({display: "block"});
+			//slide(false, this.dragboardElement);
 			
 			//show the bar element
 			this.barElement.setStyle({display: "block"});
@@ -173,6 +173,16 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	Dragboard.prototype.igadgetLoaded = function (iGadgetId) {
 	    //DO NOTHING
+	}
+	
+	Dragboard.prototype.destroy = function () {
+		var keys = this.iGadgets.keys();
+		//disconect and delete the connectables and variables of all tab iGadgets
+		for (var i = 0; i < keys.length; i++) {
+			this.workSpace.removeIGadgetData(keys[i]);
+			delete this.iGadgets[keys[i]];
+		}
+		//TODO: have all references been removed?,delete the object
 	}
 
 	Dragboard.prototype.saveConfig = function (iGadgetId) {

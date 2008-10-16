@@ -1,18 +1,15 @@
 
 body{
-	background:#E0E0E0;
-	/*background-color: rgb(197,204,211) !important;
-	background-image: url(/ezweb/images/iphone/stripes.png);*/
+	background: #E0E0E0;
 	margin: 0;
     font-family: Helvetica;
     -webkit-text-size-adjust: none;
-    color:#4C5054;
-    /*color: #4C566C;*/
+    color: #E0E0E0;
 }
 
 a, a:link, a:visited, a:hover{
 	text-decoration: none;
-	color: #2D6F9C;
+	color: #E0E0E0;
 	/*color: #4C566C;*/
 }
 
@@ -24,6 +21,10 @@ img{
 
 .block{
 	display: block;
+}
+
+.bold{
+	font-weight: bold;
 }
 
 /**** HEADER SECTION ****/
@@ -47,7 +48,7 @@ wrapper{
 	position: relative;
 }
 
-/* IGADGETS MENU */
+/* TOOLBAR */
 
 .toolbar { 
 	/* total height: 40px */
@@ -58,6 +59,34 @@ wrapper{
     color: #fcfcfc;
     font-family: Helvetica;
     text-align: center;
+    font-size: 10pt;
+}
+
+.toolbar a {
+	color: #fcfcfc;
+}
+
+.toolbar .back_button{
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	background: url(/ezweb/images/iphone/backButton.png);
+	width: 65px;
+	height: 30px;
+}
+
+.toolbar .next_button{
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background: url(/ezweb/images/iphone/nextButton.png);
+	width: 65px;
+	height: 30px;
+}
+
+.toolbar .menu_text{
+	position: relative;
+	top: 6px;
 }
 
 .toolbar h1{
@@ -70,9 +99,8 @@ wrapper{
 .toolbar .logout{
 	font-size: 11pt;
 	position: absolute;
-	right: 5px;
-	top: 0;
-	color: #fcfcfc;
+	right: 10px;
+	top: 5px;
 }
 
 body[orient="portrait"] .toolbar {
@@ -82,6 +110,84 @@ body[orient="portrait"] .toolbar {
 body[orient="landscape"] .toolbar {
     width: 480px;
 }
+
+/* WORKSPACE MENU */
+.workspace_menu{
+	display:none;
+	width: 100%;
+}
+
+body[orient="portrait"] .workspace_menu {
+    height: 416px;
+}
+
+body[orient="landscape"] .workspace_menu {
+    height: 268px;
+}
+
+.workspace_menu ul {
+	color: black;
+	background: #fff;
+	border: 1px solid rgb(180,180,180);
+	font: bold 17px Helvetica;
+	font-weight:bold;
+	padding: 0;	   
+	margin: 10px;
+	-webkit-border-radius: 8px;
+}
+
+.workspace_menu li {
+	color: rgb(50,79,133);
+	list-style-type: none;	
+	border-top: 1px solid rgb(180,180,180);
+	padding: 10px 10px 14px 10px;
+	position: relative;
+}
+			
+/* controls the radius bordes */
+
+.workspace_menu li:first-child {	
+	border-top: 0;
+	-webkit-border-top-left-radius: 8px;
+	-webkit-border-top-right-radius: 8px;
+}
+	
+.workspace_menu li:last-child {	
+	-webkit-border-bottom-left-radius: 8px;
+	-webkit-border-bottom-right-radius: 8px;
+}
+				
+.workspace_menu li:hover {
+	background: rgb(51,102,204);
+}
+
+.workspace_menu ul li a {
+	color: black;
+	text-decoration: none;
+	padding: 10px 10px 10px 10px;
+	margin: -10px;
+	display: block;
+	-webkit-tap-highlight-color:rgba(0,0,0,0);
+}
+			
+.workspace_menu ul li a.arrow {
+	background-image: url(/ezweb/images/iphone/arrow.png); 
+	background-repeat: no-repeat;
+	background-position: right 15px;
+}
+
+.workspace_menu ul li.selected{
+	background: #8fc3f1;
+}
+.workspace_menu ul li small {
+	color: rgb(50,79,133);
+	font: normal 17px Helvetica;
+	position: absolute;
+	top: 12px;
+	right: 7px;
+}
+
+/* IGADGETS MENU */
 
 .anchorTop {
     top: 0;
@@ -102,6 +208,7 @@ body[orient="landscape"] .tabs_container {
 .tab {
 	position: absolute;
 	top: 0px;
+	background: black;
 }
 
 .tab_content {
@@ -112,12 +219,12 @@ body[orient="landscape"] .tabs_container {
 
 body[orient="portrait"] .tab_content {
     width: 310px;
-    height: 363px; /* 416 - 40 (toolbar) -13 (footer) */
+    height: 358px; /* 416 - 40 (toolbar) -18 (footer) */
 }
 
 body[orient="landscape"] .tab_content {
     width: 470px;
-    height: 215px; /* 268 - 40 (toolbar) -13 (footer) */
+    height: 210px; /* 268 - 40 (toolbar) -18 (footer) */
 }
 
 body[orient="portrait"] .igadget_item{
@@ -147,10 +254,22 @@ body[orient="landscape"] .igadget_item{
 .navbar{
 	position: relative;
 	text-align: center;
-	height: 13px;
+	height: 18px;
 	vertical-align: top;
 }
 
+/* MASHUP CATALOGUE */
+.mashup {
+	display: none;
+}
+.mashup_tab {
+	position: absolute;
+	top: 0px;
+}
+
+.mashup_tab .tab_content a{
+	color: black;
+}
 
 /* DRAGBOARD SECTION */
 
@@ -158,6 +277,12 @@ body[orient="landscape"] .igadget_item{
 	display:none;
 	width: 100%;
 	position: absolute;
+	background: #E0E0E0;
+	color:#4C5054;
+	z-index: 0;
+}
+.dragboard a{
+	color: #2D6F9C;
 }
 
 body[orient="portrait"] .dragboard {
@@ -248,9 +373,11 @@ body[orient="landscape"] #mymw-nav {
 .igadget_section>div {
 	position: absolute;
 	width: 100%;
+	z-index: 2;
 }
 .igadget_section div.mymw-inactive {
 	visibility: hidden;
+	z-index: -1;
 }
 
 body[orient="portrait"] .igadget_section{
@@ -263,6 +390,7 @@ body[orient="landscape"] .igadget_section{
 
 .gadget_content{
 	display: block;
+	position: relative;
 }
 
 body[orient="portrait"] .gadget_content{
@@ -275,6 +403,7 @@ body[orient="landscape"] .gadget_content{
 
 .gadget_content_full{
 	display: block;
+	position: relative;
 }
 
 body[orient="portrait"] .gadget_content_full{
@@ -303,6 +432,7 @@ body[orient="landscape"] .gadget_content_full{
 }
 .related_gadget_div{
 	display: inline;
+	position: relative;
 }
 
 .related_gadget{
@@ -313,7 +443,7 @@ body[orient="landscape"] .gadget_content_full{
 }
 
 .related_gadgets .active{
-	border: 1px solid #ebabab;
+	border: 2px solid #ebabab;
 }
 
 
