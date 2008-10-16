@@ -569,9 +569,6 @@ class  WorkSpacePublisherEntry(Resource):
         
         cloned_workspace = packageCloner.clone_tuple(workspace)
         
-        cloned_workspace.active=False
-        cloned_workspace.save()
-        
         #Genrating info of new workspace
         vendor = mashup.get('vendor')
         name = mashup.get('name')
@@ -589,9 +586,17 @@ class  WorkSpacePublisherEntry(Resource):
             wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
         if author == "":
             author = user.username
-        if email == "":
-            email = user.email
         try:
+            cloned_workspace.active=False
+            cloned_workspace.vendor = vendor
+            cloned_workspace.name = name
+            cloned_workspace.version = version
+            cloned_workspace.author = author
+            cloned_workspace.mail = email
+            cloned_workspace.description = description
+            cloned_workspace.imageURI = imageURI
+            cloned_workspace.wikiURI = wikiURI
+            cloned_workspace.save()
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 
                                                      name=name, version=version, description=description,
