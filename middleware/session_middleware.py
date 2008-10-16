@@ -41,6 +41,7 @@ import time
 from django.conf import settings
 from django.utils.cache import patch_vary_headers
 from django.utils.http import cookie_date
+from urllib import quote, unquote
 
 class SessionMiddleware(object):
     
@@ -53,6 +54,7 @@ class SessionMiddleware(object):
         
         if user_info:
             try:
+            	user_info = unquote(user_info)
                 user_info = eval(user_info)
                 request.anonymous_id = user_info['anonymous_id']
                 session_key = user_info['session_id']
@@ -86,7 +88,10 @@ class SessionMiddleware(object):
                 request.session.save()
                 
                 #saving the user id in the cookie
-                user_info = {'session_id': request.session.session_key, 'anonymous_id': request.anonymous_id}
+                #user_info = "{'session_id':" + request.session.session_key +"/"+"anonymous_id:" + request.anonymous_id
+                user_info = unicode({'session_id': request.session.session_key, 'anonymous_id': request.anonymous_id})
+                
+                user_info = quote(user_info)
                 
                 response.set_cookie(settings.SESSION_COOKIE_NAME,
                         user_info, max_age=max_age,
