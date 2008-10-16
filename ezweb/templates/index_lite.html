@@ -11,6 +11,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_lite.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css">
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
@@ -239,18 +240,6 @@ var URIs = new _URIConstants();
 
 <!-- HEADER -->
 <div id="header">
-<div id="banner">
-  	<div id="greeting">
-		<span id="user_section">
-		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
-		  {% else %} {% trans "Welcome" %}, {{ user.username }} | <a href="/logout" onclick="UIUtils.sendPendingTags();OpManagerFactory.getInstance().sendBufferedVars();">{% trans "Exit" %}</a></span>
-		  {% endif %}
-		<div class="languages">
-		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-		</div>
-	</div>
-	<img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
-</div>	
 <div id="bar">
 <div id="tab_section" class="tab_section">
 	<input type="button" id="right_slider" title="go left" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goLeft()" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>

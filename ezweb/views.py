@@ -2,6 +2,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 
 @login_required
@@ -20,3 +21,8 @@ def index(request, user_name=None):
 def wiring(request, user_name=None):
     """ Vista del Wiring """
     return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
+
+@login_required
+def index_lite(request, user_name=None):
+    """ Vista de ezweb sin cabecera"""
+    return render_to_response('index_lite.html', {}, context_instance=RequestContext(request))

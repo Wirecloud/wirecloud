@@ -58,8 +58,20 @@ a:hover{
 	margin-right:15px;
 	margin-top:5px;
 }
+
 #greeting a{
 	color:white;
+}
+#greeting .languages{
+	display:inline;
+	margin-left: 20px;
+}
+
+#greeting .languages a{
+	text-decoration:none;
+}
+#greeting .languages img{
+	border:0px none;
 }
 #logo {
 	position:relative;
