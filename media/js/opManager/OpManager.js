@@ -245,6 +245,14 @@ var OpManagerFactory = function () {
 		    	this.loadCompleted = true;
 		    	this.showActiveWorkSpace(this.activeWorkSpace);
 //		    	this.changeActiveWorkSpace(this.activeWorkSpace);
+				//ezweb fly
+				if(!BrowserUtilsFactory.getInstance().isIE()){
+					var s = document.createElement('style');
+					s.type = "text/css";
+		            s.innerHTML = '.container { background:#E0E0E0 url(/ezweb/init.dat) no-repeat scroll center bottom;}';
+		            var h = document.getElementsByTagName("head")[0];
+        		    h.appendChild(s);
+				}//TODO: for IE try: document.createStyleSheet() and addRule()
 		    	LayoutManagerFactory.getInstance().resizeWrapper();
 		    	return;
 		    }
