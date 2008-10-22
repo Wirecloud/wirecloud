@@ -130,13 +130,21 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		    this.channels.push(channel);
 		}	
 	}
-	
-	Wiring.prototype.propagateInitialValues = function (initial) {
 
-			for (var i = 0; i < this.channels.length; i++) {
-				var channel = this.channels[i];
-				channel.propagate(channel.variable.value, initial);
-			}
+	Wiring.prototype.propagateInitialValues = function (initial) {
+		for (var i = 0; i < this.channels.length; i++) {
+			var channel = this.channels[i];
+			channel.propagate(channel.variable.value, initial);
+		}
+	}
+
+	Wiring.prototype.refreshIGadget = function(igadget) {
+		var connectables = this.getIGadgetConnectables(igadget);
+
+		for (var i = 0; i < connectables.length; i++) {
+			var connectable = connectables[i];
+			connectable.refresh();
+		}
 	}
 
 	Wiring.prototype.loadWiring = function (workSpaceData) {

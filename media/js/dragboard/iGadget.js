@@ -152,7 +152,7 @@ IGadget.prototype.isVisible = function() {
  * Paints the gadget instance
  * @param where HTML Element where the igadget will be painted
  */
-IGadget.prototype.paint = function(where) {
+IGadget.prototype.paint = function() {
 	if (this.element != null) // exit if the igadgets is already visible
 		return; // TODO exception
 
@@ -306,7 +306,7 @@ IGadget.prototype.paint = function(where) {
 	}
 
 	// Insert it into the dragboard
-	where.appendChild(this.element);
+	this.layoutStyle.dragboard.dragboardElement.appendChild(this.element);
 
 	// Recompute sizes
 	//this._recomputeSize(true);
@@ -391,8 +391,8 @@ IGadget.prototype.updateName = function (igadgetName){
 		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 	}
-	
-	if(igadgetName != null && igadgetName.length > 0){
+
+	if (igadgetName != null && igadgetName.length > 0) {
 		this.name = igadgetName;
 		this.gadgetMenu.setAttribute("title", igadgetName);
 		var o = new Object;
@@ -405,25 +405,37 @@ IGadget.prototype.updateName = function (igadgetName){
 	}
 }
 
+/**
+ * This method must be called to avoid memory leaks caused by circular references.
+ */
+IGadget.prototype.destroy = function() {
+	this.gadget = null;
+	this.layoutStyle = null;
+	this.position = null;
+	this.dragboard = null;
+}
 
 /**
  * Removes this igadget form the dragboard. Also this notify EzWeb Platform for remove the igadget form persistence.
  */
-IGadget.prototype.destroy = function() {
+IGadget.prototype.remove = function() {
 	if (this.element != null) {
 		function onSuccess() {}
 		function onError(transport, e) {
 			var msg;
 			if (transport.responseXML) {
-               msg = transport.responseXML.documentElement.textContent;
+				msg = transport.responseXML.documentElement.textContent;
 			} else {
-               msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
 			}
 			msg = interpolate(gettext("Error removing igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 			LogManagerFactory.getInstance().log(msg);
 		}
-		
-		this.element.parentNode.removeChild(this.element);
+
+		if (this.element.parentNode != null) {
+			this.layoutStyle.removeIGadget(this);
+		}
+
 		this.element = null;
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
 		var uri = URIs.GET_IGADGET.evaluate({workspaceId: this.dragboard.workSpaceId, tabId: this.dragboard.tabId, iGadgetId: this.id});
@@ -551,10 +563,8 @@ IGadget.prototype.setContentSize = function(newWidth, newHeight, persist) {
 
 	this._recomputeSize(true);
 
-	// TODO Notify Context Manager new igadget's sizes
-
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
+	this.layoutStyle._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false, persist);
 }
 
 /**
@@ -596,27 +606,27 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 	this.dragboard.getWorkspace().getContextManager().notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, newLockStatus);
 
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
+	this.layoutStyle._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
 }
 
 /**
  * This function is called when the content of the igadget has been loaded completly
  */
 IGadget.prototype._notifyLoaded = function() {
-	if (this.loaded) {
-		// TODO log
-	}
+	if (!this.loaded) {
+		this.loaded = true;
 
-	this.loaded = true;
+		if (this.errorCount > 0) {
+			var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
+			                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
+			                   this.errorCount);
+			msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
+			LogManagerFactory.getInstance().log(msg);
+			this.errorButtonElement.removeClassName("disabled");
+			this._updateErrorInfo();
+		}
 
-	if (this.errorCount > 0) {
-		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
-		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
-		                   this.errorCount);
-		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
-		LogManagerFactory.getInstance().log(msg);
-		this.errorButtonElement.removeClassName("disabled");
-		this._updateErrorInfo();
+		this.dragboard.igadgetLoaded(this);
 	}
 
 	this.setContentSize(this.contentWidth, this.contentHeight);
@@ -766,7 +776,7 @@ IGadget.prototype._setSize = function(newWidth, newHeight, resizeLeftSide, persi
 	}
 
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
+	this.layoutStyle._notifyResizeEvent(this, oldWidth, oldHeight, this.contentWidth, this.height, resizeLeftSide, persist);
 }
 
 /**
@@ -813,7 +823,7 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 	this._recomputeHeight(true);
 
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, true);
+	this.layoutStyle._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, true);
 }
 
 /**
@@ -880,7 +890,7 @@ IGadget.prototype.setConfigurationVisible = function(newValue) {
 	this._recomputeHeight(true);
 
 	// Notify resize event
-	this.dragboard._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), true);
+	this.layoutStyle._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), true);
 }
 
 /**
@@ -962,8 +972,12 @@ IGadget.prototype.save = function() {
 
 		msg = interpolate(gettext("Error adding igadget to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
+
+		// Remove this iGadget from the layout
+		this.layoutStyle.removeIGadget(this);
+		this.destroy();
 	}
-	
+
 	var persistenceEngine = PersistenceEngineFactory.getInstance();
 	var data = new Hash();
 	data['left'] = this.position.x;
@@ -972,13 +986,61 @@ IGadget.prototype.save = function() {
 	data['height'] = this.contentHeight;
 	data['code'] = this.code;
 	data['name'] = this.name;
-	
+
 	var uri = URIs.POST_IGADGET.evaluate({tabId: this.dragboard.tabId, workspaceId: this.dragboard.workSpaceId});
-	
+
 	data['uri'] = uri;
 	data['gadget'] = URIs.GET_GADGET.evaluate({vendor: this.gadget.getVendor(),
 	                                           name: this.gadget.getName(),
 	                                           version: this.gadget.getVersion()});
 	data = {igadget: data.toJSON()};
 	persistenceEngine.send_post(uri , data, this, onSuccess, onError);
+}
+
+/**
+ * This function migrates this igadget form a layout to another
+ */
+IGadget.prototype.moveToLayout = function(layout) {
+	if (this.layoutStyle == layout)
+		return;
+
+	var oldLayout = this.layoutStyle;
+	oldLayout.removeIGadget(this);
+
+	this.layoutStyle = layout;
+	this.dragboard = layout.dragboard;
+	this.position = null;
+
+	this.layoutStyle.addIGadget(this);
+
+	// Persistence
+	var onSuccess = function(transport) { }
+
+	var onError = function(transport, e) {
+		var msg;
+		if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
+		} else {
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+
+		msg = interpolate(gettext("Error saving changes to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+	}
+
+	var data = new Hash();
+	data['iGadgets'] = new Array();
+
+	var iGadgetInfo = new Hash();
+	iGadgetInfo['id'] = this.id;
+	iGadgetInfo['top'] = this.position.y;
+	iGadgetInfo['left'] = this.position.x;
+	iGadgetInfo['tab'] = this.dragboard.tabId;
+
+	data['iGadgets'].push(iGadgetInfo);
+
+	data = {igadgets: data.toJSON()};
+	var persistenceEngine = PersistenceEngineFactory.getInstance();
+	uri = URIs.GET_IGADGETS.evaluate({workspaceId: oldLayout.dragboard.workSpaceId, tabId: oldLayout.dragboard.tabId});
+	persistenceEngine.send_update(uri, data, this, onSuccess, onError);
 }

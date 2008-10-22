@@ -153,9 +153,7 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.show = function () {
 		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
-	    this.dragboard.recomputeSize();
-	    this.markAsCurrent();
-	    
+		this.markAsCurrent();
 	}
 	
 		/* if the tab is out of the visible area of the tab bar, slide it to show it */

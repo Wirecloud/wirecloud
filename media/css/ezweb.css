@@ -244,6 +244,10 @@ a:hover{
   -webkit-border-top-right-radius: 4px;
 }
 
+#tab_section .tab.selected {
+  background: #F0E68C;
+}
+
 .disabled {
   display: none !important;
 }

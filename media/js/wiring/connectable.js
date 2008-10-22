@@ -88,6 +88,9 @@ wOut.prototype.fullDisconnect = function() {
     this.disconnect(inouts[i]);
 }
 
+wOut.prototype.refresh = function() {
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This class represents every object which may initialize one transmission through the wiring module //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,6 +127,9 @@ wIn.prototype.fullDisconnect = function() {
 wIn.prototype.propagate = function(value, initial) {
   for (var i = 0; i < this.outputs.length; ++i)
     this.outputs[i].propagate(value, initial);
+}
+
+wIn.prototype.refresh = function() {
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -258,3 +264,6 @@ wSlot.prototype.getQualifiedName = function () {
   return "slot_" + this.variable.id;
 }
 
+wSlot.prototype.refresh = function() {
+  this.variable.refresh();
+}

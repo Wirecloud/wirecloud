@@ -56,28 +56,27 @@ def createConnectable(var):
     #If var is and SLOT or and EVENT, a proper connectable object must be created!
     aspect = var.vardef.aspect
     name = var.vardef.name
-    
+
     connectable = None
-    
+
     if (aspect == 'SLOT'):
         connectable = Out(name=name, abstract_variable=var.abstract_variable)
     if (aspect == 'EVEN'):
         connectable = In(name=name, variable=var)
-        
+
     if (connectable == None):
         return {}
-    
+
     connectable.save()
-    
+
     connectableId = {}
-    
-    connectableId['id'] = connectable.id    
+
+    connectableId['id'] = connectable.id
     connectableId['name'] = name
-        
-    return connectableId   
+
+    return connectableId
 
 def SaveIGadget(igadget, user, tab):
-    
     gadget_uri = igadget.get('gadget')
     igadget_code = igadget.get('code')
     igadget_name = igadget.get('name')
@@ -85,7 +84,7 @@ def SaveIGadget(igadget, user, tab):
     height = igadget.get('height')
     top = igadget.get('top')
     left = igadget.get('left')
-        
+
     # Creates IGadget position
     position = Position(posX=left, posY=top, height=height, width=width, minimized=False)
     position.save()
@@ -96,12 +95,12 @@ def SaveIGadget(igadget, user, tab):
         if gadget_uri.startswith("/user") or gadget_uri.startswith("user"):
             gadget_uri_parts = gadget_uri.split("/")
             gadget_uri = "/" + "/".join(gadget_uri_parts[gadget_uri_parts.index("gadgets"):])
-        
+
         gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
         new_igadget = IGadget(code=igadget_code, name=igadget_name, gadget=gadget, tab=tab, position=position)
         new_igadget.save()
-                
+
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
             # Sets the default value of variable
@@ -137,23 +136,32 @@ def SaveIGadget(igadget, user, tab):
     except VariableDef.DoesNotExist:
         #iGadget has no variables. It's normal
         pass
-    
+
 def UpdateIGadget(igadget, user, tab):
-    
+
     igadget_pk = igadget.get('id')
-    
+
     # Checks
     ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)
-    
+
     if igadget.has_key('name'):
         name = igadget.get('name')
         ig.name = name
-    
+
+    if igadget.has_key('tab'):
+        newtab_id = igadget.get('tab');
+        if newtab_id < 0:
+            raise Exception(_('Malformed iGadget JSON'))
+
+        if newtab_id != tab.id:
+            newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
+            ig.tab = newtab
+
     ig.save()
-    
+
     # get IGadget's position
     position = ig.position
-        
+
     # update the requested attributes
     if igadget.has_key('width'):
         width = igadget.get('width')
@@ -172,7 +180,7 @@ def UpdateIGadget(igadget, user, tab):
         if top < 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.posY = top
-    
+
     if igadget.has_key('left'):
         left = igadget.get('left')
         if left < 0:
@@ -181,7 +189,7 @@ def UpdateIGadget(igadget, user, tab):
 
     if igadget.has_key('minimized'):
         minimized = igadget.get('minimized')
-        if (minimized == 'true'):
+        if minimized == 'true':
             position.minimized = True
         else:
             position.minimized = False
@@ -251,12 +259,12 @@ class IGadgetCollection(Resource):
     @transaction.commit_manually
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
-        
+
         received_json = PUT_parameter(request, 'igadgets')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
-        
+
         try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
             received_data = simplejson.loads(received_json)

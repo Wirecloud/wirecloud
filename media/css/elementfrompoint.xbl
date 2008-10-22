@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bindings xmlns="http://www.mozilla.org/xbl">
+<binding id="default">
+	<implementation>
+
+		<constructor>//<![CDATA[
+			// Solución provisional, se debería mejorar el cálculo del tamaño del TabBar en el LayoutManager
+			var tabBorderLeft = parseInt(this.getStyle('border-left-width'));
+                	var tabBorderRight =  parseInt(this.getStyle('border-right-width')); 
+			LayoutManagerFactory.getInstance().changeTabBarSize(this.offsetWidth - tabBorderLeft - tabBorderRight);
+			elementPositions.addElement(this);
+		//]]></constructor>
+
+		<destructor>//<![CDATA[
+			elementPositions.removeElement(this);
+		//]]></destructor>
+
+	</implementation>
+</binding>
+</bindings>
