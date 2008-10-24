@@ -148,6 +148,10 @@ def UpdateIGadget(igadget, user, tab):
         name = igadget.get('name')
         ig.name = name
 
+    if igadget.has_key('code'):
+        code = igadget.get('code')
+        ig.code = code
+
     if igadget.has_key('tab'):
         newtab_id = igadget.get('tab');
         if newtab_id < 0:
