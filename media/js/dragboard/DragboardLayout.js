@@ -93,19 +93,25 @@ DragboardLayout.prototype.getWidth = function() {
 	return this.dragboardWidth;
 }
 
-DragboardLayout.prototype.addIGadget = function(iGadget) {
-	if (iGadget.element != null) // TODO
-		this.dragboard.dragboardElement.appendChild(iGadget.element);
+DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+	if (affectsDragboard) {
+		this.dragboard._registerIGadget(iGadget);
 
-	this.dragboard._registerIGadget(iGadget);
+		if (iGadget.element != null) // TODO
+			this.dragboard.dragboardElement.appendChild(iGadget.element);
+	}
+
 	this.iGadgets[iGadget.code] = iGadget;
 }
 
-DragboardLayout.prototype.removeIGadget = function(iGadget) {
-	if (iGadget.element != null) // TODO
-		this.dragboard.dragboardElement.removeChild(iGadget.element);
+DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
+	if (affectsDragboard) {
+		this.dragboard._deregisterIGadget(iGadget);
 
-	this.dragboard._deregisterIGadget(iGadget);
+		if (iGadget.element != null) // TODO
+			this.dragboard.dragboardElement.removeChild(iGadget.element);
+	}
+
 	delete this.iGadgets[iGadget.code];
 }
 

@@ -484,7 +484,7 @@ ColumnLayout.prototype.getCellAt = function (x, y) {
 }
 
 
-ColumnLayout.prototype.addIGadget = function(iGadget) {
+ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	var position = iGadget.getPosition();
 	if (position) {
 		this._insertAt(iGadget, position.x, position.y);
@@ -497,12 +497,12 @@ ColumnLayout.prototype.addIGadget = function(iGadget) {
 		this._reserveSpace(this.matrix, iGadget);
 	}
 
-	DragboardLayout.prototype.addIGadget.call(this, iGadget);
+	DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 }
 
-ColumnLayout.prototype.removeIGadget = function(iGadget) {
+ColumnLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
 	this._removeFromMatrix(this.matrix, iGadget);
-	DragboardLayout.prototype.removeIGadget.call(this, iGadget);
+	DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
 }
 
 ColumnLayout.prototype.initializeMove = function(igadget) {

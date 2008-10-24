@@ -265,7 +265,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var iGadget = new IGadget(gadget, null, this.currentCode, igadgetName, this.baseLayout, null, width, height, false, this);
 		this.currentCode++;
 
-		this.baseLayout.addIGadget(iGadget);
+		this.baseLayout.addIGadget(iGadget, true);
 
 		iGadget.save();
 	}
@@ -326,7 +326,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		this.gadgetToMove = this.iGadgets[iGadgetId];
 
-		this.gadgetToMove.layoutStyle.initializeMove(this.gadgetToMove);
+		this.gadgetToMove.layout.initializeMove(this.gadgetToMove);
 	}
 
 	Dragboard.prototype.moveTemporally = function (x, y) {
@@ -346,7 +346,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			return;
 		}
 
-		this.gadgetToMove.layoutStyle.cancelMove();
+		this.gadgetToMove.layout.cancelMove();
 		this.gadgetToMove = null;
 	}
 
@@ -357,7 +357,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			return;
 		}
 
-		this.gadgetToMove.layoutStyle._acceptMove();
+		this.gadgetToMove.layout._acceptMove();
 		this.gadgetToMove = null;
 		this.shadowMatrix = null;
 	}
@@ -376,13 +376,20 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	
 
 	Dragboard.prototype._registerIGadget = function (iGadget) {
-		this.iGadgets[iGadget.id] = iGadget;
+		if (iGadget.id)
+			this.iGadgets[iGadget.id] = iGadget;
+
+		if (!iGadget.code)
+			iGadget.code = this.currentCode++
+
 		this.iGadgetsByCode[iGadget.code] = iGadget;
 	}
 
 	Dragboard.prototype._deregisterIGadget = function (iGadget) {
 		delete this.iGadgets[iGadget.id];
 		delete this.iGadgetsByCode[iGadget.code];
+
+		iGadget.code = null;
 	}
 
 	Dragboard.prototype.addIGadget = function (iGadget, igadgetInfo) {
@@ -426,7 +433,7 @@ function DragboardCursor(iGadget, position) {
 	var positiontmp = iGadget.getPosition();
 	this.position = positiontmp.clone();
 
-	this.layoutStyle = iGadget.layoutStyle;
+	this.layout = iGadget.layout;
 	this.width = iGadget.getWidth();
 	this.height = iGadget.getHeight();
 	this.heightInPixels = iGadget.element.offsetHeight;
@@ -450,8 +457,8 @@ DragboardCursor.prototype.paint = function(dragboard) {
 	dragboardCursor.style.width = this.widthInPixels + "px";
 
 	// Set position
-	dragboardCursor.style.left = (this.layoutStyle.getColumnOffset(this.position.x) - 2) + "px"; // TODO -2 px for borders
-	dragboardCursor.style.top = (this.layoutStyle.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
+	dragboardCursor.style.left = (this.layout.getColumnOffset(this.position.x) - 2) + "px"; // TODO -2 px for borders
+	dragboardCursor.style.top = (this.layout.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
 
 	// assign the created element
 	dragboard.appendChild(dragboardCursor);
@@ -475,8 +482,8 @@ DragboardCursor.prototype.setPosition = function (position) {
 	this.position = position;
 
 	if (this.element != null) { // if visible
-		this.element.style.left = (this.layoutStyle.getColumnOffset(position.x) - 2) + "px"; // TODO -2 px for borders
-		this.element.style.top = (this.layoutStyle.getRowOffset(position.y) - 2) + "px"; // TODO -2 px for borders
+		this.element.style.left = (this.layout.getColumnOffset(position.x) - 2) + "px"; // TODO -2 px for borders
+		this.element.style.top = (this.layout.getRowOffset(position.y) - 2) + "px"; // TODO -2 px for borders
 	}
 }
 
@@ -863,8 +870,8 @@ IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleEle
 	var iGadget = data.iGadget;
 
 	// Skip if the mouse is outside the dragboard
-	if (iGadget.layoutStyle.isInside(x, y)) {
-		var position = iGadget.layoutStyle.getCellAt(x, y);
+	if (iGadget.layout.isInside(x, y)) {
+		var position = iGadget.layout.getCellAt(x, y);
 		var currentPosition = iGadget.getPosition();
 		var width;
 
