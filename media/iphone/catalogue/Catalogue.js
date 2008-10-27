@@ -38,7 +38,11 @@ var CatalogueFactory  = function () {
 		// *********************************
 		
 		
-		this.catalogueElement = $('mashup_catalogue');
+		this.catalogueElement = $('mashup_catalogue_content');
+		this.catalogueParentElement = $('mashup_catalogue');
+		this.infoElement = $('mashup_info_content');
+		this.infoParentElement = $('mashup_info');
+		this.resourceList = null;
 		
 		
 		// ********************
@@ -93,8 +97,13 @@ var CatalogueFactory  = function () {
 		}
 
 		this.hide = function(){
-			this.catalogueElement.setStyle({display: "none"});
+			this.catalogueParentElement.setStyle({display: "none"});
 			OpManagerFactory.getInstance().showWorkspaceMenu();
+		}
+		
+		this.show = function(){
+			this.catalogueParentElement.setStyle({display: "block"});
+			this.infoParentElement.setStyle({display: "none"});
 		}
 
 		this.loadCatalogue = function() {
@@ -113,27 +122,24 @@ var CatalogueFactory  = function () {
 			var loadResources = function(transport) {
 				var responseJSON = transport.responseText;
 			    var jsonResourceList = eval ('(' + responseJSON + ')');
-			    jsonResourceList = jsonResourceList.resourceList;
+			    this.resourceList = jsonResourceList.resourceList;
 				
-				var html = '<div class="container mashup_tab" id="mashup_container">';
-				html+= '<div class="toolbar anchorTop"><a href="javascript:CatalogueFactory.getInstance().hide()" class="back_button"><span class="menu_text">Menu</span></a><h1>Catalogue</h1></div>';
-				html+= '<div class="tab_content">';
-				for (var i = 0; i<jsonResourceList.length; i++)
+				var html = '';
+				for (var i = 0; i<this.resourceList.length; i++)
 				{
-					var resource = jsonResourceList[i];
+					var resource = this.resourceList[i];
 					var visibleName = resource.name;
 					if (resource.name.length > 13)
 						var visibleName = visibleName.substring(0, 11)+"...";
 					html+= '<div class="igadget_item">';
-					html+= '<a href="javascript:CatalogueFactory.getInstance().addMashupResource('+resource.mashupId+');">';
+					html+= '<a href="javascript:CatalogueFactory.getInstance().showResourceInfo('+resource.mashupId+');">';
 					html+= '<img class="igadget_icon" src="'+resource.uriImage+'" />'
 					html+= '</a>';
-					html+= '<a href="javascript:OpManagerFactory.getInstance().addMashupResource('+resource.mashupId+');">'+visibleName+'</a>';
+					html+= '<a href="javascript:CatalogueFactory.getInstance().showResourceInfo('+resource.mashupId+');">'+visibleName+'</a>';
 					html+= '</div>';
 				}
-				html+= '</div>';
 				this.catalogueElement.update(html);
-				this.catalogueElement.setStyle({display: "block"});
+				this.catalogueParentElement.setStyle({display: "block"});
 				$('workspace_menu').setStyle({display: "none"});;
 			}
 			
@@ -143,6 +149,46 @@ var CatalogueFactory  = function () {
 			
 			// Get Resources from PersistenceEngine. Asyncrhonous call!
 			persistenceEngine.send_get(search_url, this, loadResources, onError, param);
+		}
+		
+		/* Display the mashup information panel */
+		this.showResourceInfo = function(id) {
+			var html = "";
+			for (var i = 0; i<this.resourceList.length; i++){
+				var resource = this.resourceList[i];
+				if (id == resource.mashupId){
+					html += "<h2>"+resource.name+"</h2>";
+					html += "<img src='"+ resource.uriImage +"' id='resource_img'>";
+					html += "<div id='resource_description'>"+resource.description+"</div>";
+					//display the stars according to the popularity
+					html += "<div id='resource_popularity'>";
+					var i = 0;
+					for (i;i<resource.votes[0].popularity;i++)
+						html += "<img src='/ezweb/images/ico_vot_ok.gif'/>";
+					if ((resource.votes[0].popularity%1)!=0){
+						html += "<img src='/ezweb/images/ico_vot_md.gif'/>";
+						i++;
+					}
+					for (i; i<5; i++){
+						html += "<img src='/ezweb/images/ico_vot_no.gif'/>";
+					}
+					html += "<span class='x-small'> ("+resource.votes[0].votes_number+" votes)</span></div>";
+					html += "<div id='resource_vendor'><span class='title_info_resource'>Vendor: </span>" + resource.vendor+"</div>";
+					html += "<div id='resource_version'><span class='title_info_resource'>Version: </span>" + resource.version+"</div>";
+					html += "<div id='resource_tags'><span class='title_info_resource'>Tags: </span>"
+					for (var i=0; i<resource.tags.length; i++){
+						html +="<span class='small'>"+resource.tags[i].value+"<span class='x-small'> ("+resource.tags[i].appearances+")</span> </span>";
+					}
+					html += "</div>";
+					break;
+				}
+			}
+			html += "<div id='add_resource'><a href='javascript:CatalogueFactory.getInstance().addMashupResource("+resource.mashupId+");'>Add Mashup</a></div>";
+			this.infoElement.update(html);
+			
+			this.catalogueParentElement.setStyle({display: "none"});
+			this.infoParentElement.setStyle({display: "block"});
+			
 		}
 	
 	}

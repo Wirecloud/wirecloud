@@ -5,6 +5,7 @@ body{
     font-family: Helvetica;
     -webkit-text-size-adjust: none;
     color: #E0E0E0;
+    font-size: 11pt;
 }
 
 a, a:link, a:visited, a:hover{
@@ -27,6 +28,13 @@ img{
 	font-weight: bold;
 }
 
+.small{
+	font-size: small;
+}
+
+.x-small{
+	font-size: x-small;
+}
 /**** HEADER SECTION ****/
 
 #header {
@@ -87,6 +95,7 @@ wrapper{
 .toolbar .menu_text{
 	position: relative;
 	top: 6px;
+	font-size: 9pt;
 }
 
 .toolbar h1{
@@ -267,8 +276,65 @@ body[orient="landscape"] .igadget_item{
 	top: 0px;
 }
 
-.mashup_tab .tab_content a{
+.mashup_tab .tab_content a, #mashup_info .mashup_content{
 	color: black;
+}
+
+.mashup_content{
+	margin: 0 5px;
+}
+
+.mashup_content  h2{
+	text-align: center;
+	margin: 0;
+}
+
+.mashup_content div{
+	margin: 5px 0;
+}
+
+.mashup_content #resource_img{
+	width: 125px;
+	height: 125px;
+	float: right;
+	margin-right:10px;
+}
+
+.mashup_content #resource_popularity img{
+	vertical-align: top;
+}
+
+.mashup_content .title_info_resource {
+	font-weight: bold;
+	color: black;
+}
+.mashup_content #resource_tags{
+	color:#2D6F9C;
+}
+
+.mashup_content #add_resource{
+	text-align: center;
+}
+
+.mashup_content #add_resource a{
+	color: #fff;
+	font: bold 20px/46px Helvetica;
+	text-decoration: none;
+	text-align: center;
+	text-shadow: #000 0 1px 0;
+	border-width: 0px 14px 0px 14px;
+	//display: block;
+	padding: 7px;
+	margin: 3px 0;
+	color: #000;
+	text-shadow: #fff 0px 1px 0;
+	-webkit-border-image: url(/ezweb/images/iphone/whiteButton.png) 0 14 0 14;
+}
+
+.mashup_content #add_resource a:hover{
+	color: #fff !important;
+	text-shadow: #000 0px 1px 0;
+	-webkit-border-image: url(/ezweb/images/iphone/blueButton.png) 0 14 0 14;
 }
 
 /* DRAGBOARD SECTION */

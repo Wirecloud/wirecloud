@@ -37,12 +37,27 @@
     </div>
 
 	<!-- CATALOGUE -->
-	<div class="mashup tabs_container" id="mashup_catalogue">
+	<div id="mashup_catalogue" class="mashup tabs_container">
+		<div class="container mashup_tab" id="mashup_container">
+			<div class="toolbar anchorTop">
+				<a href="javascript:CatalogueFactory.getInstance().hide()" class="back_button"><span class="menu_text">Menu</span></a>
+				<h1>Catalogue</h1>
+			</div>
+			<div id="mashup_catalogue_content" class="tab_content"></div>
+		</div>
+	</div>
+	<div id="mashup_info" class="mashup tabs_container">
+		<div class="container mashup_tab" id="mashup_container">
+			<div class="toolbar anchorTop">
+				<a href="javascript:CatalogueFactory.getInstance().show()" class="back_button"><span class="menu_text">Catalogue</span></a>
+				<h1>Mashup Info</h1>
+			</div>
+			<div id="mashup_info_content" class="mashup_content"></div>
+		</div>
 	</div>
 	
 	<!-- IGADGETS MENU -->
-    <div id="tabs_container" class="tabs_container">
-    </div>
+    <div id="tabs_container" class="tabs_container"></div>
     
     
 	<!-- IGADGET SECTION --> 
