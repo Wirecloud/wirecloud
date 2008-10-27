@@ -279,12 +279,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			LogManagerFactory.getInstance().log(msg);
 			return;
 		}
-
-		channel.fullDisconnect();
+		
+		//delete the workspace variable
+		this.workspace.getVarManager().removeWorkspaceVariable(channel.variable.id);
 		
 		this.channelsForRemoving.push(channel.id);
 		
 		this.channels.removeById(channelId);
+		
+		channel.destroy();
 	}
 
 	Wiring.prototype.serializationSuccess = function (transport){
@@ -300,6 +303,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 					this.channels[j].id = mapping.id;
 					this.channels[j].provisional_id = false;
 					this.channels[j].variable.id = mapping.var_id;
+					this.workspace.getVarManager().addWorkspaceVariable(mapping.var_id, this.channels[j].variable);
 					break;
 				}
 			}

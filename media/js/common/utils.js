@@ -54,8 +54,14 @@
  
  Array.prototype.removeById = function (id){
  	var element;
- 	for(var i=0;i < this.length;i++){ 	
- 		if(this[i].getId() == id){
+ 	var elementId;
+ 	for(var i=0;i < this.length;i++){
+ 		if(typeof this[i].getId == "function"){
+ 			elementId = this[i].getId();
+ 		}else{
+ 			elementId = this[i].id;
+ 		}
+ 		if(elementId == id){
  			element = this[i];
  			this.splice(i, 1);
  			return element;

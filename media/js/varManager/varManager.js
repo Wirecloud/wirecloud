@@ -113,6 +113,7 @@ function VarManager (_workSpace) {
 	
 	VarManager.prototype.removeWorkspaceVariable = function (ws_varId) {
 		delete this.workspaceVariables[ws_varId];
+		this.workspaceModifiedVars.removeById(ws_varId);
 	}
 	
 	VarManager.prototype.parseIGadgetVariables = function (igadget) {
@@ -192,6 +193,7 @@ function VarManager (_workSpace) {
 		
 		for (var i=0; i<variables_ids.length; i++) {			
 			if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
+				this.igadgetModifiedVars.removeById(variables_ids[i]);
 				delete this.variables[variables_ids[i]];
 			}
 		}
