@@ -42,6 +42,8 @@ from django.utils.translation import ugettext as _
 from xml.sax import parseString, handler
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag
 
+import string
+
 
 class TemplateParser:
     def __init__(self, uri, user):
@@ -126,7 +128,7 @@ class TemplateHandler(handler.ContentHandler):
             self._author = self._accumulator[0]
             return
         if (name == 'Description'):
-            self._description = self._accumulator[0]
+            self._description = string.join(self._accumulator,"")
             return
         if (name == 'Mail'):
             self._mail = self._accumulator[0]

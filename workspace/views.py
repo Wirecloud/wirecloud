@@ -569,7 +569,7 @@ class  WorkSpacePublisherEntry(Resource):
         version = mashup.get('version')
         author = mashup.get('author')
         email = mashup.get('email')
-        description = mashup.get('description') + " -- " +get_workspace_description(workspace)
+        description = mashup.get('description') + " \n " +get_workspace_description(workspace)
         imageURI = mashup.get('imageURI')
         wikiURI = mashup.get('wikiURI')
         
