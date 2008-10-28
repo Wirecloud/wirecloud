@@ -82,6 +82,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.visible = false;
     if(this.currentChannel){
 		this.uncheckChannel(this.currentChannel);
+		this.currentChannel = null;
     }
     
     this.saveWiring();
