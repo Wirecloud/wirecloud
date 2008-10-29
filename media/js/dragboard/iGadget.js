@@ -433,7 +433,7 @@ IGadget.prototype.remove = function() {
 		}
 
 		if (this.element.parentNode != null) {
-			this.layout.removeIGadget(this);
+			this.layout.removeIGadget(this, true);
 		}
 
 		this.element = null;
