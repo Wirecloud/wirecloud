@@ -420,6 +420,10 @@ class TemplateHandler(handler.ContentHandler):
         if (attrs.has_key('href')):
             _href = attrs.get('href')
         
+        _content_type = None
+        if (attrs.has_key('content-type')):
+            _content_type = attrs.get('content-type')
+        
         if (_href != ""):
             try:
                 # Gadget Code Parsing
@@ -427,7 +431,7 @@ class TemplateHandler(handler.ContentHandler):
                     if path.isfile(path.join(settings.GADGETS_ROOT, _href)):
                         _href = "file://%s" % path.join(settings.GADGETS_ROOT, _href)
                 gadgetParser = GadgetCodeParser()
-                gadgetParser.parse(_href, self._gadgetURI)
+                gadgetParser.parse(_href, self._gadgetURI, _content_type)
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:
                 raise TemplateParseException(_("ERROR: XHTML could not be read") + " - " + unicode(e))

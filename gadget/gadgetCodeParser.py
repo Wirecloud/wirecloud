@@ -42,7 +42,7 @@ from gadget.models import XHTML
 class GadgetCodeParser:
     xHTML = None
 
-    def parse(self, codeURI, gadgetURI):
+    def parse(self, codeURI, gadgetURI, content_type):
         xhtml = ""
 
         # TODO Fixme!! This works for now, but we have to check if a part of a url is empty
@@ -56,12 +56,10 @@ class GadgetCodeParser:
             raise TemplateParseException(_("XHTML code is not accessible"))
 
         uri = gadgetURI + "/xhtml"
-        try:
-            self.xHTML = XHTML.objects.get (uri=uri)
-        except XHTML.DoesNotExist:
-            self.xHTML = XHTML (uri=uri, code=xhtml, url=codeURI)
-            self.xHTML.save()
         
+        self.xHTML = XHTML (uri=uri, code=xhtml, url=codeURI, content_type=content_type)
+        self.xHTML.save()
+                
         return
 
     def getXHTML (self):

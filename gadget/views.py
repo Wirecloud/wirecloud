@@ -138,7 +138,12 @@ class GadgetCodeEntry(Resource):
         user = get_user_authentication(request)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users=user)
         code = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
-        return HttpResponse(code.code, mimetype='text/html; charset=UTF-8')
+        
+        content_type = gadget.xhtml.content_type
+        if (content_type):
+            return HttpResponse(code.code, mimetype='%s; charset=UTF-8' % content_type)
+        else:
+            return HttpResponse(code.code, mimetype='text/html; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
         user = get_user_authentication(request)
