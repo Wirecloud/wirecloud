@@ -230,6 +230,36 @@
         <field type="TextField" name="default_value"><None></None></field>
         <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
     </object>
+    <object pk="24" model="gadget.variabledef">
+        <field type="CharField" name="name">opensms_url</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Service URI</field>
+        <field type="CharField" name="description">Open MovilForum SMS URI</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value">http://triqui:7000/PruebaServletEzWeb/sms</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="25" model="gadget.variabledef">
+        <field type="CharField" name="name">tm_login</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Source Telephone Number</field>
+        <field type="CharField" name="description">Source Telephone Number</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value"></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="26" model="gadget.variabledef">
+        <field type="CharField" name="name">tm_password</field>
+        <field type="CharField" name="type">P</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Password</field>
+        <field type="CharField" name="description">Password</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value"></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
     <object pk="1" model="gadget.gadget">
         <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0</field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -240,7 +270,7 @@
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
         <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
-	<field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIPhone.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIPhone.png</field>
         <field type="IntegerField" name="width">7</field>
         <field type="IntegerField" name="height">30</field>
         <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
@@ -427,6 +457,24 @@
         <field type="BooleanField" name="shared">False</field>
         <field type="DateTimeField" name="last_update"><None></None></field>
         <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="12" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/SMS Sender/1.3</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">SMS Sender</field>
+        <field type="CharField" name="version">1.3</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">12</field>
+        <field type="CharField" name="author">pjm</field>
+        <field type="CharField" name="mail">pjm@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/SMSSender</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.png</field>
+        <field type="CharField" name="iPhoneImageURI"></field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">18</field>
+        <field type="CharField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
     </object>
     <object pk="1" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0/xhtml</field>
@@ -626,9 +674,9 @@
 			&lt;div id="label"&gt;Esperando una imagen ...&lt;/div&gt;
 		&lt;/div&gt;--&gt;
 	&lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="2" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.0/xhtml</field>
@@ -703,9 +751,9 @@ function displayError(res){
 &lt;body onload="javascript:displayMenu(vkey.get());"&gt;
 	&lt;div id="content_div" style="margin:0 auto; text-align: center;"&gt;&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="3" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Search/1.4/xhtml</field>
@@ -1909,12 +1957,9 @@ alert("excepcion");
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-
-
-
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tube_iptv_search.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="4" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Player/1.3/xhtml</field>
@@ -1986,6 +2031,7 @@ function loadVideo(url_){
 &lt;/body&gt;
 &lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="5" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Amazon/1.0/xhtml</field>
@@ -2056,9 +2102,9 @@ function searchFail(res){
 &lt;img src="http://g-ecx.images-amazon.com/images/G/01/gno/images/general/navAmazonLogoFooter._V28232323_.gif"/&gt;
 &lt;div id="resultados"&gt;A la espera...&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="6" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Yahoo Trip Search/1.1/xhtml</field>
@@ -2156,9 +2202,9 @@ function searchFail(res){
 &lt;img src="http://europa.ls.fi.upm.es/ezweb/gadgets/trip_search.gif"/&gt;
 &lt;div id="resultados"&gt;A la espera...&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/yahootripsearch.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="7" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Map Viewer/1.2/xhtml</field>
@@ -2316,9 +2362,9 @@ function createPointUTM(utmx, utmy, info, center){
 
 &lt;/head&gt;&lt;body style="margin: 0px; padding: 0px;" onload="_initialize();"&gt;
 &lt;div style="width: 100%; height: 100%;" id="map"&gt;&lt;/div&gt;
-&lt;/body&gt;&lt;/html&gt;
-</field>
+&lt;/body&gt;&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/localizador/localizadorPequeno1.2.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="8" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Usuario/1.0/xhtml</field>
@@ -2367,6 +2413,7 @@ address.set(users[phone][3]);
 &lt;/body&gt;
 &lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/visorDatosUsuario.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="9" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Equipo/1.0/xhtml</field>
@@ -2438,6 +2485,7 @@ address.set(devices[device][9]);
 &lt;/body&gt;
 &lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/visorDatosEquipo.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="10" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Bandeja de Averias/1.0/xhtml</field>
@@ -2509,9 +2557,9 @@ serviceHired.set(rows[row*5+4].innerHTML);
 &lt;td style="border: 1px outset rgb(221, 221, 221);"&gt;TV&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;&lt;/table&gt;
-&lt;/body&gt;&lt;/html&gt;
-</field>
+&lt;/body&gt;&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/bandeja/bandejaAverias.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
     <object pk="11" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Configuracion de Red/1.0/xhtml</field>
@@ -2567,5 +2615,99 @@ document.body.replaceChild(oFragment,document.getElementById("visorConfRed"));
 &lt;DIV id="visorConfRed"&gt;&lt;I&gt;A la espera de seleccionar una averia...&lt;/I&gt;&lt;/DIV&gt;
 &lt;/BODY&gt;&lt;/HTML&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/configuracionRed.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
+    </object>
+    <object pk="12" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/SMS Sender/1.3/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" /&gt;
+&lt;style type="text/css"&gt;
+body {margin: 0px;padding: 0px; background-color: #d3e2f9; font-family: verdana, arial, "lucida console", sans-serif; font-size:small;}
+textarea{width: 200px;}
+table {margin-left:auto; margin-right:auto; width:100%; padding: 5px; }
+td {white-space: nowrap; font-size: small; /*border-width: 1px 1px 1px 1px; border-style: inset inset inset inset;
+	border-color: gray gray gray gray;*/}
+&lt;/style&gt;
+&lt;title&gt;Alarm Creation&lt;/title&gt;
+
+&lt;SCRIPT language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/SCRIPT&gt;
+&lt;script language="JavaScript"&gt;
+
+//IMPORTANT: user preference stores opensms_url base uri. It must be set by user
+var opensms_url = EzWebAPI.createRGadgetVariable("opensms_url", setBaseURI);
+// TM_LOGIN = numero de telefono del remitente del SMS
+var tm_login = EzWebAPI.createRGadgetVariable("tm_login", setOriginNumber);
+var password = EzWebAPI.createRGadgetVariable("tm_password", setPass);
+
+//updates base_uri var when user preference is updated
+function setBaseURI(){
+	return;
+}//setBaseURI
+
+function setOriginNumber(){
+	return;
+}//setOriginNumber
+
+function setPass(){
+	return;
+}//setPass
+
+function successCreationHandler(resp){
+	var response = eval('(' + resp.responseText + ')');
+	if (response.result == 'OK') {
+		alert('SMS sent successfully !!!');
+	} else {
+		alert(response.result);
+	}
+	return;
+}//successCreationHandler
+
+function errorCreationHandler(error){
+	alert('An error occurred while sending SMS.\nPlease, Contact admin.');
+	return;
+}//errorCreationHandler
+
+function createSMS(f){
+	//var uri = "https://opensms.movistar.es/aplicacionpost/loginEnvio.jsp";
+	var uri = opensms_url.get();
+	var to = document.SMSCreationForm.elements['to'].value;
+	var message = document.SMSCreationForm.elements['message'].value;
+	
+	if (to.length &lt;= 0) {
+		alert('Destination number is mandatory. Please, fill it in order to send a new SMS');
+	} else if (message.length &lt;= 0) {
+		alert('Message is empty!!!. Please, fill it in order to send a new SMS');
+	}  else {
+		var parameters = 	"TM_ACTION=AUTHENTICATE" + 
+							"&amp;TM_LOGIN=" + tm_login.get() + 
+							"&amp;TM_PASSWORD=" + password.get() +
+							"&amp;to=" + to +
+							"&amp;message=" + message;
+		EzWebAPI.send_post(uri, parameters, this, successCreationHandler, errorCreationHandler);
+	}
+	
+	return;
+
+}
+
+&lt;/script&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;form name="SMSCreationForm" action="return false"&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;td&gt;Destination number: &lt;/td&gt;&lt;td&gt;&lt;input type="text" name="to"&gt;&lt;/input&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Message: &lt;/td&gt;&lt;td&gt;&lt;textarea id="message" rows="3" maxlength="256"&gt;&lt;/textarea&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;input type="button" name="create" value="send" onclick="createSMS(this.form)"&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/form&gt;
+&lt;!--FONT size="2" &gt;&lt;I&gt;Fields with (*) are mandatory&lt;/I&gt;&lt;/FONT--&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
     </object>
 </django-objects>

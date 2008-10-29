@@ -295,6 +295,51 @@
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
+    <object pk="26" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">objectUrl</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="27" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">phone</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="28" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">subject</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="29" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">message</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="30" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">phone</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="31" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">phone</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="32" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">phone</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="33" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">email</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="34" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">address</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
     <object pk="1" model="catalogue.usertag">
         <field type="CharField" name="tag">image</field>
         <field type="CharField" name="weight"><None></None></field>
@@ -799,6 +844,46 @@
         <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
     </object>
+    <object pk="77" model="catalogue.usertag">
+        <field type="CharField" name="tag">mms</field>
+        <field type="CharField" name="weight"><None></None></field>
+        <field type="CharField" name="criteria"><None></None></field>
+        <field type="CharField" name="value"><None></None></field>
+        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="78" model="catalogue.usertag">
+        <field type="CharField" name="tag">sender</field>
+        <field type="CharField" name="weight"><None></None></field>
+        <field type="CharField" name="criteria"><None></None></field>
+        <field type="CharField" name="value"><None></None></field>
+        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="79" model="catalogue.usertag">
+        <field type="CharField" name="tag">agenda</field>
+        <field type="CharField" name="weight"><None></None></field>
+        <field type="CharField" name="criteria"><None></None></field>
+        <field type="CharField" name="value"><None></None></field>
+        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="80" model="catalogue.usertag">
+        <field type="CharField" name="tag">omf</field>
+        <field type="CharField" name="weight"><None></None></field>
+        <field type="CharField" name="criteria"><None></None></field>
+        <field type="CharField" name="value"><None></None></field>
+        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="81" model="catalogue.usertag">
+        <field type="CharField" name="tag">omf</field>
+        <field type="CharField" name="weight"><None></None></field>
+        <field type="CharField" name="criteria"><None></None></field>
+        <field type="CharField" name="value"><None></None></field>
+        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
+    </object>
     <object pk="7" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">7</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
@@ -889,13 +974,25 @@
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
+    <object pk="17" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">17</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">6</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="18" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">18</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">6</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
     <object pk="14" model="catalogue.gadgetresource">
         <field type="CharField" name="short_name">RSSReader</field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">2.0</field>
         <field type="CharField" name="author">jlopez</field>
         <field type="CharField" name="mail">jlopez@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget muestra un feed RSS 2.0</field>
+        <field type="TextField" name="description">Este gadget muestra un feed RSS 2.0</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -904,6 +1001,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssIPhone.jpg</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/RSSReader</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssReaderGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.0</field>
     </object>
     <object pk="9" model="catalogue.gadgetresource">
@@ -912,7 +1010,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
+        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -921,6 +1019,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuarioIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/visorDatosUsuarioGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">2.0</field>
     </object>
     <object pk="2" model="catalogue.gadgetresource">
@@ -929,7 +1028,7 @@
         <field type="CharField" name="version">1.4</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="CharField" name="description">buscador de videos youtube y selector de peliculas</field>
+        <field type="TextField" name="description">buscador de videos youtube y selector de peliculas</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -938,6 +1037,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearchIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tube_iptv_search_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.0</field>
     </object>
     <object pk="12" model="catalogue.gadgetresource">
@@ -946,14 +1046,16 @@
         <field type="CharField" name="version">1.3</field>
         <field type="CharField" name="author">pjm</field>
         <field type="CharField" name="mail">pjm@tid.es</field>
-        <field type="CharField" name="description">'Lozalizame' service from Telefonica Movistar</field>
+        <field type="TextField" name="description">'Lozalizame' service from Telefonica Movistar</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-03 19:49:24</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizameMovistar/localizame.png</field>
+        <field type="CharField" name="iphone_image_uri"><None></None></field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Localizame</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/localizameMovistar/localizame1.3.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.5</field>
     </object>
     <object pk="10" model="catalogue.gadgetresource">
@@ -962,7 +1064,7 @@
         <field type="CharField" name="version">1.2</field>
         <field type="CharField" name="author">fabio</field>
         <field type="CharField" name="mail">fabio@tid.es</field>
-        <field type="CharField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
+        <field type="TextField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -971,6 +1073,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_mapsIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/localizadorPequeno1.2.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.5</field>
     </object>
     <object pk="11" model="catalogue.gadgetresource">
@@ -979,7 +1082,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
+        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -988,6 +1091,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipoIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/visorDatosEquipoGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">2.5</field>
     </object>
     <object pk="16" model="catalogue.gadgetresource">
@@ -996,14 +1100,16 @@
         <field type="CharField" name="version">1.3</field>
         <field type="CharField" name="author">pjm</field>
         <field type="CharField" name="mail">pjm@tid.es</field>
-        <field type="CharField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
+        <field type="TextField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-06-12 13:38:52</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.png</field>
+        <field type="CharField" name="iphone_image_uri"><None></None></field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/SMSSender</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">3.5</field>
     </object>
     <object pk="13" model="catalogue.gadgetresource">
@@ -1012,7 +1118,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="CharField" name="description">Este gadget permite anadir una nota personal</field>
+        <field type="TextField" name="description">Este gadget permite anadir una nota personal</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1021,6 +1127,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Notepad</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.5</field>
     </object>
     <object pk="4" model="catalogue.gadgetresource">
@@ -1029,7 +1136,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
+        <field type="TextField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1038,6 +1145,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averiasIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/bandejaAveriasGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">2.5</field>
     </object>
     <object pk="5" model="catalogue.gadgetresource">
@@ -1046,7 +1154,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
+        <field type="TextField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1055,6 +1163,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/redIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/configuracionRedGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">3.0</field>
     </object>
     <object pk="3" model="catalogue.gadgetresource">
@@ -1063,7 +1172,7 @@
         <field type="CharField" name="version">1.3</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="CharField" name="description">Reproductor de videos de Youtube</field>
+        <field type="TextField" name="description">Reproductor de videos de Youtube</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1072,6 +1181,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberepIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.5</field>
     </object>
     <object pk="1" model="catalogue.gadgetresource">
@@ -1080,7 +1190,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="CharField" name="description">Busqueda de productos en Amazon</field>
+        <field type="TextField" name="description">Busqueda de productos en Amazon</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1089,6 +1199,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">3.0</field>
     </object>
     <object pk="6" model="catalogue.gadgetresource">
@@ -1097,7 +1208,7 @@
         <field type="CharField" name="version">1.1</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="CharField" name="description">buscador de planes de viajes de yahoo</field>
+        <field type="TextField" name="description">buscador de planes de viajes de yahoo</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1106,6 +1217,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_searchIPhone.gif</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/yahootripsearch_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">2.5</field>
     </object>
     <object pk="8" model="catalogue.gadgetresource">
@@ -1114,7 +1226,7 @@
         <field type="CharField" name="version">1.0</field>
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
+        <field type="TextField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1123,6 +1235,7 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIphone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">4.5</field>
     </object>
     <object pk="7" model="catalogue.gadgetresource">
@@ -1131,7 +1244,7 @@
         <field type="CharField" name="version">2.0</field>
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
@@ -1140,6 +1253,44 @@
         <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickrIPhone.png</field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
         <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">3.5</field>
+    </object>
+    <object pk="17" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">MMS Sender</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.1</field>
+        <field type="CharField" name="author">fabio</field>
+        <field type="CharField" name="mail">fabio@tid.es</field>
+        <field type="TextField" name="description">
+Envio de MMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-10-29 17:39:21</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/sendMMS/sendMMS.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MMSSender</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/sendMMS/sendMMS1.1.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="18" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Mobile Agenda</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.1</field>
+        <field type="CharField" name="author">fabio</field>
+        <field type="CharField" name="mail">fabio@tid.es</field>
+        <field type="TextField" name="description">Consulta de agenda utilizando la API de Open MovilForum.</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-10-29 17:40:25</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/agenda/agenda.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MobileAgenda</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/agenda/agenda.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
     </object>
 </django-objects>

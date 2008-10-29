@@ -1,5 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
+    <object pk="1" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="2" model="workspace.tab">
+        <field type="CharField" name="name">Imagen</field>
+        <field type="BooleanField" name="visible">False</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="4" model="workspace.tab">
+        <field type="CharField" name="name">IPTV</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">5</field>
+    </object>
+    <object pk="3" model="workspace.tab">
+        <field type="CharField" name="name">Averias</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="5" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
+    </object>
+    <object pk="1" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
+    <object pk="2" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
+    <object pk="3" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
+    <object pk="4" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">imageUrl</field>
+    </object>
+    <object pk="5" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab 2</field>
+    </object>
+    <object pk="6" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+    </object>
+    <object pk="7" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="8" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">poi</field>
+    </object>
+    <object pk="9" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">title</field>
+    </object>
+    <object pk="10" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">place</field>
+    </object>
+    <object pk="11" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">rssUrl</field>
+    </object>
+    <object pk="16" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">RSSYurl</field>
+    </object>
+    <object pk="17" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="18" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="19" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">travel</field>
+    </object>
+    <object pk="20" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">poi</field>
+    </object>
+    <object pk="21" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">utmCoord</field>
+    </object>
+    <object pk="22" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+    </object>
+    <object pk="23" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+    </object>
+    <object pk="24" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="25" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">video</field>
+    </object>
+    <object pk="26" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">interest_point</field>
+    </object>
+    <object pk="27" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">place</field>
+    </object>
+    <object pk="28" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">image</field>
+    </object>
+    <object pk="29" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">title</field>
+    </object>
+    <object pk="30" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">phoneNumber</field>
+    </object>
+    <object pk="31" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+    </object>
+    <object pk="33" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">utmCoord</field>
+    </object>
+    <object pk="34" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+    </object>
+    <object pk="35" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">estado</field>
+    </object>
+    <object pk="36" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">equipo</field>
+    </object>
+    <object pk="37" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">dir_equipo</field>
+    </object>
+    <object pk="38" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">servicio</field>
+    </object>
+    <object pk="39" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">telefono</field>
+    </object>
+    <object pk="40" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">deviceStatus</field>
+    </object>
+    <object pk="41" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">deviceId</field>
+    </object>
+    <object pk="42" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">serviceHired</field>
+    </object>
+    <object pk="43" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">utmCoord</field>
+    </object>
+    <object pk="44" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">address</field>
+    </object>
+    <object pk="45" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">servicio</field>
+    </object>
+    <object pk="46" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">telefono</field>
+    </object>
+    <object pk="47" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">equipo</field>
+    </object>
+    <object pk="48" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">dir_usuario</field>
+    </object>
+    <object pk="49" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">dir_equipo</field>
+    </object>
+    <object pk="50" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
     <object pk="1" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="TextField" name="value"></field>
@@ -220,33 +435,30 @@
         <field type="TextField" name="value">TV</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">38</field>
     </object>
-    <object pk="1" model="workspace.tab">
-        <field type="CharField" name="name">MyTab</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+    <object pk="50" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">6</field>
+        <field type="TextField" name="value"></field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
     </object>
-    <object pk="2" model="workspace.tab">
-        <field type="CharField" name="name">Imagen</field>
-        <field type="BooleanField" name="visible">False</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
+    <object pk="1" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="1"></object></field>
     </object>
-    <object pk="4" model="workspace.tab">
-        <field type="CharField" name="name">IPTV</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">5</field>
+    <object pk="2" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
     </object>
-    <object pk="3" model="workspace.tab">
-        <field type="CharField" name="name">Averias</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
+    <object pk="3" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="4" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
     </object>
     <object pk="1" model="workspace.workspacevariable">
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
@@ -332,195 +544,10 @@
         <field type="CharField" name="type"></field>
         <field type="CharField" name="aspect">CHANNEL</field>
     </object>
-    <object pk="1" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">MyTab</field>
-    </object>
-    <object pk="2" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">MyTab</field>
-    </object>
-    <object pk="3" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">MyTab</field>
-    </object>
-    <object pk="4" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">imageUrl</field>
-    </object>
-    <object pk="5" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">MyTab 2</field>
-    </object>
-    <object pk="6" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-    </object>
-    <object pk="7" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-    </object>
-    <object pk="8" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">poi</field>
-    </object>
-    <object pk="9" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">title</field>
-    </object>
-    <object pk="10" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">place</field>
-    </object>
-    <object pk="11" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">rssUrl</field>
-    </object>
-    <object pk="16" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">RSSYurl</field>
-    </object>
-    <object pk="17" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-    </object>
-    <object pk="18" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-    </object>
-    <object pk="19" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">travel</field>
-    </object>
-    <object pk="20" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">poi</field>
-    </object>
-    <object pk="21" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">utmCoord</field>
-    </object>
-    <object pk="22" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-    </object>
-    <object pk="23" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-    </object>
-    <object pk="24" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-    </object>
-    <object pk="25" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">video</field>
-    </object>
-    <object pk="26" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">interest_point</field>
-    </object>
-    <object pk="27" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">place</field>
-    </object>
-    <object pk="28" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">image</field>
-    </object>
-    <object pk="29" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">title</field>
-    </object>
-    <object pk="30" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">phoneNumber</field>
-    </object>
-    <object pk="31" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-    </object>
-    <object pk="33" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">utmCoord</field>
-    </object>
-    <object pk="34" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-    </object>
-    <object pk="35" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">estado</field>
-    </object>
-    <object pk="36" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">equipo</field>
-    </object>
-    <object pk="37" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">dir_equipo</field>
-    </object>
-    <object pk="38" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">servicio</field>
-    </object>
-    <object pk="39" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">telefono</field>
-    </object>
-    <object pk="40" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">deviceStatus</field>
-    </object>
-    <object pk="41" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">deviceId</field>
-    </object>
-    <object pk="42" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">serviceHired</field>
-    </object>
-    <object pk="43" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">utmCoord</field>
-    </object>
-    <object pk="44" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">address</field>
-    </object>
-    <object pk="45" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">servicio</field>
-    </object>
-    <object pk="46" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">telefono</field>
-    </object>
-    <object pk="47" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">equipo</field>
-    </object>
-    <object pk="48" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">dir_usuario</field>
-    </object>
-    <object pk="49" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">dir_equipo</field>
-    </object>
-    <object pk="1" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="1"></object></field>
-    </object>
-    <object pk="2" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="3" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    <object pk="16" model="workspace.workspacevariable">
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
+        <field type="CharField" name="type"></field>
+        <field type="CharField" name="aspect">TAB</field>
     </object>
 </django-objects>

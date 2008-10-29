@@ -105,6 +105,11 @@
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">44</field>
         <field to="connectable.inout" name="inouts" rel="ManyToManyRel"><object pk="10"></object></field>
     </object>
+    <object pk="23" model="connectable.out">
+        <field type="CharField" name="name">tab_MyTab</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
+        <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>
+    </object>
     <object pk="1" model="connectable.inout">
         <field type="CharField" name="name">video</field>
         <field to="workspace.workspacevariable" name="workspace_variable" rel="ManyToOneRel">5</field>

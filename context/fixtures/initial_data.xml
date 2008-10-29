@@ -94,6 +94,20 @@
         <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
         <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
     </object>
+    <object pk="6" model="auth.user">
+        <field type="CharField" name="username">anonymous1225298034102</field>
+        <field type="CharField" name="first_name"></field>
+        <field type="CharField" name="last_name"></field>
+        <field type="CharField" name="email"></field>
+        <field type="CharField" name="password">sha1$88ada$9f3226fc4b40d07df9dcf6a70d609824ee7ef297</field>
+        <field type="BooleanField" name="is_staff">False</field>
+        <field type="BooleanField" name="is_active">True</field>
+        <field type="BooleanField" name="is_superuser">False</field>
+        <field type="DateTimeField" name="last_login">2008-10-29 17:33:54</field>
+        <field type="DateTimeField" name="date_joined">2008-10-29 17:33:54</field>
+        <field to="auth.group" name="groups" rel="ManyToManyRel"></field>
+        <field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field>
+    </object>
     <object pk="2" model="auth.user">
         <field type="CharField" name="username">iptv</field>
         <field type="CharField" name="first_name"></field>
@@ -628,6 +642,21 @@
     <object pk="96" model="auth.permission">
         <field type="CharField" name="name">Can delete concept name</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">32</field>
+        <field type="CharField" name="codename">delete_conceptname</field>
+    </object>
+    <object pk="97" model="auth.permission">
+        <field type="CharField" name="name">Can add concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">33</field>
+        <field type="CharField" name="codename">add_conceptname</field>
+    </object>
+    <object pk="98" model="auth.permission">
+        <field type="CharField" name="name">Can change concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">33</field>
+        <field type="CharField" name="codename">change_conceptname</field>
+    </object>
+    <object pk="99" model="auth.permission">
+        <field type="CharField" name="name">Can delete concept name</field>
+        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">33</field>
         <field type="CharField" name="codename">delete_conceptname</field>
     </object>
     <object pk="9" model="admin.logentry">
