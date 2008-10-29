@@ -41,19 +41,27 @@ ANONYMOUS_PWD = 'anonymous'
 ANONYMOUS_NAME = 'anonymous'
 ANONYMOUS_SESSION_COOKIE = 'anonymousid'
 
+def generate_anonymous_user(request):
+    user_name = ANONYMOUS_NAME + unicode(time.time())
+    user_name = user_name.replace(".","1")
+    user = User(username=user_name)
+    user.set_password(ANONYMOUS_PWD)
+    user.save()
+    #user.groups.add(Group.objects.get(name=ANONYMOUS_GROUP))
+    request.anonymous_id = user.id
+    
+    return user
+
 def get_anonymous_user(request):
     anonymous_id = request.anonymous_id
     
     if anonymous_id:
-        user = User.objects.get(id=anonymous_id)
+        try:
+            user = User.objects.get(id=anonymous_id)
+        except User.DoesNotExist:
+            user = generate_anonymous_user(request)
     else:
-        user_name = ANONYMOUS_NAME + unicode(time.time())
-        user_name = user_name.replace(".","1")
-        user = User(username=user_name)
-        user.set_password(ANONYMOUS_PWD)
-        user.save()
-        #user.groups.add(Group.objects.get(name=ANONYMOUS_GROUP))
-        request.anonymous_id = user.id
+        user = generate_anonymous_user(request)
     
     user = authenticate(username=user.username, password=ANONYMOUS_PWD)
     login(request, user)
@@ -68,4 +76,5 @@ def get_user(request):
         user = backend.get_user(user_id) or get_anonymous_user(request)
     except KeyError, e:
         user = get_anonymous_user(request)
+
     return user
