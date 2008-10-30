@@ -974,7 +974,7 @@ IGadget.prototype.save = function() {
 		LogManagerFactory.getInstance().log(msg);
 
 		// Remove this iGadget from the layout
-		this.layout.removeIGadget(this);
+		this.layout.removeIGadget(this, true);
 		this.destroy();
 	}
 
