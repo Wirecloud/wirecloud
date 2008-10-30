@@ -577,10 +577,11 @@ ColumnLayout.prototype._acceptMove = function() {
 	// Needed to force repaint of the igadget at the correct position
 	this.igadgetToMove.setPosition(newposition);
 
+	// Needed to overwriting the cursor cells
+	this._reserveSpace(this.matrix, this.igadgetToMove);
+
 	// Update igadgets positions in persistence
 	if (oldposition.y != newposition.y || oldposition.x != newposition.x) {
-		this._reserveSpace(this.matrix, this.igadgetToMove);
-
 		this.dragboard._commitChanges();
 	}
 }
@@ -636,13 +637,13 @@ SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, 
 			// There is a gadget in this position, we can use their position as start point
 			lastY = this._getPositionOn(_matrix, _matrix[x][y]).y;
 			if (lastY == 0)
-			  lastY = 1;
+				lastY = 1;
 				var startX = this._getPositionOn(_matrix, _matrix[x][y]).x + _matrix[x][y].getWidth();
 			var offsetX;
 			for (;y > lastY; y--) {
 				for (offsetX = 0; offsetX < widthDiff; offsetX++) {
 					if (_matrix[startX + offsetX][y] != _matrix[startX + offsetX][y - 1]) {
-					        // Edge detected
+						// Edge detected
 						return y;
 					}
 				}
@@ -673,7 +674,7 @@ SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, 
 		lastY = 0;
 		for (offsetX = 1; offsetX < width; offsetX++) {
 			curGadget = _matrix[x + offsetX][originalY];
-			if ((curGadget != null)) {
+			if (curGadget) {
 				y = this._getPositionOn(_matrix, curGadget).y;
 			} else {
 				y = originalY - 1;
