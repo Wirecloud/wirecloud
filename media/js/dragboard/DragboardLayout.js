@@ -105,14 +105,14 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 }
 
 DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
+	delete this.iGadgets[iGadget.code];
+
 	if (affectsDragboard) {
 		this.dragboard._deregisterIGadget(iGadget);
 
 		if (iGadget.element != null) // TODO
 			this.dragboard.dragboardElement.removeChild(iGadget.element);
 	}
-
-	delete this.iGadgets[iGadget.code];
 }
 
 /**
