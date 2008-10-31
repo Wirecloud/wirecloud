@@ -11,6 +11,8 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+<!-- CSS for different header -->
+{% block css %}{% endblock %}
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css">
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
@@ -241,6 +243,7 @@ var URIs = new _URIConstants();
 
 
 <!-- HEADER -->
+{% block header %}
 <div id="header">
 <div id="banner">
   	<div id="greeting">
@@ -273,6 +276,7 @@ var URIs = new _URIConstants();
 	</div>
 </div>
 </div>
+{% endblock %}
 <div id="wrapper">
   <!-- DRAGBOARD LAYER -->
   <div id="dragboard_template">
