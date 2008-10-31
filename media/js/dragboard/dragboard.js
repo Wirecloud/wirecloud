@@ -546,10 +546,12 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	function drag(e) {
 		e = e || window.event; // needed for IE
 
-		xDelta = xStart - parseInt(e.screenX);
-		yDelta = yStart - parseInt(e.screenY);
-		xStart = parseInt(e.screenX);
-		yStart = parseInt(e.screenY);
+		var screenX = parseInt(e.screenX);
+		var screenY = parseInt(e.screenY);
+		xDelta = xStart - screenX;
+		yDelta = yStart - screenY;
+		xStart = screenX;
+		yStart = screenY;
 		y = y - yDelta;
 		x = x - xDelta;
 		draggableElement.style.top = y + 'px';
@@ -668,8 +670,12 @@ IGadgetDraggable.prototype.startFunc = function (draggable, context) {
 }
 
 IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
+	var element = null;
+
 	// Check if the mouse is over a tab
-	var element = document.elementFromPoint(event.clientX, event.clientY);
+	if (y < 0)
+		element = document.elementFromPoint(event.clientX, event.clientY);
+
 	var id = null;
 	if (element != null && element instanceof Element) {
 		id = element.getAttribute("id");
