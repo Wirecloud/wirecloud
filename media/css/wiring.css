@@ -14,7 +14,7 @@
 #wiring .tableCell {
   border-collapse: collapse;
   width: 100%;
-  table-layout: fixed;
+  table-layout:fixed;
   margin-top: 1ex;
 }
 
@@ -27,6 +27,21 @@
   width: 20%;
   padding: 1ex 20px;
   vertical-align: top;
+}
+
+#wiring .eventColumn .title #toggleEvents, #wiring .slotColumn .title #toggleSlots{
+  margin-left: 5px;
+  display: inline;
+  width: 10px;
+  height: 10px;
+  border: 0;
+  padding:0;
+  cursor:pointer;
+  background: url(/ezweb/js/wiring/minus.png) no-repeat; 
+}
+
+#wiring .eventColumn .title #toggleEvents.folding_img, #wiring .slotColumn .title #toggleSlots.folding_img{
+  background: url(/ezweb/js/wiring/plus.png) no-repeat;
 }
 
 #wiring .connectionColumn {
@@ -107,7 +122,7 @@
   margin: 6px 0px;
 }
 
-#wiring .igadget.folded .igadgetContent {
+#wiring .igadget.folded, #wiring .igadgetContent.folded{
   display: none;
 }
 
@@ -189,9 +204,27 @@
   -webkit-border-radius: 11px;
 }
 
+#wiring .eventColumn .tabContent.bckgrnd_folder {
+  background: #97A0A8 url(/ezweb/js/wiring/tree.gif) no-repeat scroll left top;
+}
+
+#wiring .slotColumn .tabContent.bckgrnd_folder {
+  background: #97A0A8 url(/ezweb/js/wiring/tree.gif) no-repeat scroll right top;
+}
+
+#wiring .igadgetName {
+  padding-left: 20px;
+  cursor:pointer;
+  background: url(/ezweb/js/wiring/Lminus.png) no-repeat scroll left top;
+}
+#wiring .igadgetName.bckgrnd_folded {
+  background: url(/ezweb/js/wiring/Tplus.png) no-repeat scroll left top;
+}
+
 #wiring .tab .tabContent {
   padding: 0px 0px 5px 0px;
   color: white;
+  cursor:pointer;
   font-weight: bold;
   margin: 2px 0px;
 }
@@ -284,11 +317,13 @@
 #wiring .channelNameInput {
    border:0px;
    margin:0px 1ex;
+   cursor:pointer;
    background: #97A0A8;
 }
 
 #wiring .selected .channelNameInput {
 	background: transparent url(/ezweb/images/fond.gif) repeat;
+	cursor: text;
 }
 
 .canvas div div{

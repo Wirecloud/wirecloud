@@ -109,6 +109,7 @@ var LayoutManagerFactory = function () {
 			var opManager = OpManagerFactory.getInstance();
 			if(opManager.loadCompleted){
 				var wiringInterface = opManager.activeWorkSpace.getWiringInterface()
+				wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
 				if(wiringInterface.currentChannel){
 					wiringInterface.uncheckChannel(wiringInterface.currentChannel);
 					wiringInterface.highlightChannel(wiringInterface.currentChannel);				
@@ -248,6 +249,8 @@ var LayoutManagerFactory = function () {
 			this.wiringLink.className = "toolbar_marked";
 			this.wiringLink.blur();
 			wiring.wiringContainer.setStyle({'zIndex' : this.showLevel, 'display': 'block', 'visibility': 'visible'});
+			//resizing the wiring table so that the scroll bar don't modify the table width.
+			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
 		}
 		
 		//the disabling layer can be clicable (in order to hide a menu) or not

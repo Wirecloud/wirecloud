@@ -34,6 +34,7 @@ function wConnectable (name, type, friendCode, id) {
   this._type = type;
   this._friendCode = friendCode;
   this.connectableType = null;
+  this.view = null;
 }
 
 wConnectable.prototype.getType = function() {
@@ -54,6 +55,10 @@ wConnectable.prototype.getId = function() {
 
 wConnectable.prototype.getFriendCode = function() {
   return this._friendCode;
+}
+
+wConnectable.prototype.setInterface = function(view) {
+	this.view=view;
 }
 
 wConnectable.prototype.destroy = function () {

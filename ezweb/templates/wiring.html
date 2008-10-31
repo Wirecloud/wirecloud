@@ -1,8 +1,8 @@
 {% load i18n %}
   <div id="wiring_messages"></div>
-  <table class="tableCell"><tr>
-      <td class="eventColumn">
-          <div class="title">{% trans "EVENTS" %}</div>
+  <table id="wiring_table" class="tableCell"><tr>
+      <td id="eventColumn" class="eventColumn">
+          <div class="title"><span>{% trans "EVENTS" %}</span></div>
           <div id="events_list"></div>
       </td>
 
@@ -25,7 +25,7 @@
 
       </td>
 
-      <td class="slotColumn">
+      <td id="slotColumn" class="slotColumn">
           <div class="title">{% trans "SLOTS" %}</div>
           <div id="slots_list"></div>
       </td></tr>
