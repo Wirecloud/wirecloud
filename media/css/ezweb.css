@@ -576,9 +576,10 @@ button {
 
 #logs_header {
     text-align:right;
-    color:darkBlue;
-    cursor:pointer;
     padding-right:20px;
+}
+#logs_header a {
+    color:darkBlue;
     text-decoration:underline;
 }
 
