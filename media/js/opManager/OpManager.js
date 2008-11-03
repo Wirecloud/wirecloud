@@ -147,6 +147,11 @@ var OpManagerFactory = function () {
 			LogManagerFactory.getInstance().show();
 		}
 		
+		OpManager.prototype.clearLogs = function () {
+			LogManagerFactory.getInstance().reset();
+			LayoutManagerFactory.getInstance().clearErrors();
+		}
+		
 		OpManager.prototype.sendBufferedVars = function () {
 			this.activeWorkSpace.sendBufferedVars();
 		}

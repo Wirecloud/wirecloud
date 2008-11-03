@@ -157,6 +157,10 @@ var LayoutManagerFactory = function () {
 			this.logsLink.setStyle({'display' : 'inline'});
 		}
 		
+		LayoutManager.prototype.clearErrors = function (labelContent){
+			this.logsLink.innerHTML = '';
+		}
+
 		// Tab operations
 		LayoutManager.prototype.unmarkTab = function(tab, launcher, changeEvent, renameEvent){
 			tab.className = "tab";

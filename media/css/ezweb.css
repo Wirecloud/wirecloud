@@ -574,6 +574,14 @@ button {
   margin: 1ex 10px 0px 36px;
 }
 
+#logs_header {
+    text-align:right;
+    color:darkBlue;
+    cursor:pointer;
+    padding-right:20px;
+    text-decoration:underline;
+}
+
 /* footer ------------------------------------------------------------------------------------------ */
 
 

@@ -101,6 +101,10 @@ var LogManagerFactory = function () {
 		LogManager.prototype.hide = function(){
 			LayoutManagerFactory.getInstance().hideView(this.logContainer);
 		}
+		LogManager.prototype.reset = function(){
+			this.logConsole.innerHTML = '';
+			this.errorCount = 0;
+		}
 	}
 	// *********************************
 	// SINGLETON GET INSTANCE
