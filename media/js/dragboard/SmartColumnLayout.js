@@ -516,11 +516,28 @@ ColumnLayout.prototype.initializeMove = function(igadget) {
 	}
 
 	// Shadow matrix = current matrix without the gadget to move
-	var i;
+	// Initialize shadow matrix and searchInsertPointCache
+	var i, lastGadget, lastY = 0;
 	this.shadowMatrix = new Array();
-	for (i = 0; i < this.columns; i++)
+	this.searchInsertPointCache = new Array();
+	for (i = 0; i < this.columns; i++) {
+		this.searchInsertPointCache[i] = new Array();
 		this.shadowMatrix[i] = this.matrix[i].clone();
+	}
 	this._removeFromMatrix(this.shadowMatrix, igadget);
+
+	// search bottommost row
+	for (i = 0; i < this.columns; i++) {
+		lastGadget = this.matrix[i].compact().last();
+
+		if (!lastGadget)
+			continue;
+
+		tmp = lastGadget.getPosition().y + lastGadget.getHeight();
+		if (tmp > lastY)
+			lastY = tmp;
+	}
+	this.searchInsertPointYLimit = lastY + 1;
 
 	// Create dragboard cursor
 	this.dragboardCursor = new DragboardCursor(igadget);
@@ -601,8 +618,7 @@ function SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horiz
 
 SmartColumnLayout.prototype = new ColumnLayout();
 
-SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, height) {
-	// Search the topmost position for the gadget
+SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, width, height) {
 	var lastY;
 
 	/* Check for special cases
@@ -626,75 +642,67 @@ SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, 
 			// The gadget at (x,y) has the same or a bigger width
 			// than the gadget to move, so as the gadget to move
 			// fits there, so at least we can insert here.
-			y = this._getPositionOn(_matrix, _matrix[x][y]).y;
+			y = this._getPositionOn(_matrix, _matrix[x][y]).y - 1;
 			while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
 				y--;
 			}
-			return y;
-		} else {
-			widthDiff = -widthDiff;
-			// There is a gadget in this position, we can use their position as start point
-			lastY = this._getPositionOn(_matrix, _matrix[x][y]).y;
-			if (lastY == 0)
-				lastY = 1;
-				var startX = this._getPositionOn(_matrix, _matrix[x][y]).x + _matrix[x][y].getWidth();
+			return ++y;
+		} if (widthDiff != 0) {
 			var offsetX;
-			for (;y > lastY; y--) {
-				for (offsetX = 0; offsetX < widthDiff; offsetX++) {
-					if (_matrix[startX + offsetX][y] != _matrix[startX + offsetX][y - 1]) {
+
+			for (;y > 1; y--) {
+				for (offsetX = 0; offsetX < width; offsetX++) {
+					if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
+						if (_matrix[x + offsetX][y - 1]) {
+							// Edge detected
+							return y;
+						}
+					}
+				}
+			}
+
+			// edges not found
+			return 0;
+		} else {
+			return this._getPositionOn(_matrix, _matrix[x][y]).y
+		}
+	}
+
+	lastY = y;
+	while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
+		y--;
+	}
+	if (y != lastY) {
+		y++;
+	} else {
+		var offsetX;
+
+		for (;y > 1; y--) {
+			for (offsetX = 0; offsetX < width; offsetX++) {
+				if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
+					if (_matrix[x + offsetX][y - 1]) {
 						// Edge detected
 						return y;
 					}
 				}
 			}
-
-			// Not edge found, check if we can go to a higher position
-			if (y == 1) {
-				return 0;
-			} else if ((y >= 1) && this._hasSpaceFor(_matrix, x, y - 1, width, 1)) {
-				// If we can go to a higher position, we have to chek 
-				y--;
-			} else { // If not, this is the insert point
-				return y;
-			}
-		}
-	}
-
-	var originalY = y;
-	while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1))) {
-		y--;
-	}
-	if (y != originalY) {
-		y++;
-	} else {
-		// Search collisions with gadgets on other columns
-		var curGadget;
-		var offsetX;
-		lastY = 0;
-		for (offsetX = 1; offsetX < width; offsetX++) {
-			curGadget = _matrix[x + offsetX][originalY];
-			if (curGadget) {
-				y = this._getPositionOn(_matrix, curGadget).y;
-			} else {
-				y = originalY - 1;
-				while ((y >= 0) && _matrix[x + offsetX][y] == null)
-					y--;
-				y++;
-			}
-			if (y > lastY) lastY = y;
 		}
 
-		y = lastY;
-
-		if (y != 0) {
-			// Search the topmost position again
-			y--;
-			while ((y >= 0) && (this._hasSpaceFor(_matrix, x, y, width, 1)))
-				y--;
-			y++;
-		}
+		return 0;
 	}
 	return y;
+}
+
+SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, height) {
+	// Search the topmost position for the gadget
+
+	if (y > this.searchInsertPointYLimit)
+		y = this.searchInsertPointYLimit;
+
+	if (!this.searchInsertPointCache[x][y])
+		this.searchInsertPointCache[x][y] = this._realSearchInsertPoint(_matrix, x, y, width, height);
+
+	return this.searchInsertPointCache[x][y];
 }
 
 SmartColumnLayout.prototype.initialize = function(iGadgets) {
