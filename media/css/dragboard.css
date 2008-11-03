@@ -112,7 +112,7 @@ div.gadget_window div.leftResizeHandle {
   bottom: -1px;
   left: -1px;
   cursor: sw-resize;
-  background: transparent;
+  background: transparent url(/ezweb/images/resize-handle-bottom-left.png) no-repeat left bottom;
 }
 
 div.gadget_window div.leftResizeHandle.inUse {
@@ -129,7 +129,7 @@ div.gadget_window div.rightResizeHandle {
   bottom: -1px;
   right: -1px;
   cursor: se-resize;
-  background: transparent;
+  background: transparent url(/ezweb/images/resize-handle-bottom-right.png) no-repeat right bottom;
 }
 
 div.gadget_window div.resizeHandle.inUse {
