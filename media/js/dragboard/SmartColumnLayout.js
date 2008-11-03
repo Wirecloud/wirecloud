@@ -391,17 +391,16 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 	var newPosition = new DragboardPosition(x, y);
 
 	// Move other instances
-	var affectedIGadgets = new Hash();
 	var affectedgadget, offset, affectedY;
+	var lastX = newPosition.x + iGadget.getWidth();
+	var lastY = newPosition.y + iGadget.getHeight();
 
-	for (x = 0; x < iGadget.getWidth(); x++)
-		for (y = 0; y < iGadget.getHeight(); y++) {
-			affectedgadget = this.matrix[newPosition.x + x][newPosition.y + y];
-			if ((affectedgadget != null) && (affectedIGadgets[affectedgadget.code] == undefined)) {
+	for (x = newPosition.x; x < lastX; x++)
+		for (y = newPosition.y; y < lastY; y++) {
+			affectedgadget = this.matrix[x][y];
+			if (affectedgadget != null) {
 				// only move the gadget if we didn't move it before
-				affectedIGadgets[affectedgadget.code] = null;
-				offset = iGadget.getHeight() - y;
-				y = newPosition.y + y;
+				offset = iGadget.getHeight() - (y - newPosition.y);
 				affectedY = affectedgadget.getPosition().y;
 				if (affectedY < y)
 					offset += y - affectedY;
