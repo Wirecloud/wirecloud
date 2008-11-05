@@ -606,7 +606,7 @@ class  WorkSpacePublisherEntry(Resource):
         baseURL = "http://" + request.get_host()
         if hasattr(settings,'TEMPLATE_GENERATOR_URL'):
             baseURL = settings.TEMPLATE_GENERATOR_URL
-        url= path.join(baseURL,"workspace","templateGenerator", str(published_workspace.id))
+        url= baseURL+"/workspace/templateGenerator/" + str(published_workspace.id)
         
         return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')
 
