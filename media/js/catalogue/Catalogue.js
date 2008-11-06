@@ -56,13 +56,11 @@ var CatalogueFactory  = function () {
 
 		this.initCatalogue = function () {	
 			var onSuccess = function (transport) {
-			    if (transport) {
 				// Loading purchaseble gadgets!! only when a transport is received!
+				var responseJSON = transport.responseText;
 				var response = eval ('(' + responseJSON + ')'); 
 				purchasableGadgets = response['available_resources'];
-			    }
 
-				
 			    // Load catalogue data!
 			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 			    
