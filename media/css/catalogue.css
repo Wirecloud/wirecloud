@@ -207,7 +207,7 @@
 	height:86.3px;
 	overflow:auto;
 	margin-top:3px;
-	margin-bottom:0px;
+	margin-bottom:0px;message
 }
 
 #catalogue .head .advanced_tag .advanced_tag_left .tagcloud .tags .multiple_size_tag {
@@ -240,7 +240,7 @@
 	margin-top:5px;
 	margin-left:1px;
 	margin-right:1px;
-}
+}message
 
 #catalogue .head .advanced_tag .advanced_tag_left .tagcloud .link span
 {
@@ -310,7 +310,7 @@
 }
 
 #catalogue .head .advanced_tag .advanced_tag_right .new_tags .my_tags .new_global_tag img {
-	margin-left:2px;
+	margin-left:2px;message
 	border:none;
 }
 
@@ -565,6 +565,14 @@
 }
 #catalogue .center .resources .resource .content button.add_mashup{
 	background: url("/ezweb/images/button_mashup.gif") top left;
+}
+
+#catalogue .center .resources .resource .content .contratable{
+	background: url("/ezweb/images/contratable.gif") top left;
+	color:white;
+	border:none;
+	font-size:100%;
+	cursor:pointer;
 }
 
 .description_balloon

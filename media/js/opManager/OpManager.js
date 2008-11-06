@@ -125,18 +125,13 @@ var OpManagerFactory = function () {
 
 			if (this.firstAccessToTheCatalogue || this.catalogueIsCurrentTab)
 			{
-				this.catalogue.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
-				this.firstAccessToTheCatalogue = false;
-				this.catalogueIsCurrentTab = false;
+			    this.catalogue.initCatalogue();
+			    this.firstAccessToTheCatalogue = false;
+			    this.catalogueIsCurrentTab = false;
 			} else {
-				UIUtils.repaintCatalogue=false;
+			    UIUtils.repaintCatalogue=false;
 			}
 			
-			
-
-			UIUtils.setResourcesWidth();
-			
-			$('simple_search_text').focus();
 		}
 		
 
@@ -338,3 +333,4 @@ var OpManagerFactory = function () {
 	}
 	
 }();
+

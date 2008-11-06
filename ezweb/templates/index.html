@@ -52,6 +52,14 @@ _URIConstants.prototype.POST_PUBLISH_WORKSPACE = new Template('/workspace/#{work
 _URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
 
+{% if home_gateway_dispatcher_url %}
+    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}?user={{ user.username }}';
+{% else %}
+    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = null;
+{% endif%}
+
+
+
 var URIs = new _URIConstants();
 </script>
 

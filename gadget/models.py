@@ -91,8 +91,16 @@ class Gadget(models.Model):
 
     def get_related_slots(self):
         return VariableDef.objects.filter(gadget=self, aspect='SLOT')
-
-
+    
+class Capability(models.Model):
+    name = models.CharField(_('Name'), max_length=50)
+    value = models.CharField(_('Value'), max_length=50)
+    gadget = models.ForeignKey(Gadget)
+    
+    class Meta:
+        unique_together = ('name', 'value', 'gadget')
+    
+    
 class VariableDef(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     TYPES = (

@@ -40,9 +40,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from xml.sax import parseString, handler
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag
+
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Capability 
 
 import string
+
 
 
 class TemplateParser:
@@ -73,10 +75,12 @@ class TemplateHandler(handler.ContentHandler):
         self._gadget_added = False
         self._user = user
         self._uri = uri
+        self._gadget = None
+        self._contratable = False
 
     def resetAccumulator(self):
         self._accumulator = []
-    
+
     def processWire(self, attrs, wire):
         _friendCode = ''
         _wiring = ''
@@ -101,8 +105,37 @@ class TemplateHandler(handler.ContentHandler):
             wiring.save()
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Event or Slot element"))
+        
+
+    def processCapability(self, attrs):   
+        name = None
+        value = None
+
+        if (attrs.has_key('name')):
+            name = attrs.get('name')
+            
+        if (attrs.has_key('value')):
+            value = attrs.get('value')
+
+        if (not name or not value):
+            raise TemplateParseException(_("ERROR: missing attribute at Capability element"))
+        
+        if (not self._gadget):
+            raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
+        
+        capability = Capability(name=name, value=value, resource=self._gadget)
+
+        capability.save()
+
+        if (capability.name.lower() == 'contratable'):
+            self._contratable=True 
 
     def processMashupResource(self, attrs):
+        if (attrs.has_key('name')):
+            name = attrs.get('name')
+            
+        if (attrs.has_key('value')):
+            value = attrs.get('value')
 
         if (attrs.has_key('vendor')==True and attrs.has_key('name')==True and attrs.has_key('version')==True):
             
@@ -150,7 +183,6 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Resource'):
             return            
 
-
         if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and self._mail != '' and self._imageURI != '' and self._wikiURI != '' and name == 'Catalog.ResourceDescription' and not self._gadget_added):
 
             gadget=GadgetResource()
@@ -170,6 +202,8 @@ class TemplateHandler(handler.ContentHandler):
 
             gadget.save()
             
+            self._gadget = gadget
+            
             userRelated = UserRelatedToGadgetResource ()
             userRelated.gadget = gadget;
             userRelated.user = self._user
@@ -177,6 +211,7 @@ class TemplateHandler(handler.ContentHandler):
             
             userRelated.save()
             
+
             #TODO: process the resources
             #workaround to add default tags
             if self._mashupId!=None:
@@ -186,6 +221,12 @@ class TemplateHandler(handler.ContentHandler):
                 userTag.idResource = gadget
                 userTag.save()
              
+
+            if self._contratable:
+                tag = UserTag (tag='contratable', idUser=self._user, idResource=gadget)
+                tag.save()
+            
+
             self._gadget_added = True
         elif (self._gadget_added):
             return
@@ -207,12 +248,13 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Event'):
             self.processWire(attrs,'Event')
             return
-        
         if (name == 'IncludedResources'):
             if (attrs.has_key('mashupId')==True):
                 self._mashupId = attrs.get('mashupId')
             return
-        
         if (name == 'Resource'):
             self.processMashupResource(attrs)
+            return
+        if (name == 'Capability'):
+            self.processCapability(attrs)
             return

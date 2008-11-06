@@ -44,12 +44,15 @@ from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XH
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 
+from gadgetCodeParser import GadgetCodeParser
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
 
 class TemplateParser:
     def __init__(self, uri):
         self.uri = uri
         self.xml = download_http_content(uri)
         self.handler = None
+        self._capabilities = [] 
         self.uriHandler = UriGadgetHandler ()
         parseString(self.xml, self.uriHandler)
 
@@ -169,6 +172,7 @@ class TemplateHandler(handler.ContentHandler):
         self._xhtml = ""
         self._lastPreference = ""
         self._gadget = Gadget ()
+        self._capabilities = []
         
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
@@ -341,7 +345,26 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['option'] = []
             self._relationships.append(relationship_eltos)
         else:
-            raise TemplateParseException(_("ERROR: missing attribute at Slot element"))            
+            raise TemplateParseException(_("ERROR: missing attribute at Slot element"))   
+        
+
+    def processCapability(self, attrs):     
+        name = None
+        value = None
+
+        if (attrs.has_key('name')):
+            name = attrs.get('name')
+            
+        if (attrs.has_key('value')):
+            value = attrs.get('value')
+
+        if (not name or not value):
+            raise TemplateParseException(_("ERROR: missing attribute at Capability element"))
+        
+        if (not self._gadget):
+            raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
+        
+        self._capabilities.append(Capability(name=name, value=value, gadget=self._gadget))
 
             
     def processGadgetContext(self, attrs):
@@ -495,6 +518,10 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Event'):
             self.processEvent(attrs)
             return
+    
+        if (name == 'Capability'):
+            self.processCapability(attrs)
+            return
 
         if (name == 'GadgetContext'):
             self.processGadgetContext(attrs)
@@ -635,6 +662,11 @@ class TemplateHandler(handler.ContentHandler):
             for opt in rel['option']:
                 opt.variableDef = rel['vdef']
                 opt.save()
+        
+        # All capabilities 
+        for cap in self._capabilities:
+            cap.gadget=self._gadget
+            cap.save()
                  
     def reset_Accumulator(self):
         self._accumulator = ""

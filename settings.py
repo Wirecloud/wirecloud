@@ -55,6 +55,8 @@ DATABASE_PASSWORD = 'ezweb'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
+#HOME_GATEWAY_DISPATCHER_URL = "http://fry.hi.inet:8001/hgwDispatcher/serviceGadgets"
+
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
@@ -163,4 +165,4 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-#TEMPLATE_GENERATOR_URL = 'http://localhost:8000'
+TEMPLATE_GENERATOR_URL = 'http://localhost:8001'

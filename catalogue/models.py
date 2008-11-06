@@ -34,6 +34,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
+        
 class GadgetResource(models.Model):
 
      short_name = models.CharField(_('Name'), max_length=250)
@@ -62,6 +63,15 @@ class GadgetResource(models.Model):
 
      def __unicode__(self):
          return self.short_name
+     
+class Capability(models.Model):
+    name = models.CharField(_('Name'), max_length=50)
+    value = models.CharField(_('Value'), max_length=50)
+    resource = models.ForeignKey(GadgetResource)
+    
+    class Meta:
+        unique_together = ('name', 'value', 'resource')
+        
 
 class UserRelatedToGadgetResource(models.Model):
     gadget = models.ForeignKey(GadgetResource)

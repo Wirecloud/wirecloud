@@ -23,13 +23,13 @@
 *     http://morfeo-project.org
  */
 
-
 var CatalogueFactory  = function () {
 
 	// *********************************
 	// SINGLETON INSTANCE
 	// *********************************
 	var instance = null;
+
 
 	function Catalogue() {
 		
@@ -45,13 +45,61 @@ var CatalogueFactory  = function () {
 		var min_offset = 10;
 		var selectedResourceName = "";
 		var selectedResourceVersion = "";
-		
+		var purchasableGadgets = []; 
+
 		this.catalogueElement = $('showcase_container');
 		
 		
 		// ********************
 		//  PRIVILEGED METHODS
 		// ********************
+
+		this.initCatalogue = function () {	
+			var onSuccess = function (transport) {
+			    if (transport) {
+				// Loading purchaseble gadgets!! only when a transport is received!
+				var response = eval ('(' + responseJSON + ')'); 
+				purchasableGadgets = response['available_resources'];
+			    }
+
+				
+			    // Load catalogue data!
+			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			    
+			    UIUtils.setResourcesWidth();
+				
+			    $('simple_search_text').focus();
+			}
+			
+			var onError = function () {
+			    // Error downloading available gadgets! 
+			    // Maybe the EzWeb user has no associated home gateway? 
+			    // Continue loading non-contratable gadgets! 
+			    purchasableGadgets = [] 
+
+			    // Load catalogue data! 
+			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			    UIUtils.setResourcesWidth(); 
+			    $('simple_search_text').focus();
+
+			}
+			
+			var persistenceEngine = PersistenceEngineFactory.getInstance();
+			
+			// Get Resources from PersistenceEngine. Asyncrhonous call!
+			
+
+			if (URIs.HOME_GATEWAY_DISPATCHER_URL) {			
+			    var params = {'method': "GET", 'url':  URIs.HOME_GATEWAY_DISPATCHER_URL};
+			    persistenceEngine.send_post("/proxy", params, this, onSuccess, onError);
+			}
+			else {
+			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			    UIUtils.setResourcesWidth();
+				
+			    $('simple_search_text').focus();
+			}
+		}
 		
 		this.reloadCompleteCatalogue = function() {
 			UIUtils.repaintCatalogue=true;
@@ -342,6 +390,24 @@ var CatalogueFactory  = function () {
 			LayoutManagerFactory.getInstance().hideView(this.catalogueElement);
 		}
 
+		this.isContratableResource = function (resource) {
+		  for (var i=0; i<resource.capabilities.length; i++) {
+		      var capability = resource.capabilities[i];
+                      if (capability.name == 'Contratable') 
+		      	 return capability.value.toLowerCase() == "true";
+		      else
+			return false;
+		  }
+ 	        } 
+ 	                 
+ 	        this.isAvailableResource = function(resource) { 
+ 	          for (var i=0; i<purchasableGadgets.length; i++) { 
+		      if (resource.uriTemplate == purchasableGadgets[i].gadget)  	            
+ 	                 return true; 
+ 	              } 
+ 	          return false; 
+ 	        } 
+
 		this.loadCatalogue = function(urlCatalogue_) {
 
 			// ******************
@@ -349,7 +415,6 @@ var CatalogueFactory  = function () {
 			// ******************
 
 			//Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-
 			var onError = function(transport, e) {
 				var msg;
 				if (e) {
@@ -368,27 +433,50 @@ var CatalogueFactory  = function () {
 			}
 
 			var loadResources = function(transport) {
-				var response = Try.these(
-									function() { 	return new DOMParser().parseFromString(transport.responseText, 'text/xml'); },
-									function() { 	var xmldom = new ActiveXObject('Microsoft.XMLDOM'); 
-													xmldom.loadXML(transport.responseText); 
-													return xmldom; }
-								);
+			  var response = Try.these(
+			       function() { 
+				   return new DOMParser().parseFromString(transport.responseText, 'text/xml'); 
+			       },
 
-				var responseJSON = transport.responseText;
-				var items = transport.getResponseHeader('items');
-			    var jsonResourceList = eval ('(' + responseJSON + ')');
-			    jsonResourceList = jsonResourceList.resourceList;
+			       function() { 
+				   var xmldom = new ActiveXObject('Microsoft.XMLDOM'); 
+				   xmldom.loadXML(transport.responseText); 											return xmldom; 
+			       }
+  			  );
 
-				for (var i = 0; i<jsonResourceList.length; i++)
-				{
-					this.addResource(jsonResourceList[i], null);
+			  var responseJSON = transport.responseText;
+			  var items = transport.getResponseHeader('items');
+			  var jsonResourceList = eval ('(' + responseJSON + ')');
+			  jsonResourceList = jsonResourceList.resourceList;
+
+                          for (var i = 0; i<jsonResourceList.length; i++) { 
+                             // It's a contratable gadget 
+			     if (this.isContratableResource(jsonResourceList[i])) {
+			     	//It's a contratable gadget!
+				//Let's see if its available at HomeGateway! 
+				if (this.isAvailableResource(jsonResourceList[i])) {
+				   // It's a available contratable gadget!
+				   // Adding to catalogue! 
+				   this.addResource(jsonResourceList[i], null);
 				}
-				this.paginate(items);
-				this.orderby(items);
-				$('global_tagcloud').innerHTML = '';
-				UIUtils.repaintCatalogue=false;
+				else { 
+				   //It's not available! 
+				   //Not adding to catalogue!
+				   continue; 
+				}
+			     }
+			     else {
+			     	  // It's a normal not purchasable gadget 
+				  // Always adding to catalogue
+				  this.addResource(jsonResourceList[i], null); 
+ 	                          continue; 
+ 	                     } 
+			  }
 
+			  this.paginate(items);
+			  this.orderby(items);
+			  $('global_tagcloud').innerHTML = '';
+			  UIUtils.repaintCatalogue=false;
 			}
 
 			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
@@ -952,3 +1040,4 @@ var CatalogueFactory  = function () {
 	}
 	
 }();
+

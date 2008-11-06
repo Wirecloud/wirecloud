@@ -45,6 +45,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getAddedBy = function() { return state.getAddedBy();}
 	this.getTags = function() { return state.getTags();}
 	this.setTags = function(tags_) { state.setTags(tags_);}
+	this.addTag = function(tag) { state.addTag(tag); }
 	this.getSlots = function() { return state.getSlots();}
 	this.setSlots = function(slots_) { state.setSlots(slots_);}
 	this.getEvents = function() { return state.getEvents();}
@@ -178,6 +179,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			this.src = '/ezweb/images/not_available.jpg';
 		});
 		image_link.appendChild(image);
+
+		// Tags
 		var tags = UIUtils.createHTMLElement("div", $H({
             class_name: 'tags'
         })); 
@@ -188,21 +191,47 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         })); 
 		tags.appendChild(important_tags);
 		_tagsToMoreImportantTags(important_tags, 3);
-		if (state.getMashupId()==null){ //Gadget
-			var button = UIUtils.createHTMLElement("button", $H({
-	            innerHTML: gettext('Add Gadget'),
-				class_name: 'add_gadget'
-	        })); 
-			button.observe("click", function(event){
+
+	   	// Depending on capabilities, the add button can be different! 
+		// Depending on resource type (Gadget, mashup), the add button can be different!
+
+		if (state.getMashupId()==null){ 
+		    //Gadget
+
+		    var bottom_message = gettext('Add Gadget'); 
+		    var bottom_class = ''
+
+		    if (this.isContratable(state.getCapabilities())) {
+		       bottom_message = gettext('Purchase');
+		       bottom_class = 'contratable';
+		    }
+
+		    var button = UIUtils.createHTMLElement("button", $H({
+		        innerHTML: bottom_message,
+			class_name: bottom_class
+	            })); 
+		
+		    button.observe("click", function(event){
 				CatalogueFactory.getInstance().addResourceToShowCase(id_);
 			});
 		}
-		else{ //Mashup
-			var button = UIUtils.createHTMLElement("button", $H({
-	            innerHTML: gettext('Add Mashup'),
-				class_name: 'add_mashup'
-	        })); 
-			button.observe("click", function(event){
+		else{ 
+		    //Mashup
+
+		    var bottom_message = gettext('Add Gadget'); 
+		    var bottom_class = ''
+
+		    if (this.isContratable(state.getCapabilities())) {
+		       bottom_message = gettext('Purchase');
+		       bottom_class = 'contratable';
+		    }
+
+		    var button = UIUtils.createHTMLElement("button", $H({
+		        innerHTML: bottom_message,
+			class_name: bottom_class
+	            }));
+
+		    button.observe("click", function(event){
 				CatalogueFactory.getInstance().addMashupResource(id_);
 			});
 		}
@@ -213,6 +242,16 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
             class_name: 'bottom'
         }));
 		resource.appendChild(bottom);
+	}
+
+	this.isContratable = function (capabilities) {
+		for (var i=0; i<capabilities.length; i++) {
+			var capability = capabilities[i];
+			if (capability.name == 'Contratable')
+				return capability.value.toLowerCase() == "true";
+			else
+				return false
+		}
 	}
 	
 	this.showInfo = function() {
@@ -1109,6 +1148,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	var votes = null;
 	var popularity = null;
 	var userVote = null;
+	var capabilities = [];
 
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -1133,6 +1173,9 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}
 	}
 	
+	this.addTag = function(tag) { 
+		tags.push(new Tag(tag)); 
+	}
 	
 	this.setSlots = function(slotsJSON_) {
 		slots.clear();
@@ -1163,7 +1206,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getVotes = function() {return votes;}
 	this.getUserVote = function() {return userVote;}
 	this.getPopularity = function() {return popularity;}
-	
+	this.getCapabilities = function() {return capabilities; } 
+
 	// Parsing JSON Resource
 	// Constructing the structure
 	
@@ -1183,5 +1227,5 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	votes = resourceJSON_.votes[0].votes_number;
 	userVote = resourceJSON_.votes[0].user_vote;
 	popularity = resourceJSON_.votes[0].popularity;	
-
+	capabilities = resourceJSON_.capabilities;
 }
