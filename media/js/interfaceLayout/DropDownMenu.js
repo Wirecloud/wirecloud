@@ -266,7 +266,7 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 		
 		// Sets the help style
 		var helpOpElement = helpMenu.menu.getElementsBySelector('#' + helpOpId)[0]
-		helpOpElement.style.fontSize = '10%';		
+		helpOpElement.style.fontSize = '80%';		
 		helpOpElement.style.padding = '0px';
 		helpOpElement.style.whiteSpace = 'pre';
 		helpOpElement.style.cursor = 'default';
