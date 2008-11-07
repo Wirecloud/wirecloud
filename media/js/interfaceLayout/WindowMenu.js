@@ -145,91 +145,22 @@ CreateWindowMenu.prototype = new WindowMenu;
 function AlertWindowMenu (element) {
 
 	//constructor
-	this.htmlElement = $('alert_menu');		     //create-window HTML element
-	this.titleElement = $('alert_window_title'); //title gap
-	this.msgElement = $('alert_window_msg');	 //error message gap
-	this.element = element;						 //workspace or tab
-	this.button = $('alert_btn1');        
-	this.operationHandler = null;
-	this._buttons = null;
+	this.htmlElement = $('alert_menu');		//create-window HTML element
+	this.titleElement = $('alert_window_title');	//title gap
+	this.msgElement = $('alert_window_msg');	//error message gap
+	this.element = element;				//workspace or tab
+	this.button = $('alert_btn1');
 	
+	this.operationHandler = null;
 
 	this.title = gettext('Warning');
 	
-	// Adds extra buttons to the window (needed for multi-choice)
-	this._addButtons = function () {
-		var i, buttonName, buttonHtml;
-		var buttonNames = this._buttons.keys();
-		var firstButton = $('alert_btn1');
-
-		for (i=0; i<buttonNames.length; i++){
-			buttonName = buttonNames[i];
-			buttonHtml = "<button id='alert_btn" + (i + 3) + "'>" + buttonName + "</button>";
-			new Insertion.After(firstButton, buttonHtml);
-		}						
-	}
-	
-	// Removes all extra buttons of the window
-	this._removeButtons = function () {
-		var i, buttonName;
-		var buttonNames = this._buttons.keys();
-		
-		for (i=0; i<buttonNames.length; i++){
-			buttonName = buttonNames[i];
-			delete this._buttons[buttonName];
-			$('alert_btn' + (i + 3)).remove();
-		}
-		delete this._buttons;
-		this._buttons = null;
-	}
-		
-	AlertWindowMenu.prototype.addExtraButton = function(name_, handler_){	
-		if (this._buttons == null){
-			this._buttons = new Hash();
-		}		
-		this._buttons[name_] = handler_; 
-	}
-	
 	AlertWindowMenu.prototype.initObserving = function(){	
-		Event.observe(this.button, "click", this.operationHandler);
-		
-		if (this._buttons == null){
-			return;
+			Event.observe(this.button, "click", this.operationHandler);
 		}
-		
-		var i, buttonName, buttonHandler, buttonElement;
-		var buttonNames = this._buttons.keys();
-		
-		this._addButtons();
-
-		
-		for (i=0; i<buttonNames.length; i++){
-			buttonName = buttonNames[i];
-			buttonHandler = this._buttons[buttonName]; 
-			buttonElement = $('alert_btn' + (i + 3));	
-			Event.observe(buttonElement, "click", buttonHandler);
-		}
-	}
 	
 	AlertWindowMenu.prototype.stopObserving = function(){	
-		Event.stopObserving(this.button, "click", this.operationHandler);
-		
-		if (this._buttons == null){
-			return;
-		}
-		
-		var i, buttonName, buttonHandler, buttonElement;
-		var buttonNames = this._buttons.keys();
-		
-		
-		for (i=0; i<buttonNames.length; i++){
-			buttonName = buttonNames[i];
-			buttonHandler = this._buttons[buttonName]; 
-			buttonElement = $('alert_btn' + (i + 3));	
-			Event.stopObserving(buttonElement, "click", buttonHandler);
-		}
-
-		this._removeButtons();
+			Event.stopObserving(this.button, "click", this.operationHandler);
 	}	
 	
 	AlertWindowMenu.prototype.setFocus = function(){
@@ -240,7 +171,7 @@ function AlertWindowMenu (element) {
 	AlertWindowMenu.prototype.hide = function (){
 		this.msgElement.update();
 		this.stopObserving();
-		this.htmlElement.style.display = "none";
+		this.htmlElement.style.display = "none";		
 	}
 
 }
@@ -339,6 +270,3 @@ function PublishWindowMenu (element) {
 }
 
 PublishWindowMenu.prototype = new WindowMenu;
-//								}
-//								else{
-//									this.msgElement.update("All the required fields must be filled");
