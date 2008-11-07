@@ -110,8 +110,9 @@ class WorkSpaceVariable(models.Model):
     ASPECTS = (
         ('CHANNEL', _('Channel')),
         ('TAB', _('Tab')),
+        ('FILTER_PARAM', _('Filter Parameter')),
     )
-    aspect = models.CharField(_('Aspect'), max_length=10, choices=ASPECTS)
+    aspect = models.CharField(_('Aspect'), max_length=12, choices=ASPECTS)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.aspect

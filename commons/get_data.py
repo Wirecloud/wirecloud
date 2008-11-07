@@ -36,7 +36,7 @@ from django.core import serializers
 
 from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption
 from igadget.models import Variable, VariableDef, Position, IGadget
-from connectable.models import In, Out, InOut
+from connectable.models import In, Out, InOut, Filter, Param, ParamVariable
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue
 from django.utils.translation import get_language
@@ -164,6 +164,9 @@ def get_output_data (inout):
     
 
 def get_inout_data(data):
+    """
+        deprecated!!!!
+    """
     data_ret = {}
     
     data_fields = data['fields']
@@ -185,6 +188,33 @@ def get_inout_data(data):
         
     return data_ret
 
+def get_filter_data(data):
+    data_ret = {}
+    
+    data_fields = data['fields']
+    data_ret['id'] = data['pk']
+    data_ret['name'] = data_fields['name']
+    data_ret['nature'] = data_fields['nature']
+    data_ret['label'] = data_fields['label']
+    data_ret['category'] = data_fields['category']
+    data_ret['help_text'] = data_fields['help_text']
+    data_ret['code'] = data_fields['code']
+    
+    params = Param.objects.filter(filter=data['pk'])
+    data_params = []
+    for param in params:
+        data_param = {}
+        data_param['name'] = param.name
+        data_param['label'] = param.label
+        data_param['type'] = param.type
+        data_param['index'] = param.index
+        data_param['defaultValue'] = param.defaultValue
+
+        data_params.append(data_param)
+    
+    data_ret['params'] = data_params    
+    return data_ret
+     
 def get_workspace_data(data):
     data_ret = {}
     data_fields = data['fields']
@@ -275,6 +305,21 @@ def get_connectable_data(connectable):
         for output in outs:
             res_data['outs'].append(get_connectable_data(output))
             
+        #Locating the filter and its params linked to this conectable!
+        res_data['filter'] = connectable.filter_id
+        
+        res_data['filter_params'] = []
+        filter_param_vars = ParamVariable.objects.filter(inout = connectable)
+        for param_var in filter_param_vars:
+            param_data = {}
+            param_data['index'] = param_var.param.index 
+            
+            param_value = VariableValue.objects.get(abstract_variable=param_var.workspace_variable.abstract_variable)
+            param_data['value'] = param_value.value
+
+            res_data['filter_params'].append(param_data)
+        
+            
     elif isinstance(connectable, Out):
         connectable_type = "out"
         
@@ -327,12 +372,10 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     concepts_data = serializers.serialize('python', concepts, ensure_ascii=False)
     data_ret['workspace']['concepts'] = [get_concept_data(d, concept_values) for d in concepts_data]
     
-    #Wiring information
-    #inouts = InOut.objects.filter(workspace_variable__workspace=workSpaceDAO).order_by('id')  
-    #data = serializers.serialize('python', inouts, ensure_ascii=False)
-    #inouts_data = [get_inout_data(d) for d in data]
-                   
-    #data_ret['workspace']['wiringInfo'] = inouts_data
+    # Filter information
+    filters = Filter.objects.all()
+    filter_data = serializers.serialize('python', filters, ensure_ascii=False)
+    data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]        
     
     return data_ret
 

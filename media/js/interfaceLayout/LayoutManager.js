@@ -316,6 +316,15 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = menu;
 				this.currentMenu.show('right', x, y);
 				break;
+			case 'filterMenu':
+				this.currentMenu = menu;
+				this.currentMenu.show('left', x, y);
+				this.showClickableCover();
+				break;
+			case 'filterHelp':
+				this.currentMenu = menu;
+				this.currentMenu.show('right', x, y);
+				break;
 			default:
 				break;
 			}
@@ -489,7 +498,7 @@ var LayoutManagerFactory = function () {
 
 	/*remove a tab from the tab bar*/
 	LayoutManager.prototype.removeFromTabBar = function(tabHTMLElement){
-		var tabWidth = -1 * (tabHTMLElement.getWidth()-this.tabImgSize +2*this.tabMarginRight);
+		var tabWidth = -1 * (tabHTMLElement.getWidth()-this.tabImgSize + 2*this.tabMarginRight);
 		Element.remove(tabHTMLElement);
 		this.changeTabBarSize(tabWidth);
 		this.scrollTabBar.setStyle({right: (this.fixedTabBarWidth - this.scrollTabBarWidth) + 'px', left:''});

@@ -25,17 +25,41 @@
 
 //Class for managing a drop down menu whose HTML code is in templates/index.html.
 //The options may be created either by default in the HTML code or dinamically with the addOption function
-function DropDownMenu(idMenu, parentMenu){
+function DropDownMenu(idMenu_, parentMenu){
 
 	//Constructor
-	this.idMenu = idMenu;	//menu: menu element in the HTLM code (<div>)
-	this.menu = $(idMenu);
+	this.idMenu = idMenu_;	//menu: menu element in the HTLM code (<div>)
+	this.menu = $(this.idMenu);
 	this.position;				//position related to the launcher
 	this.x; this.y;			//start position
 	this.submenu = $$('#'+this.idMenu+' .submenu')[0];
 	this.parentMenu = parentMenu;
 	this.option_id = 0;		//identifier for options
 	this.margin = 5;
+	
+	// In Firefox 3.0 is necessary to increase the z-index of submenus
+	if (this.parentMenu != null){
+		if ((this.parentMenu.menu.style.zIndex == "") || isNaN(this.parentMenu.menu.style.zIndex)){
+			this.menu.style.zIndex = 5;
+		}else{
+			this.menu.style.zIndex = parseInt(this.parentMenu.menu.style.zIndex) + 1;	
+		}
+	}
+	
+	
+	// PARENT CONTRUCTOR (Super class emulation)
+	DropDownMenu.prototype.DropDownMenu = function(idMenu_, parentMenu){
+		//Constructor
+		this.idMenu = idMenu_;	//menu: menu element in the HTLM code (<div>)
+		this.menu = $(this.idMenu);
+		this.position;				//position related to the launcher
+		this.x; this.y;			//start position
+		this.submenu = $$('#'+this.idMenu+' .submenu')[0];
+		this.parentMenu = parentMenu;
+		this.option_id = 0;		//identifier for options
+		this.margin = 5;
+	}
+
 	
 	//Calculates the absolute position of the menu according to the point from which it is launched
 	//The menu can be displayed either on the right or left of the launcher point
@@ -77,7 +101,7 @@ function DropDownMenu(idMenu, parentMenu){
 			}else{
 				new Insertion.Bottom(this.menu, opHtml);
 			}
-			newOption = $(opId);
+			var newOption = $(opId);
 			Event.observe(newOption, 'click', event);
 			this.option_id++;
 		}catch(e){
@@ -185,3 +209,113 @@ function DropDownMenu(idMenu, parentMenu){
 	}
 }	
 
+// Specific drop down menu for the menu of channel filters (inheritance from DropDownMenu)
+function FilterDropDownMenu(idMenu_, parentMenu){
+	DropDownMenu.prototype.DropDownMenu.call(this, idMenu_, parentMenu);
+	
+	this.optionHelps = new Hash();
+}
+
+// Defining inheritance
+FilterDropDownMenu.prototype = new DropDownMenu;
+
+
+// Adds a option (like DropDownMenu method) with a help buttom
+FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpText, event, position){
+	var optionClass = 'option underlined';
+	var optionList = $$('#'+this.idMenu+'>.option');
+	if(position == optionList.length && position != 0){//new last option
+	optionList[optionList.length-1].className='option underlined';
+		optionClass = 'option';	
+	}else if(position == optionList.length && position == 0)
+		optionClass = 'option';
+			
+	//create the HTML code for the option and insert it in the menu
+	var opId='op_'+this.idMenu+'_'+this.option_id;
+	var opHtml = '<div id="'+ opId +'" class = "'+optionClass+'">';
+	
+	//creates the elements for the left side
+	if (imgPath){
+		opHtml += '<img src="'+imgPath+'"/>';
+	}
+	opHtml += '<span>'+option+'</span>';
+	
+	//creates the element for the rigth side (help buttom)
+	opHtml += '<input class="help_buttom" type="button"/></div>';
+	
+	//inserts the option in the menu
+	try{
+		if(optionList.length >0){
+			if(position == 0)
+				new Insertion.Before(optionList[position], opHtml);				
+			else
+				new Insertion.After(optionList[position-1], opHtml);
+		}else{
+			new Insertion.Bottom(this.menu, opHtml);
+		}
+		var newOption = $(opId);
+		newOption.style.paddingRight = '25px';
+		Event.observe(newOption, 'click', event);
+		
+		// Creates the help "pop-up" like a menu
+		var idHelpMenu = 'helpFor_' + opId;
+		var helpMenuHtml = '<div id="' + idHelpMenu + '" class="drop_down_menu"></div></div>';
+		new Insertion.After($('menu_layer'), helpMenuHtml);
+		helpMenu = new DropDownMenu(idHelpMenu, this);
+		var helpOpId = helpMenu.addOption(null, helpText, function(){}, 0);
+		
+		// Sets the help style
+		var helpOpElement = helpMenu.menu.getElementsBySelector('#' + helpOpId)[0]
+		helpOpElement.style.fontSize = '10%';		
+		helpOpElement.style.padding = '0px';
+		helpOpElement.style.whiteSpace = 'pre';
+		helpOpElement.style.cursor = 'default';
+				
+		// Adds the help launcher
+		var helpButtom = newOption.getElementsBySelector('.help_buttom')[0]
+		Event.observe(helpButtom, 'click', 
+			function(e){
+				Event.stop(e);
+				var allHelps = $$('div[id^=helpFor_]');
+				var helpShown = null; 
+				var i = 0;
+				while ((i < allHelps.length) && (helpShown == null)){
+					if (allHelps[i].style.display == 'block'){
+						allHelps[i].style.display = 'none';		
+						helpShown = allHelps[i];
+					}
+					i++;
+				}
+				if ((helpShown == null) || helpShown != this.menu){
+					LayoutManagerFactory.getInstance().showDropDownMenu('filterHelp', this, Event.pointerX(e), Event.pointerY(e));
+				}
+			}.bind(helpMenu)
+		);
+		
+		this.optionHelps[idHelpMenu] = helpMenu;
+		this.option_id++;
+	
+	}catch(e){
+		return null;
+	}		
+	
+	return opId;
+}
+
+FilterDropDownMenu.prototype.removeOption = function(opId){
+	DropDownMenu.prototype.removeOption.call(this, opId);
+
+	var idHelpMenu = 'helpFor_' + opId;
+	this.optionHelps[idHelpMenu].remove();
+}
+
+
+FilterDropDownMenu.prototype.remove = function (){
+	// Removes all the helps
+	var helpIds = this.optionHelps.keys();
+	for (var i=0; i<helpIds.length; i++){
+		this.optionHelps[helpIds[i]].remove();
+	}
+	
+	DropDownMenu.prototype.remove.call(this);
+}

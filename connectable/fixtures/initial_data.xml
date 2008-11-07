@@ -1,6 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="1" model="connectable.out">
+	<object pk="1" model="connectable.filter">
+        <field type="CharField" name="name">concat</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Concat [String]</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Concatenates the value of the channel with 
+the value of the string given by the user.
+
+e.g. 
+Channel value: 'aaa'
+String (given by user): 'bbb'
+Returns: 'aaabbb'</field>
+    </object>
+	<object pk="2" model="connectable.filter">
+        <field type="CharField" name="name">encodeURIComponent</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Encode URI</field>
+		<field type="CharField" name="nature">JSLIB</field>
+		<field type="CharField" name="category">TRANS</field>
+		<field type="TextField" name="help_text">Encodes the value of the channel as a valid
+component of a universal resource identifier 
+(URI, Uniform Resource Identifier). 
+
+e.g. 
+Channel value: 'ezweb platform'
+Returns: 'ezweb%20platform'</field>
+    </object>
+	<object pk="3" model="connectable.filter">
+        <field type="CharField" name="name">decodeURIComponent</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Decode URI</field>
+		<field type="CharField" name="nature">JSLIB</field>
+		<field type="CharField" name="category">TRANS</field>
+		<field type="TextField" name="help_text">Takes the value of the channel as a universal 
+resource identifier (URI, Uniform Resource 
+Identifier) and returns its string version 
+decoded.
+
+e.g. 
+Channel value: 'ezweb%20platform'
+Returns: 'ezweb platform'</field>
+    </object>
+	<object pk="8" model="connectable.filter">
+        <field type="CharField" name="name">match</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Match [Regular Expresion]</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category"><None></None></field>
+		<field type="TextField" name="help_text"> Searchs for a specified value in the value
+of the channel using regular expressions.
+
+e.g. Search in the beginning of the value 
+for capital letters
+Channel value: 'EzWeb'
+Regular expresion (given by user): '^[A-Z]*'
+Returns: 'E'</field>
+    </object>
+	<object pk="9" model="connectable.filter">
+        <field type="CharField" name="name">replace</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Replace [Regular Expresion] [String]</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Searchs for a specified value in the value
+of the channel using regular expressions,
+and replaces it with the string given by 
+the user.
+
+e.g. Replaces the brackets with a empty 
+character (removes the bracket)
+Channel value: '(304)4345454'
+Regular expresion (given by user): '/[\(\)]/g'
+Returns: '3044345454'</field>
+    </object>
+	<object pk="12" model="connectable.filter">
+        <field type="CharField" name="name">split</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Split [Delimiter]</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Divides the value of the channel into substrings 
+using the delimiter given, and creates an array 
+containing the resulting substrings. The delimiter 
+value is not returned as part of the array of 
+substrings.
+
+e.g.  
+Channel value: 'Internet'
+Delimiter (given by user): 'e'
+Returns: 'Int, rn, t'</field>
+    </object>
+	<object pk="13" model="connectable.filter">
+        <field type="CharField" name="name">substr</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">Substr [Start] [Length]</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Extracts a specified number of characters 
+from a string beginning at the specified 
+start index.
+
+e.g.  
+Channel value: 'EzWeb'
+Start index (given by user): '2'
+Length (given by user): '3'
+Returns: 'Web'</field>
+    </object>
+	<object pk="16" model="connectable.filter">
+        <field type="CharField" name="name">toLowerCase</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">To Lower Case</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Downcases all the letters of the value 
+of the channel.
+
+e.g.  
+Channel value: 'EZWEB'
+Returns: 'ezweb'</field>
+    </object>
+	<object pk="17" model="connectable.filter">
+        <field type="CharField" name="name">toUpperCase</field>
+        <field type="TextField" name="code"><None></None></field>
+		<field type="CharField" name="label">To Upper Case</field>
+		<field type="CharField" name="nature">NATIVE</field>
+		<field type="CharField" name="category">STR</field>
+		<field type="TextField" name="help_text">Capitalizes all the letters of the value 
+of the channel.
+
+e.g.  
+Channel value: 'ezweb'
+Returns: 'EZWEB'</field>
+    </object>
+	<object pk="2" model="connectable.param">
+		<field type="CharField" name="name">delimiter</field>		
+		<field type="CharField" name="type">S</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">12</field>        
+        <field type="IntegerField" name="index">0</field>
+		<field type="CharField" name="label">Delimiter</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="9" model="connectable.param">
+		<field type="CharField" name="name">length</field>		
+		<field type="CharField" name="type">N</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">13</field>        
+        <field type="IntegerField" name="index">1</field>
+		<field type="CharField" name="label">Length</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="10" model="connectable.param">
+		<field type="CharField" name="name">stringToConcat</field>		
+		<field type="CharField" name="type">S</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">1</field>        
+        <field type="IntegerField" name="index">0</field>
+		<field type="CharField" name="label">String</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="11" model="connectable.param">
+		<field type="CharField" name="name">newSubStr</field>		
+		<field type="CharField" name="type">S</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">9</field>        
+        <field type="IntegerField" name="index">1</field>
+		<field type="CharField" name="label">String</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="12" model="connectable.param">
+		<field type="CharField" name="name">regexp</field>		
+		<field type="CharField" name="type">S</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">8</field>        
+        <field type="IntegerField" name="index">0</field>
+		<field type="CharField" name="label">Regular Expresion</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="13" model="connectable.param">
+		<field type="CharField" name="name">regexp</field>		
+		<field type="CharField" name="type">S</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">9</field>        
+        <field type="IntegerField" name="index">0</field>
+		<field type="CharField" name="label">Regular Expresion</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="18" model="connectable.param">
+		<field type="CharField" name="name">start</field>		
+		<field type="CharField" name="type">N</field>		
+		<field to="connectable.filter" name="filter" rel="ManyToOneRel">13</field>        
+        <field type="IntegerField" name="index">0</field>
+		<field type="CharField" name="label">Start</field>
+		<field type="TextField" name="defaultValue"><None></None></field>
+    </object>
+	<object pk="1" model="connectable.out">
         <field type="CharField" name="name">tab_MyTab</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
         <field to="connectable.inout" name="inouts" rel="ManyToManyRel"></field>

@@ -339,6 +339,18 @@ a:hover{
 .drop_down_menu div span {
   display: inline;
 }
+
+.drop_down_menu div .help_buttom {
+  background: transparent url(/ezweb/images/help.gif) no-repeat scroll 0 0;
+  position: absolute;
+  right: 10px;
+  margin-left: 5px;
+  border: none;
+  display: inline;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
 .underlined {
   border-bottom: solid 1px #AAAAAA;
 }

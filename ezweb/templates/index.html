@@ -41,7 +41,6 @@ _URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/
 _URIConstants.prototype.PROXY = '/proxy';
 _URIConstants.prototype.GET_IGADGET_VARIABLES = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables');
 _URIConstants.prototype.GET_POST_GADGET_VARIABLE = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}');
-_URIConstants.prototype.GET_POST_CHANNEL = new Template ('/user/{{ user.username }}/channel/#{channelName}');
 _URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
 _URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
 _URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
@@ -100,6 +99,7 @@ var URIs = new _URIConstants();
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
 
+<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
 <!--<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiringInterface.js"></script>-->
@@ -109,7 +109,6 @@ var URIs = new _URIConstants();
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
-<script language="JavaScript" src="{{ MEDIA_URL }}js/lib/helpballoon/HelpBalloon.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Resource.js"></script>
@@ -205,8 +204,8 @@ var URIs = new _URIConstants();
 		<div id="alert_window_msg" class="window_msg"></div>
 	</div>
 	<div class="window_bottom">
-		<button id ="alert_btn1">{% trans "Accept"%}</button>
-		<button id = "alert_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+		<button id="alert_btn1">{% trans "Accept"%}</button>
+		<button id="alert_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
 	</div>
 </div>
 <div id="message_menu" class="window_menu" style="display:none">

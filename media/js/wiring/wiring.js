@@ -44,6 +44,21 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		}
 	}
 
+	Wiring.prototype.processFilter = function (filterData) {
+		var filterObject = new Filter (filterData.id, filterData.name, filterData.label, 
+									   filterData.nature, filterData.code, filterData.category, filterData.help_text);
+		var fParams = filterData.params;
+		var fParam, paramObject;
+		
+		for (var i = 0; i < fParams.length; i++) {
+			fParam = fParams[i];
+			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);
+			filterObject.setParam(paramObject);  
+		}
+		
+		this.filters[filterData.id] = filterObject;		
+	}
+
 	Wiring.prototype.processTab = function (tabData) {
 		var igadgets = tabData['igadgetList'];
 		var dragboard = this.workspace.getTab(tabData['id']).getDragboard();
@@ -71,7 +86,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		if (varData.aspect == "CHANNEL" && varData.connectable) {
 			var connectableId = varData.connectable.id;
 		    var channel = new wChannel(variable, varData.name, connectableId, false);
-		    
+			
+			// Setting channel filter
+			channel.setFilter(this.filters[varData.connectable.filter]);
+			var filter_params = new Array(varData.connectable.filter_params.length); 
+			for (var k = 0; k < varData.connectable.filter_params.length; k++) {
+				filter_params[varData.connectable.filter_params[k].index] = varData.connectable.filter_params[k].value; 
+			}
+		    channel.setFilterParams(filter_params);
+			
 		    // Connecting channel input		
 		    var connectable_ins = varData.connectable.ins;
 		    for (var j = 0; j < connectable_ins.length; j++) {
@@ -151,11 +174,18 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var workSpace = workSpaceData['workspace'];
 		var ws_vars_info = workSpace['workSpaceVariableList'];
 		var tabs = workSpace['tabList'];
+		var filters = workSpace['filters'];
 
 		for (var i = 0; i < tabs.length; i++) {
 			this.processTab(tabs[i]);
 		}
 
+		// Load all platform filters. 
+		// ATTENTION: Filters must be loaded before workspace variables
+		for (var i = 0; i < filters.length; i++) {
+			this.processFilter(filters[i]);
+		}
+		
 		// Load WorkSpace variables
 		for (var i = 0; i < ws_vars_info.length; i++) {
 			this.processVar(ws_vars_info[i]);
@@ -241,6 +271,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		return this.channels;
 	}
 	
+	Wiring.prototype.getFiltersSort = function() {
+		var sortByLabel = function (a, b){
+			var x = a.getName();
+			var y = b.getName();
+			return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+		} 
+		return this.filters.values().sort(sortByLabel);
+	}
+	
 	Wiring.prototype.channelExists = function(channelName){
 		if(this.channels.getElementByName(channelName))
 			return true;
@@ -302,6 +341,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 				if (this.channels[j].getId() == mapping.provisional_id) {
 					this.channels[j].id = mapping.id;
 					this.channels[j].provisional_id = false;
+					this.channels[j].previous_id = mapping.provisional_id;
 					this.channels[j].variable.id = mapping.var_id;
 					this.workspace.getVarManager().addWorkspaceVariable(mapping.var_id, this.channels[j].variable);
 					break;
@@ -349,6 +389,21 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			serialized_channel['friend_code'] = channel._friendCode;
 			serialized_channel['var_id'] = channel.variable.id;
 			serialized_channel['provisional_id'] = channel.provisional_id;
+			if (channel.getFilter() == null)
+				serialized_channel['filter'] = null;
+			else
+				serialized_channel['filter'] = channel.getFilter().getId();
+			
+			serialized_filter_params = []
+			for (var k = 0; k < channel.getFilterParams().length; k++) {
+				var serialized_param = {};
+				
+				serialized_param['index'] = k;
+				serialized_param['value'] = channel.getFilterParams()[k]; 
+				
+				serialized_filter_params.push(serialized_param);
+			}
+			serialized_channel['filter_params'] = serialized_filter_params;
 			
 			serialized_channel.ins = [];
 			                              
@@ -403,7 +458,9 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	this.persistenceEngine = PersistenceEngineFactory.getInstance();
 	this.iGadgets = new Hash();
 	this.channels = new Array();
+	this.filters = new Hash();
 	this.channelsForRemoving = [];
+	
 	
 	
 	this.loadWiring(workSpaceGlobalInfo);
