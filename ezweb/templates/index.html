@@ -52,14 +52,18 @@ _URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
 
 {% if home_gateway_dispatcher_url %}
-    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}?user={{ user.username }}';
+    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
+    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_UNSUBSCRIBE_URL = '{{ home_gateway_dispatcher_url }}unsubscribeServices';
+    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_CANCEL_URL = '{{ home_gateway_dispatcher_url }}cancelServices';
 {% else %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = null;
 {% endif%}
 
 
-
 var URIs = new _URIConstants();
+
+var ezweb_user_name = '{{ user.username }}'
+
 </script>
 
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
@@ -176,8 +180,8 @@ var URIs = new _URIConstants();
 		<div id="rename_window_msg" class="window_msg_error"></div>
 	</div>
 	<div class="window_bottom">
-		<button id="rename_btn">{% trans "Rename"%}</button>
-		<button onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+		<button id ="alert_btn1">{% trans "Yes"%}</button> 
+		<button id = "alert_btn2">{% trans "No"%}</button>
 	</div>
 </div> -->
 <div id="create_menu" class="window_menu" style="display:none">

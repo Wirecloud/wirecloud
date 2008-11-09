@@ -150,17 +150,30 @@ function AlertWindowMenu (element) {
 	this.msgElement = $('alert_window_msg');	//error message gap
 	this.element = element;				//workspace or tab
 	this.button = $('alert_btn1');
+	this.button2 = $('alert_btn2');
 	
 	this.operationHandler = null;
+	this.operationHandler2 = null;
 
 	this.title = gettext('Warning');
 	
+	AlertWindowMenu.prototype.setHandler = function(handlerYesButton, handlerNoButton){
+		this.operationHandler = handlerYesButton;
+		
+		if (!handlerNoButton)
+			this.operationHandler2 = function () { LayoutManagerFactory.getInstance().hideCover(); }
+		else
+			this.operationHandler2 = handlerNoButton;
+	}
+
 	AlertWindowMenu.prototype.initObserving = function(){	
 			Event.observe(this.button, "click", this.operationHandler);
+			Event.observe(this.button2, "click", this.operationHandler2);
 		}
 	
 	AlertWindowMenu.prototype.stopObserving = function(){	
 			Event.stopObserving(this.button, "click", this.operationHandler);
+			Event.stopObserving(this.button2, "click", this.operationHandler2);
 	}	
 	
 	AlertWindowMenu.prototype.setFocus = function(){

@@ -55,7 +55,7 @@ DATABASE_PASSWORD = 'ezweb'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-#HOME_GATEWAY_DISPATCHER_URL = "http://fry.hi.inet:8001/hgwDispatcher/serviceGadgets"
+#HOME_GATEWAY_DISPATCHER_URL = "http://fry.hi.inet:8001/hgwDispatcher/"
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE

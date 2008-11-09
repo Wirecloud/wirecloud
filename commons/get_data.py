@@ -34,7 +34,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 from django.core import serializers
 
-from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption
+from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption, Capability
 from igadget.models import Variable, VariableDef, Position, IGadget
 from connectable.models import In, Out, InOut, Filter, Param, ParamVariable
 from context.models import Concept, ConceptName
@@ -132,7 +132,27 @@ def get_gadget_data(data):
     data_ret['size']['height'] = data_fields['height']
     data_ret['variables'] = data_vars
     data_ret['xhtml'] = data_code
+    
+    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=data['pk'])
 
+    return data_ret
+
+def get_gadget_capabilities(gadget_id):
+    data_ret = []
+    
+    try:
+        capability_list = Capability.objects.filter(gadget__id=gadget_id)
+        
+        for capability in capability_list:
+            cap = {}
+            
+            cap['name'] = capability.name
+            cap['value'] = capability.value
+            
+            data_ret.append(cap)
+    except Capability.DoesNotExist:
+        data_ret = {}
+        
     return data_ret
 
 

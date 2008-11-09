@@ -332,7 +332,7 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the asked window menu
-		LayoutManager.prototype.showWindowMenu = function(window){
+		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton){
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
 			if(this.currentMenu != null){//only if the layer is displayed.
 				this.hideCover();
@@ -352,7 +352,16 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
-				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();});
+				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
+				this.currentMenu.show();
+				break;
+			case 'cancelService':
+				if(!this.menus['alertMenu']){
+					this.menus['alertMenu'] = new AlertWindowMenu(null);
+				}
+				this.currentMenu = this.menus['alertMenu'];
+				this.currentMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
+				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
 				this.currentMenu.show();
 				break;
 			case 'deleteWorkSpace':
@@ -361,7 +370,7 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you really want to remove this workspace?'));
-				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();});
+				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();}, handlerNoButton);
 				this.currentMenu.show();
 				break;
 			case 'publishWorkSpace':
@@ -381,7 +390,7 @@ var LayoutManagerFactory = function () {
 				}else{
 					this.currentMenu.setMsg(gettext('WARNING! All versions of this gadget will be removed too! Do you really want to remove this gadget?'));
 				}
-				this.currentMenu.setHandler(function(){UIUtils.deleteGadget(UIUtils.selectedResource);});
+				this.currentMenu.setHandler(function(){UIUtils.deleteGadget(UIUtils.selectedResource);}, handlerNoButton);
 				this.currentMenu.show();
 				break;
 			default:

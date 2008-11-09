@@ -46,6 +46,18 @@ function Gadget(gadget_, url_) {
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
 	
+	this.isContratable = function() { 
+		var capabilities = state.getCapabilities();
+		
+		for (var i=0; i<capabilities.length; i++) {
+			var capability = capabilities[i];
+			if (capability.name == 'Contratable')
+				return capability.value.toLowerCase() == "true";
+			else
+				return false
+		}	
+	}
+
 	
 	// *******************
 	//  PRIVATE FUNCTIONS
@@ -122,6 +134,7 @@ function GadgetState(gadget_) {
 	var template = null;
 	var xhtml = null;
 	var image = null;
+	var capabilities = []; 
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -131,12 +144,13 @@ function GadgetState(gadget_) {
 	template = new GadgetTemplate(gadget_.variables, gadget_.size);
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
-	
+	capabilities = gadget_.capabilities;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
 	// ******************
 	
+        this.getCapabilities = function() { return capabilities; } 
 	this.getVendor = function() { return vendor; }
 	this.getName = function() { return name; }
 	this.getVersion = function() { return version; }
