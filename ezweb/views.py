@@ -38,7 +38,7 @@ from django.conf import settings
 
 
 @login_required
-def index(request, user_name=None):
+def index(request, user_name=None, template="index.html"):
     """ Vista principal """
 
     is_anonymous = False
@@ -57,7 +57,7 @@ def index(request, user_name=None):
                         {'is_anonymous': is_anonymous, 
                          'home_gateway_dispatcher_url': home_gw_url }))
     else:
-        return render_to_response('index.html', {'current_tab': 'dragboard'}, 
+        return render_to_response(template, {'current_tab': 'dragboard'}, 
                   context_instance=RequestContext(request, 
                         {'is_anonymous': is_anonymous, 
                          'home_gateway_dispatcher_url': home_gw_url }))
@@ -70,4 +70,4 @@ def wiring(request, user_name=None):
 @login_required
 def index_lite(request, user_name=None):
     """ Vista de ezweb sin cabecera"""
-    return render_to_response('index_lite.html', {}, context_instance=RequestContext(request))
+    return index(request, template="index_lite.html")
