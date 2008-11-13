@@ -165,28 +165,28 @@ function ContextManager (workspace_, workSpaceInfo_) {
 
 	ContextManager.prototype.notifyModifiedConcept = function (concept_, value_) {
 		if (! this._loaded)
-		    return;
-			
+			return;
+
 		if (! this._concepts[concept_])
 			return;
-			
+
 		this._concepts[concept_].setValue(value_);
 	}
 	
 	ContextManager.prototype.notifyModifiedGadgetConcept = function (igadgetid_, concept_, value_, preLoaded_) {
 		if (! this._loaded)
-		    return;
-			
+			return;
+
 		if (! this._concepts[concept_])
 			return;
-			
-		try{
-			if (preLoaded_){
+
+		try {
+			if (preLoaded_) {
 				this._concepts[concept_].getIGadgetVar(igadgetid_).setPreloadedValue(value_);
-			}else{
-				this._concepts[concept_].getIGadgetVar(igadgetid_).setValue(value_);	
+			} else {
+				this._concepts[concept_].getIGadgetVar(igadgetid_).setValue(value_);
 			}
-		}catch(e){
+		} catch(e) {
 			// Do nothing, igadget has not variables related to this concept
 		}
 	}
