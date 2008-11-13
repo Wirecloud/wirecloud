@@ -249,9 +249,10 @@ IGadget.prototype.paint = function() {
 	this.element.appendChild(this.contentWrapper);
 
 	// Gadget configuration (Initially empty and hidden)
-	this.configurationElement = document.createElement("div");
+	this.configurationElement = document.createElement("form");
 	this.configurationElement.setAttribute("class", "config_interface");
 	this.configurationElement.setAttribute("className", "config_interface"); //IE hack
+	Event.observe(this.configurationElement, "submit", function(){return false;}) //W3C and IE compliant
 	this.contentWrapper.appendChild(this.configurationElement);
 
 	// Gadget Content

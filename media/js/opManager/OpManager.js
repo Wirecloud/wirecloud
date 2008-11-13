@@ -63,19 +63,7 @@ var OpManagerFactory = function () {
 		}
 		
 		var onError = function (transport, e) {
-			var msg;
-			if (e) {
-				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-				                  true);
-			} else if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-			msg = interpolate(gettext("Error loading EzWeb environment: %(errorMsg)s."),
-			                          {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+		    alert("error en loadEnvironment");
 		}
 		
 		/*****WORKSPACE CALLBACK***/

@@ -176,8 +176,8 @@ div.gadget_window_locked div.statusBar {
  * config_interface
  */
 
-div.gadget_window div.config_interface,
-div.gadget_window_locked div.config_interface {
+div.gadget_window form.config_interface,
+div.gadget_window_locked form.config_interface {
   background: #DDD;
   border-bottom: 1px solid #4c5054;
   display: none;
@@ -185,44 +185,44 @@ div.gadget_window_locked div.config_interface {
   margin: 0px;
 }
 
-div.config_interface div.buttons {
+form.config_interface div.buttons {
   margin: 1ex 0px;
   float: right;
 }
 
-div.config_interface table {
+form.config_interface table {
   width: 100%;
 }
 
-div.config_interface label {
+form.config_interface label {
   margin: 1ex;
   display: block;
 }
 
-div.config_interface input, div.config_interface select {
+form.config_interface input, form.config_interface select {
   border: 1px solid #4c5054;
   margin: 0px 1ex;
 }
 
-div.config_interface table input {
+form.config_interface table input {
   width: 90%;
   max-width: 100ex;
   padding: 0px 0.5ex;
 }
 
-div.config_interface table input[type="checkbox"] {
+form.config_interface table input[type="checkbox"] {
   width: auto;
 }
 
-div.config_interface select {
+form.config_interface select {
   padding: 0px;
 }
 
-div.config_interface label.invalid {
+form.config_interface label.invalid {
   color: red;
 }
 
-div.config_interface label.invalid input {
+form.config_interface label.invalid input {
   border: 1px solid red;
 }
 
