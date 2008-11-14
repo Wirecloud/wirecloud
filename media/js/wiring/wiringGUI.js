@@ -189,6 +189,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	new Insertion.After($('menu_layer'), filterMenuHTML);
 	var filterMenu = new FilterDropDownMenu(idFilterMenu);
 
+//	filterMenu.addOptionWithHelp(
+//			"/ezweb/images/pencil.png", 
+// 		    "Creates a new filter.",
+//			gettext('New Filter'), 
+//			function(){
+//				LayoutManagerFactory.getInstance().hideCover();
+//			},
+//			0);
+
 	filterMenu.addOptionWithHelp(
 			"/ezweb/images/filter.gif", 
 			gettext('Empty'), 
@@ -358,19 +367,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     	this._addIGadget(igadgets[i], tabEvents, tabSlots);
     }
     
-    if (tabEvents.tabDiv.childNodes.length > 1){ //Elements with gadgets
-  		this.event_list.appendChild(tabEvents.tabDiv);  		
-    }else{
-    	tabEvents.tabDiv.getElementsByClassName("tabContent")[0].removeClassName("bckgrnd_folder");
-    }
-    
-  	this.slot_list.appendChild(tabSlots.tabDiv);
-    if (tabSlots.tabDiv.childNodes.length == 1){ //Elements withouth gadgets
-	    tabSlots.tabDiv.getElementsByClassName("tabContent")[0].removeClassName("bckgrnd_folder");
-    }
-  	
-  	tabEvents._toggle();
-  	tabSlots._toggle();
+    tabEvents.show();
+  	tabSlots.show();
 
   }
   
@@ -380,14 +378,14 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   	var igadgetSlots = new SlotIgadgetInterface(igadget, this, tabSlots);
   	
 	//if the igadget has events, add it
-	if (igadgetEvents.igadgetDiv){
-	    tabEvents.tabDiv.appendChild(igadgetEvents.igadgetDiv);
-	    igadgetEvents._toggle();
+	if (igadgetEvents.hasConnectables()){
+	    tabEvents.addConnectables(igadgetEvents.getConnectables());
+	    igadgetEvents.forceToggle();
 	}
 	//if the igadget has slots, add it
-	if (igadgetSlots.igadgetDiv){
-	    tabSlots.tabDiv.appendChild(igadgetSlots.igadgetDiv);
-	    igadgetSlots._toggle();
+	if (igadgetSlots.hasConnectables()){
+	    tabSlots.addConnectables(igadgetSlots.getConnectables());
+	    igadgetSlots.forceToggle();
 	} 
     
   }
@@ -459,11 +457,27 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     for (var i = 0; i < tabs.length; i++) {
     	this._addTab(this.workspace.tabInstances[tabs[i]]);
     }
-    
-    var channels = this.wiring.getChannels();
+	
+	this.chEventsWr = new EventChannelWInterface (this);
+	this.chSlotsWr = new SlotChannelWInterface (this);    
+	var channels = this.wiring.getChannels();
     for (var j = 0; j < channels.length; j++) {
-      this._addChannelInterface(new ChannelInterface(channels[j]));
-    }
+		var chInterface = new ChannelInterface(channels[j]);
+		this._addChannelInterface(chInterface);
+		
+		var chEvents = new EventChannelInterface(chInterface, this, this.chEventsWr);
+  		var chSlots = new SlotChannelInterface(chInterface, this, this.chSlotsWr);
+  	
+	    this.chEventsWr.addConnectables(chEvents.getConnectables());
+		this.chSlotsWr.addConnectables(chSlots.getConnectables());
+		//this.chEventsWr.forceToggle();
+		//this.chSlotsWr.forceToggle();
+	}		
+    
+	if (channels.length > 0){
+		this.chEventsWr.show();
+		this.chSlotsWr.show();
+	}
 
     this.channels_counter = channels.length + 1;
     
@@ -510,34 +524,54 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   
   
   WiringInterface.prototype._changeConnectionStatus = function (anchor) {
-    if (this.currentChannel == null) {
-      if (this.channels.length == 0) {
-        this.showMessage(gettext("Please, create a new channel before creating connections."));
-      } else {
-        this.showMessage(gettext("Please, select a channel before creating connections."));
-      }
-	  return;
+ 	if (this.currentChannel == null) {
+		if (this.channels.length == 0) {
+        	this.showMessage(gettext("Please, create a new channel before creating connections."));
+      	} else {
+        	this.showMessage(gettext("Please, select a channel before creating connections."));
+      	}
+	  	return;
     }
 
     var connectable = anchor.getConnectable();
 
     // add/remove the connection
-    if (connectable instanceof wIn) {
-      if (anchor.isConnected()) {
-        this.currentChannel.disconnectInput(connectable);
-        anchor.setConnectionStatus(false, null, null);
-      } else {
-        this.currentChannel.connectInput(connectable);
-        anchor.setConnectionStatus(true, this.currentChannel.inPosition, null);
-      }
+    
+	// WARNING: a wInOut connectable is a wIn too!
+	if (connectable instanceof wInOut){
+		if (anchor.isChannelIn()){
+			if (anchor.isConnected()) {
+        		this.currentChannel.disconnectInput(connectable);
+        		anchor.setConnectionStatus(false, null, null);
+      		} else {
+        		this.currentChannel.connectInput(connectable);
+        		anchor.setConnectionStatus(true, this.currentChannel.inPosition, null);
+      		}
+		} else {
+			if (anchor.isConnected()) {
+       			this.currentChannel.disconnectOutput(connectable);
+        		anchor.setConnectionStatus(false, null, null);
+      		} else {
+        		this.currentChannel.connectOutput(connectable);
+        		anchor.setConnectionStatus(true, null, this.currentChannel.outPosition);
+      		}
+		}
+	} else if (connectable instanceof wIn) {
+		if (anchor.isConnected()) {
+        	this.currentChannel.disconnectInput(connectable);
+        	anchor.setConnectionStatus(false, null, null);
+      	} else {
+        	this.currentChannel.connectInput(connectable);
+        	anchor.setConnectionStatus(true, this.currentChannel.inPosition, null);
+      	}
     } else if (connectable instanceof wOut) {
-      if (anchor.isConnected()) {
-        this.currentChannel.disconnectOutput(connectable);
-        anchor.setConnectionStatus(false, null, null);
-      } else {
-        this.currentChannel.connectOutput(connectable);
-        anchor.setConnectionStatus(true, null, this.currentChannel.outPosition);
-      }
+      	if (anchor.isConnected()) {
+        	this.currentChannel.disconnectOutput(connectable);
+        	anchor.setConnectionStatus(false, null, null);
+      	} else {
+        	this.currentChannel.connectOutput(connectable);
+        	anchor.setConnectionStatus(true, null, this.currentChannel.outPosition);
+      	}
     }
   }
 
@@ -564,9 +598,29 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       this.channels_counter++;
     }
 
-    var channel = new ChannelInterface(channelName, null);
+    var channel = new ChannelInterface(channelName);
+	var channelTempObject = {channel : wiring.createChannel(channel.getName(), channel.getId())}; 
     this._addChannelInterface(channel);
-    this.clearMessages();
+	
+	this.chEventsWr.forceToggle();
+	this.chSlotsWr.forceToggle();
+	    
+	// Creates the interface of the channel slots and events 
+	var chEvents = new EventChannelInterface(channelTempObject, this, this.chEventsWr);
+  	var chSlots = new SlotChannelInterface(channelTempObject, this, this.chSlotsWr);
+  	
+	this.chEventsWr.addConnectables(chEvents.getConnectables());
+	this.chSlotsWr.addConnectables(chSlots.getConnectables());
+	
+	if (this.wiring.getChannels().length == 1){
+		this.chEventsWr.show();
+		this.chSlotsWr.show()
+	} else{
+		this.chEventsWr.forceToggle();
+		this.chSlotsWr.forceToggle();
+	}
+	
+	this.clearMessages();
     this._changeChannel(channel);
   }
 
@@ -708,7 +762,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     for (var i = 0; i < connectables.length; i++){
    		if(connectables[i].view.parentInterface && connectables[i].view.parentInterface.isAnyUnfolded()){	//if the interface is unfolded unfold it
 				connectables[i].view.parentInterface.toggle();
-	
     	}
     }  	 
    
@@ -843,6 +896,7 @@ function ConnectionAnchor(connectable, anchorDiv, parentInterface) {
   this.jg_doc=null;
   this.canvas = null;
   this.arrow = null;
+  this.channelType = null;
   
   this.connectable.setInterface(this);
 
@@ -854,12 +908,26 @@ function ConnectionAnchor(connectable, anchorDiv, parentInterface) {
 	  return this.parentInterface;
 	}
 	
-	ConnectionAnchor.prototype.assignInterface = function(interface) {
-	  this.interface = interface;
+	ConnectionAnchor.prototype.assignInterface = function(interface_) {
+	  this._interface = interface_;
 	}
 	
 	ConnectionAnchor.prototype.getInterface = function() {
-	  return this.interface;
+	  return this._interface;
+	}
+	
+	ConnectionAnchor.prototype.isChannelIn = function() {
+		return this.connectable instanceof wInOut && this.channelType == 'IN';
+	}
+	
+	ConnectionAnchor.prototype.setAsChannelIn = function() {
+		if (this.connectable instanceof wInOut){}
+	  		this.channelType = 'IN';
+	}
+	
+	ConnectionAnchor.prototype.setAsChannelOut = function() {
+	  if (this.connectable instanceof wInOut){}
+	  		this.channelType = 'OUT';
 	}
 	
 	ConnectionAnchor.prototype.drawArrow = function(inChannelPos, outChannelPos){
@@ -874,10 +942,18 @@ function ConnectionAnchor(connectable, anchorDiv, parentInterface) {
 		var wiringPosition = Position.cumulativeOffset($('wiring'));
 		coordinates[0] = coordinates[0] - wiringPosition[0] - 1; //-1px of img border
 		coordinates[1] = coordinates[1] - wiringPosition[1] +(this.htmlElement.getHeight())/2 + 2;  
-		if (this.connectable instanceof wIn){
+		// WARNING: a wInOut connectable is a wIn too!
+		if (this.connectable instanceof wInOut){
+			if (this.channelType == 'IN'){
+				coordinates[0] = coordinates[0] + this.htmlElement.getWidth();
+				this.drawPolyLine(coordinates[0],coordinates[1], inChannelPos[0], inChannelPos[1], true);
+			}else{
+				this.drawPolyLine(outChannelPos[0], outChannelPos[1],coordinates[0],coordinates[1], false);
+			}
+		} else if (this.connectable instanceof wIn){
 			coordinates[0] = coordinates[0] + this.htmlElement.getWidth();
 			this.drawPolyLine(coordinates[0],coordinates[1], inChannelPos[0], inChannelPos[1], true);
-	  	}else{
+	  	}else {
 	  		this.drawPolyLine(outChannelPos[0], outChannelPos[1],coordinates[0],coordinates[1], false);
 	  	}
 	  	
@@ -1080,8 +1156,6 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
   var changes = [];
   var i;
 
-  //this.name = this.interface.getElementsByClassName('channelNameInput')[0].value;
-  
   if (this.channel == null) {
     // The channel don't exists
     this.channel = wiring.createChannel(this.name, this.provisional_id);
@@ -1126,28 +1200,28 @@ ChannelInterface.prototype.exists = function() {
 }
 
 ChannelInterface.prototype.check = function() {
-  this.interface.addClassName("selected");
-  this.interface.getElementsByClassName('channelNameInput')[0].focus();
+  this._interface.addClassName("selected");
+  this._interface.getElementsByClassName('channelNameInput')[0].focus();
   //calculate the position where de in arrows will end and the out ones will start
-  this.inPosition = Position.cumulativeOffset(this.interface);
+  this.inPosition = Position.cumulativeOffset(this._interface);
   var wiringPosition = Position.cumulativeOffset($('wiring'));
   this.inPosition[0] = this.inPosition[0] - wiringPosition[0] - 1; //border 
-  this.inPosition[1] = this.inPosition[1] - wiringPosition[1] - 1 + (this.interface.getHeight())/2;
+  this.inPosition[1] = this.inPosition[1] - wiringPosition[1] - 1 + (this._interface.getHeight())/2;
   this.outPosition[1] = this.inPosition[1];
-  this.outPosition[0] = this.inPosition[0]+this.interface.getWidth();
+  this.outPosition[0] = this.inPosition[0]+this._interface.getWidth();
 }
 
 ChannelInterface.prototype.uncheck = function() {
-  this.interface.removeClassName("selected");
-  this.interface.getElementsByClassName('channelNameInput')[0].blur();
+  this._interface.removeClassName("selected");
+  this._interface.getElementsByClassName('channelNameInput')[0].blur();
 }
 
-ChannelInterface.prototype.assignInterface = function(interface) {
-  this.interface = interface;
+ChannelInterface.prototype.assignInterface = function(interface_) {
+  this._interface = interface_;
 }
 
 ChannelInterface.prototype.getInterface = function() {
-  return this.interface;
+  return this._interface;
 }
 
 ChannelInterface.prototype.connectInput = function(wIn) {
@@ -1188,514 +1262,4 @@ ChannelInterface.prototype.disconnectOutput = function(connectable) {
     	this.outputsForAdding.remove(connectable);
   }
   this.outputs.remove(connectable);
-}
-
-/* Tab interface*/
-function SlotTabInterface (tab, wiringGUI) {
-  	//CREATOR
-  	//atributes
-  	this.wiringGUI = wiringGUI;
-  	this.folded = false;
-  	this.connections = 0;
-  	this.openedByUser = false;
-  	
-  	this.tabDiv = document.createElement("div");
-    this.tabDiv.addClassName("tab");
-    this.igadgetsOpenedByUser = 0;
-   
-    //Tab content
-    var htmlElement = document.createElement("div");
-    htmlElement.addClassName("tabContent");
-    htmlElement.addClassName("bckgrnd_folder");   
-    
-    //folding event
-    Event.observe(htmlElement, "click", function(e){
-    												if(this.connections<=0){
-    													this.toggleOpenedByUser();
-    													this._toggle();
-    													if(this.wiringGUI.currentChannel)
-	    												   this.wiringGUI.highlightChannelOutputs(this.wiringGUI.currentChannel)}}.bind(this));
-    												
-   
-	htmlElement.appendChild(document.createTextNode(tab.tabInfo.name));
-    
-    //create a ckeck item and an anchor for relating a tab to a channel output
-	var chkItem = document.createElement("div");
-	chkItem.addClassName("unchkItem");
-	htmlElement.appendChild(chkItem);
-	 
-	var connectable = tab.connectable;
-	var chkItemAnchor = new ConnectionAnchor(tab.connectable, chkItem, this);
-	
-	var context = {chkItemAnchor: chkItemAnchor, tabInterface:this};
-	Event.observe(chkItem, "click",
-	                         function (e) {if(!this.tabInterface.folded){
-				                         	Event.stop(e);
-	                         			   }else{
-	                         				this.tabInterface.toggle();
-    										if(this.tabInterface.wiringGUI.currentChannel)
-	    									   this.tabInterface.wiringGUI.highlightChannelOutputs(this.tabInterface.wiringGUI.currentChannel);
-	                         			   }
-	        			                   this.tabInterface.wiringGUI._changeConnectionStatus(this.chkItemAnchor);
-	                    			     }.bind(context), false);
-
-    this.tabDiv.appendChild(htmlElement);
-    this.wiringGUI.outputs.push(chkItemAnchor);
-    
-    SlotTabInterface.prototype.increaseConnections=function(){
-		this.connections++;
-	}
-	
-	SlotTabInterface.prototype.decreaseConnections=function(){
-		this.connections--;
-	}	
-    
- 	SlotTabInterface.prototype.toggleOpenedByUser=function(){
- 		if(this.folded ||(!this.folded && this.openedByUser)){
-  		//if(this.openedByUser || (!this.openedByUser && this.igadgetsOpenedByUser <= 0)){ //has the user touch the tab or igadgets?
-			this.openedByUser = !this.openedByUser;
-  		}
- 	}
-    
-	//toggle ordered automatically, for instance, changing channels
-  	SlotTabInterface.prototype.toggle = function () {
-  		//if the user hasn't touch the tab, it can automatically toggle
-  		if(this.folded || (!this.folded && !this.openedByUser && this.igadgetsOpenedByUser<=0)){
-  			this._toggle();
-  		}
-  	}
-
-	//forced toggle
-	SlotTabInterface.prototype._toggle = function () {
-		this.folded = !this.folded;
-		var igadgets = this.tabDiv.getElementsByClassName("igadget");
-		var i=0;
-		for(i=0;i<igadgets.length;i++){
-			igadgets[i].toggleClassName("folded");
-		}
-	}
-	
-	SlotTabInterface.prototype.isAnyFolded = function () {
-		return this.folded;		
-	}
-	
-	SlotTabInterface.prototype.isAnyUnfolded = function () {
-		return !this.folded;		
-	}	
-}
-
- function EventTabInterface (tab, wiringGUI) {
-  	//CREATOR
-  	//atributes
-  	this.wiringGUI = wiringGUI;
-  	this.folded = false;
-  	this.connections = 0;
-  	this.openedByUser = false;		//is the tab open and has the user done it??
-  	
-  	this.tabDiv = document.createElement("div");
-    this.tabDiv.addClassName("tab");
-    this.igadgetsOpenedByUser = 0;
-    
-    //Tab content
-    var htmlElement = document.createElement("div");
-    htmlElement.addClassName("tabContent");
-    htmlElement.addClassName("bckgrnd_folder"); 
-	htmlElement.appendChild(document.createTextNode(tab.tabInfo.name));
-    
-    //folding event
-    Event.observe(htmlElement, "click", function(e){ Event.stop(e);
-    												if(this.connections<=0){
-    													this.toggleOpenedByUser();
-	    												this._toggle();
-    													if(this.wiringGUI.currentChannel)
-	    												   this.wiringGUI.highlightChannelInputs(this.wiringGUI.currentChannel)}}.bind(this));
-    												
-
-    this.tabDiv.appendChild(htmlElement);  	
-	
-	EventTabInterface.prototype.increaseConnections=function(){
-		this.connections++;
-	}
-	
-	EventTabInterface.prototype.decreaseConnections=function(){
-		this.connections--;
-	}  	 
-  	
-  	EventTabInterface.prototype.toggleOpenedByUser=function(){
- 		if(this.folded ||(!this.folded && this.openedByUser)){
-			this.openedByUser = !this.openedByUser;
-  		}
- 	}
- 	
- 	//toggle ordered automatically, for instance, changing channels
-  	EventTabInterface.prototype.toggle = function () {
-  		//if the user hasn't touch the tab, it can automatically toggle
-  		if(this.folded || (!this.folded && !this.openedByUser && this.igadgetsOpenedByUser<=0)){
-  			this._toggle();
-  		}
-  	}
-  	
- 	//forced toggle 
-	EventTabInterface.prototype._toggle = function () {
-		this.folded = !this.folded;
-		var igadgets = this.tabDiv.getElementsByClassName("igadget");
-		var i=0;
-		for(i=0;i<igadgets.length;i++){
-	 		igadgets[i].toggleClassName("folded");
-	  	}
-	}	
-		
-	EventTabInterface.prototype.isAnyFolded = function () {
-		return this.folded;		
-	}
-	
-	EventTabInterface.prototype.isAnyUnfolded = function () {
-		return !this.folded;		
-	}
-
-}
-
-/*
- iGadget interface*/
-
-function SlotIgadgetInterface (igadget, wiringGUI, parentInterface) {
-  	//CREATOR
-  	//atributes
-  	this.wiringGUI = wiringGUI;
-  	this.folded = false;
-  	this.friendCode = null;
-  	this.igadgetDiv = null;
-  	this.connections = 0;
-  	this.parentInterface = parentInterface;
-  	this.openedByUser = false;		//is the igadget open and has the user done it??
-  	
-  	var ulSlots = document.createElement("div");
-    ulSlots.addClassName("igadgetContent");
-  	
-  	var connectables = this.wiringGUI.wiring.getIGadgetConnectables(igadget);
-
-    // Slots
-    for (var i = 0; i < connectables.length; i++) {
-	    var connectable = connectables[i];
-	    if(connectable instanceof wOut){
-			var htmlElement = document.createElement("div");
-			htmlElement.appendChild(document.createTextNode(connectable.getName()));
-			
-			var chkItem = document.createElement("div");
-			chkItem.addClassName("unchkItem");
-			htmlElement.appendChild(chkItem);
-			
-			var chkItemAnchor = new ConnectionAnchor(connectable, chkItem, this);
-			//this.chkItemAnchor.setConnectionStatus(false, null, null);
-
-			var context = {chkItemAnchor: chkItemAnchor, wiringGUI:this.wiringGUI};			
-			Event.observe(chkItem, "click",
-			                    function () {
-			                      this.wiringGUI._changeConnectionStatus(this.chkItemAnchor);
-			                    }.bind(context));
-			
-			// Harvest info about the friendCode of the connectable
-			var friendCode = connectable.getFriendCode();
-			if (friendCode != null) {
-			    if (!this.wiringGUI.friend_codes[friendCode]) {
-			      // Create the friend code entry in the list of friend codes
-			      this.wiringGUI.friend_codes[friendCode] = {};
-			      this.wiringGUI.friend_codes[friendCode].list = [];
-			      this.wiringGUI.friend_codes[friendCode].color = this.wiringGUI.color_scheme[this.wiringGUI.friend_codes_counter++];
-			    }
-			
-			    this.wiringGUI.friend_codes[friendCode].list.push(htmlElement);
-			
-			    var context = {friendCode: friendCode, wiringGUI:this.wiringGUI};
-			
-			    htmlElement.addEventListener("mouseover",
-			                            function () {this.wiringGUI._highlight_friend_code(this.friendCode, true);}.bind(context),
-			                            false);
-			    htmlElement.addEventListener("mouseout",
-			                            function () {this.wiringGUI._highlight_friend_code(this.friendCode, false);}.bind(context),
-			                            false);	      
-			}
-			// Cancel bubbling of _toggle
-			function cancelbubbling(e) {
-				Event.stop(e);
-			}
-			
-			htmlElement.addEventListener("click", cancelbubbling, false);
-			      
-			// Insert it on the correct list of connectables	
-			ulSlots.appendChild(htmlElement);
-			this.wiringGUI.outputs.push(chkItemAnchor);
-	    }
-    }
-			      
-	// Generic information about the iGadget
-	var gadget = igadget.getGadget();
-	var iGadgetName = igadget.name;
-			
-	// Slot column
-	if (ulSlots.childNodes.length > 0) {
-		this.igadgetDiv = document.createElement("div");
-		this.igadgetDiv.addClassName("igadget");
-		var igadgetName = document.createElement("div");
-		igadgetName.addClassName("igadgetName");
-		igadgetName.appendChild(document.createTextNode(iGadgetName));
-			  
-		//folding event
-		Event.observe(igadgetName, "click", function(e){
-							Event.stop(e);
-							if(this.connections<=0){
-								this.toggleOpenedByUser();
-								this._toggle();
-								if(this.wiringGUI.currentChannel)
-								   this.wiringGUI.highlightChannelOutputs(this.wiringGUI.currentChannel)}}.bind(this));			  
-				  
-		this.igadgetDiv.appendChild(igadgetName);
-		this.igadgetDiv.appendChild(ulSlots);
-	}
-	
-	SlotIgadgetInterface.prototype.increaseConnections=function(){
-		this.connections++;
-		this.parentInterface.increaseConnections();
-	}
-	
-	SlotIgadgetInterface.prototype.decreaseConnections=function(){
-		this.connections--;
-		this.parentInterface.decreaseConnections();
-	}
-
- 	SlotIgadgetInterface.prototype.toggleOpenedByUser=function(){
- 		if(this.folded || (!this.folded && this.openedByUser)){
-			this.openedByUser = !this.openedByUser;
-			if(this.openedByUser)
-				this.parentInterface.igadgetsOpenedByUser++;
-			else
-				this.parentInterface.igadgetsOpenedByUser--;
- 		}
- 	}
- 	
-	
-	//toggle ordered automatically, for instance, changing channels
-  	SlotIgadgetInterface.prototype.toggle = function () {
-  		//if the user hasn't touch the igadget, it can automatically toggle
-  		if(!this.openedByUser){
-  			this._toggle();
-  		}
-  		if(this.folded != this.parentInterface.folded){
-	  			this.parentInterface.toggle();
-  		}
-  	} 
- 	//forced toggle 
-	SlotIgadgetInterface.prototype._toggle = function () {
-		this.folded = !this.folded;
-		this.igadgetDiv.getElementsByClassName("igadgetContent")[0].toggleClassName("folded");
-		this.igadgetDiv.getElementsByClassName("igadgetName")[0].toggleClassName("bckgrnd_folded");
-	}
-	
-	SlotIgadgetInterface.prototype.isAnyFolded = function () {
-		return this.folded || this.parentInterface.folded;
-	}
-	
-	SlotIgadgetInterface.prototype.isAnyUnfolded = function () {
-		return !this.folded || !this.parentInterface.folded;
-	}
-	
-	//methods invoked when the user wants to expand/collapse all the slot tabs
-	SlotIgadgetInterface.prototype.massiveExpand = function () {
-		if(this.folded){//the igadget is folded
-			this.toggleOpenedByUser();
-			this._toggle();
-			if(this.folded != this.parentInterface.folded){//if the parent is folded
-	  			this.parentInterface.toggle();
-			}
-		}else if(!this.openedByUser){//the igadget is open because it is conected to an opened channel
-			this.openedByUser = true;
-			this.parentInterface.igadgetsOpenedByUser++;
-			
-		}
-	}
-
-	SlotIgadgetInterface.prototype.massiveCollapse = function () {
-		if(!this.folded && this.openedByUser){//the igadget is folded
-			this.toggleOpenedByUser();
-			if(this.connections<=0){//collapse only if the gadget don't have any connections
-				this._toggle();
-			}
-		}
-		if(this.folded != this.parentInterface.folded){//if the parent isn't folded
-			if(this.parentInterface.connections<=0){
-				this.parentInterface.toggleOpenedByUser();
-				this.parentInterface.toggle();
-			}
-		}
-	}	
-}
-
-
-function EventIgadgetInterface (igadget, wiringGUI, parentInterface) {
-  	//CREATOR
-  	//atributes
-  	this.wiringGUI = wiringGUI;
-  	this.folded = false;
-  	this.igadgetDiv = null;
-  	this.connections = 0;
-  	this.openedByUser = false;		//is the igadget open and has the user done it??
-  	this.parentInterface = parentInterface;
-  	
-  	var ulEvents = document.createElement("div");
-    ulEvents.addClassName("igadgetContent");
-  	
-  	var connectables = this.wiringGUI.wiring.getIGadgetConnectables(igadget);
-
-    // Events
-    for (var i = 0; i < connectables.length; i++) {
-	    var connectable = connectables[i];
-	    if(connectable instanceof wIn){
-			var htmlElement = document.createElement("div");
-			htmlElement.appendChild(document.createTextNode(connectable.getName()));
-			
-			var chkItem = document.createElement("div");
-			chkItem.addClassName("unchkItem");
-			htmlElement.appendChild(chkItem);
-			
-			var chkItemAnchor = new ConnectionAnchor(connectable, chkItem, this);
-			//this.chkItemAnchor.setConnectionStatus(false, null, null);
-			
-			var context = {chkItemAnchor: chkItemAnchor, wiringGUI:this.wiringGUI};
-			Event.observe(chkItem, "click",
-			                    function () {
-			                      this.wiringGUI._changeConnectionStatus(this.chkItemAnchor);
-			                    }.bind(context));
-			
-			// Harvest info about the friendCode of the connectable
-			var friendCode = connectable.getFriendCode();
-			if (friendCode != null) {
-			    if (!this.wiringGUI.friend_codes[friendCode]) {
-			      // Create the friend code entry in the list of friend codes
-			      this.wiringGUI.friend_codes[friendCode] = {};
-			      this.wiringGUI.friend_codes[friendCode].list = [];
-			      this.wiringGUI.friend_codes[friendCode].color = this.wiringGUI.color_scheme[this.wiringGUI.friend_codes_counter++];
-			    }
-			
-			    this.wiringGUI.friend_codes[friendCode].list.push(htmlElement);
-			
-			    var context = {friendCode: friendCode, wiringGUI:this.wiringGUI};
-			
-			    htmlElement.addEventListener("mouseover",
-			                            function () {this.wiringGUI._highlight_friend_code(this.friendCode, true);}.bind(context),
-			                            false);
-			    htmlElement.addEventListener("mouseout",
-			                            function () {this.wiringGUI._highlight_friend_code(this.friendCode, false);}.bind(context),
-			                            false);	      
-			}
-			// Cancel bubbling of _toggle
-			function cancelbubbling(e) {
-				Event.stop(e);
-			}
-			
-			htmlElement.addEventListener("click", cancelbubbling, false);
-			      
-			// Insert it on the correct list of connectables
-			ulEvents.appendChild(htmlElement);
-			this.wiringGUI.inputs.push(chkItemAnchor);
-	    }
-    }	      
-	// Generic information about the iGadget
-	var gadget = igadget.getGadget();
-	var iGadgetName = igadget.name;
-	
-	
-	// Event column
-	if (ulEvents.childNodes.length > 0) {
-	  this.igadgetDiv = document.createElement("div");
-	  this.igadgetDiv.addClassName("igadget");
-	  var igadgetName = document.createElement("div");
-	  igadgetName.addClassName("igadgetName");
-	  igadgetName.appendChild(document.createTextNode(iGadgetName));
-	  
-	  //folding event
-	  Event.observe(igadgetName, "click", function(e){Event.stop(e);
-								if(this.connections<=0){
-									this.toggleOpenedByUser();
-									this._toggle();
-									if(this.wiringGUI.currentChannel)
-									   this.wiringGUI.highlightChannelInputs(this.wiringGUI.currentChannel)}}.bind(this));			  
-		  
-	  this.igadgetDiv.appendChild(igadgetName);
-	  this.igadgetDiv.appendChild(ulEvents);
-    }
-    
- 	EventIgadgetInterface.prototype.increaseConnections=function(){
-		this.connections++;
-		this.parentInterface.increaseConnections();
-	}
-	
-	EventIgadgetInterface.prototype.decreaseConnections=function(){
-		this.connections--;
-		this.parentInterface.decreaseConnections();
-	}
-
- 	EventIgadgetInterface.prototype.toggleOpenedByUser=function(){
- 		if(this.folded || (!this.folded && this.openedByUser)){
-			this.openedByUser = !this.openedByUser;
-			if(this.openedByUser)
-				this.parentInterface.igadgetsOpenedByUser++;
-			else
-				this.parentInterface.igadgetsOpenedByUser--;
- 		}
- 	}
-	
-	//toggle ordered automatically, for instance, changing channels
-  	EventIgadgetInterface.prototype.toggle = function () {
-  		//if the user hasn't touch the igadget, it can automatically toggle
-  		if(!this.openedByUser){
-  			this._toggle();
-  		}
- 		if(this.folded != this.parentInterface.folded){
-	  			this.parentInterface.toggle();
-  		}
-  	} 
- 	//forced toggle 
-	EventIgadgetInterface.prototype._toggle = function () {
-		this.folded = !this.folded;
-		this.igadgetDiv.getElementsByClassName("igadgetContent")[0].toggleClassName("folded");
-		this.igadgetDiv.getElementsByClassName("igadgetName")[0].toggleClassName("bckgrnd_folded");
-	}
-	
-	EventIgadgetInterface.prototype.isAnyFolded = function () {
-		return this.folded || this.parentInterface.folded;
-	}
-	
-	EventIgadgetInterface.prototype.isAnyUnfolded = function () {
-		return !this.folded || !this.parentInterface.folded;
-	}
-
-	//methods invoked when the user wants to expand/collapse all the event tabs	
-	EventIgadgetInterface.prototype.massiveExpand = function () {
-		if(this.folded){//the igadget is folded
-			this.toggleOpenedByUser();
-			this._toggle();
-			if(this.folded != this.parentInterface.folded){//if the parent is folded
-	  			this.parentInterface.toggle();
-			}
-		}else if(!this.openedByUser){//the igadget is open because it is conected to an opened channel
-			this.openedByUser = true;
-			this.parentInterface.igadgetsOpenedByUser++;
-			
-		}
-	}
-
-	EventIgadgetInterface.prototype.massiveCollapse = function () {
-		if(!this.folded && this.openedByUser){//the igadget is folded
-			this.toggleOpenedByUser();
-			if(this.connections<=0){//collapse only if the gadget don't have any connections
-				this._toggle();
-			}
-		}
-		if(this.folded != this.parentInterface.folded){//if the parent isn't folded
-			if(this.parentInterface.connections<=0){
-				this.parentInterface.toggleOpenedByUser();
-				this.parentInterface.toggle();
-			}
-		}
-	}
 }
