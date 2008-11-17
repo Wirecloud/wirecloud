@@ -230,16 +230,20 @@ class PackageCloner:
             for field in fields:
                 if (isinstance(field, models.ForeignKey)): 
                     referenced_table = field.rel.to._meta.object_name
-
-                    stm = "referenced_tuple = %s.%s.id" % ('tuple', field.name)   
                     
+                    #get the id of the foreignKey. It may be optional (Null)
+                    stm = "fkValue = %s.%s" % ('tuple', field.name)
                     exec(stm)
+                    if fkValue:
+                        stm = "referenced_tuple = %s.%s.id" % ('tuple', field.name)   
                     
-                    linker_table = table_name
-                    linker_field = field.name
-                    linker_tuple_id = cloned_tuple.id
+                        exec(stm)
                     
-                    self.fks.add_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+                        linker_table = table_name
+                        linker_field = field.name
+                        linker_tuple_id = cloned_tuple.id
+                    
+                        self.fks.add_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
             
             ##########################################################################################################
             #Marking many_to_many relationships to be updated when involved tuples are both cloned!
@@ -289,11 +293,13 @@ class PackageCloner:
                 if (isinstance(field, models.ForeignKey)):                     
                     related_tuple = get_fk_tuple(tuple, field.name)
                     
-                    cloned_related_tuple = self.clone_tuple(related_tuple)
+                    #check if the foreign key is empty
+                    if related_tuple:
+                        cloned_related_tuple = self.clone_tuple(related_tuple)
                     
-                    stm = "%s.%s = cloned_related_tuple" % ('cloned_tuple', field.name)                 
+                        stm = "%s.%s = cloned_related_tuple" % ('cloned_tuple', field.name)                 
                      
-                    exec(stm)
+                        exec(stm)
                     continue
             
             #Saving already cloned fks!
