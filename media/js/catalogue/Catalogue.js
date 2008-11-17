@@ -100,14 +100,7 @@ var CatalogueFactory  = function () {
 		}
 		
 		this.reloadCompleteCatalogue = function() {
-			UIUtils.repaintCatalogue=true;
-			UIUtils.sendPendingTags();
-			if (UIUtils.isInfoResourcesOpen) {
-				UIUtils.isInfoResourcesOpen = false;
-				UIUtils.SlideInfoResourceOutOfView('info_resource');
-			}
-			UIUtils.search = false;
-			this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+			this.initCatalogue();
 		}
 		
 	 	this.emptyResourceList = function() {
