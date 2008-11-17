@@ -438,6 +438,10 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.slot_list.innerHTML = "";
     this.channels_list.innerHTML = "";
     this.clearMessages();
+    if($('toggleEvents'))
+    	 $('toggleEvents').remove();
+    if($('toggleSlots'))
+    	 $('toggleSlots').remove();    
 
     // Clean data structures
     this.friend_codes_counter = 0;
