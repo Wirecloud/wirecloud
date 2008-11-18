@@ -282,7 +282,7 @@ function ConnectableInterface (wiringGUI, parentInterface, headerText) {
 	}
 	
 	ConnectableInterface.prototype.decreaseConnections = function(){
-		this.ConnectableInterface--;
+		this.connections--;
 		this.parentInterface.decreaseConnections();
 	}
 
