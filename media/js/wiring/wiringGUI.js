@@ -1162,7 +1162,7 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
 
   if (this.channel == null) {
     // The channel don't exists
-    this.channel = wiring.createChannel(this.name, this.provisional_id);
+    this.channel = wiring.getOrCreateChannel(this.name, this.provisional_id);
   } else {
 	  // Update channel name
 	  this.channel._name = this.name;

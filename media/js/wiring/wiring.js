@@ -308,6 +308,14 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 		return this._insertChannel(channelName, channelVar, channelId, true);
 	}
+	
+	Wiring.prototype.getOrCreateChannel = function (channelName, channelId) {
+		var channel = this.channels.getElementByName(channelName);
+		if(!channel){
+			channel = this._insertChannel(channelName, channelVar, channelId, true);
+		}
+		return channel;
+	}
 
 	Wiring.prototype.removeChannel = function (channelId) {
 		var channel = this.channels.getElementById(channelId);
