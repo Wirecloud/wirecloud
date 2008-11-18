@@ -312,7 +312,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	Wiring.prototype.getOrCreateChannel = function (channelName, channelId) {
 		var channel = this.channels.getElementByName(channelName);
 		if(!channel){
-			channel = this._insertChannel(channelName, channelVar, channelId, true);
+			channel = this.createChannel(channelName, channelId);
 		}
 		return channel;
 	}
