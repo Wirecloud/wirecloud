@@ -393,7 +393,7 @@ function ConnectableInterface (wiringGUI, parentInterface, headerText) {
 						this.toggleOpenedByUser();
 						this.forceToggle();
 						if (this.wiringGUI.currentChannel)
-							this.wiringGUI.highlightChannelOutputs(this.wiringGUI.currentChannel);
+							this.repaintSiblings(this.wiringGUI.currentChannel) //repaint the needed arrows in case the layout has changed
 					}
 				}.bind(this));			  
 				  
@@ -470,7 +470,12 @@ function SlotIgadgetInterface (igadget, wiringGUI, parentInterface) {
 	
 	var connectables = wiringGUI.wiring.getIGadgetConnectables(igadget);
 	this.setConnectables (connectables);
+	
+	SlotIgadgetInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelOutputs(channel);
+	}
 }
+
 SlotIgadgetInterface.prototype = new ConnectableInterface;	
 	
 // Interface for the igadget events (with connectable)
@@ -480,6 +485,10 @@ function EventIgadgetInterface (igadget, wiringGUI, parentInterface) {
 	
 	var connectables = wiringGUI.wiring.getIGadgetConnectables(igadget);
 	this.setConnectables (connectables);
+	
+	EventIgadgetInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelInputs(channel);
+	}
 }
 EventIgadgetInterface.prototype = new ConnectableInterface;	
 
