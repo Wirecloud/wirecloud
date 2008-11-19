@@ -153,11 +153,17 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 #Authentication
 AUTHENTICATION_BACKENDS = (  
 #'authentication.ldapaccess.LDAPBackend',
-'django.contrib.auth.backends.ModelBackend',  
+'authentication.anonymousaccess.AnonymousBackend',
+#'authentication.ezsteroidsaccess.EzSteroidsBackend',
+'django.contrib.auth.backends.ModelBackend',
 )
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
+
+# Authentication Server URL. This URL is only needed to allow the authentication against
+# third parties. It must be used along with the corresponding authentication backend
+#AUTHENTICATION_SERVER_URL = 'http://localhost:8002'
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
@@ -165,4 +171,4 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
+#TEMPLATE_GENERATOR_URL = 'http://localhost:8001'

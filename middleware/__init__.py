@@ -63,7 +63,7 @@ def get_anonymous_user(request):
     else:
         user = generate_anonymous_user(request)
     
-    user = authenticate(username=user.username, password=ANONYMOUS_PWD)
+    user = authenticate(username=user.username, password=ANONYMOUS_PWD,isAnonymous=request.anonymous_id)
     login(request, user)
     
     return user

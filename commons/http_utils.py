@@ -32,11 +32,12 @@
 
 from urlparse import urlparse
 
-from urllib import urlopen, urlcleanup
+from urllib import urlopen, urlcleanup, urlencode
+from django.utils import simplejson
 
 from django.conf import settings
 
-def download_http_content (uri):
+def download_http_content (uri, params=None):
     urlcleanup()
     
     try:
@@ -53,11 +54,19 @@ def download_http_content (uri):
     except Exception:
         proxy = False
         
-    if proxy:
-        return urlopen(uri,proxies=proxy).read()
+    if params:
+        #data = {'data': simplejson.dumps(params)}
+        if proxy:
+            #return urlopen(uri,data=urlencode(data),proxies=proxy).read()
+            return urlopen(uri,data=urlencode(params),proxies=proxy).read()
+        else:
+            #return urlopen(uri,data=urlencode(data)).read()
+            return urlopen(uri,data=urlencode(params)).read()
     else:
-        return urlopen(uri).read()
-
+        if proxy:
+            return urlopen(uri,proxies=proxy).read()
+        else:
+            return urlopen(uri).read()
 
 def PUT_parameter (request, parameter_name):    
     # Checking GET and POST space!
