@@ -88,6 +88,14 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
 		}
+		
+		LayoutManager.prototype.resizeContainer = function (container) {
+			// We have to take into account the bottom margin and border widths.
+			// Bottom margin = 4px
+			// Border width = 2px => Top border + bottom border = 4px
+			// Total 8px
+			container.setStyle({"height" : (BrowserUtilsFactory.getInstance().getHeight() - $("header").offsetHeight - 8) + "px"});
+		}
 
 		LayoutManager.prototype.resizeWrapper = function () {
 			// We have to take into account the bottom margin and border widths.
@@ -100,7 +108,7 @@ var LayoutManagerFactory = function () {
 			var wrapperChilds = $('wrapper').childElements();
 			var i;
 			for (i=0;i<wrapperChilds.length;i++){
-				wrapperChilds[i].setStyle({"height" : (newHeight - $("header").offsetHeight - 8) + "px"});
+				this.resizeContainer(wrapperChilds[i]);
 			}
 			var newWidth = BrowserUtilsFactory.getInstance().getWidth();
 			this.coverLayerElement.setStyle({"height" : newHeight + "px", "width": newWidth +"px"});
