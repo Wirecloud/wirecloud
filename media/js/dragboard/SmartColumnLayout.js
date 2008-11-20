@@ -45,7 +45,6 @@ function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontal
 	this.shadowPositions = null;
 	this.columns = columns;
 	this.cellHeight = cellHeight;
-	DragboardLayout.call(this, dragboard, scrollbarSpace);
 
 	if ((verticalMargin % 2) == 0) {
 		this.topMargin = verticalMargin / 2;
@@ -63,24 +62,11 @@ function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontal
 		this.rightMargin = Math.floor(horizontalMargin / 2) + 1;
 	}
 
-	this._notifyWindowResizeEvent = function () {
-		this._recomputeSize();
-
-		// Notify each igadget
-		var iGadget;
-		var igadgetKeys = this.iGadgets.keys();
-		for (var i = 0; i < igadgetKeys.length; i++) {
-			iGadget = this.iGadgets[igadgetKeys[i]];
-			iGadget._notifyWindowResizeEvent();
-		}
-	}.bind(this);
-
-	this._recomputeSize();
-	Event.observe(window, 'resize', this._notifyWindowResizeEvent);
-
 	this._clearMatrix();         // Matrix of igadgets
 	this.dragboardCursor = null;
 	this.gadgetToMove = null;
+
+	DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
 
 /*

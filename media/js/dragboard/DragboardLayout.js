@@ -46,6 +46,22 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 	this.dragboard = dragboard;
 	this.scrollbarSpace = scrollbarSpace;
 	this.iGadgets = new Hash();
+
+	// Window Resize event dispacher function
+	this._notifyWindowResizeEvent = function () {
+		this._recomputeSize();
+
+		// Notify each igadget
+		var iGadget;
+		var igadgetKeys = this.iGadgets.keys();
+		for (var i = 0; i < igadgetKeys.length; i++) {
+			iGadget = this.iGadgets[igadgetKeys[i]];
+			iGadget._notifyWindowResizeEvent();
+		}
+	}.bind(this);
+
+	this._recomputeSize();
+	Event.observe(window, 'resize', this._notifyWindowResizeEvent);
 }
 
 DragboardLayout.prototype.getMenubarSize = function() {
@@ -119,6 +135,8 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
  * This method must be called to avoid memory leaks caused by circular references.
  */
 DragboardLayout.prototype.destroy = function() {
+	Event.stopObserving(window, 'resize', this._notifyWindowResizeEvent);
+
 	var keys = this.iGadgets.keys();
 	for (var i = 0; i < keys.length; i++) {
 		this.iGadgets[keys[i]].destroy();
