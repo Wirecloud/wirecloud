@@ -135,6 +135,18 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
+    'clms',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'processors.context_processors.home_gateway_url',
+    'processors.context_processors.server_url',
+    'processors.context_processors.is_anonymous',
 )
 
 SESSION_COOKIE_AGE = 5184000    #2 months
@@ -154,7 +166,7 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 AUTHENTICATION_BACKENDS = (  
 #'authentication.ldapaccess.LDAPBackend',
 'authentication.anonymousaccess.AnonymousBackend',
-'authentication.ezsteroidsaccess.EzSteroidsBackend',
+#'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
 )
 #LDAP Backend
@@ -163,7 +175,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Authentication Server URL. This URL is only needed to allow the authentication against
 # third parties. It must be used along with the corresponding authentication backend
-AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
+#AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')

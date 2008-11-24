@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -28,32 +28,23 @@
 #...............................licence...........................................#
 
 
-#
-
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.contrib.auth.decorators import login_required
 
 from django.conf import settings
-
-
-@login_required
-def index(request, user_name=None, template="index.html"):
-    """ Vista principal """ 
-    
-    if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
-        return render_to_response('iphone.html', {}, 
-                  context_instance=RequestContext(request))
+def server_url(request):
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        return {'AUTHENTICATION_SERVER_URL': settings.AUTHENTICATION_SERVER_URL }
     else:
-        return render_to_response(template, {'current_tab': 'dragboard'}, 
-                  context_instance=RequestContext(request))
+        return {'AUTHENTICATION_SERVER_URL': None }
 
-@login_required
-def wiring(request, user_name=None):
-    """ Vista del Wiring """
-    return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
+def is_anonymous(request):
+    is_anonymous = False
+    if hasattr(request, 'anonymous_id') and request.anonymous_id and request.anonymous_id==request.user.id:
+        is_anonymous = True
+    return {'is_anonymous': is_anonymous }
 
-@login_required
-def index_lite(request, user_name=None):
-    """ Vista de ezweb sin cabecera"""
-    return index(request, template="index_lite.html")
+def home_gateway_url(request):
+    if hasattr(settings, 'HOME_GATEWAY_DISPATCHER_URL'):
+       return {'home_gateway_dispatcher_url': settings.HOME_GATEWAY_DISPATCHER_URL}
+    else:
+        return {'home_gateway_dispatcher_url': None}
+    
