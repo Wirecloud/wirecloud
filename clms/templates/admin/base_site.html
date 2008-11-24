@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}clms/css/admin_project.css" />
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}clms/css/admin_clms.css" />
+{% endblock %}
+
+{% block title %}{{ title }} | {% trans 'Clms administration' %}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">{% trans 'Clms administration' %}</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

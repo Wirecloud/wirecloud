@@ -1,0 +1,11 @@
+{% autoescape off %}
+
+{% if portal_messages %}
+  <ul id="info-list">
+  {% for message in portal_messages %}
+   <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+
+{% endautoescape %}

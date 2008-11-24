@@ -1,0 +1,97 @@
+{% extends "admin/base_site.html" %}
+{% load i18n name_model %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}clms/css/admin_project.css" />
+{% if not app_list.1 %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}clms/css/admin_{{app_list.0.name|lower}}.css" />
+{% endif %}
+
+{% endblock %}
+
+{% block stylesheet %}{% load adminmedia %}{% admin_media_prefix %}css/dashboard.css{% endblock %}
+
+{% block coltype %}administration{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+{% if app_list %}
+    {% for app in app_list %}
+        {% ifnotequal app.name 'Auth' %}
+        <div class="module">
+        <div summary="{% blocktrans with app.name as name %}Models available in the {{ name }} application.{% endblocktrans %}">
+        {% ifequal app.name 'Pbums' %}
+            <div class="admincontent admincontent_group"> 
+                <span class="title" scope="row"><a href="/admin/auth/group/">{% trans 'Groups' %}</a></span>
+                <div class="optioncenter">
+                    <a href="/admin/auth/group/" class="changelink" title="{% trans 'Change' %}" alt="{% trans 'Change' %}"></a>
+                    <span>AALorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec erat. Suspendisse massa justo, pretium id, congue nec, adipiscing sed, felis. adipiscing sed, felis.
+                    </span>
+                </div>
+                <div class="optionfooter">
+                    <span class="addlinkPbums"><a href="/admin/auth/group/add/">{% trans 'Add Groups' %}</a></span>
+                </div>
+            </div>
+            <div class="admincontent admincontent_user">
+                <span class="title" scope="row"><a href="/admin/auth/user/">{% trans 'Users' %}</a></span>
+                <div  class="optioncenter">
+                    <a href="/admin/auth/user/" class="changelink" alt="{% trans 'Change' %}" title="{% trans 'Change' %}"></a>
+                    <span>YYLorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec erat. Suspendisse massa justo, pretium id, congue nec, adipiscing sed, felis. adipiscing sed, felis.
+                    </span>
+                </div>
+                <div class="optionfooter">
+                    <span class="addlinkPbums"><a href="/admin/auth/user/add/">{% trans 'Add Users' %}</a></span>
+                </div>
+            </div>
+        {% endifequal %}
+        {% for model in app.models %}
+            <div class="admincontent admincontent_{{model.admin_url|name_model}}">
+            {% if model.perms.change or model.perms.view %}
+                <span class="title" scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></span>
+            {% else %}
+                <span class="title" scope="row">{{ model.name }}</span>
+            {% endif %}
+            <div  class="optioncenter">
+            {% if model.perms.change %}
+                  <a href="{{ model.admin_url }}" alt="{% trans 'Change' %}" title="{% trans 'Change' %}" class="changelink"></a>
+            {% else %}
+                {% if model.perms.view %}
+                <span>
+                  <a href="{{ model.admin_url }}" alt="{% trans 'View' %}" title="{% trans 'View' %}" class="viewlink"></a>
+                </span>
+                {% else %}
+                <span>&nbsp;</span>
+                {% endif %}
+            {% endif %}
+                <span>333Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec erat. Suspendisse massa justo, pretium id, congue nec, adipiscing sed, felis. adipiscing sed, felis.
+                </span>
+            </div>
+            <div class="optionfooter">
+              {% if model.perms.add %}
+                  <span class="addlink{{app.name}}"><a href="{{ model.admin_url }}add/">{% trans 'Add' %} {{ model.name  }}</a></span>
+              {% else %}
+                  <span>&nbsp;</span>
+              {% endif %}
+            </div>
+
+            </div>
+        {% endfor %}
+        </div>
+        </div>
+      {% endifnotequal %}
+    {% endfor %}
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}

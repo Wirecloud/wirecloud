@@ -1,0 +1,28 @@
+{% extends "layout_detail.html" %}
+
+{% load i18n paginator favourite %}
+
+
+
+{% block breadcrumbs %}
+
+   <div id='layout_view' class='layout_view'>
+
+    <span>
+
+    {% if prev_layout_id %}
+        <a href='{% url clms.views.favourite_layout_detail prev_layout_id %}'> <img src="{{ MEDIA_URL }}images/go-previous.png" /></a>
+     {% endif %}
+
+    <b>{% trans "Favourite" %}:</b> {{ layout.name }}
+
+    {% if next_layout_id %}
+     <a href='{% url clms.views.favourite_layout_detail next_layout_id %}'> <img src="{{ MEDIA_URL }}images/go-next.png" /> </a>
+    {% endif %}
+
+    </span>
+
+    {% favourite user layout 'favourite' %} 
+
+   </div>
+{% endblock %}

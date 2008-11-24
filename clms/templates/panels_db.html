@@ -1,0 +1,39 @@
+{% load i18n %}
+{% for panel in panels %}
+
+<tr class="row{{forloop.counter}} save" id="{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}">
+    <th id="th_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}"> {{ panel.content.name }}</th>
+    <td>
+        <select id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_lang" disabled="disabled">
+            <option value="default">--------</option>
+            <option value="" {% ifequal panel.lang '' %} selected="selected" {% endifequal %}>{% trans "All Languages" %}</option>
+            {% for lang in langs %}
+                <option value="{{ lang.0 }}" {% ifequal panel.lang lang.0 %} selected="selected" {% endifequal %}>{{ lang.1 }}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td>
+        <select id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_category" disabled="disabled">
+            <option value="default">--------</option>
+            <option value="" {% ifequal panel.category_id '' %} selected="selected" {% endifequal %}>{% trans "All Users" %}</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}"  {% ifequal panel.category_id category.id %} selected="selected" {% endifequal %}>{{ category.name }} </option>
+            {% endfor %}
+        </select>
+
+    </td>
+    <td>
+        <input id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_button_modify" type="button" value="{% trans "Modify" %}" name="_save" onclick="javascript:{modify(this);}" />
+        <input id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_button_asign" type="button" value="{% trans "Assign" %}" name="_save" onclick="javascript:{assign(this);}" style="display:none"/>
+    </td>
+    <td>
+        <input id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_button" type="button" value="{% trans "Delete" %}" name="_save" onclick="javascript:{remove_row(this);}"/>
+    </td>
+    <td>
+        <input id="id_content_{{ panel.content.pk }}#{{ panel.category_id }}&{{ panel.lang }}_default" name="default" type="radio" value="{% trans "Delete" %}" name="default" class="default" {% if panel.default %} checked="checked" {% endif %}/>
+    </td>
+
+</tr>
+
+{% endfor %}
+

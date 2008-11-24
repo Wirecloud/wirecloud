@@ -1,0 +1,48 @@
+{% load i18n %}
+<div class="detailedinfo">
+<span class="intro">{% trans "Result" %}:</span>
+{{ first_item }}
+{% trans "to" %}
+{{ last_item }}
+{% trans "of" %}
+{{ hits }}
+|
+{% trans "Current page" %}:
+{{ page }}
+</div>
+<ul>
+
+{% if has_previous %}
+  <li>
+    <a href="{{ query_string }}page=1"><img src="/ezweb/clms/images/paginatorfirst.png" alt="{% trans "First Page" %}" /></a>
+  </li>
+  <li>
+    <a href="{{ query_string }}page={{ previous }}"><img src="/ezweb/clms/images/paginatorprev.png" alt="{% trans "Previous Page" %}" /></a>
+  </li>
+{% endif %}
+
+{% if not show_first %}
+{% endif %}
+
+{% for page_num in page_numbers %}
+   <li{% ifequal page_num page %} class="actual"{% endifequal %}>
+     {% ifequal page_num page %}
+       {{ page }}
+     {% else %}
+       <a href="{{ query_string }}page={{ page_num }}">{{ page_num }}</a>
+     {% endifequal %}
+   </li>
+{% endfor %}
+
+{% if not show_last %}
+{% endif %}
+
+{% if has_next %}
+  <li>
+    <a href="{{ query_string }}page={{ next }}"><img src="/ezweb/clms/images/paginatornext.png" alt="{% trans "Next Page" %}" /></a>
+  </li>
+  <li>
+    <a href="{{ query_string }}page={{ pages}}"><img src="/ezweb/clms/images/paginatorlast.png" alt="{% trans "Last Page" %}" /></a>
+  </li>
+{% endif %}
+</ul>

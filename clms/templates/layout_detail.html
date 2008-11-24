@@ -1,0 +1,90 @@
+{% extends "base_clms.html" %}
+
+{% load i18n paginator favourite %}
+
+{% block extrahead %}
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script> 
+    <script type="text/javascript" src="{{ MEDIA_URL }}clms/js/ajax_petitions.js"></script> 
+    <script>
+
+    function onload_layout_detail()
+    {
+            var imgs = document.getElementsByName('img_reload');
+            for(i=0; i<imgs.length;i++)
+            {
+
+                if (imgs[i].offsetWidth >= imgs[i].parentNode.width.replace("%","") * window.screen.width /90)
+                {
+                    imgs[i].setAttribute("style","width:99%;vertical-align:middle;");
+                    imgs[i].parentNode.setAttribute("align","center");
+                }
+            }
+
+            var window_height = window.innerHeight;
+            if (!window_height)
+            {
+                window_height = 700;
+            }
+            var table_height = document.getElementsByTagName('table')[0].offsetHeight + 80;
+            if (table_height > window_height)
+            {
+                window_height = table_height;
+            }
+            var height_all = (window_height - document.getElementById("header").offsetHeight) +"px";
+            document.getElementById("container_wrapper").style.height=height_all;
+
+            document.getElementById("layout_html").style.visibility="visible";
+            document.getElementById("layout_preload").style.display = 'none';
+
+    }
+    </script>
+
+{% endblock %}
+
+{% block head_control_tab %}
+   {% if hide %}
+     <a href="javascript:{show_head(true);}">{% trans "Show Menu" %}</a>
+   {% else %}
+    <a href="javascript:{hide_head(true);}">{% trans "Hide Menu" %}</a>
+   {% endif %}
+{% endblock %}
+
+
+{% block onload %} onload="{javascript:onload_layout_detail();}" {% endblock %}
+
+
+
+{% block breadcrumbs %}
+
+   <div id='layout_view' class='layout_view'>
+
+    <span>
+     {% if prev_layout_id %}
+        <a href='{% url clms.views.layout_detail prev_layout_id %}'> <img src="{{ MEDIA_URL }}images/go-previous.png" /></a>
+     {% endif %}
+
+    <b>{% trans "Layout view" %}:</b> {{ layout.name }}
+
+    {% if next_layout_id %}
+     <a href='{% url clms.views.layout_detail next_layout_id %}'> <img src="{{ MEDIA_URL }}images/go-next.png" /> </a>
+    {% endif %}
+
+    </span>
+
+    {% if not user.is_anonymous %}
+        {% favourite user layout 'normal' %} 
+    {% endif %}
+
+   </div>
+{% endblock %}
+
+
+{% block content %}
+<div id="layout_preload" style="display:block">
+        <img style="text-align:center" src="{{ MEDIA_URL }}images/ajax-loader.gif" class="img_preload">
+</div>
+<div id='layout_html'>
+    {{ layout_html|safe }}
+</div>
+
+{% endblock %}

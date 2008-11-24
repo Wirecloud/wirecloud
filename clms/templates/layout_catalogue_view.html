@@ -1,0 +1,65 @@
+{% extends "base_clms.html" %}
+
+{% load i18n paginator favourite %}
+
+{% block extrahead %}
+
+    <script type="text/javascript" src="{{ MEDIA_URL }}clms/js/ajax_petitions.js"></script> 
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    <b>{% trans "Layout catalogue" %}</b> 
+{% endblock %}
+
+
+{% block content %}
+
+
+   {% if is_paginated %}
+    <div class="pageNavigationLayout">
+        {% paginator 10 %}
+    </div>
+   {% endif %}
+
+
+  <div style='clear:both'> </div>
+  <div id="layouts" class="layouts">
+
+   {% for layout in layout_list %}
+
+        <div id='layout_box_{{ layout.id }}' class="layout_box">
+            <div class="top"></div>
+            <div class="toolbar">
+               {% block favourite %}
+                 {% if not user.is_anonymous %}
+                    {% favourite user layout 'normal' %}
+                 {% endif %}
+               {% endblock %} 
+            </div>
+            <div class="content" id="layout_{{ layout.id }}_content" style="">
+                <div class="title">{{ layout.name }}</div>
+                <div class="image">
+                    {{ layout.thumbnail|safe }}
+                </div>
+
+                {% block buttom %}
+
+                <button onClick="window.location='{% url clms.views.layout_detail layout.id %}'">
+                    {% trans "Watch Layout" %}
+                </button>
+                {% endblock %} 
+
+            </div>
+            <div id="resource_0_bottom" class="bottom" style="" ></div>
+        </div>
+
+   {% endfor %} 
+
+  </div> 
+
+
+
+
+{% endblock %}

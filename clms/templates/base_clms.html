@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+{% load i18n messagebox %}
+  <title>{% block title %}{% endblock %} - {% trans "Ezsteroids portal" %}</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/effects.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}clms/js/head_functions.js"></script>
+
+  <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}clms/css/ezsteroids.css" />
+  <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+
+
+
+  <script type="text/javascript"> 
+    function onload_base()
+    {
+        $("container_wrapper").style.height = $("container_wrapper").parentNode.style.offsetHeight;
+    }
+  </script>
+
+{% block extrahead %}
+
+{% endblock %}
+</head>
+<body {% block onload %} onload="{javascript:onload_base();}" {% endblock %}>
+
+    <div id="head_control_tab" class="control_tab">
+        {% block head_control_tab %}
+            <a href="javascript:{hide_head(false);}">{% trans "Hide Menu" %}</a>
+        {% endblock %}
+    </div>
+
+
+  {% if is_anonymous %}
+    <div id="login_control_tab" class="control_tab">
+        <a href="/accounts/login/?next=/">{% trans "Login" %}</a>
+    </div>
+
+    <div id="register_control_tab" class="control_tab">
+        <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans "Register" %}</a>
+    </div>
+  {% endif %}
+
+    <div id="header" style="{% if hide %} display:none;{% endif %}">
+
+ <div id="banner"> 
+
+  <div id="greeting">  
+    {% if not user.is_anonymous %}
+        {% trans "Welcome" %}, {{ user.username }} |
+    {% endif %}
+
+    {% for lang in LANGUAGES %} 
+        {% ifnotequal LANGUAGE_CODE lang.0 %}
+                <form id="languages-{{ lang.0 }}" class="languageform" action="{% url clms.views.language_setting %}" method="post">
+                    <input type="hidden" value="{{ lang.0 }}" name="language"/>
+                    <input style="color:white;" class="language" type="image" height="11" width="14" src="/media/img/flag_{{ lang.0 }}.png" alt="{{lang.1}}"/>
+                </form> |
+        {% endifnotequal %}
+    {% endfor %}
+    {% if not user.is_anonymous %}
+        <a href="/logout">{% trans "Exit" %}</a>
+    {% endif %}
+
+</div>
+ 
+  <img id="logo" src="{{ MEDIA_URL }}clms/images/ezsteroids.gif" alt="EzWeb Logo">
+ </div>
+
+    <div id="bar">
+
+      {% if not user.is_anonymous %}
+        <div class="tab_section" id="tab_section">
+            <div id="fixed_bar" style="width: 100%">
+                <div id="scroll_bar" style="width: 100%; right: 0px;">
+                    <div style="display: block; z-index: 2; visibility: visible;" class="tab" id="tab_4_5">
+                        <div id="favourites" class="favourites">
+                            <a href="{% url clms.views.favourite_catalogue_view %}" >{% trans "Favourites" %}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      {% endif %}
+
+
+        <div class="toolbar_section" id="toolbar_section">
+        {% if not user.is_anonymous %}
+            <input type="button" onClick="window.location.href='{{AUTHENTICATION_SERVER_URL}}/user/profile/'" class="toolbar_unmarked" title="{% trans "Profile" %}" id="profile_link"/> 
+        {% endif %}
+
+            <input type="button" onclick="window.location.href='{% url clms.views.layout_catalogue_view %}'" class="toolbar_unmarked" title="{% trans "Layouts" %}" id="layauts_link"/>
+            {% if user.is_staff %}
+                <input type="button" onclick="window.location.href='/admin/'" class="toolbar_unmarked" title="{% trans "Administration Panel" %}" id="admin_link"/>
+            {% endif %}
+            <span class="toolbar_unmarked" title="{% trans "Errors" %}" style="display: none;" id="logs_link"> </span>
+        </div>
+
+         <div class="breadcrumbs" id="breadcrumbs">
+            <div id="fixed_bar" style="width: 100%;">
+                 <div id="scroll_bar" style="width: 100%; right: 0px;">
+                    <div style="display: block; z-index: 2; visibility: visible;" class="tab current" id="tab_4_4">
+                        {% block breadcrumbs %}
+
+                        {% endblock %}
+                    </div>
+                </div>
+             </div>
+        </div>
+
+
+        <div class="messagebox" id="messagebox">
+            {% block messages %}
+                {% messagebox %}
+            {% endblock %}
+        </div>
+
+
+    </div>
+
+</div>
+
+
+    <div id="container_wrapper" height="400px" class="container dragboard" style="display: block; z-index: 2; visibility: visible;"/>
+
+        {% block content %}
+
+        {% endblock %}
+
+    </div>
+
+
+
+</body>
+</html>
