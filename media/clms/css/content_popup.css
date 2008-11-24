@@ -1,0 +1,36 @@
+div.pageNavigationLayout {
+
+margin-bottom:40px;
+}
+
+div.pageNavigationLayout div.detailedinfo {
+float:right;
+margin-top:5px;
+}
+
+div.pageNavigationLayout div.detailedinfo span.intro {
+font-weight:bold;
+}
+
+div.pageNavigationLayout ul li a {
+color:#696969;
+padding:1px 4px;
+text-decoration:none;
+}
+
+div.pageNavigationLayout ul li {
+border:1px solid #9A9A9A;
+display:block;
+float:left;
+font-size:12px;
+margin-right:5px;
+padding:0px;
+}
+
+li.actual{
+color:red;
+cursor: default;
+}
+li.actual a, li.actual a img{
+cursor: default;
+}

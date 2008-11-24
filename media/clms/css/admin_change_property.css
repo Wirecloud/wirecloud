@@ -1,0 +1,78 @@
+ul.selector-chooser {
+background:transparent url(../img/admin/chooser-bg.gif) no-repeat scroll center top;
+float:left;
+height:50px;
+margin:8em 3px 0pt;
+padding:0pt;
+width:22px;
+}
+
+.selector-available, .selector-chosen {
+float:left;
+margin-bottom:5px;
+text-align:center;
+width:270px;
+}
+
+.selector-add {
+background:transparent url(/media/img/admin/selector-add.gif) no-repeat scroll center top;
+margin-bottom:2px;
+}
+
+.selector-remove {
+background:transparent url(/media/img/admin/selector-remove.gif) no-repeat scroll center top;
+}
+
+.selector-add, .selector-remove {
+display:block;
+height:16px;
+text-indent:-3000px;
+width:16px;
+}
+select {
+height:17.2em;
+width:270px;
+}
+
+.change-list .filtered {
+background:white !important;
+}
+
+.change-list .filtered {
+min-height: 1px !important;
+}
+
+.selector {
+float:left;
+width:580px;
+}
+
+p{
+clear:both;
+float:left;
+
+}
+form{
+float:left;
+}
+div.module{
+float:left;
+}
+.submit-row {
+background:white url(/media/img/admin/nav-bg.gif) repeat-x scroll 0pt 100%;
+border:1px solid #CCCCCC;
+margin:5px 0pt;
+padding:5px 7px;
+text-align:right;
+float:left;
+}
+
+select#id_value
+{
+height: 2.0em;
+}
+
+ul.errorlist {
+clear: both;
+float:left;
+}

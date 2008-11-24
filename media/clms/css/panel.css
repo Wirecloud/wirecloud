@@ -1,0 +1,12 @@
+div.select_layout div table {
+border:1px dashed #BBBBBB !important;
+width:87%;
+height:400px;
+}
+
+div.select_layout div table tr {
+border:1px dashed #BBBBBB !important;
+}
+div.select_layout div table tr td {
+border:1px dashed #BBBBBB !important;
+}

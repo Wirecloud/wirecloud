@@ -1,4 +1,4 @@
-﻿ # -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -154,7 +154,7 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 AUTHENTICATION_BACKENDS = (  
 #'authentication.ldapaccess.LDAPBackend',
 'authentication.anonymousaccess.AnonymousBackend',
-#'authentication.ezsteroidsaccess.EzSteroidsBackend',
+'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
 )
 #LDAP Backend
@@ -163,7 +163,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Authentication Server URL. This URL is only needed to allow the authentication against
 # third parties. It must be used along with the corresponding authentication backend
-#AUTHENTICATION_SERVER_URL = 'http://localhost:8002'
+AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
@@ -172,3 +172,9 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
+
+try:
+    from clms.settings import *
+except ImportError:
+    pass
+    

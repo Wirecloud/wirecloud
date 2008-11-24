@@ -1,0 +1,342 @@
+body {
+    background: #C6C4C5;
+}
+
+#header {
+    background: url(/ezweb/clms/images/header_background.jpg) repeat-x;
+}
+
+#branding h1 {
+    color: #3f3b2f;
+    background: url(/ezweb/clms/images/logo.png) no-repeat left top;
+    padding: 5px 0 10px 58px;
+    margin: 0;
+}
+
+div.breadcrumbs {
+    background: #dbd9da;
+    color: #949393;
+    border: none;
+    font-size: 9px;
+    font-family: Arial;
+    border-bottom: 1px solid #80807e;
+}
+
+#user-tools a:link,
+#user-tools a:visited,
+#user-tools a,
+#user-tools {
+    color: #7c7c7c;
+}
+
+#content.administration {
+    margin: 0;
+    padding: 10px 15px;
+    padding-left: 35px;
+    background: #C6C4C5 url(/ezweb/clms/images/body_background.jpg) repeat-x;
+    min-height: 315px;
+}
+
+#content.administration .module {
+    clear: both;
+    background: transparent;
+    border: none;
+    float:left;
+    margin-top:1em;
+}
+
+.module {
+    margin-bottom: 20px;
+}
+
+.admincontent {
+    float: left;
+    margin-top: 0.5em;
+    margin-right: 5em;
+    font-size: 8pt;
+    width: 192px;
+}
+
+.admincontent .title {
+    display: block;
+    background: url(/ezweb/clms/images/option_header.png) no-repeat;
+    width: 196px;
+    height: 21px;
+    line-height: 18px;
+    text-align: center;
+}
+
+.admincontent .addlink a,
+.admincontent .title a{ 
+    color: #666565;
+}
+
+.optionfooter {
+    background: url(/ezweb/clms/images/option_footer.jpg) no-repeat;
+    width: 196px;
+    height: 16px;
+}
+
+.admincontent .addlinkPbums, .admincontent .addlinkClms {
+    padding-left: 20px;
+    height: 16px;
+    position: relative;
+}
+
+.admincontent a.changelink {
+    height: 68px;
+    width: 70px;
+    display: block;
+    background: none;
+    padding: 0;
+    margin-right: -20px;
+    float: right;
+}
+
+a.changelink:hover {
+    background-position: 0 -80px !important;
+}
+
+.optioncenter {
+    background: url(/ezweb/clms/images/option_background.png) repeat-y;
+    width: 192px;
+    height: 92px;
+    padding-left: 0.5em;
+}
+
+.admincontent_content  a.changelink {
+    background: url(/ezweb/clms/images/content_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+
+.admincontent_layout  a.changelink {
+    background: url(/ezweb/clms/images/layout_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+.admincontent_layouttemplate  a.changelink {
+    background: url(/ezweb/clms/images/layouttemplate_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+.admincontent_group  a.changelink {
+    background: url(/ezweb/clms/images/group_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+
+.admincontent_user  a.changelink {
+    background: url(/ezweb/clms/images/user_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+
+.admincontent_category  a.changelink {
+    background: url(/ezweb/clms/images/category_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+.admincontent_policy  a.changelink {
+    background: url(/ezweb/clms/images/policy_admin_icon.png) no-repeat left top;
+    display: block;
+}
+
+.admincontent_propertytype  a.changelink {
+    background: url(/ezweb/clms/images/propertytype_admin_icon.png) no-repeat 0 0;
+    display: block;
+}
+
+.admincontent a.changelink:hover img {
+    display: none;
+}
+
+a.section:link,
+a.section:visited {
+    color: black;
+    padding: 0 1em;
+    background: #dddddd;
+}
+
+.form-row{
+    background-color: #dddddd;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background:#b6b6b6 url(/ezweb/clms/images/default-bg.gif) repeat-x scroll left top;
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #C4C5C6;
+}
+
+#changelist .paginator{
+    background:transparent url(/ezweb/clms/images/total_user.jpg) no-repeat 0% 0;
+    border: none;
+    padding-right: 25px;
+}
+
+#changelist-filter a {
+    color: #ffffff;
+    padding: 10px;
+}
+
+#changelist .paginator {
+    float: right;
+}
+
+.change-list #changelist.filtered,
+div#changelist {
+    background: #C6C4C5 !important;
+    border: none;
+    padding-right: 190px;
+}
+
+.paginator {
+    padding:0;
+    margin-left: 5px;
+}
+
+.module p {
+    padding-left: 20px;
+}
+
+thead th a {
+color: #ffffff !important;
+}
+
+thead th, tfoot td {
+background: #b6b6b6 url(/ezweb/clms/images/default-bg.gif) repeat-x scroll left top;
+text-align: center;
+border-bottom:1px solid #EEEEEE;
+padding: 3px 3px;
+color: #ffffff;
+}
+
+thead th.sorted {
+background: #E1E1E1 url(/media/img/admin/nav-bg.gif) repeat-x scroll left top;
+}
+
+thead th.sorted a {
+color: #666666 !important;
+}
+
+.submit-row {
+background:#b6b6b6 url(/ezweb/clms/images/default-bg.gif) repeat-x scroll left top;
+}
+.row2 {
+    background: #c5c5c5;
+}
+
+.row1 {
+    background: #edf5f7;
+}
+
+#changelist-filter {
+    width: 180px;
+    background: none;
+}
+
+#changelist-filter div h3 {
+    background: transparent url(/ezweb/clms/images/filter_head.png) no-repeat center top;
+    text-align: center;
+}
+
+#changelist-filter h3 {
+    background: transparent url(/ezweb/clms/images/filter_head.png) no-repeat center top;
+    text-align: center;
+    border: none;
+}
+
+#changelist-filter div {
+    padding-bottom: 7px;
+}
+
+#changelist-filter ul {
+    margin-left: 0;
+    padding-left: 30px;
+    width: 120px;
+}
+#changelist-filter li {
+    background: #bcbcbc;
+    border: 1px solid #d3d2d2;
+}
+
+#changelist-filter li.selected {
+    border: none;
+    background: #9ab1b9;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.object-tools li {
+background:transparent url(/ezweb/clms/images/tool-left.gif) no-repeat scroll 0pt 0pt;
+}
+
+.object-tools a.addlink {
+background: #999 url(/ezweb/clms/images/tooltag-add.gif) no-repeat scroll right top;
+}
+
+.object-tools li a {
+background:#999999 url(/ezweb/clms/images/tool-left.gif) no-repeat scroll 0pt 0pt;
+}
+
+.selector ul.selector-chooser {
+background: none;
+}
+
+a.selector-chooseall {
+background:transparent url(/ezweb/clms/images/selector-addall.gif) no-repeat scroll left center;
+}
+
+a.selector-clearall {
+background:transparent url(/ezweb/clms/images/selector-removeall.gif) no-repeat scroll left center;
+}
+
+input[type="submit"], input[type="button"], .submit-row input {
+background:white url(/ezweb/clms/images/nav-bg.gif) repeat-x scroll center bottom;
+border-color:#DDDDDD rgb(170, 170, 170) rgb(170, 170, 170) rgb(221, 221, 221);
+border-style:solid;
+border-width:1px;
+color:black;
+padding:3px;
+}
+
+input.default[type="submit"], .submit-row input.default {
+background:transparent url(/ezweb/clms/images/title-bg.gif) repeat-x scroll center bottom;
+border: none;
+}
+
+.submit-row .deletelink {
+background:transparent url(/ezweb/clms/images/icon-no.gif) no-repeat scroll;
+}
+
+.change-list .filtered {
+background: none !important;
+}
+
+.admincontent .addlinkPbums {
+    background: url(/ezweb/clms/images/more_info_blue.png)no-repeat left center !important;
+}
+
+.admincontent .addlinkPbums a:hover {
+    color: #38b4e9;
+}
+
+.admincontent .addlinkPbums a, .admincontent .addlinkClms a {
+    color: #666565;
+}
+
+.object-tools a.addlinkPbums:hover {
+ background:#5B80B2 url(/ezweb/clms/images/tooltag-add_over.gif) no-repeat scroll right top;
+}
+
+.admincontent .addlinkClms  {
+    background: url(/ezweb/clms/images/more_info_yellow.png)no-repeat left center;
+}
+
+.admincontent .addlinkClms a:hover {
+    color: #f1ac33;
+}
+
+a.addlinkPbums:hover {
+    color: #38b4e9;
+}
