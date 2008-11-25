@@ -1,481 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="1" model="gadget.variabledef">
-        <field type="CharField" name="name">imageUrl</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">imageUrl</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">imageUrl</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="2" model="gadget.variabledef">
-        <field type="CharField" name="name">keyword</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">keyword</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">keyword</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="3" model="gadget.variabledef">
-        <field type="CharField" name="name">urlImage</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">urlImage</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">urlImage</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="4" model="gadget.variabledef">
-        <field type="CharField" name="name">rssUrl</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">rssUrl</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">youtube_url</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="5" model="gadget.variabledef">
-        <field type="CharField" name="name">place</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">place</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">address</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="6" model="gadget.variabledef">
-        <field type="CharField" name="name">title</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">title</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">title</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="7" model="gadget.variabledef">
-        <field type="CharField" name="name">poi</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">poi</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">poi</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="8" model="gadget.variabledef">
-        <field type="CharField" name="name">RSSYurl</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">url</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">youtube_url</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="9" model="gadget.variabledef">
-        <field type="CharField" name="name">keyword</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">keyword</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">keyword</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
-    </object>
-    <object pk="10" model="gadget.variabledef">
-        <field type="CharField" name="name">poi</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">poi</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">poi</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="11" model="gadget.variabledef">
-        <field type="CharField" name="name">travel</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">travel</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">yahoo_travel</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="12" model="gadget.variabledef">
-        <field type="CharField" name="name">address</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">Address</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">address</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="13" model="gadget.variabledef">
-        <field type="CharField" name="name">utmCoord</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">UTM Coord.</field>
-        <field type="CharField" name="description">UTM X Y Coordinates and precision (optional), comma separated</field>
-        <field type="CharField" name="friend_code">utmCoord</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="14" model="gadget.variabledef">
-        <field type="CharField" name="name">address</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">Address</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">address</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="15" model="gadget.variabledef">
-        <field type="CharField" name="name">phoneNumber</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">PhoneNumber</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">phone</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="16" model="gadget.variabledef">
-        <field type="CharField" name="name">dir_equipo</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">Address</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">address</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="17" model="gadget.variabledef">
-        <field type="CharField" name="name">equipo</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">deviceId</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">deviceId</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="18" model="gadget.variabledef">
-        <field type="CharField" name="name">estado</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">deviceStatus</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">deviceStatus</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="19" model="gadget.variabledef">
-        <field type="CharField" name="name">telefono</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">PhoneNumber</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">phone</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="20" model="gadget.variabledef">
-        <field type="CharField" name="name">servicio</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">ServiceHired</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">service</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="21" model="gadget.variabledef">
-        <field type="CharField" name="name">serviceHired</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">SLOT</field>
-        <field type="CharField" name="label">ServiceHired</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">service</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="22" model="gadget.variabledef">
-        <field type="CharField" name="name">deviceId</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">deviceId</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">deviceId</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="23" model="gadget.variabledef">
-        <field type="CharField" name="name">deviceStatus</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">EVEN</field>
-        <field type="CharField" name="label">deviceStatus</field>
-        <field type="CharField" name="description"></field>
-        <field type="CharField" name="friend_code">deviceStatus</field>
-        <field type="TextField" name="default_value"><None></None></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="24" model="gadget.variabledef">
-        <field type="CharField" name="name">opensms_url</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">PREF</field>
-        <field type="CharField" name="label">Service URI</field>
-        <field type="CharField" name="description">Open MovilForum SMS URI</field>
-        <field type="CharField" name="friend_code"><None></None></field>
-        <field type="TextField" name="default_value">http://triqui:7000/PruebaServletEzWeb/sms</field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
-    </object>
-    <object pk="25" model="gadget.variabledef">
-        <field type="CharField" name="name">tm_login</field>
-        <field type="CharField" name="type">S</field>
-        <field type="CharField" name="aspect">PREF</field>
-        <field type="CharField" name="label">Source Telephone Number</field>
-        <field type="CharField" name="description">Source Telephone Number</field>
-        <field type="CharField" name="friend_code"><None></None></field>
-        <field type="TextField" name="default_value"></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
-    </object>
-    <object pk="26" model="gadget.variabledef">
-        <field type="CharField" name="name">tm_password</field>
-        <field type="CharField" name="type">P</field>
-        <field type="CharField" name="aspect">PREF</field>
-        <field type="CharField" name="label">Password</field>
-        <field type="CharField" name="description">Password</field>
-        <field type="CharField" name="friend_code"><None></None></field>
-        <field type="TextField" name="default_value"></field>
-        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
-    </object>
-    <object pk="1" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Visor Imágenes</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">1</field>
-        <field type="CharField" name="author">jmostazo</field>
-        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">30</field>
-        <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="2" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Flickr</field>
-        <field type="CharField" name="version">2.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">2</field>
-        <field type="CharField" name="author">jmostazo</field>
-        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickrIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">18</field>
-        <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="3" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Search/1.4</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">YouTube Video Search</field>
-        <field type="CharField" name="version">1.4</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">3</field>
-        <field type="CharField" name="author">agarcia</field>
-        <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearchIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">26</field>
-        <field type="CharField" name="description">buscador de videos youtube y selector de peliculas</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="4" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Player/1.3</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">YouTube Video Player</field>
-        <field type="CharField" name="version">1.3</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">4</field>
-        <field type="CharField" name="author">jmartin</field>
-        <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberepIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">26</field>
-        <field type="CharField" name="description">Reproductor de videos de Youtube</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="5" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Amazon/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Amazon</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">5</field>
-        <field type="CharField" name="author">jmartin</field>
-        <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">26</field>
-        <field type="CharField" name="description">Busqueda de productos en Amazon</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="6" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Yahoo Trip Search/1.1</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Yahoo Trip Search</field>
-        <field type="CharField" name="version">1.1</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">6</field>
-        <field type="CharField" name="author">agarcia</field>
-        <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_searchIPhone.png</field>
-        <field type="IntegerField" name="width">6</field>
-        <field type="IntegerField" name="height">26</field>
-        <field type="CharField" name="description">buscador de planes de viajes de yahoo</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
-    </object>
-    <object pk="7" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Map Viewer/1.2</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Map Viewer</field>
-        <field type="CharField" name="version">1.2</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">7</field>
-        <field type="CharField" name="author">fabio</field>
-        <field type="CharField" name="mail">fabio@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/localizador/google_mapsIPhone.png</field>
-        <field type="IntegerField" name="width">9</field>
-        <field type="IntegerField" name="height">25</field>
-        <field type="CharField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object><object pk="3"></object></field>
-    </object>
-    <object pk="8" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Usuario/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Visor Datos de Usuario</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">8</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuarioIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">13</field>
-        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
-    </object>
-    <object pk="9" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Equipo/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Visor Datos de Equipo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">9</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipoIPhone.png</field>
-        <field type="IntegerField" name="width">6</field>
-        <field type="IntegerField" name="height">13</field>
-        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
-    </object>
-    <object pk="10" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Bandeja de Averias/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Bandeja de Averias</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">10</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/bandeja/averiasIPhone.png</field>
-        <field type="IntegerField" name="width">20</field>
-        <field type="IntegerField" name="height">13</field>
-        <field type="CharField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
-    </object>
-    <object pk="11" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/Configuracion de Red/1.0</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">Configuracion de Red</field>
-        <field type="CharField" name="version">1.0</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">11</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
-        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/redIPhone.png</field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">13</field>
-        <field type="CharField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
-    </object>
-    <object pk="12" model="gadget.gadget">
-        <field type="CharField" name="uri">/gadgets/Morfeo/SMS Sender/1.3</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="name">SMS Sender</field>
-        <field type="CharField" name="version">1.3</field>
-        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">12</field>
-        <field type="CharField" name="author">pjm</field>
-        <field type="CharField" name="mail">pjm@tid.es</field>
-        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/SMSSender</field>
-        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.png</field>
-        <field type="CharField" name="iPhoneImageURI"></field>
-        <field type="IntegerField" name="width">7</field>
-        <field type="IntegerField" name="height">18</field>
-        <field type="CharField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
-        <field type="BooleanField" name="shared">False</field>
-        <field type="DateTimeField" name="last_update"><None></None></field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
-    </object>
     <object pk="1" model="gadget.xhtml">
         <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0/xhtml</field>
         <field type="TextField" name="code">&lt;?xml version="1.0"?&gt;
@@ -2705,9 +2229,620 @@ function createSMS(f){
 &lt;/form&gt;
 &lt;!--FONT size="2" &gt;&lt;I&gt;Fields with (*) are mandatory&lt;/I&gt;&lt;/FONT--&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</field>
+&lt;/html&gt;</field>
         <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.html</field>
         <field type="CharField" name="content_type"><None></None></field>
+    </object>
+    <object pk="13" model="gadget.xhtml">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.1/xhtml</field>
+        <field type="TextField" name="code">&lt;html&gt;&lt;head&gt;
+&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;
+&lt;style type="text/css"&gt;
+body,td,div,span,p{font-family:arial,sans-serif;}
+a {color:#0000cc; }
+a:visited { color:#551a8b; }a:active { color:#ff0000; }
+body {margin: 0px;padding: 0px;   background-color: white;   }
+.t { width: 75px; height: 75px; margin: 0; border:0; padding: 3px; } 
+.t:hover { padding:1px; border: 2px solid #0063DC; border-right-color: #FF0084; }
+#logo { width:100px;}
+&lt;/style&gt;
+&lt;script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+
+var agent=navigator.userAgent;
+var is_iphone = (agent.indexOf('iPhone')!=-1);
+
+var vkey = EzWebAPI.createRGadgetVariable("keyword", displayMenu);
+var urlImage = EzWebAPI.createRWGadgetVariable("urlImage");
+var vdefault = EzWebAPI.createRGadgetVariable("defaultSearch", displayMenu);
+
+function displayMenu(keyword) {
+	if (keyword==""){
+		if (vdefault.get()=="")
+			feedUrl = "http://api.flickr.com/services/feeds/photos_public.gne?tags=ezweb&amp;lang=en-us&amp;format=rss_200";
+		else
+		        feedUrl = "http://api.flickr.com/services/feeds/photos_public.gne?tags="+vdefault.get()+"&amp;lang=en-us&amp;format=rss_200";
+	}
+	else
+		feedUrl = "http://api.flickr.com/services/feeds/photos_public.gne?tags="+keyword+"&amp;lang=en-us&amp;format=rss_200";
+	feedUrl = encodeURI(feedUrl);
+	EzWebAPI.send_get(feedUrl, this, displayOk, displayError);
+}
+
+function displayOk(resp){
+	var response = resp.responseXML;
+
+	var html = "";
+	var items = response.getElementsByTagName("item");
+	for (var i = 0; i &lt; items.length ; i++) {
+	        if (i==9 &amp;&amp; is_iphone)
+		    break;
+		var itemNodes = items.item(i).childNodes;
+		for (var j = 0; j &lt; itemNodes.length ; j++) {
+			var node = itemNodes.item(j);
+			if (node.nodeName=="media:thumbnail")
+				var urlT = node.getAttribute("url");
+			else if (node.nodeName=="link")
+				var url = node.firstChild.nodeValue;
+			else if (node.nodeName=="title") 
+				if (node.firstChild)
+					var t = node.firstChild.nodeValue;
+				else var t = "";
+			else if (node.nodeName=="author")
+				var a = node.firstChild.nodeValue;
+		}
+		if (t!="")
+			t = '\''+t+'\' by '+a.substring(a.indexOf('(')+1, a.lastIndexOf(')'));
+		else 
+			t = 'Photo by '+a.substring(a.indexOf('(')+1, a.lastIndexOf(')'));
+		html += '&lt;a href="javascript:sendImage(\''+urlT+'\');" title="'+t+'"&gt;&lt;img src="'+urlT+'" class="t" alt="'+t+'"&gt;&lt;/a&gt;';
+		//html += '&lt;a href="'+url+'" title="'+t+'" target="_blank"&gt;&lt;img src="'+urlT+'" class="t" alt="'+t+'"&gt;&lt;/a&gt;';
+	}
+	document.getElementById('content_div').innerHTML = html;
+}
+
+function sendImage(urlImage_)
+{
+	urlImage.set(urlImage_.substr(0, urlImage_.length - 6) + urlImage_.substr(urlImage_.length - 4, 4));
+}
+
+function displayError(res){
+         
+}
+
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;img id="logo" src="http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png"/&gt;
+&lt;body onload="javascript:displayMenu(vkey.get());"&gt;
+	&lt;div id="content_div" style="margin:0 auto; text-align: center;"&gt;&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</field>
+        <field type="CharField" name="url">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.html</field>
+        <field type="CharField" name="content_type"><None></None></field>
+    </object>
+    <object pk="1" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Imágenes/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Imágenes</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">1</field>
+        <field type="CharField" name="author">jmostazo</field>
+        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">30</field>
+        <field type="CharField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="2" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Flickr</field>
+        <field type="CharField" name="version">2.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">2</field>
+        <field type="CharField" name="author">jmostazo</field>
+        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickrIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">18</field>
+        <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="3" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Search/1.4</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">YouTube Video Search</field>
+        <field type="CharField" name="version">1.4</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">3</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearchIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">buscador de videos youtube y selector de peliculas</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="4" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/YouTube Video Player/1.3</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">YouTube Video Player</field>
+        <field type="CharField" name="version">1.3</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">4</field>
+        <field type="CharField" name="author">jmartin</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberepIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">Reproductor de videos de Youtube</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="5" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Amazon/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Amazon</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">5</field>
+        <field type="CharField" name="author">jmartin</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">Busqueda de productos en Amazon</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="6" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Yahoo Trip Search/1.1</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Yahoo Trip Search</field>
+        <field type="CharField" name="version">1.1</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">6</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_searchIPhone.png</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="IntegerField" name="height">26</field>
+        <field type="CharField" name="description">buscador de planes de viajes de yahoo</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    </object>
+    <object pk="7" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Map Viewer/1.2</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Map Viewer</field>
+        <field type="CharField" name="version">1.2</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">7</field>
+        <field type="CharField" name="author">fabio</field>
+        <field type="CharField" name="mail">fabio@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/localizador/google_mapsIPhone.png</field>
+        <field type="IntegerField" name="width">9</field>
+        <field type="IntegerField" name="height">25</field>
+        <field type="CharField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object><object pk="3"></object></field>
+    </object>
+    <object pk="8" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Usuario/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Datos de Usuario</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">8</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuarioIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="9" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Visor Datos de Equipo/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Visor Datos de Equipo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">9</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipoIPhone.png</field>
+        <field type="IntegerField" name="width">6</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="10" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Bandeja de Averias/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Bandeja de Averias</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">10</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/bandeja/averiasIPhone.png</field>
+        <field type="IntegerField" name="width">20</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="11" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Configuracion de Red/1.0</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Configuracion de Red</field>
+        <field type="CharField" name="version">1.0</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">11</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
+        <field type="CharField" name="iPhoneImageURI">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/redIPhone.png</field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">13</field>
+        <field type="CharField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    </object>
+    <object pk="12" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/SMS Sender/1.3</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">SMS Sender</field>
+        <field type="CharField" name="version">1.3</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">12</field>
+        <field type="CharField" name="author">pjm</field>
+        <field type="CharField" name="mail">pjm@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/SMSSender</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.png</field>
+        <field type="CharField" name="iPhoneImageURI"></field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">18</field>
+        <field type="CharField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
+    </object>
+    <object pk="13" model="gadget.gadget">
+        <field type="CharField" name="uri">/gadgets/Morfeo/Flickr/2.1</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="name">Flickr</field>
+        <field type="CharField" name="version">2.1</field>
+        <field to="gadget.xhtml" name="xhtml" rel="ManyToOneRel">13</field>
+        <field type="CharField" name="author">jjmr</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="CharField" name="wikiURI">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
+        <field type="CharField" name="imageURI">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="CharField" name="iPhoneImageURI"></field>
+        <field type="IntegerField" name="width">7</field>
+        <field type="IntegerField" name="height">18</field>
+        <field type="CharField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="BooleanField" name="shared">False</field>
+        <field type="DateTimeField" name="last_update"><None></None></field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object><object pk="1"></object></field>
+    </object>
+    <object pk="1" model="gadget.variabledef">
+        <field type="CharField" name="name">imageUrl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">imageUrl</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">imageUrl</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="2" model="gadget.variabledef">
+        <field type="CharField" name="name">keyword</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">keyword</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">keyword</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="3" model="gadget.variabledef">
+        <field type="CharField" name="name">urlImage</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">urlImage</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">urlImage</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="4" model="gadget.variabledef">
+        <field type="CharField" name="name">rssUrl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">rssUrl</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">youtube_url</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="5" model="gadget.variabledef">
+        <field type="CharField" name="name">place</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">place</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="6" model="gadget.variabledef">
+        <field type="CharField" name="name">title</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">title</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">title</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="7" model="gadget.variabledef">
+        <field type="CharField" name="name">poi</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">poi</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">poi</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="8" model="gadget.variabledef">
+        <field type="CharField" name="name">RSSYurl</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">url</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">youtube_url</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">4</field>
+    </object>
+    <object pk="9" model="gadget.variabledef">
+        <field type="CharField" name="name">keyword</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">keyword</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">keyword</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">5</field>
+    </object>
+    <object pk="10" model="gadget.variabledef">
+        <field type="CharField" name="name">poi</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">poi</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">poi</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="11" model="gadget.variabledef">
+        <field type="CharField" name="name">travel</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">travel</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">yahoo_travel</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">6</field>
+    </object>
+    <object pk="12" model="gadget.variabledef">
+        <field type="CharField" name="name">address</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="13" model="gadget.variabledef">
+        <field type="CharField" name="name">utmCoord</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">UTM Coord.</field>
+        <field type="CharField" name="description">UTM X Y Coordinates and precision (optional), comma separated</field>
+        <field type="CharField" name="friend_code">utmCoord</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">7</field>
+    </object>
+    <object pk="14" model="gadget.variabledef">
+        <field type="CharField" name="name">address</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="15" model="gadget.variabledef">
+        <field type="CharField" name="name">phoneNumber</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">PhoneNumber</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">phone</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="16" model="gadget.variabledef">
+        <field type="CharField" name="name">dir_equipo</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">Address</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">address</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="17" model="gadget.variabledef">
+        <field type="CharField" name="name">equipo</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">deviceId</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceId</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="18" model="gadget.variabledef">
+        <field type="CharField" name="name">estado</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">deviceStatus</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceStatus</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="19" model="gadget.variabledef">
+        <field type="CharField" name="name">telefono</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">PhoneNumber</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">phone</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="20" model="gadget.variabledef">
+        <field type="CharField" name="name">servicio</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">ServiceHired</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">service</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="21" model="gadget.variabledef">
+        <field type="CharField" name="name">serviceHired</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">ServiceHired</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">service</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="22" model="gadget.variabledef">
+        <field type="CharField" name="name">deviceId</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">deviceId</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceId</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="23" model="gadget.variabledef">
+        <field type="CharField" name="name">deviceStatus</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">deviceStatus</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">deviceStatus</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="24" model="gadget.variabledef">
+        <field type="CharField" name="name">opensms_url</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Service URI</field>
+        <field type="CharField" name="description">Open MovilForum SMS URI</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value">http://triqui:7000/PruebaServletEzWeb/sms</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="25" model="gadget.variabledef">
+        <field type="CharField" name="name">tm_login</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Source Telephone Number</field>
+        <field type="CharField" name="description">Source Telephone Number</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value"></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="26" model="gadget.variabledef">
+        <field type="CharField" name="name">tm_password</field>
+        <field type="CharField" name="type">P</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Password</field>
+        <field type="CharField" name="description">Password</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value"></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">12</field>
+    </object>
+    <object pk="27" model="gadget.variabledef">
+        <field type="CharField" name="name">defaultSearch</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">PREF</field>
+        <field type="CharField" name="label">Default keyword</field>
+        <field type="CharField" name="description">defaultSearch</field>
+        <field type="CharField" name="friend_code"><None></None></field>
+        <field type="TextField" name="default_value">ezweb</field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">13</field>
+    </object>
+    <object pk="28" model="gadget.variabledef">
+        <field type="CharField" name="name">keyword</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">SLOT</field>
+        <field type="CharField" name="label">keyword</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">keyword</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">13</field>
+    </object>
+    <object pk="29" model="gadget.variabledef">
+        <field type="CharField" name="name">urlImage</field>
+        <field type="CharField" name="type">S</field>
+        <field type="CharField" name="aspect">EVEN</field>
+        <field type="CharField" name="label">urlImage</field>
+        <field type="CharField" name="description"></field>
+        <field type="CharField" name="friend_code">imageUrl</field>
+        <field type="TextField" name="default_value"><None></None></field>
+        <field to="gadget.gadget" name="gadget" rel="ManyToOneRel">13</field>
     </object>
 </django-objects>

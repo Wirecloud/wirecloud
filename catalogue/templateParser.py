@@ -137,7 +137,7 @@ class TemplateHandler(handler.ContentHandler):
         if (attrs.has_key('value')):
             value = attrs.get('value')
 
-        if (attrs.has_key('vendor')==True and attrs.has_key('name')==True and attrs.has_key('version')==True):
+        if (attrs.has_key('vendor') and attrs.has_key('name') and attrs.has_key('version')):
             
              resource_id = get_object_or_404(GadgetResource, 
                 short_name=attrs.get('name'),vendor=attrs.get('vendor'),version=attrs.get('version')).id

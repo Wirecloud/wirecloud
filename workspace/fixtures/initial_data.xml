@@ -1,39 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="1" model="workspace.tab">
-        <field type="CharField" name="name">MyTab</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+    <object pk="1" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="1"></object></field>
     </object>
-    <object pk="2" model="workspace.tab">
-        <field type="CharField" name="name">Imagen</field>
-        <field type="BooleanField" name="visible">False</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
+    <object pk="2" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
     </object>
-    <object pk="4" model="workspace.tab">
-        <field type="CharField" name="name">IPTV</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">5</field>
+    <object pk="3" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
     </object>
-    <object pk="3" model="workspace.tab">
-        <field type="CharField" name="name">Averias</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
+    <object pk="4" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
     </object>
-    <object pk="5" model="workspace.tab">
-        <field type="CharField" name="name">MyTab</field>
-        <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
-        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
+    <object pk="5" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="7"></object></field>
+    </object>
+    <object pk="6" model="workspace.workspace">
+        <field type="CharField" name="name">MyWorkSpace</field>
+        <field type="BooleanField" name="active">True</field>
+        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="5"></object></field>
     </object>
     <object pk="1" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
@@ -54,14 +49,6 @@
     <object pk="5" model="workspace.abstractvariable">
         <field type="CharField" name="type">WORKSPACE</field>
         <field type="CharField" name="name">MyTab 2</field>
-    </object>
-    <object pk="6" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-    </object>
-    <object pk="7" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
     </object>
     <object pk="8" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -106,34 +93,6 @@
     <object pk="22" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
         <field type="CharField" name="name">address</field>
-    </object>
-    <object pk="23" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">urlImage</field>
-    </object>
-    <object pk="24" model="workspace.abstractvariable">
-        <field type="CharField" name="type">IGADGET</field>
-        <field type="CharField" name="name">keyword</field>
-    </object>
-    <object pk="25" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">video</field>
-    </object>
-    <object pk="26" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">interest_point</field>
-    </object>
-    <object pk="27" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">place</field>
-    </object>
-    <object pk="28" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">image</field>
-    </object>
-    <object pk="29" model="workspace.abstractvariable">
-        <field type="CharField" name="type">WORKSPACE</field>
-        <field type="CharField" name="name">title</field>
     </object>
     <object pk="30" model="workspace.abstractvariable">
         <field type="CharField" name="type">IGADGET</field>
@@ -215,6 +174,58 @@
         <field type="CharField" name="type">WORKSPACE</field>
         <field type="CharField" name="name">MyTab</field>
     </object>
+    <object pk="54" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
+    <object pk="55" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+    </object>
+    <object pk="56" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="57" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">defaultSearch</field>
+    </object>
+    <object pk="58" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">urlImage</field>
+    </object>
+    <object pk="59" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">keyword</field>
+    </object>
+    <object pk="60" model="workspace.abstractvariable">
+        <field type="CharField" name="type">IGADGET</field>
+        <field type="CharField" name="name">defaultSearch</field>
+    </object>
+    <object pk="25" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">video</field>
+    </object>
+    <object pk="26" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">interest_point</field>
+    </object>
+    <object pk="27" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">place</field>
+    </object>
+    <object pk="28" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">image</field>
+    </object>
+    <object pk="29" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">title</field>
+    </object>
+    <object pk="61" model="workspace.abstractvariable">
+        <field type="CharField" name="type">WORKSPACE</field>
+        <field type="CharField" name="name">MyTab</field>
+    </object>
     <object pk="1" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="TextField" name="value"></field>
@@ -230,11 +241,6 @@
         <field type="TextField" name="value"></field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">5</field>
     </object>
-    <object pk="7" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value"></field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">7</field>
-    </object>
     <object pk="19" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
         <field type="TextField" name="value"></field>
@@ -244,101 +250,6 @@
         <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
         <field type="TextField" name="value"></field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">21</field>
-    </object>
-    <object pk="24" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value"></field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">24</field>
-    </object>
-    <object pk="25" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2F2I4-Uec6XJM%26rel%3D1</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">25</field>
-    </object>
-    <object pk="27" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">27</field>
-    </object>
-    <object pk="11" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2F2I4-Uec6XJM%26rel%3D1</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="10" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="29" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Ciudad de Dios</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">29</field>
-    </object>
-    <object pk="26" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">26</field>
-    </object>
-    <object pk="28" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http://farm4.static.flickr.com/3139/2805424620_7d54210ef2.jpg</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">28</field>
-    </object>
-    <object pk="2" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http://farm4.static.flickr.com/3139/2805424620_7d54210ef2.jpg</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="9" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Ciudad de Dios</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="8" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="6" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http://farm4.static.flickr.com/3032/2805716054_894405fd32.jpg</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="23" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http://farm4.static.flickr.com/3139/2805424620_7d54210ef2.jpg</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">23</field>
-    </object>
-    <object pk="16" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2F2I4-Uec6XJM%26rel%3D1</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="20" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">20</field>
-    </object>
-    <object pk="17" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="22" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Rio de Janeiro</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">22</field>
-    </object>
-    <object pk="4" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">http://farm4.static.flickr.com/3139/2805424620_7d54210ef2.jpg</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="18" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
-        <field type="TextField" name="value">Ciudad de Dios</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">18</field>
     </object>
     <object pk="33" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
@@ -370,20 +281,10 @@
         <field type="TextField" name="value">device4</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">41</field>
     </object>
-    <object pk="36" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">device4</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">36</field>
-    </object>
     <object pk="37" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
         <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">37</field>
-    </object>
-    <object pk="44" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">44</field>
     </object>
     <object pk="46" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
@@ -405,30 +306,10 @@
         <field type="TextField" name="value">915334432</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">39</field>
     </object>
-    <object pk="30" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">915334432</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">30</field>
-    </object>
     <object pk="31" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
         <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">31</field>
-    </object>
-    <object pk="34" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">34</field>
-    </object>
-    <object pk="42" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">TV</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">42</field>
-    </object>
-    <object pk="40" model="workspace.variablevalue">
-        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
-        <field type="TextField" name="value">NO_OK</field>
-        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">40</field>
     </object>
     <object pk="38" model="workspace.variablevalue">
         <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
@@ -440,25 +321,155 @@
         <field type="TextField" name="value"></field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
     </object>
-    <object pk="1" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="1"></object></field>
+    <object pk="54" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">7</field>
+        <field type="TextField" name="value"></field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">54</field>
     </object>
-    <object pk="2" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="2"></object></field>
+    <object pk="57" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">ezweb</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">57</field>
     </object>
-    <object pk="3" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="3"></object></field>
+    <object pk="60" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">ezweb</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">60</field>
     </object>
-    <object pk="4" model="workspace.workspace">
-        <field type="CharField" name="name">MyWorkSpace</field>
-        <field type="BooleanField" name="active">True</field>
-        <field to="auth.user" name="users" rel="ManyToManyRel"><object pk="6"></object></field>
+    <object pk="25" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FP8nD2KB0a_E%26rel%3D1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">25</field>
+    </object>
+    <object pk="27" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">27</field>
+    </object>
+    <object pk="29" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">The Queen</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">29</field>
+    </object>
+    <object pk="26" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">26</field>
+    </object>
+    <object pk="28" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3213/3056347228_a5ed880f47.jpg</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">28</field>
+    </object>
+    <object pk="2" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3213/3056347228_a5ed880f47.jpg</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="16" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FP8nD2KB0a_E%26rel%3D1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">16</field>
+    </object>
+    <object pk="20" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">20</field>
+    </object>
+    <object pk="17" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">17</field>
+    </object>
+    <object pk="22" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">22</field>
+    </object>
+    <object pk="4" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3213/3056347228_a5ed880f47.jpg</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">4</field>
+    </object>
+    <object pk="18" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">The Queen</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">18</field>
+    </object>
+    <object pk="11" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http%3A%2F%2Fwww.youtube.com%2Fv%2FP8nD2KB0a_E%26rel%3D1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="10" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="59" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">59</field>
+    </object>
+    <object pk="9" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">The Queen</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">9</field>
+    </object>
+    <object pk="56" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">The Queen</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">56</field>
+    </object>
+    <object pk="8" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">Londres</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">8</field>
+    </object>
+    <object pk="55" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3073/3053833934_0f7d0df8f3.jpg</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">55</field>
+    </object>
+    <object pk="58" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+        <field type="TextField" name="value">http://farm4.static.flickr.com/3213/3056347228_a5ed880f47.jpg</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">58</field>
+    </object>
+    <object pk="42" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">TV</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">42</field>
+    </object>
+    <object pk="40" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">NO_OK</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">40</field>
+    </object>
+    <object pk="30" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">915334432</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">30</field>
+    </object>
+    <object pk="36" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">device4</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">36</field>
+    </object>
+    <object pk="34" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">Marcelo Usera, 46, 3 C, Madrid</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">34</field>
+    </object>
+    <object pk="44" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">3</field>
+        <field type="TextField" name="value">Calle de Camarena 253, 28047 Madrid</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">44</field>
+    </object>
+    <object pk="61" model="workspace.variablevalue">
+        <field to="auth.user" name="user" rel="ManyToOneRel">5</field>
+        <field type="TextField" name="value"></field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">61</field>
     </object>
     <object pk="1" model="workspace.workspacevariable">
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
@@ -549,5 +560,66 @@
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
         <field type="CharField" name="type"></field>
         <field type="CharField" name="aspect">TAB</field>
+    </object>
+    <object pk="17" model="workspace.workspacevariable">
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">5</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">54</field>
+        <field type="CharField" name="type"></field>
+        <field type="CharField" name="aspect">TAB</field>
+    </object>
+    <object pk="18" model="workspace.workspacevariable">
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">6</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">61</field>
+        <field type="CharField" name="type"></field>
+        <field type="CharField" name="aspect">TAB</field>
+    </object>
+    <object pk="1" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
+    </object>
+    <object pk="2" model="workspace.tab">
+        <field type="CharField" name="name">Imagen</field>
+        <field type="BooleanField" name="visible">False</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">2</field>
+    </object>
+    <object pk="4" model="workspace.tab">
+        <field type="CharField" name="name">IPTV</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">2</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">5</field>
+    </object>
+    <object pk="3" model="workspace.tab">
+        <field type="CharField" name="name">Averias</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">3</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="5" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">4</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">50</field>
+    </object>
+    <object pk="6" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">5</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">54</field>
+    </object>
+    <object pk="7" model="workspace.tab">
+        <field type="CharField" name="name">MyTab</field>
+        <field type="BooleanField" name="visible">True</field>
+        <field type="BooleanField" name="locked">False</field>
+        <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">6</field>
+        <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">61</field>
     </object>
 </django-objects>
