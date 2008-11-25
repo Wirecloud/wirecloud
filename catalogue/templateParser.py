@@ -199,8 +199,11 @@ class TemplateHandler(handler.ContentHandler):
             gadget.mashup_id = self._mashupId
             gadget.creation_date=datetime.today()
             gadget.popularity = '0.0'
-
-            gadget.save()
+            
+            try:
+                gadget.save()
+            except Exception, e:
+                raise TemplateParseException(e)
             
             self._gadget = gadget
             
