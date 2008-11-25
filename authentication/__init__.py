@@ -34,6 +34,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 def logout(request, next_page=None, template_name='registration/logged_out.html'):
     "Logs out the user and displays 'You are logged out' message."
@@ -44,3 +45,11 @@ def logout(request, next_page=None, template_name='registration/logged_out.html'
     else:
         # Redirect to this page until the session has been cleared.
         return HttpResponseRedirect(next_page or request.path)
+    
+def register(request):
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        #registration against EzSteroids (redirect to its registration form)
+        url = settings.AUTHENTICATION_SERVER_URL + "/register/?next=http://"+request.get_host()+"/accounts/login/?next=/"
+        return HttpResponseRedirect(url)
+    else:
+        return HttpResponseRedirect('/accounts/login/')

@@ -86,6 +86,8 @@ urlpatterns = patterns('',
     # custom logouts (to enable anonymous access)
     (r'^logout$', 'authentication.logout', {'next_page': '/'}),
     (r'^admin/logout/$', 'authentication.logout', {'next_page': '/'}),
+    #custom registration
+    (r'^registration/$', 'authentication.register'),
     
     #Admin CLMS interface
     (r'^admin/clms/(?P<layout_id>\d+)/content/popup/', clms_admin_view.panel_list_popup),

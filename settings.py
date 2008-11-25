@@ -164,8 +164,8 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
-#'authentication.ldapaccess.LDAPBackend',
 'authentication.anonymousaccess.AnonymousBackend',
+#'authentication.ldapaccess.LDAPBackend',
 #'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
 )
@@ -175,7 +175,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Authentication Server URL. This URL is only needed to allow the authentication against
 # third parties. It must be used along with the corresponding authentication backend
-#AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
+#AUTHENTICATION_SERVER_URL = 'http://localhost:8002'
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')

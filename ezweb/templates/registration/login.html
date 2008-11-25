@@ -47,6 +47,9 @@
     <input type="submit" value="{% trans 'Log in' %}" />
   </div>
 </form>
+{% if AUTHENTICATION_SERVER_URL %}
+<div class="registration"><a href="/registration/">{% trans 'Create a new account' %}</a></div>
+{% endif %}
 
 <script type="text/javascript">
 document.getElementById('id_username').focus()

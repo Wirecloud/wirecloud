@@ -46,6 +46,15 @@ a:hover{
 	text-align: left;
 }
 
+#content-main .registration{
+	text-align: center;
+}
+
+#content-main .registration a{
+	color:#2D6F9C;
+	cursor:pointer;
+}
+
 #banner {
   position:relative;
   overflow:hidden;
