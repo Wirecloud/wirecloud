@@ -49,7 +49,7 @@ def logout(request, next_page=None, template_name='registration/logged_out.html'
 def register(request):
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
         #registration against EzSteroids (redirect to its registration form)
-        url = settings.AUTHENTICATION_SERVER_URL + "/register/?next=http://"+request.get_host()+"/accounts/login/?next=/"
+        url = settings.AUTHENTICATION_SERVER_URL + "/api/register?next=http://"+request.get_host()+"/accounts/login/?next=/"
         return HttpResponseRedirect(url)
     else:
         return HttpResponseRedirect('/accounts/login/')
