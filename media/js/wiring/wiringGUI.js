@@ -59,6 +59,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.msgsDiv = $('wiring_messages');
   this.newChannel = $('newChannel');
   this.wiringTable = $('wiring_table');
+  
+//  this.chEventsWr = null;
+//  this.chSlotsWr = null;  
 
   this._eventCreateChannel = function (e) {
     Event.stop(e);
@@ -299,16 +302,16 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	
 	// Adds all labels
 	var filterLabel = document.createElement("div");   
-	labelLayer.appendChild(filterLabel);
+//	labelLayer.appendChild(filterLabel);
 	filterLabel.appendChild(document.createTextNode(gettext("Filter") + ":"));
 	var paramLabelLayer = document.createElement("div");
-	labelLayer.appendChild(paramLabelLayer);
-	if (channel.getFilter()){
-		var params = channel.getFilter().getParams();
-		for (var p = 0; p < params.length; p++) {
-			paramLabelLayer.appendChild(params[p].createHtmlLabel());
-		}
-	}
+//	labelLayer.appendChild(paramLabelLayer);
+//	if (channel.getFilter()){
+//		var params = channel.getFilter().getParams();
+//		for (var p = 0; p < params.length; p++) {
+//			paramLabelLayer.appendChild(params[p].createHtmlLabel());
+//		}
+//	}
 	var valueLabel = document.createElement("div");   
 	labelLayer.appendChild(valueLabel);
 	valueLabel.appendChild(document.createTextNode(gettext("Value") + ":"));
@@ -316,13 +319,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Adds the information
 	var filterText = document.createElement("div");
 	filterText.addClassName("filterValue");
-	contentLayer.appendChild(filterText);
-	if (channel.getFilter())
-		filterText.appendChild(document.createTextNode(channel.getFilter().getLabel()));
-	else
-		filterText.appendChild(document.createTextNode(gettext("Empty")));     	
+//	contentLayer.appendChild(filterText);
+//	if (channel.getFilter())
+//		filterText.appendChild(document.createTextNode(channel.getFilter().getLabel()));
+//	else
+//		filterText.appendChild(document.createTextNode(gettext("Empty")));     	
 	var filterMenuButton = document.createElement("input");
-	filterText.appendChild(filterMenuButton);
+//	filterText.appendChild(filterMenuButton);
 	filterMenuButton.setAttribute("type", "button");
 	filterMenuButton.addClassName("filterMenuLauncher");
 	Event.observe(filterMenuButton, 'click', 
@@ -339,17 +342,17 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Adds the channel value
 	var valueText = document.createElement("div");   
 	contentLayer.appendChild(valueText);
-	if (channel.getFilter()){
-		var params = channel.getFilter().getParams();
-		for (var p = 0; p < params.length; p++) {
-			paramValueLayer.appendChild(params[p].createHtmlValue(this, channel, valueText));
-		}
-	}
+//	if (channel.getFilter()){
+//		var params = channel.getFilter().getParams();
+//		for (var p = 0; p < params.length; p++) {
+//			paramValueLayer.appendChild(params[p].createHtmlValue(this, channel, valueText));
+//		}
+//	}
 	valueText.appendChild(document.createTextNode(channel.getValue()));	
 	
-	var newFilterMenu = this._createFilterMenu(channel); 
-	this.filterMenus[channel.getId()] = newFilterMenu;
-	channel.setMenu(newFilterMenu);
+//	var newFilterMenu = this._createFilterMenu(channel); 
+//	this.filterMenus[channel.getId()] = newFilterMenu;
+//	channel.setMenu(newFilterMenu);
 	
 	channel.assignInterface(channelElement);
 	this.channels.push(channel);
@@ -462,26 +465,26 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     	this._addTab(this.workspace.tabInstances[tabs[i]]);
     }
 	
-	this.chEventsWr = new EventChannelWInterface (this);
-	this.chSlotsWr = new SlotChannelWInterface (this);    
+//	this.chEventsWr = new EventChannelWInterface (this);
+//	this.chSlotsWr = new SlotChannelWInterface (this);    
 	var channels = this.wiring.getChannels();
     for (var j = 0; j < channels.length; j++) {
 		var chInterface = new ChannelInterface(channels[j]);
 		this._addChannelInterface(chInterface);
 		
-		var chEvents = new EventChannelInterface(chInterface, this, this.chEventsWr);
-  		var chSlots = new SlotChannelInterface(chInterface, this, this.chSlotsWr);
-  	
-	    this.chEventsWr.addConnectables(chEvents.getConnectables());
-		this.chSlotsWr.addConnectables(chSlots.getConnectables());
-		//this.chEventsWr.forceToggle();
-		//this.chSlotsWr.forceToggle();
+//		var chEvents = new EventChannelInterface(chInterface, this, this.chEventsWr);
+//  		var chSlots = new SlotChannelInterface(chInterface, this, this.chSlotsWr);
+//  	
+//	    this.chEventsWr.addConnectables(chEvents.getConnectables());
+//		this.chSlotsWr.addConnectables(chSlots.getConnectables());
+		//this.chEventsWr.forceToggle();  REMOVE
+		//this.chSlotsWr.forceToggle();   REMOVE
 	}		
     
-	if (channels.length > 0){
-		this.chEventsWr.show();
-		this.chSlotsWr.show();
-	}
+//	if (channels.length > 0){
+//		this.chEventsWr.show();
+//		this.chSlotsWr.show();
+//	}
 
     this.channels_counter = channels.length + 1;
     
@@ -606,23 +609,23 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	var channelTempObject = {channel : wiring.createChannel(channel.getName(), channel.getId())}; 
     this._addChannelInterface(channel);
 	
-	this.chEventsWr.forceToggle();
-	this.chSlotsWr.forceToggle();
-	    
-	// Creates the interface of the channel slots and events 
-	var chEvents = new EventChannelInterface(channelTempObject, this, this.chEventsWr);
-  	var chSlots = new SlotChannelInterface(channelTempObject, this, this.chSlotsWr);
-  	
-	this.chEventsWr.addConnectables(chEvents.getConnectables());
-	this.chSlotsWr.addConnectables(chSlots.getConnectables());
-	
-	if (this.wiring.getChannels().length == 1){
-		this.chEventsWr.show();
-		this.chSlotsWr.show()
-	} else{
-		this.chEventsWr.forceToggle();
-		this.chSlotsWr.forceToggle();
-	}
+//	this.chEventsWr.forceToggle();
+//	this.chSlotsWr.forceToggle();
+//	    
+//	// Creates the interface of the channel slots and events 
+//	var chEvents = new EventChannelInterface(channelTempObject, this, this.chEventsWr);
+//  	var chSlots = new SlotChannelInterface(channelTempObject, this, this.chSlotsWr);
+//  	
+//	this.chEventsWr.addConnectables(chEvents.getConnectables());
+//	this.chSlotsWr.addConnectables(chSlots.getConnectables());
+//	
+//	if (this.wiring.getChannels().length == 1){
+//		this.chEventsWr.show();
+//		this.chSlotsWr.show()
+//	} else{
+//		this.chEventsWr.forceToggle();
+//		this.chSlotsWr.forceToggle();
+//	}
 	
 	this.clearMessages();
     this._changeChannel(channel);
