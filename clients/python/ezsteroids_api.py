@@ -221,7 +221,7 @@ class API(object):
         response = self.request.get(url)
         if response.status == 200:
             response_json = simplejson.loads(response.body)
-            if response_json['policy'] == "None":
+            if response_json['policy'] in [None, "None"]:
                 return False
             else:
                 return True;
