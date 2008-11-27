@@ -113,16 +113,22 @@ var OpManagerFactory = function () {
 		// ****************
 			
 		OpManager.prototype.showCatalogue = function () {
+			if (!this.activeWorkSpace.isValid()) {
+				//Nothing to do!
+				return;
+			}
+			
 			UIUtils.repaintCatalogue=true;
 			UIUtils.sendPendingTags();
+			
 			if (LayoutManagerFactory.getInstance().getCurrentViewType() == 'catalogue') { 
 				this.catalogueIsCurrentTab = true;
 			}
 			this.catalogue.show();
+				
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
 			
 			// Load catalogue data!
-
 			if (this.firstAccessToTheCatalogue || this.catalogueIsCurrentTab)
 			{
 			    this.catalogue.initCatalogue();

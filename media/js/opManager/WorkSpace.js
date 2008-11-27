@@ -39,34 +39,50 @@ function WorkSpace (workSpaceState) {
 		this.varManager = new VarManager(this);
 		
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
+		
+		try {
 
-		var visibleTabId = null;
-
-		if (tabs.length>0) {
-			visibleTabId = tabs[0].id;
-			for (var i=0; i<tabs.length; i++) {
-				var tab = tabs[i];
-				this.tabInstances[tab.id] = new Tab(tab, this);
-				
-				if (tab.visible == 'true') {
-					visibleTabId = tab.id;
+			var visibleTabId = null;
+	
+			if (tabs.length>0) {
+				visibleTabId = tabs[0].id;
+				for (var i=0; i<tabs.length; i++) {
+					var tab = tabs[i];
+					this.tabInstances[tab.id] = new Tab(tab, this);
+					
+					if (tab.visible == 'true') {
+						visibleTabId = tab.id;
+					}
 				}
 			}
+	
+			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
+			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
+			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
+	
+			if (tabs.length > 0) {
+				for (i = 0; i < tabs.length; i++)
+					this.tabInstances[tabs[i].id].getDragboard().paint();
+			}
+	
+			//this.setTab(visibleTabName);
+			//set the visible tab. It will be displayed as current tab afterwards
+			this.visibleTab = this.tabInstances[visibleTabId];
+			
+			this.valid=true;
+		
 		}
-
-		this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
-		this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
-		this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
-
-		if (tabs.length > 0) {
-			for (i = 0; i < tabs.length; i++)
-				this.tabInstances[tabs[i].id].getDragboard().paint();
+		catch (error) {
+			// Error during initialization
+			// Only loading workspace menu
+			this.valid=false;
+			
+			this.tabInstances = new Hash();
+			
+			LayoutManagerFactory.getInstance().showMessageMenu('Error during workspace load! Please, change active workspace or create a new one!')
 		}
-
+		
 		this.loaded = true;
-		//this.setTab(visibleTabName);
-		//set the visible tab. It will be displayed as current tab afterwards
-		this.visibleTab = this.tabInstances[visibleTabId];
 		
 		this._createWorkspaceMenu();
 
@@ -305,6 +321,9 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.showWiring = function() {
 		if (!this.loaded)
 			return;
+	
+		if (!this.isValid())
+			return;
 		
 		this.visibleTab.unmark();
 		this.wiringInterface.show();
@@ -355,9 +374,17 @@ function WorkSpace (workSpaceState) {
 			else
 				tab.unmark();
 		}
-		//show the current tab in the tab bar if it isn't within the visible area
-		this.visibleTab.makeVisibleInTabBar();
+		
+		if (this.visibleTab) {
+			//show the current tab in the tab bar if it isn't within the visible area
+			//!this.visibleTab => error during initialization
+			this.visibleTab.makeVisibleInTabBar();
+		} 
 
+	}
+	
+	WorkSpace.prototype.isValid = function() {
+		return this.valid;
 	}
 	
 	WorkSpace.prototype.getTab = function(tabId) {
@@ -392,6 +419,10 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype.addTab = function() {
+		if (!this.isValid()) {
+			return;
+		}
+	
 		var counter = this.tabInstances.keys().length + 1;
 		var tabName = "MyTab "+counter.toString();
 		//check if there is another tab with the same name
@@ -544,6 +575,7 @@ function WorkSpace (workSpaceState) {
 	this.menu = null;
 	this.mergeMenu = null;
 	this.unlockEntryPos;
+	this.valid=false;
 	
 	var wsOpsLauncher = 'ws_operations_link';
 	var idMenu = 'menu_'+this.workSpaceState.id;
