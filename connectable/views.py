@@ -46,7 +46,7 @@ from commons.utils import json_encode, get_xml_error
 
 from igadget.models import IGadget, Variable
 from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
-from connectable.models import In, Out, InOut, Filter, Param, ParamVariable
+from connectable.models import In, Out, InOut, Filter
 
 class ConnectableEntry(Resource):
     def read(self, request, workspace_id):
@@ -78,7 +78,7 @@ class ConnectableEntry(Resource):
         
         return HttpResponse(json_encode(wiring), mimetype='application/json; charset=UTF-8')
     
-    @transaction.commit_manually
+    @transaction.commit_on_success
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -107,19 +107,6 @@ class ConnectableEntry(Resource):
                 abstract_variable.delete()
                 deleted_channel.workspace_variable.delete()
             
-            # Erasing all filter param values from worlspace
-            old_param_variables = ParamVariable.objects.filter(workspace_variable__workspace=workspace)
-            if old_param_variables:
-                old_param_variables.delete()            
-                
-            old_param_wk_variables = WorkSpaceVariable.objects.filter(workspace=workspace, aspect="FILTER_PARAM")
-            for old_param_wk_variable in old_param_wk_variables:
-                VariableValue.objects.get(user=user, abstract_variable=old_param_wk_variable.abstract_variable).delete()
-                old_param_wk_variable.abstract_variable.delete()
-            
-            if old_param_wk_variables:
-                old_param_wk_variables.delete()
-            
             # Erasing all channels of the workspace!!
             old_channels = InOut.objects.filter(workspace_variable__workspace=workspace)
             if old_channels:
@@ -144,10 +131,12 @@ class ConnectableEntry(Resource):
                     
                     try:
                         filter = Filter.objects.get(id=new_channel_data['filter'])
+                        fparam_values = new_channel_data['filter_params']
                     except Filter.DoesNotExist:
                         filter = None 
+                        fparam_values = None
                     
-                    channel = InOut(name=new_channel_data['name'], workspace_variable=new_ws_variable, filter=filter, friend_code="")
+                    channel = InOut(name=new_channel_data['name'], workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
                     channel.save()
                     
                     #A channel has been generated. It's necessary to correlate provisional and definitive ids!
@@ -167,30 +156,13 @@ class ConnectableEntry(Resource):
                 
                     try:
                         filter = Filter.objects.get(id=new_channel_data['filter'])
+                        fparam_values = new_channel_data['filter_params']
                     except Filter.DoesNotExist:
                         filter = None
+                        fparam_values = None
                     
-                    channel = InOut(id=new_channel_data['id'], name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, friend_code="")
+                    channel = InOut(id=new_channel_data['id'], name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
                     channel.save()               
-                    
-                #Setting filter params                
-                for filter_param_data in new_channel_data['filter_params']:
-                    #Getting the information filter associated with the channel
-                    param_object = Param.objects.get(filter=new_channel_data['filter'], index=filter_param_data['index']) 
-                        
-                    #Creating abstract variable
-                    param_abstract_variable = AbstractVariable(type="WORKSPACE", name=param_object.name)
-                    param_abstract_variable.save()
-                    
-                    #Creating variable value
-                    param_variable_value = VariableValue(user=user, value=filter_param_data['value'], abstract_variable=param_abstract_variable)
-                    param_variable_value.save()
-                        
-                    param_wk_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=param_abstract_variable, aspect="FILTER_PARAM")
-                    param_wk_variable.save()
-                        
-                    param_variable = ParamVariable(inout=channel, param=param_object, workspace_variable=param_wk_variable)
-                    param_variable.save()
                     
                 #Setting channel connections!
                 
@@ -218,20 +190,20 @@ class ConnectableEntry(Resource):
                     connectable.save()
 
             # Saves all channels            
-            transaction.commit()
+            #transaction.commit()
             
             json_result = {'ids': ids_mapping}
             
             return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist:
-            transaction.rollback()
+            #transaction.rollback()
 
             msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
             log(msg, request)
             return HttpResponseBadRequest(get_xml_error(msg));
 
         except Exception, e:
-            transaction.rollback()
+            #transaction.rollback()
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
             log(msg, request)
             return HttpResponseBadRequest(msg)

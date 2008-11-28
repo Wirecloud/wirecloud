@@ -46,15 +46,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 	Wiring.prototype.processFilter = function (filterData) {
 		var filterObject = new Filter (filterData.id, filterData.name, filterData.label, 
-									   filterData.nature, filterData.code, filterData.category, filterData.help_text);
-		var fParams = filterData.params;
-		var fParam, paramObject;
-		
-		for (var i = 0; i < fParams.length; i++) {
-			fParam = fParams[i];
-			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);
-			filterObject.setParam(paramObject);  
-		}
+									   filterData.nature, filterData.code, filterData.category, 
+									   filterData.params, filterData.help_text);
 		
 		this.filters[filterData.id] = filterObject;		
 	}
@@ -89,11 +82,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			
 			// Setting channel filter
 			channel.setFilter(this.filters[varData.connectable.filter]);
-			var filter_params = new Array(varData.connectable.filter_params.length); 
-			for (var k = 0; k < varData.connectable.filter_params.length; k++) {
-				filter_params[varData.connectable.filter_params[k].index] = varData.connectable.filter_params[k].value; 
-			}
-		    channel.setFilterParams(filter_params);
+		    channel.processFilterParams(varData.connectable.filter_params);
 			
 		    // Connecting channel input		
 		    var connectable_ins = varData.connectable.ins;
@@ -402,16 +391,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			else
 				serialized_channel['filter'] = channel.getFilter().getId();
 			
-			serialized_filter_params = []
+			var serialized_filter_params = '';
 			for (var k = 0; k < channel.getFilterParams().length; k++) {
-				var serialized_param = {};
-				
-				serialized_param['index'] = k;
-				serialized_param['value'] = channel.getFilterParams()[k]; 
-				
-				serialized_filter_params.push(serialized_param);
+				serialized_filter_params += '{"index": ' + k;  
+				serialized_filter_params += ', "value": "' + channel.getFilterParams()[k] + '"}';
+				if (k != (channel.getFilterParams().length - 1)){
+					serialized_filter_params += ', ';
+				}
 			}
-			serialized_channel['filter_params'] = serialized_filter_params;
+			serialized_channel['filter_params'] = '{[' + serialized_filter_params + ']}';
 			
 			serialized_channel.ins = [];
 			                              

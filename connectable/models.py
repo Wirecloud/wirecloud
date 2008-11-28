@@ -53,7 +53,8 @@ class Filter(models.Model):
         ('STR', _('String')),
     )
     category = models.CharField(_('Category'), max_length=6, choices=CATEGORY, null=True)
-    help_text = models.TextField(_('Help text'), blank=True, null=True) 
+    help_text = models.TextField(_('Help text'), blank=True, null=True)
+    params = models.TextField(_('Parameters'), blank=True, null=True) 
     
     
     def __unicode__(self):
@@ -65,6 +66,7 @@ class InOut(models.Model):
     workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'))
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
+    filter_param_values = models.TextField(_('Filter parameter values'), blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
@@ -87,35 +89,4 @@ class Out(models.Model):
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name
-
-    
-class Param(models.Model):
-    
-    name = models.CharField(_('Name'), max_length=30)
-    TYPES = (
-        ('N', _('Number')),
-        ('S', _('String')),
-        ('B', _('Boolean')),
-    )
-    type = models.CharField(_('Type'), max_length=1, choices=TYPES)
-    filter = models.ForeignKey(Filter, verbose_name=_('Filter'))
-    index = models.SmallIntegerField(_('Index'))
-    label = models.CharField(_('Label'), max_length=50)
-    defaultValue = models.TextField(_('Default Value'), blank=True, null=True)
-     
-    
-    def __unicode__(self):
-        return str(self.pk) + " " + self.name
-  
-
-class ParamVariable(models.Model):
-    
-    inout = models.ForeignKey(InOut, verbose_name=_('InOut'))
-    param = models.ForeignKey(Param, verbose_name=_('Parameter'))
-    workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'), unique=True)
-    
-    def __unicode__(self):
-        return str(self.pk)
-    
-    
+        return str(self.pk) + " " + self.name   

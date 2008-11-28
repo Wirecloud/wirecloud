@@ -279,7 +279,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     Event.observe(channelElement, "click",
                       function (e) {
                         Event.stop(e);
-                        this.wiringGUI._changeChannel(this.channel);
+						// Creates the menu just when the filter is selected
+						if (this.wiringGUI.filterMenus[this.channel.getId()] == null){
+							var newFilterMenu = this.wiringGUI._createFilterMenu(this.channel); 
+							this.wiringGUI.filterMenus[this.channel.getId()] = newFilterMenu;
+							this.channel.setMenu(newFilterMenu);	
+						}
+						this.wiringGUI._changeChannel(this.channel);
                       }.bind(context));
     
 	var inputDel = document.createElement("img");
@@ -346,16 +352,16 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	
 	// Adds all labels
 	var filterLabel = document.createElement("div");   
-//	labelLayer.appendChild(filterLabel);
+	labelLayer.appendChild(filterLabel);
 	filterLabel.appendChild(document.createTextNode(gettext("Filter") + ":"));
 	var paramLabelLayer = document.createElement("div");
-//	labelLayer.appendChild(paramLabelLayer);
-//	if (channel.getFilter()){
-//		var params = channel.getFilter().getParams();
-//		for (var p = 0; p < params.length; p++) {
-//			paramLabelLayer.appendChild(params[p].createHtmlLabel());
-//		}
-//	}
+	labelLayer.appendChild(paramLabelLayer);
+	if (channel.getFilter()){
+		var params = channel.getFilter().getParams();
+		for (var p = 0; p < params.length; p++) {
+			paramLabelLayer.appendChild(params[p].createHtmlLabel());
+		}
+	}
 	var valueLabel = document.createElement("div");   
 	labelLayer.appendChild(valueLabel);
 	valueLabel.appendChild(document.createTextNode(gettext("Value") + ":"));
@@ -363,13 +369,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Adds the information
 	var filterText = document.createElement("div");
 	filterText.addClassName("filterValue");
-//	contentLayer.appendChild(filterText);
-//	if (channel.getFilter())
-//		filterText.appendChild(document.createTextNode(channel.getFilter().getLabel()));
-//	else
-//		filterText.appendChild(document.createTextNode(gettext("Empty")));     	
+	contentLayer.appendChild(filterText);
+	if (channel.getFilter())
+		filterText.appendChild(document.createTextNode(channel.getFilter().getLabel()));
+	else
+		filterText.appendChild(document.createTextNode(gettext("Empty")));     	
 	var filterMenuButton = document.createElement("input");
-//	filterText.appendChild(filterMenuButton);
+	filterText.appendChild(filterMenuButton);
 	filterMenuButton.setAttribute("type", "button");
 	filterMenuButton.addClassName("filterMenuLauncher");
 	Event.observe(filterMenuButton, 'click', 
@@ -386,17 +392,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Adds the channel value
 	var valueText = document.createElement("div");   
 	contentLayer.appendChild(valueText);
-//	if (channel.getFilter()){
-//		var params = channel.getFilter().getParams();
-//		for (var p = 0; p < params.length; p++) {
-//			paramValueLayer.appendChild(params[p].createHtmlValue(this, channel, valueText));
-//		}
-//	}
+	if (channel.getFilter()){
+		var params = channel.getFilter().getParams();
+		for (var p = 0; p < params.length; p++) {
+			paramValueLayer.appendChild(params[p].createHtmlValue(this, channel, valueText));
+		}
+	}
 	valueText.appendChild(document.createTextNode(channel.getValue()));	
-	
-//	var newFilterMenu = this._createFilterMenu(channel); 
-//	this.filterMenus[channel.getId()] = newFilterMenu;
-//	channel.setMenu(newFilterMenu);
 	
 	channel.assignInterface(channelElement);
 	this.channels.push(channel);
@@ -614,6 +616,11 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     var channel = new ChannelInterface(channelName);
 	var channelTempObject = {channel : wiring.createChannel(channel.getName(), channel.getId())}; 
     this._addChannelInterface(channel);
+	
+	// Creates the filter menu
+	var newFilterMenu = this._createFilterMenu(channel); 
+	this.filterMenus[channel.getId()] = newFilterMenu;
+	channel.setMenu(newFilterMenu);
 	
 //	this.chEventsWr.forceToggle();
 //	this.chSlotsWr.forceToggle();

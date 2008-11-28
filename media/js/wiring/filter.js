@@ -52,6 +52,18 @@ Param.prototype.getDefaultValue = function() {
   return this._defaultValue;
 }
 
+//Param.prototype.serialize = function() {
+//	var serialized_data = new Object();
+//	
+//	serialized_data['name'] = this._name;
+//	serialized_data['label'] = this._label;
+//	serialized_data['type'] = this._type;
+//	serialized_data['index'] = this._index;
+//	serialized_data['defaultValue'] = this._defaultValue;
+//
+//	return serialized_data;
+//}
+
 Param.prototype.createHtmlLabel = function() {
   var labelLayer = document.createElement("div");
   var img = document.createElement("img");
@@ -103,7 +115,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 }
 
 // This class represents the filter of the a channel
-function Filter (id_, name_, label_, nature_, code_, category_, helpText_) {
+function Filter (id_, name_, label_, nature_, code_, category_, params_, helpText_) {
   this._id = id_;
   this._name = name_;
   this._label = label_;
@@ -112,6 +124,11 @@ function Filter (id_, name_, label_, nature_, code_, category_, helpText_) {
   this._lastExecError = null;
   this._category = category_;
   this._helpText = helpText_;
+  
+  // Sets the filter parameters
+  this.processParams (params_); 
+  
+  // Sets the filter code
   try{
 	if ((nature_ == 'USER') && ((typeof code_) != 'function')){
 		this._code = null;
@@ -158,6 +175,19 @@ Filter.prototype.getCategory = function() {
 
 Filter.prototype.getHelpText = function() {
   return this._helpText;
+}
+
+Filter.prototype.processParams = function(params_) {
+  this._params = new Array();
+  if (params_ != null){
+  	var fParam, paramObject;
+  	var jsonParams = eval (params_);  
+  	for (var i = 0; i < jsonParams.length; i++) {
+		fParam = jsonParams[i];
+		paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);
+		this.setParam(paramObject);  
+  	}
+  } 	
 }
 
 Filter.prototype.run = function(channelValue_, paramValues_) {

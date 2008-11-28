@@ -236,8 +236,18 @@ wChannel.prototype.setFilter = function(newFilter) {
   this.filter = newFilter;
 }
 
-wChannel.prototype.setFilterParams = function(filterParams) {
-  this.filterParams = filterParams;
+wChannel.prototype.processFilterParams = function(fParamsJson_) {
+  this.filterParams = new Array();
+  if (fParamsJson_ != null){
+  	var fParams = eval (fParamsJson_);
+	for (var k = 0; k < fParams.length; k++) {
+		this.filterParams[fParams[k].index] = fParams[k].value; 
+  	}
+  }
+}
+
+wChannel.prototype.setFilterParams = function(fParams) {
+  this.filterParams = fParams;
 }
 
 wChannel.prototype.getFilterParams = function() {
