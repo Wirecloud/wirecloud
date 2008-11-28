@@ -25,7 +25,7 @@
 
 #wiring .eventColumn, #wiring .slotColumn {
   width: 20%;
-  padding: 1ex 20px;
+  padding: 0 20px;
   vertical-align: top;
 }
 
