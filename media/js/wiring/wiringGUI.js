@@ -60,12 +60,59 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.newChannel = $('newChannel');
   this.wiringTable = $('wiring_table');
   
+  //folding/unfolding all tabs events
+  //events
+    
+	titleElement=this.eventColumn.getElementsByClassName("title")[0];
+	
+	Event.observe(titleElement, "click",
+	                        function (e) {
+	                        	var expand = null;
+	                        	var folded = e.target.hasClassName('folded');
+	                        	var nIgadgets = $$('#events_list .igadget').length
+	                        	var nIgadgetsFolded = $$('#events_list .igadget.folded').length
+	                        	if(folded && nIgadgetsFolded == 0)
+	                        		expand = false;	                      
+	                        	else if(!folded && nIgadgetsFolded == nIgadgets)
+	                        		expand = true;
+	                        	else{
+	                        		expand = folded;
+	                        		e.target.toggleClassName('folded');
+	                        	}
+								this.toggleEventColumn(expand);	
+	                        	
+								
+	                        }.bind(this));
+	
+	//slots
+	titleElement=this.slotColumn.getElementsByClassName("title")[0];
+	Event.observe(titleElement, "click",
+	                    function (e) {
+	                    	var expand = null;
+	                    	var folded = e.target.hasClassName('folded');
+	                    	var nIgadgets = $$('#slots_list .igadget').length
+	                    	var nIgadgetsFolded = $$('#slots_list .igadget.folded').length
+	                    	if(folded && nIgadgetsFolded == 0)
+	                    		expand = false;	                      
+	                    	else if(!folded && nIgadgetsFolded == nIgadgets)
+	                    		expand = true;
+	                    	else{
+	                    		expand = folded;
+	                    		e.target.toggleClassName('folded');
+	                    	}
+							this.toggleSlotColumn(expand);	
+	                    }.bind(this));    
+  
+  
+  
 //  this.chEventsWr = null;
 //  this.chSlotsWr = null;  
 
   this._eventCreateChannel = function (e) {
     Event.stop(e);
     this._createChannel();
+    this.toggleEventColumn(true);    
+    this.toggleSlotColumn(true);
   }.bind(this)
   
   WiringInterface.prototype.show = function () {
@@ -93,10 +140,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     
     this.saveWiring();
     this.channels.clear();
-    
-	if($('toggleEvents'))
-	    $('toggleEvents').remove();
-    $('toggleSlots').remove();    
+
     Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
     LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
   }
@@ -441,10 +485,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.slot_list.innerHTML = "";
     this.channels_list.innerHTML = "";
     this.clearMessages();
-    if($('toggleEvents'))
-    	 $('toggleEvents').remove();
-    if($('toggleSlots'))
-    	 $('toggleSlots').remove();    
 
     // Clean data structures
     this.friend_codes_counter = 0;
@@ -487,40 +527,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 //	}
 
     this.channels_counter = channels.length + 1;
-    
-    //button for unfolding all tabs
-    //events
-    if(this.inputs.length > 0){
-		var eventInput = document.createElement("input");
-		eventInput.setAttribute("type", "button");
-	    eventInput.setAttribute("id", "toggleEvents");
-	    eventInput.setAttribute("alt", gettext("fold/unfold"));
-	    eventInput.addClassName('folding_img');
-	    
-	    Event.observe(eventInput, "click",
-	                            function (e) {
-									var expand = e.target.hasClassName('folding_img');
-									e.target.toggleClassName('folding_img');
-									e.target.blur();
-									this.toggleEventColumn(expand);
-	                            }.bind(this));
-	    this.eventColumn.getElementsByClassName("title")[0].appendChild(eventInput);
-    }
-    
-    //slots
-    var slotInput = document.createElement("input");
-    slotInput.setAttribute("type", "button");
-    slotInput.setAttribute("id", "toggleSlots");
-    slotInput.setAttribute("alt", gettext("fold/unfold"));
-    slotInput.addClassName('folding_img');
-    Event.observe(slotInput, "click",
-                            function (e) {
-                            	var expand = e.target.hasClassName('folding_img');
-								e.target.toggleClassName('folding_img');
-								e.target.blur();
-								this.toggleSlotColumn(expand);
-                            }.bind(this));
-    this.slotColumn.getElementsByClassName("title")[0].appendChild(slotInput);
     
   }
 

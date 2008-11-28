@@ -29,21 +29,6 @@
   vertical-align: top;
 }
 
-#wiring .eventColumn .title #toggleEvents, #wiring .slotColumn .title #toggleSlots{
-  margin-left: 5px;
-  display: inline;
-  width: 10px;
-  height: 10px;
-  border: 0;
-  padding:0;
-  cursor:pointer;
-  background: url(/ezweb/js/wiring/minus.png) no-repeat; 
-}
-
-#wiring .eventColumn .title #toggleEvents.folding_img, #wiring .slotColumn .title #toggleSlots.folding_img{
-  background: url(/ezweb/js/wiring/plus.png) no-repeat;
-}
-
 #wiring .connectionColumn {
   width: 20%;
   vertical-align: top;
@@ -59,6 +44,10 @@
   font-size: 120%;
   text-align: center;
   margin-bottom: 1ex;
+}
+
+#wiring #eventColumn .title, #slotColumn .title{
+  cursor:pointer;
 }
 
 #wiring .borderLeftCell {
@@ -218,7 +207,7 @@
   background: url(/ezweb/js/wiring/Lminus.png) no-repeat scroll left top;
 }
 #wiring .igadgetName.bckgrnd_folded {
-  background: url(/ezweb/js/wiring/Tplus.png) no-repeat scroll left top;
+  background: url(/ezweb/js/wiring/Lplus.png) no-repeat scroll left top;
 }
 
 #wiring .tab .tabContent {

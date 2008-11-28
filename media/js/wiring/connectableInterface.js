@@ -436,7 +436,11 @@ function ConnectableInterface (wiringGUI, parentInterface, headerText) {
 			if(this.folded != this.parentInterface.folded){//if the parent is folded
 	  			this.parentInterface.toggle();
 			}
-		}else if(!this.openedByUser){//the igadget is open because it is conected to an opened channel
+		// if the gadget is open by the user but the parent is folded
+		}else if(this.openedByUser && this.parentInterface.folded){
+			this.parentInterface.toggle();
+		}
+		else if(!this.openedByUser){//the igadget is open because it is conected to an opened channel
 			this.openedByUser = true;
 			this.parentInterface.igadgetsOpenedByUser++;
 			
