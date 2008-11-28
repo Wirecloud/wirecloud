@@ -239,11 +239,21 @@
   border: 0px none;
 }
 
-#wiring .newChannel {
-  margin: 2ex 1ex;
+#wiring .newChannel, #wiring #unfold_all_link {
   cursor: pointer; cursor: hand;
   color: #2D6F9C;
   text-decoration: underline;
+}
+
+#wiring .newChannel{
+  margin: 2ex 1ex;
+}
+
+#wiring #unfold_all_link{
+  display: inline;
+  position: absolute;
+  top:5px;
+  right: 20px;
 }
 
 #wiring #channels_list .channel {

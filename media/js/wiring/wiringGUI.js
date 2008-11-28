@@ -102,6 +102,12 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	                    	}
 							this.toggleSlotColumn(expand);	
 	                    }.bind(this));    
+	  
+	  Event.observe($('unfold_all_link'), "click",
+	  					function (){
+	  						this.toggleEventColumn(true);
+						  	this.toggleSlotColumn(true);
+						}.bind(this));
   
   
   
