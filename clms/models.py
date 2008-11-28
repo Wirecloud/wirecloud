@@ -200,9 +200,3 @@ class DefaultUserLayout(models.Model):
     layout = models.ForeignKey(Layout, verbose_name=_('Layout'))
 
 
-class DefaultSettingsClms(models.Model):
-    key = models.CharField(_('key'), max_length=200, 
-                            help_text=_('Enter the key'), null=False, blank=False)
-    value = models.CharField(_('value'), max_length=200, 
-                            help_text=_('Enter the value'),null=False, blank=False)
-    content_type = models.ForeignKey(ContentType, null=True, blank=True)

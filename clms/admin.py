@@ -25,7 +25,7 @@ from clients.python.ezsteroids_real_api import get_category, get_category_list
 from clms.widgets import PanelWidget
 from clms.table_parser import TableParser
 from clms.models import LayoutTemplate, Layout, PanelDispatcher, Panel, \
-                        Content, FavouriteLayout, DefaultUserLayout, DefaultSettingsClms
+                        Content, FavouriteLayout, DefaultUserLayout
 
 
 class CLMSSite(admin.AdminSite):
@@ -100,33 +100,6 @@ class DefaultUserLayoutModelAdmin(ModelAdmin):
     pass
 
 
-class DefaultSettingsClmsModelAdmin(ModelAdmin):
-    extra_css = {'screen':["/ezweb/clms/css/admin.css"]}
-
-    def get_form(self, request, obj=None):
-        form = super(DefaultSettingsClmsModelAdmin, self).get_form(request, obj)
-        form.base_fields['content_type'].queryset = ContentType.objects.filter(app_label='clms')
-        if obj and obj.content_type:
-            queryset = obj.content_type.model_class().objects.all()
-            form.base_fields['value'] = forms.ModelChoiceField(queryset=queryset ,
-                               initial=obj.value,
-                               widget=forms.Select({}),
-                               label=_(u'value'), required=True)
-        def clean(self):
-            if self.cleaned_data.get('content_type'):
-                self.cleaned_data['value'] = self.cleaned_data['value'].id
-            return self.cleaned_data
-
-        form.clean = clean
-
-        return form
-
-    def _media(self):
-        "Injects OpenLayers Css into the admin."
-        media = super(DefaultSettingsClmsModelAdmin, self)._media()
-        media.add_css(self.extra_css)
-        return media
-    media = property(_media)
 
 class ContentModelAdmin(ModelAdmin):
     extra_js = ['/ezweb/clms/js/content.js']

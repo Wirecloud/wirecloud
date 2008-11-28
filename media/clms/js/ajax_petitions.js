@@ -4,20 +4,31 @@ function delete_message()
     $('messagebox').innerHTML= '';
 }
 
-function change_img(action, layout_id, view)
+function change_img(action, layout_id, view, type_petition)
 {
 
   if(view == 'normal')  
   {
     if (action == 'add')
     {
-        $('del_layout_'+layout_id).style.display='inline';
-        $('add_layout_'+layout_id).style.display='none';
+        if(type_petition=='default')
+        {
+            var del_layouts=$('layouts').getElementsByClassName('del_default');
+            var i ;
+            for(i=0;i<del_layouts.length; i++)
+            {
+                del_layouts[i].style.display="none";
+                $(del_layouts[i].id.replace('del','add')).style.display = "inline";
+            }
+        }
+
+        $('del_'+type_petition+'_'+layout_id).style.display='inline';
+        $('add_'+type_petition+'_'+layout_id).style.display='none';
     }
     else if (action == 'del')
     {
-        $('del_layout_'+layout_id).style.display='none';
-        $('add_layout_'+layout_id).style.display='inline';
+        $('del_'+type_petition+'_'+layout_id).style.display='none';
+        $('add_'+type_petition+'_'+layout_id).style.display='inline';
     }
   }
   else if (view == 'favourite')
@@ -27,7 +38,7 @@ function change_img(action, layout_id, view)
 }
 
 
-function favourite_ajax(url, layout_id, view)
+function petition_ajax(url, layout_id, view, type_petition)
 {
 var post_data='';
 var opt = {
@@ -41,7 +52,7 @@ var opt = {
         if (response_text.done == true)
         {
             $('messagebox').innerHTML="<ul id='info-list'><li><span class='infomsg'>"+response_text.message+"</span></li></ul>";
-            change_img(response_text.action, layout_id, view);
+            change_img(response_text.action, layout_id, view, type_petition);
             setTimeout("delete_message()", 3000);
 
         }

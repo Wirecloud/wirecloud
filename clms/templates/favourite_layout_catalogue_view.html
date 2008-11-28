@@ -1,6 +1,6 @@
 {% extends "layout_catalogue_view.html" %}
 
-{% load i18n paginator favourite %}
+{% load i18n paginator favourite default_layout %}
 
 {% block breadcrumbs %}
     <div id="favourites" class="favourites">
@@ -21,6 +21,7 @@
 
 {% block favourite %}
     {% favourite user layout 'favourite' %}
+    {% default_layout user layout 'normal' %}
 {% endblock %}
 
 {% block buttom %}

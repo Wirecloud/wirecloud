@@ -5,19 +5,19 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.template import Context, Library, Template, Variable
 
-from clms.models import Layout, FavouriteLayout
+from clms.models import Layout, DefaultUserLayout
 
 
 register = Library()
 
-def favourite(context, user, layout, view):
-    favourite_layout = FavouriteLayout.objects.filter(user=user)
+def default_layout(context, user, layout, view):
+    default_layout = DefaultUserLayout.objects.filter(user=user, layout=layout)
+
     return {
             'layout': layout,
-            'is_favourite': not favourite_layout or not layout in favourite_layout[0].layout.all(),
+            'is_default': default_layout,
             'view': view,
             'MEDIA_URL': settings.MEDIA_URL,
     }
 
-register.inclusion_tag("favourite.html", takes_context=True)(favourite)
-
+register.inclusion_tag("default_layout.html", takes_context=True)(default_layout)

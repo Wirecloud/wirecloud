@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.views.i18n import set_language
 
-from clms.models import Layout, FavouriteLayout, DefaultUserLayout, DefaultSettingsClms
+from clms.models import Layout, FavouriteLayout, DefaultUserLayout
 
 from clients.python.ezsteroids_real_api import get_category, evaluate_category
 
@@ -27,13 +27,17 @@ def language_setting(request):
     return response
 
 def default(request):
-    default_layout_id = settings.DEFAULT_LAYOUT
+    layout_default = None
     try:
-        Layout.objects.get(id=default_layout_id)
-    except Layout.DoesNotExist:
-        layouts = Layout.objects.all()
-        default_layout_id = (layouts and layouts[0].id) or 1
-    return layout_detail(request, default_layout_id,{'hide':True})
+        layout_default = DefaultUserLayout.objects.get(user=request.user).layout
+    except DefaultUserLayout.DoesNotExist:
+        layout_list = Layout.objects.all()
+        layout_query = get_allowed_layouts(request.user, layout_list)
+        try:
+            layout_default = layout_query[0]
+        except IndexError:
+            pass
+    return layout_detail(request, layout_default.id,{'hide':True})
 
 def get_allowed_layouts(user, layout_list):
     allowed_layouts_ids = []
@@ -64,7 +68,7 @@ def check_allowed_layout(user, layout):
 
 def layout_catalogue_view(request):
     layout_list = Layout.objects.all()
-    layout_query = get_allowed_layouts(request.user,layout_list)
+    layout_query = get_allowed_layouts(request.user, layout_list)
     return list_detail.object_list(request, layout_query,
                                    allow_empty=True,
                                    paginate_by=6,
@@ -72,10 +76,12 @@ def layout_catalogue_view(request):
                                    template_object_name='layout',
                                    )
 
-def layout_detail(request, layout_id, context={}):
+def layout_detail(request, layout_id=None, context={}):
+
     layout = get_object_or_404(Layout, pk=layout_id)
-    if not check_allowed_layout(request.user, layout):
+    if not context.get('hidden', False) and not check_allowed_layout(request.user, layout):
         return HttpResponseForbidden()
+
     layout_list = Layout.objects.all()
     layout_query = get_allowed_layouts(request.user,layout_list)
     try:
@@ -107,11 +113,35 @@ def add_favourite(request, layout_id):
         if not layout in favourite_layout.layout.all():
             favourite_layout.layout.add(layout)
             favourite_layout.save()
-            return HttpResponse(simplejson.dumps({'action':'add', 'done':True, 'message': _('Layaut added to favourites')}))
+            return HttpResponse(simplejson.dumps({'action':'add', 'done':True, 'message': _('Layout added to favourites')}))
         else:
-            return HttpResponse(simplejson.dumps({'action':'add', 'done':True, 'message': _('Layaut already in favourites')}))
+            return HttpResponse(simplejson.dumps({'action':'add', 'done':True, 'message': _('Layout already in favourites')}))
     except:
-        return HttpResponse(simplejson.dumps({'action':'add', 'done':False, 'message': _('Error when trying to set layaut as favourite')}))
+        return HttpResponse(simplejson.dumps({'action':'add', 'done':False, 'message': _('Error when trying to set layout as favourite')}))
+
+
+@login_required
+def add_default(request, layout_id):
+    layout = get_object_or_404(Layout, id=layout_id)
+    try:
+        default_layout = DefaultUserLayout.objects.get(user=request.user)
+        default_layout.layout = layout
+        default_layout.save()
+    except DefaultUserLayout.DoesNotExist:
+        default_layout = DefaultUserLayout.objects.create(user=request.user, layout=layout)
+    return HttpResponse(simplejson.dumps({'action':'add', 'done':True, 'message': _('Layout added to default')}))
+
+
+@login_required
+def del_default(request, layout_id):
+    layout = get_object_or_404(Layout, id=layout_id)
+    try:
+        default_layout = DefaultUserLayout.objects.get(user=request.user, layout=layout)
+        default_layout.delete()
+    except DefaultUserLayout.DoesNotExist:
+        return HttpResponse(simplejson.dumps({'action':'del', 'done':False, 'message': _('Layout is not default layout')}))
+    return HttpResponse(simplejson.dumps({'action':'del', 'done':True, 'message': _('Layout deleted to default')}))
+
 
 
 @login_required
@@ -122,11 +152,11 @@ def del_favourite(request, layout_id):
         if layout in favourite_layout.layout.all():
             favourite_layout.layout.remove(layout)
             favourite_layout.save()
-            return HttpResponse(simplejson.dumps({'action':'del', 'done':True, 'message': _('Layaut deleted from favourites')}))
+            return HttpResponse(simplejson.dumps({'action':'del', 'done':True, 'message': _('Layout deleted from favourites')}))
         else:
-            return HttpResponse(simplejson.dumps({'action':'del', 'done':True, 'message': _('Layaut is not in favourites')}))
+            return HttpResponse(simplejson.dumps({'action':'del', 'done':True, 'message': _('Layout is not in favourites')}))
     except:
-        return HttpResponse(simplejson.dumps({'action':'del', 'done':False, 'message': _('Error when trying to delete layaut as favourite')}))
+        return HttpResponse(simplejson.dumps({'action':'del', 'done':False, 'message': _('Error when trying to delete Layout as favourite')}))
 
 
 @login_required

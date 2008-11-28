@@ -1,6 +1,6 @@
 {% extends "base_clms.html" %}
 
-{% load i18n paginator favourite %}
+{% load i18n paginator favourite default_layout %}
 
 {% block extrahead %}
 
@@ -28,13 +28,13 @@
   <div id="layouts" class="layouts">
 
    {% for layout in layout_list %}
-
         <div id='layout_box_{{ layout.id }}' class="layout_box">
             <div class="top"></div>
             <div class="toolbar">
                {% block favourite %}
                  {% if not user.is_anonymous %}
                     {% favourite user layout 'normal' %}
+                    {% default_layout user layout 'normal' %}
                  {% endif %}
                {% endblock %} 
             </div>
@@ -43,18 +43,14 @@
                 <div class="image">
                     {{ layout.thumbnail|safe }}
                 </div>
-
                 {% block buttom %}
-
-                <button onClick="window.location='{% url clms.views.layout_detail layout.id %}'">
-                    {% trans "Watch Layout" %}
-                </button>
+                    <button onClick="window.location='{% url clms.views.layout_detail layout.id %}'">
+                        {% trans "Watch Layout" %}
+                    </button>
                 {% endblock %} 
-
             </div>
             <div id="resource_0_bottom" class="bottom" style="" ></div>
         </div>
-
    {% endfor %} 
 
   </div> 

@@ -250,11 +250,6 @@
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">39</field>
         <field type="CharField" name="codename">add_content</field>
     </object>
-    <object pk="136" model="auth.permission">
-        <field type="CharField" name="name">Can add default settings clms</field>
-        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">46</field>
-        <field type="CharField" name="codename">add_defaultsettingsclms</field>
-    </object>
     <object pk="133" model="auth.permission">
         <field type="CharField" name="name">Can add default user layout</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">45</field>
@@ -290,11 +285,6 @@
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">39</field>
         <field type="CharField" name="codename">change_content</field>
     </object>
-    <object pk="137" model="auth.permission">
-        <field type="CharField" name="name">Can change default settings clms</field>
-        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">46</field>
-        <field type="CharField" name="codename">change_defaultsettingsclms</field>
-    </object>
     <object pk="134" model="auth.permission">
         <field type="CharField" name="name">Can change default user layout</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">45</field>
@@ -329,11 +319,6 @@
         <field type="CharField" name="name">Can delete content</field>
         <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">39</field>
         <field type="CharField" name="codename">delete_content</field>
-    </object>
-    <object pk="138" model="auth.permission">
-        <field type="CharField" name="name">Can delete default settings clms</field>
-        <field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">46</field>
-        <field type="CharField" name="codename">delete_defaultsettingsclms</field>
     </object>
     <object pk="135" model="auth.permission">
         <field type="CharField" name="name">Can delete default user layout</field>
