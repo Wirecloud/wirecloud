@@ -1,203 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="14" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">RSSReader</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">2.0</field>
-        <field type="CharField" name="author">jlopez</field>
-        <field type="CharField" name="mail">jlopez@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">Este gadget muestra un feed RSS 2.0</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 20:47:49</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rss.jpg</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssIPhone.jpg</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/RSSReader</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/rss/rssReaderGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.0</field>
-    </object>
-    <object pk="9" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Visor Datos de Usuario</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:49:09</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuarioIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/visorDatosUsuarioGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">2.0</field>
-    </object>
-    <object pk="2" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">YouTube Video Search</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.4</field>
-        <field type="CharField" name="author">agarcia</field>
-        <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="TextField" name="description">buscador de videos youtube y selector de peliculas</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:15</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearchIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tube_iptv_search_gadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.0</field>
-    </object>
-    <object pk="12" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Localizame</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.3</field>
-        <field type="CharField" name="author">pjm</field>
-        <field type="CharField" name="mail">pjm@tid.es</field>
-        <field type="TextField" name="description">'Lozalizame' service from Telefonica Movistar</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:49:24</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizameMovistar/localizame.png</field>
-        <field type="CharField" name="iphone_image_uri"><None></None></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Localizame</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/localizameMovistar/localizame1.3.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.5</field>
-    </object>
-    <object pk="10" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Map Viewer</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.2</field>
-        <field type="CharField" name="author">fabio</field>
-        <field type="CharField" name="mail">fabio@tid.es</field>
-        <field type="TextField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:49:10</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_mapsIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/localizadorPequeno1.2.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.5</field>
-    </object>
-    <object pk="11" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Visor Datos de Equipo</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:49:21</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipoIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/visorDatosEquipoGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">2.5</field>
-    </object>
-    <object pk="16" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">SMS Sender</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.3</field>
-        <field type="CharField" name="author">pjm</field>
-        <field type="CharField" name="mail">pjm@tid.es</field>
-        <field type="TextField" name="description">Envio de SMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-12 13:38:52</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.png</field>
-        <field type="CharField" name="iphone_image_uri"><None></None></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/SMSSender</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/sendSMS/sendSMS.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">3.5</field>
-    </object>
-    <object pk="13" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Notepad</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field type="CharField" name="author">jmartin</field>
-        <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="TextField" name="description">Este gadget permite anadir una nota personal</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:49:38</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepad.jpg</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Notepad</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepadGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.5</field>
-    </object>
-    <object pk="4" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Bandeja de Averias</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:26</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averiasIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/bandejaAveriasGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">2.5</field>
-    </object>
-    <object pk="5" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Configuracion de Red</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.0</field>
-        <field type="CharField" name="author">miglesia</field>
-        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:37</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/redIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/configuracionRedGadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">3.0</field>
-    </object>
-    <object pk="3" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">YouTube Video Player</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.3</field>
-        <field type="CharField" name="author">jmartin</field>
-        <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="TextField" name="description">Reproductor de videos de Youtube</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:25</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberepIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep_gadget.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.5</field>
-    </object>
     <object pk="1" model="catalogue.gadgetresource">
         <field type="CharField" name="short_name">Amazon</field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -208,31 +10,121 @@
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:14</field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:18:19</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonIPhone.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Amazon</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazonGadget.xml</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/amazon/amazonGadget.xml</field>
         <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">3.0</field>
+        <field type="DecimalField" name="popularity">0.0</field>
     </object>
-    <object pk="6" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Yahoo Trip Search</field>
+    <object pk="2" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Bandeja de Averias</field>
         <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.1</field>
-        <field type="CharField" name="author">agarcia</field>
-        <field type="CharField" name="mail">abgp@tid.es</field>
-        <field type="TextField" name="description">buscador de planes de viajes de yahoo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="TextField" name="description">Este gadget presenta una lista de averias registradas por usuarios y la informacion relativa a ellas</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:38</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_searchIPhone.gif</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/yahootripsearch_gadget.xml</field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:18:46</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/bandeja/averias.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/BandejaDeAverias</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/bandeja/bandejaAveriasGadget.xml</field>
         <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">2.5</field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="3" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Configuracion de Red</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="TextField" name="description">Este gadget presenta un diagrama con la localizacion de la averia en el servicio</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:18:59</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/configuracionRed/red.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/ConfiguracionDeRed</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/configuracionRed/configuracionRedGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="4" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Flickr</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">2.1</field>
+        <field type="CharField" name="author">jjmr</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:19:13</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/flickr/flickr.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="5" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Map Viewer</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.2</field>
+        <field type="CharField" name="author">fabio</field>
+        <field type="CharField" name="mail">fabio@tid.es</field>
+        <field type="TextField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:19:39</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MapViewer</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/localizador/localizadorPequeno1.2.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="6" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Notepad</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">jmartin</field>
+        <field type="CharField" name="mail">jjmr@tid.es</field>
+        <field type="TextField" name="description">Este gadget permite anadir una nota personal</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:19:51</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepad.jpg</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Notepad</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/notepad/notepadGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="7" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Visor Datos de Equipo</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:20:14</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosEquipo</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/visorEquipos/visorDatosEquipoGadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
     </object>
     <object pk="8" model="catalogue.gadgetresource">
         <field type="CharField" name="short_name">Visor Imágenes</field>
@@ -244,154 +136,106 @@
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:49</field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:20:23</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenesIphone.png</field>
+        <field type="CharField" name="iphone_image_uri"></field>
         <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorImagenes</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">4.5</field>
-    </object>
-    <object pk="7" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Flickr</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">2.0</field>
-        <field type="CharField" name="author">jmostazo</field>
-        <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
-        <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-06-03 19:48:49</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
-        <field type="CharField" name="iphone_image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickrIPhone.png</field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.xml</field>
-        <field type="CharField" name="mashup_id"><None></None></field>
-        <field type="DecimalField" name="popularity">3.5</field>
-    </object>
-    <object pk="17" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">MMS Sender</field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.1</field>
-        <field type="CharField" name="author">fabio</field>
-        <field type="CharField" name="mail">fabio@tid.es</field>
-        <field type="TextField" name="description">Envio de MMS's utilizando la API de Open MovilForum. La clave del remitente se obtiene enviando un mensaje de texto gratuito al 770 (solo clientes Movistar) cuyo texto sea la clave de acceso que desee. La clave debera tener entre 6 y 14 caracteres</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-10-29 17:39:21</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/sendMMS/sendMMS.png</field>
-        <field type="CharField" name="iphone_image_uri"></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MMSSender</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/sendMMS/sendMMS1.1.xml</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/visorImagenes/visorImagenes.xml</field>
         <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
     </object>
-    <object pk="18" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Mobile Agenda</field>
+    <object pk="9" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Visor Datos de Usuario</field>
         <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">1.1</field>
-        <field type="CharField" name="author">fabio</field>
-        <field type="CharField" name="mail">fabio@tid.es</field>
-        <field type="TextField" name="description">Consulta de agenda utilizando la API de Open MovilForum.</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">miglesia</field>
+        <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
+        <field type="TextField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-10-29 17:40:25</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/agenda/agenda.png</field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:20:35</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/MobileAgenda</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/agenda/agenda.xml</field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/VisorDatosUsuario</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/visorUsuarios/visorDatosUsuarioGadget.xml</field>
         <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
     </object>
-    <object pk="19" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Flickr</field>
+    <object pk="10" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Yahoo Travel</field>
         <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">2.1</field>
-        <field type="CharField" name="author">jjmr</field>
+        <field type="CharField" name="version">1.0</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="TextField" name="description">muestra un plan de viaje mediante yahoo</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:20:46</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_travel/yahoo_travel.gif</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTravel</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/yahoo_travel/yahootravel_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="11" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Yahoo Trip Search</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.1</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="TextField" name="description">buscador de planes de viajes de yahoo</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:20:57</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/YahooTripSearch</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/yahoo_trip/yahootripsearch_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
+    </object>
+    <object pk="12" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">YouTube Video Player</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.3</field>
+        <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
+        <field type="TextField" name="description">Reproductor de videos de Youtube</field>
         <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
         <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-11-25 11:47:48</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:21:08</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.xml</field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeRep</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/youtube_player/tuberep_gadget.xml</field>
         <field type="CharField" name="mashup_id"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
     </object>
-    <object pk="7" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">7</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="6" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">6</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
+    <object pk="13" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">YouTube Video Search</field>
+        <field type="CharField" name="vendor">Morfeo</field>
+        <field type="CharField" name="version">1.4</field>
+        <field type="CharField" name="author">agarcia</field>
+        <field type="CharField" name="mail">abgp@tid.es</field>
+        <field type="TextField" name="description">buscador de videos youtube y selector de peliculas</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2008-12-01 15:21:19</field>
+        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
+        <field type="CharField" name="iphone_image_uri"></field>
+        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/TubeSearch</field>
+        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/youtube_search/tube_iptv_search_gadget.xml</field>
+        <field type="CharField" name="mashup_id"><None></None></field>
+        <field type="DecimalField" name="popularity">0.0</field>
     </object>
     <object pk="1" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">1</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="3" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">3</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="5" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">5</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="4" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">4</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="13" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">13</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="16" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">16</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="11" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">11</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="8" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">8</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="10" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">10</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="added_by">True</field>
-        <field type="BooleanField" name="preferred_by"><None></None></field>
-    </object>
-    <object pk="12" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">12</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
@@ -402,32 +246,68 @@
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
+    <object pk="3" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">3</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="4" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">4</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="5" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">5</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="6" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">6</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="7" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">7</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
+    <object pk="8" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">8</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="BooleanField" name="added_by">True</field>
+        <field type="BooleanField" name="preferred_by"><None></None></field>
+    </object>
     <object pk="9" model="catalogue.userrelatedtogadgetresource">
         <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">9</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-    <object pk="14" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">14</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">2</field>
+    <object pk="10" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">10</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-    <object pk="17" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">17</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">6</field>
+    <object pk="11" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">11</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-    <object pk="18" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">18</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">6</field>
+    <object pk="12" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">12</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
     </object>
-    <object pk="19" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">19</field>
+    <object pk="13" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">13</field>
         <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="added_by">True</field>
         <field type="BooleanField" name="preferred_by"><None></None></field>
@@ -438,892 +318,118 @@
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
     </object>
     <object pk="2" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">youtube_url</field>
+        <field type="CharField" name="friendcode">phone</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
     </object>
     <object pk="3" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">address</field>
+        <field type="CharField" name="friendcode">service</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
     </object>
     <object pk="4" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">title</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="5" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">poi</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="6" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">youtube_url</field>
+        <field type="CharField" name="friendcode">service</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
     </object>
-    <object pk="7" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
+    <object pk="5" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">deviceId</field>
         <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="6" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">deviceStatus</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
+    </object>
+    <object pk="7" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">keyword</field>
+        <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
     </object>
     <object pk="8" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">service</field>
+        <field type="CharField" name="friendcode">imageUrl</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
     </object>
     <object pk="9" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">service</field>
+        <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
     <object pk="10" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">deviceId</field>
-        <field type="CharField" name="wiring">out</field>
+        <field type="CharField" name="friendcode">utmCoord</field>
+        <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
     <object pk="11" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">deviceStatus</field>
+        <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
     <object pk="12" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">poi</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="13" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">yahoo_travel</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="14" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">keyword</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="15" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">urlImage</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="16" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">imageUrl</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="17" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">address</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="18" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="19" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">address</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="20" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">utmCoord</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="21" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">address</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="22" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">deviceId</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="23" model="catalogue.gadgetwiring">
+    <object pk="13" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">deviceStatus</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
-    <object pk="24" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">utmCoord</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
-    </object>
-    <object pk="25" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">rssUrl</field>
+    <object pk="14" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">imageUrl</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
     </object>
-    <object pk="26" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">objectUrl</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="27" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="28" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">subject</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="29" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">message</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="30" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="31" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="32" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">phone</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="33" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">email</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="34" model="catalogue.gadgetwiring">
+    <object pk="15" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
-    <object pk="35" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">keyword</field>
+    <object pk="16" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">phone</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">19</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
-    <object pk="36" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">imageUrl</field>
+    <object pk="17" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">yahoo_travel</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
+    </object>
+    <object pk="18" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">poi</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
+    </object>
+    <object pk="19" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">yahoo_travel</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">19</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
     </object>
-    <object pk="1" model="catalogue.usertag">
-        <field type="CharField" name="tag">image</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="2" model="catalogue.usertag">
-        <field type="CharField" name="tag">photo</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="3" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="4" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="5" model="catalogue.usertag">
-        <field type="CharField" name="tag">sms</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="6" model="catalogue.usertag">
-        <field type="CharField" name="tag">mobile</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="7" model="catalogue.usertag">
-        <field type="CharField" name="tag">phone</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="8" model="catalogue.usertag">
-        <field type="CharField" name="tag">yahoo</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="9" model="catalogue.usertag">
-        <field type="CharField" name="tag">trip</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="10" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-    </object>
-    <object pk="11" model="catalogue.usertag">
-        <field type="CharField" name="tag">reader</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
-    </object>
-    <object pk="12" model="catalogue.usertag">
-        <field type="CharField" name="tag">rss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
-    </object>
-    <object pk="13" model="catalogue.usertag">
-        <field type="CharField" name="tag">viewer</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
-    </object>
-    <object pk="14" model="catalogue.usertag">
-        <field type="CharField" name="tag">notepad</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-    </object>
-    <object pk="15" model="catalogue.usertag">
-        <field type="CharField" name="tag">postit</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-    </object>
-    <object pk="20" model="catalogue.usertag">
-        <field type="CharField" name="tag">localizame</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
+    <object pk="20" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">youtube_url</field>
+        <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
     </object>
-    <object pk="21" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
-    </object>
-    <object pk="22" model="catalogue.usertag">
-        <field type="CharField" name="tag">viewer</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="23" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="24" model="catalogue.usertag">
-        <field type="CharField" name="tag">device</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="25" model="catalogue.usertag">
-        <field type="CharField" name="tag">net</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
-    </object>
-    <object pk="26" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
-    </object>
-    <object pk="27" model="catalogue.usertag">
-        <field type="CharField" name="tag">map</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="28" model="catalogue.usertag">
-        <field type="CharField" name="tag">viewer</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="29" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="30" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="31" model="catalogue.usertag">
-        <field type="CharField" name="tag">breakdown</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="32" model="catalogue.usertag">
-        <field type="CharField" name="tag">tray</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="33" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="34" model="catalogue.usertag">
-        <field type="CharField" name="tag">user</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="35" model="catalogue.usertag">
-        <field type="CharField" name="tag">viewer</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="36" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="37" model="catalogue.usertag">
-        <field type="CharField" name="tag">data</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="42" model="catalogue.usertag">
-        <field type="CharField" name="tag">image</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="43" model="catalogue.usertag">
-        <field type="CharField" name="tag">viewer</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="44" model="catalogue.usertag">
-        <field type="CharField" name="tag">youtube</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="45" model="catalogue.usertag">
-        <field type="CharField" name="tag">video</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="46" model="catalogue.usertag">
-        <field type="CharField" name="tag">player</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="47" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="48" model="catalogue.usertag">
-        <field type="CharField" name="tag">youtube</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="49" model="catalogue.usertag">
-        <field type="CharField" name="tag">video</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="50" model="catalogue.usertag">
-        <field type="CharField" name="tag">search</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="51" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="52" model="catalogue.usertag">
-        <field type="CharField" name="tag">amazon</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="53" model="catalogue.usertag">
-        <field type="CharField" name="tag">iptv</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="54" model="catalogue.usertag">
-        <field type="CharField" name="tag">media</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="55" model="catalogue.usertag">
-        <field type="CharField" name="tag">media</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="56" model="catalogue.usertag">
-        <field type="CharField" name="tag">media</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-    </object>
-    <object pk="57" model="catalogue.usertag">
-        <field type="CharField" name="tag">media</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-    </object>
-    <object pk="58" model="catalogue.usertag">
-        <field type="CharField" name="tag">picture</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-    </object>
-    <object pk="59" model="catalogue.usertag">
-        <field type="CharField" name="tag">picture</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-    </object>
-    <object pk="62" model="catalogue.usertag">
-        <field type="CharField" name="tag">text</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
+    <object pk="21" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">youtube_url</field>
+        <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="63" model="catalogue.usertag">
-        <field type="CharField" name="tag">notas</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
+    <object pk="22" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">address</field>
+        <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="64" model="catalogue.usertag">
-        <field type="CharField" name="tag">memo</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
+    <object pk="23" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">title</field>
+        <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
-    <object pk="65" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
+    <object pk="24" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">poi</field>
+        <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-    </object>
-    <object pk="66" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-    </object>
-    <object pk="69" model="catalogue.usertag">
-        <field type="CharField" name="tag">eCommerce</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="70" model="catalogue.usertag">
-        <field type="CharField" name="tag">Device</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="72" model="catalogue.usertag">
-        <field type="CharField" name="tag">info</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-    </object>
-    <object pk="73" model="catalogue.usertag">
-        <field type="CharField" name="tag">info</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-    </object>
-    <object pk="74" model="catalogue.usertag">
-        <field type="CharField" name="tag">map</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
-    </object>
-    <object pk="75" model="catalogue.usertag">
-        <field type="CharField" name="tag">map</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="76" model="catalogue.usertag">
-        <field type="CharField" name="tag">oss</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-    </object>
-    <object pk="77" model="catalogue.usertag">
-        <field type="CharField" name="tag">mms</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="78" model="catalogue.usertag">
-        <field type="CharField" name="tag">sender</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="79" model="catalogue.usertag">
-        <field type="CharField" name="tag">agenda</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="80" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">18</field>
-    </object>
-    <object pk="81" model="catalogue.usertag">
-        <field type="CharField" name="tag">omf</field>
-        <field type="CharField" name="weight"><None></None></field>
-        <field type="CharField" name="criteria"><None></None></field>
-        <field type="CharField" name="value"><None></None></field>
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">6</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">17</field>
-    </object>
-    <object pk="1" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="2" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="3" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="4" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="5" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="6" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="7" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-        <field type="SmallIntegerField" name="vote">2</field>
-    </object>
-    <object pk="8" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="9" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="10" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="11" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="12" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="13" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-        <field type="SmallIntegerField" name="vote">2</field>
-    </object>
-    <object pk="14" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="15" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="16" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="17" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-        <field type="SmallIntegerField" name="vote">1</field>
-    </object>
-    <object pk="18" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
-        <field type="SmallIntegerField" name="vote">1</field>
-    </object>
-    <object pk="19" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">1</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="20" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-        <field type="SmallIntegerField" name="vote">5</field>
-    </object>
-    <object pk="21" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">2</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="22" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">3</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="23" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="24" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="25" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="26" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">16</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="27" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="28" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="29" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="30" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">3</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="31" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-        <field type="SmallIntegerField" name="vote">3</field>
-    </object>
-    <object pk="32" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">6</field>
-        <field type="SmallIntegerField" name="vote">2</field>
-    </object>
-    <object pk="33" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
-        <field type="SmallIntegerField" name="vote">4</field>
-    </object>
-    <object pk="34" model="catalogue.uservote">
-        <field to="auth.user" name="idUser" rel="ManyToOneRel">4</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
-        <field type="SmallIntegerField" name="vote">3</field>
     </object>
 </django-objects>

@@ -2331,3 +2331,289 @@ ERROR: PUT /workspace/1/variables [Anónimo]
     raise Http403 (_("You must be logged"))
 Http403: Debe registrarse
 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 18:41:07] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 18:41:45] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 18:44:45] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 18:45:10] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 18:46:21] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:00:20] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:00:40] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:01:32] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:02:40] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:06:32] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:07:46] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:11:26] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:12:36] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: PUT /workspace/10/variables admin
+[27/11/2008 19:14:35] no se pudieron actualizar las variablesERROR:  el valor null para la columna «value» viola la restricción not null
+
+UPDATE "workspace_variablevalue" SET "user_id" = 1, "value" = NULL, "abstract_variable_id" = 94 WHERE "workspace_variablevalue"."id" = 80 
+ERROR: GET /user/admin/gadgets admin
+[01/12/2008 11:34:52] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/gadget/views.py", line 60, in read
+    data = serializers.serialize('python', gadgets, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 47, in serialize
+    self.handle_fk_field(obj, field)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/python.py", line 41, in handle_fk_field
+    related = getattr(obj, field.name)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/fields/related.py", line 248, in __get__
+    rel_obj = QuerySet(self.field.rel.to).get(**params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 304, in get
+    num = len(clone)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 160, in __len__
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna gadget_xhtml.content_type
+LINE 1: ...ri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xh...
+                                                             ^
+
+SELECT "gadget_xhtml"."id", "gadget_xhtml"."uri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xhtml"."content_type" FROM "gadget_xhtml" WHERE "gadget_xhtml"."id" = 48 
+
+ERROR: GET /workspaces/282 admin
+ERROR: GET /user/admin/gadgets admin
+[01/12/2008 11:35:26] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/gadget/views.py", line 60, in read
+    data = serializers.serialize('python', gadgets, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 47, in serialize
+    self.handle_fk_field(obj, field)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/python.py", line 41, in handle_fk_field
+    related = getattr(obj, field.name)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/fields/related.py", line 248, in __get__
+    rel_obj = QuerySet(self.field.rel.to).get(**params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 304, in get
+    num = len(clone)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 160, in __len__
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna gadget_xhtml.content_type
+LINE 1: ...ri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xh...
+                                                             ^
+
+SELECT "gadget_xhtml"."id", "gadget_xhtml"."uri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xhtml"."content_type" FROM "gadget_xhtml" WHERE "gadget_xhtml"."id" = 48 
+
+ERROR: GET /workspaces/282 admin
+ERROR: GET /user/admin/gadgets admin
+[01/12/2008 11:35:47] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/gadget/views.py", line 60, in read
+    data = serializers.serialize('python', gadgets, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 47, in serialize
+    self.handle_fk_field(obj, field)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/python.py", line 41, in handle_fk_field
+    related = getattr(obj, field.name)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/fields/related.py", line 248, in __get__
+    rel_obj = QuerySet(self.field.rel.to).get(**params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 304, in get
+    num = len(clone)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 160, in __len__
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna gadget_xhtml.content_type
+LINE 1: ...ri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xh...
+                                                             ^
+
+SELECT "gadget_xhtml"."id", "gadget_xhtml"."uri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xhtml"."content_type" FROM "gadget_xhtml" WHERE "gadget_xhtml"."id" = 48 
+
+ERROR: GET /workspaces/282 admin
+ERROR: GET /workspaces/285 miguel
+ERROR: GET /user/admin/gadgets admin
+[01/12/2008 12:56:42] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/gadget/views.py", line 60, in read
+    data = serializers.serialize('python', gadgets, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 47, in serialize
+    self.handle_fk_field(obj, field)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/python.py", line 41, in handle_fk_field
+    related = getattr(obj, field.name)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/fields/related.py", line 248, in __get__
+    rel_obj = QuerySet(self.field.rel.to).get(**params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 304, in get
+    num = len(clone)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 160, in __len__
+    self._result_cache = list(self.iterator())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna gadget_xhtml.content_type
+LINE 1: ...ri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xh...
+                                                             ^
+
+SELECT "gadget_xhtml"."id", "gadget_xhtml"."uri", "gadget_xhtml"."code", "gadget_xhtml"."url", "gadget_xhtml"."content_type" FROM "gadget_xhtml" WHERE "gadget_xhtml"."id" = 48 
+
+ERROR: GET /workspaces/282 admin
+[01/12/2008 12:56:42] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/workspace/views.py", line 273, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/workspace/EzWeb/commons/get_data.py", line 374, in get_global_workspace_data
+    filter_data = serializers.serialize('python', filters, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 38, in serialize
+    for obj in queryset:
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 185, in _result_iter
+    self._fill_cache()
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 618, in _fill_cache
+    self._result_cache.append(self._iter.next())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la relación «connectable_filter»
+
+SELECT "connectable_filter"."id", "connectable_filter"."name", "connectable_filter"."code", "connectable_filter"."label", "connectable_filter"."nature", "connectable_filter"."category", "connectable_filter"."help_text", "connectable_filter"."params" FROM "connectable_filter"
+
+ERROR: GET /workspaces/290 anonymous1228132627154
+[01/12/2008 12:57:09] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/workspace/views.py", line 273, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/mac/workspace/EzWeb/commons/get_data.py", line 374, in get_global_workspace_data
+    filter_data = serializers.serialize('python', filters, ensure_ascii=False)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/core/serializers/base.py", line 38, in serialize
+    for obj in queryset:
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 185, in _result_iter
+    self._fill_cache()
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 618, in _fill_cache
+    self._result_cache.append(self._iter.next())
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/query.py", line 275, in iterator
+    for row in self.query.results_iter():
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/models/sql/query.py", line 1734, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la relación «connectable_filter»
+
+SELECT "connectable_filter"."id", "connectable_filter"."name", "connectable_filter"."code", "connectable_filter"."label", "connectable_filter"."nature", "connectable_filter"."category", "connectable_filter"."help_text", "connectable_filter"."params" FROM "connectable_filter"
+
+ERROR: GET /workspace/1/add anonymous1228132703184
+[01/12/2008 13:05:53] Traceback (most recent call last):
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/mac/workspace/EzWeb/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/usr/lib/python2.5/site-packages/Django-1.0.2_final-py2.5.egg/django/db/transaction.py", line 238, in _commit_on_success
+    res = func(*args, **kw)
+  File "/home/mac/workspace/EzWeb/workspace/views.py", line 523, in read
+    linkWorkspace(user, cloned_workspace.id)
+  File "/home/mac/workspace/EzWeb/workspace/views.py", line 203, in linkWorkspace
+    packageLinker.link_workspace(workspace, user)
+  File "/home/mac/workspace/EzWeb/workspace/packageLinker.py", line 46, in link_workspace
+    ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+NameError: global name 'IGadget' is not defined
+
+ERROR: PUT /workspace/1/variables admin
+[01/12/2008 15:17:39] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
