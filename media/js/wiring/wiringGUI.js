@@ -655,11 +655,19 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     if (!this.channels.elementExists(channel))
       return; // Nothing to do
 
-    // Check whether this channel exists in the current wiring model
+	// Check whether this channel exists in the current wiring model
     // or when it was created with the wiring interface and removed
     // before commiting changes
-    if (channel.exists())
-      this.channelsForRemove.push(channel);
+	if (channel.exists()){
+	  this.channelsForRemove.push(channel);
+	
+	// The channel might have been created and deleted without saving  
+	// the wiring information (i.e. the user does not change between interfaces).
+	// In this case, the wiring core has information about the channel that 
+	// must be removed
+	}else if (channel.isUnsaved()){
+		this.wiring.removeChannel (channel.getId(), true);
+	}
 
     if (this.currentChannel == channel){
       this._changeChannel(channel);
@@ -1100,6 +1108,10 @@ ChannelInterface.prototype.getId = function(newName) {
   	return this.provisional_id;
   }
   return this.channel.getId();
+}
+
+ChannelInterface.prototype.isUnsaved = function() {
+	return (!this.channel && this.provisional_id);
 }
 
 ChannelInterface.prototype.getInputs = function() {

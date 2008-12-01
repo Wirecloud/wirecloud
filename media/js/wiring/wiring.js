@@ -306,7 +306,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		return channel;
 	}
 
-	Wiring.prototype.removeChannel = function (channelId) {
+	Wiring.prototype.removeChannel = function (channelId, isTemp) {
 		var channel = this.channels.getElementById(channelId);
 
 		if (channel == undefined) {
@@ -319,7 +319,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		//delete the workspace variable
 		this.workspace.getVarManager().removeWorkspaceVariable(channel.variable.id);
 		
-		this.channelsForRemoving.push(channel.id);
+		if (!isTemp)
+			this.channelsForRemoving.push(channel.id);
 		
 		this.channels.removeById(channelId);
 		
