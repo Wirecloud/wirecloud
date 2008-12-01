@@ -31,7 +31,7 @@
 #
 
 from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue
-from igadget.models import Variable
+from igadget.models import Variable, IGadget
 
 from django.db import models, IntegrityError
 
@@ -43,10 +43,12 @@ class PackageLinker:
         # Getting all abstract variables of workspace
         ws_igadget_vars = Variable.objects.filter(igadget__tab__workspace=workspace)
         
+        ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+        
         # Linking igadgets' gadget with user
         # For user personal showcase 
-        for var in ws_igadget_vars:
-            gadget = var.igadget.gadget
+        for igadget in ws_igadgets:
+            gadget = igadget.gadget
             gadget.users.add(user)
             
             gadget.save()
