@@ -42,7 +42,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.channels = new Array();
   this.channelsForRemove = new Array();
   this.filterMenus = new Hash();
-  this.enabled = false;
   this.friend_codes = {};
   this.highlight_color = "#FFFFE0"; // TODO remove
   this.friend_codes_counter = 0;
@@ -705,10 +704,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.clearMessages();
     if (oldChannel != newChannel) {
       this.highlightChannel(newChannel);
-      this._setEnableStatus(true);
     } else {
       this.currentChannel = null;
-      this._setEnableStatus(false);
     }
   }
 
@@ -741,9 +738,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   }
 
   WiringInterface.prototype._highlight_friend_code = function (friend_code, highlight) {
-    // Don't highligh if the interface is disabled
-    if (!this.enabled)
-      return;
 
     if (!this.friend_codes[friend_code]) {
       // Error
@@ -761,7 +755,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
         } else {
           fcElement.style.backgroundColor = fcBgColor;
         }
- //       fcElement.parentNode.parentNode.removeClassName("folded");
       }
     }
   }
@@ -843,14 +836,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     //mark the connections with the channel
 	this.highlightChannelInputs(channel);
 	this.highlightChannelOutputs(channel);
-  }
-
-  WiringInterface.prototype._setEnableStatus = function(enabled) {
-    if (this.enabled == enabled)
-      return; // Nothing to do
-
-    // TODO
-    this.enabled = enabled;
   }
 
     // ***********************************
