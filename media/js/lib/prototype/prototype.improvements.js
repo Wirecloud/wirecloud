@@ -43,12 +43,12 @@ Object.extend(Event, {
 	 * Event extension to manage user privileges 
 	 * */
 	observe: function(element, name, observer, useCapture, featureId){
+		var _observer = observer;
 		if (featureId){
 			//check the user policies
-			if (!UserProfileFactory.getInstance().checkPolicy(featureId)){
+			if (!EzSteroidsAPI.evaluePolicy(featureId)){
 				//if the user isn't allowed
-				//TODO: set an error handler
-				return;
+				_observer = function(msg){LogManagerFactory.getInstance().showMessage("You are not allowed to perform this operation");};
 			}
 		}
 		element = $(element);
@@ -57,7 +57,7 @@ Object.extend(Event, {
     	if (name == 'keypress' && (Prototype.Browser.WebKit || element.attachEvent))
       		name = 'keydown';
 
-   		Event._observeAndCache(element, name, observer, useCapture);
+   		Event._observeAndCache(element, name, _observer, useCapture);
 	}
 });
 

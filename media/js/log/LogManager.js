@@ -35,6 +35,8 @@ var LogManagerFactory = function () {
 		/**** PRIVATE VARIABLES ****/
 		this.logConsole = $('logs_console');
 		this.logContainer = $('logs_container');
+		this.messageContainer = $('message_section');
+		this.messageBox = $('message_box');
 		this.errorCount = 0;
 
 
@@ -104,6 +106,17 @@ var LogManagerFactory = function () {
 		LogManager.prototype.reset = function(){
 			this.logConsole.innerHTML = '';
 			this.errorCount = 0;
+		}
+		
+		LogManager.prototype.showMessage = function(msg){
+			this.messageBox.update(msg);
+			this.messageContainer.setStyle({"display": "block"});
+			setTimeout(function(){LogManagerFactory.getInstance().removeMessage()}, 3000);			
+		}
+		
+		LogManager.prototype.removeMessage = function(){
+			this.messageContainer.setStyle({"display": "none"});
+			this.messageBox.update("");
 		}
 	}
 	// *********************************

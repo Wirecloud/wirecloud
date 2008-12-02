@@ -213,12 +213,12 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		
 		    button.observe("click", function(event){
 				CatalogueFactory.getInstance().addResourceToShowCase(id_);
-			});
+			},false,"instance_gadget");
 		}
 		else{ 
 		    //Mashup
 
-		    var bottom_message = gettext('Add Gadget'); 
+		    var bottom_message = gettext('Add Mashup'); 
 		    var bottom_class = ''
 
 		    if (this.isContratable(state.getCapabilities())) {
@@ -233,7 +233,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 
 		    button.observe("click", function(event){
 				CatalogueFactory.getInstance().addMashupResource(id_);
-			});
+			},false,"instance_mashup");
 		}
 		content.appendChild(button);
 		// BOTTOM
@@ -666,7 +666,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			}));
 			add_gadget_button.observe("click", function(event){
 				CatalogueFactory.getInstance().addResourceToShowCase(UIUtils.getSelectedResource());
-			});
+			},false,"instance_gadget");
 		}
 		else{ //add mashup button
 			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
@@ -677,7 +677,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			}));
 			add_gadget_button.observe("click", function(event){
 				CatalogueFactory.getInstance().addMashupResource(UIUtils.getSelectedResource());
-			});
+			},false,"instance_mashup");
 		}
 		$("info_resource_content").appendChild(add_gadget_button);
 		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({

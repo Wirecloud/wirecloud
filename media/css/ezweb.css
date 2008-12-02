@@ -216,6 +216,24 @@ a:hover{
   cursor:pointer;
 }
 
+.message_section{
+	position: absolute;
+	top: 6px;
+	z-index: 3;
+	display: none;
+	width:100%;
+	text-align: center;
+	height:18px;
+	padding-top:5px;
+	background: lightyellow;
+	border: 1px solid red;
+}
+
+.message_box{
+	color: #000000;
+	font-weight: bold;
+}
+
 #add_tab_link {
   background: transparent url(/ezweb/images/addTab21px.png) no-repeat;
   

@@ -17,8 +17,6 @@
    		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/> 
    		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
 		<div id="workspace_name"></div>
-<!--		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola',function(){alert('hola')});"/>	
-		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="var id=OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola2',function(){alert('hola')}); OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.removeOption(id,null,'adios',function(){alert('adios')});"/>	-->
    		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>		
 		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked"onclick="OpManagerFactory.getInstance().showLogs()";></span>
 	</div>

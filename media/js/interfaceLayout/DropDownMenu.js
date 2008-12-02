@@ -91,7 +91,7 @@ function DropDownMenu(idMenu_, parentMenu){
 		if (imgPath){
 			opHtml += '<img src="'+imgPath+'"/>';
 		}
-		opHtml += '<span>'+option+'</span></div>';
+		opHtml += '<span>'+gettext(option)+'</span></div>';
 		try{
 			if(optionList.length >0){
 				if(position == 0)
@@ -102,7 +102,7 @@ function DropDownMenu(idMenu_, parentMenu){
 				new Insertion.Bottom(this.menu, opHtml);
 			}
 			var newOption = $(opId);
-			Event.observe(newOption, 'click', event);
+			Event.observe(newOption, 'click', event, false, option);
 			this.option_id++;
 		}catch(e){
 			return null;
@@ -129,7 +129,7 @@ function DropDownMenu(idMenu_, parentMenu){
 		if (imgPath){
 			opHtml += '<img src="'+imgPath+'"/>';
 		}
-		opHtml += '<span>'+option+'</span>';
+		opHtml += '<span>'+gettext(option)+'</span>';
 		new Insertion.Before(old, opHtml);
 		old=old.remove();
 		var newOp = $(opId);
@@ -238,7 +238,7 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 	if (imgPath){
 		opHtml += '<img src="'+imgPath+'"/>';
 	}
-	opHtml += '<span>'+option+'</span>';
+	opHtml += '<span>'+gettext(option)+'</span>';
 	
 	//creates the element for the rigth side (help buttom)
 	opHtml += '<input class="help_buttom" type="button"/></div>';

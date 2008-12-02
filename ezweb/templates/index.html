@@ -24,6 +24,7 @@
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
 <script type="text/javascript" language="javascript">
 _URIConstants = function(){}
+_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
 _URIConstants.prototype.USER = '/user/{{ user.username }}';
 _URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
 _URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
@@ -70,7 +71,6 @@ var ezweb_user_name = '{{ user.username }}'
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/utils.js"></script>
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/userProfile/UserProfile.js"></script>
 
 <script language="JavaScript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
@@ -127,6 +127,10 @@ var ezweb_user_name = '{{ user.username }}'
 <script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
+
+<script language="JavaScript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
+<script language="JavaScript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>  
+
 
 <!-- Initialization code -->
 <script language="JavaScript">
@@ -277,14 +281,14 @@ var ezweb_user_name = '{{ user.username }}'
 
 </div>
 <div id="toolbar_section" class="toolbar_section">
-   		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/> 
-   		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
+   		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked"/> 
+   		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked"/>
 		<div id="workspace_name"></div>
-<!--		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola',function(){alert('hola')});"/>	
-		<input type="button" id="change_ws_link" title="Change workspace" class="toolbar_unmarked" onclick="var id=OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.addOption(null,'hola2',function(){alert('hola')}); OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().menu.removeOption(id,null,'adios',function(){alert('adios')});"/>	-->
+
    		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>		
 		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked"onclick="OpManagerFactory.getInstance().showLogs()";></span>
-	</div>
+</div>
+<div id="message_section" class="message_section"><span id="message_box"class="message_box"></span></div>
 </div>
 </div>
 {% endblock %}

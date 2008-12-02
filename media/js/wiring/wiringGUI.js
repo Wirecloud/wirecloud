@@ -49,6 +49,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.channels_counter = 1;
   this.channelBaseName = gettext("Channel");
   this.visible = false; // TODO temporal workarround
+  
+  Event.observe($('wiring_link'), "click", function(){OpManagerFactory.getInstance().activeWorkSpace.showWiring()}, false, "show_wiring");
 
   this.eventColumn = $('eventColumn');
   this.slotColumn = $('slotColumn');
@@ -253,7 +255,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
 	filterMenu.addOptionWithHelp(
 			"/ezweb/images/filter.gif", 
-			gettext('Empty'), 
+			'Empty', 
 			"Returns the value of the channel unfiltered.",
 			function(){
 				LayoutManagerFactory.getInstance().hideCover();

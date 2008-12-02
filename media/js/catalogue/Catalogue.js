@@ -49,6 +49,8 @@ var CatalogueFactory  = function () {
 
 		this.catalogueElement = $('showcase_container');
 		
+		Event.observe($('catalogue_link'), "click", function(){OpManagerFactory.getInstance().showCatalogue()}, false, "show_catalogue");
+		
 		
 		// ********************
 		//  PRIVILEGED METHODS
