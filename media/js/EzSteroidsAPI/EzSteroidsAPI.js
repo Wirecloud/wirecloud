@@ -57,18 +57,23 @@ function _EzSteroidsAPI(user) {
 	}
 	
 	try{
+		this.userPolicies = null;
+		this.globalPolicies = null;
+		
+		// get the policies
 		this.API = new API(URIs.EZSTEROIDS_API, URIs.PROXY);
-		this.userPolicies = this.API.getUserPolicies(user, setUserPolicies.bind(this), showUserError);
-		this.globalPolicies = this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
+		this.API.getUserPolicies(user, setUserPolicies.bind(this), showUserError);
+		this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
 	}
 	catch(e){
 		this.userPolicies = null;
+		this.globalPolicies = null;
 	}
 	
 }
 
 _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
-	if (!this.userPolicies)
+	if (!this.userPolicies || !this.globalPolicies)
 		// if EzSteroids isn't available, the user can do the action
 		return true
 	
