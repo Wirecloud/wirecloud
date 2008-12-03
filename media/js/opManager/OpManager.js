@@ -63,7 +63,24 @@ var OpManagerFactory = function () {
 		}
 		
 		var onError = function (transport, e) {
-		    alert("error en loadEnvironment");
+			var msg;
+			try {
+				if (e) {
+					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+					                  true);
+				} else if (transport.responseXML) {
+					msg = transport.responseXML.documentElement.textContent;
+				} else {
+					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+				}
+				msg = interpolate(gettext("Error loading EzWeb Platform: %(errorMsg)s."),
+				                          {errorMsg: msg}, true);
+				LogManagerFactory.getInstance().log(msg);
+			} catch (e) {
+			}
+
+			alert (gettext("Error loading EzWeb Platform"));
 		}
 		
 		/*****WORKSPACE CALLBACK***/
