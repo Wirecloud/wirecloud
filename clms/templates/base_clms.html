@@ -11,6 +11,9 @@
   <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}clms/css/ezsteroids.css" />
   <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
+  <!--[if IE]>
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/iefixes.css" />
+  <![endif]-->
 
 
   <script type="text/javascript"> 
@@ -27,11 +30,14 @@
 <body {% block onload %} onload="{javascript:onload_base();}" {% endblock %}>
 
     <div id="head_control_tab" class="control_tab">
-        {% block head_control_tab %}
-            <a href="javascript:{hide_head(false);}">{% trans "Hide Menu" %}</a>
-        {% endblock %}
+    {% block head_control_tab %}
+        {% if hide %}
+            <a href="javascript:{show_head(true);}"><img src="{{ MEDIA_URL }}clms/images/acceder_logo.png" /></a>
+        {% else %}
+            <a href="javascript:{hide_head(true);}"><img src="{{ MEDIA_URL }}clms/images/acceder_logo.png" /></a>
+        {% endif %}
+    {% endblock %}
     </div>
-
 
   {% if is_anonymous %}
     <div id="login_control_tab" class="control_tab">
@@ -45,67 +51,56 @@
 
     <div id="header" style="{% if hide %} display:none;{% endif %}">
 
- <div id="banner"> 
+ <div id="banner">
+    <div id="greeting">
+        {% if not user.is_anonymous %}
+            {% trans "Welcome" %}, {{ user.username }}
+        {% endif %}
+    </div>
+    <div id="exit_control_tab">
+        {% if not is_anonymous %}
+            <a href="/logout">{% trans "Exit" %}</a>
+        {% endif %}
+    </div>
+    <div id="logo"><img id="logo" src="{{ MEDIA_URL }}clms/images/logo.png" alt="EzWeb Logo"></div>
+ </div>
 
-  <div id="greeting">  
-    {% if not user.is_anonymous %}
-        {% trans "Welcome" %}, {{ user.username }} |
-    {% endif %}
+    <div id="bar">
+        <div id="section_title"><h3>{% block bar_title %} CLMS {% endblock %}</h3></div>
+        <div id="admin_icons">
+            <ul class="icons">
+                {% if not user.is_anonymous %}
+                    <li id="profile_link"><a href="#" onClick="window.location.href='{{AUTHENTICATION_SERVER_URL}}/user/profile/'" title="{% trans "Profile" %}"/>&nbsp;</a></li>
+                    <li id="layauts_link"><a href="#" onclick="window.location.href='{% url clms.views.layout_catalogue_view %}'" title="{% trans "Layouts" %}">&nbsp;</a></li>
+                {% endif %}
+                    <li id="flag"><a href="#" onclick="#" title="{% trans "Language" %}">&nbsp;</a></li>
+                    <li id="favourites"><a href="#" onclick="window.location.href='{% url clms.views.favourite_catalogue_view %}'" title="{% trans "Layouts" %}">&nbsp;</a></li>
+                {% if user.is_staff %}
+                    <li id="profile_link_admin"><a href="#" onClick="window.location.href='{{AUTHENTICATION_SERVER_URL}}/user/profile/'" title="{% trans "Profile" %}"/>&nbsp;</a></li>
+                    <li id="layauts_link_admin"><a href="#" onclick="window.location.href='{% url clms.views.layout_catalogue_view %}'" title="{% trans "Layouts" %}">&nbsp;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 
-    {% for lang in LANGUAGES %} 
-        {% ifnotequal LANGUAGE_CODE lang.0 %}
+<!--            {% for lang in LANGUAGES %} 
+                {% ifnotequal LANGUAGE_CODE lang.0 %}
                 <form id="languages-{{ lang.0 }}" class="languageform" action="{% url clms.views.language_setting %}" method="post">
                     <input type="hidden" value="{{ lang.0 }}" name="language"/>
                     <input style="color:white;" class="language" type="image" height="11" width="14" src="/media/img/flag_{{ lang.0 }}.png" alt="{{lang.1}}"/>
                 </form> |
-        {% endifnotequal %}
-    {% endfor %}
-    {% if not user.is_anonymous %}
-        <a href="/logout">{% trans "Exit" %}</a>
-    {% endif %}
-
-</div>
- 
-  <img id="logo" src="{{ MEDIA_URL }}clms/images/ezsteroids.gif" alt="EzWeb Logo">
- </div>
-
-    <div id="bar">
-
-      {% if not user.is_anonymous %}
-        <div class="tab_section" id="tab_section">
-            <div id="fixed_bar" style="width: 100%">
-                <div id="scroll_bar" style="width: 100%; right: 0px;">
-                    <div style="display: block; z-index: 2; visibility: visible;" class="tab" id="tab_4_5">
-                        <div id="favourites" class="favourites">
-                            <a href="{% url clms.views.favourite_catalogue_view %}" >{% trans "Favourites" %}</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-      {% endif %}
-
-
-        <div class="toolbar_section" id="toolbar_section">
-        {% if not user.is_anonymous %}
-            <input type="button" onClick="window.location.href='{{AUTHENTICATION_SERVER_URL}}/user/profile/'" class="toolbar_unmarked" title="{% trans "Profile" %}" id="profile_link"/> 
-        {% endif %}
-
-            <input type="button" onclick="window.location.href='{% url clms.views.layout_catalogue_view %}'" class="toolbar_unmarked" title="{% trans "Layouts" %}" id="layauts_link"/>
-            {% if user.is_staff %}
-                <input type="button" onclick="window.location.href='/admin/'" class="toolbar_unmarked" title="{% trans "Administration Panel" %}" id="admin_link"/>
-            {% endif %}
+                {% endifnotequal %}
+            {% endfor %}-->
             <span class="toolbar_unmarked" title="{% trans "Errors" %}" style="display: none;" id="logs_link"> </span>
         </div>
-
          <div class="breadcrumbs" id="breadcrumbs">
             <div id="fixed_bar" style="width: 100%;">
-                 <div id="scroll_bar" style="width: 100%; right: 0px;">
+                 <!--<div id="scroll_bar" style="width: 100%; right: 0px;">
                     <div style="display: block; z-index: 2; visibility: visible;" class="tab current" id="tab_4_4">
                         {% block breadcrumbs %}
 
                         {% endblock %}
-                    </div>
+                    </div>-->
                 </div>
              </div>
         </div>

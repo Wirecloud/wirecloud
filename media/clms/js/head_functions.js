@@ -3,7 +3,7 @@ function hide_head(make_resize)
 {
     var header_height_value = $("header").offsetHeight;
     Effect.toggle('header', 'blind',{ duration: 1.0 });
-    $('head_control_tab').innerHTML = "<a href='javascript:{show_head("+make_resize+");}'>Show Menu</a>";
+    $('head_control_tab').innerHTML = "<a href='javascript:{show_head("+make_resize+");}'><img src='/ezweb/clms/images/acceder_logo.png'/></a>";
     if(make_resize)
     {
         resize('+');
@@ -13,7 +13,7 @@ function hide_head(make_resize)
 function show_head(make_resize)
 {
     Effect.toggle('header', 'blind',{ duration: 1.0 });
-    $('head_control_tab').innerHTML = "<a href='javascript:{hide_head("+make_resize+");}'>Hide  Menu</a>";
+    $('head_control_tab').innerHTML = "<a href='javascript:{hide_head("+make_resize+");}'><img src='/ezweb/clms/images/acceder_logo.png'/></a>";
     if(make_resize)
     {
         setTimeout("resize('-')", 2000);

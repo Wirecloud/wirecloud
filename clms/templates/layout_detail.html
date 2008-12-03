@@ -43,16 +43,16 @@
 
 {% block head_control_tab %}
    {% if hide %}
-     <a href="javascript:{show_head(true);}">{% trans "Show Menu" %}</a>
+     <a href="javascript:{show_head(true);}"><img src="{{ MEDIA_URL }}clms/images/acceder_logo.png" /></a>
    {% else %}
-    <a href="javascript:{hide_head(true);}">{% trans "Hide Menu" %}</a>
+    <a href="javascript:{hide_head(true);}"><img src="{{ MEDIA_URL }}clms/images/acceder_logo.png" /></a>
    {% endif %}
 {% endblock %}
 
 
 {% block onload %} onload="{javascript:onload_layout_detail();}" {% endblock %}
 
-
+{% block bar_title %} {{ layout.name }} {% endblock %}
 
 {% block breadcrumbs %}
 

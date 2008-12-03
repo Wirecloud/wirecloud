@@ -13,6 +13,7 @@
     <b>{% trans "Layout catalogue" %}</b> 
 {% endblock %}
 
+{% block bar_title %} {% trans "Layout catalogue "%} {% endblock %}
 
 {% block content %}
 
@@ -31,15 +32,15 @@
         <div id='layout_box_{{ layout.id }}' class="layout_box">
             <div class="top"></div>
             <div class="toolbar">
-               {% block favourite %}
+                <div class="title">{{ layout.name }}</div>
+            </div>
+            <div class="content" id="layout_{{ layout.id }}_content" style="">
+                {% block favourite %}
                  {% if not user.is_anonymous %}
-                    {% favourite user layout 'normal' %}
+                    {% favourite user layout 'normal' %}|
                     {% default_layout user layout 'normal' %}
                  {% endif %}
                {% endblock %} 
-            </div>
-            <div class="content" id="layout_{{ layout.id }}_content" style="">
-                <div class="title">{{ layout.name }}</div>
                 <div class="image">
                     {{ layout.thumbnail|safe }}
                 </div>
