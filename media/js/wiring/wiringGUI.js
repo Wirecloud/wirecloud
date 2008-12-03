@@ -48,6 +48,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.channels_counter = 1;
   this.channelBaseName = gettext("Channel");
   this.visible = false; // TODO temporal workarround
+  this.unfold_on_entering = false; //Does the user want all tabs to be expanded?
   
   Event.observe($('wiring_link'), "click", function(){OpManagerFactory.getInstance().activeWorkSpace.showWiring()}, false, "show_wiring");
 
@@ -104,13 +105,18 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 							this.toggleSlotColumn(expand);	
 	                    }.bind(this));    
 	  
-	  Event.observe($('unfold_all_link'), "click",
+	Event.observe($('unfold_all_link'), "click",
 	  					function (){
 	  						this.toggleEventColumn(true);
 						  	this.toggleSlotColumn(true);
 						}.bind(this));
-  
-  
+					
+	Event.observe($('unfold_chkItem'), "click",
+	  					function(e){	  				
+	  						//the user wants all unfolded
+	  						e.target.toggleClassName('chkItem');
+	  						this.unfold_on_entering = e.target.hasClassName('chkItem');
+	  					}.bind(this));  
   
 //  this.chEventsWr = null;
 //  this.chSlotsWr = null;  
@@ -436,12 +442,23 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	//if the igadget has events, add it
 	if (igadgetEvents.hasConnectables()){
 	    tabEvents.addConnectables(igadgetEvents.getConnectables());
-	    igadgetEvents.forceToggle();
+	    //fold the igadget if the user hasn't specify not doing it.
+	    if(!this.unfold_on_entering)
+		    igadgetEvents.forceToggle();
+		else{
+			igadgetEvents.openedByUser = true;
+			igadgetEvents.parentInterface.igadgetsOpenedByUser++;		}
 	}
 	//if the igadget has slots, add it
 	if (igadgetSlots.hasConnectables()){
 	    tabSlots.addConnectables(igadgetSlots.getConnectables());
-	    igadgetSlots.forceToggle();
+	    //fold the igadget if the user hasn't specify not doing it.
+	    if(!this.unfold_on_entering)
+		    igadgetSlots.forceToggle();
+		else{
+			igadgetSlots.openedByUser = true;
+			igadgetSlots.parentInterface.igadgetsOpenedByUser++;
+		}
 	} 
     
   }

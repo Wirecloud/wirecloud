@@ -12,6 +12,8 @@
 }
 
 #wiring .tableCell {
+  position:relative;
+  float:left;
   border-collapse: collapse;
   width: 100%;
   table-layout: auto;
@@ -249,11 +251,37 @@
   margin: 2ex 1ex;
 }
 
+#wiring #wiring_options{
+  position:relative;
+  float:right;
+  top: 5px;
+  right: 5px;
+  color:#2D6F9C;
+  font-size: 90%;
+}
+
 #wiring #unfold_all_link{
+  display:inline;
+}
+
+#wiring #wiring_options label{
+ margin-right: 20px;
+}
+
+#wiring #unfold_chkItem{
   display: inline;
-  position: absolute;
-  top:5px;
-  right: 20px;
+  width: 15px;
+  height: 15px;
+  border: 0px;
+  padding: 0px;  
+  cursor: pointer;
+}
+#wiring #unfold_chkItem{
+  background: url(/ezweb/js/wiring/unchecked14px.png) no-repeat right bottom;
+ }
+
+#wiring #unfold_chkItem.chkItem{
+  background: url(/ezweb/js/wiring/checked14px.png) no-repeat right bottom;
 }
 
 #wiring #channels_list .channel {

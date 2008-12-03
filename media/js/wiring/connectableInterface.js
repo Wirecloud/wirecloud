@@ -181,8 +181,10 @@ SlotTabInterface.prototype.show = function () {
    	if (this.tabDiv.childNodes.length == 1){ //Elements withouth gadgets
     	this.tabDiv.getElementsByClassName("tabContent")[0].removeClassName("bckgrnd_folder");
    	}
- 	
-	this.forceToggle();
+ 	//fold the tab if the user hasn't specify not doing it.
+    if(!this.wiringGUI.unfold_on_entering)
+		this.forceToggle();
+
 }
 
 // Event interface for the tab (without connectable)
@@ -200,8 +202,9 @@ EventTabInterface.prototype.show = function (){
     }else{
     	this.tabDiv.getElementsByClassName("tabContent")[0].removeClassName("bckgrnd_folder");
     }
-    
-  	this.forceToggle();
+    //fold the tab if the user hasn't specify not doing it.
+    if(!this.wiringGUI.unfold_on_entering)
+	  	this.forceToggle();
 }
 
 ////////////////////////////////////////////////////////////

@@ -1,5 +1,9 @@
 {% load i18n %}
   <div id="wiring_messages"></div>
+  <div id="wiring_options">
+	<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
+	<div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
+  </div>
   <table id="wiring_table" class="tableCell"><tr>
       <td id="eventColumn" class="eventColumn">
           <div class="title folded">{% trans "EVENTS" %}</div>
@@ -30,4 +34,3 @@
           <div id="slots_list"></div>
       </td></tr>
   </tr></table>
-  <div id="unfold_all_link">{% trans 'Unfold all' %}</div>
