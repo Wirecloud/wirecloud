@@ -191,13 +191,16 @@ function WorkSpace (workSpaceState) {
 		
 		tabInfo.igadgetList=[];
 		
-		this.tabInstances[tabInfo.id] = new Tab(tabInfo, this);
+		var newTab = new Tab(tabInfo, this);
+		this.tabInstances[tabInfo.id] = newTab;
 		this._checkLock();
 		this.setTab(this.tabInstances[tabInfo.id]);
 		for(var i=0; i< tabInfo.workspaceVariables.length; i++){
 			this.varManager.parseWorkspaceVariable(tabInfo.workspaceVariables[i]);
 			this.wiring.processVar(tabInfo.workspaceVariables[i]);
 		}
+
+		newTab.getDragboard().paint();
 	}
 	
 	var createTabError = function(transport, e) {
@@ -485,7 +488,7 @@ function WorkSpace (workSpaceState) {
 			this.unloadTab(tabKeys[i]);
 		}
 		// reset the values used to figure out the size of the tabBar
-		LayoutManagerFactory.getInstance().resetTabBar();		
+		LayoutManagerFactory.getInstance().resetTabBar();
 		this.wiring.unload();
 		this.contextManager.unload();
 		
@@ -508,8 +511,8 @@ function WorkSpace (workSpaceState) {
 		this.varManager.addInstance(igadget, igadgetJSON);
 		this.contextManager.addInstance(igadget, igadget.getGadget().getTemplate());
 		this.wiring.addInstance(igadget, igadgetJSON.variables);
-		
-		tab.getDragboard().showInstance(igadget);
+
+		igadget.paint();
 
 		// The dragboard must be shown after an igadget insertion
 		//LayoutManagerFactory.getInstance().unMarkGlobalTabs();
@@ -519,7 +522,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
 			this.varManager.removeInstance(iGadgetId);
 			this.wiring.removeInstance(iGadgetId);
-			this.contextManager.removeInstance(iGadgetId);	
+			this.contextManager.removeInstance(iGadgetId);
 	}
 	
 	WorkSpace.prototype.removeIGadget = function(iGadgetId) {

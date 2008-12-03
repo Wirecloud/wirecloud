@@ -54,8 +54,6 @@ def get_wiring_variable_data(var, ig):
     res_data['type'] = var.vardef.type
     res_data['value'] = var.value
     res_data['friend_code'] = var.vardef.friend_code
-    res_data['code'] = ig.code
-    res_data['igadget_code'] = ig.code
     res_data['igadget_id'] = ig.id
 
     return res_data
@@ -70,7 +68,6 @@ def get_wiring_data(igadgets):
         igObject = {}
         list = []
 
-        igObject['code'] = ig.code
         igObject['id'] = ig.pk
 
         #Searching wiring variables
@@ -329,16 +326,16 @@ def get_connectable_data(connectable):
             #It's a Workspace Variable!
             ws_var_id = WorkSpaceVariable.objects.get(abstract_variable = connectable.abstract_variable).id
             ig_var_id = None
-                                                            
+
     elif isinstance(connectable, In):
         connectable_type = "in"
         ig_var_id = connectable.variable.id
         ws_var_id = None
-        
+
     res_data['connectable_type'] = connectable_type
     res_data['ig_var_id'] = ig_var_id
     res_data['ws_var_id'] = ws_var_id
-            
+
     return res_data
 
 
@@ -352,14 +349,14 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     tabs_data = [get_tab_data(d) for d in data]
     
     data_ret['workspace']['tabList'] = tabs_data
-           
+
     for tab in tabs_data:
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
         igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
         igadget_data = [get_igadget_data(d, user, workSpaceDAO) for d in igadget_data]
         tab['igadgetList'] = igadget_data
-        
+
     #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
     data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
@@ -372,7 +369,7 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     # Filter information
     filters = Filter.objects.all()
     filter_data = serializers.serialize('python', filters, ensure_ascii=False)
-    data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]        
+    data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]
     
     return data_ret
 
@@ -401,23 +398,24 @@ def get_igadget_data(data, user, workspace):
     position = Position.objects.get(pk=data_fields['position'])
 
     data_ret['id'] = data['pk']
-    data_ret['code'] = data_fields['code']
     data_ret['name'] = data_fields['name']
     data_ret['tab'] = data_fields['tab']
+    data_ret['layout'] = data_fields['layout']
     data_ret['gadget'] = gadget.uri
-    data_ret['top'] = position.posY 
+    data_ret['top'] = position.posY
     data_ret['left'] = position.posX
+    data_ret['zIndex'] = position.posZ
     data_ret['width'] = position.width
     data_ret['height'] = position.height
     if position.minimized:
         data_ret['minimized'] = "true"
     else:
         data_ret['minimized'] = "false"
-    
+
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
     data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
-   
+
     return data_ret
 
 def get_variable_data(data, user, workspace):

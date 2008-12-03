@@ -41,6 +41,7 @@ class Position(models.Model):
 
     posX = models.IntegerField(_('PositionX'))
     posY = models.IntegerField(_('PositionY'))
+    posZ = models.IntegerField(_('PositionZ'), default=0)
     height = models.IntegerField(_('Height'))
     width = models.IntegerField(_('Width'))
     minimized = models.BooleanField(_('Minimized'), default=False);
@@ -50,18 +51,17 @@ class Position(models.Model):
 
 class IGadget(models.Model):
 
-    code = models.IntegerField(_('Code'))
     name = models.CharField(_('Name'), max_length=250)
-        
     gadget = models.ForeignKey(Gadget, verbose_name=_('Gadget'))
     tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
+    layout = models.IntegerField(_('Layout'), default=0)
     position = models.ForeignKey(Position, verbose_name=_('Position'))
 
     def __unicode__(self):
         return str(self.pk)
 
 class Variable(models.Model):
-    
+
     vardef = models.ForeignKey(VariableDef, verbose_name=_('Variable definition'))
     igadget = models.ForeignKey(IGadget, verbose_name=_('IGadget'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))

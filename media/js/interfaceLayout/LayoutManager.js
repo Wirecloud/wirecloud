@@ -310,6 +310,7 @@ var LayoutManagerFactory = function () {
 		//Shows the asked drop down menu 
 		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y){
 			switch (menuType){
+			case 'igadgetOps':
 			case 'workSpaceOps':
 				this.currentMenu = menu;
 				this.currentMenu.show('right', x, y);

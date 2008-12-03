@@ -64,16 +64,21 @@ var BrowserUtilsFactory = function () {
 			}
 			return newWidth;
 		}
-			
-		
-		BrowserUtils.prototype.isLeftButton = function(button){
-			
-			if (button == 0 || (this.isIE() && button == 1))
+
+		BrowserUtils.prototype.isLeftButton = function(button) {
+			if ((this.isIE() && button == 1) || button == 0)
 				return true;
 			else
-				return false;	
+				return false;
 		}
-	
+
+		BrowserUtils.prototype.isRightButton = function(button) {
+			if (button == 2)
+				return true;
+			else
+				return false;
+		}
+
 		BrowserUtils.prototype.getBrowser = function(){ 
 			if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;
 				var ieversion=new Number(RegExp.$1) // capture x.x portion and store as a number

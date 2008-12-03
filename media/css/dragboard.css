@@ -105,6 +105,27 @@ div.floatclearer {
   clear: both;
 }
 
+div.gadget_window div.snapButton {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  bottom: 0px;
+  right: 33px;
+  cursor: pointer;
+  /* This icon represents that the iGadget is outside the grid */
+  background: transparent url(/ezweb/images/igadget/extract.png) no-repeat left bottom;
+}
+
+div.gadget_window div.extractButton {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  bottom: 0px;
+  right: 33px;
+  cursor: pointer;
+  background: transparent url(/ezweb/images/igadget/snap.png) no-repeat left bottom;
+}
+
 div.gadget_window div.leftResizeHandle {
   position: absolute;
   width: 32px;

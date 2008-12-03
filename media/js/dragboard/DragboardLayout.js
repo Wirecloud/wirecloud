@@ -23,21 +23,23 @@
 *     http://morfeo-project.org
  */
 
-/**
- * @author aarranz
- */
-
 /////////////////////////////////////
 // DragboardLayout
 /////////////////////////////////////
 
 /**
- * Represents a dragboard layout to be used to place igadgets into the dragboard.
- * Despite javascript not having a way to mark classes abstract, this class is
- * abstract, so please do not try to create an instance of this clase.
+ * This constructor initializes the common resources of a DragboardLayout. As
+ * DragboardLayout is an abstract class, this can not be called directly and is
+ * intented to be used by child classes.
  *
- * @param dragboard      associated dragboard
- * @param scrollbarSpace space reserved for the right scroll bar in pixels
+ * @class Represents a dragboard layout to be used to place igadgets into the
+ * dragboard. Despite javascript not having a way to mark classes abstract, this
+ * class is abstract, so please do not try to create an instance of this class.
+ *
+ * @private
+ *
+ * @param {Dragboard} dragboard      associated dragboard
+ * @param {Number}    scrollbarSpace space reserved for the right scroll bar in pixels
  */
 function DragboardLayout(dragboard, scrollbarSpace) {
 	if (arguments.length == 0)
@@ -64,25 +66,76 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 	Event.observe(window, 'resize', this._notifyWindowResizeEvent);
 }
 
+/**
+ * Returns the size of the menu bar.
+ *
+ * @returns {MultiValuedSize} the size of the menu bar
+ */
 DragboardLayout.prototype.getMenubarSize = function() {
-	return 18; // TODO calculate this
+	var sizeInPixels = 18; // TODO calculate this
+	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+	return new MultiValuedSize(sizeInPixels, sizeInLU);
 }
 
-DragboardLayout.prototype.getMenubarSizeInCells = function() {
-	return Math.ceil(this.fromPixelsToVCells(this.getMenubarSize()));
-}
-
+/**
+ * Returns the size of the status bar.
+ *
+ * @returns {MultiValuedSize} the size of the menu bar
+ */
 DragboardLayout.prototype.getStatusbarSize = function() {
-	return 16; // TODO calculate this
+	var sizeInPixels = 16; // TODO calculate this
+	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+	return new MultiValuedSize(sizeInPixels, sizeInLU);
 }
 
-DragboardLayout.prototype.getExtraCells = function() {
-	var sizeInPixels = this.getMenubarSize() + this.getStatusbarSize();
-	return Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+/**
+ * Returns the total vertical extra size that will have an iGadget. For now,
+ * thats includes the menu bar and the status bar sizes.
+ *
+ * @returns {MultiValuedSize} vertical extra size
+ */
+DragboardLayout.prototype.getExtraSize = function() {
+	var sizeInPixels = this.getMenubarSize().inPixels +
+	                   this.getStatusbarSize().inPixels;
+	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+	return new MultiValuedSize(sizeInPixels, sizeInLU);
+}
+
+/////////////////////////////////////
+// Layout Units (LU) conversion.
+/////////////////////////////////////
+
+/**
+ * Converts
+ */
+DragboardLayout.prototype.adaptColumnOffset = function(pixels) {
+	var msg = gettext("method \"%(method)s\" must be implemented.");
+	msg = interpolate(msg, {method: "adaptColumnOffset"}, true);
+	throw new Exception(msg);
+}
+
+DragboardLayout.prototype.adaptRowOffset = function(pixels) {
+	var msg = gettext("method \"%(method)s\" must be implemented.");
+	msg = interpolate(msg, {method: "adaptRowOffset"}, true);
+	throw new Exception(msg);
+}
+
+DragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
+	var msg = gettext("method \"%(method)s\" must be implemented.");
+	msg = interpolate(msg, {method: "adaptHeight"}, true);
+	throw new Exception(msg);
+}
+
+DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
+	var msg = gettext("method \"%(method)s\" must be implemented.");
+	msg = interpolate(msg, {method: "adaptWidth"}, true);
+	throw new Exception(msg);
 }
 
 /**
  * This function is slow. Please, only call it when really necessary.
+ *
+ * @private
  */
 DragboardLayout.prototype._recomputeSize = function() {
 	var dragboardElement = this.dragboard.dragboardElement;
@@ -98,18 +151,39 @@ DragboardLayout.prototype._recomputeSize = function() {
 }
 
 /**
- * Returns true if the point is inside the dragboard
+ * Checks if the point is inside the dragboard.
+ *
+ * @param x  X coordinate
+ * @param y  Y coordinate
+ *
+ * @returns true if the point is inside
  */
 DragboardLayout.prototype.isInside = function (x, y) {
 	return (x >= 0) && (x < this.dragboardWidth) && (y >= 0);
 }
 
-
+/**
+ * Gets the width of the usable dragboard area.
+ *
+ * @returns The width of the usable dragboard area
+ */
 DragboardLayout.prototype.getWidth = function() {
 	return this.dragboardWidth;
 }
 
+/**
+ * Adds an iGadget to this layout.
+ *
+ * @param {IGadget} iGadget          iGadget to add
+ * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
+ */
 DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+	if (iGadget.layout != null) {
+		var msg = gettext("the iGadget could not be associated with this layout as it already has an associated layout.");
+		throw new Error(msg);
+	}
+	iGadget.layout = this;
+
 	if (affectsDragboard) {
 		this.dragboard._registerIGadget(iGadget);
 
@@ -118,8 +192,46 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	}
 
 	this.iGadgets[iGadget.code] = iGadget;
+
+	if (iGadget.element != null) {
+		iGadget._recomputeSize(false);
+		this._ensureMinimalSize(iGadget, false);
+	}
 }
 
+/**
+ * @private
+ */
+DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
+	// Ensure a minimal size
+	var minWidth = Math.ceil(this.fromPixelsToHCells(80));
+	var minHeight = Math.ceil(this.fromPixelsToVCells(24));
+
+	var sizeChange = false;
+	var newWidth = iGadget.getContentWidth();
+	var newHeight = iGadget.getContentHeight();
+
+	if (newWidth < minWidth) {
+		sizeChange = true;
+		newWidth = minWidth;
+	}
+
+	if (newHeight < minHeight) {
+		sizeChange = true;
+		newHeight = minHeight;
+	}
+
+	if (sizeChange) {
+		iGadget.setContentSize(newWidth, newHeight, false, persist);
+	}
+}
+
+/**
+ * Removes an iGadget from this layout.
+ *
+ * @param {IGadget} iGadget          iGadget to remove
+ * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
+ */
 DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
 	delete this.iGadgets[iGadget.code];
 
@@ -129,10 +241,13 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
 		if (iGadget.element != null) // TODO
 			this.dragboard.dragboardElement.removeChild(iGadget.element);
 	}
+
+	iGadget.layout = null;
 }
 
 /**
- * This method must be called to avoid memory leaks caused by circular references.
+ * This method must be called to avoid memory leaks caused by circular
+ * references.
  */
 DragboardLayout.prototype.destroy = function() {
 	Event.stopObserving(window, 'resize', this._notifyWindowResizeEvent);
@@ -144,6 +259,128 @@ DragboardLayout.prototype.destroy = function() {
 	this.iGadgets = null;
 }
 
-DragboardLayout.prototype.acceptMove = function(iGadget, newposition) {
-	iGadget.setPosition(newposition);
+/////////////////////////////////////
+// Drag & drop support
+/////////////////////////////////////
+
+/**
+ * Initializes a temporal iGadget move.
+ *
+ * @param {IGadget}          iGadget     iGadget to move
+ * @param {IGadgetDraggable} [draggable] associated draggable object (only
+ *                                       needed in drag & drop operations)
+ *
+ * @see DragboardLayout.initializeMove
+ * @see DragboardLayout.moveTemporally
+ * @see DragboardLayout.acceptMove
+ * @see DragboardLayout.cancelMove
+ *
+ * @example
+ * layout.initializeMove(iGadget, iGadgetDraggable);
+ * layout.moveTemporally(1,0);
+ * layout.moveTemporally(10,8);
+ * layout.acceptMove();
+ */
+DragboardLayout.prototype.initializeMove = function(iGadget, draggable) {
+}
+
+/**
+ * Moves temporally the configured iGadget (or cursor) to the given position.
+ *
+ * @param {Number} x new X coordinate
+ * @param {Number} y new Y coordinate
+ *
+ * @see DragboardLayout.initializeMove
+ */
+DragboardLayout.prototype.moveTemporally = function(x, y) {
+}
+
+/**
+ * Finish the current temporal move accepting the current position.
+ *
+ * @see DragboardLayout.initializeMove
+ */
+DragboardLayout.prototype.acceptMove = function() {
+}
+
+/**
+ * Finish the current temporal move restoring the layout to the status before
+ * to the call to initializeMove.
+ *
+ * @see DragboardLayout.initializeMove
+ */
+DragboardLayout.prototype.cancelMove = function() {
+}
+
+/**
+ * Disables the cursor if it is active. This method must be implemented by
+ * real Layout classes whether they use cursors. The default implementation
+ * does nothing.
+ */
+DragboardLayout.prototype.disableCursor = function() {
+}
+
+/////////////////////////////////////
+// Css unit conversions
+/////////////////////////////////////
+
+/**
+ * Measure the given test elmenet in the specified css units.
+ *
+ * @param testElement element to measure
+ * @param units units to use in the measure
+ *
+ * @returns the horizontal and vertical size of the test element converted
+ *          to the target css units.
+ *
+ * @see CSSPrimitiveValue
+ */
+DragboardLayout.prototype.measure = function(testElement, units) {
+	testElement.style.visibility = "hidden";
+	this.dragboard.dragboardElement.appendChild(testElement);
+
+	// Retrieve target measurements
+	var res = new Array();
+	res[0] = getComputedStyle(testElement, null).getPropertyCSSValue("width").getFloatValue(units);
+	res[1] = getComputedStyle(testElement, null).getPropertyCSSValue("height").getFloatValue(units);
+
+	// Remove the test element
+	testElement.parentNode.removeChild(testElement);
+
+	return res;
+}
+
+/**
+ * Converts a value from its initial units to the especified css units.
+ *
+ * @param {String} value css value to convert
+ * @param newUnits units to convert to
+ *
+ * @returns the value converted to the target css units in horizontal and
+ *          vertical
+ *
+ * @see CSSPrimitiveValue
+ *
+ * @example
+ * layout.unitConvert("1cm", CSSPrimitiveValue.CSS_PX);
+ */
+DragboardLayout.prototype.unitConvert = function(value, newUnits) {
+	// Create a square div using the given value
+	var testDiv = document.createElement("div");
+	testDiv.style.height = value;
+	testDiv.style.width = value;
+
+	return this.measure(testDiv, newUnits);
+}
+
+/////////////////////////////////////
+// MultiValuedSize
+/////////////////////////////////////
+
+/**
+ * @class Represents a size in several units.
+ */
+function MultiValuedSize (inPixels, inLU) {
+	this.inPixels = inPixels;
+	this.inLU = inLU;
 }
