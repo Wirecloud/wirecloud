@@ -27,7 +27,7 @@
 
 {% endblock %}
 </head>
-<body {% block onload %} onload="{javascript:onload_base();}" {% endblock %}>
+<body {% block onload %} onload="{javascript:onload_base();}" {% endblock %} class="{% block extra_class_body %} {% endblock %}">
 
     <div id="head_control_tab" class="control_tab">
     {% block head_control_tab %}
@@ -118,7 +118,7 @@
 </div>
 
 
-    <div id="container_wrapper" height="400px" class="container dragboard" style="display: block; z-index: 2; visibility: visible;"/>
+    <div id="container_wrapper" class="container dragboard {% block extra_class_container_wrapper %} {% endblock%}" style="display: block; z-index: 2; visibility: visible;"/>
 
         {% block content %}
 

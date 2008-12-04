@@ -2617,3 +2617,71 @@ NameError: global name 'IGadget' is not defined
 
 ERROR: PUT /workspace/1/variables admin
 [01/12/2008 15:17:39] no se pudieron actualizar las variablesWorkSpaceVariable matching query does not exist.
+ERROR: GET /workspaces/5 anonymous1228380968164
+[04/12/2008 09:56:12] Traceback (most recent call last):
+  File "/home/imunoz/src/ezweb/trunk/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/imunoz/src/ezweb/trunk/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/imunoz/src/ezweb/trunk/workspace/views.py", line 273, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/imunoz/src/ezweb/trunk/commons/get_data.py", line 356, in get_global_workspace_data
+    igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
+  File "/usr/local/lib/python2.5/site-packages/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/local/lib/python2.5/site-packages/django/core/serializers/base.py", line 38, in serialize
+    for obj in queryset:
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 179, in _result_iter
+    self._fill_cache()
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 612, in _fill_cache
+    self._result_cache.append(self._iter.next())
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 269, in iterator
+    for row in self.query.results_iter():
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/sql/query.py", line 1723, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/local/lib/python2.5/site-packages/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/local/lib/python2.5/site-packages/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna igadget_igadget.layout
+LINE 1: ...igadget"."gadget_id", "igadget_igadget"."tab_id", "igadget_i...
+                                                             ^
+
+SELECT "igadget_igadget"."id", "igadget_igadget"."name", "igadget_igadget"."gadget_id", "igadget_igadget"."tab_id", "igadget_igadget"."layout", "igadget_igadget"."position_id" FROM "igadget_igadget" WHERE "igadget_igadget"."tab_id" = 5  ORDER BY "igadget_igadget"."id" ASC
+
+ERROR: GET /workspaces/1 admin
+[04/12/2008 09:59:49] Traceback (most recent call last):
+  File "/home/imunoz/src/ezweb/trunk/commons/resource.py", line 59, in __call__
+    return self.dispatch(request, self, *args, **kwargs)
+  File "/home/imunoz/src/ezweb/trunk/commons/resource.py", line 86, in dispatch
+    return target.read(request, *args, **kwargs)
+  File "/home/imunoz/src/ezweb/trunk/workspace/views.py", line 273, in read
+    workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+  File "/home/imunoz/src/ezweb/trunk/commons/get_data.py", line 356, in get_global_workspace_data
+    igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
+  File "/usr/local/lib/python2.5/site-packages/django/core/serializers/__init__.py", line 86, in serialize
+    s.serialize(queryset, **options)
+  File "/usr/local/lib/python2.5/site-packages/django/core/serializers/base.py", line 38, in serialize
+    for obj in queryset:
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 179, in _result_iter
+    self._fill_cache()
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 612, in _fill_cache
+    self._result_cache.append(self._iter.next())
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/query.py", line 269, in iterator
+    for row in self.query.results_iter():
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/sql/query.py", line 206, in results_iter
+    for rows in self.execute_sql(MULTI):
+  File "/usr/local/lib/python2.5/site-packages/django/db/models/sql/query.py", line 1723, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/local/lib/python2.5/site-packages/django/db/backends/util.py", line 19, in execute
+    return self.cursor.execute(sql, params)
+  File "/usr/local/lib/python2.5/site-packages/django/db/backends/postgresql/base.py", line 52, in execute
+    return self.cursor.execute(smart_str(sql, self.charset), self.format_params(params))
+ProgrammingError: ERROR:  no existe la columna igadget_igadget.layout
+LINE 1: ...igadget"."gadget_id", "igadget_igadget"."tab_id", "igadget_i...
+                                                             ^
+
+SELECT "igadget_igadget"."id", "igadget_igadget"."name", "igadget_igadget"."gadget_id", "igadget_igadget"."tab_id", "igadget_igadget"."layout", "igadget_igadget"."position_id" FROM "igadget_igadget" WHERE "igadget_igadget"."tab_id" = 1  ORDER BY "igadget_igadget"."id" ASC
+

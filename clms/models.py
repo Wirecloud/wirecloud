@@ -153,6 +153,8 @@ class Layout(models.Model):
 
     categories = models.CommaSeparatedIntegerField(_('Categories'), max_length=200, null=True, blank=True)
 
+    description = models.TextField(_('description'), max_length=2000, help_text=_('Enter the description'))
+
     def thumbnail(self):
         """ Used in list_display """
         try:

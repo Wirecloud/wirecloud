@@ -335,7 +335,7 @@ class LayoutModelAdmin(ModelAdmin):
 
             return self.cleaned_data
 
-        form.base_fields.keyOrder = ['name', 'layout_template', 'image', 'panels_dispatched', 'categories', 'select_layout', 'token_panels']
+        form.base_fields.keyOrder = ['name', 'description', 'layout_template', 'image', 'panels_dispatched', 'categories', 'select_layout', 'token_panels']
         form.clean = clean
 
         return form 

@@ -802,13 +802,10 @@ button {
 
 .container {
   width:100%%;
-/*   height:80%; */
   background: #e6f3ff;
   background-color:#FFFFFF;
   z-index: 1;
   visibility: hidden;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 6px;
 }
 
 .container_content {
@@ -947,12 +944,13 @@ div.pageNavigationLayout ul li a,img{
 #layouts .layout_box .toolbar
 {
     display:block;
-    width: 192px;
+    width: 196px;
     height: 22px;
     padding: 0px;
+    line-height:18px;
     margin: 0px;
     text-align:center;
-    background: url(/ezweb/clms/images/option_header.png) no-repeat bottom right;
+    background: transparent url(/ezweb/clms/images/option_header.png)  no-repeat scroll 0% 0%;
 }
 
 #layouts .layout_box .toolbar a
@@ -978,17 +976,15 @@ div.pageNavigationLayout ul li a,img{
     border:none;
 }
 
-#layouts .layout_box .content
-{
-    padding-top:5px;
+#layouts .layout_box .content {
     padding-bottom:5px;
-    margin-top: 30px;
     display:block;
-    width:192px;
-    height:154px;
+    width:190px;
+    height:50px;
     margin: 0px;
     text-align:center;
     color:#000000;
+    background: transparent url(/ezweb/clms/images/option_background.png) repeat-y scroll 0% 0%;
 }
 
 #layouts .layout_box .content .title
@@ -1001,7 +997,7 @@ div.pageNavigationLayout ul li a,img{
 #layouts .layout_box .content .image
 {
     display:block;
-    margin-top:5px;
+    margin-top:45px;
     margin-bottom:5px;
     text-align:center;
     width:100%;
@@ -1010,10 +1006,10 @@ div.pageNavigationLayout ul li a,img{
 
 #layouts .layout_box .content .image img
 {
-    padding-right:3px;
-    width:170px;
+    width: 184px;
     height:80px;
     border:none;
+    padding-left: 3px;
 }
 
 #layouts .layout_box .content .tags
@@ -1059,7 +1055,7 @@ div.pageNavigationLayout ul li a,img{
 }
 
 #layouts .layout_box .content button{
-    background: url("/ezweb/images/button.gif") top left;
+    background: url(/ezweb/images/button.gif) top left;
     color: white;
     border: none;
     font-size: 100%;
@@ -1076,12 +1072,22 @@ div#layout_html table
     width: 100%;
 }
 
-
 div#container_wrapper {
     float:left;
-    margin-left: 5px;
     margin-top: -20px;
     width:100%;
-    background: #b6b6b6 url(/ezweb/clms/images/default-bg.gif) repeat-x scroll left top;
+
 }
 
+div.catalogue{
+    background: #b6b6b6 url(/ezweb/clms/images/body_background.jpg) repeat-y scroll left top !important;
+}
+
+body.catalogue{
+background: #b6b6b6 url(/ezweb/clms/images/body_background.jpg) repeat-y scroll left top !important;
+}
+
+.layout_description {
+  padding: 2px;
+  font-size: 11px;
+}
