@@ -48,7 +48,7 @@
   </div>
 </form>
 {% if AUTHENTICATION_SERVER_URL %}
-<div class="registration"><a href="/registration/">{% trans 'Create a new account' %}</a></div>
+<div class="registration"><a href="{{AUTHENTICATION_SERVER_URL}}/api/register?next=http://{{request.get_host}}/accounts/login/?next=/">{% trans 'Create a new account' %}</a></div>
 {% endif %}
 
 <script type="text/javascript">
