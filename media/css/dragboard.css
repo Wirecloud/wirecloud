@@ -15,7 +15,7 @@ div.gadget_window {
 div.gadget_window_locked {
   position: absolute;
   border: none;
-  background: white;
+  background: transparent;
 }
 
 div.gadget_menu {
