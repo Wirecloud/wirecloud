@@ -637,9 +637,13 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
       this.channels_counter++;
     }
 
-    var channel = new ChannelInterface(channelName);
-	var channelTempObject = {channel : wiring.createChannel(channel.getName(), channel.getId())}; 
+    // Creates the channel interface
+	var channel = new ChannelInterface(channelName);
     this._addChannelInterface(channel);
+	
+	// Creates a temporary channel for the Wiring module. It is necessary to connect channels with theyselves.
+	var channelTempObject = wiring.createChannel(channel.getName(), channel.getId());
+	channel.setTempChannel(channelTempObject);
 	
 	// Creates the filter menu
 	var newFilterMenu = this._createFilterMenu(channel); 
@@ -1091,6 +1095,7 @@ function ChannelInterface(channel) {
   this.outputsForRemoving = new Array();
   this.inPosition = new Array();		//coordinates of the point where the channel input arrow ends
   this.outPosition = new Array();		//coordinates of the point where the channel output arrow starts
+  this.tempChannel = null;              //It's created by Wiring Core. Nec        
   this.menu = null;
 
   // Draw the interface
@@ -1151,11 +1156,6 @@ ChannelInterface.prototype.setFilter = function(filter_) {
 		}
   	}
   }
-    
-  if (this.channel){
-  	this.channel.setFilter(this.filter);
-	this.channel.setFilterParams(this.filterParams);
-  }
 }
 
 ChannelInterface.prototype.getFilterParams = function() {
@@ -1165,9 +1165,10 @@ ChannelInterface.prototype.getFilterParams = function() {
 
 ChannelInterface.prototype.setFilterParams = function(params_) {
   this.filterParams = params_;
-  if (this.channel){
-    this.channel.setFilterParams(params_);
-  }	
+}
+
+ChannelInterface.prototype.setTempChannel = function(channel_) {
+  this.channel = channel_;
 }
 
 ChannelInterface.prototype.getValue = function() {
@@ -1195,13 +1196,16 @@ ChannelInterface.prototype.getMenu = function() {
 }
 
 ChannelInterface.prototype.commitChanges = function(wiring) {
-  var changes = [];
   var i;
 
-  if (this.channel == null) {
-    // The channel don't exists
-    this.channel = wiring.getOrCreateChannel(this.name, this.provisional_id);
-  } else {
+  if (this.tempChannel != null){
+  	this.channel = this.tempChannel;
+  }
+  
+  if (this.channel == null){
+   	// The channel don't exists
+   	this.channel = wiring.getOrCreateChannel(this.name, this.provisional_id);
+  }else {
 	  // Update channel name
 	  this.channel._name = this.name;
   }
@@ -1233,8 +1237,6 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
     this.inputsForAdding[i].connect(this.channel);
   }
   this.inputsForAdding.clear();
-
-  return changes;
 }
 
 ChannelInterface.prototype.exists = function() {
