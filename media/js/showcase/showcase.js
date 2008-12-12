@@ -82,7 +82,7 @@ var ShowcaseFactory = function () {
 			}
 			
 			var onError = function (receivedData_) {
-				alert("eerror en showcase")
+				alert("error en showcase")
 			}
 
 			// Initial load from persitence system

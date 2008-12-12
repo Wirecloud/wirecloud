@@ -69,6 +69,13 @@ class PublishedWorkSpace(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + " " + self.workspace.name  
+    
+class Category(models.Model):
+    category_id = models.IntegerField()
+    default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'))
+    
+    def __unicode__(self):
+        return str(self.category_id) + " " + str(self.default_workspace)
 
 class AbstractVariable(models.Model):
     

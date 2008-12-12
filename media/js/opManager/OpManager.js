@@ -41,16 +41,18 @@ var OpManagerFactory = function () {
 			// JSON-coded user tabspaces
 			var response = transport.responseText;
 			var workSpacesStructure = eval ('(' + response + ')');
-
+			
+			var isDefaultWS = workSpacesStructure.isDefault;
 			var workSpaces = workSpacesStructure.workspaces;
-
+			var activeWorkSpace = null;
+			
 			for (var i = 0; i<workSpaces.length; i++) {
 			    var workSpace = workSpaces[i];
 			    
 			    this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
 			    if (workSpace.active == "true") {
-			    	this.activeWorkSpace=this.workSpaceInstances[workSpace.id];
+			    	activeWorkSpace=this.workSpaceInstances[workSpace.id];
 			    }
 			    
 			}
@@ -59,7 +61,15 @@ var OpManagerFactory = function () {
 			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this));
 			
 			// Total information of the active workspace must be downloaded!
-			this.activeWorkSpace.downloadWorkSpaceInfo();
+			if (isDefaultWS=="true"){
+				//the showcase must be reloaded to have all new gadgets
+				//it itself changes to the active workspace
+				ShowcaseFactory.getInstance().reload(workSpace.id);
+				
+			}else{
+				this.activeWorkSpace = activeWorkSpace;
+				this.activeWorkSpace.downloadWorkSpaceInfo();
+			}
 		}
 		
 		var onError = function (transport, e) {

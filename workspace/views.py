@@ -44,14 +44,13 @@ from commons.authentication import get_user_authentication
 from commons.get_data import *
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
-from commons.http_utils import PUT_parameter
-
+from commons.http_utils import PUT_parameter, download_http_content
 from connectable.models import Out
 from igadget.models import Variable
 
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 
-from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue, PublishedWorkSpace
+from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue, PublishedWorkSpace, Category
 from gadget.models import Gadget, VariableDef
 from igadget.models import IGadget, Position
 
@@ -210,12 +209,42 @@ class WorkSpaceCollection(Resource):
         user = get_user_authentication(request)
         
         data_list = {}
+        #boolean for js
+        data_list['isDefault']="false"
         try:
             workspaces = WorkSpace.objects.filter(users__id=user.id)
             if workspaces.count()==0:
-                createWorkSpace('MyWorkSpace', user)
+                cloned_workspace = None
+                #it's the first time the user has logged in.
+                #try to assign a default workspace according to user category
+                if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+                    #ask PBUMS for the category
+                    try:
+                        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
+                        received_json = download_http_content(url)
+                        categories = simplejson.loads(received_json)['category_list']
+                        if len(categories) > 0:
+                            #take the first one which has a default workspace
+                            for category in categories:
+                                try:
+                                    default_workspace = Category.objects.get(category_id=category['id']).default_workspace
+                                    #duplicate the workspace for the user
+                                    cloned_workspace = cloneWorkspace(default_workspace.id)
+                                    linkWorkspace(user, cloned_workspace.id)
+                                    setActiveWorkspace(user, cloned_workspace)
+                                    data_list['isDefault']="true"
+                                    break
+                                except Category.DoesNotExist:
+                                    #the user category doesn't have a default workspace
+                                    #try with other categories
+                                    continue
+                    except Exception, e:
+                        pass
+                if not cloned_workspace:
+                    #create an empty workspace
+                    createWorkSpace('MyWorkSpace', user)
                 
-                workspaces = WorkSpace.objects.filter(users__id=user.id)
+            workspaces = WorkSpace.objects.filter(users__id=user.id)
         except Exception, e:
             log(e, request)
             return HttpResponseBadRequest(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
