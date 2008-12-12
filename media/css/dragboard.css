@@ -15,6 +15,9 @@ div.gadget_window {
 div.gadget_window_locked {
   position: absolute;
   border: none;
+}
+
+div.gadget_window_transparent {
   background: transparent;
 }
 
@@ -95,6 +98,10 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
 div.gadget_window div.gadget_wrapper {
   width: 100%;
   border-top: 1px solid #4c5054;
+}
+
+div.gadget_window_locked div.gadget_wrapper {
+  border: none;
 }
 
 div.gadget_window div.gadget_wrapper object {

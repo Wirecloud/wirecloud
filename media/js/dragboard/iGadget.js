@@ -46,7 +46,7 @@
  * @param {Number}            height      initial content height
  * @param {Boolean}           minimized   initial minimized status
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, height, minimized) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, height, minimized, transparency) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -56,6 +56,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.contentHeight = height;
 	this.loaded = false;
 	this.zPos = zPos;
+	this.transparency = transparency;
 
 	if (!minimized)
 		this.height = this.contentHeight + layout.getExtraSize().inLU;
@@ -78,7 +79,10 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.statusBar = null;
 	this.extractButton = null;
 
-	// TODO
+	// Menu attributes
+	this.extractOptionId = null;
+	this.extractOptionOrder = 0;
+	
 	this.lowerOpId = null;
 	this.raiseOpId = null;
 	this.lowerToBottomOpId = null;
@@ -242,6 +246,38 @@ IGadget.prototype.onFreeLayout = function() {
 }
 
 /**
+ * Toggle the gadget transparency
+ */
+IGadget.prototype.toggleTransparency = function() {
+	function onSuccess() {}
+	function onError(transport, e) {
+		var msg;
+
+		if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
+		} else {
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+	}
+	
+	this.element.toggleClassName("gadget_window_transparent");
+	this.transparency = !this.transparency;
+	
+	//Persist the new state
+	var o = new Object;
+	o.transparency = this.transparency;
+	o.id = this.id;
+	var igadgetData = Object.toJSON(o);
+	var params = {'igadget': igadgetData};
+	var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
+	                                            tabId: this.layout.dragboard.tabId,
+	                                            iGadgetId: this.id});
+	PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+}
+
+/**
  * Updates the extract/snap from/to grid option on the iGadget's menu.
  *
  * @private
@@ -267,28 +303,28 @@ IGadget.prototype._updateExtractOption = function() {
 		                        this.layout.lower(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    2);
+		                    this.extractOptionOrder+1);
 		this.raiseOpId = this.menu.addOption("/ezweb/images/igadget/raise.png",
 		                    gettext("Raise"),
 		                    function() {
 		                        this.layout.raise(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    3);
+		                    this.extractOptionOrder+2);
 		this.lowerToBottomOpId = this.menu.addOption("/ezweb/images/igadget/lowerToBottom.png",
 		                    gettext("Lower To Bottom"),
 		                    function() {
 		                        this.layout.lowerToBottom(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    4);
+		                    this.extractOptionOrder+3);
 		this.raiseToTopOpId = this.menu.addOption("/ezweb/images/igadget/raiseToTop.png",
 		                    gettext("Raise To Top"),
 		                    function() {
 		                        this.layout.raiseToTop(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    5);
+		                    this.extractOptionOrder+4);
 	} else {
 		this.menu.updateOption(this.extractOptionId,
 		                       "/ezweb/images/igadget/extract.png",
@@ -332,6 +368,10 @@ IGadget.prototype.paint = function() {
 	} else {
 		this.element.addClassName("gadget_window");
 	}
+	
+	// set transparency status
+	if (this.transparency)
+		this.element.addClassName("gadget_window_transparent");
 
 	// Gadget Menu
 	this.gadgetMenu = document.createElement("div");
@@ -393,9 +433,18 @@ IGadget.prototype.paint = function() {
 	                        LayoutManagerFactory.getInstance().hideCover();
 	                    }.bind(this),
 	                    0);
-
+	                    
+	this.menu.addOption("/ezweb/images/igadget/transparency.png",
+	                    gettext("Transparency"),
+	                    function() {
+	                    	this.toggleTransparency();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    1);
+	                    
 	// Extract/Snap from/to grid option (see _updateExtractOption)
-	this.extractOptionId = this.menu.addOption("", "", function(){}, 1);
+	this.extractOptionOrder = 2;
+	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 
 	// iGadget's menu button
 	button = document.createElement("input");
@@ -497,7 +546,7 @@ IGadget.prototype.paint = function() {
 		this.content.setStyle({"width": "100%", "height": contentHeight + "px"});
 	}
 	this.contentWrapper.appendChild(this.content);
-
+Event.observe (this.contentWrapper, "mouseup", function() {alert("hola");}, true);
 	// Gadget status bar
 	this.statusBar = document.createElement("div");
 	this.statusBar.setAttribute("class", "statusBar");
@@ -886,11 +935,9 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 		return;
 
 	if (newLockStatus) {
-		this.element.class = "gadget_window_locked";
-		this.element.className = "gadget_window_locked"; //IE hack
+		this.element.addClassName("gadget_window_locked");
 	} else {
-		this.element.class = "gadget_window";
-		this.element.className = "gadget_window"; //IE hack
+		this.element.removeClassName("gadget_window_locked");
 	}
 
 	var oldWidth = this.getWidth();

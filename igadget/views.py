@@ -99,7 +99,7 @@ def SaveIGadget(igadget, user, tab):
 
         gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position)
+        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, transparency=False)
         new_igadget.save()
 
         variableDefs = VariableDef.objects.filter(gadget=gadget)
@@ -161,6 +161,9 @@ def UpdateIGadget(igadget, user, tab):
     if igadget.has_key('layout'):
         layout = igadget.get('layout')
         ig.layout = layout
+    
+    if igadget.has_key('transparency'):
+        ig.transparency = igadget.get('transparency')
 
     ig.save()
 

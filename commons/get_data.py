@@ -411,7 +411,10 @@ def get_igadget_data(data, user, workspace):
         data_ret['minimized'] = "true"
     else:
         data_ret['minimized'] = "false"
-
+    if data_fields['transparency']:
+        data_ret['transparency'] = "true"
+    else:
+        data_ret['transparency'] = "false"
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
     data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]

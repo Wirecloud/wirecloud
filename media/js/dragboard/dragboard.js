@@ -91,6 +91,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadgetInfo['width'] = iGadget.getContentWidth();
 			iGadgetInfo['height'] = iGadget.getContentHeight();
 			iGadgetInfo['tab'] = this.tabId;
+			iGadgetInfo['transparency'] = iGadget.transparency;
 
 			data['iGadgets'].push(iGadgetInfo);
 		}
@@ -244,9 +245,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 			// Parse minimize status
 			minimized = curIGadget.minimized == "true" ? true : false;
+			
+			// Parse transparency status
+			transparency = curIGadget.transparency == "true" ? true : false;
 
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, minimized);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, minimized, transparency);
 		}
 
 		this.loaded = true;
