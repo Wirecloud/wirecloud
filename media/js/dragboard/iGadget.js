@@ -546,7 +546,7 @@ IGadget.prototype.paint = function() {
 		this.content.setStyle({"width": "100%", "height": contentHeight + "px"});
 	}
 	this.contentWrapper.appendChild(this.content);
-Event.observe (this.contentWrapper, "mouseup", function() {alert("hola");}, true);
+	
 	// Gadget status bar
 	this.statusBar = document.createElement("div");
 	this.statusBar.setAttribute("class", "statusBar");
