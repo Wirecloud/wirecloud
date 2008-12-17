@@ -362,13 +362,11 @@ IGadget.prototype.paint = function() {
 
 	this.element = document.createElement("div");
 
+	this.element.addClassName("gadget_window");
 	// Sync lock status
 	if (this.layout.dragboard.isLocked()) {
 		this.element.addClassName("gadget_window_locked");
-	} else {
-		this.element.addClassName("gadget_window");
-	}
-	
+	}	
 	// set transparency status
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
