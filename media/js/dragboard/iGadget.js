@@ -1189,7 +1189,7 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 		this.minimizeButtonElement.addClassName("maximizebutton");
 	} else {
 		this.contentWrapper.setStyle({"visibility": "visible", "border": null});
-		this.statusBar.setStyle({"display": "block"});
+		this.statusBar.setStyle({"display": null});
 		if (this.configurationVisible == true)
 			this.configurationElement.setStyle({"display": "block"});
 		this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));
