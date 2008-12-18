@@ -28,44 +28,25 @@
 #...............................licence...........................................#
 
 
+#
 
 from django.contrib.auth.models import User
-from django.conf import settings
-from commons.http_utils import download_http_content
-from django.utils import simplejson
 
-class OMFBackend:
+class AnonymousBackend:
 
-    def authenticate(self,username=None,password=None):
-        if not self.is_valid(username,password):
-            return None
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            user = User(username=username)
-            user.set_password(password)
-            user.save()
+    def authenticate(self,username=None,password=None,isAnonymous=None):
+        if isAnonymous:
+            try:
+                user = User.objects.get(username=username)
+                return user
+            except User.DoesNotExist, e:
+                #the user must exist
+                pass
 
-        return user
+        return None
 
     def get_user(self,user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-
-    def is_valid (self,username=None,password=None):
-        if password == None or password == '':
-            return None
-        
-        #ask OMF autentication service
-        urlBase='http://open.movilforum.com/?q=user/login'
-        params = urllib.urlencode({'name':username, 'pass':password, 'form_id': 'user_login'}) 
-        
-        try:
-        	f = urllib.urlopen("http://open.movilforum.com/?q=user/login", params) 
-        	resulting_url = f.geturl()
-            
-        	return resulting_url == urlBase
-        except Exception, e:
-        	return False
