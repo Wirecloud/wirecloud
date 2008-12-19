@@ -641,6 +641,7 @@ IGadget.prototype.fillWithLabel = function() {
 	                                        Event.stop(e);
 	                                        this.fillWithInput();
 	                                    }.bind(this)); //do not propagate to div.
+	                                    
 }
 
 
@@ -677,7 +678,7 @@ IGadget.prototype.fillWithInput = function () {
 	this.igadgetNameHTMLElement.observe('change',
 	                                    function(e) {
 	                                        Event.stop(e);
-	                                        this.updateName(e.target.value);
+	                                        this.setName(e.target.value);
 	                                    }.bind(this));
 
 	this.igadgetNameHTMLElement.observe('keyup',
