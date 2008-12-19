@@ -895,7 +895,8 @@ div.pageNavigationLayout ul {
 }
 
 div.pageNavigationLayout ul li.actual {
-   background: #e1f7f5;
+   font-size: 17px;
+   color: #ffffff;
 }
 
 div.pageNavigationLayout ul li {
@@ -909,6 +910,7 @@ div.pageNavigationLayout ul li {
 div.pageNavigationLayout ul li a,img{
    text-decoration:none;
    border:0;
+   color: #555555;
 }
 
 
