@@ -9,3 +9,18 @@
   padding-bottom: 3px;
 }
 
+#admin_icons {
+  float: left;
+  margin-top: -40px;
+  width: 240px;
+}
+
+#section_title h3 {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+#head_control_tab {
+    margin-left: -100px;
+}

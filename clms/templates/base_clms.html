@@ -12,7 +12,7 @@
   <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
   <!--[if IE]>
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/iefixes.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
   <![endif]-->
 
 
@@ -57,11 +57,11 @@
             {% trans "Welcome" %}, {{ user.username }}
         {% endif %}
     </div>
-    <div id="exit_control_tab">
         {% if not is_anonymous %}
+    <div id="exit_control_tab">
             <a href="/logout">{% trans "Exit" %}</a>
-        {% endif %}
     </div>
+        {% endif %}
     <div id="logo"><img id="logo" src="{{ MEDIA_URL }}clms/images/logo.png" alt="EzWeb Logo"></div>
  </div>
 
