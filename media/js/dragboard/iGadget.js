@@ -76,6 +76,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.minimizeButtonElement = null;
 	this.errorButtonElement = null;
 	this.igadgetNameHTMLElement = null;
+	this.igadgetInputHTMLElement = null;
 	this.statusBar = null;
 	this.extractButton = null;
 
@@ -457,7 +458,7 @@ IGadget.prototype.paint = function() {
 	               }.bind(this),
 	               true);
 	// and listen to mouse events
-	this.gadgetMenu.observe("mousedown",
+	/*this.gadgetMenu.observe("mousedown",
 	                        function (e) {
 	                            e = e || window.event; // needed for IE
 
@@ -473,7 +474,7 @@ IGadget.prototype.paint = function() {
 	                            Event.stop(e);
 	                            return false;
 	                        }.bind(this),
-	                        true);
+	                        true);*/
 
 	button.setAttribute("title", gettext("Menu"));
 	button.setAttribute("alt", gettext("Menu"));
@@ -621,76 +622,94 @@ IGadget.prototype.paint = function() {
 }
 
 IGadget.prototype.fillWithLabel = function() {
-	if(this.igadgetNameHTMLElement != null){
-		this.igadgetNameHTMLElement.remove();
+	if(this.igadgetInputHTMLElement != null){
+		//hide the input element
+		this.igadgetInputHTMLElement.hide();
 	}
+	
+	// get the name
 	var nameToShow = this.name;
 	if(nameToShow.length>30){
 		nameToShow = nameToShow.substring(0, 30)+"...";
 	}
-
-	this.igadgetNameHTMLElement = document.createElement("span");
-	this.igadgetNameHTMLElement.innerHTML = nameToShow;
-	this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
-	//var spanHTML = nameToShow;
-	//new Insertion.Top(this.gadgetMenu, spanHTML);
-	//this.igadgetNameHTMLElement = this.gadgetMenu.firstDescendant();
-
-	this.igadgetNameHTMLElement.observe('click',
-	                                    function(e) {
-	                                        Event.stop(e);
-	                                        this.fillWithInput();
-	                                    }.bind(this)); //do not propagate to div.
-	                                    
+	
+	if(this.igadgetNameHTMLElement != null){
+		// update and show the label
+		this.igadgetNameHTMLElement.update(nameToShow);
+		this.igadgetNameHTMLElement.show();
+	}
+	else{
+		//create the label
+		this.igadgetNameHTMLElement = document.createElement("span");
+		this.igadgetNameHTMLElement.innerHTML = nameToShow;
+		this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
+		//var spanHTML = nameToShow;
+		//new Insertion.Top(this.gadgetMenu, spanHTML);
+		//this.igadgetNameHTMLElement = this.gadgetMenu.firstDescendant();
+	
+		this.igadgetNameHTMLElement.observe('click',
+		                                    function(e) {
+		                                        Event.stop(e);
+		                                        this.fillWithInput();
+		                                    }.bind(this)); //do not propagate to div.
+	}
 }
 
 
 IGadget.prototype.fillWithInput = function () {
-	this.igadgetNameHTMLElement.remove();
-	this.igadgetNameHTMLElement = document.createElement("input");
-	this.igadgetNameHTMLElement.addClassName("igadget_name");
-	this.igadgetNameHTMLElement.setAttribute("type", "text");
-	this.igadgetNameHTMLElement.setAttribute("value", this.name);
-	this.igadgetNameHTMLElement.setAttribute("size", this.name.length+5);
-	this.igadgetNameHTMLElement.setAttribute("maxlength", 30);
+	this.igadgetNameHTMLElement.hide();
+	if (this.igadgetInputHTMLElement){
+		this.igadgetInputHTMLElement.show();
+		this.igadgetInputHTMLElement.setAttribute("value", this.name);
+		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
+	}
+	else{		
+		this.igadgetInputHTMLElement = document.createElement("input");
+		this.igadgetInputHTMLElement.addClassName("igadget_name");
+		this.igadgetInputHTMLElement.setAttribute("type", "text");
+		this.igadgetInputHTMLElement.setAttribute("value", this.name);
+		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
+		this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
+		
+		this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
+		
+		this.igadgetInputHTMLElement.observe('blur',
+		                                    function(e) {
+		                                        Event.stop(e);
+		                                        this.fillWithLabel()
+		                                    }.bind(this));
 	
-	this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
+		this.igadgetInputHTMLElement.observe('keypress',
+		                                    function(e) {
+		                                        if(e.keyCode == Event.KEY_RETURN) {
+		                                            Event.stop(e);
+		                                            e.target.blur();
+		                                        }
+		                                    }.bind(this));
 	
-	//var inputHTML = "<input class='igadget_name' type='text' value='"+this.name+"' size='"+this.name.length+"' maxlength='30' />";
-	//new Insertion.Bottom(this.gadgetMenu, inputHTML);
-	//this.igadgetNameHTMLElement =  this.gadgetMenu.firstDescendant();
+		this.igadgetInputHTMLElement.observe('change',
+		                                    function(e) {
+		                                        Event.stop(e);
+		                                        this.setName(e.target.value);
+		                                    }.bind(this));
 	
-	this.igadgetNameHTMLElement.focus();
-	this.igadgetNameHTMLElement.observe('blur',
-	                                    function(e) {
-	                                        Event.stop(e);
-	                                        this.fillWithLabel()
-	                                    }.bind(this));
-
-	this.igadgetNameHTMLElement.observe('keypress',
-	                                    function(e) {
-	                                        if(e.keyCode == Event.KEY_RETURN) {
-	                                            Event.stop(e);
-	                                            e.target.blur();
-	                                        }
-	                                    }.bind(this));
-
-	this.igadgetNameHTMLElement.observe('change',
-	                                    function(e) {
-	                                        Event.stop(e);
-	                                        this.setName(e.target.value);
-	                                    }.bind(this));
-
-	this.igadgetNameHTMLElement.observe('keyup',
-	                                    function(e) {
-	                                        Event.stop(e);
-	                                        e.target.size = (e.target.value.length==0) ? 1 : e.target.value.length + 5;
-	                                    }.bind(this));
-
-	this.igadgetNameHTMLElement.observe('click',
-	                                    function(e) {
-	                                        Event.stop(e);
-	                                    }); //do not propagate to div.
+		this.igadgetInputHTMLElement.observe('keyup',
+		                                    function(e) {
+		                                        Event.stop(e);
+		                                        e.target.size = (e.target.value.length==0) ? 1 : e.target.value.length + 5;
+		                                    }.bind(this));
+	
+		/*this.igadgetInputHTMLElement.observe('click',
+		                                    function(e) {
+		                                        Event.stop(e);
+		                                    }); //do not propagate to div.*/
+		this.igadgetInputHTMLElement.observe('mousedown',
+		                                    function(e) {
+												e = e || window.event; // needed for IE
+												Event.stop(e);
+		                                    });
+	}
+	this.igadgetInputHTMLElement.focus();
 }
 
 /**
@@ -718,6 +737,7 @@ IGadget.prototype.setName = function (igadgetName) {
 	if (igadgetName != null && igadgetName.length > 0) {
 		this.name = igadgetName;
 		this.gadgetMenu.setAttribute("title", igadgetName);
+		this.igadgetNameHTMLElement.update(this.name);
 		var o = new Object;
 		o.name = igadgetName;
 		o.id = this.id;
