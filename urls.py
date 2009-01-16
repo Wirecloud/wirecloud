@@ -52,10 +52,10 @@ urlpatterns = patterns('',
 
     # EzWeb
     (r'^', include('ezweb.urls')),
-    (r'^user/(?P<user_name>[_\w]+)/$', include('ezweb.urls')),
+    (r'^user/(?P<user_name>[\s\-\.\w]+)/$', include('ezweb.urls')),
     
     # Gadgets
-    (r'^user/(?P<user_name>[_\w]+)/gadget(s)?', include('gadget.urls')),
+    (r'^user/(?P<user_name>[\s\-\.\w]+)/gadget(s)?', include('gadget.urls')),
     (r'^gadget(s)?', include('gadget.urls')),
 
     # WorkSpaces
@@ -68,10 +68,10 @@ urlpatterns = patterns('',
     (r'^workspace(s)?/(?P<workspace_id>\d+)/connectable(s)?', include('connectable.urls')),
 
     # context
-    (r'^user/(?P<user_name>[_\w]+)/context(s)?', include('context.urls')),
+    (r'^user/(?P<user_name>[\s\-\.\w]+)/context(s)?', include('context.urls')),
 
     # Catalogue Resource
-    (r'^user/(?P<user_name>[_\w]+)/catalogue/', include('catalogue.urls')),
+    (r'^user/(?P<user_name>[\s\-\.\w]+)/catalogue/', include('catalogue.urls')),
 
     # Proxy
     (r'^proxy', include('proxy.urls')),

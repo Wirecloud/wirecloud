@@ -37,7 +37,7 @@ from django.core import serializers
 
 from commons.resource import Resource
 
-from commons.authentication import get_user_authentication
+from commons.authentication import get_user_authentication, user_authentication
 from commons.get_data import get_gadget_data
 
 from gadget.templateParser import TemplateParser
@@ -55,7 +55,7 @@ from gadget.models import Gadget
 
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadgets = Gadget.objects.filter(users=user)
         data = serializers.serialize('python', gadgets, ensure_ascii=False)
         data_list = []
@@ -66,7 +66,7 @@ class GadgetCollection(Resource):
 
     @transaction.commit_manually
     def create(self, request, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         if request.POST.has_key('url'):
             templateURL = request.POST['url']
         else:
@@ -115,27 +115,27 @@ class GadgetCollection(Resource):
         
 class GadgetEntry(Resource):
     def read(self, request, vendor, name, version, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadgets = get_list_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         data = serializers.serialize('python', gadgets, ensure_ascii=False)
         data_fields = get_gadget_data(data[0])
         return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         gadget.save()
         return HttpResponse('ok')
 
     def delete(self, request, vendor, name, version, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         gadget.delete()
         return HttpResponse('ok')
 
 class GadgetCodeEntry(Resource):
     def read(self, request, vendor, name, version, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users=user)
         code = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
         
@@ -146,7 +146,7 @@ class GadgetCodeEntry(Resource):
             return HttpResponse(code.code, mimetype='text/html; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
-        user = get_user_authentication(request)
+        user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
 
         xhtml = gadget.xhtml;
