@@ -97,9 +97,10 @@ class Proxy(Resource):
                         has_content_type = True
                 if (header[0].lower() == 'http_content_type'):
                     http_content_type_value = header[1]
-                headers[header[0]] = header[1]
-                    
-                
+                headers[header[0].replace("HTTP_", "", 1)] = header[1]
+            
+            headers["HOST"] = host       
+            headers["Via"] = "EzWeb-Proxy"
             # Add Content-Type (Servlets bug)
             if ((method == 'POST' or method == 'PUT') and not has_content_type):
                 if (http_content_type_value != ''):
