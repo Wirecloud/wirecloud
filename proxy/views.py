@@ -97,8 +97,10 @@ class Proxy(Resource):
                         has_content_type = True
                 if (header[0].lower() == 'http_content_type'):
                     http_content_type_value = header[1]
-                if (header[0].find("HTTP_")>=0):
-                    headers[header[0].replace("HTTP_", "", 1).replace("_", "-")] = header[1]
+                if (header[0].lower() == 'http_user_agent'):
+                    headers["User-Agent"] = header[1]
+                elif (header[0].find("HTTP_")>=0):
+                    headers[header[0].replace("HTTP_", "", 1)] = header[1]
             
             headers["HOST"] = host       
             headers["Via"] = "EzWeb-Proxy"
