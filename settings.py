@@ -135,7 +135,7 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
-    'clms',
+#    'clms',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
