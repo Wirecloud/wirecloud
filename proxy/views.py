@@ -47,9 +47,15 @@ import string
 
 def getConnection(protocol, proxy, host):
     if (proxy != "" and not is_localhost(host)):
-        return httplib.HTTPConnection(proxy)
+        if (protocol=="http"):
+            return httplib.HTTPConnection(proxy)
+        elif (protocol=="https"):
+             return httplib.HTTPSConnection(proxy)
     else:
-        return httplib.HTTPConnection(host)
+        if (protocol=="http"):
+            return httplib.HTTPConnection(host)
+        elif (protocol=="https"):
+            return httplib.HTTPSConnection(host) 
 
 class Proxy(Resource):
     def create(self,request):
