@@ -75,7 +75,11 @@ _EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHa
 }
 
 _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler) {
-	var params = {url: url, method: 'POST', params: parameters};
+	if (typeof(parameters)=="string")
+		var p = parameters;
+	else
+		var p = Object.toJSON(parameters);
+	var params = {url: url, method: 'POST', params: p};
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
@@ -84,7 +88,11 @@ _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandle
 }
 
 _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler, errorHandler) {
-	var params = {url: url, method: 'PUT', params: parameters};
+	if (typeof(parameters)=="string")
+		var p = parameters;
+	else
+		var p = Object.toJSON(parameters);
+	var params = {url: url, method: 'PUT', params: p};
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;

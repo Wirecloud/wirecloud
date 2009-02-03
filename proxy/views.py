@@ -33,6 +33,8 @@
 import httplib
 import urlparse
 
+from urllib import urlencode
+
 from commons.resource import Resource
 
 from proxy.utils import encode_query, is_valid_header, is_localhost
@@ -42,6 +44,8 @@ from django.utils.translation import string_concat
 
 from django.http import Http404, HttpResponse, HttpResponseServerError
 from django.conf import settings
+
+from django.utils import simplejson
 
 import string
 
@@ -73,7 +77,11 @@ class Proxy(Resource):
 
         # Params
         if request.POST.has_key('params'):
-            params = encode_query(request.POST['params'])
+            #params = encode_query(request.POST['params'])
+            try:
+                params = urlencode(simplejson.loads(request.POST['params']))
+            except Exception, e:
+                params = encode_query(request.POST['params'])
         else:
             params = ''
 
