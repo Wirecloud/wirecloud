@@ -30,6 +30,7 @@
 
 #
 
+import urllib2
 import httplib
 import urlparse
 
@@ -49,17 +50,17 @@ from django.utils import simplejson
 
 import string
 
-def getConnection(protocol, proxy, host):
-    if (proxy != "" and not is_localhost(host)):
-        if (protocol=="http"):
-            return httplib.HTTPConnection(proxy)
-        elif (protocol=="https"):
-             return httplib.HTTPSConnection(proxy)
-    else:
-        if (protocol=="http"):
-            return httplib.HTTPConnection(host)
-        elif (protocol=="https"):
-            return httplib.HTTPSConnection(host) 
+#def getConnection(protocol, proxy, host):
+#    if (proxy != "" and not is_localhost(host)):
+#        if (protocol=="http"):
+#            return httplib.HTTPConnection(proxy)
+#        elif (protocol=="https"):
+#             return httplib.HTTPSConnection(proxy)
+#    else:
+#        if (protocol=="http"):
+#            return httplib.HTTPConnection(host)
+#        elif (protocol=="https"):
+#            return httplib.HTTPSConnection(host) 
 
 class Proxy(Resource):
     def create(self,request):
@@ -92,15 +93,15 @@ class Proxy(Resource):
             
             query = encode_query(query)
             
-            # Proxy support
-            proxy = ""
-            try:
-                proxy = settings.PROXY_SERVER
-            except Exception:
-                proxy = ""
-                
-            conn = getConnection(proto, proxy, host)
-                
+            #manage proxies with authentication (get it from environment)
+            if (host.startswith(('localhost','127.0.0.1'))):
+                proxy = urllib2.ProxyHandler({})#no proxy
+            else:
+                proxy = urllib2.ProxyHandler()#proxies from environment
+        
+            opener = urllib2.build_opener(proxy)            
+                   
+                        
             # Adds original request Headers to the request (and modifies Content-Type for Servlets)
             headers = {}
             has_content_type = False
@@ -132,58 +133,58 @@ class Proxy(Resource):
             headers['Cookie'] = cookies
 
             # Open the request
-            if query != '':
-                cgi = cgi + '?%s' % query
+ #           if query != '':
+ #               cgi = cgi + '?%s' % query
                 
-            if (proxy != ""):
-                conn.request(method, url, params, headers)
+            if method == 'GET':
+                req=urllib2.Request(url, None, headers)
             else:
-                conn.request(method, cgi, params, headers)
+                req=urllib2.Request(url, params, headers)
+            
+            res = opener.open(req)
 
-            res = conn.getresponse()
-
-            # Redirect resolution
-            MAX_REDIRECTS = 50
-            index_redirects = 0
-    
-            while (res.status >= 300) and (res.status < 400):
-
-                if (index_redirects >= MAX_REDIRECTS):
-                    return HttpResponse('<error>Redirect limit has been exceeded</error>')
-                index_redirects = index_redirects + 1
-
-                url = res.getheader('Location')
-                proto, host, cgi, param, auxquery = urlparse.urlparse(url)[:5]
-                conn = getConnection(proto, proxy, host)
-
-                auxquery = encode_query(auxquery)
-
-                if query != '':
-                    query = query + "&" + auxquery
-                else:
-                    query = auxquery
-
-                if query != '':
-                    cgi = cgi + '?%s' % query
-
-                if (proxy != ""):
-                    conn.request(method, url, params, headers)
-                else:
-                    conn.request(method, cgi, params, headers)
-
-                res = conn.getresponse()
+#            # Redirect resolution
+#            MAX_REDIRECTS = 50
+#            index_redirects = 0
+#    
+#            while (res.status >= 300) and (res.status < 400):
+#
+#                if (index_redirects >= MAX_REDIRECTS):
+#                    return HttpResponse('<error>Redirect limit has been exceeded</error>')
+#                index_redirects = index_redirects + 1
+#
+#                url = res.getheader('Location')
+#                proto, host, cgi, param, auxquery = urlparse.urlparse(url)[:5]
+#                conn = getConnection(proto, proxy, host)
+#
+#                auxquery = encode_query(auxquery)
+#
+#                if query != '':
+#                    query = query + "&" + auxquery
+#                else:
+#                    query = auxquery
+#
+#                if query != '':
+#                    cgi = cgi + '?%s' % query
+#
+#                if (proxy != ""):
+#                    conn.request(method, url, params, headers)
+#                else:
+#                    conn.request(method, cgi, params, headers)
+#
+#                res = conn.getresponse()
                 
             # Add content-type header to the response
-            if res.getheader('content-type'):
-                response = HttpResponse (res.read(), mimetype=res.getheader('content-type'))
+            if res.headers['content-type']:
+                response = HttpResponse (res.read(), mimetype=res.headers['content-type'])
             else:
                 response = HttpResponse (res.read())
 
             # Set status code to the response
-            response.status_code = res.status
+            response.status_code = res.code
 
             # Add all the headers recieved to the response
-            headers = res.getheaders()
+            headers = res.headers
             for header in headers:
                 if is_valid_header (string.lower(header[0])):
                     response[header[0]] = header[1]
