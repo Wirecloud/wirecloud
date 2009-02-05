@@ -28,9 +28,17 @@ function _EzWebAPI() {
 	this.platform = window.parent;
 
 	// Get id from the URL
-	var tmp = document.URL.split("?");
-	tmp = tmp[1].split("=");
-	this.id = tmp[1];
+	var tmp = document.URL.split("?", 2)[1];
+	tmp = tmp.split("#", 2)[0];
+	tmp = tmp.split("&");
+	for (var i = 0; i < tmp.length; i++) {
+		var current = tmp[i];
+		current = current.split("=", 2);
+		if (current[0] = "id") {
+			this.id = parseInt(current[1]);
+			break;
+		}
+	}
 
     /*if (document.addEventListener) 
            document.addEventListener("DOMContentLoaded", this.addOnLoadNotifier, false);
