@@ -88,6 +88,7 @@ class Proxy(Resource):
 
         # HTTP call
         try:
+            httplib.HTTPConnection.debuglevel = 1
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
             
@@ -114,7 +115,8 @@ class Proxy(Resource):
                     http_content_type_value = header[1]
                 if (header[0].lower() == 'http_user_agent'):
                     headers["User-Agent"] = header[1]
-                elif (header[0].find("HTTP_")>=0):
+                #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
+                elif (header[0].find("HTTP_")>=0 and header[0].lower != 'cache_control'):
                     headers[header[0].replace("HTTP_", "", 1)] = header[1]
             
             headers["HOST"] = host       
@@ -137,7 +139,7 @@ class Proxy(Resource):
  #               cgi = cgi + '?%s' % query
                 
             if method == 'GET':
-                req=urllib2.Request(url, None, headers)
+                req=urllib2.Request(url, None)
             else:
                 req=urllib2.Request(url, params, headers)
             
