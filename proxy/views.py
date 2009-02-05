@@ -177,7 +177,7 @@ class Proxy(Resource):
 #                res = conn.getresponse()
                 
             # Add content-type header to the response
-            if res.headers['content-type']:
+            if hasattr(res.headers,'content-type'):
                 response = HttpResponse (res.read(), mimetype=res.headers['content-type'])
             else:
                 response = HttpResponse (res.read())
