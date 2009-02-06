@@ -86,7 +86,7 @@ _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandle
 	if (typeof(parameters)=="string")
 		var p = parameters;
 	else
-		var p = Object.toJSON(parameters);
+		var p = this.platform.Object.toJSON(parameters);
 	var params = {url: url, method: 'POST', params: p};
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
@@ -99,7 +99,7 @@ _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler
 	if (typeof(parameters)=="string")
 		var p = parameters;
 	else
-		var p = Object.toJSON(parameters);
+		var p = this.platform.Object.toJSON(parameters);
 	var params = {url: url, method: 'PUT', params: p};
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
