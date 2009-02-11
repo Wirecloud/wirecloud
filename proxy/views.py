@@ -188,8 +188,8 @@ class Proxy(Resource):
             # Add all the headers recieved to the response
             headers = res.headers
             for header in headers:
-                if is_valid_header (string.lower(header[0])):
-                    response[header[0]] = header[1]
+                if is_valid_header (string.lower(header)):
+                    response[header] = headers[header]
 
             return response
 
