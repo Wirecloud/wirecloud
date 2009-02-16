@@ -1170,7 +1170,7 @@ IGadget.prototype.setSize = function(newWidth, newHeight, resizeLeftSide, persis
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTHINPIXELS, this.content.offsetWwidth);
+		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
 	}
 
 	// Notify resize event
