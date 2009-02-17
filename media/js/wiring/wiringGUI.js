@@ -161,8 +161,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   WiringInterface.prototype.unload = function () {
 	    // Saving wiring structure and hiding!
 	    //this.wiringContainer.update();
-	    
-	    delete this;
   }
 
   WiringInterface.prototype.saveWiring = function () {
