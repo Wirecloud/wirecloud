@@ -69,8 +69,6 @@ function Tab (tabInfo, workSpace) {
 		this.menu.remove();
 		
 		this.dragboard.destroy();
-		
-		delete this;
 	}
 	
 	Tab.prototype.updateInfo = function (tabName){

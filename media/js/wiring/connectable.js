@@ -61,9 +61,11 @@ wConnectable.prototype.setInterface = function(view) {
 	this.view=view;
 }
 
+/**
+ * This method must be called to avoid memory leaks caused by circular references.
+ */
 wConnectable.prototype.destroy = function () {
 	this.fullDisconnect();
-	delete this;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
