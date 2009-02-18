@@ -432,15 +432,15 @@ IGadget.prototype.paint = function() {
 	                        LayoutManagerFactory.getInstance().hideCover();
 	                    }.bind(this),
 	                    0);
-	                    
+
 	this.menu.addOption("/ezweb/images/igadget/transparency.png",
 	                    gettext("Transparency"),
 	                    function() {
-	                    	this.toggleTransparency();
+	                        this.toggleTransparency();
 	                        LayoutManagerFactory.getInstance().hideCover();
 	                    }.bind(this),
 	                    1);
-	                    
+
 	// Extract/Snap from/to grid option (see _updateExtractOption)
 	this.extractOptionOrder = 2;
 	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
@@ -528,7 +528,6 @@ IGadget.prototype.paint = function() {
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
 		this.content.setAttribute("src", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
 		this.content.setAttribute("standby", "Loading...");
-		this.content.setAttribute("onload", "OpManagerFactory.getInstance().igadgetLoaded("+this.id+")");
 //		this.content.innerHTML = "Loading...."; // TODO add an animation ?
 
 		this.content.setAttribute("width", "100%");
@@ -539,11 +538,15 @@ IGadget.prototype.paint = function() {
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
 		this.content.setAttribute("data", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
 		this.content.setAttribute("standby", "Loading...");
-		this.content.setAttribute("onload", "OpManagerFactory.getInstance().igadgetLoaded("+this.id+")");  
 		this.content.innerHTML = "Loading...."; // TODO add an animation ?
 
 		this.content.setStyle({"width": "100%", "height": contentHeight + "px"});
 	}
+	this.content.observe("load",
+	                     function () {
+	                         OpManagerFactory.getInstance().igadgetLoaded(this.id);
+	                     }.bind(this),
+	                     true);
 	this.contentWrapper.appendChild(this.content);
 	
 	// Gadget status bar
@@ -662,23 +665,22 @@ IGadget.prototype.fillWithInput = function () {
 		this.igadgetInputHTMLElement.show();
 		this.igadgetInputHTMLElement.setAttribute("value", this.name);
 		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
-	}
-	else{		
+	} else {
 		this.igadgetInputHTMLElement = document.createElement("input");
 		this.igadgetInputHTMLElement.addClassName("igadget_name");
 		this.igadgetInputHTMLElement.setAttribute("type", "text");
 		this.igadgetInputHTMLElement.setAttribute("value", this.name);
 		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
 		this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
-		
+
 		this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
-		
+
 		this.igadgetInputHTMLElement.observe('blur',
 		                                    function(e) {
 		                                        Event.stop(e);
 		                                        this.fillWithLabel()
 		                                    }.bind(this));
-	
+
 		this.igadgetInputHTMLElement.observe('keypress',
 		                                    function(e) {
 		                                        if(e.keyCode == Event.KEY_RETURN) {
@@ -686,27 +688,27 @@ IGadget.prototype.fillWithInput = function () {
 		                                            e.target.blur();
 		                                        }
 		                                    }.bind(this));
-	
+
 		this.igadgetInputHTMLElement.observe('change',
 		                                    function(e) {
 		                                        Event.stop(e);
 		                                        this.setName(e.target.value);
 		                                    }.bind(this));
-	
+
 		this.igadgetInputHTMLElement.observe('keyup',
 		                                    function(e) {
 		                                        Event.stop(e);
 		                                        e.target.size = (e.target.value.length==0) ? 1 : e.target.value.length + 5;
 		                                    }.bind(this));
-	
+
 		/*this.igadgetInputHTMLElement.observe('click',
 		                                    function(e) {
 		                                        Event.stop(e);
 		                                    }); //do not propagate to div.*/
 		this.igadgetInputHTMLElement.observe('mousedown',
 		                                    function(e) {
-												e = e || window.event; // needed for IE
-												Event.stop(e);
+		                                        e = e || window.event; // needed for IE
+		                                        Event.stop(e);
 		                                    });
 	}
 	this.igadgetInputHTMLElement.focus();
@@ -932,7 +934,7 @@ IGadget.prototype.setContentSize = function(newWidth, newHeight, persist) {
  * @private
  */
 IGadget.prototype._notifyWindowResizeEvent = function() {
-	if (!this.element)
+	if (!this.element || !this.loaded)
 		return;
 
 	// Recompute position
@@ -995,6 +997,11 @@ IGadget.prototype._notifyLoaded = function() {
 
 	}
 
+	// Recompute position
+	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
+	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
+
+	// Recompute sizes
 	this.setContentSize(this.contentWidth, this.contentHeight, false);
 
 	// Notify to the context manager the igadget has been loaded
