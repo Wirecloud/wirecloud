@@ -106,7 +106,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// PUBLIC METHODS 
 	// ****************
 
-	Dragboard.prototype.recomputeSize = function() {
+	Dragboard.prototype.unload = function() {
 	    var keys = this.iGadgets.keys();
 	    //unloading igadgets
 	    for (var i = 0; i < keys.length; i++)
