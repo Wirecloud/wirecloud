@@ -538,6 +538,8 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 		// Pre-reserve the cells for the gadget instance
 		this._reserveSpace(this.matrix, iGadget);
 	}
+
+	this._adaptIGadget(iGadget);
 }
 
 ColumnLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {

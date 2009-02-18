@@ -564,7 +564,7 @@ button {
 /*  overflow-x: auto;*/
   overflow-y: auto;
   z-index: 1;
-  visibility: hidden;
+  display: none;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;
 }

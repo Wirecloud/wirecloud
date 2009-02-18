@@ -939,8 +939,8 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
 	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 
-	// Recompute width
-	this._recomputeWidth();
+	// Recompute size
+	this._recomputeSize(true);
 }
 
 /**
@@ -1019,7 +1019,6 @@ IGadget.prototype._recomputeWidth = function() {
  * @private
  */
 IGadget.prototype._recomputeWrapper = function() {
-	var wrapperHeight;
 	if (!this.minimized)
 		wrapperHeight = this.content.offsetHeight + this.configurationElement.offsetHeight;
 	else
@@ -1094,6 +1093,8 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 
 			// Notify Context Manager about the new igadget's size
 			contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+
+			this._recomputeWrapper();
 		} else {
 			this._recomputeWrapper();
 			contentHeight = this.element.offsetHeight;
@@ -1113,9 +1114,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 
 		// Notify Context Manager about the new igadget's size
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+
+		this._recomputeWrapper();
 	}
 
-	this._recomputeWrapper();
 }
 
 /**
@@ -1284,10 +1286,12 @@ IGadget.prototype.isConfigurationVisible = function() {
  */
 IGadget.prototype.setConfigurationVisible = function(newValue) {
 	if (this.configurationVisible == newValue)
-		return;
+		return; // Nothing to do
+
+	// New Status
+	this.configurationVisible = newValue;
 
 	if (newValue == true) {
-		this.configurationVisible = true;
 		this.configurationElement.appendChild(this._makeConfigureInterface());
 		if (this.isMinimized())
 			this.configurationElement.setStyle({"display": "none"});
@@ -1298,7 +1302,6 @@ IGadget.prototype.setConfigurationVisible = function(newValue) {
 	} else {
 		this.configurationElement.innerHTML = "";
 		this.configurationElement.hide();
-		this.configurationVisible = false;
 		this.settingsButtonElement.removeClassName("settings2button");
 		this.settingsButtonElement.addClassName("settingsbutton");
 	}
@@ -1458,11 +1461,16 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	}
 
 	// ##### TODO Revise this
+	//console.debug("prev width: " + this.contentWidth);
 	var newWidth = newLayout.adaptWidth(contentWidth, fullWidth)
 	this.contentWidth = newWidth.inLU;
+	//console.debug("new width: " + this.contentWidth);
 
+	//console.debug("prev height: " + this.height);
 	var newHeight = newLayout.adaptHeight(contentHeight, fullHeight)
 	this.height = newHeight.inLU;
+	//console.debug("new height: " + this.height);
+
 	// ##### END TODO
 	newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();

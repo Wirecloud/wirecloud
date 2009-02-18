@@ -181,6 +181,8 @@ FreeLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 
 	var posZ = this.orderList.push(iGadget) - 1;
 	iGadget.setZPosition(1000 + posZ);
+
+	this._adaptIGadget(iGadget);
 }
 
 FreeLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {

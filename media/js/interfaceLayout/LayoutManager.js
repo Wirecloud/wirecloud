@@ -31,57 +31,78 @@ var LayoutManagerFactory = function () {
 	// *********************************
 	var instance = null;
 
+	// *********************************
+	// PRIVATE CONSTANTS
+	// *********************************
+
+	// z-index levelS
+	var hideLevel = 1;
+	var showLevel = 2;
+
+	var hideStyle = {'zIndex': hideLevel, 'display': 'none'};
+	var showStyle = {'zIndex': showLevel, 'display': 'block'};
+
+	/*
+	 * Workaround for Firefox 2
+	 */
+	var firefox2workaround = Prototype.Browser.Gecko && navigator.userAgent.indexOf("2.0.0") != -1;
+	if (firefox2workaround) {
+		hideStyle['visibility'] = 'hidden';
+		delete hideStyle['display'];
+
+		showStyle['visibility'] = 'visible';
+		delete showStyle['display'];
+
+		document.styleSheets[0].insertRule(".container {display:block; visibility:hidden;}", document.styleSheets[0].cssRules.length);
+	}
+
+
 	function LayoutManager () {
-	        
-	    // *********************************
+		// *********************************
 		// PRIVATE VARIABLES 
 		// *********************************
-		
-		// z-index levels	
-			this.hideLevel = 1;
-			this.showLevel = 2;
-			
+
 		// current view: catalogue, dragboard, wiring, logs
-			this.currentViewType = null;
-			this.currentView = null;
-			
+		this.currentViewType = null;
+		this.currentView = null;
+
 		// Global links managed by LayoutManager: {showcase, wiring}
 		// Tabs are managed by WorkSpaces!! 
-			this.catalogueLink = $('catalogue_link');
-			this.wiringLink = $('wiring_link');
-			
+		this.catalogueLink = $('catalogue_link');
+		this.wiringLink = $('wiring_link');
+
 		// Container managed by LayOutManager: {showcase_tab}
 		// Remaining containers managed by WorkSpaces!!
-			this.catalogue = null;
-			this.logs = LogManagerFactory.getInstance();
-			this.logsLink = $('logs_link');
-			
-		// Menu Layer	
-			this.currentMenu = null;							//current menu (either dropdown or window)
-			this.coverLayerElement = $('menu_layer');					//disabling background layer
-			this.coverLayerEvent = function () {this.hideCover()}.bind(this);	//disabling layer onclick event (by default)
-			
+		this.catalogue = null;
+		this.logs = LogManagerFactory.getInstance();
+		this.logsLink = $('logs_link');
+
+		// Menu Layer
+		this.currentMenu = null;                                                // current menu (either dropdown or window)
+		this.coverLayerElement = $('menu_layer');                               // disabling background layer
+		this.coverLayerEvent = function () {this.hideCover()}.bind(this);       // disabling layer onclick event (by default)
+
 		// Tab bar section: to make the section scroll 2 divs are needed: one which limits the whole room and
 		//another which is absolutely positioned each time a slider button is clicked
-			this.tabBarStep = 20;
-			this.tabImgSize = 14; //launcher width
-			this.extraGap = 15;	// 15px to ensure that a new character has enough room in the scroll bar
-			this.tabMarginRight = 6	;	//6px
-			this.rightSlider = $('right_slider');
-			this.leftSlider = $('left_slider');
-			this.leftTimeOut;
-			this.rightTimeOut;			
-			//fixed section
-			this.fixedTabBar = $('fixed_bar');
-			this.fixedTabBarMaxWidth = BrowserUtilsFactory.getInstance().getWidth()*0.70;
-			
-			//scroll bar
-			this.scrollTabBar = $('scroll_bar');
-			//initial width (there is always a launcher (of the current tab))
-			this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
-	
-			this.menus = new Array();
-					
+		this.tabBarStep = 20;
+		this.tabImgSize = 14;    // launcher width
+		this.extraGap = 15;      // 15px to ensure that a new character has enough room in the scroll bar
+		this.tabMarginRight = 6; // 6px
+		this.rightSlider = $('right_slider');
+		this.leftSlider = $('left_slider');
+		this.leftTimeOut;
+		this.rightTimeOut;
+		//fixed section
+		this.fixedTabBar = $('fixed_bar');
+		this.fixedTabBarMaxWidth = BrowserUtilsFactory.getInstance().getWidth()*0.70;
+
+		//scroll bar
+		this.scrollTabBar = $('scroll_bar');
+		//initial width (there is always a launcher (of the current tab))
+		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
+
+		this.menus = new Array();
+
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
@@ -120,114 +141,112 @@ var LayoutManagerFactory = function () {
 				wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
 				if(wiringInterface.currentChannel){
 					wiringInterface.uncheckChannel(wiringInterface.currentChannel);
-					wiringInterface.highlightChannel(wiringInterface.currentChannel);				
+					wiringInterface.highlightChannel(wiringInterface.currentChannel);
 				}
 			}
-			
+
 			//recalculate menu positions
 			if(this.currentMenu){
 				this.currentMenu.calculatePosition();
 			}
-			
 		}
-		
+
 		LayoutManager.prototype.unloadCurrentView = function () {
 			if (this.currentView) {
 				this.currentView.hide();
 				this.currentView = null;
 			}
 		}
-		
+
 		LayoutManager.prototype.unMarkGlobalTabs = function () {
 			if (!this.catalogue) {
 				this.catalogueLink = $('catalogue_link');
 				this.logsLink = $('logs_link');
 				this.wiringLink = $('wiring_link');
 			}
-			
+
 			this.catalogueLink.className = 'toolbar_unmarked';
 			this.wiringLink.className = 'toolbar_unmarked';
 			this.logsLink.className = 'toolbar_unmarked';
-			
+
 /*			this.hideShowCase();
-			this.hideLogs();		
+			this.hideLogs();
 */
 		}
 
 		/****VIEW OPERATIONS****/
 		//hide an HTML Element
-		LayoutManager.prototype.hideView = function (viewHTML){
-			viewHTML.setStyle({'zIndex': this.hideLevel, 'visibility': 'hidden'});
+		LayoutManager.prototype.hideView = function (viewHTML) {
+			viewHTML.setStyle(hideStyle);
 		}
-		
-		LayoutManager.prototype.notifyError = function (labelContent){
+
+		LayoutManager.prototype.notifyError = function (labelContent) {
 			this.logsLink.innerHTML = labelContent;
 			this.logsLink.setStyle({'display' : 'inline'});
 		}
 		
-		LayoutManager.prototype.clearErrors = function (labelContent){
+		LayoutManager.prototype.clearErrors = function (labelContent) {
 			this.logsLink.innerHTML = '';
 		}
 
 		// Tab operations
-		LayoutManager.prototype.unmarkTab = function(tab, launcher, changeEvent, renameEvent){
+		LayoutManager.prototype.unmarkTab = function(tab, launcher, changeEvent, renameEvent) {
 			tab.className = "tab";
 			//hide the launcher image for the drop down menu from the former current tab
 			var tabOpsLauncher = $(launcher);
 			tabOpsLauncher.setStyle({'display':'none'});
 			Event.stopObserving(tab, 'click', renameEvent);
-		   	Event.observe(tab, 'click', changeEvent);
-		    tab.setStyle({'zIndex': this.showLevel, 'display':'block', 'visibility':'visible'});
-			
+			Event.observe(tab, 'click', changeEvent);
+			tab.setStyle({"display": "block"}); // TODO
 		}
-		
-		LayoutManager.prototype.markTab = function(tab, launcher, renameHandler, changeHandler){
-			if(tab.className != "tab current"){
+
+		LayoutManager.prototype.markTab = function(tab, launcher, renameHandler, changeHandler) {
+			if (tab.className != "tab current") {
 				tab.className = "tab current";
-			    var tabOpsLauncher = $(launcher);
-			    tabOpsLauncher.setStyle({'display':'inline'});
-		    	tab.setStyle({'zIndex': this.showLevel, 'display':'block', 'visibility':'visible'});
+				var tabOpsLauncher = $(launcher);
+				tabOpsLauncher.setStyle({'display':'inline'});
+				tab.setStyle({"display": "block"}); // TODO
 			}
-			if(this.currentViewType == 'dragboard'){
+			if (this.currentViewType == 'dragboard') {
 				Event.stopObserving(tab, 'click', changeHandler);
-   			   	Event.observe(tab, 'click', renameHandler);
-			}else{
+				Event.observe(tab, 'click', renameHandler);
+			} else {
 				Event.stopObserving(tab, 'click', renameHandler);
-   			   	Event.observe(tab, 'click', changeHandler);
+				Event.observe(tab, 'click', changeHandler);
 			}
 		}
-		
-		LayoutManager.prototype.hideTab = function(tab){
+
+		LayoutManager.prototype.hideTab = function(tab) {
 			try{ //remove the launcher image for the drop down menu from the former current tab
 				var tabOpsLauncher = $$('#'+tab.getAttribute('id')+' #tabOps_launcher');
-				if(tabOpsLauncher.length>0){	
+				if (tabOpsLauncher.length > 0) {
 					tabOpsLauncher[0].setStyle({'display':'none'});
 				}
-			}catch (e){
+			} catch (e) {
 				return;
 			}
 			tab.className = "tab";
-			tab.setStyle({'zIndex': this.hideLevel, 'display':'none', 'visibility':'hidden'});
+			tab.setStyle(hideStyle);
 		}
-		
+
 		// Dragboard operations (usually called together with Tab operations)
-		LayoutManager.prototype.showDragboard = function(dragboard){
+		LayoutManager.prototype.showDragboard = function(dragboard) {
 			this.unMarkGlobalTabs();
-			if(this.currentView != null){
+			if (this.currentView != null) {
 				this.currentView.hide();
 			}
-		    this.currentView = dragboard;
-		    this.currentViewType = 'dragboard';
-			dragboard.dragboardElement.setStyle({'zIndex': this.showLevel, 'visibility': 'visible'})
+			this.currentView = dragboard;
+			this.currentViewType = 'dragboard';
+			dragboard.dragboardElement.setStyle(showStyle);
 		}
-		
+
 		// Catalogue operations
 		LayoutManager.prototype.showCatalogue = function(){
 			this.unMarkGlobalTabs();
-			if(this.currentView != null){
+			if (this.currentView != null) {
 				this.currentView.hide();
-			}			
-				
+			}
+
 			if (!this.catalogue) {
 				this.catalogue = CatalogueFactory.getInstance();
 			}
@@ -235,36 +254,36 @@ var LayoutManagerFactory = function () {
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
 			this.catalogueLink.className = 'toolbar_marked';
-			this.catalogue.catalogueElement.setStyle({'zIndex': this.showLevel, 'display': 'block', 'visibility': 'visible'});
+			this.catalogue.catalogueElement.setStyle(showStyle);
 		}
-				
+
 		// Logs operations
 		LayoutManager.prototype.showLogs = function(){
 			this.unMarkGlobalTabs();
 			if(this.currentView != null){
 				this.currentView.hide();
-			}				
-		    this.currentView = this.logs;
+			}
+			this.currentView = this.logs;
 			this.currentViewType = 'logs';
-			this.logsLink.className = "toolbar_marked";			
-			this.logs.logContainer.setStyle({'zIndex': this.showLevel, 'display': 'block', 'visibility': 'visible'});
+			this.logsLink.className = "toolbar_marked";
+			this.logs.logContainer.setStyle(showStyle);
 		}
-	
+
 		//Wiring operations
 		LayoutManager.prototype.showWiring = function(wiring){
 			this.unMarkGlobalTabs();
 			if(this.currentView != null){
 				this.currentView.hide();
-			}				
-		    this.currentView = wiring;			
+			}
+			this.currentView = wiring;
 			this.currentViewType = 'wiring';
 			this.wiringLink.className = "toolbar_marked";
 			this.wiringLink.blur();
-			wiring.wiringContainer.setStyle({'zIndex' : this.showLevel, 'display': 'block', 'visibility': 'visible'});
+			wiring.wiringContainer.setStyle(showStyle);
 			//resizing the wiring table so that the scroll bar don't modify the table width.
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
 		}
-		
+
 		//the disabling layer can be clicable (in order to hide a menu) or not
 		LayoutManager.prototype.showClickableCover = function(){
 			this.coverLayerElement.style.display="block";
@@ -274,7 +293,7 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.showUnclickableCover = function(){
 			this.coverLayerElement.addClassName('disabled_background');
 			this.coverLayerElement.style.display="block";
-	
+
 			Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
 		}
 
@@ -305,7 +324,7 @@ var LayoutManagerFactory = function () {
 				workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function (){this.firstWK.mergeWith(this.scndWK.workSpaceState.id)}.bind(context), i);
 
 			}
-		}		
+		}
 
 		//Shows the asked drop down menu 
 		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y){
@@ -388,11 +407,11 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['publishWorkSpaceMenu'];
 				this.currentMenu.show();
-				break;			
+				break;
 			case 'deleteAllResourceVersions':
 				if(!this.menus['alertMenu']){
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
-				}				
+				}
 				this.currentMenu = this.menus['alertMenu'];
 				if (UIUtils.selectedVersion != null){
 					this.currentMenu.setMsg(gettext('Do you really want to remove this version of the gadget?'));
@@ -420,7 +439,7 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentMenu = this.menus['messageMenu'];
 			this.currentMenu.setMsg(msg);
-			this.currentMenu.show();			
+			this.currentMenu.show();
 		}
 
 		//hides the disabling layer and so, the current menu
@@ -429,8 +448,8 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.hide();
 			}
 			this.currentMenu = null;
-			this.coverLayerElement.style.display="none";		
-			this.coverLayerElement.removeClassName('disabled_background');			
+			this.coverLayerElement.style.display="none";
+			this.coverLayerElement.removeClassName('disabled_background');
 		}
 		
 		var FADE_RED_INI = 240;
@@ -481,33 +500,39 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.fadeColour = function(colour, obj, step){
 			if(colour > obj){
 				if(colour - step > obj){
-					return colour - step;	
-				}	
+					return colour - step;
+				}
 			} else {
 				if(colour + step < obj){
-					return colour + step;	
-				}		
+					return colour + step;
+				}
 			}
 			return obj;
 		}
 		
 	}
-	
-	/*Tab scroll bar management*/
+
+	/*-----------------------------*
+	 * Tab scroll bar management   *
+	 *-----------------------------*/
+
 	/*Reset the tab bar values*/
-	LayoutManager.prototype.resetTabBar = function(tabId){
+	LayoutManager.prototype.resetTabBar = function(tabId) {
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		//we don't need arrows
 		this.rightSlider.style.display = "none";
-		this.leftSlider.style.display = "none";		
+		this.leftSlider.style.display = "none";
 	}
-	
+
 	/*Insert tab in the tab bar*/
-	LayoutManager.prototype.addToTabBar = function(tabId){
-		new Insertion.Top(this.scrollTabBar, "<div id='"+tabId+"' class='tab' style='display:none'></div>");
-		var tabHTMLElement = this.scrollTabBar.firstDescendant();
+	LayoutManager.prototype.addToTabBar = function(tabId) {
+		var tabHTMLElement = document.createElement("div");
+		tabHTMLElement.setAttribute("id", tabId);
+		tabHTMLElement.setAttribute("class", "tab");
+		tabHTMLElement.setStyle({"display": "none"}); // TODO
+		this.scrollTabBar.insertBefore(tabHTMLElement, this.scrollTabBar.firstChild);
 		var tabBorder= parseInt(tabHTMLElement.getStyle('border-left-width'));
 		this.changeTabBarSize(2*(this.tabMarginRight + tabBorder));
 		this.scrollTabBar.setStyle({right: 0, left:''});
@@ -528,12 +553,12 @@ var LayoutManagerFactory = function () {
 		this.scrollTabBarWidth += tabSize;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		if(this.scrollTabBarWidth <= this.fixedTabBarMaxWidth){
+		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			//we don't need arrows
 			this.rightSlider.style.display = "none";
-			this.leftSlider.style.display = "none";			
-		}else{ //if the scrollTabBar is bigger than the fixed tab, we need arrows
+			this.leftSlider.style.display = "none";
+		} else { //if the scrollTabBar is bigger than the fixed tab, we need arrows
 			this.rightSlider.style.display = "inline";
 			this.leftSlider.style.display = "inline";
 			
@@ -571,17 +596,17 @@ var LayoutManagerFactory = function () {
 			this.changeScrollBarRightPosition(this.tabBarStep);
 			var leftMethod = function(){this.goLeft()}.bind(this);
 			this.leftTimeOut=setTimeout(leftMethod,50);
-		}			
+		}
 	}
 
-	LayoutManager.prototype.goRight = function(){
-		this.leftSlider.blur();	
+	LayoutManager.prototype.goRight = function() {
+		this.leftSlider.blur();
 		if (parseInt(this.scrollTabBar.offsetLeft)<0){
 			this.changeScrollBarRightPosition(-1*this.tabBarStep);
 
 			var rightMethod = function(){this.goRight()}.bind(this);
 			this.rightTimeOut=setTimeout(rightMethod,50);
-		}		
+		}
 	}
 	
 	
@@ -589,12 +614,11 @@ var LayoutManagerFactory = function () {
 	// SINGLETON GET INSTANCE
 	// *********************************
 	return new function() {
-    	this.getInstance = function() {
-    		if (instance == null) {
-        		instance = new LayoutManager();
-         	}
-         	return instance;
-       	}
+	this.getInstance = function() {
+		if (instance == null) {
+			instance = new LayoutManager();
+		}
+		return instance;
+		}
 	}
-	
 }();

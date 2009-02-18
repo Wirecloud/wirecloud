@@ -51,6 +51,9 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 
 	// Window Resize event dispacher function
 	this._notifyWindowResizeEvent = function () {
+		if (this.dragboard.dragboardElement.style.display == "none")
+			return
+
 		this._recomputeSize();
 
 		// Notify each igadget
@@ -63,7 +66,8 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 	}.bind(this);
 
 	this._recomputeSize();
-	Event.observe(window, 'resize', this._notifyWindowResizeEvent);
+	this.dragboard.dragboardElement.observe('load', this._notifyWindowResizeEvent, true);
+	Event.observe(window, 'resize', this._notifyWindowResizeEvent, true);
 }
 
 /**
@@ -194,7 +198,17 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	this.iGadgets[iGadget.code] = iGadget;
 
 	if (iGadget.element != null) {
-		iGadget._recomputeSize(false);
+		iGadget._recomputeSize();
+	}
+}
+
+/**
+ * @private
+ *
+ * This function should be called at the end of the implementation of addIGadget.
+ */
+DragboardLayout.prototype._adaptIGadget = function(iGadget) {
+	if (iGadget.element != null) {
 		this._ensureMinimalSize(iGadget, false);
 	}
 }
@@ -250,7 +264,7 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
  * references.
  */
 DragboardLayout.prototype.destroy = function() {
-	Event.stopObserving(window, 'resize', this._notifyWindowResizeEvent);
+	Event.stopObserving(window, 'resize', this._notifyWindowResizeEvent, true);
 
 	var keys = this.iGadgets.keys();
 	for (var i = 0; i < keys.length; i++) {

@@ -25,7 +25,7 @@
 
 
 function Tab (tabInfo, workSpace) {
-				
+
 	//CALLBACK METHODS
 	var renameSuccess = function(transport){
 
@@ -151,6 +151,7 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.show = function () {
 		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
+		this.dragboard.recomputeSize();
 		this.markAsCurrent();
 	}
 	
@@ -230,7 +231,6 @@ function Tab (tabInfo, workSpace) {
 	this.dragboardElement = wrapper.firstDescendant();
 
 	this.dragboardElement.setAttribute('id', this.dragboardLayerName);
-	this.dragboardElement.setStyle({'display': 'block'});
 
 	this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
 	
@@ -238,7 +238,7 @@ function Tab (tabInfo, workSpace) {
 	
 	// Tab creation
 	//add a new tab to the tab section
-	this.tabHTMLElement=LayoutManagerFactory.getInstance().addToTabBar(this.tabName);
+	this.tabHTMLElement = LayoutManagerFactory.getInstance().addToTabBar(this.tabName);
 
 	this.tabOpsLauncher = this.tabName+"_launcher";
 	var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
