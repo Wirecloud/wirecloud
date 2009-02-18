@@ -937,12 +937,26 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
 	if (!this.element || !this.loaded)
 		return;
 
+	/* TODO this is a temporally workaround needed when using display:none to hide tabs */
+	var oldHeight = this.getHeight();
+	var oldWidth = this.getWidth();
+	/* TODO end of temporally workaround */
+
 	// Recompute position
 	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 
 	// Recompute size
 	this._recomputeSize(true);
+
+	/* TODO this is a temporally workaround needed when using display:none to hide tabs */
+	// Notify new sizes if needed
+	var newHeight = this.getHeight();
+	var newWidth = this.getWidth();
+
+	if ((oldHeight != newHeight) || (oldWidth != newWidth))
+		this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
+	/* TODO end of temporally workaround */
 }
 
 /**
