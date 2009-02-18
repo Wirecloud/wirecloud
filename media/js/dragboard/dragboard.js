@@ -107,6 +107,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// ****************
 
 	Dragboard.prototype.recomputeSize = function() {
+	    var keys = this.iGadgets.keys();
+	    //unloading igadgets
+	    for (var i = 0; i < keys.length; i++)
+		this.iGadgets[keys[i]].unload();
+	}
+
+	Dragboard.prototype.recomputeSize = function() {
 		this.baseLayout._notifyWindowResizeEvent();
 		this.freeLayout._notifyWindowResizeEvent();
 	}

@@ -959,6 +959,11 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
 	/* TODO end of temporally workaround */
 }
 
+IGadget.prototype.unload = function() {
+    this.menu.remove();
+}
+
+
 /**
  * This function is called when the dragboard is locked or unlocked.
  *

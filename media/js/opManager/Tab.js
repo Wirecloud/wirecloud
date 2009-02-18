@@ -70,6 +70,11 @@ function Tab (tabInfo, workSpace) {
 		
 		this.dragboard.destroy();
 	}
+
+
+	Tab.prototype.unload = function(){
+	    this.dragboard.unload();
+	}
 	
 	Tab.prototype.updateInfo = function (tabName){
 
