@@ -53,7 +53,7 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 	this._notifyWindowResizeEvent = function () {
 		// TODO do this in a compatible fashion
 		var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
-		if (cssStyle.getPropertyValue("none") == "none")
+		if (cssStyle.getPropertyValue("display") == "none")
 			return
 
 		this._recomputeSize();
@@ -69,7 +69,7 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 
 	// TODO do this in a compatible fashion
 	var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
-	if (cssStyle.getPropertyValue("none") == "none")
+	if (cssStyle.getPropertyValue("display") == "none")
 		this.dragboardWidth = 1200; // temporal size
 	else
 		this._recomputeSize();
