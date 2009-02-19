@@ -51,7 +51,9 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 
 	// Window Resize event dispacher function
 	this._notifyWindowResizeEvent = function () {
-		if (this.dragboard.dragboardElement.style.display == "none")
+		// TODO do this in a compatible fashion
+		var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
+		if (cssStyle.getPropertyValue("none") == "none")
 			return
 
 		this._recomputeSize();
@@ -65,7 +67,13 @@ function DragboardLayout(dragboard, scrollbarSpace) {
 		}
 	}.bind(this);
 
-	this._recomputeSize();
+	// TODO do this in a compatible fashion
+	var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
+	if (cssStyle.getPropertyValue("none") == "none")
+		this.dragboardWidth = 1200; // temporal size
+	else
+		this._recomputeSize();
+
 	this.dragboard.dragboardElement.observe('load', this._notifyWindowResizeEvent, true);
 	Event.observe(window, 'resize', this._notifyWindowResizeEvent, true);
 }
