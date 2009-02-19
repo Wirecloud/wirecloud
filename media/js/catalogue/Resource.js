@@ -219,7 +219,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		    //Mashup
 
 		    var bottom_message = gettext('Add Mashup'); 
-		    var bottom_class = ''
+		    var bottom_class = 'add_mashup'
 
 		    if (this.isContratable(state.getCapabilities())) {
 		       bottom_message = gettext('Purchase');
