@@ -463,11 +463,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.unloadTab = function(tabId){
 		var tab = this.tabInstances[tabId];
 		
-		var tabKeys = this.tabInstances.keys();
-		
-		for (var i=0; i<tabKeys.length; i++) {
-		    this.tabInstances[tabKeys[i]].unload();
-		} 
+		tab.unload();
 
 		this.tabInstances.remove(tabId);
 
