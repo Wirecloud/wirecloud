@@ -59,11 +59,11 @@ function Tab (tabInfo, workSpace) {
 		LayoutManagerFactory.getInstance().hideCover();
 	}
 
-    // ****************
-    // PUBLIC METHODS
-    // ****************
+	// ****************
+	// PUBLIC METHODS
+	// ****************
 
-	Tab.prototype.destroy = function(){
+	Tab.prototype.destroy = function() {
 		LayoutManagerFactory.getInstance().removeFromTabBar(this.tabHTMLElement);
 		
 		this.menu.remove();
@@ -72,11 +72,7 @@ function Tab (tabInfo, workSpace) {
 	}
 
 
-	Tab.prototype.unload = function(){
-	    this.dragboard.unload();
-	}
-	
-	Tab.prototype.updateInfo = function (tabName){
+	Tab.prototype.updateInfo = function (tabName) {
 
 		//If the server isn't working the changes will not be saved
 		if(tabName=="" || tabName.match(/^\s$/)){//empty name

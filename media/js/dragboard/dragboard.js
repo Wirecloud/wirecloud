@@ -106,13 +106,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// PUBLIC METHODS 
 	// ****************
 
-	Dragboard.prototype.unload = function() {
-	    var keys = this.iGadgets.keys();
-	    //unloading igadgets
-	    for (var i = 0; i < keys.length; i++)
-		this.iGadgets[keys[i]].unload();
-	}
-
 	Dragboard.prototype.recomputeSize = function() {
 		this.baseLayout._notifyWindowResizeEvent();
 		this.freeLayout._notifyWindowResizeEvent();
@@ -140,8 +133,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgetsByCode = null;
 
 		Element.remove(this.dragboardElement);
-
-		//TODO: have all references been removed?,delete the object
 	}
 
 	/**

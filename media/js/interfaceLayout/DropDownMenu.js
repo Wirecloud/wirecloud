@@ -184,13 +184,11 @@ function DropDownMenu(idMenu_, parentMenu){
 			this.parentMenu.hide();
 	}
 	
-	DropDownMenu.prototype.remove = function (){
-
-		Element.remove(this.menu);	
-		delete this;
+	DropDownMenu.prototype.remove = function () {
+		Element.remove(this.menu);
 	}
 
-	//shows the menu (calling showMenu function)	
+	//shows the menu (calling showMenu function)
 	DropDownMenu.prototype.show = function (position, x, y){
 		this.position = position;
 		this.x = x;

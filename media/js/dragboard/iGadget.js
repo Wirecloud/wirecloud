@@ -756,6 +756,10 @@ IGadget.prototype.setName = function (igadgetName) {
  * This method must be called to avoid memory leaks caused by circular references.
  */
 IGadget.prototype.destroy = function() {
+	if (this.menu) {
+		this.menu.remove();
+		this.menu = null;
+	}
 	this.gadget = null;
 	this.layout = null;
 	this.position = null;
@@ -958,11 +962,6 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
 		this.layout._notifyResizeEvent(this, oldWidth, oldHeight, newWidth, newHeight, false, false);
 	/* TODO end of temporally workaround */
 }
-
-IGadget.prototype.unload = function() {
-    this.menu.remove();
-}
-
 
 /**
  * This function is called when the dragboard is locked or unlocked.
