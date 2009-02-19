@@ -44,7 +44,7 @@ Object.extend(Event, {
 	 * */
 	observe: function(element, name, observer, useCapture, featureId){
 		var _observer = observer;
-		if (featureId){
+		if (featureId && typeof(EzSteroidsAPI)!="undefined"){
 			//check the user policies
 			if (!EzSteroidsAPI.evaluePolicy(featureId)){
 				//if the user isn't allowed

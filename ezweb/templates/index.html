@@ -129,9 +129,10 @@ var ezweb_user_name = '{{ user.username }}'
 <script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
 
+{% if AUTHENTICATION_SERVER_URL %}
 <script language="JavaScript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>  
-
+{% endif%}
 
 <!-- Initialization code -->
 <script language="JavaScript">
