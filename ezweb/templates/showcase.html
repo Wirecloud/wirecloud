@@ -1,16 +1,16 @@
 {% load i18n %}
 
-<div id="catalogue" class="container_content" onresize="UIUtils.setResourcesWidth();">
+<div id="catalogue" class="container_content">
 	<div id="head" class="head">
 		<div id="header_always" class="header_always">
 			<div id="new_resource" class="new_resource">
 				<label for="template_uri">{% trans "Template URL:" %}</label>
-				<input id="template_uri" name="template_uri" type="text" onClick="select();"/>
+				<input id="template_uri" name="template_uri" type="text" onclick="select();"/>
 				<a id="submit_link" class="submit_link" href="#" >{% trans "Create resource" %}</a>
 			</div>
-			<div id="simple_search" name="simple_search" class="simple_search">	
+			<div id="simple_search" class="simple_search">
 				<label for="simple_search_text">{% trans  "Search:" %}</label>
-				<input type="text" id="simple_search_text" name="simple_search_text" class="text" autocomplete="on" onKeyUp="if(this.value.length<20){;}else if (this.value.length >= 16 && this.value.length < 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"></input>
+				<input type="text" id="simple_search_text" name="simple_search_text" class="text" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"></input>
 				<a class="submit_link" href="#" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');">{% trans  "Search" %}</a>
 			</div>
 			<div id="advanced_options" class="advanced_options">
@@ -20,22 +20,22 @@
 			<div id="header_always_status" class="header_always_status"></div>
 			<div id="header_always_error" class="message_error"></div>
 		</div>
-		<div id="advanced_search" class="advanced_search" style="display:none;">	
+		<div id="advanced_search" class="advanced_search" style="display:none;">
 			<div id="advanced_search_left" class="advanced_search_left">
 				<table>
 					<tr>
 						<td><label for="advanced_search_text_tag">{% trans  "Search by tags:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_tag" name="advanced_search_text_tag" class="text" autocomplete="on" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');"></input></td>
+						<td><input type="text" id="advanced_search_text_tag" name="advanced_search_text_tag" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
  						<td><label for="advanced_search_text_event">{% trans  "Search by events:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_event" name="advanced_search_text_event" class="text" autocomplete="on" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');"></input></td>
+						<td><input type="text" id="advanced_search_text_event" name="advanced_search_text_event" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
  						<td><label for="advanced_search_text_slot">{% trans  "Search by slots:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_slot" name="advanced_search_text_slot" class="text" autocomplete="on"  onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');"></input></td>
+						<td><input type="text" id="advanced_search_text_slot" name="advanced_search_text_slot" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');">{% trans "Search" %}</a></td>
 					</tr>
 				</table>
@@ -44,17 +44,17 @@
 				<table>
 					<tr>
 						<td><label for="advanced_search_text_and">{% trans  "All of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_and" name="advanced_search_text_and" class="text" autocomplete="on" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');"></input></td>
+						<td><input type="text" id="advanced_search_text_and" name="advanced_search_text_and" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
 						<td><label for="advanced_search_text_or">{% trans  "Any of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_or" name="advanced_search_text_or" class="text" autocomplete="on" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');"></input></td>
+						<td><input type="text" id="advanced_search_text_or" name="advanced_search_text_or" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
 						<td><label for="advanced_search_text_not">{% trans  "None of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_not" name="advanced_search_text_not" class="text" autocomplete="on" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');"></input></td>
+						<td><input type="text" id="advanced_search_text_not" name="advanced_search_text_not" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');"></input></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');">{% trans  "Search" %}</a></td>
 					</tr>
 				</table>
@@ -68,29 +68,29 @@
 				<a href="#" class="submit_link" id="clear_search_formulary_link"  onclick="UIUtils.clearSearchForm();">{% trans  "Clear Search Form" %}</a>
 			</div>
 		</div>
-		<div id="advanced_tag" class="advanced_tag" style="display:none;">	
+		<div id="advanced_tag" class="advanced_tag" style="display:none;">
 			<div id="advanced_tag_left" class="advanced_tag_left">
-				<div class='tagcloud'>
-					<div class='title'>{% trans "Tagcloud" %} </div>
-					<div id='view_global_tags_links' class='link'>
+				<div class="tagcloud">
+					<div class="title">{% trans "Tagcloud" %} </div>
+					<div id="view_global_tags_links" class="link">
 						<span>{% trans "All common tags" %}  </span>
-						<a href='javascript:CatalogueFactory.getInstance().changeGlobalTagcloud("mytags");'>{% trans "My common tags" %} </a>
-						<a href='javascript:CatalogueFactory.getInstance().changeGlobalTagcloud("others");'>{% trans "Others common tags" %}</a>
+						<a href="javascript:CatalogueFactory.getInstance().changeGlobalTagcloud('mytags');">{% trans "My common tags" %} </a>
+						<a href="javascript:CatalogueFactory.getInstance().changeGlobalTagcloud('others');">{% trans "Others common tags" %}</a>
 					</div>
-					<div id='global_tagcloud' class='tags'></div>
+					<div id="global_tagcloud" class="tags"></div>
 				</div>
 			</div>	
 			<div id="advanced_tag_right" class="advanced_tag_right">
-				<div id='add_global_tags_panel' class='new_tags'>
-					<div class='title'>{% trans "New tags:" %}</div>
-					<div id='my_global_tags' class='my_tags'>
-						<div id='new_global_tag_text' class='new_tag_text'>
-							<input id='new_global_tag_text_input' type='text' size=5 maxlength=20 onkeyup="UIUtils.enlargeInput(this);" onkeypress="UIUtils.onReturn(event,UIUtils.addGlobalTag,this);" />
+				<div id="add_global_tags_panel" class="new_tags">
+					<div class="title">{% trans "New tags:" %}</div>
+					<div id="my_global_tags" class="my_tags">
+						<div id="new_global_tag_text" class="new_tag_text">
+							<input id="new_global_tag_text_input" type="text" size="5" maxlength="20" onkeyup="UIUtils.enlargeInput(this);" onkeypress="UIUtils.onReturn(event,UIUtils.addGlobalTag,this);" />
 					</div></div>
 					<div id="global_tag_alert" class="global_tag_alert"></div>
-					<div class='buttons'>
-						<a href="#" class="submit_link" onClick='javascript:UIUtils.sendGlobalTags();'>{% trans "Tag" %}</a>
-						<a href="#" class="submit_link" onClick='javascript:UIUtils.removeAllGlobalTags();'>{% trans "Cancel" %}</a>
+					<div class="buttons">
+						<a href="#" class="submit_link" onclick="javascript:UIUtils.sendGlobalTags();">{% trans "Tag" %}</a>
+						<a href="#" class="submit_link" onclick="javascript:UIUtils.removeAllGlobalTags();">{% trans "Cancel" %}</a>
 					</div>
 				</div>
 			</div>		
@@ -110,7 +110,7 @@
 		</div></div>
 		<div id="tab_info_resource" class="tab_info_resource">
 			<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.sendPendingTags();UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
-			<img  id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png"></img>
+			<img id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png" alt="Close"></img>
 			</a>
 		</div>
 	</div>

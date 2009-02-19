@@ -1,10 +1,8 @@
-﻿{% load i18n %}
+{% load i18n %}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
-<head>
-<title>EzWeb</title>
 <head>
 <title>{% trans "EzWeb Platform" %}</title>
 
@@ -13,16 +11,16 @@
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
 <!-- CSS for different header -->
 {% block css %}{% endblock %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css">
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
 <!--[if IE]>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
+  <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
 <![endif]-->
 
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
-<script type="text/javascript" language="javascript">
+<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+<script type="text/javascript">
 _URIConstants = function(){}
 _URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
 _URIConstants.prototype.USER = '/user/{{ user.username }}';
@@ -67,75 +65,75 @@ var ezweb_user_name = '{{ user.username }}'
 
 </script>
 
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/common/utils.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/common/utils.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/XHtml.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/gadgetModel/Gadget.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/XHtml.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/GadgetTemplate.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/gadgetModel/Gadget.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/log/LogManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/log/LogManager.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/WorkSpace.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/WorkSpace.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/Tab.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/opManager/OpManager.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariableGadget.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/opManager/OpManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariableGadget.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/showcase/showcase.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/showcase/util.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/showcase/showcase.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/showcase/util.js"></script>
 
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextManager.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/ContextPlatform.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/contextManager/Adaptors.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/ContextManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/ContextPlatform.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/Adaptors.js"></script>
 
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/DragboardLayout.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/SmartColumnLayout.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/FreeLayout.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/iGadget.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/dragboard.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/DragboardLayout.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/SmartColumnLayout.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/FreeLayout.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/iGadget.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/dragboard.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
 
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiringGUI.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
-<!--<script language="JavaScript" src="{{ MEDIA_URL}}js/wiring/color_scheme.js"></script>-->
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiringGUI.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
+<!--<script type="text/javascript" src="{{ MEDIA_URL}}js/wiring/color_scheme.js"></script>-->
 
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
-<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Resource.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/catalogue/Tag.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Resource.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tag.js"></script>
 <script type="text/javascript">
-	window.onresize = UIUtils.setResourcesWidth;
+    window.onresize = UIUtils.setResourcesWidth;
 </script>
 
-<script language="javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
-<script language="javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
 
 {% if AUTHENTICATION_SERVER_URL %}
-<script language="JavaScript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
-<script language="JavaScript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>  
+<script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 {% endif%}
 
 <!-- Initialization code -->
-<script language="JavaScript">
+<script type="text/javascript">
 	function setLanguage(language) {
 		var onSuccess = function() {
 			window.location.reload();
@@ -154,8 +152,7 @@ var ezweb_user_name = '{{ user.username }}'
 
 
 </head>
-
-<body onload="OpManagerFactory.getInstance().loadEnviroment()" onresize="LayoutManagerFactory.getInstance().resizeWrapper();" onunload="OpManagerFactory.getInstance().sendBufferedVars();UIUtils.sendPendingTags();">
+<body onload="OpManagerFactory.getInstance().loadEnviroment()" onunload="OpManagerFactory.getInstance().sendBufferedVars();UIUtils.sendPendingTags();">
 
 <!-- HIDDEN MENUS -->
 <div id="menu_layer" style="display:none">
@@ -210,7 +207,7 @@ var ezweb_user_name = '{{ user.username }}'
 		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
 	</div>
 	<div class="window_content">
-		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert">
+		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert" />
 		<div id="alert_window_msg" class="window_msg"></div>
 	</div>
 	<div class="window_bottom">
@@ -224,7 +221,7 @@ var ezweb_user_name = '{{ user.username }}'
 		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
 	</div>
 	<div class="window_content">
-		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert">
+		<img src="{{ MEDIA_URL }}images/warning.png" alt="alert" />
 		<div id="message_window_msg" class="window_msg"></div>
 	</div>
 	<div class="window_bottom">
@@ -263,7 +260,7 @@ var ezweb_user_name = '{{ user.username }}'
 {% block header %}
 <div id="header">
 <div id="banner">
-  	<div id="greeting">
+	<div id="greeting">
 		<span id="user_section">
 		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
 		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile"%}</a> |{%endif%} <a href="/logout" onclick="UIUtils.sendPendingTags();OpManagerFactory.getInstance().sendBufferedVars();">{% trans "Exit" %}</a></span>
@@ -272,7 +269,7 @@ var ezweb_user_name = '{{ user.username }}'
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 		</div>
 	</div>
-	<img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
+	<img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo" />
 </div>	
 <div id="bar">
 <div id="tab_section" class="tab_section">
@@ -283,47 +280,41 @@ var ezweb_user_name = '{{ user.username }}'
 
 </div>
 <div id="toolbar_section" class="toolbar_section">
-   		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked"/> 
-   		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked"/>
+		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked"/> 
+		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked"/>
 		<div id="workspace_name"></div>
 
-   		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>		
-		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked"onclick="OpManagerFactory.getInstance().showLogs()";></span>
+		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>
+		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></span>
 </div>
-<div id="message_section" class="message_section"><span id="message_box"class="message_box"></span></div>
+<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
 </div>
 </div>
 {% endblock %}
 <div id="wrapper">
-  <!-- DRAGBOARD LAYER -->
-  <div id="dragboard_template">
-  	<div id="dragboard_template" class="container dragboard">
-    	<div class="container_content">
-    	</div>
-    </div>
-  </div>
-  <!-- SHOWCASE LAYER -->
-  
-  <!-- WIRING LAYER -->
-  <div id="wiring" class="container">
-      {% include "wiring.html" %}
-  </div>
-  <!-- WIRING LAYER -->
-  
-  <!-- SHOWCASE LAYER -->
-  <div id="showcase_container" class="container">
-     {% include "showcase.html" %}
-  </div>
-  <!-- SHOWCASE LAYER -->
+	<!-- DRAGBOARD LAYERS -->
+		<!-- Initially empty -->
+	<!-- DRAGBOARD LAYERS -->
 
-  <!-- LOGS LAYER -->
-  <div id="logs_container" class="container">
-	<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>
-    <div id="logs_console" class="container_content">
-    </div>
-  </div>
-  <!-- LOGS LAYER -->
+	<!-- WIRING LAYER -->
+	<div id="wiring" class="container">
+	{% include "wiring.html" %}
+	</div>
+	<!-- WIRING LAYER -->
+
+	<!-- SHOWCASE LAYER -->
+	<div id="showcase_container" class="container">
+	{% include "showcase.html" %}
+	</div>
+	<!-- SHOWCASE LAYER -->
+
+	<!-- LOGS LAYER -->
+	<div id="logs_container" class="container">
+		<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>
+		<div id="logs_console" class="container_content">
+		 </div>
+	</div>
+	<!-- LOGS LAYER -->
 </div>
 </body>
-
 </html>

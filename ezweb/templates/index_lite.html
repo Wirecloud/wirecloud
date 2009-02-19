@@ -1,7 +1,7 @@
-﻿{% extends "index.html"%}
+{% extends "index.html"%}
 {% load i18n %}
 
-{% block css %}<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_lite.css">{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_lite.css" />{% endblock %}
 
 {%block header%}
 <div id="header">
@@ -14,11 +14,11 @@
 
 </div>
 <div id="toolbar_section" class="toolbar_section">
-   		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/> 
-   		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
+		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/>
+		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
 		<div id="workspace_name"></div>
-   		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>		
-		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked"onclick="OpManagerFactory.getInstance().showLogs()";></span>
+		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>
+		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></span>
 	</div>
 </div>
 </div>

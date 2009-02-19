@@ -1,36 +1,36 @@
 {% load i18n %}
-  <div id="wiring_messages"></div>
-  <div id="wiring_options">
-	<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
-	<div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
-  </div>
-  <table id="wiring_table" class="tableCell"><tr>
-      <td id="eventColumn" class="eventColumn">
-          <div class="title folded">{% trans "EVENTS" %}</div>
-          <div id="events_list"></div>
-      </td>
+	<div id="wiring_messages"></div>
+	<div id="wiring_options">
+		<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
+		<div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
+	</div>
+	<table id="wiring_table" class="tableCell">
+	<tr>
+		<td id="eventColumn" class="eventColumn">
+			<div class="title folded">{% trans "EVENTS" %}</div>
+			<div id="events_list"></div>
+		</td>
 
-      <td class="connectionColumn">
-          
-      </td>
+		<td class="connectionColumn">
+		</td>
 
-      <td class="inoutColumn">
-          <div class="title">{% trans "CHANNELS" %}</div>
-          <div align="center" class="newChannel" id="newChannel">
-          	{% trans "new channel" %}
-          	<div class="channelContent">
-	            <input class="newChannelInput" type="text" id="channel_name" name="channel_name"/>
-	        </div>
-          </div>
-          <div id="channels_list"></div>
-      </td>
+		<td class="inoutColumn">
+			<div class="title">{% trans "CHANNELS" %}</div>
+			<div class="newChannel" id="newChannel">
+				{% trans "new channel" %}
+				<div class="channelContent">
+					<input class="newChannelInput" type="text" id="channel_name" name="channel_name"/>
+				</div>
+			</div>
+			<div id="channels_list"></div>
+		</td>
 
-      <td class="connectionColumn">
+		<td class="connectionColumn">
+		</td>
 
-      </td>
-
-      <td id="slotColumn" class="slotColumn">
-          <div class="title folded">{% trans "SLOTS" %}</div>
-          <div id="slots_list"></div>
-      </td></tr>
-  </tr></table>
+		<td id="slotColumn" class="slotColumn">
+			<div class="title folded">{% trans "SLOTS" %}</div>
+			<div id="slots_list"></div>
+		</td>
+	</tr>
+	</table>

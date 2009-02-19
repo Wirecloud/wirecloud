@@ -248,6 +248,7 @@
 
 #wiring .newChannel{
   margin: 2ex 1ex;
+  text-align: center;
 }
 
 #wiring #wiring_options{

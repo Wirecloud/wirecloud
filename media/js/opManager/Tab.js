@@ -224,12 +224,11 @@ function Tab (tabInfo, workSpace) {
 	}.bind(this);
 
 	// Dragboard layer creation
-	var dragboardHTML = $("dragboard_template").innerHTML;
 	var wrapper = $("wrapper");
 
-	new Insertion.Top(wrapper, dragboardHTML);
-
-	this.dragboardElement = wrapper.firstDescendant();
+	this.dragboardElement = document.createElement("div");
+	this.dragboardElement.className = "container dragboard";
+	wrapper.insertBefore(this.dragboardElement, wrapper.firstChild);
 
 	this.dragboardElement.setAttribute('id', this.dragboardLayerName);
 
