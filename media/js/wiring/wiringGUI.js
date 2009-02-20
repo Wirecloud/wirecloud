@@ -40,12 +40,10 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   this.inputs = new Array(); // Input connections (events & inouts)
   this.outputs = new Array(); // Output connections (slots & inouts)
   this.channels = new Array();
-  this.channelsForRemove = new Array();
   this.filterMenus = new Hash();
   this.friend_codes = {};
   this.highlight_color = "#FFFFE0"; // TODO remove
   this.friend_codes_counter = 0;
-  this.channels_counter = 1;
   this.channelBaseName = gettext("Channel");
   this.visible = false; // TODO temporal workarround
   this.unfold_on_entering = false; //Does the user want all tabs to be expanded?
@@ -164,12 +162,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
   }
 
   WiringInterface.prototype.saveWiring = function () {
-    // Remove channels
-    for (var i = 0; i < this.channelsForRemove.length; i++) {
-      this.wiring.removeChannel(this.channelsForRemove[i].channel.getId());
-    }
 
-    // Create & update channels
     for (var i = 0; i < this.channels.length; i++) {
       this.channels[i].commitChanges(this.wiring);
     }
@@ -516,7 +509,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
     this.inputs.clear();
     this.outputs.clear();
     this.currentChannel = null;
-    this.channelsForRemove = new Array();
 	var filterKeys = this.filterMenus.keys();
     for (var f = 0; f < filterKeys.length; f++) {
 		this.filterMenus[filterKeys[f]].remove();
@@ -549,8 +541,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 //		this.chEventsWr.show();
 //		this.chSlotsWr.show();
 //	}
-
-    this.channels_counter = channels.length + 1;
     
   }
 
@@ -624,15 +614,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
     if (channelName == "") {
       // Build an initial channel name
-      channelName = this.channelBaseName + "_" + this.channels_counter;
-      this.channels_counter++;
+      var auxName=this.channels.length+1;
+      channelName = this.channelBaseName + "_" + (auxName);
     }
 
     // Check if there is another channel with the same name
     while (this.channelExists(channelName)) {
       // Build another channel name
-      channelName = this.channelBaseName + "_" + this.channels_counter;
-      this.channels_counter++;
+      channelName = this.channelBaseName + "_" + auxName;
+      auxName++;
     }
 
     // Creates the channel interface
@@ -678,8 +668,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Check whether this channel exists in the current wiring model
     // or when it was created with the wiring interface and removed
     // before commiting changes
-	if (channel.exists()){
-	  this.channelsForRemove.push(channel);
+	if (channel.exists() && !channel.isUnsaved()){
+		this.wiring.removeChannel (channel.getId());
 	
 	// The channel might have been created and deleted without saving  
 	// the wiring information (i.e. the user does not change between interfaces).
@@ -1101,6 +1091,10 @@ function ChannelInterface(channel) {
 
 ChannelInterface.prototype.setName = function(newName) {
   this.name = newName;
+  //if it has an associated channel in the wiring model, change its name too.
+  if(this.channel){
+  	this.channel._name=newName;
+  }
 }
 
 ChannelInterface.prototype.getPreviousId = function(newName) {
@@ -1118,7 +1112,7 @@ ChannelInterface.prototype.getId = function(newName) {
 }
 
 ChannelInterface.prototype.isUnsaved = function() {
-	return (!this.channel && this.provisional_id);
+	return (this.channel && this.provisional_id);
 }
 
 ChannelInterface.prototype.getInputs = function() {
@@ -1203,9 +1197,6 @@ ChannelInterface.prototype.commitChanges = function(wiring) {
   if (this.channel == null){
    	// The channel don't exists
    	this.channel = wiring.getOrCreateChannel(this.name, this.provisional_id);
-  }else {
-	  // Update channel name
-	  this.channel._name = this.name;
   }
   
   // Filter and params for adding
