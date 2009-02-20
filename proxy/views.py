@@ -139,7 +139,7 @@ class Proxy(Resource):
  #               cgi = cgi + '?%s' % query
                 
             if method == 'GET':
-                req=urllib2.Request(url, None)
+                req=urllib2.Request(url, None, headers)
             else:
                 req=urllib2.Request(url, params, headers)
             
