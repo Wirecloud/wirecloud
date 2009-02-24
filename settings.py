@@ -185,6 +185,8 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
 
+FORCE_SCRIPT_NAME=""
+
 try:
     from clms.settings import *
 except ImportError:
