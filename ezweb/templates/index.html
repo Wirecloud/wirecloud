@@ -118,7 +118,10 @@ var ezweb_user_name = '{{ user.username }}'
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tag.js"></script>
 <script type="text/javascript">
-    window.onresize = UIUtils.setResourcesWidth;
+    window.onresize = function () {
+        LayoutManagerFactory.getInstance().resizeWrapper()
+        UIUtils.setResourcesWidth();
+    }
 </script>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>

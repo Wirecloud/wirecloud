@@ -10,7 +10,7 @@
 			</div>
 			<div id="simple_search" class="simple_search">
 				<label for="simple_search_text">{% trans  "Search:" %}</label>
-				<input type="text" id="simple_search_text" name="simple_search_text" class="text" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"></input>
+				<input type="text" id="simple_search_text" name="simple_search_text" class="text" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"/>
 				<a class="submit_link" href="#" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');">{% trans  "Search" %}</a>
 			</div>
 			<div id="advanced_options" class="advanced_options">
@@ -25,17 +25,17 @@
 				<table>
 					<tr>
 						<td><label for="advanced_search_text_tag">{% trans  "Search by tags:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_tag" name="advanced_search_text_tag" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');"></input></td>
+						<td><input type="text" id="advanced_search_text_tag" name="advanced_search_text_tag" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'tag');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
  						<td><label for="advanced_search_text_event">{% trans  "Search by events:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_event" name="advanced_search_text_event" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');"></input></td>
+						<td><input type="text" id="advanced_search_text_event" name="advanced_search_text_event" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'event');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
  						<td><label for="advanced_search_text_slot">{% trans  "Search by slots:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_slot" name="advanced_search_text_slot" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');"></input></td>
+						<td><input type="text" id="advanced_search_text_slot" name="advanced_search_text_slot" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'slot');">{% trans "Search" %}</a></td>
 					</tr>
 				</table>
@@ -44,17 +44,17 @@
 				<table>
 					<tr>
 						<td><label for="advanced_search_text_and">{% trans  "All of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_and" name="advanced_search_text_and" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');"></input></td>
+						<td><input type="text" id="advanced_search_text_and" name="advanced_search_text_and" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'and');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
 						<td><label for="advanced_search_text_or">{% trans  "Any of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_or" name="advanced_search_text_or" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');"></input></td>
+						<td><input type="text" id="advanced_search_text_or" name="advanced_search_text_or" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'or');">{% trans  "Search" %}</a></td>
 					</tr>
 					<tr>
 						<td><label for="advanced_search_text_not">{% trans  "None of these words:" %}</label></td>
-						<td><input type="text" id="advanced_search_text_not" name="advanced_search_text_not" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');"></input></td>
+						<td><input type="text" id="advanced_search_text_not" name="advanced_search_text_not" class="text" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');"/></td>
 						<td><a href="#" class="submit_link" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'not');">{% trans  "Search" %}</a></td>
 					</tr>
 				</table>
@@ -110,7 +110,7 @@
 		</div></div>
 		<div id="tab_info_resource" class="tab_info_resource">
 			<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.sendPendingTags();UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
-			<img id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png" alt="Close"></img>
+			<img id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png" alt="Close" />
 			</a>
 		</div>
 	</div>
