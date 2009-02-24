@@ -356,12 +356,24 @@ var LayoutManagerFactory = function () {
 				break;
 			case 'filterMenu':
 				this.currentMenu = menu;
-				this.currentMenu.show('left', x, y);
+				var position;
+				if (y + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()){
+					//the menu has enough room to be displayed from top to bottom
+					this.currentMenu.show('left-bottom', x, y);
+				}else{
+					this.currentMenu.show('left-top', x, y);
+				}				
 				this.showClickableCover();
 				break;
 			case 'filterHelp':
-				this.currentMenu = menu;
-				this.currentMenu.show('right', x, y);
+				this.currentMenu = menu;		
+				var position;
+				if (y + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()){
+					//the menu has enough room to be displayed from top to bottom
+					this.currentMenu.show('right-bottom', x, y);
+				}else{
+					this.currentMenu.show('right-top', x, y);
+				}								
 				break;
 			default:
 				break;

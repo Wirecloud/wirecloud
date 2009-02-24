@@ -52,7 +52,7 @@ function DropDownMenu(idMenu_, parentMenu){
 		//Constructor
 		this.idMenu = idMenu_;	//menu: menu element in the HTLM code (<div>)
 		this.menu = $(this.idMenu);
-		this.position;				//position related to the launcher
+		this.position=new Array();				//position related to the launcher:top, left, right, bottom
 		this.x; this.y;			//start position
 		this.submenu = $$('#'+this.idMenu+' .submenu')[0];
 		this.parentMenu = parentMenu;
@@ -64,13 +64,17 @@ function DropDownMenu(idMenu_, parentMenu){
 	//Calculates the absolute position of the menu according to the point from which it is launched
 	//The menu can be displayed either on the right or left of the launcher point
 	DropDownMenu.prototype.calculatePosition = function(){
-		var smWidth = this.menu.getWidth();
-			
-		if(this.position == 'left'){
+		
+		if(this.position.indexOf('left') != -1){
+			var smWidth = this.menu.getWidth();
 			this.x -= smWidth;
-		}			
+		}
+		if(this.position.indexOf('top') != -1){
+			var smHeight = this.menu.getHeight();
+			this.y -= smHeight;
+		}
 		//set position
-		this.menu.style.top = this.y + this.margin +"px";
+		this.menu.style.top = this.y +"px";
 		this.menu.style.left = this.x +"px";
 	}
 
@@ -190,7 +194,7 @@ function DropDownMenu(idMenu_, parentMenu){
 
 	//shows the menu (calling showMenu function)
 	DropDownMenu.prototype.show = function (position, x, y){
-		this.position = position;
+		this.position = position.split('-');
 		this.x = x;
 		this.y = y;
 		this.calculatePosition();
