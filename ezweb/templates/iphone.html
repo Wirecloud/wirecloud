@@ -15,7 +15,7 @@
 
 </head>
 
-<body onload="initialLoad();"  onorientationchange="updateLayout();" >
+<body onload="initialLoad();"  onorientationchange="updateLayout();">
 
 <!-- HEADER -->
 <div id="header">
@@ -68,7 +68,7 @@
 			</ul>
 			<span id="tab_name" class="tab_name">
 			</span>
-			<a class="menu_link" href="javascript:OpManagerFactory.getInstance().showGadgetsMenu()"><img src="{{ MEDIA_URL }}images/iphone/gadgets_menu.png" class="menu_icon" /><span>Gadgets List</span></a>
+			<a class="menu_link" href="javascript:OpManagerFactory.getInstance().sendBufferedVars();OpManagerFactory.getInstance().showGadgetsMenu();"><img src="{{ MEDIA_URL }}images/iphone/gadgets_menu.png" class="menu_icon" /><span>Gadgets List</span></a>
 		</div>
 	  	<!-- DRAGBOARD -->
 	  	<div id="mymw-content" class="igadget_section">
