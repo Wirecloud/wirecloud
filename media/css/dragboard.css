@@ -34,13 +34,17 @@ div.gadget_menu {
   -webkit-border-top-right-radius: 4px;
   height: 16px;
   font-weight: bold;
-  background: #97A0A8 url(/ezweb/images/degradado.png) no-repeat scroll left top;
+  background: #EFEFEF url(/ezweb/images/degradado.png) no-repeat scroll left top;
   font-size: 12px;
   overflow: hidden;
 }
 
 div.dragboard.fixed div.gadget_menu {
   display: none;
+}
+
+div.dragboard.fixed{
+  background: #ffffff;
 }
 
 div.gadget_window div.gadget_menu input[type="button"] {
@@ -101,7 +105,7 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
 
 div.gadget_window div.gadget_wrapper {
   width: 100%;
-  border-top: 1px solid #4c5054;
+  border-top: 1px solid #CCCCCC;
 }
 
 div.gadget_window_locked div.gadget_wrapper {
@@ -180,7 +184,7 @@ div.dragboard.fixed div.gadget_window div.leftResizeHandle,
 .gadget_menu span {
   margin-right:5px;
   cursor: pointer;
-  color:#FFFFFF;
+  color: #4C5054;
 }
 
 .gadget_menu .igadget_name {
@@ -194,8 +198,6 @@ div.dragboard.fixed div.gadget_window div.leftResizeHandle,
 }
 
 div.gadget_window div.statusBar {
-  border-top: 1px solid #4c5054;
-  background: #DDD;
   height: 16px;
 }
 
