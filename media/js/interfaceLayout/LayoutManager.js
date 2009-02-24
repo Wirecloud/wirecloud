@@ -330,6 +330,16 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y){
 			switch (menuType){
 			case 'igadgetOps':
+				this.currentMenu = menu;
+				var position;
+				if (x + menu.menu.getWidth() <= BrowserUtilsFactory.getInstance().getWidth()){
+					//the menu has enough room to be displayed from left to right
+					this.currentMenu.show('right', x, y);
+				}else{
+					this.currentMenu.show('left', x, y);
+				}
+				this.showClickableCover();
+				break;
 			case 'workSpaceOps':
 				this.currentMenu = menu;
 				this.currentMenu.show('right', x, y);
