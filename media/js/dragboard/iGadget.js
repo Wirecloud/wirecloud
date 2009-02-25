@@ -1375,16 +1375,33 @@ IGadget.prototype.saveConfig = function() {
 	// Start propagation of the new values of the user pref variables
 	varManager.incNestingLevel();
 
+	// Annotate new value of the variable without invoking callback function!
 	var oldValue, newValue;
-	for (i = 0; i < prefs.length; i++) {
+	for (var i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
 		prefName = curPref.getVarName();
 		prefElement = this.prefElements[prefName];
 		var oldValue = curPref.getCurrentValue(varManager, this.id);
 		var newValue = curPref.getValueFromInterface(prefElement);
 
+
 		if (newValue != oldValue)
-			curPref.setValue(varManager, this.id, newValue);
+			curPref.annotateValue(varManager, this.id, newValue);
+	}
+
+        /* Commit new value of the variable
+	   Doing this in 2 phases (first setting the value and then propagating changes)
+           avoids reading old values!! */
+	
+	for (var i = 0; i < prefs.length; i++) {
+		curPref = prefs[i];
+		prefName = curPref.getVarName();
+		prefElement = this.prefElements[prefName];
+		var oldValue = curPref.getCurrentValue(varManager, this.id);
+		var newValue = curPref.getValueFromInterface(prefElement);
+
+		
+		curPref.setValue(varManager, this.id, newValue);
 	}
 
 	// Commit

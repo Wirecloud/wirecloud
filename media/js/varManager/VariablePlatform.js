@@ -31,6 +31,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Variable (id, iGadget, name, varManager) {
+        // True when a the value of the variable has changed and the callback has not been invoked! 
+        this.annotated = false;
 	this.varManager = null;
 	this.id = null;
 	this.iGadget = null;
@@ -47,7 +49,7 @@ Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-    this.name = name_;
+        this.name = name_;
 	this.aspect = aspect_;
 	this.value = value_;
 }
@@ -63,6 +65,11 @@ Variable.prototype.get = function () {
 Variable.prototype.setHandler = function () { } 
 
 Variable.prototype.set = function (value) { } 
+
+Variable.prototype.annotate = function (value) {
+        this.annotated = true;
+        this.value=value;
+} 
 
 Variable.prototype.assignConnectable = function (connectable) {
 	this.connectable = connectable;
@@ -116,6 +123,11 @@ RVariable.prototype.setHandler = function (handler_) {
 } 
 
 RVariable.prototype.set = function (newValue) {
+    if (this.annotated) {
+	// If not annotated, the value must be managed!
+        // And it must be changed to NOT annotated!
+	this.annotated = false;	
+
 	var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
 	switch (this.aspect) {
 		case Variable.prototype.USER_PREF:
@@ -153,6 +165,8 @@ RVariable.prototype.set = function (newValue) {
 		default:
 			break;
 	}
+	
+    }
 }
 
 RVariable.prototype.refresh = function() {

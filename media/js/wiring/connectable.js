@@ -37,6 +37,8 @@ function wConnectable (name, type, friendCode, id) {
   this.view = null;
 }
 
+wConnectable.prototype.annotate = function() {}
+
 wConnectable.prototype.getType = function() {
   return this.type;
 }
@@ -78,6 +80,10 @@ function wOut(name, type, friendCode, id) {
 }
 
 wOut.prototype = new wConnectable();
+
+wOut.prototype.annotate = function(value) {
+    this.variable.annotate(value);
+}
 
 wOut.prototype.addInOut = function(inout) {
 	this.inouts.push(inout);
@@ -133,6 +139,9 @@ wIn.prototype.fullDisconnect = function() {
 
 wIn.prototype.propagate = function(value, initial) {
   for (var i = 0; i < this.outputs.length; ++i)
+    this.outputs[i].annotate(value);
+
+  for (var i = 0; i < this.outputs.length; ++i)
     this.outputs[i].propagate(value, initial);
 }
 
@@ -150,6 +159,11 @@ function wInOut(name, type, friendCode, id) {
 }
 
 wInOut.prototype = new wIn();
+
+wInOut.prototype.annotate = function(value) {
+  for (var i = 0; i < this.outputs.length; ++i)
+      this.outputs[i].annotate();
+}	
 
 wInOut.prototype.connect = function(out) {	
 	wIn.prototype.connect.call(this, out);

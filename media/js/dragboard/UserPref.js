@@ -59,10 +59,19 @@ UserPref.prototype.getCurrentValue = function (varManager, iGadgetId) {
 	return variable.get();
 }
 
+//Set value and invoke callback function
 UserPref.prototype.setValue = function (varManager, iGadgetId, newValue) {
 	if (this.validate(newValue)) {
 		var variable = varManager.getVariableByName(iGadgetId, this.varName);
 		variable.set(newValue);
+	}
+}
+
+//Set new variable but it doesn't invoke callback function
+UserPref.prototype.annotateValuea = function (varManager, iGadgetId, newValue) {
+	if (this.validate(newValue)) {
+		var variable = varManager.getVariableByName(iGadgetId, this.varName);
+		variable.annotate(newValue);
 	}
 }
 
