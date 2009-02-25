@@ -1386,7 +1386,7 @@ IGadget.prototype.saveConfig = function() {
 
 
 		if (newValue != oldValue)
-			curPref.annotateValue(varManager, this.id, newValue);
+			curPref.annotate(varManager, this.id, newValue);
 	}
 
         /* Commit new value of the variable
