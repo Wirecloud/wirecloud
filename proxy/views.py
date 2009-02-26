@@ -115,8 +115,15 @@ class Proxy(Resource):
                     http_content_type_value = header[1]
                 if (header[0].lower() == 'http_user_agent'):
                     headers["User-Agent"] = header[1]
-                #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
-                elif (header[0].find("HTTP_")>=0 and header[0].lower != 'cache_control'):
+                elif (header[0].find("HTTP_")>=0 
+                      and header[0].lower() != 'http_cache_control' #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
+                      and header[0].lower() != 'http_content_length'
+                      and header[0].lower() != 'http_x_forwarded_for'
+                      and header[0].lower() != 'http_x_forwarded_proto'
+                      and header[0].lower() != 'http_x_bluecoat_via'
+                      and header[0].lower() != 'http_x_requested_with'
+                      and header[0].lower() != 'http_x_prototype_version'
+                      and header[0].lower() != 'http_referer'):
                     headers[header[0].replace("HTTP_", "", 1)] = header[1]
             
             headers["HOST"] = host       
