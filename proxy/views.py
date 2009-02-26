@@ -123,10 +123,11 @@ class Proxy(Resource):
                       and header[0].lower() != 'http_x_bluecoat_via'
                       and header[0].lower() != 'http_x_requested_with'
                       and header[0].lower() != 'http_x_prototype_version'
+                      and header[0].lower() != 'http_host'
                       and header[0].lower() != 'http_referer'):
                     headers[header[0].replace("HTTP_", "", 1)] = header[1]
             
-            headers["HOST"] = host       
+            #headers["HOST"] = host       
             headers["Via"] = "EzWeb-Proxy"
             # Add Content-Type (Servlets bug)
             if ((method == 'POST' or method == 'PUT') and not has_content_type):
