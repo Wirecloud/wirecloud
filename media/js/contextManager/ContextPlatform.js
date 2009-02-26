@@ -58,8 +58,12 @@ ContextVar.prototype.propagateValue = function () {
 
 ContextVar.prototype.setValue = function (newValue_) {
 	this._value = newValue_;
-	if (this._varManager !=null)
-		this._varManager.getVariableByName(this._igadgetId, this._varName).set(newValue_);
+	if (this._varManager !=null) {
+		var variable = this._varManager.getVariableByName(this._igadgetId, this._varName)
+		
+		variable.annotate(newValue_);
+		variable.set(newValue_);
+	}
 }
 
 ContextVar.prototype.setVarManager = function (varManager_) {
