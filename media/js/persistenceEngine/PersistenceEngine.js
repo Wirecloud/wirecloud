@@ -36,23 +36,25 @@ var PersistenceEngineFactory = function () {
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
-		PersitenceEngine.prototype.send_get = function (url, context, successHandler, errorHandler) {
+		PersitenceEngine.prototype.send_get = function (url, context, successHandler, errorHandler, parameters, requestHeaders) {
 			new Ajax.Request(url, {
 				method: 'get',
-				parameters: arguments[4],
+				parameters: parameters,
 				onSuccess: successHandler.bind(context),
 				onFailure: errorHandler.bind(context),
-				onException: errorHandler.bind(context)
+				onException: errorHandler.bind(context),
+				requestHeaders: requestHeaders
 			    });
 		} 
 		
-		PersitenceEngine.prototype.send_post = function (url, params, context, successHandler, errorHandler) {
+		PersitenceEngine.prototype.send_post = function (url, params, context, successHandler, errorHandler, requestHeaders) {
 			new Ajax.Request(url, {
 				method: 'post',
 				parameters: params,
 				onSuccess: successHandler.bind(context),
 				onFailure: errorHandler.bind(context),
-				onException: errorHandler.bind(context)
+				onException: errorHandler.bind(context),
+				requestHeaders: requestHeaders
 			    });
 		}
 		

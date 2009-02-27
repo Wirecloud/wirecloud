@@ -64,13 +64,14 @@ _EzWebAPI.prototype.createRGadgetVariable = function(name, handler) {
 	return new EzWebAPI.platform.RGadgetVariable(EzWebAPI.id, name, handler);
 }
 
-_EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandler) {
+_EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandler, requestHeaders) {
 	var params = {url: url, method: 'GET'};
+	
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler);
+	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHandler) {
@@ -82,7 +83,7 @@ _EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHa
 	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler);
 }
 
-_EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler) {
+_EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
 	if (typeof(parameters)=="string")
 		var p = parameters;
 	else
@@ -92,7 +93,7 @@ _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandle
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler);
+	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler, errorHandler) {
