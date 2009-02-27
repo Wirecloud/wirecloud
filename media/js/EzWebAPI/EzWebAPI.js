@@ -74,13 +74,13 @@ _EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandl
 	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
-_EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHandler) {
+_EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHandler, requestHeaders) {
 	var params = {url: url, method: 'DELETE'};
 
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler);
+	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
@@ -96,7 +96,7 @@ _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandle
 	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
-_EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler, errorHandler) {
+_EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
 	if (typeof(parameters)=="string")
 		var p = parameters;
 	else
@@ -106,7 +106,7 @@ _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler
 	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler);
+	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.getConnection = function() {

@@ -58,22 +58,24 @@ var PersistenceEngineFactory = function () {
 			    });
 		}
 		
-		PersitenceEngine.prototype.send_delete = function (url, context, successHandler, errorHandler){
+		PersitenceEngine.prototype.send_delete = function (url, context, successHandler, errorHandler, requestHeaders){
 			new Ajax.Request(url, {
 				method: 'delete',
 				onSuccess: successHandler.bind(context),
 				onFailure: errorHandler.bind(context),
-				onException: errorHandler.bind(context)
+				onException: errorHandler.bind(context),
+				requestHeaders: requestHeaders
 			});
 		}
 		
-		PersitenceEngine.prototype.send_update = function (url, params, context, successHandler, errorHandler){
+		PersitenceEngine.prototype.send_update = function (url, params, context, successHandler, errorHandler, requestHeaders){
 			new Ajax.Request(url, {
 				method: 'put',
 				parameters: params,
 				onSuccess: successHandler.bind(context),
 				onFailure: errorHandler.bind(context),
-				onException: errorHandler.bind(context)
+				onException: errorHandler.bind(context),
+				requestHeaders: requestHeaders
 			});
 		}
 		
