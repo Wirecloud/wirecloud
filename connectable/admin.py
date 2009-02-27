@@ -31,9 +31,10 @@
 #
 
 from django.contrib import admin
-from connectable.models import In, Out, InOut
+from connectable.models import In, Out, InOut, Filter
 
 admin.site.register(In)
 admin.site.register(Out)
 admin.site.register(InOut)
+admin.site.register(Filter)
 
