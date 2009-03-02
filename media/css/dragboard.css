@@ -34,7 +34,7 @@ div.gadget_menu {
   -webkit-border-top-right-radius: 4px;
   height: 16px;
   font-weight: bold;
-  background: #EFEFEF url(/ezweb/images/degradado.png) no-repeat scroll left top;
+  background: #FFFFFF;
   font-size: 12px;
   overflow: hidden;
 }
@@ -105,7 +105,6 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
 
 div.gadget_window div.gadget_wrapper {
   width: 100%;
-  border-top: 1px solid #CCCCCC;
 }
 
 div.gadget_window_locked div.gadget_wrapper {
