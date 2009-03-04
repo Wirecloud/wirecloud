@@ -51,10 +51,7 @@ def log(message, request, file_name='error'):
     log_file_manager.write_log_header(request, None, file_name)
     log_file_manager.write_text(message, file_name)
 
-def log_exception(request, exception, file_name='error'):
-    if logging >= 1:
-        return
-    
+def log_exception(request, exception, file_name='error'):    
     exc_type, exc_value, exc_tb = sys.exc_info()
     info_array = traceback.format_exception(exc_type, exc_value, exc_tb)
     
