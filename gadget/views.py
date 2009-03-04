@@ -46,12 +46,13 @@ from django.db import transaction
 
 from django.utils.translation import ugettext as _
 
-from commons.logs import log
 from commons.utils import get_xml_error, json_encode
 from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 
 from gadget.models import Gadget
+
+from commons.logs_exception import TracedServerError
 
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
@@ -91,20 +92,20 @@ class GadgetCollection(Resource):
             gadget.users.add(user) 
             transaction.commit()
         except TemplateParseException, e:
-            log(e, request)
             transaction.rollback()
-
-            return HttpResponseServerError(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
+            msg = _("Error parsing template!")
+            
+            raise TracedServerError(e, {'url': templateURL}, request, msg)
         except IntegrityError:
-            log(_("Gadget already exists"), request)
-            # Gadget already exists. Rollback transaction
             transaction.rollback()
+            msg = _("Gadget already exists")
+
+            raise TracedServerError(e, {'url': templateURL}, request, msg)
         except Exception, e:
-            # Internal error
-            log(e, request)
-            transaction.rollback()
-            return HttpResponseServerError(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
-        
+            msg = _("Error creating gadget!")
+
+            raise TracedServerError(e, {'url': templateURL}, request, msg)
+            
         gadgetName = templateParser.getGadgetName()
         gadgetVendor = templateParser.getGadgetVendor()
         gadgetVersion = templateParser.getGadgetVersion()
@@ -154,9 +155,9 @@ class GadgetCodeEntry(Resource):
         try:
             xhtml.code = download_http_content(xhtml.url)
             xhtml.save()
-        except Exception:
+        except Exception, e:
             msg = _("XHTML code is not accessible")
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg))
+
+            raise TracedServerError(e, {'vendor': vendor, 'name': name, 'version': version}, request, msg)
         
         return HttpResponse('ok')

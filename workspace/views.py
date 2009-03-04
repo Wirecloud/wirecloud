@@ -64,6 +64,8 @@ from os import path
 
 from django.conf import settings
 
+from commons.logs_exception import TracedServerError
+
 def get_workspace_description(workspace):    
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
     
@@ -246,8 +248,9 @@ class WorkSpaceCollection(Resource):
                 
             workspaces = WorkSpace.objects.filter(users__id=user.id)
         except Exception, e:
-            log(e, request)
-            return HttpResponseBadRequest(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
+            msg = _("error reading workspace: ") + unicode(e)
+            
+            raise TracedServerError(e, arguments, request, msg)
         
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
         data_list['workspaces'] = [get_workspace_data(d) for d in  data]
@@ -287,8 +290,8 @@ class WorkSpaceCollection(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("workspace cannot be created: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, ts, request, msg)
 
 
 class WorkSpaceEntry(Resource):
@@ -333,8 +336,8 @@ class WorkSpaceEntry(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("workspace cannot be updated: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+
+            raise TracedServerError(e, ts, request, msg)
 
 
     @transaction.commit_on_success
@@ -345,8 +348,8 @@ class WorkSpaceEntry(Resource):
         
         if workspaces.count()==0:
             msg = _("workspace cannot be deleted")
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
             
         # Gets Igadget, if it does not exist, a http 404 error is returned
         workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
@@ -355,6 +358,7 @@ class WorkSpaceEntry(Resource):
         #set a new active workspace (first workspace by default)
         activeWorkspace=workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
+        
         return HttpResponse('ok')
 
 
@@ -385,8 +389,8 @@ class TabCollection(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("tab cannot be created: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, t, request, msg)
 
 
 class TabEntry(Resource):
@@ -435,8 +439,8 @@ class TabEntry(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("tab cannot be updated: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, t, request, msg)
 
     @transaction.commit_on_success
     def delete(self, request, workspace_id, tab_id):
@@ -499,8 +503,8 @@ class WorkSpaceVariableCollection(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("cannot update variables: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, variables, request, msg)
 
 class WorkSpaceChannelCollection(Resource):
     def read(self, request, workspace_id):
@@ -581,8 +585,8 @@ class  WorkSpacePublisherEntry(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("mashup cannot be published: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, mashup, request, msg)
         
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
@@ -628,13 +632,15 @@ class  WorkSpacePublisherEntry(Resource):
             published_workspace.save()
         except IntegrityError, e:
             transaction.rollback()
-            msg = _("mashup cannot be published: ") + "duplicated mashup"
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            msg = _("mashup cannot be published: duplicated mashup")
+            
+            raise TracedServerError(e, workspace_id, request, msg)
+        
         #ask the template Generator for the template of the new mashup
         baseURL = "http://" + request.get_host()
         if hasattr(settings,'TEMPLATE_GENERATOR_URL'):
             baseURL = settings.TEMPLATE_GENERATOR_URL
+        
         url= baseURL+"/workspace/templateGenerator/" + str(published_workspace.id)
         
         return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')
@@ -643,5 +649,6 @@ class  GeneratorURL(Resource):
     def read(self, request, workspace_id):
         templateGen = TemplateGenerator()
         template=templateGen.getTemplate(workspace_id)
+        
         return HttpResponse(template,mimetype='application/xml; charset=UTF-8' )
         

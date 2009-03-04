@@ -48,6 +48,8 @@ from igadget.models import IGadget, Variable
 from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
 from connectable.models import In, Out, InOut, Filter
 
+from commons.logs_exception import TracedServerError
+
 class ConnectableEntry(Resource):
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
@@ -196,17 +198,14 @@ class ConnectableEntry(Resource):
             
             return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist:
-            #transaction.rollback()
-
             msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
-            log(msg, request)
-            return HttpResponseBadRequest(get_xml_error(msg));
+            
+            raise TracedServerError(e, json, request, msg)
 
         except Exception, e:
-            #transaction.rollback()
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
-            log(msg, request)
-            return HttpResponseBadRequest(msg)
+            
+            raise TracedServerError(e, json, request, msg)
 
         return HttpResponse('ok')
 

@@ -47,8 +47,6 @@ from context.models import Concept, ConceptName
 
 from commons.http_utils import PUT_parameter
 
-
-
 class ContextCollection(Resource):
     def read(self, request, user_name):
         user = user_authentication(request, user_name)

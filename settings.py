@@ -37,8 +37,6 @@ from django.utils.translation import ugettext_lazy as _
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-APPEND_SLASH=False
-
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False
 
@@ -55,7 +53,18 @@ DATABASE_PASSWORD = 'ezweb'         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
-#HOME_GATEWAY_DISPATCHER_URL = "http://fry.hi.inet:8001/hgwDispatcher/"
+
+#################################################################
+# LOGGING 
+#################################################################
+# 0 => no logging 
+# 1 => only access and errors
+# 2 => access and arguments when exception 
+# 3 => access and arguments in every call
+LOGGING_LEVEL = 2 
+##################################################################
+
+#HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
@@ -150,7 +159,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 SESSION_COOKIE_AGE = 5184000    #2 months
-#SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'

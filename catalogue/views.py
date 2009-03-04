@@ -53,6 +53,7 @@ from catalogue.catalogue_utils import *
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.logs import log
+from commons.logs_exception import TracedServerError
 from commons.utils import get_xml_error
 from commons.http_utils import PUT_parameter
 
@@ -73,17 +74,20 @@ class GadgetsCollection(Resource):
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
             transaction.rollback()
-            log(e, request)
-            return HttpResponseServerError(get_xml_error(unicode(sys.exc_info()[1])), mimetype='application/xml; charset=UTF-8')
+            msg = _("Gadget already exists!")
+            
+            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
         except TemplateParseException, e:
             transaction.rollback()
-            log(e, request)
-            return HttpResponseServerError(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
+            msg = _("Problem parsing template xml")
+            
+            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)        
         except Exception, e:
             # Internal error
             transaction.rollback()
-            log(e, request)
-            return HttpResponseServerError(get_xml_error(unicode(sys.exc_info()[1])), mimetype='application/xml; charset=UTF-8')
+            msg = _("Problem parsing template xml")
+            
+            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         xml_ok = '<ResponseOK>OK</ResponseOK>'
         return HttpResponse(xml_ok,mimetype='application/xml; charset=UTF-8')
@@ -342,7 +346,8 @@ class GadgetsCollectionByGlobalSearch(Resource):
 
 
 class GadgetTagsCollection(Resource):
-
+    
+    @transaction.commit_manually
     def create(self,request, user_name, vendor, name, version):
 
         try:
@@ -381,8 +386,10 @@ class GadgetTagsCollection(Resource):
             try:
                 UserTag.objects.get_or_create(tag=e, idUser=user, idResource=gadget)
             except Exception, ex:
-                log (ex, request)
-                return HttpResponseServerError(get_xml_error(unicode(ex)), mimetype='application/xml; charset=UTF-8')
+                transaction.rollback()
+                msg = _("Error tagging resource!!") 
+                
+                raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml}, request, msg)
 
         return get_tag_response(gadget,user, format)
 

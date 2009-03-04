@@ -52,6 +52,8 @@ from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable
 from connectable.models import In, Out
 from igadget.models import Position, IGadget, Variable
 
+from commons.logs_exception import TracedServerError
+
 def createConnectable(var):
     #If var is and SLOT or and EVENT, a proper connectable object must be created!
     aspect = var.vardef.aspect
@@ -132,9 +134,12 @@ def SaveIGadget(igadget, user, tab):
 
         return ids
 
-    except Gadget.DoesNotExist:
-        raise Gadget.DoesNotExist(_('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': gadget_uri})
-    except VariableDef.DoesNotExist:
+    except Gadget.DoesNotExist, e:
+        msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': gadget_uri}
+        
+        raise TracedServerError(e, {'igadget': igadget, 'user': user, 'tab': tab}, request, msg)
+
+    except VariableDef.DoesNotExist, e:
         #iGadget has no variables. It's normal
         pass
 
@@ -258,16 +263,17 @@ class IGadgetCollection(Resource):
             igadget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
             ids = SaveIGadget(igadget, user, tab)
+            
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
-        except WorkSpace.DoesNotExist:
-            msg = _('referred workspace %(workspace_id)s does not exist.')
-            log(msg, request)
-            return HttpResponseBadRequest(get_xml_error(msg))
+        except WorkSpace.DoesNotExist, e:
+            msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
+            
+            raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
         except Exception, e:
             transaction.rollback()
             msg = _("iGadget cannot be created: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
 
     @transaction.commit_manually
@@ -285,17 +291,19 @@ class IGadgetCollection(Resource):
             igadgets = received_data.get('iGadgets')
             for igadget in igadgets:
                 UpdateIGadget(igadget, user, tab)
+                
             transaction.commit()
+            
             return HttpResponse('ok')
-        except Tab.DoesNotExist:
-            msg = _('referred tab %(tab_id)s does not exist.')
-            log(msg, request)
-            return HttpResponseBadRequest(get_xml_error(msg))
+        except Tab.DoesNotExist, e:
+            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
             transaction.rollback()
             msg = _("iGadgets cannot be updated: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
 class IGadgetEntry(Resource):
     def read(self, request, workspace_id, tab_id, igadget_id):
@@ -306,6 +314,7 @@ class IGadgetEntry(Resource):
         igadget = get_list_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=igadget_id)
         data = serializers.serialize('python', igadget, ensure_ascii=False)
         igadget_data = get_igadget_data(data[0], user, workspace)
+        
         return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
@@ -321,16 +330,17 @@ class IGadgetEntry(Resource):
             igadget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
             UpdateIGadget(igadget, user, tab)
+            
             return HttpResponse('ok')
-        except Tab.DoesNotExist:
-            msg = _('referred tab %(tab_id)s does not exist.')
-            log(msg, request)
-            return HttpResponseBadRequest(get_xml_error(msg))
+        except Tab.DoesNotExist, e:
+            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
         except Exception, e:
             transaction.rollback()
-            msg = _("iGadget cannot be updated: ") + unicode(e)
-            log(msg, request)
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+            msg = _("iGadgets cannot be updated: ") + unicode(e)
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
 
     @transaction.commit_on_success
@@ -353,6 +363,7 @@ class IGadgetVariableCollection(Resource):
         variables = Variable.objects.filter(igadget__tab=tab, igadget__id=igadget_id)
         data = serializers.serialize('python', variables, ensure_ascii=False)
         vars_data = [get_variable_data(d) for d in data]
+        
         return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_manually
@@ -379,14 +390,15 @@ class IGadgetVariableCollection(Resource):
                         varServer.save()
             
             transaction.commit()
-        except Tab.DoesNotExist:
-            msg = _('referred tab %(tab_id)s does not exist.')
-            log(msg, request)
-            return HttpResponseBadRequest(get_xml_error(msg))
+        except Tab.DoesNotExist, e:
+            msg = _('referred tab %(tab_id)s does not exist.') % {'tab_id': tab_id}
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
         except Exception, e:
             transaction.rollback()
-            log(e, request)
-            return HttpResponseServerError(get_xml_error(unicode(e)), mimetype='application/xml; charset=UTF-8')
+            msg = _("igadget varaible cannot be updated: ") + unicode(e)
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id}, request, msg)
 
         return HttpResponse("<ok>", mimetype='text/xml; charset=UTF-8')
 
@@ -398,6 +410,7 @@ class IGadgetVariable(Resource):
         variable = get_list_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
         data = serializers.serialize('python', variable, ensure_ascii=False)
         var_data = get_variable_data(data[0])
+        
         return HttpResponse(json_encode(var_data), mimetype='application/json; charset=UTF-8')
     
     def create(self, request, workspace_id, tab_id, igadget_id, var_id):
@@ -421,7 +434,9 @@ class IGadgetVariable(Resource):
             variable.save()
         except Exception, e:
             transaction.rollback()
-            log(e, request)
-            return HttpResponseServerError(get_xml_error(e), mimetype='application/xml; charset=UTF-8')
+            msg = _("igadget varaible cannot be updated: ") + unicode(e)
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id, 'igadget': igadget_id, 'variable': var_id}, request, msg)
+            
 
         return HttpResponse('ok')

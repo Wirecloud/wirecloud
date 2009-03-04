@@ -28,15 +28,16 @@
 #...............................licence...........................................#
 
 
+#
 
-import sys
-import traceback
-
-from commons.logs import log
+from commons.logs import log_exception, log_detailed_exception, log_request
 from commons.utils import get_xml_error
+
+from logs_exception import TracedServerError
 
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, QueryDict
 from django.utils import datastructures
+
 
 class HttpMethodNotAllowed(Exception):
     """
@@ -56,21 +57,27 @@ class Resource:
     
     def __call__(self, request, *args, **kwargs):      
         try:
-            return self.dispatch(request, self, *args, **kwargs)
+            response = self.dispatch(request, self, *args, **kwargs)
+            
+            log_request(request, response, 'access')
+            
+            return response
         except HttpMethodNotAllowed:
+            log_request(request, None, 'access')
+            
             response = HttpResponseNotAllowed(self.permitted_methods)
             response.mimetype = self.mimetype
             return response
-        except:
-            exc_info = sys.exc_info()
-            msg_array = traceback.format_exception(exc_info[0], exc_info[1], exc_info[2])
-            msg = ""
-            for line in msg_array:
-              msg += line
-            log(msg, request)
+        except TracedServerError, e:
+            log_request(request, None, 'access')
+            
+            msg = log_detailed_exception(request, e)
+        except Exception, e:
+            log_request(request, None, 'access')
+            
+            msg = log_exception(request, e)
 
-            msg = "[" + unicode(exc_info[0]) + "] " + unicode(exc_info[1])
-            return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+        return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
     
     def adaptRequest(self, request):
         request._post, request._files = QueryDict(request.raw_post_data, encoding=request._encoding), datastructures.MultiValueDict()
