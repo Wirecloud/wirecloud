@@ -652,6 +652,18 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	this.setYOffset = function(offset) {
 		yOffset = offset;
 	}
+
+	this.destroy = function() {
+		Event.stopObserving (handler, "mousedown", startdrag);
+		startdrag = null;
+		enddrag = null;
+		drag = null;
+		scroll = null;
+		cancelbubbling = null;
+		draggable = null;
+		data = null;
+		handler = null;
+	}
 }
 
 /////////////////////////////////////
@@ -865,6 +877,16 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 
 	// Add event listener
 	Event.observe (handleElement, "mousedown", startresize);
+
+	this.destroy = function() {
+		Event.stopObserving (handleElement, "mousedown", startresize);
+		startresize = null;
+		resize = null;
+		scroll = null;
+		endresize = null;
+		data = null;
+		handleElement = null;
+	}
 }
 
 /////////////////////////////////////

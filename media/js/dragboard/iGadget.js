@@ -57,6 +57,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.loaded = false;
 	this.zPos = zPos;
 	this.transparency = transparency;
+	this.draggable = null;
 
 	if (!minimized)
 		this.height = this.contentHeight + layout.getExtraSize().inLU;
@@ -362,15 +363,7 @@ IGadget.prototype.paint = function() {
 	var contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
 
 	this.element = document.createElement("div");
-
 	this.element.addClassName("gadget_window");
-	// Sync lock status
-	if (this.layout.dragboard.isLocked()) {
-		this.element.addClassName("gadget_window_locked");
-	}	
-	// set transparency status
-	if (this.transparency)
-		this.element.addClassName("gadget_window_transparent");
 
 	// Gadget Menu
 	this.gadgetMenu = document.createElement("div");
@@ -564,13 +557,13 @@ IGadget.prototype.paint = function() {
 	resizeHandle = document.createElement("div");
 	resizeHandle.setAttribute("class", "leftResizeHandle");
 	this.statusBar.appendChild(resizeHandle);
-	new IGadgetResizeHandle(resizeHandle, this, true);
+	this.leftResizeHandle = new IGadgetResizeHandle(resizeHandle, this, true);
 
 	// Right one
 	resizeHandle = document.createElement("div");
 	resizeHandle.setAttribute("class", "rightResizeHandle");
 	this.statusBar.appendChild(resizeHandle);
-	new IGadgetResizeHandle(resizeHandle, this, false);
+	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
 	// extract/snap button
 	this.extractButton = document.createElement("div");
@@ -580,6 +573,15 @@ IGadget.prototype.paint = function() {
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
+
+	// Initialize lock status
+	if (this.layout.dragboard.isLocked()) {
+		this.element.addClassName("gadget_window_locked");
+	}
+
+	// Initialize transparency status
+	if (this.transparency)
+		this.element.addClassName("gadget_window_transparent");
 
 	// TODO use setStyle from prototype
 	// Position
@@ -604,7 +606,7 @@ IGadget.prototype.paint = function() {
 	this.layout._ensureMinimalSize(this, false);
 
 	// Mark as draggable
-	new IGadgetDraggable(this);
+	this.draggable = new IGadgetDraggable(this);
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
@@ -756,6 +758,21 @@ IGadget.prototype.setName = function (igadgetName) {
  * This method must be called to avoid memory leaks caused by circular references.
  */
 IGadget.prototype.destroy = function() {
+	if (this.draggable !== null) {
+		this.draggable.destroy();
+		this.draggable = null;
+	}
+
+	if (this.leftResizeHandle !== null) {
+		this.leftResizeHandle.destroy();
+		this.leftResizeHandle = null;
+	}
+
+	if (this.rightResizeHandle !== null) {
+		this.rightResizeHandle.destroy();
+		this.rightResizeHandle = null;
+	}
+
 	if (this.menu) {
 		this.menu.remove();
 		this.menu = null;
