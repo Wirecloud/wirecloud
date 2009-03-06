@@ -52,18 +52,6 @@ Param.prototype.getDefaultValue = function() {
   return this._defaultValue;
 }
 
-//Param.prototype.serialize = function() {
-//	var serialized_data = new Object();
-//	
-//	serialized_data['name'] = this._name;
-//	serialized_data['label'] = this._label;
-//	serialized_data['type'] = this._type;
-//	serialized_data['index'] = this._index;
-//	serialized_data['defaultValue'] = this._defaultValue;
-//
-//	return serialized_data;
-//}
-
 Param.prototype.createHtmlLabel = function() {
   var labelLayer = document.createElement("div");
   var img = document.createElement("img");
@@ -205,7 +193,7 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 			if (i!=0)
 				params += ',';
 			// Checks the type of parameter
-			if (this._params[i].getType() == 'N'){
+			if (this._params[i].getType() == 'N'){ // Param is Number
 				var interger_value = parseInt(paramValues_[i]);
 				if (isNaN(interger_value)){
 					msg = interpolate(gettext("Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It must be a number"), 
@@ -213,10 +201,23 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 					LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
 					this._lastExecError = msg;
 					return gettext('undefined');
-				} 
+				}
+				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
+				params += this._params[i].getName(); 
+			} else if (this._params[i].getType() == 'regexp'){ // Param is RegExp
+				if ((paramValues_[i].indexOf('/') == 0) && (paramValues_[i].lastIndexOf('/') > 0)){
+					var current_pattern = paramValues_[i].substring(1, paramValues_[i].lastIndexOf('/'));
+					var current_modifiers = paramValues_[i].substring(paramValues_[i].lastIndexOf('/') + 1, paramValues_[i].length);
+					eval ("var " + this._params[i].getName() + " = new RegExp ('" + current_pattern + "', '" + current_modifiers + "');");	
+				}else {
+					eval ("var " + this._params[i].getName() + " = new RegExp ('" + paramValues_[i] + "');");
+				}
+				params += this._params[i].getName();
+			} else { // Otherwise is String
+				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
+				params += this._params[i].getName();
 			}
-			eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
-			params += this._params[i].getName();
+			
 		}
 	}catch(e){
 		msg = interpolate(gettext("Error loading param '%(paramName)s' of the filter '%(filterName)s'."), 
