@@ -210,6 +210,12 @@ UIUtils.updateGadgetXHTML = function() {
 
 }
 
+UIUtils.clearPreviousSearch = function() {
+	UIUtils.search = false;
+	UIUtils.searchValue = [];
+	UIUtils.searchCriteria = '';
+}
+
 UIUtils.toggle_elements = function(elementIds_) {
 	for (i=0;i<elementIds_.length ;i++ )
 	{

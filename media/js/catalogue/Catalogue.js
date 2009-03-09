@@ -86,6 +86,8 @@ var CatalogueFactory  = function () {
 			
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
 			
+			UIUtils.clearPreviousSearch();
+			
 			// Get Resources from PersistenceEngine. Asyncrhonous call!
 			
 
