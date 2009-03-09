@@ -131,16 +131,16 @@ Returns: 'ezweb platform'</field>
         <field type="TextField" name="code"><None></None></field>
         <field type="CharField" name="label">Match [Regular Expresion]</field>
         <field type="CharField" name="nature">NATIVE</field>
-        <field type="CharField" name="category"><None></None></field>
+        <field type="CharField" name="category">STR</field>
         <field type="TextField" name="help_text">Searchs for a specified value in the value
 of the channel using regular expressions.
 
-e.g. Search in the beginning of the value 
-for capital letters
-Channel value: 'EzWeb'
-Regular expresion (given by user): '^[A-Z]*'
-Returns: 'E'</field>
-    	<field type="TextField" name="params">{[{"name": "regexp", "type": "S", "index": 0, "label": "Regular Expresion"}]}</field>
+e.g. Looks up the characters before the first
+comma  
+Channel value: 'Getafe, Madrid'
+Regular expresion (given by user): '/[\\w|\\s]*,/'
+Returns: 'Getafe,'</field>
+    	<field type="TextField" name="params">{[{"name": "regexp", "type": "regexp", "index": 0, "label": "Regular Expresion"}]}</field>
 	</object>
     <object pk="9" model="connectable.filter">
         <field type="CharField" name="name">replace</field>
@@ -156,9 +156,9 @@ the user.
 e.g. Replaces the brackets with a empty 
 character (removes the bracket)
 Channel value: '(304)4345454'
-Regular expresion (given by user): '/[\(\)]/g'
+Regular expresion (given by user): '/[\\(\\)]/g'
 Returns: '3044345454'</field>
-		<field type="TextField" name="params">{[{"name": "newSubStr", "type": "S", "index": 1, "label": "String"},{"name": "regexp", "type": "S", "index": 0, "label": "Regular Expresion"}]}</field>
+		<field type="TextField" name="params">{[{"name": "newSubStr", "type": "S", "index": 1, "label": "String"},{"name": "regexp", "type": "regexp", "index": 0, "label": "Regular Expresion"}]}</field>
 	</object>
     <object pk="12" model="connectable.filter">
         <field type="CharField" name="name">split</field>
