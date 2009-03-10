@@ -138,11 +138,12 @@ class TemplateHandler(handler.ContentHandler):
             value = attrs.get('value')
 
         if (attrs.has_key('vendor') and attrs.has_key('name') and attrs.has_key('version')):
+             pass
             
-             resource_id = get_object_or_404(GadgetResource, 
-                short_name=attrs.get('name'),vendor=attrs.get('vendor'),version=attrs.get('version')).id
+             #resource_id = get_object_or_404(GadgetResource, 
+             #   short_name=attrs.get('name'),vendor=attrs.get('vendor'),version=attrs.get('version')).id
 
-             self._includedResources.append(resource_id)
+             #self._includedResources.append(resource_id)
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Resource"))
 
