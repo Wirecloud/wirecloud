@@ -48,7 +48,7 @@ def generate_anonymous_user(request):
     user.set_password(ANONYMOUS_PWD)
     user.save()
     #user.groups.add(Group.objects.get(name=ANONYMOUS_GROUP))
-    request.anonymous_id = user.id
+    request.anonymous_id = user.username
     
     return user
 
@@ -57,10 +57,12 @@ def get_anonymous_user(request):
     
     if anonymous_id:
         try:
-            user = User.objects.get(id=anonymous_id)
+            user = User.objects.get(username=anonymous_id)
         except User.DoesNotExist:
             user = generate_anonymous_user(request)
     else:
+        #import pydevd
+        #pydevd.settrace()
         user = generate_anonymous_user(request)
     
     user = authenticate(username=user.username, password=ANONYMOUS_PWD,isAnonymous=request.anonymous_id)

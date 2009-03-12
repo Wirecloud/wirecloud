@@ -38,7 +38,7 @@ def server_url(request):
 
 def is_anonymous(request):
     is_anonymous = False
-    if hasattr(request, 'anonymous_id') and request.anonymous_id and request.anonymous_id==request.user.id:
+    if hasattr(request, 'anonymous_id') and request.anonymous_id and request.anonymous_id==request.user.username:
         is_anonymous = True
     return {'is_anonymous': is_anonymous }
 
