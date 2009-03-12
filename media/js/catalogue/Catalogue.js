@@ -379,6 +379,8 @@ var CatalogueFactory  = function () {
 
 		this.show = function(){
 			LayoutManagerFactory.getInstance().showCatalogue();
+			UIUtils.setResourcesWidth();
+			
 		}
 
 		this.hide = function(){
