@@ -64,5 +64,5 @@ class FileLogManager:
             f.close()
         except UnicodeDecodeError, e:
             print e
-        except IOError:
+        except IOError, e:
             print e
