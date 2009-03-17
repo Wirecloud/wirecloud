@@ -37,53 +37,53 @@ function WorkSpace (workSpaceState) {
 		this.workSpaceGlobalInfo = eval ('(' + response + ')');
 
 		this.varManager = new VarManager(this);
-		
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
-		
-		try {
 
+		try {
 			var visibleTabId = null;
-	
+
 			if (tabs.length>0) {
 				visibleTabId = tabs[0].id;
 				for (var i=0; i<tabs.length; i++) {
 					var tab = tabs[i];
 					this.tabInstances[tab.id] = new Tab(tab, this);
-					
+
 					if (tab.visible == 'true') {
 						visibleTabId = tab.id;
 					}
 				}
 			}
-	
+
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
-	
+
 			if (tabs.length > 0) {
 				for (i = 0; i < tabs.length; i++)
 					this.tabInstances[tabs[i].id].getDragboard().paint();
 			}
-	
-			//this.setTab(visibleTabName);
+
 			//set the visible tab. It will be displayed as current tab afterwards
 			this.visibleTab = this.tabInstances[visibleTabId];
-			
+
 			this.valid=true;
-		
-		}
-		catch (error) {
+		} catch (error) {
 			// Error during initialization
 			// Only loading workspace menu
 			this.valid=false;
-			
+
+			// Log it on the log console
 			this.tabInstances = new Hash();
-			
+			msg = interpolate(gettext("Error loading workspace: %(error)s"),
+			                  {error: error}, true);
+			LogManagerFactory.getInstance().log(msg);
+
+			// Show a user friend alert
 			LayoutManagerFactory.getInstance().showMessageMenu('Error during workspace load! Please, change active workspace or create a new one!')
 		}
-		
+
 		this.loaded = true;
-		
+
 		this._createWorkspaceMenu();
 
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
@@ -242,7 +242,7 @@ function WorkSpace (workSpaceState) {
 		}
 		var nameToShow = (this.workSpaceState.name.length>15)?this.workSpaceState.name.substring(0, 15)+"..." : this.workSpaceState.name;
 		var spanHTML = "<span>"+nameToShow+"</span>";
-    	new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
+		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
 		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){this.fillWithInput();}.bind(this));
     }
@@ -359,30 +359,31 @@ function WorkSpace (workSpaceState) {
 			tab.hide();
 		}
 	}
-	
+
 	WorkSpace.prototype.show = function() {	
 		if (!this.loaded)
 			return;
-			
+
 		//global tab section
 		this.fillWithLabel();
-		
+
 		var tabList = this.tabInstances.keys();
-		
+
 		for (var i=0; i<tabList.length; i++) {
 			var tab = this.tabInstances[tabList[i]];
-	
+
 			if (tab == this.visibleTab)
 				tab.show();
 			else
 				tab.unmark();
 		}
-		
+
 		if (this.visibleTab) {
 			//show the current tab in the tab bar if it isn't within the visible area
 			//!this.visibleTab => error during initialization
 			this.visibleTab.makeVisibleInTabBar();
-		} 
+			this.visibleTab.getDragboard()._notifyWindowResizeEvent();
+		}
 
 	}
 	
@@ -398,7 +399,7 @@ function WorkSpace (workSpaceState) {
 		if (!this.loaded)
 			return;
 		if(this.visibleTab != null){
-			this.visibleTab.unmark();		
+			this.visibleTab.unmark();
 		}
 		this.visibleTab = tab;
 		this.visibleTab.show();
@@ -473,29 +474,35 @@ function WorkSpace (workSpaceState) {
 		this.visibleTab = null;
 	}
 	
-	WorkSpace.prototype.unload = function(){
-		// First of all, wiring interface structure is managed!
-		// (Changing to another workspace from wiring)
-		this.wiringInterface.unload();
-		delete this.wiringInterface;
-		
+	WorkSpace.prototype.unload = function() {
+		// Unload Wiring Interface
+		// TODO Wiring Interface should be shared between Workspaces
+		if (this.wiringInterface !== null) {
+			this.wiringInterface.unload();
+			this.wiringInterface = null;
+		}
+
 		LayoutManagerFactory.getInstance().unloadCurrentView();
-		
+
+		this.sendBufferedVars();
+
 		// After that, tab info is managed
 		var tabKeys = this.tabInstances.keys();
-		
+
 		for (var i=0; i<tabKeys.length; i++) {
 			this.unloadTab(tabKeys[i]);
 		}
 		// reset the values used to figure out the size of the tabBar
 		LayoutManagerFactory.getInstance().resetTabBar();
-		this.wiring.unload();
-		this.contextManager.unload();
-		
+
+		if (this.wiring !== null)
+			this.wiring.unload();
+		if (this.contextManager !== null)
+			this.contextManager.unload();
+
 		this.menu.remove();
 		this.mergeMenu.remove();
 	}
-	
 
 	WorkSpace.prototype.goTab = function(tab) {
 		if (!this.loaded)
@@ -619,7 +626,6 @@ function WorkSpace (workSpaceState) {
 		}
 		this.menu.addOption("/ezweb/images/list-add.png","New workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
-		
 	
 	this._lockFunc = function(locked) {
 		var keys = this.tabInstances.keys();
@@ -638,7 +644,7 @@ function WorkSpace (workSpaceState) {
 			if (i == 0){
 				locked = this.tabInstances[keys[i]].dragboard.isLocked();
 			} else if (locked != this.tabInstances[keys[i]].dragboard.isLocked()){
-				all = false;	
+				all = false;
 			}
 		}
 		
@@ -646,7 +652,7 @@ function WorkSpace (workSpaceState) {
 			if(locked && this.lockEntryId!=null){
 				this.menu.removeOption(this.lockEntryId);
 				this.lockEntryId = null;
-				numRemoved++;				
+				numRemoved++;
 			}else if(!locked && this.unlockEntryId!=null){
 				this.menu.removeOption(this.unlockEntryId);
 				this.unlockEntryId = null;	

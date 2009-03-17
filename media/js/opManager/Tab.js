@@ -105,13 +105,13 @@ function Tab (tabInfo, workSpace) {
 		}
 		var nameToShow = (this.tabInfo.name.length>15)?this.tabInfo.name.substring(0, 15)+"..." : this.tabInfo.name;
 		var spanHTML = "<span>"+nameToShow+"</span>";
-    	new Insertion.Top(this.tabHTMLElement, spanHTML);
-    	var difference = this.tabHTMLElement.getWidth() - this.tabWidth;
-    	if(difference!=0)
-	    	LayoutManagerFactory.getInstance().changeTabBarSize(difference);
+		new Insertion.Top(this.tabHTMLElement, spanHTML);
+		var difference = this.tabHTMLElement.getWidth() - this.tabWidth;
+		if(difference!=0)
+			LayoutManagerFactory.getInstance().changeTabBarSize(difference);
 		this.tabNameHTMLElement = this.tabHTMLElement.firstDescendant();
 		this.tabWidth = this.tabHTMLElement.getWidth();
-    }
+	}
 
 	Tab.prototype.fillWithInput = function () {
 		var oldTabWidth= this.tabHTMLElement.getWidth();
@@ -125,11 +125,11 @@ function Tab (tabInfo, workSpace) {
 			LayoutManagerFactory.getInstance().changeTabBarSize(difference);
 		this.tabWidth = newTabWidth;
 		
-		this.tabNameHTMLElement.focus();	
+		this.tabNameHTMLElement.focus();
 		Event.observe(this.tabNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
-					e.target.blur();} else{this.makeVisibleInTabBar();}}.bind(this));					
+					e.target.blur();} else{this.makeVisibleInTabBar();}}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'change', function(e){Event.stop(e);
 					this.updateInfo(e.target.value);}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){Event.stop(e);
@@ -140,7 +140,7 @@ function Tab (tabInfo, workSpace) {
 						LayoutManagerFactory.getInstance().changeTabBarSize(difference);
 					this.tabWidth = newTabWidth;
 				}.bind(this));
-		Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.					
+		Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.
 	}
 	
 	Tab.prototype.unmark = function () {
@@ -152,7 +152,7 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.show = function () {
 		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
-		this.dragboard.recomputeSize();
+		this.dragboard._notifyWindowResizeEvent();
 		this.markAsCurrent();
 	}
 	

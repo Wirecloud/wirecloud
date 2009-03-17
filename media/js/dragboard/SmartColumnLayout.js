@@ -113,7 +113,7 @@ ColumnLayout.prototype.fromPixelsToHCells = function(pixels) {
 }
 
 ColumnLayout.prototype.fromHCellsToPixels = function(cells) {
-	return (this.dragboardWidth * this.fromHCellsToPercentage(cells)) / 100;
+	return (this.getWidth() * this.fromHCellsToPercentage(cells)) / 100;
 }
 
 ColumnLayout.prototype.fromHCellsToPercentage = function(cells) {
@@ -151,7 +151,7 @@ ColumnLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
 }
 
 ColumnLayout.prototype.getColumnOffset = function(column) {
-	var tmp = Math.floor((this.dragboardWidth * this.fromHCellsToPercentage(column)) / 100);
+	var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
 	tmp += this.leftMargin;
 	return tmp;
 }
@@ -468,6 +468,7 @@ ColumnLayout.prototype.initialize = function () {
 
 		position = iGadget.getPosition();
 
+		iGadget.paint();
 		this._ensureMinimalSize(iGadget);
 
 		if (iGadget.getWidth() > this.getColumns())
@@ -477,7 +478,6 @@ ColumnLayout.prototype.initialize = function () {
 			iGadgetsToReinsert.push(iGadget);
 		} else if (this._hasSpaceFor(this.matrix, position.x, position.y, iGadget.getWidth(), iGadget.getHeight())) {
 			this._reserveSpace(this.matrix, iGadget);
-			iGadget.paint();
 		} else {
 			iGadgetsToReinsert.push(iGadget);
 		}
@@ -488,7 +488,6 @@ ColumnLayout.prototype.initialize = function () {
 		position = this._searchFreeSpace(iGadgetsToReinsert[i].getWidth(),
 		                                 iGadgetsToReinsert[i].getHeight());
 		iGadgetsToReinsert[i].setPosition(position);
-		iGadgetsToReinsert[i].paint();
 		this._reserveSpace(this.matrix, iGadgetsToReinsert[i]);
 	}
 
@@ -499,7 +498,7 @@ ColumnLayout.prototype.initialize = function () {
  * Calculate what cell is at a given position in pixels
  */
 ColumnLayout.prototype.getCellAt = function (x, y) {
-	var columnWidth = this.dragboardWidth / this.getColumns();
+	var columnWidth = this.getWidth() / this.getColumns();
 
 	return new DragboardPosition(Math.floor(x / columnWidth),
 	                             Math.floor(y / this.getCellHeight()));

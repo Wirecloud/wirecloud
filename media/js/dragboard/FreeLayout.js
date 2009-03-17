@@ -47,10 +47,6 @@ FreeLayout.prototype = new DragboardLayout();
 
 FreeLayout.prototype.MAX_HLU = 1000000;
 
-FreeLayout.prototype.getWidth = function() {
-	return this.dragboardWidth;
-}
-
 FreeLayout.prototype.fromPixelsToVCells = function(pixels) {
 	return pixels;
 }
@@ -68,11 +64,11 @@ FreeLayout.prototype.getHeightInPixels = function (cells) {
 }
 
 FreeLayout.prototype.fromPixelsToHCells = function(pixels) {
-	return (pixels  * this.MAX_HLU/ this.dragboardWidth);
+	return (pixels  * this.MAX_HLU/ this.getWidth());
 }
 
 FreeLayout.prototype.fromHCellsToPixels = function(cells) {
-	return Math.ceil((this.dragboardWidth * cells) / this.MAX_HLU);
+	return Math.ceil((this.getWidth() * cells) / this.MAX_HLU);
 }
 
 FreeLayout.prototype.fromHCellsToPercentage = function(cells) {
@@ -80,7 +76,7 @@ FreeLayout.prototype.fromHCellsToPercentage = function(cells) {
 }
 
 FreeLayout.prototype.getColumnOffset = function(column) {
-	return Math.ceil((this.dragboardWidth * column) / this.MAX_HLU);
+	return Math.ceil((this.getWidth() * column) / this.MAX_HLU);
 }
 
 FreeLayout.prototype.getRowOffset = function(row) {
@@ -166,7 +162,7 @@ FreeLayout.prototype.initialize = function () {
  * Calculate what cell is at a given position in pixels
  */
 FreeLayout.prototype.getCellAt = function (x, y) {
-	return new DragboardPosition((x * this.MAX_HLU) / this.dragboardWidth,
+	return new DragboardPosition((x * this.MAX_HLU) / this.getWidth(),
 	                             y);
 }
 

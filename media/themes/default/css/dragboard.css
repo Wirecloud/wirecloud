@@ -1,0 +1,116 @@
+div.gadget_window {
+  -moz-border-radius-topleft:  6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  border: 1px solid #4c5054;
+  background: white;
+}
+
+div.gadget_menu {
+  padding: 1px 3px 1px 7px;
+  -moz-border-radius-topleft:  4px;
+  -moz-border-radius-topright: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  height: 16px;
+  font-weight: bold;
+  background: #FFFFFF;
+  font-size: 12px;
+}
+
+div.dragboard.fixed div.gadget_menu {
+}
+
+div.dragboard.fixed {
+  background: #ffffff;
+}
+
+div.gadget_window div.gadget_menu input[type="button"].closebutton {
+  background: url(/ezweb/images/close.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
+  background: url(/ezweb/images/close-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
+  background: url(/ezweb/images/minimize.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
+  background: url(/ezweb/images/minimize-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
+  background: url(/ezweb/images/maximize.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
+  background: url(/ezweb/images/maximize-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
+  background: url(/ezweb/images/settings.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
+  background: url(/ezweb/images/settings-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button {
+  background: url(/ezweb/images/settings2.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
+  background: url(/ezweb/images/settings2-highlighted.png);
+}
+
+div.gadget_window div.gadget_menu input[type="button"].errorbutton {
+  background: url(/ezweb/images/warning.png);
+}
+
+div.gadget_window_locked div.gadget_wrapper {
+  border: none;
+}
+
+div.floatclearer {
+  clear: both;
+}
+
+div.gadget_window div.snapButton {
+  /* This icon represents that the iGadget is outside the grid */
+  background: transparent url(/ezweb/images/igadget/extract.png) no-repeat left bottom;
+}
+
+div.gadget_window div.extractButton {
+  background: transparent url(/ezweb/images/igadget/snap.png) no-repeat left bottom;
+}
+
+div.gadget_window div.leftResizeHandle {
+  background: transparent url(/ezweb/images/resize-handle-bottom-left.png) no-repeat left bottom;
+}
+
+div.gadget_window div.rightResizeHandle {
+  background: transparent url(/ezweb/images/resize-handle-bottom-right.png) no-repeat right bottom;
+}
+
+.gadget_menu .igadget_name {
+  color:       #4C5054;
+  border:      0px;
+  font-size:   12px;
+  font-weight: bold;
+}
+
+div.gadget_window div.statusBar {
+  height: 16px;
+}
+
+#dragboardcursor {
+  border: 2px dashed #97A0A8;
+  background: #F2F9FF;
+  -moz-border-radius-topleft:  6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+}

@@ -106,6 +106,22 @@ var LayoutManagerFactory = function () {
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
+
+		LayoutManager.prototype._notifyPlatformReady = function (firstTime) {
+			var loadingElement = $("loading-indicator");
+			loadingElement.addClassName("disabled");
+
+			if (!firstTime)
+				return;
+
+			// Listen to resize events
+				Event.observe(window,
+				              "resize",
+				              this.resizeWrapper.bind(this));
+		}
+
+
+
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
 		}
@@ -133,20 +149,27 @@ var LayoutManagerFactory = function () {
 			}
 			var newWidth = BrowserUtilsFactory.getInstance().getWidth();
 			this.coverLayerElement.setStyle({"height" : newHeight + "px", "width": newWidth +"px"});
-			
-			//recalculate wiring position
+
+			// Recalculate catalogue sizes
+			UIUtils.setResourcesWidth();
+
+			// Recalculate wiring position
 			var opManager = OpManagerFactory.getInstance();
-			if(opManager.loadCompleted){
+			if(opManager.loadCompleted) {
+				/* Wiring */
 				var wiringInterface = opManager.activeWorkSpace.getWiringInterface()
 				wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
 				if(wiringInterface.currentChannel){
 					wiringInterface.uncheckChannel(wiringInterface.currentChannel);
 					wiringInterface.highlightChannel(wiringInterface.currentChannel);
 				}
+
+				/* Current Dragboard */
+				opManager.activeWorkSpace.getActiveDragboard()._notifyWindowResizeEvent();
 			}
 
-			//recalculate menu positions
-			if(this.currentMenu){
+			// Recalculate menu positions
+			if (this.currentMenu) {
 				this.currentMenu.calculatePosition();
 			}
 		}
@@ -362,18 +385,18 @@ var LayoutManagerFactory = function () {
 					this.currentMenu.show('left-bottom', x, y);
 				}else{
 					this.currentMenu.show('left-top', x, y);
-				}				
+				}
 				this.showClickableCover();
 				break;
 			case 'filterHelp':
-				this.currentMenu = menu;		
+				this.currentMenu = menu;
 				var position;
 				if (y + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()){
 					//the menu has enough room to be displayed from top to bottom
 					this.currentMenu.show('right-bottom', x, y);
 				}else{
 					this.currentMenu.show('right-top', x, y);
-				}								
+				}
 				break;
 			default:
 				break;

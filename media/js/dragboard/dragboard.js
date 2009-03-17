@@ -32,7 +32,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// *********************************
 	this.loaded = false;
 	this.currentCode = 1;
+	this.scrollbarSpace = 17; // TODO make this configurable?
+	// TODO or initialized with the scroll bar's real with?
 	this.dragboardElement;
+	this.dragboardWidth = 800;
 	this.baseLayout = null;
 	this.freeLayout = null;
 	this.gadgetToMove = null;
@@ -45,10 +48,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	this.fixed = false;
 
 	// ***********************
-	// PRIVATE FUNCTIONS 
+	// PRIVATE FUNCTIONS
 	// ***********************
 	Dragboard.prototype.paint = function () {
 		this.dragboardElement.innerHTML = "";
+
+		this._recomputeSize();
 
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
@@ -102,13 +107,49 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		persistenceEngine.send_update(uri, data, this, onSuccess, onError);
 	}
 
+	/**
+	 * This function is slow. Please, only call it when really necessary.
+	 *
+	 * @private
+	 */
+	Dragboard.prototype._recomputeSize = function() {
+		// TODO check this in a compatible fashion
+		var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
+		if (cssStyle.getPropertyValue("display") == "none")
+			return; // Do nothing
+
+		var dragboardElement = this.dragboardElement;
+		this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+
+		var tmp = this.dragboardWidth;
+		tmp-= parseInt(dragboardElement.clientWidth);
+
+		if (tmp > this.scrollbarSpace)
+			this.dragboardWidth-= tmp;
+		else
+			this.dragboardWidth-= this.scrollbarSpace;
+	}
+
+
 	// ****************
-	// PUBLIC METHODS 
+	// PUBLIC METHODS
 	// ****************
 
+	/**
+	 * Gets the width of the usable dragboard area.
+	 *
+	 * @returns The width of the usable dragboard area
+	 */
+	Dragboard.prototype.getWidth = function() {
+		return this.dragboardWidth;
+	}
+
+	/**
+	 * This method forces recomputing of the iGadgets' sizes.
+	 */
 	Dragboard.prototype.recomputeSize = function() {
-		this.baseLayout._notifyWindowResizeEvent();
-		this.freeLayout._notifyWindowResizeEvent();
+		this.baseLayout._notifyWindowResizeEvent(this.dragboardWidth);
+		this.freeLayout._notifyWindowResizeEvent(this.dragboardWidth);
 	}
 
 	Dragboard.prototype.hide = function () {
@@ -393,16 +434,29 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// *******************
 	this.dragboardElement = dragboardElement;
 
+	this.dragboardElement.observe("DOMContentLoaded",
+	                              function() {alert('hola');},
+	                              true);
+
+	// Window Resize event dispacher function
+	this._notifyWindowResizeEvent = function () {
+		//var oldWidth = this.dragboardWidth;
+		this._recomputeSize();
+		//var newWidth = this.dragboardWidth;
+
+		//if (oldWidth !== newWidth)
+			this.recomputeSize();
+	}.bind(this);
+
 	/*
 	 * nº columns                         = 20
 	 * cell height                        = 12 pixels
 	 * vertical Margin between IGadgets   = 2 pixels
 	 * horizontal Margin between IGadgets = 4 pixels
-	 * scroll bar reserved space          = 17 pixels
 	 */
-	this.baseLayout = new SmartColumnLayout(this, 20, 12, 2, 4, 17);
+	this.baseLayout = new SmartColumnLayout(this, 20, 12, 2, 4);
 
-	this.freeLayout = new FreeLayout(this, 17);
+	this.freeLayout = new FreeLayout(this);
 
 	this.parseTab(tab.tabInfo);
 }
@@ -515,7 +569,7 @@ EzWebEffectBase.findDragboardElement = function(element) {
 	return null; // Not found
 }
 
-function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
+function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
 	var xDelta = 0, yDelta = 0;
 	var xStart = 0, yStart = 0;
 	var yScroll = 0;
@@ -523,6 +577,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 	var x, y;
 	var dragboardCover;
 	var draggable = this;
+	canBeDragged = canBeDragged ? canBeDragged : function() {return true;};
 
 	// remove the events
 	function enddrag(e) {
@@ -573,6 +628,9 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish) {
 
 		// Only attend to left button (or right button for left-handed persons) events
 		if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
+			return false;
+
+		if (!canBeDragged(draggable, data))
 			return false;
 
 		document.oncontextmenu = function() { return false; }; // disable context menu
@@ -675,8 +733,14 @@ function IGadgetDraggable (iGadget) {
 	Draggable.call(this, iGadget.element, iGadget.gadgetMenu, context,
 	                     IGadgetDraggable.prototype.startFunc,
 	                     IGadgetDraggable.prototype.updateFunc,
-	                     IGadgetDraggable.prototype.finishFunc);
+	                     IGadgetDraggable.prototype.finishFunc,
+	                     IGadgetDraggable.prototype.canBeDraggedFunc);
 }
+
+IGadgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
+	return !context.iGadget.layout.dragboard.isLocked();
+}
+
 
 IGadgetDraggable.prototype.startFunc = function (draggable, context) {
 	context.layout = context.iGadget.layout;

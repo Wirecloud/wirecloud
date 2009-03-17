@@ -39,43 +39,26 @@
  * @private
  *
  * @param {Dragboard} dragboard      associated dragboard
- * @param {Number}    scrollbarSpace space reserved for the right scroll bar in pixels
  */
-function DragboardLayout(dragboard, scrollbarSpace) {
+function DragboardLayout(dragboard) {
 	if (arguments.length == 0)
 		return; // Allow empty constructor (allowing hierarchy)
 
 	this.dragboard = dragboard;
-	this.scrollbarSpace = scrollbarSpace;
 	this.iGadgets = new Hash();
+}
 
-	// Window Resize event dispacher function
-	this._notifyWindowResizeEvent = function () {
-		// TODO do this in a compatible fashion
-		var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
-		if (cssStyle.getPropertyValue("display") == "none")
-			return
-
-		this._recomputeSize();
-
-		// Notify each igadget
-		var iGadget;
-		var igadgetKeys = this.iGadgets.keys();
-		for (var i = 0; i < igadgetKeys.length; i++) {
-			iGadget = this.iGadgets[igadgetKeys[i]];
-			iGadget._notifyWindowResizeEvent();
-		}
-	}.bind(this);
-
-	// TODO do this in a compatible fashion
-	var cssStyle = document.defaultView.getComputedStyle(this.dragboard.dragboardElement, null);
-	if (cssStyle.getPropertyValue("display") == "none")
-		this.dragboardWidth = 1200; // temporal size
-	else
-		this._recomputeSize();
-
-	this.dragboard.dragboardElement.observe('load', this._notifyWindowResizeEvent, true);
-	Event.observe(window, 'resize', this._notifyWindowResizeEvent, true);
+/**
+ *
+ */
+DragboardLayout.prototype._notifyWindowResizeEvent = function() {
+	// Notify each igadget
+	var iGadget;
+	var igadgetKeys = this.iGadgets.keys();
+	for (var i = 0; i < igadgetKeys.length; i++) {
+		iGadget = this.iGadgets[igadgetKeys[i]];
+		iGadget._notifyWindowResizeEvent();
+	}
 }
 
 /**
@@ -145,24 +128,6 @@ DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
 }
 
 /**
- * This function is slow. Please, only call it when really necessary.
- *
- * @private
- */
-DragboardLayout.prototype._recomputeSize = function() {
-	var dragboardElement = this.dragboard.dragboardElement;
-	this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
-
-	var tmp = this.dragboardWidth;
-	tmp-= parseInt(dragboardElement.clientWidth);
-
-	if (tmp > this.scrollbarSpace)
-		this.dragboardWidth-= tmp;
-	else
-		this.dragboardWidth-= this.scrollbarSpace;
-}
-
-/**
  * Checks if the point is inside the dragboard.
  *
  * @param x  X coordinate
@@ -171,7 +136,7 @@ DragboardLayout.prototype._recomputeSize = function() {
  * @returns true if the point is inside
  */
 DragboardLayout.prototype.isInside = function (x, y) {
-	return (x >= 0) && (x < this.dragboardWidth) && (y >= 0);
+	return (x >= 0) && (x < this.getWidth()) && (y >= 0);
 }
 
 /**
@@ -180,7 +145,7 @@ DragboardLayout.prototype.isInside = function (x, y) {
  * @returns The width of the usable dragboard area
  */
 DragboardLayout.prototype.getWidth = function() {
-	return this.dragboardWidth;
+	return this.dragboard.getWidth();
 }
 
 /**
@@ -199,13 +164,13 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	if (affectsDragboard) {
 		this.dragboard._registerIGadget(iGadget);
 
-		if (iGadget.element != null) // TODO
+		if (iGadget.isVisible()) // TODO
 			this.dragboard.dragboardElement.appendChild(iGadget.element);
 	}
 
 	this.iGadgets[iGadget.code] = iGadget;
 
-	if (iGadget.element != null) {
+	if (iGadget.isVisible()) {
 		iGadget._recomputeSize();
 	}
 }
@@ -272,8 +237,6 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
  * references.
  */
 DragboardLayout.prototype.destroy = function() {
-	Event.stopObserving(window, 'resize', this._notifyWindowResizeEvent, true);
-
 	var keys = this.iGadgets.keys();
 	for (var i = 0; i < keys.length; i++) {
 		this.iGadgets[keys[i]].destroy();

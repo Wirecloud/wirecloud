@@ -58,9 +58,10 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.zPos = zPos;
 	this.transparency = transparency;
 	this.draggable = null;
+	this.visible = false;
 
 	if (!minimized)
-		this.height = this.contentHeight + layout.getExtraSize().inLU;
+		this.height = this.contentHeight;
 	else
 		this.height = layout.getMenubarSize().inLU;
 
@@ -96,6 +97,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.errorCount = 0;
 
 	// Add the iGadget to the layout
+	this.build();
 	layout.addIGadget(this, true);
 }
 
@@ -234,7 +236,7 @@ IGadget.prototype.getElement = function() {
  * @returns {Boolean} true if the iGadget is currently visible; false otherwise.
  */
 IGadget.prototype.isVisible = function() {
-	return this.element != null;
+	return this.visible;
 }
 
 /**
@@ -354,14 +356,9 @@ IGadget.prototype._updateExtractOption = function() {
 }
 
 /**
- * Paints this gadget instance into the assigned dragboard
+ * Builds the structure of the gadget
  */
-IGadget.prototype.paint = function() {
-	if (this.element != null) // exit if the igadgets is already visible
-		return; // TODO exception
-
-	var contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
-
+IGadget.prototype.build = function() {
 	this.element = document.createElement("div");
 	this.element.addClassName("gadget_window");
 
@@ -515,25 +512,22 @@ IGadget.prototype.paint = function() {
 	this.contentWrapper.appendChild(this.configurationElement);
 
 	// Gadget Content
+	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
 	if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
-		this.content = document.createElement("iframe"); 
-		this.content.setAttribute("class", "gadget_object"); 
-		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
-		this.content.setAttribute("src", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
+		this.content = document.createElement("iframe");
+		this.content.setAttribute("class", "gadget_object");
+		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
 		this.content.setAttribute("standby", "Loading...");
 //		this.content.innerHTML = "Loading...."; // TODO add an animation ?
-
+		this.content.setAttribute("src", codeURL);
 		this.content.setAttribute("width", "100%");
-		this.content.setAttribute("height", contentHeight + "px");
 	} else { //non IE6
-		this.content = document.createElement("object"); 
-		this.content.setAttribute("class", "gadget_object"); 
-		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml 
-		this.content.setAttribute("data", this.gadget.getXHtml().getURICode() + "?id=" + this.id); 
+		this.content = document.createElement("object");
+		this.content.setAttribute("class", "gadget_object");
+		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
 		this.content.setAttribute("standby", "Loading...");
+		this.content.setAttribute("data", codeURL);
 		this.content.innerHTML = "Loading...."; // TODO add an animation ?
-
-		this.content.setStyle({"width": "100%", "height": contentHeight + "px"});
 	}
 	this.content.observe("load",
 	                     function () {
@@ -573,6 +567,16 @@ IGadget.prototype.paint = function() {
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
+}
+
+/**
+ * Paints this gadget instance into the assigned dragboard
+ */
+IGadget.prototype.paint = function() {
+	if (this.visible)
+		return; // Do nothing if the iGadget is already painted
+
+	this.visible = true;
 
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
@@ -583,27 +587,28 @@ IGadget.prototype.paint = function() {
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
 
+	// Initialize snap/extract options
+	this._updateExtractOption();
+
+
+	// Insert it into the dragboard
+	this.layout.dragboard.dragboardElement.appendChild(this.element);
+
+	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+	if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
+		this.content.setAttribute("src", codeURL);
+	} else { //non IE6
+		this.content.setAttribute("data", codeURL);
+	}
+
 	// TODO use setStyle from prototype
 	// Position
 	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 	this.element.style.zIndex = this.zPos;
 
-	// Sizes
-	var widthInPixels = this.layout.getWidthInPixels(this.contentWidth);
-	this.element.style.width = widthInPixels + "px";
-	if (this.minimized) {
-		this.contentWrapper.style.borderTop = "0px";
-		this.contentWrapper.style.visibility = "hidden";
-	}
-
-	// Insert it into the dragboard
-	this.layout.dragboard.dragboardElement.appendChild(this.element);
-
-	this._updateExtractOption();
-
-	// Ensure a minimal size
-	this.layout._ensureMinimalSize(this, false);
+	// Recompute size
+	this._recomputeSize(true);
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
@@ -617,13 +622,13 @@ IGadget.prototype.paint = function() {
 	// Notify Context Manager of igadget's size
 	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
 	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTHINPIXELS, widthInPixels);
 
 	// Notify Context Manager of the current lock status
 	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
-	return this.element;
+	// TODO temporal hack
+	var colores = ["#A8D914", "#EFEFEF", "#D4E6FC", "#97A0A8", "#B2A3A3", "#46C0ED", "#FFBB03"];
+	this.gadgetMenu.style.backgroundColor = colores[this.code % colores.length];
 }
 
 IGadget.prototype.fillWithLabel = function() {
@@ -955,7 +960,7 @@ IGadget.prototype.setContentSize = function(newWidth, newHeight, persist) {
  * @private
  */
 IGadget.prototype._notifyWindowResizeEvent = function() {
-	if (!this.element || !this.loaded)
+	if (!this.element)
 		return;
 
 	/* TODO this is a temporally workaround needed when using display:none to hide tabs */
@@ -1029,15 +1034,7 @@ IGadget.prototype._notifyLoaded = function() {
 		}
 
 		this.layout.dragboard.igadgetLoaded(this);
-
 	}
-
-	// Recompute position
-	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
-	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
-
-	// Recompute sizes
-	this.setContentSize(this.contentWidth, this.contentHeight, false);
 
 	// Notify to the context manager the igadget has been loaded
 	this.layout.dragboard.getWorkspace().getContextManager().propagateInitialValues(this.id);
@@ -1060,11 +1057,13 @@ IGadget.prototype._recomputeWidth = function() {
 /**
  * @private
  */
-IGadget.prototype._recomputeWrapper = function() {
-	if (!this.minimized)
-		wrapperHeight = this.content.offsetHeight + this.configurationElement.offsetHeight;
-	else
+IGadget.prototype._recomputeWrapper = function(contentHeight) {
+	if (!this.minimized) {
+		contentHeight = contentHeight ? contentHeight : parseInt(this.content.offsetHeight);
+		wrapperHeight = contentHeight + this.configurationElement.offsetHeight;
+	} else {
 		wrapperHeight = 0;
+	}
 
 	this.contentWrapper.setStyle({height: wrapperHeight + "px"});
 }
@@ -1133,10 +1132,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 			this.height = processedSize.inLU;
 			this.content.setStyle({height: contentHeight + "px"});
 
+			this._recomputeWrapper(contentHeight);
+
 			// Notify Context Manager about the new igadget's size
 			contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
-
-			this._recomputeWrapper();
 		} else {
 			this._recomputeWrapper();
 			contentHeight = this.element.offsetHeight;
@@ -1154,10 +1153,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 		this.content.setStyle({height: contentHeight + "px"});
 		this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
 
+		this._recomputeWrapper(contentHeight);
+
 		// Notify Context Manager about the new igadget's size
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
-
-		this._recomputeWrapper();
 	}
 
 }

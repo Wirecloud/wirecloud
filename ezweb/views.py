@@ -42,10 +42,16 @@ def index(request, user_name=None, template="index.html"):
     """ Vista principal """ 
     
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
-        return render_to_response('iphone.html', {}, 
+        return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
     else:
-        return render_to_response(template, {'current_tab': 'dragboard'}, 
+        if not hasattr(settings, "THEME_URL"):
+            if not hasattr(settings, "THEME") or settings.THEME == None:
+                settings.THEME = "default"
+
+            settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
+
+        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL},
                   context_instance=RequestContext(request))
 
 @login_required
