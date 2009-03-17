@@ -59,7 +59,7 @@ def log_exception(request, exception, file_name='error'):
     for line in info_array:
         info += line
 
-    log_file_manager.write_file(info, request, file_name)
+    log_file_manager.write_text(info, file_name)
 
     exc_name = unicode(exc_type.__name__)
     exc_desc = str(exc_value).decode("utf-8")

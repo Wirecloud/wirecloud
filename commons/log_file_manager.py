@@ -34,11 +34,10 @@ class FileLogManager:
             line = unicode('%s' % (message))
             f.write(line)
             f.close()
-        except UnicodeDecodeError:
-            print message
-        except IOError:
-            print message
-            pass
+        except UnicodeDecodeError, e:
+            print e
+        except IOError, e:
+            print e
         
     def write_log_header(self, request, response, file_name):
         """Prints request general info and DO NOT insert a line separator""" 
@@ -63,8 +62,7 @@ class FileLogManager:
             f.write(line)
             
             f.close()
-        except UnicodeDecodeError:
-            print message
+        except UnicodeDecodeError, e:
+            print e
         except IOError:
-            print message
-            pass
+            print e
