@@ -1,19 +1,18 @@
 body {
-	 margin:0;
-	 padding:0;
-	 color:#000;
-	 font-size:80%;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background: url("/ezweb/images/fond.gif") top left;
-	overflow: hidden;
+    margin:0;
+    padding:0;
+    color:#000;
+    font-size:80%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
 
-a{
-	 color:red;
+a {
+    color:red;
 }
 
 a:hover{
-	 color:red;
+    color:red;
 }
 
 /* header ------------------------------------------------------------------------------------------ */
@@ -98,14 +97,12 @@ a:hover{
 }
 
 #tab_section {
- position: absolute; 
- top: 6px;
- display: block;
- right:4px;
-/* margin-left:25%;*/
- width:100%;
- z-index: 3;
-
+    position: absolute;
+    bottom:   0;
+    display:  block;
+    right:    4px;
+    width:    100%;
+    z-index:  3;
 }
 
 #tab_section #fixed_bar{
@@ -556,17 +553,16 @@ button {
 }
 
 .container {
-  position: fixed;
-  width:99.1%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
   height:100%;
-  background: #e6f3ff;
-  background-color:#E0E0E0;
-/*  overflow-x: auto;*/
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1;
   display: none;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 6px;
 }
 
 .container_content {

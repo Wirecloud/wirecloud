@@ -1,24 +1,17 @@
 div.dragboard {
+  overflow: auto;
   overflow-x: hidden;
+  overflow-y: auto;
+}
+
+div.dragboard.fixed {
 }
 
 div.gadget_window {
-  -moz-border-radius-topleft:  6px;
-  -moz-border-radius-topright: 6px;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
   position: absolute;
-  border: 1px solid #4c5054;
-  background: white;
 }
 
 div.gadget_window_locked {
-  position: absolute;
-  border: none;
-  -moz-border-radius-topleft:  0px;
-  -moz-border-radius-topright: 0px;
-  -webkit-border-top-left-radius: 0px;
-  -webkit-border-top-right-radius: 0px;
 }
 
 div.gadget_window_transparent {
@@ -27,24 +20,15 @@ div.gadget_window_transparent {
 
 div.gadget_menu {
   cursor: move;
-  padding: 1px 3px 1px 7px;
-  -moz-border-radius-topleft:  4px;
-  -moz-border-radius-topright: 4px;
-  -webkit-border-top-left-radius: 4px;
-  -webkit-border-top-right-radius: 4px;
-  height: 16px;
-  font-weight: bold;
-  background: #FFFFFF;
-  font-size: 12px;
   overflow: hidden;
 }
 
 div.dragboard.fixed div.gadget_menu {
-  display: none;
+  cursor: default;
 }
 
-div.dragboard.fixed{
-  background: #ffffff;
+div.dragboard.fixed div.gadget_menu input[type="button"] {
+  display: none;
 }
 
 div.gadget_window div.gadget_menu input[type="button"] {
@@ -57,50 +41,6 @@ div.gadget_window div.gadget_menu input[type="button"] {
   border: 0px none;
   outline: 0px none;
   cursor: pointer;
-}
-
-div.gadget_window div.gadget_menu input[type="button"].closebutton {
-  background: url(/ezweb/images/close.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
-  background: url(/ezweb/images/close-highlighted.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
-  background: url(/ezweb/images/minimize.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
-  background: url(/ezweb/images/minimize-highlighted.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
-  background: url(/ezweb/images/maximize.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
-  background: url(/ezweb/images/maximize-highlighted.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
-  background: url(/ezweb/images/settings.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
-  background: url(/ezweb/images/settings-highlighted.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].settings2button {
-  background: url(/ezweb/images/settings2.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
-  background: url(/ezweb/images/settings2-highlighted.png);
-}
-
-div.gadget_window div.gadget_menu input[type="button"].errorbutton {
-  background: url(/ezweb/images/warning.png);
 }
 
 div.gadget_window div.gadget_wrapper {
@@ -126,8 +66,6 @@ div.gadget_window div.snapButton {
   bottom: 0px;
   right: 33px;
   cursor: pointer;
-  /* This icon represents that the iGadget is outside the grid */
-  background: transparent url(/ezweb/images/igadget/extract.png) no-repeat left bottom;
 }
 
 div.gadget_window div.extractButton {
@@ -137,7 +75,6 @@ div.gadget_window div.extractButton {
   bottom: 0px;
   right: 33px;
   cursor: pointer;
-  background: transparent url(/ezweb/images/igadget/snap.png) no-repeat left bottom;
 }
 
 div.gadget_window div.leftResizeHandle {
@@ -147,7 +84,6 @@ div.gadget_window div.leftResizeHandle {
   bottom: -1px;
   left: -1px;
   cursor: sw-resize;
-  background: transparent url(/ezweb/images/resize-handle-bottom-left.png) no-repeat left bottom;
 }
 
 div.gadget_window div.leftResizeHandle.inUse {
@@ -164,7 +100,6 @@ div.gadget_window div.rightResizeHandle {
   bottom: -1px;
   right: -1px;
   cursor: se-resize;
-  background: transparent url(/ezweb/images/resize-handle-bottom-right.png) no-repeat right bottom;
 }
 
 div.gadget_window div.resizeHandle.inUse {
@@ -175,34 +110,24 @@ div.gadget_window div.resizeHandle.inUse {
 }
 
 div.dragboard.fixed div.gadget_window div.leftResizeHandle,
-  div.dragboard.fixed div.gadget_window div.rightResizeHandle
+  div.dragboard.fixed div.gadget_window div.rightResizeHandle,
+  div.dragboard.fixed div.gadget_window div.extractButton
 {
   display: none;
 }
 
 .gadget_menu span {
-  margin-right:5px;
   cursor: pointer;
-  color: #4C5054;
 }
 
 .gadget_menu .igadget_name {
   float:left;
   background:transparent none repeat scroll 0%;
-  color:#4C5054;
-  border: 0px;
-  font-size:12px;
-  font-weight:bold;
   display:inline;
 }
 
 div.gadget_window div.statusBar {
   height: 16px;
-}
-
-div.gadget_window_locked div.statusBar {
-  display: none;
-  height: 0;
 }
 
 /*****
@@ -272,11 +197,5 @@ div.config_interface label.invalid input {
 
 #dragboardcursor {
   position: absolute;
-  border: 2px dashed #97A0A8;
-  background: #F2F9FF;
   z-index: 1;
-  -moz-border-radius-topleft:  6px;
-  -moz-border-radius-topright: 6px;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
 }
