@@ -244,7 +244,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 	Dragboard.prototype.parseTab = function(tabInfo) {
-		var curIGadget, position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout;
+		var curIGadget, position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color;
 
 		var opManager = OpManagerFactory.getInstance();
 
@@ -284,12 +284,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 			// Parse minimize status
 			minimized = curIGadget.minimized == "true" ? true : false;
-			
+
 			// Parse transparency status
 			transparency = curIGadget.transparency == "true" ? true : false;
 
+			// Menu color
+			menu_color = curIGadget.menu_color;
+
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, minimized, transparency);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, minimized, transparency, menu_color);
 		}
 
 		this.loaded = true;
@@ -332,7 +335,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, null);
 
 		iGadget.save();
 	}

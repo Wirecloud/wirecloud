@@ -87,6 +87,7 @@ def SaveIGadget(igadget, user, tab):
     left = igadget.get('left')
     zIndex = igadget.get('zIndex')
     layout = igadget.get('layout')
+    menu_color = igadget.get('menu_color')
 
     # Creates IGadget position
     position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False)
@@ -101,7 +102,7 @@ def SaveIGadget(igadget, user, tab):
 
         gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, transparency=False)
+        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, transparency=False, menu_color=menu_color)
         new_igadget.save()
 
         variableDefs = VariableDef.objects.filter(gadget=gadget)
@@ -136,7 +137,7 @@ def SaveIGadget(igadget, user, tab):
 
     except Gadget.DoesNotExist, e:
         msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': gadget_uri}
-        
+
         raise TracedServerError(e, {'igadget': igadget, 'user': user, 'tab': tab}, request, msg)
 
     except VariableDef.DoesNotExist, e:

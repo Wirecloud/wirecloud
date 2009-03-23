@@ -30,23 +30,30 @@
  *
  * @class Represents an instance of a Gadget.
  *
- * @param {Gadget}            gadget      Gadget of this iGadget
- * @param {Number}            iGadgetId   iGadget id in persistence. This
- *                                        parameter can be null for new iGadgets
- *                                        (not coming from persistence)
- * @param {String}            iGadgetName current gadget
- * @param {DragboardLayout}   layout      associated layout
- * @param {DragboardPosition} position    initial position. This parameter can
- *                                        be null for new iGadgets (not coming
- *                                        from persistence)
- * @param {Number}            zPos        initial z coordinate position. This
- *                                        parameter can be null for new iGadgets
- *                                        (not coming from persistence)
- * @param {Number}            width       initial content width
- * @param {Number}            height      initial content height
- * @param {Boolean}           minimized   initial minimized status
+ * @param {Gadget}            gadget       Gadget of this iGadget
+ * @param {Number}            iGadgetId    iGadget id in persistence. This
+ *                                         parameter can be null for new
+ *                                         iGadgets (not coming from
+ *                                         persistence)
+ * @param {String}            iGadgetName  current gadget
+ * @param {DragboardLayout}   layout       associated layout
+ * @param {DragboardPosition} position     initial position. This parameter can
+ *                                         be null for new iGadgets (not coming
+ *                                         from persistence)
+ * @param {Number}            zPos         initial z coordinate position. This
+ *                                         parameter can be null for new
+ *                                         iGadgets (not coming from
+ *                                         persistence)
+ * @param {Number}            width        initial content width
+ * @param {Number}            height       initial content height
+ * @param {Boolean}           minimized    initial minimized status
+ * @param {Boolean}           transparency initial transparency status (true for
+ *                                         enabled and false for disabled)
+ * @param {String}            menu_color   background color for the iGadget's
+ *                                         menu. (6 chars with a hexadecimal
+ *                                         color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, height, minimized, transparency) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, height, minimized, transparency, menu_color) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -99,6 +106,13 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	// Add the iGadget to the layout
 	this.build();
 	layout.addIGadget(this, true);
+
+	// TODO temporal hack
+	var colors = ["A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+	if (menu_color !== undefined && menu_color !== null)
+		this.menu_color = menu_color;
+	else
+		this.menu_color = colors[this.code % colors.length];
 }
 
 /**
@@ -626,9 +640,7 @@ IGadget.prototype.paint = function() {
 	// Notify Context Manager of the current lock status
 	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
-	// TODO temporal hack
-	var colores = ["#A8D914", "#EFEFEF", "#D4E6FC", "#97A0A8", "#B2A3A3", "#46C0ED", "#FFBB03"];
-	this.gadgetMenu.style.backgroundColor = colores[this.code % colores.length];
+	this.gadgetMenu.style.backgroundColor = "#" + this.menu_color;
 }
 
 IGadget.prototype.fillWithLabel = function() {
@@ -1465,6 +1477,7 @@ IGadget.prototype.save = function() {
 	data['width'] = this.contentWidth;
 	data['height'] = this.contentHeight;
 	data['name'] = this.name;
+	data['menu_color'] = this.menu_color;
 	if (this.onFreeLayout())
 		data['layout'] = 1;
 	else

@@ -401,6 +401,7 @@ def get_igadget_data(data, user, workspace):
     data_ret['name'] = data_fields['name']
     data_ret['tab'] = data_fields['tab']
     data_ret['layout'] = data_fields['layout']
+    data_ret['menu_color'] = data_fields['menu_color']
     data_ret['gadget'] = gadget.uri
     data_ret['top'] = position.posY
     data_ret['left'] = position.posX
