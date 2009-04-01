@@ -1,6 +1,9 @@
 #!/bin/bash
 # tu nombre de usuario tiene que existir como superusuario de postgresq
 
+echo "Borrando base de datos. Desea continuar? Control-C para parar"
+read
+
 dropdb ezweb
 createdb --owner=ezweb ezweb
 
