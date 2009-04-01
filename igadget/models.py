@@ -57,7 +57,7 @@ class IGadget(models.Model):
     layout = models.IntegerField(_('Layout'), default=0)
     transparency = models.BooleanField(_('Transparency'), default=False)
     position = models.ForeignKey(Position, verbose_name=_('Position'))
-    menu_color = models.CharField(max_length=6)
+    menu_color = models.CharField(max_length=6, default="FFFFFF")
 
     def __unicode__(self):
         return str(self.pk)

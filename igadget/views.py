@@ -164,10 +164,14 @@ def UpdateIGadget(igadget, user, tab):
             newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
             ig.tab = newtab
 
+    if igadget.has_key('menu_color'):
+        menu_color = igadget.get('menu_color')
+        ig.menu_color = menu_color
+
     if igadget.has_key('layout'):
         layout = igadget.get('layout')
         ig.layout = layout
-    
+
     if igadget.has_key('transparency'):
         ig.transparency = igadget.get('transparency')
 

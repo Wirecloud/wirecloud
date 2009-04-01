@@ -107,12 +107,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.build();
 	layout.addIGadget(this, true);
 
-	// TODO temporal hack
-	var colors = ["A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
-	if (menu_color !== undefined && menu_color !== null)
-		this.menu_color = menu_color;
-	else
-		this.menu_color = colors[this.code % colors.length];
+	this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 }
 
 /**
@@ -428,6 +423,9 @@ IGadget.prototype.build = function() {
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
 
+	var idColorMenu = 'igadget_color_menu_' + this.id;
+	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
+
 	// Settings
 	this.menu.addOption("/ezweb/images/igadget/settings.png",
 	                    gettext("Preferences"),
@@ -437,13 +435,24 @@ IGadget.prototype.build = function() {
 	                    }.bind(this),
 	                    0);
 
+	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
+	                                           gettext("Menu Bar Color..."),
+	                                           function(e) {
+	                                               var menuEntry = $(this.menuColorEntryId);
+	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+	                                                   this.colorMenu,
+	                                                   Event.pointerX(e),
+	                                                   menuEntry.getBoundingClientRect().top + (menuEntry.offsetHeight/2));
+	                                           }.bind(this),
+	                                           1);
+
 	this.menu.addOption("/ezweb/images/igadget/transparency.png",
 	                    gettext("Transparency"),
 	                    function() {
 	                        this.toggleTransparency();
 	                        LayoutManagerFactory.getInstance().hideCover();
 	                    }.bind(this),
-	                    1);
+	                    2);
 
 	// Extract/Snap from/to grid option (see _updateExtractOption)
 	this.extractOptionOrder = 2;
@@ -640,7 +649,7 @@ IGadget.prototype.paint = function() {
 	// Notify Context Manager of the current lock status
 	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
-	this.gadgetMenu.style.backgroundColor = "#" + this.menu_color;
+	this.setMenuColor(undefined, true);
 }
 
 IGadget.prototype.fillWithLabel = function() {
@@ -734,7 +743,7 @@ IGadget.prototype.fillWithInput = function () {
 }
 
 /**
- * Set the name of this iGadget. The name of the iGadget is shown at the
+ * Sets the name of this iGadget. The name of the iGadget is shown at the
  * iGadget's menu bar. Also, this name will be used to refere to this gadget in
  * other parts of the EzWeb Platform, for example it is used in the wiring
  * interface.
@@ -769,6 +778,49 @@ IGadget.prototype.setName = function (igadgetName) {
 		                                            iGadgetId: this.id});
 		PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
 	}
+}
+
+/**
+ * Sets the background color of the iGadget's menu bar.
+ *
+ * @param {String|Color} newColor
+ */
+IGadget.prototype.setMenuColor = function (newColor, temporal) {
+	temporal = temporal != undefined ? temporal : false;
+
+	if (newColor == undefined) {
+		newColor = this.menu_color;
+		temporal = true;
+	}
+
+	this.gadgetMenu.style.backgroundColor = IGadgetColorManager.color2css(newColor);
+
+	if (temporal)
+		return;
+
+	function onSuccess() {}
+	function onError(transport, e) {
+		var msg;
+
+		if (transport.responseXML) {
+			msg = transport.responseXML.documentElement.textContent;
+		} else {
+			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+		}
+		msg = interpolate(gettext("Error updating igadget's menu color into persistence: %(errorMsg)s."), {errorMsg: msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+	}
+
+	this.menu_color = newColor;
+	var persistenceEngine = PersistenceEngineFactory.getInstance();
+	var data = new Hash();
+	data['id'] = this.id;
+	data['menu_color'] = IGadgetColorManager.color2hex(this.menu_color);
+	var params = {'igadget': data.toJSON()};
+	var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
+	                                            tabId: this.layout.dragboard.tabId,
+	                                            iGadgetId: this.id});
+	persistenceEngine.send_update(igadgetUrl, params, this, onSuccess, onError);
 }
 
 /**
@@ -1477,7 +1529,7 @@ IGadget.prototype.save = function() {
 	data['width'] = this.contentWidth;
 	data['height'] = this.contentHeight;
 	data['name'] = this.name;
-	data['menu_color'] = this.menu_color;
+	data['menu_color'] = IGadgetColorManager.color2css(this.menu_color).substring(1, 6); // TODO
 	if (this.onFreeLayout())
 		data['layout'] = 1;
 	else
@@ -1585,3 +1637,58 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	uri = URIs.GET_IGADGETS.evaluate({workspaceId: oldLayout.dragboard.workSpaceId, tabId: oldLayout.dragboard.tabId});
 	persistenceEngine.send_update(uri, data, this, onSuccess, onError);
 }
+
+function IGadgetColorManager () {
+	this.colors = ["A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+}
+
+IGadgetColorManager.prototype.autogenColor = function(color, seed) {
+	if (color === undefined || color === null)
+		return this.colors[seed % this.colors.length];
+	else
+		return color;
+}
+
+IGadgetColorManager.prototype.genDropDownMenu = function(idColorMenu, parentMenu, iGadget) {
+	var updateColorFunc = function (newColor) {
+		iGadget.setMenuColor(newColor, true);
+	}
+
+	var endFunc = function (newColor) {
+		iGadget.setMenuColor(newColor, false);
+	}
+
+	var colorMenu = new ColorDropDownMenu(idColorMenu,
+	                                      parentMenu,
+	                                      endFunc,
+	                                      {onMouseOver: updateColorFunc,
+	                                       onMouseOut: updateColorFunc});
+
+	for (var i = 0; i < this.colors.length; i++)
+		colorMenu.appendColor(this.colors[i]);
+
+	return colorMenu;
+}
+
+IGadgetColorManager.prototype.color2css = function(color) {
+	if (typeof color === "string")
+		return '#' + color;
+	else
+		return "rgb(" + color.red.cssText + ", " + color.green.cssText + ", " + color.blue.cssText + ")";
+}
+
+IGadgetColorManager.prototype.color2hex = function(color) {
+	if (typeof color === "string") {
+		return color;
+	} else {
+		function component2hex(component) {
+			return "0123456789ABCDEF".charAt(Math.floor(component / 16)) +
+			       "0123456789ABCDEF".charAt(component % 16);
+		}
+		return component2hex(color.red.cssText) +
+		       component2hex(color.green.cssText) +
+		       component2hex(color.blue.cssText);
+	}
+}
+
+IGadgetColorManager = new IGadgetColorManager();

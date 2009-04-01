@@ -350,15 +350,22 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the asked drop down menu 
-		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y){
-			switch (menuType){
+		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y) {
+			switch (menuType) {
 			case 'igadgetOps':
 				this.currentMenu = menu;
 				var position;
-				if (x + menu.menu.getWidth() <= BrowserUtilsFactory.getInstance().getWidth()){
+
+				if (menu.parentMenu)
+					x = menu.parentMenu.menu.offsetLeft + menu.parentMenu.menu.offsetWidth - 10;
+
+				if (x + menu.menu.getWidth() <= BrowserUtilsFactory.getInstance().getWidth()) {
 					//the menu has enough room to be displayed from left to right
 					this.currentMenu.show('right', x, y);
-				}else{
+				} else {
+					if (menu.parentMenu)
+						x = menu.parentMenu.menu.offsetLeft + 10;
+
 					this.currentMenu.show('left', x, y);
 				}
 				this.showClickableCover();

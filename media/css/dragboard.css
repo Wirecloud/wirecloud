@@ -55,6 +55,20 @@ div.gadget_window div.gadget_wrapper object {
   width: 100%;
 }
 
+div.row {
+  white-space: nowrap;
+}
+
+div.color_button {
+  float: left;
+  cursor: pointer;
+  border: 1px solid #888;
+  -moz-border-radius: 4px;
+  margin: 3px;
+  width: 16px;
+  height: 16px;
+}
+
 div.floatclearer {
   clear: both;
 }
