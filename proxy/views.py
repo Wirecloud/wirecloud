@@ -61,6 +61,13 @@ import string
 #            return httplib.HTTPConnection(host)
 #        elif (protocol=="https"):
 #            return httplib.HTTPSConnection(host) 
+class MethodRequest(urllib2.Request):
+  def __init__(self, method, *args, **kwargs):
+    self._method = method
+    urllib2.Request.__init__(self, *args, **kwargs)
+
+  def get_method(self):
+    return self._method
 
 class Proxy(Resource):
     def create(self,request):
@@ -149,7 +156,8 @@ class Proxy(Resource):
             if method == 'GET':
                 req=urllib2.Request(url, None, headers)
             else:
-                req=urllib2.Request(url, params, headers)
+                #req=urllib2.Request(url, params, headers)
+                req=MethodRequest(method, url, params, headers)
             
             res = opener.open(req)
 
