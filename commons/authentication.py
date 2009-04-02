@@ -34,26 +34,24 @@ from django.utils.translation import ugettext as _
 
 from commons.logs_exception import TracedServerError
 
+from django.utils.translation import ugettext as _
+
 class Http403(Exception):
-    msg = None
-    
-    def __init__(self, msg):
-        self.msg = msg
+    pass
 
 def user_authentication(request, user_name):
     user = request.user
     if not user.is_authenticated():
-        raise TracedServerError(Http403(_("You must be logged")), {}, request, _("You must be logged"))
+        raise Http403 (_("You must be logged"))
 
     if user_name and user.username != user_name:
-        raise TracedServerError(Http403(_("Invalid request: the user is not the same in url than in request")), {}, request, 
-                                _("Invalid request: the user is not the same in url than in request"))
+        raise Http403 (_("You do not have permission"))
 
     return user
 
 def get_user_authentication(request):
     user = request.user
     if not user.is_authenticated():
-        raise TracedServerError(Http403(_("You must be logged")), {}, request, _("You must be logged"))
+        raise Http403 (_("You must be logged"))
 
     return user

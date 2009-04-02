@@ -35,6 +35,8 @@ from commons.utils import get_xml_error
 
 from logs_exception import TracedServerError
 
+from commons.authentication import Http403
+
 from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, QueryDict
 from django.utils import datastructures
 
@@ -62,7 +64,7 @@ class Resource:
             log_request(request, response, 'access')
             
             return response
-        except HttpMethodNotAllowed:
+        except (HttpMethodNotAllowed, Http403):
             log_request(request, None, 'access')
             
             response = HttpResponseNotAllowed(self.permitted_methods)
