@@ -324,10 +324,9 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 	this.currentRow = document.createElement("div");
 	this.currentRow.className = "row";
 	this.menu.appendChild(this.currentRow);
-
-	var clearer = document.createElement("div");
-	clearer.className = "floatclearer";
-	this.menu.appendChild(clearer);
+	this.clearer = document.createElement("div");
+	this.clearer.className = "floatclearer";
+	this.currentRow.appendChild(this.clearer);
 
 	var onMouseOver = options['onMouseOver'] != undefined ? options['onMouseOver'] : function(){};
 
@@ -363,11 +362,18 @@ ColorDropDownMenu.prototype.appendColor = function(color) {
 	var cell = document.createElement("div");
 	cell.className = "color_button";
 	cell.style.background = "#" + color;
-	this.currentRow.appendChild(cell);
+	this.currentRow.insertBefore(cell, this.clearer);
 
 	cell.observe('mouseover', this._onMouseOver, true);
 	cell.observe('mouseout', this._onMouseOut, true);
 	cell.observe('click', this._onClick, true);
+}
+
+ColorDropDownMenu.prototype.show = function (position, x, y) {
+	DropDownMenu.prototype.show.apply(this, arguments);
+
+	// This is needed for Firefox 2
+	this.style.height = this.currentRow.offsetHeight + "px";
 }
 
 ColorDropDownMenu.prototype.addOption = function() {

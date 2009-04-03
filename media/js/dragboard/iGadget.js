@@ -439,10 +439,16 @@ IGadget.prototype.build = function() {
 	                                           gettext("Menu Bar Color..."),
 	                                           function(e) {
 	                                               var menuEntry = $(this.menuColorEntryId);
+	                                               if (menuEntry.getBoundingClientRect != undefined) {
+	                                                   var y = menuEntry.getBoundingClientRect().top;
+	                                               } else {
+	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
+	                                                           document.getBoxObjectFor(document.documentElement).screenY;
+	                                               }
 	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
 	                                                   this.colorMenu,
 	                                                   Event.pointerX(e),
-	                                                   menuEntry.getBoundingClientRect().top + (menuEntry.offsetHeight/2));
+	                                                   y + (menuEntry.offsetHeight/2));
 	                                           }.bind(this),
 	                                           1);
 
