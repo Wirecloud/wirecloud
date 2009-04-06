@@ -1645,7 +1645,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 }
 
 function IGadgetColorManager () {
-	this.colors = ["A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+	this.colors = ["FFFFFF", "A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
 }
 
 IGadgetColorManager.prototype.autogenColor = function(color, seed) {

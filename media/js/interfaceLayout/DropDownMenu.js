@@ -373,7 +373,7 @@ ColorDropDownMenu.prototype.show = function (position, x, y) {
 	DropDownMenu.prototype.show.apply(this, arguments);
 
 	// This is needed for Firefox 2
-	this.style.height = this.currentRow.offsetHeight + "px";
+	this.menu.style.height = this.currentRow.offsetHeight + "px";
 }
 
 ColorDropDownMenu.prototype.addOption = function() {
