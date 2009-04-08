@@ -156,6 +156,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.home_gateway_url',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
+    'processors.context_processors.only_one_js_file',
 )
 
 SESSION_COOKIE_AGE = 5184000    #2 months
@@ -192,9 +193,11 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-#TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
+#TEMPLATE_GENERATOR_URL = 'http://localhost:9000'
 
 FORCE_SCRIPT_NAME=""
+
+ONLY_ONE_JS_FILE=True
 
 try:
     from clms.settings import *
