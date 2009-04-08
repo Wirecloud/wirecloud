@@ -30,6 +30,7 @@
 
 
 from django.conf import settings
+
 def server_url(request):
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
         return {'AUTHENTICATION_SERVER_URL': settings.AUTHENTICATION_SERVER_URL }
@@ -47,4 +48,10 @@ def home_gateway_url(request):
        return {'home_gateway_dispatcher_url': settings.HOME_GATEWAY_DISPATCHER_URL}
     else:
         return {'home_gateway_dispatcher_url': None}
+
+def only_one_js_file(request):
+    if hasattr(settings, 'ONLY_ONE_JS_FILE'):
+       return {'only_one_js_file': settings.ONLY_ONE_JS_FILE}
+    else:
+        return {'only_one_js_file': None}
     
