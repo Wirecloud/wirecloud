@@ -38,6 +38,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiringGUI.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/jsonFilter.js"></script>
 
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>

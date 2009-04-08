@@ -223,4 +223,17 @@ Channel value: 'ezweb'
 Returns: 'EZWEB'</field>
 		<field type="TextField" name="params"><None></None></field>    
 	</object>
+   <object pk="18" model="connectable.filter">
+        <field type="CharField" name="name">JSONParser.parse</field>
+        <field type="TextField" name="code"><None></None></field>
+        <field type="CharField" name="label">JSON Parser</field>
+        <field type="CharField" name="nature">JSLIB</field>
+        <field type="CharField" name="category">JSON</field>
+        <field type="TextField" name="help_text">Find elements in JSON structures.
+
+Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for further information. 
+</field>
+		<field type="TextField" name="params">{[{"name": "jpExp", "type": "jpath", "index": 0, "label": "Expression"}]}</field>    
+	</object>
+
 </django-objects>
