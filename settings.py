@@ -197,7 +197,7 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 
 FORCE_SCRIPT_NAME=""
 
-ONLY_ONE_JS_FILE=True
+#ONLY_ONE_JS_FILE=True
 
 try:
     from clms.settings import *
