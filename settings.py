@@ -165,9 +165,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 AUTH_PROFILE_MODULE = 'user.UserProfile'
 
-#Set the proxy server here if needed
-#PROXY_SERVER = 'nube.hi.inet:8080'
-
 # Set the log path
 # When empty, defaults to MEDIA_ROOT/logs
 #LOG_PATH='/var/log/ezweb'
