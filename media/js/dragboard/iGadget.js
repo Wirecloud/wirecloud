@@ -695,7 +695,7 @@ IGadget.prototype.fillWithLabel = function() {
 
 IGadget.prototype.fillWithInput = function () {
 	this.igadgetNameHTMLElement.hide();
-	if (this.igadgetInputHTMLElement){
+	if (this.igadgetInputHTMLElement) {
 		this.igadgetInputHTMLElement.show();
 		this.igadgetInputHTMLElement.setAttribute("value", this.name);
 		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);

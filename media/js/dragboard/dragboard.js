@@ -96,7 +96,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadgetInfo['width'] = iGadget.getContentWidth();
 			iGadgetInfo['height'] = iGadget.getContentHeight();
 			iGadgetInfo['tab'] = this.tabId;
-			iGadgetInfo['transparency'] = iGadget.transparency;
 
 			data['iGadgets'].push(iGadgetInfo);
 		}
@@ -335,7 +334,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, null);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
 
 		iGadget.save();
 	}
