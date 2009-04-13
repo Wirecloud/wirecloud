@@ -5667,7 +5667,7 @@ IGadget.prototype.fillWithLabel = function() {
 
 IGadget.prototype.fillWithInput = function () {
 	this.igadgetNameHTMLElement.hide();
-	if (this.igadgetInputHTMLElement){
+	if (this.igadgetInputHTMLElement) {
 		this.igadgetInputHTMLElement.show();
 		this.igadgetInputHTMLElement.setAttribute("value", this.name);
 		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
@@ -6744,7 +6744,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadgetInfo['width'] = iGadget.getContentWidth();
 			iGadgetInfo['height'] = iGadget.getContentHeight();
 			iGadgetInfo['tab'] = this.tabId;
-			iGadgetInfo['transparency'] = iGadget.transparency;
 
 			data['iGadgets'].push(iGadgetInfo);
 		}
@@ -6983,7 +6982,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, null);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
 
 		iGadget.save();
 	}
@@ -7964,6 +7963,14 @@ function Param (name_, label_, type_, index_, defaultValue_){
   this._defaultValue = defaultValue_;
 }
 
+Param.prototype.Param = function (name_, label_, type_, index_, defaultValue_){
+  this._name = name_;
+  this._label = label_;
+  this._type = type_;
+  this._index = index_;
+  this._defaultValue = defaultValue_;
+}
+
 Param.prototype.getName = function() {
   return this._name;
 }
@@ -8104,7 +8111,11 @@ Filter.prototype.processParams = function(params_) {
   	var jsonParams = eval (params_);  
   	for (var i = 0; i < jsonParams.length; i++) {
 		fParam = jsonParams[i];
-		paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);
+		if (fParam.type == 'jpath'){
+			paramObject = new JPathParam (fParam.name, fParam.label, fParam.index, fParam.defaultValue);
+		} else {
+			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);						
+		}
 		this.setParam(paramObject);  
   	}
   } 	
@@ -8116,8 +8127,8 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 	// Begins to run, no errors
 	this._lastExecError = null;
 	
-	// Creates the varible for the channel value
-	eval ("var channelValue = '" + channelValue_ + "';");
+//	// Creates the varible for the channel value
+//	eval ("var channelValue = '" + channelValue_ + "';");
 	
 	try{
 		// Creates the variables for other params
@@ -8125,7 +8136,8 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 			if (i!=0)
 				params += ',';
 			// Checks the type of parameter
-			if (this._params[i].getType() == 'N'){ // Param is Number
+			switch (this._params[i].getType()){
+			case 'N': // Param is Number
 				var interger_value = parseInt(paramValues_[i]);
 				if (isNaN(interger_value)){
 					msg = interpolate(gettext("Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It must be a number"), 
@@ -8135,8 +8147,9 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 					return gettext('undefined');
 				}
 				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
-				params += this._params[i].getName(); 
-			} else if (this._params[i].getType() == 'regexp'){ // Param is RegExp
+				params += this._params[i].getName();
+				break; 
+			case 'regexp': // Param is RegExp
 				if ((paramValues_[i].indexOf('/') == 0) && (paramValues_[i].lastIndexOf('/') > 0)){
 					var current_pattern = paramValues_[i].substring(1, paramValues_[i].lastIndexOf('/'));
 					var current_modifiers = paramValues_[i].substring(paramValues_[i].lastIndexOf('/') + 1, paramValues_[i].length);
@@ -8145,15 +8158,22 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 					eval ("var " + this._params[i].getName() + " = new RegExp ('" + paramValues_[i] + "');");
 				}
 				params += this._params[i].getName();
-			} else { // Otherwise is String
+				break;
+			case 'jpath': // Param is a JPATH expresion (for JSON)
+				var jpath_exp = this._params[i].parse(paramValues_[i]);
+				eval ("var " + this._params[i].getName() + " = this._params[i].parse(paramValues_[i]);");
+				params += this._params[i].getName();
+				break;
+			default: // Otherwise is String
 				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
 				params += this._params[i].getName();
+				break;
 			}
-			
+
 		}
 	}catch(e){
-		msg = interpolate(gettext("Error loading param '%(paramName)s' of the filter '%(filterName)s'."), 
-			{paramName: this._params[i].getLabel(), filterName: this._label}, true);
+		msg = interpolate(gettext("Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)s."), 
+			{paramName: this._params[i].getLabel(), filterName: this._label, error: e}, true);
 		LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
 		this._lastExecError = msg;
 		return gettext('undefined');
@@ -8164,17 +8184,17 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 		// Exeutes the filter code
 		switch(this._nature){
 			case "NATIVE":
-				return eval ('channelValue.' + this._name + '(' + params + ');');
+				return eval ('channelValue_.' + this._name + '(' + params + ');');
 				break;
 			case "JSLIB":
 				if (params != '')
 					params = ',' + params;
-				return eval (this._name + '(channelValue' + params + ');');
+				return eval (this._name + '(channelValue_' + params + ');');
 				break;
 			case "USER":
 				if (params != '')
 					params = ',' + params;
-				return eval ('this._code(channelValue' + params + ');');
+				return eval ('this._code(channelValue_' + params + ');');
 				break;
 			default:
 				break;

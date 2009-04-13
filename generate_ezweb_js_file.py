@@ -88,7 +88,7 @@ files_iphone = [
 
 def write_file(final_file_name, file_list):
     try:
-        res = open(final_file_name, 'a')
+        res = open(final_file_name, 'w')
         
         header = open('morfeo_header.txt', 'r')
         
@@ -100,24 +100,27 @@ def write_file(final_file_name, file_list):
            file = open(file_name,'r')
         
            #Deleting license header
-           header_ended = False
-           while (not header_ended):
+           while (True):
               line = file.readline()
+              
+              if not line:
+                  break
               
               if (line.find('*     http://morfeo-project.org') >= 0):
                  break
         
             
-           #skiping useless line after MORFEO URL!
+           #skiping useless lines after MORFEO URL!
            file.readline()
         
+           #copying real js code to the resulting unique source file!
            res.write(file.read())
         
            file.close()
 
         res.close()
     except Exception, e:
-        pass
+        print e
 
 #Main
 write_file('media/js/ezweb.js', files_normal)
