@@ -347,7 +347,6 @@ class GadgetsCollectionByGlobalSearch(Resource):
 
 class GadgetTagsCollection(Resource):
     
-    @transaction.commit_manually
     def create(self,request, user_name, vendor, name, version):
 
         try:
