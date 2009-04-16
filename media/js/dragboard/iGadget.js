@@ -107,7 +107,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.build();
 	layout.addIGadget(this, true);
 
-	this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
+	this.menu_color = "FFFFFF";
+	//this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 }
 
 /**
