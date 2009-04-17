@@ -47,9 +47,14 @@ def download_http_content (uri, params=None):
     host = urlparse(uri)[1]
 
     #manage proxies with authentication (get it from environment)
-    if (host.startswith(('localhost','127.0.0.1'))):
-        proxy = urllib2.ProxyHandler({})#no proxy
-    else:
+    proxy=None   
+    for proxy_name in settings.NOT_PROXY_FOR:
+	if host.startswith(proxy_name):
+	    proxy = urllib2.ProxyHandler({})#no proxy
+            break
+    
+    if not proxy:
+	#Host is not included in the NOT_PROXY_FOR list => proxy is needed!
         proxy = urllib2.ProxyHandler()#proxies from environment
 
     opener = urllib2.build_opener(proxy)

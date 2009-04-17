@@ -1,4 +1,4 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -195,6 +195,8 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 FORCE_SCRIPT_NAME=""
 
 #ONLY_ONE_JS_FILE=True
+
+NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
 try:
     from clms.settings import *
