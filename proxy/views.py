@@ -104,9 +104,9 @@ class Proxy(Resource):
             #manage proxies with authentication (get it from en	vironment)
             proxy=None   	
             for proxy_name in settings.NOT_PROXY_FOR:
-	        if host.startswith(proxy_name):
-	        proxy = urllib2.ProxyHandler({})#no proxy
-                break
+    	        if host.startswith(proxy_name):
+    	            proxy = urllib2.ProxyHandler({})#no proxy
+                    break
     
             if not proxy:
 	            #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
