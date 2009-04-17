@@ -376,10 +376,11 @@ var CatalogueFactory  = function () {
 			this.emptyResourceList();
 			this.loadCatalogue(url);
 		}
-
+		
 		this.show = function(){
-			LayoutManagerFactory.getInstance().showCatalogue();
-		}
+            LayoutManagerFactory.getInstance().showCatalogue();
+            UIUtils.setResourcesWidth();               
+        }
 
 		this.hide = function(){
 			LayoutManagerFactory.getInstance().hideView(this.catalogueElement);
