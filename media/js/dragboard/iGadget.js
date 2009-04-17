@@ -26,7 +26,7 @@
 /**
  * Creates an instance of a Gadget.
  *
- * @author √Ålvaro Arranz
+ * @author ¡lvaro Arranz
  *
  * @class Represents an instance of a Gadget.
  *
@@ -1646,7 +1646,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 }
 
 function IGadgetColorManager () {
-	this.colors = ["FFFFFF", "A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+	this.colors = ["FFFFFF", "EFEFEF", "DDDDDD", "97A0A8", "FF9999", "FF3333","FFD4AA", "FFD42A", "FFFFCC", "FFFF66", "CCFFCC", "A8D914", "D4E6FC", "CCCCFF", "349EE8", "FFCCFF", "FF99FF"];
 }
 
 IGadgetColorManager.prototype.autogenColor = function(color, seed) {
