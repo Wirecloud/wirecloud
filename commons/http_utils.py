@@ -54,7 +54,7 @@ def download_http_content (uri, params=None):
             break
     
     if not proxy:
-	#Host is not included in the NOT_PROXY_FOR list => proxy is needed!
+	    #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
         proxy = urllib2.ProxyHandler()#proxies from environment
 
     opener = urllib2.build_opener(proxy)
