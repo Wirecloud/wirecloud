@@ -275,10 +275,10 @@ IGadget.prototype.toggleTransparency = function() {
 		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 	}
-	
+
 	this.element.toggleClassName("gadget_window_transparent");
 	this.transparency = !this.transparency;
-	
+
 	//Persist the new state
 	var o = new Object;
 	o.transparency = this.transparency;
@@ -417,53 +417,6 @@ IGadget.prototype.build = function() {
 	button.setAttribute("title", gettext("Close"));
 	button.setAttribute("alt", gettext("Close"));
 	this.gadgetMenu.appendChild(button);
-
-	// iGadget's menu
-	var idMenu = 'igadget_menu_' + this.id;
-	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
-	new Insertion.After($('menu_layer'), menuHTML);
-	this.menu = new DropDownMenu(idMenu);
-
-	var idColorMenu = 'igadget_color_menu_' + this.id;
-	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
-
-	// Settings
-	this.menu.addOption("/ezweb/images/igadget/settings.png",
-	                    gettext("Preferences"),
-	                    function() {
-	                        this.toggleConfigurationVisible();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    0);
-
-	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
-	                                           gettext("Menu Bar Color..."),
-	                                           function(e) {
-	                                               var menuEntry = $(this.menuColorEntryId);
-	                                               if (menuEntry.getBoundingClientRect != undefined) {
-	                                                   var y = menuEntry.getBoundingClientRect().top;
-	                                               } else {
-	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
-	                                                           document.getBoxObjectFor(document.documentElement).screenY;
-	                                               }
-	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-	                                                   this.colorMenu,
-	                                                   Event.pointerX(e),
-	                                                   y + (menuEntry.offsetHeight/2));
-	                                           }.bind(this),
-	                                           1);
-
-	this.menu.addOption("/ezweb/images/igadget/transparency.png",
-	                    gettext("Transparency"),
-	                    function() {
-	                        this.toggleTransparency();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    2);
-
-	// Extract/Snap from/to grid option (see _updateExtractOption)
-	this.extractOptionOrder = 2;
-	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 
 	// iGadget's menu button
 	button = document.createElement("input");
@@ -607,6 +560,53 @@ IGadget.prototype.paint = function() {
 		return; // Do nothing if the iGadget is already painted
 
 	this.visible = true;
+
+	// Initialize iGadget's preferences menu
+	var idMenu = 'igadget_menu_' + this.id;
+	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
+	new Insertion.After($('menu_layer'), menuHTML);
+	this.menu = new DropDownMenu(idMenu);
+
+	var idColorMenu = 'igadget_color_menu_' + this.id;
+	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
+
+	// Settings
+	this.menu.addOption("/ezweb/images/igadget/settings.png",
+	                    gettext("Preferences"),
+	                    function() {
+	                        this.toggleConfigurationVisible();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    0);
+
+	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
+	                                           gettext("Menu Bar Color..."),
+	                                           function(e) {
+	                                               var menuEntry = $(this.menuColorEntryId);
+	                                               if (menuEntry.getBoundingClientRect != undefined) {
+	                                                   var y = menuEntry.getBoundingClientRect().top;
+	                                               } else {
+	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
+	                                                           document.getBoxObjectFor(document.documentElement).screenY;
+	                                               }
+	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+	                                                   this.colorMenu,
+	                                                   Event.pointerX(e),
+	                                                   y + (menuEntry.offsetHeight/2));
+	                                           }.bind(this),
+	                                           1);
+
+	this.menu.addOption("/ezweb/images/igadget/transparency.png",
+	                    gettext("Transparency"),
+	                    function() {
+	                        this.toggleTransparency();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    2);
+
+	// Extract/Snap from/to grid option (see _updateExtractOption)
+	this.extractOptionOrder = 2;
+	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
