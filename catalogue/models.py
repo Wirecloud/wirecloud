@@ -45,16 +45,16 @@ class GadgetResource(models.Model):
      mail = models.CharField(_('Mail'), max_length=30)
            
      description = models.TextField(_('Description'))
-     size = models.CharField(_('Size'),max_length=10, null=True)
-     license = models.CharField(_('License'),max_length=20, null=True)
+     size = models.CharField(_('Size'),max_length=10, null=True, blank=True)
+     license = models.CharField(_('License'),max_length=20, null=True, blank=True)
 
-     gadget_uri = models.URLField(_('gadgetURI'), null=True)
+     gadget_uri = models.URLField(_('gadgetURI'), null=True, blank=True)
      creation_date = models.DateTimeField('creation_date', null=True)
      image_uri = models.URLField(_('imageURI'), null=True)
      iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True)
      wiki_page_uri = models.URLField(_('wikiURI'))
      template_uri= models.URLField(_('templateURI'))
-     mashup_id = models.URLField(_('mashupId'), null=True)
+     mashup_id = models.URLField(_('mashupId'), null=True, blank=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
 
