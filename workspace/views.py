@@ -488,7 +488,7 @@ class WorkSpaceVariableCollection(Resource):
                 
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=wsVarDAO.abstract_variable)
                    
-                variable_value.value=wsVar['value']
+                variable_value.value=unicode(wsVar['value'])
                 variable_value.save()
                
             for igVar in igadgetVariables:
@@ -496,7 +496,7 @@ class WorkSpaceVariableCollection(Resource):
                 
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
    
-                variable_value.value=igVar['value']
+                variable_value.value=unicode(igVar['value'])
                 variable_value.save()
             
             return HttpResponse(str('OK'))
