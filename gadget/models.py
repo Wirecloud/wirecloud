@@ -74,7 +74,7 @@ class Gadget(models.Model):
 
     width = models.IntegerField(_('Width'), default=1)
     height = models.IntegerField(_('Height'), default=1)
-    description = models.CharField(_('Description'), max_length=250)
+    description = models.TextField(_('Description'))
     
     shared = models.BooleanField(_('Shared'), default=False, null=True)
     users = models.ManyToManyField(User, verbose_name=_('Users'))
