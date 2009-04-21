@@ -7,6 +7,8 @@ from datetime import datetime
 
 from django.conf import settings
 
+from django.utils.translation import ugettext as _
+
 class FileLogManager:
     logging = 2   #Default value
     
