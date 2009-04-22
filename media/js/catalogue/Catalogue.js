@@ -445,7 +445,7 @@ var CatalogueFactory  = function () {
 			  var jsonResourceList = eval ('(' + responseJSON + ')');
 			  jsonResourceList = jsonResourceList.resourceList;
 
-                          for (var i = 0; i<jsonResourceList.length; i++) { 
+              for (var i = 0; i<jsonResourceList.length; i++) { 
                              // It's a contratable gadget 
 			     if (this.isContratableResource(jsonResourceList[i])) {
 			     	//It's a contratable gadget!
