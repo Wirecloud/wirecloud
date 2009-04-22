@@ -227,15 +227,34 @@ function PublishWindowMenu (element) {
 	this.button = $('publish_btn1');
 	this.title = gettext('Publish Workspace');
 	
+	this.not_valid_characters = ['/', '?', '&', ':']
+	
 	this.operationHandler = function(e){
-								if ($('publish_name').value!="" && $('publish_vendor').value!="" && $('publish_name').version!="" && $('publish_email').value!="") {
-									this.executeOperation();
-									LayoutManagerFactory.getInstance().hideCover();
-								}
-								else{
-									this.msgElement.update("All the required fields must be filled");
-								}
-							}.bind(this);
+		var publish_name = $('publish_name').value;
+		var publish_vendor = $('publish_vendor').value;
+		var publish_version = $('publish_version').value;
+		var publish_email = $('publish_email').value;
+		
+		if (publish_name.value!="" && publish_vendor!="" && publish_version!="" && publish_email!="") {
+			// Not empty input data!
+			// Now validating input data!
+			
+			for (var i=0; i<this.not_valid_characters.length; i++) {
+				var character = this.not_valid_characters[i];
+				
+				if (publish_name.indexOf(character) >= 0 || publish_vendor.indexOf(character) >= 0 || publish_version.indexOf(character) >= 0) {
+					this.msgElement.update("Not valid characters in: 'Mashup Name', 'Distributor' or 'Version'. Don't use [/, ?, &, :]");
+					return;
+				}
+			}
+			
+			this.executeOperation();
+			LayoutManagerFactory.getInstance().hideCover();
+		}
+		else{
+			this.msgElement.update("All the required fields must be filled");
+		}
+	}.bind(this);
 
 
 	PublishWindowMenu.prototype.initObserving = function(){	
