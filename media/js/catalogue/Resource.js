@@ -1218,7 +1218,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	description = resourceJSON_.description;
 	uriImage = resourceJSON_.uriImage;
 	uriWiki = resourceJSON_.uriWiki;
-	mashupId = resourceJSON_.mashupId;
+	if (resourceJSON_.mashupId && resourceJSON_.mashupId!="")
+		mashupId = resourceJSON_.mashupId;
 	addedBy = resourceJSON_.added_by_user;
 	uriTemplate = resourceJSON_.uriTemplate;
 	this.setEvents(resourceJSON_.events);
