@@ -443,6 +443,7 @@ def get_variable_data(data, user, workspace):
     data_ret['igadgetId'] = data_fields['igadget']
     data_ret['vardefId'] = var_def.pk
     data_ret['name'] = var_def.name
+    data_ret['label'] = var_def.label
     data_ret['friend_code'] = var_def.friend_code
     
     #Context management    

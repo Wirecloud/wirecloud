@@ -37,6 +37,7 @@ function Variable (id, iGadget, name, varManager) {
 	this.id = null;
 	this.iGadget = null;
 	this.name = null;
+	this.label = null;
 	this.aspect = null;
 	this.value = null;
 }
@@ -45,11 +46,12 @@ function Variable (id, iGadget, name, varManager) {
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
  
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_) {
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-        this.name = name_;
+    this.name = name_;
+    this.label = label_;
 	this.aspect = aspect_;
 	this.value = value_;
 }
@@ -96,8 +98,8 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
   
 	this.handler = null;
 }
@@ -203,8 +205,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
 }
 
 //////////////////////////////////////////////

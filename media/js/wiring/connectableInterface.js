@@ -316,7 +316,7 @@ function ConnectableInterface (wiringGUI, parentInterface, headerText) {
 				((connectable instanceof wInOut) && (this instanceof SlotChannelInterface))  ||
 				((connectable instanceof wInOut) && (this instanceof EventChannelInterface))){
 				var htmlElement = document.createElement("div");
-				htmlElement.appendChild(document.createTextNode(connectable.getName()));
+				htmlElement.appendChild(document.createTextNode(connectable.getLabel()));
 			
 				var chkItem = document.createElement("div");
 				chkItem.addClassName("unchkItem");

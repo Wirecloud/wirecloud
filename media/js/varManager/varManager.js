@@ -123,20 +123,21 @@ function VarManager (_workSpace) {
 			var id = igadgetVars[i].id;
 			var igadgetId = igadgetVars[i].igadgetId;
 			var name = igadgetVars[i].name;
+			var label = igadgetVars[i].label;
 			var aspect = igadgetVars[i].aspect;
 			var value = igadgetVars[i].value;
 				
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 			}

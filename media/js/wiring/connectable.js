@@ -219,6 +219,11 @@ wEvent.prototype.getQualifiedName = function () {
   return "event_" + this.variable.id;
 }
 
+wEvent.prototype.getLabel = function () {
+  return this.variable.label;	
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,6 +323,10 @@ wSlot.prototype.propagate = function(newValue, initial) {
 
 wSlot.prototype.getQualifiedName = function () {
   return "slot_" + this.variable.id;
+}
+
+wSlot.prototype.getLabel = function () {
+  return this.variable.label;	
 }
 
 wSlot.prototype.refresh = function() {
