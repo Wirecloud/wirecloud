@@ -39,23 +39,8 @@ var LayoutManagerFactory = function () {
 	var hideLevel = 1;
 	var showLevel = 2;
 
-	var hideStyle = {'zIndex': hideLevel, 'display': 'none'};
-	var showStyle = {'zIndex': showLevel, 'display': 'block'};
-
-	/*
-	 * Workaround for Firefox 2
-	 */
-	var firefox2workaround = Prototype.Browser.Gecko && navigator.userAgent.indexOf("2.0.0") != -1;
-	if (firefox2workaround) {
-		hideStyle['visibility'] = 'hidden';
-		delete hideStyle['display'];
-
-		showStyle['visibility'] = 'visible';
-		delete showStyle['display'];
-
-		document.styleSheets[0].insertRule(".container {display:block; visibility:hidden;}", document.styleSheets[0].cssRules.length);
-	}
-
+	var hideStyle = {'zIndex': hideLevel, 'height': 0};
+	var showStyle = {'zIndex': showLevel, 'display':'block'};
 
 	function LayoutManager () {
 		// *********************************
@@ -260,6 +245,7 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = dragboard;
 			this.currentViewType = 'dragboard';
+			this.resizeContainer(this.currentView.dragboardElement);
 			dragboard.dragboardElement.setStyle(showStyle);
 		}
 
@@ -277,6 +263,7 @@ var LayoutManagerFactory = function () {
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
 			this.catalogueLink.className = 'toolbar_marked';
+			this.resizeContainer(this.currentView.catalogueElement);
 			this.catalogue.catalogueElement.setStyle(showStyle);
 		}
 
@@ -289,6 +276,7 @@ var LayoutManagerFactory = function () {
 			this.currentView = this.logs;
 			this.currentViewType = 'logs';
 			this.logsLink.className = "toolbar_marked";
+			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 		}
 
@@ -302,8 +290,9 @@ var LayoutManagerFactory = function () {
 			this.currentViewType = 'wiring';
 			this.wiringLink.className = "toolbar_marked";
 			this.wiringLink.blur();
+			this.resizeContainer(this.currentView.wiringContainer);
 			wiring.wiringContainer.setStyle(showStyle);
-			//resizing the wiring table so that the scroll bar don't modify the table width.
+			//resizing the wiring table so that the scroll bar doesn't modify the table width.
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
 		}
 
