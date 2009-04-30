@@ -89,14 +89,26 @@ class AbstractVariable(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
+    def has_public_value(self):
+       #If it's a workspace variable, it has a public value!
+       if self.type=='WORKSPACE':
+           return True
+       
+       #Cycling import 
+       from igadget.models import Variable
+       
+       #Igadget variable
+       igadget_var = Variable.objects.get(abstract_variable=self)
+       
+       return igadget_var.has_public_value()
+       
+        
+
 class VariableValue(models.Model):
     
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-    
-    class Meta:
-        unique_together = ('user', 'abstract_variable')
 
     def __unicode__(self):
         return self.abstract_variable.name + self.value

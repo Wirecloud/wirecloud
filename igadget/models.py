@@ -71,3 +71,5 @@ class Variable(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name
 
+    def has_public_value(self):   
+       return self.vardef.has_public_value()

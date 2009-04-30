@@ -69,12 +69,27 @@ class PackageLinker:
 
     def add_user_to_abstract_variable_list(self, abstract_var_list, user):
         for (abstract_var, variable) in abstract_var_list:
-            if (len(VariableValue.objects.filter(user=user, abstract_variable=abstract_var))>0):
-                #Can happen due to linking algorithm.
-                #With a proper inheritance scheme for Variables database models, this can be avoided!
-                # TO BE IMPROVED!
+            variable_values = VariableValue.objects.filter(user=user, abstract_variable=abstract_var)
+            
+            if (len(variable_values)>0):
+                #The VariableValue of this abstract_variable has been already cloned with the workspace structure
+                #It's not necessary to create a default value from the VariableValue, the value was published by the workspace
+                
+                if (not abstract_var.has_public_value()):
+                    #There is a variable value but it shouldn't be returned to the user because it's not public!!
+                    #Changing it to default!
+                    variable_value = variable_values[0]
+                    
+                    if variable and variable.vardef.default_value:
+                        variable_value.value = variable.vardef.default_value
+                    else:
+                        variable_value.value = ""
+                    
+                    variable_value.save()
+                
                 continue
             
+            #Creating VariableValue with default value for not public varaibles
             variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
             
             # variable is the child element of the Variable inheritance

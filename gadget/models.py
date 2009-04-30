@@ -129,6 +129,8 @@ class VariableDef(models.Model):
     def __unicode__(self):
         return self.gadget.uri + " " + self.aspect
 
+    def has_public_value(self):   
+       return self.type!='P'
 
 class UserPrefOption(models.Model):
     value = models.CharField(_('Value'), max_length=30)
