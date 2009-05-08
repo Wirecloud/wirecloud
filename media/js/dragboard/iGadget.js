@@ -542,6 +542,20 @@ IGadget.prototype.build = function() {
 	this.statusBar.appendChild(resizeHandle);
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
+	// wikilink
+	this.wikilink = document.createElement('div');
+	this.wikilink.setAttribute ('class', 'dragboardwiki');
+	var awikilink = document.createElement('a');
+	awikilink.href=this.gadget.getUriWiki();
+	awikilink.setAttribute ('target', '_blank');
+	awikilink.setAttribute ('class', 'dragboardwikilink');
+	var imgwikilink = document.createElement('img');
+	imgwikilink.src = '/ezweb/images/wiki_dragboard.png'
+	imgwikilink.setAttribute('title', 'Access to Information');
+	awikilink.appendChild(imgwikilink);
+	this.wikilink.appendChild(awikilink);
+	this.statusBar.appendChild(this.wikilink);
+
 	// extract/snap button
 	this.extractButton = document.createElement("div");
 	this.extractButton.observe("click",
@@ -550,6 +564,7 @@ IGadget.prototype.build = function() {
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
+	
 }
 
 /**

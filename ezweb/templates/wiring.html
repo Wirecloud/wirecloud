@@ -7,15 +7,19 @@
 	<table id="wiring_table" class="tableCell">
 	<tr>
 		<td id="eventColumn" class="eventColumn">
-			<div class="title folded">{% trans "EVENTS" %}</div>
+			<div class="title folded">{% trans "EVENTS" %}
+				<input name='event' class='help_button' type='button' onclick="DisplayHelpWiringHeader(this,event);"/>
+			</div>
 			<div id="events_list"></div>
 		</td>
 
 		<td class="connectionColumn">
 		</td>
 
-		<td class="inoutColumn">
-			<div class="title">{% trans "CHANNELS" %}</div>
+		<td class="inoutColumn" class="inoutColumn">
+			<div class="title">{% trans "CHANNELS" %}
+				<input name='channels' class='help_button' type='button' onclick="DisplayHelpWiringHeader(this, event);"/>
+			</div>
 			<div class="newChannel" id="newChannel">
 				{% trans "new channel" %}
 				<div class="channelContent">
@@ -29,7 +33,9 @@
 		</td>
 
 		<td id="slotColumn" class="slotColumn">
-			<div class="title folded">{% trans "SLOTS" %}</div>
+			<div class="title folded">{% trans "SLOTS" %}
+				<input name='slot' class='help_button' type='button' onclick="DisplayHelpWiringHeader(this,event);"/>
+			</div>
 			<div id="slots_list"></div>
 		</td>
 	</tr>

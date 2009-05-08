@@ -65,7 +65,15 @@ var OpManagerFactory = function () {
 			}
 			
 			// set handler for workspace options button
-			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this));
+			Event.observe($('ws_operations_link'), 'click', function(e){
+				if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+					e.target.blur();
+					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
+				}
+				else {
+					OpManagerFactory.getInstance().showActiveWorkSpace();
+				}
+			}.bind(this));
 			
 			// Total information of the active workspace must be downloaded!
 			if (isDefaultWS=="true"){
@@ -171,6 +179,7 @@ var OpManagerFactory = function () {
 			} else {
 				UIUtils.repaintCatalogue=false;
 			}
+			UIUtils.resizeResourcesContainer();
 		}
 
 		OpManager.prototype.showLogs = function () {
@@ -183,6 +192,8 @@ var OpManagerFactory = function () {
 		OpManager.prototype.clearLogs = function () {
 			LogManagerFactory.getInstance().reset();
 			LayoutManagerFactory.getInstance().clearErrors();
+			LayoutManagerFactory.getInstance().resizeTabBar();
+			this.showActiveWorkSpace();
 		}
 
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {

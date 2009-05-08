@@ -47,6 +47,7 @@ function WindowMenu(){
 		
 		this.htmlElement.style.top = coordenates[1]+"px";
 		this.htmlElement.style.left = coordenates[0]+"px";
+		this.htmlElement.style.right = coordenates[0]+"px";
 	}
 
 	WindowMenu.prototype.setHandler = function (handler){
@@ -216,6 +217,25 @@ function MessageWindowMenu (element) {
 
 MessageWindowMenu.prototype = new WindowMenu;
 
+//Especific class for alert windows
+function InfoWindowMenu (element) {
+
+	//constructor
+	this.htmlElement = $('info_menu');		//create-window HTML element
+	this.titleElement = $('info_window_title');	//title gap
+	this.msgElement = $('info_window_msg');	//error message gap
+	this.title = gettext('Do you know what ... ?');
+
+	//hides the window and clears all the inputs
+	InfoWindowMenu.prototype.hide = function (){
+		this.msgElement.update();
+		this.stopObserving();
+		this.htmlElement.style.display = "none";		
+	}
+
+}
+
+InfoWindowMenu.prototype = new WindowMenu;
 
 //Especific class for publish windows
 function PublishWindowMenu (element) {

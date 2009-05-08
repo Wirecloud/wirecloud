@@ -199,7 +199,20 @@ var public_workspace = '{{ active_workspace }}';
 		<div id="message_window_msg" class="window_msg"></div>
 	</div>
 	<div class="window_bottom">
-		<button id = "message_btn1" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Accept"%}</button>
+		<button id = "message_btn1" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Don't bother me more with this shity question"%}</button>
+	</div>
+</div>
+<div id="info_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="info_window_title" class="window_title"></label>
+		<input id="info_window_button" type="button" class="closebutton button" />
+	</div>
+	<div class="window_content">
+		<img src="{{ MEDIA_URL }}images/info.png" alt="Help" />
+		<div id="info_window_msg" class="window_msg"></div>
+	</div>
+	<div class="window_bottom">
+		<input type="checkbox" id="info_window_checkbox">{% trans "Don't show me more"%}</input>
 	</div>
 </div>
 <div id="publish_menu" class="window_menu" style="display:none">
@@ -250,16 +263,17 @@ var public_workspace = '{{ active_workspace }}';
 	<input type="button" id="right_slider" title="go left" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goLeft()" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
 	<div id="fixed_bar"><div id="scroll_bar"></div></div>
 	<input type="button" id="left_slider" title="go right" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goRight();" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();"/>
+	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
 
 </div>
 <div id="toolbar_section" class="toolbar_section">
-		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked"/> 
-		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked"/>
-		<div id="workspace_name"></div>
-
-		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>
-		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></span>
+		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
+		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
+		<div id="dragboard_link" class="toolbar_unmarked">
+			<div id="workspace_name"></div> 
+			<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+		</div>
+		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
 </div>
 <div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
 </div>

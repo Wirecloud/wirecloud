@@ -67,7 +67,7 @@ var CatalogueFactory  = function () {
 			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 			    
 			    UIUtils.setResourcesWidth();
-				
+			    UIUtils.resizeResourcesContainer();
 			    $('simple_search_text').focus();
 			}
 			
@@ -436,7 +436,8 @@ var CatalogueFactory  = function () {
 
 			       function() { 
 				   var xmldom = new ActiveXObject('Microsoft.XMLDOM'); 
-				   xmldom.loadXML(transport.responseText); 											return xmldom; 
+				   xmldom.loadXML(transport.responseText);
+					return xmldom; 
 			       }
   			  );
 
@@ -473,16 +474,14 @@ var CatalogueFactory  = function () {
 			  this.orderby(items);
 			  $('global_tagcloud').innerHTML = '';
 			  UIUtils.repaintCatalogue=false;
+			  UIUtils.resizeResourcesContainer();
 			}
-
-			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
+			if (UIUtils.searchValue != "")
+				var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
+			else
+				var param = {orderby: UIUtils.orderby, search_boolean:$("global_search_boolean").value}	
 
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
-
-			$('header_always_status').innerHTML = "";
-			$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-				innerHTML: urlCatalogue_
-			})));
 
 			var text = "";
 			switch(UIUtils.searchCriteria){
@@ -520,12 +519,6 @@ var CatalogueFactory  = function () {
 				case "global":
 					text = gettext('Global Search') + ': ';
 					break;
-			}
-			if (text != "") {
-				$('header_always_status').innerHTML = "";
-				$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-					innerHTML: text
-				})));
 			}
 			var searching='';
 			switch(UIUtils.searchCriteria){
@@ -727,15 +720,8 @@ var CatalogueFactory  = function () {
 			var auxiliar = urlCatalogue_.toString().split("/");
 			for (var i=0;i<auxiliar.length;i++){
 				if (auxiliar[i] == 'resource') {
-					$('header_always_status').innerHTML = "";
-					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-						innerHTML: gettext('Full Catalogue')
-					})));
 					break;
 				} else if (auxiliar[i] == 'search' || auxiliar[i]=='globalsearch') {
-					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-						innerHTML: searching
-					})));
 					var reload_link = UIUtils.createHTMLElement("a", $H({
 						innerHTML: gettext("Reload")
 					}));
@@ -743,7 +729,6 @@ var CatalogueFactory  = function () {
 						CatalogueFactory.getInstance().emptyResourceList();
 						CatalogueFactory.getInstance().loadCatalogue(urlCatalogue_);
 					});
-					$('header_always_status').appendChild(reload_link);
 					break;
 				}
 			}
@@ -757,8 +742,7 @@ var CatalogueFactory  = function () {
 				CatalogueFactory.getInstance().reloadCompleteCatalogue();
 				$('header_always_error').style.display = 'none';
 			});
-			$('header_always_status').appendChild(reload_catalogue_link);
-			
+		
 			// Get Resources from PersistenceEngine. Asyncrhonous call!
 			persistenceEngine.send_get(urlCatalogue_, this, loadResources, onError, param);
 		}

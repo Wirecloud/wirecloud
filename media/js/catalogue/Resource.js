@@ -91,7 +91,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         }));
 		toolbar.appendChild(content_toolbar);
 		var wiki = UIUtils.createHTMLElement("a", $H({
-            title: gettext ('Access to the wiki'),
+		        title: gettext ('Show More'),
 			target: '_blank',
 			href: state.getUriWiki()
         }));
@@ -107,23 +107,6 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			this.src = '/ezweb/images/wiki_gray.png';
 		});
 		wiki.appendChild(wiki_img);
-		var template = UIUtils.createHTMLElement("a", $H({
-            title: gettext ('Show template'),
-			target: '_blank',
-			href: state.getUriTemplate()
-        }));
-		content_toolbar.appendChild(template);
-		var template_img = UIUtils.createHTMLElement("img", $H({
-            id: id_ + '_template_img',
-			src: '/ezweb/images/template_gray.png'
-        }));
-		template_img.observe("mouseover", function(event){
-			this.src = '/ezweb/images/template.png';
-		});
-		template_img.observe("mouseout", function(event){
-			this.src = '/ezweb/images/template_gray.png';
-		});
-		template.appendChild(template_img);
 		if (state.getAddedBy() == 'Yes') {
 			var deleteResource = UIUtils.createHTMLElement("a", $H({
 				title: gettext('Delete')
@@ -297,7 +280,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Vote Me... ')
 		})));
 		rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			id: 'ratingSaved',
+			d: 'ratingSaved',
 			innerHTML: gettext('Vote Saved ')
 		})));
 		var rate_me = UIUtils.createHTMLElement("span", $H({ 
@@ -377,6 +360,115 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			src: state.getUriImage(),
 			alt: state.getName()+ ' ' + state.getVersion()
 		})));
+		// tag cloud
+		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'tagcloud'
+		}));
+		fieldset.appendChild(tagcloud);
+		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('Tagcloud') + ':'
+		})));
+		var tag_links = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'link',
+			id: 'view_tags_links'
+		}));
+		tagcloud.appendChild(tag_links);
+		tag_links.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('All tags')
+		})));
+		var my_tags = UIUtils.createHTMLElement("a", $H({ 
+			innerHTML: gettext('My tags')
+		}));
+		my_tags.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
+		});
+		tag_links.appendChild(my_tags);
+		var others_tags = UIUtils.createHTMLElement("a", $H({ 
+			innerHTML: gettext('Others tags')
+		}));
+		others_tags.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
+		});
+		tag_links.appendChild(others_tags);
+		var tags = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'tags',
+			id: id_ + '_tagcloud'
+		}));
+		tagcloud.appendChild(tags);
+		_tagsToTagcloud(tags, 'description');
+		var add_tags_panel = UIUtils.createHTMLElement("div", $H({
+			id: 'add_tags_panel',
+			class_name: 'new_tags',
+			style: 'display:none;'
+		}));
+		fieldset.appendChild(add_tags_panel);
+		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
+			class_name: 'title',
+			innerHTML: gettext('New tags')
+		})));
+		my_tags = UIUtils.createHTMLElement("div", $H({
+			id: 'my_tags',
+			class_name: 'my_tags'
+		}));
+		add_tags_panel.appendChild(my_tags);
+		var new_tag_text = UIUtils.createHTMLElement("div", $H({
+			id: "new_tag_text",
+			class_name: "new_tag_text"
+		}));
+		my_tags.appendChild(new_tag_text);
+		my_tags.appendChild (new_tag_text);	
+		var new_tag_text_input = UIUtils.createHTMLElement("input", $H({
+			id: 'new_tag_text_input',
+			type: 'text',
+			maxlength: '20'
+		}));
+		new_tag_text_input.observe("keyup", function(event){
+			UIUtils.enlargeInput(this);
+		});
+		new_tag_text_input.observe("keypress", function(event){
+			UIUtils.onReturn(event,UIUtils.sendTags,this);
+		});
+		new_tag_text.appendChild(new_tag_text_input);
+		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
+			id: 'tag_alert',
+			class_name: 'message_error'
+		})));
+		var buttons = UIUtils.createHTMLElement("div", $H({
+			class_name: 'buttons'
+		}));
+		add_tags_panel.appendChild(buttons);
+		var link_tag = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			innerHTML: gettext('Tag')
+		}));
+		link_tag.observe("click", function(event){
+			UIUtils.sendTags();
+		});
+		buttons.appendChild(link_tag);
+//		var link_delete = UIUtils.createHTMLElement("a", $H({
+//			class_name: 'submit_link',
+//			innerHTML: gettext('Delete all')
+//		}));
+//		link_delete.observe("click", function(event){
+//			UIUtils.removeAllTags();
+//		});
+//		buttons.appendChild(link_delete);
+		var add_tags_link = UIUtils.createHTMLElement("div", $H({
+			id: 'add_tags_link',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		fieldset.appendChild(add_tags_link);
+		var add_tags_submit_link = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			innerHTML: gettext('Tag the resource')
+		}));
+		add_tags_submit_link.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
+		});
+		add_tags_link.appendChild(add_tags_submit_link);
+
+		// Description
 		var description = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'description'
 		}));
@@ -384,10 +476,26 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		description.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Description') + ':'
 		})));
+		var access_wiki_link = UIUtils.createHTMLElement("div", $H({
+			id: 'access_wiki_link',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		var access_wiki_submit_link = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			href: state.getUriWiki(),
+			target: '_blank',
+			innerHTML: gettext('Show More...'),
+			style: 'display:block'
+		}));
+		access_wiki_link.appendChild(access_wiki_submit_link);
 		description.appendChild(UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'text',
-			innerHTML: state.getDescription()
+			innerHTML: state.getDescription() + access_wiki_link.innerHTML
 		})));
+
+
+		// Connectivity
 		var connect = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'connect'
 		}));
@@ -396,7 +504,9 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Resource connectivity') + ':'
 		})));
 		var connect_text = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'text'
+			id:'events_slots',
+			class_name: 'text',
+			style: 'display:none'
 		}));
 		connect.appendChild(connect_text);
 		var events = UIUtils.createHTMLElement("div", $H({ 
@@ -456,6 +566,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				style: 'text-align:right;'
 			}));
 			fieldset.appendChild(search_events_slots_div);
+
 			var search_events_slots_link = UIUtils.createHTMLElement("a", $H({
 				id: 'search_events_slots_link',
 				class_name: 'submit_link',
@@ -466,6 +577,31 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			});
 			search_events_slots_div.appendChild(search_events_slots_link);
 		}
+		var search_advanced_events_slots_div = UIUtils.createHTMLElement("div", $H({
+			id: 'search_advanced_events_slots_div',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		fieldset.appendChild(search_advanced_events_slots_div)
+		var search_advanced_event_slot_link = UIUtils.createHTMLElement ("a", $H({
+			id: 'search_advanced_events_slots_link',
+			class_name: 'submit_link',
+			innerHTML: gettext('Advanced Search by connectivity')
+		}));
+
+		search_advanced_event_slot_link.observe("click", function(event){
+			if (document.getElementById("events_slots").style.display == "block"){
+				document.getElementById("events_slots").style.display = "none";
+				document.getElementById("search_advanced_events_slots_link").innerHTML = gettext('Advanced Search by connectivity')
+			}
+			else{
+				document.getElementById("events_slots").style.display = "block";
+				document.getElementById("search_advanced_events_slots_link").innerHTML = gettext('Hide Advanced Search by connectivity')
+			}	
+		    });
+
+		search_advanced_events_slots_div.appendChild(search_advanced_event_slot_link);
+		// VERSIONS
 		var versions = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'versions'
 		}));
@@ -507,123 +643,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showVersionPanel();
 		});
 		show_versions_div.appendChild(show_versions_link);
-		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'tagcloud'
-		}));
-		fieldset.appendChild(tagcloud);
-		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('Tagcloud') + ':'
-		})));
-		var tag_links = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'link',
-			id: 'view_tags_links'
-		}));
-		tagcloud.appendChild(tag_links);
-		tag_links.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('All tags')
-		})));
-		var my_tags = UIUtils.createHTMLElement("a", $H({ 
-			innerHTML: gettext('My tags')
-		}));
-		my_tags.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
-		});
-		tag_links.appendChild(my_tags);
-		var others_tags = UIUtils.createHTMLElement("a", $H({ 
-			innerHTML: gettext('Others tags')
-		}));
-		others_tags.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
-		});
-		tag_links.appendChild(others_tags);
-		var tags = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'tags',
-			id: id_ + '_tagcloud'
-		}));
-		tagcloud.appendChild(tags);
-		_tagsToTagcloud(tags, 'description');
-		var add_tags_panel = UIUtils.createHTMLElement("div", $H({
-			id: 'add_tags_panel',
-			class_name: 'new_tags',
-			style: 'display:none;'
-		}));
-		fieldset.appendChild(add_tags_panel);
-		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
-			class_name: 'title',
-			innerHTML: gettext('New tags')
-		})));
-		my_tags = UIUtils.createHTMLElement("div", $H({
-			id: 'my_tags',
-			class_name: 'my_tags'
-		}));
-		add_tags_panel.appendChild(my_tags);
-		var new_tag_text = UIUtils.createHTMLElement("div", $H({
-			id: "new_tag_text",
-			class_name: "new_tag_text"
-		}));
-		my_tags.appendChild(new_tag_text);
-		var new_tag_text_input = UIUtils.createHTMLElement("input", $H({
-			id: 'new_tag_text_input',
-			type: 'text',
-			maxlength: '20'
-		}));
-		new_tag_text_input.observe("keyup", function(event){
-			UIUtils.enlargeInput(this);
-		});
-		new_tag_text_input.observe("keypress", function(event){
-			UIUtils.onReturn(event,UIUtils.addTag,this);
-		});
-		new_tag_text.appendChild(new_tag_text_input);
-		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
-			id: 'tag_alert',
-			class_name: 'message_error'
-		})));
-		var buttons = UIUtils.createHTMLElement("div", $H({
-			class_name: 'buttons'
-		}));
-		add_tags_panel.appendChild(buttons);
-		var link_tag = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Tag')
-		}));
-		link_tag.observe("click", function(event){
-			UIUtils.sendTags();
-		});
-		buttons.appendChild(link_tag);
-		var link_delete = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Delete all')
-		}));
-		link_delete.observe("click", function(event){
-			UIUtils.removeAllTags();
-		});
-		buttons.appendChild(link_delete);
-		var add_tags_link = UIUtils.createHTMLElement("div", $H({
-			id: 'add_tags_link',
-			class_name: 'link',
-			style: 'text-align:right;'
-		}));
-		fieldset.appendChild(add_tags_link);
-		var add_tags_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Tag the resource')
-		}));
-		add_tags_submit_link.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
-		});
-		add_tags_link.appendChild(add_tags_submit_link);
-		var access_wiki_link = UIUtils.createHTMLElement("div", $H({
-			id: 'access_wiki_link',
-			class_name: 'link'
-		}));
-		fieldset.appendChild(access_wiki_link);
-		var access_wiki_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			href: state.getUriWiki(),
-			target: '_blank',
-			innerHTML: gettext('Access to the Wiki')
-		}));
-		access_wiki_link.appendChild(access_wiki_submit_link);
+
+
 		var access_template_link = UIUtils.createHTMLElement("div", $H({
 			id: 'access_template_link',
 			class_name: 'link'

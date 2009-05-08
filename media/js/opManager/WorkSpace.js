@@ -244,7 +244,15 @@ function WorkSpace (workSpaceState) {
 		var spanHTML = "<span>"+nameToShow+"</span>";
 		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){this.fillWithInput();}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){
+			if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+				this.fillWithInput();
+			}
+			else {
+				OpManagerFactory.getInstance().showActiveWorkSpace();
+			}
+		}.bind(this));
+		LayoutManagerFactory.getInstance().resizeTabBar();
     }
 
 

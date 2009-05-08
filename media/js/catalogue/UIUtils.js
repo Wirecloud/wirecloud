@@ -21,10 +21,7 @@
 *     is available at
 *
 *     http://morfeo-project.org
- */
-
-
-
+*/
 function UIUtils()
 {
 	// *********************************
@@ -45,7 +42,7 @@ UIUtils.infoResourcesWidth = 400;
 UIUtils.isInfoResourcesOpen = false;
 UIUtils.page = 1;
 UIUtils.off = 10;
-UIUtils.orderby = '-creation_date';
+UIUtils.orderby = '-popularity';
 UIUtils.num_items = 0;
 UIUtils.search = false;
 UIUtils.searchValue = [];
@@ -285,8 +282,14 @@ UIUtils.simpleSearch = function(url, criteria) {
 	UIUtils.searchValue[0] = UIUtils.filterString(UIUtils.searchValue[0]);
 
 	if (UIUtils.searchValue[0] == ""){
-		$('header_always_error').style.display="block";
-		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
+//		$('header_always_error').style.display="block";
+//		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
+		$('header_always_error').style.display = 'none';
+		UIUtils.page = 1;
+		UIUtils.off = 10;
+		UIUtils.search = false;
+		UIUtils.searchCriteria = '';
+		CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 	}
 	else{
 		$('header_always_error').style.display = 'none';
@@ -295,6 +298,14 @@ UIUtils.simpleSearch = function(url, criteria) {
 		UIUtils.searchCriteria = criteria;
 		CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 	}
+}
+UIUtils.viewAll = function (url, criteria){
+	$('header_always_error').style.display = 'none';
+	UIUtils.page = 1;
+	UIUtils.off = 10;
+	UIUtils.search = false;
+	UIUtils.searchCriteria = '';
+	CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 }
 
 UIUtils.globalSearch = function(url) {
@@ -684,13 +695,13 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 }
 
 UIUtils.setResourcesWidth = function() {
-	var tab = $('tab_info_resource');
+	//var tab = $('tab_info_resource');
 	var head = $('head');
 	var resources = $('resources');
 	var center = $('center');
 	if (center){
 		center.style.width = head.offsetWidth + 'px';
-		resources.style.width = (center.offsetWidth - (tab.offsetWidth + (UIUtils.isInfoResourcesOpen?UIUtils.infoResourcesWidth:0))) + 'px';
+		resources.style.width = (center.offsetWidth - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth+20):0)) + 'px';
 	}
 }
 
@@ -712,6 +723,7 @@ UIUtils.closeInfoResource = function() {
 }
 
 UIUtils.SlideInfoResourceIntoView = function(element) {
+  $('resources_container').style.display = 'block'
   $(element).style.width = '0px';
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
@@ -724,16 +736,19 @@ UIUtils.SlideInfoResourceIntoView = function(element) {
       scaleMode: 'contents',
       scaleFrom: 0,
       afterUpdate: function(effect){},
-	  afterFinish: function(effect)
-        {UIUtils.show('tab_info_resource_close'); }
+      afterFinish: function(effect){
+         UIUtils.show('close_info_resource');/*UIUtils.show('tab_info_resource_close');*/
+         UIUtils.resizeResourcesContainer();
+      }
     })
   );
-	if (UIUtils.selectedResource != null) {
-		 UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
-	}
+  if (UIUtils.selectedResource != null) {
+     UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
+  }
 }
 
 UIUtils.SlideInfoResourceOutOfView = function(element) {
+  UIUtils.hidde('close_info_resource');
   UIUtils.selectedResource= null;
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
@@ -743,8 +758,12 @@ UIUtils.SlideInfoResourceOutOfView = function(element) {
       scaleContent: false,
       scaleY: false,
       afterUpdate: function(effect){},
-      afterFinish: function(effect)
-        { Element.hide(effect.element); UIUtils.setResourcesWidth(); UIUtils.hidde('tab_info_resource_close'); }
+      afterFinish: function(effect) {
+         Element.hide(effect.element);
+         UIUtils.setResourcesWidth();
+         $('resources_container').style.display = 'none';/*UIUtils.hidde('tab_info_resource_close');*/
+         UIUtils.resizeResourcesContainer();
+      }
     })
   );
 }
@@ -776,6 +795,7 @@ UIUtils.restoreSlide = function() {
 	        }
 	    }
     }
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvanced = function(element,container) {
@@ -790,7 +810,11 @@ UIUtils.SlideAdvanced = function(element,container) {
             for(i=0;i<nodeList.length;i++){
                 if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!=element && nodeList.item(i).id!='header_always'){
                     if(Element.visible(nodeList.item(i))==true){
-                        Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2}});
+                        Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
                         aux = nodeList.item(i).id.split("_");
                         switch (aux[1].toLowerCase()) {
 			            	case "tag":
@@ -798,6 +822,9 @@ UIUtils.SlideAdvanced = function(element,container) {
 			            		break;
 			            	case "search":
 			            		tab = gettext("Advanced Search");
+			            		break;
+			            	case "develop":
+			            		tab = gettext("Development Options");
 			            		break;
 			            	default:
 			            		break;
@@ -808,7 +835,11 @@ UIUtils.SlideAdvanced = function(element,container) {
                     }
                 }
             }
-            Effect.BlindDown(element,{queue:{position:'end',scope:'menuScope',limit:2}});
+            Effect.BlindDown(element, { queue:{ position:'end', scope:'menuScope', limit:2 },
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
             aux = element.split("_");
             switch (aux[1].toLowerCase()) {
             	case "tag":
@@ -817,6 +848,9 @@ UIUtils.SlideAdvanced = function(element,container) {
             	case "search":
             		tab = gettext("Simple Search");
             		break;
+		case "develop":
+			tab = gettext("Hide Development Options");
+			break;
             	default:
             		break;
             }
@@ -825,7 +859,11 @@ UIUtils.SlideAdvanced = function(element,container) {
 			if(element=="advanced_tag"){UIUtils.activateTagMode();}
        }
        else {
-       		Effect.BlindUp(element,{queue:{position:'end',scope:'menuScope',limit:2}});
+       		Effect.BlindUp(element,{queue:{position:'end',scope:'menuScope',limit:2},
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
             aux = element.split("_");
             switch (aux[1].toLowerCase()) {
             	case "tag":
@@ -833,6 +871,9 @@ UIUtils.SlideAdvanced = function(element,container) {
             		break;
             	case "search":
             		tab = gettext('Advanced Search');
+            		break;
+            	case "develop":
+            		tab = gettext('Development Options');
             		break;
             	default:
             		break;
@@ -900,6 +941,7 @@ UIUtils.SlideAdvanced2 = function(element) {
 				}
 			});
 	}
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvancedSearchIntoView = function(element) {
@@ -934,6 +976,8 @@ UIUtils.SlideAdvancedSearchIntoView = function(element) {
 	}
     }, arguments[1] || {})
   );
+
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvancedSearchOutOfView = function(element) {
@@ -966,6 +1010,7 @@ UIUtils.SlideAdvancedSearchOutOfView = function(element) {
 	}
    }, arguments[1] || {})
   );
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.activateTagMode = function() {
@@ -974,6 +1019,7 @@ UIUtils.activateTagMode = function() {
 	UIUtils.closeInfoResource();
 	$("global_tagcloud").innerHTML = '';
 	$("my_global_tags").childNodes[0].style.display="none";
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.deactivateTagMode = function() {
@@ -984,6 +1030,7 @@ UIUtils.deactivateTagMode = function() {
 		UIUtils.deselectResource(selectedResources[i]);
 	}
 	CatalogueFactory.getInstance().clearSelectedResources();
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.clickOnResource = function(id_) {
@@ -1173,4 +1220,10 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 	var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + preferredVersion_;
 	var data = {preferred: true};
     PersistenceEngineFactory.getInstance().send_update(resourceURI, data, this, onSuccess, onError);
+}
+
+UIUtils.resizeResourcesContainer = function (){
+	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 28;
+	document.getElementById('resources_container').style.height = height +'px';
+	document.getElementById('resources').style.height = height+'px';
 }

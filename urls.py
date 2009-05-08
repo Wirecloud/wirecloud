@@ -30,7 +30,7 @@
 
 #
 
-from os import path
+from os import path 
 from django.conf.urls.defaults import patterns, include
 from django.conf import settings
 

@@ -46,6 +46,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tag.js"></script>
 
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>

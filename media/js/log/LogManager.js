@@ -94,7 +94,8 @@ var LogManagerFactory = function () {
 			}
 			logentry.appendChild(document.createTextNode(msg));
 			this.logConsole.appendChild(logentry);
-
+			
+			LayoutManagerFactory.getInstance().resizeTabBar();
 		}
 		
 		LogManager.prototype.show = function(){

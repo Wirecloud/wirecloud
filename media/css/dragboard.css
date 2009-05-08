@@ -82,6 +82,15 @@ div.gadget_window div.snapButton {
   cursor: pointer;
 }
 
+div.gadget_window div.dragboardwiki {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  bottom: 2px;
+  right: 55px;
+  cursor: pointer;
+}
+
 div.gadget_window div.extractButton {
   position: absolute;
   width: 16px;
@@ -212,4 +221,11 @@ div.config_interface label.invalid input {
 #dragboardcursor {
   position: absolute;
   z-index: 1;
+}
+
+.dragboardwikilink {
+	color: transparent;
+}
+.dragboardwikilink:hover {
+	color: transparent;
 }

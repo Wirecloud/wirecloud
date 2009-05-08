@@ -338,6 +338,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		iGadget.save();
 	}
+	
+	Dragboard.prototype.getNumberOfIGadgets = function () {
+		return this.iGadgets.keys().length;
+	}
 
 	Dragboard.prototype.removeInstance = function (iGadgetId) {
 		var igadget = this.iGadgets[iGadgetId];
@@ -820,6 +824,9 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 		setTimeout(function() {
 			tabElement.removeClassName("selected");
 		}, 500);
+		
+		//var fadder = new BackgroundFadder(tabElement, "#F0E68C", ((tabElement.hasClassName("current"))?"#E0E0E0":"#97A0A8"), 1000);
+		//fadder.fade();
 
 		context.selectedTab = null;
 		context.selectedTabElement = null;

@@ -755,17 +755,25 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
     var fcList = this.friend_codes[friend_code].list;
     var fcColor = this.friend_codes[friend_code].color;
-    var fcBgColor = "";
-
-    for (var i = 0; i < fcList.length; i++) {
-      if (fcElement = fcList[i]) {
-        if (highlight) {
-          fcElement.style.backgroundColor = fcColor;
-        } else {
-          fcElement.style.backgroundColor = fcBgColor;
+    var fcBgColor = "#F7F7F7";
+    var fcElement = null;
+    
+    try {
+        this.friend_codes[friend_code].fadder.reset();
+    } catch(e){}
+    
+    if (highlight) {
+        for (var i = 0; i < fcList.length; i++) {
+            if (fcElement = fcList[i]) {
+                  fcElement.style.backgroundColor = fcColor;
+            }
         }
-      }
     }
+    else {
+        if (!this.friend_codes[friend_code].fadder) 
+       	    this.friend_codes[friend_code].fadder = new BackgroundFadder(fcList, fcColor, fcBgColor, (fcList.length > 1)?1700:0, 300);
+        this.friend_codes[friend_code].fadder.fade();
+     }
   }
 
   /*Uncheck channel*/
@@ -1295,4 +1303,38 @@ ChannelInterface.prototype.disconnectOutput = function(connectable) {
     	this.outputsForAdding.remove(connectable);
   }
   this.outputs.remove(connectable);
+}
+
+
+function DisplayHelpWiringHeader (element, event)
+{
+	Event.stop(event);
+	var divout = document.createElement('div');
+	divout.setAttribute ('id', 'help_background');
+	divout.style.cssText = "top:0;bottom:0;right:0;left:0;position:absolute;z-index:3001;"
+	divout.observe('click', function (e){
+		Event.stop(e);
+		this.parentNode.removeChild(this);
+	});
+	// Sets the help style
+	var helpOpElement = document.createElement('div');
+	helpOpElement.addClassName ('helpwiringheader');
+	helpOpElement.style.padding = '5px';
+	helpOpElement.style.position = 'absolute';
+	helpOpElement.style.top = Event.pointerY(event)+'px';
+	divout.appendChild(helpOpElement)
+	document.body.appendChild (divout);
+	
+	if (element.name=='event'){
+		helpOpElement.style.left = Event.pointerX(event)+'px';
+		helpOpElement.innerHTML = gettext('Lists of gadgets with events.\nThis events produces a value\nwhich will be received by\nother gadgets as slots.');
+	}
+	else if (element.name=='channels'){
+		helpOpElement.style.left = Event.pointerX(event)+'px';
+		helpOpElement.innerHTML = gettext('Channels allows you to manage\nthe connections between different\ninstantiated gadgets.');
+	}
+	else if (element.name=='slot'){
+		helpOpElement.innerHTML = gettext('Lists of gadgets with slots.\nThis slots receives values\nwhich are produced by\nother gadgets as events.');
+		helpOpElement.style.left = (Event.pointerX(event) - helpOpElement.offsetWidth) +'px';
+	}
 }

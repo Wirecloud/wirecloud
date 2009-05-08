@@ -55,6 +55,7 @@ var LayoutManagerFactory = function () {
 		// Tabs are managed by WorkSpaces!! 
 		this.catalogueLink = $('catalogue_link');
 		this.wiringLink = $('wiring_link');
+		this.dragboardLink = $('dragboard_link');
 
 		// Container managed by LayOutManager: {showcase_tab}
 		// Remaining containers managed by WorkSpaces!!
@@ -71,26 +72,49 @@ var LayoutManagerFactory = function () {
 		//another which is absolutely positioned each time a slider button is clicked
 		this.tabBarStep = 20;
 		this.tabImgSize = 14;    // launcher width
-		this.extraGap = 15;      // 15px to ensure that a new character has enough room in the scroll bar
-		this.tabMarginRight = 6; // 6px
+		this.extraGap = 2;      // 15px to ensure that a new character has enough room in the scroll bar
+		this.tabMarginRight = 3; // 6px
 		this.rightSlider = $('right_slider');
 		this.leftSlider = $('left_slider');
 		this.leftTimeOut;
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
-		this.fixedTabBarMaxWidth = BrowserUtilsFactory.getInstance().getWidth()*0.70;
-
+		this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 100;
+		
 		//scroll bar
 		this.scrollTabBar = $('scroll_bar');
 		//initial width (there is always a launcher (of the current tab))
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 
 		this.menus = new Array();
-
+		
+		//information messages
+		this.informacionMessagesStatus = [false, false, false, false];
+		var cookies = document.cookie.split(/\s*;\s+/);
+		for (var i=0; i<cookies.length; i++) {
+			var cookie = cookies[i].split(/\s*=\s*/);
+			if(cookie[0] == "informationMessagesStatus") {
+				var value = eval("(" + decodeURIComponent(cookie[1]) + ")");
+				if (value instanceof Array)
+					this.informacionMessagesStatus = value;
+			}
+		}
+		
+		//Renew cookie
+		var oneYearLater = new Date((new Date()).getTime() + 31536000000);
+		document.cookie = "informationMessagesStatus" + "=" + 
+			encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
+			"; expires=" + oneYearLater.toGMTString();
+		
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
+		
+		LayoutManager.prototype.resizeTabBar = function () {
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 70;
+			this.changeTabBarSize(0);
+		}
 
 		LayoutManager.prototype._notifyPlatformReady = function (firstTime) {
 			var loadingElement = $("loading-indicator");
@@ -137,6 +161,7 @@ var LayoutManagerFactory = function () {
 
 			// Recalculate catalogue sizes
 			UIUtils.setResourcesWidth();
+			UIUtils.resizeResourcesContainer();
 
 			// Recalculate wiring position
 			var opManager = OpManagerFactory.getInstance();
@@ -157,8 +182,10 @@ var LayoutManagerFactory = function () {
 			if (this.currentMenu) {
 				this.currentMenu.calculatePosition();
 			}
+			
+			this.resizeTabBar();
 		}
-
+		
 		LayoutManager.prototype.unloadCurrentView = function () {
 			if (this.currentView) {
 				this.currentView.hide();
@@ -171,12 +198,18 @@ var LayoutManagerFactory = function () {
 				this.catalogueLink = $('catalogue_link');
 				this.logsLink = $('logs_link');
 				this.wiringLink = $('wiring_link');
+				this.dragboardLink = $('dragboard_link');
 			}
-
-			this.catalogueLink.className = 'toolbar_unmarked';
-			this.wiringLink.className = 'toolbar_unmarked';
-			this.logsLink.className = 'toolbar_unmarked';
-
+			
+			this.catalogueLink.removeClassName("toolbar_marked");
+			this.catalogueLink.addClassName("toolbar_unmarked");
+			this.wiringLink.removeClassName("toolbar_marked");
+			this.wiringLink.addClassName("toolbar_unmarked");
+			this.dragboardLink.removeClassName("toolbar_marked");
+			this.dragboardLink.addClassName("toolbar_unmarked");
+			this.logsLink.removeClassName("toolbar_marked");
+			this.logsLink.addClassName("toolbar_unmarked");
+			
 /*			this.hideShowCase();
 			this.hideLogs();
 */
@@ -190,11 +223,12 @@ var LayoutManagerFactory = function () {
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
 			this.logsLink.innerHTML = labelContent;
-			this.logsLink.setStyle({'display' : 'inline'});
+			this.logsLink.style.display = 'inline';
 		}
 		
 		LayoutManager.prototype.clearErrors = function (labelContent) {
 			this.logsLink.innerHTML = '';
+			this.logsLink.style.display = 'none';
 		}
 
 		// Tab operations
@@ -245,8 +279,24 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = dragboard;
 			this.currentViewType = 'dragboard';
+
+			this.dragboardLink.removeClassName("toolbar_unmarked");
+			this.dragboardLink.addClassName("toolbar_marked");
+			this.showTabs();
+			this.dragboardLink.blur();
+			$("ws_operations_link").blur();
+			$("ws_operations_link").removeClassName("hidden");
+			$("dragboard_link").title = "";
+
 			this.resizeContainer(this.currentView.dragboardElement);
+
 			dragboard.dragboardElement.setStyle(showStyle);
+			
+			LayoutManagerFactory.getInstance().resizeTabBar();
+			
+			if (dragboard.getNumberOfIGadgets() == 0) {
+				this.showMessageInformation(gettext("You are in Dragboard, which is your workspace, go to the Catalogue to add all resources you want, and then use Wiring to let the communication between gadgets."), 2);
+			}
 		}
 
 		// Catalogue operations
@@ -262,9 +312,18 @@ var LayoutManagerFactory = function () {
 
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
-			this.catalogueLink.className = 'toolbar_marked';
+			
+			this.catalogueLink.removeClassName("toolbar_unmarked");
+			this.catalogueLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
+			this.catalogueLink.blur();
+			
 			this.resizeContainer(this.currentView.catalogueElement);
 			this.catalogue.catalogueElement.setStyle(showStyle);
+			
+			this.showMessageInformation(gettext("This section contains the Catalogue of gadgets and mashups where you could add them to your workspace. A gadget is an application that you can use in EzWeb, and a mashup consists of gadgets whose channels let the communication between them."), 0);
 		}
 
 		// Logs operations
@@ -275,9 +334,18 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = this.logs;
 			this.currentViewType = 'logs';
-			this.logsLink.className = "toolbar_marked";
+			
+			this.logsLink.removeClassName("toolbar_unmarked");
+			this.logsLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
+			this.logsLink.blur();
+			
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
+			
+			this.showMessageInformation(gettext("Logs are shown in this section."), 3);
 		}
 
 		//Wiring operations
@@ -288,12 +356,31 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = wiring;
 			this.currentViewType = 'wiring';
-			this.wiringLink.className = "toolbar_marked";
+			
+			this.wiringLink.removeClassName("toolbar_unmarked");
+			this.wiringLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
 			this.wiringLink.blur();
+
 			this.resizeContainer(this.currentView.wiringContainer);
+
 			wiring.wiringContainer.setStyle(showStyle);
 			//resizing the wiring table so that the scroll bar doesn't modify the table width.
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
+			
+			//if(wiring.channels.length == 0){
+				this.showMessageInformation(gettext("In Wiring section you can spread gadget information to different gadgets using channels. First of all create the channels, and then select the events and slots of gadgets in your workspace."), 1);
+			//}
+		}
+		
+		LayoutManager.prototype.hideTabs = function() {
+			$("tab_section").addClassName("hidden");
+		}
+		
+		LayoutManager.prototype.showTabs = function() {
+			$("tab_section").removeClassName("hidden");
 		}
 
 		//the disabling layer can be clicable (in order to hide a menu) or not
@@ -467,6 +554,55 @@ var LayoutManagerFactory = function () {
 			}
 		}
 		
+		//Shows the background and on click the message on front disappear
+		LayoutManager.prototype.showTransparentBackground = function(){
+			this.coverLayerElement.addClassName('disabled_background');
+			this.coverLayerElement.style.display="block";
+
+			Event.observe( this.coverLayerElement, "click", this.coverLayerEvent);
+		}
+
+		//Shows the message information
+		LayoutManager.prototype.showMessageInformation = function(msg, type){
+			if (this.informacionMessagesStatus[type]) // Don't show me more 
+				return;
+				
+			$("info_window_checkbox").checked = false;
+			var handlerCheckbox = function(e) {
+				this.informacionMessagesStatus[type] = e.target.checked;
+				var oneYearLater = new Date((new Date()).getTime() + 31536000000);
+				document.cookie = "informationMessagesStatus" + "=" + 
+					encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
+					"; expires=" + oneYearLater.toGMTString();
+				this.hideCover();
+				$("info_window_button").stopObserving("click", handlerClose);
+				e.target.stopObserving("click", handlerCheckbox);
+			}.bind(this);
+			
+			var handlerClose = function(e) {
+				this.hideCover();
+				$("info_window_checkbox").stopObserving("click", handlerCheckbox);
+				e.target.stopObserving("click", handlerClose);
+			}.bind(this);
+			
+			$("info_window_checkbox").observe("click", handlerCheckbox);
+			$("info_window_button").observe("click", handlerClose);
+			
+			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if(this.currentMenu != null){//only if the layer is displayed.
+				this.hideCover();
+			}
+			//this.showTransparentBackground();
+			this.showUnclickableCover();
+			
+			if(!this.menus['messageMenu']){
+				this.menus['messageMenu'] = new InfoWindowMenu(null);
+			}
+			this.currentMenu = this.menus['messageMenu'];
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.show();
+		}
+		
 		//Shows the message window menu
 		LayoutManager.prototype.showMessageMenu = function(msg){
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
@@ -493,62 +629,14 @@ var LayoutManagerFactory = function () {
 			this.coverLayerElement.removeClassName('disabled_background');
 		}
 		
-		var FADE_RED_INI = 240;
-		var FADE_GREEN_INI = 230;
-		var FADE_BLUE_INI = 140;
-		var FADE_RED_END_TAB = 151;
-		var FADE_GREEN_END_TAB = 160;
-		var FADE_BLUE_END_TAB = 168;
-		var FADE_RED_END_CUR_TAB = 224;
-		var FADE_GREEN_END_CUR_TAB = 224;
-		var FADE_BLUE_END_CUR_TAB = 224;
-		var FADE_HOLD = 500;
-		var FADE_SPEED = 200;
-		var FADE_STEP = 5;
-		var self = this;
+		LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
+		LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
+		LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
+
 		LayoutManager.prototype.goTab = function(tab, tabLauncher, renameHandler, changeHandler){
 			this.markTab(tab, tabLauncher, renameHandler, changeHandler);
-			var currentColour = [FADE_RED_INI, FADE_GREEN_INI, FADE_BLUE_INI];
-			tab.style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
-			setTimeout(function(){
-					var endColour = [FADE_RED_END_TAB, FADE_GREEN_END_TAB, FADE_BLUE_END_TAB];
-					if(tab.className == "tab current"){
-						endColour = [FADE_RED_END_CUR_TAB, FADE_GREEN_END_CUR_TAB, FADE_BLUE_END_CUR_TAB];	
-					}
-					self.fadeTab(tab.id, currentColour, endColour);
-				}, FADE_HOLD);
-		}
-		
-		LayoutManager.prototype.fadeTab = function(tabId, currentColour, endColour){
-			var element = document.getElementById(tabId);
-			if(!element){
-				return;
-			}
-			
-			if(currentColour[0]==endColour[0] && currentColour[1]==endColour[1] && currentColour[2] == endColour[2]){
-				element.style.background = "";
-				return;
-			}
-			
-			currentColour[0] = this.fadeColour(currentColour[0], endColour[0], FADE_STEP);
-			currentColour[1] = this.fadeColour(currentColour[1], endColour[1], FADE_STEP);
-			currentColour[2] = this.fadeColour(currentColour[2], endColour[2], FADE_STEP);
-			
-			element.style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
-			setTimeout(function(){self.fadeTab(tabId, currentColour, endColour);}, FADE_SPEED);
-		}
-		
-		LayoutManager.prototype.fadeColour = function(colour, obj, step){
-			if(colour > obj){
-				if(colour - step > obj){
-					return colour - step;
-				}
-			} else {
-				if(colour + step < obj){
-					return colour + step;
-				}
-			}
-			return obj;
+			var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
+			fadder.fade();
 		}
 		
 	}
@@ -561,7 +649,7 @@ var LayoutManagerFactory = function () {
 	LayoutManager.prototype.resetTabBar = function(tabId) {
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		//we don't need arrows
 		this.rightSlider.style.display = "none";
 		this.leftSlider.style.display = "none";
@@ -590,10 +678,9 @@ var LayoutManagerFactory = function () {
 	
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
-		
 		this.scrollTabBarWidth += tabSize;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			//we don't need arrows

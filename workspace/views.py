@@ -140,7 +140,7 @@ def createTab (tab_name, user,  workspace):
     ids['name'] = tab.name
 
     data = serializers.serialize('python', [wsVariable], ensure_ascii=False)
-    ids['workspaceVariables'] = [get_workspace_variable_data(d, user) for d in data]
+    ids['workspaceVariables'] = [get_workspace_variable_data(d, user, workspace) for d in data]
     
     return ids
 

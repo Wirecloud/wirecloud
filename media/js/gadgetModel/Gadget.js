@@ -42,7 +42,7 @@ function Gadget(gadget_, url_) {
 	this.getTemplate = function() { return state.getTemplate(); }
 	this.getXHtml = function() { return state.getXHtml(); }
 	this.getInfoString = function() { return state.getInfoString(); }
-	
+	this.getUriWiki = function() { return state.getUriWiki();}
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
 	
@@ -135,6 +135,7 @@ function GadgetState(gadget_) {
 	var xhtml = null;
 	var image = null;
 	var capabilities = []; 
+	var uriwiki = null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -145,6 +146,7 @@ function GadgetState(gadget_) {
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
 	capabilities = gadget_.capabilities;
+	uriwiki = gadget_.wikiURI;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -161,7 +163,7 @@ function GadgetState(gadget_) {
 		var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
 		return interpolate(msg, transObj, true);
 	}
-	
+	this.getUriWiki = function () {return uriwiki;}
 	this.getImage = function() { return image; }
 	this.setImage = function(image_) { image = image_; }
 }

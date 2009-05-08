@@ -40,7 +40,7 @@ a:hover {
 	background: url("/ezweb/images/header.gif") repeat-x top left;
 	color:white;
 	text-align:right;
-	height: 70px;
+	height: 77px;
 	z-index: 2;
 }
 .form-row {
@@ -115,13 +115,13 @@ a:hover {
 
 #tab_section {
  position: absolute; 
- top: 6px;
+ top: 13px;
  display: block;
  right:4px;
 /* margin-left:25%;*/
  width:100%;
  z-index: 3;
-
+ white-space: nowrap;
 }
 
 #tab_section #fixed_bar{
@@ -144,10 +144,14 @@ a:hover {
 
 #toolbar_section {
   position: relative;
-  padding-left: 20px;
+  padding-left: 9px;
   float: left;
   margin-top: 8px;
   z-index: 3;
+  background:transparent url(/ezweb/images/fond.gif) repeat scroll left top;
+  white-space: nowrap;
+  height: 28px;
+  overflow: hidden;
 /*  right: 4px;
   left: 4px;*/
 
@@ -155,7 +159,6 @@ a:hover {
 
 .toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
   position: relative;
-  margin-right: 3px;
   margin-left: 3px;
   height: 21px;
   width: 21px;
@@ -172,6 +175,7 @@ a:hover {
 #workspace_name {
   position: relative;
   display: inline;
+  top: -1px;
   margin-right: 0px;
   margin-left: 3px;
   color:#2D6F9C;
@@ -182,14 +186,14 @@ a:hover {
  margin-left:3px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderL21px.png) no-repeat;
+ background: transparent url(/ezweb/images/sliderL21px.png) no-repeat scroll 2px 0;
 }
 
 #right_slider{
  margin-top:2px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderR21px.png) no-repeat;
+ background: transparent url(/ezweb/images/sliderR21px.png) no-repeat scroll 2px 0;
 }
 
 #add_tab_link {
@@ -199,26 +203,33 @@ a:hover {
 
 
 #catalogue_link {
-  background: transparent url(/ezweb/images/catalogue21px.png) no-repeat;
+  background: transparent url(/ezweb/images/catalogue16px.png) no-repeat scroll 1px 1px;
 }
 /*#catalogue_link:hover {
-  background: transparent url(catalogue.png) no-repeat;
+  background: transparent url(catalogue.png) no-repeat scroll 2px 0;
 }*/
 
 #wiring_link {
-  background: transparent url(/ezweb/images/wiring21px.png) no-repeat;
+  background: transparent url(/ezweb/images/wiring16px.png) no-repeat scroll 1px 1px;
 }
 /*#wiring_link:hover {
   background: transparent url(wiring.png) no-repeat;
 }*/
+
+#dragboard_link {
+  background: url(/ezweb/images/dragboard16px.png) no-repeat scroll 1px 1px;
+}
 
 #change_ws_link {
   background-image: url(/ezweb/images/settings.png);
 }
 
 #ws_operations_link {
-  background: transparent url(/ezweb/images/ops21px.png) no-repeat;
-  margin-left: 0px;
+  background: transparent url(/ezweb/images/ops21px.png) no-repeat scroll 0 0;
+  margin-left: -5px;
+  width: 16px;
+  position:relative;
+  top:-1px;
 }
 
 /*#ws_operations_link:hover {
@@ -226,10 +237,11 @@ a:hover {
 }*/
 
 #logs_link {
-  margin-right: 3px;
-  margin-left: 3px;
+  height: 16px !important;
+  background: transparent url(/ezweb/images/error.png) no-repeat scroll 3px 1px;
   color:red;
   cursor:pointer;
+  padding: 2px 4px 0px 22px;
 }
 
 .message_section{
@@ -251,7 +263,7 @@ a:hover {
 }
 
 #add_tab_link {
-  background: transparent url(/ezweb/images/addTab21px.png) no-repeat;
+  background: transparent url(/ezweb/images/addTab16px.png) no-repeat scroll 1px 1px;
   
 }
 
@@ -276,7 +288,7 @@ a:hover {
   background: #97A0A8 url(/ezweb/images/degradado.png) no-repeat scroll left top;
   font-weight: bold;
   padding: 2px 9px;
-  margin: 0px 6px;
+  margin: 0px 3px;
   cursor: pointer;
   z-index: 3;
   height: 18px;
@@ -288,7 +300,7 @@ a:hover {
 }
 
 #tab_section .tab.selected {
-  background: #F0E68C;
+  background: #F0E68C !important;
 }
 
 .disabled {

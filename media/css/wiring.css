@@ -397,4 +397,21 @@
 	background: transparent url(/ezweb/images/wiringArrow.png) no-repeat;
 }
 
+.help_button {
+  background: transparent url(/ezweb/images/help.gif) no-repeat scroll 0 0;
+  margin-left: 0px;
+  margin-bottom:2px;
+  border: none;
+  display: inline;
+  vertical-align: middle;
+  cursor: pointer;
+}
 
+.helpwiringheader {
+	border: 1px solid #AAA;
+	-moz-border-radius:6px;
+	background:white;
+	text-align:left;
+	font-size:80%;
+	white-space:pre;
+}
