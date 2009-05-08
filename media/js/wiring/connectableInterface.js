@@ -83,7 +83,7 @@ ConnectableWrapperInterface.prototype.ConnectableWrapperInterface = function(wir
     			this.toggleOpenedByUser();
     			this.forceToggle();
     			if(this.wiringGUI.currentChannel)
-	    			this.wiringGUI.highlightChannelOutputs(this.wiringGUI.currentChannel);
+    				this.repaintSiblings(this.wiringGUI.currentChannel)
 				}
 			}.bind(this)
 		);
@@ -187,6 +187,10 @@ SlotTabInterface.prototype.show = function () {
 
 }
 
+SlotTabInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelOutputs(channel);
+	}
+
 // Event interface for the tab (without connectable)
 ////////////////////////////////////////////////////
 function EventTabInterface (tab, wiringGUI) {
@@ -206,6 +210,10 @@ EventTabInterface.prototype.show = function (){
     if(!this.wiringGUI.unfold_on_entering)
 	  	this.forceToggle();
 }
+
+EventTabInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelInputs(channel);
+	}
 
 ////////////////////////////////////////////////////////////
 //   SLOT AND EVENT INTERFACE FOR THE CHANNEL (WRAPPER)   //
