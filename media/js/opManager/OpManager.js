@@ -51,9 +51,17 @@ var OpManagerFactory = function () {
 
 				this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
-				if (workSpace.active == "true") {
-					activeWorkSpace=this.workSpaceInstances[workSpace.id];
+				if (public_workspace && public_workspace != '') {
+				    if (workSpace.id == public_workspace) {
+					  activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					  continue;
+					}
 				}
+                else {
+					if (workSpace.active == "true") {
+						activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					}
+				}	
 			}
 			
 			// set handler for workspace options button

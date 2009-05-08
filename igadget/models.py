@@ -72,4 +72,7 @@ class Variable(models.Model):
         return str(self.pk) + " " + self.vardef.name
 
     def has_public_value(self):   
-       return self.vardef.has_public_value()
+        return self.vardef.has_public_value()
+   
+    def get_default_value(self):
+        return self.vardef.default_value

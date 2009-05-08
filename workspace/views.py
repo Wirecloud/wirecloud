@@ -40,7 +40,7 @@ from commons.resource import Resource
 
 from django.db import transaction
 
-from commons.authentication import get_user_authentication
+from commons.authentication import get_user_authentication, get_public_user
 from commons.get_data import *
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
@@ -65,6 +65,13 @@ from os import path
 from django.conf import settings
 
 from commons.logs_exception import TracedServerError
+
+def clone_original_variable_value(abstract_variable, creator, new_user):
+    original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
+    
+    new_var_value = original_var_value.clone_variable_value(new_user)
+    
+    return new_var_value
 
 def get_workspace_description(workspace):    
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
@@ -187,21 +194,21 @@ def setActiveWorkspace(user, workspace):
     
 def cloneWorkspace(workspace_id):
 
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        
-        workspace = published_workspace.workspace
-        
-        packageCloner = PackageCloner()
-        
-        return packageCloner.clone_tuple(workspace)
+    published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+    
+    workspace = published_workspace.workspace
+    
+    packageCloner = PackageCloner()
+    
+    return packageCloner.clone_tuple(workspace)
     
 def linkWorkspace(user, workspace_id):   
         
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
-                
-        packageLinker = PackageLinker()
-        
-        packageLinker.link_workspace(workspace, user)
+    workspace = get_object_or_404(WorkSpace, id=workspace_id)
+            
+    packageLinker = PackageLinker()
+    
+    packageLinker.link_workspace(workspace, user)
         
         
 
@@ -295,6 +302,7 @@ class WorkSpaceCollection(Resource):
 
 
 class WorkSpaceEntry(Resource):
+    @transaction.commit_on_success
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
         
@@ -530,6 +538,33 @@ class  WorkSpaceMergerEntry(Resource):
         
         return HttpResponse("{'result': 'ok', 'merged_workspace_id': %s}" % (to_workspace.id), mimetype='application/json; charset=UTF-8')
 
+
+class  WorkSpaceSharerEntry(Resource):
+    @transaction.commit_on_success
+    def update(self, request, workspace_id, share_boolean):
+        user = get_user_authentication(request)
+        
+        try:
+            workspace = WorkSpace.objects.get(id=workspace_id)
+        except WorkSpace.DoesNotExist:
+            HttpServerResponseError(get_xml_error(_("workspace does not exist")), mimetype='application/xml; charset=UTF-8')
+        
+        owner = workspace.users.all()[0]
+        
+        if (owner != user):
+            return HttpServerResponseError(get_xml_error(_("you are not the owner of the workspace! you can not share the workspace!")), mimetype='application/xml; charset=UTF-8')
+        
+        #Everything right! Linking with public user!
+        public_user = get_public_user()
+        
+        workspace.users.add(public_user)
+        workspace.save()
+        
+        url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
+        
+        return HttpResponse("{'result': 'ok', 'url':'%s'}" % url, mimetype='application/json; charset=UTF-8')
+
+
 class  WorkSpaceLinkerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
@@ -592,6 +627,7 @@ class  WorkSpacePublisherEntry(Resource):
         
         user = get_user_authentication(request)
         
+        #Cloning original workspace!
         packageCloner = PackageCloner()
         
         cloned_workspace = packageCloner.clone_tuple(workspace)

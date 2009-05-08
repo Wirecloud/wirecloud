@@ -101,6 +101,15 @@ class AbstractVariable(models.Model):
        igadget_var = Variable.objects.get(abstract_variable=self)
        
        return igadget_var.has_public_value()
+   
+    def get_default_value(self):       
+       #Cycling import 
+       from igadget.models import Variable
+       
+       #Igadget variable
+       igadget_var = Variable.objects.get(abstract_variable=self)
+       
+       return igadget_var.get_default_value()
        
         
 
@@ -109,6 +118,18 @@ class VariableValue(models.Model):
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+    
+    def clone_variable_value(self, user):
+        cloned_value = VariableValue(user=user, value=self.get_variable_value(), abstract_variable=self.abstract_variable)
+        cloned_value.save()
+        
+        return cloned_value
+        
+    def get_variable_value(self):
+        if (self.abstract_variable.has_public_value()):
+            return self.value
+        
+        return self.abstract_variable.get_default_value()
 
     def __unicode__(self):
         return self.abstract_variable.name + self.value

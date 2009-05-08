@@ -36,5 +36,6 @@ urlpatterns = patterns('ezweb.views',
     (r'^$', 'index'),
     (r'^wiring$', 'wiring'),
     (r'^lite$', 'index_lite'),
+    (r'^viewer/workspace/(?P<public_ws_id>[\d]+)$', 'public_ws_viewer'),
 
 )

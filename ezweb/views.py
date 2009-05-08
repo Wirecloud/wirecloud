@@ -34,13 +34,47 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
-from django.conf import settings
+from commons.authentication import login_public_user
+from commons.utils import get_xml_error, json_encode
 
+from workspace.models import WorkSpace
+
+from django.http import HttpResponseServerError
+from django.conf import settings
+from django.utils.translation import ugettext as _
 
 @login_required
 def index(request, user_name=None, template="index.html"):
-    """ Vista principal """ 
+    return render_ezweb(request, user_name, template)
+
+@login_required
+def wiring(request, user_name=None):
+    """ Vista del Wiring """
+    return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
+
+@login_required
+def index_lite(request, user_name=None):
+    """ Vista de ezweb sin cabecera"""
+    return render_ezweb(request, template="index_lite.html")
+
+def public_ws_viewer(request, public_ws_id):
+    """ EzWeb viewer """
+    try:
+        workspace = WorkSpace.objects.get(id=public_ws_id)
+    except WorkSpace.DoesNotExist:
+         return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
     
+    public_user=login_public_user(request)
+    
+    request.user=public_user
+    
+    if (len(workspace.users.filter(username=public_user.username)) == 1):
+        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id)
+    
+    return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
+
+def render_ezweb(request, user_name=None, template='index.html', public_workspace=''):
+    """ Main view """ 
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
         return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
@@ -51,15 +85,5 @@ def index(request, user_name=None, template="index.html"):
 
             settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
 
-        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL},
+        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL, 'active_workspace': public_workspace},
                   context_instance=RequestContext(request))
-
-@login_required
-def wiring(request, user_name=None):
-    """ Vista del Wiring """
-    return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
-
-@login_required
-def index_lite(request, user_name=None):
-    """ Vista de ezweb sin cabecera"""
-    return index(request, template="index_lite.html")

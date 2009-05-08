@@ -10,19 +10,21 @@
 
 <!-- Base css -->
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
-<!-- CSS for different header -->
-{% block css %}{% endblock %}
 
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
 
+{% block extra_stylecss %}
 <!-- Theme css -->
 <link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
 <link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/catalogue.css" />
 <link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/dragboard.css" />
 <link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/wiring.css" />
+{% endblock %}
 
+<!-- CSS for different header -->
+{% block css %}{% endblock %}
 
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
@@ -63,6 +65,7 @@ _URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab
 _URIConstants.prototype.POST_PUBLISH_WORKSPACE = new Template('/workspace/#{workspace_id}/publish');
 _URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
+_URIConstants.prototype.PUT_SHARE_WORKSPACE = new Template('/workspace/#{workspace_id}/share/#{share_boolean}');
 
 {% if home_gateway_dispatcher_url %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
@@ -77,21 +80,28 @@ var URIs = new _URIConstants();
 
 var ezweb_user_name = '{{ user.username }}'
 
+var public_workspace = '{{ active_workspace }}';
+
 </script>
 
-{% if only_one_js_file %}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb.js"></script>
-{% else %}
-   {% include "js_includes.js" %}
-{% endif %}
+{% block includes %}
 
-<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
-<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+    {% if only_one_js_file %}
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb.js"></script>
+    {% else %}
+       {% include "js_includes.js" %}
+    {% endif %}
+    
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
+    <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+    
+    {% if AUTHENTICATION_SERVER_URL %}
+    <script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
+    {% endif %}
 
-{% if AUTHENTICATION_SERVER_URL %}
-<script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
-{% endif %}
+
+{% endblock %}
 
 <!-- Initialization code -->
 <script type="text/javascript">

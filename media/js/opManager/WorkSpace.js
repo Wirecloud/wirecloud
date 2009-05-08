@@ -554,6 +554,23 @@ function WorkSpace (workSpaceState) {
 		return this.visibleTab.getDragboard();
 	}
 	
+	WorkSpace.prototype.shareWorkspace = function(value) {
+		var share_workspace_success = function (transport) {
+			var response = transport.responseText;
+			var result = eval ('(' + response + ')');
+			
+			alert('New workspace shared in ' + result['url'])
+		}
+		
+		var share_workspace_error = function (transport) {
+			alert('Error sharing workspace')
+		}
+		
+		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
+		
+		PersistenceEngineFactory.getInstance().send_update(url, {}, this, share_workspace_success, share_workspace_error);
+	}
+	
 	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
@@ -621,9 +638,13 @@ function WorkSpace (workSpaceState) {
 		this.menu.addOption("/ezweb/images/remove.png","Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
 		this.menu.addOption("/ezweb/images/publish.png","Publish workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		
 		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
 			this.menu.addOption("/ezweb/images/merge.png","Merge with workspace...",function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
 		}
+		
+		this.menu.addOption("/ezweb/images/publish.png","Share workspace",function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
+		
 		this.menu.addOption("/ezweb/images/list-add.png","New workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
 	
@@ -632,6 +653,11 @@ function WorkSpace (workSpaceState) {
 		for (var i = 0; i < keys.length; i++) {
 			this.tabInstances[keys[i]]._lockFunc(locked);
 		}
+	}.bind(this);
+	
+	// Share current workspace to the rest of users
+	this._shareWorkspace = function() {
+		this.shareWorkspace(true);
 	}.bind(this);
 	
 	this._checkLock = function() {

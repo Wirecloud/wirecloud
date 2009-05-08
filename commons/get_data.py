@@ -234,25 +234,18 @@ def get_workspace_data(data):
 def get_workspace_variables_data(workSpaceDAO, user):
     tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')  
     tabs_data = serializers.serialize('python', tab_variables, ensure_ascii=False)
-    ws_variables_data = [get_workspace_variable_data(d, user) for d in tabs_data]
+    ws_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in tabs_data]
     
     inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')  
     inouts_data = serializers.serialize('python', inout_variables, ensure_ascii=False)
-    ws_inout_variables_data = [get_workspace_variable_data(d, user) for d in inouts_data]
+    ws_inout_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in inouts_data]
     
     for inout in ws_inout_variables_data:
         ws_variables_data.append(inout)
     
     return ws_variables_data
 
-def get_workspace_channels_data(workSpaceDAO):
-    ws_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL').order_by('id')  
-    data = serializers.serialize('python', ws_variables, ensure_ascii=False)
-    ws_variables_data = [get_workspace_variable_data(d) for d in data]
-    
-    return ws_variables_data
-
-def get_workspace_variable_data(data, user):
+def get_workspace_variable_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
     
@@ -265,8 +258,13 @@ def get_workspace_variable_data(data, user):
     
     data_ret['aspect'] = data_fields['aspect']
     
-    variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
-    
+    try:
+        variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
+    except VariableValue.DoesNotExist:
+        from workspace.views import clone_original_variable_value
+        
+        variable_value = clone_original_variable_value(abstract_var, workspace.users.all()[0], user)
+        
     data_ret['value'] = variable_value.value
     data_ret['name'] = abstract_var.name
     data_ret['type'] = data_fields['type']
@@ -433,7 +431,12 @@ def get_variable_data(data, user, workspace):
     
     abstract_var = get_abstract_variable(abstract_var_id) 
     
-    variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
+    try:
+        variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
+    except VariableValue.DoesNotExist:
+        from workspace.views import clone_original_variable_value
+        
+        variable_value = clone_original_variable_value(abstract_var, workspace.users.all()[0], user)
 
     data_ret['id'] = data['pk']
     

@@ -115,7 +115,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
- #   'django.contrib.sessions.middleware.SessionMiddleware',
+#    'django.contrib.sessions.middleware.SessionMiddleware',
     'middleware.session_middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -171,6 +171,7 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
+'authentication.public_access.PublicBackend',
 'authentication.anonymousaccess.AnonymousBackend',
 #'authentication.ldapaccess.LDAPBackend',
 #'authentication.ezsteroidsaccess.EzSteroidsBackend',

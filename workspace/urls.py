@@ -58,6 +58,10 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
         ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
         
+    # Sharing workspace
+    (r'^/((?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)[/]?)?$', 
+        WorkSpaceSharerEntry(permitted_methods=('PUT', ))),
+        
     # Coping workspace structure when adding package
     (r'^/((?P<workspace_id>\d+)/copy?[/]?)?$', 
         WorkSpaceClonerEntry(permitted_methods=('GET', ))),

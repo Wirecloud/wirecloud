@@ -36,6 +36,12 @@ from commons.logs_exception import TracedServerError
 
 from django.utils.translation import ugettext as _
 
+from django.contrib.auth.models import User
+
+from django.contrib.auth import authenticate, login, load_backend
+
+import middleware
+
 class Http403(Exception):
     pass
 
@@ -54,4 +60,27 @@ def get_user_authentication(request):
     if not user.is_authenticated():
         raise Http403 (_("You must be logged"))
 
+    return user
+
+def get_public_user():
+    try:
+        user = User.objects.get(username=middleware.PUBLIC_NAME)
+    except User.DoesNotExist:
+        user = generate_public_user(request)
+    
+    return user
+
+def login_public_user(request):
+    user = get_public_user()
+        
+    user = authenticate(username=user.username, password=middleware.PUBLIC_PWD,isPublic=True)
+    login(request, user)
+
+    return user
+
+def generate_public_user(request):
+    user = User(username=PUBLIC_NAME)
+    user.set_password(PUBLIC_PWD)
+    user.save()
+    
     return user

@@ -131,6 +131,9 @@ class VariableDef(models.Model):
 
     def has_public_value(self):   
        return self.type!='P'
+   
+    def get_default_value(self):
+        return self.default_value
 
 class UserPrefOption(models.Model):
     value = models.CharField(_('Value'), max_length=30)

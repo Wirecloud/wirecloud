@@ -34,12 +34,17 @@ import time
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, load_backend
 
+from commons import authentication 
+
 SESSION_KEY = '_auth_user_id'
 BACKEND_SESSION_KEY = '_auth_user_backend'
 
 ANONYMOUS_PWD = 'anonymous'
 ANONYMOUS_NAME = 'anonymous'
 ANONYMOUS_SESSION_COOKIE = 'anonymousid'
+
+PUBLIC_PWD = 'public'
+PUBLIC_NAME = 'public'
 
 def generate_anonymous_user(request):
     user_name = ANONYMOUS_NAME + unicode(time.time())
@@ -69,6 +74,7 @@ def get_anonymous_user(request):
     login(request, user)
     
     return user
+
 
 def get_user(request):
     try:
