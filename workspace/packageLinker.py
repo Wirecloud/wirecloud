@@ -36,10 +36,23 @@ from igadget.models import Variable, IGadget
 from django.db import models, IntegrityError
 
 class PackageLinker:
-    def link_workspace(self, workspace, user):
+    def link_workspace(self, workspace, user, link_variable_values=True):
         # Linking user to workspace
         self.add_user_to_workspace(workspace, user)
         
+        #Linking gadgets to user (allways needed)
+        ws_igadgets_vars = self.link_gadgets(workspace, user)
+        
+        if (link_variable_values):
+            ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
+            
+            abstract_var_list = self.get_abstract_var_list(ws_igadget_vars, ws_vars)
+            
+            # Creating new VariableValue to each AbstractVariable
+            # Linking each new VariableValue to the user argument
+            self.add_user_to_abstract_variable_list(abstract_var_list, user)
+    
+    def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
         ws_igadget_vars = Variable.objects.filter(igadget__tab__workspace=workspace)
         
@@ -53,13 +66,7 @@ class PackageLinker:
             
             gadget.save()
         
-        ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
-        
-        abstract_var_list = self.get_abstract_var_list(ws_igadget_vars, ws_vars)
-        
-        # Creating new VariableValue to each AbstractVariable
-        # Linking each new VariableValue to the user argument
-        self.add_user_to_abstract_variable_list(abstract_var_list, user)
+        return ws_igadget_vars
 
     def add_user_to_workspace(self, workspace, user):
          #Checking if user is already linked to workspace

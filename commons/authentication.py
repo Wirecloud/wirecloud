@@ -62,7 +62,7 @@ def get_user_authentication(request):
 
     return user
 
-def get_public_user():
+def get_public_user(request):
     try:
         user = User.objects.get(username=middleware.PUBLIC_NAME)
     except User.DoesNotExist:
@@ -71,7 +71,7 @@ def get_public_user():
     return user
 
 def login_public_user(request):
-    user = get_public_user()
+    user = get_public_user(request)
         
     user = authenticate(username=user.username, password=middleware.PUBLIC_PWD,isPublic=True)
     login(request, user)
@@ -79,8 +79,8 @@ def login_public_user(request):
     return user
 
 def generate_public_user(request):
-    user = User(username=PUBLIC_NAME)
-    user.set_password(PUBLIC_PWD)
+    user = User(username=middleware.PUBLIC_NAME)
+    user.set_password(middleware.PUBLIC_PWD)
     user.save()
     
     return user

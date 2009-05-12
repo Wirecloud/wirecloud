@@ -87,7 +87,6 @@ def get_igadgets_description(included_igadgets):
     return description[:-2]
 
 def deleteTab (tab, user):
-    
     #Deleting igadgets
     igadgets = IGadget.objects.filter(tab=tab)
     for igadget in igadgets:
@@ -201,17 +200,18 @@ def cloneWorkspace(workspace_id):
     packageCloner = PackageCloner()
     
     return packageCloner.clone_tuple(workspace)
-    
-def linkWorkspace(user, workspace_id):   
-        
-    workspace = get_object_or_404(WorkSpace, id=workspace_id)
-            
+
+def linkWorkspaceObject(user, workspace, link_variable_values=True):               
     packageLinker = PackageLinker()
     
-    packageLinker.link_workspace(workspace, user)
-        
-        
+    packageLinker.link_workspace(workspace, user, link_variable_values)
+    
+def linkWorkspace(user, workspace_id, link_variable_values=True):         
+    workspace = get_object_or_404(WorkSpace, id=workspace_id)
+            
+    linkWorkspaceObject(user, workspace, link_variable_values)
 
+        
 class WorkSpaceCollection(Resource):
     @transaction.commit_on_success
     def read(self, request):
@@ -555,10 +555,9 @@ class  WorkSpaceSharerEntry(Resource):
             return HttpServerResponseError(get_xml_error(_("you are not the owner of the workspace! you can not share the workspace!")), mimetype='application/xml; charset=UTF-8')
         
         #Everything right! Linking with public user!
-        public_user = get_public_user()
+        public_user = get_public_user(request)
         
-        workspace.users.add(public_user)
-        workspace.save()
+        linkWorkspaceObject(public_user, workspace, link_variable_values=False)
         
         url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
         
