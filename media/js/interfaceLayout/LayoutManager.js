@@ -295,7 +295,15 @@ var LayoutManagerFactory = function () {
 			LayoutManagerFactory.getInstance().resizeTabBar();
 			
 			if (dragboard.getNumberOfIGadgets() == 0) {
-				this.showMessageInformation(gettext("You are in Dragboard, which is your workspace, go to the Catalogue to add all resources you want, and then use Wiring to let the communication between gadgets."), 2);
+				var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
+				var msg = gettext("In the Dragborad you can move and resize all your gadgets in order to perform and use your own application. Check the gadget preferences for further personalization %(settingsIcon)s. Go to the Catalogue to add more gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections among them %(wiringIcon)s. If you need more help visit the %(helpLink)s.");
+				msg = interpolate(msg,
+				                  {settingsIcon: "<img src='/ezweb/images/igadget/settings.png'/>",
+				                   catalogueIcon: "<img src='/ezweb/images/catalogue16px.png'/>",
+				                   wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				                   helpLink: videoTutorialMsg},
+				                  true);
+				this.showMessageInformation(msg, 2);
 			}
 		}
 
@@ -322,8 +330,14 @@ var LayoutManagerFactory = function () {
 			
 			this.resizeContainer(this.currentView.catalogueElement);
 			this.catalogue.catalogueElement.setStyle(showStyle);
-			
-			this.showMessageInformation(gettext("This section contains the Catalogue of gadgets and mashups where you could add them to your workspace. A gadget is an application that you can use in EzWeb, and a mashup consists of gadgets whose channels let the communication between them."), 0);
+			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
+			var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
+			msg = interpolate(msg,
+				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
+				           wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				           helpLink: videoTutorialMsg},
+				          true);
+			this.showMessageInformation(msg, 0);
 		}
 
 		// Logs operations
@@ -345,7 +359,7 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 			
-			this.showMessageInformation(gettext("Logs are shown in this section."), 3);
+			//this.showMessageInformation(gettext("Logs are shown in this section."), 3);
 		}
 
 		//Wiring operations
@@ -371,7 +385,13 @@ var LayoutManagerFactory = function () {
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
 			
 			//if(wiring.channels.length == 0){
-				this.showMessageInformation(gettext("In Wiring section you can spread gadget information to different gadgets using channels. First of all create the channels, and then select the events and slots of gadgets in your workspace."), 1);
+			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
+			var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
+			msg = interpolate(msg,
+				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
+				           helpLink: videoTutorialMsg},
+				          true);
+			this.showMessageInformation(msg, 1);
 			//}
 		}
 		
@@ -571,7 +591,7 @@ var LayoutManagerFactory = function () {
 			var handlerCheckbox = function(e) {
 				this.informacionMessagesStatus[type] = e.target.checked;
 				var oneYearLater = new Date((new Date()).getTime() + 31536000000);
-				document.cookie = "informationMessagesStatus" + "=" + 
+				document.cookie = "informationMessagesStatus=" + 
 					encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
 					"; expires=" + oneYearLater.toGMTString();
 				this.hideCover();
