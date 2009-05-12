@@ -441,7 +441,7 @@ function Gadget(gadget_, url_) {
 	this.getTemplate = function() { return state.getTemplate(); }
 	this.getXHtml = function() { return state.getXHtml(); }
 	this.getInfoString = function() { return state.getInfoString(); }
-	
+	this.getUriWiki = function() { return state.getUriWiki();}
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
 	
@@ -534,6 +534,7 @@ function GadgetState(gadget_) {
 	var xhtml = null;
 	var image = null;
 	var capabilities = []; 
+	var uriwiki = null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -544,6 +545,7 @@ function GadgetState(gadget_) {
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
 	capabilities = gadget_.capabilities;
+	uriwiki = gadget_.wikiURI;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -560,7 +562,7 @@ function GadgetState(gadget_) {
 		var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
 		return interpolate(msg, transObj, true);
 	}
-	
+	this.getUriWiki = function () {return uriwiki;}
 	this.getImage = function() { return image; }
 	this.setImage = function(image_) { image = image_; }
 }
@@ -636,7 +638,8 @@ var LogManagerFactory = function () {
 			}
 			logentry.appendChild(document.createTextNode(msg));
 			this.logConsole.appendChild(logentry);
-
+			
+			LayoutManagerFactory.getInstance().resizeTabBar();
 		}
 		
 		LogManager.prototype.show = function(){
@@ -895,7 +898,15 @@ function WorkSpace (workSpaceState) {
 		var spanHTML = "<span>"+nameToShow+"</span>";
 		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){this.fillWithInput();}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){
+			if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+				this.fillWithInput();
+			}
+			else {
+				OpManagerFactory.getInstance().showActiveWorkSpace();
+			}
+		}.bind(this));
+		LayoutManagerFactory.getInstance().resizeTabBar();
     }
 
 
@@ -1205,6 +1216,23 @@ function WorkSpace (workSpaceState) {
 		return this.visibleTab.getDragboard();
 	}
 	
+	WorkSpace.prototype.shareWorkspace = function(value) {
+		var share_workspace_success = function (transport) {
+			var response = transport.responseText;
+			var result = eval ('(' + response + ')');
+			
+			alert('New workspace shared in ' + result['url'])
+		}
+		
+		var share_workspace_error = function (transport) {
+			alert('Error sharing workspace')
+		}
+		
+		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
+		
+		PersistenceEngineFactory.getInstance().send_update(url, {}, this, share_workspace_success, share_workspace_error);
+	}
+	
 	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
@@ -1258,24 +1286,28 @@ function WorkSpace (workSpaceState) {
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
 		//adding options to workspace menu
-		this.menu.addOption("/ezweb/images/rename.gif", "Rename", function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
+		this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
 							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
 		if (this.workSpaceGlobalInfo.workspace.active != "true") {
-			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", "Mark as Active", function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
+			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", gettext("Mark as Active"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
 		}
 		this.unlockEntryPos = optionPosition;
-		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
+		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
 		var res = this._checkLock();
 		optionPosition -= res;
 
-		this.menu.addOption("/ezweb/images/remove.png","Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
+		this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
-		this.menu.addOption("/ezweb/images/publish.png","Publish workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		
 		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
-			this.menu.addOption("/ezweb/images/merge.png","Merge with workspace...",function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
+			this.menu.addOption("/ezweb/images/merge.png", gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
 		}
-		this.menu.addOption("/ezweb/images/list-add.png","New workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
+		
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Share workspace"),function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
+		
+		this.menu.addOption("/ezweb/images/list-add.png", gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
 	
 	this._lockFunc = function(locked) {
@@ -1283,6 +1315,11 @@ function WorkSpace (workSpaceState) {
 		for (var i = 0; i < keys.length; i++) {
 			this.tabInstances[keys[i]]._lockFunc(locked);
 		}
+	}.bind(this);
+	
+	// Share current workspace to the rest of users
+	this._shareWorkspace = function() {
+		this.shareWorkspace(true);
 	}.bind(this);
 	
 	this._checkLock = function() {
@@ -1312,12 +1349,12 @@ function WorkSpace (workSpaceState) {
 		}
 		
 		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
+			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
 		}
 		if((!all || !locked) && this.lockEntryId==null){
 			if(this.unlockEntryId)
 				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
+			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
 		}
 		return numRemoved;
 	}.bind(this);
@@ -1599,23 +1636,28 @@ function Tab (tabInfo, workSpace) {
 	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
-	this.menu.addOption("/ezweb/images/rename.gif", "Rename", function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
-								LayoutManagerFactory.getInstance().hideCover();},0);
+	this.menu.addOption("/ezweb/images/rename.gif",
+	                    gettext("Rename"),
+			    function() {
+			        OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
+				LayoutManagerFactory.getInstance().hideCover();
+	                    },
+			    0);
 
 	this._lockFunc = function(locked) {
 		if (locked) {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
+			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
 		} else {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this));	
+			this.menu.updateOption(this.lockEntryId, "/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this));	
 		}
 		this.dragboard.setLock(locked);
 		this.workSpace._checkLock();
 	}.bind(this);
 
 	if (this.dragboard.isLocked()) {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
 	} else {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
 	}
 	
 	this.markAsVisibleSuccess = function() {
@@ -1624,7 +1666,7 @@ function Tab (tabInfo, workSpace) {
 			var tab = this.workSpace.tabInstances[tabIds[i]];
 			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
 				tab.firstVisible = false;
-				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", "First Visible", function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
+				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", gettext("First Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
 			}
 		}
 		this.firstVisible = true;
@@ -1672,7 +1714,7 @@ function Tab (tabInfo, workSpace) {
 	
 	this.addMarkAsVisible = function (){
 		this.firstVisible = false;
-		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", "Mark as Visible", function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
+		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", gettext("Mark as Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
 	}.bind(this);
 	
 	if (this.tabInfo.visible != "true") {
@@ -1713,13 +1755,29 @@ var OpManagerFactory = function () {
 
 				this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
-				if (workSpace.active == "true") {
-					activeWorkSpace=this.workSpaceInstances[workSpace.id];
+				if (public_workspace && public_workspace != '') {
+				    if (workSpace.id == public_workspace) {
+					  activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					  continue;
+					}
 				}
+                else {
+					if (workSpace.active == "true") {
+						activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					}
+				}	
 			}
 			
 			// set handler for workspace options button
-			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this));
+			Event.observe($('ws_operations_link'), 'click', function(e){
+				if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+					e.target.blur();
+					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
+				}
+				else {
+					OpManagerFactory.getInstance().showActiveWorkSpace();
+				}
+			}.bind(this));
 			
 			// Total information of the active workspace must be downloaded!
 			if (isDefaultWS=="true"){
@@ -1825,6 +1883,7 @@ var OpManagerFactory = function () {
 			} else {
 				UIUtils.repaintCatalogue=false;
 			}
+			UIUtils.resizeResourcesContainer();
 		}
 
 		OpManager.prototype.showLogs = function () {
@@ -1837,6 +1896,8 @@ var OpManagerFactory = function () {
 		OpManager.prototype.clearLogs = function () {
 			LogManagerFactory.getInstance().reset();
 			LayoutManagerFactory.getInstance().clearErrors();
+			LayoutManagerFactory.getInstance().resizeTabBar();
+			this.showActiveWorkSpace();
 		}
 
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
@@ -2171,6 +2232,7 @@ function Variable (id, iGadget, name, varManager) {
 	this.id = null;
 	this.iGadget = null;
 	this.name = null;
+	this.label = null;
 	this.aspect = null;
 	this.value = null;
 }
@@ -2179,11 +2241,12 @@ function Variable (id, iGadget, name, varManager) {
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
  
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_) {
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-        this.name = name_;
+    this.name = name_;
+    this.label = label_;
 	this.aspect = aspect_;
 	this.value = value_;
 }
@@ -2230,8 +2293,8 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
   
 	this.handler = null;
 }
@@ -2337,8 +2400,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
 }
 
 //////////////////////////////////////////////
@@ -2483,20 +2546,21 @@ function VarManager (_workSpace) {
 			var id = igadgetVars[i].id;
 			var igadgetId = igadgetVars[i].igadgetId;
 			var name = igadgetVars[i].name;
+			var label = igadgetVars[i].label;
 			var aspect = igadgetVars[i].aspect;
 			var value = igadgetVars[i].value;
 				
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 			}
@@ -4998,7 +5062,7 @@ FreeLayout.prototype.raise = function(iGadget) {
 /**
  * Creates an instance of a Gadget.
  *
- * @author √Ålvaro Arranz
+ * @author ¡lvaro Arranz
  *
  * @class Represents an instance of a Gadget.
  *
@@ -5079,7 +5143,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.build();
 	layout.addIGadget(this, true);
 
-	this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
+	this.menu_color = menu_color ? menu_color : "FFFFFF";
+	//this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 }
 
 /**
@@ -5246,10 +5311,10 @@ IGadget.prototype.toggleTransparency = function() {
 		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 	}
-	
+
 	this.element.toggleClassName("gadget_window_transparent");
 	this.transparency = !this.transparency;
-	
+
 	//Persist the new state
 	var o = new Object;
 	o.transparency = this.transparency;
@@ -5389,53 +5454,6 @@ IGadget.prototype.build = function() {
 	button.setAttribute("alt", gettext("Close"));
 	this.gadgetMenu.appendChild(button);
 
-	// iGadget's menu
-	var idMenu = 'igadget_menu_' + this.id;
-	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
-	new Insertion.After($('menu_layer'), menuHTML);
-	this.menu = new DropDownMenu(idMenu);
-
-	var idColorMenu = 'igadget_color_menu_' + this.id;
-	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
-
-	// Settings
-	this.menu.addOption("/ezweb/images/igadget/settings.png",
-	                    gettext("Preferences"),
-	                    function() {
-	                        this.toggleConfigurationVisible();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    0);
-
-	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
-	                                           gettext("Menu Bar Color..."),
-	                                           function(e) {
-	                                               var menuEntry = $(this.menuColorEntryId);
-	                                               if (menuEntry.getBoundingClientRect != undefined) {
-	                                                   var y = menuEntry.getBoundingClientRect().top;
-	                                               } else {
-	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
-	                                                           document.getBoxObjectFor(document.documentElement).screenY;
-	                                               }
-	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-	                                                   this.colorMenu,
-	                                                   Event.pointerX(e),
-	                                                   y + (menuEntry.offsetHeight/2));
-	                                           }.bind(this),
-	                                           1);
-
-	this.menu.addOption("/ezweb/images/igadget/transparency.png",
-	                    gettext("Transparency"),
-	                    function() {
-	                        this.toggleTransparency();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    2);
-
-	// Extract/Snap from/to grid option (see _updateExtractOption)
-	this.extractOptionOrder = 2;
-	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
-
 	// iGadget's menu button
 	button = document.createElement("input");
 	button.setAttribute("type", "button");
@@ -5560,6 +5578,20 @@ IGadget.prototype.build = function() {
 	this.statusBar.appendChild(resizeHandle);
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
+	// wikilink
+	this.wikilink = document.createElement('div');
+	this.wikilink.setAttribute ('class', 'dragboardwiki');
+	var awikilink = document.createElement('a');
+	awikilink.href=this.gadget.getUriWiki();
+	awikilink.setAttribute ('target', '_blank');
+	awikilink.setAttribute ('class', 'dragboardwikilink');
+	var imgwikilink = document.createElement('img');
+	imgwikilink.src = '/ezweb/images/wiki_dragboard.png'
+	imgwikilink.setAttribute('title', 'Access to Information');
+	awikilink.appendChild(imgwikilink);
+	this.wikilink.appendChild(awikilink);
+	this.statusBar.appendChild(this.wikilink);
+
 	// extract/snap button
 	this.extractButton = document.createElement("div");
 	this.extractButton.observe("click",
@@ -5568,6 +5600,7 @@ IGadget.prototype.build = function() {
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
+	
 }
 
 /**
@@ -5578,6 +5611,53 @@ IGadget.prototype.paint = function() {
 		return; // Do nothing if the iGadget is already painted
 
 	this.visible = true;
+
+	// Initialize iGadget's preferences menu
+	var idMenu = 'igadget_menu_' + this.id;
+	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
+	new Insertion.After($('menu_layer'), menuHTML);
+	this.menu = new DropDownMenu(idMenu);
+
+	var idColorMenu = 'igadget_color_menu_' + this.id;
+	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
+
+	// Settings
+	this.menu.addOption("/ezweb/images/igadget/settings.png",
+	                    gettext("Preferences"),
+	                    function() {
+	                        this.toggleConfigurationVisible();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    0);
+
+	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
+	                                           gettext("Menu Bar Color..."),
+	                                           function(e) {
+	                                               var menuEntry = $(this.menuColorEntryId);
+	                                               if (menuEntry.getBoundingClientRect != undefined) {
+	                                                   var y = menuEntry.getBoundingClientRect().top;
+	                                               } else {
+	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
+	                                                           document.getBoxObjectFor(document.documentElement).screenY;
+	                                               }
+	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+	                                                   this.colorMenu,
+	                                                   Event.pointerX(e),
+	                                                   y + (menuEntry.offsetHeight/2));
+	                                           }.bind(this),
+	                                           1);
+
+	this.menu.addOption("/ezweb/images/igadget/transparency.png",
+	                    gettext("Transparency"),
+	                    function() {
+	                        this.toggleTransparency();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    2);
+
+	// Extract/Snap from/to grid option (see _updateExtractOption)
+	this.extractOptionOrder = 2;
+	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
@@ -6617,7 +6697,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 }
 
 function IGadgetColorManager () {
-	this.colors = ["FFFFFF", "A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+	this.colors = ["FFFFFF", "EFEFEF", "DDDDDD", "97A0A8", "FF9999", "FF3333","FFD4AA", "FFD42A", "FFFFCC", "FFFF66", "CCFFCC", "A8D914", "D4E6FC", "CCCCFF", "349EE8", "FFCCFF", "FF99FF"];
 }
 
 IGadgetColorManager.prototype.autogenColor = function(color, seed) {
@@ -6985,6 +7065,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
 
 		iGadget.save();
+	}
+	
+	Dragboard.prototype.getNumberOfIGadgets = function () {
+		return this.iGadgets.keys().length;
 	}
 
 	Dragboard.prototype.removeInstance = function (iGadgetId) {
@@ -7468,6 +7552,9 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 		setTimeout(function() {
 			tabElement.removeClassName("selected");
 		}, 500);
+		
+		//var fadder = new BackgroundFadder(tabElement, "#F0E68C", ((tabElement.hasClassName("current"))?"#E0E0E0":"#97A0A8"), 1000);
+		//fadder.fade();
 
 		context.selectedTab = null;
 		context.selectedTabElement = null;
@@ -8408,6 +8495,11 @@ wEvent.prototype.getQualifiedName = function () {
   return "event_" + this.variable.id;
 }
 
+wEvent.prototype.getLabel = function () {
+  return this.variable.label;	
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -8507,6 +8599,10 @@ wSlot.prototype.propagate = function(newValue, initial) {
 
 wSlot.prototype.getQualifiedName = function () {
   return "slot_" + this.variable.id;
+}
+
+wSlot.prototype.getLabel = function () {
+  return this.variable.label;	
 }
 
 wSlot.prototype.refresh = function() {
@@ -9685,17 +9781,25 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
     var fcList = this.friend_codes[friend_code].list;
     var fcColor = this.friend_codes[friend_code].color;
-    var fcBgColor = "";
-
-    for (var i = 0; i < fcList.length; i++) {
-      if (fcElement = fcList[i]) {
-        if (highlight) {
-          fcElement.style.backgroundColor = fcColor;
-        } else {
-          fcElement.style.backgroundColor = fcBgColor;
+    var fcBgColor = "#F7F7F7";
+    var fcElement = null;
+    
+    try {
+        this.friend_codes[friend_code].fadder.reset();
+    } catch(e){}
+    
+    if (highlight) {
+        for (var i = 0; i < fcList.length; i++) {
+            if (fcElement = fcList[i]) {
+                  fcElement.style.backgroundColor = fcColor;
+            }
         }
-      }
     }
+    else {
+        if (!this.friend_codes[friend_code].fadder) 
+       	    this.friend_codes[friend_code].fadder = new BackgroundFadder(fcList, fcColor, fcBgColor, (fcList.length > 1)?1700:0, 300);
+        this.friend_codes[friend_code].fadder.fade();
+     }
   }
 
   /*Uncheck channel*/
@@ -10226,6 +10330,41 @@ ChannelInterface.prototype.disconnectOutput = function(connectable) {
   }
   this.outputs.remove(connectable);
 }
+
+
+function DisplayHelpWiringHeader (element, event)
+{
+	Event.stop(event);
+	var divout = document.createElement('div');
+	divout.setAttribute ('id', 'help_background');
+	divout.style.cssText = "top:0;bottom:0;right:0;left:0;position:absolute;z-index:3001;"
+	divout.observe('click', function (e){
+		Event.stop(e);
+		this.parentNode.removeChild(this);
+	});
+	// Sets the help style
+	var helpOpElement = document.createElement('div');
+	helpOpElement.addClassName ('helpwiringheader');
+	helpOpElement.style.padding = '5px';
+	helpOpElement.style.position = 'absolute';
+	helpOpElement.style.top = Event.pointerY(event)+'px';
+	divout.appendChild(helpOpElement)
+	document.body.appendChild (divout);
+	
+	if (element.name=='event'){
+		helpOpElement.style.left = Event.pointerX(event)+'px';
+		helpOpElement.innerHTML = gettext('Lists of gadgets with events.\nThis events produces a value\nwhich will be received by\nother gadgets as slots.');
+	}
+	else if (element.name=='channels'){
+		helpOpElement.style.left = Event.pointerX(event)+'px';
+		helpOpElement.innerHTML = gettext('Channels allows you to manage\nthe connections between different\ninstantiated gadgets.');
+	}
+	else if (element.name=='slot'){
+		helpOpElement.innerHTML = gettext('Lists of gadgets with slots.\nThis slots receives values\nwhich are produced by\nother gadgets as events.');
+		helpOpElement.style.left = (Event.pointerX(event) - helpOpElement.offsetWidth) +'px';
+	}
+}
+
 /////////////////////////////////////////////////
 //     WRAPPER INTERFACE FOR CONNECTABLES      //
 /////////////////////////////////////////////////
@@ -10286,7 +10425,7 @@ ConnectableWrapperInterface.prototype.ConnectableWrapperInterface = function(wir
     			this.toggleOpenedByUser();
     			this.forceToggle();
     			if(this.wiringGUI.currentChannel)
-	    			this.wiringGUI.highlightChannelOutputs(this.wiringGUI.currentChannel);
+    				this.repaintSiblings(this.wiringGUI.currentChannel)
 				}
 			}.bind(this)
 		);
@@ -10390,6 +10529,10 @@ SlotTabInterface.prototype.show = function () {
 
 }
 
+SlotTabInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelOutputs(channel);
+	}
+
 // Event interface for the tab (without connectable)
 ////////////////////////////////////////////////////
 function EventTabInterface (tab, wiringGUI) {
@@ -10409,6 +10552,10 @@ EventTabInterface.prototype.show = function (){
     if(!this.wiringGUI.unfold_on_entering)
 	  	this.forceToggle();
 }
+
+EventTabInterface.prototype.repaintSiblings = function(channel){
+		this.wiringGUI.highlightChannelInputs(channel);
+	}
 
 ////////////////////////////////////////////////////////////
 //   SLOT AND EVENT INTERFACE FOR THE CHANNEL (WRAPPER)   //
@@ -10519,7 +10666,7 @@ function ConnectableInterface (wiringGUI, parentInterface, headerText) {
 				((connectable instanceof wInOut) && (this instanceof SlotChannelInterface))  ||
 				((connectable instanceof wInOut) && (this instanceof EventChannelInterface))){
 				var htmlElement = document.createElement("div");
-				htmlElement.appendChild(document.createTextNode(connectable.getName()));
+				htmlElement.appendChild(document.createTextNode(connectable.getLabel()));
 			
 				var chkItem = document.createElement("div");
 				chkItem.addClassName("unchkItem");
@@ -10724,10 +10871,7 @@ function EventChannelInterface (channel, wiringGUI, parentInterface) {
 }
 EventChannelInterface.prototype = new ConnectableInterface;
 	
-	
-
-
-function UIUtils()
+	function UIUtils()
 {
 	// *********************************
 	//           STATIC CLASS
@@ -10747,7 +10891,7 @@ UIUtils.infoResourcesWidth = 400;
 UIUtils.isInfoResourcesOpen = false;
 UIUtils.page = 1;
 UIUtils.off = 10;
-UIUtils.orderby = '-creation_date';
+UIUtils.orderby = '-popularity';
 UIUtils.num_items = 0;
 UIUtils.search = false;
 UIUtils.searchValue = [];
@@ -10987,8 +11131,14 @@ UIUtils.simpleSearch = function(url, criteria) {
 	UIUtils.searchValue[0] = UIUtils.filterString(UIUtils.searchValue[0]);
 
 	if (UIUtils.searchValue[0] == ""){
-		$('header_always_error').style.display="block";
-		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
+//		$('header_always_error').style.display="block";
+//		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
+		$('header_always_error').style.display = 'none';
+		UIUtils.page = 1;
+		UIUtils.off = 10;
+		UIUtils.search = false;
+		UIUtils.searchCriteria = '';
+		CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 	}
 	else{
 		$('header_always_error').style.display = 'none';
@@ -10997,6 +11147,14 @@ UIUtils.simpleSearch = function(url, criteria) {
 		UIUtils.searchCriteria = criteria;
 		CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 	}
+}
+UIUtils.viewAll = function (url, criteria){
+	$('header_always_error').style.display = 'none';
+	UIUtils.page = 1;
+	UIUtils.off = 10;
+	UIUtils.search = false;
+	UIUtils.searchCriteria = '';
+	CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 }
 
 UIUtils.globalSearch = function(url) {
@@ -11386,13 +11544,13 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 }
 
 UIUtils.setResourcesWidth = function() {
-	var tab = $('tab_info_resource');
+	//var tab = $('tab_info_resource');
 	var head = $('head');
 	var resources = $('resources');
 	var center = $('center');
 	if (center){
 		center.style.width = head.offsetWidth + 'px';
-		resources.style.width = (center.offsetWidth - (tab.offsetWidth + (UIUtils.isInfoResourcesOpen?UIUtils.infoResourcesWidth:0))) + 'px';
+		resources.style.width = (center.offsetWidth - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth+20):0)) + 'px';
 	}
 }
 
@@ -11414,6 +11572,7 @@ UIUtils.closeInfoResource = function() {
 }
 
 UIUtils.SlideInfoResourceIntoView = function(element) {
+  $('resources_container').style.display = 'block'
   $(element).style.width = '0px';
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
@@ -11426,16 +11585,19 @@ UIUtils.SlideInfoResourceIntoView = function(element) {
       scaleMode: 'contents',
       scaleFrom: 0,
       afterUpdate: function(effect){},
-	  afterFinish: function(effect)
-        {UIUtils.show('tab_info_resource_close'); }
+      afterFinish: function(effect){
+         UIUtils.show('close_info_resource');/*UIUtils.show('tab_info_resource_close');*/
+         UIUtils.resizeResourcesContainer();
+      }
     })
   );
-	if (UIUtils.selectedResource != null) {
-		 UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
-	}
+  if (UIUtils.selectedResource != null) {
+     UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
+  }
 }
 
 UIUtils.SlideInfoResourceOutOfView = function(element) {
+  UIUtils.hidde('close_info_resource');
   UIUtils.selectedResource= null;
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
@@ -11445,8 +11607,12 @@ UIUtils.SlideInfoResourceOutOfView = function(element) {
       scaleContent: false,
       scaleY: false,
       afterUpdate: function(effect){},
-      afterFinish: function(effect)
-        { Element.hide(effect.element); UIUtils.setResourcesWidth(); UIUtils.hidde('tab_info_resource_close'); }
+      afterFinish: function(effect) {
+         Element.hide(effect.element);
+         UIUtils.setResourcesWidth();
+         $('resources_container').style.display = 'none';/*UIUtils.hidde('tab_info_resource_close');*/
+         UIUtils.resizeResourcesContainer();
+      }
     })
   );
 }
@@ -11478,6 +11644,7 @@ UIUtils.restoreSlide = function() {
 	        }
 	    }
     }
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvanced = function(element,container) {
@@ -11492,7 +11659,11 @@ UIUtils.SlideAdvanced = function(element,container) {
             for(i=0;i<nodeList.length;i++){
                 if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!=element && nodeList.item(i).id!='header_always'){
                     if(Element.visible(nodeList.item(i))==true){
-                        Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2}});
+                        Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
                         aux = nodeList.item(i).id.split("_");
                         switch (aux[1].toLowerCase()) {
 			            	case "tag":
@@ -11500,6 +11671,9 @@ UIUtils.SlideAdvanced = function(element,container) {
 			            		break;
 			            	case "search":
 			            		tab = gettext("Advanced Search");
+			            		break;
+			            	case "develop":
+			            		tab = gettext("Development Options");
 			            		break;
 			            	default:
 			            		break;
@@ -11510,7 +11684,11 @@ UIUtils.SlideAdvanced = function(element,container) {
                     }
                 }
             }
-            Effect.BlindDown(element,{queue:{position:'end',scope:'menuScope',limit:2}});
+            Effect.BlindDown(element, { queue:{ position:'end', scope:'menuScope', limit:2 },
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
             aux = element.split("_");
             switch (aux[1].toLowerCase()) {
             	case "tag":
@@ -11519,6 +11697,9 @@ UIUtils.SlideAdvanced = function(element,container) {
             	case "search":
             		tab = gettext("Simple Search");
             		break;
+		case "develop":
+			tab = gettext("Hide Development Options");
+			break;
             	default:
             		break;
             }
@@ -11527,7 +11708,11 @@ UIUtils.SlideAdvanced = function(element,container) {
 			if(element=="advanced_tag"){UIUtils.activateTagMode();}
        }
        else {
-       		Effect.BlindUp(element,{queue:{position:'end',scope:'menuScope',limit:2}});
+       		Effect.BlindUp(element,{queue:{position:'end',scope:'menuScope',limit:2},
+					afterFinish: function() {
+						UIUtils.resizeResourcesContainer();
+					}
+				});
             aux = element.split("_");
             switch (aux[1].toLowerCase()) {
             	case "tag":
@@ -11535,6 +11720,9 @@ UIUtils.SlideAdvanced = function(element,container) {
             		break;
             	case "search":
             		tab = gettext('Advanced Search');
+            		break;
+            	case "develop":
+            		tab = gettext('Development Options');
             		break;
             	default:
             		break;
@@ -11602,6 +11790,7 @@ UIUtils.SlideAdvanced2 = function(element) {
 				}
 			});
 	}
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvancedSearchIntoView = function(element) {
@@ -11636,6 +11825,8 @@ UIUtils.SlideAdvancedSearchIntoView = function(element) {
 	}
     }, arguments[1] || {})
   );
+
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvancedSearchOutOfView = function(element) {
@@ -11668,6 +11859,7 @@ UIUtils.SlideAdvancedSearchOutOfView = function(element) {
 	}
    }, arguments[1] || {})
   );
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.activateTagMode = function() {
@@ -11676,6 +11868,7 @@ UIUtils.activateTagMode = function() {
 	UIUtils.closeInfoResource();
 	$("global_tagcloud").innerHTML = '';
 	$("my_global_tags").childNodes[0].style.display="none";
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.deactivateTagMode = function() {
@@ -11686,6 +11879,7 @@ UIUtils.deactivateTagMode = function() {
 		UIUtils.deselectResource(selectedResources[i]);
 	}
 	CatalogueFactory.getInstance().clearSelectedResources();
+    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.clickOnResource = function(id_) {
@@ -11877,6 +12071,12 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
     PersistenceEngineFactory.getInstance().send_update(resourceURI, data, this, onSuccess, onError);
 }
 
+UIUtils.resizeResourcesContainer = function (){
+	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 28;
+	document.getElementById('resources_container').style.height = height +'px';
+	document.getElementById('resources').style.height = height+'px';
+}
+
 var CatalogueFactory  = function () {
 
 	// *********************************
@@ -11921,7 +12121,7 @@ var CatalogueFactory  = function () {
 			    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 			    
 			    UIUtils.setResourcesWidth();
-				
+			    UIUtils.resizeResourcesContainer();
 			    $('simple_search_text').focus();
 			}
 			
@@ -12230,10 +12430,11 @@ var CatalogueFactory  = function () {
 			this.emptyResourceList();
 			this.loadCatalogue(url);
 		}
-
+		
 		this.show = function(){
-			LayoutManagerFactory.getInstance().showCatalogue();
-		}
+            LayoutManagerFactory.getInstance().showCatalogue();
+            UIUtils.setResourcesWidth();               
+        }
 
 		this.hide = function(){
 			LayoutManagerFactory.getInstance().hideView(this.catalogueElement);
@@ -12289,7 +12490,8 @@ var CatalogueFactory  = function () {
 
 			       function() { 
 				   var xmldom = new ActiveXObject('Microsoft.XMLDOM'); 
-				   xmldom.loadXML(transport.responseText); 											return xmldom; 
+				   xmldom.loadXML(transport.responseText);
+					return xmldom; 
 			       }
   			  );
 
@@ -12298,7 +12500,7 @@ var CatalogueFactory  = function () {
 			  var jsonResourceList = eval ('(' + responseJSON + ')');
 			  jsonResourceList = jsonResourceList.resourceList;
 
-                          for (var i = 0; i<jsonResourceList.length; i++) { 
+              for (var i = 0; i<jsonResourceList.length; i++) { 
                              // It's a contratable gadget 
 			     if (this.isContratableResource(jsonResourceList[i])) {
 			     	//It's a contratable gadget!
@@ -12326,16 +12528,14 @@ var CatalogueFactory  = function () {
 			  this.orderby(items);
 			  $('global_tagcloud').innerHTML = '';
 			  UIUtils.repaintCatalogue=false;
+			  UIUtils.resizeResourcesContainer();
 			}
-
-			var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
+			if (UIUtils.searchValue != "")
+				var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
+			else
+				var param = {orderby: UIUtils.orderby, search_boolean:$("global_search_boolean").value}	
 
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
-
-			$('header_always_status').innerHTML = "";
-			$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-				innerHTML: urlCatalogue_
-			})));
 
 			var text = "";
 			switch(UIUtils.searchCriteria){
@@ -12373,12 +12573,6 @@ var CatalogueFactory  = function () {
 				case "global":
 					text = gettext('Global Search') + ': ';
 					break;
-			}
-			if (text != "") {
-				$('header_always_status').innerHTML = "";
-				$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-					innerHTML: text
-				})));
 			}
 			var searching='';
 			switch(UIUtils.searchCriteria){
@@ -12580,15 +12774,8 @@ var CatalogueFactory  = function () {
 			var auxiliar = urlCatalogue_.toString().split("/");
 			for (var i=0;i<auxiliar.length;i++){
 				if (auxiliar[i] == 'resource') {
-					$('header_always_status').innerHTML = "";
-					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-						innerHTML: gettext('Full Catalogue')
-					})));
 					break;
 				} else if (auxiliar[i] == 'search' || auxiliar[i]=='globalsearch') {
-					$('header_always_status').appendChild(UIUtils.createHTMLElement("span", $H({
-						innerHTML: searching
-					})));
 					var reload_link = UIUtils.createHTMLElement("a", $H({
 						innerHTML: gettext("Reload")
 					}));
@@ -12596,7 +12783,6 @@ var CatalogueFactory  = function () {
 						CatalogueFactory.getInstance().emptyResourceList();
 						CatalogueFactory.getInstance().loadCatalogue(urlCatalogue_);
 					});
-					$('header_always_status').appendChild(reload_link);
 					break;
 				}
 			}
@@ -12610,8 +12796,7 @@ var CatalogueFactory  = function () {
 				CatalogueFactory.getInstance().reloadCompleteCatalogue();
 				$('header_always_error').style.display = 'none';
 			});
-			$('header_always_status').appendChild(reload_catalogue_link);
-			
+		
 			// Get Resources from PersistenceEngine. Asyncrhonous call!
 			persistenceEngine.send_get(urlCatalogue_, this, loadResources, onError, param);
 		}
@@ -12959,7 +13144,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
         }));
 		toolbar.appendChild(content_toolbar);
 		var wiki = UIUtils.createHTMLElement("a", $H({
-            title: gettext ('Access to the wiki'),
+		        title: gettext ('Show More'),
 			target: '_blank',
 			href: state.getUriWiki()
         }));
@@ -12975,23 +13160,6 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			this.src = '/ezweb/images/wiki_gray.png';
 		});
 		wiki.appendChild(wiki_img);
-		var template = UIUtils.createHTMLElement("a", $H({
-            title: gettext ('Show template'),
-			target: '_blank',
-			href: state.getUriTemplate()
-        }));
-		content_toolbar.appendChild(template);
-		var template_img = UIUtils.createHTMLElement("img", $H({
-            id: id_ + '_template_img',
-			src: '/ezweb/images/template_gray.png'
-        }));
-		template_img.observe("mouseover", function(event){
-			this.src = '/ezweb/images/template.png';
-		});
-		template_img.observe("mouseout", function(event){
-			this.src = '/ezweb/images/template_gray.png';
-		});
-		template.appendChild(template_img);
 		if (state.getAddedBy() == 'Yes') {
 			var deleteResource = UIUtils.createHTMLElement("a", $H({
 				title: gettext('Delete')
@@ -13165,7 +13333,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Vote Me... ')
 		})));
 		rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			id: 'ratingSaved',
+			d: 'ratingSaved',
 			innerHTML: gettext('Vote Saved ')
 		})));
 		var rate_me = UIUtils.createHTMLElement("span", $H({ 
@@ -13245,6 +13413,115 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			src: state.getUriImage(),
 			alt: state.getName()+ ' ' + state.getVersion()
 		})));
+		// tag cloud
+		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'tagcloud'
+		}));
+		fieldset.appendChild(tagcloud);
+		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('Tagcloud') + ':'
+		})));
+		var tag_links = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'link',
+			id: 'view_tags_links'
+		}));
+		tagcloud.appendChild(tag_links);
+		tag_links.appendChild(UIUtils.createHTMLElement("span", $H({ 
+			innerHTML: gettext('All tags')
+		})));
+		var my_tags = UIUtils.createHTMLElement("a", $H({ 
+			innerHTML: gettext('My tags')
+		}));
+		my_tags.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
+		});
+		tag_links.appendChild(my_tags);
+		var others_tags = UIUtils.createHTMLElement("a", $H({ 
+			innerHTML: gettext('Others tags')
+		}));
+		others_tags.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
+		});
+		tag_links.appendChild(others_tags);
+		var tags = UIUtils.createHTMLElement("div", $H({ 
+			class_name: 'tags',
+			id: id_ + '_tagcloud'
+		}));
+		tagcloud.appendChild(tags);
+		_tagsToTagcloud(tags, 'description');
+		var add_tags_panel = UIUtils.createHTMLElement("div", $H({
+			id: 'add_tags_panel',
+			class_name: 'new_tags',
+			style: 'display:none;'
+		}));
+		fieldset.appendChild(add_tags_panel);
+		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
+			class_name: 'title',
+			innerHTML: gettext('New tags')
+		})));
+		my_tags = UIUtils.createHTMLElement("div", $H({
+			id: 'my_tags',
+			class_name: 'my_tags'
+		}));
+		add_tags_panel.appendChild(my_tags);
+		var new_tag_text = UIUtils.createHTMLElement("div", $H({
+			id: "new_tag_text",
+			class_name: "new_tag_text"
+		}));
+		my_tags.appendChild(new_tag_text);
+		my_tags.appendChild (new_tag_text);	
+		var new_tag_text_input = UIUtils.createHTMLElement("input", $H({
+			id: 'new_tag_text_input',
+			type: 'text',
+			maxlength: '20'
+		}));
+		new_tag_text_input.observe("keyup", function(event){
+			UIUtils.enlargeInput(this);
+		});
+		new_tag_text_input.observe("keypress", function(event){
+			UIUtils.onReturn(event,UIUtils.sendTags,this);
+		});
+		new_tag_text.appendChild(new_tag_text_input);
+		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
+			id: 'tag_alert',
+			class_name: 'message_error'
+		})));
+		var buttons = UIUtils.createHTMLElement("div", $H({
+			class_name: 'buttons'
+		}));
+		add_tags_panel.appendChild(buttons);
+		var link_tag = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			innerHTML: gettext('Tag')
+		}));
+		link_tag.observe("click", function(event){
+			UIUtils.sendTags();
+		});
+		buttons.appendChild(link_tag);
+//		var link_delete = UIUtils.createHTMLElement("a", $H({
+//			class_name: 'submit_link',
+//			innerHTML: gettext('Delete all')
+//		}));
+//		link_delete.observe("click", function(event){
+//			UIUtils.removeAllTags();
+//		});
+//		buttons.appendChild(link_delete);
+		var add_tags_link = UIUtils.createHTMLElement("div", $H({
+			id: 'add_tags_link',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		fieldset.appendChild(add_tags_link);
+		var add_tags_submit_link = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			innerHTML: gettext('Tag the resource')
+		}));
+		add_tags_submit_link.observe("click", function(event){
+			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
+		});
+		add_tags_link.appendChild(add_tags_submit_link);
+
+		// Description
 		var description = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'description'
 		}));
@@ -13252,10 +13529,26 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		description.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			innerHTML: gettext('Description') + ':'
 		})));
+		var access_wiki_link = UIUtils.createHTMLElement("div", $H({
+			id: 'access_wiki_link',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		var access_wiki_submit_link = UIUtils.createHTMLElement("a", $H({
+			class_name: 'submit_link',
+			href: state.getUriWiki(),
+			target: '_blank',
+			innerHTML: gettext('Show More...'),
+			style: 'display:block'
+		}));
+		access_wiki_link.appendChild(access_wiki_submit_link);
 		description.appendChild(UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'text',
-			innerHTML: state.getDescription()
+			innerHTML: state.getDescription() + access_wiki_link.innerHTML
 		})));
+
+
+		// Connectivity
 		var connect = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'connect'
 		}));
@@ -13264,7 +13557,9 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Resource connectivity') + ':'
 		})));
 		var connect_text = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'text'
+			id:'events_slots',
+			class_name: 'text',
+			style: 'display:none'
 		}));
 		connect.appendChild(connect_text);
 		var events = UIUtils.createHTMLElement("div", $H({ 
@@ -13324,6 +13619,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				style: 'text-align:right;'
 			}));
 			fieldset.appendChild(search_events_slots_div);
+
 			var search_events_slots_link = UIUtils.createHTMLElement("a", $H({
 				id: 'search_events_slots_link',
 				class_name: 'submit_link',
@@ -13334,6 +13630,31 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			});
 			search_events_slots_div.appendChild(search_events_slots_link);
 		}
+		var search_advanced_events_slots_div = UIUtils.createHTMLElement("div", $H({
+			id: 'search_advanced_events_slots_div',
+			class_name: 'link',
+			style: 'text-align:right;'
+		}));
+		fieldset.appendChild(search_advanced_events_slots_div)
+		var search_advanced_event_slot_link = UIUtils.createHTMLElement ("a", $H({
+			id: 'search_advanced_events_slots_link',
+			class_name: 'submit_link',
+			innerHTML: gettext('Advanced Search by connectivity')
+		}));
+
+		search_advanced_event_slot_link.observe("click", function(event){
+			if (document.getElementById("events_slots").style.display == "block"){
+				document.getElementById("events_slots").style.display = "none";
+				document.getElementById("search_advanced_events_slots_link").innerHTML = gettext('Advanced Search by connectivity')
+			}
+			else{
+				document.getElementById("events_slots").style.display = "block";
+				document.getElementById("search_advanced_events_slots_link").innerHTML = gettext('Hide Advanced Search by connectivity')
+			}	
+		    });
+
+		search_advanced_events_slots_div.appendChild(search_advanced_event_slot_link);
+		// VERSIONS
 		var versions = UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'versions'
 		}));
@@ -13375,123 +13696,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showVersionPanel();
 		});
 		show_versions_div.appendChild(show_versions_link);
-		var tagcloud = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'tagcloud'
-		}));
-		fieldset.appendChild(tagcloud);
-		tagcloud.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('Tagcloud') + ':'
-		})));
-		var tag_links = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'link',
-			id: 'view_tags_links'
-		}));
-		tagcloud.appendChild(tag_links);
-		tag_links.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			innerHTML: gettext('All tags')
-		})));
-		var my_tags = UIUtils.createHTMLElement("a", $H({ 
-			innerHTML: gettext('My tags')
-		}));
-		my_tags.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
-		});
-		tag_links.appendChild(my_tags);
-		var others_tags = UIUtils.createHTMLElement("a", $H({ 
-			innerHTML: gettext('Others tags')
-		}));
-		others_tags.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
-		});
-		tag_links.appendChild(others_tags);
-		var tags = UIUtils.createHTMLElement("div", $H({ 
-			class_name: 'tags',
-			id: id_ + '_tagcloud'
-		}));
-		tagcloud.appendChild(tags);
-		_tagsToTagcloud(tags, 'description');
-		var add_tags_panel = UIUtils.createHTMLElement("div", $H({
-			id: 'add_tags_panel',
-			class_name: 'new_tags',
-			style: 'display:none;'
-		}));
-		fieldset.appendChild(add_tags_panel);
-		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
-			class_name: 'title',
-			innerHTML: gettext('New tags')
-		})));
-		my_tags = UIUtils.createHTMLElement("div", $H({
-			id: 'my_tags',
-			class_name: 'my_tags'
-		}));
-		add_tags_panel.appendChild(my_tags);
-		var new_tag_text = UIUtils.createHTMLElement("div", $H({
-			id: "new_tag_text",
-			class_name: "new_tag_text"
-		}));
-		my_tags.appendChild(new_tag_text);
-		var new_tag_text_input = UIUtils.createHTMLElement("input", $H({
-			id: 'new_tag_text_input',
-			type: 'text',
-			maxlength: '20'
-		}));
-		new_tag_text_input.observe("keyup", function(event){
-			UIUtils.enlargeInput(this);
-		});
-		new_tag_text_input.observe("keypress", function(event){
-			UIUtils.onReturn(event,UIUtils.addTag,this);
-		});
-		new_tag_text.appendChild(new_tag_text_input);
-		add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
-			id: 'tag_alert',
-			class_name: 'message_error'
-		})));
-		var buttons = UIUtils.createHTMLElement("div", $H({
-			class_name: 'buttons'
-		}));
-		add_tags_panel.appendChild(buttons);
-		var link_tag = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Tag')
-		}));
-		link_tag.observe("click", function(event){
-			UIUtils.sendTags();
-		});
-		buttons.appendChild(link_tag);
-		var link_delete = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Delete all')
-		}));
-		link_delete.observe("click", function(event){
-			UIUtils.removeAllTags();
-		});
-		buttons.appendChild(link_delete);
-		var add_tags_link = UIUtils.createHTMLElement("div", $H({
-			id: 'add_tags_link',
-			class_name: 'link',
-			style: 'text-align:right;'
-		}));
-		fieldset.appendChild(add_tags_link);
-		var add_tags_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Tag the resource')
-		}));
-		add_tags_submit_link.observe("click", function(event){
-			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
-		});
-		add_tags_link.appendChild(add_tags_submit_link);
-		var access_wiki_link = UIUtils.createHTMLElement("div", $H({
-			id: 'access_wiki_link',
-			class_name: 'link'
-		}));
-		fieldset.appendChild(access_wiki_link);
-		var access_wiki_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			href: state.getUriWiki(),
-			target: '_blank',
-			innerHTML: gettext('Access to the Wiki')
-		}));
-		access_wiki_link.appendChild(access_wiki_submit_link);
+
+
 		var access_template_link = UIUtils.createHTMLElement("div", $H({
 			id: 'access_template_link',
 			class_name: 'link'
@@ -14086,7 +14292,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	description = resourceJSON_.description;
 	uriImage = resourceJSON_.uriImage;
 	uriWiki = resourceJSON_.uriWiki;
-	mashupId = resourceJSON_.mashupId;
+	if (resourceJSON_.mashupId && resourceJSON_.mashupId!="")
+		mashupId = resourceJSON_.mashupId;
 	addedBy = resourceJSON_.added_by_user;
 	uriTemplate = resourceJSON_.uriTemplate;
 	this.setEvents(resourceJSON_.events);
@@ -14097,6 +14304,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	popularity = resourceJSON_.votes[0].popularity;	
 	capabilities = resourceJSON_.capabilities;
 }
+
 
 function Tagger(){
 	
@@ -14709,6 +14917,7 @@ function WindowMenu(){
 		
 		this.htmlElement.style.top = coordenates[1]+"px";
 		this.htmlElement.style.left = coordenates[0]+"px";
+		this.htmlElement.style.right = coordenates[0]+"px";
 	}
 
 	WindowMenu.prototype.setHandler = function (handler){
@@ -14878,6 +15087,25 @@ function MessageWindowMenu (element) {
 
 MessageWindowMenu.prototype = new WindowMenu;
 
+//Especific class for alert windows
+function InfoWindowMenu (element) {
+
+	//constructor
+	this.htmlElement = $('info_menu');		//create-window HTML element
+	this.titleElement = $('info_window_title');	//title gap
+	this.msgElement = $('info_window_msg');	//error message gap
+	this.title = gettext('Do you know what ... ?');
+
+	//hides the window and clears all the inputs
+	InfoWindowMenu.prototype.hide = function (){
+		this.msgElement.update();
+		this.stopObserving();
+		this.htmlElement.style.display = "none";		
+	}
+
+}
+
+InfoWindowMenu.prototype = new WindowMenu;
 
 //Especific class for publish windows
 function PublishWindowMenu (element) {
@@ -14889,15 +15117,34 @@ function PublishWindowMenu (element) {
 	this.button = $('publish_btn1');
 	this.title = gettext('Publish Workspace');
 	
+	this.not_valid_characters = ['/', '?', '&', ':']
+	
 	this.operationHandler = function(e){
-								if ($('publish_name').value!="" && $('publish_vendor').value!="" && $('publish_name').version!="" && $('publish_email').value!="") {
-									this.executeOperation();
-									LayoutManagerFactory.getInstance().hideCover();
-								}
-								else{
-									this.msgElement.update("All the required fields must be filled");
-								}
-							}.bind(this);
+		var publish_name = $('publish_name').value;
+		var publish_vendor = $('publish_vendor').value;
+		var publish_version = $('publish_version').value;
+		var publish_email = $('publish_email').value;
+		
+		if (publish_name.value!="" && publish_vendor!="" && publish_version!="" && publish_email!="") {
+			// Not empty input data!
+			// Now validating input data!
+			
+			for (var i=0; i<this.not_valid_characters.length; i++) {
+				var character = this.not_valid_characters[i];
+				
+				if (publish_name.indexOf(character) >= 0 || publish_vendor.indexOf(character) >= 0 || publish_version.indexOf(character) >= 0) {
+					this.msgElement.update("Not valid characters in: 'Mashup Name', 'Distributor' or 'Version'. Don't use [/, ?, &, :]");
+					return;
+				}
+			}
+			
+			this.executeOperation();
+			LayoutManagerFactory.getInstance().hideCover();
+		}
+		else{
+			this.msgElement.update("All the required fields must be filled");
+		}
+	}.bind(this);
 
 
 	PublishWindowMenu.prototype.initObserving = function(){	
@@ -14962,23 +15209,8 @@ var LayoutManagerFactory = function () {
 	var hideLevel = 1;
 	var showLevel = 2;
 
-	var hideStyle = {'zIndex': hideLevel, 'display': 'none'};
-	var showStyle = {'zIndex': showLevel, 'display': 'block'};
-
-	/*
-	 * Workaround for Firefox 2
-	 */
-	var firefox2workaround = Prototype.Browser.Gecko && navigator.userAgent.indexOf("2.0.0") != -1;
-	if (firefox2workaround) {
-		hideStyle['visibility'] = 'hidden';
-		delete hideStyle['display'];
-
-		showStyle['visibility'] = 'visible';
-		delete showStyle['display'];
-
-		document.styleSheets[0].insertRule(".container {display:block; visibility:hidden;}", document.styleSheets[0].cssRules.length);
-	}
-
+	var hideStyle = {'zIndex': hideLevel, 'height': 0};
+	var showStyle = {'zIndex': showLevel, 'display':'block'};
 
 	function LayoutManager () {
 		// *********************************
@@ -14993,6 +15225,7 @@ var LayoutManagerFactory = function () {
 		// Tabs are managed by WorkSpaces!! 
 		this.catalogueLink = $('catalogue_link');
 		this.wiringLink = $('wiring_link');
+		this.dragboardLink = $('dragboard_link');
 
 		// Container managed by LayOutManager: {showcase_tab}
 		// Remaining containers managed by WorkSpaces!!
@@ -15009,26 +15242,49 @@ var LayoutManagerFactory = function () {
 		//another which is absolutely positioned each time a slider button is clicked
 		this.tabBarStep = 20;
 		this.tabImgSize = 14;    // launcher width
-		this.extraGap = 15;      // 15px to ensure that a new character has enough room in the scroll bar
-		this.tabMarginRight = 6; // 6px
+		this.extraGap = 2;      // 15px to ensure that a new character has enough room in the scroll bar
+		this.tabMarginRight = 3; // 6px
 		this.rightSlider = $('right_slider');
 		this.leftSlider = $('left_slider');
 		this.leftTimeOut;
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
-		this.fixedTabBarMaxWidth = BrowserUtilsFactory.getInstance().getWidth()*0.70;
-
+		this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 100;
+		
 		//scroll bar
 		this.scrollTabBar = $('scroll_bar');
 		//initial width (there is always a launcher (of the current tab))
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 
 		this.menus = new Array();
-
+		
+		//information messages
+		this.informacionMessagesStatus = [false, false, false, false];
+		var cookies = document.cookie.split(/\s*;\s+/);
+		for (var i=0; i<cookies.length; i++) {
+			var cookie = cookies[i].split(/\s*=\s*/);
+			if(cookie[0] == "informationMessagesStatus") {
+				var value = eval("(" + decodeURIComponent(cookie[1]) + ")");
+				if (value instanceof Array)
+					this.informacionMessagesStatus = value;
+			}
+		}
+		
+		//Renew cookie
+		var oneYearLater = new Date((new Date()).getTime() + 31536000000);
+		document.cookie = "informationMessagesStatus" + "=" + 
+			encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
+			"; expires=" + oneYearLater.toGMTString();
+		
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
+		
+		LayoutManager.prototype.resizeTabBar = function () {
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 70;
+			this.changeTabBarSize(0);
+		}
 
 		LayoutManager.prototype._notifyPlatformReady = function (firstTime) {
 			var loadingElement = $("loading-indicator");
@@ -15075,6 +15331,7 @@ var LayoutManagerFactory = function () {
 
 			// Recalculate catalogue sizes
 			UIUtils.setResourcesWidth();
+			UIUtils.resizeResourcesContainer();
 
 			// Recalculate wiring position
 			var opManager = OpManagerFactory.getInstance();
@@ -15095,8 +15352,10 @@ var LayoutManagerFactory = function () {
 			if (this.currentMenu) {
 				this.currentMenu.calculatePosition();
 			}
+			
+			this.resizeTabBar();
 		}
-
+		
 		LayoutManager.prototype.unloadCurrentView = function () {
 			if (this.currentView) {
 				this.currentView.hide();
@@ -15109,12 +15368,18 @@ var LayoutManagerFactory = function () {
 				this.catalogueLink = $('catalogue_link');
 				this.logsLink = $('logs_link');
 				this.wiringLink = $('wiring_link');
+				this.dragboardLink = $('dragboard_link');
 			}
-
-			this.catalogueLink.className = 'toolbar_unmarked';
-			this.wiringLink.className = 'toolbar_unmarked';
-			this.logsLink.className = 'toolbar_unmarked';
-
+			
+			this.catalogueLink.removeClassName("toolbar_marked");
+			this.catalogueLink.addClassName("toolbar_unmarked");
+			this.wiringLink.removeClassName("toolbar_marked");
+			this.wiringLink.addClassName("toolbar_unmarked");
+			this.dragboardLink.removeClassName("toolbar_marked");
+			this.dragboardLink.addClassName("toolbar_unmarked");
+			this.logsLink.removeClassName("toolbar_marked");
+			this.logsLink.addClassName("toolbar_unmarked");
+			
 /*			this.hideShowCase();
 			this.hideLogs();
 */
@@ -15128,11 +15393,12 @@ var LayoutManagerFactory = function () {
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
 			this.logsLink.innerHTML = labelContent;
-			this.logsLink.setStyle({'display' : 'inline'});
+			this.logsLink.style.display = 'inline';
 		}
 		
 		LayoutManager.prototype.clearErrors = function (labelContent) {
 			this.logsLink.innerHTML = '';
+			this.logsLink.style.display = 'none';
 		}
 
 		// Tab operations
@@ -15183,7 +15449,32 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = dragboard;
 			this.currentViewType = 'dragboard';
+
+			this.dragboardLink.removeClassName("toolbar_unmarked");
+			this.dragboardLink.addClassName("toolbar_marked");
+			this.showTabs();
+			this.dragboardLink.blur();
+			$("ws_operations_link").blur();
+			$("ws_operations_link").removeClassName("hidden");
+			$("dragboard_link").title = "";
+
+			this.resizeContainer(this.currentView.dragboardElement);
+
 			dragboard.dragboardElement.setStyle(showStyle);
+			
+			LayoutManagerFactory.getInstance().resizeTabBar();
+			
+			if (dragboard.getNumberOfIGadgets() == 0) {
+				var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
+				var msg = gettext("In the Dragborad you can move and resize all your gadgets in order to perform and use your own application. Check the gadget preferences for further personalization %(settingsIcon)s. Go to the Catalogue to add more gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections among them %(wiringIcon)s. If you need more help visit the %(helpLink)s.");
+				msg = interpolate(msg,
+				                  {settingsIcon: "<img src='/ezweb/images/igadget/settings.png'/>",
+				                   catalogueIcon: "<img src='/ezweb/images/catalogue16px.png'/>",
+				                   wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				                   helpLink: videoTutorialMsg},
+				                  true);
+				this.showMessageInformation(msg, 2);
+			}
 		}
 
 		// Catalogue operations
@@ -15199,8 +15490,24 @@ var LayoutManagerFactory = function () {
 
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
-			this.catalogueLink.className = 'toolbar_marked';
+			
+			this.catalogueLink.removeClassName("toolbar_unmarked");
+			this.catalogueLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
+			this.catalogueLink.blur();
+			
+			this.resizeContainer(this.currentView.catalogueElement);
 			this.catalogue.catalogueElement.setStyle(showStyle);
+			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
+			var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
+			msg = interpolate(msg,
+				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
+				           wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				           helpLink: videoTutorialMsg},
+				          true);
+			this.showMessageInformation(msg, 0);
 		}
 
 		// Logs operations
@@ -15211,8 +15518,18 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = this.logs;
 			this.currentViewType = 'logs';
-			this.logsLink.className = "toolbar_marked";
+			
+			this.logsLink.removeClassName("toolbar_unmarked");
+			this.logsLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
+			this.logsLink.blur();
+			
+			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
+			
+			//this.showMessageInformation(gettext("Logs are shown in this section."), 3);
 		}
 
 		//Wiring operations
@@ -15223,11 +15540,37 @@ var LayoutManagerFactory = function () {
 			}
 			this.currentView = wiring;
 			this.currentViewType = 'wiring';
-			this.wiringLink.className = "toolbar_marked";
+			
+			this.wiringLink.removeClassName("toolbar_unmarked");
+			this.wiringLink.addClassName("toolbar_marked");
+			$("ws_operations_link").addClassName("hidden");
+			$("dragboard_link").title = gettext("Show active workspace");
+			this.hideTabs();
 			this.wiringLink.blur();
+
+			this.resizeContainer(this.currentView.wiringContainer);
+
 			wiring.wiringContainer.setStyle(showStyle);
-			//resizing the wiring table so that the scroll bar don't modify the table width.
+			//resizing the wiring table so that the scroll bar doesn't modify the table width.
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
+			
+			//if(wiring.channels.length == 0){
+			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
+			var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
+			msg = interpolate(msg,
+				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
+				           helpLink: videoTutorialMsg},
+				          true);
+			this.showMessageInformation(msg, 1);
+			//}
+		}
+		
+		LayoutManager.prototype.hideTabs = function() {
+			$("tab_section").addClassName("hidden");
+		}
+		
+		LayoutManager.prototype.showTabs = function() {
+			$("tab_section").removeClassName("hidden");
 		}
 
 		//the disabling layer can be clicable (in order to hide a menu) or not
@@ -15401,6 +15744,55 @@ var LayoutManagerFactory = function () {
 			}
 		}
 		
+		//Shows the background and on click the message on front disappear
+		LayoutManager.prototype.showTransparentBackground = function(){
+			this.coverLayerElement.addClassName('disabled_background');
+			this.coverLayerElement.style.display="block";
+
+			Event.observe( this.coverLayerElement, "click", this.coverLayerEvent);
+		}
+
+		//Shows the message information
+		LayoutManager.prototype.showMessageInformation = function(msg, type){
+			if (this.informacionMessagesStatus[type]) // Don't show me more 
+				return;
+				
+			$("info_window_checkbox").checked = false;
+			var handlerCheckbox = function(e) {
+				this.informacionMessagesStatus[type] = e.target.checked;
+				var oneYearLater = new Date((new Date()).getTime() + 31536000000);
+				document.cookie = "informationMessagesStatus=" + 
+					encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
+					"; expires=" + oneYearLater.toGMTString();
+				this.hideCover();
+				$("info_window_button").stopObserving("click", handlerClose);
+				e.target.stopObserving("click", handlerCheckbox);
+			}.bind(this);
+			
+			var handlerClose = function(e) {
+				this.hideCover();
+				$("info_window_checkbox").stopObserving("click", handlerCheckbox);
+				e.target.stopObserving("click", handlerClose);
+			}.bind(this);
+			
+			$("info_window_checkbox").observe("click", handlerCheckbox);
+			$("info_window_button").observe("click", handlerClose);
+			
+			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if(this.currentMenu != null){//only if the layer is displayed.
+				this.hideCover();
+			}
+			//this.showTransparentBackground();
+			this.showUnclickableCover();
+			
+			if(!this.menus['messageMenu']){
+				this.menus['messageMenu'] = new InfoWindowMenu(null);
+			}
+			this.currentMenu = this.menus['messageMenu'];
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.show();
+		}
+		
 		//Shows the message window menu
 		LayoutManager.prototype.showMessageMenu = function(msg){
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
@@ -15427,62 +15819,14 @@ var LayoutManagerFactory = function () {
 			this.coverLayerElement.removeClassName('disabled_background');
 		}
 		
-		var FADE_RED_INI = 240;
-		var FADE_GREEN_INI = 230;
-		var FADE_BLUE_INI = 140;
-		var FADE_RED_END_TAB = 151;
-		var FADE_GREEN_END_TAB = 160;
-		var FADE_BLUE_END_TAB = 168;
-		var FADE_RED_END_CUR_TAB = 224;
-		var FADE_GREEN_END_CUR_TAB = 224;
-		var FADE_BLUE_END_CUR_TAB = 224;
-		var FADE_HOLD = 500;
-		var FADE_SPEED = 200;
-		var FADE_STEP = 5;
-		var self = this;
+		LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
+		LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
+		LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
+
 		LayoutManager.prototype.goTab = function(tab, tabLauncher, renameHandler, changeHandler){
 			this.markTab(tab, tabLauncher, renameHandler, changeHandler);
-			var currentColour = [FADE_RED_INI, FADE_GREEN_INI, FADE_BLUE_INI];
-			tab.style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
-			setTimeout(function(){
-					var endColour = [FADE_RED_END_TAB, FADE_GREEN_END_TAB, FADE_BLUE_END_TAB];
-					if(tab.className == "tab current"){
-						endColour = [FADE_RED_END_CUR_TAB, FADE_GREEN_END_CUR_TAB, FADE_BLUE_END_CUR_TAB];	
-					}
-					self.fadeTab(tab.id, currentColour, endColour);
-				}, FADE_HOLD);
-		}
-		
-		LayoutManager.prototype.fadeTab = function(tabId, currentColour, endColour){
-			var element = document.getElementById(tabId);
-			if(!element){
-				return;
-			}
-			
-			if(currentColour[0]==endColour[0] && currentColour[1]==endColour[1] && currentColour[2] == endColour[2]){
-				element.style.background = "";
-				return;
-			}
-			
-			currentColour[0] = this.fadeColour(currentColour[0], endColour[0], FADE_STEP);
-			currentColour[1] = this.fadeColour(currentColour[1], endColour[1], FADE_STEP);
-			currentColour[2] = this.fadeColour(currentColour[2], endColour[2], FADE_STEP);
-			
-			element.style.background = "rgb(" + currentColour[0] + "," + currentColour[1] + "," + currentColour[2] + ")";
-			setTimeout(function(){self.fadeTab(tabId, currentColour, endColour);}, FADE_SPEED);
-		}
-		
-		LayoutManager.prototype.fadeColour = function(colour, obj, step){
-			if(colour > obj){
-				if(colour - step > obj){
-					return colour - step;
-				}
-			} else {
-				if(colour + step < obj){
-					return colour + step;
-				}
-			}
-			return obj;
+			var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
+			fadder.fade();
 		}
 		
 	}
@@ -15495,7 +15839,7 @@ var LayoutManagerFactory = function () {
 	LayoutManager.prototype.resetTabBar = function(tabId) {
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		//we don't need arrows
 		this.rightSlider.style.display = "none";
 		this.leftSlider.style.display = "none";
@@ -15524,10 +15868,9 @@ var LayoutManagerFactory = function () {
 	
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
-		
 		this.scrollTabBarWidth += tabSize;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
+		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			//we don't need arrows

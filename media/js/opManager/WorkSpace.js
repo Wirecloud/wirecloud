@@ -632,28 +632,28 @@ function WorkSpace (workSpaceState) {
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
 		//adding options to workspace menu
-		this.menu.addOption("/ezweb/images/rename.gif", "Rename", function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
+		this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
 							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
 		if (this.workSpaceGlobalInfo.workspace.active != "true") {
-			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", "Mark as Active", function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
+			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", gettext("Mark as Active"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
 		}
 		this.unlockEntryPos = optionPosition;
-		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
+		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
 		var res = this._checkLock();
 		optionPosition -= res;
 
-		this.menu.addOption("/ezweb/images/remove.png","Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
+		this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
-		this.menu.addOption("/ezweb/images/publish.png","Publish workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
 		
 		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
-			this.menu.addOption("/ezweb/images/merge.png","Merge with workspace...",function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
+			this.menu.addOption("/ezweb/images/merge.png", gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
 		}
 		
-		this.menu.addOption("/ezweb/images/publish.png","Share workspace",function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Share workspace"),function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
 		
-		this.menu.addOption("/ezweb/images/list-add.png","New workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
+		this.menu.addOption("/ezweb/images/list-add.png", gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
 	
 	this._lockFunc = function(locked) {
@@ -695,12 +695,12 @@ function WorkSpace (workSpaceState) {
 		}
 		
 		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
+			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
 		}
 		if((!all || !locked) && this.lockEntryId==null){
 			if(this.unlockEntryId)
 				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
+			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
 		}
 		return numRemoved;
 	}.bind(this);

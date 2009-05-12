@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-12 14:30+0200\n"
+"POT-Creation-Date: 2009-05-12 16:53+0200\n"
 "PO-Revision-Date: 2008-02-19 13:13+0100\n"
 "Last-Translator: manuel <(null)>\n"
 "Language-Team: Español/España\n"
@@ -392,7 +392,6 @@ msgid "Tokens"
 msgstr ""
 
 #: clms/models.py:113 clms/models.py:152
-#, fuzzy
 msgid "Image"
 msgstr "Imagen"
 
@@ -409,7 +408,6 @@ msgid "Select a layout template"
 msgstr ""
 
 #: clms/models.py:156
-#, fuzzy
 msgid "description"
 msgstr "Descripción"
 
@@ -984,7 +982,7 @@ msgstr "Búsqueda avanzada"
 
 #: ezweb/templates/showcase.html:10
 msgid "View All"
-msgstr ""
+msgstr "Ver todos"
 
 #: ezweb/templates/showcase.html:13
 msgid "Advanced Tagging"
@@ -1476,8 +1474,7 @@ msgstr "El entorno de trabajo no existe."
 #: workspace/views.py:555
 msgid ""
 "you are not the owner of the workspace! you can not share the workspace!"
-msgstr ""
-"¡tu no eres el dueño de el entorno de trabajo!"
+msgstr "¡tu no eres el dueño de el entorno de trabajo!"
 
 #: workspace/views.py:608
 msgid "mashup data expected"

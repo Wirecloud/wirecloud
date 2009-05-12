@@ -1256,7 +1256,7 @@ function Gadget(gadget_, url_) {
 	this.getTemplate = function() { return state.getTemplate(); }
 	this.getXHtml = function() { return state.getXHtml(); }
 	this.getInfoString = function() { return state.getInfoString(); }
-	
+	this.getUriWiki = function() { return state.getUriWiki();}
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
 	
@@ -1349,6 +1349,7 @@ function GadgetState(gadget_) {
 	var xhtml = null;
 	var image = null;
 	var capabilities = []; 
+	var uriwiki = null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -1359,6 +1360,7 @@ function GadgetState(gadget_) {
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
 	capabilities = gadget_.capabilities;
+	uriwiki = gadget_.wikiURI;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -1375,7 +1377,7 @@ function GadgetState(gadget_) {
 		var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
 		return interpolate(msg, transObj, true);
 	}
-	
+	this.getUriWiki = function () {return uriwiki;}
 	this.getImage = function() { return image; }
 	this.setImage = function(image_) { image = image_; }
 }
@@ -1601,7 +1603,15 @@ function WorkSpace (workSpaceState) {
 		var spanHTML = "<span>"+nameToShow+"</span>";
 		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){this.fillWithInput();}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){
+			if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+				this.fillWithInput();
+			}
+			else {
+				OpManagerFactory.getInstance().showActiveWorkSpace();
+			}
+		}.bind(this));
+		LayoutManagerFactory.getInstance().resizeTabBar();
     }
 
 
@@ -1911,6 +1921,23 @@ function WorkSpace (workSpaceState) {
 		return this.visibleTab.getDragboard();
 	}
 	
+	WorkSpace.prototype.shareWorkspace = function(value) {
+		var share_workspace_success = function (transport) {
+			var response = transport.responseText;
+			var result = eval ('(' + response + ')');
+			
+			alert('New workspace shared in ' + result['url'])
+		}
+		
+		var share_workspace_error = function (transport) {
+			alert('Error sharing workspace')
+		}
+		
+		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
+		
+		PersistenceEngineFactory.getInstance().send_update(url, {}, this, share_workspace_success, share_workspace_error);
+	}
+	
 	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
@@ -1964,24 +1991,28 @@ function WorkSpace (workSpaceState) {
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
 		//adding options to workspace menu
-		this.menu.addOption("/ezweb/images/rename.gif", "Rename", function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
+		this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
 							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
 		if (this.workSpaceGlobalInfo.workspace.active != "true") {
-			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", "Mark as Active", function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
+			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", gettext("Mark as Active"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
 		}
 		this.unlockEntryPos = optionPosition;
-		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
+		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
 		var res = this._checkLock();
 		optionPosition -= res;
 
-		this.menu.addOption("/ezweb/images/remove.png","Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
+		this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
 		//TODO:Intermediate window to ask for data (name, description...)
-		this.menu.addOption("/ezweb/images/publish.png","Publish workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+		
 		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
-			this.menu.addOption("/ezweb/images/merge.png","Merge with workspace...",function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
+			this.menu.addOption("/ezweb/images/merge.png", gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
 		}
-		this.menu.addOption("/ezweb/images/list-add.png","New workspace",function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
+		
+		this.menu.addOption("/ezweb/images/publish.png", gettext("Share workspace"),function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
+		
+		this.menu.addOption("/ezweb/images/list-add.png", gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
 	
 	this._lockFunc = function(locked) {
@@ -1989,6 +2020,11 @@ function WorkSpace (workSpaceState) {
 		for (var i = 0; i < keys.length; i++) {
 			this.tabInstances[keys[i]]._lockFunc(locked);
 		}
+	}.bind(this);
+	
+	// Share current workspace to the rest of users
+	this._shareWorkspace = function() {
+		this.shareWorkspace(true);
 	}.bind(this);
 	
 	this._checkLock = function() {
@@ -2018,12 +2054,12 @@ function WorkSpace (workSpaceState) {
 		}
 		
 		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
+			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), this.unlockEntryPos);
 		}
 		if((!all || !locked) && this.lockEntryId==null){
 			if(this.unlockEntryId)
 				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
+			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), position);	
 		}
 		return numRemoved;
 	}.bind(this);
@@ -2305,23 +2341,28 @@ function Tab (tabInfo, workSpace) {
 	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
-	this.menu.addOption("/ezweb/images/rename.gif", "Rename", function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
-								LayoutManagerFactory.getInstance().hideCover();},0);
+	this.menu.addOption("/ezweb/images/rename.gif",
+	                    gettext("Rename"),
+			    function() {
+			        OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
+				LayoutManagerFactory.getInstance().hideCover();
+	                    },
+			    0);
 
 	this._lockFunc = function(locked) {
 		if (locked) {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
+			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
 		} else {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this));	
+			this.menu.updateOption(this.lockEntryId, "/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this));	
 		}
 		this.dragboard.setLock(locked);
 		this.workSpace._checkLock();
 	}.bind(this);
 
 	if (this.dragboard.isLocked()) {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", "Unlock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
 	} else {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", "Lock", function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
 	}
 	
 	this.markAsVisibleSuccess = function() {
@@ -2330,7 +2371,7 @@ function Tab (tabInfo, workSpace) {
 			var tab = this.workSpace.tabInstances[tabIds[i]];
 			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
 				tab.firstVisible = false;
-				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", "First Visible", function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
+				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", gettext("First Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
 			}
 		}
 		this.firstVisible = true;
@@ -2378,7 +2419,7 @@ function Tab (tabInfo, workSpace) {
 	
 	this.addMarkAsVisible = function (){
 		this.firstVisible = false;
-		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", "Mark as Visible", function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
+		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", gettext("Mark as Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
 	}.bind(this);
 	
 	if (this.tabInfo.visible != "true") {
@@ -2419,13 +2460,29 @@ var OpManagerFactory = function () {
 
 				this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
-				if (workSpace.active == "true") {
-					activeWorkSpace=this.workSpaceInstances[workSpace.id];
+				if (public_workspace && public_workspace != '') {
+				    if (workSpace.id == public_workspace) {
+					  activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					  continue;
+					}
 				}
+                else {
+					if (workSpace.active == "true") {
+						activeWorkSpace=this.workSpaceInstances[workSpace.id];
+					}
+				}	
 			}
 			
 			// set handler for workspace options button
-			Event.observe($('ws_operations_link'), 'click', function(e){e.target.blur();LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this));
+			Event.observe($('ws_operations_link'), 'click', function(e){
+				if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+					e.target.blur();
+					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
+				}
+				else {
+					OpManagerFactory.getInstance().showActiveWorkSpace();
+				}
+			}.bind(this));
 			
 			// Total information of the active workspace must be downloaded!
 			if (isDefaultWS=="true"){
@@ -2531,6 +2588,7 @@ var OpManagerFactory = function () {
 			} else {
 				UIUtils.repaintCatalogue=false;
 			}
+			UIUtils.resizeResourcesContainer();
 		}
 
 		OpManager.prototype.showLogs = function () {
@@ -2543,6 +2601,8 @@ var OpManagerFactory = function () {
 		OpManager.prototype.clearLogs = function () {
 			LogManagerFactory.getInstance().reset();
 			LayoutManagerFactory.getInstance().clearErrors();
+			LayoutManagerFactory.getInstance().resizeTabBar();
+			this.showActiveWorkSpace();
 		}
 
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
@@ -2877,6 +2937,7 @@ function Variable (id, iGadget, name, varManager) {
 	this.id = null;
 	this.iGadget = null;
 	this.name = null;
+	this.label = null;
 	this.aspect = null;
 	this.value = null;
 }
@@ -2885,11 +2946,12 @@ function Variable (id, iGadget, name, varManager) {
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
  
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_) {
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-        this.name = name_;
+    this.name = name_;
+    this.label = label_;
 	this.aspect = aspect_;
 	this.value = value_;
 }
@@ -2936,8 +2998,8 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
   
 	this.handler = null;
 }
@@ -3043,8 +3105,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
 }
 
 //////////////////////////////////////////////
@@ -3189,20 +3251,21 @@ function VarManager (_workSpace) {
 			var id = igadgetVars[i].id;
 			var igadgetId = igadgetVars[i].igadgetId;
 			var name = igadgetVars[i].name;
+			var label = igadgetVars[i].label;
 			var aspect = igadgetVars[i].aspect;
 			var value = igadgetVars[i].value;
 				
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label);
 					this.variables[id] = objVars[name];
 					break;
 			}
@@ -4139,7 +4202,7 @@ LanguageAdaptor.prototype.CONCEPT = 'language'
 /**
  * Creates an instance of a Gadget.
  *
- * @author √Ålvaro Arranz
+ * @author ¡lvaro Arranz
  *
  * @class Represents an instance of a Gadget.
  *
@@ -4220,7 +4283,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.build();
 	layout.addIGadget(this, true);
 
-	this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
+	this.menu_color = menu_color ? menu_color : "FFFFFF";
+	//this.menu_color = IGadgetColorManager.autogenColor(menu_color, this.code);
 }
 
 /**
@@ -4387,10 +4451,10 @@ IGadget.prototype.toggleTransparency = function() {
 		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 	}
-	
+
 	this.element.toggleClassName("gadget_window_transparent");
 	this.transparency = !this.transparency;
-	
+
 	//Persist the new state
 	var o = new Object;
 	o.transparency = this.transparency;
@@ -4530,53 +4594,6 @@ IGadget.prototype.build = function() {
 	button.setAttribute("alt", gettext("Close"));
 	this.gadgetMenu.appendChild(button);
 
-	// iGadget's menu
-	var idMenu = 'igadget_menu_' + this.id;
-	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
-	new Insertion.After($('menu_layer'), menuHTML);
-	this.menu = new DropDownMenu(idMenu);
-
-	var idColorMenu = 'igadget_color_menu_' + this.id;
-	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
-
-	// Settings
-	this.menu.addOption("/ezweb/images/igadget/settings.png",
-	                    gettext("Preferences"),
-	                    function() {
-	                        this.toggleConfigurationVisible();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    0);
-
-	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
-	                                           gettext("Menu Bar Color..."),
-	                                           function(e) {
-	                                               var menuEntry = $(this.menuColorEntryId);
-	                                               if (menuEntry.getBoundingClientRect != undefined) {
-	                                                   var y = menuEntry.getBoundingClientRect().top;
-	                                               } else {
-	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
-	                                                           document.getBoxObjectFor(document.documentElement).screenY;
-	                                               }
-	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-	                                                   this.colorMenu,
-	                                                   Event.pointerX(e),
-	                                                   y + (menuEntry.offsetHeight/2));
-	                                           }.bind(this),
-	                                           1);
-
-	this.menu.addOption("/ezweb/images/igadget/transparency.png",
-	                    gettext("Transparency"),
-	                    function() {
-	                        this.toggleTransparency();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    2);
-
-	// Extract/Snap from/to grid option (see _updateExtractOption)
-	this.extractOptionOrder = 2;
-	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
-
 	// iGadget's menu button
 	button = document.createElement("input");
 	button.setAttribute("type", "button");
@@ -4701,6 +4718,20 @@ IGadget.prototype.build = function() {
 	this.statusBar.appendChild(resizeHandle);
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
+	// wikilink
+	this.wikilink = document.createElement('div');
+	this.wikilink.setAttribute ('class', 'dragboardwiki');
+	var awikilink = document.createElement('a');
+	awikilink.href=this.gadget.getUriWiki();
+	awikilink.setAttribute ('target', '_blank');
+	awikilink.setAttribute ('class', 'dragboardwikilink');
+	var imgwikilink = document.createElement('img');
+	imgwikilink.src = '/ezweb/images/wiki_dragboard.png'
+	imgwikilink.setAttribute('title', 'Access to Information');
+	awikilink.appendChild(imgwikilink);
+	this.wikilink.appendChild(awikilink);
+	this.statusBar.appendChild(this.wikilink);
+
 	// extract/snap button
 	this.extractButton = document.createElement("div");
 	this.extractButton.observe("click",
@@ -4709,6 +4740,7 @@ IGadget.prototype.build = function() {
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
+	
 }
 
 /**
@@ -4719,6 +4751,53 @@ IGadget.prototype.paint = function() {
 		return; // Do nothing if the iGadget is already painted
 
 	this.visible = true;
+
+	// Initialize iGadget's preferences menu
+	var idMenu = 'igadget_menu_' + this.id;
+	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
+	new Insertion.After($('menu_layer'), menuHTML);
+	this.menu = new DropDownMenu(idMenu);
+
+	var idColorMenu = 'igadget_color_menu_' + this.id;
+	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
+
+	// Settings
+	this.menu.addOption("/ezweb/images/igadget/settings.png",
+	                    gettext("Preferences"),
+	                    function() {
+	                        this.toggleConfigurationVisible();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    0);
+
+	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
+	                                           gettext("Menu Bar Color..."),
+	                                           function(e) {
+	                                               var menuEntry = $(this.menuColorEntryId);
+	                                               if (menuEntry.getBoundingClientRect != undefined) {
+	                                                   var y = menuEntry.getBoundingClientRect().top;
+	                                               } else {
+	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
+	                                                           document.getBoxObjectFor(document.documentElement).screenY;
+	                                               }
+	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+	                                                   this.colorMenu,
+	                                                   Event.pointerX(e),
+	                                                   y + (menuEntry.offsetHeight/2));
+	                                           }.bind(this),
+	                                           1);
+
+	this.menu.addOption("/ezweb/images/igadget/transparency.png",
+	                    gettext("Transparency"),
+	                    function() {
+	                        this.toggleTransparency();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(this),
+	                    2);
+
+	// Extract/Snap from/to grid option (see _updateExtractOption)
+	this.extractOptionOrder = 2;
+	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
@@ -5758,7 +5837,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 }
 
 function IGadgetColorManager () {
-	this.colors = ["FFFFFF", "A8D914", "EFEFEF", "D4E6FC", "97A0A8", "B2A3A3", "46C0ED", "FFBB03"];
+	this.colors = ["FFFFFF", "EFEFEF", "DDDDDD", "97A0A8", "FF9999", "FF3333","FFD4AA", "FFD42A", "FFFFCC", "FFFF66", "CCFFCC", "A8D914", "D4E6FC", "CCCCFF", "349EE8", "FFCCFF", "FF99FF"];
 }
 
 IGadgetColorManager.prototype.autogenColor = function(color, seed) {
@@ -6126,6 +6205,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
 
 		iGadget.save();
+	}
+	
+	Dragboard.prototype.getNumberOfIGadgets = function () {
+		return this.iGadgets.keys().length;
 	}
 
 	Dragboard.prototype.removeInstance = function (iGadgetId) {
@@ -6609,6 +6692,9 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 		setTimeout(function() {
 			tabElement.removeClassName("selected");
 		}, 500);
+		
+		//var fadder = new BackgroundFadder(tabElement, "#F0E68C", ((tabElement.hasClassName("current"))?"#E0E0E0":"#97A0A8"), 1000);
+		//fadder.fade();
 
 		context.selectedTab = null;
 		context.selectedTabElement = null;
@@ -7549,6 +7635,11 @@ wEvent.prototype.getQualifiedName = function () {
   return "event_" + this.variable.id;
 }
 
+wEvent.prototype.getLabel = function () {
+  return this.variable.label;	
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -7648,6 +7739,10 @@ wSlot.prototype.propagate = function(newValue, initial) {
 
 wSlot.prototype.getQualifiedName = function () {
   return "slot_" + this.variable.id;
+}
+
+wSlot.prototype.getLabel = function () {
+  return this.variable.label;	
 }
 
 wSlot.prototype.refresh = function() {
