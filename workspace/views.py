@@ -547,12 +547,12 @@ class  WorkSpaceSharerEntry(Resource):
         try:
             workspace = WorkSpace.objects.get(id=workspace_id)
         except WorkSpace.DoesNotExist:
-            HttpServerResponseError(get_xml_error(_("workspace does not exist")), mimetype='application/xml; charset=UTF-8')
+            HttpResponseServerError(get_xml_error(_("workspace does not exist")), mimetype='application/xml; charset=UTF-8')
         
         owner = workspace.users.all()[0]
         
         if (owner != user):
-            return HttpServerResponseError(get_xml_error(_("you are not the owner of the workspace! you can not share the workspace!")), mimetype='application/xml; charset=UTF-8')
+            return HttpResponseServerError(get_xml_error(_("you are not the owner of the workspace! you can not share the workspace!")), mimetype='application/xml; charset=UTF-8')
         
         #Everything right! Linking with public user!
         public_user = get_public_user(request)
