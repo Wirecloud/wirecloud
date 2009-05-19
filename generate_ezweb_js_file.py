@@ -71,6 +71,7 @@ files_normal = [
    'media/js/wiring/connectableInterface.js',
    
    'media/js/catalogue/UIUtils.js',
+   'media/js/catalogue/CategoryManager.js',
    'media/js/catalogue/Catalogue.js',
    'media/js/catalogue/Resource.js',
    'media/js/catalogue/Tagger.js',
