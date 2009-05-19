@@ -30,6 +30,8 @@
 
 
 from django.conf import settings
+from commons.utils import json_encode
+from catalogue.models import Category, Tag
 
 def server_url(request):
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
@@ -54,4 +56,28 @@ def only_one_js_file(request):
        return {'only_one_js_file': settings.ONLY_ONE_JS_FILE}
     else:
         return {'only_one_js_file': None}
+    
+
+#private method: gets the tags and category children from an specific category (Category model)
+def _get_Category_Info(cat):
+    catObject = {}
+    #get the related tag names
+    catObject['tags'] = [t.name for t in cat.tags.all()]
+    #get its category children
+    children = Category.objects.filter(parent = cat)
+    catObject['children'] = {}
+    for catChild in children:
+        #make the same with all its children
+        catObject['children'][catChild.name]= _get_Category_Info(catChild)
+        
+    return catObject
+
+# tag categories from the catalogue specified by db admin
+def tag_categories(request):
+    categories = {}
+    catQuerySet = Category.objects.filter(parent = None)
+    for cat in catQuerySet:
+        categories[cat.name] =_get_Category_Info(cat)        
+    
+    return {'tag_categories': json_encode(categories)}
     

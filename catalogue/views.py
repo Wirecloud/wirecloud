@@ -46,7 +46,7 @@ from commons.resource import Resource
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, UserVote
+from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, Tag, UserVote
 from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
@@ -176,17 +176,23 @@ class GadgetsCollection(Resource):
             xml_ok = '<ResponseOK>OK</ResponseOK>'
             return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
 
-
 def deleteOneGadget(resource, user):
     try:
         # Delete the gadget only if this user is the owner
-        userReleted = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
+        userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
         # Delete the related user information to that gadget
-        userReleted.delete()
+        userRelated.delete()
         # Delete the related wiring information for that gadget
         GadgetWiring.objects.filter(idResource=resource.id).delete()
         # Delete the related tags for that gadget
-        UserTag.objects.filter(idResource=resource.id).delete()
+        
+        #if there is no more gadgets tagged with these tags, delete the Tag
+        resourceTags = UserTag.objects.filter(idResource=resource.id)
+        for t in resourceTags:
+            if UserTag.objects.filter(tag = t.tag).count() == 1:
+                t.tag.delete()
+            t.delete()
+        
         # Delete the related votes for that gadget
         UserVote.objects.filter(idResource=resource.id).delete()
         # Delete the object
@@ -241,7 +247,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets that match any of the given tags
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
 
         elif criteria == 'connectSlot':
             #get all the gadgets compatible with the given events
@@ -315,7 +321,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
             #get all the gadgets that match any of the given tags
             criteria = search_criteria[3].split()
             for e in criteria:
-                taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+                taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
             taglist = get_uniquelist(taglist)
             fields = fields+1
         if (search_criteria[4] != ""):
@@ -383,7 +389,8 @@ class GadgetTagsCollection(Resource):
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
             try:
-                UserTag.objects.get_or_create(tag=e, idUser=user, idResource=gadget)
+                tag, created = Tag.objects.get_or_create(name=e)
+                UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=gadget)
             except Exception, ex:
                 transaction.rollback()
                 msg = _("Error tagging resource!!") 
@@ -424,10 +431,14 @@ class GadgetTagsCollection(Resource):
             format = 'default'
 
         gadget = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version).id
-        tag = get_object_or_404(UserTag, id=tag)
+        userTag = get_object_or_404(UserTag, id=tag)
 
-        tag.delete()
-
+        #if there is no more gadgets tagged by an user with this tag, delete the Tag
+        if UserTag.objects.filter(tag = userTag.tag).count() == 1:
+            userTag.tag.delete()
+            
+        userTag.delete()
+        
         return get_tag_response(gadget,user, format)
 
 

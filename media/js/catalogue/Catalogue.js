@@ -48,6 +48,8 @@ var CatalogueFactory  = function () {
 		var purchasableGadgets = []; 
 
 		this.catalogueElement = $('showcase_container');
+	    //paint tag categories
+	    this.categoryManager = new CategoryManager();
 		
 		Event.observe($('catalogue_link'), "click", function(){OpManagerFactory.getInstance().showCatalogue()}, false, "show_catalogue");
 		
@@ -373,6 +375,11 @@ var CatalogueFactory  = function () {
 		this.repaintCatalogue = function (url) {
 			selectedResourceName = arguments[1];
 			selectedResourceVersion = arguments[2];
+			keepCatSection = arguments[3];
+			//repainting the catalogue when it isn't a search by category must close the category section
+			if(!keepCatSection){
+				this.categoryManager.closeCategories();
+			}
 			this.emptyResourceList();
 			this.loadCatalogue(url);
 		}

@@ -98,7 +98,7 @@ def get_and_list(criterialist, user):
     for e in criterialist:
         # Get a list of elements that match the given criteria
         gadgetlist = get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) | Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
-        taglist = get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+        taglist = get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
         if taglist:
             gadgetlist = gadgetlist | taglist
         gadgetlist = get_uniquelist(gadgetlist)
@@ -122,7 +122,7 @@ def get_or_list(criterialist, user):
     for e in criterialist:
         # Get a list of elements that match the given value
         gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
-        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
     gadgetlist += taglist
     gadgetlist = get_uniquelist(gadgetlist)
     return gadgetlist
@@ -143,7 +143,7 @@ def get_not_list(criterialist, user):
         else:
             gadgetlist = gadgetlist.exclude(Q(short_name__icontains = e) |  Q(vendor__icontains = e) | Q(author__icontains = e) | Q(mail__icontains = e) | Q(description__icontains = e) | Q(version__icontains = e))
         #Get the list of gadgets that match any of the criteria in the UserTag database table
-        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__icontains = e)
+        taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
     gadgetlist = list(gadgetlist)
     # Remove the gadgets in taglist of gadgetlist
     for b in taglist:

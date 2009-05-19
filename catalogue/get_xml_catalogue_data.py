@@ -126,14 +126,14 @@ def get_tags_by_resource(gadget_id, user_id):
     for e in UserTag.objects.filter(idResource=gadget_id, idUser=user_id):
         xml_tag += "".join(['<Tag>\n'
                             '<Identifier>'+str(e.id)+'</Identifier>\n',
-                            '<Value>'+e.tag+'</Value>\n',
+                            '<Value>'+e.tag.name+'</Value>\n',
                             '<Added_by>Yes</Added_by>\n',
                             '</Tag>'])
 
     for e in UserTag.objects.filter(idResource=gadget_id).exclude(idUser=user_id):
         xml_tag += "".join(['<Tag>\n',
                             '<Identifier>'+str(e.id)+'</Identifier>\n',
-                            '<Value>'+e.tag+'</Value>\n',
+                            '<Value>'+e.tag.name+'</Value>\n',
                             '<Added_by>No</Added_by>\n',
                             '</Tag>'])
 

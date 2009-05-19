@@ -144,9 +144,16 @@ class GadgetWiring(models.Model):
      def __unicode__(self):
          return self.friendcode
 
+class Tag(TransModel):
+
+    name = models.CharField(max_length=20, unique = True)
+    
+    def __unicode__(self):
+        return self.name
+
 class UserTag(models.Model):
 
-    tag = models.CharField(max_length=20)
+    tag = models.ForeignKey(Tag)
     weight = models.CharField(max_length=20, null = True)
     criteria = models.CharField(max_length=20, null = True)
     value = models.CharField(max_length=20, null = True)
@@ -156,8 +163,16 @@ class UserTag(models.Model):
     class Meta:
         unique_together = ("tag", "idUser","idResource")
 
+    #def __unicode__(self):
+    #   return self.tag
+    
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique = True)
+    tags = models.ManyToManyField(Tag)
+    parent = models.ForeignKey('self', blank=True, null = True)
+
     def __unicode__(self):
-        return self.tag
+        return self.name
 
 VOTES = (
     (u'0', 0),

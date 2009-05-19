@@ -1,5 +1,6 @@
 {% load i18n %}
 
+
 <div id="catalogue" class="container_content">
 	<div id="head" class="head">
 		<div id="header_always" class="header_always">
@@ -97,27 +98,30 @@
 			</div>		
 		</div>
 	</div>
+	<div id="left_bar">
+		<div id="tag_categories" class="bar_widget">
+			<span class="widget_title">{% trans 'Search by category:' %}</span>
+			<div class="widget_content"></div>
+		</div> 
+	</div>
+	<div id="center" class="center">
 		<div id="resources_header" class="resources_header">
 			<div id="paginate_show" class="paginate_show"></div>
 			<div id="orderby" class="orderby"></div>
 			<div id="paginate" class="paginate"></div>
 		</div>
-
-	<div id="center" class="center">
-			<div id="resources" class="resources"></div>
-		<div id="resources_container" style='display:none'>
-			<img id='close_info_resource' src='/ezweb/images/close.png' onclick='UIUtils.sendPendingTags();UIUtils.closeInfoResource();' style='display:none;cursor:pointer;' title="{% trans 'Hide resource details' %}">
-			</img>
-			<div id="info_resource" class="info_resource" style="display:none;"><div>
-			<div class="top"></div>
-			<div id="info_resource_content" class="content"></div>
-			<!--<div class="bottom"></div>-->
-			</div></div>
+		<div id="resources" class="resources"></div>
+	</div>
+	<div id="resources_container" style='display:none'>
+		<div id="info_resource" class="info_resource" style="display:none;"><div>
+		<img id='close_info_resource' src='/ezweb/images/close.png' onclick='UIUtils.sendPendingTags();UIUtils.closeInfoResource();' style='display:none;cursor:pointer;' title="{% trans 'Hide resource details' %}">
+		</img>
+		<div id="info_resource_content" class="content"></div>
+		</div></div>
 <!--			<div id="tab_info_resource" class="tab_info_resource">
 				<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.sendPendingTags();UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
 				<img id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png" alt="Close" />
 				</a>
 			</div>-->
-		</div>
 	</div>
 </div>

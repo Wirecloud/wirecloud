@@ -121,14 +121,15 @@ UIUtils.deselectResource = function(resourceId_) {
 }
 
 UIUtils.selectConnectableResources = function(resourceId_) {
-	UIUtils.deselectConnectableResources();
+/*	UIUtils.deselectConnectableResources();
 	UIUtils.selectResource(resourceId_);
 	UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
+*/
 }
 
 /* This method selects all the resources related by wiring in the catalogue*/
 UIUtils.lightUpConnectableResources = function(resourceId_) {
-
+/*
 	var resource = CatalogueFactory.getInstance().getResource(resourceId_);
 	var slots = resource.getSlots();
 	var events = resource.getEvents();
@@ -169,16 +170,18 @@ UIUtils.lightUpConnectableResources = function(resourceId_) {
 			}
 		}
 	}
+*/
 }
 
 UIUtils.deselectConnectableResources = function() {
-	var resources = CatalogueFactory.getInstance().getResources().values();
+/*	var resources = CatalogueFactory.getInstance().getResources().values();
 	for (var i=0; i<resources.length; i++){
 		var bottom = $('resource_'+i + '_bottom');
 		bottom.style.backgroundImage = UIUtils.imageConnectableBottom;
 		var content = $('resource_'+i + '_content');
 		content.style.backgroundImage = UIUtils.imageConnectableContent;
 	}
+*/
 }
 	
 UIUtils.showResourceInfo = function(resourceId_) {
@@ -375,7 +378,9 @@ UIUtils.searchByGlobalConnectivity = function(url, search_events, search_slots) 
 	CatalogueFactory.getInstance().repaintCatalogue(url + "/connectEventSlot/" + UIUtils.getPage() + "/" + UIUtils.getOffset(), name, version);
 }
 
-UIUtils.searchByTag = function(url, search_value) {
+//this function is called on searching by category.
+//keepCatSection parameter allows knowing whether the category section must be closed or not.
+UIUtils.searchByTag = function(url, search_value, keepCatSection) {
 	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
@@ -389,7 +394,9 @@ UIUtils.searchByTag = function(url, search_value) {
 		UIUtils.search = true;
 		UIUtils.searchValue[0] = search_value;
 		UIUtils.searchCriteria = 'tag';
-		CatalogueFactory.getInstance().repaintCatalogue(url + "/tag/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+		//if the search is done from the category section this section musn't be closed on repainting the catalogue
+		//closeCatSection is the fourth parameter.
+		CatalogueFactory.getInstance().repaintCatalogue(url + "/tag/" + UIUtils.getPage() + "/" + UIUtils.getOffset(), null, null, keepCatSection);
 	}
 }
 
@@ -435,7 +442,8 @@ UIUtils.cataloguePaginate = function(url, offset, pag, items) {
     }
 	UIUtils.page = pag; 
 
-	CatalogueFactory.getInstance().repaintCatalogue(url + "/" + pag + "/" + UIUtils.getOffset());
+	//we don't want to change the category section
+	CatalogueFactory.getInstance().repaintCatalogue(url + "/" + pag + "/" + UIUtils.getOffset(),null, null, true);
 }
 
 UIUtils.setOrderby = function(orderby) {
@@ -699,10 +707,21 @@ UIUtils.setResourcesWidth = function() {
 	var head = $('head');
 	var resources = $('resources');
 	var center = $('center');
+	var left_bar = $('left_bar');
+	var leftBarMarginRight = parseInt(left_bar.getStyle('margin-right').replace("px",""));
+	var centerBorder = parseInt(center.getStyle('border-left-width').replace("px",""));
 	if (center){
-		center.style.width = head.offsetWidth + 'px';
-		resources.style.width = (center.offsetWidth - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth+20):0)) + 'px';
+
+		center.style.width = head.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
+		resources.style.width = center.offsetWidth - 2*centerBorder + 'px';
 	}
+}
+
+UIUtils.setInfoResourceHeight = function(){
+	//Get info_resource height
+	$('info_resource').style.height = $('info_resource_content').getHeight() + 'px'; 
+
+
 }
 
 UIUtils.openInfoResource = function() {
@@ -710,6 +729,7 @@ UIUtils.openInfoResource = function() {
 	{
 		UIUtils.isInfoResourcesOpen = true;
 		UIUtils.SlideInfoResourceIntoView('info_resource');
+		UIUtils.setInfoResourceHeight();
 	}
 }
 
@@ -724,12 +744,12 @@ UIUtils.closeInfoResource = function() {
 
 UIUtils.SlideInfoResourceIntoView = function(element) {
   $('resources_container').style.display = 'block'
-  $(element).style.width = '0px';
+//  $(element).style.width = '0px';
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
   UIUtils.setResourcesWidth();
   Element.show(element);
-  new Effect.Scale(element, 100,
+ /* new Effect.Scale(element, 100,
     Object.extend(arguments[1] || {}, {
       scaleContent: false,
       scaleY: false,
@@ -737,11 +757,13 @@ UIUtils.SlideInfoResourceIntoView = function(element) {
       scaleFrom: 0,
       afterUpdate: function(effect){},
       afterFinish: function(effect){
-         UIUtils.show('close_info_resource');/*UIUtils.show('tab_info_resource_close');*/
+         UIUtils.show('close_info_resource');
          UIUtils.resizeResourcesContainer();
       }
     })
-  );
+  );*/
+  UIUtils.show('close_info_resource');/*UIUtils.show('tab_info_resource_close');*/
+  UIUtils.resizeResourcesContainer();
   if (UIUtils.selectedResource != null) {
      UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
   }
@@ -753,7 +775,7 @@ UIUtils.SlideInfoResourceOutOfView = function(element) {
   $(element).style.overflow = 'hidden';
   $(element).firstChild.style.position = 'relative';
   Element.show(element);
-  new Effect.Scale(element, 0,
+/*  new Effect.Scale(element, 0,
     Object.extend(arguments[1] || {}, {
       scaleContent: false,
       scaleY: false,
@@ -761,11 +783,16 @@ UIUtils.SlideInfoResourceOutOfView = function(element) {
       afterFinish: function(effect) {
          Element.hide(effect.element);
          UIUtils.setResourcesWidth();
-         $('resources_container').style.display = 'none';/*UIUtils.hidde('tab_info_resource_close');*/
+         $('resources_container').style.display = 'none';
          UIUtils.resizeResourcesContainer();
       }
     })
-  );
+  );*/
+  Element.hide(element);
+  UIUtils.setResourcesWidth();
+  $('resources_container').style.display = 'none';
+  UIUtils.resizeResourcesContainer();  
+  
 }
 
 UIUtils.restoreSlide = function() {
@@ -1224,6 +1251,8 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 
 UIUtils.resizeResourcesContainer = function (){
 	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 28;
-	document.getElementById('resources_container').style.height = height +'px';
 	document.getElementById('resources').style.height = height+'px';
+	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight;
+	document.getElementById('resources_container').style.height = height +'px';
+
 }

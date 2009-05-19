@@ -158,6 +158,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.only_one_js_file',
+    'processors.context_processors.tag_categories',
 )
 
 SESSION_COOKIE_AGE = 5184000    #2 months

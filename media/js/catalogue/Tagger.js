@@ -34,6 +34,8 @@ function Tagger(){
 		if (tag_.length < 3) {
 			$("tag_alert").style.display="block";
 			UIUtils.getError($("tag_alert"),gettext ("Tags must have at least three characters."));
+			//may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();
 		}
 		else {
 			if (!containsTag(tag_)) {

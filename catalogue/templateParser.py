@@ -39,9 +39,9 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from xml.sax import parseString, handler
+from xml.sax import parseString, handler
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Capability, Translation
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Tag, Capability, Translation
 from commons.translation_utils import get_trans_index
 
 import string
@@ -269,17 +269,14 @@ class TemplateHandler(handler.ContentHandler):
             #TODO: process the resources
             #workaround to add default tags
             if self._mashupId!=None:
-                userTag = UserTag()
-                userTag.tag = "mashup"
-                userTag.idUser = self._user
-                userTag.idResource = gadget
+                tag, created = Tag.objects.get_or_create(name="mashup")
+                userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)  
                 userTag.save()
-             
 
             if self._contratable:
-                tag = UserTag (tag='contratable', idUser=self._user, idResource=gadget)
-                tag.save()
-            
+                tag, created = Tag.objects.get_or_create(name="contratable")
+                userTag = UserTag(tag= tag, idUser=self._user, idResource=gadget)      
+                userTag.save()
 
             self._gadget_added = True
         elif (self._gadget_added and name=="msg"):

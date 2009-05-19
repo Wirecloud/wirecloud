@@ -382,6 +382,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}));
 		my_tags.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
+			//the number of tags may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();
 		});
 		tag_links.appendChild(my_tags);
 		var others_tags = UIUtils.createHTMLElement("a", $H({ 
@@ -389,6 +391,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}));
 		others_tags.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
+			//the number of tags may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();			
 		});
 		tag_links.appendChild(others_tags);
 		var tags = UIUtils.createHTMLElement("div", $H({ 
@@ -466,6 +470,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}));
 		add_tags_submit_link.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
+			//the number of tags may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();	
 		});
 		add_tags_link.appendChild(add_tags_submit_link);
 
@@ -599,6 +605,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				document.getElementById("events_slots").style.display = "block";
 				document.getElementById("search_advanced_events_slots_link").innerHTML = gettext('Hide Advanced Search by connectivity')
 			}	
+			//the number of tags may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();
 		    });
 
 		search_advanced_events_slots_div.appendChild(search_advanced_event_slot_link);
@@ -642,6 +650,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		}));
 		show_versions_link.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showVersionPanel();
+			//the number of tags may make the info_resource container higher
+			UIUtils.setInfoResourceHeight();	
 		});
 		show_versions_div.appendChild(show_versions_link);
 
@@ -702,13 +712,11 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			},false,"instance_mashup");
 		}
 		$("info_resource_content").appendChild(add_gadget_button);
-		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({
-			id: 'content_bottom_margin'
-		})));
-		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({
-			class_name: 'bottom'
-		})));
+
 		_rateResource();
+		
+		//size of info resource container may change.
+		UIUtils.setInfoResourceHeight();
 	}
 
 	this.updateTags = function()
@@ -731,6 +739,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				all_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("all");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();	
 				});
 				$("view_tags_links").appendChild(all_tags);
 				$("view_tags_links").appendChild(UIUtils.createHTMLElement("span", $H({
@@ -741,6 +751,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				others_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();						
 				});
 				$("view_tags_links").appendChild(others_tags);
 				UIUtils.hidde("add_tags_link");
@@ -755,6 +767,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				all_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("all");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();	
 				});
 				$("view_tags_links").appendChild(all_tags);
 				var my_tags = UIUtils.createHTMLElement("a", $H({
@@ -762,6 +776,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				my_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();						
 				});
 				$("view_tags_links").appendChild(my_tags);
 				$("view_tags_links").appendChild(UIUtils.createHTMLElement("span", $H({
@@ -780,6 +796,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				my_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("mytags");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();		
 				});
 				$("view_tags_links").appendChild(my_tags);
 				var others_tags = UIUtils.createHTMLElement("a", $H({
@@ -787,6 +805,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				}));
 				others_tags.observe("click", function(event){
 					CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
+					//the number of tags may make the info_resource container higher
+					UIUtils.setInfoResourceHeight();				
 				});
 				$("view_tags_links").appendChild(others_tags);
 				UIUtils.show("add_tags_link");
