@@ -232,7 +232,12 @@ var LayoutManagerFactory = function () {
 		}
 
 		// Tab operations
-		LayoutManager.prototype.unmarkTab = function(tab, launcher, changeEvent, renameEvent) {
+		LayoutManager.prototype.unmarkTab = function(tab_object) {
+			var tab = tab_object.tabHTMLElement;
+			var launcher = tab_object.tabOpsLauncher;
+			var renameEvent = tab_object.renameTabHandler;
+			var changeEvent = tab_object.changeTabHandler;
+		
 			tab.className = "tab";
 			//hide the launcher image for the drop down menu from the former current tab
 			var tabOpsLauncher = $(launcher);
@@ -242,11 +247,21 @@ var LayoutManagerFactory = function () {
 			tab.setStyle({"display": "block"}); // TODO
 		}
 
-		LayoutManager.prototype.markTab = function(tab, launcher, renameHandler, changeHandler) {
+		LayoutManager.prototype.markTab = function(tab_object) {
+			var tab = tab_object.tabHTMLElement;
+			var launcher = tab_object.tabOpsLauncher;
+			var renameHandler = tab_object.renameTabHandler;
+			var changeHandler = tab_object.changeTabHandler;
+			
+		
 			if (tab.className != "tab current") {
 				tab.className = "tab current";
+				
 				var tabOpsLauncher = $(launcher);
-				tabOpsLauncher.setStyle({'display':'inline'});
+				
+				if (! tab_object.workSpace._isShared())
+					tabOpsLauncher.setStyle({'display':'inline'});
+				
 				tab.setStyle({"display": "block"}); // TODO
 			}
 			if (this.currentViewType == 'dragboard') {

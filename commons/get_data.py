@@ -224,15 +224,19 @@ def get_filter_data(data):
     
     return data_ret
      
-def get_workspace_data(data):
+def get_workspace_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
+    
+    #First one in the users relationship is the creator of the workspace
+    data_ret['shared'] = workspace.is_shared(user)
+    
     if data_fields['active']:
-        data_ret['active'] = "true"
+        data_ret['active'] = 'true'
     else:
-        data_ret['active'] = "false"
+        data_ret['active'] = 'false'
     return data_ret
 
 def get_workspace_variables_data(workSpaceDAO, user):
@@ -267,7 +271,7 @@ def get_workspace_variable_data(data, user, workspace):
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
         
-        variable_value = clone_original_variable_value(abstract_var, workspace.users.all()[0], user)
+        variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
         
     data_ret['value'] = variable_value.value
     data_ret['name'] = abstract_var.name
@@ -343,15 +347,19 @@ def get_connectable_data(connectable):
 
 def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
-    data_ret['workspace'] = get_workspace_data(data)  
+    data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)  
     
     # Tabs processing              
     tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id') 
     data = serializers.serialize('python', tabs, ensure_ascii=False)
-    tabs_data = [get_tab_data(d) for d in data]
+    
+    tabs_data = []
+    
+    for i in range(len(tabs)):
+        tabs_data.append(get_tab_data(data[i], tabs[i], user))
     
     data_ret['workspace']['tabList'] = tabs_data
-
+    
     for tab in tabs_data:
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
@@ -375,20 +383,18 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     
     return data_ret
 
-def get_tab_data(data):
+def get_tab_data(data, tab, user):
     data_ret = {}
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
+    
     if data_fields['visible']:
         data_ret['visible'] = "true"
     else:
         data_ret['visible'] = "false"
-
-    if data_fields['locked']:
-        data_ret['locked'] = "true"
-    else:
-        data_ret['locked'] = "false"
+    
+    data_ret['locked'] = tab.is_locked(user)
 
     return data_ret
 
@@ -440,7 +446,7 @@ def get_variable_data(data, user, workspace):
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
         
-        variable_value = clone_original_variable_value(abstract_var, workspace.users.all()[0], user)
+        variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
 
     data_ret['id'] = data['pk']
     

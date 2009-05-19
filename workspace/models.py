@@ -38,11 +38,31 @@ class WorkSpace(models.Model):
     
     name = models.CharField(_('Name'), max_length=30)
     active = models.BooleanField(_('Active'))
+    creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=True, null=True)
     
     users = models.ManyToManyField(User, verbose_name=_('Users'))
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name  
+        return str(self.pk) + " " + self.name
+    
+    def get_creator(self):
+        if self.creator:
+            return self.creator
+    
+        #No creator specified (previous version of the model didn't have this field)
+        #First element in the user relationship returned!
+        creator = self.users.all()[0]
+        
+        self.creator = creator
+        self.save()
+        
+        return self.creator
+
+    def is_shared(self, user):
+        if (self.get_creator() == user):
+            return 'false'
+        
+        return 'true'
 
 class PublishedWorkSpace(models.Model):
     WORKSPACE_TYPES = (
@@ -62,7 +82,6 @@ class PublishedWorkSpace(models.Model):
     
     description = models.TextField(_('Description'))
     
-    author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=30)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
@@ -169,3 +188,15 @@ class Tab(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
+    
+    def is_locked(self, user):
+        is_shared = self.workspace.is_shared(user)
+        if (is_shared == 'true'):
+            return is_shared
+        
+        #Not shared! 
+        #Returning data form data model! 
+        if (self.locked):
+            return 'true'
+        
+        return 'false'

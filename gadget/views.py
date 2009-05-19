@@ -51,14 +51,21 @@ from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 
 from gadget.models import Gadget
+from workspace.views import get_user_gadgets
 
 from commons.logs_exception import TracedServerError
 
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
-        gadgets = Gadget.objects.filter(users=user)
+        
+        #Getting all gadgets of the user
+        #Done it against workspaces, not directly against gadgets!
+        #Done like this, it's not necessary to keep updated relationships between gadgets and users
+        gadgets = get_user_gadgets(user)
+        
         data = serializers.serialize('python', gadgets, ensure_ascii=False)
+
         data_list = []
         for d in data:
             data_fields = get_gadget_data(d)

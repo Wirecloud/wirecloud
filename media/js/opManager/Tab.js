@@ -145,7 +145,7 @@ function Tab (tabInfo, workSpace) {
 	
 	Tab.prototype.unmark = function () {
 		//this.hideDragboard();
-		LayoutManagerFactory.getInstance().unmarkTab(this.tabHTMLElement, this.tabOpsLauncher, this.changeTabHandler, this.renameTabHandler);
+		LayoutManagerFactory.getInstance().unmarkTab(this);
 
 	}
 
@@ -175,7 +175,7 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	Tab.prototype.markAsCurrent = function (){
-		LayoutManagerFactory.getInstance().markTab(this.tabHTMLElement, this.tabOpsLauncher, this.renameTabHandler, this.changeTabHandler);
+		LayoutManagerFactory.getInstance().markTab(this);
 	}
 	
 	Tab.prototype.hide = function () {
@@ -239,7 +239,12 @@ function Tab (tabInfo, workSpace) {
 	// Tab creation
 	//add a new tab to the tab section
 	this.tabHTMLElement = LayoutManagerFactory.getInstance().addToTabBar(this.tabName);
-
+	
+	//fill the tab label with a span tag
+	this.fillWithLabel();
+	
+	
+	// It's not your own workspace so you can't change things!
 	this.tabOpsLauncher = this.tabName+"_launcher";
 	var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
 	new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);
@@ -248,22 +253,9 @@ function Tab (tabInfo, workSpace) {
 													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 
-	//fill the tab label with a span tag
-	this.fillWithLabel();
 
 	//create tab menu
-	var idMenu = 'menu_'+this.tabName;
-	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
-	new Insertion.After($('menu_layer'), menuHTML);
-	this.menu = new DropDownMenu(idMenu);
-	this.menu.addOption("/ezweb/images/rename.gif",
-	                    gettext("Rename"),
-			    function() {
-			        OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
-				LayoutManagerFactory.getInstance().hideCover();
-	                    },
-			    0);
-
+	
 	this._lockFunc = function(locked) {
 		if (locked) {
 			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
@@ -273,12 +265,6 @@ function Tab (tabInfo, workSpace) {
 		this.dragboard.setLock(locked);
 		this.workSpace._checkLock();
 	}.bind(this);
-
-	if (this.dragboard.isLocked()) {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
-	} else {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
-	}
 	
 	this.markAsVisibleSuccess = function() {
 		var tabIds = this.workSpace.tabInstances.keys();
@@ -337,11 +323,30 @@ function Tab (tabInfo, workSpace) {
 		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", gettext("Mark as Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
 	}.bind(this);
 	
+	var idMenu = 'menu_'+this.tabName;
+	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
+	new Insertion.After($('menu_layer'), menuHTML);
+	this.menu = new DropDownMenu(idMenu);
+	
+	this.menu.addOption("/ezweb/images/rename.gif",
+	                    gettext("Rename"),
+			    function() {
+			        OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
+				LayoutManagerFactory.getInstance().hideCover();
+	                    },
+			    0);
+	
 	if (this.tabInfo.visible != "true") {
 		this.addMarkAsVisible();
 	} else {
 		this.firstVisible = true;
 		this.visibleEntryId = null;
+	}
+	
+	if (this.dragboard.isLocked()) {
+		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
+	} else {
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
 	}
 	
 	this.menu.addOption("/ezweb/images/remove.png", "Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');},2);

@@ -11,7 +11,7 @@ if (( $? )) ; then
   echo "No se puede crear la base de datos. (Mira que Django no está corriendo y prueba de nuevo.)"
   exit 1
 fi
-./manage.py syncdb
+./manage.py syncdb --settings=settings
 
 if (( $? )) ; then
   echo "No se puede crear el nuevo esquema (syncdb). "

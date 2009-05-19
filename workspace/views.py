@@ -66,6 +66,28 @@ from django.conf import settings
 
 from commons.logs_exception import TracedServerError
 
+def get_user_gadgets(user):
+    workspaces = WorkSpace.objects.filter(users=user)
+    
+    gadgets = []
+    for workspace in workspaces:
+        ws_gadgets = get_workspace_gadgets(workspace)
+        
+        for gadget in ws_gadgets:
+            gadgets.append(gadget)
+    
+    return gadgets
+
+def get_workspace_gadgets(workspace):
+    ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+    
+    ws_gadgets = []
+    for igadget in ws_igadgets:
+        ws_gadgets.append(igadget.gadget)
+        
+    return ws_gadgets
+    
+
 def clone_original_variable_value(abstract_variable, creator, new_user):
     original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
     
@@ -260,7 +282,12 @@ class WorkSpaceCollection(Resource):
             raise TracedServerError(e, arguments, request, msg)
         
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
-        data_list['workspaces'] = [get_workspace_data(d) for d in  data]
+        workspace_list = []
+        
+        for i in range(len(workspaces)):
+            workspace_list.append(get_workspace_data(data[i], user, workspaces[i]))
+            
+        data_list['workspaces'] = workspace_list
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
     
@@ -547,12 +574,14 @@ class  WorkSpaceSharerEntry(Resource):
         try:
             workspace = WorkSpace.objects.get(id=workspace_id)
         except WorkSpace.DoesNotExist:
-            HttpResponseServerError(get_xml_error(_("workspace does not exist")), mimetype='application/xml; charset=UTF-8')
+            msg = 'The workspace does not exist!'
+            HttpResponseServerError("{'result': 'error', 'description':'%s'}" % msg, mimetype='application/json; charset=UTF-8')
         
-        owner = workspace.users.all()[0]
+        owner = workspace.get_creator()
         
         if (owner != user):
-            return HttpResponseServerError(get_xml_error(_("you are not the owner of the workspace! you can not share the workspace!")), mimetype='application/xml; charset=UTF-8')
+            msg = 'You are not the owner of the workspace, so you can not share it!'
+            return HttpResponseServerError("{'result': 'error', 'description':'%s'}" % msg, mimetype='application/json; charset=UTF-8')
         
         #Everything right! Linking with public user!
         public_user = get_public_user(request)

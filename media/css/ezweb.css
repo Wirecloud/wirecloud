@@ -490,7 +490,7 @@ a:hover{
 }
 
 button {
-  background: transparent url(/ezweb/images/button.gif) no-repeat;
+  background: transparent url(/ezweb/images/button.gif) repeat;
   border: medium none;
   color: white;
   margin: 3px;

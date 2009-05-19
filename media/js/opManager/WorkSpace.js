@@ -85,6 +85,10 @@ function WorkSpace (workSpaceState) {
 		this.loaded = true;
 
 		this._createWorkspaceMenu();
+		
+		//If workspace is shared, some options must be unavailable!
+		if (this._isShared())
+			this._hide_creator_options();
 
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
 	}
@@ -571,7 +575,10 @@ function WorkSpace (workSpaceState) {
 		}
 		
 		var share_workspace_error = function (transport) {
-			alert('Error sharing workspace')
+			var response = transport.responseText;
+			var result = eval ('(' + response + ')');
+			
+			alert(result['description'])
 		}
 		
 		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
@@ -586,10 +593,10 @@ function WorkSpace (workSpaceState) {
 		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
 	}
 	
-		WorkSpace.prototype.mergeWith = function(workspace_id){
-			var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
-			PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);			
-		}
+	WorkSpace.prototype.mergeWith = function(workspace_id){
+		var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
+		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);			
+	}
 
     // *****************
     //  CONSTRUCTOR
@@ -615,6 +622,10 @@ function WorkSpace (workSpaceState) {
 	var wsOpsLauncher = 'ws_operations_link';
 	var idMenu = 'menu_'+this.workSpaceState.id;
 	
+	//Check if a workspace is shared with another users
+	this._isShared = function(){
+		return eval(this.workSpaceState['shared']);
+	}
 	
 	//create workspace menu
 	this._createWorkspaceMenu = function(){
@@ -631,27 +642,34 @@ function WorkSpace (workSpaceState) {
 		new Insertion.After($('menu_layer'), mergeMenuHTML);
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
-		//adding options to workspace menu
-		this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
-							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
+		//adding options to workspace menu		
 		if (this.workSpaceGlobalInfo.workspace.active != "true") {
 			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png", gettext("Mark as Active"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsActive();}.bind(this),optionPosition++);
 		}
-		this.unlockEntryPos = optionPosition;
-		this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
-		var res = this._checkLock();
-		optionPosition -= res;
-
-		this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
-		//TODO:Intermediate window to ask for data (name, description...)
-		this.menu.addOption("/ezweb/images/publish.png", gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
 		
-		if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
-			this.menu.addOption("/ezweb/images/merge.png", gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
+		if (! this._isShared()) {
+			//It's your own workspace.
+			//All operations are allowed!
+			
+			this.menu.addOption("/ezweb/images/rename.gif", gettext("Rename"), function(){OpManagerFactory.getInstance().activeWorkSpace.fillWithInput(); 
+							LayoutManagerFactory.getInstance().hideCover();},optionPosition++);
+			
+			this.unlockEntryPos = optionPosition;
+			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this), optionPosition++);
+			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this), optionPosition++);							
+			var res = this._checkLock();
+			optionPosition -= res;
+			
+			this.menu.addOption("/ezweb/images/publish.png", gettext("Share workspace"),function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
+			
+			this.menu.addOption("/ezweb/images/remove.png", gettext("Remove"),function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');}, optionPosition++);
+			//TODO:Intermediate window to ask for data (name, description...)
+			this.menu.addOption("/ezweb/images/publish.png", gettext("Publish workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');}.bind(this), optionPosition++);
+			
+			if(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1){ //there are several workspaces
+				this.menu.addOption("/ezweb/images/merge.png", gettext("Merge with workspace..."),function(e){LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',this.mergeMenu, Event.pointerX(e), Event.pointerY(e));}.bind(this), optionPosition++);
+			}
 		}
-		
-		this.menu.addOption("/ezweb/images/publish.png", gettext("Share workspace"),function(){LayoutManagerFactory.getInstance().hideCover(); this._shareWorkspace();}.bind(this), optionPosition++);
 		
 		this.menu.addOption("/ezweb/images/list-add.png", gettext("New workspace"),function(){LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');}, optionPosition++);
 	}
@@ -746,5 +764,23 @@ function WorkSpace (workSpaceState) {
 		}	
 		
 		return true;
+	}
+	
+	this._hide_new_tab_button = function() {
+		$('add_tab_link').style.display = 'None';
+	}
+	
+	this._hide_catalogue_button = function() {
+		$('catalogue_link').style.display = 'None';
+	}
+	
+	this._hide_wiring_button = function() {
+		$('wiring_link').style.display = 'None';
+	}
+	
+	this._hide_creator_options = function() {
+		this._hide_new_tab_button();
+		this._hide_wiring_button();
+		this._hide_catalogue_button();
 	}
 }
