@@ -93,25 +93,24 @@ files_iphone = [
    'media/iphone/catalogue/Catalogue.js',
    'media/js/gadgetModel/XHtml.js', 
    'media/js/gadgetModel/GadgetTemplate.js',
-   'media/js/gadgetModel/Gadget.js', 
-   'media/js/opManager/WorkSpace.js',
-   'media/js/opManager/Tab.js',
-   'media/js/opManager/OpManager.js', 
+   'media/iphone/gadgetModel/Gadget.js', 
+   'media/iphone/opManager/WorkSpace.js',
+   'media/iphone/opManager/Tab.js',
+   'media/iphone/opManager/OpManager.js', 
    'media/js/varManager/VariableGadget.js',
    'media/js/varManager/VariablePlatform.js', 
    'media/js/varManager/varManager.js',
-   'media/js/showcase/showcase.js',
+   'media/iphone/showcase/showcase.js',
    'media/js/showcase/util.js',
    'media/js/contextManager/ContextManager.js',
    'media/js/contextManager/ContextPlatform.js',
    'media/js/contextManager/Adaptors.js',
-   'media/js/dragboard/iGadget.js', 
-   'media/js/dragboard/dragboard.js',
-   'media/js/dragboard/UserPref.js', 
-   'media/js/dragboard/ElementPositions.js',
+   'media/iphone/dragboard/iGadget.js', 
+   'media/iphone/dragboard/dragboard.js',
    'media/js/wiring/filter.js', 
    'media/js/wiring/connectable.js', 
-   'media/js/wiring/wiring.js', 
+   'media/js/wiring/wiring.js',
+   'media/js/wiring/jsonFilter.js',
    'media/iphone/add-ons/wiring.js',
    'media/iphone/add-ons/connectable.js',
 ]
@@ -154,5 +153,5 @@ def write_file(final_file_name, file_list):
 
 #Main
 write_file('media/js/ezweb.js', files_normal)
-write_file('media/js/ezweb_iphone.js', files_iphone)
+write_file('media/iphone/ezweb_iphone.js', files_iphone)
 

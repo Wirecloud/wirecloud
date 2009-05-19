@@ -442,7 +442,9 @@ body[orient="landscape"] #mymw-nav {
 	z-index: 2;
 }
 .igadget_section div.mymw-inactive {
-	visibility: hidden;
+	height: 0;
+	width: 0;
+	/*visibility: hidden;*/
 	z-index: -1;
 }
 
@@ -454,6 +456,11 @@ body[orient="landscape"] .igadget_section{
 	height: 222px; /* 268 -42(bar+padding)-4(border) */
 }
 
+.igadget_section div.mymw-inactive .gadget_content{
+	height: 0;
+	width: 0;
+}
+	
 .gadget_content{
 	display: block;
 	position: relative;
@@ -465,6 +472,11 @@ body[orient="portrait"] .gadget_content{
 
 body[orient="landscape"] .gadget_content{
 	height: 172px; /* 222 (igadget_section) - 50 (related) */
+}
+
+.igadget_section div.mymw-inactive .related_gadgets{
+	height: 0;
+	width: 0;
 }
 
 .gadget_content_full{
@@ -480,12 +492,21 @@ body[orient="landscape"] .gadget_content_full{
 	height: 222px; /* without related section */
 }
 
+.igadget_section div.mymw-inactive .gadget_object{
+	height: 0;
+	width: 0;
+}
 .gadget_object{
 	width: 100%;
 	height: 100%;
 }
 
 /**** Related Gadget Section ****/
+.igadget_section div.mymw-inactive .related_gadgets{
+	height: 0;
+	width: 0;
+}
+
 .related_gadgets{
 	border: 1px solid #E0E0E0;
 	width: 95%;
