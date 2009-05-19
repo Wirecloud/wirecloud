@@ -114,6 +114,10 @@ def get_gadget_data(data):
     data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=data_fields['xhtml'])
  
     data_ret['name'] = data_fields['name']
+    if data_fields['display_name'] and data_fields['display_name']!="":
+        data_ret['displayName'] = data_fields['display_name']
+    else:
+        data_ret['displayName'] = data_fields['name']
     data_ret['vendor'] = data_fields['vendor']
     data_ret['description'] = data_fields['description']
     data_ret['uri'] = data_fields['uri']

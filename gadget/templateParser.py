@@ -47,6 +47,9 @@ from commons.http_utils import download_http_content
 from gadgetCodeParser import GadgetCodeParser
 from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
 
+from commons.translation_utils import get_trans_index
+from translator.models import Translation
+
 class TemplateParser:
     def __init__(self, uri):
         self.uri = uri
@@ -158,6 +161,7 @@ class TemplateHandler(handler.ContentHandler):
         self._accumulator = []
         self._link = []
         self._gadgetName = ""
+        self._gadgetDisplayName = ""
         self._gadgetVersion = ""
         self._gadgetVendor = ""
         self._gadgetImage = ""
@@ -173,6 +177,14 @@ class TemplateHandler(handler.ContentHandler):
         self._lastPreference = ""
         self._gadget = Gadget ()
         self._capabilities = []
+        #translation attributes
+        self.translatable_list = []
+        self.translated_list = []
+        self.translations = {}
+        self.lang_list = []
+        self.default_lang = ""
+        self.current_lang = ""
+        self.current_text = ""
         
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
@@ -216,6 +228,7 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
             relationship_eltos['option'] = []
+            relationship_eltos['trans'] = []
             self._relationships.append(relationship_eltos)
             
         else:
@@ -227,7 +240,8 @@ class TemplateHandler(handler.ContentHandler):
         _description = ''
         _label = ''
         _default_value = ''
-
+        
+        
         if (attrs.has_key('name')):
             _name = attrs.get('name')
 
@@ -256,6 +270,18 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
             relationship_eltos['option'] = []
+            
+            relationship_eltos['trans'] = []
+            index = self.addIndex(_description)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+            index = self.addIndex(_label)
+            
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+            
             self._relationships.append(relationship_eltos)
 
             self._lastPreference = relationship_eltos
@@ -270,7 +296,7 @@ class TemplateHandler(handler.ContentHandler):
         _description = ''
         _label = ''
         _friendCode = ''
-
+        
 
         if (attrs.has_key('name')):
             _name = attrs.get('name')
@@ -280,9 +306,11 @@ class TemplateHandler(handler.ContentHandler):
 
         if (attrs.has_key('description')):
             _description = attrs.get('description')
+            index = self.addIndex(_description)
 
         if (attrs.has_key('label')):
             _label = attrs.get('label')
+            index = self.addIndex(_label)
 
         if (attrs.has_key('friendcode')):
             _friendCode = attrs.get('friendcode')
@@ -301,6 +329,17 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
             relationship_eltos['option'] = []
+            
+            relationship_eltos['trans'] = []
+            index = self.addIndex(_description)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+            index = self.addIndex(_label)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+            
             self._relationships.append(relationship_eltos)
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Event element"))
@@ -312,7 +351,6 @@ class TemplateHandler(handler.ContentHandler):
         _description = ''
         _label = ''
         _friendCode = ''
-
 
         if (attrs.has_key('name')):
             _name = attrs.get('name')
@@ -343,6 +381,18 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
             relationship_eltos['option'] = []
+            
+            relationship_eltos['trans'] = []
+            index = self.addIndex(_description)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+                
+            index = self.addIndex(_label)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+            
             self._relationships.append(relationship_eltos)
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Slot element"))   
@@ -397,6 +447,7 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = context
             relationship_eltos['option'] = []
+            relationship_eltos['trans'] = []
             self._relationships.append(relationship_eltos)
             
         else:
@@ -433,6 +484,7 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = context
             relationship_eltos['option'] = []
+            relationship_eltos['trans'] = []
             self._relationships.append(relationship_eltos)            
         else:
             raise TemplateParseException(_("ERROR: missing attribute at External Context element"))            
@@ -467,14 +519,20 @@ class TemplateHandler(handler.ContentHandler):
         _name=""
 
         if (attrs.has_key('name')):
+            # backward compatibility
             _name = attrs.get('name')
+        elif (attrs.has_key('label')):
+            _name = attrs.get('label')
 
         if (attrs.has_key('value')):
             _value = attrs.get('value')
-
+        
         if (_value!= "") and (_name!="") and (self._lastPreference['vdef'].type ==  self.typeText2typeCode("list")):
             option = UserPrefOption(value=_value, name=_name, variableDef=self._lastPreference['vdef'])
-            self._lastPreference['option'].append(option)
+            index = self.addIndex(_name)
+            if index:
+                self.addTranslation(index, option)
+            self._lastPreference['option'].append({"option":option,"index":index})
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Option element"))            
 
@@ -492,13 +550,53 @@ class TemplateHandler(handler.ContentHandler):
             self._gadgetWidth=_width
             self._gadgetHeight=_height
         else:
-            raise TemplateParseException(_("ERROR: missing attribute at Rendering element"))                       
+            raise TemplateParseException(_("ERROR: missing attribute at Rendering element"))     
+    
+    def processTranslations(self, attrs):
+        if (attrs.has_key('default')):
+            self.default_lang = attrs.get('default')
+        else:
+            raise TemplateParseException(_("ERROR: missing the 'default' attribute at Translations element"))
+        
+    def processTranslation(self, attrs):
+        if (attrs.has_key('lang')):
+            self.current_lang = attrs.get('lang')
+            self.lang_list.append(self.current_lang)
+        else:
+            raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
+        
+    def processMsg(self, attrs):
+        if (attrs.has_key('name')):
+            self.current_text = attrs.get('name')
+        else:
+            raise TemplateParseException(_("ERROR: missing the language attribute at Translation element")) 
+                                         
+    def addIndex(self, index):
+        #add index to the translation list
+        value = get_trans_index(index)
+        if value and not value in self.translatable_list:
+            self.translatable_list.append(value)
+        return value
+    
+    def addTranslation(self, index, object):
+        table_ = object.__class__.__module__+"."+object.__class__.__name__
+        if self.translations.has_key(index):
+            #increment the number of times this index has been used (it will been used when the Translation is saved)
+            times = 1;
+            if self.translations[index].has_key("times"):
+                times = self.translations[index]["times"]
+            self.translations[index]["times"] = times + 1
+        else:
+            self.translations[index]={}
+            self.translations[index]["trans"]=table_
+        return
 
 ###############
 
     def startElement(self, name, attrs):
         # Catalogue
-        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author'):
+        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='ImageURI') or (name=='iPhoneImageURI') or \
+        (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author') or (name=='DisplayName'):
             self.reset_Accumulator()
             return
 
@@ -542,9 +640,25 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Platform.Rendering'):
             self.processRendering(attrs)
             return
+        #Translation elements
+        if (name == 'Translations'):
+            self.processTranslations(attrs)
+            return
+        if (name == 'Translation'):
+            self.processTranslation(attrs)
+            return
+        if (name == 'msg'):
+            self.reset_Accumulator()
+            self.processMsg(attrs)
+            return
 
 
     def endElement(self, name):
+        #add index to the translation list
+        index = self.addIndex(self._accumulator)
+        if index:
+            self.addTranslation(index, self._gadget)
+        
         if (name == 'Catalog.ResourceDescription'):
             
             self._gadgetURI = "/gadgets/" + self._gadgetVendor + "/" + self._gadgetName + "/" + self._gadgetVersion
@@ -552,16 +666,25 @@ class TemplateHandler(handler.ContentHandler):
             return
 
         if (name == 'Name'):
+            if index:
+                raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
             self._gadgetName = self._accumulator
             return
 
         if (name == 'Version'):
+            if index:
+                raise TemplateParseException(_("ERROR: The element Version cannot be translated"))
             self._gadgetVersion = self._accumulator
             return
 
         if (name == 'Vendor'):
+            if index:
+                raise TemplateParseException(_("ERROR: The element Vendor cannot be translated"))
             self._gadgetVendor = self._accumulator
             return
+        if (name == 'DisplayName'):
+            self._gadgetDisplayName = self._accumulator
+            return 
 
         if (name == 'Author'):
             self._gadgetAuthor = self._accumulator
@@ -585,9 +708,39 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Description'):
             self._gadgetDesc = self._accumulator
             return
-
-
-
+        if (name == "Translation"):
+            if self.current_lang==self.default_lang:
+                for ind in self.translatable_list:
+                    self.translated_list.remove(ind)
+                if len(self.translated_list)>0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: "+str(self.translated_list)))
+            
+        if (name == "msg"):
+            if not self.current_text in self.translatable_list:
+                #message not used in the platform
+                return;
+            
+            if self.current_lang==self.default_lang:
+                self.translated_list.append(self.current_text)
+                
+            # create the Translation (Gadget text) or add the language and value to the existing one (Variable or Option text)
+            try:
+                #existing Translation (VarDef or Option text)
+                trans_list = self.translations[self.current_text]["trans"]
+                if (type(trans_list)==type([])):
+                    #use the first Translation to get the table
+                    table_ = trans_list[0]["table"]
+                else:
+                    #get the datum and create the list
+                    table_ = trans_list
+                    self.translations[self.current_text]["trans"] = []                        
+                trans = {"text_id":self.current_text, "table":table_,"language":self.current_lang, 
+                         "value":self._accumulator, "default":(self.current_lang==self.default_lang)}
+            except:
+                #the text isn't in the translations dictionary
+                return
+            self.translations[self.current_text]["trans"].append(trans)
+        
     def characters(self, text):
         if (len(text) == 0):
             return
@@ -600,6 +753,15 @@ class TemplateHandler(handler.ContentHandler):
 
         self._accumulator += text
 
+    def createTranslation(self, trans, id):
+        t = Translation(element_id=id,
+                        text_id=trans["text_id"],
+                        table=trans["table"], 
+                        language=trans["language"], 
+                        value=trans["value"], 
+                        default=trans["default"])
+        t.save()
+        
     @transaction.commit_on_success
     def endDocument(self):
         emptyRequiredFields = []
@@ -633,11 +795,17 @@ class TemplateHandler(handler.ContentHandler):
         if len(emptyRequiredFields) > 0:
             print emptyRequiredFields
             raise TemplateParseException(_("Missing required field(s): %(fields)s") % {fields: unicode(emptyRequiredFields)})
+        
+        # Check the default translation
+        if len(self.lang_list)>0 and not self.default_lang in self.lang_list:
+            raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language ("+ self.default_lang +") translations"))
+        
 
         # Save the new gadget
         self._gadget.uri=self._gadgetURI
         self._gadget.vendor=self._gadgetVendor
         self._gadget.name=self._gadgetName
+        self._gadget.display_name=self._gadgetDisplayName
         self._gadget.version=self._gadgetVersion
         self._gadget.xhtml=self._xhtml
         self._gadget.author=self._gadgetAuthor
@@ -655,18 +823,47 @@ class TemplateHandler(handler.ContentHandler):
             rel['vdef'].gadget = self._gadget
             rel['vdef'].save()
             
+            #save translations
+            for ind in rel['trans']:
+                if self.translations.has_key(ind):
+                    for trans in self.translations[ind]["trans"]:
+                        self.createTranslation(trans, rel['vdef'].id)
+                    times = 1
+                    if self.translations[ind].has_key("times"):
+                        times = self.translations[ind]["times"]
+                    if times == 1:
+                        del self.translations[ind]
+                    else:
+                        self.translations[ind]["times"] = times -1
+                    
+            
             if rel['context']:
                 rel['context'].varDef = rel['vdef']
                 rel['context'].save()
             
             for opt in rel['option']:
-                opt.variableDef = rel['vdef']
-                opt.save()
+                opt["option"].variableDef = rel['vdef']
+                opt["option"].save()
+                if opt["index"] and self.translations.has_key(opt["index"]):
+                    for trans in self.translations[opt["index"]]["trans"]:
+                        self.createTranslation(trans, opt["option"].id)
+                    times = 1
+                    if self.translations[opt["index"]].has_key("times"):
+                        times = self.translations[opt["index"]]["times"]
+                    if times == 1:
+                        del self.translations[opt["index"]]
+                    else:
+                        self.translations[opt["index"]]["times"] = times -1
         
         # All capabilities 
         for cap in self._capabilities:
             cap.gadget=self._gadget
             cap.save()
+        
+        # Gadget translations
+        for index in self.translations:
+            for trans in self.translations[index]["trans"]:
+                self.createTranslation(trans, self._gadget.id)
                  
     def reset_Accumulator(self):
         self._accumulator = ""

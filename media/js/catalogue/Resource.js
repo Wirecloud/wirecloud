@@ -35,6 +35,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	
 	this.getVendor = function() { return state.getVendor();}
 	this.getName = function() { return state.getName();}
+	this.getDisplayName = function() { return state.getDisplayName();}
 	this.getVersion = function() { return state.getVersion();}
 	this.getAllVersions = function() { return state.getAllVersions();}
 	this.getDescription = function() { return state.getDescription();}
@@ -137,7 +138,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		resource.appendChild(content);
 		content.appendChild(UIUtils.createHTMLElement("div", $H({
             class_name: 'title',
-			innerHTML: state.getName()
+			innerHTML: state.getDisplayName()
         }))); 
 		var image_div = UIUtils.createHTMLElement("div", $H({
             class_name: 'image'
@@ -261,7 +262,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		fieldset.appendChild(title);
 		title.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			class_name: 'name',
-			innerHTML: state.getName()
+			innerHTML: state.getDisplayName()
 		})));
 		/*title.appendChild(UIUtils.createHTMLElement("span", $H({ 
 			class_name: 'version',
@@ -280,7 +281,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			innerHTML: gettext('Vote Me... ')
 		})));
 		rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
-			d: 'ratingSaved',
+			id: 'ratingSaved',
 			innerHTML: gettext('Vote Saved ')
 		})));
 		var rate_me = UIUtils.createHTMLElement("span", $H({ 
@@ -1155,6 +1156,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	
 	var vendor = null;
 	var name = null;
+	var displayName = null;
 	var version = null;
 	var description = null;
 	var uriImage = null;
@@ -1177,6 +1179,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	
 	this.getVendor = function() { return vendor;}
 	this.getName = function() { return name;}
+	this.getDisplayName = function() { return displayName;}
 	this.getVersion = function() { return version;}
 	this.getAllVersions = function() { return allVersions;}
 	this.getDescription = function() { return description;}
@@ -1234,6 +1237,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	
 	vendor = resourceJSON_.vendor;
 	name = resourceJSON_.name;
+	displayName = resourceJSON_.displayName;
 	version = resourceJSON_.version;
 	allVersions = resourceJSON_.versions;
 	description = resourceJSON_.description;

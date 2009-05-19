@@ -159,6 +159,10 @@ def get_gadgetresource_data(data, user):
     data_fields = data['fields']
     data_ret['vendor'] = data_fields['vendor']
     data_ret['name'] = data_fields['short_name']
+    if data_fields['display_name'] and data_fields['display_name']!="":
+        data_ret['displayName'] = data_fields['display_name']
+    else:
+        data_ret['displayName'] = data_ret['name']
     data_ret['version'] = data_fields['version']
     data_ret['author'] = data_fields['author']
     data_ret['mail'] = data_fields['mail']

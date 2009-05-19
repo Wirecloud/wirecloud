@@ -41,7 +41,8 @@ from django.utils.translation import ugettext as _
 
 from xml.sax import parseString, handler
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Capability 
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Capability, Translation
+from commons.translation_utils import get_trans_index
 
 import string
 
@@ -62,6 +63,7 @@ class TemplateHandler(handler.ContentHandler):
     def __init__(self, user, uri):
         self._accumulator = []
         self._name = ""
+        self._displayName = ""
         self._vendor = ""
         self._version = ""
         self._author = ""
@@ -77,6 +79,13 @@ class TemplateHandler(handler.ContentHandler):
         self._uri = uri
         self._gadget = None
         self._contratable = False
+        #translation attributes
+        self.translatable_list = []
+        self.translated_list = []
+        self.lang_list = []
+        self.default_lang = ""
+        self.current_lang = ""
+        self.current_text = ""
 
     def resetAccumulator(self):
         self._accumulator = []
@@ -146,16 +155,54 @@ class TemplateHandler(handler.ContentHandler):
              #self._includedResources.append(resource_id)
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Resource"))
-
+        
+    def processTranslations(self, attrs):
+        if (attrs.has_key('default')):
+            self.default_lang = attrs.get('default')
+        else:
+            raise TemplateParseException(_("ERROR: missing the 'default' attribute at Translations element"))
+        
+    def processTranslation(self, attrs):
+        if (attrs.has_key('lang')):
+            self.current_lang = attrs.get('lang')
+            self.lang_list.append(self.current_lang)
+        else:
+            raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
+        
+    def processMsg(self, attrs):
+        if (attrs.has_key('name')):
+            self.current_text = attrs.get('name')
+        else:
+            raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
+        
+    def addIndex(self, index):
+        #add index to the translation list
+        value = get_trans_index(index)
+        if value and not value in self.translatable_list:
+            self.translatable_list.append(value)
+        return value
 
     def endElement(self, name):
+        if not self._gadget_added:
+            #add index to the translation list
+            value = self.addIndex(self._accumulator[0])
+            
         if (name == 'Name'):
+            if value:
+                raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
             self._name = self._accumulator[0]
             return
+        if (name == 'DisplayName'):
+            self._displayName = self._accumulator[0]
+            return
         if (name == 'Vendor'):
+            if value:
+                raise TemplateParseException(_("ERROR: The element Vendor cannot be translated"))
             self._vendor = self._accumulator[0]
             return
         if (name == 'Version'):
+            if value:
+                raise TemplateParseException(_("ERROR: The element Version cannot be translated"))
             self._version = self._accumulator[0]
             return
         if (name == 'Author'):
@@ -184,10 +231,13 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Resource'):
             return            
 
-        if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and self._mail != '' and self._imageURI != '' and self._wikiURI != '' and name == 'Catalog.ResourceDescription' and not self._gadget_added):
+        if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and \
+            self._mail != '' and self._imageURI != '' and self._wikiURI != '' and name == 'Catalog.ResourceDescription' \
+            and not self._gadget_added):
 
             gadget=GadgetResource()
             gadget.short_name=self._name
+            gadget.display_name=self._displayName
             gadget.vendor=self._vendor
             gadget.version=self._version
             gadget.author=self._author
@@ -232,6 +282,25 @@ class TemplateHandler(handler.ContentHandler):
             
 
             self._gadget_added = True
+        elif (self._gadget_added and name=="msg"):
+            if not self.current_text in self.translatable_list:
+                #message not used in the catalogue
+                return;
+            if self.current_lang==self.default_lang:
+                self.translated_list.append(self.current_text)
+                
+            table_ = self._gadget.__class__.__module__+"."+self._gadget.__class__.__name__
+            trans = Translation(text_id=self.current_text, element_id=self._gadget.id, table=table_, language=self.current_lang, value=self._accumulator[0], default=(self.current_lang==self.default_lang))
+            trans.save()
+        elif (self._gadget_added and name=="Translation"):
+            if self.current_lang==self.default_lang:
+                for ind in self.translatable_list:
+                    self.translated_list.remove(ind)
+                if len(self.translated_list)>0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: "+str(self.translated_list)))
+        elif (self._gadget_added and name=="Translations"):
+            if len(self.lang_list)>0 and not self.default_lang in self.lang_list:
+                raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language ("+ self.default_lang +") translations"))
         elif (self._gadget_added):
             return
         else:
@@ -241,7 +310,8 @@ class TemplateHandler(handler.ContentHandler):
         self._accumulator.append(text)
 
     def startElement(self, name, attrs):
-        if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='Author') or (name=='Description') or (name=='Mail') or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI'):
+        if ((name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='DisplayName') or (name=='Author') or (name=='Description') or (name=='Mail') \
+            or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='DisplayName')):
             self.resetAccumulator()
             return
 
@@ -261,4 +331,15 @@ class TemplateHandler(handler.ContentHandler):
             return
         if (name == 'Capability'):
             self.processCapability(attrs)
+            return
+        #Translation elements
+        if (name == 'Translations'):
+            self.processTranslations(attrs)
+            return
+        if (name == 'Translation'):
+            self.processTranslation(attrs)
+            return
+        if (name == 'msg'):
+            self.resetAccumulator()
+            self.processMsg(attrs)
             return

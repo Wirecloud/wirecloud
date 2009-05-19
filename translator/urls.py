@@ -30,13 +30,22 @@
 
 #
 
-from django.contrib import admin
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, UserVote, Translation
+from django.conf.urls.defaults import patterns
 
-admin.site.register(GadgetResource)
-admin.site.register(GadgetWiring)
-admin.site.register(UserRelatedToGadgetResource)
-admin.site.register(UserTag)
-admin.site.register(UserVote)
-admin.site.register(Translation)
+from translator.views import *
 
+urlpatterns = patterns('translator.views',
+                       
+    # Add new Translations
+    (r'^[/]?$', 
+        TranslationCollection(permitted_methods=('POST', ))),
+        
+    # Get Translation gadget view 
+    (r'^/gadget/((?P<identifier>\d+)[/]?)?$', 
+        GadgetTranslator(permitted_methods=('GET', ))),
+    
+    # Get Translation Workspace view
+    #(r'^/workspace/((?P<workspace_id>\d+)[/]?)?$', 
+    #    WorkspaceTranslator(permitted_methods=('GET', ))),
+    
+)

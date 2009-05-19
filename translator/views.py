@@ -29,14 +29,26 @@
 
 
 #
+from commons.resource import Resource
+from django.shortcuts import render_to_response,get_object_or_404
+from gadget.models import Gadget
 
-from django.contrib import admin
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, UserVote, Translation
+class TranslationCollection(Resource):
+    def write(self, request):
+        pass
 
-admin.site.register(GadgetResource)
-admin.site.register(GadgetWiring)
-admin.site.register(UserRelatedToGadgetResource)
-admin.site.register(UserTag)
-admin.site.register(UserVote)
-admin.site.register(Translation)
-
+class GadgetTranslator(Resource):
+    def read(self, request, identifier):
+        gadget = get_object_or_404(id=identifier)
+        translate_fields = gadget.get_translate_fields()
+        result = {}
+        # transform the data
+        for e in translate_fields:
+            #for each variable
+            for lang, fields in e.iteritems():
+                #for each language
+                for field in fields:
+                    #add the value 
+                    index = field["id"]+"_"+field["table"]+"_"+field["attribute"]
+                    result[lang][index] = field["widget"].render(index, field["value"])
+        return render_to_response("translation.html", {'translate_fields': result}, context_instance=RequestContext(request))

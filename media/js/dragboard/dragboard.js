@@ -333,7 +333,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 
 		// Create the instance
-		var igadgetName = gadget.getName() + ' (' + this.currentCode + ')';
+		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
 		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
 
 		iGadget.save();

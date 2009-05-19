@@ -33,18 +33,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-#class Template(models.Model):
-#    uri = models.CharField(_('URI'), max_length=500, unique=True)
-#    description = models.CharField(_('Description'), max_length=250)
-#    image = models.CharField(max_length=500)
-#    width = models.IntegerField(_('Width'), default=1)
-#    height = models.IntegerField(_('Height'), default=1)    
-#
-#    class Admin:
-#        pass
-#
-#    def __unicode__(self):
-#        return self.uri
+from translator.models import TransModel 
 
 class XHTML(models.Model):
     uri = models.CharField(_('URI'), max_length=500, unique=True)
@@ -56,12 +45,13 @@ class XHTML(models.Model):
         return self.uri
 
 
-class Gadget(models.Model):
+class Gadget(TransModel):
     uri = models.CharField(_('URI'), max_length=500)
     
     vendor = models.CharField(_('Vendor'), max_length=250)
     name = models.CharField(_('Name'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
+    display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
     
     xhtml = models.ForeignKey(XHTML)
     
@@ -92,6 +82,15 @@ class Gadget(models.Model):
     def get_related_slots(self):
         return VariableDef.objects.filter(gadget=self, aspect='SLOT')
     
+#===============================================================================
+#    def get_translate_fields(self):
+#        translate_fields = TransModel.get_translate_fields(self)
+#        variables = VariableDef.objects.filter(gadget=self)
+#        for v in variables:
+#            translate_fields.append(v.get_translate_fields())
+#        return translate_fields
+#===============================================================================
+    
 class Capability(models.Model):
     name = models.CharField(_('Name'), max_length=50)
     value = models.CharField(_('Value'), max_length=50)
@@ -101,7 +100,7 @@ class Capability(models.Model):
         unique_together = ('name', 'value', 'gadget')
     
     
-class VariableDef(models.Model):
+class VariableDef(TransModel):
     name = models.CharField(_('Name'), max_length=30)
     TYPES = (
         ('N', _('Number')),
@@ -135,9 +134,9 @@ class VariableDef(models.Model):
     def get_default_value(self):
         return self.default_value
 
-class UserPrefOption(models.Model):
-    value = models.CharField(_('Value'), max_length=30)
-    name = models.CharField(_('Name'), max_length=30)
+class UserPrefOption(TransModel):
+    value = models.CharField(_('Value'), max_length=50)
+    name = models.CharField(_('Name'), max_length=50)
     variableDef = models.ForeignKey(VariableDef)
         
     def __unicode__(self):

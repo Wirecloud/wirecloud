@@ -31,12 +31,7 @@
 #
 
 from django.contrib import admin
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, UserVote, Translation
+from translator.models import Translation
 
-admin.site.register(GadgetResource)
-admin.site.register(GadgetWiring)
-admin.site.register(UserRelatedToGadgetResource)
-admin.site.register(UserTag)
-admin.site.register(UserVote)
 admin.site.register(Translation)
 

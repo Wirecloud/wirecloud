@@ -144,6 +144,7 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
+    'translator',
 #    'clms',
 )
 

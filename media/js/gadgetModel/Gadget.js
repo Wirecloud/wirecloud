@@ -38,6 +38,7 @@ function Gadget(gadget_, url_) {
 	
 	this.getVendor = function() { return state.getVendor(); }
 	this.getName = function() { return state.getName(); }
+	this.getDisplayName = function() { return state.getDisplayName(); }
 	this.getVersion = function() { return state.getVersion(); }
 	this.getTemplate = function() { return state.getTemplate(); }
 	this.getXHtml = function() { return state.getXHtml(); }
@@ -131,6 +132,7 @@ function GadgetState(gadget_) {
 	var vendor = null;
 	var name = null;
 	var version = null;
+	var displayName = null;
 	var template = null;
 	var xhtml = null;
 	var image = null;
@@ -142,6 +144,7 @@ function GadgetState(gadget_) {
 	vendor = gadget_.vendor;
 	name = gadget_.name;
 	version = gadget_.version;
+	displayName = gadget_.displayName
 	template = new GadgetTemplate(gadget_.variables, gadget_.size);
 	xhtml = new XHtml(gadget_.xhtml);
 	image = gadget_.image;
@@ -155,6 +158,7 @@ function GadgetState(gadget_) {
         this.getCapabilities = function() { return capabilities; } 
 	this.getVendor = function() { return vendor; }
 	this.getName = function() { return name; }
+	this.getDisplayName = function() { return displayName; }
 	this.getVersion = function() { return version; }
 	this.getTemplate = function() { return template; }
 	this.getXHtml = function() { return xhtml; }

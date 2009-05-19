@@ -31,13 +31,62 @@
 #
 
 from django.db import models 
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.utils.translation import ugettext as _
+from django.utils.translation import get_language, ugettext as _
+from django.core.exceptions import ObjectDoesNotExist
 
-        
-class GadgetResource(models.Model):
+###### Translation Section ######
+from commons.translation_utils import get_trans_index
+class TransModel(models.Model):
+    
+    def __getattribute__(self, attr):
+        language_ = get_language()[:2]
+        value = object.__getattribute__(self, attr)
+        index = get_trans_index(value)
+        if index:
+            # retrieve the translation
+            try:
+                id_ = object.__getattribute__(self, "id")
+                table_ = object.__getattribute__(self, "__class__").__module__+"."+object.__getattribute__(self, "__class__").__name__
+                attr_trans = Translation.objects.filter(text_id=index,element_id=id_, table=table_, language=language_)
+                if (attr_trans.count() > 0):
+                    return attr_trans[0].value
+                else:
+                    #get the default value
+                    attr_trans = Translation.objects.filter(text_id=index, element_id=id_, table=table_, default=True)
+                    if (attr_trans.count() > 0):
+                        return attr_trans[0].value
+                    # there isn't a default value -> it musn't be possible because it is ensured during the template parser 
+                    return value
+            except ObjectDoesNotExist, e:
+                # this attribute doesn't exist
+                raise AttributeError
+        else:
+             # the element don't need to be translated
+             return value
+    
+    class Meta:
+        abstract = True
+            
+
+class Translation(models.Model):
+    text_id = models.CharField(_('Text Identifier'), max_length=250)
+    element_id = models.IntegerField(_('Object Identifier'))
+    table = models.CharField(_('Model'), max_length=250)
+    language = models.CharField(_('Language'), choices=settings.LANGUAGES, max_length=2)
+    value = models.TextField(_('Value'), null=True)
+    default = models.BooleanField(_('Default Value'), default=False)
+    
+    def __unicode__(self):
+         return self.text_id + " - " + self.table + "." + str(self.element_id) + " -> " + self.language
+
+###### Catalogue section ######
+            
+class GadgetResource(TransModel):
 
      short_name = models.CharField(_('Name'), max_length=250)
+     display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
      vendor= models.CharField(_('Vendor'), max_length=250)
      version = models.CharField(_('Version'), max_length=150)
 
