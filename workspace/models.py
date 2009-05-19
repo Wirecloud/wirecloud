@@ -82,6 +82,7 @@ class PublishedWorkSpace(models.Model):
     
     description = models.TextField(_('Description'))
     
+    author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=30)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
