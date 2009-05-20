@@ -184,11 +184,8 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	Tab.prototype.go = function () {
-
-		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
-
-	    this.dragboard.recomputeSize();
 	    LayoutManagerFactory.getInstance().goTab(this);
+	    this.show()
 	    this.makeVisibleInTabBar();
 	}
 
