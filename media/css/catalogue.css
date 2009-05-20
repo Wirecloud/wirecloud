@@ -90,7 +90,12 @@
 #catalogue .head .header_always .simple_search {
 	display: inline;
 	margin-right: 20px;
-	margin-left: 20px;
+	margin-left: 5px;
+}
+
+#catalogue .head .header_always .simple_search #simple_search_text{
+	width:13%;
+	margin-right: 5px;
 }
 
 #catalogue .head .header_always .advanced_options {
@@ -349,7 +354,7 @@
 	width: 13%;
 	padding: 20px 10px 0 10px;
 	margin: 0 10px 0 0;
-	background: #E6F3FF;
+	background: #f9f9f9;
 	border-right: 1px solid #BBBBBB;
 	border-bottom: 1px solid #BBBBBB;
 	-moz-border-radius-bottomright:6px;
