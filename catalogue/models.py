@@ -144,7 +144,7 @@ class GadgetWiring(models.Model):
      def __unicode__(self):
          return self.friendcode
 
-class Tag(TransModel):
+class Tag(models.Model):
 
     name = models.CharField(max_length=20, unique = True)
     
@@ -166,7 +166,7 @@ class UserTag(models.Model):
     #def __unicode__(self):
     #   return self.tag
     
-class Category(models.Model):
+class Category(TransModel):
     name = models.CharField(max_length=50, unique = True)
     tags = models.ManyToManyField(Tag)
     parent = models.ForeignKey('self', blank=True, null = True)
