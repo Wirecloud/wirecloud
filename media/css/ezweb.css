@@ -414,6 +414,10 @@ a:hover{
   cursor: pointer;
 }
 
+#help_section .help_button{
+	padding-left: 18px;
+}
+
 .underlined {
   border-bottom: solid 1px #AAAAAA;
 }

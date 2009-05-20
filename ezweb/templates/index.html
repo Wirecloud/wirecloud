@@ -250,8 +250,8 @@ var public_workspace = '{{ active_workspace }}';
 <div id="banner">
 	<div id="greeting">
 		<span id="user_section">
-		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
-		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile"%}</a> |{%endif%} <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">{% trans "Video Tutorial"%}</a></span>  | <a href="/logout">{% trans "Exit" %}</a></span>
+		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"></a></span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile"%}</a> |{%endif%} <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"></a></span>  | <a href="/logout">{% trans "Exit" %}</a></span>
 		  {% endif %}
 		<div class="languages">
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
