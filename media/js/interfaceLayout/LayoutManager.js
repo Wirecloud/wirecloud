@@ -668,8 +668,11 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
 		LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
 
-		LayoutManager.prototype.goTab = function(tab, tabLauncher, renameHandler, changeHandler){
-			this.markTab(tab, tabLauncher, renameHandler, changeHandler);
+		LayoutManager.prototype.goTab = function(tab_object){
+			this.markTab(tab_object);
+			
+			var tab = tab_object.tabHTMLElement;
+			
 			var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
 			fadder.fade();
 		}

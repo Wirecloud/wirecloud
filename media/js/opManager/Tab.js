@@ -188,7 +188,7 @@ function Tab (tabInfo, workSpace) {
 		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
 	    this.dragboard.recomputeSize();
-	    LayoutManagerFactory.getInstance().goTab(this.tabHTMLElement, this.tabOpsLauncher, this.renameTabHandler, this.changeTabHandler);
+	    LayoutManagerFactory.getInstance().goTab(this);
 	    this.makeVisibleInTabBar();
 	}
 
