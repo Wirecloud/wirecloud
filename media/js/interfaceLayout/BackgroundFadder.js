@@ -62,6 +62,11 @@ BackgroundFadder.prototype.fade = function() {
 	  		this.timer2ID = setTimeout(this.fade, this.interval); // sets timer so that this function will be called every 100 miliseconds
 	  	}
 	}
+	else{
+		for (var i=0; i<this.elements.length; i++) {
+			this.elements[i].style.background = "";
+		}
+	}
 	this.currentStep++;
 }
 
