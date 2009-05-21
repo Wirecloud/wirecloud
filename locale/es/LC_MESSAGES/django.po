@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-21 07:59+0000\n"
+"POT-Creation-Date: 2009-05-21 10:30+0000\n"
 "PO-Revision-Date: 2008-02-19 13:13+0100\n"
 "Last-Translator: manuel <(null)>\n"
 "Language-Team: Español/España\n"
@@ -194,9 +194,11 @@ msgstr "ERROR: falta un atributo en el elemento Slot"
 
 #: catalogue/templateParser.py:133 gadget/templateParser.py:415
 msgid "ERROR: capabilities must be placed AFTER Resource definition!"
-msgstr "ERROR: el campo capabilities debe aparecer DESPUES de la definicion del recurso!"
+msgstr ""
+"ERROR: el campo capabilities debe aparecer DESPUES de la definicion del "
+"recurso!"
 
-#: Catalogue/templateParser.py:157
+#: catalogue/templateParser.py:157
 msgid "ERROR: missing attribute at Resource"
 msgstr "ERROR: falta un atributo en el Recurso"
 
@@ -227,11 +229,11 @@ msgstr "ERROR: El elemento Version no puede traducirse"
 msgid "ERROR: the following translation indexes need a default value: "
 msgstr "ERROR: los siguientes índices necesitan un valor por defecto: "
 
-#: Catalogue/templateParser.py:300 gadget/templateParser.py:801
+#: catalogue/templateParser.py:300 gadget/templateParser.py:801
 msgid "ERROR: There isn't a Translation element with the default language ("
 msgstr "ERROR: No hay un elemento Translation con el lenguaje por defecto ("
 
-#: Catalogue/templateParser.py:304
+#: catalogue/templateParser.py:304
 msgid ""
 "ERROR: missing Resource description field at Resource element! Check schema!"
 msgstr ""
@@ -943,12 +945,10 @@ msgid "Accept"
 msgstr "Aceptar"
 
 #: ezweb/templates/index.html:203
-#, fuzzy
-msgid "Don't bother me anymore with this question"
+msgid "Don't bother me with this question anymore"
 msgstr "No volver a hacerme esta pregunta"
 
 #: ezweb/templates/index.html:216
-#, fuzzy
 msgid "Don't show me anymore"
 msgstr "No volver a mostrarme"
 
@@ -971,7 +971,6 @@ msgid "Wiki URL"
 msgstr "wikiURI"
 
 #: ezweb/templates/index.html:253
-#, fuzzy
 msgid "anonymous"
 msgstr "Anónimo"
 
@@ -1120,7 +1119,6 @@ msgid "Tag"
 msgstr "Etiquetar"
 
 #: ezweb/templates/showcase.html:103
-#, fuzzy
 msgid "Search by category:"
 msgstr "Buscar por categoría:"
 
@@ -1197,7 +1195,6 @@ msgid "Boolean"
 msgstr "Booleano"
 
 #: gadget/models.py:110
-#, fuzzy
 msgid "Password"
 msgstr "Contraseña"
 
