@@ -41,7 +41,7 @@ class PackageLinker:
         self.add_user_to_workspace(workspace, user)
         
         #Linking gadgets to user (allways needed)
-        ws_igadgets_vars = self.link_gadgets(workspace, user)
+        ws_igadget_vars = self.link_gadgets(workspace, user)
         
         if (link_variable_values):
             ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
