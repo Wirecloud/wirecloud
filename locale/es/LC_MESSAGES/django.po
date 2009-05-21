@@ -221,15 +221,15 @@ msgstr "ERROR: El elemento Vendor no puede traducirse"
 
 #: catalogue/templateParser.py:205 gadget/templateParser.py:676
 msgid "ERROR: The element Version cannot be translated"
-msgstr ""ERROR: El elemento Version no puede traducirse"
+msgstr "ERROR: El elemento Version no puede traducirse"
 
 #: catalogue/templateParser.py:297 gadget/templateParser.py:716
 msgid "ERROR: the following translation indexes need a default value: "
-msgstr "ERROR: los siguientes indices necesitan un valor por defecto: "
+msgstr "ERROR: los siguientes índices necesitan un valor por defecto: "
 
 #: Catalogue/templateParser.py:300 gadget/templateParser.py:801
 msgid "ERROR: There isn't a Translation element with the default language ("
-msgstr "ERROR: No hay un elemento Translation con el lenguaje por defecto "
+msgstr "ERROR: No hay un elemento Translation con el lenguaje por defecto ("
 
 #: Catalogue/templateParser.py:304
 msgid ""
@@ -1122,7 +1122,7 @@ msgstr "Etiquetar"
 #: ezweb/templates/showcase.html:103
 #, fuzzy
 msgid "Search by category:"
-msgstr "Buscar por categoria:"
+msgstr "Buscar por categoría:"
 
 #: ezweb/templates/showcase.html:117 ezweb/templates/showcase.html.py:122
 msgid "Hide resource details"
