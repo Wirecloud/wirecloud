@@ -276,6 +276,10 @@ var public_workspace = '{{ active_workspace }}';
 		</div>
 		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
 </div>
+
+{% block ezweb_logo %}
+{% endblock %}
+
 <div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
 </div>
 </div>
