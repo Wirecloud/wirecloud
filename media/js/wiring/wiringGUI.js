@@ -250,9 +250,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 //			0);
 
 	filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif", 
-			'Empty', 
-			"Returns the value of the channel unfiltered.",
+			"/ezweb/images/filter.gif",
+			gettext('Empty'),
+			gettext('Returns the value of the channel unfiltered.'),
 			function(){
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, null); 
@@ -262,15 +262,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	for (var i = 0; i < filters.length; i++) {
 		context = {wiringGUI:this, channel:channel, filter:filters[i]};
 		filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif", 
+			"/ezweb/images/filter.gif",
 			filters[i].getLabel(),
-			filters[i].getHelpText(), 
-			function(){
+			filters[i].getHelpText(),
+			function() {
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, this.filter);
 			}.bind(context),
 			i+1
-		);	
+		);
 	}
 	return filterMenu;
   }

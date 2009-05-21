@@ -255,9 +255,21 @@ function Tab (tabInfo, workSpace) {
 	
 	this._lockFunc = function(locked) {
 		if (locked) {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this));
+			this.menu.updateOption(this.lockEntryId,
+				"/ezweb/images/unlock.png",
+				gettext("Unlock"),
+				function() {
+					LayoutManagerFactory.getInstance().hideCover();
+					this._lockFunc(false);
+				}.bind(this));
 		} else {
-			this.menu.updateOption(this.lockEntryId, "/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this));	
+			this.menu.updateOption(this.lockEntryId,
+				"/ezweb/images/lock.png",
+				gettext("Lock"),
+				function() {
+					LayoutManagerFactory.getInstance().hideCover();
+					this._lockFunc(true);
+				}.bind(this));
 		}
 		this.dragboard.setLock(locked);
 		this.workSpace._checkLock();
@@ -269,7 +281,13 @@ function Tab (tabInfo, workSpace) {
 			var tab = this.workSpace.tabInstances[tabIds[i]];
 			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
 				tab.firstVisible = false;
-				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png", gettext("First Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); tab.markAsVisible();}.bind(tab),1);	
+				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png",
+					gettext("First Visible"),
+					function() {
+						LayoutManagerFactory.getInstance().hideCover();
+						tab.markAsVisible();
+					}.bind(tab),
+					1);
 			}
 		}
 		this.firstVisible = true;
@@ -317,7 +335,13 @@ function Tab (tabInfo, workSpace) {
 	
 	this.addMarkAsVisible = function (){
 		this.firstVisible = false;
-		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png", gettext("Mark as Visible"), function(){LayoutManagerFactory.getInstance().hideCover(); this.markAsVisible();}.bind(this),1);
+		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png",
+			gettext("Mark as Visible"),
+			function() {
+				LayoutManagerFactory.getInstance().hideCover();
+				this.markAsVisible();
+			}.bind(this),
+			1);
 	}.bind(this);
 	
 	var idMenu = 'menu_'+this.tabName;
@@ -326,13 +350,13 @@ function Tab (tabInfo, workSpace) {
 	this.menu = new DropDownMenu(idMenu);
 	
 	this.menu.addOption("/ezweb/images/rename.gif",
-	                    gettext("Rename"),
-			    function() {
-			        OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
-				LayoutManagerFactory.getInstance().hideCover();
-	                    },
-			    0);
-	
+		gettext("Rename"),
+		function() {
+			OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
+			LayoutManagerFactory.getInstance().hideCover();
+		},
+		0);
+
 	if (this.tabInfo.visible != "true") {
 		this.addMarkAsVisible();
 	} else {
@@ -341,10 +365,27 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	if (this.dragboard.isLocked()) {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png", gettext("Unlock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(false);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png",
+			gettext("Unlock"),
+			function() {
+				LayoutManagerFactory.getInstance().hideCover();
+				this._lockFunc(false);
+			}.bind(this),
+			1);
 	} else {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png", gettext("Lock"), function(){LayoutManagerFactory.getInstance().hideCover(); this._lockFunc(true);}.bind(this),1);
+		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png",
+			gettext("Lock"),
+			function() {
+				LayoutManagerFactory.getInstance().hideCover();
+				this._lockFunc(true);
+			}.bind(this),
+			1);
 	}
-	
-	this.menu.addOption("/ezweb/images/remove.png", "Remove",function(){LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');},2);
+
+	this.menu.addOption("/ezweb/images/remove.png",
+		gettext("Remove"),
+		function() {
+			LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');
+		},
+		2);
 }

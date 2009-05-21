@@ -442,9 +442,13 @@ var LayoutManagerFactory = function () {
 				workSpace.menu.submenu.className = "submenu";
 			}
 
-			for (var i=0; i<workspaces.length; i++){
-				workSpace.menu.addOptionToSubmenu(null, workspaces[i].workSpaceState.name, function (){LayoutManagerFactory.getInstance().hideCover();OpManagerFactory.getInstance().changeActiveWorkSpace(this)}.bind(workspaces[i]));
-
+			for (var i = 0; i < workspaces.length; i++) {
+				workSpace.menu.addOptionToSubmenu(null,
+					workspaces[i].workSpaceState.name,
+					function () {
+						LayoutManagerFactory.getInstance().hideCover();
+						OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+					}.bind(workspaces[i]));
 			}
 		}
 
@@ -452,11 +456,15 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces){
 			
 			workSpace.mergeMenu.clearOptions();
-			
+
 			for (var i=0; i<workspaces.length; i++){
 				var context = {firstWK: workSpace, scndWK: workspaces[i]}
-				workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function (){this.firstWK.mergeWith(this.scndWK.workSpaceState.id)}.bind(context), i);
-
+				workSpace.mergeMenu.addOption(null,
+					workspaces[i].workSpaceState.name,
+					function () {
+						this.firstWK.mergeWith(this.scndWK.workSpaceState.id);
+					}.bind(context),
+					 i);
 			}
 		}
 
