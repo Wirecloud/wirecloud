@@ -724,6 +724,7 @@ var LayoutManagerFactory = function () {
 	
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
+		this.showTabs();
 		this.scrollTabBarWidth += tabSize;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
