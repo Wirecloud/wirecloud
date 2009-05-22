@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+
 mv connectable/fixtures/initial_data.xml2 connectable/fixtures/initial_data.xml
 mv gadget/fixtures/initial_data.xml2 gadget/fixtures/initial_data.xml
 mv igadget/fixtures/initial_data.xml2 igadget/fixtures/initial_data.xml
