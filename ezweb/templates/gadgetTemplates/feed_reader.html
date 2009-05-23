@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Template schemaLocation="http://morfeo-project.org/2007/Template">
+  <!-- Meta tags define gadgets properties -->
+  <Catalog.ResourceDescription>
+    <Vendor>Morfeo</Vendor>
+    <Name>{{name}}</Name>
+    <Version>3.26</Version>
+    <Author>ezweb</Author>
+
+    <Mail>ezwebplatform-feedback@lists.morfeo-project.org</Mail>
+    <Description>Feed reader for RSS 2.0 or Atom 1.0 resources. Thanks to this gadget you can access to your favourite feeds from your workspace. Change the feed shown editing the gadgets preferences from the gadget menu or wiring this gadget to any feed source available like the Feed List gadget. This reader also exports information about what you are reading (summary, title...). Try to wire it to any gadget waiting for text (MMS sender, Google Translator...)</Description>
+    <ImageURI>{{imageURI}}</ImageURI>
+    <iPhoneImageURI>{{iPhoneImageURI}}</iPhoneImageURI>
+    <WikiURI>https://forge.morfeo-project.org/wiki/index.php/Gadgets_2009#Feed_Reader</WikiURI>
+  </Catalog.ResourceDescription>
+
+  <!-- EzWeb Gadgets Tags -->
+  <Platform.Preferences>
+	<Preference name="onClick" type="list" description="where must the piece of news be opened" label="Open news on..." default="gadget">
+	<Option value="gadget" name="This gadget"/>
+	<Option value="window" name="New window"/>
+	</Preference>
+    <Preference name="items" type="text" label="Max items" description="max num of items to show" default="7"/>
+	<Preference name="feedUrlPref" type="text" label="feedUrl" description="feed origin" default={{URL}}/>
+	<Preference name="theme" type="list" label="theme" description="theme" default={{feedColor}}>
+
+		<Option value="blue" name="blue"/>
+		<Option value="orange" name="orange"/>
+		<Option value="red" name="red"/>
+		<Option value="green" name="green"/>
+	</Preference>
+  </Platform.Preferences>
+  <!-- EzWeb Gadget Persistent State -->
+  <Platform.StateProperties>
+  </Platform.StateProperties>
+
+  <!-- EzWeb Gadget Data Wiring -->
+  <Platform.Wiring>
+    <Slot name="feedUrl" type="text" label="feedUrl" friendcode="feedUrl"/>
+	<Event name="selectedURL" type="text" label="selected item URL" friendcode="itemUrl"/>
+	<Event name="selectedTitle" type="text" label="selected item title" friendcode="itemTitle"/>
+	<Event name="selectedSummary" type="text" label="selected item summary" friendcode="itemSummary"/>
+	<Event name="sentURL" type="text" label="sent item URL" friendcode="itemUrl"/>
+	<Event name="sentTitle" type="text" label="sent item title" friendcode="itemTitle"/>
+	<Event name="sentSummary" type="text" label="sent item Summary" friendcode="itemSummary"/>
+
+  </Platform.Wiring>
+  <Platform.Link>
+    <XHTML href="http://ezweb.tid.es/repository/feedReader/feedReader.html"/>
+  </Platform.Link>
+  <Platform.Rendering width="10" height="25"/>
+	<Platform.Context>
+		<Context name="language" type="text" concept="language"/>
+	</Platform.Context>
+</Template>

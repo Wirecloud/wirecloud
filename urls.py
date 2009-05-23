@@ -72,6 +72,9 @@ urlpatterns = patterns('',
 
     # Catalogue Resource
     (r'^user/(?P<user_name>[\s\-\.\w]+)/catalogue/', include('catalogue.urls')),
+    
+    #GadgetGenerator
+    (r'^gadgetGenerator', include('gadgetGenerator.urls')),
 
     # Proxy
     (r'^proxy', include('proxy.urls')),
