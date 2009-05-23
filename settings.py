@@ -145,6 +145,7 @@ INSTALLED_APPS = (
     'catalogue',
     'context',
     'translator',
+    'gadgetGenerator',
 #    'clms',
 )
 
@@ -194,6 +195,12 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #TEMPLATE_GENERATOR_URL = 'http://localhost:9000'
+
+# Gadget Template Generator URL. This URL is only needed to allow creating
+# a Gadget when EzWeb is running with the develop server (manage.py)
+# or if this application is moved to another server
+# PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
+#GADGET_GENERATOR_URL = 'http://localhost:9001'
 
 FORCE_SCRIPT_NAME=""
 
