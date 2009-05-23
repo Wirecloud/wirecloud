@@ -407,7 +407,7 @@ function AddFeedMenu (element) {
 		if ($('feed_iphone_URL').value!="")
 			o.iPhoneImageURI = $('feed_iphone_URL').value;
 		if ($('feed_color').style.display!="none" && $('feed_color').value!="")
-			o.feedColor = $('feed_color').value;
+			o.feed_color = $('feed_color').value;
 		var data = {"template_data": Object.toJSON(o)};
 		var gadget_type="";
 		if (this.type=="addFeed"){
