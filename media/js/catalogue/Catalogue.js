@@ -53,7 +53,7 @@ var CatalogueFactory  = function () {
 		
 		Event.observe($('catalogue_link'), "click", function(){OpManagerFactory.getInstance().showCatalogue()}, false, "show_catalogue");
 		Event.observe($('add_feed_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addFeed")}, false, "show_feed_window");
-		Event.observe($('add_site_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addSite")}, false, "show_feed_window");
+		Event.observe($('add_site_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addSite")}, false, "show_site_window");
 		
 		
 		// ********************
