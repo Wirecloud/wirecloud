@@ -57,6 +57,22 @@ def get_uniquelist(list, value = None):
 
     return uniquelist
 
+# Filter gadgets that don't belong to given organization
+def filter_gadgets_by_organization(gadget_list, organization_list):
+    final_list = []
+     
+    for gadget in gadget_list:
+        if (not gadget.organization):
+            final_list.append(gadget)
+            continue
+        
+        for organization in organization_list:
+            if gadget.organization == organization:
+                final_list.append(gadget)
+                continue
+                    
+    return final_list
+
 # This function returns a list ordered by the criteria passed as parameter.
 def get_sortedlist(list, orderby):
     if orderby=='-creation_date':

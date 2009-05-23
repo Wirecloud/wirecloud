@@ -123,6 +123,8 @@ class GadgetsCollection(Resource):
             if a==1:
                 c=0
             gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)[c:d]
+            
+        gadgetlist = filter_gadgets_by_organization(gadgetlist, user.groups.all())
 
         return get_resource_response(gadgetlist, format, items, user)
 
@@ -272,6 +274,9 @@ class GadgetsCollectionBySimpleSearch(Resource):
                 gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
 
         gadgetlist = get_uniquelist(gadgetlist)
+        
+        gadgetlist = filter_gadgets_by_organization(gadgetlist, user.groups.all())
+        
         items = len(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
@@ -345,6 +350,9 @@ class GadgetsCollectionByGlobalSearch(Resource):
         else:
             gadgetlist = get_uniquelist(gadgetlist)
         items = len(gadgetlist)
+        
+        gadgetlist = filter_gadgets_by_organization(gadgetlist, user.groups.all())
+        
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
 

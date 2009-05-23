@@ -32,7 +32,7 @@
 
 from django.db import models 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import get_language, ugettext as _
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -104,6 +104,9 @@ class GadgetResource(TransModel):
      wiki_page_uri = models.URLField(_('wikiURI'))
      template_uri= models.URLField(_('templateURI'))
      mashup_id = models.URLField(_('mashupId'), null=True, blank=True)
+     
+     #For implementing "private gadgets" only visible for users that belongs to a concrete group
+     organization = models.ForeignKey(Group, null=True, blank=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
 
