@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -29,19 +29,9 @@
 
 
 #
-from django.db import models
-from django.utils.translation import ugettext as _
 
-class Template(models.Model):
-    name = models.CharField(_('Name'), max_length=250, unique = True)
-    defaultContext = models.TextField(_('Default context'))
+from django.contrib import admin
+from gadgetGenerator.models import *
 
-    def __unicode__(self):
-        return self.name      
-
-class TemplateInstance(models.Model):
-    context = models.TextField(_('Context'))
-    template = models.ForeignKey(Template)
-     
-    def __unicode__(self):
-        return self.template.name + '_' + str(self.id)
+admin.site.register(Template)
+admin.site.register(TemplateInstance)

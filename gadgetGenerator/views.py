@@ -33,10 +33,15 @@
 from django.db import transaction
 from django.utils import simplejson
 
+from django.utils.translation import ugettext as _
+from django.http import HttpResponse
+from django.shortcuts import render_to_response
+
 from commons.logs import log
 from commons.resource import Resource
-from gadgetGenerator.models import TemplateInstance
+from gadgetGenerator.models import Template, TemplateInstance
 
+from commons.logs_exception import TracedServerError
 
 class templateGenerator(Resource):
     
@@ -44,26 +49,27 @@ class templateGenerator(Resource):
 
         try:
             #fetch the parameters the user had introduced on creating the template
-            templateInstance = TemplateInstance.objects.get(id=templateId)
+            templateInstance = TemplateInstance.objects.get(id=int(templateId))
             context = simplejson.loads(templateInstance.context)
             
             #fetch the default parameters
-            template = Template.objects.get(id=templateInstance.template)
+            template = Template.objects.get(id=templateInstance.template.id)
             defaultContext = simplejson.loads(template.defaultContext)
             
             #create the new context with the default vaules plus the ones specified by the user
             newContext = {}
             for (key, value) in defaultContext.iteritems():
-                newContext[key] = context[key] or value
+                try:
+                    newContext[key] = context[key] or value
+                except:
+                    newContext[key] = value
         
         except Exception, e:
             msg = _("template cannot be fetched: ") + unicode(e)
             
             raise TracedServerError(e, {'templateName': templateName, 'templateId':templateId}, request, msg)    
         
-        return render_to_response(templateName + '.html',
-                          my_data_dictionary,
-                          context_instance=RequestContext(request))
+        return render_to_response("gadgetTemplates/" + templateName + '.xml', newContext, mimetype="application/xhtml+xml")
  
         
 
@@ -88,8 +94,8 @@ class templateGenerator(Resource):
             transaction.rollback()
             msg = _("template cannot be created: ") + unicode(e)
             
-            raise TracedServerError(e, {'template_data': template_data}, request, msg)    
+            raise TracedServerError(e, {'template_data': received_json}, request, msg)    
     
         #return the new template URL
-        url = request.build_absolute_uri() + str(templateInstance.id)
+        url = request.build_absolute_uri() + "/" + str(templateInstance.id)
         return HttpResponse("{'URL': '%s'}" % (url), mimetype='application/json; charset=UTF-8')

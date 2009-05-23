@@ -322,3 +322,119 @@ function PublishWindowMenu (element) {
 }
 
 PublishWindowMenu.prototype = new WindowMenu;
+
+//Especific class for Feed creator window
+function AddFeedMenu (element) {
+
+	//constructor
+	this.htmlElement = $('add_feed_menu');		//create-window HTML element
+	this.titleElement = $('add_feed_window_title');	//title gap
+	this.msgElement = $('add_feed_window_msg');	//error message gap
+	this.button = $('add_feed_btn1');
+	this.type="";	
+	
+	AddFeedMenu.prototype.setType = function(type){
+		this.type=type;
+		if (this.type=="addFeed"){
+			this.title = gettext('Add Feed');
+			$('color_pref_opt').setStyle({display:"table-row"});
+		}
+		else if (this.type=="addSite"){
+			this.title = gettext('Add Site');
+		}
+		this.titleElement.update(this.title);
+	}	
+
+	
+	this.not_valid_characters = ['/', '?', '&', ':']
+	
+	
+	this.operationHandler = function(e){
+		var feed_name = $('feed_name').value;
+		var feed_URL = $('feed_URL').value;
+		var feed_image_URL = $('feed_image_URL').value;
+		var feed_iphone_URL = $('feed_iphone_URL').value;
+		var feed_color = $('feed_color').value;
+		
+		if (feed_name.value!="" && feed_URL!="") {
+			// Not empty input data!
+			// Now validating input data!
+			
+			for (var i=0; i<this.not_valid_characters.length; i++) {
+				var character = this.not_valid_characters[i];
+				
+				if (feed_name.indexOf(character) >= 0) {
+					this.msgElement.update("Not valid characters in the feed Name");
+					return;
+				}
+			}
+			this.executeOperation();
+		}
+		else{
+			this.msgElement.update("All the required fields must be filled");
+		}
+	}.bind(this);
+
+
+	AddFeedMenu.prototype.initObserving = function(){	
+			Event.observe(this.button, "click", this.operationHandler, false, "add_feed");	
+	}
+	
+	AddFeedMenu.prototype.stopObserving = function(){	
+			Event.stopObserving(this.button, "click", this.operationHandler);
+	}	
+	
+	AddFeedMenu.prototype.setFocus = function(){
+		$('feed_name').focus();
+	}
+	
+	AddFeedMenu.prototype.executeOperation = function(){
+		
+		function onError(transport, e){
+			alert("error generando el template");
+			this.hide();
+		}
+		function onSuccess(transport){
+			var response = transport.responseText;
+			var data = eval ('(' + response + ')');
+			UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
+		}
+		var o = new Object;
+		o.name = $('feed_name').value;
+		o.URL = $('feed_URL').value;
+		if ($('feed_image_URL').value!="")
+			o.imageURI = $('feed_image_URL').value;
+		if ($('feed_iphone_URL').value!="")
+			o.iPhoneImageURI = $('feed_iphone_URL').value;
+		if ($('feed_color').style.display!="none" && $('feed_color').value!="")
+			o.feedColor = $('feed_color').value;
+		var data = {"template_data": Object.toJSON(o)};
+		var gadget_type="";
+		if (this.type=="addFeed"){
+			gadget_type="feed_reader"
+		} else if (this.type=="addSite"){
+			gadget_type="web_browser"
+		}
+		PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': gadget_type}), data, this, onSuccess, onError);
+	}
+	
+
+
+	//hides the window and clears all the inputs
+	AddFeedMenu.prototype.hide = function (){
+
+		var inputArray = $$('#add_feed_menu input:not([type=button])');
+		for (var i=0; i<inputArray.length; i++){
+			inputArray[i].value = '';
+		}
+		var msg = $('add_feed_window_msg');
+		msg.update();
+		this.stopObserving();
+		this.msgElement.update();
+		this.htmlElement.style.display = "none";
+		$('color_pref_opt').setStyle({display:"none"});
+	}
+
+}
+
+AddFeedMenu.prototype = new WindowMenu;

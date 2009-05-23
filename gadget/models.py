@@ -56,7 +56,7 @@ class Gadget(TransModel):
     xhtml = models.ForeignKey(XHTML)
     
     author = models.CharField(_('Author'), max_length=250)
-    mail = models.CharField(_('Mail'), max_length=30)
+    mail = models.CharField(_('Mail'), max_length=100)
    
     wikiURI = models.URLField(_('wikiURI'))
     imageURI = models.URLField(_('imageURI'))

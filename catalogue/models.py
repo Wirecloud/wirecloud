@@ -91,7 +91,7 @@ class GadgetResource(TransModel):
      version = models.CharField(_('Version'), max_length=150)
 
      author = models.CharField(_('Author'), max_length=250)
-     mail = models.CharField(_('Mail'), max_length=30)
+     mail = models.CharField(_('Mail'), max_length=100)
            
      description = models.TextField(_('Description'))
      size = models.CharField(_('Size'),max_length=10, null=True, blank=True)

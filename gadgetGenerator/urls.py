@@ -35,8 +35,8 @@ from gadgetGenerator.views import *
 urlpatterns = patterns('gadgetGenerator.views',
 
     #Template generator
-    (r'^/template/(?P<gadget_name>[\s\-\.\w]+)$',
+    (r'^/template/(?P<templateName>[\s\-\.\w]+)$',
      templateGenerator(permitted_methods=('POST', ))),
-     (r'^/template/((?P<gadget_name>[\s\-\.\w]+)/(?P<template_id>\d+))$',
+     (r'^/template/((?P<templateName>[\s\-\.\w]+)/(?P<templateId>\d+))$',
      templateGenerator(permitted_methods=('GET', ))),
 )

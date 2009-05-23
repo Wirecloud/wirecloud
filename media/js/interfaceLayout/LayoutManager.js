@@ -543,7 +543,6 @@ var LayoutManagerFactory = function () {
 					this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');
 				}
 				this.currentMenu = this.menus['createWorkSpaceMenu'];
-				this.currentMenu.show();
 				break;
 			case 'deleteTab':
 				if(!this.menus['alertMenu']){
@@ -552,7 +551,6 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
-				this.currentMenu.show();
 				break;
 			case 'cancelService':
 				if(!this.menus['alertMenu']){
@@ -561,7 +559,6 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
 				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
-				this.currentMenu.show();
 				break;
 			case 'deleteWorkSpace':
 				if(!this.menus['alertMenu']){
@@ -570,14 +567,12 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you really want to remove this workspace?'));
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();}, handlerNoButton);
-				this.currentMenu.show();
 				break;
 			case 'publishWorkSpace':
 				if(!this.menus['publishWorkSpaceMenu']){
 					this.menus['publishWorkSpaceMenu'] = new PublishWindowMenu(null);
 				}
 				this.currentMenu = this.menus['publishWorkSpaceMenu'];
-				this.currentMenu.show();
 				break;
 			case 'deleteAllResourceVersions':
 				if(!this.menus['alertMenu']){
@@ -590,11 +585,19 @@ var LayoutManagerFactory = function () {
 					this.currentMenu.setMsg(gettext('WARNING! All versions of this gadget will be removed too! Do you really want to remove this gadget?'));
 				}
 				this.currentMenu.setHandler(function(){UIUtils.deleteGadget(UIUtils.selectedResource);}, handlerNoButton);
-				this.currentMenu.show();
+				break;
+			case 'addFeed':
+			case 'addSite':
+				if(!this.menus['addFeedMenu']){
+					this.menus['addFeedMenu'] = new AddFeedMenu();
+				}
+				this.currentMenu = this.menus['addFeedMenu'];
+				this.currentMenu.setType(window);
 				break;
 			default:
-				break;
+				return;
 			}
+			this.currentMenu.show();
 		}
 		
 		//Shows the background and on click the message on front disappear

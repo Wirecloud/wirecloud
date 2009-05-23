@@ -66,6 +66,7 @@ _URIConstants.prototype.POST_PUBLISH_WORKSPACE = new Template('/workspace/#{work
 _URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
 _URIConstants.prototype.PUT_SHARE_WORKSPACE = new Template('/workspace/#{workspace_id}/share/#{share_boolean}');
+_URIConstants.prototype.GADGET_TEMPLATE_GENERATOR = new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}');
 
 {% if home_gateway_dispatcher_url %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
@@ -238,6 +239,27 @@ var public_workspace = '{{ active_workspace }}';
 	<div class="window_bottom">
 		<button id = "publish_btn1">{% trans "Accept"%}</button>
 		<button id = "publish_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
+	</div>
+</div>
+<div id="add_feed_menu" class="window_menu" style="display:none">
+	<div class="window_top">
+		<label id="add_feed_window_title" class="window_title"></label>
+		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
+	</div>
+	<div class="window_content">
+		<table>
+		<tr><td><label>{% trans "Name"%}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Image URL"%}</label></td><td><input id="feed_image_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "iPhone image URL"%}</label></td><td><input id="feed_iphone_URL" type="text" value = ""/></td></tr>
+		<tr id="color_pref_opt" style="display:none"><td><label>{% trans "Template color"%}</label></td><td><input id="feed_color" type="text" /></td></tr>
+		</table>
+		<div style="display:block;"><span class="required_mark">*</span> <span class="required_text">required</span></div>
+		<div id="add_feed_window_msg" class="window_msg_error"></div>
+	</div>
+	<div class="window_bottom">
+		<button id = "add_feed_btn1">{% trans "Accept"%}</button>
+		<button id = "add_feed_btn2" onclick="LayoutManagerFactory.getInstance().hideCover();">{% trans "Cancel"%}</button>
 	</div>
 </div>
 <!-- <div id="changeWorkspace_menu" class="drop_down_menu" style="display:none;">

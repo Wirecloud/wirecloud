@@ -395,9 +395,14 @@
 	margin: 0 0 5px 0;
 }
 
-#catalogue #tag_categories .category_name{
+#catalogue #tag_categories .category_name, #catalogue #left_bar .link{
 	cursor:pointer;
 	color: darkBlue;
+}
+
+#catalogue #left_bar .link{
+	display: block;
+	padding-bottom: 3px;
 }
 
 #catalogue #tag_categories .selected_cat{

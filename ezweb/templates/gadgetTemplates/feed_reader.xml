@@ -21,8 +21,8 @@
 	<Option value="window" name="New window"/>
 	</Preference>
     <Preference name="items" type="text" label="Max items" description="max num of items to show" default="7"/>
-	<Preference name="feedUrlPref" type="text" label="feedUrl" description="feed origin" default={{URL}}/>
-	<Preference name="theme" type="list" label="theme" description="theme" default={{feedColor}}>
+	<Preference name="feedUrlPref" type="text" label="feedUrl" description="feed origin" default="{{URL}}"/>
+	<Preference name="theme" type="list" label="theme" description="theme" default="{{feed_color}}">
 
 		<Option value="blue" name="blue"/>
 		<Option value="orange" name="orange"/>

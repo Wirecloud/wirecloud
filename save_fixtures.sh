@@ -7,6 +7,7 @@ python ./manage.py dumpdata --format=xml --indent=4 catalogue > catalogue/fixtur
 python ./manage.py dumpdata --format=xml --indent=4 workspace > workspace/fixtures/initial_data.xml
 python ./manage.py dumpdata --format=xml --indent=4 context > context/fixtures/initial_data.xml
 python ./manage.py dumpdata --format=xml --indent=4 auth > ezweb/fixtures/initial_data.xml
+python ./manage.py dumpdata --format=xml --indent=4 gadgetGenerator > gadgetGenerator/fixtures/initial_data.xml
 
 
 
