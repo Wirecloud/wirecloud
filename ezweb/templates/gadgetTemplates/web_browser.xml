@@ -15,14 +15,19 @@
   </Catalog.ResourceDescription>
   <!-- EzWeb Gadgets Tags -->
   <Platform.Preferences>
-     <Preference name="urlPref" type="text" description="HTML page URL" label="Page URL" default="{{URL}}"/>
+     <Preference name="urlPref" type="text" description="HTML base URL" label="Base URL" default="{{URL}}"/>
+     <Preference name="homeUrl" type="text" description="Home page URL" label="Home page URL" default="{{home_URL}}"/>
+     <Preference name="refreshingTime" type="text" description="Refreshing interval (minutes)" label="Refresh every... (minutes)" default="0"/>
   </Platform.Preferences>
   <!-- EzWeb Gadget Persistent State -->
   <Platform.StateProperties>
+  	<Property name="source" type="text" label="source" default="{{source}}"/>
+  	<Property name="sourceUrl" type="text" label="source" default="{{source_URL}}"/>  	
   </Platform.StateProperties>
   <!-- EzWeb Gadget Data Wiring -->
   <Platform.Wiring>
     <Slot name="url" type="text" label="url" friendcode="url"/>
+    <Slot name="parameters" type="text" label="paremeters" friendcode="parameters"/>
   </Platform.Wiring>
   <Platform.Link>
     <XHTML href="http://ezweb.tid.es/repository/browser/browser.html"/>
