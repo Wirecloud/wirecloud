@@ -35,7 +35,7 @@ from datetime import datetime
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content 
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -79,6 +79,10 @@ class TemplateHandler(handler.ContentHandler):
         self._uri = uri
         self._gadget = None
         self._contratable = False
+        
+        #Organizations
+        self._organization_list = []
+        
         #translation attributes
         self.translatable_list = []
         self.translated_list = []
@@ -138,6 +142,17 @@ class TemplateHandler(handler.ContentHandler):
 
         if (capability.name.lower() == 'contratable'):
             self._contratable=True 
+            
+    def processOrganization(self, organization_accumulator):         
+        if (not organization_accumulator):
+            #Not specifiying organization is valid!
+            return
+        
+        organization_name=organization_accumulator[0]
+        
+        organization, created = Group.objects.get_or_create(name=organization_name.upper())
+            
+        self._organization_list.append(organization)
 
     def processMashupResource(self, attrs):
         if (attrs.has_key('name')):
@@ -177,15 +192,19 @@ class TemplateHandler(handler.ContentHandler):
         
     def addIndex(self, index):
         #add index to the translation list
-        value = get_trans_index(index)
-        if value and not value in self.translatable_list:
-            self.translatable_list.append(value)
-        return value
+        
+        if (len(index)):    
+            value = get_trans_index(index[0])
+            if value and not value in self.translatable_list:
+                self.translatable_list.append(value)
+            return value
+        
+        return None
 
     def endElement(self, name):
         if not self._gadget_added:
             #add index to the translation list
-            value = self.addIndex(self._accumulator[0])
+            value = self.addIndex(self._accumulator)
             
         if (name == 'Name'):
             if value:
@@ -194,6 +213,9 @@ class TemplateHandler(handler.ContentHandler):
             return
         if (name == 'DisplayName'):
             self._displayName = self._accumulator[0]
+            return
+        if (name == 'Organization'):
+            self.processOrganization(self._accumulator)
             return
         if (name == 'Vendor'):
             if value:
@@ -250,6 +272,10 @@ class TemplateHandler(handler.ContentHandler):
             gadget.mashup_id = self._mashupId
             gadget.creation_date=datetime.today()
             gadget.popularity = '0.0'
+            
+            #To be changed: A gadget belongs to many organizations
+            for organization in self._organization_list:
+                gadget.organization=organization
             
             try:
                 gadget.save()
@@ -308,7 +334,7 @@ class TemplateHandler(handler.ContentHandler):
 
     def startElement(self, name, attrs):
         if ((name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='DisplayName') or (name=='Author') or (name=='Description') or (name=='Mail') \
-            or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='DisplayName')):
+            or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='DisplayName') or (name=='Organization')):
             self.resetAccumulator()
             return
 
@@ -329,6 +355,7 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Capability'):
             self.processCapability(attrs)
             return
+        
         #Translation elements
         if (name == 'Translations'):
             self.processTranslations(attrs)

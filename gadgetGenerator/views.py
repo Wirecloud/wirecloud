@@ -56,7 +56,7 @@ class templateGenerator(Resource):
             template = Template.objects.get(id=templateInstance.template.id)
             defaultContext = simplejson.loads(template.defaultContext)
             
-            #create the new context with the default vaules plus the ones specified by the user
+            #create the new context with the default values plus the ones specified by the user
             newContext = {}
             for (key, value) in defaultContext.iteritems():
                 try:
