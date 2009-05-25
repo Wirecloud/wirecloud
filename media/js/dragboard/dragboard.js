@@ -334,7 +334,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, null);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, gadget.getMenuColor());
 
 		iGadget.save();
 	}

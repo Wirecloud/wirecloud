@@ -170,6 +170,7 @@ class TemplateHandler(handler.ContentHandler):
         self._gadgetAuthor = ""
         self._gadgetMail = ""
         self._gadgetDesc = ""
+        self._gadgetMenuColor=""
         self._gadgetWidth= ""
         self._gadgetHeight= ""
         self._gadgetURI = ""
@@ -596,7 +597,7 @@ class TemplateHandler(handler.ContentHandler):
     def startElement(self, name, attrs):
         # Catalogue
         if (name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='ImageURI') or (name=='iPhoneImageURI') or \
-        (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author') or (name=='DisplayName'):
+        (name=='WikiURI') or (name=='Mail') or (name=='Description') or (name=='Author') or (name=='DisplayName') or (name=="MenuColor"):
             self.reset_Accumulator()
             return
 
@@ -708,6 +709,11 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Description'):
             self._gadgetDesc = self._accumulator
             return
+        
+        if (name == 'MenuColor'):
+            self._gadgetMenuColor = self._accumulator
+            return
+        
         if (name == "Translation"):
             if self.current_lang==self.default_lang:
                 for ind in self.translatable_list:
@@ -816,6 +822,7 @@ class TemplateHandler(handler.ContentHandler):
         self._gadget.width=self._gadgetWidth
         self._gadget.height=self._gadgetHeight
         self._gadget.description=self._gadgetDesc
+        self._gadget.menuColor=self._gadgetMenuColor
         self._gadget.save()
         
         # All relationship must be saved now, when all its data are known 

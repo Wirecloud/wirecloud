@@ -46,6 +46,7 @@ function Gadget(gadget_, url_) {
 	this.getUriWiki = function() { return state.getUriWiki();}
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
+	this.getMenuColor = function() { return state.getMenuColor(); }
 	
 	this.isContratable = function() { 
 		var capabilities = state.getCapabilities();
@@ -138,6 +139,7 @@ function GadgetState(gadget_) {
 	var image = null;
 	var capabilities = []; 
 	var uriwiki = null;
+	var menuColor= null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -150,6 +152,7 @@ function GadgetState(gadget_) {
 	image = gadget_.image;
 	capabilities = gadget_.capabilities;
 	uriwiki = gadget_.wikiURI;
+	menuColor = gadget_.menuColor;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -170,4 +173,5 @@ function GadgetState(gadget_) {
 	this.getUriWiki = function () {return uriwiki;}
 	this.getImage = function() { return image; }
 	this.setImage = function(image_) { image = image_; }
+	this.getMenuColor = function () {return menuColor;}
 }

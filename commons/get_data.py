@@ -124,6 +124,7 @@ def get_gadget_data(data):
     data_ret['wikiURI'] = data_fields['wikiURI']
     data_ret['imageURI'] = data_fields['imageURI']
     data_ret['iPhoneImageURI'] = data_fields['iPhoneImageURI']
+    data_ret['menuColor'] = data_fields['menuColor']
     data_ret['version'] = data_fields['version']
     data_ret['mail'] = data_fields['mail']
     data_ret['shared'] = data_fields['shared']

@@ -248,10 +248,10 @@ var public_workspace = '{{ active_workspace }}';
 	</div>
 	<div class="window_content">
 		<table>
-		<tr><td><label>{% trans "Name"%}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "Image URL"%}</label></td><td><input id="feed_image_URL" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "iPhone image URL"%}</label></td><td><input id="feed_iphone_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Name" %}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "URL "%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Image URL" %}</label></td><td><input id="feed_image_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "iPhone image URL" %}</label></td><td><input id="feed_iphone_URL" type="text" value = ""/></td></tr>
 		<tr id="color_pref_opt" style="display:none"><td><label>{% trans "Template color"%}</label></td><td>
 			<select id="feed_color" name="feed_color">
 				<option value="blue">blue</option>
@@ -260,7 +260,8 @@ var public_workspace = '{{ active_workspace }}';
 				<option value="green">green</option>
 			</select>
 		</td></tr>
-		<tr><td><label>{% trans "Organization"%}</label></td><td><input id="feed_organization" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Menu Color (Hex.)" %}</label></td><td><input id="feed_menu_color" type="text" size="6" value = ""/></td></tr>
+		<tr><td><label>{% trans "Organization" %}</label></td><td><input id="feed_organization" type="text" value = ""/></td></tr>
 		</table>
 		<div style="display:block;"><span class="required_mark">*</span> <span class="required_text">required</span></div>
 		<div id="add_feed_window_msg" class="window_msg_error"></div>

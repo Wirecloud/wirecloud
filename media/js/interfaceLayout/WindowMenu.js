@@ -410,6 +410,8 @@ function AddFeedMenu (element) {
 			o.feed_color = $('feed_color').value;
 		if ($('feed_organization').value!="")
 			o.organization = $('feed_organization').value;
+		if ($('feed_menu_color').value!="")
+			o.feed_menu_color = $('feed_menu_color').value;
 		var data = {"template_data": Object.toJSON(o)};
 		var gadget_type="";
 		if (this.type=="addFeed"){
