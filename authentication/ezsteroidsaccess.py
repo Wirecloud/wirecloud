@@ -30,7 +30,7 @@
 
 #
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from commons.http_utils import download_http_content
 from django.utils import simplejson
@@ -38,14 +38,19 @@ from django.utils import simplejson
 class EzSteroidsBackend:
 
     def authenticate(self,username=None,password=None):
-        if not self.is_valid(username,password):
+        (is_valid, groups) = self.is_valid(username,password)
+        
+        if (not is_valid):
             return None
+        
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User(username=username)
             user.set_password(password)
             user.save()
+            
+        self.manage_groups(user, groups)
 
         return user
 
@@ -58,6 +63,7 @@ class EzSteroidsBackend:
     def is_valid (self,username=None,password=None):
         if password == None or password == '':
             return None
+        
         #ask PBUMS about the authentication
         if hasattr(settings,'AUTHENTICATION_SERVER_URL'):
             urlBase=settings.AUTHENTICATION_SERVER_URL;
@@ -66,6 +72,16 @@ class EzSteroidsBackend:
             try:
             	result = download_http_content(url,params)
             	result = simplejson.loads(result)
-            	return result['isValid']
+            	
+                return (result['isValid'], result['groups'])
             except Exception, e:
-            	return False
+            	return (False, None)
+    
+    def manage_groups(self, user, groups):
+        user.groups.clear()
+        
+        for group in groups:
+            group, created = Group.objects.get_or_create(name=group)
+            user.groups.add(group)
+        
+        user.save()
