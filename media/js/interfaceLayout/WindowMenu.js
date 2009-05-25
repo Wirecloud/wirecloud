@@ -408,6 +408,8 @@ function AddFeedMenu (element) {
 			o.iPhoneImageURI = $('feed_iphone_URL').value;
 		if ($('feed_color').style.display!="none" && $('feed_color').value!="")
 			o.feed_color = $('feed_color').value;
+		if ($('feed_organization').value!="")
+			o.organization = $('feed_organization').value;
 		var data = {"template_data": Object.toJSON(o)};
 		var gadget_type="";
 		if (this.type=="addFeed"){
