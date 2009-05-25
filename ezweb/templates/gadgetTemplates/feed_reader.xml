@@ -48,6 +48,7 @@
     <XHTML href="http://ezweb.tid.es/repository/feedReader/feedReader.html"/>
   </Platform.Link>
   <Platform.Rendering width="10" height="25"/>
+  <MenuColor>{{menu_color}}</MenuColor>
 	<Platform.Context>
 		<Context name="language" type="text" concept="language"/>
 	</Platform.Context>

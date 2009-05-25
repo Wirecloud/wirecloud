@@ -28,5 +28,6 @@
     <XHTML href="http://ezweb.tid.es/repository/browser/browser.html"/>
   </Platform.Link>
   <Platform.Rendering width="15" height="26"/>
+  <MenuColor>{{menu_color}}</MenuColor>
 </Template>
 
