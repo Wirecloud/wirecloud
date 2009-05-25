@@ -208,6 +208,7 @@ class TemplateHandler(handler.ContentHandler):
         _name = ''
         _type = ''
         _description = ''
+        _default_value = None
 
         if (attrs.has_key('name')):
             _name = attrs.get('name')
@@ -217,11 +218,15 @@ class TemplateHandler(handler.ContentHandler):
 
         if (attrs.has_key('description')):
             _description = attrs.get('description')
+            
+        if (attrs.has_key('default')):
+            _default_value = attrs.get('default')
 
         if (_name != '' and _type != ''):
             vDef = VariableDef ( name = _name, description =_description,
                                  type=self.typeText2typeCode(_type), 
-                                 aspect = 'PROP', friend_code = None, 
+                                 aspect = 'PROP', friend_code = None,
+                                 default_value = _default_value,
                                  gadget = self._gadget )
 
             #vDef.save()

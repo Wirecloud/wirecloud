@@ -336,11 +336,14 @@ function AddFeedMenu (element) {
 	AddFeedMenu.prototype.setType = function(type){
 		this.type=type;
 		if (this.type=="addFeed"){
-			this.title = gettext('Add Feed');
+			this.title = gettext('Add new feed');
 			$('color_pref_opt').setStyle({display:"table-row"});
 		}
 		else if (this.type=="addSite"){
-			this.title = gettext('Add Site');
+			this.title = gettext('Add new site');
+			$('source_opt').setStyle({display:"table-row"});
+			$('source_URL_opt').setStyle({display:"table-row"});
+			$('home_URL_opt').setStyle({display:"table-row"});
 		}
 		this.titleElement.update(this.title);
 	}	
@@ -359,6 +362,11 @@ function AddFeedMenu (element) {
 		if (feed_name.value!="" && feed_URL!="") {
 			// Not empty input data!
 			// Now validating input data!
+			
+			if ($('home_URL_opt').style.display!="none" && $('site_home_URL').value==""){
+				this.msgElement.update("All the required fields must be filled");
+				return;
+			}
 			
 			for (var i=0; i<this.not_valid_characters.length; i++) {
 				var character = this.not_valid_characters[i];
@@ -406,12 +414,21 @@ function AddFeedMenu (element) {
 			o.imageURI = $('feed_image_URL').value;
 		if ($('feed_iphone_URL').value!="")
 			o.iPhoneImageURI = $('feed_iphone_URL').value;
-		if ($('feed_color').style.display!="none" && $('feed_color').value!="")
-			o.feed_color = $('feed_color').value;
 		if ($('feed_organization').value!="")
 			o.organization = $('feed_organization').value;
 		if ($('feed_menu_color').value!="")
 			o.menu_color = $('feed_menu_color').value;
+			
+		if ($('color_pref_opt').style.display!="none" && $('feed_color').value!="")
+			o.feed_color = $('feed_color').value;
+			
+		if ($('site_source').style.display!="none" && $('site_source').value!="")
+			o.source = $('site_source').value;
+		if ($('site_source_URL').style.display!="none" && $('site_source_URL').value!="")
+			o.source_URL = $('site_source_URL').value;
+		if ($('home_URL_opt').style.display!="none")
+			o.home_URL = $('site_home_URL').value;
+			
 		var data = {"template_data": Object.toJSON(o)};
 		var gadget_type="";
 		if (this.type=="addFeed"){
@@ -437,6 +454,9 @@ function AddFeedMenu (element) {
 		this.msgElement.update();
 		this.htmlElement.style.display = "none";
 		$('color_pref_opt').setStyle({display:"none"});
+		$('source_opt').setStyle({display:"none"});
+		$('source_URL_opt').setStyle({display:"none"});
+		$('home_URL_opt').setStyle({display:"none"});
 	}
 
 }
