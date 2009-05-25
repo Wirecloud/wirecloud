@@ -6,12 +6,12 @@
     <Name>{{name}}</Name>
     <Version>3.26</Version>
     <Author>ezweb</Author>
-
     <Mail>ezwebplatform-feedback@lists.morfeo-project.org</Mail>
     <Description>Feed reader for RSS 2.0 or Atom 1.0 resources. Thanks to this gadget you can access to your favourite feeds from your workspace. Change the feed shown editing the gadgets preferences from the gadget menu or wiring this gadget to any feed source available like the Feed List gadget. This reader also exports information about what you are reading (summary, title...). Try to wire it to any gadget waiting for text (MMS sender, Google Translator...)</Description>
     <ImageURI>{{imageURI}}</ImageURI>
     <iPhoneImageURI>{{iPhoneImageURI}}</iPhoneImageURI>
     <WikiURI>https://forge.morfeo-project.org/wiki/index.php/Gadgets_2009#Feed_Reader</WikiURI>
+    <Organization>{{organization}}</Organization>
   </Catalog.ResourceDescription>
 
   <!-- EzWeb Gadgets Tags -->
@@ -23,7 +23,6 @@
     <Preference name="items" type="text" label="Max items" description="max num of items to show" default="7"/>
 	<Preference name="feedUrlPref" type="text" label="feedUrl" description="feed origin" default="{{URL}}"/>
 	<Preference name="theme" type="list" label="theme" description="theme" default="{{feed_color}}">
-
 		<Option value="blue" name="blue"/>
 		<Option value="orange" name="orange"/>
 		<Option value="red" name="red"/>

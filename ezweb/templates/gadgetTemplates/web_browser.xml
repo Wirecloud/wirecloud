@@ -11,6 +11,7 @@
     <ImageURI>{{imageURI}}</ImageURI>
     <iPhoneImageURI>{{iPhoneImageURI}}</iPhoneImageURI>
     <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/browser</WikiURI>
+    <Organization>{{organization}}</Organization>
   </Catalog.ResourceDescription>
   <!-- EzWeb Gadgets Tags -->
   <Platform.Preferences>
