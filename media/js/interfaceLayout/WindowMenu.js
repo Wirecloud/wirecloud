@@ -416,9 +416,12 @@ function AddFeedMenu (element) {
 			o.iPhoneImageURI = $('feed_iphone_URL').value;
 		if ($('feed_organization').value!="")
 			o.organization = $('feed_organization').value;
-		if ($('feed_menu_color').value!="")
+		if ($('feed_menu_color').value!="") {
 			o.menu_color = $('feed_menu_color').value;
-			
+			if (o.menu_color.indexOf("#") == 0) {
+				o.menu_color = o.menu_color.substring(1);
+			}
+		}
 		if ($('color_pref_opt').style.display!="none" && $('feed_color').value!="")
 			o.feed_color = $('feed_color').value;
 			
@@ -447,6 +450,9 @@ function AddFeedMenu (element) {
 		var inputArray = $$('#add_feed_menu input:not([type=button])');
 		for (var i=0; i<inputArray.length; i++){
 			inputArray[i].value = '';
+			if (inputArray[i].id == "color_sample"){
+				inputArray[i].style.backgroundColor = '';
+			}
 		}
 		var msg = $('add_feed_window_msg');
 		msg.update();

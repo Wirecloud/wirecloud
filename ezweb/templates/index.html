@@ -35,6 +35,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/301a.js"></script>
 
 <script type="text/javascript">
 _URIConstants = function(){}
@@ -247,6 +248,8 @@ var public_workspace = '{{ active_workspace }}';
 		<input type="button" class="closebutton button" onclick="LayoutManagerFactory.getInstance().hideCover();" />
 	</div>
 	<div class="window_content">
+		<!-- Color Picker -->
+		<div id="colorpicker301" class="colorpicker301"></div>
 		<table>
 		<tr><td><label>{% trans "Name" %}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "Base URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" type="text" value = ""/></td></tr>
@@ -262,7 +265,7 @@ var public_workspace = '{{ active_workspace }}';
 				<option value="green">green</option>
 			</select>
 		</td></tr>
-		<tr><td><label>{% trans "Menu Color (Hex.)" %}</label></td><td><input id="feed_menu_color" type="text" maxlength="6" value = ""/></td></tr>
+		<tr><td><label>{% trans "Menu Color (Hex.)" %}</label></td><td><input id="feed_menu_color" type="text" maxlength="6" style="width:72px;" value = ""/>&nbsp;<img src="{{ MEDIA_URL }}images/colorPicker25px.png" onclick="showColorGrid3('feed_menu_color','color_sample');" style="cursor:pointer;width:23px;" alt="select color" title="Click to select a color"/>&nbsp;<input type="text" id="color_sample" size="1" value=""/></td></tr>
 		<tr><td><label>{% trans "Organization" %}</label></td><td><input id="feed_organization" type="text" value = ""/></td></tr>
 		<tr id="source_opt" style="display:none"><td><label>{% trans "Source" %}</label></td><td><input id="site_source" type="text" value = ""/></td></tr>
 		<tr id="source_URL_opt" style="display:none"><td><label>{% trans "Source URL" %}</label></td><td><input id="site_source_URL" type="text" value = ""/></td></tr>		
