@@ -235,5 +235,15 @@ Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for furt
 </field>
 		<field type="TextField" name="params">{[{"name": "jpExp", "type": "jpath", "index": 0, "label": "Expression"}]}</field>    
 	</object>
+   <object pk="19" model="connectable.filter">
+        <field type="CharField" name="name">Demultiplex</field>
+        <field type="TextField" name="code"><None></None></field>
+        <field type="CharField" name="label">Demultiplex</field>
+        <field type="CharField" name="nature">PATT</field>
+        <field type="CharField" name="category">TRANS</field>
+        <field type="TextField" name="help_text">Find elements in JSON structures.
 
+Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for further information.</field>
+        <field type="TextField" name="params"><None></None></field>
+    </object>
 </django-objects>
