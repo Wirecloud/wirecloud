@@ -18,6 +18,9 @@
      <Preference name="urlPref" type="text" description="HTML base URL" label="Base URL" default="{{URL}}"/>
      <Preference name="homeUrl" type="text" description="Home page URL" label="Home page URL" default="{{home_URL}}"/>
      <Preference name="refreshingTime" type="text" description="Refreshing interval (minutes)" label="Refresh every... (minutes)" default="0"/>
+    {% for param in params %}
+     <Preference name="{{param}}_pref" type="text" description="{{param}}" label="{{param}}"/>
+    {% endfor %}     
   </Platform.Preferences>
   <!-- EzWeb Gadget Persistent State -->
   <Platform.StateProperties>
@@ -28,9 +31,12 @@
   <Platform.Wiring>
     <Slot name="url" type="text" label="url" friendcode="url"/>
     <Slot name="parameters" type="text" label="paremeters" friendcode="parameters"/>
+    {% for param in params %}
+    <Event name="{{param}}_event" type="text" label="{{param}}" friendcode="{{param}}"/>
+    {% endfor %}
   </Platform.Wiring>
   <Platform.Link>
-    <XHTML href="http://ezweb.tid.es/repository/browser/browser.html"/>
+    <XHTML href="{{XHTML}}"/>
   </Platform.Link>
   <Platform.Rendering width="15" height="26"/>
   <MenuColor>{{menu_color}}</MenuColor>

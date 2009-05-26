@@ -39,6 +39,7 @@ from django.shortcuts import render_to_response
 
 from commons.logs import log
 from commons.resource import Resource
+from commons.utils import json_encode
 from gadgetGenerator.models import Template, TemplateInstance
 
 from commons.logs_exception import TracedServerError
@@ -56,20 +57,16 @@ class templateGenerator(Resource):
             template = Template.objects.get(id=templateInstance.template.id)
             defaultContext = simplejson.loads(template.defaultContext)
             
-            #create the new context with the default values plus the ones specified by the user
-            newContext = {}
-            for (key, value) in defaultContext.iteritems():
-                try:
-                    newContext[key] = context[key] or value
-                except:
-                    newContext[key] = value
+            #update the default context with the context specified by the user.
+            defaultContext.update(context)
+                    
         
         except Exception, e:
             msg = _("template cannot be fetched: ") + unicode(e)
             
             raise TracedServerError(e, {'templateName': templateName, 'templateId':templateId}, request, msg)    
         
-        return render_to_response("gadgetTemplates/" + templateName + '.xml', newContext, mimetype="application/xhtml+xml")
+        return render_to_response("gadgetTemplates/" + templateName + '.xml', defaultContext, mimetype="application/xhtml+xml")
  
         
 
@@ -83,12 +80,28 @@ class templateGenerator(Resource):
         received_json = request.POST['template_data']
 
         try:
-            #Register the params to generate an specific template dinamically
+            #generate an specific template dinamically
             templateInstance = TemplateInstance()
-            templateInstance.context = received_json
             templateInstance.template = Template.objects.get(name=templateName)
-            templateInstance.save()
+            templateInstance.save()  
+
+
+            context = simplejson.loads(received_json)
+            #include the parameters of the url
+            parsedUrl = context['URL'].partition('?')
+            context['URL'] = parsedUrl[0] + parsedUrl[1] # base + ?
+            queryString = parsedUrl[2]
+            context['params'] = []
+            if len(queryString) > 0:
+                for param in queryString.split('&'):
+                    if param != '':
+                        context['params'].append(param.split('=')[0])
+                        
+            #include the XHTML url
+            context['XHTML'] = "http://" + request.get_host() + "/gadgetGenerator/xhtml/" + templateName + '/' + str(templateInstance.id)
             
+            templateInstance.context = json_encode(context)
+            templateInstance.save()            
             
         except Exception, e:
             transaction.rollback()
