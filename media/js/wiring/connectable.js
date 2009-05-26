@@ -239,10 +239,15 @@ function wChannel (variable, name, id, provisional_id) {
 wChannel.prototype = new wInOut();
 
 wChannel.prototype.getValue = function() {
-  if (this.filter == null)
+  if (this.filter == null){
 	return this.variable.get();  	
-  else
- 	return this.filter.run(this.variable.get(), this.filterParams);
+  }else{
+ 	if (this.filter.getNature() == 'PATT'){
+ 		return this.variable.get();
+ 	} else {
+ 		return this.filter.run(this.variable.get(), this.filterParams);
+ 	}
+ }
 }
 
 wChannel.prototype.getValueWithoutFilter = function() {
@@ -275,9 +280,39 @@ wChannel.prototype.getFilterParams = function() {
   return this.filterParams;
 }
 
+wChannel.prototype.getJSONInput = function() {
+  var json = new Hash();
+  for (var i = 0; i < this.inputs.length; i++) {
+    if (this.inputs[i].variable.value != ''){
+  		json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
+    } else {
+    	return false;
+    }
+  }
+  
+  return json;
+}
+
 wChannel.prototype.propagate = function(newValue, initial) {
-  this.variable.set(newValue);
-  wInOut.prototype.propagate.call(this, this.getValue(), initial);
+  
+  if ((this.filter != null) && (this.filter.getNature() == 'PATT')){
+  	var json = this.getJSONInput();
+  	if (!json){
+  		return;		
+  	} else {
+		var params = '?';
+		var keys = json.keys();
+		for (var i = 0; i < keys.length; i++) {
+			params += keys[i] + '=' + json[keys[i]] + '&'; 
+		}
+		this.variable.set(params);
+		wInOut.prototype.propagate.call(this, params, initial);
+  	}
+  } else {
+  	this.variable.set(newValue);
+  	wInOut.prototype.propagate.call(this, this.getValue(), initial); 
+  }
+ 
 }
 
 wChannel.prototype.getQualifiedName = function () {

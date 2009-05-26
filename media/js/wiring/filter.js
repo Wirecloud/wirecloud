@@ -137,6 +137,10 @@ function Filter (id_, name_, label_, nature_, code_, category_, params_, helpTex
   }
 }
 
+Filter.prototype.getNature = function() {
+  return this._nature;
+}
+
 Filter.prototype.getId = function() {
   return this._id;
 }

@@ -45,6 +45,7 @@ class Filter(models.Model):
         ('NATIVE', _('Object Native')),
         ('JSLIB', _('JavaScript Lib')),
         ('USER', _('User')),
+        ('PATT', _('Patterns')),
     )
     nature = models.CharField(_('Nature'), max_length=6, choices=NATURE)
     CATEGORY = (
