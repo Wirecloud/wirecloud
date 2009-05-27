@@ -253,9 +253,11 @@ var public_workspace = '{{ active_workspace }}';
 		<div id="colorpicker301" class="colorpicker301"></div>
 		<table>
 		<tr><td><label>{% trans "Name" %}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "Base URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" class="url" type="text" value = ""/></td></tr>
-		<tr id="home_URL_opt" style="display:none"><td><label>{% trans "Home URL "%}</label> <span class="required_mark">*</span></td><td><input id="site_home_URL" class="url" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" class="url" type="text" value = ""/></td></tr>
+		<tr id="parse_parameters_opt" style="display:none"><td><label>{% trans "Parse URL Parameters"%}</label></td><td><input id="parse_parameters" type="checkbox" name="1"/></td></tr>
 		<tr><td colspan="2"><hr /></td></tr>
+		<tr id="events_opt" style="display:none"><td><label>{% trans "Events"%}</label></td><td><input id="events" type="text" value = ""/></td></tr>
+		<tr id="home_URL_opt" style="display:none"><td><label>{% trans "Home URL"%}</label></td><td><input id="site_home_URL" class="url" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "Image URL" %}</label></td><td><input id="feed_image_URL" class="url" type="text" value = ""/></td></tr>
 		<tr><td><label>{% trans "iPhone image URL" %}</label></td><td><input id="feed_iphone_URL" class="url" type="text" value = ""/></td></tr>
 		<tr id="color_pref_opt" style="display:none"><td><label>{% trans "Template color"%}</label></td><td>
