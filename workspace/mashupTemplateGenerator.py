@@ -55,6 +55,7 @@ class TemplateGenerator:
         xml += '<Description>%s</Description>' % published_workspace.description
         xml += '<ImageURI>%s</ImageURI>' % published_workspace.imageURI
         xml += '<WikiURI>%s</WikiURI>' % published_workspace.wikiURI
+        xml += '<Organization>%s</Organization>' % published_workspace.organization
         xml += '<IncludedResources mashupId="%s">'%(workspace_id)
         
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)

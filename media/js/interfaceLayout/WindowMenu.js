@@ -305,6 +305,7 @@ function PublishWindowMenu (element) {
 		o.description = $('publish_description').value;
 		o.imageURI = $('publish_imageURI').value;
 		o.wikiURI = $('publish_wikiURI').value;
+		o.organization = $('publish_organization').value;
 		OpManagerFactory.getInstance().activeWorkSpace.publish(o);
 	}
 	

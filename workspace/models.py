@@ -31,7 +31,7 @@
 #
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext as  _
 
 class WorkSpace(models.Model):
@@ -84,6 +84,9 @@ class PublishedWorkSpace(models.Model):
     
     author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=30)
+    
+    #For implementing "private mashups" only visible for users that belongs to a concrete group
+    organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
 

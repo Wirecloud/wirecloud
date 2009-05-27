@@ -669,6 +669,7 @@ class  WorkSpacePublisherEntry(Resource):
         description = mashup.get('description') + " \n " +get_workspace_description(workspace)
         imageURI = mashup.get('imageURI')
         wikiURI = mashup.get('wikiURI')
+        organization = mashup.get('organization')
         
         # set default values if the variable is empty
         if imageURI == "":
@@ -691,7 +692,7 @@ class  WorkSpacePublisherEntry(Resource):
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 
                                                      name=name, version=version, description=description,
-                                                     imageURI=imageURI, wikiURI=wikiURI)
+                                                     imageURI=imageURI, wikiURI=wikiURI, organization = organization)
             
             published_workspace.save()
         except IntegrityError, e:
