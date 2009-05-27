@@ -415,10 +415,8 @@ function AddFeedMenu (element) {
 	}
 	
 	AddFeedMenu.prototype.executeOperation = function(){
-		
 		function onError(transport, e){
 			alert("error generando el template");
-			this.hide();
 		}
 		function onSuccess(transport){
 			var response = transport.responseText;
@@ -458,6 +456,7 @@ function AddFeedMenu (element) {
 			gadget_type="web_browser"
 		}
 		PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': gadget_type}), data, this, onSuccess, onError);
+		LayoutManagerFactory.getInstance().hideCover();
 	}
 	
 

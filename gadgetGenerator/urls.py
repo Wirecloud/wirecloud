@@ -37,6 +37,8 @@ urlpatterns = patterns('gadgetGenerator.views',
     #Template generator
     (r'^/template/(?P<templateName>[\s\-\.\w]+)$',
      templateGenerator(permitted_methods=('POST', ))),
-     (r'^/template/((?P<templateName>[\s\-\.\w]+)/(?P<templateId>\d+))$',
+    (r'^/template/((?P<templateName>[\s\-\.\w]+)/(?P<templateId>\d+))$',
      templateGenerator(permitted_methods=('GET', ))),
+    (r'^/xhtml/((?P<templateName>[\s\-\.\w]+)/(?P<templateId>\d+))$',
+     xhtmlGenerator(permitted_methods=('GET', ))),
 )

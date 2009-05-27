@@ -1,0 +1,229 @@
+<html>
+<head>
+
+<style>
+#header{
+	padding: 3px 0;
+}
+
+#header div{
+	font-size: 75%;
+	display:inline;
+	margin: 0 10px;
+}
+
+#header #source label{
+	color: #274463;
+}
+
+#header a, #header #home, #header #refresh{
+	color: #2D6F9C;
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+#header #source a {
+
+}
+#header div.param{
+	display: inline-table;
+	margin: 0 3px;
+}
+form, body {
+	margin: 0;
+}
+form{
+	display: inline;
+}
+</style>
+
+<script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
+<script>
+
+var agent=navigator.userAgent;
+var is_iphone = (agent.indexOf('iPhone')!=-1);
+
+function URLDecode( url )
+{
+   // Replace + with ' '
+   // Replace %xx with equivalent character
+   // Put [ERROR] in output if %xx is invalid.
+   var HEXCHARS = "0123456789ABCDEFabcdef"; 
+   var encoded = url;
+   var plaintext = "";
+   var i = 0;
+   while (i < encoded.length) {
+       var ch = encoded.charAt(i);
+        if (ch == "+") {
+	    plaintext += " ";
+	         i++;
+		 } else if (ch == "%") {
+		        if (i < (encoded.length-2) 
+			       && HEXCHARS.indexOf(encoded.charAt(i+1)) != -1 
+			              && HEXCHARS.indexOf(encoded.charAt(i+2)) != -1 ) {
+				                plaintext += unescape( encoded.substr(i,3) );
+						          i += 3;
+							         } else {
+								           alert( 'Bad escape combination near ...' + encoded.substr(i) );
+									             plaintext += "%[ERROR]";
+										               i++;
+											              }
+												      } else {
+												                plaintext += ch;
+														  i++;
+														  }
+   } // while
+   
+   return plaintext;
+}
+
+//PREFERENCES
+var urlPref = EzWebAPI.createRGadgetVariable("urlPref", setURL);
+var homeUrl = EzWebAPI.createRGadgetVariable("homeUrl", setURL);
+var refreshingTime = EzWebAPI.createRGadgetVariable("refreshingTime", setRefreshingTime);
+//WIRING
+var url = EzWebAPI.createRGadgetVariable("url", setURL);
+var params = EzWebAPI.createRGadgetVariable("parameters", setParams);
+//PROPERTIES
+var source = EzWebAPI.createRWGadgetVariable("source");
+var sourceUrl = EzWebAPI.createRWGadgetVariable("sourceUrl");
+
+//AUTHOMATIC EVENTS AND PREFERENCES
+{% for param in params %}
+var {{ param }}_event = EzWebAPI.createRWGadgetVariable("{{ param }}_event");
+var {{ param }}_pref = EzWebAPI.createRGadgetVariable("{{ param }}_pref",{{ param }}_pref_handler);
+
+function {{ param }}_pref_handler (value){
+	document.getElementById({{ param }}).value=value;
+}
+{% endfor %}
+
+
+//GLOBAL
+var real_url;
+var current_url;
+var idInterval;
+
+function init(){
+	resizeIframe()
+	real_url = url.get();
+	if (!real_url || real_url==""){
+		real_url = urlPref.get();
+		if (!params.get()){
+			loadURL(homeUrl.get());
+			//print the preference values
+			{% for param in params %}
+				if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
+					document.getElementById("{{ param }}").value={{ param }}_pref.get()
+				}
+			{% endfor %}
+		}
+	}
+	//else -> wait the wiring propagation
+
+	//show source
+	if(source.get() && source.get()!=""){
+		var sourceDiv = document.getElementById('source');
+		//if we have an URL, create a link
+		if(sourceUrl.get() && sourceUrl.get()!=""){
+			var link = document.createElement('a');
+			link.href = sourceUrl.get();
+			link.target = "_blank";
+			link.innerHTML = source.get();
+			sourceDiv.appendChild(link);
+		}else{
+			var span = document.createElement('span');
+			span.innerHTML = source.get();
+			sourceDiv.appendChild(span);
+		}
+
+		sourceDiv.style.display="inline";
+	}
+	if(refreshingTime.get() > 0)
+		idInterval = setInterval("refresh()",parseInt(refreshingTime.get()) * 60000);
+		
+	
+}
+function resizeIframe(){
+	iframe = document.getElementById("browser");
+	header = document.getElementById("header");
+	iframe.height = window.innerHeight - header.offsetHeight; 
+}
+function loadURL(url_){
+
+ if(url_ && url_!=""){
+   url_ = URLDecode (url_);
+   var frm = document.getElementById("browser");
+   frm.setAttribute('src',url_);
+	current_url = url_;
+ }
+}
+
+function setURL(value){
+	real_url = value;
+	loadURL(real_url + params.get());
+}
+
+function setParams(value){
+	loadURL(real_url + value);
+	if (value !="")
+		//print the parameters in the input fields
+		var parameters = value.split('?')[1].split('&');
+		for (i in parameters){
+			var param = parameters[i].split("=");
+			if (param[0]!=parameters[i]){
+				if (document.getElementById(param[0]))
+					document.getElementById(param[0]).value=param[1]
+			}
+		} 
+}
+
+function refresh(){
+	loadURL(current_url);
+}
+
+function setRefreshingTime(value){
+	if(parseInt(value) > 0){
+		clearInterval(idInterval);
+		idInterval = setInterval("refresh()",parseInt(value) * 60000);
+	}
+}
+
+function goHome(){
+	loadURL(homeUrl.get());
+}
+
+function sendParameters(){
+	var elements = document.getElementById('parameters').elements;
+	//var URL =""
+	for (index=0;index<elements.length;index++){
+		var field = elements[index]
+		if (field.nodeName.toLowerCase()=="input"){
+			if (field.value!=""){
+				eval(field.name+"_event").set(field.value);
+				//URL = URL + field.name + "=" + field.value + "&";
+			}
+		}		
+	}
+	return false;
+}
+
+</script>
+</head>
+<body onload="init()" onresize="resizeIframe()">
+<div id="header">
+	<div id="source" style="display:none"><label>source: </label></div><div id="home" onclick="goHome()">home</div><div id="refresh" onclick="refresh()">refresh</div>
+	<form id="parameters" name="parameters" onsubmit="return false;">
+	{% for param in params %}
+		<div class="param"><label>{{ param }}:</label><input size="6" type="text" name="{{ param }}" id="{{ param }}" /></div>
+	{% endfor %}
+	{% if params %}
+		<button id="send" type="button"  onclick="sendParameters()">send</button>
+	{% endif %}
+	</form>
+</div>
+<div id="video">
+<iframe id="browser" frameborder="0" width="100%"></iframe>
+</div>
+</body>
+</html>

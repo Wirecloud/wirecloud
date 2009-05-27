@@ -89,7 +89,7 @@ class templateGenerator(Resource):
             context = simplejson.loads(received_json)
             #include the parameters of the url
             parsedUrl = context['URL'].partition('?')
-            context['URL'] = parsedUrl[0] + parsedUrl[1] # base + ?
+            context['URL'] = parsedUrl[0] # base without ?
             queryString = parsedUrl[2]
             context['params'] = []
             if len(queryString) > 0:
@@ -112,3 +112,18 @@ class templateGenerator(Resource):
         #return the new template URL
         url = request.build_absolute_uri() + "/" + str(templateInstance.id)
         return HttpResponse("{'URL': '%s'}" % (url), mimetype='application/json; charset=UTF-8')
+    
+class xhtmlGenerator(Resource):
+    
+    def read(self,request,templateName,templateId):  
+        try:
+            #fetch the parameters the user had introduced on creating the template
+            templateInstance = TemplateInstance.objects.get(id=int(templateId))
+            context = simplejson.loads(templateInstance.context)
+            
+            return render_to_response("gadgetTemplates/" + templateName + '.html', context)
+        
+        except Exception, e:
+            msg = _("xhtml cannot be fetched: ") + unicode(e)
+            
+            raise TracedServerError(e, {'templateName': templateName, 'templateId':templateId}, request, msg)
