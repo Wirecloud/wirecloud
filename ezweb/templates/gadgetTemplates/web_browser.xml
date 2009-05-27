@@ -34,6 +34,9 @@
     {% for param in params %}
     <Event name="{{param}}_event" type="text" label="{{param}}" friendcode="{{param}}"/>
     {% endfor %}
+    {% for event in events %}
+    <Event name="{{event}}" type="text" label="{{event}}" friendcode="{{event}}"/>
+    {% endfor %}
   </Platform.Wiring>
   <Platform.Link>
     <XHTML href="{{XHTML}}"/>

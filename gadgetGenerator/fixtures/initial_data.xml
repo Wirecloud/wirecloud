@@ -2,7 +2,7 @@
 <django-objects version="1.0">
     <object pk="2" model="gadgetGenerator.template">
         <field type="CharField" name="name">web_browser</field>
-        <field type="TextField" name="defaultContext">{"name":"Custom Web Browser","URL":"","imageURI":"http://demo.ezweb.morfeo-project.org/repository/browser/browser.jpg","iPhoneImageURI":"http://demo.ezweb.morfeo-project.org/repository/browser/browser.jpg"}</field>
+        <field type="TextField" name="defaultContext">{"name":"Custom Web Browser","URL":"", "home_URL": "", "imageURI":"http://demo.ezweb.morfeo-project.org/repository/browser/browser.jpg","iPhoneImageURI":"http://demo.ezweb.morfeo-project.org/repository/browser/browser.jpg"}</field>
     </object>
     <object pk="1" model="gadgetGenerator.template">
         <field type="CharField" name="name">feed_reader</field>

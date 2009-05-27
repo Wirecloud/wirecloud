@@ -87,15 +87,23 @@ class templateGenerator(Resource):
 
 
             context = simplejson.loads(received_json)
-            #include the parameters of the url
-            parsedUrl = context['URL'].partition('?')
-            context['URL'] = parsedUrl[0] # base without ?
-            queryString = parsedUrl[2]
+            
             context['params'] = []
-            if len(queryString) > 0:
-                for param in queryString.split('&'):
-                    if param != '':
-                        context['params'].append(param.split('=')[0])
+            parsedUrl = context['URL'].partition('?')
+            if int(context['parse_parameters']) > 0:
+                #include the parameters of the url
+                context['URL'] = parsedUrl[0] # base without ?
+                queryString = parsedUrl[2]
+                if len(queryString) > 0:
+                    for param in queryString.split('&'):
+                        if param != '':
+                            context['params'].append(param.split('=')[0])
+                        
+            events = context['events'].split(',')
+            context['events'] = []
+            for event in events:
+                if event.strip() != '':
+                    context['events'].append(event.strip())
                         
             #include the XHTML url
             context['XHTML'] = "http://" + request.get_host() + "/gadgetGenerator/xhtml/" + templateName + '/' + str(templateInstance.id)
