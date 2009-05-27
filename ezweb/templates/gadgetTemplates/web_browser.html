@@ -9,14 +9,14 @@
 #header div{
 	font-size: 75%;
 	display:inline;
-	margin: 0 10px;
+	margin: 0 5px;
 }
 
 #header #source label{
 	color: #274463;
 }
 
-#header a, #header #home, #header #refresh{
+#header a, #header .link{
 	color: #2D6F9C;
 	cursor: pointer;
 	text-decoration: underline;
@@ -28,12 +28,22 @@
 #header div.param{
 	display: inline-table;
 	margin: 0 3px;
+	padding: 1px;
+}
+
+.param input{
+	font-size:85%;
+}
+
+#header div.event{
+	background: #DEDEDE;
 }
 form, body {
 	margin: 0;
 }
 form{
 	display: inline;
+	margin: 0 5px;
 }
 </style>
 
@@ -79,7 +89,7 @@ function URLDecode( url )
 
 //PREFERENCES
 var urlPref = EzWebAPI.createRGadgetVariable("urlPref", setURL);
-var homeUrl = EzWebAPI.createRGadgetVariable("homeUrl", setURL);
+var homeUrl = EzWebAPI.createRGadgetVariable("homeUrl", setHomeURL);
 var refreshingTime = EzWebAPI.createRGadgetVariable("refreshingTime", setRefreshingTime);
 //WIRING
 var url = EzWebAPI.createRGadgetVariable("url", setURL);
@@ -88,7 +98,7 @@ var params = EzWebAPI.createRGadgetVariable("parameters", setParams);
 var source = EzWebAPI.createRWGadgetVariable("source");
 var sourceUrl = EzWebAPI.createRWGadgetVariable("sourceUrl");
 
-//AUTHOMATIC EVENTS AND PREFERENCES
+//AUTHOMATIC EVENTS AND PREFERENCES OF THE URL
 {% for param in params %}
 var {{ param }}_event = EzWebAPI.createRWGadgetVariable("{{ param }}_event");
 var {{ param }}_pref = EzWebAPI.createRGadgetVariable("{{ param }}_pref",{{ param }}_pref_handler);
@@ -98,6 +108,10 @@ function {{ param }}_pref_handler (value){
 }
 {% endfor %}
 
+//AUTHOMATIC EVENTS
+{% for event in events %}
+var {{ event }} = EzWebAPI.createRWGadgetVariable("{{ event }}");
+{% endfor %}
 
 //GLOBAL
 var real_url;
@@ -107,10 +121,20 @@ var idInterval;
 function init(){
 	resizeIframe()
 	real_url = url.get();
+	var home_url = homeUrl.get();
+	
 	if (!real_url || real_url==""){
+		//the url don't come through the wiring -> select home or preference
 		real_url = urlPref.get();
-		if (!params.get()){
-			loadURL(homeUrl.get());
+		if (!params.get() || params.get()==""){
+			// there is no params -> show the home if it exists
+			if (home_url && home_url!=""){
+				loadURL(home_url);
+			}
+			else{
+				//no more options -> show the url base
+				loadURL(real_url);
+			}
 			//print the preference values
 			{% for param in params %}
 				if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
@@ -120,7 +144,6 @@ function init(){
 		}
 	}
 	//else -> wait the wiring propagation
-
 	//show source
 	if(source.get() && source.get()!=""){
 		var sourceDiv = document.getElementById('source');
@@ -141,14 +164,14 @@ function init(){
 	}
 	if(refreshingTime.get() > 0)
 		idInterval = setInterval("refresh()",parseInt(refreshingTime.get()) * 60000);
-		
-	
 }
+
 function resizeIframe(){
 	iframe = document.getElementById("browser");
 	header = document.getElementById("header");
 	iframe.height = window.innerHeight - header.offsetHeight; 
 }
+
 function loadURL(url_){
 
  if(url_ && url_!=""){
@@ -157,6 +180,12 @@ function loadURL(url_){
    frm.setAttribute('src',url_);
 	current_url = url_;
  }
+}
+function setHomeURL(value){
+	if (value && value!="")
+		document.getElementById("home").style.display="inline";
+	else
+		document.getElementById("home").style.display="none";
 }
 
 function setURL(value){
@@ -200,22 +229,42 @@ function sendParameters(){
 		var field = elements[index]
 		if (field.nodeName.toLowerCase()=="input"){
 			if (field.value!=""){
-				eval(field.name+"_event").set(field.value);
-				//URL = URL + field.name + "=" + field.value + "&";
+				eval(field.name).set(field.value);
 			}
 		}		
 	}
 	return false;
 }
 
+function showVariables(){
+	document.getElementById("show_link").style.display="none";
+	document.getElementById("hide_link").style.display="inline";	
+	document.getElementById("parameters").style.display="block";
+	resizeIframe();
+}
+
+function hideVariables(){
+	document.getElementById("hide_link").style.display="none";
+	document.getElementById("show_link").style.display="inline";	
+	document.getElementById("parameters").style.display="none";
+	resizeIframe();
+}
+
 </script>
 </head>
 <body onload="init()" onresize="resizeIframe()">
 <div id="header">
-	<div id="source" style="display:none"><label>source: </label></div><div id="home" onclick="goHome()">home</div><div id="refresh" onclick="refresh()">refresh</div>
-	<form id="parameters" name="parameters" onsubmit="return false;">
+	<div id="source" style="display:none"><label>source: </label></div>
+	<div id="home" onclick="goHome()" class="link"{% if home_URL %} style="display:none" {% endif %}>home</div>
+	<div id="refresh" onclick="refresh()" class="link">refresh</div>
+	<div id="show_link" onclick="showVariables()" class="link">show variables</div>
+	<div id="hide_link" onclick="hideVariables()" style="display:none" class="link">hide variables</div>
+	<form id="parameters" name="parameters" style="display:none" onsubmit="return false;">
 	{% for param in params %}
-		<div class="param"><label>{{ param }}:</label><input size="6" type="text" name="{{ param }}" id="{{ param }}" /></div>
+		<div class="param"><label>{{ param }}:</label><input size="9" type="text" name="{{ param }}_event" id="{{ param }}_event" /></div>
+	{% endfor %}
+	{% for event in events %}
+		<div class="param event"><label>{{ event }}:</label><input size="9" type="text" name="{{ event }}" id="{{ event }}" /></div>
 	{% endfor %}
 	{% if params %}
 		<button id="send" type="button"  onclick="sendParameters()">send</button>
