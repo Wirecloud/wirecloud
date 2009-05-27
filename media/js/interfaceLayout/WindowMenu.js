@@ -62,7 +62,13 @@ function WindowMenu(){
 		this.htmlElement.style.display = "block";
 		this.setFocus();
 	}
-
+	
+	//check the URLs
+	WindowMenu.prototype.isUrl = function(s) {
+		var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+		return regexp.test(s);
+	}
+	
 	//abstract methods
 	WindowMenu.prototype.initObserving = function (){
 	}
@@ -353,12 +359,14 @@ function AddFeedMenu (element) {
 	
 	
 	this.operationHandler = function(e){
+		
 		var feed_name = $('feed_name').value;
 		var feed_URL = $('feed_URL').value;
 		var feed_image_URL = $('feed_image_URL').value;
 		var feed_iphone_URL = $('feed_iphone_URL').value;
 		var feed_color = $('feed_color').value;
 		
+		//validate fields
 		if (feed_name.value!="" && feed_URL!="") {
 			// Not empty input data!
 			// Now validating input data!
@@ -376,6 +384,16 @@ function AddFeedMenu (element) {
 					return;
 				}
 			}
+			//check URLs
+			urls = $$('#add_feed_menu .url');
+			for(var i=0; i<urls.length; i++){
+				if(urls[i].value != '' && !this.isUrl(urls[i].value)){
+					this.msgElement.update(urls[i].value + " is not a valid URL");
+					return;
+				}
+					
+			}
+			
 			this.executeOperation();
 		}
 		else{

@@ -252,11 +252,11 @@ var public_workspace = '{{ active_workspace }}';
 		<div id="colorpicker301" class="colorpicker301"></div>
 		<table>
 		<tr><td><label>{% trans "Name" %}</label> <span class="required_mark">*</span></td><td><input id="feed_name" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "Base URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" type="text" value = ""/></td></tr>
-		<tr id="home_URL_opt" style="display:none"><td><label>{% trans "Home URL "%}</label> <span class="required_mark">*</span></td><td><input id="site_home_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Base URL"%}</label> <span class="required_mark">*</span></td><td><input id="feed_URL" class="url" type="text" value = ""/></td></tr>
+		<tr id="home_URL_opt" style="display:none"><td><label>{% trans "Home URL "%}</label> <span class="required_mark">*</span></td><td><input id="site_home_URL" class="url" type="text" value = ""/></td></tr>
 		<tr><td colspan="2"><hr /></td></tr>
-		<tr><td><label>{% trans "Image URL" %}</label></td><td><input id="feed_image_URL" type="text" value = ""/></td></tr>
-		<tr><td><label>{% trans "iPhone image URL" %}</label></td><td><input id="feed_iphone_URL" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "Image URL" %}</label></td><td><input id="feed_image_URL" class="url" type="text" value = ""/></td></tr>
+		<tr><td><label>{% trans "iPhone image URL" %}</label></td><td><input id="feed_iphone_URL" class="url" type="text" value = ""/></td></tr>
 		<tr id="color_pref_opt" style="display:none"><td><label>{% trans "Template color"%}</label></td><td>
 			<select id="feed_color" name="feed_color">
 				<option value="blue">blue</option>
@@ -268,7 +268,7 @@ var public_workspace = '{{ active_workspace }}';
 		<tr><td><label>{% trans "Menu Color (Hex.)" %}</label></td><td><input id="feed_menu_color" type="text" maxlength="6" style="width:72px;" value = ""/>&nbsp;<img src="{{ MEDIA_URL }}images/colorPicker25px.png" onclick="showColorGrid3('feed_menu_color','color_sample');" style="cursor:pointer;width:23px;" alt="select color" title="Click to select a color"/>&nbsp;<input type="text" id="color_sample" size="1" value=""/></td></tr>
 		<tr><td><label>{% trans "Organization" %}</label></td><td><input id="feed_organization" type="text" value = ""/></td></tr>
 		<tr id="source_opt" style="display:none"><td><label>{% trans "Source" %}</label></td><td><input id="site_source" type="text" value = ""/></td></tr>
-		<tr id="source_URL_opt" style="display:none"><td><label>{% trans "Source URL" %}</label></td><td><input id="site_source_URL" type="text" value = ""/></td></tr>		
+		<tr id="source_URL_opt" style="display:none"><td><label>{% trans "Source URL" %}</label></td><td><input id="site_source_URL" class="url" type="text" value = ""/></td></tr>		
 		</table>
 		<div style="display:block;"><span class="required_mark">*</span> <span class="required_text">required</span></div>
 		<div id="add_feed_window_msg" class="window_msg_error"></div>
