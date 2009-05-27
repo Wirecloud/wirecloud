@@ -111,6 +111,7 @@ function wIn(name, type, friendCode, id) {
   wConnectable.call(this, name, type, friendCode, id);
   this.outputs = new Array();
   this.connectableType = "in";
+  this.changed = false;
 }
 
 wIn.prototype = new wConnectable();
@@ -138,11 +139,21 @@ wIn.prototype.fullDisconnect = function() {
 }
 
 wIn.prototype.propagate = function(value, initial) {
+  this.changed = true;
+  
   for (var i = 0; i < this.outputs.length; ++i)
     this.outputs[i].annotate(value);
 
   for (var i = 0; i < this.outputs.length; ++i)
     this.outputs[i].propagate(value, initial);
+}
+
+wIn.prototype.has_changed = function() {
+  return this.changed;
+}
+
+wIn.prototype.mark_unchanged = function() {
+  this.changed = false;
 }
 
 wIn.prototype.refresh = function() {
@@ -223,6 +234,10 @@ wEvent.prototype.getLabel = function () {
   return this.variable.label;	
 }
 
+wIn.prototype.getValue = function() {
+  return this.variable.get();
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
@@ -282,29 +297,41 @@ wChannel.prototype.getFilterParams = function() {
 
 wChannel.prototype.getJSONInput = function() {
   var json = new Hash();
+  
   for (var i = 0; i < this.inputs.length; i++) {
-    if (this.inputs[i].variable.value != ''){
+    if (this.inputs[i].has_changed()){
   		json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
     } else {
     	return false;
     }
   }
   
+  // All inputs has been received!
+  // Marking all inputs as unchanged to control when a new value arrives!
+  for (var i = 0; i < this.inputs.length; i++) {
+  	this.inputs[i].mark_unchanged();
+  }
+  
   return json;
 }
 
 wChannel.prototype.propagate = function(newValue, initial) {
-  
   if ((this.filter != null) && (this.filter.getNature() == 'PATT')){
   	var json = this.getJSONInput();
   	if (!json){
   		return;		
   	} else {
 		var params = '?';
+		
 		var keys = json.keys();
 		for (var i = 0; i < keys.length; i++) {
 			params += keys[i] + '=' + json[keys[i]] + '&'; 
 		}
+		
+		if (keys.length > 0) {
+			params = params.substr(0, params.length-1)
+		}
+		
 		this.variable.set(params);
 		wInOut.prototype.propagate.call(this, params, initial);
   	}
