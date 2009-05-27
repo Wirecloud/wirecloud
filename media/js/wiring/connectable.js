@@ -138,22 +138,12 @@ wIn.prototype.fullDisconnect = function() {
     this.disconnect(outputs[i]);
 }
 
-wIn.prototype.propagate = function(value, initial) {
-  this.changed = true;
-  
+wIn.prototype.propagate = function(value, initial) {  
   for (var i = 0; i < this.outputs.length; ++i)
     this.outputs[i].annotate(value);
 
   for (var i = 0; i < this.outputs.length; ++i)
-    this.outputs[i].propagate(value, initial);
-}
-
-wIn.prototype.has_changed = function() {
-  return this.changed;
-}
-
-wIn.prototype.mark_unchanged = function() {
-  this.changed = false;
+    this.outputs[i].propagate(value, initial, this);
 }
 
 wIn.prototype.refresh = function() {
@@ -166,6 +156,8 @@ function wInOut(name, type, friendCode, id) {
   wIn.call(this, name, type, friendCode, id);
 
   this.inputs = new Array();
+  this.modified_inputs_state = new Array();
+  
   this.connectableType = "inout";
 }
 
@@ -184,16 +176,29 @@ wInOut.prototype.connect = function(out) {
 
 wInOut.prototype._addInput = function(wIn) {
   this.inputs.push(wIn);
+  this.modified_inputs_state.push(false);
 }
 
 wInOut.prototype._removeInput = function(wIn) {
-  if (this.inputs.getElementById(wIn.getId()) == wIn)
+  if (this.inputs.getElementById(wIn.getId()) == wIn) {
 	    this.inputs.remove(wIn);
+	    
+	    var input_position = this.get_input_position(wIn);
+	    
+	    this.modified_inputs_state.removeById(input_position);
+  }
 }
 
 wInOut.prototype._removeOutput = function(wOut) {
   if (this.outputs.getElementById(wOut.getId()) == wOut)
     this.outputs.remove(wOut);
+}
+
+wInOut.prototype.get_input_position = function (input) {
+  for (var i = 0; i < this.inputs.length; i++) {
+  	if (this.inputs[i] == input)
+  		return i;
+  }
 }
 
 wInOut.prototype.fullDisconnect = function() {
@@ -299,28 +304,26 @@ wChannel.prototype.getJSONInput = function() {
   var json = new Hash();
   
   for (var i = 0; i < this.inputs.length; i++) {
-    if (this.inputs[i].has_changed()){
-  		json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
-    } else {
-    	return false;
-    }
+  	json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
   }
   
-  // All inputs has been received!
-  // Marking all inputs as unchanged to control when a new value arrives!
-  for (var i = 0; i < this.inputs.length; i++) {
-  	this.inputs[i].mark_unchanged();
-  }
+  this.unmark_all_inputs_as_modified();
   
   return json;
 }
 
-wChannel.prototype.propagate = function(newValue, initial) {
+wChannel.prototype.propagate = function(newValue, initial, input) {  
+  if (! initial) {
+  	this.mark_input_as_modified(input);
+  }
+  
   if ((this.filter != null) && (this.filter.getNature() == 'PATT')){
-  	var json = this.getJSONInput();
-  	if (!json){
-  		return;		
-  	} else {
+  	//AD-HOC DEMUX FILTER
+  	//O-DO: CHANDE THIS TO INCLUDE THIS CODE INTO THE FILTER ITSELT
+  	
+  	if (this.all_inputs_modified()) {
+	  	var json = this.getJSONInput();
+	  	
 		var params = '?';
 		
 		var keys = json.keys();
@@ -334,7 +337,7 @@ wChannel.prototype.propagate = function(newValue, initial) {
 		
 		this.variable.set(params);
 		wInOut.prototype.propagate.call(this, params, initial);
-  	}
+	}
   } else {
   	this.variable.set(newValue);
   	wInOut.prototype.propagate.call(this, this.getValue(), initial); 
@@ -344,6 +347,27 @@ wChannel.prototype.propagate = function(newValue, initial) {
 
 wChannel.prototype.getQualifiedName = function () {
   return "channel_" + this.id;
+}
+
+wChannel.prototype.mark_input_as_modified = function (input) {
+    var input_position = this.get_input_position(input);
+    
+    this.modified_inputs_state[input_position]=true;
+}
+
+wChannel.prototype.unmark_all_inputs_as_modified = function () {
+  for (var i = 0; i < this.modified_inputs_state.length; i++) {
+  	this.modified_inputs_state[i] = false;
+  }
+}
+
+wChannel.prototype.all_inputs_modified = function () {
+  for (var i = 0; i < this.modified_inputs_state.length; i++) {
+  	if (!this.modified_inputs_state[i])
+  		return false;
+  	}
+  	
+  	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
