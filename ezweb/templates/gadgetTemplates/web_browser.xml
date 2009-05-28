@@ -4,7 +4,7 @@
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
     <Name>{{name}}</Name>
-    <Version>0.3</Version>
+    <Version>0.4</Version>
     <Author>ezweb</Author>
     <Mail>ezwebplatform-feedback@lists.morfeo-project.org</Mail>
     <Description>Gadgets that renders an html page</Description>
