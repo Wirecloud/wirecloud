@@ -609,7 +609,23 @@ class  WorkSpaceClonerEntry(Resource):
         cloned_workspace = cloneWorkspace(workspace_id)
         return HttpResponse("{'result': 'ok', 'new_workspace_id': %s}" % (cloned_workspace.id), mimetype='application/json; charset=UTF-8')
         
-    
+
+class  PublishedWorkSpaceMergerEntry(Resource):
+    @transaction.commit_on_success
+    def read(self, request, published_ws_id, to_ws_id):
+        user = get_user_authentication(request)
+        
+        published_workspace = get_object_or_404(PublishedWorkSpace, id=published_ws_id)
+        
+        from_ws = published_workspace.workspace
+        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        
+        packageCloner = PackageCloner()
+        
+        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
+        
+        return HttpResponse("{'result': 'ok', 'workspace_id': %s}" % (to_workspace.id), mimetype='application/json; charset=UTF-8')
+
 class  WorkSpaceAdderEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):

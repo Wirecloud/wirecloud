@@ -201,7 +201,7 @@ var CatalogueFactory  = function () {
 				} else {
 					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
 				}
-				msg = interpolate(gettext("Error cloning workspace: %(errorMsg)s."),
+				msg = interpolate(gettext("Error merging workspace: %(errorMsg)s."),
 				                          {errorMsg: msg}, true);
 				LogManagerFactory.getInstance().log(msg);				
 				
@@ -211,6 +211,46 @@ var CatalogueFactory  = function () {
 			var workSpaceId = currentResource.getMashupId();
 			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId});
 			PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
+		}
+		
+		this.mergeMashupResource = function(resourceId_) {
+			/***CALLBACK methods***/
+			var mergeOk = function(transport){
+				var response = transport.responseText;
+				response = eval ('(' + response + ')');
+				
+				//create the new workspace and go to it
+				opManager = OpManagerFactory.getInstance();
+		
+				ShowcaseFactory.getInstance().reload(response['workspace_id']);
+				
+			}
+			var mergeError = function(transport, e){
+				var msg;
+				if (e) {
+					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
+					                  true);
+				} else if (transport.responseXML) {
+					msg = transport.responseXML.documentElement.textContent;
+				} else {
+					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+				}
+				msg = interpolate(gettext("Error cloning workspace: %(errorMsg)s."),
+				                          {errorMsg: msg}, true);
+				                          
+				LogManagerFactory.getInstance().log(msg);				
+				
+			}
+			
+			var currentResource = this.getResource(resourceId_);
+			var workSpaceId = currentResource.getMashupId();
+			
+			var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
+			
+			var mergeURL = URIs.GET_MERGE_PUBLISHED_WORKSPACE.evaluate({'published_ws': workSpaceId, 'to_ws': active_ws_id});
+			
+			PersistenceEngineFactory.getInstance().send_get(mergeURL, this, mergeOk, mergeError);
 		}
 
 		this.paginate = function(items) {

@@ -699,6 +699,8 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			add_gadget_button.observe("click", function(event){
 				CatalogueFactory.getInstance().addResourceToShowCase(UIUtils.getSelectedResource());
 			},false,"instance_gadget");
+			
+			$("info_resource_content").appendChild(add_gadget_button);
 		}
 		else{ //add mashup button
 			var add_gadget_button = UIUtils.createHTMLElement("button", $H({
@@ -710,8 +712,20 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			add_gadget_button.observe("click", function(event){
 				CatalogueFactory.getInstance().addMashupResource(UIUtils.getSelectedResource());
 			},false,"instance_mashup");
+			
+			var merge_mashup_button = UIUtils.createHTMLElement("button", $H({
+				id: 'merge_mashup_button',
+				class_name: 'add_mashup',
+				style: 'text-align:center;',
+				innerHTML: gettext('Merge Mashup')
+			}));
+			merge_mashup_button.observe("click", function(event){
+				CatalogueFactory.getInstance().mergeMashupResource(UIUtils.getSelectedResource());
+			},false,"instance_mashup");
+			
+			$("info_resource_content").appendChild(add_gadget_button);
+			$("info_resource_content").appendChild(merge_mashup_button);
 		}
-		$("info_resource_content").appendChild(add_gadget_button);
 
 		_rateResource();
 		

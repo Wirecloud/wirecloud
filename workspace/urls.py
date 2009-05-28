@@ -70,6 +70,10 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<workspace_id>\d+)/link?[/]?)?$', 
         WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
     
+    # Merge a published workspace to a normal one  
+    (r'^/published_workspace/(?P<published_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?$', 
+        PublishedWorkSpaceMergerEntry(permitted_methods=('GET', ))),
+    
     # Publish workspace photo to PublishedWorkspaces  
     (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$', 
         WorkSpacePublisherEntry(permitted_methods=('GET', 'POST',))),

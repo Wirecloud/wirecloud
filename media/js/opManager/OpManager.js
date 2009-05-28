@@ -254,6 +254,10 @@ var OpManagerFactory = function () {
 				return;
 			this.activeWorkSpace.removeIGadget(iGadgetId);
 		}
+		
+		OpManager.prototype.getActiveWorkspaceId = function () {
+			return this.activeWorkSpace.getId();
+		}
 
 
 		OpManager.prototype.sendEvent = function (gadget, event, value) {

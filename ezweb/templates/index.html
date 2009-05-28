@@ -68,6 +68,8 @@ _URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
 _URIConstants.prototype.PUT_SHARE_WORKSPACE = new Template('/workspace/#{workspace_id}/share/#{share_boolean}');
 _URIConstants.prototype.GADGET_TEMPLATE_GENERATOR = new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}');
+_URIConstants.prototype.GET_MERGE_PUBLISHED_WORKSPACE = new Template('/workspace/published_workspace/#{published_ws}/merge/#{to_ws}');
+
 
 {% if home_gateway_dispatcher_url %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
