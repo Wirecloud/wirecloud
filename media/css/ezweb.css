@@ -427,6 +427,10 @@ a:hover{
   max-width:50%
 }
 
+#parse_parameters{
+  margin: 0px 0px 0px 0pt;
+}
+
 .window_menu .window_top {
   position:relative;
   margin:2px 2px 20px 2px;
