@@ -34,9 +34,16 @@
 .param input{
 	font-size:85%;
 }
-
+.param label{
+	display:block;
+	font-size:90%;
+	font-weight:bold;
+}
 #header div.event{
 	background: #DEDEDE;
+}
+button{
+	vertical-align:bottom;
 }
 form, body {
 	margin: 0;
@@ -267,12 +274,12 @@ function hideVariables(){
 	{% endif %}
 	<form id="parameters" name="parameters" style="display:none" onsubmit="return false;">
 	{% for param in params %}
-		<div class="param"><label>{{ param }}:</label><input size="9" type="text" name="{{ param }}_event" id="{{ param }}_event" /></div>
+		<div class="param"><label>{{ param }}</label><input size="9" type="text" name="{{ param }}_event" id="{{ param }}_event" /></div>
 	{% endfor %}
 	{% for event in events %}
-		<div class="param event"><label>{{ event }}:</label><input size="9" type="text" name="{{ event }}" id="{{ event }}" /></div>
+		<div class="param event"><label>{{ event }}</label><input size="9" type="text" name="{{ event }}" id="{{ event }}" /></div>
 	{% endfor %}
-	{% if params %}
+	{% if params or events %}
 		<button id="send" type="button"  onclick="sendParameters()">send</button>
 	{% endif %}
 	</form>

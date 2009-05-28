@@ -316,6 +316,9 @@ wChannel.prototype.propagate = function(newValue, initial, input) {
   if (! initial) {
   	this.mark_input_as_modified(input);
   }
+  else {
+  	this.mark_all_inputs_as_modified(input);
+  }
   
   if ((this.filter != null) && (this.filter.getNature() == 'PATT')){
   	//AD-HOC DEMUX FILTER
@@ -328,7 +331,7 @@ wChannel.prototype.propagate = function(newValue, initial, input) {
 		
 		var keys = json.keys();
 		for (var i = 0; i < keys.length; i++) {
-			if(json[keys[i]])
+			if(json[keys[i]] && json[keys[i]] != "None")
 				params += keys[i] + '=' + json[keys[i]] + '&'; 
 		}
 		
@@ -359,6 +362,12 @@ wChannel.prototype.mark_input_as_modified = function (input) {
 wChannel.prototype.unmark_all_inputs_as_modified = function () {
   for (var i = 0; i < this.modified_inputs_state.length; i++) {
   	this.modified_inputs_state[i] = false;
+  }
+}
+
+wChannel.prototype.mark_all_inputs_as_modified = function () {
+  for (var i = 0; i < this.modified_inputs_state.length; i++) {
+  	this.modified_inputs_state[i] = true;
   }
 }
 

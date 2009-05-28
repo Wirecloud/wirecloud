@@ -90,7 +90,7 @@ class templateGenerator(Resource):
             
             context['params'] = []
             parsedUrl = context['URL'].partition('?')
-            if int(context['parse_parameters']) > 0:
+            if 'parse_parameters' in context and int(context['parse_parameters']) > 0:
                 #include the parameters of the url
                 context['URL'] = parsedUrl[0] # base without ?
                 queryString = parsedUrl[2]
@@ -98,8 +98,11 @@ class templateGenerator(Resource):
                     for param in queryString.split('&'):
                         if param != '':
                             context['params'].append(param.split('=')[0])
-                        
-            events = context['events'].split(',')
+                            
+            events = []         
+            if 'events' in context:          
+                events = context['events'].split(',')
+                
             context['events'] = []
             for event in events:
                 if event.strip() != '':
