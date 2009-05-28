@@ -26,7 +26,7 @@
 /**
  * Creates an instance of a Gadget.
  *
- * @author Álvaro Arranz
+ * @author ï¿½lvaro Arranz
  *
  * @class Represents an instance of a Gadget.
  *
@@ -1551,7 +1551,7 @@ IGadget.prototype.save = function() {
 	data['width'] = this.contentWidth;
 	data['height'] = this.contentHeight;
 	data['name'] = this.name;
-	data['menu_color'] = IGadgetColorManager.color2css(this.menu_color).substring(1, 6); // TODO
+	data['menu_color'] = IGadgetColorManager.color2css(this.menu_color).substring(1, 7); // TODO
 	if (this.onFreeLayout())
 		data['layout'] = 1;
 	else
