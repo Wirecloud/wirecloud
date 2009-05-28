@@ -328,7 +328,8 @@ wChannel.prototype.propagate = function(newValue, initial, input) {
 		
 		var keys = json.keys();
 		for (var i = 0; i < keys.length; i++) {
-			params += keys[i] + '=' + json[keys[i]] + '&'; 
+			if(json[keys[i]])
+				params += keys[i] + '=' + json[keys[i]] + '&'; 
 		}
 		
 		if (keys.length > 0) {
