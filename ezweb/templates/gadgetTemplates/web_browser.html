@@ -104,7 +104,7 @@ var {{ param }}_event = EzWebAPI.createRWGadgetVariable("{{ param }}_event");
 var {{ param }}_pref = EzWebAPI.createRGadgetVariable("{{ param }}_pref",{{ param }}_pref_handler);
 
 function {{ param }}_pref_handler (value){
-	document.getElementById({{ param }}).value=value;
+	document.getElementById("{{ param }}_event").value=value;
 }
 {% endfor %}
 
@@ -135,14 +135,14 @@ function init(){
 				//no more options -> show the url base
 				loadURL(real_url);
 			}
-			//print the preference values
-			{% for param in params %}
-				if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
-					document.getElementById("{{ param }}").value={{ param }}_pref.get()
-				}
-			{% endfor %}
 		}
 	}
+	//print the preference values
+	{% for param in params %}
+		if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
+			document.getElementById("{{ param }}_event").value={{ param }}_pref.get()
+		}
+	{% endfor %}
 	if (home_url=="")
 		document.getElementById("home").style.display="none";
 	//else -> wait the wiring propagation
