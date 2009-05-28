@@ -143,6 +143,8 @@ function init(){
 			{% endfor %}
 		}
 	}
+	if (home_url=="")
+		document.getElementById("home").style.display="none";
 	//else -> wait the wiring propagation
 	//show source
 	if(source.get() && source.get()!=""){
@@ -230,6 +232,8 @@ function sendParameters(){
 		if (field.nodeName.toLowerCase()=="input"){
 			if (field.value!=""){
 				eval(field.name).set(field.value);
+			}else{
+				eval(field.name).set(null);
 			}
 		}		
 	}
@@ -255,7 +259,7 @@ function hideVariables(){
 <body onload="init()" onresize="resizeIframe()">
 <div id="header">
 	<div id="source" style="display:none"><label>source: </label></div>
-	<div id="home" onclick="goHome()" class="link"{% if home_URL %} style="display:none" {% endif %}>home</div>
+	<div id="home" onclick="goHome()" class="link">home</div>
 	<div id="refresh" onclick="refresh()" class="link">refresh</div>
 	<div id="show_link" onclick="showVariables()" class="link">show variables</div>
 	<div id="hide_link" onclick="hideVariables()" style="display:none" class="link">hide variables</div>
