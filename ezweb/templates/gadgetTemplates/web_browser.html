@@ -261,8 +261,10 @@ function hideVariables(){
 	<div id="source" style="display:none"><label>source: </label></div>
 	<div id="home" onclick="goHome()" class="link">home</div>
 	<div id="refresh" onclick="refresh()" class="link">refresh</div>
+	{% if params or events %}
 	<div id="show_link" onclick="showVariables()" class="link">show variables</div>
 	<div id="hide_link" onclick="hideVariables()" style="display:none" class="link">hide variables</div>
+	{% endif %}
 	<form id="parameters" name="parameters" style="display:none" onsubmit="return false;">
 	{% for param in params %}
 		<div class="param"><label>{{ param }}:</label><input size="9" type="text" name="{{ param }}_event" id="{{ param }}_event" /></div>
