@@ -568,9 +568,12 @@ IGadget.prototype.build = function() {
 }
 
 /**
- * Paints this gadget instance into the assigned dragboard
+ * Paints this gadget instance into the assigned dragboard.
+ *
+ * @param {Boolean} onInit true if this gadget is being painted on Dragboard
+ *        initation.
  */
-IGadget.prototype.paint = function() {
+IGadget.prototype.paint = function(onInit) {
 	if (this.visible)
 		return; // Do nothing if the iGadget is already painted
 
@@ -653,7 +656,10 @@ IGadget.prototype.paint = function() {
 	this.element.style.zIndex = this.zPos;
 
 	// Recompute size
-	this._recomputeSize(true);
+	if (onInit)
+		this._recomputeSize(true);
+	else
+		this.setContentSize(this.contentWidth, this.contentHeight, false);
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);

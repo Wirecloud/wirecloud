@@ -468,7 +468,7 @@ ColumnLayout.prototype.initialize = function () {
 
 		position = iGadget.getPosition();
 
-		iGadget.paint();
+		iGadget.paint(true);
 		this._ensureMinimalSize(iGadget);
 
 		if (iGadget.getWidth() > this.getColumns())

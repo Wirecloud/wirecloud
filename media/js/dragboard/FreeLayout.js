@@ -135,7 +135,7 @@ FreeLayout.prototype.initialize = function () {
 			this.orderList[zPos] = iGadget;
 		}
 
-		iGadget.paint();
+		iGadget.paint(true);
 	}
 
 	// Reinsert the igadgets that didn't fit in their positions
@@ -143,7 +143,7 @@ FreeLayout.prototype.initialize = function () {
 		iGadget = iGadgetsToReinsert[i];
 		zPos = this.orderList.push(iGadget) - 1;
 		iGadget.setZPosition(1000 + zPos);
-		iGadget.paint();
+		iGadget.paint(true);
 	}
 
 	// Check if we have to readjust the z positions
