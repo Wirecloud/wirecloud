@@ -259,8 +259,15 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 			}.bind(context),
 			0);
 	var filters = this.wiring.getFiltersSort();
+	var found = false;
+	var j = 0;
 	for (var i = 0; i < filters.length; i++) {
 		context = {wiringGUI:this, channel:channel, filter:filters[i]};
+		if (filters[i].getLabel()=="Demultiplex" && found)
+			continue;
+		if (filters[i].getLabel()=="Demultiplex")
+			found = true;
+			
 		filterMenu.addOptionWithHelp(
 			"/ezweb/images/filter.gif",
 			filters[i].getLabel(),
@@ -269,8 +276,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, this.filter);
 			}.bind(context),
-			i+1
+			j+1
 		);
+		j++;
 	}
 	return filterMenu;
   }
