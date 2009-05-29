@@ -59,7 +59,7 @@ class WorkSpace(models.Model):
         return self.creator
 
     def is_shared(self, user):
-        if (len(self.users.objects.all()) < 2):
+        if (len(self.users.all()) < 2):
             return 'false'
         
         if (self.get_creator() == user):
