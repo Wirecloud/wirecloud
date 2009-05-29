@@ -179,7 +179,7 @@ IntUserPref.prototype.validate = function (newValue) {
 
 /**
  * extends UserPref
- * @autor aarranz
+ * @author aarranz
  */
 function TextUserPref(name_, label_, desc_, defaultValue_) {
 	UserPref.prototype.UserPref.call(this, name_, label_, desc_, defaultValue_);
@@ -203,7 +203,7 @@ TextUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
 
 /**
  * extends UserPref
- * @autor aarranz
+ * @author aarranz
  */
 function DateUserPref(name_, label_, desc_, defaultValue_) {
 	UserPref.prototype.UserPref.call(this, name_, label_, desc_, defaultValue_);
@@ -227,7 +227,7 @@ DateUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
 
 /**
  * extends UserPref
- * @autor aarranz
+ * @author aarranz
  */
 function BoolUserPref(name_, label_, desc_, defaultValue_) {
 	UserPref.prototype.UserPref.call(this, name_, label_, desc_, defaultValue_);
@@ -255,7 +255,7 @@ BoolUserPref.prototype.getValueFromInterface = function(element) {
 
 /**
  * extends UserPref
- * @autor fabio
+ * @author fabio
  */
 function PasswordUserPref(name_, label_, desc_, defaultValue_) {
 	UserPref.prototype.UserPref.call(this, name_, label_, desc_, defaultValue_);
