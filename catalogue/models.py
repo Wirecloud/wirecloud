@@ -103,7 +103,7 @@ class GadgetResource(TransModel):
      iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True)
      wiki_page_uri = models.URLField(_('wikiURI'))
      template_uri= models.URLField(_('templateURI'))
-     mashup_id = models.URLField(_('mashupId'), null=True, blank=True)
+     mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
      
      #For implementing "private gadgets" only visible for users that belongs to a concrete group
      organization = models.ForeignKey(Group, null=True, blank=True)

@@ -250,35 +250,27 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 //			0);
 
 	filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif",
-			gettext('Empty'),
-			gettext('Returns the value of the channel unfiltered.'),
+			"/ezweb/images/filter.gif", 
+			'Empty', 
+			"Returns the value of the channel unfiltered.",
 			function(){
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, null); 
 			}.bind(context),
 			0);
 	var filters = this.wiring.getFiltersSort();
-	var found = false;
-	var j = 0;
 	for (var i = 0; i < filters.length; i++) {
 		context = {wiringGUI:this, channel:channel, filter:filters[i]};
-		if (filters[i].getLabel()=="Demultiplex" && found)
-			continue;
-		if (filters[i].getLabel()=="Demultiplex")
-			found = true;
-			
 		filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif",
+			"/ezweb/images/filter.gif", 
 			filters[i].getLabel(),
-			filters[i].getHelpText(),
-			function() {
+			filters[i].getHelpText(), 
+			function(){
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, this.filter);
 			}.bind(context),
-			j+1
-		);
-		j++;
+			i+1
+		);	
 	}
 	return filterMenu;
   }
