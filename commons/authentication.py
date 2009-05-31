@@ -38,7 +38,7 @@ from django.utils.translation import ugettext as _
 
 from django.contrib.auth.models import User
 
-from django.contrib.auth import authenticate, login, load_backend
+from django.contrib.auth import authenticate, login, load_backend, logout
 
 import middleware
 
@@ -69,6 +69,15 @@ def get_public_user(request):
         user = generate_public_user(request)
     
     return user
+
+def relogin_after_public(request, username, password):
+    user = authenticate(username=username, password=password, isPublic=True)
+    login(request, user)
+    
+    return user
+
+def logout_request(request):
+    logout(request)
 
 def login_public_user(request):
     user = get_public_user(request)

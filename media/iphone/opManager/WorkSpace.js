@@ -148,7 +148,7 @@ function WorkSpace (workSpaceState) {
 	
 	
 	WorkSpace.prototype.downloadWorkSpaceInfo = function () {
-		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
 	}
 	

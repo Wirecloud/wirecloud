@@ -40,7 +40,7 @@ from commons.resource import Resource
 
 from django.db import transaction
 
-from commons.authentication import get_user_authentication, get_public_user
+from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
 from commons.get_data import *
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
@@ -330,7 +330,8 @@ class WorkSpaceCollection(Resource):
 
 class WorkSpaceEntry(Resource):
     @transaction.commit_on_success
-    def read(self, request, workspace_id):
+    def read(self, request, workspace_id, last_user=''):
+        #last_user : last_user_after_public autologin
         user = get_user_authentication(request)
         
         workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
@@ -339,10 +340,15 @@ class WorkSpaceEntry(Resource):
         concept_data['user'] = user
         workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
         
+        #Closing session after downloading public user workspace
+        if (user.username == 'public' and last_user):
+            logout_request(request)
+            request.user = relogin_after_public(request, last_user, None)
+        
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
-    def update(self, request, workspace_id):
+    def update(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'workspace')
@@ -376,7 +382,7 @@ class WorkSpaceEntry(Resource):
 
 
     @transaction.commit_on_success
-    def delete(self, request, workspace_id):
+    def delete(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
         
         workspaces = WorkSpace.objects.filter(users__id=user.id).exclude(pk=workspace_id)

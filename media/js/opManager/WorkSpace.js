@@ -285,7 +285,7 @@ function WorkSpace (workSpaceState) {
 		}else if(!OpManagerFactory.getInstance().workSpaceExists(workSpaceName)){
 			this.workSpaceState.name = workSpaceName;		
 	
-			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 			var o = new Object;
 			o.name = workSpaceName;
 			var workSpaceData = Object.toJSON(o);
@@ -299,7 +299,7 @@ function WorkSpace (workSpaceState) {
     
     WorkSpace.prototype.deleteWorkSpace = function() {
 		if(OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)){
-			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 			PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);		
 		}
 	}
@@ -329,7 +329,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.downloadWorkSpaceInfo = function () {
-		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
 	}
 	
@@ -787,7 +787,7 @@ function WorkSpace (workSpaceState) {
 	}.bind(this);
 	
 	this.markAsActive = function (){
-		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		var o = new Object;
 		o.active = "true"
 		var workSpaceData = Object.toJSON(o);

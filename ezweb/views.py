@@ -64,16 +64,20 @@ def public_ws_viewer(request, public_ws_id):
     except WorkSpace.DoesNotExist:
          return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
     
+    last_user = None
+    if (request.user):
+        last_user = request.user
+    
     public_user=login_public_user(request)
     
     request.user=public_user
     
     if (len(workspace.users.filter(username=public_user.username)) == 1):
-        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id)
+        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id, last_user=last_user)
     
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
-def render_ezweb(request, user_name=None, template='index.html', public_workspace=''):
+def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user=''):
     """ Main view """ 
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
         return render_to_response('iphone.html', {},
@@ -85,5 +89,5 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
 
             settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
 
-        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL, 'active_workspace': public_workspace},
+        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL, 'active_workspace': public_workspace, 'last_user': last_user},
                   context_instance=RequestContext(request))
