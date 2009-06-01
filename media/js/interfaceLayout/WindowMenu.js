@@ -491,7 +491,7 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 			break;
 		case 'url':
 			if (!this._isURL(field.input.value))
-				badURLFields += "," + field.label + " ";
+				badURLFields += ", " + field.label;
 			break;
 		case 'id':
 			for (var i = 0; i < this.not_valid_characters.length; i++) {
@@ -528,7 +528,7 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 			switch (field.type) {
 			case 'color':
 				value = this.fields[fieldId].input.value;
-				if (value.indexOf('#'))
+				if (value.indexOf('#') !== -1)
 					value = value.substring(1);
 				break;
 			case 'boolean':
