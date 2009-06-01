@@ -63,7 +63,7 @@ Param.prototype.getDefaultValue = function() {
 Param.prototype.createHtmlLabel = function() {
   var labelLayer = document.createElement("div");
   var img = document.createElement("img");
-  img.setAttribute("src", "/ezweb/images/param.png");
+  img.setAttribute("src", _currentTheme.getIconURL('wiring-filter_param'));
   labelLayer.appendChild(img);
   labelLayer.appendChild(document.createTextNode(this._label + ':'));
   

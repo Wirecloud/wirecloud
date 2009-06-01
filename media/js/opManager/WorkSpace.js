@@ -79,7 +79,7 @@ function WorkSpace (workSpaceState) {
 			LogManagerFactory.getInstance().log(msg);
 
 			// Show a user friend alert
-			LayoutManagerFactory.getInstance().showMessageMenu('Error during workspace load! Please, change active workspace or create a new one!')
+			LayoutManagerFactory.getInstance().showMessageMenu('Error during workspace load! Please, change active workspace or create a new one!', Constants.Logging.ERROR_MSG);
 		}
 
 		this.loaded = true;
@@ -595,7 +595,7 @@ function WorkSpace (workSpaceState) {
 	
 	WorkSpace.prototype.mergeWith = function(workspace_id){
 		var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
-		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);			
+		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
 	}
 
     // *****************
@@ -642,9 +642,9 @@ function WorkSpace (workSpaceState) {
 		new Insertion.After($('menu_layer'), mergeMenuHTML);
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
-		//adding options to workspace menu		
+		//adding options to workspace menu
 		if (this.workSpaceGlobalInfo.workspace.active != "true") {
-			this.activeEntryId = this.menu.addOption("/ezweb/images/active.png",
+			this.activeEntryId = this.menu.addOption(_currentTheme.getIconURL('workspace_active'),
 				gettext("Mark as Active"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -657,7 +657,7 @@ function WorkSpace (workSpaceState) {
 			//It's your own workspace.
 			//All operations are allowed!
 			
-			this.menu.addOption("/ezweb/images/rename.gif",
+			this.menu.addOption(_currentTheme.getIconURL('rename'),
 				gettext("Rename"),
 				function() {
 					OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
@@ -666,7 +666,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 
 			this.unlockEntryPos = optionPosition;
-			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png",
+			this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
 				gettext("Unlock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -674,7 +674,7 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 
-			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png",
+			this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
 				gettext("Lock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -684,7 +684,7 @@ function WorkSpace (workSpaceState) {
 			var res = this._checkLock();
 			optionPosition -= res;
 			
-			this.menu.addOption("/ezweb/images/publish.png",
+			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
 				gettext("Share workspace"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -692,7 +692,7 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 
-			this.menu.addOption("/ezweb/images/remove.png",
+			this.menu.addOption(_currentTheme.getIconURL('remove'),
 				gettext("Remove"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');
@@ -700,7 +700,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 
 			//TODO:Intermediate window to ask for data (name, description...)
-			this.menu.addOption("/ezweb/images/publish.png",
+			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
 				gettext("Publish workspace"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
@@ -708,7 +708,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 
 			if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces
-				this.menu.addOption("/ezweb/images/merge.png",
+				this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),
 					gettext("Merge with workspace..."),
 					function(e) {
 						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
@@ -717,7 +717,7 @@ function WorkSpace (workSpaceState) {
 			}
 		}
 
-		this.menu.addOption("/ezweb/images/list-add.png",
+		this.menu.addOption(_currentTheme.getIconURL('add'),
 			gettext("New workspace"),
 			function() {
 				LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
@@ -764,7 +764,7 @@ function WorkSpace (workSpaceState) {
 		}
 		
 		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.menu.addOption("/ezweb/images/unlock.png",
+			this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
 				gettext("Unlock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -775,7 +775,7 @@ function WorkSpace (workSpaceState) {
 		if((!all || !locked) && this.lockEntryId==null){
 			if(this.unlockEntryId)
 				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png",
+			this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
 				gettext("Lock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();

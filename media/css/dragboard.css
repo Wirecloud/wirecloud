@@ -69,10 +69,6 @@ div.color_button {
   height: 16px;
 }
 
-div.floatclearer {
-  clear: both;
-}
-
 div.gadget_window div.snapButton {
   position: absolute;
   width: 16px;

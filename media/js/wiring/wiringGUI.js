@@ -211,7 +211,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 		filterValue = filter_content.childNodes[1];
 	}
 	if (filter == null){
-		filterValue.nodeValue = gettext("Empty");
+		filterValue.nodeValue = gettext("None");
 	}else{
 		filterValue.nodeValue = filter.getLabel();
 	}
@@ -250,9 +250,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 //			0);
 
 	filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif", 
-			'Empty', 
-			"Returns the value of the channel unfiltered.",
+			_currentTheme.getIconURL('filter'),
+			gettext('None'),
+			gettext('Returns the value of the channel unfiltered.'),
 			function(){
 				LayoutManagerFactory.getInstance().hideCover();
 				this.wiringGUI._setChannelFilter(this.channel, null); 
@@ -262,7 +262,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	for (var i = 0; i < filters.length; i++) {
 		context = {wiringGUI:this, channel:channel, filter:filters[i]};
 		filterMenu.addOptionWithHelp(
-			"/ezweb/images/filter.gif", 
+			_currentTheme.getIconURL('filter'),
 			filters[i].getLabel(),
 			filters[i].getHelpText(), 
 			function(){
@@ -295,7 +295,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	var inputDel = document.createElement("img");
     channelElement.appendChild(inputDel);
 	inputDel.setAttribute("alt", gettext("Remove"));
-    inputDel.setAttribute("src", "/ezweb/images/remove.png");
+    inputDel.setAttribute("src", _currentTheme.getIconURL('remove'));
     Event.observe(inputDel, "click",
                             function (e) {
                               Event.stop(e);
@@ -377,7 +377,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	if (channel.getFilter())
 		filterText.appendChild(document.createTextNode(channel.getFilter().getLabel()));
 	else
-		filterText.appendChild(document.createTextNode(gettext("Empty")));     	
+		filterText.appendChild(document.createTextNode(gettext("None")));
 	var filterMenuButton = document.createElement("input");
 	filterText.appendChild(filterMenuButton);
 	filterMenuButton.setAttribute("type", "button");

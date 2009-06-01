@@ -385,26 +385,16 @@
 	cursor: text;
 }
 
-.canvas div div{
+.canvas div div {
 	z-index: 3;
 }
 
-.canvas .arrow{
+.canvas .arrow {
 	position: absolute;
 	z-index: 3;
 	width: 20px;
 	height: 16px;
 	background: transparent url(/ezweb/images/wiringArrow.png) no-repeat;
-}
-
-.help_button {
-  background: transparent url(/ezweb/images/help.gif) no-repeat scroll 0 0;
-  margin-left: 0px;
-  margin-bottom:2px;
-  border: none;
-  display: inline;
-  vertical-align: middle;
-  cursor: pointer;
 }
 
 .helpwiringheader {

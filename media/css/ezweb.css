@@ -19,6 +19,10 @@ a:hover{
     display: none !important;
 }
 
+div.floatclearer {
+  clear: both;
+}
+
 /* header ------------------------------------------------------------------------------------------ */
 /* testing from codesyntax */
 #header {
@@ -422,7 +426,7 @@ a:hover{
   border-bottom: solid 1px #AAAAAA;
 }
 
-.window_menu{
+.window_menu {
   border: 2px solid #0b8fff;
   max-width:50%
 }
@@ -432,41 +436,29 @@ a:hover{
 }
 
 .window_menu .window_top {
-  position:relative;
-  margin:2px 2px 20px 2px;
-}
-
-.window_menu .window_title {
-  font-size: 16px;
-  color: #2D6F9C;
-  font-weight: bold;
-  margin-left: 10px;
+  position: relative;
 }
 
 .window_menu .closebutton {
-  position: absolute;
-  right: 2px;
+  position: relative;
+  top: 3px;
+  margin-left: 1ex;
+  float: right;
 }
+
 .window_menu .window_content {
   clear: both;
-  margin:20px;
 }
-.window_menu .window_content img{
+
+.window_menu .window_content > img {
+  float: left;
   margin-right: 5px;
   vertical-align: bottom;
 }
-.window_msg {
-  display: inline;
-  text-align: center;
-}
+
 .window_msg_error{
   font-size: 90%;
   color: red;
-}
-
-.window_menu .window_bottom {
-  margin:20px 18px 10px 18px;
-  text-align: center;
 }
 
 .required_mark{
@@ -552,8 +544,8 @@ button {
 	color:#36C;
 }
 
-#gadgets .gadget .preferences input{
-	width:100%; 
+#gadgets .gadget .preferences input {
+	width:100%;
 }
 
 #gadgets .gadget .preferences td{

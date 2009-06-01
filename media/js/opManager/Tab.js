@@ -252,11 +252,10 @@ function Tab (tabInfo, workSpace) {
 
 
 	//create tab menu
-	
 	this._lockFunc = function(locked) {
 		if (locked) {
 			this.menu.updateOption(this.lockEntryId,
-				"/ezweb/images/unlock.png",
+				_currentTheme.getIconURL('unlock'),
 				gettext("Unlock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -264,7 +263,7 @@ function Tab (tabInfo, workSpace) {
 				}.bind(this));
 		} else {
 			this.menu.updateOption(this.lockEntryId,
-				"/ezweb/images/lock.png",
+				_currentTheme.getIconURL('lock'),
 				gettext("Lock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -281,7 +280,7 @@ function Tab (tabInfo, workSpace) {
 			var tab = this.workSpace.tabInstances[tabIds[i]];
 			if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
 				tab.firstVisible = false;
-				tab.visibleEntryId = tab.menu.addOption("/ezweb/images/visible.png",
+				tab.visibleEntryId = tab.menu.addOption(_currentTheme.getIconURL('mark_tab_visible'),
 					gettext("First Visible"),
 					function() {
 						LayoutManagerFactory.getInstance().hideCover();
@@ -335,7 +334,7 @@ function Tab (tabInfo, workSpace) {
 	
 	this.addMarkAsVisible = function (){
 		this.firstVisible = false;
-		this.visibleEntryId = this.menu.addOption("/ezweb/images/visible.png",
+		this.visibleEntryId = this.menu.addOption(_currentTheme.getIconURL("mark_tab_visible"),
 			gettext("Mark as Visible"),
 			function() {
 				LayoutManagerFactory.getInstance().hideCover();
@@ -349,7 +348,7 @@ function Tab (tabInfo, workSpace) {
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
 	
-	this.menu.addOption("/ezweb/images/rename.gif",
+	this.menu.addOption(_currentTheme.getIconURL("rename"),
 		gettext("Rename"),
 		function() {
 			OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
@@ -365,7 +364,7 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	if (this.dragboard.isLocked()) {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/unlock.png",
+		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL("unlock"),
 			gettext("Unlock"),
 			function() {
 				LayoutManagerFactory.getInstance().hideCover();
@@ -373,7 +372,7 @@ function Tab (tabInfo, workSpace) {
 			}.bind(this),
 			1);
 	} else {
-		this.lockEntryId = this.menu.addOption("/ezweb/images/lock.png",
+		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
 			gettext("Lock"),
 			function() {
 				LayoutManagerFactory.getInstance().hideCover();
@@ -382,7 +381,7 @@ function Tab (tabInfo, workSpace) {
 			1);
 	}
 
-	this.menu.addOption("/ezweb/images/remove.png",
+	this.menu.addOption(_currentTheme.getIconURL("remove"),
 		gettext("Remove"),
 		function() {
 			LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');

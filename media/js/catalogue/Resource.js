@@ -42,7 +42,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 	this.getUriImage = function() { return state.getUriImage();}
 	this.getUriTemplate = function() { return state.getUriTemplate();}
 	this.getUriWiki = function() { return state.getUriWiki();}
-	this.getMashupId = function() { return state.getMashupId();}	
+	this.getMashupId = function() { return state.getMashupId();}
 	this.getAddedBy = function() { return state.getAddedBy();}
 	this.getTags = function() { return state.getTags();}
 	this.setTags = function(tags_) { state.setTags(tags_);}
@@ -99,13 +99,13 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		content_toolbar.appendChild(wiki);
 		var wiki_img = UIUtils.createHTMLElement("img", $H({
             id: id_ + '_wiki_img',
-			src: '/ezweb/images/wiki_gray.png'
+			src: _currentTheme.getIconURL('showcase-wiki')
         }));
 		wiki_img.observe("mouseover", function(event){
-			this.src = '/ezweb/images/wiki.png';
+			this.src = _currentTheme.getIconURL('showcase-wiki_highlighted');
 		});
 		wiki_img.observe("mouseout", function(event){
-			this.src = '/ezweb/images/wiki_gray.png';
+			this.src = _currentTheme.getIconURL('showcase-wiki');
 		});
 		wiki.appendChild(wiki_img);
 		if (state.getAddedBy() == 'Yes') {
@@ -120,13 +120,13 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			content_toolbar.appendChild(deleteResource);
 			var delete_img = UIUtils.createHTMLElement("img", $H({
 				id: id_ + '_delete_img',
-				src: '/ezweb/images/cancel_gray.png'
+				src: _currentTheme.getIconURL('showcase-delete')
 			}));
-			delete_img.observe("mouseover", function(event){
-				this.src = '/ezweb/images/delete.png';
+			delete_img.observe("mouseover", function(event) {
+				this.src = _currentTheme.getIconURL('showcase-delete_highlighted');
 			});
-			delete_img.observe("mouseout", function(event){
-				this.src = '/ezweb/images/cancel_gray.png';
+			delete_img.observe("mouseout", function(event) {
+				this.src = _currentTheme.getIconURL('showcase-delete');
 			});
 			deleteResource.appendChild(delete_img);
 		}
@@ -392,7 +392,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		others_tags.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud("others");
 			//the number of tags may make the info_resource container higher
-			UIUtils.setInfoResourceHeight();			
+			UIUtils.setInfoResourceHeight();
 		});
 		tag_links.appendChild(others_tags);
 		var tags = UIUtils.createHTMLElement("div", $H({ 
@@ -471,7 +471,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		add_tags_submit_link.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).changeTagcloud('mytags');
 			//the number of tags may make the info_resource container higher
-			UIUtils.setInfoResourceHeight();	
+			UIUtils.setInfoResourceHeight();
 		});
 		add_tags_link.appendChild(add_tags_submit_link);
 
@@ -522,7 +522,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		connect_text.appendChild(events);
 		events.appendChild(UIUtils.createHTMLElement("img", $H({
 			title: gettext('All compatible gadgets by events are highlighted in this color'),
-			src: '/ezweb/images/resource_compatible_event.png'
+			src: _currentTheme.getIconURL('catalogue-resource_compatible_event')
 		})));
 		if (state.getEvents().length != 0)
 		{
@@ -547,7 +547,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		connect_text.appendChild(slots);
 		slots.appendChild(UIUtils.createHTMLElement("img", $H({
 			title: gettext('All compatible gadgets by slots are highlighted in this color'),
-			src: '/ezweb/images/resource_compatible_slot.png'
+			src: _currentTheme.getIconURL('catalogue-resource_compatible_slot')
 		})));
 		if (state.getSlots().length != 0)
 		{
@@ -651,7 +651,7 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 		show_versions_link.observe("click", function(event){
 			CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showVersionPanel();
 			//the number of tags may make the info_resource container higher
-			UIUtils.setInfoResourceHeight();	
+			UIUtils.setInfoResourceHeight();
 		});
 		show_versions_div.appendChild(show_versions_link);
 
@@ -932,11 +932,11 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 			var ver_element = UIUtils.createHTMLElement("span", $H({ 
 			}));
 			parent.appendChild(ver_element);
-			if (versions[i] == state.getVersion()){
+			if (versions[i] == state.getVersion()) {
 				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
 					innerHTML: 'v' + versions[i]
-				})));					
-			}else{
+				})));
+			} else {
 				var ver_link = UIUtils.createHTMLElement("a", $H({ 
 					title: gettext('Select this version as preferred version'),
 					innerHTML: 'v' + versions[i]
@@ -954,19 +954,19 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 				var delete_img = UIUtils.createHTMLElement("img", $H({
 					title: gettext('Delete this version of the gadget'),
 					id: "deleteIcon_v" + versions[i],
-					src: '/ezweb/images/cancel_gray.png',
+					src: _currentTheme.getIconURL('delete'),
 					style: 'border:none;',
 					name: versions[i]
 				}));
-				delete_img.observe("click", function(event){
+				delete_img.observe("click", function(event) {
 					UIUtils.selectedVersion = event.currentTarget.getAttribute('name')
 					LayoutManagerFactory.getInstance().showWindowMenu('deleteAllResourceVersions');
 				});
-				delete_img.observe("mouseover", function(event){
-					this.src='/ezweb/images/delete.png';
+				delete_img.observe("mouseover", function(event) {
+					this.src= _currentTheme.getIconURL('delete_highlighted');
 				});
-				delete_img.observe("mouseout", function(event){
-					this.src='/ezweb/images/cancel_gray.png';
+				delete_img.observe("mouseout", function(event) {
+					this.src= _currentTheme.getIconURL('delete');
 				});
 				ver_element.appendChild(delete_img);
 				ver_element.appendChild(UIUtils.createHTMLElement("span", $H({ 
@@ -1061,15 +1061,15 @@ function Resource( id_, resourceJSON_, urlTemplate_) {
 					tag.appendChild(tag_link);
 					var tag_img = UIUtils.createHTMLElement("img", $H({
 						id: id + "_deleteIcon_" + i + "_" + loc,
-						src: '/ezweb/images/cancel_gray.png',
+						src: _currentTheme.getIconURL('delete'),
 						style: 'border:none;',
 						name: 'op1'
 					}));
-					tag_img.observe("mouseover", function(event){
-						this.src='/ezweb/images/delete.png';
+					tag_img.observe("mouseover", function(event) {
+						this.src= _currentTheme.getIconURL('delete_highlighted');
 					});
-					tag_img.observe("mouseout", function(event){
-						this.src='/ezweb/images/cancel_gray.png';
+					tag_img.observe("mouseout", function(event) {
+						this.src= _currentTheme.getIconURL('delete');
 					});
 					tag_link.appendChild(tag_img);
 					tag.appendChild(UIUtils.createHTMLElement("span", $H({ 

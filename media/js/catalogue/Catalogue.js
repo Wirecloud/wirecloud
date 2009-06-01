@@ -863,7 +863,7 @@ var CatalogueFactory  = function () {
 			});
 			first_span.appendChild(first_link);
 			var first_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-first.png'
+				src: _currentTheme.getIconURL('go-first')
 			}));
 			first_link.appendChild(first_img);
 			var previous_link = UIUtils.createHTMLElement("a", $H({
@@ -874,17 +874,17 @@ var CatalogueFactory  = function () {
 			});
 			previous_span.appendChild(previous_link);
 			var previous_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-previous.png'
+				src: _currentTheme.getIconURL('go-previous')
 			}));
 			previous_link.appendChild(previous_img);
         } 
 		else {
 			var first_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-first-dim.png'
+				src: _currentTheme.getIconURL('go-first-disabled')
 			}));
 			first_span.appendChild(first_img);
 			var previous_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-previous-dim.png'
+				src: _currentTheme.getIconURL('go-previous-disabled')
 			}));
 			previous_span.appendChild(previous_img);
         }
@@ -926,11 +926,11 @@ var CatalogueFactory  = function () {
 		if(end_page == UIUtils.getPage())
         {
 			var last_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-last-dim.png'
+				src: _currentTheme.getIconURL('go-last-disabled')
 			}));
 			last_span.appendChild(last_img);
 			var next_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-next-dim.png'
+				src: _currentTheme.getIconURL('go-next-disabled')
 			}));
 			next_span.appendChild(next_img);
         }
@@ -943,7 +943,7 @@ var CatalogueFactory  = function () {
 			});
 			last_span.appendChild(last_link);
 			var last_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-last.png'
+				src: _currentTheme.getIconURL('go-last')
 			}));
 			last_link.appendChild(last_img);
 			var next_link = UIUtils.createHTMLElement("a", $H({
@@ -954,7 +954,7 @@ var CatalogueFactory  = function () {
 			});
 			next_span.appendChild(next_link);
 			var next_img = UIUtils.createHTMLElement("img", $H({
-				src: '/ezweb/images/go-next.png'
+				src: _currentTheme.getIconURL('go-next')
 			}));
 			next_link.appendChild(next_img);
 		}
@@ -1030,15 +1030,15 @@ var CatalogueFactory  = function () {
                 });
                 var image = UIUtils.createHTMLElement("img", $H({
                     id: ('delete_icon_' + i),
-                    src: '/ezweb/images/cancel_gray.png',
+                    src: _currentTheme.getIconURL('cancel_gray'),
                     border: '0',
                     name: 'op1'
                 }));
                 image.observe("mouseover", function(event){
-                    this.src = '/ezweb/images/delete.png';
+                    this.src = _currentTheme.getIconURL('delete');
                 });
                 image.observe("mouseout", function(event){
-                    this.src = '/ezweb/images/cancel_gray.png';
+                    this.src = _currentTheme.getIconURL('cancel_gray');
                 });
 				image_container.appendChild(image);
                 new_tag.appendChild(image_container);

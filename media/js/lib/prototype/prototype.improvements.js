@@ -170,3 +170,53 @@ Ajax.Request.prototype.request = function(url) {
       this.dispatchException(e);
     }
   }
+
+
+/*
+ * ARRAY EXTENSIONS
+ */
+
+Array.prototype.elementExists = function (element) {
+	return this.indexOf(element) !== -1;
+}
+
+Array.prototype.getElementById = function (id) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i].getId() == id)
+			return this[i];
+	}
+	return null;
+}
+
+Array.prototype.getElementByName = function (elementName) {
+	for (var i = 0; i < this.length; i++) {
+		if (this[i].getName() == elementName)
+			return this[i];
+	}
+	return null;
+}
+
+Array.prototype.remove = function(element) {
+	var index = this.indexOf(element);
+	if (index != -1)
+		this.splice(index, 1);
+}
+
+Array.prototype.removeById = function (id) {
+	var element;
+	var elementId;
+	for (var i = 0; i < this.length; i++) {
+		if (typeof this[i].getId == "function") {
+			elementId = this[i].getId();
+		} else {
+			elementId = this[i].id;
+		}
+
+		if (elementId == id) {
+			element = this[i];
+			this.splice(i, 1);
+			return element;
+		}
+	}
+	return null;
+}

@@ -50,7 +50,7 @@ a:hover {
 	padding: 10px;
 }
 
-.form-row input[type="submit"]{
+.form-row input[type="submit"] {
 	padding: 3px;
 	background: transparent url(/ezweb/images/header.gif) repeat;
 	color: white;
@@ -186,14 +186,14 @@ a:hover {
  margin-left:3px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderL21px.png) no-repeat scroll 2px 0;
+ background: transparent url(../images/leftSlider.png) no-repeat scroll 2px 0;
 }
 
 #right_slider{
  margin-top:2px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderR21px.png) no-repeat scroll 2px 0;
+ background: transparent url(../images/rightSlider.png) no-repeat scroll 2px 0;
 }
 
 #add_tab_link {
@@ -203,21 +203,15 @@ a:hover {
 
 
 #catalogue_link {
-  background: transparent url(/ezweb/images/catalogue16px.png) no-repeat scroll 1px 1px;
+  background: transparent url(../images/catalogue.png) no-repeat scroll 1px 1px;
 }
-/*#catalogue_link:hover {
-  background: transparent url(catalogue.png) no-repeat scroll 2px 0;
-}*/
 
 #wiring_link {
-  background: transparent url(/ezweb/images/wiring16px.png) no-repeat scroll 1px 1px;
+  background: transparent url(../images/wiring.png) no-repeat scroll 1px 1px;
 }
-/*#wiring_link:hover {
-  background: transparent url(wiring.png) no-repeat;
-}*/
 
 #dragboard_link {
-  background: url(/ezweb/images/dragboard16px.png) no-repeat scroll 1px 1px;
+  background: transparent url(../images/dragboard.png) no-repeat scroll 1px 1px;
 }
 
 #change_ws_link {
@@ -231,10 +225,6 @@ a:hover {
   position:relative;
   top:-1px;
 }
-
-/*#ws_operations_link:hover {
-  background: transparent url(ops.png) no-repeat;
-}*/
 
 #logs_link {
   height: 16px !important;
@@ -352,7 +342,7 @@ a:hover {
 
 .drop_down_menu, .window_menu{
   background: #FFFFFF;
-  position:fixed;
+  position: fixed;
   text-align: left;
   z-index: 4;
   -moz-border-radius: 6px;
@@ -406,7 +396,7 @@ a:hover {
   cursor: pointer;
 }
 
-#help_section .help_button{
+#help_section .help_button {
 	padding-left: 18px;
 }
 
@@ -414,45 +404,39 @@ a:hover {
   border-bottom: solid 1px #AAAAAA;
 }
 
-.window_menu{
+.window_menu {
   border: 2px solid #0b8fff;
-}
-
-.window_menu .window_top {
-  position:relative;
-  margin:2px 2px 20px 2px;
+  padding: 0.8em 1.8em;
 }
 
 .window_menu .window_title {
   font-size: 16px;
+  margin-right: 1ex;
   color: #2D6F9C;
   font-weight: bold;
-  margin-left: 10px;
+  min-width: 31ex;
 }
 
-.window_menu .closebutton {
-  position: absolute;
-  right: 2px;
-}
 .window_menu .window_content {
-  clear: both;
-  margin:20px;
+  margin-top: 2em;
 }
-.window_menu .window_content img{
-  margin-right: 5px;
+
+.window_menu .window_content .msg {
+  text-align: justify;
+}
+
+.window_menu .window_content .msg img {
+  margin: 0 2px;
   vertical-align: bottom;
 }
-.window_msg {
-  display: inline;
-  text-align: center;
-}
+
 .window_msg_error{
   font-size: 90%;
   color: red;
 }
 
 .window_menu .window_bottom {
-  margin:20px 18px 10px 18px;
+  margin: 2em 0 0.5em;
   text-align: center;
 }
 
@@ -466,8 +450,8 @@ a:hover {
 }
 
 .tabOps_launcher, .closebutton{
-  border:0px none;
-  cursor: pointer;
+  border: 0px none;
+  cursor: hand, cursor: pointer;
   padding: 0px;
   width: 16px;
   height: 16px;
@@ -482,7 +466,7 @@ a:hover {
 }*/
 
 .closebutton {
-  background: transparent url(/ezweb/images/close.png) no-repeat;
+  background: transparent url(../images/remove.png) no-repeat;
 }
 
 button {
@@ -552,14 +536,14 @@ button {
 }
 
 #gadgets .gadget .main{
-	padding:1%;
+  padding:1%;
 }
 #gadgets .gadget .main h4{
-	margin-top:1%;
-	border-bottom:1px dotted #dfdfdf;
+  margin-top:1%;
+  border-bottom:1px dotted #dfdfdf;
 }
 #gadgets .gadget .main table{
-	border:1px dotted #dfdfdf;
+  border:1px dotted #dfdfdf;
 }
 #gadgets .gadget .main th{
 
@@ -568,9 +552,9 @@ button {
 
 }
 #gadgets .gadget .main img{
-	width:120px;
-	height:60px;
-	margin-bottom: 1%;
+  width:120px;
+  height:60px;
+  margin-bottom: 1%;
 }
 
 /* containers --------------------------------------------------------------------------------------- */
@@ -588,9 +572,9 @@ button {
 }
 
 .container {
-    background-color:#E0E0E0;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 6px;
+  background-color:#E0E0E0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 6px;
 }
 
 .container_content {
@@ -656,4 +640,27 @@ button {
 /* dragboard template ------------------------------------------------------------------------------- */
 #dragboard_template {
   display: none;
+}
+
+
+.help_button {
+	background: transparent url(../images/help.gif) no-repeat scroll 0 0;
+	margin-left: 0px;
+	margin-bottom:2px;
+	border: none;
+	border: none;
+	display: inline;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.color_input {
+	width: 8ex;
+}
+
+.color_button {
+	background: transparent url(../images/colorpicker.png) no-repeat scroll 0 0;
+	height: 25px;
+	width: 25px;
+	vertical-align: middle;
 }

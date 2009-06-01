@@ -299,7 +299,7 @@ IGadget.prototype.toggleTransparency = function() {
 IGadget.prototype._updateExtractOption = function() {
 	if (this.onFreeLayout()) {
 		this.menu.updateOption(this.extractOptionId,
-		                       "/ezweb/images/igadget/snap.png",
+		                       _currentTheme.getIconURL('igadget-snap'),
 		                       gettext("Snap to grid"),
 		                       function() {
 		                           this.toggleLayout();
@@ -311,28 +311,28 @@ IGadget.prototype._updateExtractOption = function() {
 		this.extractButton.setAttribute("title", gettext("This iGadget outside the grid."));
 
 		// TODO more generic code
-		this.lowerOpId = this.menu.addOption("/ezweb/images/igadget/lower.png",
+		this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
 		                    gettext("Lower"),
 		                    function() {
 		                        this.layout.lower(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    this.extractOptionOrder+1);
-		this.raiseOpId = this.menu.addOption("/ezweb/images/igadget/raise.png",
+		this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
 		                    gettext("Raise"),
 		                    function() {
 		                        this.layout.raise(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    this.extractOptionOrder+2);
-		this.lowerToBottomOpId = this.menu.addOption("/ezweb/images/igadget/lowerToBottom.png",
+		this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
 		                    gettext("Lower To Bottom"),
 		                    function() {
 		                        this.layout.lowerToBottom(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    this.extractOptionOrder+3);
-		this.raiseToTopOpId = this.menu.addOption("/ezweb/images/igadget/raiseToTop.png",
+		this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
 		                    gettext("Raise To Top"),
 		                    function() {
 		                        this.layout.raiseToTop(this);
@@ -341,7 +341,7 @@ IGadget.prototype._updateExtractOption = function() {
 		                    this.extractOptionOrder+4);
 	} else {
 		this.menu.updateOption(this.extractOptionId,
-		                       "/ezweb/images/igadget/extract.png",
+		                       _currentTheme.getIconURL('igadget-extract'),
 		                       gettext("Extract from grid"),
 		                       function() {
 		                           this.toggleLayout();
@@ -546,12 +546,12 @@ IGadget.prototype.build = function() {
 	this.wikilink = document.createElement('div');
 	this.wikilink.setAttribute ('class', 'dragboardwiki');
 	var awikilink = document.createElement('a');
-	awikilink.href=this.gadget.getUriWiki();
+	awikilink.href = this.gadget.getUriWiki();
 	awikilink.setAttribute ('target', '_blank');
 	awikilink.setAttribute ('class', 'dragboardwikilink');
 	var imgwikilink = document.createElement('img');
-	imgwikilink.src = '/ezweb/images/wiki_dragboard.png'
-	imgwikilink.setAttribute('title', 'Access to Information');
+	imgwikilink.src = _currentTheme.getIconURL('dragboard-wiki');
+	imgwikilink.setAttribute('title', gettext('Access to Information'));
 	awikilink.appendChild(imgwikilink);
 	this.wikilink.appendChild(awikilink);
 	this.statusBar.appendChild(this.wikilink);
@@ -589,7 +589,7 @@ IGadget.prototype.paint = function(onInit) {
 	this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
 
 	// Settings
-	this.menu.addOption("/ezweb/images/igadget/settings.png",
+	this.menu.addOption(_currentTheme.getIconURL('igadget-settings'),
 	                    gettext("Preferences"),
 	                    function() {
 	                        this.toggleConfigurationVisible();
@@ -597,7 +597,7 @@ IGadget.prototype.paint = function(onInit) {
 	                    }.bind(this),
 	                    0);
 
-	this.menuColorEntryId = this.menu.addOption("/ezweb/images/menu_colors.png",
+	this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
 	                                           gettext("Menu Bar Color..."),
 	                                           function(e) {
 	                                               var menuEntry = $(this.menuColorEntryId);
@@ -614,7 +614,7 @@ IGadget.prototype.paint = function(onInit) {
 	                                           }.bind(this),
 	                                           1);
 
-	this.menu.addOption("/ezweb/images/igadget/transparency.png",
+	this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
 	                    gettext("Transparency"),
 	                    function() {
 	                        this.toggleTransparency();

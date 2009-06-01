@@ -56,7 +56,8 @@ var LogManagerFactory = function () {
 			default:
 			case Constants.Logging.ERROR_MSG:
 				icon = document.createElement("img");
-				icon.setAttribute("src", "/ezweb/images/error.png");
+				if (_currentTheme.iconExists('error'))
+					icon.setAttribute("src", _currentTheme.getIconURL('error'));
 				icon.setAttribute("class", "icon");
 				icon.setAttribute("alt", "[Error] ");
 				this.logConsole.appendChild(icon);
@@ -66,7 +67,8 @@ var LogManagerFactory = function () {
 				break;
 			case Constants.Logging.WARN_MSG:
 				icon = document.createElement("img");
-				icon.setAttribute("src", "/ezweb/images/warning.png");
+				if (_currentTheme.iconExists('warning'))
+					icon.setAttribute("src", _currentTheme.getIconURL('warning'));
 				icon.setAttribute("class", "icon"); 
 				icon.setAttribute("alt", "[Warning] ");
 				this.logConsole.appendChild(icon);
@@ -76,7 +78,8 @@ var LogManagerFactory = function () {
 				break;
 			case Constants.Logging.INFO_MSG:
 				icon = document.createElement("img");
-				icon.setAttribute("src", "/ezweb/images/info.png");
+				if (_currentTheme.iconExists('info'))
+					icon.setAttribute("src", _currentTheme.getIconURL('info'));
 				icon.setAttribute("class", "icon");
 				icon.setAttribute("alt", "[Info] ");
 				this.logConsole.appendChild(icon);
@@ -88,31 +91,37 @@ var LogManagerFactory = function () {
 
 			var index;
 			while ((index = msg.indexOf("\n")) != -1) {
-			  logentry.appendChild(document.createTextNode(msg.substring(0, index)));
-			  logentry.appendChild(document.createElement("br"));
-			  msg = msg.substring(index + 1);
+				logentry.appendChild(document.createTextNode(msg.substring(0, index)));
+				logentry.appendChild(document.createElement("br"));
+				msg = msg.substring(index + 1);
 			}
 			logentry.appendChild(document.createTextNode(msg));
 			this.logConsole.appendChild(logentry);
-			
+
+			var clearer = document.createElement('div');
+			clearer.setAttribute('class', 'floatclearer');
+			this.logConsole.appendChild(clearer);
+
 			LayoutManagerFactory.getInstance().resizeTabBar();
 		}
-		
-		LogManager.prototype.show = function(){
+
+		LogManager.prototype.show = function() {
 			LayoutManagerFactory.getInstance().showLogs();
 		}
-		LogManager.prototype.hide = function(){
+
+		LogManager.prototype.hide = function() {
 			LayoutManagerFactory.getInstance().hideView(this.logContainer);
 		}
-		LogManager.prototype.reset = function(){
+
+		LogManager.prototype.reset = function() {
 			this.logConsole.innerHTML = '';
 			this.errorCount = 0;
 		}
-		
-		LogManager.prototype.showMessage = function(msg){
+
+		LogManager.prototype.showMessage = function(msg) {
 			this.messageBox.update(msg);
 			this.messageContainer.setStyle({"display": "block"});
-			setTimeout(function(){LogManagerFactory.getInstance().removeMessage()}, 3000);			
+			setTimeout(function(){LogManagerFactory.getInstance().removeMessage()}, 3000);
 		}
 		
 		LogManager.prototype.removeMessage = function(){

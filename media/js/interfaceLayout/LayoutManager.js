@@ -179,10 +179,9 @@ var LayoutManagerFactory = function () {
 			}
 
 			// Recalculate menu positions
-			if (this.currentMenu) {
+			if (this.currentMenu)
 				this.currentMenu.calculatePosition();
-			}
-			
+
 			this.resizeTabBar();
 		}
 		
@@ -306,16 +305,16 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.dragboardElement);
 
 			dragboard.dragboardElement.setStyle(showStyle);
-			
+
 			LayoutManagerFactory.getInstance().resizeTabBar();
-			
+
 			if (dragboard.getNumberOfIGadgets() == 0) {
 				var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
 				var msg = gettext("In the Dragborad you can move and resize all your gadgets in order to perform and use your own application. Check the gadget preferences for further personalization %(settingsIcon)s. Go to the Catalogue to add more gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections among them %(wiringIcon)s. If you need more help visit the %(helpLink)s.");
 				msg = interpolate(msg,
-				                  {settingsIcon: "<img src='/ezweb/images/igadget/settings.png'/>",
-				                   catalogueIcon: "<img src='/ezweb/images/catalogue16px.png'/>",
-				                   wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				                  {settingsIcon: "<img src='" + _currentTheme.getIconURL('igadget-settings') + "'/>",
+				                   catalogueIcon: "<img src='" + _currentTheme.getIconURL('catalogue') + "'/>",
+				                   wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				                   helpLink: videoTutorialMsg},
 				                  true);
 				this.showMessageInformation(msg, 2);
@@ -323,7 +322,7 @@ var LayoutManagerFactory = function () {
 		}
 
 		// Catalogue operations
-		LayoutManager.prototype.showCatalogue = function(){
+		LayoutManager.prototype.showCatalogue = function() {
 			this.unMarkGlobalTabs();
 			if (this.currentView != null) {
 				this.currentView.hide();
@@ -348,8 +347,8 @@ var LayoutManagerFactory = function () {
 			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
 			var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
 			msg = interpolate(msg,
-				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
-				           wiringIcon: "<img src='/ezweb/images/wiring16px.png'/>",
+				          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('dragboard') + "'/>",
+				           wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				           helpLink: videoTutorialMsg},
 				          true);
 			this.showMessageInformation(msg, 0);
@@ -403,7 +402,7 @@ var LayoutManagerFactory = function () {
 			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
 			var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
 			msg = interpolate(msg,
-				          {dragboardIcon: "<img src='/ezweb/images/dragboard16px.png'/>",
+				          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				           helpLink: videoTutorialMsg},
 				          true);
 			this.showMessageInformation(msg, 1);
@@ -533,19 +532,20 @@ var LayoutManagerFactory = function () {
 		//Shows the asked window menu
 		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton){
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
-			if(this.currentMenu != null){//only if the layer is displayed.
+			if (this.currentMenu != null) {
+				// only if the layer is displayed.
 				this.hideCover();
 			}
 			this.showUnclickableCover();
-			switch (window){
+			switch (window) {
 			case 'createWorkSpace':
-				if(!this.menus['createWorkSpaceMenu']){
+				if (!this.menus['createWorkSpaceMenu']) {
 					this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');
 				}
 				this.currentMenu = this.menus['createWorkSpaceMenu'];
 				break;
 			case 'deleteTab':
-				if(!this.menus['alertMenu']){
+				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
 				}
 				this.currentMenu = this.menus['alertMenu'];
@@ -553,7 +553,7 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
 				break;
 			case 'cancelService':
-				if(!this.menus['alertMenu']){
+				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
 				}
 				this.currentMenu = this.menus['alertMenu'];
@@ -561,7 +561,7 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
 				break;
 			case 'deleteWorkSpace':
-				if(!this.menus['alertMenu']){
+				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
 				}
 				this.currentMenu = this.menus['alertMenu'];
@@ -569,39 +569,43 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();}, handlerNoButton);
 				break;
 			case 'publishWorkSpace':
-				if(!this.menus['publishWorkSpaceMenu']){
+				if (!this.menus['publishWorkSpaceMenu']) {
 					this.menus['publishWorkSpaceMenu'] = new PublishWindowMenu(null);
 				}
 				this.currentMenu = this.menus['publishWorkSpaceMenu'];
 				break;
 			case 'deleteAllResourceVersions':
-				if(!this.menus['alertMenu']){
+				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
 				}
 				this.currentMenu = this.menus['alertMenu'];
-				if (UIUtils.selectedVersion != null){
+				if (UIUtils.selectedVersion != null) {
 					this.currentMenu.setMsg(gettext('Do you really want to remove this version of the gadget?'));
-				}else{
+				} else {
 					this.currentMenu.setMsg(gettext('WARNING! All versions of this gadget will be removed too! Do you really want to remove this gadget?'));
 				}
 				this.currentMenu.setHandler(function(){UIUtils.deleteGadget(UIUtils.selectedResource);}, handlerNoButton);
 				break;
 			case 'addFeed':
-			case 'addSite':
-				if(!this.menus['addFeedMenu']){
+				if (!this.menus['addFeedMenu']) {
 					this.menus['addFeedMenu'] = new AddFeedMenu();
 				}
 				this.currentMenu = this.menus['addFeedMenu'];
-				this.currentMenu.setType(window);
+				break;
+			case 'addSite':
+				if (!this.menus['addSiteMenu']) {
+					this.menus['addSiteMenu'] = new AddSiteMenu();
+				}
+				this.currentMenu = this.menus['addSiteMenu'];
 				break;
 			default:
 				return;
 			}
 			this.currentMenu.show();
 		}
-		
+
 		//Shows the background and on click the message on front disappear
-		LayoutManager.prototype.showTransparentBackground = function(){
+		LayoutManager.prototype.showTransparentBackground = function() {
 			this.coverLayerElement.addClassName('disabled_background');
 			this.coverLayerElement.style.display="block";
 
@@ -609,72 +613,61 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the message information
-		LayoutManager.prototype.showMessageInformation = function(msg, type){
-			if (this.informacionMessagesStatus[type]) // Don't show me more 
+		LayoutManager.prototype.showMessageInformation = function(msg, type) {
+			if (this.informacionMessagesStatus[type]) // Don't show me anymore
 				return;
-				
-			$("info_window_checkbox").checked = false;
-			var handlerCheckbox = function(e) {
-				this.informacionMessagesStatus[type] = e.target.checked;
-				var oneYearLater = new Date((new Date()).getTime() + 31536000000);
-				document.cookie = "informationMessagesStatus=" + 
-					encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
-					"; expires=" + oneYearLater.toGMTString();
-				this.hideCover();
-				$("info_window_button").stopObserving("click", handlerClose);
-				e.target.stopObserving("click", handlerCheckbox);
-			}.bind(this);
-			
-			var handlerClose = function(e) {
-				this.hideCover();
-				$("info_window_checkbox").stopObserving("click", handlerCheckbox);
-				e.target.stopObserving("click", handlerClose);
-			}.bind(this);
-			
-			$("info_window_checkbox").observe("click", handlerCheckbox);
-			$("info_window_button").observe("click", handlerClose);
-			
+
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
-			if(this.currentMenu != null){//only if the layer is displayed.
+			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
-			//this.showTransparentBackground();
+
 			this.showUnclickableCover();
-			
-			if(!this.menus['messageMenu']){
-				this.menus['messageMenu'] = new InfoWindowMenu(null);
-			}
-			this.currentMenu = this.menus['messageMenu'];
+
+			if (!this.menus['infoMenu'])
+				this.menus['infoMenu'] = new InfoWindowMenu();
+
+			this.currentMenu = this.menus['infoMenu'];
 			this.currentMenu.setMsg(msg);
-			this.currentMenu.show();
+			this.currentMenu.show(type);
 		}
-		
-		//Shows the message window menu
-		LayoutManager.prototype.showMessageMenu = function(msg){
+
+		/**
+		 * Shows the message window menu using the specified text. By default,
+		 * it will be interpreted as an information message, but you can use the
+		 * type param to change this behaviour.
+		 *
+		 * @param {String} msg Text of the message to show
+		 * @param {Constants.Logging} type Optional parameter to change the
+		 *        message type. (default value: Constants.Logging.INFO_MSG)
+		 */
+		LayoutManager.prototype.showMessageMenu = function(msg, type) {
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
-			if(this.currentMenu != null){//only if the layer is displayed.
+			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
 			this.showUnclickableCover();
 			
-			if(!this.menus['messageMenu']){
+			if (!this.menus['messageMenu']) {
 				this.menus['messageMenu'] = new MessageWindowMenu(null);
 			}
+			type = type ? type : Constants.Logging.INFO_MSG;
 			this.currentMenu = this.menus['messageMenu'];
 			this.currentMenu.setMsg(msg);
+			this.currentMenu.setType(type);
 			this.currentMenu.show();
 		}
 
 		//hides the disabling layer and so, the current menu
-		LayoutManager.prototype.hideCover = function(){
-			if(this.currentMenu){
+		LayoutManager.prototype.hideCover = function() {
+			if (this.currentMenu) {
 				this.currentMenu.hide();
 			}
 			this.currentMenu = null;
 			this.coverLayerElement.style.display="none";
 			this.coverLayerElement.removeClassName('disabled_background');
 		}
-		
+
 		LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
 		LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
 		LayoutManager.prototype.FADE_TAB_END = "#97A0A8";

@@ -95,7 +95,7 @@
 						<a href="#" class="submit_link" onclick="javascript:UIUtils.removeAllGlobalTags();">{% trans "Cancel" %}</a>
 					</div>
 				</div>
-			</div>		
+			</div>
 		</div>
 	</div>
 	<div id="left_bar">
@@ -120,8 +120,8 @@
 	</div>
 	<div id="resources_container" style='display:none'>
 		<div id="info_resource" class="info_resource" style="display:none;"><div>
-		<img id='close_info_resource' src='/ezweb/images/close.png' onclick='UIUtils.sendPendingTags();UIUtils.closeInfoResource();' style='display:none;cursor:pointer;' title="{% trans 'Hide resource details' %}">
-		</img>
+		<button id='close_info_resource' class='closebutton' onclick='UIUtils.sendPendingTags();UIUtils.closeInfoResource();' title="{% trans 'Hide resource details' %}">
+		</button>
 		<div id="info_resource_content" class="content"></div>
 		</div></div>
 <!--			<div id="tab_info_resource" class="tab_info_resource">

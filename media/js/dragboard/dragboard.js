@@ -310,7 +310,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		if (this.isLocked()) {
 			var msg = gettext("The destination tab (%(tabName)s) is locked. Try to unlock it or select an unlocked tab.");
 			msg = interpolate(msg, {tabName: this.tab.tabInfo.name}, true);
-			LayoutManagerFactory.getInstance().showMessageMenu(msg);
+			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
 			return;
 		}
 

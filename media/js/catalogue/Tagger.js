@@ -156,14 +156,14 @@ function Tagger(){
 		});
 		var value = UIUtils.createHTMLElement("span", $H({ innerHTML: tag_ }));
 		var disable = UIUtils.createHTMLElement("span", $H({ id: "button_disable_" + id_ }));
-		var img_disable = UIUtils.createHTMLElement("img", $H({ src: '/ezweb/images/cancel_gray.png' }));
+		var img_disable = UIUtils.createHTMLElement("img", $H({ src: _currentTheme.getIconURL('delete') }));
 		disable.appendChild(img_disable);
 		var enable = UIUtils.createHTMLElement("span",  $H({ id: "button_enable_" + id_ }));
 		enable.hide();
 		enable.observe("click", function(event) {
 			UIUtils.removeTag(id_);
 		});
-		var img_enable = UIUtils.createHTMLElement("img", $H({ src: '/ezweb/images/delete.png' }));
+		var img_enable = UIUtils.createHTMLElement("img", $H({ src: _currentTheme.getIconURL('delete') }));
 		enable.appendChild(img_enable);
 		var separator = UIUtils.createHTMLElement("span", $H({ innerHTML: "," }));
 		newTag.appendChild(value);

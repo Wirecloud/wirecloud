@@ -22,50 +22,106 @@
 *
 *     http://morfeo-project.org
  */
- 
- /******GENERAL UTILS **********/
- 
- //ARRAY EXTENSIONS
- Array.prototype.elementExists = function (element){
- 	if(this.indexOf(element) != -1)
- 		return true;
- 	return false;
- }
- Array.prototype.getElementById = function (id){
- 	for(var i=0;i < this.length;i++){
- 		if(this[i].getId() == id)
- 			return this[i];
- 	}
- 	return null;
- }
- 
- Array.prototype.getElementByName = function (elementName){
- 	for(var i=0;i < this.length;i++){
- 		if(this[i].getName() == elementName)
- 			return this[i];
- 	}
- 	return null;
- }
- 
- Array.prototype.remove = function(element){
- 	var index = this.indexOf(element);
-	if(index != -1)this.splice(index, 1);
- }
- 
- Array.prototype.removeById = function (id){
- 	var element;
- 	var elementId;
- 	for(var i=0;i < this.length;i++){
- 		if(typeof this[i].getId == "function"){
- 			elementId = this[i].getId();
- 		}else{
- 			elementId = this[i].id;
- 		}
- 		if(elementId == id){
- 			element = this[i];
- 			this.splice(i, 1);
- 			return element;
- 		}
- 	}
- 	return null;
- }
+
+
+/**
+ * This class represents a Theme.
+ */
+function Theme(name, baseTheme, callback) {
+	this.loaded = false;
+
+	this.name = name;
+	this._themeURL = "/ezweb/themes/" + name;
+
+	this._callback = callback;
+	if (baseTheme)
+		this._iconMapping = Object.clone(baseTheme._iconMapping);
+	else
+		this._iconMapping = new Object();
+
+	// Internal function for theme loading
+	var _notifyLoaded = function (transport) {
+		var response = transport.responseText;
+		try {
+			var icons = eval ('(' + response + ')');
+		} catch (e) {
+			var msg = gettext("The icon catalogue for the \"%(themeName)s\" theme could not be loaded.");
+			msg = interpolate(msg, {themeName: this.name}, true);
+			LogManagerFactory.getInstance().log(msg);
+			return;
+		}
+
+		for (var iconId in icons)
+			// Transform to an absolute URL
+			this._iconMapping[iconId] = this.getResource('/images/' + icons[iconId]);
+
+		this.loaded = true;
+		if (this._callback) this._callback(true);
+	}.bind(this);
+
+	var _notifyError = function (response) {
+		if (this._callback) this._callback(false);
+	}.bind(this);
+
+	new Ajax.Request(this.getResource('/icons.json'), {
+		method: 'get',
+		onSuccess: _notifyLoaded,
+		onFailure: _notifyError
+	});
+}
+
+/**
+ * Returns the base URL associated to root path for the resources of this theme
+ */
+Theme.prototype.getBaseURL = function() {
+	return this._themeURL;
+}
+
+/**
+ * Returns the URL for a resource given its relative path.
+ *
+ * @param {String} path relative path of the resource
+ *
+ * @return {String} absolute URL of the resource
+ */
+Theme.prototype.getResource = function(path) {
+	return this._themeURL + path;
+}
+
+/**
+ * @param {String} iconId
+ */
+Theme.prototype.iconExists = function(iconId) {
+	return this._iconMapping[iconId] !== undefined;
+}
+
+/**
+ * @param {String} iconId
+ */
+Theme.prototype.getIconURL = function(iconId) {
+	if (this._iconMapping[iconId] === undefined) {
+		var msg = gettext("There is not any icon identified by \"%(iconId)s\".");
+		msg = interpolate(msg, {iconId: iconId}, true);
+		LogManagerFactory.getInstance().log(msg, Constants.Logging.WARN_MSG);
+	}
+
+	return this._iconMapping[iconId];
+}
+
+// TODO include this on the ezweb loading process
+function initTheme(loaded) {
+	if (loaded === false) {
+		// TODO log eror
+		return;
+	}
+
+	var _defaultTheme = _currentTheme;
+
+	if (_INITIAL_THEME != 'default')
+		_currentTheme = new Theme(_INITIAL_THEME, _defaultTheme);
+}
+
+_INITIAL_THEME = 'sesame';
+
+// Default theme
+var _currentTheme = new Theme('default', null, initTheme);

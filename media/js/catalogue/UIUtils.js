@@ -97,14 +97,12 @@ UIUtils.getSelectedResource = function() {
 UIUtils.selectResource = function(resourceId_) {
 	var bottom = $(resourceId_ + '_bottom');
 	var content = $(resourceId_ + '_content');
-	if (!UIUtils.tagmode)
-	{
-	    UIUtils.imageBottom = bottom.style.backgroundImage;
-	    UIUtils.imageContent = content.style.backgroundImage;
+	if (!UIUtils.tagmode) {
+		UIUtils.imageBottom = bottom.style.backgroundImage;
+		UIUtils.imageContent = content.style.backgroundImage;
 	}
 	bottom.style.backgroundImage = 'url(/ezweb/images/resource-left-bottom-select.png)';
 	content.style.backgroundImage = 'url(/ezweb/images/resource-left-fill-select.png)';
-    
 }
 
 UIUtils.deselectResource = function(resourceId_) {
@@ -183,31 +181,31 @@ UIUtils.deselectConnectableResources = function() {
 	}
 */
 }
-	
+
 UIUtils.showResourceInfo = function(resourceId_) {
 	UIUtils.selectedResource = resourceId_;
 	CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showInfo();
 }
 
 UIUtils.updateGadgetXHTML = function() {
-    var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
+	var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
 
-    var dict = {vendor: resource.getVendor(), name: resource.getName(), version: resource.getVersion()};
+	var dict = {vendor: resource.getVendor(), name: resource.getName(), version: resource.getVersion()};
 
-    var resourceURI = URIs.GET_GADGET.evaluate(dict) + "/xhtml";
+	var resourceURI = URIs.GET_GADGET.evaluate(dict) + "/xhtml";
 
-    var onError = function(transport) {
+	var onError = function(transport) {
 		var msg = interpolate(gettext("Error updating the XHTML: %(errorMsg)s."), {errorMsg: transport.status}, true);
 		LogManagerFactory.getInstance().log(msg);
-	// Process
-    }
+		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+		// Process
+	}
 
-    var onSuccess = function(transport) {
+	var onSuccess = function(transport) {
 		LayoutManagerFactory.getInstance().showMessageMenu(gettext('The gadget code has been successfully updated'));
-    }
+	}
 
-    PersistenceEngineFactory.getInstance().send_update(resourceURI, "", this, onSuccess, onError);
-
+	PersistenceEngineFactory.getInstance().send_update(resourceURI, "", this, onSuccess, onError);
 }
 
 UIUtils.clearPreviousSearch = function() {
@@ -690,13 +688,13 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 	});
 	image_div.appendChild(image_link);
 	var image = UIUtils.createHTMLElement("img", $H({
-		src: '/ezweb/images/cancel_gray.png'
+		src: _currentTheme.getIconURL('delete')
 	}));
 	image.observe('mouseover', function(event){
-		this.src = '/ezweb/images/delete.png';
+		this.src = _currentTheme.getIconURL('delete_highlighted');
 	});
 	image.observe('mouseout', function(event){
-		this.src = '/ezweb/images/cancel_gray.png';
+		this.src = _currentTheme.getIconURL('delete');
 	});
 	image_link.appendChild(image);
 	$("my_global_tags").insertBefore(newTag, $("new_global_tag_text"));
@@ -1125,13 +1123,13 @@ UIUtils.getError = function(element, error) {
 	})));
 	var close = UIUtils.createHTMLElement("img", $H({
 		class_name: 'close',
-		src: '/ezweb/images/cancel_gray.png'
+		src: _currentTheme.getIconURL('delete')
 	}));
 	close.observe('mouseover', function(event){
-		this.src='/ezweb/images/delete.png';
+		this.src = _currentTheme.getIconURL('delete_highlighted');
 	});
 	close.observe('mouseout', function(event){
-		this.src='/ezweb/images/cancel_gray.png';
+		this.src = _currentTheme.getIconURL('delete');
 	});
 	close.observe('click', function(event){
 		$(element.id).style.display = "none";

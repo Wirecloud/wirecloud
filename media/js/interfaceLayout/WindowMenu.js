@@ -23,477 +23,665 @@
 *     http://morfeo-project.org
  */
 
-//Hierachy for managing a window menu whose HTML code is in templates/index.html.
-function WindowMenu(){
-	//constructor
-	this.htmlElement;		//window HTML element
-	this.titleElement;		//title gap
-	this.msgElement;		// message gap
-	this.element;			//workspace or tab
-	this.button; 			//window operation button
-	this.operationHandler;	//window handler
-	this.title;				//title
+/**
+ * Base class for managing window menus whose HTML code is in templates/index.html.
+ */
+function WindowMenu(title) {
+	// Allow hierarchy
+	if (arguments.length == 0)
+		return;
 
-	//displays a message
-	WindowMenu.prototype.setMsg = function (msg){
-		this.msgElement.update(msg);
-	}
-	//Calculates a usable absolute position for the window
-	WindowMenu.prototype.calculatePosition = function(){
-		var coordenates = [];
-		
-		coordenates[1] = BrowserUtilsFactory.getInstance().getHeight()/2 - this.htmlElement.getHeight()/2;
-		coordenates[0] = BrowserUtilsFactory.getInstance().getWidth()/2 - this.htmlElement.getWidth()/2;
-		
-		this.htmlElement.style.top = coordenates[1]+"px";
-		this.htmlElement.style.left = coordenates[0]+"px";
-		this.htmlElement.style.right = coordenates[0]+"px";
-	}
+	this.htmlElement = document.createElement('div');  // create the root HTML element
+	this.htmlElement.className = "window_menu";
 
-	WindowMenu.prototype.setHandler = function (handler){
-		this.operationHandler = handler;
-	}	
-	//displays the window in the correct position
-	WindowMenu.prototype.show = function (){
-		
-		this.calculatePosition();	
-		this.initObserving();
-		this.titleElement.update(this.title);
-		this.htmlElement.style.display = "block";
-		this.setFocus();
-	}
-	
-	//check the URLs
-	WindowMenu.prototype.isUrl = function(s) {
-		var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-		return regexp.test(s);
-	}
-	
-	//abstract methods
-	WindowMenu.prototype.initObserving = function (){
-	}
-	WindowMenu.prototype.stopObserving = function (){
-	}
-	WindowMenu.prototype.hide = function (){		
-	}
-	WindowMenu.prototype.setFocus = function (){		
-	}
+	// Window Top
+	var windowTop = document.createElement('div');
+	windowTop.className = "window_top";
+	this.htmlElement.appendChild(windowTop);
 
+	this._closeListener = this._closeListener.bind(this);
+	this.closeButton = document.createElement('input');
+	this.closeButton.type = "button";
+	this.closeButton.className = "closebutton button";
+	windowTop.appendChild(this.closeButton);
+	this.closeButton.observe("click", this._closeListener);
+
+	this.titleElement = document.createElement('div');
+	this.titleElement.className = "window_title";
+	windowTop.appendChild(this.titleElement);
+
+	// Window Content
+	this.windowContent = document.createElement('div');
+	this.windowContent.className = "window_content";
+	this.htmlElement.appendChild(this.windowContent);
+
+	this.msgElement = document.createElement('div');
+	this.msgElement.className = "msg";
+	this.windowContent.appendChild(this.msgElement);
+
+	// Window Bottom
+	this.windowBottom = document.createElement('div');
+	this.windowBottom.className = "window_bottom";
+	this.htmlElement.appendChild(this.windowBottom);
+
+	// Initial title
+	this.titleElement.update(title);
+}
+
+/**
+ * @private
+ *
+ * Click Listener for the close button.
+ */
+WindowMenu.prototype._closeListener = function(e) {
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+/**
+ * Updates the message displayed by this <code>WindowMenu</code>
+ */
+WindowMenu.prototype.setMsg = function (msg) {
+	this.msgElement.update(msg);
+}
+
+/**
+ * @private
+ *
+ * Calculates a usable absolute position for the window
+ */
+WindowMenu.prototype.calculatePosition = function() {
+	var coordenates = [];
+
+	coordenates[1] = BrowserUtilsFactory.getInstance().getHeight()/2 - this.htmlElement.getHeight()/2;
+	coordenates[0] = BrowserUtilsFactory.getInstance().getWidth()/2 - this.htmlElement.getWidth()/2;
+
+	this.htmlElement.style.top = coordenates[1]+"px";
+	this.htmlElement.style.left = coordenates[0]+"px";
+//	this.htmlElement.style.right = coordenates[0]+"px";
+}
+
+/**
+ *
+ */
+WindowMenu.prototype.setHandler = function (handler) {
+	this.operationHandler = handler;
+}
+
+/**
+ * Displays the window in the correct position.
+ */
+WindowMenu.prototype.show = function () {
+	document.body.insertBefore(this.htmlElement, $("header"));
+	this.calculatePosition();
+	this.htmlElement.style.display = "block";
+	this.setFocus();
+}
+
+WindowMenu.prototype.hide = function () {
+	document.body.removeChild(this.htmlElement);
+	this.msgElement.update();
+}
+
+WindowMenu.prototype.setFocus = function () {
 }
 
 
-//Especific class for the windows used for creating
+/**
+ * Specific class for dialogs about creating things.
+ */
 function CreateWindowMenu (element) {
-
-	//constructor
-	this.htmlElement = $('create_menu');		//create-window HTML element
-	this.titleElement = $('create_window_title');	//title gap
-	this.msgElement = $('create_window_msg');	//error message gap
-	this.element = element;				//workspace or tab
-	this.button = $('create_btn');
-	this.nameInput = $('create_name');
-	
-	this.operationHandler = function(e){if(e.target == this.nameInput && e.keyCode == Event.KEY_RETURN || e.target == this.button)this.executeOperation()}.bind(this);
-
-	if(this.element == 'workSpace'){
-		this.title = gettext('Create workSpace');
+	var title;
+	this.element = element;
+	switch (element) {
+	case 'workSpace':
+		title = gettext('Create workSpace');
+		break;
 	}
 
-	CreateWindowMenu.prototype.initObserving = function(){	
-			Event.observe(this.button, "click", this.operationHandler);
-			Event.observe(this.nameInput, "keypress", this.operationHandler);
-	}
-	
-	CreateWindowMenu.prototype.stopObserving = function(){	
-			Event.stopObserving(this.button, "click", this.operationHandler);
-			Event.stopObserving(this.nameInput, "keypress", this.operationHandler);
-	}	
-	
-	CreateWindowMenu.prototype.setFocus = function(){
-		this.nameInput.focus();
-	}
+	WindowMenu.call(this, title);
+	this.htmlElement.addClassName('create_menu');
 
-	//Calls the Create operation (the task the window is made for).
-	CreateWindowMenu.prototype.executeOperation = function(){
+	// Accept button
+	this.button = document.createElement('button');
+	this.button.appendChild(document.createTextNode('Create'));
+	this.windowBottom.appendChild(this.button);
 
-		var newName = $('create_name').value;
-		switch (this.element){
-		case 'workSpace':
-			if(!OpManagerFactory.getInstance().workSpaceExists(newName)){
-					OpManagerFactory.getInstance().addWorkSpace(newName);
-			}
-			else{
-				this.msgElement.update(gettext('Invalid name: the name '+newName+' is already in use'));
-			}
-			break;
-		default:
-			break;
-		}
+	// Cancel button
+	var cancelButton = document.createElement('button');
+	cancelButton.appendChild(document.createTextNode('Cancel'));
+	cancelButton.observe("click", this._closeListener);
+	this.windowBottom.appendChild(cancelButton);
 
-	}
+	// Name input
+	var label = document.createElement('label');
+	label.appendChild(document.createTextNode(gettext('Nombre: ')));
 
-	//hides the window and clears all the inputs
-	CreateWindowMenu.prototype.hide = function (){
+	this.nameInput = document.createElement('input');
+	this.nameInput.setAttribute('type', 'text');
+	this.nameInput.setAttribute('value', '');
+	label.appendChild(this.nameInput);
 
-		var inputArray = $$('#create_menu input:not([type=button])');
-		for (var i=0; i<inputArray.length; i++){
-			inputArray[i].value = '';
-		}
-		var msg = $('create_window_msg');
-		msg.update();
-		this.stopObserving();
-		this.htmlElement.style.display = "none";		
-	}
+	this.windowContent.insertBefore(label, this.msgElement);
 
+	this.operationHandler = function(e) {
+		if (e.target == this.nameInput && e.keyCode == Event.KEY_RETURN || e.target == this.button)
+			this.executeOperation();
+	}.bind(this);
+
+	this.button.observe("click", this.operationHandler);
+	this.nameInput.observe("keypress", this.operationHandler);
 }
-CreateWindowMenu.prototype = new WindowMenu;
+CreateWindowMenu.prototype = new WindowMenu();
 
-//Especific class for alert windows
+CreateWindowMenu.prototype.setFocus = function() {
+	this.nameInput.focus();
+}
+
+//Calls the Create operation (the task the window is made for).
+CreateWindowMenu.prototype.executeOperation = function() {
+	var newName = this.nameInput.value;
+	switch (this.element) {
+	case 'workSpace':
+		if (!OpManagerFactory.getInstance().workSpaceExists(newName)) {
+			OpManagerFactory.getInstance().addWorkSpace(newName);
+		} else {
+			var msg = gettext('Invalid name: the name \"%(newName)s\" is already in use');
+			msg = interpolate(msg, {newName: newName}, true);
+			this.setMsg(msg);
+		}
+
+		break;
+	default:
+		break;
+	}
+}
+
+CreateWindowMenu.prototype.show = function () {
+	this.nameInput.value = '';
+
+	WindowMenu.prototype.show.call(this);
+}
+
+/**
+ * Specific class representing alert dialogs.
+ */
 function AlertWindowMenu (element) {
+	WindowMenu.call(this, gettext('Warning'));
 
-	//constructor
-	this.htmlElement = $('alert_menu');		//create-window HTML element
-	this.titleElement = $('alert_window_title');	//title gap
-	this.msgElement = $('alert_window_msg');	//error message gap
-	this.element = element;				//workspace or tab
-	this.button = $('alert_btn1');
-	this.button2 = $('alert_btn2');
-	
-	this.operationHandler = null;
-	this.operationHandler2 = null;
+	// Warning icon
+	var icon = document.createElement('img');
+	icon.setAttribute('src', _currentTheme.getIconURL('warning'));
+	icon.setAttribute('alt', gettext('Info:'));
+	this.windowContent.insertBefore(icon, this.msgElement);
 
-	this.title = gettext('Warning');
-	
-	AlertWindowMenu.prototype.setHandler = function(handlerYesButton, handlerNoButton){
-		this.operationHandler = handlerYesButton;
-		
-		if (!handlerNoButton)
-			this.operationHandler2 = function () { LayoutManagerFactory.getInstance().hideCover(); }
-		else
-			this.operationHandler2 = handlerNoButton;
-	}
+	// Accept button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode('Yes'));
+	this._acceptListener = this._acceptListener.bind(this);
+	this.acceptButton.observe("click", this._acceptListener);
+	this.windowBottom.appendChild(this.acceptButton);
 
-	AlertWindowMenu.prototype.initObserving = function(){	
-			Event.observe(this.button, "click", this.operationHandler);
-			Event.observe(this.button2, "click", this.operationHandler2);
-		}
-	
-	AlertWindowMenu.prototype.stopObserving = function(){	
-			Event.stopObserving(this.button, "click", this.operationHandler);
-			Event.stopObserving(this.button2, "click", this.operationHandler2);
-	}	
-	
-	AlertWindowMenu.prototype.setFocus = function(){
-		this.button.focus();
-	}
+	// Cancel button
+	this.cancelButton = document.createElement('button');
+	this.cancelButton.appendChild(document.createTextNode('No'));
+	this.cancelButton.observe("click", this._closeListener);
+	this.windowBottom.appendChild(this.cancelButton);
 
-	//hides the window and clears all the inputs
-	AlertWindowMenu.prototype.hide = function (){
-		this.msgElement.update();
-		this.stopObserving();
-		this.htmlElement.style.display = "none";		
-	}
+	this.acceptHandler = null;
+	this.cancelHandler = null;
+}
+AlertWindowMenu.prototype = new WindowMenu();
 
+AlertWindowMenu.prototype._acceptListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
 }
 
-AlertWindowMenu.prototype = new WindowMenu;
+AlertWindowMenu.prototype._closeListener = function(e) {
+	if (this.cancelHandler) this.cancelHandler();
+	WindowMenu.prototype._closeListener(e);
+}
 
-//Especific class for alert windows
+AlertWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
+	this.acceptHandler = acceptHandler;
+	this.cancelHandler = cancelHandler;
+}
+
+AlertWindowMenu.prototype.setFocus = function() {
+	this.acceptButton.focus();
+}
+
+/**
+ * Specific class representing alert dialogs.
+ */
 function MessageWindowMenu (element) {
+	WindowMenu.call(this, '');
 
-	//constructor
-	this.htmlElement = $('message_menu');		//create-window HTML element
-	this.titleElement = $('message_window_title');	//title gap
-	this.msgElement = $('message_window_msg');	//error message gap
-	this.button = $('message_btn1');
-	this.title = gettext('Warning');
-	
-	MessageWindowMenu.prototype.setFocus = function(){
-		this.button.focus();
-	}
+	// Warning icon
+	this.icon = document.createElement('img');
+	this.windowContent.insertBefore(this.icon, this.msgElement);
 
-	//hides the window and clears all the inputs
-	MessageWindowMenu.prototype.hide = function (){
-		this.msgElement.update();
-		this.stopObserving();
-		this.htmlElement.style.display = "none";		
-	}
+	// Accept button
+	this.button = document.createElement('button');
+	this.button.appendChild(document.createTextNode('Accept'));
+	this.windowBottom.appendChild(this.button);
+	this.button.observe("click", this._closeListener);
+}
+MessageWindowMenu.prototype = new WindowMenu();
 
+MessageWindowMenu.prototype.setFocus = function() {
+	this.button.focus();
 }
 
-MessageWindowMenu.prototype = new WindowMenu;
+MessageWindowMenu.prototype.setType = function(type) {
+	var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
+	var icons = ['', 'error', 'warning', 'info'];
+	var iconDesc = ['', 'Error:', 'Warning:', 'Info:'];
 
-//Especific class for alert windows
-function InfoWindowMenu (element) {
+	// Update title
+	this.titleElement.update(titles[type]);
 
-	//constructor
-	this.htmlElement = $('info_menu');		//create-window HTML element
-	this.titleElement = $('info_window_title');	//title gap
-	this.msgElement = $('info_window_msg');	//error message gap
-	this.title = gettext('Do you know what ... ?');
-
-	//hides the window and clears all the inputs
-	InfoWindowMenu.prototype.hide = function (){
-		this.msgElement.update();
-		this.stopObserving();
-		this.htmlElement.style.display = "none";		
-	}
-
+	// Update icon
+	this.icon.setAttribute('src', _currentTheme.getIconURL(icons[type]));
+	this.icon.setAttribute('alt', gettext(iconDesc[type]));
 }
 
-InfoWindowMenu.prototype = new WindowMenu;
+/**
+ * Specific class for info dialogs. The user can 
+ */
+function InfoWindowMenu() {
+	WindowMenu.call(this, gettext('Do you know what ... ?'));
+	this.htmlElement.addClassName('info_menu');
 
-//Especific class for publish windows
-function PublishWindowMenu (element) {
+	// Extra HTML Elements
+	var icon = document.createElement('img');
+	icon.setAttribute('src', _currentTheme.getIconURL('info'));
+	icon.setAttribute('alt', gettext('Info:'));
+	this.windowContent.insertBefore(icon, this.msgElement);
 
-	//constructor
-	this.htmlElement = $('publish_menu');		//create-window HTML element
-	this.titleElement = $('publish_window_title');	//title gap
-	this.msgElement = $('publish_window_msg');	//error message gap
-	this.button = $('publish_btn1');
-	this.title = gettext('Publish Workspace');
-	
+	this.checkbox = document.createElement('input');
+	this.checkbox.setAttribute('type', 'checkbox');
+	this.windowBottom.appendChild(this.checkbox);
+	this.windowBottom.appendChild(document.createTextNode(gettext('Don\'t show me anymore')));
+
+	// Event Listeners
+	this._dontShowAnymore = this._dontShowAnymore.bind(this);
+
+	this.checkbox.observe("click", this._dontShowAnymore);
+}
+InfoWindowMenu.prototype = new WindowMenu();
+
+InfoWindowMenu.prototype._dontShowAnymore = function(e) {
+	var layoutManager = LayoutManagerFactory.getInstance();
+	layoutManager.informacionMessagesStatus[this.type] = true;
+	var oneYearLater = new Date((new Date()).getTime() + 31536000000);
+	document.cookie = "informationMessagesStatus=" +
+		encodeURIComponent(layoutManager.informacionMessagesStatus.toJSON()) +
+		"; expires=" + oneYearLater.toGMTString();
+
+	layoutManager.hideCover();
+}
+
+/**
+ *
+ */
+InfoWindowMenu.prototype.show = function (type) {
+	this.type = type;
+	this.checkbox.checked = false;
+
+	WindowMenu.prototype.show.call(this);
+}
+
+
+/**
+ * Form dialog.
+ */
+function FormWindowMenu (fields, title) {
+	// Allow hierarchy
+	if (arguments.length == 0)
+		return;
+
+	WindowMenu.call(this, title);
+
+	this.fields = fields;
 	this.not_valid_characters = ['/', '?', '&', ':']
-	
-	this.operationHandler = function(e){
-		var publish_name = $('publish_name').value;
-		var publish_vendor = $('publish_vendor').value;
-		var publish_version = $('publish_version').value;
-		var publish_email = $('publish_email').value;
-		
-		if (publish_name.value!="" && publish_vendor!="" && publish_version!="" && publish_email!="") {
-			// Not empty input data!
-			// Now validating input data!
-			
-			for (var i=0; i<this.not_valid_characters.length; i++) {
-				var character = this.not_valid_characters[i];
-				
-				if (publish_name.indexOf(character) >= 0 || publish_vendor.indexOf(character) >= 0 || publish_version.indexOf(character) >= 0) {
-					this.msgElement.update("Not valid characters in: 'Mashup Name', 'Distributor' or 'Version'. Don't use [/, ?, &, :]");
-					return;
-				}
+
+	var table = document.createElement('table');
+	for (var fieldId in this.fields) {
+		var field = this.fields[fieldId];
+		var row = document.createElement('tr');
+		table.appendChild(row);
+
+		if (field.type === 'separator') {
+			var separator = document.createElement('td');
+			separator.setAttribute('colspan', '2');
+			var hr = document.createElement('hr');
+			separator.appendChild(hr);
+			row.appendChild(separator);
+			delete this.fields[fieldId];
+			continue;
+		}
+
+		// Label Cell
+		var labelCell = document.createElement('td');
+		row.appendChild(labelCell);
+
+		var label = document.createElement('label');
+		label.appendChild(document.createTextNode(field.label));
+		labelCell.appendChild(label);
+
+		if (field.required) {
+			var requiredMark = document.createElement('span');
+			requiredMark.appendChild(document.createTextNode('*'));
+			requiredMark.className = 'required_mark';
+			labelCell.appendChild(requiredMark);
+		}
+
+		// Input Cell
+		var inputCell = document.createElement('td');
+		row.appendChild(inputCell);
+
+		var extraElements = [];
+		switch (field.type) {
+		case 'color':
+			var input = document.createElement('input');
+			input.setAttribute('maxlength', 6);
+			input.setAttribute('type', 'text');
+			input.setAttribute('class', 'color_input');
+			var inputId = fieldId + '_input';
+			input.setAttribute('id', inputId);
+
+			var button = document.createElement('button');
+			button.setAttribute('class', 'color_button');
+			extraElements.push(button);
+
+			var sample = document.createElement('input');
+			var sampleId = fieldId + '_sample';
+			sample.setAttribute('id', sampleId);
+			sample.setAttribute('size', '1');
+			sample.setAttribute('type', 'text');
+			sample.setAttribute('disabled', 'disabled');
+			extraElements.push(sample);
+
+			button.observe('click',
+			    function() {
+			        showColorGrid3(inputId, sampleId);
+			    });
+			break;
+		case 'select':
+			var input = document.createElement('select');
+			for (var i in field.options) {
+				var option = document.createElement('option');
+				option.textContent = field.options[i][1];
+				option.setAttribute('value', field.options[i][0]);
+				input.appendChild(option);
 			}
-			
-			this.executeOperation();
-			LayoutManagerFactory.getInstance().hideCover();
+			break;
+		case 'longtext':
+			var input = document.createElement('textarea');
+			input.setAttribute('cols', '50');
+			input.setAttribute('rows', '3');
+			break;
+		case 'url':
+		case 'text':
+			var input = document.createElement('input');
+			input.setAttribute('type', 'text');
+			break;
+		case 'boolean':
+			var input = document.createElement('input');
+			input.setAttribute('type', 'checkbox');
+			break;
 		}
-		else{
-			this.msgElement.update("All the required fields must be filled");
-		}
-	}.bind(this);
+		inputCell.appendChild(input);
 
+		field.input = input;
+		field.defaultValue = field.defaultValue ? field.defaultValue : "";
 
-	PublishWindowMenu.prototype.initObserving = function(){	
-			Event.observe(this.button, "click", this.operationHandler);
+		for (var i = 0; i < extraElements.length; i++)
+			inputCell.appendChild(extraElements[i]);
 	}
-	
-	PublishWindowMenu.prototype.stopObserving = function(){	
-			Event.stopObserving(this.button, "click", this.operationHandler);
-	}	
-	
-	PublishWindowMenu.prototype.setFocus = function(){
-		$('publish_name').focus();
-	}
-	
-	PublishWindowMenu.prototype.executeOperation = function(){
-		var o = new Object;
-		o.name = $('publish_name').value;
-		o.vendor = $('publish_vendor').value;
-		o.version = $('publish_version').value;
-		o.author = $('publish_author').value;
-		o.email = $('publish_email').value;
-		o.description = $('publish_description').value;
-		o.imageURI = $('publish_imageURI').value;
-		o.wikiURI = $('publish_wikiURI').value;
-		o.organization = $('publish_organization').value;
-		OpManagerFactory.getInstance().activeWorkSpace.publish(o);
-	}
-	
+	this.windowContent.insertBefore(table, this.msgElement);
 
+	// Legend
+	var legend = document.createElement('div');
+	var requiredMark = document.createElement('span');
+	requiredMark.appendChild(document.createTextNode('*'));
+	requiredMark.className = 'required_mark';
+	legend.appendChild(requiredMark);
+	legend.appendChild(document.createTextNode(gettext('required field')));
+	this.windowContent.insertBefore(legend, this.msgElement);
 
-	//hides the window and clears all the inputs
-	PublishWindowMenu.prototype.hide = function (){
+	// Accept button
+	this.button = document.createElement('button');
+	this.button.appendChild(document.createTextNode('Accept'));
+	this.windowBottom.appendChild(this.button);
+	this._acceptHandler = this._acceptHandler.bind(this);
+	this.button.observe("click", this._acceptHandler);
 
-		var inputArray = $$('#publish_menu input:not([type=button])');
-		for (var i=0; i<inputArray.length; i++){
-			inputArray[i].value = '';
-		}
-		$('publish_description').value="";
-		var msg = $('create_window_msg');
-		msg.update();
-		this.stopObserving();
-		this.msgElement.update();
-		this.htmlElement.style.display = "none";		
-	}
+	// Cancel button
+	var cancelButton = document.createElement('button');
+	cancelButton.appendChild(document.createTextNode('Cancel'));
+	cancelButton.observe("click", this._closeListener);
+	this.windowBottom.appendChild(cancelButton);
+}
+FormWindowMenu.prototype = new WindowMenu();
 
+FormWindowMenu.prototype._isURL = function(string) {
+	var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+	return regexp.test(string);
 }
 
-PublishWindowMenu.prototype = new WindowMenu;
+FormWindowMenu.prototype._acceptHandler = function(e) {
+	var emptyRequiredFields = "";
+	var badURLFields = "";
+	var errorMsg = "";
 
-//Especific class for Feed creator window
-function AddFeedMenu (element) {
+	// Validate input fields
+	for (var fieldId in this.fields) {
+		var field = this.fields[fieldId];
+		if (field.required && field.input.value == "")
+			emptyRequiredFields += ", " + field.label;
 
-	//constructor
-	this.htmlElement = $('add_feed_menu');		//create-window HTML element
-	this.titleElement = $('add_feed_window_title');	//title gap
-	this.msgElement = $('add_feed_window_msg');	//error message gap
-	this.button = $('add_feed_btn1');
-	this.type="";	
-	
-	AddFeedMenu.prototype.setType = function(type){
-		this.type=type;
-		if (this.type=="addFeed"){
-			this.title = gettext('Add new feed');
-			$('color_pref_opt').setStyle({display:"table-row"});
-		}
-		else if (this.type=="addSite"){
-			this.title = gettext('Add new site');
-			$('source_opt').setStyle({display:"table-row"});
-			$('source_URL_opt').setStyle({display:"table-row"});
-			$('home_URL_opt').setStyle({display:"table-row"});
-			$('events_opt').setStyle({display:"table-row"});
-			$('parse_parameters_opt').setStyle({display:"table-row"});
-		}
-		this.titleElement.update(this.title);
-	}	
+		if (field.input.value == "")
+			continue;
 
-	
-	this.not_valid_characters = ['/', '?', '&', ':']
-	
-	
-	this.operationHandler = function(e){
-		
-		var feed_name = $('feed_name').value;
-		var feed_URL = $('feed_URL').value;
-		var feed_image_URL = $('feed_image_URL').value;
-		var feed_iphone_URL = $('feed_iphone_URL').value;
-		var feed_color = $('feed_color').value;
-		
-		//validate fields
-		if (feed_name.value!="" && feed_URL!="") {
-			// Not empty input data!
-			// Now validating input data!
-			
-			for (var i=0; i<this.not_valid_characters.length; i++) {
+		switch (field.type) {
+		case 'longtext':
+		case 'text':
+			break;
+		case 'url':
+			if (!this._isURL(field.input.value))
+				badURLFields += "," + field.label + " ";
+			break;
+		case 'id':
+			for (var i = 0; i < this.not_valid_characters.length; i++) {
 				var character = this.not_valid_characters[i];
-				
-				if (feed_name.indexOf(character) >= 0) {
-					this.msgElement.update("Not valid characters in the feed Name");
-					return;
-				}
+				if (field.input.value.indexOf(character) >= 0)
+					badURLFields += ", " + field.label;
 			}
-			//check URLs
-			urls = $$('#add_feed_menu .url');
-			for(var i=0; i<urls.length; i++){
-				if(urls[i].value != '' && !this.isUrl(urls[i].value)){
-					this.msgElement.update(urls[i].value + " is not a valid URL");
-					return;
-				}
-					
-			}
-			
-			this.executeOperation();
+			break;
 		}
-		else{
-			this.msgElement.update("All the required fields must be filled");
-		}
-	}.bind(this);
-
-
-	AddFeedMenu.prototype.initObserving = function(){	
-			Event.observe(this.button, "click", this.operationHandler, false, "add_feed");	
 	}
-	
-	AddFeedMenu.prototype.stopObserving = function(){	
-			Event.stopObserving(this.button, "click", this.operationHandler);
-	}	
-	
-	AddFeedMenu.prototype.setFocus = function(){
-		$('feed_name').focus();
+
+	if (emptyRequiredFields != "") {
+		var msg = gettext("The following required fields are empty: %(fields)s.");
+		msg = interpolate(msg, {'fields': emptyRequiredFields.substring(2)}, true);
+		errorMsg += "<p>" + msg + "</p>";
 	}
-	
-	AddFeedMenu.prototype.executeOperation = function(){
-		function onError(transport, e){
-			alert("error generando el template");
-		}
-		function onSuccess(transport){
-			var response = transport.responseText;
-			var data = eval ('(' + response + ')');
-			UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
-		}
-		var o = new Object;
-		o.name = $('feed_name').value;
-		o.URL = $('feed_URL').value;
-		if ($('feed_image_URL').value!="")
-			o.imageURI = $('feed_image_URL').value;
-		if ($('feed_iphone_URL').value!="")
-			o.iPhoneImageURI = $('feed_iphone_URL').value;
-		if ($('feed_organization').value!="")
-			o.organization = $('feed_organization').value;
-		if ($('feed_menu_color').value!="") {
-			o.menu_color = $('feed_menu_color').value;
-			if (o.menu_color.indexOf("#") == 0) {
-				o.menu_color = o.menu_color.substring(1);
+
+	if (badURLFields != "") {
+		var msg = gettext("The following fields does not contain a valid URL: %(fields)s.");
+		msg = interpolate(msg, {'fields': badURLFields.substring(2)}, true);
+		errorMsg += "<p>" + msg + "</p>";
+	}
+
+	// Show error message if needed
+	if (errorMsg != "") {
+		this.setMsg(errorMsg);
+		return;
+	} else {
+		// Otherwise process the data
+		var value;
+		var form = new Object();
+		for (var fieldId in this.fields) {
+			var field = this.fields[fieldId];
+			switch (field.type) {
+			case 'color':
+				value = this.fields[fieldId].input.value;
+				if (value.indexOf('#'))
+					value = value.substring(1);
+				break;
+			case 'boolean':
+				value = this.fields[fieldId].input.checked;
+				break;
+			default:
+				value = this.fields[fieldId].input.value;
+				break;
 			}
+			if (field.required || value !== "")
+				form[fieldId] = value;
 		}
-		if ($('color_pref_opt').style.display!="none" && $('feed_color').value!="")
-			o.feed_color = $('feed_color').value;
-			
-		if ($('site_source').style.display!="none" && $('site_source').value!="")
-			o.source = $('site_source').value;
-		if ($('site_source_URL').style.display!="none" && $('site_source_URL').value!="")
-			o.source_URL = $('site_source_URL').value;
-		if ($('home_URL_opt').style.display!="none")
-			o.home_URL = $('site_home_URL').value;
-		if ($('events_opt').style.display!="none")
-			o.events = $('events').value;
-		if ($('parse_parameters_opt').style.display!="none") {
-			if ($('parse_parameters').checked) {
-				o.parse_parameters = 1;
-			} else {
-				o.parse_parameters = 0;
-			}
-		}
-			
-		var data = {"template_data": Object.toJSON(o)};
-		var gadget_type="";
-		if (this.type=="addFeed"){
-			gadget_type="feed_reader"
-		} else if (this.type=="addSite"){
-			gadget_type="web_browser"
-		}
-		PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': gadget_type}), data, this, onSuccess, onError);
+
+		this.executeOperation(form);
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	
-
-
-	//hides the window and clears all the inputs
-	AddFeedMenu.prototype.hide = function (){
-
-		var inputArray = $$('#add_feed_menu input:not([type=button])');
-		for (var i=0; i<inputArray.length; i++){
-			inputArray[i].value = '';
-			if (inputArray[i].id == "color_sample"){
-				inputArray[i].style.backgroundColor = '';
-			}
-			if (inputArray[i].id == "parse_parameters"){
-				inputArray[i].checked = false;
-			}
-		}
-		var msg = $('add_feed_window_msg');
-		msg.update();
-		this.stopObserving();
-		this.msgElement.update();
-		this.htmlElement.style.display = "none";
-		$('color_pref_opt').setStyle({display:"none"});
-		$('source_opt').setStyle({display:"none"});
-		$('source_URL_opt').setStyle({display:"none"});
-		$('home_URL_opt').setStyle({display:"none"});
-		$('events_opt').setStyle({display:"none"});
-		$('parse_parameters_opt').setStyle({display:"none"});
-	}
-
 }
 
-AddFeedMenu.prototype = new WindowMenu;
+FormWindowMenu.prototype.show = function () {
+	for (var fieldId in this.fields) {
+		var field = this.fields[fieldId];
+		field.input.value = field.defaultValue;
+	}
+
+	WindowMenu.prototype.show.call(this);
+}
+
+/**
+ * Especific class for publish windows
+ */
+function PublishWindowMenu (element, fields) {
+	var fields = {
+		'name': {label: gettext('Mashup Name'), type:'text', required: true},
+		'vendor': {label: gettext('Vendor'), type:'text',  required: true},
+		'version': {label: gettext('Version'), type:'text',  required: true},
+		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
+		'email': {label: gettext('Email'), type:'text',  required: true},
+		'description': {label: gettext('Description'), type:'longtext'},
+		'imageURI': {label: gettext('Image URL'), type:'url'},
+		'wikiURI': {label: gettext('Wiki URL'), type:'url'}
+	}
+
+	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
+}
+PublishWindowMenu.prototype = new FormWindowMenu();
+
+PublishWindowMenu.prototype.setFocus = function() {
+	this.fields['name'].input.focus();
+}
+
+PublishWindowMenu.prototype.executeOperation = function(form) {
+	OpManagerFactory.getInstance().activeWorkSpace.publish(form);
+}
+
+/**
+ * Specific class for Feed creator window.
+ */
+function AddFeedMenu (element) {
+	var fields = {
+		'name'          : {label: gettext('Name'), type: 'text', required: true},
+		'URL'           : {label: gettext('URL'), type: 'text',  required: true},
+		'separator1': {type: 'separator', required: true},
+		'imageURI'      : {label: gettext('Image URL'), type: 'url'},
+		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
+		'feed_color'    : {label: gettext('Template color'),
+		                   type: 'select',
+		                   options: [
+		                             ['blue', gettext('blue')],
+		                             ['orange', gettext('orange')],
+		                             ['red', gettext('red')],
+		                             ['green', gettext('green')],
+		                            ],
+		                  },
+		'menu_color'    : {label: gettext('Menu Color'), type: 'color'},
+		'organization'  : {label: gettext('Organization'), type: 'text'},
+	}
+
+	FormWindowMenu.call(this, fields, gettext('Add Feed'));
+
+	// TODO remove this hackism needed by color input fields
+	var colorpicker301 = document.createElement('div');
+	colorpicker301.setAttribute('id', 'colorpicker301');
+	colorpicker301.setAttribute('class', 'colorpicker301');
+	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
+}
+AddFeedMenu.prototype = new FormWindowMenu();
+
+AddFeedMenu.prototype.setFocus = function() {
+	this.fields['name'].input.focus();
+}
+
+AddFeedMenu.prototype.executeOperation = function(form) {
+	function onError(transport, e) {
+		alert("error generando el template");
+		this.hide();
+	}
+
+	function onSuccess(transport) {
+		var response = transport.responseText;
+		var data = eval ('(' + response + ')');
+		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
+	}
+
+	var data = {"template_data": Object.toJSON(form)};
+	PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': 'feed_reader'}), data, this, onSuccess, onError);
+}
+
+/**
+ * Specific class for Site creator window.
+ */
+function AddSiteMenu (element) {
+	var fields = {
+		'name': {label: gettext('Name'), type: 'text', required: true},
+		'URL': {label: gettext('URL'), type: 'url', required: true},
+		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},
+		'separator1': {type: 'separator', required: true},
+		'events': {label: gettext('Events'), type: 'url'},
+		'home_URL': {label: gettext('Home URL'), type: 'url'},
+		'imageURI': {label: gettext('Image URL'), type: 'url'},
+		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
+		'menu_color': {label: gettext('Menu Color (Hex.)'), type: 'color'},
+		'organization': {label: gettext('Organization'), type: 'text'},
+		'source': {label: gettext('Source'), type: 'text'},
+		'source_URL': {label: gettext('Source URL'), type: 'url'},
+	}
+
+	FormWindowMenu.call(this, fields, gettext('Add Site'));
+
+	// TODO remove this hackism needed by color input fields
+	var colorpicker301 = document.createElement('div');
+	colorpicker301.setAttribute('id', 'colorpicker301');
+	colorpicker301.setAttribute('class', 'colorpicker301');
+	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
+}
+AddSiteMenu.prototype = new FormWindowMenu();
+
+AddSiteMenu.prototype.setFocus = function() {
+	this.fields['name'].input.focus();
+}
+
+AddSiteMenu.prototype.executeOperation = function(form) {
+	function onError(transport, e) {
+		alert("error generando el template");
+		this.hide();
+	}
+
+	function onSuccess(transport) {
+		var response = transport.responseText;
+		var data = eval ('(' + response + ')');
+		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
+	}
+
+	var data = {"template_data": Object.toJSON(form)};
+	PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': 'web_browser'}), data, this, onSuccess, onError);
+}
+
