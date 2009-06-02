@@ -592,7 +592,7 @@ class  WorkSpaceSharerEntry(Resource):
         #Everything right! Linking with public user!
         public_user = get_public_user(request)
         
-        linkWorkspaceObject(public_user, workspace, link_variable_values=False)
+        linkWorkspaceObject(public_user, workspace, link_variable_values=True)
         
         url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
         

@@ -50,7 +50,7 @@ class PackageLinker:
             
             # Creating new VariableValue to each AbstractVariable
             # Linking each new VariableValue to the user argument
-            self.add_user_to_abstract_variable_list(abstract_var_list, user)
+            self.add_user_to_abstract_variable_list(abstract_var_list, user, workspace.get_creator())
     
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
@@ -74,39 +74,22 @@ class PackageLinker:
             workspace.users.add(user)
             workspace.save()
 
-    def add_user_to_abstract_variable_list(self, abstract_var_list, user):
+    def add_user_to_abstract_variable_list(self, abstract_var_list, user, creator):
         for (abstract_var, variable) in abstract_var_list:
             variable_values = VariableValue.objects.filter(user=user, abstract_variable=abstract_var)
+            original_variable_value = VariableValue.objects.get(user=creator, abstract_variable=abstract_var)
             
             if (len(variable_values)>0):
-                #The VariableValue of this abstract_variable has been already cloned with the workspace structure
-                #It's not necessary to create a default value from the VariableValue, the value was published by the workspace
+                #The VariableValue of this abstract_variable exists!
+                #It's time to update the variable value with creator's variable value!
+                linked_user_variable_value = variable_values[0]
+            else:
+                #Creating VariableValue with creators value!
+                linked_user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
+            
+            linked_user_variable_value.value = original_variable_value.get_variable_value()
+            linked_user_variable_value.save()
                 
-                if (not abstract_var.has_public_value()):
-                    #There is a variable value but it shouldn't be returned to the user because it's not public!!
-                    #Changing it to default!
-                    variable_value = variable_values[0]
-                    
-                    if variable and variable.vardef.default_value:
-                        variable_value.value = variable.vardef.default_value
-                    else:
-                        variable_value.value = ""
-                    
-                    variable_value.save()
-                
-                continue
-            
-            #Creating VariableValue with default value for not public varaibles
-            variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
-            
-            # variable is the child element of the Variable inheritance
-            # variable == None => wk_variable
-            # variable != None => igadget_variable associated to abstract_variable
-            if variable and variable.vardef.default_value:
-                variable_value.value = variable.vardef.default_value
-            
-            variable_value.save()
-    
     def get_abstract_var_list(self, ws_igadget_vars, ws_vars):
         abstract_var_list = []
         
