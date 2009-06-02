@@ -261,11 +261,7 @@ div.floatclearer {
 }
 
 #logs_link {
-  height: 16px !important;
-  background: transparent url(/ezweb/images/error.png) no-repeat scroll 3px 1px;
-  color:red;
   cursor:pointer;
-  padding: 2px 4px 0px 22px;
 }
 
 .message_section{

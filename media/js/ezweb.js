@@ -11936,7 +11936,6 @@ UIUtils.enlargeInput = function(inputText_) {
 }
 
 UIUtils.getError = function(element, error) {
-	var jsCall = 'javascript:$(\"' + element.id + '\").style.display=\"none\"';
 	element.innerHTML = "";
 	element.appendChild(UIUtils.createHTMLElement("img", $H({
 		class_name: 'warning',
@@ -11949,13 +11948,13 @@ UIUtils.getError = function(element, error) {
 		class_name: 'close',
 		src: '/ezweb/images/cancel_gray.png'
 	}));
-	close.observe('mouseover', function(event){
+	close.observe('mouseover', function(event) {
 		this.src='/ezweb/images/delete.png';
 	});
-	close.observe('mouseout', function(event){
+	close.observe('mouseout', function(event) {
 		this.src='/ezweb/images/cancel_gray.png';
 	});
-	close.observe('click', function(event){
+	close.observe('click', function(event) {
 		$(element.id).style.display = "none";
 	});
 	element.appendChild(close);

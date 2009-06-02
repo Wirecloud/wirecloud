@@ -228,9 +228,8 @@ a:hover {
 
 #logs_link {
   height: 16px !important;
-  background: transparent url(/ezweb/images/error.png) no-repeat scroll 3px 1px;
+  background: transparent url(../images/error.png) no-repeat scroll 3px 1px;
   color:red;
-  cursor:pointer;
   padding: 2px 4px 0px 22px;
 }
 

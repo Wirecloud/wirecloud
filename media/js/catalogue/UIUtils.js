@@ -22,8 +22,7 @@
 *
 *     http://morfeo-project.org
 */
-function UIUtils()
-{
+function UIUtils() {
 	// *********************************
 	//           STATIC CLASS
 	// *********************************
@@ -36,8 +35,6 @@ UIUtils.selectedResource = null;
 UIUtils.selectedVersion = null;
 UIUtils.imageBottom = '';
 UIUtils.imageContent = '';
-UIUtils.imageConnectableBottom = '';
-UIUtils.imageConnectableContent = '';
 UIUtils.infoResourcesWidth = 400;
 UIUtils.isInfoResourcesOpen = false;
 UIUtils.page = 1;
@@ -94,37 +91,6 @@ UIUtils.getSelectedResource = function() {
 	return UIUtils.selectedResource;
 }
 
-UIUtils.selectResource = function(resourceId_) {
-	var bottom = $(resourceId_ + '_bottom');
-	var content = $(resourceId_ + '_content');
-	if (!UIUtils.tagmode) {
-		UIUtils.imageBottom = bottom.style.backgroundImage;
-		UIUtils.imageContent = content.style.backgroundImage;
-	}
-	bottom.style.backgroundImage = 'url(/ezweb/images/resource-left-bottom-select.png)';
-	content.style.backgroundImage = 'url(/ezweb/images/resource-left-fill-select.png)';
-}
-
-UIUtils.deselectResource = function(resourceId_) {
-	var bottom = $(resourceId_ + '_bottom');
-	var content = $(resourceId_ + '_content');
-	if (!UIUtils.tagmode)
-	{
-	    bottom.style.backgroundImage = UIUtils.imageBottom;
-	    content.style.backgroundImage = UIUtils.imageContent;
-	} else {
-	    bottom.style.backgroundImage = 'url(/ezweb/images/resource-left-bottom.gif)';
-	    content.style.backgroundImage = 'url(/ezweb/images/resource-left-fill.gif)';
-	}
-}
-
-UIUtils.selectConnectableResources = function(resourceId_) {
-/*	UIUtils.deselectConnectableResources();
-	UIUtils.selectResource(resourceId_);
-	UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
-*/
-}
-
 /* This method selects all the resources related by wiring in the catalogue*/
 UIUtils.lightUpConnectableResources = function(resourceId_) {
 /*
@@ -171,17 +137,6 @@ UIUtils.lightUpConnectableResources = function(resourceId_) {
 */
 }
 
-UIUtils.deselectConnectableResources = function() {
-/*	var resources = CatalogueFactory.getInstance().getResources().values();
-	for (var i=0; i<resources.length; i++){
-		var bottom = $('resource_'+i + '_bottom');
-		bottom.style.backgroundImage = UIUtils.imageConnectableBottom;
-		var content = $('resource_'+i + '_content');
-		content.style.backgroundImage = UIUtils.imageConnectableContent;
-	}
-*/
-}
-
 UIUtils.showResourceInfo = function(resourceId_) {
 	UIUtils.selectedResource = resourceId_;
 	CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showInfo();
@@ -220,15 +175,12 @@ UIUtils.toggle_elements = function(elementIds_) {
 		UIUtils.toggle(elementIds_[i]);
 	}
 }
-	
+
 UIUtils.toggle = function(elementId_) {
 	var element = $(elementId_);
-	if (element.style.display != 'none')
-	{
+	if (element.style.display != 'none') {
 		element.style.display = 'none';
-	}
-	else
-	{
+	} else {
 		element.style.display = 'block';
 	}
 }
@@ -249,40 +201,36 @@ UIUtils.changeImage = function(elementId_, newImage_) {
 }
 
 UIUtils.simpleSearch = function(url, criteria) {
-	UIUtils.repaintCatalogue=true;
+	UIUtils.repaintCatalogue = true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	UIUtils.searchValue = [];
-	if (criteria == 'simple_or')
-	{
+	switch (criteria) {
+	case 'simple_or':
 		UIUtils.searchValue[0] = $('simple_search_text').value;
-	} else if (criteria == 'and')
-	{
+		break;
+	case 'and':
 		UIUtils.searchValue[0] = $('advanced_search_text_and').value;
-	}
-	else if (criteria == 'or')
-	{
+		break;
+	case 'or':
 		UIUtils.searchValue[0] = $('advanced_search_text_or').value;
-	}
-	else if (criteria == 'not')
-	{
+		break;
+	case 'not':
 		UIUtils.searchValue[0] = $('advanced_search_text_not').value;
-	}
-	else if (criteria == 'tag')
-	{
+		break;
+	case 'tag':
 		UIUtils.searchValue[0] = $('advanced_search_text_tag').value;
-	}
-	else if (criteria == 'event')
-	{
+		break;
+	case 'event':
 		UIUtils.searchValue[0] = $('advanced_search_text_event').value;
-	}
-	else if (criteria == 'slot')
-	{
+		break;
+	case 'slot':
 		UIUtils.searchValue[0] = $('advanced_search_text_slot').value;
+		break;
 	}
 	UIUtils.searchValue[0] = UIUtils.filterString(UIUtils.searchValue[0]);
 
-	if (UIUtils.searchValue[0] == ""){
+	if (UIUtils.searchValue[0] == "") {
 //		$('header_always_error').style.display="block";
 //		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
 		$('header_always_error').style.display = 'none';
@@ -291,8 +239,7 @@ UIUtils.simpleSearch = function(url, criteria) {
 		UIUtils.search = false;
 		UIUtils.searchCriteria = '';
 		CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
-	}
-	else{
+	} else {
 		$('header_always_error').style.display = 'none';
 		UIUtils.setPage(1);
 		UIUtils.search = true;
@@ -300,7 +247,8 @@ UIUtils.simpleSearch = function(url, criteria) {
 		CatalogueFactory.getInstance().repaintCatalogue(url + "/" + criteria + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
 	}
 }
-UIUtils.viewAll = function (url, criteria){
+
+UIUtils.viewAll = function (url, criteria) {
 	$('header_always_error').style.display = 'none';
 	UIUtils.page = 1;
 	UIUtils.off = 10;
@@ -324,8 +272,7 @@ UIUtils.globalSearch = function(url) {
 	if (UIUtils.searchValue[0] == "" && UIUtils.searchValue[1] == "" && UIUtils.searchValue[2] == "" && UIUtils.searchValue[3] == "" && UIUtils.searchValue[4] == "" && UIUtils.searchValue[5] == ""){
 		$('header_always_error').style.display="block";
 		UIUtils.getError($('header_always_error'),gettext("Indicate a criteria in search formulary"));
-	}
-	else{
+	} else {
 		$('header_always_error').style.display = 'none';
 		UIUtils.setPage(1);
 		UIUtils.search = true;
@@ -408,37 +355,37 @@ UIUtils.cataloguePaginate = function(url, offset, pag, items) {
 	var opManager = OpManagerFactory.getInstance();
 	var pages = Math.ceil(UIUtils.getNum_items()/UIUtils.getOffset());
 
-	if (!UIUtils.search){
+	if (!UIUtils.search)
 		url = URIs.GET_POST_RESOURCES;
-	} else if(UIUtils.searchCriteria=="global"){
+	else if (UIUtils.searchCriteria=="global")
 		url = URIs.GET_RESOURCES_GLOBAL_SEARCH;
-	} else {
+	else
 		url = URIs.GET_RESOURCES_SIMPLE_SEARCH + "/" + UIUtils.searchCriteria;
-	}
 
-	if (pag == "first"){
+	switch (pag) {
+	case "first":
 		pag = 1;
-    }
-	if (pag == "prev"){
-		if(UIUtils.page == 1){
-  			pag = 1;
-  		}
-   		else{
-  			pag = UIUtils.page - 1;
-  		}
-  	}
-	if (pag == "next"){
-  		if(UIUtils.page == pages){
-  			pag = pages;
-  		}
-		else{
+		break;
+
+	case "prev":
+		if (UIUtils.page == 1)
+			pag = 1;
+		else
+			pag = UIUtils.page - 1;
+		break;
+
+	case "next":
+		if(UIUtils.page == pages)
+			pag = pages;
+		else
 			pag = parseInt(UIUtils.page) + 1;
-		}
+		break;
+
+	case "last":
+		pag = pages;
+		break;
 	}
-    if (pag == "last"){
-          pag = pages;
-    }
-	UIUtils.page = pag; 
+	UIUtils.page = pag;
 
 	//we don't want to change the category section
 	CatalogueFactory.getInstance().repaintCatalogue(url + "/" + pag + "/" + UIUtils.getOffset(),null, null, true);
@@ -688,13 +635,13 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 	});
 	image_div.appendChild(image_link);
 	var image = UIUtils.createHTMLElement("img", $H({
-		src: _currentTheme.getIconURL('delete')
+		src: _currentTheme.getIconURL('showcase-delete')
 	}));
 	image.observe('mouseover', function(event){
-		this.src = _currentTheme.getIconURL('delete_highlighted');
+		this.src = _currentTheme.getIconURL('showcase-delete_highlighted');
 	});
 	image.observe('mouseout', function(event){
-		this.src = _currentTheme.getIconURL('delete');
+		this.src = _currentTheme.getIconURL('showcase-delete');
 	});
 	image_link.appendChild(image);
 	$("my_global_tags").insertBefore(newTag, $("new_global_tag_text"));
@@ -728,8 +675,7 @@ UIUtils.setInfoResourceHeight = function(){
 }
 
 UIUtils.openInfoResource = function() {
-	if (!UIUtils.isInfoResourcesOpen)
-	{
+	if (!UIUtils.isInfoResourcesOpen) {
 		UIUtils.isInfoResourcesOpen = true;
 		UIUtils.SlideInfoResourceIntoView('info_resource');
 		UIUtils.setInfoResourceHeight();
@@ -737,79 +683,70 @@ UIUtils.openInfoResource = function() {
 }
 
 UIUtils.closeInfoResource = function() {
-	if (UIUtils.isInfoResourcesOpen)
-	{
-		UIUtils.deselectConnectableResources();
+	if (UIUtils.isInfoResourcesOpen) {
 		UIUtils.isInfoResourcesOpen = false;
 		UIUtils.SlideInfoResourceOutOfView('info_resource');
 	}
 }
 
 UIUtils.SlideInfoResourceIntoView = function(element) {
-  $('resources_container').style.display = 'block'
-//  $(element).style.width = '0px';
-  $(element).style.overflow = 'hidden';
-  $(element).firstChild.style.position = 'relative';
-  UIUtils.setResourcesWidth();
-  Element.show(element);
- /* new Effect.Scale(element, 100,
-    Object.extend(arguments[1] || {}, {
-      scaleContent: false,
-      scaleY: false,
-      scaleMode: 'contents',
-      scaleFrom: 0,
-      afterUpdate: function(effect){},
-      afterFinish: function(effect){
-         UIUtils.show('close_info_resource');
-         UIUtils.resizeResourcesContainer();
-      }
-    })
-  );*/
-  UIUtils.show('close_info_resource');/*UIUtils.show('tab_info_resource_close');*/
-  UIUtils.resizeResourcesContainer();
-  if (UIUtils.selectedResource != null) {
-     UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
-  }
+	$('resources_container').style.display = 'block'
+//	$(element).style.width = '0px';
+	$(element).style.overflow = 'hidden';
+	$(element).firstChild.style.position = 'relative';
+	UIUtils.setResourcesWidth();
+	Element.show(element);
+/*	new Effect.Scale(element, 100,
+	Object.extend(arguments[1] || {}, {
+		scaleContent: false,
+		scaleY: false,
+		scaleMode: 'contents',
+		scaleFrom: 0,
+		afterUpdate: function(effect){},
+		afterFinish: function(effect) {
+			UIUtils.resizeResourcesContainer();
+		}
+	}));*/
+	UIUtils.resizeResourcesContainer();
+	if (UIUtils.selectedResource != null)
+		UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
 }
 
 UIUtils.SlideInfoResourceOutOfView = function(element) {
-  UIUtils.hidde('close_info_resource');
-  UIUtils.selectedResource= null;
-  $(element).style.overflow = 'hidden';
-  $(element).firstChild.style.position = 'relative';
-  Element.show(element);
-/*  new Effect.Scale(element, 0,
-    Object.extend(arguments[1] || {}, {
-      scaleContent: false,
-      scaleY: false,
-      afterUpdate: function(effect){},
-      afterFinish: function(effect) {
-         Element.hide(effect.element);
-         UIUtils.setResourcesWidth();
-         $('resources_container').style.display = 'none';
-         UIUtils.resizeResourcesContainer();
-      }
-    })
-  );*/
-  Element.hide(element);
-  UIUtils.setResourcesWidth();
-  $('resources_container').style.display = 'none';
-  UIUtils.resizeResourcesContainer();  
-  
+	UIUtils.selectedResource= null;
+	$(element).style.overflow = 'hidden';
+	$(element).firstChild.style.position = 'relative';
+	Element.show(element);
+/*	new Effect.Scale(element, 0,
+	Object.extend(arguments[1] || {}, {
+		scaleContent: false,
+		scaleY: false,
+		afterUpdate: function(effect){},
+		afterFinish: function(effect) {
+			Element.hide(effect.element);
+			UIUtils.setResourcesWidth();
+			$('resources_container').style.display = 'none';
+			UIUtils.resizeResourcesContainer();
+		}
+	}));*/
+	Element.hide(element);
+	UIUtils.setResourcesWidth();
+	$('resources_container').style.display = 'none';
+	UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.restoreSlide = function() {
 	var div = $("head");
-    var nodeList = div.childNodes;
-    var aux = '';
-    var tab = '';
-    for(i=0;i<nodeList.length;i++){
-    	if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!='header_always'){
-	        if(Element.visible(nodeList.item(i))==true){
-	        	nodeList.item(i).style.display = "none";
-	           	//Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},});
-	            aux = nodeList.item(i).id.split("_");
-	            switch (aux[1].toLowerCase()) {
+	var nodeList = div.childNodes;
+	var aux = '';
+	var tab = '';
+	for(i = 0; i < nodeList.length; i++) {
+		if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!='header_always') {
+			if(Element.visible(nodeList.item(i))==true) {
+				nodeList.item(i).style.display = "none";
+				//Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},});
+				aux = nodeList.item(i).id.split("_");
+				switch (aux[1].toLowerCase()) {
 	            	case "tag":
 	            		tab = gettext("Advanced Tagging");
 	            		break;
@@ -909,8 +846,8 @@ UIUtils.SlideAdvanced = function(element,container) {
             		break;
             }
             $(element+"_toggle").innerHTML = tab;
-            $(element+"_toggle").style.background="transparent"; 
-            if(element=="advanced_tag"){UIUtils.deactivateTagMode();}      
+            $(element+"_toggle").style.background="transparent";
+            if(element=="advanced_tag"){UIUtils.deactivateTagMode();}
        }
    }
 }
@@ -1055,60 +992,78 @@ UIUtils.activateTagMode = function() {
 UIUtils.deactivateTagMode = function() {
 	UIUtils.sendPendingTags();
 	UIUtils.tagmode = false;
-	selectedResources=CatalogueFactory.getInstance().getSelectedResources();
-	for(var i=0; i<selectedResources.length;i++){
+	var selectedResources=CatalogueFactory.getInstance().getSelectedResources();
+	for (var i = 0; i < selectedResources.length; i++)
 		UIUtils.deselectResource(selectedResources[i]);
-	}
+
 	CatalogueFactory.getInstance().clearSelectedResources();
-    UIUtils.resizeResourcesContainer();
+	UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.clickOnResource = function(id_) {
-	if(UIUtils.tagmode){
+	if (UIUtils.tagmode) {
 		UIUtils.toggleSelectedResource(id_);
-	}else{
+	} else {
 		UIUtils.showResourceInfo(id_);
 		UIUtils.openInfoResource();
-		UIUtils.selectConnectableResources(id_);
 	}
 }
 
-UIUtils.toggleSelectedResource = function(id_) {
-	UIUtils.removeAllGlobalTags();
-	if(CatalogueFactory.getInstance().isSelectedResource(id_)){
-		var bottom = $(id_ + '_bottom');
-	    var content = $(id_ + '_content');
-	    bottom.style.backgroundImage = 'url(/ezweb/images/resource-left-bottom.gif)';
-	    content.style.backgroundImage = 'url(/ezweb/images/resource-left-fill.gif)';
-		CatalogueFactory.getInstance().removeSelectedResource(id_);
-	} else{
-		var bottom = $(id_ + '_bottom');
-	    var content = $(id_ + '_content');
-	    bottom.style.backgroundImage = 'url(/ezweb/images/resource-left-bottom-tagmode.png)';
-	    content.style.backgroundImage = 'url(/ezweb/images/resource-left-fill-tagmode.png)';
-		CatalogueFactory.getInstance().addSelectedResource(id_);
-	}
-	CatalogueFactory.getInstance().updateGlobalTags();
-	
-	if (CatalogueFactory.getInstance().getSelectedResources().length == 0){
+/**
+ * @private
+ */
+UIUtils._updateMyGlobalTags = function() {
+	if (CatalogueFactory.getInstance().getSelectedResources().length == 0) {
 		$("my_global_tags").childNodes[0].style.display="none";
-	}else{
+	} else {
 		$("my_global_tags").childNodes[0].style.display="inline";
 	}
 }
 
-UIUtils.mouseOverResource = function(id_) {
-	if(!((UIUtils.tagmode)&&(CatalogueFactory.getInstance().isSelectedResource(id_)))){
-			UIUtils.selectResource(id_);
-	}
-	UIUtils.show(id_ + "_toolbar");
+/**
+ * @private
+ */
+UIUtils._updateTagInfo = function(id) {
+	UIUtils.removeAllGlobalTags();
+	CatalogueFactory.getInstance().updateGlobalTags();
+	UIUtils._updateMyGlobalTags();
 }
 
-UIUtils.mouseOutResource = function(id_) {
-	if(!((UIUtils.tagmode)&&(CatalogueFactory.getInstance().isSelectedResource(id_)))){
-			UIUtils.deselectResource(id_);
-	}
-	UIUtils.hidde(id_ + "_toolbar");
+/**
+ * Selects a resource when on tagmode.
+ *
+ * @param id Id of the resource to select.
+ */
+UIUtils.selectResource = function(id) {
+	$(id).addClassName('selected');
+	CatalogueFactory.getInstance().addSelectedResource(id);
+
+	UIUtils._updateTagInfo();
+}
+
+/**
+ * Deselects a resource when on tagmode.
+ *
+ * @param id Id of the resource to deselect.
+ */
+UIUtils.deselectResource = function(id) {
+	$(id).removeClassName('selected');
+	CatalogueFactory.getInstance().removeSelectedResource(id);
+
+	UIUtils._updateTagInfo();
+}
+
+/**
+ * Selects or deselects a resource depending on its current select status when
+ * on tagmode.
+ *
+ * @param id Id of the resource to select/deselect.
+ */
+UIUtils.toggleSelectedResource = function(id) {
+	if (CatalogueFactory.getInstance().isSelectedResource(id))
+		UIUtils.deselectResource(id);
+	else
+		UIUtils.selectResource(id);
 }
 
 //enlarge an input depending on the size of the text

@@ -1012,44 +1012,31 @@ var CatalogueFactory  = function () {
 		}
 	}
 
-    var _globalTagsToTagcloud = function(parent){
-        parent.innerHTML = "";
-        for (var i = 0; i < globalTags.length; i++) {
-            var new_tag = UIUtils.createHTMLElement("span", $H({
-                class_name: 'multiple_size_tag'
-            }));
-            new_tag.appendChild(globalTags[i].tagToTypedHTML({
-                tags: 'multiple'
-            }));
-            if (UIUtils.globalTags == "mytags") {
-                var image_container = UIUtils.createHTMLElement("span", $H({
-                    title: gettext('Delete tag')
-                }));
-                image_container.observe("click", function(event){
-                    UIUtils.removeGlobalTagUser(this.parentNode.firstChild.innerHTML);
-                });
-                var image = UIUtils.createHTMLElement("img", $H({
-                    id: ('delete_icon_' + i),
-                    src: _currentTheme.getIconURL('cancel_gray'),
-                    border: '0',
-                    name: 'op1'
-                }));
-                image.observe("mouseover", function(event){
-                    this.src = _currentTheme.getIconURL('delete');
-                });
-                image.observe("mouseout", function(event){
-                    this.src = _currentTheme.getIconURL('cancel_gray');
-                });
-				image_container.appendChild(image);
-                new_tag.appendChild(image_container);
-            }
-            var separator = UIUtils.createHTMLElement("span", $H({
-                innerHTML: ((i < (globalTags.length - 1)) ? "," : "")
-            }));
-            new_tag.appendChild(separator);
-            parent.appendChild(new_tag);
-        }
-    }
+	var _globalTagsToTagcloud = function(parent){
+		parent.innerHTML = "";
+		for (var i = 0; i < globalTags.length; i++) {
+			var new_tag = UIUtils.createHTMLElement("span", $H({
+				class_name: 'multiple_size_tag'
+			}));
+			new_tag.appendChild(globalTags[i].tagToTypedHTML({
+				tags: 'multiple'
+			}));
+			if (UIUtils.globalTags == "mytags") {
+				var deleteButton = UIUtils.createHTMLElement("button", $H({
+					class_name: 'delete button'
+				}));
+				deleteButton.observe("click", function(event) {
+					UIUtils.removeGlobalTagUser(this.parentNode.firstChild.innerHTML);
+				});
+				new_tag.appendChild(deleteButton);
+			}
+			var separator = UIUtils.createHTMLElement("span", $H({
+				innerHTML: ((i < (globalTags.length - 1)) ? "," : "")
+			}));
+			new_tag.appendChild(separator);
+			parent.appendChild(new_tag);
+		}
+	}
 
 	OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
 	
@@ -1060,13 +1047,12 @@ var CatalogueFactory  = function () {
 	// ************************
 	
 	return new function() {
-    	this.getInstance = function() {
-    		if (instance == null) {
-        		instance = new Catalogue();
-         	}
-         	return instance;
-       	}
+		this.getInstance = function() {
+			if (instance == null) {
+				instance = new Catalogue();
+			}
+		return instance;
+		}
 	}
-	
 }();
 

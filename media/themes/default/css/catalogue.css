@@ -460,17 +460,83 @@
 	text-align:center;
 }
 
+#catalogue .center .resources .resource .top {
+	display: block;
+	width: 192px;
+	height: 7px;
+	padding: 0px;
+	margin: 0px;
+	background: url(../images/catalogue/resource-left-top.png) no-repeat top right;
+}
+
+#catalogue .resource > .bottom {
+	position: relative;
+	display: block;
+	width: 192px;
+	height: 11px;
+	padding: 0px;
+	bottom: 5px;
+	background: url(../images/catalogue/resource-left-bottom.gif) no-repeat bottom right;
+}
+
+#catalogue .resource > .toolbar {
+	display: block;
+	width: 192px;
+	height: 22px;
+	padding: 0px;
+	margin: 0px;
+	text-align:right;
+	background: url(../images/catalogue/resource-left-header.png) no-repeat bottom right;
+}
+
 #catalogue .resource > .toolbar > div {
 	display: none;
+	float: right;
+	padding-top: 1px;
+	margin-right: 7px;
 }
 
-#catalogue .resource > .content .title {
+#catalogue .resource > .toolbar a * {
+	margin-top:3px;
+	border:none;
+}
+
+#catalogue .resource > .content {
+	padding-top:5px;
+	padding-bottom:5px;
+	display:block;
+	width:192px;
+	height:154px;
+	margin: 0px;
+	background: url("/ezweb/images/resource-left-fill.gif") repeat-y top right;
+	text-align:center;
+	color:#000000;
+}
+
+#catalogue .center .resources .resource .content .title
+{
 	overflow:hidden;
+	font-size:12px;
+	font-weight:bold;
+	height:20px;
 }
 
-#catalogue .resource > .content .image > img {
-	width:  170px;
-	height: 80px;
+#catalogue .center .resources .resource .content .image
+{
+	display:block;
+	margin-top:5px;
+	margin-bottom:5px;
+	text-align:center;
+	width:100%;
+	height:80px;
+}
+
+#catalogue .center .resources .resource .content .image img
+{
+	padding-right:3px;
+	width:170px;
+	height:80px;
+	border:none;
 }
 
 #catalogue .center .resources .resource .content .tags
@@ -934,8 +1000,17 @@
 	float:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe a {
-	float:left;
+#catalogue #resources_container .info_resource .content #rateMe a
+{
+	float:left; 
+	background:url("../images/catalogue/ico_vot_vo.gif") no-repeat; 
+	width:15px; 
+	height:15px;
+}
+
+#catalogue #resources_container .info_resource .content #rateMe .on
+{
+	background:url("../images/catalogue/ico_vot_ok.gif") no-repeat;
 }
 
 #catalogue #resources_container .info_resource .content #ratingSaved
@@ -943,8 +1018,22 @@
 	display:none;
 }
 
-#catalogue #resources_container .info_resource .content #rateResult a {
-	float:left;
+#catalogue #resources_container .info_resource .content #rateResult a
+{
+	float:left; 
+	background:url("../images/catalogue/ico_vot_no.gif") no-repeat; 
+	width:15px; 
+	height:15px;
+}
+
+#catalogue #resources_container .info_resource .content #rateResult .on
+{
+	background:url("../images/catalogue/ico_vot_ok.gif") no-repeat;
+}
+
+#catalogue #resources_container .info_resource .content #rateResult .md
+{
+	background:url("../images/catalogue/ico_vot_md.gif") no-repeat;
 }
 
 #catalogue #resources_container .info_resource .content #votes
@@ -959,24 +1048,68 @@
 	top:10px;
 }
 
-/* Resource Highlighting */
+/*
+ * Resource Highlighting
+ */
 #catalogue .resource:hover > .toolbar > div {
 	display: block;
 }
 
 #catalogue .resource:hover > .content {
-	background-image: url(/ezweb/images/resource-left-fill-select.png);
+	background-image: url(../images/catalogue/resource-left-fill-select.png);
 }
 
 #catalogue .resource:hover > .bottom {
-	background-image: url(/ezweb/images/resource-left-bottom-select.png)
+	background-image: url(../images/catalogue/resource-left-bottom-select.png)
 }
 
-/* Resource Selection */
+/*
+ * Resource Selection
+ */
 #catalogue .resource.selected > .content {
-	background-image: url(/ezweb/images/resource-left-fill-tagmode.png);
+	background-image: url(../images/catalogue/resource-left-fill-tagmode.png);
 }
 
 #catalogue .resource.selected > .bottom {
-	background-image: url(/ezweb/images/resource-left-bottom-tagmode.png)
+	background-image: url(../images/catalogue/resource-left-bottom-tagmode.png)
+}
+
+/*
+ *
+ */
+
+#catalogue .button {
+	height:16px;
+	padding:0;
+	width:16px;
+}
+
+#catalogue .multiple_size_tag .button {
+	vertical-align: middle;
+	margin: 0;
+}
+
+/*
+ * Resource icons
+ */
+#catalogue .resource .toolbar .button {
+	float:left;
+	margin: 0 5px;
+	display:block;
+}
+
+#catalogue .resource .wiki.button {
+	background-image: url(../images/wiki.png)
+}
+
+#catalogue .resource .wiki.button:hover {
+	background-image: url(../images/wiki-highlighted.png)
+}
+
+#catalogue .delete.button {
+	background-image: url(../images/delete.png)
+}
+
+#catalogue .delete.button:hover {
+	background-image: url(../images/delete-highlighted.png)
 }

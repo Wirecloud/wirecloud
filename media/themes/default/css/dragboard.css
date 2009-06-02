@@ -31,47 +31,47 @@ div.dragboard.fixed {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
-  background: url(../images/igadget/close.png);
+  background: url("../images/igadget/close.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
-  background: url(../images/igadget/close-highlighted.png);
+  background: url("../images/igadget/close-highlighted.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
-  background: url(../images/igadget/minimize.png);
+  background: url("../images/igadget/minimize.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
-  background: url(../images/igadget/minimize-highlighted.png);
+  background: url("../images/igadget/minimize-highlighted.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
-  background: url(../images/igadget/maximize.png);
+  background: url("../images/igadget/maximize.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
-  background: url(../images/igadget/maximize-highlighted.png);
+  background: url("../images/igadget/maximize-highlighted.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
-  background: url(../images/igadget/settings.png);
+  background: url("../images/igadget/settings.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
-  background: url(../images/igadget/settings-highlighted.png);
+  background: url("../images/igadget/settings-highlighted.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button {
-  background: url(../images/igadget/settings2.png);
+  background: url("../images/igadget/settings2.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
-  background: url(../images/igadget/settings2-highlighted.png);
+  background: url("../images/igadget/settings2-highlighted.png");
 }
 
 div.gadget_window div.gadget_menu input[type="button"].errorbutton {
-  background: url(../images/igadget/warning.png);
+  background: url("../images/igadget/warning.png");
 }
 
 div.gadget_window_locked div.gadget_wrapper {
@@ -84,19 +84,27 @@ div.floatclearer {
 
 div.gadget_window div.snapButton {
   /* This icon represents that the iGadget is outside the grid */
-  background: transparent url(../images/igadget/extract.png) no-repeat left bottom;
+  background: transparent url("../images/igadget/extract.png") no-repeat left bottom;
+}
+
+div.gadget_window .dragboardwiki {
+  background: transparent url("../images/wiki.png") no-repeat left bottom;
+}
+
+div.gadget_window .dragboardwiki:hover {
+  background: transparent url("../images/wiki-highlighted.png") no-repeat left bottom;
 }
 
 div.gadget_window div.extractButton {
-  background: transparent url(../images/igadget/snap.png) no-repeat left bottom;
+  background: transparent url("../images/igadget/snap.png") no-repeat left bottom;
 }
 
 div.gadget_window div.leftResizeHandle {
-  background: transparent url(../images/igadget/resize-handle-bottom-left.png) no-repeat left bottom;
+  background: transparent url("../images/igadget/resize-handle-bottom-left.png") no-repeat left bottom;
 }
 
 div.gadget_window div.rightResizeHandle {
-  background: transparent url(../images/igadget/resize-handle-bottom-right.png) no-repeat right bottom;
+  background: transparent url("../images/igadget/resize-handle-bottom-right.png") no-repeat right bottom;
 }
 
 .gadget_menu .igadget_name {
@@ -108,6 +116,11 @@ div.gadget_window div.rightResizeHandle {
 
 div.gadget_window div.statusBar {
   height: 16px;
+  padding: 0 32px;
+}
+
+div.gadget_window_locked div.statusBar {
+  padding: 0 4px;
 }
 
 #dragboardcursor {

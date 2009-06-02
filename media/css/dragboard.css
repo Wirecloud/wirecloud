@@ -82,21 +82,12 @@ div.gadget_window div.snapButton {
   cursor: pointer;
 }
 
-div.gadget_window div.dragboardwiki {
-  position: absolute;
+div.gadget_window .button {
+  display: block;
+  margin: 2px 2px 0px 2px;
+  float: right;
   width: 16px;
   height: 16px;
-  bottom: 2px;
-  right: 55px;
-  cursor: pointer;
-}
-
-div.gadget_window div.extractButton {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  bottom: 0px;
-  right: 33px;
   cursor: pointer;
 }
 

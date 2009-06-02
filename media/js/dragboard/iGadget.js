@@ -520,7 +520,7 @@ IGadget.prototype.build = function() {
 	                     }.bind(this),
 	                     true);
 	this.contentWrapper.appendChild(this.content);
-	
+
 	// Gadget status bar
 	this.statusBar = document.createElement("div");
 	this.statusBar.setAttribute("class", "statusBar");
@@ -544,29 +544,23 @@ IGadget.prototype.build = function() {
 	this.statusBar.appendChild(resizeHandle);
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
-	// wikilink
-	this.wikilink = document.createElement('div');
-	this.wikilink.setAttribute ('class', 'dragboardwiki');
-	var awikilink = document.createElement('a');
-	awikilink.href = this.gadget.getUriWiki();
-	awikilink.setAttribute ('target', '_blank');
-	awikilink.setAttribute ('class', 'dragboardwikilink');
-	var imgwikilink = document.createElement('img');
-	imgwikilink.src = _currentTheme.getIconURL('dragboard-wiki');
-	imgwikilink.setAttribute('title', gettext('Access to Information'));
-	awikilink.appendChild(imgwikilink);
-	this.wikilink.appendChild(awikilink);
-	this.statusBar.appendChild(this.wikilink);
-
 	// extract/snap button
 	this.extractButton = document.createElement("div");
+	this.extractButton.className = "button";
 	this.extractButton.observe("click",
 	                           function() {
 	                               this.toggleLayout();
 	                           }.bind(this),
 	                           false);
 	this.statusBar.appendChild(this.extractButton);
-	
+
+	// wikilink
+	this.wikilink = document.createElement('a');
+	this.wikilink.setAttribute('class', 'dragboardwiki button');
+	this.wikilink.href = this.gadget.getUriWiki();
+	this.wikilink.setAttribute('target', '_blank');
+	this.wikilink.setAttribute('title', gettext('Access to Information'));
+	this.statusBar.appendChild(this.wikilink);
 }
 
 /**
