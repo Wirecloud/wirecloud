@@ -589,7 +589,7 @@ PublishWindowMenu.prototype.executeOperation = function(form) {
 function AddFeedMenu (element) {
 	var fields = {
 		'name'          : {label: gettext('Name'), type: 'text', required: true},
-		'URL'           : {label: gettext('URL'), type: 'text',  required: true},
+		'URL'           : {label: gettext('URL'), type: 'url',  required: true},
 		'separator1': {type: 'separator', required: true},
 		'imageURI'      : {label: gettext('Image URL'), type: 'url'},
 		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
