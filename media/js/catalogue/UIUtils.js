@@ -702,15 +702,20 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 
 UIUtils.setResourcesWidth = function() {
 	//var tab = $('tab_info_resource');
-	var head = $('head');
+	var catalogue = $('catalogue');
 	var resources = $('resources');
 	var center = $('center');
 	var left_bar = $('left_bar');
 	var leftBarMarginRight = parseInt(left_bar.getStyle('margin-right').replace("px",""));
 	var centerBorder = parseInt(center.getStyle('border-left-width').replace("px",""));
-	if (center){
+	var catalogue_content = $('catalogue_content');
+	var content_padding_left = parseInt(catalogue_content.getStyle('padding-left').replace("px",""));
 
-		center.style.width = head.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
+	catalogue_content.style.width = catalogue.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - content_padding_left + 'px';
+
+	if (center){
+		center.style.width = catalogue_content.offsetWidth - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
+//		center.style.width = catalogue.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
 		resources.style.width = center.offsetWidth - 2*centerBorder + 'px';
 	}
 }
@@ -1250,7 +1255,8 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 UIUtils.resizeResourcesContainer = function (){
 	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 28;
 	document.getElementById('resources').style.height = height+'px';
+	var resources_container_margin = parseInt($('resources_container').getStyle('margin-top').replace("px",""));
 	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight;
-	document.getElementById('resources_container').style.height = height +'px';
+	document.getElementById('resources_container').style.height = height - resources_container_margin +'px';
 
 }

@@ -1,19 +1,36 @@
 {% load i18n %}
 
-
 <div id="catalogue" class="container_content">
+	<div id="left_bar">
+		<div id="menu_options" class="bar_widget">
+			<div class = "widget_content">
+				<div id="simple_search" class="simple_search">
+					<input type="text" id="simple_search_text" name="simple_search_text" value="{% trans "Search"%}" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"/>
+					<span class="link" onclick="UIUtils.viewAll(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or')">{% trans  "View All" %}</span>
+					<span id="advanced_search_toggle" class="link" onclick="UIUtils.SlideAdvanced('advanced_search','head');">{% trans  "Advanced Search" %}</span>
+				</div>
+				<div id="advanced_options" class="advanced_options">
+					<span id="advanced_tag_toggle" class="link" onclick="UIUtils.SlideAdvanced('advanced_tag','head');">{% trans  "Advanced Tagging" %}</span>
+					<span id="advanced_develop_toggle" class="link" onclick="UIUtils.SlideAdvanced('advanced_develop','head');">{% trans  "Development Options" %}</span>
+				</div>
+			</div>
+		</div>
+		<div id="tag_categories" class="bar_widget">
+			<span class="widget_title">{% trans 'Search by category:' %}</span>
+			<div class="widget_content"></div>
+		</div> 
+		<div id="new_gadget_options" class="bar_widget">
+			<span class="widget_title">{% trans 'Add your custom Gadget:' %}</span>
+			<div class="widget_content">
+				<span id="add_feed_link" class="link">{% trans "Add new feed" %}</span>
+				<span id="add_site_link" class="link">{% trans "Add new site" %}</span>
+			</div>
+		</div>
+		
+	</div>
+	<div id="catalogue_content">
 	<div id="head" class="head">
 		<div id="header_always" class="header_always">
-			<div id="simple_search" class="simple_search">
-				<input type="text" id="simple_search_text" name="simple_search_text" class="text" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"/>
-				<a class="submit_link" href="#" onclick="UIUtils.simpleSearch(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');">{% trans  "Search" %}</a>
-				<a id="advanced_search_toggle" class="header_link" href="#" onclick="UIUtils.SlideAdvanced('advanced_search','head');">{% trans  "Advanced Search" %}</a>
-				<a class="submit_link" href="#" onclick="UIUtils.viewAll(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or')">{% trans  "View All" %}</a>
-			</div>
-			<div id="advanced_options" class="advanced_options">
-				<a id="advanced_tag_toggle" class="header_link" href="#" onclick="UIUtils.SlideAdvanced('advanced_tag','head');">{% trans  "Advanced Tagging" %}</a>
-				<a id="advanced_develop_toggle" class="header_link" href="#" onclick="UIUtils.SlideAdvanced('advanced_develop','head');">{% trans  "Development Options" %}</a>
-			</div>
 			<div id="header_always_error" class="message_error"></div>
 		</div>
 		<div id="advanced_develop" class="advanced_develop" style="display:none">
@@ -95,21 +112,10 @@
 						<a href="#" class="submit_link" onclick="javascript:UIUtils.removeAllGlobalTags();">{% trans "Cancel" %}</a>
 					</div>
 				</div>
-			</div>
+			</div>		
 		</div>
 	</div>
-	<div id="left_bar">
-		<div id="menu_options" class="bar_widget">
-			<div class="widget_content">
-				<span id="add_feed_link" class="link">{% trans "Add new feed" %}</span>
-				<span id="add_site_link" class="link">{% trans "Add new site" %}</span>
-			</div>
-		</div>
-		<div id="tag_categories" class="bar_widget">
-			<span class="widget_title">{% trans 'Search by category:' %}</span>
-			<div class="widget_content"></div>
-		</div> 
-	</div>
+	
 	<div id="center" class="center">
 		<div id="resources_header" class="resources_header">
 			<div id="paginate_show" class="paginate_show"></div>
@@ -130,4 +136,5 @@
 				</a>
 			</div>-->
 	</div>
+	</div> <!--catalogue_content -->
 </div>
