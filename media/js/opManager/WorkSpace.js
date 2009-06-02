@@ -573,14 +573,17 @@ function WorkSpace (workSpaceState) {
 			var response = transport.responseText;
 			var result = eval ('(' + response + ')');
 			
-			alert('New workspace shared in ' + result['url'])
+			if (result['result'] != 'ok')
+				LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have NOT been successfully shared!", '');
+			else
+				LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have been successfully shared!", result);
 		}
 		
 		var share_workspace_error = function (transport) {
 			var response = transport.responseText;
 			var result = eval ('(' + response + ')');
 			
-			alert(result['description'])
+			LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have NOT been successfully shared!", '');
 		}
 		
 		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})

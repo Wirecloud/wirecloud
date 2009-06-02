@@ -685,3 +685,71 @@ AddSiteMenu.prototype.executeOperation = function(form) {
 	PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': 'web_browser'}), data, this, onSuccess, onError);
 }
 
+/**
+ * Specific class for Sharing workspace results window!
+ */
+function SharedWorkSpaceMenu() {
+	WindowMenu.call(this, gettext('Shared WorkSpace Info'));
+	this.htmlElement.addClassName('info_menu');
+
+	// Extra HTML Elements
+	var icon = document.createElement('img');
+	icon.setAttribute('src', _currentTheme.getIconURL('info'));
+	icon.setAttribute('alt', gettext('Info:'));
+	this.windowContent.insertBefore(icon, this.msgElement);
+	
+	// Extra HTML Elements (url and html_code)
+	//Table
+	this.addElement('tableElement', 'table', 'windowContent');
+	
+	//TR1
+	this.addElement('tr1Element', 'tr', 'tableElement');
+	
+	//TD11
+	this.addElement('td11Element', 'td', 'tr1Element');
+	
+	//LABEL1
+	this.addElement('label1', 'label', 'td11Element');
+	this.label1.innerHTML = 'URL:';
+	
+	//TD12
+	this.addElement('td12Element', 'td', 'tr1Element');
+	
+	//URL
+	this.addElement('urlElement', 'input', 'td12Element');
+	
+	//TR2
+	this.addElement('tr2Element', 'tr', 'tableElement');
+	
+	//TD21
+	this.addElement('td21Element', 'td', 'tr2Element');
+	
+	//LABEL2
+	this.addElement('label2', 'label', 'td21Element');
+	this.label2.innerHTML = 'HTML code:';
+	
+	//TD12
+	this.addElement('td22Element', 'td', 'tr2Element');
+	
+	//HTML
+	this.addElement('html_codeElement', 'textarea', 'td22Element');
+	this.html_codeElement.setAttribute('cols', 30);
+	this.html_codeElement.setAttribute('rows', 3);
+}
+SharedWorkSpaceMenu.prototype = new WindowMenu();
+
+SharedWorkSpaceMenu.prototype.addElement = function(element_name, html_tag, father_name) {
+	eval('this.' + element_name + '= document.createElement(html_tag)');
+	eval('this.' + father_name + '.appendChild(this.' + element_name + ')');
+}
+
+SharedWorkSpaceMenu.prototype.setURL = function(url) {
+	this.urlElement.value = url;
+}
+
+SharedWorkSpaceMenu.prototype.setHTML = function(url) {
+    var html_code = '<object width="" height="" data="' + url + '"></object>';
+	
+	this.html_codeElement.value = html_code;
+}
+ 
