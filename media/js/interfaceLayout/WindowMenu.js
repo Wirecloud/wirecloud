@@ -606,7 +606,7 @@ function AddFeedMenu (element) {
 		'organization'  : {label: gettext('Organization'), type: 'text'},
 	}
 
-	FormWindowMenu.call(this, fields, gettext('Add Feed'));
+	FormWindowMenu.call(this, fields, gettext('Add new feed'));
 
 	// TODO remove this hackism needed by color input fields
 	var colorpicker301 = document.createElement('div');
@@ -655,7 +655,7 @@ function AddSiteMenu (element) {
 		'source_URL': {label: gettext('Source URL'), type: 'url'},
 	}
 
-	FormWindowMenu.call(this, fields, gettext('Add Site'));
+	FormWindowMenu.call(this, fields, gettext('Add new site'));
 
 	// TODO remove this hackism needed by color input fields
 	var colorpicker301 = document.createElement('div');
