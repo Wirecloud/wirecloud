@@ -87,8 +87,10 @@ function WorkSpace (workSpaceState) {
 		this._createWorkspaceMenu();
 		
 		//If workspace is shared, some options must be unavailable!
-		if (this._isShared())
+		if (this.isShared())
 			this._hide_creator_options();
+		else
+			this._show_creator_options();
 
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
 	}
@@ -597,6 +599,11 @@ function WorkSpace (workSpaceState) {
 		var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
 	}
+	
+	//Check if a workspace is shared with another users
+	WorkSpace.prototype.isShared = function(){
+		return eval(this.workSpaceState['shared']);
+	}
 
     // *****************
     //  CONSTRUCTOR
@@ -621,11 +628,6 @@ function WorkSpace (workSpaceState) {
 	
 	var wsOpsLauncher = 'ws_operations_link';
 	var idMenu = 'menu_'+this.workSpaceState.id;
-	
-	//Check if a workspace is shared with another users
-	this._isShared = function(){
-		return eval(this.workSpaceState['shared']);
-	}
 	
 	//create workspace menu
 	this._createWorkspaceMenu = function(){
@@ -653,7 +655,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 			}
 
-		if (! this._isShared()) {
+		if (! this.isShared()) {
 			//It's your own workspace.
 			//All operations are allowed!
 			
@@ -829,21 +831,23 @@ function WorkSpace (workSpaceState) {
 		return true;
 	}
 	
-	this._hide_new_tab_button = function() {
-		$('add_tab_link').style.display = 'None';
+	this._hide_element = function(id) {
+		$(id).style.display = 'none';
 	}
 	
-	this._hide_catalogue_button = function() {
-		$('catalogue_link').style.display = 'None';
-	}
-	
-	this._hide_wiring_button = function() {
-		$('wiring_link').style.display = 'None';
+	this._show_element = function(id) {
+		$(id).style.display = 'block';
 	}
 	
 	this._hide_creator_options = function() {
-		this._hide_new_tab_button();
-		this._hide_wiring_button();
-		this._hide_catalogue_button();
+		this._hide_element('add_tab_link');
+		this._hide_element('catalogue_link');
+		this._hide_element('wiring_link');
+	}
+	
+	this._show_creator_options = function() {
+		this._show_element('add_tab_link');
+		this._show_element('catalogue_link');
+		this._show_element('wiring_link');
 	}
 }

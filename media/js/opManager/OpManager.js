@@ -206,6 +206,11 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace = workSpace;
 			this.activeWorkSpace.downloadWorkSpaceInfo();
 		}
+		
+		OpManager.prototype.logout = function () {		
+			this.activeWorkSpace.sendBufferedVars();
+			window.open("/logout");
+		}
 
 		OpManager.prototype.addInstance = function (gadgetId) {
 			if (!this.loadCompleted)

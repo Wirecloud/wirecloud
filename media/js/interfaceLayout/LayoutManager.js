@@ -241,8 +241,14 @@ var LayoutManagerFactory = function () {
 			//hide the launcher image for the drop down menu from the former current tab
 			var tabOpsLauncher = $(launcher);
 			tabOpsLauncher.setStyle({'display':'none'});
-			Event.stopObserving(tab, 'click', renameEvent);
+			
+			//Rename is an operation for ws owners!
+			if (! tab_object.workSpace.isShared()) {
+				Event.stopObserving(tab, 'click', renameEvent);
+			}
+				
 			Event.observe(tab, 'click', changeEvent);
+			
 			tab.setStyle({"display": "block"}); // TODO
 		}
 
@@ -258,16 +264,24 @@ var LayoutManagerFactory = function () {
 				
 				var tabOpsLauncher = $(launcher);
 				
-				if (! tab_object.workSpace._isShared())
+				if (! tab_object.workSpace.isShared())
 					tabOpsLauncher.setStyle({'display':'inline'});
 				
 				tab.setStyle({"display": "block"}); // TODO
 			}
 			if (this.currentViewType == 'dragboard') {
 				Event.stopObserving(tab, 'click', changeHandler);
-				Event.observe(tab, 'click', renameHandler);
+				
+				//Rename is an operation for ws owners!
+				if (! tab_object.workSpace.isShared()) {
+					Event.observe(tab, 'click', renameHandler);
+				}
 			} else {
-				Event.stopObserving(tab, 'click', renameHandler);
+				//Rename is an operation for ws owners!
+				if (! tab_object.workSpace.isShared()) {
+					Event.stopObserving(tab, 'click', renameHandler);
+				}
+				
 				Event.observe(tab, 'click', changeHandler);
 			}
 		}

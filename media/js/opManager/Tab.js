@@ -208,7 +208,7 @@ function Tab (tabInfo, workSpace) {
 	this.tabHTMLElement;
 	this.tabNameHTMLElement = null;
 	this.tabWidth = 0;
-
+	
 	//tab event handlers
 	this.renameTabHandler = function(e){
 		this.makeVisibleInTabBar();
@@ -240,8 +240,6 @@ function Tab (tabInfo, workSpace) {
 	//fill the tab label with a span tag
 	this.fillWithLabel();
 	
-	
-	// It's not your own workspace so you can't change things!
 	this.tabOpsLauncher = this.tabName+"_launcher";
 	var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
 	new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);

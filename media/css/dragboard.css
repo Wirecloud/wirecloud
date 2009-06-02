@@ -31,6 +31,10 @@ div.dragboard.fixed div.gadget_menu input[type="button"] {
   display: none;
 }
 
+div.dragboard.fixed div.gadget_menu #settingsbutton {
+  display: inline;
+}
+
 div.gadget_window div.gadget_menu input[type="button"] {
   float: right;
   display: inline;

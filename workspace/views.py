@@ -181,7 +181,7 @@ def createWorkSpace (workSpaceName, user):
         active = True
         
     #Workspace creation
-    workspace = WorkSpace(name=workSpaceName, active=active)
+    workspace = WorkSpace(name=workSpaceName, active=active, creator=user)
     workspace.save()
     
     #Adding user reference to workspace in the many to many relationship
@@ -341,7 +341,7 @@ class WorkSpaceEntry(Resource):
         workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
         
         #Closing session after downloading public user workspace
-        if (user.username == 'public' and last_user):
+        if (user.username == 'public' and last_user and last_user != 'public'):
             logout_request(request)
             request.user = relogin_after_public(request, last_user, None)
         

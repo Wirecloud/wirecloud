@@ -422,6 +422,8 @@ IGadget.prototype.build = function() {
 	button = document.createElement("input");
 	button.setAttribute("type", "button");
 	button.addClassName("settingsbutton");
+	button.setAttribute("id", "settingsbutton");
+	
 	button.observe("click",
 	               function(e) {
 	                  LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
@@ -597,7 +599,8 @@ IGadget.prototype.paint = function(onInit) {
 	                    }.bind(this),
 	                    0);
 
-	this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
+	if (! this.is_shared_workspace()) {
+		this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
 	                                           gettext("Menu Bar Color..."),
 	                                           function(e) {
 	                                               var menuEntry = $(this.menuColorEntryId);
@@ -613,18 +616,22 @@ IGadget.prototype.paint = function(onInit) {
 	                                                   y + (menuEntry.offsetHeight/2));
 	                                           }.bind(this),
 	                                           1);
-
-	this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
-	                    gettext("Transparency"),
-	                    function() {
-	                        this.toggleTransparency();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(this),
-	                    2);
-
-	// Extract/Snap from/to grid option (see _updateExtractOption)
-	this.extractOptionOrder = 2;
-	this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
+	                                           
+		this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
+		                    gettext("Transparency"),
+		                    function() {
+		                        this.toggleTransparency();
+		                        LayoutManagerFactory.getInstance().hideCover();
+		                    }.bind(this),
+		                    2);
+	
+		// Extract/Snap from/to grid option (see _updateExtractOption)
+		this.extractOptionOrder = 2;
+		this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
+		
+		// Initialize snap/extract options
+	    this._updateExtractOption();
+	}
 
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
@@ -634,10 +641,6 @@ IGadget.prototype.paint = function(onInit) {
 	// Initialize transparency status
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
-
-	// Initialize snap/extract options
-	this._updateExtractOption();
-
 
 	// Insert it into the dragboard
 	this.layout.dragboard.dragboardElement.appendChild(this.element);
@@ -1516,6 +1519,13 @@ IGadget.prototype.saveConfig = function() {
 	varManager.decNestingLevel();
 
 	this.setConfigurationVisible(false);
+}
+
+/**
+ * Check if the igadget belongs to a shared workspace
+ */
+IGadget.prototype.is_shared_workspace = function() {
+	return this.layout.dragboard.getWorkspace().isShared();
 }
 
 /**
