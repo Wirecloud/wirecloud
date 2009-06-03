@@ -37,7 +37,7 @@ from igadget.models import Variable
 from workspace.models import WorkSpaceVariable, AbstractVariable
 
 class Filter(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     code = models.TextField(_('Code'), blank=True, null=True)
     label = models.CharField(_('Label'), max_length=50, null=True) 
@@ -56,13 +56,12 @@ class Filter(models.Model):
     category = models.CharField(_('Category'), max_length=6, choices=CATEGORY, null=True)
     help_text = models.TextField(_('Help text'), blank=True, null=True)
     params = models.TextField(_('Parameters'), blank=True, null=True) 
-    
-    
+
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
 class InOut(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'))
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
@@ -74,7 +73,7 @@ class InOut(models.Model):
 
 
 class In(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     variable = models.ForeignKey(Variable, verbose_name=_('Variable'))  
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
@@ -84,10 +83,18 @@ class In(models.Model):
 
 
 class Out(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name   
+        return str(self.pk) + " " + self.name
+
+class RelatedInOut(models.Model):
+
+    in_inout = models.ForeignKey(InOut, related_name='in_inouts', verbose_name=_('In InOut'))
+    out_inout = models.ForeignKey(InOut, related_name='out_inouts', verbose_name=_('Out InOut'))
+
+    def __unicode__(self):
+        return str(self.pk)

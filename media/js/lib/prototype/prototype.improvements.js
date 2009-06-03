@@ -114,12 +114,28 @@ Object.genGUID = function()
 
 Hash.prototype.clone = function() {
   var newHash = new Hash();
-    
+
   this.each(function (pair) {
     newHash[pair.key] = pair.value;
   });
 
   return newHash;
+}
+
+if (Element.prototype.getBoundingClientRect != undefined) {
+    Element.getRelativeBoundingClientRect = function(element1, element2) {
+        var rect1 = element1.getBoundingClientRect();
+        var rect2 = element2.getBoundingClientRect();
+        return {
+            top: rect1.top - rect2.top,
+            left: rect1.left - rect2.left,
+            right: rect1.right - rect2.left,
+            bottom: rect1.bottom - rect2.top
+        }
+    }
+} else {
+    Element.getRelativeBoundingClientRect = function(element1, element2) {
+    }
 }
 
 //    Hack for right HTTP verbs

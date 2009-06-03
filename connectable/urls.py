@@ -37,6 +37,6 @@ from connectable.views import ConnectableEntry
 urlpatterns = patterns('connectable.views',
 
     # Connectables
-    (r'^$', ConnectableEntry(permitted_methods=('GET', 'POST'))),
+    (r'^$', ConnectableEntry(permitted_methods=('GET', 'POST', 'PUT'))),
 
 )

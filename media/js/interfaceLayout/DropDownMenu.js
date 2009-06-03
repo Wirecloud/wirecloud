@@ -221,16 +221,16 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 	//create the HTML code for the option and insert it in the menu
 	var opId='op_'+this.idMenu+'_'+this.option_id;
 	var opHtml = '<div id="'+ opId +'" class = "'+optionClass+'">';
-	
+
 	//creates the elements for the left side
 	if (imgPath) {
 		opHtml += '<img src="'+imgPath+'"/>';
 	}
 	opHtml += '<span>' + option + '</span>';
-	
+
 	//creates the element for the rigth side (help buttom)
 	opHtml += '<input class="help_buttom" type="button"/></div>';
-	
+
 	//inserts the option in the menu
 	try {
 		if (optionList.length >0) {
@@ -253,7 +253,7 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 		var helpOpId = helpMenu.addOption(null, helpText, function(){}, 0);
 
 		// Sets the help style
-		var helpOpElement = helpMenu.menu.getElementsBySelector('#' + helpOpId)[0]
+		var helpOpElement = helpMenu.menu.getElementsBySelector("#" + helpOpId)[0];
 		helpOpElement.style.fontSize = '80%';
 		helpOpElement.style.padding = '0px';
 		helpOpElement.style.whiteSpace = 'pre';
@@ -332,7 +332,7 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 
 	// On Mouse Over
 	this._onMouseOver = function(e) {
-		var windowStyle = window.getComputedStyle(e.target, null);
+		var windowStyle = document.defaultView.getComputedStyle(e.target, null);
 
 		var newColor = windowStyle.getPropertyCSSValue("background-color").
 		               getRGBColorValue();
@@ -348,7 +348,7 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 	}
 
 	this._onClick = function(e) {
-		var windowStyle = window.getComputedStyle(e.target, null);
+		var windowStyle = document.defaultView.getComputedStyle(e.target, null);
 
 		var newColor = windowStyle.getPropertyCSSValue("background-color").
 		               getRGBColorValue();

@@ -120,11 +120,11 @@ FreeLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight,
 }
 
 FreeLayout.prototype.initialize = function () {
-	var iGadget, key, zPos, iGadgetsToReinsert = new Array();
+	var iGadget, i, key, zPos, iGadgetsToReinsert = new Array();
 
 	// Insert igadgets
 	var igadgetKeys = this.iGadgets.keys();
-	for (var i = 0; i < igadgetKeys.length; i++) {
+	for (i = 0; i < igadgetKeys.length; i++) {
 		key = igadgetKeys[i];
 		iGadget = this.iGadgets[key];
 

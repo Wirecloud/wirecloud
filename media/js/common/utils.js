@@ -121,7 +121,7 @@ function initTheme(loaded) {
 		_currentTheme = new Theme(_INITIAL_THEME, _defaultTheme);
 }
 
-_INITIAL_THEME = 'sesame';
+_INITIAL_THEME = 'default';
 
 // Default theme
 var _currentTheme = new Theme('default', null, initTheme);

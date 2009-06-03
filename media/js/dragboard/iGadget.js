@@ -1161,7 +1161,7 @@ IGadget.prototype._recomputeWrapper = function(contentHeight) {
  * @private
  */
 IGadget.prototype._computeExtraWidthPixels = function () {
-	var windowStyle = window.getComputedStyle(this.element, null);
+	var windowStyle = document.defaultView.getComputedStyle(this.element, null);
 
 	var pixels = windowStyle.getPropertyCSSValue("border-left-width").
 	             getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -1175,20 +1175,20 @@ IGadget.prototype._computeExtraWidthPixels = function () {
  * @private
  */
 IGadget.prototype._computeExtraHeightPixels = function () {
-	var windowStyle = window.getComputedStyle(this.element, null);
+	var windowStyle = document.defaultView.getComputedStyle(this.element, null);
 
 	var pixels = windowStyle.getPropertyCSSValue("border-bottom-width").
 	             getFloatValue(CSSPrimitiveValue.CSS_PX);
 	pixels += windowStyle.getPropertyCSSValue("border-top-width").
 	          getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-	var menubarStyle = window.getComputedStyle(this.gadgetMenu, null);
+	var menubarStyle = document.defaultView.getComputedStyle(this.gadgetMenu, null);
 	pixels += menubarStyle.getPropertyCSSValue("border-bottom-width").
 	          getFloatValue(CSSPrimitiveValue.CSS_PX);
 	pixels += menubarStyle.getPropertyCSSValue("border-top-width").
 	          getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-	var statusbarStyle = window.getComputedStyle(this.statusBar, null);
+	var statusbarStyle = document.defaultView.getComputedStyle(this.statusBar, null);
 	pixels += statusbarStyle.getPropertyCSSValue("border-bottom-width").
 	          getFloatValue(CSSPrimitiveValue.CSS_PX);
 	pixels += statusbarStyle.getPropertyCSSValue("border-top-width").
@@ -1480,32 +1480,34 @@ IGadget.prototype.saveConfig = function() {
 	// Start propagation of the new values of the user pref variables
 	varManager.incNestingLevel();
 
+	/*
+	 * The new value is commited with 2 phases (first setting the value and then
+	 * propagating changes). This avoids the case where igadgets read old values.
+	 */
+
+	// Phase 1
 	// Annotate new value of the variable without invoking callback function!
 	var oldValue, newValue;
-	for (var i = 0; i < prefs.length; i++) {
+	for (i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
 		prefName = curPref.getVarName();
 		prefElement = this.prefElements[prefName];
 		var oldValue = curPref.getCurrentValue(varManager, this.id);
 		var newValue = curPref.getValueFromInterface(prefElement);
-
 
 		if (newValue != oldValue)
 			curPref.annotate(varManager, this.id, newValue);
 	}
 
-        /* Commit new value of the variable
-	   Doing this in 2 phases (first setting the value and then propagating changes)
-           avoids reading old values!! */
-	
-	for (var i = 0; i < prefs.length; i++) {
+	// Phase 2
+	// Commit new value of the variable
+	for (i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
 		prefName = curPref.getVarName();
 		prefElement = this.prefElements[prefName];
 		var oldValue = curPref.getCurrentValue(varManager, this.id);
 		var newValue = curPref.getValueFromInterface(prefElement);
 
-		
 		curPref.setValue(varManager, this.id, newValue);
 	}
 

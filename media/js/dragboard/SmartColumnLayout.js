@@ -455,13 +455,13 @@ ColumnLayout.prototype._searchFreeSpace = function(width, height) {
 }
 
 ColumnLayout.prototype.initialize = function () {
-	var iGadget, key, position, iGadgetsToReinsert = new Array();
+	var iGadget, i, key, position, iGadgetsToReinsert = new Array();
 
 	this._clearMatrix();
 
 	// Insert igadgets
 	var igadgetKeys = this.iGadgets.keys();
-	for (var i = 0; i < igadgetKeys.length; i++) {
+	for (i = 0; i < igadgetKeys.length; i++) {
 		key = igadgetKeys[i];
 
 		iGadget = this.iGadgets[key];

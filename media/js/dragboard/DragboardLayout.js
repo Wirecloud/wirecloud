@@ -326,8 +326,9 @@ DragboardLayout.prototype.measure = function(testElement, units) {
 
 	// Retrieve target measurements
 	var res = new Array();
-	res[0] = getComputedStyle(testElement, null).getPropertyCSSValue("width").getFloatValue(units);
-	res[1] = getComputedStyle(testElement, null).getPropertyCSSValue("height").getFloatValue(units);
+	var cssStyle = document.defaultView.getComputedStyle(testElement, null);
+	res[0] = cssStyle.getPropertyCSSValue("width").getFloatValue(units);
+	res[1] = cssStyle.getPropertyCSSValue("height").getFloatValue(units);
 
 	// Remove the test element
 	testElement.parentNode.removeChild(testElement);

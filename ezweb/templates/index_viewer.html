@@ -24,10 +24,9 @@
     {% else %}
        {% include "js_viewer_includes.js" %}
     {% endif %}
-    
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wz_jsgraphics.js"></script>
+
     <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
-    
+
     {% if AUTHENTICATION_SERVER_URL %}
     <script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>

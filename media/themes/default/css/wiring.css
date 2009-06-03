@@ -1,5 +1,57 @@
+
+#wiring #wiring_table {
+  margin-top: 10px;
+}
+
+#wiring #channels_list {
+  margin: 2ex 0px;
+  padding: 0px;
+}
+
+#wiring .tableCell {
+  position:relative;
+  float:left;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto;
+  margin-top: 1ex;
+}
+
+#wiring .connectableColumn {
+  width: 25%;
+  vertical-align: top;
+}
+
+#wiring .eventColumn, #wiring .slotColumn {
+  width: 20%;
+  padding: 0 20px;
+  vertical-align: top;
+}
+
+#wiring .connectionColumn {
+  width: 20%;
+  vertical-align: top;
+}
+
+#wiring .inoutColumn {
+  width: 20%;
+  vertical-align: top;
+}
+
+#wiring .title {
+  font-weight: bold;
+  font-size: 120%;
+  text-align: center;
+  margin-bottom: 1ex;
+}
+
+#wiring #eventColumn .title, #slotColumn .title{
+  cursor:pointer;
+}
+
 #wiring .borderLeftCell {
   border-collapse: collapse;
+  padding: 0 0 0 1ex;
   border-top: none;
   border-bottom: none;
   border-left: 1px solid #AAA;
@@ -9,110 +61,299 @@
 #wiring .columnCell ul input[type="radio"] {
   display: none;
 }
+
+#wiring .columnCell ul li {
+  padding: 2px;
+}
+
+#wiring .columnCell ul li div {
+  padding: 2px;
+}
+
 .form-row input[type="submit"] {
-  background-image: url(../images/kgpg.png);
+  background-image: url("../images/kgpg.png");
   background-repeat: no-repeat;
+  padding-left: 18px;
 }
 
 #wiring .igadget {
   background: #F7F7F7;
+  margin:3px 2px;
+  position: relative;
+  font-weight: bold;
+  padding: 3px 3px 0px;
   color: black;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
 }
 
-#wiring .igadget.folded, #wiring .igadgetContent.folded{
+#wiring .igadget > .content {
+  padding: 0px 0px 1px 0px;
+  font-weight: normal;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .igadget > .content > div {
+  line-height: 24px;
+}
+
+#wiring .eventColumn .igadget > .content > div {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  cursor: hand; cursor:pointer;
+}
+
+#wiring .slotColumn .igadget > .content > div {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
+}
+
+#wiring .igadget.folded > .content {
   display: none;
 }
 
-#wiring .igadget .igadgetContent div .chkItem {
+#wiring .igadget > .content > div > .anchor {
+  position: absolute;
+  display: inline;
+  width: 24px;
+  height: 24px;
   border: 0px;
-  background: url(../images/wiring/checked.png);
+  padding: 0px;
+  top: 0;
 }
 
-#wiring .igadget .igadgetContent div .unchkItem {
-  border: 0px;
-  background: url(../images/wiring/unchecked.png);
+#wiring .eventColumn .igadget .anchor {
+  right: -24px;
+  background: url("../images/wiring/inAnchor.png");
 }
 
-#wiring .tab .tabContent .chkItem {
-  border: 0px;
-  background: url(../images/wiring/checkedtab.png);
+#wiring .slotColumn .igadget .anchor {
+  left: -24px;
+  background: url("../images/wiring/outAnchor.png");
 }
 
-#wiring .tab .tabContent .unchkItem {
-  border: 0px;
-  background: url(../images/wiring/unchecked.png);
+#wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
+  background: url("../images/wiring/inAnchorInEnabled.png");
+}
+
+#wiring #channels_list .channel.selected .outAnchor.checked {
+  background: url("../images/wiring/inAnchorOutEnabled.png");
+}
+
+#wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
+  background: url("../images/wiring/outAnchorOutEnabled.png");
+}
+
+#wiring #channels_list .channel.selected .inAnchor.checked {
+  background: url("../images/wiring/outAnchorInEnabled.png");
+}
+
+#wiring #channels_list .channel .inAnchor, #wiring #channels_list .channel .outAnchor {
+  height:   24px;
+  top:      0; /* TEMP */
+  width:    24px;
+}
+
+#wiring #channels_list .channel .inAnchor {
+  background: url("../images/wiring/outAnchorChannel.png");
+  left: -15px;
+}
+
+#wiring #channels_list .channel .outAnchor {
+  background: url("../images/wiring/inAnchorChannel.png");
+  right: -15px;
 }
 
 #wiring .tab {
-  border: 2px solid black;
+  margin: 5px 0px;
+  position: relative;
+  padding: 2px;
+}
+
+#wiring .tab > .header {
+  clear: both;
+  z-index: 1;
+}
+
+#wiring .tab.folded > .content, #wiring .tab.empty > .content {
+  height: 5px;
+  overflow: hidden;
+}
+
+#wiring .tab > .content {
+  padding: 2px;
+  clear: both;
   background: #97A0A8;
-  -moz-border-radius: 11px;
-  -webkit-border-radius: 11px;
+  border: 1px solid black;
+  z-index: 0;
+  position: relative;
+  top: -1px;
 }
 
-#wiring .eventColumn .tabContent.bckgrnd_folder {
-  background: #97A0A8 url(../images/wiring/tree.gif) no-repeat scroll left top;
+#wiring .eventColumn .tab > .header {
+  -moz-border-radius-topright: 10px;
+  -moz-border-radius-topleft: 4px;
+  -webkit-border-radius: 10px; /* TODO */
+  float: right;
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: black;
+  padding: 2px 24px 2px 34px;
+  background: #97A0A8 url("../images/wiring/tree.gif") no-repeat scroll 2px 2px;
+  text-align: right;
 }
 
-#wiring .slotColumn .tabContent.bckgrnd_folder {
-  background: #97A0A8 url(../images/wiring/tree.gif) no-repeat scroll right top;
+#wiring .eventColumn .tab > .content {
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-bottomright: 10px;
+  -moz-border-radius-bottomleft: 10px;
 }
 
-#wiring .igadgetName {
-  background: url(../images/wiring/Lminus.png) no-repeat scroll left top;
-}
-#wiring .igadgetName.bckgrnd_folded {
-  background: url(../images/wiring/Lplus.png) no-repeat scroll left top;
+#wiring .slotColumn .tab > .header {
+  -moz-border-radius-topleft: 10px;
+  -moz-border-radius-topright: 4px;
+  float: left;
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: black;
+  background: #97A0A8 url("../images/wiring/tree.gif") no-repeat scroll right 2px;
+  padding: 2px 34px 2px 24px;
+  text-align: left;
 }
 
-#wiring .tab .tabContent {
-  color: white;
+#wiring .slotColumn .tab > .content {
+  -moz-border-radius-topright: 10px;
+  -moz-border-radius-bottomright: 10px;
+  -moz-border-radius-bottomleft: 10px;
 }
 
+#wiring .tab > .header {
+  color:       white;
+  cursor:      pointer;
+  font-weight: bold;
+  position:    relative;
+}
+
+#wiring .tab.empty > .header {
+  background: #97A0A8;
+  cursor: default;
+}
+
+#wiring .tab > .header > .anchor {
+  background: url("../images/wiring/unchecked.png");
+  position: absolute;
+  left: -9px;
+  top: 1px;
+  display: inline;
+  width: 18px;
+  height: 18px;
+  border: 0px;
+  padding: 0px;
+}
+
+#wiring .tab > .header > .anchor.checked {
+  background: url("../images/wiring/checkedtab.png");
+}
+
+#wiring .igadget > .header {
+  padding-left: 20px;
+  cursor:pointer;
+  background: url("../images/wiring/Lminus.png") no-repeat scroll left top;
+}
+
+#wiring .igadget.folded > .header {
+  background: url("../images/wiring/Lplus.png") no-repeat scroll left top;
+}
+
+#wiring .igadget.unfoldable > .header {
+  background: url("../images/wiring/LminusDisabled.png") no-repeat scroll left top;
+}
 
 #wiring #newChannelForm .addSubmit {
-  background: url(../images/wiring/add.png);
+  cursor: pointer; cursor: hand;
+  padding: 0px;
+  height: 16px;
+  width: 16px;
+  background: url("../images/wiring/add.png");
   border: 0px none;
 }
 
 #wiring .newChannel, #wiring #unfold_all_link {
+  cursor: pointer; cursor: hand;
   color: #2D6F9C;
   text-decoration: underline;
 }
 
-#wiring #wiring_options{
-  color:#2D6F9C;
+#wiring .newChannel {
+  margin:     2ex 1ex;
+  text-align: center;
+}
+
+#wiring #wiring_options {
+  color:     #2D6F9C;
+  font-size: 90%;
+}
+
+#wiring #unfold_all_link {
+  display:inline;
+}
+
+#wiring #wiring_options label {
+  margin-right: 20px;
 }
 
 #wiring #unfold_chkItem{
-  background: url(../images/wiring/unchecked14px.png) no-repeat right bottom;
+  display: inline;
+  width: 15px;
+  height: 15px;
+  border: 0px;
+  padding: 0px;
+  cursor: pointer;
+}
+
+#wiring #unfold_chkItem{
+  background: url("../images/wiring/unchecked14px.png") no-repeat right bottom;
  }
 
 #wiring #unfold_chkItem.chkItem{
-  background: url(../images/wiring/checked14px.png) no-repeat right bottom;
+  background: url("../images/wiring/checked14px.png") no-repeat right bottom;
 }
 
 #wiring #channels_list .channel {
-  border: 1px solid #2D6F9C;
-  background: #97A0A8;
-  -moz-border-radius: 11px;
-  -webkit-border-radius: 11px;
+  margin: 20px 1ex;
+  padding: 0px;
 }
 
-#wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
-  border-top: 1px solid #525248;
+#wiring #channels_list .channel .channelPipe {
+  border: 1px solid #2D6F9C;
+  background: #97A0A8 url("../images/wiring/pipe.png");
+  cursor: pointer; cursor: hand;
+  height: 22px;
+  padding: 0 8px;
+}
+
+#wiring img {
+  margin: 2px;
+  vertical-align: middle;
+}
+
+#wiring #channels_list .channel .channelContent {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #525248;
+  margin: 0 8px;
   display: none;
   background: #F7F7F7;
+  padding: 0.5ex 1ex 0.5ex 1ex;
   -moz-border-radius-bottomleft: 9px;
   -moz-border-radius-bottomright: 9px;
   -webkit-border-top-left-radius: 9px;
   -webkit-border-top-right-radius: 9px
 }
 
-#wiring #channels_list .channel.selected {
-  background: #2D6F9C;
+#wiring #channels_list .channel.selected .channelPipe {
+  background-color: #2D6F9C;
 }
 
 #wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
@@ -120,51 +361,106 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url(../images/ops21px.png) no-repeat scroll 0 0;
+	background: transparent url("../images/ops21px.png") no-repeat scroll 0 0;
+	margin-left: 5px;
 	border: 0;
+	cursor: pointer;
+}
+
+#wiring #channels_list .channel.selected .channelContent .column, #wiring .newChannel.selected .channelContent .column {
+	vertical-align: top;
 }
 
 #wiring #channels_list .channel.selected .channelContent .column .labelContent, #wiring .newChannel.selected .channelContent .column .labelContent {
 	color: #2D6F9C;
+	vertical-align: top;
+	text-align: left;
+	white-space: nowrap;
+	margin: 0px
+}
+
+
+#wiring #channels_list .channel.selected .channelContent .column .filterValue, #wiring .newChannel.selected .channelContent .column .filterValue {
+	margin-top: -1px;
+	white-space: nowrap;
 }
 
 #wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
-	background: #E0E0E0;
-	border:0px none;
+  background: #E0E0E0;
+  border:0px none;
+  margin: 0.05ex 0ex 0.05ex 0ex;
+  width:100%;
+  cursor: text;
 }
 
 #wiring #wiring_messages {
   border: 1px solid orange;
   background: lightyellow;
+  margin: 1ex 20px;
+  padding: 1ex 2ex;
 }
 
-#wiring #newChannelForm .linkSubmit{
+#wiring #newChannelForm .linkSubmit {
    color: blue;
    background-color:#E0E0E0;
    border-style:none;
    border-color:#FFFFFF;
+   cursor: pointer;
    text-decoration: underline;
 }
 
 #wiring .newChannelInput {
    border:1px solid #4C5054;
+   margin:0px 1ex;
 }
 
 #wiring .channelNameInput {
    border:0px;
-   background: #97A0A8;
+   margin:0px 1ex;
+   cursor:pointer;
+   background: transparent;
 }
 
 #wiring .selected .channelNameInput {
-	background: transparent url(../images/fond.gif) repeat;
+	background: transparent url("../images/fond.gif") repeat;
+	cursor: text;
+}
+
+/*.canvas div div {
+  z-index: 3;
 }
 
 .canvas .arrow {
-	background: transparent url(../images/wiring/wiringArrow.png) no-repeat;
+  position: absolute;
+  z-index: 3;
+  width: 20px;
+  height: 16px;
+  background: transparent url("../images/wiringArrow.png") no-repeat;
+}*/
+
+.canvas .arrow {
+  stroke: #2D6F9C;
+  fill:   none;
+  stroke-width: 2;
+  marker-end: url(#endArrow);
+}
+
+.canvas .inFromChannel {
+  stroke: green;
+  fill:   none;
+  stroke-width: 2;
+  marker-end: url(#endArrow);
+}
+
+.canvas .outToChannel {
+  stroke: red;
+  fill:   none;
+  stroke-width: 2;
+  marker-end: url(#endArrow);
 }
 
 .helpwiringheader {
-	border: 1px solid #AAA;
-	-moz-border-radius:6px;
-	background:white;
+  border: 1px solid #AAA;
+  -moz-border-radius:6px;
+  background:white;
 }

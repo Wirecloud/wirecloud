@@ -2,6 +2,16 @@
   width: 100%;
 }
 
+#wiring #wiring_wrapper {
+  position: relative;
+}
+
+#wiring #wiring_table {
+  position: relative;
+  clear:    both;
+  z-index:  1;
+}
+
 #wiring #channels_list {
   margin: 2ex 0px;
   padding: 0px;
@@ -64,184 +74,84 @@
   padding: 2px;
 }
 
-.form-row input[type="submit"] {
-  padding-left: 18px;
-}
-
 #wiring #newChannelForm {
     text-align: center;
 }
 
 #wiring .igadget {
-  margin:3px 2px;
   position: relative;
   font-weight: bold;
   padding: 3px 3px 0px;
 }
 
-#wiring .igadget .igadgetContent {
-  padding: 0px 0px 1px 0px;
-  font-weight: normal;
-}
-
-#wiring .eventColumn .igadget .igadgetContent div {
-  padding: 0px 14px 0px 0px;
-  text-align: right;
+#wiring .igadget .content div {
   position: relative;
-  margin: 6px 0px;
 }
 
-#wiring .slotColumn .igadget .igadgetContent div {
-  padding: 0px 0px 0px 14px;
-  text-align: left;
-  position: relative;
-  margin: 6px 0px;
+#wiring .igadget.unfoldable > .header {
+  cursor: default;
 }
 
-#wiring .igadget.folded, #wiring .igadgetContent.folded{
+#wiring .igadget.folded, #wiring .igadgetContent.folded {
   display: none;
 }
 
-#wiring .igadget .igadgetContent div .chkItem {
-  position: absolute;
-  display: inline;
-  width: 18px;
-  height: 18px;
-  border: 0px;
-  padding: 0px;
-  top: -8px;
-}
-
-#wiring .igadget .igadgetContent div .unchkItem {
-  position: absolute;
-  display: inline;
-  width: 18px;
-  height: 18px;
-  border: 0px;
-  padding: 0px;
-  top: -8px;
-}
-
-#wiring .eventColumn .igadget .igadgetContent .chkItem {
-  right: -14px;
-}
-
-#wiring .eventColumn .igadget .igadgetContent .unchkItem {
-  right: -14px;
-}
-
-#wiring .slotColumn .igadget .chkItem {
-  left: -14px;
-}
-
-#wiring .slotColumn .igadget .igadgetContent .unchkItem {
-  left: -14px;
-}
-
-#wiring .tab .tabContent .chkItem {
-  position: absolute;
-  display: inline;
-  width: 18px;
-  height: 18px;
-  border: 0px;
-  padding: 0px;
-}
-
-#wiring .tab .tabContent .unchkItem {
-  position: absolute;
-  display: inline;
-  width: 18px;
-  height: 18px;
-  border: 0px;
-  padding: 0px;
-}
-
-#wiring .slotColumn .tab .tabContent .chkItem {
-  left: -9px;
-  top: -1px;
-}
-
-#wiring .slotColumn .tab .tabContent .unchkItem {
-  left: -9px;
-  top: -1px;
-}
-
 #wiring .tab {
-  margin: 5px 0px;
-  position: relative;
-  padding: 2px;
-}
-
-#wiring .igadgetName {
-  padding-left: 20px;
-  cursor:pointer;
-}
-
-#wiring .tab .tabContent {
-  padding: 0px 0px 5px 0px;
-  cursor:pointer;
-  font-weight: bold;
-  margin: 2px 0px;
-}
-
-#wiring .eventColumn .tab .tabContent {
-  padding: 0px 14px 0px 0px;
-  text-align: right;
   position: relative;
 }
 
-#wiring .slotColumn .tab .tabContent {
-  padding: 0px 0px 0px 14px;
-  text-align: left;
-  position: relative;
-}
-
-#wiring #newChannelForm .addSubmit {
-  cursor: pointer; cursor: hand;
-  padding: 0px;
-  height: 16px;
-  width: 16px;
-  border: 0px none;
+#wiring .eventColumn .tab.empty, #wiring .tab .igadget.empty {
+  display: none;
 }
 
 #wiring .newChannel, #wiring #unfold_all_link {
   cursor: pointer;
 }
 
-#wiring .newChannel{
+#wiring .newChannel {
   margin: 2ex 1ex;
   text-align: center;
 }
 
-#wiring #wiring_options{
-  position:relative;
-  float:right;
-  top: 5px;
-  right: 5px;
-  font-size: 90%;
+#wiring #wiring_options {
+  position: relative;
+  float:    right;
+  z-index:  1;
+  margin:   5px;
 }
 
-#wiring #unfold_all_link{
-  display:inline;
+#wiring #unfold_all_link {
+  display: inline;
 }
 
-#wiring #wiring_options label{
+#wiring #wiring_options label {
  margin-right: 20px;
 }
 
-#wiring #unfold_chkItem{
+#wiring #unfold_chkItem {
   display: inline;
   width: 15px;
   height: 15px;
   border: 0px;
-  padding: 0px;  
+  padding: 0px;
   cursor: pointer;
 }
 
 #wiring #channels_list .channel {
-  margin: 2ex 1ex;
-  padding: 0px;
   cursor: pointer; cursor: hand;
+  position: relative;
+}
+
+#wiring #channels_list .channel .inAnchor {
+  position: absolute;
+}
+
+#wiring #channels_list .channel .outAnchor {
+  position: absolute;
+}
+
+#wiring #channels_list .channel.selected .inAnchor, #wiring #channels_list .channel.selected .outAnchor {
+  cursor:default;
 }
 
 #wiring img {
@@ -249,78 +159,77 @@
   vertical-align: middle;
 }
 
-#wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
-  padding: 0.5ex 1ex 0.5ex 1ex;
+#wiring #channels_list .channel .channelContent {
+  display: none;
+  cursor: default;
 }
 
-#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
+#wiring #channels_list .channel.selected .channelContent {
   display: block;
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher {
 	margin-left: 5px;
 	cursor: pointer;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column, #wiring .newChannel.selected .channelContent .column {
+#wiring #channels_list .channel.selected .channelContent .column {
 	vertical-align: top;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column .labelContent, #wiring .newChannel.selected .channelContent .column .labelContent {
-	vertical-align: top;
-	text-align: left;
-	white-space: nowrap;
-	margin: 0px
+#wiring #channels_list .channel.selected .channelContent .column .labelContent {
+  vertical-align: top;
+  text-align: left;
+  white-space: nowrap;
+  margin: 0px
 }
 
 
-#wiring #channels_list .channel.selected .channelContent .column .filterValue, #wiring .newChannel.selected .channelContent .column .filterValue {
-	margin-top: -1px;
-	white-space: nowrap;
+#wiring #channels_list .channel.selected .channelContent .column .filterValue {
+  margin-top: -1px;
+  white-space: nowrap;
 }
 
-#wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
-	margin: 0.05ex 0ex 0.05ex 0ex;
-	width:100%;
-	cursor: text;
+#wiring #channels_list .channel.selected .channelContent .paramValueInput {
+  background: #E0E0E0;
+  border:0px none;
+  margin: 0.05ex 0ex 0.05ex 0ex;
+  width:100%;
+  cursor: text;
 }
 
 #wiring #wiring_messages {
-  margin: 1ex 20px;
-  padding: 1ex 2ex;
   display: none;
 }
 
-#wiring #newChannelForm .linkSubmit{;
-   cursor: pointer;
-}
-
-#wiring .newChannelInput {
-   margin:0px 1ex;
-}
-
 #wiring .channelNameInput {
-   margin:0px 1ex;
-   cursor:pointer;
+  border:0px;
+  margin:0px 1ex;
+  cursor:pointer;
+  background: #97A0A8;
 }
 
 #wiring .selected .channelNameInput {
-	cursor: text;
+  cursor: text;
 }
 
-.canvas div div {
-	z-index: 3;
+.canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 
-.canvas .arrow {
-	position: absolute;
-	z-index: 3;
-	width: 20px;
-	height: 16px;
+.canvas div {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .helpwiringheader {
-	text-align:left;
-	font-size:80%;
-	white-space:pre;
+  text-align:left;
+  font-size:80%;
+  white-space:pre;
 }

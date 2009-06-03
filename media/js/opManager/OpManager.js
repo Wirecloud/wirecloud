@@ -169,7 +169,7 @@ var OpManagerFactory = function () {
 			this.catalogue.show();
 
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
-			
+
 			// Load catalogue data!
 			if (this.firstAccessToTheCatalogue || this.catalogueIsCurrentTab)
 			{
@@ -188,7 +188,7 @@ var OpManagerFactory = function () {
 			
 			LogManagerFactory.getInstance().show();
 		}
-		
+
 		OpManager.prototype.clearLogs = function () {
 			LogManagerFactory.getInstance().reset();
 			LayoutManagerFactory.getInstance().clearErrors();
@@ -206,9 +206,13 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace = workSpace;
 			this.activeWorkSpace.downloadWorkSpaceInfo();
 		}
-		
-		OpManager.prototype.logout = function () {		
-			this.activeWorkSpace.sendBufferedVars();
+
+		/**
+		 * Method called when the user clicks the logout link. As this action
+		 * changes the document URL, an unload event will be launched (so
+		 * unloadEnvironment will be called).
+		 */
+		OpManager.prototype.logout = function () {
 			window.open("/logout");
 		}
 
@@ -269,6 +273,9 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace.getWiring().sendEvent(gadget, event, value);
 		}
 
+		/**
+		 * Loads the EzWeb Platform.
+		 */
 		OpManager.prototype.loadEnviroment = function () {
 			// Init Layout Manager
 			LayoutManagerFactory.getInstance().resizeWrapper();
@@ -286,6 +293,10 @@ var OpManagerFactory = function () {
 			              true);
 		}
 
+		/**
+		 * Unloads the EzWeb Platform. This method is called, by default, when
+		 * the unload event is captured.
+		 */
 		OpManager.prototype.unloadEnvironment = function() {
 			if (this.activeWorkSpace)
 				this.activeWorkSpace.unload();

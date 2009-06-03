@@ -59,7 +59,7 @@ function WorkSpace (workSpaceState) {
 			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 
 			if (tabs.length > 0) {
-				for (i = 0; i < tabs.length; i++)
+				for (var i = 0; i < tabs.length; i++)
 					this.tabInstances[tabs[i].id].getDragboard().paint();
 			}
 
@@ -194,9 +194,9 @@ function WorkSpace (workSpaceState) {
 	var createTabSuccess = function(transport) {
 		var response = transport.responseText;
 		var tabInfo = eval ('(' + response + ')');
-		
+
 		tabInfo.igadgetList=[];
-		
+
 		var newTab = new Tab(tabInfo, this);
 		this.tabInstances[tabInfo.id] = newTab;
 		this._checkLock();
@@ -208,7 +208,7 @@ function WorkSpace (workSpaceState) {
 
 		newTab.getDragboard().paint();
 	}
-	
+
 	var createTabError = function(transport, e) {
 		var msg;
 		if (transport.responseXML) {
@@ -220,11 +220,11 @@ function WorkSpace (workSpaceState) {
 		msg = interpolate(gettext("Error creating a tab: %(errorMsg)s."), {errorMsg: msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 	}
-	
+
 	// ****************
 	// PUBLIC METHODS
 	// ****************
-	
+
 	WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
 		var igadget = this.getIgadget(igadgetId);
 		var reload = igadget.loaded;
@@ -232,18 +232,18 @@ function WorkSpace (workSpaceState) {
 
 		if (reload) {
 			this.wiring.refreshIGadget(igadget);
-		} if (this._allIgadgetsLoaded()) {
-			this.wiring.propagateInitialValues(true);
+		} else if (this._allIgadgetsLoaded()) {
+			this.wiring.propagateInitialValues();
 		}
 	}
-	
+
 	WorkSpace.prototype.sendBufferedVars = function () {
 		this.varManager.sendBufferedVars();
 	}
-	
+
 	WorkSpace.prototype.fillWithLabel = function() {
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		if(this.workSpaceNameHTMLElement != null){
+		if (this.workSpaceNameHTMLElement != null) {
 			this.workSpaceNameHTMLElement.remove();
 		}
 		var nameToShow = (this.workSpaceState.name.length>15)?this.workSpaceState.name.substring(0, 15)+"..." : this.workSpaceState.name;
@@ -259,27 +259,25 @@ function WorkSpace (workSpaceState) {
 			}
 		}.bind(this));
 		LayoutManagerFactory.getInstance().resizeTabBar();
-    }
-
+	}
 
 	WorkSpace.prototype.fillWithInput = function () {
 		this.workSpaceNameHTMLElement.remove();
 		var inputHTML = "<input class='ws_name' value='"+this.workSpaceState.name+"' size='"+this.workSpaceState.name.length+" maxlength=30' />";
 		new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
 		this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
-		this.workSpaceNameHTMLElement.focus();	
+		this.workSpaceNameHTMLElement.focus();
 		Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
-					e.target.blur();}}.bind(this));						
+					e.target.blur();}}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){Event.stop(e);
 					this.updateInfo(e.target.value);}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){Event.stop(e);
 					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
 	}
-	
-	
-    WorkSpace.prototype.updateInfo = function (workSpaceName) {
+
+	WorkSpace.prototype.updateInfo = function (workSpaceName) {
 		//If the server isn't working the changes will not be saved
 		if(workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
 			var msg = interpolate(gettext("Error updating a workspace: invalid name"), true);
@@ -492,6 +490,7 @@ function WorkSpace (workSpaceState) {
 		// Unload Wiring Interface
 		// TODO Wiring Interface should be shared between Workspaces
 		if (this.wiringInterface !== null) {
+			this.wiringInterface.saveWiring();
 			this.wiringInterface.unload();
 			this.wiringInterface = null;
 		}

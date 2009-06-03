@@ -33,8 +33,8 @@
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core import serializers
 from django.utils import simplejson
-from django.utils.translation import ugettext as _ 
- 
+from django.utils.translation import ugettext as _
+
 from commons.resource import Resource
 
 from django.db import transaction
@@ -46,7 +46,7 @@ from commons.utils import json_encode, get_xml_error
 
 from igadget.models import IGadget, Variable
 from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
-from connectable.models import In, Out, InOut, Filter
+from connectable.models import In, Out, RelatedInOut, InOut, Filter
 
 from commons.logs_exception import TracedServerError
 
@@ -59,27 +59,27 @@ class ConnectableEntry(Resource):
             igadgets = IGadget.objects.filter(tab__workspace__pk=workspace_id)
             igadget_data_list = get_wiring_data(igadgets)
             wiring['iGadgetList'] = igadget_data_list
-            
+
             tabs = Tab.objects.filter(workspace__pk=workspace_id)
             tab_data = serializers.serialize('python', tabs, ensure_ascii=False)
             wiring['tabList'] = [get_tab_data(d) for d in tab_data]
-            
+
         except WorkSpace.DoesNotExist:
             wiring['iGadgetList'] = []
             wiring['tabList'] = []
-        
+
         # InOut list
         inouts = InOut.objects.filter(workspace__pk=workspace_id)
         inout_data = serializers.serialize('python', inouts, ensure_ascii=False)
         wiring['inOutList'] = [get_inout_data(d) for d in inout_data]
-        
+
         # Filter list
         filters = Filter.objects.all()
         filter_data = serializers.serialize('python', filters, ensure_ascii=False)
         wiring['filterList'] = [get_filter_data(d) for d in filter_data]
-        
+
         return HttpResponse(json_encode(wiring), mimetype='application/json; charset=UTF-8')
-    
+
     @transaction.commit_on_success
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
@@ -90,122 +90,238 @@ class ConnectableEntry(Resource):
         else:
             return HttpResponseBadRequest (_(u'JSON parameter expected'))
 
-        try:                        
+        try:
             workspace = WorkSpace.objects.get(id=workspace_id)
-            
-            #Mapping between provisional ids and database-generated ids!!!
-            ids_mapping = []
-        
+
+            # Mapping between provisional ids and database-generated ids!!!
+            id_mapping = {}
+
             # Erasing variables associated with channels deleted explicitly by the user
             channelsDeletedByUser = json['channelsForRemoving']
             for deleted_channel_id in channelsDeletedByUser:
                 #Removing workspace_variable and abstract_variable of channels deleted explicitly by user
                 deleted_channel = InOut.objects.get(id=deleted_channel_id)
-                
+
                 abstract_variable = deleted_channel.workspace_variable.abstract_variable
-                
+
                 VariableValue.objects.get(user=user, abstract_variable=abstract_variable).delete()
-                
+
                 abstract_variable.delete()
                 deleted_channel.workspace_variable.delete()
-            
+
             # Erasing all channels of the workspace!!
             old_channels = InOut.objects.filter(workspace_variable__workspace=workspace)
             if old_channels:
+                for old_channel in old_channels:
+                    # Deleting the old relationships between channels
+                    # First delete the relationships where old_channel is the input
+                    rel_old_channels = RelatedInOut.objects.filter(in_inout=old_channel)
+                    if rel_old_channels:
+                        rel_old_channels.delete()
+
+                    # And then the relationships where old_channel is the output
+                    rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
+                    if rel_old_channels:
+                        rel_old_channels.delete()
+
                 old_channels.delete()
-                
+
             # Adding channels recreating JSON structure!
             new_channels = json['inOutList']
             for new_channel_data in new_channels:
                 if (new_channel_data['provisional_id']):
                     #It's necessary to create all objects!
-                    
+
                     #Creating abstract variable
                     new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'])
                     new_abstract_variable.save()
-                    
+
                     #Creating variable value
                     new_variable_value = VariableValue(user=user, value="", abstract_variable=new_abstract_variable)
                     new_variable_value.save()
-                    
+
                     new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
                     new_ws_variable.save()
-                    
-                    try:
-                        filter = Filter.objects.get(id=new_channel_data['filter'])
-                        fparam_values = new_channel_data['filter_params']
-                    except Filter.DoesNotExist:
-                        filter = None 
-                        fparam_values = None
-                    
+
+                    filter = None
+                    fparam_values = None
+                    if new_channel_data['filter']:
+                        try:
+                            filter = Filter.objects.get(id=new_channel_data['filter'])
+                            fparam_values = new_channel_data['filter_params']
+                        except Filter.DoesNotExist:
+                            pass
+
                     channel = InOut(name=new_channel_data['name'], workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
                     channel.save()
-                    
-                    #A channel has been generated. It's necessary to correlate provisional and definitive ids!
-                    id_mapping = {}
-                    
-                    id_mapping['id'] = channel.id;
-                    id_mapping['provisional_id'] = new_channel_data['id'];
-                    id_mapping['var_id'] = new_ws_variable.id;
-                    
-                    ids_mapping.append(id_mapping);
+
+                    # A channel has been generated. It's necessary to correlate provisional and definitive ids!
+                    id_mapping[new_channel_data['id']] = {'new_id': channel.id, 'new_wv_id': new_ws_variable.id}
+
                 else:
                     #WorkSpaceVariable objects is still in database, it's only necessary to link it!
                     workspace_variable = WorkSpaceVariable.objects.get(id=new_channel_data['var_id'])
-                    
+
                     workspace_variable.abstract_variable.name = new_channel_data['name']
                     workspace_variable.abstract_variable.save()
-                
+
                     try:
                         filter = Filter.objects.get(id=new_channel_data['filter'])
                         fparam_values = new_channel_data['filter_params']
                     except Filter.DoesNotExist:
                         filter = None
                         fparam_values = None
-                    
+
                     channel = InOut(id=new_channel_data['id'], name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
-                    channel.save()               
-                    
-                #Setting channel connections!
-                
-                #In connections
+                    channel.save()
+
+                # In connections
+                # InOut out connections will be created later
                 ins = new_channel_data['ins']
-                for input in ins:
-                    if input['connectable_type'] == 'in':
-                        connectable = In.objects.get(id=input['id'])
-                    if input['connectable_type'] == 'inout': 
-                        connectable = InOut.objects.get(id=input['id'])
-                    
-                    connectable.inouts.add(channel);
-                    connectable.save()
-                
-                
-                #Out connections
-                outs = new_channel_data['outs']
-                for output in outs:
-                    if output['connectable_type'] == 'out':
-                        connectable = Out.objects.get(id=output['id'])
-                    if output['connectable_type'] == 'inout': 
-                        connectable = InOut.objects.get(id=output['id'])
-                    
+                for inputId in ins:
+                    connectable = In.objects.get(id=inputId)
                     connectable.inouts.add(channel);
                     connectable.save()
 
-            # Saves all channels            
+                # Out connections
+                # InOut out connections will be created later
+                outs = new_channel_data['outs']
+                for outputId in outs:
+                    connectable = Out.objects.get(id=outputId)
+                    connectable.inouts.add(channel);
+                    connectable.save()
+
+            # Now it is time to recreate channel to channel connections
+            for new_channel_data in new_channels:
+                inouts = new_channel_data['inouts']
+                for inout_to_add in inouts:
+                    inout_id = inout_to_add['id']
+
+                    # search final id if needed
+                    if inout_to_add['provisional_id']:
+                        inout_id = id_mapping[inout_id]['new_id']
+
+                    relationship = RelatedInOut(in_inout=channel, out_inout=InOut.objects.get(id=inout_id))
+                    relationship.save()
+
+            # Saves all channels
             #transaction.commit()
-            
-            json_result = {'ids': ids_mapping}
-            
+
+            json_result = {'ids': id_mapping}
+
             return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist:
             msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
-            
             raise TracedServerError(e, json, request, msg)
 
         except Exception, e:
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
-            
             raise TracedServerError(e, json, request, msg)
 
         return HttpResponse('ok')
 
+    @transaction.commit_on_success
+    def update(self, request, workspace_id):
+        user = get_user_authentication(request)
+
+        # Gets all needed parameters from request
+        if request.POST.has_key('json'):
+            json = simplejson.loads(request.POST['json'])
+        else:
+            return HttpResponseBadRequest (_(u'JSON parameter expected'))
+
+        try:
+            workspace = WorkSpace.objects.get(id=workspace_id)
+        except WorkSpace.DoesNotExist:
+            msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
+            raise TracedServerError(e, json, request, msg)
+
+        id_mapping = {}
+
+        # Pashe 1: Additions
+        channels_to_add = json['channelsToAdd']
+        for new_channel in channels_to_add:
+            # Creating the abstract variable for this channel
+            new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'])
+            new_abstract_variable.save()
+
+            # Creating the variable value entry for this channel
+            new_variable_value = VariableValue(user=user, value="", abstract_variable=new_abstract_variable)
+            new_variable_value.save()
+
+            # And the workspace variable
+            new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
+            new_ws_variable.save()
+
+            channel = InOut(name="", workspace_variable=new_ws_variable, filter=None, filter_param_values=None, friend_code="")
+            channel.save()
+
+            id_mapping[new_channel['id']] = {'cid': channel.id, 'wvid': new_ws_variable.id}
+
+        # Pashe 2: Updates
+        channels_to_update = json['channelsToUpdate']
+        for current_channel_data in channels_to_update:
+            current_channel_id = current_channel_data['id']
+
+            # search final id if needed
+            if current_channel_data['provisional_id']:
+                current_channel_id = id_mapping[current_channel_id]['cid']
+
+            current_channel = InOut.objects.get(id=current_channel_data['id'])
+
+            for input_to_add in current_channel_data['inputsToRemove']:
+                connectable = In.objects.get(id=input_to_add['id'])
+                connectable.inouts.add(current_channel);
+                connectable.save()
+
+            for input_to_remove in current_channel_data['inputsToRemove']:
+                connectable = In.objects.get(id=input_to_add['id'])
+                connectable.inouts.remove(current_channel);
+                connectable.save()
+
+            for output_to_add in current_channel_data['outputsToRemove']:
+                connectable = Out.objects.get(id=output_to_add['id'])
+                connectable.inouts.add(current_channel);
+                connectable.save()
+
+            for output_to_remove in current_channel_data['outputsToRemove']:
+                connectable = Out.objects.get(id=output_to_add['id'])
+                connectable.inouts.remove(current_channel);
+                connectable.save()
+
+            for inout_to_add in current_channel_data['inoutsToRemove']:
+                inout_id = input_to_add['id']
+
+                # search final id if needed
+                if inout_to_add['provisional_id']:
+                    inout_id = id_mapping[inout_id]['cid']
+
+                relationship = RelatedInOut(in_inout=current_channel, out_inout=InOut.objects.get(id=inout_id))
+                relationship.save()
+
+            for output_to_remove in current_channel_data['outputsToRemove']:
+                inout_id = input_to_add['id']
+
+                # search final id if needed
+                if inout_to_add['provisional_id']:
+                    inout_id = id_mapping[inout_id]['cid']
+
+                relationship = RelatedInOut.objects.get(in_inout=current_channel, out_inout=inout_id)
+                relationship.delete()
+
+        # Pashe 3: Deletions
+        channels_to_remove = json['channelsToRemove']
+        for current_channel_data in channels_to_remove:
+            channel = InOut.objects.get(id=current_channel_data['id'])
+
+            abstract_variable = channel.workspace_variable.abstract_variable
+
+            VariableValue.objects.get(user=user, abstract_variable=abstract_variable).delete()
+
+            abstract_variable.delete()
+            channel.workspace_variable.delete()
+            channel.delete()
+
+
+        json_result = {'id_mapping': id_mapping}
+        return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')

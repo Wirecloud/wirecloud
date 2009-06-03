@@ -24,407 +24,482 @@
  */
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
-// This is the class has the common properties of every connectable object of the wiring module //
-// The other connectable classes from the wiring module will inherit from this class            //
-//////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @abstract
+ *
+ * This class has the common properties of every connectable object of the wiring module.
+ * The other connectable classes from the wiring module will inherit from this class.
+ *
+ * @param name name of the connectable
+ * @param type data type managed by this connectable
+ * @param friendCode friendCode of this connectable
+ * @param id id of this connectable
+ */
 function wConnectable (name, type, friendCode, id) {
-  this.id = id;
-  this._name = name;
-  this._type = type;
-  this._friendCode = friendCode;
-  this.connectableType = null;
-  this.view = null;
-}
-
-wConnectable.prototype.annotate = function() {}
-
-wConnectable.prototype.getType = function() {
-  return this.type;
-}
-
-wConnectable.prototype.getValue = function() {
-  throw new Exception("Unimplemented function"); // TODO
-}
-
-wConnectable.prototype.getName = function() {
-  return this._name;
-}
-
-wConnectable.prototype.getId = function() {
-  return this.id;
-}
-
-wConnectable.prototype.getFriendCode = function() {
-  return this._friendCode;
-}
-
-wConnectable.prototype.setInterface = function(view) {
-	this.view=view;
+	this.id = id;
+	this._name = name;
+	this._type = type;
+	this._friendCode = friendCode;
 }
 
 /**
- * This method must be called to avoid memory leaks caused by circular references.
+ * @private
+ *
+ * Stablish a new value for this <code>wConnectable</code> but without
+ * propagating any event.
+ */
+wConnectable.prototype._annotate = function() {
+	var funcName = '_annotate';
+	var msg = gettext("Unimplemented function: %(funcName)s");
+	msg = interpolate(msg, {funcName: funcName}, yes);
+	LogManagerFactory.getInstance().log(msg);
+	return;
+}
+
+wConnectable.prototype.getType = function() {
+	return this.type;
+}
+
+wConnectable.prototype.getValue = function() {
+	var funcName = 'getValue';
+	var msg = gettext("Unimplemented function: %(funcName)s");
+	msg = interpolate(msg, {funcName: funcName}, yes);
+	LogManagerFactory.getInstance().log(msg);
+	return;
+}
+
+wConnectable.prototype.getName = function() {
+	return this._name;
+}
+
+wConnectable.prototype.getId = function() {
+	return this.id;
+}
+
+wConnectable.prototype.getFriendCode = function() {
+	return this._friendCode;
+}
+
+/**
+ * Disconnects this <code>wConnectable</code> from all the
+ * <code>wConnectables</code> this is connected to.
+ */
+wConnectable.prototype.fullDisconnect = function() {
+	var funcName = 'fullDisconnect';
+	var msg = gettext("Unimplemented function: %(funcName)s");
+	msg = interpolate(msg, {funcName: funcName}, yes);
+	LogManagerFactory.getInstance().log(msg);
+	return;
+}
+
+/**
+ * This method must be called to avoid memory leaks caused by circular
+ * references.
  */
 wConnectable.prototype.destroy = function () {
 	this.fullDisconnect();
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This class represents every object which may be placed in the middle of a connection between a In object and wOut object //
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/**
+ * @abstract
+ *
+ * This class represents every object in which the transmission is ended
+ */
 function wOut(name, type, friendCode, id) {
-   wConnectable.call(this, name, type, friendCode, id);
-   this.connectableType = "out";
-   this.inouts = new Array();
+	wConnectable.call(this, name, type, friendCode, id);
+	this.inouts = new Array();
 }
 
 wOut.prototype = new wConnectable();
 
-wOut.prototype.annotate = function(value) {
-    this.variable.annotate(value);
+wOut.prototype._annotate = function(value) {
+	this.variable.annotate(value);
 }
 
-wOut.prototype.addInOut = function(inout) {
+/**
+ * @private
+ *
+ * This method must be used only by the connectables code. If you like to
+ * connect an wOut to an wInOut, you should call to the connect method of the
+ * wInOut intance.
+ */
+wOut.prototype._addInput = function(inout) {
 	this.inouts.push(inout);
 }
 
-wOut.prototype.disconnect = function(inout) {
+/**
+ * @private
+ *
+ * This method must be used only by connectables code. If you like to disconnect
+ * an wOut from an wInOut, you should call to the disconnect method of the wInOut
+ * intance.
+ */
+wOut.prototype._removeInput = function(inout) {
 	inout._removeOutput(this);
-    this.inouts.remove(inout);
+	this.inouts.remove(inout);
 }
 
 wOut.prototype.fullDisconnect = function() {
-  // Disconnecting inouts
-  var inouts = this.inouts.clone();
-  for (var i = 0; i < inouts.length; ++i)
-    this.disconnect(inouts[i]);
+	// Disconnecting inouts
+	var inouts = this.inouts.clone();
+	for (var i = 0; i < inouts.length; ++i)
+		inouts[i].disconnect(this);
 }
 
 wOut.prototype.refresh = function() {
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This class represents every object which may initialize one transmission through the wiring module //
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * @abstract
+ *
+ * This class represents every object which may initialize one transmission
+ * through the wiring module.
+ *
+ * @param name
+ * @param type
+ * @param friendCode
+ * @param id
+ */
 function wIn(name, type, friendCode, id) {
-  wConnectable.call(this, name, type, friendCode, id);
-  this.outputs = new Array();
-  this.connectableType = "in";
+	wConnectable.call(this, name, type, friendCode, id);
+	this.outputs = new Array();
   this.changed = false;
 }
-
 wIn.prototype = new wConnectable();
 
 wIn.prototype.connect = function(out) {
-  this.outputs.push(out);
-  if (out instanceof wInOut)
-    out._addInput(this);
+	this.outputs.push(out);
+
+	if (out instanceof wInOut)
+		out._addInput(this);
 }
 
 wIn.prototype.disconnect = function(out) {
-  if (this.outputs.getElementById(out.getId()) == out) {
-    if (out instanceof wInOut)
-      out._removeInput(this);
+	if (this.outputs.getElementById(out.getId()) == out) {
+		if (out instanceof wInOut)
+			out._removeInput(this);
 
-    this.outputs.remove(out);
-  }
+		this.outputs.remove(out);
+	}
 }
 
 wIn.prototype.fullDisconnect = function() {
-  // Outputs
-  var outputs = this.outputs.clone();
-  for (var i = 0; i < outputs.length; ++i)
-    this.disconnect(outputs[i]);
+	// Outputs
+	var outputs = this.outputs.clone();
+	for (var i = 0; i < outputs.length; ++i)
+		this.disconnect(outputs[i]);
 }
 
-wIn.prototype.propagate = function(value, initial) {  
-  for (var i = 0; i < this.outputs.length; ++i)
-    this.outputs[i].annotate(value);
+/**
+ * Sets the value for this <code>wIn</code>. Also, this method propagates this
+ * new value to the output connectables.
+ */
+wIn.prototype.propagate = function(value, initial) {
+	for (var i = 0; i < this.outputs.length; ++i)
+		this.outputs[i]._annotate(value);
 
-  for (var i = 0; i < this.outputs.length; ++i)
-    this.outputs[i].propagate(value, initial, this);
+	for (var i = 0; i < this.outputs.length; ++i)
+		this.outputs[i].propagate(value, initial, this);
 }
 
 wIn.prototype.refresh = function() {
 }
 
-/////////////////////////////////////////////////////////////////////
-// This class represents every object which may transmit some data //
-/////////////////////////////////////////////////////////////////////
+/**
+ * @abstract
+ * This class represents every object which may transmit some data.
+ *
+ * @param name
+ * @param type
+ * @param friendCode
+ * @param id
+ */
 function wInOut(name, type, friendCode, id) {
-  wIn.call(this, name, type, friendCode, id);
+	wIn.call(this, name, type, friendCode, id);
 
-  this.inputs = new Array();
-  this.modified_inputs_state = new Array();
-  
-  this.connectableType = "inout";
+	this.inputs = new Array();
+	this.modified_inputs_state = new Array();
 }
-
 wInOut.prototype = new wIn();
 
-wInOut.prototype.annotate = function(value) {
-  for (var i = 0; i < this.outputs.length; ++i)
-      this.outputs[i].annotate();
-}	
+/**
+ * @private
+ *
+ * Stablish a new value for this <code>wConnectable</code> but without
+ * propagating any event.
+ */
+wInOut.prototype._annotate = function(value) {
+	for (var i = 0; i < this.outputs.length; ++i)
+		this.outputs[i]._annotate(value);
+}
 
-wInOut.prototype.connect = function(out) {	
+wInOut.prototype.connect = function(out) {
 	wIn.prototype.connect.call(this, out);
-	
-	out.addInOut(this);
 }
 
 wInOut.prototype._addInput = function(wIn) {
-  this.inputs.push(wIn);
-  this.modified_inputs_state.push(false);
+	this.inputs.push(wIn);
+	this.modified_inputs_state.push(false);
 }
 
 wInOut.prototype._removeInput = function(wIn) {
-  if (this.inputs.getElementById(wIn.getId()) == wIn) {
-	    this.inputs.remove(wIn);
-	    
-	    var input_position = this.get_input_position(wIn);
-	    
-	    this.modified_inputs_state.removeById(input_position);
-  }
+	if (this.inputs.getElementById(wIn.getId()) == wIn) {
+		this.inputs.remove(wIn);
+
+		var input_position = this.inputs.indexOf(wIn);
+		this.modified_inputs_state.removeById(input_position);
+	}
 }
 
 wInOut.prototype._removeOutput = function(wOut) {
-  if (this.outputs.getElementById(wOut.getId()) == wOut)
-    this.outputs.remove(wOut);
-}
-
-wInOut.prototype.get_input_position = function (input) {
-  for (var i = 0; i < this.inputs.length; i++) {
-  	if (this.inputs[i] == input)
-  		return i;
-  }
+	if (this.outputs.getElementById(wOut.getId()) == wOut)
+		this.outputs.remove(wOut);
 }
 
 wInOut.prototype.fullDisconnect = function() {
-  // Inputs
-  var inputs = this.inputs.clone();
-  for (var i = 0; i < inputs.length; ++i)
-    inputs[i].disconnect(this);
+	// Inputs
+	var inputs = this.inputs.clone();
+	for (var i = 0; i < inputs.length; ++i)
+		inputs[i].disconnect(this);
 
-  // Outputs
-  var outputs = this.outputs.clone();
-  for (var i = 0; i < outputs.length; ++i)
-    this.disconnect(outputs[i]);
+	// Outputs
+	var outputs = this.outputs.clone();
+	for (var i = 0; i < outputs.length; ++i)
+		this.disconnect(outputs[i]);
 }
 
-// TODO implement this function
-//wInOut.prototype.searchCycle = function(name)
-
-// wChannel and wEvent (connectables that propagates values) register in their
-// associated variable, a pointer to them
-// Double-linked structure.
-
-//////////////////////////////////////////////////////////////////////////
-// This class represents a iGadget variable which may produce some data 
-//////////////////////////////////////////////////////////////////////////
+/**
+ * This class represents a iGadget variable which may produce some data (also
+ * know as event)
+ *
+ * @param variable
+ * @param type
+ * @param friendCode
+ * @param id
+ */
 function wEvent(variable, type, friendCode, id) {
-  this.variable = variable;
-  wIn.call(this, this.variable.name, type, friendCode, id);
-  this.variable.assignConnectable(this);
+	this.variable = variable;
+	wIn.call(this, this.variable.name, type, friendCode, id);
+	this.variable.assignConnectable(this);
 }
 
 wEvent.prototype = new wIn();
 
 wEvent.prototype.getQualifiedName = function () {
-  return "event_" + this.variable.id;
+	return "event_" + this.variable.id;
 }
 
 wEvent.prototype.getLabel = function () {
-  return this.variable.label;	
+	return this.variable.label;
 }
 
-wIn.prototype.getValue = function() {
+wEvent.prototype.getValue = function() {
   return this.variable.get();
 }
 
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * This class represents a <code>wConnectable</code> whose only purpose is to
+ * redistribute the data produced by an wIn object.
+ *
+ * @param variable
+ * @param name
+ * @param id
+ * @param provisional_id
+ */
 function wChannel (variable, name, id, provisional_id) {
-  this.variable = variable;
-  this.provisional_id=provisional_id;
-  wInOut.call(this, name, null, null, id);
-  this.variable.assignConnectable(this);
-  this.filter = null;
-  this.filterParams = new Array();
+	this.variable = variable;
+	this.provisional_id=provisional_id;
+	wInOut.call(this, name, null, null, id);
+	this.variable.assignConnectable(this);
+	this.filter = null;
+	this.filterParams = new Array();
 }
-
 wChannel.prototype = new wInOut();
 
 wChannel.prototype.getValue = function() {
-  if (this.filter == null){
-	return this.variable.get();  	
-  }else{
- 	if (this.filter.getNature() == 'PATT'){
- 		return this.variable.get();
- 	} else {
- 		return this.filter.run(this.variable.get(), this.filterParams);
- 	}
- }
+	if (this.filter == null || this.filter.getNature() == 'PATT')
+		return this.variable.get();
+	else if (this.filter.getNature() == 'PATT')
+		return this.filter.run(this.variable.get(), this.filterParams);
 }
 
 wChannel.prototype.getValueWithoutFilter = function() {
-	return this.variable.get();  	
+	return this.variable.get();
 }
 
 wChannel.prototype.getFilter = function() {
-  return this.filter;
+	return this.filter;
 }
 
 wChannel.prototype.setFilter = function(newFilter) {
-  this.filter = newFilter;
+	this.filter = newFilter;
 }
 
+/**
+ * @private
+ */
 wChannel.prototype.processFilterParams = function(fParamsJson_) {
-  this.filterParams = new Array();
-  if (fParamsJson_ != null){
-  	var fParams = eval (fParamsJson_);
-	for (var k = 0; k < fParams.length; k++) {
-		this.filterParams[fParams[k].index] = fParams[k].value; 
-  	}
-  }
+	this.filterParams = new Array();
+	if (fParamsJson_ != null) {
+		var fParams = eval (fParamsJson_);
+		for (var k = 0; k < fParams.length; k++)
+			this.filterParams[fParams[k].index] = fParams[k].value;
+	}
 }
 
 wChannel.prototype.setFilterParams = function(fParams) {
-  this.filterParams = fParams;
+	this.filterParams = fParams;
 }
 
 wChannel.prototype.getFilterParams = function() {
-  return this.filterParams;
+	return this.filterParams;
 }
 
-wChannel.prototype.getJSONInput = function() {
-  var json = new Hash();
-  
-  for (var i = 0; i < this.inputs.length; i++) {
-  	json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
-  }
-  
-  this.unmark_all_inputs_as_modified();
-  
-  return json;
-}
+/**
+ * @private
+ */
+wChannel.prototype._getJSONInput = function() {
+	var json = new Hash();
 
-wChannel.prototype.propagate = function(newValue, initial, input) {  
-  if (! initial) {
-  	this.mark_input_as_modified(input);
-  }
-  else {
-  	this.mark_all_inputs_as_modified(input);
-  }
-  
-  if ((this.filter != null) && (this.filter.getNature() == 'PATT')){
-  	//AD-HOC DEMUX FILTER
-  	//O-DO: CHANDE THIS TO INCLUDE THIS CODE INTO THE FILTER ITSELT
-  	
-  	if (this.all_inputs_modified()) {
-	  	var json = this.getJSONInput();
-	  	
-		var params = '';
-		
-		var keys = json.keys();
-		for (var i = 0; i < keys.length; i++) {
-			if(json[keys[i]] && json[keys[i]] != "None")
-				params += keys[i] + '=' + json[keys[i]] + '&'; 
-		}
-		
-		if (keys.length > 0) {
-			params = params.substr(0, params.length-1)
-		}
-		
-		this.variable.set(params);
-		wInOut.prototype.propagate.call(this, params, initial);
+	for (var i = 0; i < this.inputs.length; i++) {
+		json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
 	}
-  } else {
-  	this.variable.set(newValue);
-  	wInOut.prototype.propagate.call(this, this.getValue(), initial); 
-  }
- 
+
+	this.unmark_all_inputs_as_modified();
+
+	return json;
+}
+
+/**
+ * @param newValue new value for this <code>wChannel</code>
+ * @param {Boolean} initial true for initial propagations
+ * @param {wIn} source connectable the new value comes from.
+ */
+wChannel.prototype.propagate = function(newValue, initial, source) {
+	if (!initial)
+		this._markInputAsModified(source);
+	else
+		this._markAllInputsAsModified(source);
+
+	if ((this.filter != null) && (this.filter.getNature() == 'PATT')) {
+		//AD-HOC DEMUX FILTER
+		// TODO: CHANDE THIS TO INCLUDE THIS CODE INTO THE FILTER ITSELT
+
+		if (this._allInputsModified()) {
+			var json = this._getJSONInput();
+
+			var params = '';
+
+			var keys = json.keys();
+			for (var i = 0; i < keys.length; i++) {
+				if(json[keys[i]] && json[keys[i]] != "None")
+					params += keys[i] + '=' + json[keys[i]] + '&';
+			}
+
+			if (keys.length > 0)
+				params = params.substr(0, params.length-1);
+
+			this.variable.set(params);
+			wInOut.prototype.propagate.call(this, params, initial);
+		}
+	} else {
+		this.variable.set(newValue);
+		wInOut.prototype.propagate.call(this, this.getValue(), initial);
+	}
 }
 
 wChannel.prototype.getQualifiedName = function () {
-  return "channel_" + this.id;
+	return "channel_" + this.id;
 }
 
-wChannel.prototype.mark_input_as_modified = function (input) {
-    var input_position = this.get_input_position(input);
-    
-    this.modified_inputs_state[input_position]=true;
+/**
+ * @private
+ */
+wChannel.prototype._markInputAsModified = function (input) {
+	var input_position = this.get_input_position(input);
+
+	this.modified_inputs_state[input_position]=true;
 }
 
-wChannel.prototype.unmark_all_inputs_as_modified = function () {
-  for (var i = 0; i < this.modified_inputs_state.length; i++) {
-  	this.modified_inputs_state[i] = false;
-  }
+/**
+ * @private
+ */
+wChannel.prototype._unmarkAllInputsAsModified = function () {
+	for (var i = 0; i < this.modified_inputs_state.length; i++) {
+		this.modified_inputs_state[i] = false;
+	}
 }
 
-wChannel.prototype.mark_all_inputs_as_modified = function () {
-  for (var i = 0; i < this.modified_inputs_state.length; i++) {
-  	this.modified_inputs_state[i] = true;
-  }
+/**
+ * @private
+ */
+wChannel.prototype._markAllInputsAsModified = function () {
+	for (var i = 0; i < this.modified_inputs_state.length; i++) {
+		this.modified_inputs_state[i] = true;
+	}
 }
 
-wChannel.prototype.all_inputs_modified = function () {
-  for (var i = 0; i < this.modified_inputs_state.length; i++) {
-  	if (!this.modified_inputs_state[i])
-  		return false;
-  	}
-  	
-  	return true;
+/**
+ * @private
+ */
+wChannel.prototype._allInputsModified = function () {
+	for (var i = 0; i < this.modified_inputs_state.length; i++) {
+		if (!this.modified_inputs_state[i])
+			return false;
+	}
+
+	return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// This class represents a wConnectable whose only purpose is to redistribute the data produced by an wIn object //
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * This class represents a Tab as a possible target on the wiring module.
+ */
 function wTab (variable, name, tab, id) {
-  this.variable = variable;
-  this.tab = tab;
-  this.variable.assignConnectable(this);
-  wOut.call(this, name, null, null, id);
+	this.variable = variable;
+	this.tab = tab;
+	this.variable.assignConnectable(this);
+	wOut.call(this, name, null, null, id);
 }
-
 wTab.prototype = new wOut();
 
 wTab.prototype.propagate = function(newValue, initial) {
-  if(!initial){
-  	this.variable.set(newValue);
-  }
+	if (!initial)
+		this.variable.set(newValue);
 }
 
 wTab.prototype.getQualifiedName = function () {
-  return "tab_" + this.id;
+	return "tab_" + this.id;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// This class representents a iGadget variable which may receive some data //
-/////////////////////////////////////////////////////////////////////////////
+/**
+ * This class representents a iGadget variable which may receive some data.
+ *
+ * @param variable
+ * @param type
+ * @param friendCode
+ * @param id
+ */
 function wSlot(variable, type, friendCode, id) {
-  this.variable = variable;
-  this.variable.assignConnectable(this);
-  wOut.call(this, this.variable.name, type, friendCode, id);
+	this.variable = variable;
+	this.variable.assignConnectable(this);
+	wOut.call(this, this.variable.name, type, friendCode, id);
 }
-
 wSlot.prototype = new wOut();
 
 wSlot.prototype.propagate = function(newValue, initial) {
-  this.variable.set(newValue);
+	this.variable.set(newValue);
 }
 
 wSlot.prototype.getQualifiedName = function () {
-  return "slot_" + this.variable.id;
+	return "slot_" + this.variable.id;
 }
 
 wSlot.prototype.getLabel = function () {
-  return this.variable.label;	
+	return this.variable.label;
 }
 
 wSlot.prototype.refresh = function() {
-  this.variable.refresh();
+	this.variable.refresh();
 }

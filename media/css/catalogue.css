@@ -516,9 +516,7 @@
 	border:none;
 }
 
-#catalogue .center .resources .resource .content button{
-	color:white;
-	border:none;
+#catalogue .center .resources .resource .content button {
 	font-size:100%;
 	cursor:pointer;
 }
