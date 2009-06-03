@@ -85,10 +85,38 @@ class templateGenerator(Resource):
             templateInstance.template = Template.objects.get(name=templateName)
             templateInstance.save()  
 
-
             context = simplejson.loads(received_json)
             
-            context['params'] = []
+            # Parse fixed params
+            fixed_params = ''
+            
+            if 'parse_parameters' in context and 'fixed_params' in context:
+                fixed_params = context['fixed_params'].strip()
+            
+                context['fixed_params'] = {}
+                if len(fixed_params) > 0:
+                    for param in fixed_params.split(','):
+                        param = param.strip()
+                        if param != '':
+                            context['fixed_params'][param.split('=')[0].strip()] = param.split('=')[1].strip()
+                        
+            # Parse default params
+            default_params_tmp = ''
+            default_params = {}
+            
+            if 'parse_parameters' in context and 'default_params' in context:
+                default_params_tmp = context['default_params'].strip()
+                del context['default_params']
+            
+                
+                if len(default_params_tmp) > 0:
+                    for param in default_params_tmp.split(','):
+                        param = param.strip()
+                        if param != '':
+                            default_params[param.split('=')[0].strip()] = param.split('=')[1].strip()
+            
+            # Parse URL params, create a params dictionary without the fixed params    
+            context['params'] = {}
             parsedUrl = context['URL'].partition('?')
             if 'parse_parameters' in context and int(context['parse_parameters']) > 0:
                 #include the parameters of the url
@@ -97,7 +125,26 @@ class templateGenerator(Resource):
                 if len(queryString) > 0:
                     for param in queryString.split('&'):
                         if param != '':
-                            context['params'].append(param.split('=')[0])
+                            # Check if params is not on the fixed_params dictionary
+                            param_att_value = param.split('=')
+                            if not('fixed_params' in context) or not(param_att_value[0] in context['fixed_params']):
+                                if param_att_value[0] in default_params:
+                                    context['params'][param_att_value[0]] = default_params[param_att_value[0]]
+                                else:
+                                    context['params'][param_att_value[0]] = ''
+                    if ('fixed_params' in context and len(context['fixed_params']) > 0) or ('params' in context and len(context['params']) > 0):
+                        # if we have parameters, fixed or variable, add '?' to the base URL
+                        context['URL'] = context['URL'] + parsedUrl[1]
+                    # Add fixed params to the base URL and remove from context
+                    if ('fixed_params' in context and len(context['fixed_params']) > 0):
+                        fixed_params_part = ''
+                        for key,value in context['fixed_params'].items():
+                            if fixed_params_part != '':
+                                fixed_params_part = fixed_params_part + '&' + key + '=' + value
+                            else:
+                                fixed_params_part = key + '=' + value
+                        context['URL'] = context['URL'] + fixed_params_part
+                        del context['fixed_params']
                             
             events = []         
             if 'events' in context:          

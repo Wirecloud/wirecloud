@@ -99,19 +99,36 @@ var urlPref = EzWebAPI.createRGadgetVariable("urlPref", setURL);
 var homeUrl = EzWebAPI.createRGadgetVariable("homeUrl", setHomeURL);
 var refreshingTime = EzWebAPI.createRGadgetVariable("refreshingTime", setRefreshingTime);
 //WIRING
-var url = EzWebAPI.createRGadgetVariable("url", setURL);
+{% if params %}
 var params = EzWebAPI.createRGadgetVariable("parameters", setParams);
+{% endif %}
 //PROPERTIES
 var source = EzWebAPI.createRWGadgetVariable("source");
 var sourceUrl = EzWebAPI.createRWGadgetVariable("sourceUrl");
 
-//AUTHOMATIC EVENTS AND PREFERENCES OF THE URL
+//AUTHOMATIC EVENTS, SLOTS AND PREFERENCES OF THE URL
+var slotValuesArray = new Array();
 {% for param in params %}
+slotValuesArray[{{forloop.counter0}}] = {
+	'name': '{{ param }}',
+	'value': null,
+	'withValue': false,
+};
 var {{ param }}_event = EzWebAPI.createRWGadgetVariable("{{ param }}_event");
+var {{ param }}_slot = EzWebAPI.createRGadgetVariable("{{ param }}_slot",{{ param }}_slot_handler);
 var {{ param }}_pref = EzWebAPI.createRGadgetVariable("{{ param }}_pref",{{ param }}_pref_handler);
 
 function {{ param }}_pref_handler (value){
 	document.getElementById("{{ param }}_event").value=value;
+}
+
+function {{ param }}_slot_handler (value){
+	// form value = slot value
+	document.getElementById("{{ param }}_event").value=value;
+	// Update slot values array counter
+	slotValuesArray[{{forloop.counter0}}].value = value;
+	slotValuesArray[{{forloop.counter0}}].withValue = true;
+	checkSlotValues();
 }
 {% endfor %}
 
@@ -127,23 +144,25 @@ var idInterval;
 
 function init(){
 	resizeIframe()
-	real_url = url.get();
+	//the url comes from the urlPref or homeUrl preferences
 	var home_url = homeUrl.get();
+	real_url = urlPref.get();
 	
-	if (!real_url || real_url==""){
-		//the url don't come through the wiring -> select home or preference
-		real_url = urlPref.get();
-		if (!params.get() || params.get()==""){
-			// there is no params -> show the home if it exists
-			if (home_url && home_url!=""){
-				loadURL(home_url);
-			}
-			else{
-				//no more options -> show the url base
-				loadURL(real_url);
-			}
+	{% if params %}
+	if (!params.get() || params.get()==""){
+	{% endif %}
+		// there is no params -> show the home if it exists
+		if (home_url && home_url!=""){
+			loadURL(home_url);
 		}
+		else{
+			//no more options -> show the url base
+			loadURL(real_url);
+		}
+	{% if params %}	
 	}
+	{% endif %}
+
 	//print the preference values
 	{% for param in params %}
 		if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
@@ -199,9 +218,10 @@ function setHomeURL(value){
 
 function setURL(value){
 	real_url = value;
-	loadURL(real_url + params.get());
+	//loadURL(real_url + params.get());
 }
 
+{% if params %}
 function setParams(value){
 	loadURL(real_url + value);
 	if (value !="")
@@ -215,6 +235,7 @@ function setParams(value){
 			}
 		} 
 }
+{% endif %}
 
 function refresh(){
 	loadURL(current_url);
@@ -233,18 +254,55 @@ function goHome(){
 
 function sendParameters(){
 	var elements = document.getElementById('parameters').elements;
+	var params_query = '';
 	//var URL =""
+	// Send form values through the events variables
 	for (index=0;index<elements.length;index++){
 		var field = elements[index]
 		if (field.nodeName.toLowerCase()=="input"){
 			if (field.value!=""){
 				eval(field.name).set(field.value);
+				// Build query string 
+				params_query = params_query + '&' + field.name.substring(0,field.name.lastIndexOf('_event')) + '=' + field.value;
 			}else{
 				eval(field.name).set(null);
 			}
 		}		
 	}
-	return false;
+	buildQueryAndInvoke(real_url, params_query);
+	
+	//return false;
+}
+
+// Build query string and invoke URL
+function buildQueryAndInvoke(real_url, params_query) {
+	if (real_url.charAt(real_url.length-1) == '?') {
+		// If the last character is a '?', we don't have fixed params, so we remove the initial '&'
+		params_query = params_query.substring(1); 
+	}
+	loadURL(real_url + params_query);
+}
+
+function checkSlotValues(){
+	var params_query = '';
+
+	for (var i = 0; i<slotValuesArray.length; i++) {
+		if (!slotValuesArray[i].withValue) {
+			// If we've found some 'false' element, do nothing
+			return; 
+		} else {
+			if (slotValuesArray[i].value != null){
+				// Build query string 
+				params_query = params_query + '&' + slotValuesArray[i].name + '=' + slotValuesArray[i].value;
+			}
+		}
+	}
+	// If we get here, all the elements of the slotWithValueArray are 'true'. 
+	// Reset the array and make the request
+	for (var i = 0; i<slotValuesArray.length; i++) {
+		slotValuesArray[i].withValue = false;
+	}
+	buildQueryAndInvoke(real_url, params_query)
 }
 
 function showVariables(){

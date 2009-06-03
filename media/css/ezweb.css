@@ -340,6 +340,11 @@ body {
 #parse_parameters{
   margin: 0px 0px 0px 0pt;
 }
+
+.window_menu .window_content input {
+  margin: 0px 0px 0px 0pt;
+}
+
 .window_menu .window_title {
   font-size: 16px;
   margin-right: 1ex;
@@ -541,11 +546,18 @@ button {
 }
 
 .color_input {
-	width: 8ex;
+	width: 74px;
+}
+
+#menu_color_sample {
+	margin-left:5px;
 }
 
 .color_button {
 	height: 25px;
 	width: 25px;
-	vertical-align: middle;
+	vertical-align: top;
+	cursor: pointer;
+	margin-bottom:0;
+	margin-top:0;
 }

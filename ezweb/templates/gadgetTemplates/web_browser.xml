@@ -18,8 +18,8 @@
      <Preference name="urlPref" type="text" description="HTML base URL" label="Base URL" default="{{URL}}"/>
      <Preference name="homeUrl" type="text" description="Home page URL" label="Home page URL" default="{{home_URL}}"/>
      <Preference name="refreshingTime" type="text" description="Refreshing interval (minutes)" label="Refresh every... (minutes)" default="0"/>
-    {% for param in params %}
-     <Preference name="{{param}}_pref" type="text" description="{{param}}" label="{{param}}"/>
+    {% for key, value in params.items %}
+     <Preference name="{{key}}_pref" type="text" description="{{key}}" label="{{key}}" default="{{value}}"/>
     {% endfor %}     
   </Platform.Preferences>
   <!-- EzWeb Gadget Persistent State -->
@@ -29,10 +29,14 @@
   </Platform.StateProperties>
   <!-- EzWeb Gadget Data Wiring -->
   <Platform.Wiring>
-    <Slot name="url" type="text" label="url" friendcode="url"/>
-    <Slot name="parameters" type="text" label="paremeters" friendcode="parameters"/>
-    {% for param in params %}
-    <Event name="{{param}}_event" type="text" label="{{param}}" friendcode="{{param}}"/>
+  	{% if params %}
+    <Slot name="parameters" type="text" label="parameters" friendcode="parameters"/>
+    {% endif %}
+    {% for key, value in params.items %}
+    <Slot name="{{key}}_slot" type="text" label="{{key}}" friendcode="{{key}}"/>
+    {% endfor %}
+    {% for key, value in params.items %}
+    <Event name="{{key}}_event" type="text" label="{{key}}" friendcode="{{key}}"/>
     {% endfor %}
     {% for event in events %}
     <Event name="{{event}}" type="text" label="{{event}}" friendcode="{{event}}"/>
