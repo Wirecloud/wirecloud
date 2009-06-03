@@ -410,7 +410,7 @@ function FormWindowMenu (fields, title) {
 			break;
 		case 'select':
 			var input = document.createElement('select');
-			for (var i in field.options) {
+			for (var i = 0; i < field.options.length; i++) {
 				var option = document.createElement('option');
 				option.textContent = field.options[i][1];
 				option.setAttribute('value', field.options[i][0]);
