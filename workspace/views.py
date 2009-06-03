@@ -682,24 +682,34 @@ class  WorkSpacePublisherEntry(Resource):
         
         cloned_workspace = packageCloner.clone_tuple(workspace)
         
-        #Genrating info of new workspace
+        #Generating info of new workspace
         vendor = mashup.get('vendor')
         name = mashup.get('name')
         version = mashup.get('version')
-        author = mashup.get('author')
         email = mashup.get('email')
-        description = mashup.get('description') + " \n " +get_workspace_description(workspace)
-        imageURI = mashup.get('imageURI')
-        wikiURI = mashup.get('wikiURI')
-        organization = mashup.get('organization')
         
-        # set default values if the variable is empty
-        if imageURI == "":
-            imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
-        if wikiURI == "":
-            wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
-        if author == "":
+        description = mashup.get('description')
+        if (description):
+            description = description + " \n " + get_workspace_description(workspace)
+        else:
+            description = get_workspace_description(workspace)
+        
+        author = mashup.get('author')
+        if (not author):
             author = user.username
+            
+        imageURI = mashup.get('imageURI')
+        if (not imageURI):
+            imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
+            
+        wikiURI = mashup.get('wikiURI')
+        if (not wikiURI):
+            wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
+        
+        organization = mashup.get('organization')
+        if (not organization):
+            organization = ''
+        
         try:
             cloned_workspace.active=False
             cloned_workspace.vendor = vendor
