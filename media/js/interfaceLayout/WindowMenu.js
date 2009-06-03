@@ -203,7 +203,7 @@ CreateWindowMenu.prototype.show = function () {
 }
 
 /**
- * Specific class representing alert dialogs.
+ * Specific class representing alert dialogs
  */
 function AlertWindowMenu (element) {
 	WindowMenu.call(this, gettext('Warning'));
@@ -248,6 +248,55 @@ AlertWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
 }
 
 AlertWindowMenu.prototype.setFocus = function() {
+	this.acceptButton.focus();
+}
+
+/**
+ * Specific class representing alert dialogs
+ */
+function AddMashupWindowMenu (actions) {
+	WindowMenu.call(this, gettext('Add Mashup'));
+
+	// Warning icon
+	var icon = document.createElement('img');
+	icon.setAttribute('src', _currentTheme.getIconURL('warning'));
+	icon.setAttribute('alt', gettext('Info:'));
+	this.windowContent.insertBefore(icon, this.msgElement);
+
+	// New Workspace button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode('New Workspace'));
+	this.acceptButton.observe("click", this._newWorkspaceListener);
+	this.windowBottom.appendChild(this.acceptButton);
+
+	// Cancel button
+	this.cancelButton = document.createElement('button');
+	this.cancelButton.appendChild(document.createTextNode('Current Workspace'));
+	this.cancelButton.observe("click", this._currentWorkspaceListener);
+	this.windowBottom.appendChild(this.cancelButton);
+	
+	this.acceptHandler = null;
+	this.cancelHandler = null;
+
+}
+AddMashupWindowMenu.prototype = new WindowMenu();
+
+AddMashupWindowMenu.prototype._newWorkspaceListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+AddMashupWindowMenu.prototype._currentWorkspaceListener = function(e) {
+	this.cancelHandler = cancelHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+AlertWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
+	this.acceptHandler = acceptHandler;
+	this.cancelHandler = cancelHandler;
+}
+
+AddMashupWindowMenu.prototype.setFocus = function() {
 	this.acceptButton.focus();
 }
 
@@ -643,12 +692,9 @@ function AddSiteMenu (element) {
 	var fields = {
 		'name': {label: gettext('Name'), type: 'text', required: true},
 		'URL': {label: gettext('URL'), type: 'url', required: true},
-		'separator1': {type: 'separator', required: true},
 		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},
-		'fixed_params': {label: gettext('Fixed Params'), type: 'text'},
-		'default_params': {label: gettext('Default Param Values'), type: 'text'},
-		'events': {label: gettext('Events'), type: 'text'},
-		'separator2': {type: 'separator', required: true},
+		'separator1': {type: 'separator', required: true},
+		'events': {label: gettext('Events'), type: 'url'},
 		'home_URL': {label: gettext('Home URL'), type: 'url'},
 		'imageURI': {label: gettext('Image URL'), type: 'url'},
 		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},

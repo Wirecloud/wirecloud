@@ -615,6 +615,14 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['addSiteMenu'];
 				break;
+			case 'addMashup':
+				if (!this.menus['addMashupMenu']) {
+					this.menus['addMashupMenu'] = new AddMashupWindowMenu();
+				}
+				this.currentMenu = this.menus['addMashupMenu'];
+				this.currentMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
+				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
+				break;
 			default:
 				return;
 			}
