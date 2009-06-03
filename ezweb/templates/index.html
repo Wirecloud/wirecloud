@@ -151,17 +151,8 @@ var last_logged_user = '{{ last_user }}';
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 		</div>
 	</div>
-	<img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo" />
-</div>	
-<div id="bar">
-<div id="tab_section" class="tab_section">
-	<input type="button" id="right_slider" title="go left" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goLeft()" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
-	<div id="fixed_bar"><div id="scroll_bar"></div></div>
-	<input type="button" id="left_slider" title="go right" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goRight();" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
-
-</div>
-<div id="toolbar_section" class="toolbar_section">
+	<img id="logo" src="{{ THEME_URL }}/images/Open_Ez_Logo.png" alt="EzWeb Logo" />
+	<div id="toolbar_section" class="toolbar_section">
 		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
 		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
 		<div id="dragboard_link" class="toolbar_unmarked">
@@ -169,6 +160,15 @@ var last_logged_user = '{{ last_user }}';
 			<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
 		</div>
 		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
+	</div>
+</div>	
+<div id="bar">
+<div id="tab_section" class="tab_section">
+	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
+	<input type="button" id="right_slider" title="go left" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goLeft()" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
+	<div id="fixed_bar"><div id="scroll_bar"></div></div>
+	<input type="button" id="left_slider" title="go right" style="display:none" onmousedown="LayoutManagerFactory.getInstance().goRight();" onmouseup="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
+
 </div>
 
 {% block ezweb_logo %}

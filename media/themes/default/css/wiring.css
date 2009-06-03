@@ -1,0 +1,170 @@
+#wiring .borderLeftCell {
+  border-collapse: collapse;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid #AAA;
+  border-right: none;
+}
+
+#wiring .columnCell ul input[type="radio"] {
+  display: none;
+}
+.form-row input[type="submit"] {
+  background-image: url(../images/kgpg.png);
+  background-repeat: no-repeat;
+}
+
+#wiring .igadget {
+  background: #F7F7F7;
+  color: black;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+
+#wiring .igadget.folded, #wiring .igadgetContent.folded{
+  display: none;
+}
+
+#wiring .igadget .igadgetContent div .chkItem {
+  border: 0px;
+  background: url(../images/wiring/checked.png);
+}
+
+#wiring .igadget .igadgetContent div .unchkItem {
+  border: 0px;
+  background: url(../images/wiring/unchecked.png);
+}
+
+#wiring .tab .tabContent .chkItem {
+  border: 0px;
+  background: url(../images/wiring/checkedtab.png);
+}
+
+#wiring .tab .tabContent .unchkItem {
+  border: 0px;
+  background: url(../images/wiring/unchecked.png);
+}
+
+#wiring .tab {
+  border: 2px solid black;
+  background: #97A0A8;
+  -moz-border-radius: 11px;
+  -webkit-border-radius: 11px;
+}
+
+#wiring .eventColumn .tabContent.bckgrnd_folder {
+  background: #97A0A8 url(../images/wiring/tree.gif) no-repeat scroll left top;
+}
+
+#wiring .slotColumn .tabContent.bckgrnd_folder {
+  background: #97A0A8 url(../images/wiring/tree.gif) no-repeat scroll right top;
+}
+
+#wiring .igadgetName {
+  background: url(../images/wiring/Lminus.png) no-repeat scroll left top;
+}
+#wiring .igadgetName.bckgrnd_folded {
+  background: url(../images/wiring/Lplus.png) no-repeat scroll left top;
+}
+
+#wiring .tab .tabContent {
+  color: white;
+}
+
+
+#wiring #newChannelForm .addSubmit {
+  background: url(../images/wiring/add.png);
+  border: 0px none;
+}
+
+#wiring .newChannel, #wiring #unfold_all_link {
+  color: #2D6F9C;
+  text-decoration: underline;
+}
+
+#wiring #wiring_options{
+  color:#2D6F9C;
+}
+
+#wiring #unfold_chkItem{
+  background: url(../images/wiring/unchecked14px.png) no-repeat right bottom;
+ }
+
+#wiring #unfold_chkItem.chkItem{
+  background: url(../images/wiring/checked14px.png) no-repeat right bottom;
+}
+
+#wiring #channels_list .channel {
+  border: 1px solid #2D6F9C;
+  background: #97A0A8;
+  -moz-border-radius: 11px;
+  -webkit-border-radius: 11px;
+}
+
+#wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
+  border-top: 1px solid #525248;
+  display: none;
+  background: #F7F7F7;
+  -moz-border-radius-bottomleft: 9px;
+  -moz-border-radius-bottomright: 9px;
+  -webkit-border-top-left-radius: 9px;
+  -webkit-border-top-right-radius: 9px
+}
+
+#wiring #channels_list .channel.selected {
+  background: #2D6F9C;
+}
+
+#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
+  display: block;
+}
+
+#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+	background: transparent url(../images/ops21px.png) no-repeat scroll 0 0;
+	border: 0;
+}
+
+#wiring #channels_list .channel.selected .channelContent .column .labelContent, #wiring .newChannel.selected .channelContent .column .labelContent {
+	color: #2D6F9C;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
+	background: #E0E0E0;
+	border:0px none;
+}
+
+#wiring #wiring_messages {
+  border: 1px solid orange;
+  background: lightyellow;
+}
+
+#wiring #newChannelForm .linkSubmit{
+   color: blue;
+   background-color:#E0E0E0;
+   border-style:none;
+   border-color:#FFFFFF;
+   text-decoration: underline;
+}
+
+#wiring .newChannelInput {
+   border:1px solid #4C5054;
+}
+
+#wiring .channelNameInput {
+   border:0px;
+   background: #97A0A8;
+}
+
+#wiring .selected .channelNameInput {
+	background: transparent url(../images/fond.gif) repeat;
+}
+
+.canvas .arrow {
+	background: transparent url(../images/wiring/wiringArrow.png) no-repeat;
+}
+
+.helpwiringheader {
+	border: 1px solid #AAA;
+	-moz-border-radius:6px;
+	background:white;
+}

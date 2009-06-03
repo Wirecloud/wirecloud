@@ -1,36 +1,30 @@
 body {
     margin:0;
     padding:0;
-    color:#000;
     font-size:80%;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     overflow: hidden;
 }
 
-a {
-    color:red;
-}
 
-a:hover{
-    color:red;
-}
 
-.hidden {
-    display: none !important;
-}
-
-div.floatclearer {
-  clear: both;
+#loading-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
 }
 
 /* header ------------------------------------------------------------------------------------------ */
-/* testing from codesyntax */
+
 #header {
-        position: relative;
-        width:100%;
-	background: url("/ezweb/images/header.gif") repeat-x top left;
-	color:white;
-        text-align:right;
+    position: relative;
+    width:100%;
+    text-align:right;
 	height: 77px;
 	z-index: 2;
 }
@@ -43,8 +37,6 @@ div.floatclearer {
 
 .form-row input[type="submit"]{
 	padding: 3px;
-	background: transparent url(/ezweb/images/header.gif) repeat;
-	color: white;
 	border: 0;
 	margin-top: 5px;
 }
@@ -58,7 +50,6 @@ div.floatclearer {
 }
 
 #content-main .registration a{
-	color:#2D6F9C;
 	cursor:pointer;
 }
 
@@ -75,17 +66,12 @@ div.floatclearer {
 	margin-top:5px;
 }
 
-#greeting a{
-	color:white;
-}
+
 #greeting .languages{
 	display:inline;
 	margin-left: 20px;
 }
 
-#greeting .languages a{
-	text-decoration:none;
-}
 #greeting .languages img{
 	border:0px none;
 }
@@ -133,9 +119,8 @@ div.floatclearer {
 }
 
 #toolbar_section {
-  background:transparent url(/ezweb/images/fond.gif) repeat scroll left top;
   position: relative;
-  padding-left: 9px;
+  padding-left: 30px;
   float: left;
   margin-top: 8px;
   z-index: 3;
@@ -150,17 +135,13 @@ div.floatclearer {
 .toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
   position: relative;
   margin-left: 3px;
+  margin-right: 3px;
   height: 21px;
   width: 21px;
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-position: center center;
-  border: 0px none;
   cursor: pointer;
 }
 
 .ws_name{
-  border: 0px none;
   max-width: 130px;
   height: 15px;
 }
@@ -170,15 +151,10 @@ div.floatclearer {
   display: inline;
   margin-right: 0px;
   margin-left: 3px;
-  color:#2D6F9C;
 }
 
 .toolbar_marked, .toolbar_unmarked {
 	width: auto !important;
-	color: #2D6F9C;
-	border-color:#2D6F9C !important;
-	border-style:solid !important;
-	-moz-border-radius: 4px;
 	height: 21px !important;
 	position: relative;
 	float: left;
@@ -186,14 +162,11 @@ div.floatclearer {
 }
 
 .toolbar_marked {
-	background-color:#DDDEDF !important;
-	border-width:2px 1px 1px 3px !important;
 	top: 5px;
 	margin: 0 0 1px 3px;
 }
 
 .toolbar_unmarked {
-	background-color:transparent !important;
 	border-width:1px 3px 2px 1px !important;
 	top: 4px;
 	margin: 1px 0 0 3px;
@@ -213,14 +186,16 @@ div.floatclearer {
  margin-left:3px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderL21px.png) no-repeat;
 }
 
 #right_slider{
  margin-top:2px;
  float:right;
  width: 10px;
- background: transparent url(/ezweb/images/sliderR21px.png) no-repeat;
+}
+
+.message_box{
+	font-weight: bold;
 }
 
 #add_tab_link {
@@ -228,16 +203,7 @@ div.floatclearer {
  float:right;
 }
 
-#catalogue_link {
-  background: transparent url(/ezweb/images/catalogue16px.png) no-repeat scroll 1px 1px;
-}
-
-#wiring_link {
-  background: transparent url(/ezweb/images/wiring16px.png) no-repeat scroll 1px 1px;
-}
-
 #dragboard_link {
-  background: url(/ezweb/images/dragboard16px.png) no-repeat scroll 1px 1px;
   height: 18px !important;
 }
 
@@ -248,12 +214,7 @@ div.floatclearer {
   margin-right:3px;
 }
 
-#change_ws_link {
-  background-image: url(/ezweb/images/settings.png);
-}
-
 #ws_operations_link {
-  background: transparent url(/ezweb/images/ops21px.png) no-repeat scroll 0 0;
   margin-left: -5px;
   width: 16px;
   position:relative;
@@ -261,7 +222,9 @@ div.floatclearer {
 }
 
 #logs_link {
+  height: 16px !important;
   cursor:pointer;
+  padding: 2px 4px 0px 2px;
 }
 
 .message_section{
@@ -273,42 +236,19 @@ div.floatclearer {
 	text-align: center;
 	height:18px;
 	padding-top:5px;
-	background: lightyellow;
-	border: 1px solid red;
-}
-
-.message_box{
-	color: #000000;
-	font-weight: bold;
-}
-
-#add_tab_link {
-  background: transparent url(/ezweb/images/addTab16px.png) no-repeat scroll 1px 1px;
-  
 }
 
 #tab_section .tab {
   position: relative;
   float: right;
   display: block;
-  border: 1px solid #4c5054;
-  color: #FFF;
-  background: #97A0A8 url(/ezweb/images/degradado.png) no-repeat scroll left top;
-  font-weight: bold;
   padding: 2px 9px;
   margin: 0px 3px;
   cursor: pointer;
   z-index: 3;
   height: 18px;
   padding: 3px 5px 1px;
-  -moz-border-radius-topleft:10px;
-  -moz-border-radius-topright:4px;
-  -webkit-border-top-left-radius: 10px;
-  -webkit-border-top-right-radius: 4px;
-}
-
-#tab_section .tab.selected {
-  background: #F0E68C !important;
+  font-weight: bold;
 }
 
 .disabled {
@@ -316,9 +256,6 @@ div.floatclearer {
 }
 
 #tab_section .current {
-  color: #4c5054;
-  background: #E0E0E0;
-  border-bottom: 0px none;
   padding-bottom: 2px;
   padding-right: 3px;
 }
@@ -326,19 +263,10 @@ div.floatclearer {
 .tab span{
   margin-right:5px;
 }
-.tab .tab_name {
-  background: #97A0A8;
-  border: 0px;
-}
 
 .current .tab_name {
-  background: #E0E0E0;
   margin-right: 5px;
 }
-
-#description {}
-
-#description p {}
 
 #menu_layer{
   position:absolute;
@@ -346,29 +274,16 @@ div.floatclearer {
   left: 0;
   width:100%;
   height: 100%;
-}
-#menu_layer{
   z-index: 3;
-  opacity: .2;
-  moz-opacity: .5;
-  filter: alpha(opacity=50);
-}
-
-.disabled_background {
-  background-color: #6699cc;
 }
 
 .drop_down_menu, .window_menu{
-  background: #FFFFFF;
   position:fixed;
   text-align: left;
   z-index: 4;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
 }
 
 .drop_down_menu {
-  border: solid 1px #AAAAAA;
   padding: 0.5em;
   display: none;
 }
@@ -384,14 +299,6 @@ div.floatclearer {
   padding: 2px;
 }
 
-.drop_down_menu .border_bottom{
-	border-bottom: 4px double #2D6F9C;
-}
-
-.drop_down_menu .submenu .submenu_title{
- font-size: 90%;
-}
-
 .drop_down_menu div img {
   border: none;
   display: inline;
@@ -403,8 +310,11 @@ div.floatclearer {
   display: inline;
 }
 
+.drop_down_menu .submenu .submenu_title{
+ font-size: 90%;
+}
+
 .drop_down_menu div .help_buttom {
-  background: transparent url(/ezweb/images/help.gif) no-repeat scroll 0 0;
   position: absolute;
   right: 10px;
   margin-left: 5px;
@@ -423,14 +333,19 @@ div.floatclearer {
 }
 
 .window_menu {
-  border: 2px solid #0b8fff;
-  max-width:50%
+  max-width:50%;
+  padding: 0.8em 1.8em;
 }
 
 #parse_parameters{
   margin: 0px 0px 0px 0pt;
 }
-
+.window_menu .window_title {
+  font-size: 16px;
+  margin-right: 1ex;
+  font-weight: bold;
+  min-width: 31ex;
+}
 .window_menu .window_top {
   position: relative;
 }
@@ -452,14 +367,22 @@ div.floatclearer {
   vertical-align: bottom;
 }
 
+.window_menu .window_content .msg img {
+  margin: 0 2px;
+  vertical-align: bottom;
+}
+
 .window_msg_error{
   font-size: 90%;
-  color: red;
+}
+
+.window_menu .window_bottom {
+  margin: 2em 0 0.5em;
+  text-align: center;
 }
 
 .required_mark{
 	font-size: 100%;
-	color: red;
 }
 
 .required_text{
@@ -474,46 +397,24 @@ div.floatclearer {
   height: 16px;
 }
 
-.tabOps_launcher{
-  background: transparent url(/ezweb/images/tabops16px.png) no-repeat;
-}
-
-/*.tabOps_launcher:hover{
-  background: transparent url(/ezweb/images/settings-highlighted.png) no-repeat;
-}*/
-
-.closebutton {
-  background: transparent url(/ezweb/images/close.png) no-repeat;
-}
-
 button {
-  background: transparent url(/ezweb/images/button.gif) repeat;
-  border: medium none;
-  color: white;
   margin: 3px;
 }
 
 
 /* gadgets ------------------------------------------------------------------------------------------ */
 
-#gadgets {
-}
 
 #gadgets .gadget {
-	border: 1px solid #C5D7EF;
-	border-top:1px solid #7AA5D6;
 	padding:0;
 }
 
 #gadgets .gadget .toolbar{
 	margin-top:0;
-	background-color:#E5ECF9;
 	height:30px;
-	border-bottom: 1px solid #C5D7EF;
 }
 #gadgets .gadget .toolbar h2{
 	margin:0;
-	color:#36C;
 	padding:5px;
 	font-size:120%;
 	float:left;
@@ -526,18 +427,11 @@ button {
 }
 #gadgets .gadget .toolbar a img {}
 
-#gadgets .gadget .preferences{
-	border-bottom: 1px solid #C5D7EF;
-	background-color:#E5ECF9;
-	color:#36C;
-}
 
 #gadgets .gadget .preferences table{
 	width:90%; 
 	margin-left:5%; 
 	margin-right:5%;
-	background-color:#E5ECF9;
-	color:#36C;
 }
 
 #gadgets .gadget .preferences input {
@@ -557,17 +451,8 @@ button {
 }
 #gadgets .gadget .main h4{
 	margin-top:1%;
-	border-bottom:1px dotted #dfdfdf;
 }
-#gadgets .gadget .main table{
-	border:1px dotted #dfdfdf;
-}
-#gadgets .gadget .main th{
 
-}
-#gadgets .gadget .main td{
-
-}
 #gadgets .gadget .main img{
 	width:120px;
 	height:60px;
@@ -581,11 +466,8 @@ button {
   min-width: 600px;
   left: 0px;
   right: 0px;
-  border: 1px solid #4c5054;
   margin: 0 4px 4px 4px;
   z-index: 1;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
 }
 
 .container {
@@ -620,14 +502,9 @@ button {
 
 #showcase_container {
   overflow-x: hidden;
-  background: #FFF;
 }
 
 /* logs -------------------------------------------------------------------------------------------- */
-
-#header .tab_section #logs_tab {
-  color: #FFCC00;
-}
 
 #logs_console {
   overflow-x: hidden;
@@ -649,19 +526,26 @@ button {
     text-align:right;
     padding-right:20px;
 }
-#logs_header a {
-    color:darkBlue;
-    text-decoration:underline;
-}
-
-/* footer ------------------------------------------------------------------------------------------ */
-
-
-#footer {}
-
-#footer p {}
 
 /* dragboard template ------------------------------------------------------------------------------- */
 #dragboard_template {
   display: none;
+}
+
+.help_button {
+	margin-left: 0px;
+	margin-bottom:2px;
+	display: inline;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.color_input {
+	width: 8ex;
+}
+
+.color_button {
+	height: 25px;
+	width: 25px;
+	vertical-align: middle;
 }

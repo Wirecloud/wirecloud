@@ -80,7 +80,7 @@ var LayoutManagerFactory = function () {
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
-		this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 100;
+		this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
 		
 		//scroll bar
 		this.scrollTabBar = $('scroll_bar');
@@ -112,7 +112,7 @@ var LayoutManagerFactory = function () {
 		// ****************
 		
 		LayoutManager.prototype.resizeTabBar = function () {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("toolbar_section").offsetWidth - $("add_tab_link").offsetWidth - 70;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
 			this.changeTabBarSize(0);
 		}
 
@@ -509,7 +509,10 @@ var LayoutManagerFactory = function () {
 				break;
 			case 'tabOps':
 				this.currentMenu = menu;
-				this.currentMenu.show('left', x, y);
+				if (x - menu.menu.getWidth()<=0)
+					this.currentMenu.show('right', x, y);
+				else
+					this.currentMenu.show('left', x, y);
 				this.showClickableCover();
 				break;
 			case 'workSpaceOpsSubMenu':

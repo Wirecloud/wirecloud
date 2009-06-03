@@ -1,6 +1,3 @@
-#wiring {
-}
-
 #wiring_container {
   width: 100%;
 }
@@ -52,12 +49,7 @@
 }
 
 #wiring .borderLeftCell {
-  border-collapse: collapse;
   padding: 0 0 0 1ex;
-  border-top: none;
-  border-bottom: none;
-  border-left: 1px solid #AAA;
-  border-right: none;
 }
 
 #wiring .columnCell ul input[type="radio"] {
@@ -73,8 +65,6 @@
 }
 
 .form-row input[type="submit"] {
-  background-image: url(/ezweb/images/kgpg.png);
-  background-repeat: no-repeat;
   padding-left: 18px;
 }
 
@@ -83,14 +73,10 @@
 }
 
 #wiring .igadget {
-  background: #F7F7F7;
   margin:3px 2px;
   position: relative;
   font-weight: bold;
   padding: 3px 3px 0px;
-  color: black;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
 }
 
 #wiring .igadget .igadgetContent {
@@ -122,7 +108,6 @@
   width: 18px;
   height: 18px;
   border: 0px;
-  background: url(/ezweb/js/wiring/checked.png);
   padding: 0px;
   top: -8px;
 }
@@ -133,7 +118,6 @@
   width: 18px;
   height: 18px;
   border: 0px;
-  background: url(/ezweb/js/wiring/unchecked.png);
   padding: 0px;
   top: -8px;
 }
@@ -160,7 +144,6 @@
   width: 18px;
   height: 18px;
   border: 0px;
-  background: url(/ezweb/js/wiring/checkedtab.png);
   padding: 0px;
 }
 
@@ -170,7 +153,6 @@
   width: 18px;
   height: 18px;
   border: 0px;
-  background: url(/ezweb/js/wiring/unchecked.png);
   padding: 0px;
 }
 
@@ -185,35 +167,18 @@
 }
 
 #wiring .tab {
-  border: 2px solid black;
   margin: 5px 0px;
   position: relative;
   padding: 2px;
-  background: #97A0A8;
-  -moz-border-radius: 11px;
-  -webkit-border-radius: 11px;
-}
-
-#wiring .eventColumn .tabContent.bckgrnd_folder {
-  background: #97A0A8 url(/ezweb/js/wiring/tree.gif) no-repeat scroll left top;
-}
-
-#wiring .slotColumn .tabContent.bckgrnd_folder {
-  background: #97A0A8 url(/ezweb/js/wiring/tree.gif) no-repeat scroll right top;
 }
 
 #wiring .igadgetName {
   padding-left: 20px;
   cursor:pointer;
-  background: url(/ezweb/js/wiring/Lminus.png) no-repeat scroll left top;
-}
-#wiring .igadgetName.bckgrnd_folded {
-  background: url(/ezweb/js/wiring/Lplus.png) no-repeat scroll left top;
 }
 
 #wiring .tab .tabContent {
   padding: 0px 0px 5px 0px;
-  color: white;
   cursor:pointer;
   font-weight: bold;
   margin: 2px 0px;
@@ -236,14 +201,11 @@
   padding: 0px;
   height: 16px;
   width: 16px;
-  background: url(/ezweb/js/wiring/add.png);
   border: 0px none;
 }
 
 #wiring .newChannel, #wiring #unfold_all_link {
-  cursor: pointer; cursor: hand;
-  color: #2D6F9C;
-  text-decoration: underline;
+  cursor: pointer;
 }
 
 #wiring .newChannel{
@@ -256,7 +218,6 @@
   float:right;
   top: 5px;
   right: 5px;
-  color:#2D6F9C;
   font-size: 90%;
 }
 
@@ -276,22 +237,11 @@
   padding: 0px;  
   cursor: pointer;
 }
-#wiring #unfold_chkItem{
-  background: url(/ezweb/js/wiring/unchecked14px.png) no-repeat right bottom;
- }
-
-#wiring #unfold_chkItem.chkItem{
-  background: url(/ezweb/js/wiring/checked14px.png) no-repeat right bottom;
-}
 
 #wiring #channels_list .channel {
   margin: 2ex 1ex;
-  border: 1px solid #2D6F9C;
-  background: #97A0A8;
   padding: 0px;
   cursor: pointer; cursor: hand;
-  -moz-border-radius: 11px;
-  -webkit-border-radius: 11px;
 }
 
 #wiring img {
@@ -300,18 +250,7 @@
 }
 
 #wiring #channels_list .channel .channelContent, #wiring .newChannel .channelContent {
-  border-top: 1px solid #525248;
-  display: none;
-  background: #F7F7F7;
   padding: 0.5ex 1ex 0.5ex 1ex;
-  -moz-border-radius-bottomleft: 9px;
-  -moz-border-radius-bottomright: 9px;
-  -webkit-border-top-left-radius: 9px;
-  -webkit-border-top-right-radius: 9px
-}
-
-#wiring #channels_list .channel.selected {
-  background: #2D6F9C;
 }
 
 #wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
@@ -319,9 +258,7 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url(/ezweb/images/ops21px.png) no-repeat scroll 0 0;
 	margin-left: 5px;
-	border: 0;
 	cursor: pointer;
 }
 
@@ -330,7 +267,6 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .column .labelContent, #wiring .newChannel.selected .channelContent .column .labelContent {
-	color: #2D6F9C;
 	vertical-align: top;
 	text-align: left;
 	white-space: nowrap;
@@ -344,44 +280,31 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
-	background: #E0E0E0;
-	border:0px none;
 	margin: 0.05ex 0ex 0.05ex 0ex;
 	width:100%;
 	cursor: text;
 }
 
 #wiring #wiring_messages {
-  border: 1px solid orange;
-  background: lightyellow;
   margin: 1ex 20px;
   padding: 1ex 2ex;
   display: none;
 }
 
-#wiring #newChannelForm .linkSubmit{
-   color: blue;
-   background-color:#E0E0E0;
-   border-style:none;
-   border-color:#FFFFFF;
+#wiring #newChannelForm .linkSubmit{;
    cursor: pointer;
-   text-decoration: underline;
 }
 
 #wiring .newChannelInput {
-   border:1px solid #4C5054;
    margin:0px 1ex;
 }
 
 #wiring .channelNameInput {
-   border:0px;
    margin:0px 1ex;
    cursor:pointer;
-   background: #97A0A8;
 }
 
 #wiring .selected .channelNameInput {
-	background: transparent url(/ezweb/images/fond.gif) repeat;
 	cursor: text;
 }
 
@@ -394,13 +317,9 @@
 	z-index: 3;
 	width: 20px;
 	height: 16px;
-	background: transparent url(/ezweb/images/wiringArrow.png) no-repeat;
 }
 
 .helpwiringheader {
-	border: 1px solid #AAA;
-	-moz-border-radius:6px;
-	background:white;
 	text-align:left;
 	font-size:80%;
 	white-space:pre;

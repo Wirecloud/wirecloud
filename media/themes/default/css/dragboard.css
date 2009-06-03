@@ -74,6 +74,11 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
   background: url("../images/igadget/warning.png");
 }
 
+div.color_button {
+  border: 1px solid #888;
+  -moz-border-radius: 4px;
+}
+
 div.gadget_window_locked div.gadget_wrapper {
   border: none;
 }
@@ -122,6 +127,32 @@ div.gadget_window div.statusBar {
 div.gadget_window_locked div.statusBar {
   padding: 0 4px;
 }
+
+/*****
+ * config_interface
+ */
+ 
+div.gadget_window div.config_interface,
+div.gadget_window_locked div.config_interface {
+  background: #DDD;
+  border-bottom: 1px solid #4c5054;
+}
+
+div.config_interface input, div.config_interface select {
+  border: 1px solid #4c5054;
+}
+
+div.config_interface label.invalid {
+  color: red;
+}
+
+div.config_interface label.invalid input {
+  border: 1px solid red;
+}
+
+/***
+ *
+ */
 
 #dragboardcursor {
   border: 2px dashed #97A0A8;

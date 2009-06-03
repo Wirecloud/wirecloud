@@ -66,8 +66,6 @@ div.row {
 div.color_button {
   float: left;
   cursor: pointer;
-  border: 1px solid #888;
-  -moz-border-radius: 4px;
   margin: 3px;
   width: 16px;
   height: 16px;
@@ -150,8 +148,6 @@ div.gadget_window div.statusBar {
 
 div.gadget_window div.config_interface,
 div.gadget_window_locked div.config_interface {
-  background: #DDD;
-  border-bottom: 1px solid #4c5054;
   display: none;
   padding: 1px 1ex;
   margin: 0px;
@@ -172,7 +168,6 @@ div.config_interface label {
 }
 
 div.config_interface input, div.config_interface select {
-  border: 1px solid #4c5054;
   margin: 0px 1ex;
 }
 
@@ -188,14 +183,6 @@ div.config_interface table input[type="checkbox"] {
 
 div.config_interface select {
   padding: 0px;
-}
-
-div.config_interface label.invalid {
-  color: red;
-}
-
-div.config_interface label.invalid input {
-  border: 1px solid red;
 }
 
 /***
