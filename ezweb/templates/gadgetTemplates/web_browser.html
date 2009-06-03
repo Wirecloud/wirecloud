@@ -226,7 +226,7 @@ function setParams(value){
 	loadURL(real_url + value);
 	if (value !="")
 		//print the parameters in the input fields
-		var parameters = value.split('?')[1].split('&');
+		var parameters = value.split('&');
 		for (i in parameters){
 			var param = parameters[i].split("=");
 			if (param[0]!=parameters[i]){
