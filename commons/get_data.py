@@ -36,12 +36,12 @@ from django.core import serializers
 
 from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption, Capability
 from igadget.models import Variable, VariableDef, Position, IGadget
-from connectable.models import In, Out, InOut, Filter
+from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue
 from django.utils.translation import get_language
 
-def get_abstract_variable(id):    
+def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
 
 
@@ -251,44 +251,44 @@ def get_workspace_variables_data(workSpaceDAO, user):
     
     for inout in ws_inout_variables_data:
         ws_variables_data.append(inout)
-    
+
     return ws_variables_data
 
 def get_workspace_variable_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
-    
+
     abstract_var_id = data['fields']['abstract_variable']
-       
+
     abstract_var = get_abstract_variable(abstract_var_id)
 
     data_ret['id'] = data['pk']
     data_ret['abstract_var_id'] = abstract_var_id
-    
+
     data_ret['aspect'] = data_fields['aspect']
-    
+
     try:
         variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
-        
+
         variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
-        
+
     data_ret['value'] = variable_value.value
     data_ret['name'] = abstract_var.name
     data_ret['type'] = data_fields['type']
-    
+
     if (data_ret['aspect'] == 'TAB'):
         connectable = Out.objects.get(abstract_variable__id = abstract_var_id)
         data_ret['tab_id'] = Tab.objects.filter(abstract_variable = abstract_var)[0].id
     if (data_ret['aspect'] == 'CHANNEL'):
         workspace_variable = WorkSpaceVariable.objects.get(abstract_variable__id = abstract_var_id)
         connectable = InOut.objects.get(workspace_variable = workspace_variable)
-        
-    connectable_data = get_connectable_data(connectable)    
+
+    connectable_data = get_connectable_data(connectable)
 
     data_ret['connectable'] = connectable_data
-        
+
     return data_ret
 
 
@@ -298,32 +298,38 @@ def get_connectable_data(connectable):
     res_data['id'] = connectable.id
     res_data['name'] = connectable.name
 
-    if isinstance(connectable, InOut): 
+    if isinstance(connectable, InOut):
         connectable_type = "inout"
         ws_var_id = connectable.workspace_variable.id
         ig_var_id = None
-        
-        #Locating IN and INOUT connectables linked to this conectable!
+
+        # Locating IN connectables linked to this connectable
         res_data['ins'] = []
-        
+
         ins = In.objects.filter(inouts__id = connectable.id)
         for input in ins:
             res_data['ins'].append(get_connectable_data(input))
-            
-        #Locating OUT and INOUT connectables linked to this conectable!
+
+        # Locating OUT connectables linked to this connectable
         res_data['outs'] = []
-        
+
         outs = Out.objects.filter(inouts__id = connectable.id)
         for output in outs:
             res_data['outs'].append(get_connectable_data(output))
-            
+
+        # Locating INOUT connectables linked to this connectable as output
+        res_data['out_inouts'] = []
+        related_inouts = RelatedInOut.objects.filter(in_inout=connectable)
+        for related_inout in related_inouts:
+            res_data['out_inouts'].append(related_inout.out_inout_id)
+
         #Locating the filter linked to this conectable!
         res_data['filter'] = connectable.filter_id
         res_data['filter_params'] = connectable.filter_param_values
-            
+
     elif isinstance(connectable, Out):
         connectable_type = "out"
-        
+
         #Checking asbtract_variable aspect
         if (connectable.abstract_variable.type == "IGADGET"):
             #It's a Gadget Variable!
