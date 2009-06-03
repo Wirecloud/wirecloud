@@ -327,7 +327,7 @@ wChannel.prototype.propagate = function(newValue, initial, input) {
   	if (this.all_inputs_modified()) {
 	  	var json = this.getJSONInput();
 	  	
-		var params = '?';
+		var params = '';
 		
 		var keys = json.keys();
 		for (var i = 0; i < keys.length; i++) {
