@@ -252,7 +252,7 @@ AlertWindowMenu.prototype.setFocus = function() {
 }
 
 /**
- * Specific class representing alert dialogs
+ * Specific class representing add mashup dialogs
  */
 function AddMashupWindowMenu (actions) {
 	WindowMenu.call(this, gettext('Add Mashup'));
@@ -291,7 +291,7 @@ AddMashupWindowMenu.prototype._currentWorkspaceListener = function(e) {
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
-AlertWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
+AddMashupWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
 	this.acceptHandler = acceptHandler;
 	this.cancelHandler = cancelHandler;
 }
@@ -692,9 +692,12 @@ function AddSiteMenu (element) {
 	var fields = {
 		'name': {label: gettext('Name'), type: 'text', required: true},
 		'URL': {label: gettext('URL'), type: 'url', required: true},
-		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},
 		'separator1': {type: 'separator', required: true},
-		'events': {label: gettext('Events'), type: 'url'},
+		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},
+		'fixed_params': {label: gettext('Fixed Params'), type: 'text'},
+		'default_params': {label: gettext('Default Param Values'), type: 'text'},
+		'events': {label: gettext('Events'), type: 'text'},
+		'separator2': {type: 'separator', required: true},
 		'home_URL': {label: gettext('Home URL'), type: 'url'},
 		'imageURI': {label: gettext('Image URL'), type: 'url'},
 		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
