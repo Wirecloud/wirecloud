@@ -125,12 +125,14 @@ function Filter (id_, name_, label_, nature_, code_, category_, params_, helpTex
   
   // Sets the filter code
   try{
-	if ((nature_ == 'USER') && ((typeof code_) != 'function')){
-		this._code = null;
-	}else{
-		this._code = eval ('(' + code_ + ')');		
-	}
+  	 eval ('this._code = ' + code_);
+  	
+  	 if ((typeof this._code) != 'function')
+  		this._code = null;
+  	
   }catch(e){
+  	this._code = null;
+  	
 	var msg = interpolate(gettext("Error loading code of the filter '%(filterName)s'."), {filterName: this._label}, true);
 	LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
   }
@@ -178,7 +180,7 @@ Filter.prototype.getHelpText = function() {
 
 Filter.prototype.processParams = function(params_) {
   this._params = new Array();
-  if (params_ != null){
+  if (params_ != null && params_ != ''){
   	var fParam, paramObject;
   	var jsonParams = eval (params_);  
   	for (var i = 0; i < jsonParams.length; i++) {
@@ -193,7 +195,7 @@ Filter.prototype.processParams = function(params_) {
   } 	
 }
 
-Filter.prototype.run = function(channelValue_, paramValues_) {
+Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	var i, msg, params = '';
 
 	// Begins to run, no errors
@@ -266,7 +268,7 @@ Filter.prototype.run = function(channelValue_, paramValues_) {
 			case "USER":
 				if (params != '')
 					params = ',' + params;
-				return eval ('this._code(channelValue_' + params + ');');
+				return eval ('this._code(channelValue_,' + params + ', channel);');
 				break;
 			default:
 				break;

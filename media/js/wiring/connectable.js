@@ -319,10 +319,10 @@ function wChannel (variable, name, id, provisional_id) {
 wChannel.prototype = new wInOut();
 
 wChannel.prototype.getValue = function() {
-	if (this.filter == null || this.filter.getNature() == 'PATT')
+	if (this.filter == null)
 		return this.variable.get();
-	else if (this.filter.getNature() == 'PATT')
-		return this.filter.run(this.variable.get(), this.filterParams);
+	else 
+		return this.filter.run(this.variable.get(), this.filterParams, this);
 }
 
 wChannel.prototype.getValueWithoutFilter = function() {
@@ -377,31 +377,24 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 	else
 		this._markAllInputsAsModified(source);
 
-	if ((this.filter != null) && (this.filter.getNature() == 'PATT')) {
-		//AD-HOC DEMUX FILTER
-		// TODO: CHANDE THIS TO INCLUDE THIS CODE INTO THE FILTER ITSELT
-
-		if (this._allInputsModified()) {
-			var json = this._getJSONInput();
-
-			var params = '';
-
-			var keys = json.keys();
-			for (var i = 0; i < keys.length; i++) {
-				if(json[keys[i]] && json[keys[i]] != "None")
-					params += keys[i] + '=' + json[keys[i]] + '&';
-			}
-
-			if (keys.length > 0)
-				params = params.substr(0, params.length-1);
-
-			this.variable.set(params);
-			wInOut.prototype.propagate.call(this, params, initial);
-		}
-	} else {
-		this.variable.set(newValue);
-		wInOut.prototype.propagate.call(this, this.getValue(), initial);
+	try {
+		var value = this.getValue();
 	}
+	catch (err) {
+		if (err instanceof DontPropagateException) {
+			//Exception when getting value from channel => there is a filter
+			//When a filter thorws an Exception, the propagation stops;
+			return;
+		}
+		
+		//Loggin error
+		var msg = interpolate(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), {errorMsg: err.msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+		return;
+	}
+		
+	this.variable.set(newValue);
+	wInOut.prototype.propagate.call(this, this.getValue(), initial);
 }
 
 wChannel.prototype.getQualifiedName = function () {
