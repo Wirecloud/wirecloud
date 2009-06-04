@@ -268,7 +268,7 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 			case "USER":
 				if (params != '')
 					params = ',' + params;
-				return eval ('this._code(channelValue_,' + params + ', channel);');
+				return this._code(channelValue_, params, channel);
 				break;
 			default:
 				break;

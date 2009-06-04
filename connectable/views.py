@@ -111,20 +111,17 @@ class ConnectableEntry(Resource):
 
             # Erasing all channels of the workspace!!
             old_channels = InOut.objects.filter(workspace_variable__workspace=workspace)
-            if old_channels:
-                for old_channel in old_channels:
-                    # Deleting the old relationships between channels
-                    # First delete the relationships where old_channel is the input
-                    rel_old_channels = RelatedInOut.objects.filter(in_inout=old_channel)
-                    if rel_old_channels:
-                        rel_old_channels.delete()
+            for old_channel in old_channels:
+                # Deleting the old relationships between channels
+                # First delete the relationships where old_channel is the input
+                rel_old_channels = RelatedInOut.objects.filter(in_inout=old_channel)
+                for channel_delete in rel_old_channels:
+                    channel_delete.delete()
 
-                    # And then the relationships where old_channel is the output
-                    rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
-                    if rel_old_channels:
-                        rel_old_channels.delete()
-
-                old_channels.delete()
+                # And then the relationships where old_channel is the output
+                rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
+                for channel_delete in rel_old_channels:
+                    channel_delete.delete()
 
             # Adding channels recreating JSON structure!
             new_channels = json['inOutList']
@@ -203,9 +200,6 @@ class ConnectableEntry(Resource):
 
                     relationship = RelatedInOut(in_inout=channel, out_inout=InOut.objects.get(id=inout_id))
                     relationship.save()
-
-            # Saves all channels
-            #transaction.commit()
 
             json_result = {'ids': id_mapping}
 

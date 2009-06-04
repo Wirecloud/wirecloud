@@ -360,10 +360,10 @@ wChannel.prototype._getJSONInput = function() {
 	var json = new Hash();
 
 	for (var i = 0; i < this.inputs.length; i++) {
-		json[this.inputs[i].getLabel()] = this.inputs[i].variable.value;
+		json[this.inputs[i].getName()] = this.inputs[i].variable.value;
 	}
 
-	this.unmark_all_inputs_as_modified();
+	this._unmarkAllInputsAsModified();
 
 	return json;
 }
