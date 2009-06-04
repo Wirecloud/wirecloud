@@ -270,13 +270,6 @@ wInOut.prototype.fullDisconnect = function() {
 		this.disconnect(outputs[i]);
 }
 
-wInOut.prototype.get_input_position = function (input) {
-  for (var i = 0; i < this.inputs.length; i++) {
-  	if (this.inputs[i] == input)
-  		return i;
-  }
-}
-
 /**
  * This class represents a iGadget variable which may produce some data (also
  * know as event)
@@ -342,22 +335,16 @@ wChannel.prototype.getFilter = function() {
 
 wChannel.prototype.setFilter = function(newFilter) {
 	this.filter = newFilter;
+	this.filterParams = new Array();
 }
 
-/**
- * @private
- */
-wChannel.prototype.processFilterParams = function(fParamsJson_) {
+wChannel.prototype.setFilterParams = function(fParamsJson_) {
 	this.filterParams = new Array();
 	if (fParamsJson_ != null) {
 		var fParams = eval (fParamsJson_);
 		for (var k = 0; k < fParams.length; k++)
 			this.filterParams[fParams[k].index] = fParams[k].value;
 	}
-}
-
-wChannel.prototype.setFilterParams = function(fParams) {
-	this.filterParams = fParams;
 }
 
 wChannel.prototype.getFilterParams = function() {
@@ -425,7 +412,7 @@ wChannel.prototype.getQualifiedName = function () {
  * @private
  */
 wChannel.prototype._markInputAsModified = function (input) {
-	var input_position = this.get_input_position(input);
+	var input_position = this.inputs.indexOf(input);
 
 	this.modified_inputs_state[input_position]=true;
 }

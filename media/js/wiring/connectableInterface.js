@@ -501,30 +501,26 @@ function ChannelInterface(channel, wiringGUI) {
 	var filterLabel = document.createElement("div");
 	labelLayer.appendChild(filterLabel);
 	filterLabel.appendChild(document.createTextNode(gettext("Filter") + ":"));
-	var paramLabelLayer = document.createElement("div");
-	labelLayer.appendChild(paramLabelLayer);
-	if (this.filter) {
-		for (var p = 0; p < this.filterParams.length; p++)
-			paramLabelLayer.appendChild(this.filterParams[p].createHtmlLabel());
-	}
+	this.paramLabelLayer = document.createElement("div");
+	labelLayer.appendChild(this.paramLabelLayer);
+
 	var valueLabel = document.createElement("div");
 	labelLayer.appendChild(valueLabel);
 	valueLabel.appendChild(document.createTextNode(gettext("Value") + ":"));
 
 	// Adds the information
-	var filterText = document.createElement("div");
-	filterText.addClassName("filterValue");
-	contentLayer.appendChild(filterText);
-	if (this.filter)
-		filterText.appendChild(document.createTextNode(this.filter.getLabel()));
-	else
-		filterText.appendChild(document.createTextNode(gettext("Empty")));
+	var filterLabelDiv = document.createElement("div");
+	filterLabelDiv.addClassName("filterValue");
+	contentLayer.appendChild(filterLabelDiv);
+
+	this.filterInput = document.createTextNode("");
+	filterLabelDiv.appendChild(this.filterInput);
 
 	var filterMenuButton = document.createElement("input");
-	filterText.appendChild(filterMenuButton);
+	filterLabelDiv.appendChild(filterMenuButton);
 	filterMenuButton.setAttribute("type", "button");
 	filterMenuButton.addClassName("filterMenuLauncher");
-	Event.observe(filterMenuButton, 'click',
+	filterMenuButton.observe('click',
 		function(e) {
 			e.target.blur();
 			Event.stop(e);
@@ -535,18 +531,17 @@ function ChannelInterface(channel, wiringGUI) {
 				Event.pointerY(e));
 		}.bind(this)
 	);
-	var paramValueLayer = document.createElement("div");
-	contentLayer.appendChild(paramValueLayer);
+
+	this.paramValueLayer = document.createElement("div");
+	contentLayer.appendChild(this.paramValueLayer);
 
 	// Adds the channel value
-	var valueText = document.createElement("div");
-	contentLayer.appendChild(valueText);
-	if (this.filter) {
-		for (var p = 0; p < this.filterParams.length; p++)
-			paramValueLayer.appendChild(this.filterParams[p].createHtmlValue(this, channel, valueText));
-	}
-	valueText.appendChild(document.createTextNode(this.getValue()));
+	this.valueElement = document.createElement("div");
+	contentLayer.appendChild(this.valueElement);
 
+
+	// Update the initial information
+	this._updateFilterInterface();
 	channelNameInput.focus();
 
 	// Anchors
@@ -656,13 +651,56 @@ ChannelInterface.prototype.getFilter = function() {
 	return this.filter;
 }
 
-ChannelInterface.prototype.setFilter = function(filter_) {
-	this.filter = filter_;
+/**
+ * @private
+ *
+ * Builds/Rebuilds the filter params interface.
+ * @param {ChannelInterface} channel
+ * @param {Filter} filter
+ * @param {}
+ */
+ChannelInterface.prototype._showFilterParams = function () {
+	// No filter, no params
+	if (this.filter == null)
+		return;
+
+	// Adds a new row for each param of the current filter
+	var params = this.filter.getParams();
+	for (var p = 0; p < params.length; p++) {
+		this.paramLabelLayer.appendChild(params[p].createHtmlLabel());
+		this.paramValueLayer.appendChild(params[p].createHtmlValue(this.wiringGUI, this, this.valueElement));
+	}
+}
+
+/**
+ * Updates the interface according to the new filter.
+ *
+ * @private
+ */
+ChannelInterface.prototype._updateFilterInterface = function() {
+	// Removes the params of the previous filter
+	this.paramLabelLayer.textContent = "";
+	this.paramValueLayer.textContent = "";
+
+	// Sets the filter name
+	if (this.filter == null) {
+		this.filterInput.textContent = gettext("None");
+	} else {
+		this.filterInput.textContent = this.filter.getLabel();
+	}
+
+	// Sets the channel value and the channel filter params
+	this.valueElement.update(this.getValueWithoutFilter());
+	this._showFilterParams();
+}
+
+ChannelInterface.prototype.setFilter = function(filter) {
+	this.filter = filter;
 	this.filterParams = new Array ();
 
 	// Sets parameter values by default
-	if (filter_ != null) {
-		var paramDefinition = filter_.getParams();
+	if (this.filter != null) {
+		var paramDefinition = this.filter.getParams();
 		this.filterParams = new Array (paramDefinition.length);
 		for (var p = 0; p < paramDefinition.length; p++) {
 			var defaultaValue = paramDefinition[p].getDefaultValue();
@@ -673,6 +711,8 @@ ChannelInterface.prototype.setFilter = function(filter_) {
 			}
 		}
 	}
+
+	this._updateFilterInterface()
 }
 
 ChannelInterface.prototype.getFilterParams = function() {

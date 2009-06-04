@@ -76,7 +76,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 			// Setting channel filter
 			channel.setFilter(this.filters[varData.connectable.filter]);
-			channel.processFilterParams(varData.connectable.filter_params);
+			channel.setFilterParams(varData.connectable.filter_params);
 
 			// Connecting channel input
 			var connectable_ins = varData.connectable.ins;

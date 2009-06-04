@@ -71,38 +71,37 @@ Param.prototype.createHtmlLabel = function() {
 }
 
 Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
-  var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
-  
-  var paramValueLayer = document.createElement("div");
-  var paramInput = document.createElement("input");
-  paramInput.addClassName("paramValueInput");
-  paramInput.setAttribute ("value", channel.getFilterParams()[this._index]);
-  Event.observe(paramInput, 'click',function(e){Event.stop(e);});
-  
-  var checkResult = 
-  	function(e){
-    	var msg;
+	var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
+
+	var paramValueLayer = document.createElement("div");
+	var paramInput = document.createElement("input");
+	paramInput.addClassName("paramValueInput");
+	paramInput.setAttribute ("value", channel.getFilterParams()[this._index]);
+	Event.observe(paramInput, 'click',function(e){Event.stop(e);});
+
+	var checkResult = function(e) {
+		var msg;
 		if(e.target.value == "" || e.target.value.match(/^\s$/)){
-	    	msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
+			msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
 			this.wiringGUI.showMessage(msg);
 			this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
-			return;			
-    	} 
+			return;
+		}
 		
 		// Sets the param value
 		this.channel.getFilterParams()[this.param._index] = e.target.value;
 		
 		// Sets the channel value
-		this.valueElement.childNodes[0].nodeValue = channel.getValue();
+		this.valueElement.nodeValue = channel.getValue();
 		
 		// Shows a message (only with error)
 		if (this.channel.getFilter().getlastExecError() == null){
-			this.wiringGUI.clearMessages();			
+			this.wiringGUI.clearMessages();
 		}else{
 			this.wiringGUI.showMessage(this.channel.getFilter().getlastExecError());
-			this.valueElement.childNodes[0].nodeValue = gettext('undefined');
+			this.valueElement.nodeValue = gettext('undefined');
 		}
-    };
+	};
 	
   // Sets the input
   Event.observe(paramInput, 'change', checkResult.bind(context));

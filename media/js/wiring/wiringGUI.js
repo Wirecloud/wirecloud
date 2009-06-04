@@ -176,20 +176,7 @@ WiringInterface.prototype.saveWiring = function () {
 	this.wiring.serialize();
 
 	// TODO error control
-	this.changed = true;
-}
-
-WiringInterface.prototype._showFilterParams = function (channel, filter, paramLabelElement, paramValueElement, valueElement) {
-	// No filter, no params
-	if (filter == null)
-		return;
-
-	// Adds a new row for each param of the current filter
-	var params = filter.getParams();
-	for (var p = 0; p < params.length; p++) {
-		paramLabelElement.appendChild(params[p].createHtmlLabel());
-		paramValueElement.appendChild(params[p].createHtmlValue(this, channel, valueElement));
-	}
+	this.changed = false;
 }
 
 /**
@@ -1080,11 +1067,15 @@ WiringInterface.prototype._createFilterMenu = function () {
 	new Insertion.After($('menu_layer'), filterMenuHTML);
 	var filterMenu = new FilterDropDownMenu('wiring_filter_menu');
 
+	var callback = function() {
+		this.wiringGUI._updateFilterFunc(this.wiringGUI.currentChannel, this.filter);
+	};
+
 	filterMenu.addOptionWithHelp (
 		_currentTheme.getIconURL('filter'),
 		gettext('None'),
 		gettext("Returns the value of the channel unfiltered."),
-		this._updateFilterFunc.bind({wiringGUI:this, filter: null}),
+		callback.bind({wiringGUI:this, filter: null}),
 		0);
 	var filters = this.wiring.getFiltersSort();
 	for (var i = 0; i < filters.length; i++) {
@@ -1093,7 +1084,7 @@ WiringInterface.prototype._createFilterMenu = function () {
 			_currentTheme.getIconURL('filter'),
 			filters[i].getLabel(),
 			filters[i].getHelpText(),
-			this._updateFilterFunc.bind(context),
+			callback.bind(context),
 			i+1);
 	}
 
@@ -1105,58 +1096,19 @@ WiringInterface.prototype._createFilterMenu = function () {
  *
  * @private
  */
-WiringInterface.prototype._updateFilterFunc = function() {
+WiringInterface.prototype._updateFilterFunc = function(channel, filter) {
 	// Close Filter Menu
 	LayoutManagerFactory.getInstance().hideCover();
 
-	var wiringGUI = this.wiringGUI;
-	var filter = this.filter;
-	var channel = wiringGUI.currentChannel;
+	if (channel.getFilter() == filter)
+		return; // There is not a real change => nothing to do
 
-	// Harvest filter data
-	var filterValue;
-
-	// TODO there are better and more easy ways of doing this...
-	var selected_channel_cells = $$('.channel.selected td');
-	var filter_content = selected_channel_cells[1].firstChild.childNodes[0];
-	var param_label_content = selected_channel_cells[0].firstChild.childNodes[1];
-	var param_content = selected_channel_cells[1].firstChild.childNodes[1];
-	var value_content = selected_channel_cells[1].firstChild.childNodes[2];
-
+	this.changed = true;
 	channel.setFilter(filter);
 
-	// Removes the params of the other filter
-	while (param_label_content.childNodes.length > 0)
-		param_label_content.childNodes[param_label_content.childNodes.length - 1].remove();
-
-	while (param_content.childNodes.length > 0)
-		param_content.childNodes[param_content.childNodes.length - 1].remove();
-
-	// Sets the filter name
-	if (filter_content.childNodes[0].nodeType ==  Node.TEXT_NODE) {
-		filterValue = filter_content.childNodes[0];
-	} else {
-		filterValue = filter_content.childNodes[1];
-	}
-
-	if (filter == null) {
-		filterValue.textContent = gettext("None");
-	} else {
-		filterValue.textContent = filter.getLabel();
-	}
-
-	// Sets the channel value and the channel filter params
-	if (filter == null || !filter.hasParams()) {
-		value_content.update(channel.getValue());
-	} else {
-		// The channel value will be calculated with the params given by user.
-		value_content.update(channel.getValueWithoutFilter());
-		wiringGUI._showFilterParams(channel, filter, param_label_content, param_content, value_content);
-	}
-
 	// The filter content size has changed, and the selected channel and its arrows must be repainted
-	wiringGUI.uncheckChannel(channel);
-	wiringGUI.highlightChannel(channel);
+	this.uncheckChannel(channel);
+	this.highlightChannel(channel);
 }
 
 /**
