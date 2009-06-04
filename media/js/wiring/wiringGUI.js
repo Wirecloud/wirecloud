@@ -570,7 +570,11 @@ WiringInterface.prototype._highlight = function (chk, friendCode) {
 
 /**
  * @private
- * 
+ *
+ * Highlights all the connectables with the given friend_code
+ *
+ * @param {String} friend_code
+ * @param {Boolean} highligh
  */
 WiringInterface.prototype._highlight_friend_code = function (friend_code, highlight) {
 	if (!this.friend_codes[friend_code]) {
@@ -579,10 +583,24 @@ WiringInterface.prototype._highlight_friend_code = function (friend_code, highli
 	}
 
 	var connectables = this.friend_codes[friend_code].list;
-	var bgColor = highlight ? this.friend_codes[friend_code].color : null;
+	var fcColor = this.friend_codes[friend_code].color;
+	var fcBgColor = "#F7F7F7";
+	var fcElement = null;
 
-/*	for (var i = 0; i < connectables.length; i++)
-		connectables[i].style.backgroundColor = bgColor;*/
+	try {
+		this.friend_codes[friend_code].fadder.reset();
+	} catch(e){}
+
+	if (highlight) {
+		for (var i = 0; i < connectables.length; i++)
+			connectables[i].getHTMLElement().style.backgroundColor = fcColor;
+	} else {
+		var timeout = connectables.length > 1 ? 1700 : 0;
+		if (!this.friend_codes[friend_code].fadder)
+			this.friend_codes[friend_code].fadder = new BackgroundFadder(connectables, fcColor, fcBgColor, timeout, 300);
+
+		this.friend_codes[friend_code].fadder.fade();
+	}
 }
 
 /**

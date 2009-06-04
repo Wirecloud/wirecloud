@@ -50,21 +50,22 @@ BackgroundFadder.prototype.fade = function() {
   			this.currentRed += this.deltaRed;
 			this.currentGreen += this.deltaGreen;
 			this.currentBlue += this.deltaBlue;
-  			
-  		}
-  		if (this.currentStep == 0) {
-	  		this.timer1ID = setTimeout(function(){
-		  		this.timer2ID = setTimeout(this.fade, this.interval); 
-		  		// sets timer so that this function will be called every 100 miliseconds
-		  	}.bind(this), this.initialTime);
-	  	}
-	  	else {
-	  		this.timer2ID = setTimeout(this.fade, this.interval); // sets timer so that this function will be called every 100 miliseconds
-	  	}
-	}
-	else{
+		}
+		if (this.currentStep == 0) {
+			this.timer1ID = setTimeout(function(){
+				this.timer2ID = setTimeout(this.fade, this.interval); 
+				// sets timer so that this function will be called every 100 miliseconds
+			}.bind(this), this.initialTime);
+		}
+		else {
+			this.timer2ID = setTimeout(this.fade, this.interval); // sets timer so that this function will be called every 100 miliseconds
+		}
+	} else {
 		for (var i=0; i<this.elements.length; i++) {
-			this.elements[i].style.background = "";
+			if (typeof this.elements[i].getHTMLElement === 'function')
+				this.elements[i].getHTMLElement().style.backgroundColor = "";
+			else
+				this.elements[i].style.backgroundColor = "";
 		}
 	}
 	this.currentStep++;
@@ -76,17 +77,21 @@ BackgroundFadder.prototype.fade = function() {
 
 BackgroundFadder.prototype._setBackgrounds = function() {
 	var color = this._getCurrentColor();
-	for (var i=0; i<this.elements.length; i++) {
-		this.elements[i].style.backgroundColor = color;
+
+	for (var i = 0; i < this.elements.length; i++) {
+		if (typeof this.elements[i].getHTMLElement === 'function')
+			this.elements[i].getHTMLElement().style.backgroundColor = color;
+		else
+			this.elements[i].style.backgroundColor = color;
 	}
 }
 
 BackgroundFadder.prototype._getCurrentColor = function() {
-	// convert to hex	
+	// convert to hex
 	var hexRed = this._dec2Hex(this.currentRed);
 	var hexGreen = this._dec2Hex(this.currentGreen);
 	var hexBlue = this._dec2Hex(this.currentBlue);
-	
+
 	return "#"+hexRed+""+hexGreen+""+hexBlue+"";
 }
 
