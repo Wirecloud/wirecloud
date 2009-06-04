@@ -210,8 +210,8 @@ class ConnectableEntry(Resource):
             json_result = {'ids': id_mapping}
 
             return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
-        except WorkSpace.DoesNotExist:
-            msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
+        except WorkSpace.DoesNotExist, e:
+            msg = _('referred workspace (id: %(workspace_id)s) does not exist.') % {'workspace_id': workspace_id}
             raise TracedServerError(e, json, request, msg)
 
         except Exception, e:
