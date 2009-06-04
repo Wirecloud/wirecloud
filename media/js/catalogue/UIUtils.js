@@ -562,11 +562,12 @@ UIUtils.deleteGadget = function(id) {
 	var resource = CatalogueFactory.getInstance().getResource(id);
 	if (UIUtils.selectedVersion == null){
 		// Removes all versions of the gadget
-		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + escape(resource.getName());
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName();
 	}else{
 		// Removes only the specified version of the gadget
 		var resourceURI = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + UIUtils.selectedVersion;
 	}
+	//resourceURI = encodeURI(resourceURI); -> pjm: in theory, the resourceURI must be encoded, but works well without doing so
 	UIUtils.repaintCatalogue=true;
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
