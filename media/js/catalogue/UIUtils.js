@@ -797,7 +797,7 @@ UIUtils.SlideAdvanced = function(element,container) {
 			            		break;
 			            }
                         $(nodeList.item(i).id+"_toggle").innerHTML = tab;
-                        $(nodeList.item(i).id+"_toggle").style.background="transparent";
+                        $(nodeList.item(i).id+"_toggle").removeClassName('advanced_selected');
                         if(nodeList.item(i).id=="advanced_tag"){UIUtils.deactivateTagMode();}
                     }
                 }
@@ -822,7 +822,7 @@ UIUtils.SlideAdvanced = function(element,container) {
             		break;
             }
             $(element+"_toggle").innerHTML = tab;
-			$(element+"_toggle").style.background="lightBlue";
+			$(element+"_toggle").addClassName('advanced_selected');
 			if(element=="advanced_tag"){UIUtils.activateTagMode();}
        }
        else {
@@ -846,7 +846,7 @@ UIUtils.SlideAdvanced = function(element,container) {
             		break;
             }
             $(element+"_toggle").innerHTML = tab;
-            $(element+"_toggle").style.background="transparent";
+            $(element+"_toggle").removeClassName('advanced_selected');
             if(element=="advanced_tag"){UIUtils.deactivateTagMode();}
        }
    }
@@ -998,6 +998,31 @@ UIUtils.deactivateTagMode = function() {
 
 	CatalogueFactory.getInstance().clearSelectedResources();
 	UIUtils.resizeResourcesContainer();
+}
+
+UIUtils.rgbConvert = function(str){
+	str = str.replace(/rgb\(|\)/g, "").split(",");
+	str[0] = parseInt(str[0], 10).toString(16).toLowerCase();
+	str[1] = parseInt(str[1], 10).toString(16).toLowerCase();
+	str[2] = parseInt(str[2], 10).toString(16).toLowerCase();
+	str[0] = (str[0].length == 1) ? '0' + str[0] : str[0];
+	str[1] = (str[1].length == 1) ? '0' + str[1] : str[1];
+	str[2] = (str[2].length == 1) ? '0' + str[2] : str[2];
+	return ('#' + str.join(""));
+}
+
+UIUtils.showResourceTagCloud = function(id_){
+	UIUtils.showResourceInfo(id_);
+	UIUtils.openInfoResource();
+	var tagCloudHTML = $$('#info_resource .tagcloud .tags')[0];
+	tagCloudHTML.parentNode.parentNode.scrollIntoView(true);
+	
+	var FADE_CLOUD_INI = "#349ee8";
+	var FADE_CLOUD_END = this.rgbConvert(tagCloudHTML.getStyle('background-color'));
+		
+	var fadder = new BackgroundFadder(tagCloudHTML, FADE_CLOUD_INI, FADE_CLOUD_END, 0, 3000);
+	fadder.fade();
+	
 }
 
 UIUtils.clickOnResource = function(id_) {

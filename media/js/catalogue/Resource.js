@@ -103,20 +103,67 @@ Resource.prototype.paint = function() {
 		class: 'toolbar'
 	}));
 	resource.appendChild(toolbar);
+	
+	displayName = this._state.getDisplayName()
+	toolbar.appendChild(UIUtils.createHTMLElement("div", $H({
+		class_name: 'title',
+		title: displayName,
+		innerHTML: (displayName.length > 18)?displayName.substring(0, 18)+"&#8230;": displayName
+	})));
+	
 	var content_toolbar = document.createElement("div");
 	toolbar.appendChild(content_toolbar);
+	
+	
+	// Depending on capabilities, the add button can be different!
+	// Depending on resource type (Gadget, mashup), the add button can be different!
 
-	// Wiki icon
-	var wiki = UIUtils.createHTMLElement("a", $H({
-		title: gettext ('Show More'),
-		target: '_blank',
-		class_name: 'wiki button',
-		href: this._state.getUriWiki()
-	}));
-	content_toolbar.appendChild(wiki);
+	var button_message = gettext('Add');
 
+	if (this._state.getMashupId() == null) {
+		//Gadget
+
+		var button_class = '';
+
+		if (this.isContratable(this._state.getCapabilities())) {
+			//button_message = gettext('Purchase');
+			button_class = 'contratable';
+		}
+
+		var button = UIUtils.createHTMLElement("button", $H({
+			innerHTML: button_message,
+			class_name: button_class
+		}));
+
+		button.observe("click", function(event) {
+			CatalogueFactory.getInstance().addResourceToShowCase(this._id);
+		}.bind(this), false, "instance_gadget");
+	} else {
+		//Mashup
+
+		//var button_message = gettext('Add Mashup');
+		var button_class = 'add_mashup'
+
+		if (this.isContratable(this._state.getCapabilities())) {
+			//button_message = gettext('Purchase');
+			button_class = 'contratable';
+		}
+
+		var button = UIUtils.createHTMLElement("button", $H({
+			innerHTML: button_message,
+			class_name: button_class
+		}));
+
+		button.observe("click", function(event) {
+			LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
+				function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(this),
+				function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(this));
+		}.bind(this), false, "instance_mashup");
+	}
+	content_toolbar.appendChild(button);
+	
 	// Delete icon
-	if (this._state.getAddedBy() == 'Yes') {
+/*	if (this._state.getAddedBy() == 'Yes') {
 		var deleteResource = UIUtils.createHTMLElement("a", $H({
 			title: gettext('Delete'),
 			class_name: 'delete button'
@@ -128,16 +175,13 @@ Resource.prototype.paint = function() {
 		}.bind(this));
 		content_toolbar.appendChild(deleteResource);
 	}
-
+*/
 	// CONTENT
 	var content = UIUtils.createHTMLElement("div", $H({
 		class_name: 'content'
 	}));
 	resource.appendChild(content);
-	content.appendChild(UIUtils.createHTMLElement("div", $H({
-		class_name: 'title',
-		innerHTML: this._state.getDisplayName()
-	})));
+
 	var image_div = UIUtils.createHTMLElement("div", $H({
 		class_name: 'image'
 	}));
@@ -157,7 +201,16 @@ Resource.prototype.paint = function() {
 	image.observe("error", this._setDefaultImage);
 	image.observe("abort", this._setDefaultImage);
 	image_link.appendChild(image);
-
+	
+	// Wiki icon
+/*	var wiki = UIUtils.createHTMLElement("a", $H({
+		title: gettext ('Show More'),
+		target: '_blank',
+		class_name: 'wiki button',
+		href: this._state.getUriWiki()
+	}));
+	image_div.appendChild(wiki);
+*/
 	// Tags
 	var tags = UIUtils.createHTMLElement("div", $H({
 		class_name: 'tags'
@@ -168,51 +221,20 @@ Resource.prototype.paint = function() {
 		class_name: 'important_tags'
 	}));
 	tags.appendChild(important_tags);
-	this._tagsToMoreImportantTags(important_tags, 3);
-
-	// Depending on capabilities, the add button can be different!
-	// Depending on resource type (Gadget, mashup), the add button can be different!
-
-	if (this._state.getMashupId() == null) {
-		//Gadget
-
-		var bottom_message = gettext('Add Gadget');
-		var bottom_class = '';
-
-		if (this.isContratable(this._state.getCapabilities())) {
-			bottom_message = gettext('Purchase');
-			bottom_class = 'contratable';
-		}
-
-		var button = UIUtils.createHTMLElement("button", $H({
-			innerHTML: bottom_message,
-			class_name: bottom_class
+	var numTags =this._tagsToMoreImportantTags(important_tags, 3);
+		
+	if(numTags>0){
+		//go to tagcloud button
+		var button = UIUtils.createHTMLElement("a", $H({
+			class_name: 'go_to_tagCloud',
+			innerHTML: gettext('More')
 		}));
-
-		button.observe("click", function(event) {
-			CatalogueFactory.getInstance().addResourceToShowCase(this._id);
-		}.bind(this), false, "instance_gadget");
-	} else {
-		//Mashup
-
-		var bottom_message = gettext('Add Mashup');
-		var bottom_class = 'add_mashup'
-
-		if (this.isContratable(this._state.getCapabilities())) {
-			bottom_message = gettext('Purchase');
-			bottom_class = 'contratable';
-		}
-
-		var button = UIUtils.createHTMLElement("button", $H({
-			innerHTML: bottom_message,
-			class_name: bottom_class
-		}));
-
-		button.observe("click", function(event) {
-			CatalogueFactory.getInstance().addMashupResource(this._id);
-		}.bind(this), false, "instance_mashup");
+		button.observe("click", function(event){
+			UIUtils.sendPendingTags();
+			UIUtils.showResourceTagCloud(this._id);
+		}.bind(this));
+		tags.appendChild(button);
 	}
-	content.appendChild(button);
 
 	// BOTTOM
 	var bottom = UIUtils.createHTMLElement("div", $H({
@@ -277,6 +299,10 @@ Resource.prototype.showInfo = function() {
 	rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
 		id: 'ratingSaved',
 		innerHTML: gettext('Vote Saved ')
+	})));
+	
+	rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
+		id: 'votes'
 	})));
 	var rate_me = UIUtils.createHTMLElement("span", $H({ 
 		id: 'rateMe'
@@ -344,9 +370,7 @@ Resource.prototype.showInfo = function() {
 		id: 'res_5',
 		title: gettext('Awesome!')
 	})));
-	rating.appendChild(UIUtils.createHTMLElement("span", $H({ 
-		id: 'votes'
-	})));
+
 	var image = UIUtils.createHTMLElement("div", $H({ 
 		class_name: 'image'
 	}));
@@ -731,7 +755,23 @@ Resource.prototype.showInfo = function() {
 }
 
 Resource.prototype.updateTags = function() {
-	this._tagsToMoreImportantTags($(this._id + "_important_tags"), 3);
+	var numTags = this._tagsToMoreImportantTags($(this._id + "_important_tags"), 3);
+	
+	var tags = $$("#" + this._id + " .tags")[0];
+	var gotoButton = $$("#" + this._id + " .tags" + " .go_to_tagCloud")[0];
+	if(numTags>0 && !gotoButton){
+		//go to tagcloud button
+		var button = UIUtils.createHTMLElement("a", $H({
+			class_name: 'go_to_tagCloud',
+			innerHTML: gettext('More')
+		}));
+		button.observe("click", function(event){
+			UIUtils.sendPendingTags();
+			UIUtils.showResourceTagCloud(this._id);
+		}.bind(this));
+		tags.appendChild(button);
+	}
+	
 	if ((this._id == UIUtils.selectedResource) &&  ($(this._id + "_tagcloud") != null))
 		this._tagsToTagcloud($(this._id + "_tagcloud"), 'description' , {tags:'mytags'});
 }
@@ -885,6 +925,7 @@ Resource.prototype._tagsToMoreImportantTags = function(parent, tagsNumber_) {
 			})));
 		}
 	}
+	return moreImportantTags.length;
 }
 
 /**
@@ -1062,7 +1103,7 @@ Resource.prototype._tagsToTagcloud = function(parent, loc) {
 				class_name: 'delete button',
 			}));
 			tag_link.observe("click", function(event) {
-				UIUtils.removeTagUser(this.parentNode.firstChild.innerHTML, this._id);
+				UIUtils.removeTagUser(event.target.parentNode.firstChild.innerHTML, this._id);
 			}.bind(this));
 			tag.appendChild(tag_link);
 

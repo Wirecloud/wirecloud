@@ -21,8 +21,6 @@
 	width:100%;
 	padding:0px;
 	margin:0px;
-	background: #e6f3ff;
-	background: url("/ezweb/images/search_fond.gif") repeat-x top left;
 	height:auto;
 }
 
@@ -30,7 +28,6 @@
    background-color: transparent;
    border: none;
    color: darkBlue;
-   text-decoration: underline;
    cursor: pointer;
    cursor: hand;
    padding: 1px;
@@ -104,6 +101,7 @@
 #catalogue .head .advanced_search {
 	height: 125px;
 	width:100%;
+	overflow-y: auto;
 }
 
 #catalogue .head .advanced_search .advanced_search_left {
@@ -126,12 +124,11 @@
 	height: 142px;
 	position: relative;
 	width: 100%;
-	float:left;
 }
 
 #catalogue .head .advanced_tag .advanced_tag_left {
 	padding: 0px;
-	margin: 1% 0.5%;
+	margin: 1% 0.5% 0 0.5%;
 	width: 49%;
 	float: left;
 	display: block;
@@ -370,10 +367,8 @@
 	padding-bottom: 3px;
 }
 
-#catalogue #tag_categories .selected_cat{
-	font-weight: bold;
+#catalogue #left_bar .advanced_selected, #catalogue #tag_categories .selected_cat{
 }
-
 
 #catalogue #catalogue_content{
 	position:relative;
@@ -444,7 +439,6 @@
 	overflow-x:hidden;
 	width:100%;
 	float:left;
-	padding-top:5px;
 }
 
 #catalogue .center .resources .resource
@@ -452,19 +446,17 @@
 	position:relative;
 	display:inline;
 	float:left;
-	width:192px;
-	height:202px;
+	width: 192px;
 	margin-left:10px;
 	margin-top:10px;
 	background:none;
 	text-align:center;
 }
-
 #catalogue .resource > .toolbar > div {
-	display: none;
+	display: inline;
 }
 
-#catalogue .resource > .content .title {
+#catalogue .resource > .toolbar .title {
 	overflow:hidden;
 }
 
@@ -476,63 +468,50 @@
 #catalogue .center .resources .resource .content .tags
 {
 	position:relative;
-	padding-right:10px;
 	display:block;
 	margin-bottom:5px;
-	text-align:center;
-	width:100%;
+	padding: 0 5px;
 	height:18px;
 }
 
 #catalogue .center .resources .resource .content .tags .important_tags
 {
-	position:absolute;
-	text-align:center;
-	display:block;
-	width:168px;
+	position:relative;
+	display:inline;
+	float:left;
+	width:140px;
 	height:15px;
-	left:10px;
+	padding-right: 2px;
 	overflow:hidden;
-	font-size:11px;
+	
 }
 
 #catalogue .center .resources .resource .content .tags .important_tags *
 {
-	color:blue;
+
 }
 
-#catalogue .center .resources .resource .content .tags .more_tags
-{
-	position:absolute;
-	display:block;
-	width:23px;
-	left:157px;
-	text-align:right;
-	height:18px;
+#catalogue .center .resources .resource .content .tags .go_to_tagCloud{
+	cursor: pointer;
+	position: relative;
+	float:left;
 }
 
-#catalogue .center .resources .resource .content .tags .more_tags img
-{
+#catalogue .center .resources .resource .toolbar button{
+	color:white;
 	border:none;
-}
-
-#catalogue .center .resources .resource .content button {
-	font-size:100%;
+	font-size:75%;
 	cursor:pointer;
 }
-#catalogue .center .resources .resource .content button.add_gadget{
+#catalogue .center .resources .resource .toolbar button.add_gadget{
 	background: url("/ezweb/images/button.gif") top left;
 }
-#catalogue .center .resources .resource .content button.add_mashup{
+#catalogue .center .resources .resource .toolbar button.add_mashup{
 	background: url("/ezweb/images/button_mashup.gif") top left;
 }
 
-#catalogue .center .resources .resource .content .contratable{
+#catalogue .center .resources .resource .toolbar button.contratable{
 	background: url("/ezweb/images/contratable.gif") top left;
-	color:white;
-	border:none;
-	font-size:100%;
-	cursor:pointer;
 }
 
 .description_balloon
@@ -571,7 +550,6 @@
 	height:100%;
 	margin: 0;
 	text-align:center;
-	background:#E6F3FF;
 	border:1px solid #BBBBBB;
 	border-bottom: 0px;
 	-moz-border-radius-topleft:6px;
@@ -594,35 +572,10 @@
 	text-align:center;
 }
 
-
-#catalogue #resources_container .info_resource .submit_link {
-   background-color: transparent;
-   border: none;
-   color: darkBlue;
-   text-decoration: underline;
-   cursor: pointer;
-   cursor: hand;
-   padding: 1px;
-   margin-right: 5px;
-}
-
-#catalogue #resources_container .info_resource .submit_link:hover {
-	background-color: transparent;
-}
-
-#catalogue #resources_container .info_resource .submit_link:active {
-	outline: none;
-}
-
-#catalogue #resources_container .info_resource .submit_link:focus {
-	outline: none;
-}
-
 #catalogue #resources_container .info_resource .content .title_fieldset
 {
-	margin-top:15px;
+	margin-top:5px;
 	font-size:14pt;
-	font-weight:bold;
 }
 
 #catalogue #resources_container .info_resource .content .fieldset
@@ -633,7 +586,7 @@
 	margin-bottom:15px;
 	margin-left:10px;
 	margin-right:12px;
-	padding-top:15px;
+	padding-top:10px;
 	padding-bottom:15px;
 	padding-left:5px;
 	padding-right:5px;
@@ -650,7 +603,6 @@
 {
 	display:inline;
 	font-weight:bold;
-	font-size:25px;
 }
 
 #catalogue #resources_container .info_resource .content .version
@@ -658,14 +610,12 @@
 	padding-left:5px;
 	display:inline;
 	font-weight:bold;
-	font-size:18px;
 }
 
 #catalogue #resources_container .info_resource .content .vendor
 {
 	display:block;
 	font-style:italic;
-	font-size:18px;
 	width:100%;
 }
 
@@ -676,20 +626,20 @@
 	margin-bottom:15px;
 	text-align:center;
 	width:100%;
-	height:100px;
+	position:relative;
+	float:left;
 }
 
 #catalogue #resources_container .info_resource .content .image img
 {
-	width:210px;
-	height:100px;
+	width:170px;
+	height:80px;
 }
 
 #catalogue #resources_container .info_resource .content .description
 {
 	margin-top:15px;
 	display:block;
-	font-size:12px;
 	width:100%;
 }
 
@@ -697,11 +647,9 @@
 {
 	border:1px solid #bbbbbb;
 	margin-top:5px;
-	overflow:auto;
+	overflow-y:auto;
 	padding:5px;
-	font-size:12px;
-	background-color:#ddeeff;
-	height:80px;
+	height:60px;
 }
 
 #catalogue #resources_container .info_resource .content .connect
@@ -896,25 +844,30 @@
 	background-color: #DDEEFF;
 	padding-left: 2px;
 	padding-right: 2px;
-	padding-bottom: 5px;
+	padding-bottom: 4px;
 	margin-top:5px;
 }
 
-#catalogue #resources_container .info_resource .content .add_gadget
-{
-	color:white;
-	border:none;
-	font-size:100%;
-	cursor:pointer;
-	background: url("/ezweb/images/button.gif") top left;
+#catalogue #resources_container .info_resource .submit_link {
+   background-color: transparent;
+   border: none;
+   color: darkBlue;
+   cursor: pointer;
+   cursor: hand;
+   padding: 1px;
+   margin-right: 5px;
 }
-#catalogue #resources_container .info_resource .content .add_mashup
-{
-	color:white;
-	border:none;
-	font-size:100%;
-	cursor:pointer;
-	background: url("/ezweb/images/button_mashup.gif") top left;
+
+#catalogue #resources_container .info_resource .submit_link:hover {
+	background-color: transparent;
+}
+
+#catalogue #resources_container .info_resource .submit_link:active {
+	outline: none;
+}
+
+#catalogue #resources_container .info_resource .submit_link:focus {
+	outline: none;
 }
 
 #catalogue #resources_container .info_resource .content #rateStatus
@@ -932,8 +885,9 @@
 	float:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe a {
+#catalogue #resources_container .info_resource .content #rateMe{
 	float:left;
+	clear:left;
 }
 
 #catalogue #resources_container .info_resource .content #ratingSaved
@@ -957,9 +911,15 @@
 	top:10px;
 }
 
-/* Resource Highlighting */
-#catalogue .resource:hover > .toolbar > div {
+/*
+ * Resource Highlighting
+ */
+#catalogue .resource:hover > .wiki button {
 	display: block;
+	position: absolute;
+	z-index:2;
+	bottom: 2px;
+	right: 2px;
 }
 
 #catalogue .resource:hover > .content {

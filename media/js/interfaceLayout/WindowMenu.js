@@ -266,13 +266,13 @@ function AddMashupWindowMenu (actions) {
 	// New Workspace button
 	this.acceptButton = document.createElement('button');
 	this.acceptButton.appendChild(document.createTextNode('New Workspace'));
-	this.acceptButton.observe("click", this._newWorkspaceListener);
+	this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.acceptButton);
 
 	// Cancel button
 	this.cancelButton = document.createElement('button');
 	this.cancelButton.appendChild(document.createTextNode('Current Workspace'));
-	this.cancelButton.observe("click", this._currentWorkspaceListener);
+	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.cancelButton);
 	
 	this.acceptHandler = null;
@@ -287,7 +287,7 @@ AddMashupWindowMenu.prototype._newWorkspaceListener = function(e) {
 }
 
 AddMashupWindowMenu.prototype._currentWorkspaceListener = function(e) {
-	this.cancelHandler = cancelHandler();
+	this.cancelHandler();
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
