@@ -651,6 +651,21 @@ ChannelInterface.prototype.getFilter = function() {
 	return this.filter;
 }
 
+ChannelInterface.prototype._getFilterParams = function () {
+	// No filter, no params
+	if (this.filter == null)
+		return;
+
+	var fParams = {};
+	var params = this.filter.getParams();
+	var valueNodes = this.paramValueLayer.childNodes;
+	for (var i = 0; valueNodes.length; i++) {
+		fParams[params[i].index] = valueNodes[i].textContent;
+	}
+
+	return fParams;
+}
+
 /**
  * @private
  *
@@ -720,9 +735,9 @@ ChannelInterface.prototype.getFilterParams = function() {
 }
 
 
-ChannelInterface.prototype.setFilterParams = function(params_) {
+/*ChannelInterface.prototype.setFilterParams = function(params_) {
 	this.filterParams = params_;
-}
+}*/
 
 ChannelInterface.prototype.getValue = function() {
 	if (this.connectable) {
@@ -760,7 +775,7 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 
 		// Update filter and filter params
 		this.connectable.setFilter(this.filter);
-		this.connectable.setFilterParams(this.filterParams);
+		this.connectable.setFilterParams(this._getFilterParams());
 
 		// Inputs for removing
 		for (i = 0; i < this.inputsForRemoving.length; i++)

@@ -338,13 +338,15 @@ wChannel.prototype.setFilter = function(newFilter) {
 	this.filterParams = new Array();
 }
 
-wChannel.prototype.setFilterParams = function(fParamsJson_) {
+/**
+ * @param {fParamsHash} fParams
+ */
+wChannel.prototype.setFilterParams = function(fParams) {
+	fParams = fParams ? fParams : [];
+
 	this.filterParams = new Array();
-	if (fParamsJson_ != null) {
-		var fParams = eval (fParamsJson_);
-		for (var k = 0; k < fParams.length; k++)
-			this.filterParams[fParams[k].index] = fParams[k].value;
-	}
+	for (var k = 0; k < fParams.length; k++)
+		this.filterParams[fParams[k].index] = fParams[k].value;
 }
 
 wChannel.prototype.getFilterParams = function() {
