@@ -270,6 +270,13 @@ wInOut.prototype.fullDisconnect = function() {
 		this.disconnect(outputs[i]);
 }
 
+wInOut.prototype.get_input_position = function (input) {
+  for (var i = 0; i < this.inputs.length; i++) {
+  	if (this.inputs[i] == input)
+  		return i;
+  }
+}
+
 /**
  * This class represents a iGadget variable which may produce some data (also
  * know as event)
