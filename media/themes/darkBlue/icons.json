@@ -45,5 +45,5 @@
   'workspace_merge': 'workspace/merge.png',
   'workspace_active': 'workspace/active.png',
   'workspace_publish': 'publish.png',
-   'init-dat': 'init.dat'
+  'init-dat': 'init.dat'
 }

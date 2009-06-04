@@ -1,11 +1,19 @@
 body {
 	color:#000;
-	background: url("../images/fond.gif") top left;
+	background: url("../images/fondo.jpg") repeat top left;
     margin:0;
     padding:0;
     font-size:80%;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     overflow: hidden;
+}
+
+a {
+	color:red;
+}
+
+a:hover {
+	color:red;
 }
 
 #loading-indicator {
@@ -27,7 +35,7 @@ div.floatclearer {
 
 /* header ------------------------------------------------------------------------------------------ */
 #header {
-	background: url("../images/header_deg.gif") repeat-x top left;
+	background: url("../images/header.png") repeat-x top left;
 	color:white;
 }
 
@@ -51,30 +59,32 @@ div.floatclearer {
 }
 
 #logo {
-	padding-top:5px;
+	padding-top:15px;
 }
 
 #tab_section {
  top: 13px;
 }
 
-
-
-
-.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
+#add_tab_link, #left_slider, #right_slider {
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: center center;
   border: 0px none;
   cursor: pointer;
 }
+
+.toolbar_section input[type=button]{
+	border: 0px none;
+  	cursor: pointer;
+}
+
 .ws_name{
   border: 0px none;
 }
 
-#workspace_name {
-  top: -1px;
-  color:#2D6F9C;
+#dragboard_link{
+	padding: 0 7px;
 }
 
 #workspace_menu_link{
@@ -91,43 +101,32 @@ div.floatclearer {
 }
 
 .toolbar_marked, .toolbar_unmarked {
-	color: #2D6F9C;
-	border-color:#2D6F9C !important;
-	border-style:solid !important;
-	-moz-border-radius: 4px;
-	padding: 0px 0px 0px 16px;
-	height: 21px !important;
+	-moz-border-radius: 15%;
+	height: 21px;
+	margin: 0 7px;
 }
 
 .toolbar_marked {
-	background-color:#DDDEDF !important;
-	border-width:2px 1px 1px 3px !important;
+	color: white;
+	font-weight: bold;
+	background: transparent url(../images/button-center-selected.png) repeat-x scroll left top;
+}
+
+.toolbar_unmarked:hover {
+	color: white;
+	background: transparent url(../images/button-center-selected.png) repeat-x scroll left top;
 }
 .toolbar_unmarked {
-	border-width:1px 3px 2px 1px !important;
-	background-color: #f0f0f0;
+	color: #b4d7ec;
+	background: transparent url(../images/button-center.png) repeat-x scroll left top;
 }
 
 #left_slider{
- background: transparent url(../images/leftSlider.png) no-repeat scroll 2px 0;
+ 	background: transparent url(../images/leftSlider.png) no-repeat scroll 2px 0;
 }
 
 #right_slider{
- background: transparent url(../images/rightSlider.png) no-repeat scroll 2px 0;
-}
-
-
-
-#catalogue_link {
-  background: #ffffff url(../images/catalogue.png) no-repeat scroll 1px 1px;
-}
-
-#wiring_link {
-  background: #ffffff url(../images/wiring.png) no-repeat scroll 1px 1px;
-}
-
-#dragboard_link {
-  background: #ffffff url(../images/dragboard.png) no-repeat scroll 1px 1px;
+ 	background: transparent url(../images/rightSlider.png) no-repeat scroll 2px 0;
 }
 
 #logs_link {
@@ -147,10 +146,6 @@ div.floatclearer {
 #add_tab_link {
   background: #FFFFFF url(../images/addTab16px.png) no-repeat scroll 1px 1px;
   
-}
-
-#dragboard_link {
-  height: 18px !important;
 }
 
 #tab_section .tab {
@@ -300,7 +295,6 @@ button {
 }
 
 .container {
-  background-color:#E0E0E0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;
 }

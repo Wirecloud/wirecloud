@@ -157,9 +157,13 @@ var last_logged_user = '{{ last_user }}';
 	<div id="toolbar_section" class="toolbar_section">
 		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
 		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
-		<div id="dragboard_link" class="toolbar_unmarked">
-			<div id="workspace_name"></div> 
-			<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+		<div id="workspace_link_container" >
+			<div id="dragboard_link" class="toolbar_unmarked">
+				<div id="workspace_name"></div>
+			</div>
+			<div id="workspace_menu_link"> 
+				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+			</div>
 		</div>
 		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
 	</div>

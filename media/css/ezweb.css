@@ -1,11 +1,3 @@
-body {
-    margin:0;
-    padding:0;
-    font-size:80%;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    overflow: hidden;
-}
-
 
 td {
   padding: 0;
@@ -31,7 +23,6 @@ td {
 #header {
     position: relative;
     width:100%;
-    text-align:right;
     height: 77px;
     z-index: 2;
 }
@@ -66,6 +57,7 @@ td {
 }
 
 #greeting{
+	text-align:right;
 	position:relative;
 	float:right;
 	width:400px;
@@ -127,19 +119,28 @@ td {
 
 #toolbar_section {
   position: relative;
-  padding-left: 30px;
+  margin-left: 40px;
   float: left;
-  margin-top: 8px;
+  margin-top: 3px;
   z-index: 3;
   white-space: nowrap;
-  height: 28px;
-  overflow: hidden;
-/*  right: 4px;
-  left: 4px;*/
-
 }
 
-.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
+/*.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
+  position: relative;
+  margin-left: 3px;
+  margin-right: 3px;
+  height: 21px;
+  width: 21px;
+  cursor: pointer;
+}REVISAR COMPATIBILIDAD con esto y los 2 siguientes estilos*/
+
+.toolbar_section input[type=button]{
+	border: 0px none;
+  	cursor: pointer;
+}
+
+#add_tab_link, #left_slider, #right_slider {
   position: relative;
   margin-left: 3px;
   margin-right: 3px;
@@ -161,11 +162,9 @@ td {
 }
 
 .toolbar_marked, .toolbar_unmarked {
-	width: auto !important;
-	height: 21px !important;
 	position: relative;
 	float: left;
-	padding: 0px 0px 0px 16px;
+	width: auto !important;
 }
 
 .toolbar_marked {
@@ -174,7 +173,6 @@ td {
 }
 
 .toolbar_unmarked {
-	border-width:1px 3px 2px 1px !important;
 	top: 4px;
 	margin: 1px 0 0 3px;
 }
@@ -210,8 +208,12 @@ td {
  float:right;
 }
 
-#dragboard_link {
-  height: 18px !important;
+#workspace_link_container {
+	float: left;
+}
+
+#workspace_menu_link{
+	clear: left;
 }
 
 #dragboard_link span {
@@ -221,12 +223,6 @@ td {
   margin-right:3px;
 }
 
-#ws_operations_link {
-  margin-left: -5px;
-  width: 16px;
-  position:relative;
-  top:-1px;
-}
 
 #logs_link {
   height: 16px !important;
