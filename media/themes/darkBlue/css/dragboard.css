@@ -26,10 +26,6 @@ div.gadget_menu {
 div.dragboard.fixed div.gadget_menu {
 }
 
-div.dragboard.fixed {
-  background: #ffffff;
-}
-
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
   background: url("../images/igadget/close.png");
 }

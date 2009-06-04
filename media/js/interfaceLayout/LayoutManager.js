@@ -504,7 +504,7 @@ var LayoutManagerFactory = function () {
 				break;
 			case 'workSpaceOps':
 				this.currentMenu = menu;
-				this.currentMenu.show('right', x, y);
+				this.currentMenu.show('center', x, y);
 				this.showClickableCover();
 				break;
 			case 'tabOps':

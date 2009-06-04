@@ -23,7 +23,6 @@ td {
 #header {
     position: relative;
     width:100%;
-    height: 77px;
     z-index: 2;
 }
 .form-row {
@@ -126,15 +125,6 @@ td {
   white-space: nowrap;
 }
 
-/*.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
-  position: relative;
-  margin-left: 3px;
-  margin-right: 3px;
-  height: 21px;
-  width: 21px;
-  cursor: pointer;
-}REVISAR COMPATIBILIDAD con esto y los 2 siguientes estilos*/
-
 .toolbar_section input[type=button]{
 	border: 0px none;
   	cursor: pointer;
@@ -151,7 +141,6 @@ td {
 
 .ws_name{
   max-width: 130px;
-  height: 15px;
 }
 
 #workspace_name {
@@ -331,10 +320,6 @@ td {
 	padding-left: 18px;
 }
 
-.underlined {
-  border-bottom: solid 1px #AAAAAA;
-}
-
 .window_menu {
   max-width:50%;
   padding: 0.8em 1.8em;
@@ -411,6 +396,7 @@ td {
 
 button {
   margin: 3px;
+  cursor: pointer;
 }
 
 

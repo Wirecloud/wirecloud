@@ -1,5 +1,5 @@
 body {
-	color:#000;
+	color:#000000;
 	background: url("../images/fondo.jpg") repeat top left;
     margin:0;
     padding:0;
@@ -8,12 +8,13 @@ body {
     overflow: hidden;
 }
 
-a {
-	color:red;
+a, a:visited{
+	color:#3483a5;
 }
 
-a:hover {
-	color:red;
+input[type="text"], textarea{
+	border: none;
+	-moz-border-radius: 3%;
 }
 
 #loading-indicator {
@@ -35,8 +36,9 @@ div.floatclearer {
 
 /* header ------------------------------------------------------------------------------------------ */
 #header {
-	background: url("../images/header.png") repeat-x top left;
+	background: url("../images/header.png") repeat-x left top;
 	color:white;
+	height: 65px;
 }
 
 .form-row input[type="submit"] {
@@ -45,13 +47,11 @@ div.floatclearer {
 }
 
 #content-main .registration a{
-	color:#2D6F9C;
+	color:#3483a5;
 }
 
-
-
-#greeting a{
-	color:white;
+#greeting a, #greeting a:visited{
+	color:#3483a5;
 }
 
 #greeting .languages a{
@@ -59,11 +59,11 @@ div.floatclearer {
 }
 
 #logo {
-	padding-top:15px;
+	padding-top:5px;
 }
 
 #tab_section {
- top: 13px;
+ top: 5px;
 }
 
 #add_tab_link, #left_slider, #right_slider {
@@ -81,7 +81,11 @@ div.floatclearer {
 
 .ws_name{
   border: 0px none;
+  height: 13px;
+  font-size: 90%;
+  margin-top: 3px;
 }
+
 
 #dragboard_link{
 	padding: 0 7px;
@@ -89,14 +93,14 @@ div.floatclearer {
 
 #workspace_menu_link{
 	margin: 0 auto;
-	width: 28px;
-	height: 11px;
+	width: 19px;
+	height: 8px;
 	padding-top: 5px;
 }
 
 #ws_operations_link {
-	width: 28px;
-	height: 11px;
+	width: 19px;
+	height: 8px;
   	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 
@@ -109,16 +113,15 @@ div.floatclearer {
 .toolbar_marked {
 	color: white;
 	font-weight: bold;
-	background: transparent url(../images/button-center-selected.png) repeat-x scroll left top;
+	background: transparent url(../images/button-selected.png) repeat-x scroll left top;
 }
 
-.toolbar_unmarked:hover {
+.toolbar_unmarked:hover,#add_tab_link {
 	color: white;
-	background: transparent url(../images/button-center-selected.png) repeat-x scroll left top;
 }
 .toolbar_unmarked {
-	color: #b4d7ec;
-	background: transparent url(../images/button-center.png) repeat-x scroll left top;
+	color: #b5d7ed;
+	background: transparent url(../images/button.png) repeat-x scroll left top;
 }
 
 #left_slider{
@@ -140,12 +143,12 @@ div.floatclearer {
 }
 
 .message_box{
-	color: #000000;
+	color: #FFFFFF;
 }
 
 #add_tab_link {
-  background: #FFFFFF url(../images/addTab16px.png) no-repeat scroll 1px 1px;
-  
+	color: #B5D7ED;
+	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
 }
 
 #tab_section .tab {
@@ -188,17 +191,18 @@ div.floatclearer {
 }
 
 .disabled_background {
-  background-color: #6699cc;
+  background-color: #FFFFFF;
 }
 
 .drop_down_menu, .window_menu{
-  background: #FFFFFF;
+  background: transparent url(../images/menu.png) repeat scroll 0 0;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
+  color: #FFFFFF;
 }
 
 .drop_down_menu {
-  border: solid 1px #AAAAAA;
+  color: #b5d7ed;
 }
 
 .drop_down_menu .border_bottom{
@@ -210,15 +214,11 @@ div.floatclearer {
 }
 
 .underlined {
-  border-bottom: solid 1px #AAAAAA;
-}
-
-.window_menu {
-  border: 2px solid #2D6F9C;
+ 
 }
 
 .window_menu .window_title {
-  color: #2D6F9C;
+  color: #FFFFFF;
 }
 
 .window_menu .window_content {
@@ -246,9 +246,10 @@ div.floatclearer {
 }
 
 button {
-  background: transparent url(../images/button.gif) repeat;
+  background: transparent url(../images/button.png) repeat;
   border: medium none;
   color: white;
+  -moz-border-radius: 15%;
 }
 
 
@@ -313,7 +314,6 @@ button {
 }
 
 #logs_header a {
-    color:darkBlue;
     text-decoration:underline;
 }
 

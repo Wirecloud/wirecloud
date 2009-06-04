@@ -29,6 +29,7 @@ div.floatclearer {
 #header {
 	background: url("../images/header_deg.gif") repeat-x top left;
 	color:white;
+	height: 74px;
 }
 
 .form-row input[type="submit"] {
@@ -42,7 +43,7 @@ div.floatclearer {
 
 
 
-#greeting a{
+#greeting a, #greeting a:visited{
 	color:white;
 }
 
@@ -55,10 +56,8 @@ div.floatclearer {
 }
 
 #tab_section {
- top: 13px;
+ top: 10px;
 }
-
-
 
 
 .toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
@@ -68,8 +67,10 @@ div.floatclearer {
   border: 0px none;
   cursor: pointer;
 }
+
 .ws_name{
   border: 0px none;
+  height: 15px;
 }
 
 #workspace_name {
@@ -79,14 +80,14 @@ div.floatclearer {
 
 #workspace_menu_link{
 	margin: 0 auto;
-	width: 28px;
-	height: 11px;
+	width: 19px;
+	height: 8px;
 	padding-top: 5px;
 }
 
 #ws_operations_link {
-	width: 28px;
-	height: 11px;
+	width: 19px;
+	height: 8px;
   	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 

@@ -61,6 +61,10 @@ DropDownMenu.prototype.calculatePosition = function() {
 		var smHeight = this.menu.getHeight();
 		this.y -= smHeight;
 	}
+	if(this.position.indexOf('center') != -1) {
+		var smWidth = this.menu.getWidth();
+		this.x -= smWidth/2;
+	}
 	//set position
 	this.menu.style.top = this.y +"px";
 	this.menu.style.left = this.x +"px";
