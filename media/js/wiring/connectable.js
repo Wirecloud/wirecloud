@@ -225,6 +225,35 @@ function wInOut(name, type, friendCode, id) {
 wInOut.prototype = new wIn();
 
 /**
+ * Checks whether a loop will be created if the given <code>wInOut</code> is
+ * connected to this <code>wInOut</code>.
+ *
+ * @param {wInOut} inout
+ */
+wInOut.prototype.isConnectable = function(inout) {
+	return !inout._checkLoop(this, 100);
+}
+
+wInOut.prototype._checkLoop = function(inout, depth) {
+	if (depth <= 0)
+		return false;
+
+	if (this.outputs.indexOf(inout) == -1) {
+		for (var i = 0; i < this.outputs.length; i++) {
+			var currentInout = this.outputs[i];
+			if (!(currentChannel instanceof wInout)) // Loops can only be formed by channels
+				continue;
+
+			if (currentInout._checkLoop(inout, depth - 1))
+				return true;
+		}
+		return false;
+	} else {
+		return true;
+	}
+}
+
+/**
  * @private
  *
  * Stablish a new value for this <code>wConnectable</code> but without

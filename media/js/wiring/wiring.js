@@ -129,7 +129,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	/**
 	 * @private
 	 *
-	 * Connects channels with other channels on 
+	 * Connects channels with other channels.
 	 */
 	Wiring.prototype._connectInouts = function (varData) {
 		var channel = this.channelsById[varData.connectable.id];
