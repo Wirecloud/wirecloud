@@ -62,14 +62,19 @@ def filter_gadgets_by_organization(gadget_list, organization_list):
     final_list = []
      
     for gadget in gadget_list:
-        if (not gadget.organization):
+        gadget_organizations = gadget.organization.all()
+        
+        if (len(gadget_organizations) == 0):
+            #There is no organization => always returned to client app!
             final_list.append(gadget)
             continue
         
-        for organization in organization_list:
-            if gadget.organization == organization:
-                final_list.append(gadget)
-                continue
+        #There are organizations, if a gadget organization corresponds to a user organization
+        for gadget_organization in gadget_organizations:           
+            for user_organization in organization_list:
+                if gadget_organization == user_organization:
+                    final_list.append(gadget)
+                    continue
                     
     return final_list
 
