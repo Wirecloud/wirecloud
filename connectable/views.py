@@ -123,6 +123,9 @@ class ConnectableEntry(Resource):
                 for channel_delete in rel_old_channels:
                     channel_delete.delete()
 
+                # Now delete the current channel
+                old_channel.delete()
+
             # Adding channels recreating JSON structure!
             new_channels = json['inOutList']
             for new_channel_data in new_channels:
@@ -145,7 +148,7 @@ class ConnectableEntry(Resource):
                     if new_channel_data['filter']:
                         try:
                             filter = Filter.objects.get(id=new_channel_data['filter'])
-                            fparam_values = new_channel_data['filter_params']
+                            fparam_values = json_encode(new_channel_data['filter_params'])
                         except Filter.DoesNotExist:
                             pass
 
@@ -164,7 +167,7 @@ class ConnectableEntry(Resource):
 
                     try:
                         filter = Filter.objects.get(id=new_channel_data['filter'])
-                        fparam_values = new_channel_data['filter_params']
+                        fparam_values = json_encode(new_channel_data['filter_params'])
                     except Filter.DoesNotExist:
                         filter = None
                         fparam_values = None
