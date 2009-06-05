@@ -82,6 +82,12 @@ class Translation(models.Model):
          return self.text_id + " - " + self.table + "." + str(self.element_id) + " -> " + self.language
 
 ###### Catalogue section ######
+
+CERTIFICATION_STATUS = (
+    (u'CERT', 'Certified'),
+    (u'NOT_CERT', 'Not Verified'),
+    (u'NOT_VALID','Not Valid'),
+)
             
 class GadgetResource(TransModel):
 
@@ -105,10 +111,19 @@ class GadgetResource(TransModel):
      template_uri= models.URLField(_('templateURI'))
      mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
      
-     #For implementing "private gadgets" only visible for users that belongs to a concrete group
-     organization = models.ForeignKey(Group, null=True, blank=True)
+     #For implementing "private gadgets" only visible for users that belongs to some concrete organizations
+     organization = models.ManyToManyField(Group, null=True, blank=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
+     
+     certification_status = models.CharField(_('Certification Status'), max_length=10, 
+                                             choices=CERTIFICATION_STATUS, blank=True, null=True)
+     
+     def resource_type(self):
+         if (self.mashup_id):
+            return 'mashup'
+        
+         return 'gadget'
 
      class Meta:
          unique_together = ("short_name", "vendor", "version")

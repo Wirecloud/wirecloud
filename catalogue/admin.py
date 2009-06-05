@@ -38,7 +38,13 @@ class CategoyAdminView(admin.ModelAdmin):
     filter_horizontal = ('tags',)
     verbose_name_plural = 'Categories'
     
-admin.site.register(GadgetResource)
+class GadgetResourceAdmin(admin.ModelAdmin): 
+    search_fields = ['short_name', 'vendor', 'author']
+    list_display = ['short_name', 'vendor', 'author', 'resource_type']
+    verbose_name_plural = 'Resources'
+    list_filter = ['certification_status']
+    
+admin.site.register(GadgetResource, GadgetResourceAdmin)
 admin.site.register(GadgetWiring)
 admin.site.register(UserRelatedToGadgetResource)
 admin.site.register(UserTag)
