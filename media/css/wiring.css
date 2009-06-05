@@ -92,7 +92,7 @@
   cursor: default;
 }
 
-#wiring .igadget.folded, #wiring .igadgetContent.folded {
+#wiring .igadgetContent.folded {
   display: none;
 }
 
