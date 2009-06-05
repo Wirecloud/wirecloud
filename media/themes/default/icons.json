@@ -8,7 +8,7 @@
   'dragboard': 'dragboard.png',
   'dragboard-wiki': 'dragboard-wiki.png',
   'delete': 'delete.png',
-  'delete-highlighted': 'delete-highlighted.png',
+  'delete_highlighted': 'delete-highlighted.png',
   'error': 'error.png',
   'filter': 'filter.gif',
   'go-first': 'go-first.png',

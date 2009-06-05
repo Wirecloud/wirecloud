@@ -670,7 +670,11 @@ UIUtils.setResourcesWidth = function() {
 
 UIUtils.setInfoResourceHeight = function(){
 	//Get info_resource height
-	$('info_resource').style.height = $('info_resource_content').getHeight() + 'px'; 
+	var difference = $('resources_container').getHeight() - $('info_resource_content').getHeight();
+	if (difference > 0)
+		$('info_resource').style.height = $('info_resource_content').getHeight() + difference -1 + 'px'; 
+	else
+				$('info_resource').style.height = $('info_resource_content').getHeight() + 'px'; 
 
 
 }

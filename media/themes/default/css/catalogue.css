@@ -222,7 +222,7 @@
 #catalogue .head .advanced_tag .advanced_tag_right .new_tags .tag_alert {
 	display:none;
 	margin:2px 0px;
-	background:transparent url(/ezweb/images/ico_error_mini.gif) no-repeat scroll 0%;
+	background:transparent url(../images/ico_error_mini.gif) no-repeat scroll 0%;
 	color:#CE440E;
 	font-family:Arial,Helvetica,sans-serif;
 	font-size:0.8em;
@@ -371,7 +371,7 @@
 
 #catalogue #left_bar .link{
 	display: block;
-	padding-bottom: 3px;
+	padding-bottom: 5px;
 }
 
 #catalogue #left_bar .advanced_selected, #catalogue #tag_categories .selected_cat{
@@ -503,7 +503,7 @@
 	padding:5px 9px 0 5px;
 	display:block;
 	margin: 0px;
-	background: url("/ezweb/images/resource-left-fill.gif") repeat-y top left;
+	background: url("../images/catalogue/resource-left-fill.gif") repeat-y top left;
 	color:#000000;
 }
 
@@ -572,14 +572,14 @@
 	cursor:pointer;
 }
 #catalogue .center .resources .resource .toolbar button.add_gadget{
-	background: url("/ezweb/images/button.gif") top left;
+	background: url("../images/button.gif") top left;
 }
 #catalogue .center .resources .resource .toolbar button.add_mashup{
-	background: url("/ezweb/images/button_mashup.gif") top left;
+	background: url("../images/button_mashup.gif") top left;
 }
 
 #catalogue .center .resources .resource .toolbar button.contratable{
-	background: url("/ezweb/images/contratable.gif") top left;
+	background: url("../images/contratable.gif") top left;
 }
 
 .description_balloon

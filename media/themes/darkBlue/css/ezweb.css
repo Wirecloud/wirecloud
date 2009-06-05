@@ -13,7 +13,7 @@ a, a:visited{
 }
 
 input[type="text"], input[type="password"], textarea{
-	border: none;
+	border-width: 0 0 0 0;
 	-moz-border-radius: 3%;
 }
 
@@ -312,7 +312,7 @@ button {
 /* showcase ---------------------------------------------------------------------------------------- */
 
 #showcase_container {
-  background: #FFF;
+  background: transparent;
 }
 
 /* logs -------------------------------------------------------------------------------------------- */
