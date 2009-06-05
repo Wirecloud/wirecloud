@@ -659,8 +659,8 @@ ChannelInterface.prototype._getFilterParams = function () {
 	var fParams = {};
 	var params = this.filter.getParams();
 	var valueNodes = this.paramValueLayer.childNodes;
-	for (var i = 0; valueNodes.length; i++) {
-		fParams[params[i].index] = valueNodes[i].textContent;
+	for (var i = 0; i < valueNodes.length; i++) {
+		fParams[params[i].getIndex()] = valueNodes[i].textContent;
 	}
 
 	return fParams;
