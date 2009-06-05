@@ -8,11 +8,15 @@
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
+<!-- Base css -->
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css">
+
+{% block extra_stylecss %}
+<!-- Theme css -->
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
+{% endblock %}
+
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
-
-
 
 </head>
 
@@ -20,7 +24,7 @@
 
 <!-- HEADER -->
 <div id="header">
-  <img id="logo" src="{{ MEDIA_URL }}images/logo.gif" alt="EzWeb Logo">
+<img id="logo" src="{{ THEME_URL }}/images/Open_Ez_Logo.png" alt="EzWeb Logo" />
 {% if error_message %}
 <p class="errornote">{{ error_message }}</p>
 {% endif %}

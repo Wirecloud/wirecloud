@@ -90,4 +90,14 @@ def tag_categories(request):
         categories[cat.name] =_get_Category_Info(cat)        
     
     return {'tag_categories': json_encode(categories)}
+
+# themes url
+def theme_url(request):
+    if not hasattr(settings, "THEME_URL"):
+        if not hasattr(settings, "THEME") or settings.THEME == None:
+            settings.THEME = "default"
+
+        settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
+    
+    return {'THEME_URL': settings.THEME_URL}
     

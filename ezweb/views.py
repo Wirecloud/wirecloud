@@ -83,11 +83,5 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
         return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
     else:
-        if not hasattr(settings, "THEME_URL"):
-            if not hasattr(settings, "THEME") or settings.THEME == None:
-                settings.THEME = "default"
-
-            settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
-
-        return render_to_response(template, {'current_tab': 'dragboard', 'THEME_URL': settings.THEME_URL, 'active_workspace': public_workspace, 'last_user': last_user},
+        return render_to_response(template, {'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user},
                   context_instance=RequestContext(request))
