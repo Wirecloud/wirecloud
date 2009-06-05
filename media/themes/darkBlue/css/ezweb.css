@@ -12,7 +12,7 @@ a, a:visited{
 	color:#3483a5;
 }
 
-input[type="text"], textarea{
+input[type="text"], input[type="password"], textarea{
 	border: none;
 	-moz-border-radius: 3%;
 }
@@ -63,7 +63,7 @@ div.floatclearer {
 }
 
 #tab_section {
- top: 5px;
+ top: 6px;
 }
 
 #add_tab_link, #left_slider, #right_slider {
@@ -116,7 +116,7 @@ div.floatclearer {
 	background: transparent url(../images/button-selected.png) repeat-x scroll left top;
 }
 
-.toolbar_unmarked:hover,#add_tab_link {
+.toolbar_unmarked:hover,#add_tab_link:hover {
 	color: white;
 }
 .toolbar_unmarked {
@@ -152,13 +152,16 @@ div.floatclearer {
 }
 
 #tab_section .tab {
-  border: 1px solid #4c5054;
-  color: #FFF;
-  background: #97A0A8 url(../images/degradado.png) no-repeat scroll left top;
+  background: transparent url(../images/tab.png) repeat-x scroll left top;
   -moz-border-radius-topleft:10px;
-  -moz-border-radius-topright:4px;
+  -moz-border-radius-topright:10px;
   -webkit-border-top-left-radius: 10px;
-  -webkit-border-top-right-radius: 4px;
+  -webkit-border-top-right-radius: 10px;
+  color: #b5d7ed;
+}
+
+#tab_section .tab:hover {
+	color: #FFFFFF;
 }
 
 #tab_section .tab.selected {
@@ -170,9 +173,17 @@ div.floatclearer {
 }
 
 #tab_section .current {
-  color: #4c5054;
-  background: #E0E0E0;
-  border-bottom: 0px none;
+  	background: transparent url(../images/tab-selected.png) repeat-x scroll left top;
+  	color: white;
+	font-weight: bold;
+}
+
+.tab span{
+  margin-right:5px;
+}
+
+.current .tab_name {
+  margin-right: 4px;
 }
 
 .tab .tab_name {
@@ -238,7 +249,9 @@ div.floatclearer {
 }
 
 .tabOps_launcher{
-  background: transparent url(../images/tabops16px.png) no-repeat;
+  width: 16px;
+  height: 16px;
+  background: transparent url(../images/menu-tab.png) no-repeat;
 }
 
 .closebutton {
@@ -289,13 +302,8 @@ button {
 
 /* containers --------------------------------------------------------------------------------------- */
 
-#wrapper {
-  border: 1px solid #4c5054;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-}
-
-.container {
+.dragboard {
+  border: 1px solid #2e4e6a;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;
 }
@@ -315,6 +323,10 @@ button {
 
 #logs_header a {
     text-decoration:underline;
+}
+
+#logs_console{
+	color: #FFFFFF;
 }
 
 /* dragboard template ------------------------------------------------------------------------------- */

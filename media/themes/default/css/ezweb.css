@@ -178,6 +178,14 @@ div.floatclearer {
   border-bottom: 0px none;
 }
 
+.tab span{
+  margin-right:5px;
+}
+
+.current .tab_name {
+  margin-right: 5px;
+}
+
 .tab .tab_name {
   background: #97A0A8;
   border: 0px;
@@ -244,6 +252,8 @@ div.floatclearer {
 }
 
 .tabOps_launcher{
+  width: 16px;
+  height: 16px;
   background: transparent url(../images/tabops16px.png) no-repeat;
 }
 

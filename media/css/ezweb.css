@@ -59,7 +59,7 @@ td {
 	text-align:right;
 	position:relative;
 	float:right;
-	width:400px;
+	width:350px;
 	margin-right:15px;
 	margin-top:5px;
 }
@@ -67,7 +67,7 @@ td {
 
 #greeting .languages{
 	display:inline;
-	margin-left: 20px;
+	margin-left: 15px;
 }
 
 #greeting .languages img{
@@ -252,14 +252,6 @@ td {
   padding-right: 3px;
 }
 
-.tab span{
-  margin-right:5px;
-}
-
-.current .tab_name {
-  margin-right: 5px;
-}
-
 #menu_layer{
   position:absolute;
   top: 0;
@@ -390,8 +382,6 @@ td {
   border:0px none;
   cursor: pointer;
   padding: 0px;
-  width: 16px;
-  height: 16px;
 }
 
 button {
