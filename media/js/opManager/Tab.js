@@ -231,7 +231,7 @@ function Tab (tabInfo, workSpace) {
 
 	this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
 	
-	LayoutManagerFactory.getInstance().resizeContainer(this.dragboardElement);
+	//LayoutManagerFactory.getInstance().resizeContainer(this.dragboardElement);
 	
 	// Tab creation
 	//add a new tab to the tab section

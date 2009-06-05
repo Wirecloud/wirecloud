@@ -150,39 +150,42 @@ var LayoutManagerFactory = function () {
 			// Total 8px
 			var newHeight=BrowserUtilsFactory.getInstance().getHeight();
 			$("wrapper").setStyle({"height" : (newHeight - $("header").offsetHeight - 8) + "px"});
-
-			var wrapperChilds = $('wrapper').childElements();
-			var i;
-			for (i=0;i<wrapperChilds.length;i++){
-				this.resizeContainer(wrapperChilds[i]);
-			}
-			var newWidth = BrowserUtilsFactory.getInstance().getWidth();
-			this.coverLayerElement.setStyle({"height" : newHeight + "px", "width": newWidth +"px"});
-
-			// Recalculate catalogue sizes
-			UIUtils.setResourcesWidth();
-			UIUtils.resizeResourcesContainer();
-
-			// Recalculate wiring position
+			
 			var opManager = OpManagerFactory.getInstance();
 			if(opManager.loadCompleted) {
-				/* Wiring */
-				var wiringInterface = opManager.activeWorkSpace.getWiringInterface()
-				wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
-				if(wiringInterface.currentChannel){
-					wiringInterface.uncheckChannel(wiringInterface.currentChannel);
-					wiringInterface.highlightChannel(wiringInterface.currentChannel);
+				//resize cover layer
+				var newWidth = BrowserUtilsFactory.getInstance().getWidth();
+				this.coverLayerElement.setStyle({"height" : newHeight + "px", "width": newWidth +"px"});
+				
+				//resize the current view element and its related elemets
+				if (this.currentViewType=="catalogue"){
+					this.resizeContainer(this.currentView.catalogueElement);
+					// Recalculate catalogue sizes
+					UIUtils.setResourcesWidth();
+					UIUtils.resizeResourcesContainer();
+				}else if (this.currentViewType=="wiring"){	
+					// Recalculate wiring position			
+					this.resizeContainer(this.currentView.wiringContainer);
+					var wiringInterface = opManager.activeWorkSpace.getWiringInterface()
+					wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
+					if(wiringInterface.currentChannel){
+						wiringInterface.uncheckChannel(wiringInterface.currentChannel);
+						wiringInterface.highlightChannel(wiringInterface.currentChannel);
+					}
+				}else if (this.currentViewType=="logs"){ 
+					this.resizeContainer(this.currentView.logContainer);
+				}else{ //dragboard
+					this.resizeContainer(this.currentView.dragboardElement);
+					opManager.activeWorkSpace.getActiveDragboard()._notifyWindowResizeEvent();
 				}
+				
 
-				/* Current Dragboard */
-				opManager.activeWorkSpace.getActiveDragboard()._notifyWindowResizeEvent();
+				// Recalculate menu positions
+				if (this.currentMenu)
+					this.currentMenu.calculatePosition();
+				// recalculate the tab bar
+				this.resizeTabBar();
 			}
-
-			// Recalculate menu positions
-			if (this.currentMenu)
-				this.currentMenu.calculatePosition();
-
-			this.resizeTabBar();
 		}
 		
 		LayoutManager.prototype.unloadCurrentView = function () {
