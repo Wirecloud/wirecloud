@@ -386,6 +386,10 @@
 	color: #b5d7ed;
 }
 
+#catalogue #tag_categories .category_name:hover, #catalogue #left_bar .link:hover{
+	text-decoration: underline
+}
+
 #catalogue #left_bar .link{
 	display: block;
 	padding-bottom: 5px;
@@ -522,7 +526,6 @@
 {
 	overflow:hidden;
 	float:left;
-	width: 133px;
 	text-align:left;
 	overflow:hidden;
 	font-size:11px;
@@ -541,6 +544,32 @@
 	background: url("../images/catalogue/resource-fill.png") repeat-y top left;
 	color:#000000;
 }
+
+#catalogue .resource.current .content{
+	background-image: url(../images/catalogue/resource-fill-select.png);
+}
+
+#catalogue .center .resources .resource.current > .top {
+	background-image: url(../images/catalogue/resource-top-select.png);
+}
+
+#catalogue .resource.current > .toolbar {
+	background-image: url(../images/catalogue/resource-header-select.png);
+}
+
+#catalogue .resource.current > .bottom {
+	background-image: url(../images/catalogue/resource-bottom-select.png)
+}
+
+#catalogue .center .resources .resource.current .toolbar button {
+	background-image: url(../images/catalogue/button_select.png)
+}
+
+
+
+
+
+
 
 #catalogue .center .resources .resource .content .image
 {
@@ -561,10 +590,6 @@
 	height:80px;
 	border:none;
 	margin-top: 3px;
-}
-
-#catalogue .resource > .wiki a * {
-	border:none;
 }
 
 #catalogue .center .resources .resource .content .tags
@@ -607,7 +632,7 @@
 	color:white;
 	border:none;
 	font-size:75%;
-	height:18px;
+	height:22px;
 	cursor:pointer;
 }
 #catalogue .center .resources .resource .toolbar button{
@@ -717,15 +742,21 @@
 {
 	display:inline;
 	font-weight:bold;
+	position.relative;
+	float:left;
 	font-size: 14pt;
 }
 
-#catalogue #resources_container .info_resource .content .version
+#catalogue #resources_container .info_resource .content a.wiki 
 {
 	padding-left:5px;
 	display:inline;
-	font-weight:bold;
-	font-size:14pt;
+	position.relative;
+	float:left;
+}
+
+#catalogue #resources_container .info_resource .content .title .wiki img{
+	border: none;
 }
 
 #catalogue #resources_container .info_resource .content .vendor
@@ -1076,15 +1107,19 @@
 	background-image: url(../images/catalogue/resource-bottom-select.png)
 }
 
+#catalogue .center .resources .resource:hover .toolbar button {
+	background-image: url(../images/catalogue/button_select.png)
+}
+
 /*
  * Resource Selection
  */
 #catalogue .resource.selected > .content {
-	background-image: url(../images/catalogue/resource-left-fill-tagmode.png);
+	background-image: url(../images/catalogue/resource-fill-tagmode.png);
 }
 
 #catalogue .resource.selected > .bottom {
-	background-image: url(../images/catalogue/resource-left-bottom-tagmode.png)
+	background-image: url(../images/catalogue/resource-bottom-tagmode.png)
 }
 
 /*
@@ -1108,9 +1143,9 @@
 #catalogue .resource .toolbar button {
 	position:absolute;
 	right: 8px;
-	top:25px;
+	top:23px;
 	margin: 0;
-	padding: 0 2px;
+	padding: 2px;
 	-moz-border-radius: 20%;
 	-webkit-border-radius: 20%;
 }

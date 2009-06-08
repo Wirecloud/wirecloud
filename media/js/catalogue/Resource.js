@@ -280,10 +280,21 @@ Resource.prototype.showInfo = function() {
 		class_name: 'name',
 		innerHTML: this._state.getDisplayName()
 	})));
-	/*title.appendChild(UIUtils.createHTMLElement("span", $H({ 
-		class_name: 'version',
-		innerHTML: this._state.getVersion()
-	})));*/
+	var wikiLink = UIUtils.createHTMLElement("a", $H({ 
+		class_name: 'wiki',
+		href: this._state.getUriWiki(),
+		target: '_blank',
+		title: gettext('More info'),
+		alt: gettext('More info')
+	}));
+	
+	var wikiImg = UIUtils.createHTMLElement("img", $H({
+		src: _currentTheme.getIconURL('catalogue-wiki')
+	}));
+	
+	wikiLink.appendChild(wikiImg);
+	title.appendChild(wikiLink);
+	
 	fieldset.appendChild(UIUtils.createHTMLElement("div", $H({ 
 		class_name: 'vendor',
 		innerHTML: this._state.getVendor()

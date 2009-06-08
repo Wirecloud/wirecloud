@@ -139,6 +139,7 @@ UIUtils.lightUpConnectableResources = function(resourceId_) {
 
 UIUtils.showResourceInfo = function(resourceId_) {
 	UIUtils.selectedResource = resourceId_;
+	$(UIUtils.selectedResource).addClassName('current');
 	CatalogueFactory.getInstance().getResource(UIUtils.selectedResource).showInfo();
 }
 
@@ -690,6 +691,7 @@ UIUtils.openInfoResource = function() {
 UIUtils.closeInfoResource = function() {
 	if (UIUtils.isInfoResourcesOpen) {
 		UIUtils.isInfoResourcesOpen = false;
+		$(UIUtils.selectedResource).removeClassName('current');
 		UIUtils.SlideInfoResourceOutOfView('info_resource');
 	}
 }
@@ -1031,6 +1033,9 @@ UIUtils.showResourceTagCloud = function(id_){
 }
 
 UIUtils.clickOnResource = function(id_) {
+	if(UIUtils.selectedResource)
+		$(UIUtils.selectedResource).removeClassName('current');
+		
 	if (UIUtils.tagmode) {
 		UIUtils.toggleSelectedResource(id_);
 	} else {
