@@ -312,7 +312,7 @@ var OpManagerFactory = function () {
 				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default')
 					new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
 				else
-					continueLoading(true);
+					continueLoading(_defaultTheme, true);
 			}
 			_currentTheme = new Theme('default', null, initTheme);
 		}
