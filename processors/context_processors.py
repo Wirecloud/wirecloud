@@ -79,7 +79,7 @@ def _get_Category_Info(cat):
     for catChild in children:
         #make the same with all its children
         catObject['children'][catChild.name]= _get_Category_Info(catChild)
-        
+
     return catObject
 
 # tag categories from the catalogue specified by db admin
@@ -87,17 +87,16 @@ def tag_categories(request):
     categories = {}
     catQuerySet = Category.objects.filter(parent = None)
     for cat in catQuerySet:
-        categories[cat.name] =_get_Category_Info(cat)        
-    
+        categories[cat.name] =_get_Category_Info(cat)
+
     return {'tag_categories': json_encode(categories)}
 
 # themes url
 def theme_url(request):
-    if not hasattr(settings, "THEME_URL"):
-        if not hasattr(settings, "THEME") or settings.THEME == None:
-            settings.THEME = "default"
+    if not hasattr(settings, "DEFAULT_THEME") or settings.DEFAULT_THEME == None:
+        settings.DEFAULT_THEME = "default"
 
-        settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.THEME
-    
-    return {'THEME_URL': settings.THEME_URL}
-    
+    if not hasattr(settings, "THEME_URL"):
+        settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.DEFAULT_THEME
+
+    return {'_INITIAL_THEME': settings.DEFAULT_THEME, 'THEME_URL': settings.THEME_URL}

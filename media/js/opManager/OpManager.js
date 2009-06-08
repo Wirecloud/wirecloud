@@ -280,17 +280,40 @@ var OpManagerFactory = function () {
 			// Init Layout Manager
 			LayoutManagerFactory.getInstance().resizeWrapper();
 
-			// First, global modules must be loaded (Showcase, Catalogue)
-			// Showcase is the first!
-			// When it finish, it will invoke continueLoadingGlobalModules method!
-			this.showcaseModule = ShowcaseFactory.getInstance();
-			this.showcaseModule.init();
+			// Init log manager
 			this.logs = LogManagerFactory.getInstance();
 
 			Event.observe(window,
 			              "unload",
 			              this.unloadEnvironment.bind(this),
 			              true);
+
+			// TODO create a Theme Manager Module
+			// Start loading the default theme
+			// When it finish, it will invoke continueLoadingGlobalModules method!
+			function continueLoading(loaded) {
+				if (loaded === false) {
+					// TODO log eror
+					return;
+				}
+
+				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+			}
+
+			function initTheme(loaded) {
+				if (loaded === false) {
+					// TODO log eror
+					return;
+				}
+
+				_defaultTheme = _currentTheme;
+
+				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default')
+					_currentTheme = new Theme(_INITIAL_THEME, _defaultTheme);
+				else
+					continueLoading(true);
+			}
+			_currentTheme = new Theme('default', null, initTheme);
 		}
 
 		/**
@@ -328,6 +351,12 @@ var OpManagerFactory = function () {
 		OpManager.prototype.continueLoadingGlobalModules = function (module) {
 			// Asynchronous load of modules
 			// Each singleton module notifies OpManager it has finished loading!
+
+			if (module == Modules.prototype.THEME_MANAGER) {
+				// Now global modules must be loaded... Showcase is the first!
+				this.showcaseModule = ShowcaseFactory.getInstance();
+				this.showcaseModule.init();
+			}
 
 			if (module == Modules.prototype.SHOWCASE) {
 				this.catalogue = CatalogueFactory.getInstance();

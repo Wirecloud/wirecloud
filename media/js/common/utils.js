@@ -107,23 +107,3 @@ Theme.prototype.getIconURL = function(iconId) {
 
 	return this._iconMapping[iconId];
 }
-
-// TODO include this on the ezweb loading process
-function initTheme(loaded) {
-	if (loaded === false) {
-		// TODO log eror
-		return;
-	}
-
-	var _defaultTheme = _currentTheme;
-
-	if (_INITIAL_THEME != 'default')
-		_currentTheme = new Theme(_INITIAL_THEME, _defaultTheme);
-}
-
-
-_INITIAL_THEME = 'default';
-
-
-// Default theme
-var _currentTheme = new Theme('default', null, initTheme);

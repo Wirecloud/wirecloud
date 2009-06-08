@@ -28,6 +28,8 @@ function Modules () {
 
 }
 
+Modules.prototype.THEME_MANAGER = 3;
+
 // Singleton modules (valid for every WorkSpace)
 Modules.prototype.SHOWCASE = 0;
 Modules.prototype.CATALOGUE = 1;

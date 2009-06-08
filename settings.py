@@ -55,14 +55,21 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 
 
 #################################################################
-# LOGGING 
+# LOGGING
 #################################################################
-# 0 => no logging 
+# 0 => no logging
 # 1 => only access and errors
-# 2 => access and arguments when exception 
+# 2 => access and arguments when exception
 # 3 => access and arguments in every call
-LOGGING_LEVEL = 2 
-##################################################################
+LOGGING_LEVEL = 2
+#################################################################
+
+#################################################################
+# DEFAULT THEME
+#################################################################
+# Uncomment this to override the default Theme.
+#DEFAULT_THEME = "default"
+#################################################################
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
