@@ -291,25 +291,26 @@ var OpManagerFactory = function () {
 			// TODO create a Theme Manager Module
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!
-			function continueLoading(loaded) {
+			function continueLoading(theme, loaded) {
 				if (loaded === false) {
 					// TODO log eror
-					return;
+				} else {
+					_currentTheme = theme;
 				}
 
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
 			}
 
-			function initTheme(loaded) {
+			function initTheme(theme, loaded) {
 				if (loaded === false) {
 					// TODO log eror
 					return;
 				}
 
-				_defaultTheme = _currentTheme;
+				_defaultTheme = theme;
 
 				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default')
-					_currentTheme = new Theme(_INITIAL_THEME, _defaultTheme);
+					new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
 				else
 					continueLoading(true);
 			}

@@ -56,11 +56,11 @@ function Theme(name, baseTheme, callback) {
 			this._iconMapping[iconId] = this.getResource('/images/' + icons[iconId]);
 
 		this.loaded = true;
-		if (this._callback) this._callback(true);
+		if (this._callback) this._callback(this, true);
 	}.bind(this);
 
 	var _notifyError = function (response) {
-		if (this._callback) this._callback(false);
+		if (this._callback) this._callback(this, false);
 	}.bind(this);
 
 	new Ajax.Request(this.getResource('/icons.json'), {
