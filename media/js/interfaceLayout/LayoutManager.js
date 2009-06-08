@@ -39,8 +39,8 @@ var LayoutManagerFactory = function () {
 	var hideLevel = 1;
 	var showLevel = 2;
 
-	var hideStyle = {'zIndex': hideLevel, 'height': 0};
-	var showStyle = {'zIndex': showLevel, 'display':'block'};
+	var hideStyle = {'zIndex': hideLevel, 'height': 0, visibility:'hidden'};
+	var showStyle = {'zIndex': showLevel, 'display':'block', visibility:'visible'};
 
 	function LayoutManager () {
 		// *********************************

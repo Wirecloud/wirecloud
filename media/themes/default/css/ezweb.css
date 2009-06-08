@@ -8,6 +8,10 @@ body {
     overflow: hidden;
 }
 
+a, a:visited{
+	color:darkBlue;
+}
+
 #loading-indicator {
     background: white;
     -moz-opacity: 0.6;
@@ -143,6 +147,7 @@ div.floatclearer {
 
 .message_box{
 	color: #000000;
+	font-weight: bold;
 }
 
 #add_tab_link {

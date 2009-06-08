@@ -9,7 +9,11 @@ body {
 }
 
 a, a:visited{
-	color:#3483a5;
+	color:#b5d7ed;
+}
+
+label{
+	color: #FFFFFF;
 }
 
 input[type="text"], input[type="password"], textarea{
@@ -47,11 +51,11 @@ div.floatclearer {
 }
 
 #content-main .registration a{
-	color:#3483a5;
+	color:#b5d7ed;
 }
 
 #greeting a, #greeting a:visited{
-	color:#3483a5;
+	color:#b5d7ed;
 }
 
 #greeting .languages a{
@@ -143,7 +147,8 @@ div.floatclearer {
 }
 
 .message_box{
-	color: #FFFFFF;
+	color: #000000;
+	font-weight: bold;
 }
 
 #add_tab_link {
@@ -196,8 +201,8 @@ div.floatclearer {
 }
 
 #menu_layer{
-  opacity: .2;
-  moz-opacity: .5;
+  opacity: .5;
+  -moz-opacity: .5;
   filter: alpha(opacity=50);
 }
 
@@ -256,6 +261,7 @@ div.floatclearer {
 
 .closebutton {
   background: transparent url(../images/remove.png) no-repeat;
+  width: 13px;
 }
 
 button {
@@ -264,7 +270,6 @@ button {
   color: white;
   -moz-border-radius: 15%;
 }
-
 
 /* gadgets ------------------------------------------------------------------------------------------ */
 
@@ -302,10 +307,10 @@ button {
 
 /* containers --------------------------------------------------------------------------------------- */
 
-.dragboard {
-  border: 1px solid #2e4e6a;
+.dragboard, #wiring {
   -moz-border-radius: 5px;
-  -webkit-border-radius: 6px;
+  -webkit-border-radius: 5px;
+  background: transparent url(../images/layer.png) repeat scroll 0 0;
 }
 
 

@@ -348,7 +348,7 @@ var OpManagerFactory = function () {
 				if(!BrowserUtilsFactory.getInstance().isIE()) {
 					var s = document.createElement('style');
 					s.type = "text/css";
-					s.innerHTML = '.container { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}';
+					s.innerHTML = '#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}';
 					var h = document.getElementsByTagName("head")[0];
 					h.appendChild(s);
 				}//TODO: for IE try: document.createStyleSheet() and addRule()

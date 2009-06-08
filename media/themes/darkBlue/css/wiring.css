@@ -43,6 +43,7 @@
   font-size: 120%;
   text-align: center;
   margin-bottom: 1ex;
+  color: #FFFFFF;
 }
 
 #wiring #eventColumn .title, #slotColumn .title{
@@ -281,7 +282,7 @@
 
 #wiring .newChannel, #wiring #unfold_all_link {
   cursor: pointer; cursor: hand;
-  color: #2D6F9C;
+  color: #b5d7ed;
   text-decoration: underline;
 }
 
@@ -291,7 +292,7 @@
 }
 
 #wiring #wiring_options {
-  color:     #2D6F9C;
+  color:     #FFFFFF;
   font-size: 90%;
 }
 
@@ -361,7 +362,7 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url("../images/ops21px.png") no-repeat scroll 0 0;
+	background: transparent url("../images/menu-arrow-selected.png") no-repeat scroll 0 0;
 	margin-left: 5px;
 	border: 0;
 	cursor: pointer;

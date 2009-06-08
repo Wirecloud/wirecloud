@@ -36,6 +36,7 @@
   'unlock': 'unlock.png',
   'warning': 'warning.png',
   'wiring-filter_param': 'filter-param.png',
+  'channel-remove': 'remove.png',
   'showcase-delete': 'delete.png',
   'showcase-delete_highlighted': 'delete-highlighted.png',
   'showcase-wiki': 'wiki.png',
