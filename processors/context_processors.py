@@ -99,4 +99,4 @@ def theme_url(request):
     if not hasattr(settings, "THEME_URL"):
         settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.DEFAULT_THEME
 
-    return {'_INITIAL_THEME': settings.DEFAULT_THEME, 'THEME_URL': settings.THEME_URL}
+    return {'INITIAL_THEME': settings.DEFAULT_THEME, 'THEME_URL': settings.THEME_URL}
