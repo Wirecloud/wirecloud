@@ -441,12 +441,11 @@ function ChannelInterface(channel, wiringGUI) {
 	                  this.wiringGUI._removeChannel(this);
 	              }.bind(this));
 
-	var channelNameInput = document.createElement("input");
-	channelPipe.appendChild(channelNameInput);
-	channelNameInput.setAttribute ("value", this.name);
-	channelNameInput.addClassName ("channelNameInput");
-	Event.observe(channelNameInput,
-	              'click',
+	this.channelNameInput = document.createElement("input");
+	channelPipe.appendChild(this.channelNameInput);
+	this.channelNameInput.setAttribute ("value", this.name);
+	this.channelNameInput.addClassName ("channelNameInput");
+	this.channelNameInput.observe('click',
 	              function(e) {
 	                  if (this.wiringGUI.currentChannel == this)
 	                      Event.stop(e); //do not propagate to div.
@@ -466,7 +465,7 @@ function ChannelInterface(channel, wiringGUI) {
 			this.setName(e.target.value)
 		}
 	}
-	Event.observe(channelNameInput, 'change', checkName.bind(this));
+	this.channelNameInput.observe('change', checkName.bind(this));
 
 	var channelContent = document.createElement("div");
 	this.htmlElement.appendChild(channelContent);
@@ -542,7 +541,7 @@ function ChannelInterface(channel, wiringGUI) {
 
 	// Update the initial information
 	this._updateFilterInterface();
-	channelNameInput.focus();
+	this.channelNameInput.focus();
 
 	// Anchors
 	var inAnchorElement = this.inAnchor.getHTMLElement();
@@ -734,11 +733,6 @@ ChannelInterface.prototype.getFilterParams = function() {
 	return this.filterParams;
 }
 
-
-/*ChannelInterface.prototype.setFilterParams = function(params_) {
-	this.filterParams = params_;
-}*/
-
 ChannelInterface.prototype.getValue = function() {
 	if (this.connectable) {
 		return this.connectable.getValue();
@@ -817,12 +811,12 @@ ChannelInterface.prototype.exists = function() {
 
 ChannelInterface.prototype.check = function() {
 	this.htmlElement.addClassName("selected");
-	this.htmlElement.getElementsByClassName('channelNameInput')[0].focus();
+	this.channelNameInput.focus();
 }
 
 ChannelInterface.prototype.uncheck = function() {
 	this.htmlElement.removeClassName("selected");
-	this.htmlElement.getElementsByClassName('channelNameInput')[0].blur();
+	this.channelNameInput.blur();
 }
 
 ChannelInterface.prototype.getHTMLElement = function() {
