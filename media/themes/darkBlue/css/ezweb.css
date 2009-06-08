@@ -45,9 +45,11 @@ div.floatclearer {
 	height: 65px;
 }
 
-.form-row input[type="submit"] {
-	background: transparent url(../images/header_deg.gif) repeat;
-	color: white;
+.form-row input[type="submit"] { /* login form */
+	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
+	color: #B5D7ED;
+	-moz-border-radius: 3%;
+	cursor: pointer;
 }
 
 #content-main .registration a{
@@ -348,4 +350,5 @@ button {
 
 .color_button {
 	background: transparent url(../images/colorpicker.png) no-repeat scroll 0 0;
+	vertical-align:middle;
 }
