@@ -328,7 +328,7 @@ button {
 }
 
 .container {
-  background-color:#E0E0E0;
+  background-color:#E0E0E0 url(../images/init.dat) no-repeat scroll bottom center;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;
 }
