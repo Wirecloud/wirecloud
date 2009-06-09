@@ -103,7 +103,7 @@ Resource.prototype.paint = function() {
 
 	// TOOLBAR
 	var toolbar = UIUtils.createHTMLElement("div", $H({
-		class: 'toolbar'
+		class_name: 'toolbar'
 	}));
 	resource.appendChild(toolbar);
 	
@@ -1007,7 +1007,7 @@ Resource.prototype._addVersionsToPanel = function (parent) {
 			})));
 			var delete_img = UIUtils.createHTMLElement("button", $H({
 				title: gettext('Delete this version of the gadget'),
-				class: "delete_icon",
+				class_name: "delete_icon",
 				name: versions[i]
 			}));
 			delete_img.observe("click", function(event) {

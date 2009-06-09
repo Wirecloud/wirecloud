@@ -222,13 +222,13 @@ WiringInterface.prototype._addIGadget = function (igadget, tabEvents, tabSlots) 
  * @private
  * This function is used by _registerEvent and _registerSlot
  *
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-WiringInterface.prototype._registerConnectable = function(interface) {
-	this.connectablesByQName[interface.getConnectable().getQualifiedName()] = interface;
+WiringInterface.prototype._registerConnectable = function(_interface) {
+	this.connectablesByQName[_interface.getConnectable().getQualifiedName()] = _interface;
 
 	// Harvest friend code info
-	var friendCode = interface.getFriendCode();
+	var friendCode = _interface.getFriendCode();
 
 	if (friendCode === null)
 		return;
@@ -239,7 +239,7 @@ WiringInterface.prototype._registerConnectable = function(interface) {
 		this.friend_codes[friendCode].list = [];
 		this.friend_codes[friendCode].color = this.color_scheme[this.friend_codes_counter++];
 	}
-	this.friend_codes[friendCode].list.push(interface);
+	this.friend_codes[friendCode].list.push(_interface);
 }
 
 /**
@@ -780,12 +780,12 @@ WiringInterface.prototype.color_scheme.push("#5357cf");
  *
  * @abstract
  */
-function ConnectionAnchor(interface) {
+function ConnectionAnchor(_interface) {
 	// Allow hierarchy
 	if (arguments.length == 0)
 		return;
 
-	this.interface = interface;
+	this._interface = _interface;
 	this.connectionArrows = [];
 	this.channelType = null;
 
@@ -800,7 +800,7 @@ function ConnectionAnchor(interface) {
  * @return {ConnectableInterface}
  */
 ConnectionAnchor.prototype.getConnectableInterface = function() {
-	return this.interface;
+	return this._interface;
 }
 
 /**
@@ -822,8 +822,8 @@ ConnectionAnchor.prototype._addConnectionArrow = function(connectionArrow) {
 	if (!this.isConnected())
 		this.htmlElement.addClassName('checked');
 
-	if (this.interface._increaseConnections)
-		this.interface._increaseConnections();
+	if (this._interface._increaseConnections)
+		this._interface._increaseConnections();
 
 	this.connectionArrows.push(connectionArrow);
 }
@@ -837,8 +837,8 @@ ConnectionAnchor.prototype._addConnectionArrow = function(connectionArrow) {
 ConnectionAnchor.prototype._removeConnectionArrow = function(connectionArrow) {
 	this.connectionArrows.remove(connectionArrow);
 
-	if (this.interface._decreaseConnections)
-		this.interface._decreaseConnections();
+	if (this._interface._decreaseConnections)
+		this._interface._decreaseConnections();
 
 	if (!this.isConnected())
 		this.htmlElement.removeClassName('checked');
@@ -902,54 +902,54 @@ ConnectionAnchor.prototype.getConnectionArrows = function() {
 
 /**
  * @class
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-function InConnectionAnchor(interface) {
+function InConnectionAnchor(_interface) {
 	// Allow hierarchy
 	if (arguments.length == 0)
 		return;
 
-	ConnectionAnchor.call(this, interface);
+	ConnectionAnchor.call(this, _interface);
 }
 InConnectionAnchor.prototype = new ConnectionAnchor();
 
 /**
  * @class
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-function OutConnectionAnchor(interface) {
+function OutConnectionAnchor(_interface) {
 	// Allow hierarchy
 	if (arguments.length == 0)
 		return;
 
-	ConnectionAnchor.call(this, interface);
+	ConnectionAnchor.call(this, _interface);
 }
 OutConnectionAnchor.prototype = new ConnectionAnchor();
 
 /**
  * @class
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-function EventConnectionAnchor(interface) {
-	InConnectionAnchor.call(this, interface);
+function EventConnectionAnchor(_interface) {
+	InConnectionAnchor.call(this, _interface);
 }
 EventConnectionAnchor.prototype = new InConnectionAnchor();
 
 /**
  * @class
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-function SlotConnectionAnchor(interface) {
-	OutConnectionAnchor.call(this, interface);
+function SlotConnectionAnchor(_interface) {
+	OutConnectionAnchor.call(this, _interface);
 }
 SlotConnectionAnchor.prototype = new OutConnectionAnchor();
 
 /**
  * @class
- * @param {ConnectableInterface} interface
+ * @param {ConnectableInterface} _interface
  */
-function TabConnectionAnchor(interface) {
-	OutConnectionAnchor.call(this, interface);
+function TabConnectionAnchor(_interface) {
+	OutConnectionAnchor.call(this, _interface);
 }
 TabConnectionAnchor.prototype = new OutConnectionAnchor();
 
@@ -958,9 +958,9 @@ EventConnectionAnchor.prototype.setConnectionStatus = function(newStatus) {
 	ConnectionAnchor.prototype.setConnectionStatus.call(this, newStatus);
 
 	if (newStatus)
-		this.interface._increaseConnections();
+		this._interface._increaseConnections();
 	else
-		this.interface._decreaseConnections();
+		this._interface._decreaseConnections();
 }
 SlotConnectionAnchor.prototype.setConnectionStatus = EventConnectionAnchor.prototype.setConnectionStatus;
 TabConnectionAnchor.prototype.setConnectionStatus = EventConnectionAnchor.prototype.setConnectionStatus;

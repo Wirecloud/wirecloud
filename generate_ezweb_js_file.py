@@ -214,6 +214,6 @@ def write_file(final_file_name, file_list):
 
 #Main
 write_file('media/js/ezweb_' + ezweb_release(None)['ezweb_release'] + '.js', files_normal)
-write_file('media/js/ezweb_viewer_' + ezweb_release(None)['ezweb_release'] + '.js', files_normal)
+write_file('media/js/ezweb_viewer_' + ezweb_release(None)['ezweb_release'] + '.js', files_viewer)
 write_file('media/iphone/ezweb_iphone_' + ezweb_release(None)['ezweb_release'] + '.js', files_iphone)
 

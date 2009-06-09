@@ -851,66 +851,66 @@ ChannelInterface.prototype.remove = function() {
  * @param {ConnectableInterface} interface connectable to connect as input for
  *        this Channel.
  */
-ChannelInterface.prototype.connectInput = function(interface) {
-	if (interface instanceof ChannelInterface) {
-		this.inputs.push(interface);
+ChannelInterface.prototype.connectInput = function(_interface) {
+	if (_interface instanceof ChannelInterface) {
+		this.inputs.push(_interface);
 		return;
 	}
 
 	if (this.connectable != null &&
-		this.connectable.inputs.elementExists(interface.getConnectable())) {
-		this.inputsForRemoving.remove(interface);
+		this.connectable.inputs.elementExists(_interface.getConnectable())) {
+		this.inputsForRemoving.remove(_interface);
 	} else {
-		this.inputsForAdding.push(interface);
+		this.inputsForAdding.push(_interface);
 	}
-	this.inputs.push(interface);
+	this.inputs.push(_interface);
 }
 
 /**
  * @param {ConnectableInterface} interface connectable to disconnect as input
  *        for this Channel.
  */
-ChannelInterface.prototype.disconnectInput = function(interface) {
-	if (interface instanceof ChannelInterface) {
-		this.inputs.remove(interface);
+ChannelInterface.prototype.disconnectInput = function(_interface) {
+	if (_interface instanceof ChannelInterface) {
+		this.inputs.remove(_interface);
 		return;
 	}
 
 	if (this.connectable != null &&
-		this.connectable.inputs.elementExists(interface.getConnectable())) {
-		this.inputsForRemoving.push(interface);
+		this.connectable.inputs.elementExists(_interface.getConnectable())) {
+		this.inputsForRemoving.push(_interface);
 	} else {
-		this.inputsForAdding.remove(interface);
+		this.inputsForAdding.remove(_interface);
 	}
-	this.inputs.remove(interface);
+	this.inputs.remove(_interface);
 }
 
 /**
  * @param {ConnectableInterface} interface connectable to connect as output for
  *        this Channel.
  */
-ChannelInterface.prototype.connectOutput = function(interface) {
+ChannelInterface.prototype.connectOutput = function(_interface) {
 	if (this.connectable != null &&
-		this.connectable.outputs.elementExists(interface.getConnectable())) {
-		this.outputsForRemoving.remove(interface);
+		this.connectable.outputs.elementExists(_interface.getConnectable())) {
+		this.outputsForRemoving.remove(_interface);
 	} else {
-		this.outputsForAdding.push(interface);
+		this.outputsForAdding.push(_interface);
 	}
-	this.outputs.push(interface);
+	this.outputs.push(_interface);
 }
 
 /**
  * @param {ConnectableInterface} interface connectable to disconnect as output
  *        for this Channel.
  */
-ChannelInterface.prototype.disconnectOutput = function(interface) {
+ChannelInterface.prototype.disconnectOutput = function(_interface) {
 	if (this.connectable != null &&
-		this.connectable.outputs.elementExists(interface.getConnectable())) {
-		this.outputsForRemoving.push(interface);
+		this.connectable.outputs.elementExists(_interface.getConnectable())) {
+		this.outputsForRemoving.push(_interface);
 	} else {
-		this.outputsForAdding.remove(interface);
+		this.outputsForAdding.remove(_interface);
 	}
-	this.outputs.remove(interface);
+	this.outputs.remove(_interface);
 }
 
 /**
@@ -1068,10 +1068,10 @@ function IGadgetSlotsInterface (igadget, wiringGUI, parentInterface) {
 		if (!(connectable instanceof wSlot))
 			continue;
 
-		var interface = new SlotInterface(wiringGUI, connectable, this);
+		var _interface = new SlotInterface(wiringGUI, connectable, this);
 
 		// Insert the HTMLElement of the SlotInterface
-		this.contentElement.appendChild(interface.getHTMLElement());
+		this.contentElement.appendChild(_interface.getHTMLElement());
 		this.empty = false;
 	}
 
@@ -1121,10 +1121,10 @@ function IGadgetEventsInterface (igadget, wiringGUI, parentInterface) {
 		if (!(connectable instanceof wEvent))
 			continue;
 
-		var interface = new EventInterface(wiringGUI, connectable, this);
+		var _interface = new EventInterface(wiringGUI, connectable, this);
 
 		// Insert the HTMLElement of the Event Interface
-		this.contentElement.appendChild(interface.getHTMLElement());
+		this.contentElement.appendChild(_interface.getHTMLElement());
 		this.empty = false;
 	}
 

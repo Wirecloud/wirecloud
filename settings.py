@@ -166,6 +166,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.only_one_js_file',
+    'processors.context_processors.only_one_css_file',
     'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
     'processors.context_processors.theme_url',
@@ -213,10 +214,11 @@ GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 
 FORCE_SCRIPT_NAME=""
 
-# Compact ezweb javascript files into one single file. If set to True,
+# Compact ezweb javascript and/or css files into one single file. If set to True,
 # you must set the EZWEB_RELEASE property to generate a versioned .js file
 #ONLY_ONE_JS_FILE=True
-#EZWEB_RELEASE='1235'
+#ONLY_ONE_CSS_FILE=True
+#EZWEB_RELEASE='1237'
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
