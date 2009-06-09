@@ -53,6 +53,10 @@
 	width: 100%;
 }
 
+#catalogue .head #global_search_boolean{
+	font-size: 8pt;
+}
+
 #catalogue .head .new_resource {
 	display: inline;
 }
@@ -107,12 +111,7 @@
 }
 
 #catalogue .head .advanced_search input.text{
-	background: transparent url(../images/catalogue/box_bg.png);
-	color: #b5d7ed;
 	padding: 2px 5px;
-	border-width: 2px 2px 0 0;
-	-moz-border-radius: 15%;
-	-webkit-border-radius: 15%;
 }
 
 #catalogue .head .advanced_search .advanced_search_left {
@@ -317,7 +316,7 @@
 	display:inline;
 	position:relative;
 	width: 13%;
-	padding: 10px 10px 0 10px;
+	padding: 12px 10px 0 10px;
 	margin: 0;
 	border: 1px solid #000000;
 	border-top: 0;
@@ -350,12 +349,7 @@
 #catalogue #menu_options .simple_search input#simple_search_text{
 	width:90%;
 	margin-bottom: 5px;
-	background: transparent url(../images/catalogue/box_bg.png);
-	color: #b5d7ed;
 	padding: 2px 5px;
-	border-width: 2px 2px 0 0;
-	-moz-border-radius: 15%;
-	-webkit-border-radius: 15%;
 }
 
 #catalogue #menu_options .advanced_options {

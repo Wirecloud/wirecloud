@@ -302,7 +302,7 @@
 	display:inline;
 	position:relative;
 	width: 13%;
-	padding: 10px 10px 0 10px;
+	padding: 12px 10px 0 10px;
 	margin: 0;
 	background: #f9f9f9;
 	border-right: 1px solid #BBBBBB;
@@ -673,6 +673,18 @@
 	display:inline;
 	font-weight:bold;
 	font-size: 14pt;
+
+}
+
+#catalogue #resources_container .info_resource .content a.wiki 
+{
+	padding-left:5px;
+	display:inline;
+
+}
+
+#catalogue #resources_container .info_resource .content .title .wiki img{
+	border: none;
 }
 
 #catalogue #resources_container .info_resource .content .version

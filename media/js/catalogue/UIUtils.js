@@ -1019,6 +1019,8 @@ UIUtils.rgbConvert = function(str){
 }
 
 UIUtils.showResourceTagCloud = function(id_){
+	if(UIUtils.selectedResource)
+		$(UIUtils.selectedResource).removeClassName('current');
 	UIUtils.showResourceInfo(id_);
 	UIUtils.openInfoResource();
 	var tagCloudHTML = $$('#info_resource .tagcloud .tags')[0];
@@ -1243,10 +1245,13 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 }
 
 UIUtils.resizeResourcesContainer = function (){
-	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 28;
+	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 18;
 	document.getElementById('resources').style.height = height+'px';
-	var resources_container_margin = parseInt($('resources_container').getStyle('margin-top').replace("px",""));
+	document.getElementById('resources_container').style.height = $('center').offsetHeight + 'px';
+	UIUtils.setInfoResourceHeight();
+	
+/*	var resources_container_margin = parseInt($('resources_container').getStyle('margin-top').replace("px",""));
 	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight;
 	document.getElementById('resources_container').style.height = height - resources_container_margin +'px';
-
+*/
 }
