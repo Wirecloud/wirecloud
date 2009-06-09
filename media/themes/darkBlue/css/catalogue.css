@@ -481,8 +481,8 @@
 	position:relative;
 	display:inline;
 	float:left;
-	width: 206px;
-	margin-top:10px;
+	width: 207px;
+	margin-top:0px;
 	margin-left:0;
 	background:none;
 	text-align:center;
@@ -1077,14 +1077,7 @@
 /*
  * Resource Highlighting
  */
-/*#catalogue .resource:hover .wiki{
-	display: block;
-	position: absolute;
-	z-index:2;
-	bottom: -5px;
-	right: 0px;
-}
-*/
+
 #catalogue .resource:hover > .content {
 	background-image: url(../images/catalogue/resource-fill-select.png);
 }
@@ -1110,6 +1103,13 @@
  */
 #catalogue .resource.selected > .content {
 	background-image: url(../images/catalogue/resource-fill-tagmode.png);
+}
+#catalogue .center .resources .resource.selected > .top {
+	background-image: url(../images/catalogue/resource-top-tagmode.png);
+}
+
+#catalogue .resource.selected > .toolbar {
+	background-image: url(../images/catalogue/resource-header.png);
 }
 
 #catalogue .resource.selected > .bottom {
