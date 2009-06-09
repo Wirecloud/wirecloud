@@ -83,7 +83,10 @@ Resource.prototype.setSelectedVersion = function(version) {this._versionSelected
  * Set the "resource_image_not_avaiable" image to this resource
  */
 Resource.prototype._setDefaultImage = function(e) {
-	this.src = _currentTheme.getIconURL('showcase-resource_image_not_available');
+	this.image.stopObserving("error", this._setDefaultImage);
+	this.image.stopObserving("abort", this._setDefaultImage);
+
+	this.image.src = _currentTheme.getIconURL('showcase-resource_image_not_available');
 }
 
 Resource.prototype.paint = function() {
@@ -194,14 +197,15 @@ Resource.prototype.paint = function() {
 		UIUtils.clickOnResource(this._id);
 	}.bind(this));
 	image_div.appendChild(image_link);
-	var image = UIUtils.createHTMLElement("img", $H({
+	this.image = UIUtils.createHTMLElement("img", $H({
 		src: this._state.getUriImage()
 	}));
 
-	image.observe("error", this._setDefaultImage);
-	image.observe("abort", this._setDefaultImage);
-	image_link.appendChild(image);
-	
+	this._setDefaultImage = this._setDefaultImage.bind(this);
+	this.image.observe("error", this._setDefaultImage);
+	this.image.observe("abort", this._setDefaultImage);
+	image_link.appendChild(this.image);
+
 	// Wiki icon
 /*	var wiki = UIUtils.createHTMLElement("a", $H({
 		title: gettext ('Show More'),
