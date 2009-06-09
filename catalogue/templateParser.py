@@ -272,16 +272,16 @@ class TemplateHandler(handler.ContentHandler):
             gadget.mashup_id = self._mashupId
             gadget.creation_date=datetime.today()
             gadget.popularity = '0.0'
-            
-            #To be changed: A gadget belongs to many organizations
-            for organization in self._organization_list:
-                gadget.organization=organization
-            
+
             try:
                 gadget.save()
             except Exception, e:
                 raise TemplateParseException(e)
             
+            # A gadget belongs to many organizations
+            for organization in self._organization_list:
+                gadget.organization.add(organization)
+                
             self._gadget = gadget
             
             userRelated = UserRelatedToGadgetResource ()
