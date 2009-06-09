@@ -10,7 +10,7 @@
   'delete': 'delete.png',
   'delete_highlighted': 'delete-highlighted.png',
   'error': 'error.png',
-  'filter': 'filter.gif',
+  'filter': 'filter.png',
   'go-first': 'catalogue/go-first.png',
   'go-first-disabled': 'catalogue/go-first.png',
   'go-last': 'catalogue/go-last.png',
@@ -43,8 +43,8 @@
   'showcase-wiki_highlighted': 'wiki-highlighted.png',
   'showcase-resource_image_not_available': 'image_not_available.jpg',
   'wiring': 'wiring.png',
-  'workspace_merge': 'workspace/merge.png',
-  'workspace_active': 'workspace/active.png',
+  'workspace_merge': 'merge.png',
+  'workspace_active': 'visible.png',
   'workspace_publish': 'publish.png',
   'init-dat': 'init.dat'
 }
