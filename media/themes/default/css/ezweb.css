@@ -101,7 +101,7 @@ div.floatclearer {
 }
 
 .toolbar_marked, .toolbar_unmarked {
-	-moz-border-radius: 6%;
+	-moz-border-radius: 6px;
 	height: 21px;
 	margin: 0 7px;
 	color: #2D6F9C;
@@ -109,6 +109,7 @@ div.floatclearer {
 
 .toolbar_marked {
 	font-weight: bold;
+	top: 4px;
 	background: transparent url(../images/button-selected.png) repeat-x scroll left top;
 }
 

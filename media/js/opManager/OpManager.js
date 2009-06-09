@@ -213,7 +213,7 @@ var OpManagerFactory = function () {
 		 * unloadEnvironment will be called).
 		 */
 		OpManager.prototype.logout = function () {
-			window.open("/logout");
+			window.open("/logout", "_self");
 		}
 
 		OpManager.prototype.addInstance = function (gadgetId) {

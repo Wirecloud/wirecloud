@@ -85,19 +85,15 @@ div.floatclearer {
 
 div.gadget_window div.snapButton {
   /* This icon represents that the iGadget is outside the grid */
-  background: transparent url("../images/igadget/extract.png") no-repeat left bottom;
+  background: transparent url("../images/igadget/extract-bottom.png") no-repeat 0 0;
 }
 
 div.gadget_window .dragboardwiki {
-  background: transparent url("../images/wiki.png") no-repeat left bottom;
-}
-
-div.gadget_window .dragboardwiki:hover {
-  background: transparent url("../images/wiki-highlighted.png") no-repeat left bottom;
+  background: transparent url("../images/wiki_overWhite.png") no-repeat 0 0;
 }
 
 div.gadget_window div.extractButton {
-  background: transparent url("../images/igadget/snap.png") no-repeat left bottom;
+  background: transparent url("../images/igadget/snap-bottom.png") no-repeat 0 0;
 }
 
 div.gadget_window div.leftResizeHandle {

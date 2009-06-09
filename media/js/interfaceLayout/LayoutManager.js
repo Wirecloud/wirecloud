@@ -187,14 +187,14 @@ var LayoutManagerFactory = function () {
 				}else{ //dragboard
 					this.resizeContainer(this.currentView.dragboardElement);
 					opManager.activeWorkSpace.getActiveDragboard()._notifyWindowResizeEvent();
+					// recalculate the tab bar
+					this.resizeTabBar();
 				}
 				
 
 				// Recalculate menu positions
 				if (this.currentMenu)
 					this.currentMenu.calculatePosition();
-				// recalculate the tab bar
-				this.resizeTabBar();
 			}
 		}
 		
@@ -813,7 +813,7 @@ var LayoutManagerFactory = function () {
 	/* get the left position of the fixed tab bar */
 	
 	LayoutManager.prototype.getFixedBarLeftPosition = function(){
-		return parseInt(this.fixedTabBar.offsetLeft);
+		return Position.cumulativeOffset(this.fixedTabBar)[0];
 	}
 	
 	/*get the width of te fixed bar */

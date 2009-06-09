@@ -747,10 +747,12 @@
 	display:inline;
 	position.relative;
 	float:left;
+	height:19px;
 }
 
 #catalogue #resources_container .info_resource .content .title .wiki img{
 	border: none;
+	padding-top: 3px;
 }
 
 #catalogue #resources_container .info_resource .content .vendor
