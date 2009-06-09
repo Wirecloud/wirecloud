@@ -98,7 +98,7 @@ var _INITIAL_THEME = '{{ INITIAL_THEME }}';
 {% block includes %}
 
     {% if only_one_js_file %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb_{{ ezweb_release }}.js"></script>
     {% else %}
        {% include "js_includes.js" %}
     {% endif %}

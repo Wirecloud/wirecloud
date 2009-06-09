@@ -22,6 +22,7 @@
 *
 *     http://morfeo-project.org
 */
+
 function UIUtils() {
 	// *********************************
 	//           STATIC CLASS

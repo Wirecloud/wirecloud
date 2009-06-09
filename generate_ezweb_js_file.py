@@ -27,6 +27,7 @@
 #
 #...............................licence...........................................#
 
+from processors.context_processors import ezweb_release
 
 files_normal = [
    'media/js/common/constants.js', 
@@ -69,6 +70,7 @@ files_normal = [
    'media/js/wiring/wiring.js', 
    'media/js/wiring/wiringGUI.js',
    'media/js/wiring/connectableInterface.js',
+   'media/js/wiring/jsonFilter.js',
    
    'media/js/catalogue/UIUtils.js',
    'media/js/catalogue/CategoryManager.js',
@@ -77,6 +79,7 @@ files_normal = [
    'media/js/catalogue/Tagger.js',
    'media/js/catalogue/Tag.js',
    
+   'media/js/interfaceLayout/BackgroundFadder.js',
    'media/js/interfaceLayout/DropDownMenu.js',
    'media/js/interfaceLayout/WindowMenu.js',
    'media/js/interfaceLayout/LayoutManager.js',
@@ -116,6 +119,63 @@ files_iphone = [
    'media/iphone/add-ons/connectable.js',
 ]
 
+files_viewer = [
+   'media/js/common/constants.js', 
+   'media/js/common/utils.js',
+     
+   'media/js/common/modules.js', 
+   'media/js/persistenceEngine/PersistenceEngineForViewer.js', 
+   
+   'media/js/gadgetModel/XHtml.js', 
+   'media/js/gadgetModel/GadgetTemplate.js',
+   'media/js/gadgetModel/Gadget.js', 
+   
+   'media/js/log/LogManager.js',
+   
+   'media/js/opManager/WorkSpace.js',
+   'media/js/opManager/Tab.js',
+   
+   'media/js/opManager/OpManager.js', 
+   'media/js/varManager/VariableGadget.js',
+   'media/js/varManager/VariablePlatform.js', 
+   'media/js/varManager/varManager.js',
+   
+   'media/js/showcase/showcase.js',
+   'media/js/showcase/util.js',
+   
+   'media/js/contextManager/ContextManager.js',
+   'media/js/contextManager/ContextPlatform.js',
+   'media/js/contextManager/Adaptors.js',
+   
+   'media/js/dragboard/DragboardLayout.js',
+   'media/js/dragboard/SmartColumnLayout.js', 
+   'media/js/dragboard/FreeLayout.js', 
+   'media/js/dragboard/iGadget.js', 
+   'media/js/dragboard/dragboard.js',
+   'media/js/dragboard/UserPref.js', 
+   'media/js/dragboard/ElementPositions.js',
+   
+   'media/js/wiring/filter.js', 
+   'media/js/wiring/connectable.js', 
+   'media/js/wiring/wiring.js', 
+   'media/js/wiring/wiringGUI.js',
+   'media/js/wiring/connectableInterface.js',
+   'media/js/wiring/jsonFilter.js',
+   
+   'media/js/catalogue/UIUtils.js',
+   'media/js/catalogue/CategoryManager.js',
+   'media/js/catalogue/Catalogue.js',
+   'media/js/catalogue/Resource.js',
+   'media/js/catalogue/Tagger.js',
+   'media/js/catalogue/Tag.js',
+   
+   'media/js/interfaceLayout/BackgroundFadder.js',
+   'media/js/interfaceLayout/DropDownMenu.js',
+   'media/js/interfaceLayout/WindowMenu.js',
+   'media/js/interfaceLayout/LayoutManager.js',
+   'media/js/interfaceLayout/BrowserUtils.js',
+]
+
 def write_file(final_file_name, file_list):
     try:
         res = open(final_file_name, 'w')
@@ -153,6 +213,7 @@ def write_file(final_file_name, file_list):
         print e
 
 #Main
-write_file('media/js/ezweb.js', files_normal)
-write_file('media/iphone/ezweb_iphone.js', files_iphone)
+write_file('media/js/ezweb_' + ezweb_release(None)['ezweb_release'] + '.js', files_normal)
+write_file('media/js/ezweb_viewer_' + ezweb_release(None)['ezweb_release'] + '.js', files_normal)
+write_file('media/iphone/ezweb_iphone_' + ezweb_release(None)['ezweb_release'] + '.js', files_iphone)
 

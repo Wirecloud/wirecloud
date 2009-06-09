@@ -78,7 +78,7 @@
 </div>
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
 {% if only_one_js_file %}
-      <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/ezweb_iphone.js"></script>
+      <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/ezweb_iphone_{{ ezweb_release }}.js"></script>
 {% else %}
       {% include "js_iphone_includes.js" %}
 {% endif %}

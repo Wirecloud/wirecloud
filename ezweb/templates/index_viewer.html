@@ -20,7 +20,7 @@
 {% block includes %}
 
     {% if only_one_js_file %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb_viewer_{{ ezweb_release }}.js"></script>
     {% else %}
        {% include "js_viewer_includes.js" %}
     {% endif %}

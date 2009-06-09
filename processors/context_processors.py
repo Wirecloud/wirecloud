@@ -67,6 +67,12 @@ def only_one_js_file(request):
     else:
         return {'only_one_js_file': None}
     
+def ezweb_release(request):
+    if hasattr(settings, 'EZWEB_RELEASE'):
+       return {'ezweb_release': settings.EZWEB_RELEASE}
+    else:
+        return {'ezweb_release': None}
+    
 
 #private method: gets the tags and category children from an specific category (Category model)
 def _get_Category_Info(cat):
