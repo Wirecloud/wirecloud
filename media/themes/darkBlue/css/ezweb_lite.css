@@ -1,0 +1,32 @@
+#header {
+	background: none;
+	height: 25px;
+}
+
+#lite_toolbar_section {
+	margin-top:0;
+	position: relative;
+	float:left;
+}
+
+#lite_toolbar_section .toolbar_marked, #lite_toolbar_section .toolbar_unmarked{
+	background-color: #666666;
+	top:2px;
+}
+
+#ws_operations_link{
+	background: transparent url(../images/menu-tab.png) no-repeat scroll 0 0;
+	height: auto;
+}
+
+#workspace_menu_link{
+	float:left;
+	clear:none;
+	margin: auto 0 0 0;
+	
+}
+
+#tab_section {
+	top:3px;
+	width: auto;
+}

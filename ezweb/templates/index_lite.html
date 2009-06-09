@@ -1,25 +1,31 @@
 {% extends "index.html"%}
 {% load i18n %}
 
-{% block css %}<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_lite.css" />{% endblock %}
+{% block css %}<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb_lite.css" />{% endblock %}
 
 {%block header%}
 <div id="header">
 <div id="bar">
+	<div id="lite_toolbar_section" class="toolbar_section">
+		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
+		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
+		<div id="workspace_link_container" >
+			<div id="dragboard_link" class="toolbar_unmarked">
+				<div id="workspace_name"></div>
+			</div>
+			<div id="workspace_menu_link"> 
+				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+			</div>
+		</div>
+		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
+	</div>
 <div id="tab_section" class="tab_section">
+	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
 	<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
 	<div id="fixed_bar"><div id="scroll_bar"></div></div>
 	<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();"/>
 
 </div>
-<div id="toolbar_section" class="toolbar_section">
-		<input type="button" id="catalogue_link" title="{% trans 'Catalogue' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showCatalogue()"/>
-		<input type="button" id="wiring_link" title="{% trans 'Wires' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().activeWorkSpace.showWiring()"/>
-		<div id="workspace_name"></div>
-		<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}" class="toolbar_unmarked"/>
-		<span id="logs_link" style="display:none" title="{% trans 'Errors' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></span>
-	</div>
 </div>
 </div>
 {% endblock %}

@@ -80,7 +80,11 @@ var LayoutManagerFactory = function () {
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
-		this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
+		if($('lite_toolbar_section')){
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+		}else{
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+		}
 		
 		//scroll bar
 		this.scrollTabBar = $('scroll_bar');
@@ -112,8 +116,13 @@ var LayoutManagerFactory = function () {
 		// ****************
 		
 		LayoutManager.prototype.resizeTabBar = function () {
-			//this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+
+			if($('lite_toolbar_section')){
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+			}else{
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+			}
+	
 			this.changeTabBarSize(0);
 		}
 
