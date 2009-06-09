@@ -64,12 +64,18 @@ div.floatclearer {
 }
 
 
-.toolbar_section input[type=button], #add_tab_link, #left_slider, #right_slider {
+#add_tab_link, #left_slider, #right_slider {
   background-color: transparent;
   background-repeat: no-repeat;
   background-position: center center;
   border: 0px none;
   cursor: pointer;
+}
+
+.toolbar_section input[type=button]{
+	border: 0px none;
+  	cursor: pointer;
+  	padding-bottom: 3px;
 }
 
 .ws_name{
@@ -78,7 +84,6 @@ div.floatclearer {
 }
 
 #workspace_name {
-  top: -1px;
   color:#2D6F9C;
 }
 
@@ -96,43 +101,53 @@ div.floatclearer {
 }
 
 .toolbar_marked, .toolbar_unmarked {
+	-moz-border-radius: 6%;
+	height: 21px;
+	margin: 0 7px;
 	color: #2D6F9C;
-	border-color:#2D6F9C !important;
-	border-style:solid !important;
-	-moz-border-radius: 4px;
-	padding: 0px 0px 0px 16px;
-	height: 21px !important;
 }
 
 .toolbar_marked {
-	background-color:#DDDEDF !important;
-	border-width:2px 1px 1px 3px !important;
+	font-weight: bold;
+	background: transparent url(../images/button-selected.png) repeat-x scroll left top;
 }
+
 .toolbar_unmarked {
-	border-width:1px 3px 2px 1px !important;
-	background-color: #f0f0f0;
+	background: transparent url(../images/button.png) repeat-x scroll left top;
 }
 
 #left_slider{
- background: transparent url(../images/leftSlider.png) no-repeat scroll 2px 0;
+ margin-top:2px;
+ margin-left:3px;
+ width: 10px;
+ background: transparent url(../images/leftSlider.png) no-repeat scroll 0 0;
 }
 
 #right_slider{
- background: transparent url(../images/rightSlider.png) no-repeat scroll 2px 0;
+ margin-top:2px;
+ width: 10px;
+ background: transparent url(../images/rightSlider.png) no-repeat scroll 0 0;
 }
 
 
 
 #catalogue_link {
-  background: #ffffff url(../images/catalogue.png) no-repeat scroll 1px 1px;
+  
+  padding-bottom: 3px;
 }
 
 #wiring_link {
-  background: #ffffff url(../images/wiring.png) no-repeat scroll 1px 1px;
+  
+  padding-bottom: 3px;
 }
 
 #dragboard_link {
-  background: #ffffff url(../images/dragboard.png) no-repeat scroll 1px 1px;
+  padding:0 7px;
+  top: 4px;
+}
+
+#dragboard_link span {
+	top: 2px;
 }
 
 #logs_link {
@@ -151,12 +166,7 @@ div.floatclearer {
 }
 
 #add_tab_link {
-  background: #FFFFFF url(../images/addTab16px.png) no-repeat scroll 1px 1px;
-  
-}
-
-#dragboard_link {
-  height: 18px !important;
+	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
 }
 
 #tab_section .tab {
@@ -265,6 +275,7 @@ div.floatclearer {
 .closebutton {
   width: 13px;
   background: transparent url(../images/remove.png) no-repeat;
+  width: 13px;
 }
 
 button {

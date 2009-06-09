@@ -138,6 +138,10 @@ div.config_interface input, div.config_interface select {
   border: 1px solid #4c5054;
 }
 
+div.config_interface label {
+  color: black;
+}
+
 div.config_interface label.invalid {
   color: red;
 }

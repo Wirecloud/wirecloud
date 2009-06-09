@@ -112,7 +112,8 @@ var LayoutManagerFactory = function () {
 		// ****************
 		
 		LayoutManager.prototype.resizeTabBar = function () {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
+			//this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - 50;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
 			this.changeTabBarSize(0);
 		}
 

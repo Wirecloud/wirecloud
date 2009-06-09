@@ -83,6 +83,7 @@ div.floatclearer {
 .toolbar_section input[type=button]{
 	border: 0px none;
   	cursor: pointer;
+  	padding-bottom: 3px;
 }
 
 .ws_name{
@@ -95,6 +96,10 @@ div.floatclearer {
 
 #dragboard_link{
 	padding: 0 7px;
+}
+
+#dragboard_link span {
+	top: 2px;
 }
 
 #workspace_menu_link{
@@ -131,11 +136,16 @@ div.floatclearer {
 }
 
 #left_slider{
- 	background: transparent url(../images/leftSlider.png) no-repeat scroll 2px 0;
+ margin-top:2px;
+ margin-left:3px;
+ width: 23px;
+ background: transparent url(../images/leftSlider.png) no-repeat scroll 0 0;
 }
 
 #right_slider{
- 	background: transparent url(../images/rightSlider.png) no-repeat scroll 2px 0;
+ margin-top:2px;
+ width: 23px;
+ background: transparent url(../images/rightSlider.png) no-repeat scroll 0 0;
 }
 
 #logs_link {
@@ -193,13 +203,8 @@ div.floatclearer {
   margin-right: 4px;
 }
 
-.tab .tab_name {
-  background: #97A0A8;
-  border: 0px;
-}
-
 .current .tab_name {
-  background: #E0E0E0;
+  background: #FFFFFF;
 }
 
 #menu_layer{

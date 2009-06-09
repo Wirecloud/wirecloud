@@ -176,16 +176,11 @@ td {
 }
 
 #left_slider{
- margin-top:2px;
- margin-left:3px;
  float:right;
- width: 10px;
 }
 
 #right_slider{
- margin-top:2px;
  float:right;
- width: 10px;
 }
 
 #add_tab_link {
@@ -203,7 +198,6 @@ td {
 
 #dragboard_link span {
   position:relative;
-  top:3px;
   vertical-align:top;
   margin-right:3px;
 }
