@@ -45,7 +45,12 @@ div.floatclearer {
 	color:#2D6F9C;
 }
 
-
+#greeting {
+	text-align:right;
+	float:right;
+	margin-right:15px;
+	margin-top:5px;
+}
 
 #greeting a, #greeting a:visited{
 	color:white;
@@ -56,13 +61,11 @@ div.floatclearer {
 }
 
 #logo {
-	padding-top:5px;
+	margin-top:5px;
+	background: url("../images/Open_Ez_Logo.png") no-repeat;
+	width: 244px;
+	height: 46px;
 }
-
-#tab_section {
- top: 10px;
-}
-
 
 #add_tab_link, #left_slider, #right_slider {
   background-color: transparent;

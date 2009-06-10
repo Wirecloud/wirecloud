@@ -25,6 +25,7 @@ td {
     width:100%;
     z-index: 2;
 }
+
 .form-row {
 	width: 300px;
 	margin: auto;
@@ -55,18 +56,8 @@ td {
   overflow:hidden;
 }
 
-#greeting{
-	text-align:right;
-	position:relative;
-	float:right;
-	width:350px;
-	margin-right:15px;
-	margin-top:5px;
-}
-
-
-#greeting .languages{
-	display:inline;
+#greeting .languages {
+	display: inline;
 	margin-left: 15px;
 }
 
@@ -81,21 +72,20 @@ td {
 }
 
 #bar {
-  position: relative;
-  float: left;
-  clear:both;
-  width: 100%;
-
+	position: absolute;
+	bottom: -2px;
+	width: 100%;
 }
 
 #tab_section {
-    position: absolute;
-    bottom:   0;
-    display:  block;
-    right:    4px;
-    width:    100%;
-    z-index:  3;
-    white-space: nowrap
+	position: absolute;
+	bottom:   0;
+	height:   auto;
+	display:  block;
+	right:    4px;
+	width:    100%;
+	z-index:  3;
+	white-space: nowrap
 }
 
 #tab_section #fixed_bar{
