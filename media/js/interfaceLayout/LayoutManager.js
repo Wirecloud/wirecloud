@@ -138,14 +138,37 @@ var LayoutManagerFactory = function () {
 			              "resize",
 			              this.resizeWrapper.bind(this));
 
-			// Listen to theme changes
-			$('themeSelector').observe('change',
+			// Build theme list
+			// TODO retreive this list from the server
+			var themes = ['default', 'darkBlue'];
+			var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
+			new Insertion.After($('menu_layer'), menuHTML);
+			var themeMenu = new DropDownMenu('themeMenu');
+
+			for (var i = 0; i < themes.length; i++) {
+				var themeName = themes[i]
+				themeMenu.addOption(null,
+				                    themeName,
+				                    function() {
+				                        LayoutManagerFactory.getInstance().hideCover();
+				                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
+				                    }.bind({theme:themeName}),
+				                    i);
+			}
+
+			$('themeSelector').observe('click',
 				function (e) {
-					LayoutManagerFactory.getInstance().changeCurrentTheme(this.value);
+					LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+					                                                      themeMenu,
+					                                                      Event.pointerX(e),
+					                                                      Event.pointerY(e));
 				});
 		}
 
 		LayoutManager.prototype.changeCurrentTheme = function(newTheme) {
+			if (_currentTheme.name == newTheme)
+				return;
+
 			var loadingElement = $("loading-indicator");
 			loadingElement.removeClassName("disabled");
 
@@ -153,19 +176,30 @@ var LayoutManagerFactory = function () {
 			this.menus.clear();
 
 			// Load the new theme
+			function continueLoading2(theme, imagesNotFound) {
+				var layoutManager = LayoutManagerFactory.getInstance();
+
+				if (imagesNotFound.length > 0) {
+					// TODO log eror
+				}
+
+				_currentTheme.deapplyStyle();
+				_currentTheme = theme;
+				$("themeLabel").textContent = theme.name;
+				_currentTheme.applyStyle();
+				layoutManager.resizeWrapper();
+				layoutManager._notifyPlatformReady(false);
+			}
+
 			function continueLoading(theme, loaded) {
 				var layoutManager = LayoutManagerFactory.getInstance();
 
 				if (loaded === true) {
-					_currentTheme.deapplyStyle();
-					_currentTheme = theme;
-					_currentTheme.applyStyle();
-
-					layoutManager.resizeWrapper();
+					theme.preloadImages(continueLoading2)
 				} else {
 					// TODO log eror
+					layoutManager._notifyPlatformReady(false);
 				}
-				layoutManager._notifyPlatformReady(false);
 			}
 
 			if (newTheme != 'default')

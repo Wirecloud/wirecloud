@@ -130,6 +130,40 @@ Theme.prototype._removeStyle = function(url) {
 	styleEntry.parentNode.removeChild(styleEntry);
 }
 
+Theme.prototype._countIcons = function() {
+	if (this._iconCount != undefined)
+		return;
+
+	this._iconCount = 0;
+
+	for (var iconId in this._iconMapping)
+		this._iconCount++;
+}
+
+Theme.prototype.preloadImages = function(onFinishCallback) {
+	this._countIcons();
+	var loadedCount = this._iconCount;
+	var imagesNotFound = new Array();
+
+	var _incLoadedCount = function() {
+		if (--loadedCount == 0)
+			onFinishCallback(this, imagesNotFound);
+	}.bind(this);
+
+	var _notifyError = function() {
+		imagesNotFound.push(this.src);
+		_incLoadedCount();
+	}
+
+	for (var iconId in this._iconMapping) {
+		var img = document.createElement('img');
+		img.observe('load', _incLoadedCount);
+		img.observe('error', _notifyError);
+		img.observe('abort', _notifyError);
+		img.src = this._iconMapping[iconId];
+	}
+}
+
 Theme.prototype.applyStyle = function() {
 	if (_ONLY_ONE_CSS_FILE === false) {
 		this._appendStyle(this.getResource('/css/ezweb.css'));
@@ -137,7 +171,7 @@ Theme.prototype.applyStyle = function() {
 		this._appendStyle(this.getResource('/css/catalogue.css'));
 		this._appendStyle(this.getResource('/css/dragboard.css'));
 	} else {
-		this._appendStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_Release + '.css'));
+		this._appendStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
 	}
 }
 
@@ -148,6 +182,6 @@ Theme.prototype.deapplyStyle = function() {
 		this._removeStyle(this.getResource('/css/catalogue.css'));
 		this._removeStyle(this.getResource('/css/dragboard.css'));
 	} else {
-		this._removeStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_Release + '.css'));
+		this._removeStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
 	}
 }

@@ -1,6 +1,5 @@
 {
   'add': 'add.png',
-  'catalogue': 'catalogue.png',
   'catalogue-wiki': 'wiki.png',
   'catalogue-resource_compatible_event': 'catalogue/resource_compatible_event.png',
   'catalogue-resource_compatible_slot': 'catalogue/resource_compatible_slot.png',
@@ -46,5 +45,17 @@
   'workspace_merge': 'merge.png',
   'workspace_active': 'visible.png',
   'workspace_publish': 'publish.png',
-  'init-dat': 'init.dat'
+  'init-dat': 'init.dat',
+
+  'preload1': 'resource-bottom.png',
+  'preload2': 'resource-bottom-select.png',
+  'preload3': 'resource-bottom-tagmode.png',
+  'preload4': 'resource-fill.png',
+  'preload5': 'resource-fill-select.png',
+  'preload6': 'resource-fill-tagmode.png',
+  'preload7': 'resource-header.png',
+  'preload8': 'resource-header-select.png',
+  'preload9': 'resource-top.png',
+  'preload10': 'resource-top-select.png',
+  'preload11': 'resource-top-tagmode.png',
 }

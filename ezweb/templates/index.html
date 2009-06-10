@@ -150,10 +150,14 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
 		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a> |{%endif%} <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>  | <a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a></span>
 		  {% endif %}
-		<select id="themeSelector">
-			<option value="default">default</option>
-			<option value="darkBlue">darkBlue</option>
-		</select>
+		|
+		<span id="themeSelector">
+			<span>{% trans "Theme:" %}</span>
+			<span id="themeLabel">
+				{{ INITIAL_THEME }}
+			</span>
+		</span>
+
 		<div class="languages">
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 		</div>
