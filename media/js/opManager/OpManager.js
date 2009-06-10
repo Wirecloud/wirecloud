@@ -296,6 +296,7 @@ var OpManagerFactory = function () {
 					// TODO log eror
 				} else {
 					_currentTheme = theme;
+					_currentTheme.applyStyle();
 				}
 
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);

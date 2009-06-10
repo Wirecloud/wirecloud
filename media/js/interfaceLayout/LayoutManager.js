@@ -35,7 +35,7 @@ var LayoutManagerFactory = function () {
 	// PRIVATE CONSTANTS
 	// *********************************
 
-	// z-index levelS
+	// z-index levels
 	var hideLevel = 1;
 	var showLevel = 2;
 
@@ -134,12 +134,42 @@ var LayoutManagerFactory = function () {
 				return;
 
 			// Listen to resize events
-				Event.observe(window,
-				              "resize",
-				              this.resizeWrapper.bind(this));
+			Event.observe(window,
+			              "resize",
+			              this.resizeWrapper.bind(this));
+
+			// Listen to theme changes
+			$('themeSelector').observe('change',
+				function (e) {
+					LayoutManagerFactory.getInstance().changeCurrentTheme(this.value);
+				});
 		}
 
+		LayoutManager.prototype.changeCurrentTheme = function(newTheme) {
+			var loadingElement = $("loading-indicator");
+			loadingElement.removeClassName("disabled");
 
+			// Clear themed resources
+			this.menus.clear();
+
+			// Load the new theme
+			function continueLoading(theme, loaded) {
+				if (loaded === false) {
+					// TODO log eror
+				} else {
+					_currentTheme.deapplyStyle();
+					_currentTheme = theme;
+					_currentTheme.applyStyle();
+				}
+
+				LayoutManagerFactory.getInstance()._notifyPlatformReady(false);
+			}
+
+			if (newTheme != 'default')
+				new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
+			else
+				continueLoading(_defaultTheme, true);
+		}
 
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;

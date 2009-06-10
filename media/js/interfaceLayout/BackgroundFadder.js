@@ -1,5 +1,5 @@
 /* 
-*     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
+*     (C) Copyright 2009 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
 *     This file is part of Morfeo EzWeb Platform.

@@ -107,3 +107,47 @@ Theme.prototype.getIconURL = function(iconId) {
 
 	return this._iconMapping[iconId];
 }
+
+Theme.prototype._appendStyle = function(url) {
+	// Create the Script Object
+	var style = document.createElement('link');
+	style.setAttribute("rel", "stylesheet");
+	style.setAttribute("type", "text/css");
+	//style.setAttribute("media", "screen,projection");
+	style.setAttribute("href", url);
+
+	// Insert the created object to the html head element
+	var head = document.getElementsByTagName('head').item(0);
+	head.appendChild(style);
+}
+
+Theme.prototype._removeStyle = function(url) {
+	var styleEntry = $$('link[type="text/css"][href="' + url +'"]');
+	if (styleEntry.length !== 1)
+		return;
+
+	styleEntry = styleEntry[0];
+	styleEntry.parentNode.removeChild(styleEntry);
+}
+
+Theme.prototype.applyStyle = function() {
+	if (_ONLY_ONE_CSS_FILE === false) {
+		this._appendStyle(this.getResource('/css/ezweb.css'));
+		this._appendStyle(this.getResource('/css/wiring.css'));
+		this._appendStyle(this.getResource('/css/catalogue.css'));
+		this._appendStyle(this.getResource('/css/dragboard.css'));
+	} else {
+		this._appendStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_Release + '.css'));
+	}
+}
+
+Theme.prototype.deapplyStyle = function() {
+	if (_ONLY_ONE_CSS_FILE === false) {
+		this._removeStyle(this.getResource('/css/ezweb.css'));
+		this._removeStyle(this.getResource('/css/wiring.css'));
+		this._removeStyle(this.getResource('/css/catalogue.css'));
+		this._removeStyle(this.getResource('/css/dragboard.css'));
+	} else {
+		this._removeStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_Release + '.css'));
+	}
+}

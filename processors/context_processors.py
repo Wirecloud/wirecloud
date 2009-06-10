@@ -71,7 +71,7 @@ def only_one_css_file(request):
     if hasattr(settings, 'ONLY_ONE_CSS_FILE'):
        return {'only_one_css_file': settings.ONLY_ONE_CSS_FILE}
     else:
-        return {'only_one_css_file': None}
+        return {'only_one_css_file': False}
     
 def ezweb_release(request):
     if hasattr(settings, 'EZWEB_RELEASE'):
