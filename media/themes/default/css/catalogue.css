@@ -569,6 +569,7 @@
 	border:none;
 	font-size:75%;
 	height:18px;
+	padding-bottom: 3px;
 	cursor:pointer;
 }
 #catalogue .center .resources .resource .toolbar button.add_gadget{
