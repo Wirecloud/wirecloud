@@ -374,15 +374,8 @@ WiringInterface.prototype.renewInterface = function () {
 		this.channels[i].initialize();
 }
 
-WiringInterface.prototype.showMessage = function (msg) {
-	this.msgsDiv.innerHTML = msg;
-	this.msgsDiv.setStyle({display: "block"});
-
-	if (this.currentChannel) {
-		//repaint status because the channel position may have changed
-		this.uncheckChannel(this.currentChannel);
-		this.highlightChannel(this.currentChannel);
-	}
+WiringInterface.prototype.showMessage = function (msg, type) {
+	LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning'));
 }
 
 
@@ -395,9 +388,9 @@ WiringInterface.prototype.showMessage = function (msg) {
 WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 	if (this.currentChannel == null) {
 		if (this.channels.length == 0) {
-			this.showMessage(gettext("Please, create a new channel before creating connections."));
+			this.showMessage(gettext("Please, create a new channel before creating connections."), 10);
 		} else {
-			this.showMessage(gettext("Please, select a channel before creating connections."));
+			this.showMessage(gettext("Please, select a channel before creating connections."), 11);
 		}
 		return;
 	}
@@ -441,7 +434,7 @@ WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 			var targetConnectable = targetAnchor.getConnectableInterface();
 			if (!sourceConnectable.isConnectable(targetConnectable)) {
 				var msg = gettext("You can not make that connection because if you do it, a loop will be created.");
-				this.showMessage(msg);
+				this.showMessage(msg, 12);
 				return;
 			}
 		}

@@ -336,10 +336,13 @@ MessageWindowMenu.prototype.setType = function(type) {
 }
 
 /**
- * Specific class for info dialogs. The user can 
+ * Specific class for info dialogs.
  */
-function InfoWindowMenu() {
-	WindowMenu.call(this, gettext('Do you know what ... ?'));
+function InfoWindowMenu(title) {
+	if (arguments.length == 0)
+		return;
+
+	WindowMenu.call(this, title);
 	this.htmlElement.addClassName('info_menu');
 
 	// Extra HTML Elements
@@ -381,6 +384,13 @@ InfoWindowMenu.prototype.show = function (type) {
 	WindowMenu.prototype.show.call(this);
 }
 
+/**
+ * Specific class for tip dialogs.
+ */
+function TipWindowMenu() {
+	InfoWindowMenu.call(this, gettext('Do you know what ... ?'));
+}
+TipWindowMenu.prototype = new InfoWindowMenu();
 
 /**
  * Form dialog.
@@ -804,4 +814,3 @@ SharedWorkSpaceMenu.prototype.setHTML = function(url) {
 	
 	this.html_codeElement.value = html_code;
 }
- 

@@ -111,7 +111,7 @@ var LayoutManagerFactory = function () {
 			encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
 			"; expires=" + oneYearLater.toGMTString();
 		
-		// ****************
+		// ***************
 		// PUBLIC METHODS 
 		// ****************
 		
@@ -411,7 +411,7 @@ var LayoutManagerFactory = function () {
 				                   wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				                   helpLink: videoTutorialMsg},
 				                  true);
-				this.showMessageInformation(msg, 2);
+				this.showTipMessage(msg, 2);
 			}
 		}
 
@@ -445,7 +445,7 @@ var LayoutManagerFactory = function () {
 				           wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				           helpLink: videoTutorialMsg},
 				          true);
-			this.showMessageInformation(msg, 0);
+			this.showTipMessage(msg, 0);
 		}
 
 		// Logs operations
@@ -467,7 +467,7 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 			
-			//this.showMessageInformation(gettext("Logs are shown in this section."), 3);
+			//this.showTipMessage(gettext("Logs are shown in this section."), 3);
 		}
 
 		//Wiring operations
@@ -499,7 +499,7 @@ var LayoutManagerFactory = function () {
 				          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
 				           helpLink: videoTutorialMsg},
 				          true);
-			this.showMessageInformation(msg, 1);
+			this.showTipMessage(msg, 1);
 			//}
 		}
 		
@@ -718,7 +718,7 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the message information
-		LayoutManager.prototype.showMessageInformation = function(msg, type) {
+		LayoutManager.prototype.showTipMessage = function(msg, type) {
 			if (this.informacionMessagesStatus[type]) // Don't show me anymore
 				return;
 
@@ -729,14 +729,31 @@ var LayoutManagerFactory = function () {
 
 			this.showUnclickableCover();
 
-			if (!this.menus['infoMenu'])
-				this.menus['infoMenu'] = new InfoWindowMenu();
+			if (!this.menus['tipMenu'])
+				this.menus['tipMenu'] = new TipWindowMenu();
 
-			this.currentMenu = this.menus['infoMenu'];
+			this.currentMenu = this.menus['tipMenu'];
 			this.currentMenu.setMsg(msg);
 			this.currentMenu.show(type);
 		}
-		
+
+		// Shows a generic information dialog
+		LayoutManager.prototype.showInfoMessage = function(msg, type, title) {
+			if (this.informacionMessagesStatus[type]) // Don't show me anymore
+				return;
+
+			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if (this.currentMenu != null) {//only if the layer is displayed.
+				this.hideCover();
+			}
+
+			this.showUnclickableCover();
+
+			this.currentMenu = new InfoWindowMenu(title);
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.show(type);
+		}
+
 		//Show sharing workspace results!
 		LayoutManager.prototype.showSharingWorkspaceResults = function(msg, shared_ws_data) {
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
