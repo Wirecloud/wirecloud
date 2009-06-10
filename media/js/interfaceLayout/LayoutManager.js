@@ -154,19 +154,22 @@ var LayoutManagerFactory = function () {
 
 			// Load the new theme
 			function continueLoading(theme, loaded) {
-				if (loaded === false) {
-					// TODO log eror
-				} else {
+				var layoutManager = LayoutManagerFactory.getInstance();
+
+				if (loaded === true) {
 					_currentTheme.deapplyStyle();
 					_currentTheme = theme;
 					_currentTheme.applyStyle();
-				}
 
-				LayoutManagerFactory.getInstance()._notifyPlatformReady(false);
+					layoutManager.resizeWrapper();
+				} else {
+					// TODO log eror
+				}
+				layoutManager._notifyPlatformReady(false);
 			}
 
 			if (newTheme != 'default')
-				new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
+				new Theme(newTheme, _defaultTheme, continueLoading);
 			else
 				continueLoading(_defaultTheme, true);
 		}
@@ -174,7 +177,7 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
 		}
-		
+
 		LayoutManager.prototype.resizeContainer = function (container) {
 			// We have to take into account the bottom margin and border widths.
 			// Bottom margin = 4px
