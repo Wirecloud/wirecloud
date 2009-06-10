@@ -158,7 +158,7 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 		</div>
 	</div>
-	<img id="logo" src="{{ THEME_URL }}/images/Open_Ez_Logo.png" alt="EzWeb Logo" />
+	<div id="logo"></div>
 	<div id="toolbar_section" class="toolbar_section">
 		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
 		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
