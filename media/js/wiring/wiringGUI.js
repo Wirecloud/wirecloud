@@ -58,7 +58,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	this.slot_list = $('slots_list');
 	this.channels_list = $('channels_list');
 	this.channel_name = $('channel_name');
-	this.msgsDiv = $('wiring_messages');
 	this.newChannel = $('newChannel');
 	this.wiringTable = $('wiring_table');
 
@@ -279,12 +278,6 @@ WiringInterface.prototype._registerSlot = function(slot) {
 }
 
 /**
- */
-WiringInterface.prototype.clearMessages = function () {
-	this.msgsDiv.setStyle({display: null});
-}
-
-/**
  * Expands or collapses all tabs & gadgets of the Events column, according to
  * the expand parameter.
  *
@@ -333,7 +326,6 @@ WiringInterface.prototype._clear = function() {
 	this.event_list.innerHTML = "";
 	this.slot_list.innerHTML = "";
 	this.channels_list.innerHTML = "";
-	this.clearMessages();
 	this.canvas.clear();
 
 	// Clean data structures
@@ -375,7 +367,10 @@ WiringInterface.prototype.renewInterface = function () {
 }
 
 WiringInterface.prototype.showMessage = function (msg, type) {
-	LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning'));
+	if (type != undefined)
+		LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning'));
+	else
+		LayoutManagerFactory.getInstance().showAlertMessage(msg);
 }
 
 
@@ -480,7 +475,6 @@ WiringInterface.prototype._createChannel = function () {
 
 	this.changed = true;
 
-	this.clearMessages();
 	this._changeChannel(channel);
 }
 
@@ -524,7 +518,6 @@ WiringInterface.prototype._changeChannel = function(newChannel) {
 	if (oldChannel)
 		this.uncheckChannel(oldChannel);
 
-	this.clearMessages();
 	if (oldChannel != newChannel)
 		this.highlightChannel(newChannel);
 	else

@@ -643,7 +643,7 @@ var LayoutManagerFactory = function () {
 				break;
 			case 'deleteTab':
 				if (!this.menus['alertMenu']) {
-					this.menus['alertMenu'] = new AlertWindowMenu(null);
+					this.menus['alertMenu'] = new AlertWindowMenu();
 				}
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
@@ -752,6 +752,20 @@ var LayoutManagerFactory = function () {
 			this.currentMenu = new InfoWindowMenu(title);
 			this.currentMenu.setMsg(msg);
 			this.currentMenu.show(type);
+		}
+
+		// Shows a generic alert dialog
+		LayoutManager.prototype.showAlertMessage = function(msg) {
+			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if (this.currentMenu != null) {//only if the layer is displayed.
+				this.hideCover();
+			}
+
+			this.showUnclickableCover();
+
+			this.currentMenu = new AlertWindowMenu();
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.show();
 		}
 
 		//Show sharing workspace results!

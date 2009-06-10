@@ -205,7 +205,7 @@ CreateWindowMenu.prototype.show = function () {
 /**
  * Specific class representing alert dialogs
  */
-function AlertWindowMenu (element) {
+function AlertWindowMenu () {
 	WindowMenu.call(this, gettext('Warning'));
 
 	// Warning icon

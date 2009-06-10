@@ -95,9 +95,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 		this.valueElement.nodeValue = channel.getValue();
 		
 		// Shows a message (only with error)
-		if (this.channel.getFilter().getlastExecError() == null){
-			this.wiringGUI.clearMessages();
-		}else{
+		if (this.channel.getFilter().getlastExecError() != null) {
 			this.wiringGUI.showMessage(this.channel.getFilter().getlastExecError());
 			this.valueElement.nodeValue = gettext('undefined');
 		}
