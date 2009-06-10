@@ -446,7 +446,17 @@ WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 }
 
 WiringInterface.prototype.channelExists = function(channelName) {
-	return this.channelsByName[channelName] != null ? true : false;
+	var in_channels = this.channelsByName[channelName] != null ? true : false;
+	
+	if (in_channels)
+		return true;
+	
+	for (var i=0; i<this.channelsToRemove.length; i++) {
+		if (this.channelsToRemove[i].name == channelName)
+		return true;
+	}
+	
+	return false;
 }
 
 WiringInterface.prototype._getChannelInterfaceByName = function(channelName) {
@@ -1108,7 +1118,7 @@ WiringInterface.prototype._updateFilterFunc = function(channel, filter) {
 		return; // There is not a real change => nothing to do
 
 	this.changed = true;
-	channel.setFilter(filter);
+	channel.setFilter(filter, this.wiring);
 
 	// The filter content size has changed, and the selected channel and its arrows must be repainted
 	this.uncheckChannel(channel);

@@ -371,11 +371,7 @@ wChannel.prototype.setFilter = function(newFilter) {
  * @param {fParamsHash} fParams
  */
 wChannel.prototype.setFilterParams = function(fParams) {
-	fParams = fParams ? fParams : [];
-
-	this.filterParams = new Array();
-	for (var k = 0; k < fParams.length; k++)
-		this.filterParams[fParams[k].index] = fParams[k].value;
+	this.filterParams = fParams;
 }
 
 wChannel.prototype.getFilterParams = function() {
@@ -407,9 +403,12 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 		this._markInputAsModified(source);
 	else
 		this._markAllInputsAsModified(source);
-
+		
+	this.variable.set(newValue);
+	
 	try {
-		var value = this.getValue();
+		//getValue applys filter if needed!
+		var filteredValue = this.getValue();
 	}
 	catch (err) {
 		if (err instanceof DontPropagateException) {
@@ -424,8 +423,7 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 		return;
 	}
 		
-	this.variable.set(newValue);
-	wInOut.prototype.propagate.call(this, this.getValue(), initial);
+	wInOut.prototype.propagate.call(this, filteredValue, initial);
 }
 
 wChannel.prototype.getQualifiedName = function () {

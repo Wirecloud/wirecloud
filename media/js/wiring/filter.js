@@ -70,13 +70,24 @@ Param.prototype.createHtmlLabel = function() {
   return labelLayer;
 }
 
+Param.prototype.fillValue = function(filterParams, valueElement) {
+	var paramLayers = valueElement.childElements();
+	
+	for (var i = 0; i < paramLayers.length; i++) {
+		var paramInput = paramLayers[i].childElements()[0];
+		
+		paramInput.value = filterParams[i]['value'];
+	}
+}
+
+
 Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 	var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
 
 	var paramValueLayer = document.createElement("div");
 	var paramInput = document.createElement("input");
 	paramInput.addClassName("paramValueInput");
-	paramInput.setAttribute ("value", channel.getFilterParams()[this._index]);
+	paramInput.setAttribute ("value", channel.getFilterParams()[this._index]['value']);
 	Event.observe(paramInput, 'click',function(e){Event.stop(e);});
 
 	var checkResult = function(e) {
@@ -92,7 +103,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 		this.channel.getFilterParams()[this.param._index] = e.target.value;
 		
 		// Sets the channel value
-		this.valueElement.nodeValue = channel.getValue();
+		//this.valueElement.nodeValue = channel.getValue();
 		
 		// Shows a message (only with error)
 		if (this.channel.getFilter().getlastExecError() != null) {
@@ -193,6 +204,16 @@ Filter.prototype.processParams = function(params_) {
   } 	
 }
 
+Filter.prototype.getInitialValues = function() {  
+	var params = [];
+	
+  	for (var i = 0; i < this._params.length; i++) {
+  		params.push({'index': this._params[i]._index, 'value': this._params[i]._defaultValue})
+  	}
+  	
+  	return params;	
+}
+
 Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	var i, msg, params = '';
 
@@ -207,10 +228,14 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 		for (i=0; i < this._params.length; ++i){ 
 			if (i!=0)
 				params += ',';
+				
+			var paramValue = paramValues_[i]['value'];
+				
 			// Checks the type of parameter
 			switch (this._params[i].getType()){
 			case 'N': // Param is Number
-				var interger_value = parseInt(paramValues_[i]);
+				var interger_value = parseInt(paramValue);
+				
 				if (isNaN(interger_value)){
 					msg = interpolate(gettext("Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It must be a number"), 
 						{paramName: this._params[i].getLabel(), filterName: this._label}, true);
@@ -218,26 +243,26 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 					this._lastExecError = msg;
 					return gettext('undefined');
 				}
-				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
+				eval ("var " + this._params[i].getName() + " = '" + paramValue + "';");
 				params += this._params[i].getName();
 				break; 
 			case 'regexp': // Param is RegExp
-				if ((paramValues_[i].indexOf('/') == 0) && (paramValues_[i].lastIndexOf('/') > 0)){
-					var current_pattern = paramValues_[i].substring(1, paramValues_[i].lastIndexOf('/'));
-					var current_modifiers = paramValues_[i].substring(paramValues_[i].lastIndexOf('/') + 1, paramValues_[i].length);
+				if ((paramValue.indexOf('/') == 0) && (paramValue.lastIndexOf('/') > 0)){
+					var current_pattern = paramValue.substring(1, paramValue.lastIndexOf('/'));
+					var current_modifiers = paramValue.substring(paramValue.lastIndexOf('/') + 1, paramValue.length);
 					eval ("var " + this._params[i].getName() + " = new RegExp ('" + current_pattern + "', '" + current_modifiers + "');");	
 				}else {
-					eval ("var " + this._params[i].getName() + " = new RegExp ('" + paramValues_[i] + "');");
+					eval ("var " + this._params[i].getName() + " = new RegExp ('" + paramValue + "');");
 				}
 				params += this._params[i].getName();
 				break;
 			case 'jpath': // Param is a JPATH expresion (for JSON)
-				var jpath_exp = this._params[i].parse(paramValues_[i]);
-				eval ("var " + this._params[i].getName() + " = this._params[i].parse(paramValues_[i]);");
+				var jpath_exp = this._params[i].parse(paramValue);
+				eval ("var " + this._params[i].getName() + " = this._params[i].parse(paramValue);");
 				params += this._params[i].getName();
 				break;
 			default: // Otherwise is String
-				eval ("var " + this._params[i].getName() + " = '" + paramValues_[i] + "';");
+				eval ("var " + this._params[i].getName() + " = '" + paramValue + "';");
 				params += this._params[i].getName();
 				break;
 			}
@@ -283,4 +308,5 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 		}
 		return gettext('undefined');
 	}
+	
 }

@@ -687,6 +687,26 @@ ChannelInterface.prototype._showFilterParams = function () {
 }
 
 /**
+ * @private
+ *
+ * Fills filter params interface.
+ * @param {ChannelInterface} channel
+ * @param {Filter} filter
+ * @param {}
+ */
+ChannelInterface.prototype._fillFilterParams = function () {
+	// No filter, no params
+	if (this.filter == null)
+		return;
+
+	// Adds a new row for each param of the current filter
+	var params = this.filter.getParams();
+	for (var p = 0; p < params.length; p++) {
+		params[p].fillValue(this.connectable.filterParams, this.paramValueLayer);
+	}
+}
+
+/**
  * Updates the interface according to the new filter.
  *
  * @private
@@ -704,27 +724,18 @@ ChannelInterface.prototype._updateFilterInterface = function() {
 	}
 
 	// Sets the channel value and the channel filter params
-	this.valueElement.update(this.getValueWithoutFilter());
+	//this.valueElement.update(this.getValueWithFilter());
 	this._showFilterParams();
 }
 
-ChannelInterface.prototype.setFilter = function(filter) {
+ChannelInterface.prototype.setFilter = function(filter, wiring) {
 	this.filter = filter;
 	this.filterParams = new Array ();
 
-	// Sets parameter values by default
-	if (this.filter != null) {
-		var paramDefinition = this.filter.getParams();
-		this.filterParams = new Array (paramDefinition.length);
-		for (var p = 0; p < paramDefinition.length; p++) {
-			var defaultaValue = paramDefinition[p].getDefaultValue();
-			if ((defaultaValue == null) || (defaultaValue == "") || defaultaValue.match(/^\s$/)) {
-				this.filterParams[p] = "";
-			} else {
-				this.filterParams[p] = defaultaValue;
-			}
-		}
-	}
+	if (this.filter)
+		this.filterParams = this.filter.getInitialValues();
+	
+	this._changeFilterToConnectable(wiring)
 
 	this._updateFilterInterface()
 }
@@ -749,6 +760,14 @@ ChannelInterface.prototype.getValueWithoutFilter = function() {
 	}
 }
 
+ChannelInterface.prototype.getValueWithFilter = function() {
+	if (this.connectable) {
+		return this.connectable.getValue();
+	} else {
+		return gettext("undefined"); // TODO
+	}
+}
+
 /**
  * @param {Wiring} wiring
  * @param {Number} phase current phase:
@@ -768,8 +787,7 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 		this.connectable._name= this.name;
 
 		// Update filter and filter params
-		this.connectable.setFilter(this.filter);
-		this.connectable.setFilterParams(this._getFilterParams());
+		this._changeFilterToConnectable();
 
 		// Inputs for removing
 		for (i = 0; i < this.inputsForRemoving.length; i++)
@@ -810,6 +828,8 @@ ChannelInterface.prototype.exists = function() {
 }
 
 ChannelInterface.prototype.check = function() {
+    this._fillFilterParams();
+    this.valueElement.update(this.getValueWithFilter());
 	this.htmlElement.addClassName("selected");
 	this.channelNameInput.focus();
 }
@@ -920,6 +940,17 @@ ChannelInterface.prototype.disconnectOutput = function(_interface) {
  */
 ChannelInterface.prototype.destroy = function() {
 	this.wiringGUI = null;
+}
+
+/**
+ * Change filter and filterParams to channel's connectable
+ */
+ChannelInterface.prototype._changeFilterToConnectable = function(wiring) {
+	if (this.connectable == null)
+			this.connectable = wiring.createChannel(this.name);
+		
+	this.connectable.setFilter(this.getFilter());
+	this.connectable.setFilterParams(this.filterParams);
 }
 
 /**
