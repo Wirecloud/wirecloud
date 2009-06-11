@@ -149,6 +149,10 @@ WiringInterface.prototype.unload = function () {
 	this.filterMenu = null;
 }
 
+WiringInterface.prototype.setFilterParam = function () {
+	this.changed = true;
+}
+
 WiringInterface.prototype.saveWiring = function () {
 	if (!this.changed)
 		return; // Nothing to do

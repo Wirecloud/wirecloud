@@ -396,7 +396,6 @@ function ChannelInterface(channel, wiringGUI) {
 		this.inputs = channel.inputs.clone();
 		this.outputs = channel.outputs.clone();
 		this.filter = channel.getFilter();
-		this.filterParams = channel.getFilterParams();
 	} else {
 		// New channel
 		this.connectable = null;
@@ -404,7 +403,6 @@ function ChannelInterface(channel, wiringGUI) {
 		this.inputs = new Array();
 		this.outputs = new Array();
 		this.filter = null;
-		this.filterParams = new Array();
 	}
 
 	this.inputsForAdding = new Array();
@@ -699,12 +697,10 @@ ChannelInterface.prototype._fillFilterParams = function () {
 	if (this.filter == null)
 		return;
 
-	// Adds a new row for each param of the current filter
-	var params = this.filter.getParams();
-	for (var p = 0; p < params.length; p++) {
-		params[p].fillValue(this.connectable.filterParams, this.paramValueLayer);
-	}
+	// Fill each input of the params with the filterParams value
+	this.filter.fillFilterParamValues(this.connectable.filterParams, this.paramValueLayer);
 }
+
 
 /**
  * Updates the interface according to the new filter.
@@ -730,18 +726,18 @@ ChannelInterface.prototype._updateFilterInterface = function() {
 
 ChannelInterface.prototype.setFilter = function(filter, wiring) {
 	this.filter = filter;
-	this.filterParams = new Array ();
-
-	if (this.filter)
-		this.filterParams = this.filter.getInitialValues();
 	
-	this._changeFilterToConnectable(wiring)
+	var initial_values = []
+	if (filter != null)
+		initial_values = this.filter.getInitialValues();
+
+	this._changeFilterToConnectable(wiring, initial_values);	
 
 	this._updateFilterInterface()
 }
 
 ChannelInterface.prototype.getFilterParams = function() {
-	return this.filterParams;
+	return this.connectable.filterParams;
 }
 
 ChannelInterface.prototype.getValue = function() {
@@ -785,9 +781,6 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 	case 2: // Updates
 		// Update channel name
 		this.connectable._name= this.name;
-
-		// Update filter and filter params
-		this._changeFilterToConnectable();
 
 		// Inputs for removing
 		for (i = 0; i < this.inputsForRemoving.length; i++)
@@ -841,6 +834,15 @@ ChannelInterface.prototype.uncheck = function() {
 
 ChannelInterface.prototype.getHTMLElement = function() {
 	return this.htmlElement;
+}
+
+/**
+ */
+ChannelInterface.prototype.setFilterParam = function(index, value) {
+	if (this.connectable) {
+		this.connectable.setFilterParam(index, value);
+		this.wiringGUI.setFilterParam();
+	}
 }
 
 /**
@@ -945,12 +947,12 @@ ChannelInterface.prototype.destroy = function() {
 /**
  * Change filter and filterParams to channel's connectable
  */
-ChannelInterface.prototype._changeFilterToConnectable = function(wiring) {
+ChannelInterface.prototype._changeFilterToConnectable = function(wiring, paramValues) {
 	if (this.connectable == null)
 			this.connectable = wiring.createChannel(this.name);
 		
-	this.connectable.setFilter(this.getFilter());
-	this.connectable.setFilterParams(this.filterParams);
+	this.connectable.setFilter(this.filter);
+	this.connectable.setFilterParams(paramValues);
 }
 
 /**

@@ -374,6 +374,12 @@ wChannel.prototype.setFilterParams = function(fParams) {
 	this.filterParams = fParams;
 }
 
+/**
+ */
+wChannel.prototype.setFilterParam = function(index, value) {
+	this.filterParams[index]['value'] = value;
+}
+
 wChannel.prototype.getFilterParams = function() {
 	return this.filterParams;
 }

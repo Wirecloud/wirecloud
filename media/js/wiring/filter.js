@@ -70,16 +70,6 @@ Param.prototype.createHtmlLabel = function() {
   return labelLayer;
 }
 
-Param.prototype.fillValue = function(filterParams, valueElement) {
-	var paramLayers = valueElement.childElements();
-	
-	for (var i = 0; i < paramLayers.length; i++) {
-		var paramInput = paramLayers[i].childElements()[0];
-		
-		paramInput.value = filterParams[i]['value'];
-	}
-}
-
 
 Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 	var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
@@ -92,7 +82,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 
 	var checkResult = function(e) {
 		var msg;
-		if(e.target.value == "" || e.target.value.match(/^\s$/)){
+		if(! e.target.value  || e.target.value.match(/^\s$/)){
 			msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
 			this.wiringGUI.showMessage(msg);
 			this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
@@ -100,10 +90,11 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 		}
 		
 		// Sets the param value
-		this.channel.getFilterParams()[this.param._index] = e.target.value;
+		this.channel.setFilterParam(this.param._index, e.target.value);
+		
 		
 		// Sets the channel value
-		//this.valueElement.nodeValue = channel.getValue();
+		this.valueElement.update(channel.getValue());
 		
 		// Shows a message (only with error)
 		if (this.channel.getFilter().getlastExecError() != null) {
@@ -212,6 +203,16 @@ Filter.prototype.getInitialValues = function() {
   	}
   	
   	return params;	
+}
+
+Filter.prototype.fillFilterParamValues = function(filterParams, valueElement) {
+	var paramLayers = valueElement.childElements();
+	
+	for (var i = 0; i < paramLayers.length; i++) {
+		var paramInput = paramLayers[i].childElements()[0];
+		
+		paramInput.value = filterParams[i]['value'];
+	}
 }
 
 Filter.prototype.run = function(channelValue_, paramValues_, channel) {

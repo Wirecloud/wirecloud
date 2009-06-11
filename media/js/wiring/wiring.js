@@ -465,16 +465,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			else
 				serialized_channel['filter'] = channel.getFilter().getId();
 
-			var filter_params = []
-			for (var k = 0; k < channel.getFilterParams().length; k++) {
-				var filter_param = {}
-				
-				filter_param['index'] = k;
-				filter_param['value'] = channel.getFilterParams()[k];
-				
-				filter_params.push(filter_param);
-			}
-			serialized_channel['filter_params'] = filter_params;
+			serialized_channel['filter_params'] = channel.getFilterParams();
 
 			// Inputs (except inouts)
 			serialized_channel['ins'] = [];
