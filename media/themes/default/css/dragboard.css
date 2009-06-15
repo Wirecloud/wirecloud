@@ -124,6 +124,11 @@ div.gadget_window div.statusBar {
   padding: 0 32px;
 }
 
+div.gadget_window div.statusBar .button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 div.gadget_window_locked div.statusBar {
   padding: 0 4px;
 }

@@ -130,7 +130,7 @@ div.dragboard.fixed div.gadget_window div.leftResizeHandle,
 }
 
 div.gadget_window div.statusBar {
-  height: 16px;
+  overflow: hidden;
 }
 
 /*****

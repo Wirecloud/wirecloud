@@ -338,7 +338,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		iGadget.save();
 	}
-	
+
 	Dragboard.prototype.getNumberOfIGadgets = function () {
 		return this.iGadgets.keys().length;
 	}
@@ -457,10 +457,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	/*
 	 * nº columns                         = 20
 	 * cell height                        = 12 pixels
-	 * vertical Margin between IGadgets   = 2 pixels
+	 * vertical Margin between IGadgets   = 3 pixels
 	 * horizontal Margin between IGadgets = 4 pixels
 	 */
-	this.baseLayout = new SmartColumnLayout(this, 20, 12, 2, 4);
+	this.baseLayout = new SmartColumnLayout(this, 20, 12, 3, 4);
 
 	this.freeLayout = new FreeLayout(this);
 
