@@ -3,6 +3,14 @@
   margin-top: 10px;
 }
 
+#wiring #wiring_table .anchor{
+	display: none;
+}
+
+#wiring #wiring_table.selected_channel .anchor{
+	display: block;
+}
+
 #wiring #channels_list {
   margin: 2ex 0px;
   padding: 0px;
@@ -115,26 +123,29 @@
 
 #wiring .igadget > .content > div > .anchor {
   position: absolute;
-  display: inline;
-  width: 24px;
-  height: 24px;
+  width: 35px;
+  height: 18px;
   border: 0px;
   padding: 0px;
-  top: 0;
+  top: 3px;
 }
 
 #wiring .eventColumn .igadget .anchor {
-  right: -24px;
+  right: -35px;
   background: url("../images/wiring/inAnchor.png");
 }
 
 #wiring .slotColumn .igadget .anchor {
-  left: -24px;
+  left: -35px;
   background: url("../images/wiring/outAnchor.png");
 }
 
 #wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
   background: url("../images/wiring/inAnchorInEnabled.png");
+}
+
+#wiring #channels_list .channel.selected .outAnchor, #wiring #channels_list .channel.selected .inAnchor{
+  background: none;
 }
 
 #wiring #channels_list .channel.selected .outAnchor.checked {
@@ -150,19 +161,19 @@
 }
 
 #wiring #channels_list .channel .inAnchor, #wiring #channels_list .channel .outAnchor {
-  height:   24px;
-  top:      0; /* TEMP */
-  width:    24px;
+  height:   18px;
+  top:      3px; /* TEMP */
+  width:    35px;
 }
 
 #wiring #channels_list .channel .inAnchor {
   background: url("../images/wiring/outAnchorChannel.png");
-  left: -15px;
+  left: -25px;
 }
 
 #wiring #channels_list .channel .outAnchor {
   background: url("../images/wiring/inAnchorChannel.png");
-  right: -15px;
+  right: -25px;
 }
 
 #wiring .tab {
@@ -195,7 +206,6 @@
   -moz-border-radius-topright: 10px;
   -moz-border-radius-topleft: 4px;
   -webkit-border-radius: 10px; /* TODO */
-  float: right;
   border-width: 1px 1px 0 1px;
   border-style: solid;
   border-color: black;
@@ -205,7 +215,6 @@
 }
 
 #wiring .eventColumn .tab > .content {
-  -moz-border-radius-topleft: 10px;
   -moz-border-radius-bottomright: 10px;
   -moz-border-radius-bottomleft: 10px;
 }
@@ -213,7 +222,6 @@
 #wiring .slotColumn .tab > .header {
   -moz-border-radius-topleft: 10px;
   -moz-border-radius-topright: 4px;
-  float: left;
   border-width: 1px 1px 0 1px;
   border-style: solid;
   border-color: black;
@@ -223,7 +231,6 @@
 }
 
 #wiring .slotColumn .tab > .content {
-  -moz-border-radius-topright: 10px;
   -moz-border-radius-bottomright: 10px;
   -moz-border-radius-bottomleft: 10px;
 }
@@ -243,9 +250,8 @@
 #wiring .tab > .header > .anchor {
   background: url("../images/wiring/unchecked.png");
   position: absolute;
-  left: -9px;
+  left: -11px;
   top: 1px;
-  display: inline;
   width: 18px;
   height: 18px;
   border: 0px;
@@ -329,9 +335,12 @@
   border: 1px solid #2D6F9C;
   background: #97A0A8 url("../images/wiring/pipe.png");
   cursor: pointer; cursor: hand;
-  height: 22px;
+  height: 25px;
   padding: 0 8px;
+  -moz-border-radius:5%;
+  -webkit-border-radius: 5%;
 }
+
 
 #wiring img {
   margin: 2px;

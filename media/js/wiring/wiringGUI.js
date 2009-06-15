@@ -646,6 +646,9 @@ WiringInterface.prototype._uncheckChannelOutputs = function (channel) {
 WiringInterface.prototype.uncheckChannel = function (channel) {
 	channel.uncheck();
 
+	//notify through a CSS class that there is no channel marked
+	this.wiringTable.removeClassName('selected_channel');
+
 	this._uncheckChannelInputs(channel);
 	this._uncheckChannelOutputs(channel);
 }
@@ -700,6 +703,9 @@ WiringInterface.prototype._highlightChannelOutputs = function (channel) {
  */
 WiringInterface.prototype.highlightChannel = function (channel) {
 	channel.check(); //highlight the channel
+
+	//notify through a CSS class that there is a channel marked
+	this.wiringTable.addClassName('selected_channel');
 
 	//mark the connections with the channel
 	this._highlightChannelInputs(channel);
