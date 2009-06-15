@@ -82,6 +82,9 @@ WindowMenu.prototype._closeListener = function(e) {
  */
 WindowMenu.prototype.setMsg = function (msg) {
 	this.msgElement.update(msg);
+
+	if (this.htmlElement.parentNode !== null)
+		this.calculatePosition();
 }
 
 /**
@@ -481,6 +484,7 @@ function FormWindowMenu (fields, title) {
 			input.setAttribute('cols', '50');
 			input.setAttribute('rows', '3');
 			break;
+		case 'id':
 		case 'url':
 		case 'text':
 			var input = document.createElement('input');
@@ -503,12 +507,16 @@ function FormWindowMenu (fields, title) {
 
 	// Legend
 	var legend = document.createElement('div');
+	legend.className = "legend";
 	var requiredMark = document.createElement('span');
 	requiredMark.appendChild(document.createTextNode('*'));
 	requiredMark.className = 'required_mark';
 	legend.appendChild(requiredMark);
 	legend.appendChild(document.createTextNode(gettext('required field')));
 	this.windowContent.insertBefore(legend, this.msgElement);
+
+	// Mark our message div as an error msg
+	this.msgElement.addClassName("error");
 
 	// Accept button
 	this.button = document.createElement('button');
@@ -543,7 +551,13 @@ FormWindowMenu.prototype._isValidIdentifier = function(field_id) {
 	return true;
 }
 
-FormWindowMenu.prototype.customizedValidation = function(form) {
+/**
+ * Does extra checks for testing field validity. This method must be overwriten
+ * by child classes for providing this extra checks.
+ *
+ * @param {Hash} form Hash with the current values
+ */
+FormWindowMenu.prototype.extraValidation = function(form) {
 	//Parent implementation, allways true if no redefined by child class!
 	return "";
 }
@@ -551,6 +565,7 @@ FormWindowMenu.prototype.customizedValidation = function(form) {
 FormWindowMenu.prototype._acceptHandler = function(e) {
 	var emptyRequiredFields = "";
 	var badURLFields = "";
+	var badIdFields = "";
 	var errorMsg = "";
 
 	// Validate input fields
@@ -574,15 +589,25 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 			for (var i = 0; i < this.not_valid_characters.length; i++) {
 				var character = this.not_valid_characters[i];
 				if (field.input.value.indexOf(character) >= 0)
-					badURLFields += ", " + field.label;
+					badIdFields += ", " + field.label;
 			}
 			break;
 		}
 	}
 
+	// Extra validations
+	var extraErrorMsg = this.extraValidation(form);
+
+	// Build Error Message
 	if (emptyRequiredFields != "") {
 		var msg = gettext("The following required fields are empty: %(fields)s.");
 		msg = interpolate(msg, {'fields': emptyRequiredFields.substring(2)}, true);
+		errorMsg += "<p>" + msg + "</p>";
+	}
+
+	if (badIdFields != "") {
+		var msg = gettext("The following fields contain invalid characters: %(fields)s.");
+		msg = interpolate(msg, {'fields': badIdFields.substring(2)}, true);
 		errorMsg += "<p>" + msg + "</p>";
 	}
 
@@ -591,8 +616,9 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 		msg = interpolate(msg, {'fields': badURLFields.substring(2)}, true);
 		errorMsg += "<p>" + msg + "</p>";
 	}
-	
-	errorMsg = this.customizedValidation(form);
+
+	if (extraErrorMsg !== null && extraErrorMsg != "")
+		errorMsg += "<p>" + extraErrorMsg + "</p>";
 
 	// Show error message if needed
 	if (errorMsg != "") {
@@ -640,9 +666,9 @@ FormWindowMenu.prototype.show = function () {
  */
 function PublishWindowMenu (element, fields) {
 	var fields = {
-		'name': {label: gettext('Mashup Name'), type:'text', required: true},
-		'vendor': {label: gettext('Vendor'), type:'text',  required: true},
-		'version': {label: gettext('Version'), type:'text',  required: true},
+		'name': {label: gettext('Mashup Name'), type:'id', required: true},
+		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
+		'version': {label: gettext('Version'), type:'id',  required: true},
 		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
 		'email': {label: gettext('Email'), type:'text',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},
@@ -659,22 +685,6 @@ PublishWindowMenu.prototype.setFocus = function() {
 	this.fields['name'].input.focus();
 }
 
-PublishWindowMenu.prototype.customizedValidation = function(form) {
-	if (this._isValidIdentifier('name') && 
-		this._isValidIdentifier('vendor') && this._isValidIdentifier('version')) {
-		
-		//Everything correct!
-		return "";
-	}
-	
-	//Something wrong!
-	var msg = gettext("Check characters in: name, vendor and version");
-	msg = "<p>" + msg + "</p>";
-	
-	return msg;
-
-}
-
 PublishWindowMenu.prototype.executeOperation = function(form) {
 	OpManagerFactory.getInstance().activeWorkSpace.publish(form);
 }
@@ -684,7 +694,7 @@ PublishWindowMenu.prototype.executeOperation = function(form) {
  */
 function AddFeedMenu (element) {
 	var fields = {
-		'name'          : {label: gettext('Name'), type: 'text', required: true},
+		'name'          : {label: gettext('Name'), type: 'id', required: true},
 		'URL'           : {label: gettext('URL'), type: 'url',  required: true},
 		'separator1': {type: 'separator', required: true},
 		'imageURI'      : {label: gettext('Image URL'), type: 'url'},
@@ -737,7 +747,7 @@ AddFeedMenu.prototype.executeOperation = function(form) {
  */
 function AddSiteMenu (element) {
 	var fields = {
-		'name': {label: gettext('Name'), type: 'text', required: true},
+		'name': {label: gettext('Name'), type: 'id', required: true},
 		'URL': {label: gettext('URL'), type: 'url', required: true},
 		'separator1': {type: 'separator', required: true},
 		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},

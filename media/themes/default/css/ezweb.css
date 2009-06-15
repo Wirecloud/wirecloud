@@ -262,7 +262,11 @@ div.floatclearer {
   text-align: justify;
 }
 
-.window_msg_error{
+.window_menu .legend {
+  margin-top: 3ex;
+}
+
+.window_menu .msg.error {
   color: red;
 }
 
