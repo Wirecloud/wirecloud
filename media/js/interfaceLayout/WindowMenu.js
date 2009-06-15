@@ -403,7 +403,7 @@ function FormWindowMenu (fields, title) {
 	WindowMenu.call(this, title);
 
 	this.fields = fields;
-	this.not_valid_characters = ['/', '?', '&', ':']
+	this.not_valid_characters = ['/', '?', '&', ':', '#', '=']
 
 	var table = document.createElement('table');
 	for (var fieldId in this.fields) {
@@ -530,6 +530,24 @@ FormWindowMenu.prototype._isURL = function(string) {
 	return regexp.test(string);
 }
 
+FormWindowMenu.prototype._isValidIdentifier = function(field_id) {
+	var field = this.fields[field_id];
+
+	for (var i = 0; i < this.not_valid_characters.length; i++) {
+			var character = this.not_valid_characters[i];
+			
+			if (field.input.value.indexOf(character) >= 0)
+				return false;
+	}
+	
+	return true;
+}
+
+FormWindowMenu.prototype.customizedValidation = function(form) {
+	//Parent implementation, allways true if no redefined by child class!
+	return "";
+}
+
 FormWindowMenu.prototype._acceptHandler = function(e) {
 	var emptyRequiredFields = "";
 	var badURLFields = "";
@@ -573,6 +591,8 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 		msg = interpolate(msg, {'fields': badURLFields.substring(2)}, true);
 		errorMsg += "<p>" + msg + "</p>";
 	}
+	
+	errorMsg = this.customizedValidation(form);
 
 	// Show error message if needed
 	if (errorMsg != "") {
@@ -627,7 +647,8 @@ function PublishWindowMenu (element, fields) {
 		'email': {label: gettext('Email'), type:'text',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
-		'wikiURI': {label: gettext('Wiki URL'), type:'url'}
+		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
+		'organization'  : {label: gettext('Organization'), type: 'text'},
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
@@ -636,6 +657,22 @@ PublishWindowMenu.prototype = new FormWindowMenu();
 
 PublishWindowMenu.prototype.setFocus = function() {
 	this.fields['name'].input.focus();
+}
+
+PublishWindowMenu.prototype.customizedValidation = function(form) {
+	if (this._isValidIdentifier('name') && 
+		this._isValidIdentifier('vendor') && this._isValidIdentifier('version')) {
+		
+		//Everything correct!
+		return "";
+	}
+	
+	//Something wrong!
+	var msg = gettext("Check characters in: name, vendor and version");
+	msg = "<p>" + msg + "</p>";
+	
+	return msg;
+
 }
 
 PublishWindowMenu.prototype.executeOperation = function(form) {
