@@ -155,14 +155,17 @@ var LayoutManagerFactory = function () {
 				                    }.bind({theme:themeName}),
 				                    i);
 			}
+			
+			if($('themeSelector')){
 
-			$('themeSelector').observe('click',
-				function (e) {
-					LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-					                                                      themeMenu,
-					                                                      Event.pointerX(e),
-					                                                      Event.pointerY(e));
-				});
+				$('themeSelector').observe('click',
+					function (e) {
+						LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+						                                                      themeMenu,
+						                                                      Event.pointerX(e),
+						                                                      Event.pointerY(e));
+					});
+			}
 		}
 
 		LayoutManager.prototype.changeCurrentTheme = function(newTheme) {

@@ -1,6 +1,6 @@
 #header {
-	background: none;
-	height: 25px;
+	background: none !important;
+	height: 25px !important;
 }
 
 #lite_toolbar_section {
@@ -18,8 +18,8 @@
 }
 
 #ws_operations_link{
-	height: auto;
-	background: transparent url(../images/tabops16px.png) no-repeat scroll 0 0;
+	height: auto !important;
+	background: transparent url(../images/tabops16px.png) no-repeat scroll 0 0 !important;
 }
 
 #workspace_menu_link{
@@ -31,4 +31,8 @@
 #tab_section {
 	top:2px;
 	width: auto;
+}
+
+#bar{
+	bottom: 4px !important;
 }
