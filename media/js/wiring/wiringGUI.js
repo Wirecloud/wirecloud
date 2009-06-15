@@ -459,18 +459,16 @@ WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 	this.changed = true;
 }
 
+/**
+ * Checks whether a channel with a given name exists in the current wiring
+ * interface status.
+ *
+ * @param {String} channelName name of the channel to check
+ *
+ * @return true if there is a channel with the given name
+ */
 WiringInterface.prototype.channelExists = function(channelName) {
-	var in_channels = this.channelsByName[channelName] != null ? true : false;
-	
-	if (in_channels)
-		return true;
-	
-	for (var i=0; i<this.channelsToRemove.length; i++) {
-		if (this.channelsToRemove[i].name == channelName)
-		return true;
-	}
-	
-	return false;
+	return this.channelsByName[channelName] != null;
 }
 
 WiringInterface.prototype._getChannelInterfaceByName = function(channelName) {
@@ -482,13 +480,12 @@ WiringInterface.prototype._createChannel = function () {
 
 	// Build an initial channel name
 	var auxName = this.channels.length + 1;
-	var channelName = this.channelBaseName + "_" + auxName;
+	var channelName = this.channelBaseName + "_" + auxName++;
 
 	// Check if there is another channel with the same name
 	while (this.channelExists(channelName)) {
 		// Build another channel name
-		channelName = this.channelBaseName + "_" + auxName;
-		auxName++;
+		channelName = this.channelBaseName + "_" + auxName++;
 	}
 
 	// Creates the channel interface

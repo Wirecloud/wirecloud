@@ -629,8 +629,9 @@ ChannelInterface.prototype.getFriendCode = function() {
 }
 
 ChannelInterface.prototype.setName = function(newName) {
-	this.wiringGUI._notifyNameChange(this.name, newName);
+	this.wiringGUI._notifyNameChange(this.name, newName, this);
 	this.name = newName;
+
 }
 
 ChannelInterface.prototype.getInputs = function() {
