@@ -179,7 +179,12 @@
 #wiring .tab {
   margin: 5px 0px;
   position: relative;
-  padding: 2px;
+  background: #97A0A8 url(../images/degradado.png) no-repeat scroll left top;
+  -moz-border-radius-topleft:10px;
+  -moz-border-radius-topright:4px;
+  -moz-border-radius-bottomleft:3px;
+  -moz-border-radius-bottomright:3px;
+  border: 1px solid #000000;
 }
 
 #wiring .tab > .header {
@@ -188,51 +193,33 @@
 }
 
 #wiring .tab.folded > .content, #wiring .tab.empty > .content {
-  height: 5px;
+  height: 0px;
   overflow: hidden;
 }
 
 #wiring .tab > .content {
   padding: 2px;
   clear: both;
-  background: #97A0A8;
-  border: 1px solid black;
   z-index: 0;
   position: relative;
   top: -1px;
+  -moz-border-radius-bottomleft: 3px;
+  -moz-border-radius-bottomright: 3px;
 }
 
-#wiring .eventColumn .tab > .header {
-  -moz-border-radius-topright: 10px;
-  -moz-border-radius-topleft: 4px;
-  -webkit-border-radius: 10px; /* TODO */
-  border-width: 1px 1px 0 1px;
-  border-style: solid;
-  border-color: black;
-  padding: 2px 24px 2px 34px;
-  background: #97A0A8 url("../images/wiring/tree.gif") no-repeat scroll 2px 2px;
+#wiring .eventColumn .tab > .header, #wiring .slotColumn .tab > .header {
+  padding: 6px 24px 2px 34px;
   text-align: right;
 }
 
-#wiring .eventColumn .tab > .content {
-  -moz-border-radius-bottomright: 10px;
-  -moz-border-radius-bottomleft: 10px;
+#wiring .eventColumn .tab > .header{
+  text-align: right;
+  background: url("../images/wiring/tree.gif") no-repeat scroll 2px 5px;
 }
 
 #wiring .slotColumn .tab > .header {
-  -moz-border-radius-topleft: 10px;
-  -moz-border-radius-topright: 4px;
-  border-width: 1px 1px 0 1px;
-  border-style: solid;
-  border-color: black;
-  background: #97A0A8 url("../images/wiring/tree.gif") no-repeat scroll right 2px;
-  padding: 2px 34px 2px 24px;
   text-align: left;
-}
-
-#wiring .slotColumn .tab > .content {
-  -moz-border-radius-bottomright: 10px;
-  -moz-border-radius-bottomleft: 10px;
+  background: url("../images/wiring/tree.gif") no-repeat scroll 99% 5px;
 }
 
 #wiring .tab > .header {
@@ -243,15 +230,15 @@
 }
 
 #wiring .tab.empty > .header {
-  background: #97A0A8;
   cursor: default;
+  background: none;
 }
 
 #wiring .tab > .header > .anchor {
   background: url("../images/wiring/unchecked.png");
   position: absolute;
   left: -11px;
-  top: 1px;
+  top: 5px;
   width: 18px;
   height: 18px;
   border: 0px;
@@ -425,7 +412,7 @@
 
 #wiring .channelNameInput {
    border:0px;
-   margin:0px 1ex;
+   margin:2px 1ex;
    cursor:pointer;
    background: transparent;
 }
