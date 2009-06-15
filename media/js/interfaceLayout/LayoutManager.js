@@ -140,31 +140,33 @@ var LayoutManagerFactory = function () {
 
 			// Build theme list
 			// TODO retreive this list from the server
-			var themes = ['default', 'darkBlue'];
-			var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
-			new Insertion.After($('menu_layer'), menuHTML);
-			var themeMenu = new DropDownMenu('themeMenu');
-
-			for (var i = 0; i < themes.length; i++) {
-				var themeName = themes[i]
-				themeMenu.addOption(null,
-				                    themeName,
-				                    function() {
-				                        LayoutManagerFactory.getInstance().hideCover();
-				                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
-				                    }.bind({theme:themeName}),
-				                    i);
-			}
-			
-			if($('themeSelector')){
-
-				$('themeSelector').observe('click',
-					function (e) {
-						LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-						                                                      themeMenu,
-						                                                      Event.pointerX(e),
-						                                                      Event.pointerY(e));
-					});
+			if ($('themeMenu') == null) {
+				var themes = ['default', 'darkBlue'];
+				var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
+				new Insertion.After($('menu_layer'), menuHTML);
+				var themeMenu = new DropDownMenu('themeMenu');
+	
+				for (var i = 0; i < themes.length; i++) {
+					var themeName = themes[i]
+					themeMenu.addOption(null,
+					                    themeName,
+					                    function() {
+					                        LayoutManagerFactory.getInstance().hideCover();
+					                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
+					                    }.bind({theme:themeName}),
+					                    i);
+				}
+				
+				if($('themeSelector')){
+	
+					$('themeSelector').observe('click',
+						function (e) {
+							LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+							                                                      themeMenu,
+							                                                      Event.pointerX(e),
+							                                                      Event.pointerY(e));
+						});
+				}
 			}
 		}
 
