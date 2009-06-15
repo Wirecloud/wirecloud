@@ -374,7 +374,7 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url("../images/ops21px.png") no-repeat scroll 0 0;
+	background: transparent url("../images/menu-arrow-selected.png") no-repeat scroll 0 5px;
 	margin-left: 5px;
 	border: 0;
 	cursor: pointer;
