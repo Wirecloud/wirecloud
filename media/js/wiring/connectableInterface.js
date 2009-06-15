@@ -451,14 +451,14 @@ function ChannelInterface(channel, wiringGUI) {
 
 	var checkName = function(e) {
 		if (e.target.value == "" || e.target.value.match(/^\s$/)) {
-			var msg = gettext("Error updating a channel. Invalid name");
-			LogManagerFactory.getInstance().log(msg);
-			e.target.value=this.channel.getName();
+			var msg = gettext("Channel name cannot be empty.");
+			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+			e.target.value = this.getName();
 		} else if (this.wiringGUI.channelExists(e.target.value)) {
-			var msg = gettext("Error updating a channel. %(channelName)s: Channel already exists");
+			var msg = gettext("A channel named \"%(channelName)s\" already exists.");
 			msg = interpolate(msg, {channelName: e.target.value}, true);
-			LogManagerFactory.getInstance().log(msg);
-			e.target.value=this.channel.getName();
+			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+			e.target.value = this.getName();
 		} else {
 			this.setName(e.target.value)
 		}
@@ -629,6 +629,7 @@ ChannelInterface.prototype.getFriendCode = function() {
 }
 
 ChannelInterface.prototype.setName = function(newName) {
+	this.wiringGUI._notifyNameChange(this.name, newName);
 	this.name = newName;
 }
 

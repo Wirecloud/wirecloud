@@ -253,6 +253,16 @@ WiringInterface.prototype.getConnectableByQName = function(qname) {
 }
 
 /**
+ * @private used by <code>ChannelInterface</code>
+ */
+WiringInterface.prototype._notifyNameChange = function(oldName, newName, channel) {
+	if (this.channelsByName[oldName] == channel) {
+		this.channelsByName[newName] = channel;
+		delete this.channelsByName[oldName];
+	}
+}
+
+/**
  * @param {ChannelInterface} channel
  */
 WiringInterface.prototype._registerChannel = function(channel) {
@@ -499,20 +509,22 @@ WiringInterface.prototype._removeChannel = function (channel) {
 	if (!this.channels.elementExists(channel))
 		return; // Nothing to do
 
-	if (this.currentChannel == channel) {
+	// Remove the channel from the interface
+	if (this.currentChannel == channel)
 		this._changeChannel(channel);
-		this.channels_list.removeChild(channel.getHTMLElement());
-	} else {
-		this.channels_list.removeChild(channel.getHTMLElement());
-		if (this.currentChannel) {
-			//repaint status because the channel position may have changed
-			this.uncheckChannel(this.currentChannel);
-			this.highlightChannel(this.currentChannel);
-		}
+
+	this.channels_list.removeChild(channel.getHTMLElement());
+
+	// Mark channel as removed
+	channel.remove();
+
+	// Repaint the wiring interface as the channel position may have changed
+	if (this.currentChannel) {
+		this.uncheckChannel(this.currentChannel);
+		this.highlightChannel(this.currentChannel);
 	}
 
-	channel.remove();
-	// If channel exists in the wiring module, destroy it on saving
+	// If channel exists in the wiring module, destroy it when saving
 	if (channel.exists())
 		this.channelsToRemove.push(channel);
 	else
