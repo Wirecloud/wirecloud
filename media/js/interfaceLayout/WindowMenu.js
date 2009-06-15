@@ -368,11 +368,10 @@ InfoWindowMenu.prototype = new WindowMenu();
 
 InfoWindowMenu.prototype._dontShowAnymore = function(e) {
 	var layoutManager = LayoutManagerFactory.getInstance();
-	layoutManager.informacionMessagesStatus[this.type] = true;
-	var oneYearLater = new Date((new Date()).getTime() + 31536000000);
-	document.cookie = "informationMessagesStatus=" +
-		encodeURIComponent(layoutManager.informacionMessagesStatus.toJSON()) +
-		"; expires=" + oneYearLater.toGMTString();
+	layoutManager.informationMessagesStatus[this.type] = true;
+	CookieManager.createCookie('informationMessagesStatus',
+		layoutManager.informationMessagesStatus,
+		365);
 
 	layoutManager.hideCover();
 }

@@ -92,25 +92,24 @@ var LayoutManagerFactory = function () {
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 
 		this.menus = new Array();
-		
-		//information messages
-		this.informacionMessagesStatus = [false, false, false, false];
-		var cookies = document.cookie.split(/\s*;\s+/);
-		for (var i=0; i<cookies.length; i++) {
-			var cookie = cookies[i].split(/\s*=\s*/);
-			if(cookie[0] == "informationMessagesStatus") {
-				var value = eval("(" + decodeURIComponent(cookie[1]) + ")");
-				if (value instanceof Array)
-					this.informacionMessagesStatus = value;
-			}
+
+		// Information messages
+		this.informationMessagesStatus = CookieManager.readCookie('informationMessagesStatus', true);
+		if (this.informationMessagesStatus !== null) {
+			// Renew information message cookie
+			CookieManager.createCookie('informationMessagesStatus',
+				this.informationMessagesStatus,
+				365);
+		} else {
+			// TODO refactor this
+			this.informationMessagesStatus = [];
+			for (var i = 0; i < 20; i++)
+				this.informationMessagesStatus[i] = false;
 		}
-		
-		//Renew cookie
-		var oneYearLater = new Date((new Date()).getTime() + 31536000000);
-		document.cookie = "informationMessagesStatus" + "=" + 
-			encodeURIComponent(this.informacionMessagesStatus.toJSON()) + 
-			"; expires=" + oneYearLater.toGMTString();
-		
+
+		// Renew theme cookie if needed
+		CookieManager.renewCookie('theme', 365);
+
 		// ***************
 		// PUBLIC METHODS 
 		// ****************
@@ -145,7 +144,7 @@ var LayoutManagerFactory = function () {
 				var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
 				new Insertion.After($('menu_layer'), menuHTML);
 				var themeMenu = new DropDownMenu('themeMenu');
-	
+
 				for (var i = 0; i < themes.length; i++) {
 					var themeName = themes[i]
 					themeMenu.addOption(null,
@@ -156,9 +155,8 @@ var LayoutManagerFactory = function () {
 					                    }.bind({theme:themeName}),
 					                    i);
 				}
-				
-				if($('themeSelector')){
-	
+
+				if($('themeSelector')) {
 					$('themeSelector').observe('click',
 						function (e) {
 							LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
@@ -193,6 +191,12 @@ var LayoutManagerFactory = function () {
 				$("themeLabel").textContent = theme.name;
 				_currentTheme.applyStyle();
 				layoutManager.resizeWrapper();
+
+				// Save theme selection into a cookie
+				CookieManager.createCookie('informationMessagesStatus',
+					theme.name,
+					365);
+
 				layoutManager._notifyPlatformReady(false);
 			}
 
@@ -724,7 +728,7 @@ var LayoutManagerFactory = function () {
 
 		//Shows the message information
 		LayoutManager.prototype.showTipMessage = function(msg, type) {
-			if (this.informacionMessagesStatus[type]) // Don't show me anymore
+			if (this.informationMessagesStatus[type]) // Don't show me anymore
 				return;
 
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
@@ -744,7 +748,7 @@ var LayoutManagerFactory = function () {
 
 		// Shows a generic information dialog
 		LayoutManager.prototype.showInfoMessage = function(msg, type, title) {
-			if (this.informacionMessagesStatus[type]) // Don't show me anymore
+			if (this.informationMessagesStatus[type]) // Don't show me anymore
 				return;
 
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
