@@ -28,12 +28,13 @@
 
 #wiring .eventColumn, #wiring .slotColumn {
   width: 20%;
-  position: absolute;
+  position: relative;
 }
 
 #wiring .inoutColumn {
   width: 20%;
   position: relative;
+  left: 20%;
   float: left;
 }
 
@@ -45,10 +46,6 @@
 #wiring .slotColumn {
   right: 0;
   float: right;
-}
-
-#wiring .inoutColumn {
-  left: 40%;
 }
 
 #wiring .title {
