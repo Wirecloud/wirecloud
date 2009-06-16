@@ -20,7 +20,7 @@
 # }
 # -------------------------- End lighttpd optimizations -----------------------
 
-set DJANGO_SETTINGS_MODULE=settings
+export DJANGO_SETTINGS_MODULE=settings
 
 python generate_ezweb_js_file.py
 python generate_ezweb_css_file.py
