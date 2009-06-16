@@ -79,10 +79,6 @@ div.gadget_window_locked div.gadget_wrapper {
   border: none;
 }
 
-div.floatclearer {
-  clear: both;
-}
-
 div.gadget_window div.snapButton {
   /* This icon represents that the iGadget is outside the grid */
   background: transparent url("../images/igadget/extract-bottom.png") no-repeat 0 0;

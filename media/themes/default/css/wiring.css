@@ -33,17 +33,10 @@
 #wiring .eventColumn, #wiring .slotColumn {
   width: 20%;
   padding: 0 20px;
-  vertical-align: top;
-}
-
-#wiring .connectionColumn {
-  width: 20%;
-  vertical-align: top;
 }
 
 #wiring .inoutColumn {
   width: 20%;
-  vertical-align: top;
 }
 
 #wiring .title {
@@ -53,7 +46,7 @@
   margin-bottom: 1ex;
 }
 
-#wiring #eventColumn .title, #slotColumn .title{
+.eventColumn > .title, .slotColumn > .title {
   cursor:pointer;
 }
 

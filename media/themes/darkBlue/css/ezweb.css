@@ -34,10 +34,6 @@ input[type="text"], input[type="password"], textarea{
     display: none !important;
 }
 
-div.floatclearer {
-  clear: both;
-}
-
 /* header ------------------------------------------------------------------------------------------ */
 #header {
 	background: url("../images/header.png") repeat-x left top;

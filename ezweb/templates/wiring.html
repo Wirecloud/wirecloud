@@ -4,19 +4,15 @@
 			<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
 			<div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
 		</div>
-		<table id="wiring_table">
-		<tr>
-			<td id="eventColumn" class="eventColumn">
+		<div id="wiring_table">
+			<div id="eventColumn" class="eventColumn">
 				<div class="title folded">{% trans "EVENTS" %}
 					<input name='event' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
 				</div>
 				<div id="events_list"></div>
-			</td>
+			</div>
 
-			<td class="connectionColumn">
-			</td>
-
-			<td class="inoutColumn">
+			<div class="inoutColumn">
 				<div class="title">{% trans "CHANNELS" %}
 					<input name='channels' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this, event);"/>
 				</div>
@@ -24,17 +20,14 @@
 					{% trans "new channel" %}
 				</div>
 				<div id="channels_list"></div>
-			</td>
+			</div>
 
-			<td class="connectionColumn">
-			</td>
-
-			<td id="slotColumn" class="slotColumn">
+			<div id="slotColumn" class="slotColumn">
 				<div class="title folded">{% trans "SLOTS" %}
 					<input name='slot' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
 				</div>
 				<div id="slots_list"></div>
-			</td>
-		</tr>
-		</table>
+			</div>
+			<div class="floatclearer"></div>
+		</div>
 	</div>

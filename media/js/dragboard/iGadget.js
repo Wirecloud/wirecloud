@@ -432,24 +432,6 @@ IGadget.prototype.build = function() {
 	                                                                      Event.pointerY(e));
 	               }.bind(this),
 	               true);
-	// and listen to mouse events
-	/*this.gadgetMenu.observe("mousedown",
-	                        function (e) {
-	                            e = e || window.event; // needed for IE
-
-	                            // Only attend to right button (or left button for left-handed persons) events
-	                            if (!BrowserUtilsFactory.getInstance().isRightButton(e.button))
-	                                return false;
-
-	                            LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-	                                                                                this.menu,
-	                                                                                Event.pointerX(e),
-	                                                                                Event.pointerY(e));
-
-	                            Event.stop(e);
-	                            return false;
-	                        }.bind(this),
-	                        true);*/
 
 	button.setAttribute("title", gettext("Menu"));
 	button.setAttribute("alt", gettext("Menu"));
@@ -610,7 +592,7 @@ IGadget.prototype.paint = function(onInit) {
 	                                                   y + (menuEntry.offsetHeight/2));
 	                                           }.bind(this),
 	                                           1);
-	                                           
+
 		this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
 		                    gettext("Transparency"),
 		                    function() {

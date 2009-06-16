@@ -44,7 +44,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	this.channelsByName = {};
 	this.channelsToRemove = [];
 	this.friend_codes = {};
-	this.highlight_color = "#FFFFE0"; // TODO remove
 	this.friend_codes_counter = 0;
 	this.channelBaseName = gettext("Channel");
 	this.visible = false; // TODO temporal workarround
@@ -57,7 +56,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	this.event_list = $('events_list');
 	this.slot_list = $('slots_list');
 	this.channels_list = $('channels_list');
-	this.channel_name = $('channel_name');
 	this.newChannel = $('newChannel');
 	this.wiringTable = $('wiring_table');
 
@@ -69,6 +67,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
 
 	// folding/unfolding all tabs events
+	var titleElement;
+
 	this.eventTabs = new ConnectableColumnInterface(this.event_list);
 	titleElement = this.eventColumn.getElementsByClassName("title")[0];
 

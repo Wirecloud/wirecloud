@@ -525,3 +525,7 @@ button {
 	margin-bottom:0;
 	margin-top:0;
 }
+
+.floatclearer {
+  clear: both;
+}

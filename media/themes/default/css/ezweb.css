@@ -25,10 +25,6 @@ a, a:visited{
     display: none !important;
 }
 
-div.floatclearer {
-  clear: both;
-}
-
 /* header ------------------------------------------------------------------------------------------ */
 #header {
 	background: url("../images/header_deg.gif") repeat-x top left;
