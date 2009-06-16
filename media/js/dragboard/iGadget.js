@@ -575,23 +575,23 @@ IGadget.prototype.paint = function(onInit) {
 	                    }.bind(this),
 	                    0);
 
-	if (! this.is_shared_workspace()) {
+	if (!this.is_shared_workspace()) {
 		this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
-	                                           gettext("Menu Bar Color..."),
-	                                           function(e) {
-	                                               var menuEntry = $(this.menuColorEntryId);
-	                                               if (menuEntry.getBoundingClientRect != undefined) {
-	                                                   var y = menuEntry.getBoundingClientRect().top;
-	                                               } else {
-	                                                   var y = document.getBoxObjectFor(menuEntry).screenY -
-	                                                           document.getBoxObjectFor(document.documentElement).screenY;
-	                                               }
-	                                               LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-	                                                   this.colorMenu,
-	                                                   Event.pointerX(e),
-	                                                   y + (menuEntry.offsetHeight/2));
-	                                           }.bind(this),
-	                                           1);
+		                                       gettext("Menu Bar Color..."),
+		                                       function(e) {
+		                                           var menuEntry = $(this.menuColorEntryId);
+		                                           if (menuEntry.getBoundingClientRect != undefined) {
+		                                               var y = menuEntry.getBoundingClientRect().top;
+		                                           } else {
+		                                               var y = document.getBoxObjectFor(menuEntry).screenY -
+		                                                       document.getBoxObjectFor(document.documentElement).screenY;
+		                                           }
+		                                           LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+		                                               this.colorMenu,
+		                                               Event.pointerX(e),
+		                                               y + (menuEntry.offsetHeight/2));
+		                                       }.bind(this),
+		                                       1);
 
 		this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
 		                    gettext("Transparency"),
@@ -600,13 +600,13 @@ IGadget.prototype.paint = function(onInit) {
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    2);
-	
+
 		// Extract/Snap from/to grid option (see _updateExtractOption)
 		this.extractOptionOrder = 2;
 		this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
 		
 		// Initialize snap/extract options
-	    this._updateExtractOption();
+		this._updateExtractOption();
 	}
 
 	// Initialize lock status
@@ -1187,49 +1187,48 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager()
 
-	if (basedOnContent) {
-		// Based on content height
+	var oldHeight = this.height;
 
-		if (!this.minimized) {
+	if (!this.minimized) {
+		if (basedOnContent) {
+			// Based on content height
+
 			contentHeight = this.layout.fromVCellsToPixels(this.contentHeight);
 			var fullSize = contentHeight;
 			fullSize += this.gadgetMenu.offsetHeight +
 			            this.statusBar.offsetHeight +
 			            this.configurationElement.offsetHeight;
 			fullSize += this._computeExtraHeightPixels();
-			
+
 			processedSize = this.layout.adaptHeight(contentHeight, fullSize);
 			contentHeight = processedSize.inPixels;
 			this.height = processedSize.inLU;
 			this.content.setStyle({height: contentHeight + "px"});
-
-			this._recomputeWrapper(contentHeight);
-
-			// Notify Context Manager about the new igadget's size
-			contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 		} else {
-			this._recomputeWrapper();
-			contentHeight = this.element.offsetHeight;
-			this.content.setStyle({height: "0px"});
-			this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
+			// Based on full gadget height
+			contentHeight = this.layout.getHeightInPixels(this.height);
+			contentHeight -= this.configurationElement.offsetHeight + this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
+			contentHeight -= this._computeExtraHeightPixels();
+			this.content.setStyle({height: contentHeight + "px"});
+			this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
 		}
-
-		// Notify Context Manager about the new igadget's size
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.height);
-	} else {
-		// Based on full gadget height
-		contentHeight = this.layout.getHeightInPixels(this.height);
-		contentHeight -= this.configurationElement.offsetHeight + this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
-		contentHeight -= this._computeExtraHeightPixels();
-		this.content.setStyle({height: contentHeight + "px"});
-		this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
 
 		this._recomputeWrapper(contentHeight);
 
 		// Notify Context Manager about the new igadget's size
 		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+
+	} else {
+		this._recomputeWrapper();
+		contentHeight = this.element.offsetHeight;
+		this.content.setStyle({height: "0px"});
+		this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
 	}
 
+	if (oldHeight !== this.height) {
+		// Notify Context Manager about the new igadget's size
+		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.height);
+	}
 }
 
 /**
