@@ -102,7 +102,6 @@ var LogManagerFactory = function () {
 			clearer.setAttribute('class', 'floatclearer');
 			this.logConsole.appendChild(clearer);
 
-			LayoutManagerFactory.getInstance().resizeTabBar();
 		}
 
 		LogManager.prototype.show = function() {
