@@ -89,9 +89,16 @@ def get_workspace_gadgets(workspace):
     
 
 def clone_original_variable_value(abstract_variable, creator, new_user):
-    original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
-    
-    new_var_value = original_var_value.clone_variable_value(new_user)
+    try:
+        original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
+        
+        #Cloned using new way (even cloning Variablevalues)
+        new_var_value = original_var_value.clone_variable_value(new_user)
+    except VariableValue.DoesNotExist:
+        #This VariableValue should exist. 
+        #However, published workspaces cloned in the old-fashioned way don't have the VariableValue of the creator variable!
+        #Managing everything with AbstractVariable's default value, VariableValue it's unavailable!
+        new_var_value = abstract_variable.get_default_value() 
     
     return new_var_value
 
