@@ -142,6 +142,8 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 <div id="menu_layer" style="display:none">
 </div>
 
+
+
 <!-- HEADER -->
 {% block header %}
 <div id="header">
@@ -158,6 +160,9 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 				{{ INITIAL_THEME }}
 			</span>
 		</span>
+		|
+		<!-- LOGS LINK -->
+		<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
 
 		<div class="languages">
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
@@ -175,7 +180,6 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
 			</div>
 		</div>
-		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
 	</div>
 </div>	
 <div id="bar">

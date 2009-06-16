@@ -62,7 +62,7 @@ td {
 
 #greeting .languages {
 	display: inline;
-	margin-left: 15px;
+	margin-left: 5px;
 }
 
 #greeting .languages img{
@@ -200,7 +200,6 @@ td {
 #logs_link {
   height: 16px !important;
   cursor:pointer;
-  padding: 2px 4px 0px 2px;
 }
 
 .message_section{

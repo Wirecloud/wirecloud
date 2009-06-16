@@ -155,8 +155,14 @@ div.floatclearer {
 }
 
 #logs_link {
-  background: none;
-  color:red;
+  height: 16px;
+  border: none;
+  width: 16px;
+  background: transparent url(../images/info.png) no-repeat;
+}
+
+#logs_link.highlighted{
+  background: transparent url(../images/info_highlighted.png) no-repeat;
 }
 
 .message_section{

@@ -293,8 +293,8 @@ var LayoutManagerFactory = function () {
 			this.wiringLink.addClassName("toolbar_unmarked");
 			this.dragboardLink.removeClassName("toolbar_marked");
 			this.dragboardLink.addClassName("toolbar_unmarked");
-			this.logsLink.removeClassName("toolbar_marked");
-			this.logsLink.addClassName("toolbar_unmarked");
+			/*this.logsLink.removeClassName("toolbar_marked");
+			this.logsLink.addClassName("toolbar_unmarked");*/
 			
 /*			this.hideShowCase();
 			this.hideLogs();
@@ -308,13 +308,16 @@ var LayoutManagerFactory = function () {
 		}
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
-			this.logsLink.innerHTML = labelContent;
-			this.logsLink.style.display = 'inline';
+			/*this.logsLink.innerHTML = labelContent;
+			this.logsLink.style.display = 'inline';*/
+			this.logsLink.addClassName('highlighted');
+			setTimeout("LayoutManagerFactory.getInstance().clearErrors()", 1000);
 		}
 		
 		LayoutManager.prototype.clearErrors = function (labelContent) {
-			this.logsLink.innerHTML = '';
-			this.logsLink.style.display = 'none';
+			/*this.logsLink.innerHTML = '';
+			this.logsLink.style.display = 'none';*/
+			this.logsLink.removeClassName('highlighted');
 		}
 
 		// Tab operations
@@ -464,8 +467,8 @@ var LayoutManagerFactory = function () {
 			this.currentView = this.logs;
 			this.currentViewType = 'logs';
 			
-			this.logsLink.removeClassName("toolbar_unmarked");
-			this.logsLink.addClassName("toolbar_marked");
+			/*this.logsLink.removeClassName("toolbar_unmarked");
+			this.logsLink.addClassName("toolbar_marked");*/
 			$("ws_operations_link").addClassName("hidden");
 			$("dragboard_link").title = gettext("Show active workspace");
 			this.hideTabs();

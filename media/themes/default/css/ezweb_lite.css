@@ -36,3 +36,8 @@
 #bar{
 	bottom: auto !important;
 }
+
+#logs_link {
+	top: 10px !important;
+	right: 0 !important;
+}

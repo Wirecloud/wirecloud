@@ -17,7 +17,7 @@
 				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
 			</div>
 		</div>
-		<div id="logs_link" style="display:none" title="{% trans 'Show errors console' %}" class="toolbar_unmarked" onclick="OpManagerFactory.getInstance().showLogs();"></div>
+
 	</div>
 <div id="tab_section" class="tab_section">
 	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
@@ -26,6 +26,8 @@
 	<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
 
 </div>
+	<!-- LOGS LINK -->
+	<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
 </div>
 </div>
 {% endblock %}

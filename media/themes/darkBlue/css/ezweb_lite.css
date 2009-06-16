@@ -29,8 +29,14 @@
 #tab_section {
 	top:3px;
 	width: auto;
+	right: 20px !important;
 }
 
 #bar{
 	bottom: auto !important;
+}
+
+#logs_link {
+	margin-top:4px;
+	float:right;
 }
