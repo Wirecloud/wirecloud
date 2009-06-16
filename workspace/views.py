@@ -727,6 +727,7 @@ class  WorkSpacePublisherEntry(Resource):
             cloned_workspace.description = description
             cloned_workspace.imageURI = imageURI
             cloned_workspace.wikiURI = wikiURI
+            cloned_workspace.creator = user
             cloned_workspace.save()
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 

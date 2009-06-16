@@ -36,21 +36,23 @@ from igadget.models import Variable, IGadget
 from django.db import models, IntegrityError
 
 class PackageLinker:
-    def link_workspace(self, workspace, user, link_variable_values=True):
+    def link_workspace(self, workspace, user, update_variable_values=True):
         # Linking user to workspace
-        self.add_user_to_workspace(workspace, user)
         
-        #Linking gadgets to user (allways needed)
+        #Linking gadgets to user!
         ws_igadget_vars = self.link_gadgets(workspace, user)
         
-        if (link_variable_values):
+        #Linking workspace with user!
+        workspace.users.add(user)
+        
+        if (update_variable_values):
             ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
             
             abstract_var_list = self.get_abstract_var_list(ws_igadget_vars, ws_vars)
             
             # Creating new VariableValue to each AbstractVariable
             # Linking each new VariableValue to the user argument
-            self.add_user_to_abstract_variable_list(abstract_var_list, user, workspace.get_creator())
+            self.update_user_variable_values(abstract_var_list, user, workspace.get_creator())
     
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
@@ -73,22 +75,41 @@ class PackageLinker:
         if (len(workspace.users.filter(id=user.id))==0):
             workspace.users.add(user)
             workspace.save()
+            
+    
+    def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable):
+        if (creator_value_available):           
+            user_variable_value.value = creator_value_available.get_variable_value()
+        else:
+            #Creator VariableValue not available (workspace published with old cloning algorithm)
+            #Using AbstractVariable default value
+            user_variable_value.value = abstract_variable.get_default_value()
+        
+        return user_variable_value
 
-    def add_user_to_abstract_variable_list(self, abstract_var_list, user, creator):
+    def update_user_variable_values(self, abstract_var_list, user, creator):
         for (abstract_var, variable) in abstract_var_list:
-            variable_values = VariableValue.objects.filter(user=user, abstract_variable=abstract_var)
-            original_variable_value = VariableValue.objects.get(user=creator, abstract_variable=abstract_var)
+            #Does user have his own VariableValue?
+            try:
+                user_variable_value = VariableValue.objects.get(user=user, abstract_variable=abstract_var)
+            except VariableValue.DoesNotExist:
+                user_variable_value = None
             
-            if (len(variable_values)>0):
-                #The VariableValue of this abstract_variable exists!
-                #It's time to update the variable value with creator's variable value!
-                linked_user_variable_value = variable_values[0]
-            else:
-                #Creating VariableValue with creators value!
-                linked_user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
+            #Does creator have his own VariableValue?
+            try:
+                creator_variable_value = VariableValue.objects.get(user=creator, abstract_variable=abstract_var)
+            except VariableValue.DoesNotExist:
+                creator_variable_value = None
+                
+            if (not user_variable_value):
+                #User VariableValue does not exist! Creating one!
+                
+                user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
             
-            linked_user_variable_value.value = original_variable_value.get_variable_value()
-            linked_user_variable_value.save()
+            #Updating User VariableValue value!   
+            user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, abstract_var)
+                
+            user_variable_value.save()
                 
     def get_abstract_var_list(self, ws_igadget_vars, ws_vars):
         abstract_var_list = []
