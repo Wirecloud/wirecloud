@@ -140,7 +140,7 @@ var LayoutManagerFactory = function () {
 			// Build theme list
 			// TODO retreive this list from the server
 			if ($('themeMenu') == null) {
-				var themes = ['default', 'darkBlue'];
+				var themes = _THEMES;
 				var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
 				new Insertion.After($('menu_layer'), menuHTML);
 				var themeMenu = new DropDownMenu('themeMenu');
@@ -193,9 +193,7 @@ var LayoutManagerFactory = function () {
 				layoutManager.resizeWrapper();
 
 				// Save theme selection into a cookie
-				CookieManager.createCookie('informationMessagesStatus',
-					theme.name,
-					365);
+				CookieManager.createCookie('theme', theme.name, 365);
 
 				layoutManager._notifyPlatformReady(false);
 			}

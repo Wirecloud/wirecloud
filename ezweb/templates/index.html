@@ -88,6 +88,7 @@ var tag_categories = '{{ tag_categories|safe }}'
 var public_workspace = '{{ active_workspace }}';
 var last_logged_user = '{{ last_user }}';
 
+var _THEMES = {% autoescape off %} {{ THEMES }} {% endautoescape %};
 var _INITIAL_THEME = '{{ INITIAL_THEME }}';
 var _ONLY_ONE_CSS_FILE = '{{ only_one_css_file }}' == 'True';
 var _EzWeb_RELEASE = '{{ ezweb_release }}';

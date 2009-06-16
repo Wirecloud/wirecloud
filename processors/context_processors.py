@@ -29,6 +29,7 @@
 
 
 
+import stat, os
 from django.conf import settings
 from commons.utils import json_encode
 from catalogue.models import Category, Tag
@@ -105,10 +106,34 @@ def tag_categories(request):
 
 # themes url
 def theme_url(request):
+
+    # Default theme
     if not hasattr(settings, "DEFAULT_THEME") or settings.DEFAULT_THEME == None:
         settings.DEFAULT_THEME = "default"
 
-    if not hasattr(settings, "THEME_URL"):
-        settings.THEME_URL = settings.MEDIA_URL + "themes/" + settings.DEFAULT_THEME
+    # Theme cache
+    if not hasattr(settings, "CACHED_THEMES"):
+        themes_dir = os.path.join(settings.BASEDIR, 'media', 'themes')
 
-    return {'INITIAL_THEME': settings.DEFAULT_THEME, 'THEME_URL': settings.THEME_URL}
+        themes = []
+        for filename in os.listdir(themes_dir):
+            if filename.startswith('.'):
+                continue
+
+            pathname = os.path.join(themes_dir, filename)
+            mode = os.stat(pathname)[stat.ST_MODE]
+            if stat.S_ISDIR(mode):
+                themes.append(filename)
+
+        themes.sort(key=str.lower)
+        settings.CACHED_THEMES = json_encode(themes)
+
+    # Process current theme
+    if request.COOKIES.has_key('theme'):
+        theme = request.COOKIES['theme']
+    else:
+        theme = settings.DEFAULT_THEME
+
+    theme_url = settings.MEDIA_URL + "themes/" + theme
+
+    return {'THEMES': settings.CACHED_THEMES, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
