@@ -1068,13 +1068,12 @@
 	font-size: 70%;
 	margin-left:10px;
 }
+
 #close_info_resource {
 	position:absolute;
 	z-index:2;
 	right:10px;
 	top:12px;
-	width: 16px;
-	height: 16px;
 }
 
 /*

@@ -320,8 +320,6 @@ td {
 }
 
 .window_menu .closebutton {
-  position: relative;
-  top: 3px;
   margin-left: 1ex;
   float: right;
 }

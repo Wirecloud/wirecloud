@@ -281,9 +281,9 @@ div.floatclearer {
 }
 
 .closebutton {
-  width: 13px;
   background: transparent url(../images/remove.png) no-repeat;
-  width: 13px;
+  width: 16px;
+  height: 16px;
 }
 
 button {
