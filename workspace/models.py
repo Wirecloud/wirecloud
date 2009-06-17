@@ -142,7 +142,7 @@ class AbstractVariable(models.Model):
 class VariableValue(models.Model):
     
     user = models.ForeignKey(User, verbose_name=_('User'))
-    value = models.TextField(_('Value'))
+    value = models.TextField(_('Value'), null=True, blank=True)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
     
     def clone_variable_value(self, user):
