@@ -83,10 +83,14 @@ class Translation(models.Model):
 
 ###### Catalogue section ######
 
+CERTIFIED = 'CERT'
+NOT_VERIFIED = 'NOT_CERT'
+NOT_VALID = 'NOT_VALID'
+
 CERTIFICATION_STATUS = (
-    (u'CERT', 'Certified'),
-    (u'NOT_CERT', 'Not Verified'),
-    (u'NOT_VALID','Not Valid'),
+    (CERTIFIED, 'Certified'),
+    (NOT_VERIFIED, 'Not Verified'),
+    (NOT_VALID,' Not Valid'),
 )
             
 class GadgetResource(TransModel):
