@@ -57,9 +57,26 @@ DropDownMenu.prototype.calculatePosition = function() {
 		var smWidth = this.menu.getWidth();
 		this.x -= smWidth;
 	}
+	
+	this.menu.setStyle({'max-height' : 'none'});
+	var smHeight = this.menu.getHeight();
+	
 	if(this.position.indexOf('top') != -1) {
-		var smHeight = this.menu.getHeight();
-		this.y -= smHeight;
+		//Check the available height
+		if (this.y < smHeight){
+			//set max-height in order to have scroll
+			this.menu.setStyle({'max-height' : this.y + 'px'});
+			this.y = 0;
+		}else{
+			this.y -= smHeight;
+		}
+	}else{
+		//Check the available height
+		var availableHeight = BrowserUtilsFactory.getInstance().getHeight()- this.y;
+		if (availableHeight < smHeight){
+			//set max-height in order to have scroll
+			this.menu.setStyle({'max-height' : availableHeight + 'px'});
+		}
 	}
 	if(this.position.indexOf('center') != -1) {
 		var smWidth = this.menu.getWidth();

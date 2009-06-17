@@ -253,6 +253,7 @@ td {
 .drop_down_menu {
   padding: 0.5em;
   display: none;
+  overflow-y: auto;
 }
 
 .drop_down_menu .option {
