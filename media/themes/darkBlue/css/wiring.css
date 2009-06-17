@@ -233,18 +233,18 @@
 }
 
 #wiring .tab > .header > .anchor {
-  background: url("../images/wiring/unchecked.png");
+  background: url("../images/wiring/outAnchor.png");
   position: absolute;
-  left: -11px;
+  left: -28px;
   top: 5px;
-  width: 18px;
+  width: 35px;
   height: 18px;
   border: 0px;
   padding: 0px;
 }
 
 #wiring .tab > .header > .anchor.checked {
-  background: url("../images/wiring/checkedtab.png");
+  background: url("../images/wiring/outAnchorOutEnabled.png");
 }
 
 #wiring .igadget > .header {
