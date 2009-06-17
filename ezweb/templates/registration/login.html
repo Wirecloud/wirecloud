@@ -11,21 +11,21 @@
 <!-- Base css -->
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
 
-{% block extra_stylecss %}
-<!-- Theme css -->
-<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
-{% endblock %}
+
 
 <style>
 body{
   overflow: visible;
+  color: #19446A;
+	background: url("/ezweb/themes/default/images/fond.gif") top left;
+    margin:0;
+    padding:0;
+    font-size:80%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 ul{
   margin-top: 0;
   margin-bottom:0;
-}
-p{
-  width: 93%;
 }
 img{
   border: none;
@@ -37,40 +37,93 @@ img{
 }
 
 #header {
-        position: relative;
-        width:100%;
-        background: url("/ezweb/images/header_deg.gif") repeat-x top left;
-        color:black;
-	text-align:right;
-        height: 77px;
-        z-index: 2;
-	position: inherit;
+    height: 51px;
+    position: relative;
+    width:100%;
+    z-index: 2;
+    background: url("/ezweb/themes/default/images/header_deg.gif") repeat-x left top;
+	color:white;
+	height: 65px;
 }
-a, a:visited{
-   color: white;
+#logo {
+	margin-top:5px;
+	background: url("/ezweb/themes/default/images/Open_Ez_Logo.png") no-repeat;
+	width: 244px;
+	height: 46px;
+}
+#greeting {
+	text-align:right;
+	float:right;
+	margin-right:15px;
+	margin-top:5px;
+}
+
+.form-row {
+	width: 220px;
+	margin: auto;
+	text-align: center;
+	padding: 10px;
+}
+
+.form-row input[type="submit"] {
+	background: transparent url("/ezweb/themes/default/images/header_deg.gif") repeat;
+	color: white;
 }
 
 #content-main .registration{
         text-align: center;
 }
 
-#content-main .registration a{
+#right-section a{
         color:#2D6F9C;
         cursor:pointer;
 }
-#content-main .training{
-        background:#19446A none repeat scroll 0 0;
-        border:2px solid;
-        color:#75B8D9;
-        font-family:verdana;
-        font-size:89%;
-	font-weight:bold;
-        padding: 5px;
-	text-align:justify;
-        position: relative;
-	margin-top: 15px;
+
+#login-section{
+	border: 1px solid;
+	-moz-border-radius: 6px;
+	background: #E3F0F7;
+	margin: auto;
+	width: 70%;
+	margin-bottom: 75px;
+	margin-top: 27px;
+	padding: 10px;
+	border-right: 2px solid;
+	border-bottom: 2px solid;
 }
 
+#content-main .training{
+        color:#19446A;
+	    padding: 5px;
+		text-align:justify;
+	    position: relative;
+		margin-top: 15px;
+		margin-left: 5px;
+		float: left;
+		width: 40%;
+}
+
+.training .training-content{
+        width: 90%;
+        margin: auto;
+        background:#E3F0F7;
+        padding: 10px;
+        font-size:110%;
+        -moz-border-radius: 6px;
+        border:1px solid;
+        border-right: 2px solid;
+		border-bottom: 2px solid;
+}
+
+.training-content td{
+	padding: 2px;
+}
+
+#content-main #right-section{
+	float: left;
+	width: 57%;
+	padding: 14px 0;
+}
 
 table{
   border: 0;
@@ -100,30 +153,37 @@ table{
 	cursor:pointer;
 }
 
-.training .training-content{
-        width: 80%;
-        margin: auto;
-}
-
-.training li{
-        margin: 6px 0;
-}
-
-.training h3{
-        margin: 0;
-        color: white;
-}
-
-.training-content td a{
-  float: left;
-  text-decoration: none;
-  margin: 2px 10px;
+h3{
+        color: #19446A;
 }
 
 .subtitle{
-  display: block;
-  width: 100px;
-  font-size:85%;
+	  display: block;
+	  width: 100px;
+	  font-size:85%;
+}
+
+.tooltip{
+	padding: 10px;
+	border: 1px solid;
+	border-right: 2px solid;
+	border-bottom: 2px solid;
+	-moz-border-radius: 6px;
+	width: 400px;
+	margin: 10px;
+	background: white;
+	color: #19446A;
+	background:white;
+    color:#19446A;
+    clear: both;
+}
+
+#tip_grow{
+	float: right;
+}
+
+#tip_contact{
+	float: left;
 }
 
 </style>
@@ -136,8 +196,12 @@ table{
     document.getElementById('spanish_form').style.display='block';
     document.getElementById('english_registration').style.display='none';
     document.getElementById('spanish_registration').style.display='block';
+    document.getElementById('english_title').style.display='none';
+    document.getElementById('spanish_title').style.display='block';
     document.getElementById('english_training').style.display='none';
     document.getElementById('spanish_training').style.display='block';
+    document.getElementById('english_tips').style.display='none';
+    document.getElementById('spanish_tips').style.display='block';
   }
 
   function show_in_english() {
@@ -145,8 +209,12 @@ table{
     document.getElementById('english_form').style.display='block';
     document.getElementById('spanish_registration').style.display='none';
     document.getElementById('english_registration').style.display='block';
+    document.getElementById('spanish_title').style.display='none';
+    document.getElementById('english_title').style.display='block';
     document.getElementById('spanish_training').style.display='none';
     document.getElementById('english_training').style.display='block';
+    document.getElementById('spanish_tips').style.display='none';
+    document.getElementById('english_tips').style.display='block';
   }
 
   function change_language(language_code) {
@@ -186,121 +254,196 @@ table{
 
 <!-- HEADER -->
 <div id="header">
-<div id="banner">
-<div id="logo"></div>
-<div id="greeting">
- <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">Contact us</a></span>
- <div class="languages">
-  {% for lang in LANGUAGES %} <img onclick="change_language('{{lang.0}}')" title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/>{% endfor %}
+	<div id="banner">
+		<div id="logo"></div>
+		<div id="greeting">
+			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">Contact us</a></span>
+			 <div class="languages">
+			  {% for lang in LANGUAGES %} <img onclick="change_language('{{lang.0}}')" title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/>{% endfor %}
+			 </div>
+		</div>
+	
+	</div>
 </div>
-</div>
-
-</div>
-
 {% if error_message %}
 <p class="errornote">{{ error_message }}</p>
 {% endif %}
 
 
 <div id="content-main">
-<form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="login-form">
-  <div id="spanish_form" style="display: none;" class="form-row">
-  	<table>
-  		<tr><td>
-    		<label for="id_username">Nombre de Usuario: </label> 
-    	</td><td>
-    		<input type="text" name="username" id="id_username" />
-    	</td></tr>
-    	<tr><td>
-    		<label for="id_password">Clave: </Label> 
-    	</td><td>	
-    		<input type="password" name="password" id="id_password" />
-    	</td></tr>
-    </table>
-    <input type="hidden" name="this_is_the_login_form" value="1" />
-    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
-    <input type="submit" value="Acceder" />
-  </div>
-
-  <div id="english_form" class="form-row">
-  	<table>
-  		<tr><td>
-    		<label for="id_username">Username: </label> 
-    	</td><td>
-    		<input type="text" name="username" id="id_username" />
-    	</td></tr>
-    	<tr><td>
-    		<label for="id_password">Password: </label> 
-    	</td><td>	
-    		<input type="password" name="password" id="id_password" />
-    	</td></tr>
-    </table>
-    <input type="hidden" name="this_is_the_login_form" value="1" />
-    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
-    <input type="submit" value="Log in" />
-  </div>
-</form>
-
-<!-- Registration -->
-<div id="english_registration" class="registration">Access with your username and password in <a href="http://open.movilforum.com/">Open movilforum</a> or <a href="http://ezweb.tid.es:8080/register/">register</a></div>
-<div id="spanish_registration" style="display: none" class="registration">Accede con tu usuario de <a href="http://open.movilforum.com/">Open movilforum</a> o <a href="http://open.movilforum.com/?q=user/register">reg&iacute;strate</a></div>
-
-<!-- Training -->
-<div class="training">
-
-<div class="training-content" id="training-content" style="display:none">
-
-
-<div id="spanish_training" style="display: none">
-<h3>Bienvenido a la plataforma EzWeb (Beta)!</h3>
-<p>Gracias a EzWeb podr&aacute;s configurar tu acceso personalizado a un universo de servicios disponibles en Internet</p><p>Utilizando EzWeb ser&aacute;s capaz de:</p>
-<table>
-
-<tr><td width="70%"><ul><li>Descubrir gadgets en nuestro cat&aacute;logo, etiquetar y puntuar los gadgets que m&aacute;s te interesen y, finalmente, a&ntilde;adir gadgets a tu espacio de trabajo.</li></ul></td><td width="30%" align="center"><a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png"/><div class="subtitle">Descubre</div></a></td></tr>
-
-<tr><td><ul><li>Personaliza los gadgets de tu espacio de trabajo a tu gusto y conecta unos con otros, utilizando las capacidades de layout avanzado y wiring que EzWeb te proporciona.</li></ul></td><td align="center"><a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png"/><div class="subtitle">Personaliza</div></a> <a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png"/><div class="subtitle">Conecta</div></a></td></tr>
-
-<tr><td><ul><li>A&ntilde;ade facilmente gadgets vinculados con tus feeds y p&aacute;ginas web favoritas</li></ul></td></tr>
-
-
-<tr><td><ul><li>Comparte tu espacio de trabajo/mashup como elemento en el cat&aacute;logo de EzWeb o como objeto que puedes embeber en tu entorno favorito</li></ul></td><td align="center"><a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png"/><div class="subtitle">Publica</div></a> <a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/share/share.png"/><div class="subtitle">Embebe</div></a></td></tr>
-
-<tr><td><ul><li>Combina tus servicios favoritos de la Web y automatiza los procesos que har&iacute;an tu vida mucho m&aacute;s sencilla (enviar SMS/MMS, enviar a Twitter las noticias de los feeds que lees, ...)</li></ul></td></tr>
-
-</table>
-<p>
-Nuestro cat&aacute;logo de gadgets ir&aacute; creciando en los pr&oacute;ximos meses, poniendo a tu alcance un universo cada vez m&aacute;s rico de servicios, enfocado a tus necesidades y gustos. No dejes de enviarnos tu <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">opini&oacute;n</a> y una relaci&oacute;n de los gadgets que desear&iacute;as ver en el cat&aacute;logo pr&oacute;ximamente. Si eres un desarrollador y quieres publicar tus gadgets en el cat&aacute;logo de EzWeb, no dejes tampoco de contactar con nosotros <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">aqu&iacute;</a>.
-</p>
-<p>Note: EzWeb (Beta) s6oacute;lo est&aacute; disponible para Firefox 2+ pero pronto lo estar&aacute; tambi6eacute;n para Internet Explorer</p>
-</div>
-
-<div id="english_training">
-<h3>Welcome to the EzWeb (Beta) Platform!</h3>
-<p>Thanks to EzWeb you will be able to configure your personalized access to services available on the Web.</p><p>Using EzWeb you will be able to:</p>
-<table>
-
-<tr><td width="70%"><ul><li>Search for gadgets in our catalogue, sharing tags and rates you assign to them, and finally import gadgets in your workspace</li></ul></td><td width="30%" align="center"><a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png"/><div class="subtitle">Discover</div></a></td></tr>
-
-<tr><td><ul><li>Arrange gadgets in your workspace at your will, and connect them together, using the advanced layout and wiring capabilities that EzWeb provides.</li></ul></td><td align="center"><a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png"/><div class="subtitle">Customize</div></a> <a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png"/><div class="subtitle">Connect</div></a></td></tr>
-
-<tr><td><ul><li>Easily add gadgets linked to your favourite feeds and web pages</li></ul></td></tr>
-
-
-<tr><td><ul><li>Share your workspaces/mashups either as items in EzWeb's catalogue or as objects you may embed in your favorite environment</li></ul></td><td align="center"><a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png"/><div class="subtitle">Publish</div></a> <a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank"><img src="http://ezweb.tid.es/ezweb/videos/share/share.png"/><div class="subtitle">Embed</div></a></td></tr>
-
-<tr><td><ul><li>Combine your favorite services on the Web and automate processes that would make your life much easier (sending SMS/MMS, twitting news about feeds you read, ...)</li></ul></td></tr>
-
-</table>
-<p>
-Our catalogue will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes. Don't hesitate sending us your <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">opinion and feedback</a> of what gadgets you would like to see in the EzWeb Catalogue next time. Keep in <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">touch</a> with us!.
-</p>
-<p>Note: EzWeb (Beta) is only available at Firefox 2+ but will also be available on Internet Explorer soon</p>
-</div>
-
-</div>
-
-
-
+	
+	<!-- Training -->
+	<div class="training">
+		<h2 id="spanish_title" style="display: none">Gracias a EzWeb podrás combinar tus servicios favoritos para hacer tu vida más sencilla</h2>
+		<h2 id="english_title">Thanks to EzWeb you will be able to combine your favorite services to make your life easier</h2>
+			<div class="training-content" id="training-content" style="display:none">
+				<div id="spanish_training" style="display: none">
+					<h3>¡Echa un vistazo a nuestros vídeos!</h3>
+					<table cellspacing="0">
+						<tr>
+							<td width="110px" align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Descubre"/>
+								</a>
+							</td>
+							<td><b>Descubre</b> nuevos gadgets en nuestro catálogo y añádelos a tu espacio de trabajo.</td>
+						</tr>					
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Personaliza"/>
+								</a> 
+							</td>
+							<td>Personaliza los gadgets de tu espacio de trabajo <b>a tu gusto</b>.</td>
+						</tr>
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Conecta"/>
+								</a>
+							</td>
+							<td><b>Conecta</b> los gadgets entre si.</td>
+						</tr>										
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publica"/>
+								</a> 
+							</td>
+							<td>Comparte tus espacios de trabajo/<b>mashups</b> como elementos del catálogo de EzWeb</td>
+						</tr>
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embebe"/>
+								</a>
+							</td>
+							<td>Comparte tu propio espacio de trabajo como objeto que puedes <b>embeber</b> en tus entornos favoritos.</td>
+						</tr>			
+					</table>
+				</div>
+			
+				<div id="english_training">
+					<h3>Watch our videos!</h3>
+					<table cellspacing="0">
+						<tr>
+							<td width="110px" align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Discover"/>
+								</a>
+							</td>
+							<td><b>Discover</b> new gadgets in our catalogue and import them in your workspace.</td>
+						</tr>					
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Arrange"/>
+								</a> 
+							</td>
+							<td>Arrange gadgets in your workspace <b>at your will</b>.</td>
+						</tr>
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Connect"/>
+								</a>
+							</td>
+							<td><b>Wire</b> gadgets together.</td>
+						</tr>										
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
+								</a> 
+							</td>
+							<td>Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue.</td>
+						</tr>
+						<tr>
+							<td align="center">
+								<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
+									<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embed"/>
+								</a>
+							</td>
+							<td>Share your own workspace as an object you may <b>embed</b> in your favourite environments.</td>
+						</tr>			
+					</table>
+				</div>
+		
+		</div>	
+	</div>
+	
+	<!-- Registration -->
+	<div id="right-section">
+		
+		<div id="login-section">
+			<form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="login-form">
+				  <div id="spanish_form" style="display: none;" class="form-row">
+				  	<table>
+				  		<tr><td>
+				    		<label for="id_username">Usuario </label> 
+				    	</td><td>
+				    		<input type="text" name="username" id="id_username" size="15"/>
+				    	</td></tr>
+				    	<tr><td>
+				    		<label for="id_password">Clave </Label> 
+				    	</td><td>	
+				    		<input type="password" name="password" id="id_password" size="15"/>
+				    	</td></tr>
+				    </table>
+				    <input type="hidden" name="this_is_the_login_form" value="1" />
+				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
+				    <input type="submit" value="Acceder" />
+				  </div>
+				
+				  <div id="english_form" class="form-row">
+				  	<table>
+				  		<tr><td>
+				    		<label for="id_username">Username </label> 
+				    	</td><td>
+				    		<input type="text" name="username" id="id_username" size="15"/>
+				    	</td></tr>
+				    	<tr><td>
+				    		<label for="id_password">Password </label> 
+				    	</td><td>	
+				    		<input type="password" name="password" id="id_password" size="15"/>
+				    	</td></tr>
+				    </table>
+				    <input type="hidden" name="this_is_the_login_form" value="1" />
+				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
+				    <input type="submit" value="Log in" />
+				  </div>
+			</form>
+			
+			<div id="english_registration" class="registration">
+				Your first time in EzWeb? Access with your login in <a href="http://open.movilforum.com/">Open movilforum</a> or <a href="http://ezweb.tid.es:8080/register/">register</a>
+			</div>
+			<div id="spanish_registration" style="display: none" class="registration">
+				Accede con tu usuario de <a href="http://open.movilforum.com/">Open movilforum</a> o <a href="http://open.movilforum.com/?q=user/register">reg&iacute;strate</a>
+			</div>
+		</div>
+		<div id="english_tips">
+			<div id="tip_catalogue" class="tooltip">
+			<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages.
+			</div>
+			<div id="tip_grow" class="tooltip">
+			Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes.
+			</div>
+			<div id="tip_contact" class="tooltip">
+			Don't hesitate sending us your <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">opinion and feedback</a>. Keep in touch with us!
+			</div>
+		</div>
+		<div id="spanish_tips" style="display: none">
+			<div id="tip_catalogue" class="tooltip">
+			¡<b>Ayudanos</b> a hacer que crezca nuestro catálogo! Añade fácilmente gadgets vinculados a tus páginas web y feeds favoritos.
+			</div>
+			<div id="tip_grow" class="tooltip">
+			Nuestro <b>catálogo</b> crecerá en los próximos meses, poniendo a tu alcance un universo cada vez más rico de servicios, enfocado a tus necesidades y gustos.
+			</div>
+			<div id="tip_contact" class="tooltip">
+			No dejes de enviarnos tu <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">opinión</a>. ¡Mantente en contacto con nosotros!
+			</div>
+		</div>
+	</div>
 </div>
 <script type="text/javascript">
 var is_iphone = (navigator.userAgent.indexOf('iPhone')!=-1 || navigator.userAgent.indexOf('iPod')!=-1 );
@@ -308,12 +451,7 @@ var is_iphone = (navigator.userAgent.indexOf('iPhone')!=-1 || navigator.userAgen
 if (!is_iphone){
   document.getElementById('training-content').style.display="block";
 }
-
-//document.getElementById('id_username').focus()
 </script>
-</div>
-
 </body>
-
 </html>
 
