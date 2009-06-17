@@ -518,11 +518,11 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	if (!this.initialized)
 		return;
 
+	if (iGadget.getWidth() > this.getColumns())
+		iGadget.contentWidth = this.getColumns();
+
 	var position = iGadget.getPosition();
 	if (position) {
-		if (iGadget.getWidth() > this.getColumns())
-			iGadget.contentWidth = this.getColumns();
-
 		var diff = iGadget.getWidth() + position.x - this.getColumns();
 		if (diff > 0)
 			position.x -= diff
