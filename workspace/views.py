@@ -220,7 +220,7 @@ def setActiveWorkspace(user, workspace):
     
     workspace.save()
     
-def cloneWorkspace(workspace_id):
+def cloneWorkspace(workspace_id, user):
 
     published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
     
@@ -228,7 +228,13 @@ def cloneWorkspace(workspace_id):
     
     packageCloner = PackageCloner()
     
-    return packageCloner.clone_tuple(workspace)
+    cloned_workspace = packageCloner.clone_tuple(workspace)
+    
+    cloned_workspace.creator = user
+    
+    cloned_workspace.save()
+    
+    return cloned_workspace
 
 def linkWorkspaceObject(user, workspace, link_variable_values=True):               
     packageLinker = PackageLinker()
@@ -267,7 +273,7 @@ class WorkSpaceCollection(Resource):
                                 try:
                                     default_workspace = Category.objects.get(category_id=category['id']).default_workspace
                                     #duplicate the workspace for the user
-                                    cloned_workspace = cloneWorkspace(default_workspace.id)
+                                    cloned_workspace = cloneWorkspace(default_workspace.id, user)
                                     linkWorkspace(user, cloned_workspace.id)
                                     setActiveWorkspace(user, cloned_workspace)
                                     data_list['isDefault']="true"
@@ -618,8 +624,9 @@ class  WorkSpaceLinkerEntry(Resource):
 class  WorkSpaceClonerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
+        user = get_user_authentication(request)
         
-        cloned_workspace = cloneWorkspace(workspace_id)
+        cloned_workspace = cloneWorkspace(workspace_id, user)
         return HttpResponse("{'result': 'ok', 'new_workspace_id': %s}" % (cloned_workspace.id), mimetype='application/json; charset=UTF-8')
         
 
@@ -644,7 +651,7 @@ class  WorkSpaceAdderEntry(Resource):
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
         
-        cloned_workspace = cloneWorkspace(workspace_id)
+        cloned_workspace = cloneWorkspace(workspace_id, user)
         linkWorkspace(user, cloned_workspace.id)
         
         data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
