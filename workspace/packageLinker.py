@@ -36,7 +36,7 @@ from igadget.models import Variable, IGadget
 from django.db import models, IntegrityError
 
 class PackageLinker:
-    def link_workspace(self, workspace, user, update_variable_values=True):
+    def link_workspace(self, workspace, user, creator, update_variable_values=True):
         # Linking user to workspace
         
         #Linking gadgets to user!
@@ -52,7 +52,7 @@ class PackageLinker:
             
             # Creating new VariableValue to each AbstractVariable
             # Linking each new VariableValue to the user argument
-            self.update_user_variable_values(abstract_var_list, user, workspace.get_creator())
+            self.update_user_variable_values(abstract_var_list, user, creator)
     
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
@@ -77,18 +77,24 @@ class PackageLinker:
             workspace.save()
             
     
-    def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable):
+    def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable, created):
         if (creator_value_available):           
             user_variable_value.value = creator_value_available.get_variable_value()
         else:
             #Creator VariableValue not available (workspace published with old cloning algorithm)
             #Using AbstractVariable default value
-            user_variable_value.value = abstract_variable.get_default_value()
+            if (created):
+                user_variable_value.value = abstract_variable.get_default_value()
         
         return user_variable_value
 
-    def update_user_variable_values(self, abstract_var_list, user, creator):
+    def update_user_variable_values(self, abstract_var_list, user, creator): 
         for (abstract_var, variable) in abstract_var_list:
+            var_values = VariableValue.objects.filter(abstract_variable=abstract_var)
+            
+            for var_value in var_values:
+                print var_value
+            
             #Does user have his own VariableValue?
             try:
                 user_variable_value = VariableValue.objects.get(user=user, abstract_variable=abstract_var)
@@ -101,13 +107,16 @@ class PackageLinker:
             except VariableValue.DoesNotExist:
                 creator_variable_value = None
                 
+            created = False
+                
             if (not user_variable_value):
                 #User VariableValue does not exist! Creating one!
                 
                 user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
+                created = True
             
             #Updating User VariableValue value!   
-            user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, abstract_var)
+            user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, abstract_var, created)
                 
             user_variable_value.save()
                 

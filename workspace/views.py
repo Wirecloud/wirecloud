@@ -236,15 +236,15 @@ def cloneWorkspace(workspace_id, user):
     
     return cloned_workspace
 
-def linkWorkspaceObject(user, workspace, link_variable_values=True):               
+def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):               
     packageLinker = PackageLinker()
     
-    packageLinker.link_workspace(workspace, user, link_variable_values)
+    packageLinker.link_workspace(workspace, user, creator, link_variable_values)
     
-def linkWorkspace(user, workspace_id, link_variable_values=True):         
+def linkWorkspace(user, workspace_id, creator, link_variable_values=True):         
     workspace = get_object_or_404(WorkSpace, id=workspace_id)
             
-    linkWorkspaceObject(user, workspace, link_variable_values)
+    linkWorkspaceObject(user, workspace, creator, link_variable_values)
 
         
 class WorkSpaceCollection(Resource):
@@ -274,7 +274,7 @@ class WorkSpaceCollection(Resource):
                                     default_workspace = Category.objects.get(category_id=category['id']).default_workspace
                                     #duplicate the workspace for the user
                                     cloned_workspace = cloneWorkspace(default_workspace.id, user)
-                                    linkWorkspace(user, cloned_workspace.id)
+                                    linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.get_creator())
                                     setActiveWorkspace(user, cloned_workspace)
                                     data_list['isDefault']="true"
                                     break
@@ -605,7 +605,7 @@ class  WorkSpaceSharerEntry(Resource):
         #Everything right! Linking with public user!
         public_user = get_public_user(request)
         
-        linkWorkspaceObject(public_user, workspace, link_variable_values=True)
+        linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
         
         url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
         
@@ -651,8 +651,12 @@ class  WorkSpaceAdderEntry(Resource):
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
         
+        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        
+        original_workspace = published_workspace.workspace
+        
         cloned_workspace = cloneWorkspace(workspace_id, user)
-        linkWorkspace(user, cloned_workspace.id)
+        linkWorkspace(user, cloned_workspace.id, original_workspace.get_creator())
         
         data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
         concept_data = {}

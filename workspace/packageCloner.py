@@ -343,6 +343,6 @@ class PackageCloner:
         # Linking merged workspace
         packageLinker = PackageLinker()
         
-        packageLinker.link_workspace(to_ws, user)
+        packageLinker.link_workspace(to_ws, user, from_ws.get_creator())
         
         return to_ws

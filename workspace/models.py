@@ -128,7 +128,12 @@ class AbstractVariable(models.Model):
        
        return igadget_var.has_public_value()
    
-    def get_default_value(self):       
+    def get_default_value(self):
+       #If it's a workspace variable, and there is not creator value!
+       #Returning ""
+       if self.type=='WORKSPACE':
+           return ""
+       
        #Cycling import 
        from igadget.models import Variable
        
