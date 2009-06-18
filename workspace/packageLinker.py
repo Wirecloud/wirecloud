@@ -89,12 +89,7 @@ class PackageLinker:
         return user_variable_value
 
     def update_user_variable_values(self, abstract_var_list, user, creator): 
-        for (abstract_var, variable) in abstract_var_list:
-            var_values = VariableValue.objects.filter(abstract_variable=abstract_var)
-            
-            for var_value in var_values:
-                print var_value
-            
+        for (abstract_var, variable) in abstract_var_list:            
             #Does user have his own VariableValue?
             try:
                 user_variable_value = VariableValue.objects.get(user=user, abstract_variable=abstract_var)
