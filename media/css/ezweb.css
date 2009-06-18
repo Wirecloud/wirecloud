@@ -298,6 +298,7 @@ td {
 
 .window_menu {
   max-width:50%;
+  overflow-y: auto;
   padding: 0.8em 1.8em;
 }
 

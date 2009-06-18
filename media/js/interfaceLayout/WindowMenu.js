@@ -95,12 +95,24 @@ WindowMenu.prototype.setMsg = function (msg) {
 WindowMenu.prototype.calculatePosition = function() {
 	var coordenates = [];
 
-	coordenates[1] = BrowserUtilsFactory.getInstance().getHeight()/2 - this.htmlElement.getHeight()/2;
-	coordenates[0] = BrowserUtilsFactory.getInstance().getWidth()/2 - this.htmlElement.getWidth()/2;
+	var windowHeight = BrowserUtilsFactory.getInstance().getHeight();
+	var windowWidth = BrowserUtilsFactory.getInstance().getWidth();
 
-	this.htmlElement.style.top = coordenates[1]+"px";
+	this.htmlElement.setStyle({'max-height' : 'none'});
+	var menuHeight = this.htmlElement.getHeight();
+	
+	coordenates[1] = windowHeight/2 - menuHeight/2;
+	coordenates[0] = windowWidth/2 - this.htmlElement.getWidth()/2;
+
+	if(windowHeight < menuHeight){
+		var padding = 2* parseInt(this.htmlElement.getStyle('padding-top').replace("px",""));
+		
+		this.htmlElement.setStyle({'max-height': windowHeight-padding + 'px'});
+		this.htmlElement.style.top = 0 + "px";
+	}else{
+		this.htmlElement.style.top = coordenates[1]+"px";
+	}
 	this.htmlElement.style.left = coordenates[0]+"px";
-//	this.htmlElement.style.right = coordenates[0]+"px";
 }
 
 /**
