@@ -83,6 +83,8 @@ var OpManagerFactory = function () {
 				
 			}else{
 				this.activeWorkSpace = activeWorkSpace;
+				if (this.activeWorkSpace==null && workSpaces.length > 0)
+					this.activeWorkSpace = this.workSpaceInstances[workSpaces[0].id];
 				this.activeWorkSpace.downloadWorkSpaceInfo();
 			}
 		}
