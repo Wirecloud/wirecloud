@@ -38,7 +38,7 @@ from workspace.views import *
 urlpatterns = patterns('workspace.views',
     # WorkSpace
     (r'^[/]?$', WorkSpaceCollection(permitted_methods=('GET','POST', ))),
-    (r'^/((?P<workspace_id>\d+)/last_user/(?P<last_user>[\s\-\.\w]+)[/]?)?$',
+    (r'^/((?P<workspace_id>\d+)/last_user/(?P<last_user>[\s\-\.\w]*)[/]?)?$',
 	    WorkSpaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
     # Tab
     (r'^/((?P<workspace_id>\d+)/tab(s)?[/]?)?$',

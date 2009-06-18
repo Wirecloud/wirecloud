@@ -354,8 +354,10 @@ class WorkSpaceEntry(Resource):
         workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
         
         #Closing session after downloading public user workspace
-        if (user.username == 'public' and last_user and last_user != 'public'):
+        if (user.username == 'public'):
             logout_request(request)
+        
+        if (user.username == 'public' and last_user and last_user != 'public' and last_user != ''):
             request.user = relogin_after_public(request, last_user, None)
         
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')

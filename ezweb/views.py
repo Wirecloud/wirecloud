@@ -64,8 +64,8 @@ def public_ws_viewer(request, public_ws_id):
     except WorkSpace.DoesNotExist:
          return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
     
-    last_user = None
-    if (request.user):
+    last_user = ''
+    if (request.user and request.user.username != 'public' and request.user.username != ''):
         last_user = request.user
     
     public_user=login_public_user(request)

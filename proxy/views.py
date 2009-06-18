@@ -101,7 +101,7 @@ class Proxy(Resource):
             
             query = encode_query(query)
             
-            #manage proxies with authentication (get it from en	vironment)
+            #manage proxies with authentication (get it from environment)
             proxy=None   	
             for proxy_name in settings.NOT_PROXY_FOR:
     	        if host.startswith(proxy_name):
