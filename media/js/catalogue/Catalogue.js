@@ -42,6 +42,7 @@ var CatalogueFactory  = function () {
 		var globalTags = [];
 		var _this = this;
 		var max_gadgets_per_page = 40;
+		var max_number_of_pages = 5;
 		var min_offset = 10;
 		var selectedResourceName = "";
 		var selectedResourceVersion = "";
@@ -853,6 +854,7 @@ var CatalogueFactory  = function () {
 		}));
 		parent.appendChild(previous_span);
 		
+		// First and previous page
         if(UIUtils.getPage()!=1)
         {
 			var first_link = UIUtils.createHTMLElement("a", $H({
@@ -888,10 +890,28 @@ var CatalogueFactory  = function () {
 			}));
 			previous_span.appendChild(previous_img);
         }
-
-		for (var i=1; i<=end_page; i++)
+		
+		// Number of pages
+		var first_page_shown = (parseInt(UIUtils.getPage()) - 2 > 1) ? parseInt(UIUtils.getPage()) - 2 : 1;
+		var last_page_shown = (parseInt(UIUtils.getPage()) + 2 < end_page) ? parseInt(UIUtils.getPage()) + 2 : end_page;
+		var npages = last_page_shown - first_page_shown + 1;
+		var pages_to_show = (max_number_of_pages < end_page)?max_number_of_pages:end_page;
+		if (npages < pages_to_show){
+			if (first_page_shown <= 2){
+				last_page_shown += pages_to_show - npages;
+			}else if (last_page_shown >= end_page - 2){
+				first_page_shown -= pages_to_show - npages;
+			}		
+		}
+		
+		/*if (last_page_shown == end_page){
+			if (first_page_shown > 1){
+				first_page_shown -= end_page - last_page_shown
+			}			
+		}*/
+		for (var i=first_page_shown; i<=last_page_shown; i++)
 		{
-            if(UIUtils.getPage()!=i)
+            if(parseInt(UIUtils.getPage())!=i)
             {
 				var page_span = UIUtils.createHTMLElement("span", $H({
 					class_name: 'pagination_button'
@@ -913,7 +933,8 @@ var CatalogueFactory  = function () {
 				})));
 		    }
 		}
-
+		
+		// Next and last page
 		var next_span = UIUtils.createHTMLElement("span", $H({
 			class_name: 'pagination_button'
 		}));
