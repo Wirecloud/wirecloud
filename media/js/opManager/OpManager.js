@@ -298,7 +298,8 @@ var OpManagerFactory = function () {
 					// TODO log eror
 				} else {
 					_currentTheme = theme;
-					_currentTheme.applyStyle();
+					// Initial theme css's are pre applied, so we don't need to apply they
+					//_currentTheme.applyStyle();
 				}
 
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);

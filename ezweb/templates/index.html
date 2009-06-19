@@ -21,6 +21,15 @@
 <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
 {% endif %}
 {% block extra_stylecss %}
+<!-- Theme css --> 
+{% if only_one_css_file %}
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb_theme_{{ ezweb_release }}.css"/>
+{% else %}
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/catalogue.css" />
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/dragboard.css" />
+<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/wiring.css" />
+{% endif %}
 {% endblock %}
 
 <!-- CSS for different header -->
