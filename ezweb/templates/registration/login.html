@@ -376,8 +376,7 @@ h3{
 	<div id="right-section">
 		
 		<div id="login-section">
-			<form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="login-form">
-				  <div id="spanish_form" class="form-row">
+				  <form onSubmit="return check_browser()" action="{{ app_path }}" method="post"  id="spanish_form" class="form-row">
 				  	<table>
 				  		<tr><td>
 				    		<label for="id_username">Usuario </label> 
@@ -393,9 +392,9 @@ h3{
 				    <input type="hidden" name="this_is_the_login_form" value="1" />
 				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
 				    <input type="submit" value="Acceder" />
-				  </div>
+				  </form>
 				
-				  <div id="english_form" style="display: none" class="form-row">
+				  <form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="english_form" style="display: none" class="form-row">
 				  	<table>
 				  		<tr><td>
 				    		<label for="id_username">Username </label> 
@@ -411,8 +410,7 @@ h3{
 				    <input type="hidden" name="this_is_the_login_form" value="1" />
 				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
 				    <input type="submit" value="Log in" />
-				  </div>
-			</form>
+				  </form>
 			
 			<div id="english_registration" style="display: none" class="registration">
 				Your first time in EzWeb? Access with your login in <a href="http://open.movilforum.com/">Open movilforum</a> or <a href="http://ezweb.tid.es:8080/register/">register</a>
