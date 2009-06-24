@@ -34,7 +34,7 @@ function _EzWebAPI() {
 	for (var i = 0; i < tmp.length; i++) {
 		var current = tmp[i];
 		current = current.split("=", 2);
-		if (current[0] = "id") {
+		if (current[0] == "id") {
 			this.id = parseInt(current[1]);
 			break;
 		}
