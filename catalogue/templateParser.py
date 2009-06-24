@@ -44,6 +44,8 @@ from xml.sax import parseString, handler
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Tag, Capability, Translation
 from commons.translation_utils import get_trans_index
 
+from commons.user_utils import get_certification_status
+
 import string
 
 
@@ -273,15 +275,20 @@ class TemplateHandler(handler.ContentHandler):
             gadget.creation_date=datetime.today()
             gadget.popularity = '0.0'
 
+            # A gadget belongs to many organizations
+            for organization in self._organization_list:
+                gadget.organization.add(organization)
+                
+            #Checking certification status
+            gadget.certification = get_certification_status(self._user)
+            
+            gadget.creator = self._user
+
             try:
                 gadget.save()
             except Exception, e:
                 raise TemplateParseException(e)
             
-            # A gadget belongs to many organizations
-            for organization in self._organization_list:
-                gadget.organization.add(organization)
-                
             self._gadget = gadget
             
             userRelated = UserRelatedToGadgetResource ()

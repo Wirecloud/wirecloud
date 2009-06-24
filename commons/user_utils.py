@@ -30,24 +30,21 @@
 
 #
 
-from django.contrib import admin
+from django.contrib.auth.models import Group
 
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, Tag, Category, UserVote, Translation
+CERTIFICATION_PREFIX = 'cert__'
+ORGANIZATION_PREFIX = 'org__'
 
-class CategoyAdminView(admin.ModelAdmin):     
-    filter_horizontal = ('tags',)
-    verbose_name_plural = 'Categories'
+CERTIFICATION_DEFAULT = CERTIFICATION_PREFIX + 'not_verified'
+CERTIFICATION_VERIFIED = CERTIFICATION_PREFIX + 'verified'
+
+def get_certification_status(user):
+    certification_groups = user.groups.filter(name__contains = CERTIFICATION_PREFIX)
     
-class GadgetResourceAdmin(admin.ModelAdmin): 
-    search_fields = ['short_name', 'vendor', 'author']
-    list_display = ['short_name', 'vendor', 'author', 'resource_type', 'certification']
-    verbose_name_plural = 'Resources'
+    if (len(certification_groups) == 0):
+        default, created = Group.objects.get_or_create(name=CERTIFICATION_DEFAULT)
+        
+        return default
     
-admin.site.register(GadgetResource, GadgetResourceAdmin)
-admin.site.register(GadgetWiring)
-admin.site.register(UserRelatedToGadgetResource)
-admin.site.register(UserTag)
-admin.site.register(UserVote)
-admin.site.register(Tag)
-admin.site.register(Category,CategoyAdminView)
-admin.site.register(Translation)
+    return certification_groups[0]
+    

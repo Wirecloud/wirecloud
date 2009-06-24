@@ -35,6 +35,8 @@ from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
 
 from commons.utils import get_xml_error, json_encode
+from commons.user_utils import CERTIFICATION_VERIFIED
+
 from catalogue.get_json_catalogue_data import get_gadgetresource_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from catalogue.models import GadgetResource, UserTag, UserRelatedToGadgetResource
@@ -58,10 +60,16 @@ def get_uniquelist(list, value = None):
     return uniquelist
 
 # Filter gadgets that don't belong to given organization
+# Also filter gadgets that are not certificated!
 def filter_gadgets_by_organization(gadget_list, organization_list):
     final_list = []
      
     for gadget in gadget_list:
+        certification_status = gadget.certification
+        
+        if (certification_status and certification_status.name != CERTIFICATION_VERIFIED):
+            continue
+        
         gadget_organizations = gadget.organization.all()
         
         if (len(gadget_organizations) == 0):

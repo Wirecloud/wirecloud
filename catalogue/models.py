@@ -98,6 +98,9 @@ class GadgetResource(TransModel):
 
      author = models.CharField(_('Author'), max_length=250)
      mail = models.CharField(_('Mail'), max_length=100)
+     
+     #Person how added the resource to catalogue!
+     creator = models.ForeignKey(User, null=True, blank=True)
            
      description = models.TextField(_('Description'))
      size = models.CharField(_('Size'),max_length=10, null=True, blank=True)
@@ -106,18 +109,19 @@ class GadgetResource(TransModel):
      gadget_uri = models.URLField(_('gadgetURI'), null=True, blank=True)
      creation_date = models.DateTimeField('creation_date', null=True)
      image_uri = models.URLField(_('imageURI'), null=True)
-     iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True)
+     iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True, blank=True)
      wiki_page_uri = models.URLField(_('wikiURI'))
      template_uri= models.URLField(_('templateURI'))
      mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
      
      #For implementing "private gadgets" only visible for users that belongs to some concrete organizations
-     organization = models.ManyToManyField(Group, null=True, blank=True)
+     organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
+
+     #Certification status
+     #Done via User groups!
+     certification = models.ForeignKey(Group, related_name='certification', null=True, blank=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
-     
-     certification_status = models.CharField(_('Certification Status'), max_length=10, 
-                                             choices=CERTIFICATION_STATUS, blank=True, null=True)
      
      def resource_type(self):
          if (self.mashup_id):
