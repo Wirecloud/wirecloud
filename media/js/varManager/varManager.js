@@ -200,8 +200,7 @@ function VarManager (_workSpace) {
 		}
 	}
 	
-	VarManager.prototype.unload = function () {	
-		delete this;
+	VarManager.prototype.unload = function () {
 	}
 
 	VarManager.prototype.commitModifiedVariables = function() {		

@@ -216,8 +216,6 @@ function ContextManager (workspace_, workSpaceInfo_) {
 		// Delete all the ContextManager attributes
 		delete this._loaded;
 		delete this._workspace;
-
-		delete this;
 	}
 
 

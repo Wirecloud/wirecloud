@@ -76,8 +76,6 @@ ContextVar.prototype.unload = function () {
 	delete this._conceptName;
 	delete this._varManager;
 	delete this._value;
-	
-	delete this;
 }
 
 //////////////////////////////////////////////////////////
@@ -235,37 +233,8 @@ Concept.prototype.getIGadgetVar = function (igadgetId_) {
 }
 
 Concept.prototype.unload = function () {
-	
 	// Delete all the igadget variables related to this concept
 	var keys = this._igadgetVars.keys();
-	for (var i=0; i<keys.length; i++) {
+	for (var i = 0; i < keys.length; i++)
 		this._igadgetVars[keys[i]].unload();
-		delete this._igadgetVars[keys[i]];
-	}
-	
-	// Delete all the Concept attributes
-	delete this._semanticConcept;
-	delete this._adaptor;
-	delete this._type;
-	delete this._value;
-	delete this._initialValue;
-	
-	delete this.EXTERNAL;
-	delete this.IGADGET;
-	delete this.USERNAME;
-	delete this.LANGUAGE;
-	delete this.WIDTH;
-	delete this.WIDTHINPIXELS;
-	delete this.HEIGHT;
-	delete this.HEIGHTINPIXELS;
-	delete this.XPOSITION;
-	delete this.YPOSITION;
-	delete this.LOCKSTATUS;
-	delete this.ORIENTATION;
-	
-	delete this;
-
 }
-
-
-
