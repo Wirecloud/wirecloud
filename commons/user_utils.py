@@ -43,6 +43,7 @@ def get_certification_status(user):
     
     if (len(certification_groups) == 0):
         default, created = Group.objects.get_or_create(name=CERTIFICATION_DEFAULT)
+        verified, created = Group.objects.get_or_create(name=CERTIFICATION_VERIFIED)
         
         return default
     

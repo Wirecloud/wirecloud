@@ -61,13 +61,13 @@ def get_uniquelist(list, value = None):
 
 # Filter gadgets that don't belong to given organization
 # Also filter gadgets that are not certificated!
-def filter_gadgets_by_organization(gadget_list, organization_list):
+def filter_gadgets_by_organization(user, gadget_list, organization_list):
     final_list = []
      
     for gadget in gadget_list:
         certification_status = gadget.certification
         
-        if (certification_status and certification_status.name != CERTIFICATION_VERIFIED):
+        if (certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != gadget.creator):
             continue
         
         gadget_organizations = gadget.organization.all()
