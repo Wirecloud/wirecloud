@@ -157,20 +157,25 @@ WiringInterface.prototype.saveWiring = function () {
 	if (!this.changed)
 		return; // Nothing to do
 
-	// Phase 1. Creation
+	// Phase 1. Connection deletion
 	for (var i = 0; i < this.channels.length; i++) {
 		this.channels[i].commitChanges(this.wiring, 1);
 	}
 
-	// Phase 2. Updating
-	for (var i = 0; i < this.channels.length; i++) {
-		this.channels[i].commitChanges(this.wiring, 2);
-	}
-
-	// Phase 3. Deletions
+	// Phase 2. Channel deletion
 	for (var i = 0; i < this.channelsToRemove.length; i++) {
 		this.wiring.removeChannel(this.channelsToRemove[i].getConnectable());
 		this.channelsToRemove[i].destroy();
+	}
+
+	// Phase 3. Channel creation and general updates
+	for (var i = 0; i < this.channels.length; i++) {
+		this.channels[i].commitChanges(this.wiring, 3);
+	}
+
+	// Phase 4. Connection creation
+	for (var i = 0; i < this.channels.length; i++) {
+		this.channels[i].commitChanges(this.wiring, 4);
 	}
 
 	this.channelsToRemove = {};

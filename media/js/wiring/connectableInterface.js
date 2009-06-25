@@ -769,20 +769,18 @@ ChannelInterface.prototype.getValueWithFilter = function() {
 /**
  * @param {Wiring} wiring
  * @param {Number} phase current phase:
- *                 1 -> Creation
- *                 2 -> Updating
+ *                 1 -> Connection deletion
+ *                 2 -> Channel deletion
+ *                 3 -> Channel creation & general updates
+ *                 4 -> Connection creation
  */
 ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 	var i;
 
 	switch (phase) {
-	case 1: // Creation
+	case 1: // Connection deletion
 		if (this.connectable == null)
-			this.connectable = wiring.createChannel(this.name);
-		break;
-	case 2: // Updates
-		// Update channel name
-		this.connectable._name= this.name;
+			return;
 
 		// Inputs for removing
 		for (i = 0; i < this.inputsForRemoving.length; i++)
@@ -796,6 +794,16 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 
 		this.outputsForRemoving.clear();
 
+		break;
+	case 3: // Channel creation & general updates
+		if (this.connectable == null)
+			this.connectable = wiring.createChannel(this.name);
+
+		// Update channel name
+		this.connectable._name= this.name;
+		break;
+
+	case 4:
 		// Outputs for adding
 		for (i = 0; i < this.outputsForAdding.length; i++)
 			this.connectable.connect(this.outputsForAdding[i].getConnectable());
