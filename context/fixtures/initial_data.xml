@@ -237,13 +237,42 @@ Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for furt
 	</object>
    <object pk="19" model="connectable.filter">
         <field type="CharField" name="name">Demultiplex</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+  function(channelValue, params, channel){
+    			if (!channel._allInputsModified()){
+    				throw new DontPropagateException("not all imputs are modified");
+    			}
+				else{
+
+					if (params){
+						//change the indexes given by the user
+						var inputValues = channel._getJSONInput();
+						var userIndexes = eval('('+params+')');
+						var newInputs = {};
+						var newIndex, value = null;
+						var indexes = inputValues.keys();
+						for(var i=0; i < indexes.length;i++){
+							value = inputValues[indexes[i]];
+							newIndex = userIndexes[indexes[i]];
+							if(!newIndex){
+								newIndex = indexes[i];
+							}
+							newInputs[newIndex] = value;
+						}
+						return Object.toJSON(newInputs);
+					}
+					return channel._getJSONInput().toJSON();
+				}
+			}
+        ]]></field>
         <field type="CharField" name="label">Demultiplex</field>
         <field type="CharField" name="nature">PATT</field>
         <field type="CharField" name="category">TRANS</field>
-        <field type="TextField" name="help_text">Find elements in JSON structures.
-
-Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for further information.</field>
-        <field type="TextField" name="params"><None></None></field>
+        <field type="TextField" name="help_text">Propagate only when all the inputs have been modified.
+If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
+That is, "{'name1':'value1', 'name2':'value2'}".
+Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
+{'name1': 'new_index1','name2': 'new_index2'}</field>
+        <field type="TextField" name="params">{[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]}</field>
     </object>
 </django-objects>

@@ -347,11 +347,21 @@ function wChannel (variable, name, id, provisional_id) {
 }
 wChannel.prototype = new wInOut();
 
-wChannel.prototype.getValue = function() {
+wChannel.prototype.getValue = function(propagating) {
 	if (this.filter == null)
 		return this.variable.get();
-	else 
-		return this.filter.run(this.variable.get(), this.filterParams, this);
+	else{
+		try{
+			return this.filter.run(this.variable.get(), this.filterParams, this);
+		}catch (e){
+			if(e.name == "DONT_PROPAGATE"){
+				if(propagating)
+					throw new DontPropagateException(e)
+				else
+					return gettext("undefined");
+			}
+		}
+	}
 }
 
 wChannel.prototype.getValueWithoutFilter = function() {
@@ -394,8 +404,6 @@ wChannel.prototype._getJSONInput = function() {
 		json[this.inputs[i].getName()] = this.inputs[i].variable.value;
 	}
 
-	this._unmarkAllInputsAsModified();
-
 	return json;
 }
 
@@ -414,10 +422,11 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 	
 	try {
 		//getValue applys filter if needed!
-		var filteredValue = this.getValue();
+		var filteredValue = this.getValue(propagating=true);
+		this._unmarkAllInputsAsModified();
 	}
 	catch (err) {
-		if (err instanceof DontPropagateException) {
+		if (err.name == "DONT_PROPAGATE") {
 			//Exception when getting value from channel => there is a filter
 			//When a filter thorws an Exception, the propagation stops;
 			return;
@@ -467,6 +476,10 @@ wChannel.prototype._markAllInputsAsModified = function () {
  * @private
  */
 wChannel.prototype._allInputsModified = function () {
+
+	if(this.modified_inputs_state.length == 0)
+		return false;
+
 	for (var i = 0; i < this.modified_inputs_state.length; i++) {
 		if (!this.modified_inputs_state[i])
 			return false;

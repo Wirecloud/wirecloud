@@ -33,6 +33,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/ElementPositions.js"></script>
 
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring_exceptions.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>

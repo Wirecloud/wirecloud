@@ -82,12 +82,16 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 
 	var checkResult = function(e) {
 		var msg;
+		/*
+		
 		if(! e.target.value  || e.target.value.match(/^\s$/)){
 			msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
 			this.wiringGUI.showMessage(msg);
 			this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
 			return;
 		}
+		
+		*/
 		
 		// Sets the param value
 		this.channel.setFilterParam(this.param._index, e.target.value);
@@ -227,10 +231,13 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	try{
 		// Creates the variables for other params
 		for (i=0; i < this._params.length; ++i){ 
-			if (i!=0)
+			if (i!=0 && params != '')
 				params += ',';
 				
 			var paramValue = paramValues_[i]['value'];
+			
+			if(!paramValue)
+				continue;
 				
 			// Checks the type of parameter
 			switch (this._params[i].getType()){
@@ -263,7 +270,7 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 				params += this._params[i].getName();
 				break;
 			default: // Otherwise is String
-				eval ("var " + this._params[i].getName() + " = '" + paramValue + "';");
+				eval ("var " + this._params[i].getName() + " = \"" + paramValue.replace(/"/g,"'" ) + "\";");
 				params += this._params[i].getName();
 				break;
 			}
@@ -290,24 +297,32 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 				return eval (this._name + '(channelValue_' + params + ');');
 				break;
 			case "USER":
-				if (params != '')
-					params = ',' + params;
-				return this._code(channelValue_, params, channel);
+			case "PATT":
+				if (params != "")
+					return this._code(channelValue_, eval(params), channel);
+				else
+					return this._code(channelValue_, null, channel);
+
 				break;
 			default:
 				break;
 		}
 	
-	}catch(e){
-		var msg = interpolate(gettext("Error executing code of the filter '%(filterName)s'."), {filterName: this._Label}, true);
-		LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
-		// Saves the message (for wiring interface)
-		if (this._params.length == 0){
-			this._lastExecError = msg;
-		}else{
-			this._lastExecError = interpolate(gettext("Error executing code of the filter '%(filterName)s'. Check the parametres."), {filterName: this._label}, true);
+	}catch(err){
+		if(err.name == "DONT_PROPAGATE"){
+			throw new DontPropagateException(err)
 		}
-		return gettext('undefined');
+		else{
+			var msg = interpolate(gettext("Error executing code of the filter '%(filterName)s'."), {filterName: this._Label}, true);
+			LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+			// Saves the message (for wiring interface)
+			if (this._params.length == 0){
+				this._lastExecError = msg;
+			}else{
+				this._lastExecError = interpolate(gettext("Error executing code of the filter '%(filterName)s'. Check the parametres."), {filterName: this._label}, true);
+			}
+			return gettext('undefined');
+		}
 	}
 	
 }

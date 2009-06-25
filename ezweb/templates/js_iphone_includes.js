@@ -36,6 +36,7 @@
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/dragboard/iGadget.js"></script>
 <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/dragboard/dragboard.js"></script>
 
+<script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/wiring_exceptions.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/filter.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/connectable.js"></script>
 <script language="JavaScript" src="{{ MEDIA_URL }}js/wiring/wiring.js"></script>

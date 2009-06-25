@@ -65,6 +65,7 @@ files_normal = [
    'media/js/dragboard/UserPref.js', 
    'media/js/dragboard/ElementPositions.js',
    
+   'media/js/wiring/wiring_exceptions.js',
    'media/js/wiring/filter.js', 
    'media/js/wiring/connectable.js', 
    'media/js/wiring/wiring.js', 
@@ -111,6 +112,7 @@ files_iphone = [
    'media/js/contextManager/Adaptors.js',
    'media/iphone/dragboard/iGadget.js', 
    'media/iphone/dragboard/dragboard.js',
+   'media/js/wiring/wiring_exceptions.js',
    'media/js/wiring/filter.js', 
    'media/js/wiring/connectable.js', 
    'media/js/wiring/wiring.js',
@@ -155,6 +157,7 @@ files_viewer = [
    'media/js/dragboard/UserPref.js', 
    'media/js/dragboard/ElementPositions.js',
    
+   'media/js/wiring/wiring_exceptions.js',
    'media/js/wiring/filter.js', 
    'media/js/wiring/connectable.js', 
    'media/js/wiring/wiring.js', 
