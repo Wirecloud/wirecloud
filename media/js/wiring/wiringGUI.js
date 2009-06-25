@@ -259,6 +259,9 @@ WiringInterface.prototype._notifyNameChange = function(oldName, newName, channel
 	if (this.channelsByName[oldName] == channel) {
 		this.channelsByName[newName] = channel;
 		delete this.channelsByName[oldName];
+		this.changed = true;
+	} else {
+		// TODO log error
 	}
 }
 
