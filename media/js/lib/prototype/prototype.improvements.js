@@ -61,7 +61,7 @@ Object.extend(Event, {
 	}
 });
 
-Browser = {
+var Browser = {
 	
 	/**
 	 * Returns the user agent
@@ -122,7 +122,7 @@ Hash.prototype.clone = function() {
   return newHash;
 }
 
-if (Element.prototype.getBoundingClientRect != undefined) {
+if (document.documentElement.getBoundingClientRect != undefined) {
 	Element.getRelativeBoundingClientRect = function(element1, element2) {
 		var rect1 = element1.getBoundingClientRect();
 		var rect2 = element2.getBoundingClientRect();
@@ -252,7 +252,7 @@ Array.prototype.removeById = function (id) {
  * COOKIE EXTENSIONS
  */
 
-CookieManager = new Object();
+var CookieManager = new Object();
 
 /**
  * Creates or updates a cookie.
@@ -323,4 +323,171 @@ CookieManager.renewCookie = function(name, days) {
 	if (cookieValue !== null) {
 		this.createCookie(name, cookieValue, days);
 	}
+}
+
+/*----------------------------------------------------------------------------*
+ *                                                                            *
+ *----------------------------------------------------------------------------*/
+
+var useInternalComputedStyle = window.getComputedStyle === undefined;
+if (!useInternalComputedStyle) {
+	var computedStyle = document.defaultView.getComputedStyle(document.body, null);
+	try {
+		var width = computedStyle.getPropertyCSSValue('width');
+		width = width.getFloatValue(CSSPrimitiveValue.CSS_PX);
+	} catch (e) {
+		useInternalComputedStyle = true;
+
+		var _nativeGetComputedStyle = document.defaultView.getComputedStyle;
+		var _internalGetCurrentStyle = function(element, property, ieProperty) {
+			var computedStyle = _nativeGetComputedStyle.call(document.defaultView, element, null);
+			return computedStyle.getPropertyValue(property);
+		}
+	}
+} else {
+	var _internalGetCurrentStyle = function(element, property, ieProperty) {
+		var value = element.currentStyle[ieProperty];
+
+		if (value == 'auto')
+			value = element.runtimeStyle[ieProperty];
+
+		return value;
+	}
+}
+
+if (useInternalComputedStyle) {
+	/**
+	 * Partial implementation of CSSPrimitiveValue.
+	 */
+	function CSSPrimitiveValue(element, property, ieProperty) {
+		if (arguments.length == 0)
+			return;
+
+		this._element = element;
+		this._property = property;
+		this._ieProperty = ieProperty;
+
+		this.cssText = _internalGetCurrentStyle(this._element,
+		                                        this._property,
+		                                        this._ieProperty);
+	}
+	CSSPrimitiveValue.CSS_PX = 1;
+	CSSPrimitiveValue._ValueRegExp = new RegExp('\(\\d+|\\d+.\\d+\)\(\\w+\)');
+
+	CSSPrimitiveValue.prototype.getFloatValue = function(unit) {
+		switch (unit) {
+		case CSSPrimitiveValue.CSS_PX:
+			var matching = CSSPrimitiveValue._ValueRegExp.exec(this.cssText);
+			var value = matching[1];
+			var units = matching[2];
+
+			var parentNode = this._element.parentNode;
+			var testElement = this._element.ownerDocument.createElement('div');
+			testElement.style.width = (value * 1000) + units;
+			testElement.style.visibility = "hidden";
+			testElement.style.padding = "0";
+			testElement.style.margin = "0";
+			testElement.style.border = "0";
+
+			parentNode.appendChild(testElement);
+
+			if (testElement.clientWidth != null) {
+				var result = testElement.clientWidth;
+			} else if (testElement.style.pixelWidth != null) {
+				var result = testElement.style.pixelWidth;
+			} else {
+				throw new Error();
+			}
+
+			parentNode.removeChild(testElement);
+
+			return result / 1000;
+			break;
+		default:
+			break;
+		}
+	}
+
+	CSSPrimitiveValue.prototype.getRGBColorValue = function() {
+		switch (this._property) {
+		case 'background-color':
+			var parentNode = this._element.parentNode;
+			var testElement = this._element.ownerDocument.createElement('table');
+			testElement.setAttribute('bgcolor', this.cssText);
+			testElement.style.visibility = "hidden";
+			parentNode.appendChild(testElement);
+			var bgColor = testElement.bgColor;
+
+			parentNode.removeChild(testElement);
+
+			// Build the result
+			var red = bgColor.substr(1,2);
+			var green = bgColor.substr(3,2);
+			var blue = bgColor.substr(5,2);
+
+			function hex2value(hex) {
+				var hex = hex.toUpperCase();
+				return ("0123456789ABCDEF".indexOf(hex[0]) * 16) +
+				       "0123456789ABCDEF".indexOf(hex[1]);
+			}
+
+			var result = new Object();
+			result.red = new CSSColorComponentValue(hex2value(red));
+			result.green = new CSSColorComponentValue(hex2value(green));
+			result.blue = new CSSColorComponentValue(hex2value(blue));
+			result.alpha = new CSSColorComponentValue("1");
+			return result;
+			break;
+		default:
+			throw new Error();
+		}
+	}
+
+	function CSSColorComponentValue(value) {
+		this.cssText = "" + value;
+	}
+	CSSColorComponentValue.prototype = new CSSPrimitiveValue();
+
+	CSSColorComponentValue.prototype.getFloatValue = function(unit) {
+		return parseInt(this.cssText);
+	}
+
+	/**
+	 * Partial implementation of ComputedCSSStyleDeclaration
+	 */
+	function ComputedCSSStyleDeclaration(element) {
+		this._element = element;
+	}
+
+	ComputedCSSStyleDeclaration.prototype._getIEProperty = function(property) {
+		switch (property) {
+		case 'float':
+			return "cssFloat";
+		default:
+			return property.replace(/-\w/g, function(a){return a.substr(1,1).toUpperCase()});
+		}
+	}
+
+	ComputedCSSStyleDeclaration.prototype.getPropertyCSSValue = function(property) {
+		return new CSSPrimitiveValue(this._element, property, this._getIEProperty(property));
+	}
+
+	ComputedCSSStyleDeclaration.prototype.getPropertyValue = function(property) {
+		return _internalGetCurrentStyle(this._element,
+		                                property,
+		                                this._getIEProperty(property));
+	}
+
+	/*
+	 * WARNING This is not a full implementation of the getComputedStyle, some
+	 * things will not work.
+	 *
+	 * @param element
+	 * @param context not used by this implementation
+	 */
+	window.getComputedStyle = function(element, context) {
+		return new ComputedCSSStyleDeclaration(element);
+	}
+
+	document.defaultView = window;
 }
