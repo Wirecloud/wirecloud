@@ -265,15 +265,9 @@ IGadget.prototype.onFreeLayout = function() {
 IGadget.prototype.toggleTransparency = function() {
 	function onSuccess() {}
 	function onError(transport, e) {
-		var msg;
-
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error renaming igadget from persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	this.element.toggleClassName("gadget_window_transparent");
@@ -760,15 +754,9 @@ IGadget.prototype.fillWithInput = function () {
 IGadget.prototype.setName = function (igadgetName) {
 	function onSuccess() {}
 	function onError(transport, e) {
-		var msg;
-
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error renaming igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error renaming igadget from persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	if (igadgetName != null && igadgetName.length > 0) {
@@ -807,15 +795,9 @@ IGadget.prototype.setMenuColor = function (newColor, temporal) {
 
 	function onSuccess() {}
 	function onError(transport, e) {
-		var msg;
-
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error updating igadget's menu color into persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error updating igadget's menu color into persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	this.menu_color = newColor;
@@ -866,14 +848,9 @@ IGadget.prototype.remove = function() {
 	if (this.element != null) {
 		function onSuccess() {}
 		function onError(transport, e) {
-			var msg;
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-			msg = interpolate(gettext("Error removing igadget from persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error removing igadget from persistence: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 
 		var dragboard = this.layout.dragboard;
@@ -1517,19 +1494,9 @@ IGadget.prototype.save = function() {
 	}
 
 	function onError(transport, e) {
-		var msg;
-		if (e) {
-			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-			                  true);
-		} else if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-
-		msg = interpolate(gettext("Error adding igadget to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error adding igadget to persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 
 		// Remove this iGadget from the layout
 		this.layout.removeIGadget(this, true);
@@ -1617,15 +1584,9 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	var onSuccess = function(transport) { }
 
 	var onError = function(transport, e) {
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-
-		msg = interpolate(gettext("Error saving changes to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error saving changes to persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	var data = new Hash();

@@ -191,23 +191,14 @@ var CatalogueFactory  = function () {
 				ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
 				
 			}
-			var cloneError = function(transport, e){
-				var msg;
-				if (e) {
-					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-					                  true);
-				} else if (transport.responseXML) {
-					msg = transport.responseXML.documentElement.textContent;
-				} else {
-					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-				}
-				msg = interpolate(gettext("Error merging workspace: %(errorMsg)s."),
-				                          {errorMsg: msg}, true);
-				LogManagerFactory.getInstance().log(msg);				
+
+			var cloneError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+				logManagerFactory.log(msg);
 				
 			}
-			
+
 			var currentResource = this.getResource(resourceId_);
 			var workSpaceId = currentResource.getMashupId();
 			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId});
@@ -226,24 +217,12 @@ var CatalogueFactory  = function () {
 				ShowcaseFactory.getInstance().reload(response['workspace_id']);
 				
 			}
-			var mergeError = function(transport, e){
-				var msg;
-				if (e) {
-					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-					                  true);
-				} else if (transport.responseXML) {
-					msg = transport.responseXML.documentElement.textContent;
-				} else {
-					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-				}
-				msg = interpolate(gettext("Error cloning workspace: %(errorMsg)s."),
-				                          {errorMsg: msg}, true);
-				                          
-				LogManagerFactory.getInstance().log(msg);				
-				
+			var mergeError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error cloning workspace: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
 			}
-			
+
 			var currentResource = this.getResource(resourceId_);
 			var workSpaceId = currentResource.getMashupId();
 			
@@ -462,20 +441,9 @@ var CatalogueFactory  = function () {
 
 			//Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 			var onError = function(transport, e) {
-				var msg;
-				if (e) {
-					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-							  true);
-				} else if (transport.responseXML) {
-					msg = transport.responseXML.documentElement.textContent;
-				} else {
-					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-				}
-
-				msg = interpolate(gettext("Error retrieving catalogue data: %(errorMsg)s."), {errorMsg: msg}, true);
-				LogManagerFactory.getInstance().log(msg);
-
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error retrieving catalogue data: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
 			}
 
 			var loadResources = function(transport) {

@@ -101,7 +101,37 @@ var LogManagerFactory = function () {
 			var clearer = document.createElement('div');
 			clearer.setAttribute('class', 'floatclearer');
 			this.logConsole.appendChild(clearer);
+		}
 
+		LogManager.prototype.formatError = function(format, transport, e) {
+			var msg;
+
+			if (e) {
+				var context;
+				if (e.lineNumber !== undefined) {
+					// Firefox
+					context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e};
+				} else if (e.line !== undefined) {
+					// Webkit
+					context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e};
+				} else {
+					// Unknown
+					var text = gettext("unknown");
+					context = {errorFile: text, errorLine: text, errorDesc: e};
+				}
+
+				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
+				                  context,
+				                  true);
+			} else if (transport.responseXML) {
+				msg = transport.responseXML.documentElement.textContent;
+			} else {
+				msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+				msg = interpolate(msg, {errorCode: transport.status, errorDesc: transport.statusText}, true);
+			}
+			msg = interpolate(format, {errorMsg: msg}, true);
+
+			return msg;
 		}
 
 		LogManager.prototype.show = function() {
@@ -122,7 +152,7 @@ var LogManagerFactory = function () {
 			this.messageContainer.setStyle({"display": "block"});
 			setTimeout(function(){LogManagerFactory.getInstance().removeMessage()}, 3000);
 		}
-		
+
 		LogManager.prototype.removeMessage = function(){
 			this.messageContainer.setStyle({"display": "none"});
 			this.messageBox.update("");
@@ -132,11 +162,11 @@ var LogManagerFactory = function () {
 	// SINGLETON GET INSTANCE
 	// *********************************
 	return new function() {
-    	this.getInstance = function() {
-    		if (instance == null) {
-        		instance = new LogManager();
-         	}
-         	return instance;
-       	}
+		this.getInstance = function() {
+			if (instance == null) {
+				instance = new LogManager();
+			}
+			return instance;
+		}
 	}
 }();

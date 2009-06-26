@@ -40,22 +40,15 @@ function UserAdaptor() {
 	}
 
 	function _onError(transport, e) {
-		var msg;
-		if (e) {
-			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-							  true);
-		} else {
-			msg = transport.status + " " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
-		                          {concept: UserAdaptor.prototype.CONCEPT, errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
+		                      {concept: UserAdaptor.prototype.CONCEPT}, true);
+		msg = logManager.formatError(gettext("Error getting concept %(concept)s: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
-	
+
 	var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: UserAdaptor.prototype.CONCEPT});
-	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);			
-	
+	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
 }
 
 UserAdaptor.prototype.CONCEPT = 'username'
@@ -73,22 +66,15 @@ function LanguageAdaptor() {
 	}
 
 	function _onError(transport, e) {
-		var msg;
-		if (e) {
-			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-							  true);
-		} else {
-			msg = transport.status + " " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
-		                          {concept: UserAdaptor.prototype.CONCEPT, errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
+		                      {concept: UserAdaptor.prototype.CONCEPT}, true);
+		msg = logManager.formatError(msg, transport, e);
+		logManager.log(msg);
 	}
-	
+
 	var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: LanguageAdaptor.prototype.CONCEPT});
-	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);			
-	
+	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
 }
 
 LanguageAdaptor.prototype.CONCEPT = 'language'

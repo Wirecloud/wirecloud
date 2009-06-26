@@ -65,22 +65,13 @@ function VarManager (_workSpace) {
 		}
 
 		function onError(transport, e) {
-			var msg;
-			if (e) {
-				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-				                  true);
-			} else {
-				msg = transport.status + " " + transport.statusText;
-			}
-			msg = interpolate(gettext("Error saving variables to persistence: %(errorMsg)s."),
-			                          {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 		
 		// Max lenght of buffered requests have been reached. Uploading to server!
 		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
-						
 			var variables = {};
 			
 			variables['igadgetVars'] = this.igadgetModifiedVars;

@@ -96,33 +96,17 @@ function WorkSpace (workSpaceState) {
 	}
 
 	var onError = function (transport, e) {
-		var msg;
-		if (e) {
-			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-			                  true);
-		} else if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-		msg = interpolate(gettext("Error retreiving workspace data: %(errorMsg)s."),
-		                          {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error retreiving workspace data: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
-	
+
 	var renameSuccess = function(transport) {
 	}
 	var renameError = function(transport, e) {
-		var msg;
-		if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-
-			msg = interpolate(gettext("Error renaming workspace, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error renaming workspace, changes will not be saved: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 	var deleteSuccess = function(transport) {
 		var tabList = this.tabInstances.keys();
@@ -134,36 +118,26 @@ function WorkSpace (workSpaceState) {
 		}
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	var deleteError = function(transport, e) {
-			var msg;
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
 
-			msg = interpolate(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-			LayoutManagerFactory.getInstance().hideCover();
+	var deleteError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error removing workspace, changes will not be saved: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+		LayoutManagerFactory.getInstance().hideCover();
 	}
+
 	var publishSuccess = function(transport) {
 		// JSON-coded new published workspace id and mashup url mapping
 		var response = transport.responseText;
-		var mashupInfo = eval ('(' + response + ')');		
+		var mashupInfo = eval ('(' + response + ')');
 		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', mashupInfo.url);
 	}
-	var publishError = function(transport, e) {
-			var msg;
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
 
-			msg = interpolate(gettext("Error publishing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-			LayoutManagerFactory.getInstance().hideCover();
-		
+	var publishError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+		LayoutManagerFactory.getInstance().hideCover();
 	}
 	
 	var mergeSuccess = function(transport) {
@@ -175,21 +149,14 @@ function WorkSpace (workSpaceState) {
 		opManager.changeActiveWorkSpace(opManager.workSpaceInstances[data.merged_workspace_id]);
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	
-	var mergeError = function(transport, e) {
-			var msg;
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
 
-			msg = interpolate(gettext("Error merging workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-			LayoutManagerFactory.getInstance().hideCover();
-		
-	}	
-	
+	var mergeError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+		LayoutManagerFactory.getInstance().hideCover();
+	}
+
 	//**** TAB CALLBACK*****
 	var createTabSuccess = function(transport) {
 		var response = transport.responseText;
@@ -210,15 +177,9 @@ function WorkSpace (workSpaceState) {
 	}
 
 	var createTabError = function(transport, e) {
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-
-		msg = interpolate(gettext("Error creating a tab: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	// ****************
@@ -807,29 +768,23 @@ function WorkSpace (workSpaceState) {
 			this.activeEntryId = null;
 		}
 	}.bind(this);
-	
-	this.markAsActiveError = function(transport, e){
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
 
-		msg = interpolate(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+	this.markAsActiveError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}.bind(this);
 	
 	this._allIgadgetsLoaded = function() {
-		var tabs = this.tabInstances.keys();	
+		var tabs = this.tabInstances.keys();
 		for (var i = 0; i < tabs.length; i++) {
 			var tab = tabs[i];
 			var remainingIgadgets = this.tabInstances[tab].getDragboard().getRemainingIGadgets();
 			
 			if (remainingIgadgets != 0)
 				return false;
-		}	
-		
+		}
+
 		return true;
 	}
 	

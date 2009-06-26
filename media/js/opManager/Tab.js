@@ -30,32 +30,21 @@ function Tab (tabInfo, workSpace) {
 	var renameSuccess = function(transport){
 
 	}
-	var renameError = function(transport, e){
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-
-		msg = interpolate(gettext("Error renaming a tab, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+	var renameError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error renaming a tab, changes will not be saved: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
-	
-	var deleteSuccess = function(transport){
+
+	var deleteSuccess = function(transport) {
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	var deleteError = function(transport, e){
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
 
-		msg = interpolate(gettext("Error removing a tab: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
-		
+	var deleteError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error removing a tab: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+
 		LayoutManagerFactory.getInstance().hideCover();
 	}
 
@@ -319,15 +308,9 @@ function Tab (tabInfo, workSpace) {
 	}.bind(this);
 	
 	this.markAsVisibleError = function(transport, e){
-		var msg;
-		if (transport.responseXML) {
-			msg = transport.responseXML.documentElement.textContent;
-		} else {
-			msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-		}
-
-		msg = interpolate(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error marking as first visible tab, changes will not be saved: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}.bind(this);
 	
 	this.addMarkAsVisible = function (){

@@ -1191,9 +1191,11 @@ Resource.prototype._createResource = function(urlTemplate_) {
 	//  CALLBACK METHODS
 	// ******************
 
-	var onError = function(transport) {
-		msg = interpolate(gettext("Error creating the resource: %(errorMsg)s."), {errorMsg: transport.status}, true);
-		LogManagerFactory.getInstance().log(msg);
+	var onError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error creating the resource: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		// Process
 	}
 

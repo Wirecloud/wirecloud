@@ -59,27 +59,19 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	}
 	
 	var newResourceOnError = function (transport, e) {
-		var msg;
-		if (e) {
-			msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-			                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-					  true);
-		} else if (transport.responseXML) {
-			if (transport.responseXML.documentElement.textContent.match("duplicate key"))
-			{
-                        msg = gettext("The gadget is already added to the catalogue");
-			} else {
-                        msg = transport.responseXML.documentElement.textContent;
-			}
+		var logManager = LogManagerFactory.getInstance();
+		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
+
+		if (transport.responseXML && transport.responseXML.documentElement.textContent.match("duplicate key")) {
+			msg = interpolate(msg, {errorMsg: gettext("The gadget is already added to the catalogue")}, true);
 		} else {
-                        msg = "HTTP Error " + transport.status + " - " + transport.statusText;
+			msg = logManager.formatError(msg, transport, e)
 		}
 
-		msg = interpolate(gettext("The resource could not be added to the catalogue: %(errorMsg)s."), {errorMsg: msg}, true);
-		LogManagerFactory.getInstance().log(msg);
+		logManager.log(msg);
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	
+
 	var persistenceEngine = PersistenceEngineFactory.getInstance();
 
 	var params = new Hash();
@@ -151,9 +143,10 @@ UIUtils.updateGadgetXHTML = function() {
 
 	var resourceURI = URIs.GET_GADGET.evaluate(dict) + "/xhtml";
 
-	var onError = function(transport) {
-		var msg = interpolate(gettext("Error updating the XHTML: %(errorMsg)s."), {errorMsg: transport.status}, true);
-		LogManagerFactory.getInstance().log(msg);
+	var onError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error updating the XHTML: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		// Process
 	}
@@ -574,13 +567,14 @@ UIUtils.deleteGadget = function(id) {
 	UIUtils.sendPendingTags();
 	UIUtils.closeInfoResource();
 	
-	var onError = function(transport) {
-				LayoutManagerFactory.getInstance().hideCover();
-				var msg = interpolate(gettext("Error deleting the Gadget: %(errorMsg)s."), {errorMsg: transport.status}, true);
-				LogManagerFactory.getInstance().log(msg);
-				// Process
-			}
-			
+	var onError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+		LayoutManagerFactory.getInstance().hideCover();
+		// Process
+	}
+
 	var loadCatalogue = function(transport) {
 				LayoutManagerFactory.getInstance().hideCover();
 				CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
@@ -1227,11 +1221,12 @@ UIUtils.createHTMLElement = function(type_, attributes_){
 
 UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 
-    var onError = function(transport) {
-		var	msg = interpolate(gettext("Error updating the preferred version: %(errorMsg)s."), {errorMsg: transport.status}, true);
+	var onError = function(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error updating the preferred version: %(errorMsg)s."), transport, e);
 		LogManagerFactory.getInstance().log(msg);
-    }
-			
+	}
+
     var onSuccess = function(transport) {
     	UIUtils.repaintCatalogue=true;
 		UIUtils.sendPendingTags();

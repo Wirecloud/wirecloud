@@ -74,19 +74,9 @@ function Gadget(gadget_, url_) {
 		// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 		
 		var onError = function(transport, e) {
-			var msg;
-			if (e) {
-				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-						  true);
-			} else if (transport.responseXML) {
-                                msg = transport.responseXML.documentElement.textContent;
-			} else {
-                                msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-
-			msg = interpolate(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 		
 		var loadGadget = function(transport) {

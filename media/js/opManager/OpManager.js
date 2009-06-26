@@ -92,22 +92,16 @@ var OpManagerFactory = function () {
 		var onError = function (transport, e) {
 			var msg;
 			try {
-				if (e) {
-					msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-					                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-					                  true);
-				} else if (transport.responseXML) {
-					msg = transport.responseXML.documentElement.textContent;
-				} else {
-					msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-				}
-				msg = interpolate(gettext("Error loading EzWeb Platform: %(errorMsg)s."),
-				                          {errorMsg: msg}, true);
-				LogManagerFactory.getInstance().log(msg);
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error loading EzWeb Platform: %(errorMsg)s."), transport, e);
+				LayoutManagerFactory.getInstance().showMessageWindowMenu(msg, Constants.Logging.ERROR_MSG);
+				logManager.log(msg);
 			} catch (e) {
+				if (msg !== null)
+					alert(msg);
+				else
+					alert (gettext("Error loading EzWeb Platform"));
 			}
-
-			alert (gettext("Error loading EzWeb Platform"));
 		}
 		
 		/*****WORKSPACE CALLBACK***/
@@ -118,17 +112,11 @@ var OpManagerFactory = function () {
 			this.changeActiveWorkSpace(this.workSpaceInstances[wsInfo.workspace.id]);
 			LayoutManagerFactory.getInstance().hideCover();
 		}
-		
-		var createWSError = function(transport, e){
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
 
-			msg = interpolate(gettext("Error creating a workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
-		
+		var createWSError = function(transport, e) {
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error creating a workspace: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 
 		
@@ -447,7 +435,7 @@ var OpManagerFactory = function () {
 			if (this.workSpaceInstances.keys().length <= 1) {
 				var msg = "there must be one workspace at least";
 				msg = interpolate(gettext("Error removing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
-				
+
 				LogManagerFactory.getInstance().log(msg);
 				LayoutManagerFactory.getInstance().hideCover();
 				return false;

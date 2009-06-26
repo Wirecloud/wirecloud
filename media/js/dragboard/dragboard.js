@@ -68,15 +68,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var onSuccess = function(transport) { }
 
 		var onError = function(transport, e) {
-			var msg;
-			if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-
-			msg = interpolate(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 
 		// TODO only send real changes
@@ -213,19 +207,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var onSuccess = function (transport) {}
 
 		var onError = function (transport, e) {
-			var msg;
-			if (e) {
-				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
-				                  {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e},
-				                  true);
-			} else if (transport.responseXML) {
-				msg = transport.responseXML.documentElement.textContent;
-			} else {
-				msg = "HTTP Error " + transport.status + " - " + transport.statusText;
-			}
-			msg = interpolate(gettext("Error changing tab lock status: %(errorMsg)s."),
-			                          {errorMsg: msg}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error changing tab lock status: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 		}
 
 		var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabId});

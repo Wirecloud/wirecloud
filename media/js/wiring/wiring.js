@@ -435,10 +435,10 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	/**
 	 * @private
 	 */
-	Wiring.prototype.serializationError = function (response) {
-		var p = response.responseText;
-		msg = interpolate(gettext("Error : %(errorMsg)s."), {errorMsg: p}, true);
-		LogManagerFactory.getInstance().log(msg);
+	Wiring.prototype.serializationError = function (transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error saving wiring status: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
 	}
 
 	/**

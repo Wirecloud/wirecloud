@@ -437,7 +437,7 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 		LogManagerFactory.getInstance().log(msg);
 		return;
 	}
-		
+
 	wInOut.prototype.propagate.call(this, filteredValue, initial);
 }
 

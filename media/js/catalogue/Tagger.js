@@ -70,16 +70,16 @@ function Tagger(){
 		if(!UIUtils.tagmode)eraserAll();
 	}
 
-	this.sendTags = function(url, resourceURI, resource)
-	{
-		if (tags.keys().length>0)
-		{
-			var onError = function(transport) {
-				var msg = interpolate(gettext("Error sending tags: %(errorMsg)s."), {errorMsg: transport.status}, true);
-				LogManagerFactory.getInstance().log(msg);
+	this.sendTags = function(url, resourceURI, resource) {
+		if (tags.keys().length > 0) {
+			var onError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error sending tags: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
+				LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 				// Process
 			}
-			
+
 			var loadTags = function(transport) {
 				var responseJSON = transport.responseText;
 				var jsonResourceList = eval ('(' + responseJSON + ')');
@@ -117,8 +117,9 @@ function Tagger(){
 		var resource = CatalogueFactory.getInstance().getResource(id);
 
 		var onError = function(transport) {
-			var msg = interpolate(gettext("Error removing tag: %(errorMsg)s."), {errorMsg: transport.status}, true);
-			LogManagerFactory.getInstance().log(msg);
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error removing tag: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
 			// Process
 		}
 		
