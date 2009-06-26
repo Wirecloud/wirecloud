@@ -82,12 +82,6 @@ class Translation(models.Model):
          return self.text_id + " - " + self.table + "." + str(self.element_id) + " -> " + self.language
 
 ###### Catalogue section ######
-
-CERTIFICATION_STATUS = (
-    (u'CERT', 'Certified'),
-    (u'NOT_CERT', 'Not Verified'),
-    (u'NOT_VALID','Not Valid'),
-)
             
 class GadgetResource(TransModel):
 
