@@ -41,6 +41,101 @@
   <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
 <![endif]-->
 
+</head>
+<body>
+
+<!-- Loading indicator -->
+<div id="loading-indicator"></div>
+
+<!-- HIDDEN MENUS -->
+<div id="menu_layer" style="display:none">
+</div>
+
+
+
+<!-- HEADER -->
+{% block header %}
+<div id="header">
+<div id="banner">
+	<div id="greeting">
+		<span id="user_section">
+		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a> |{%endif%} <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>  | <a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a></span>
+		  {% endif %}
+		|
+		<span id="themeSelector">
+			<span>{% trans "Theme:" %}</span>
+			<span id="themeLabel">
+				{{ INITIAL_THEME }}
+			</span>
+		</span>
+		|
+		<!-- LOGS LINK -->
+		<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+
+		<div class="languages">
+		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
+		</div>
+	</div>
+	<div id="logo"></div>
+	<div id="toolbar_section" class="toolbar_section">
+		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
+		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
+		<div id="workspace_link_container" >
+			<div id="dragboard_link" class="toolbar_unmarked">
+				<div id="workspace_name"></div>
+			</div>
+			<div id="workspace_menu_link"> 
+				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+			</div>
+		</div>
+	</div>
+</div>	
+<div id="bar">
+<div id="tab_section" class="tab_section">
+	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
+	<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
+	<div id="fixed_bar"><div id="scroll_bar"></div></div>
+	<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
+
+</div>
+
+{% block ezweb_logo %}
+{% endblock %}
+
+<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
+</div>
+</div>
+{% endblock %}
+<div id="wrapper">
+	<!-- DRAGBOARD LAYERS -->
+		<!-- Initially empty -->
+	<!-- DRAGBOARD LAYERS -->
+
+	<!-- WIRING LAYER -->
+	<div id="wiring" class="container">
+	{% include "wiring.html" %}
+	</div>
+	<!-- WIRING LAYER -->
+
+	<!-- SHOWCASE LAYER -->
+	<div id="showcase_container" class="container">
+	{% include "showcase.html" %}
+	</div>
+	<!-- SHOWCASE LAYER -->
+
+	<!-- LOGS LAYER -->
+	<div id="logs_container" class="container">
+		<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>
+		<div id="logs_console" class="container_content">
+		 </div>
+	</div>
+	<!-- LOGS LAYER -->
+</div>
+</body>
+
+<!-- JavaScript code -->
+
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
@@ -138,99 +233,8 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 	}
 
 	var opManager = OpManagerFactory.getInstance();
+	opManager.loadEnviroment();
 </script>
 
 
-</head>
-<body onload="OpManagerFactory.getInstance().loadEnviroment()">
-
-<!-- Loading indicator -->
-<div id="loading-indicator"></div>
-
-<!-- HIDDEN MENUS -->
-<div id="menu_layer" style="display:none">
-</div>
-
-
-
-<!-- HEADER -->
-{% block header %}
-<div id="header">
-<div id="banner">
-	<div id="greeting">
-		<span id="user_section">
-		  {% if is_anonymous %}{% trans "anonymous" %}</span> | <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span> | <a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
-		  {% else %} {% trans "Welcome" %}, {{ user.username }} | {%if AUTHENTICATION_SERVER_URL%}<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a> |{%endif%} <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>  | <a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a></span>
-		  {% endif %}
-		|
-		<span id="themeSelector">
-			<span>{% trans "Theme:" %}</span>
-			<span id="themeLabel">
-				{{ INITIAL_THEME }}
-			</span>
-		</span>
-		|
-		<!-- LOGS LINK -->
-		<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-
-		<div class="languages">
-		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-		</div>
-	</div>
-	<div id="logo"></div>
-	<div id="toolbar_section" class="toolbar_section">
-		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
-		<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
-		<div id="workspace_link_container" >
-			<div id="dragboard_link" class="toolbar_unmarked">
-				<div id="workspace_name"></div>
-			</div>
-			<div id="workspace_menu_link"> 
-				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
-			</div>
-		</div>
-	</div>
-</div>	
-<div id="bar">
-<div id="tab_section" class="tab_section">
-	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
-	<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
-	<div id="fixed_bar"><div id="scroll_bar"></div></div>
-	<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-
-</div>
-
-{% block ezweb_logo %}
-{% endblock %}
-
-<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
-</div>
-</div>
-{% endblock %}
-<div id="wrapper">
-	<!-- DRAGBOARD LAYERS -->
-		<!-- Initially empty -->
-	<!-- DRAGBOARD LAYERS -->
-
-	<!-- WIRING LAYER -->
-	<div id="wiring" class="container">
-	{% include "wiring.html" %}
-	</div>
-	<!-- WIRING LAYER -->
-
-	<!-- SHOWCASE LAYER -->
-	<div id="showcase_container" class="container">
-	{% include "showcase.html" %}
-	</div>
-	<!-- SHOWCASE LAYER -->
-
-	<!-- LOGS LAYER -->
-	<div id="logs_container" class="container">
-		<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>
-		<div id="logs_console" class="container_content">
-		 </div>
-	</div>
-	<!-- LOGS LAYER -->
-</div>
-</body>
 </html>
