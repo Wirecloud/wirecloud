@@ -241,7 +241,7 @@ wInOut.prototype._checkLoop = function(inout, depth) {
 	if (this.outputs.indexOf(inout) == -1) {
 		for (var i = 0; i < this.outputs.length; i++) {
 			var currentInout = this.outputs[i];
-			if (!(currentChannel instanceof wInout)) // Loops can only be formed by channels
+			if (!(currentInout instanceof wInOut)) // Loops can only be formed by channels
 				continue;
 
 			if (currentInout._checkLoop(inout, depth - 1))
