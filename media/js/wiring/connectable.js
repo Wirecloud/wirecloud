@@ -231,7 +231,7 @@ wInOut.prototype = new wIn();
  * @param {wInOut} inout
  */
 wInOut.prototype.isConnectable = function(inout) {
-	return !inout._checkLoop(this, 100);
+	return inout != this && !inout._checkLoop(this, 100);
 }
 
 wInOut.prototype._checkLoop = function(inout, depth) {
