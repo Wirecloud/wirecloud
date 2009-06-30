@@ -715,8 +715,8 @@ WiringInterface.prototype.highlightChannel = function (channel) {
 
 // ***********************************
 //  COLOR SCHEME FOR HIGHLIGHTS
-//  More colors in color_scheme.js file but now it's not used!
-//  Too many colors at that file, it's has been optimized!
+//  More colors in color_scheme.js file but now it is not used!
+//  Too many colors at that file, it is has been optimized!
 // ***********************************
 
 WiringInterface.prototype.color_scheme = [];
@@ -858,35 +858,39 @@ function Coordinates(topLeftSquare, width, height) {
 }
 
 Coordinates.prototype.getCenter = function() {
-	return {x: Math.round(this.topLeftSquare.x + (this.width/2)),
-	        y: Math.round(this.topLeftSquare.y + (this.height/2))};
+	return {posX: Math.round(this.topLeftSquare.posX + (this.width/2)),
+	        posY: Math.round(this.topLeftSquare.posY + (this.height/2))};
 }
 
 Coordinates.prototype.getAngle = function(angle) {
 	switch (angle) {
 	case 0:
-		return {x: this.topLeftSquare.x + this.width,
-		        y: this.topLeftSquare.y + Math.round(this.height/2)};
+		return {posX: this.topLeftSquare.posX + this.width,
+		        posY: this.topLeftSquare.posY + Math.round(this.height/2)};
 	case 180:
-		return {x: this.topLeftSquare.x,
-		        y: this.topLeftSquare.y + Math.round(this.height/2)};
+		return {posX: this.topLeftSquare.posX,
+		        posY: this.topLeftSquare.posY + Math.round(this.height/2)};
+	default:
+		throw new Error();
 	}
 }
 
 /**
+ * Retreives the coordinates of this anchor relative to another HTML Element.
  *
+ * @param {HTMLElement} baseElement element of reference.
  */
 ConnectionAnchor.prototype.getCoordinates = function(baseElement) {
-	var coordinates = {x: this.htmlElement.offsetLeft,
-	                   y: this.htmlElement.offsetTop};
+	var coordinates = {posX: this.htmlElement.offsetLeft,
+	                   posY: this.htmlElement.offsetTop};
 
 	var parentNode = this.htmlElement.parentNode;
 	while (parentNode != baseElement) {
 		var p = Element.getStyle(parentNode, 'position');
 		if (p != 'static') {
 			var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
-			coordinates.x += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
-			coordinates.y += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+			coordinates.posY += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+			coordinates.posX += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		}
 		parentNode = parentNode.parentNode;
 	}
@@ -990,7 +994,7 @@ WiringInterface.prototype._buildArrowPointList = function(sourceAnchor, targetAn
 	var scenter = scoordinates.getCenter();
 	var tcenter = scoordinates.getCenter();
 
-	if (scenter.x < tcenter.x) {
+	if (scenter.posX < tcenter.posX) {
 		scoordinates = scoordinates.getAngle(180);
 		tcoordinates = tcoordinates.getAngle(0);
 	} else {
@@ -1004,10 +1008,11 @@ WiringInterface.prototype._buildArrowPointList = function(sourceAnchor, targetAn
 		targetAnchor instanceof SlotConnectionAnchor ||
 		targetAnchor instanceof TabConnectionAnchor)
 	{
+
 	// TODO
-/*		var middleX = (scoordinates.x + tcoordinates.x) / 2;
-		pointList.push({x: middleX, y: scoordinates.y});
-		pointList.push({x: middleX, y: tcoordinates.y});*/
+/*		var middleX = (scoordinates.posX + tcoordinates.posX) / 2;
+		pointList.push({posY: scoordinates.posY, posX: middleX});
+		pointList.push({posY: tcoordinates.posY, posX: middleX});*/
 	} else {
 		var crossingY;
 
@@ -1016,28 +1021,28 @@ WiringInterface.prototype._buildArrowPointList = function(sourceAnchor, targetAn
 		                                                 this.wiringContainer);
 
 		if (sourceAnchor.getConnectableInterface() == this.currentChannel) {
-			var left = tcoordinates.x - 50;
-			var right = scoordinates.x + 30;
+			var left = tcoordinates.posX - 50;
+			var right = scoordinates.posX + 30;
 
-			if (scoordinates.y < tcoordinates.y) {
+			if (scoordinates.posY < tcoordinates.posY) {
 				crossingY = rect.top - 15;
 			} else {
 				crossingY = rect.bottom + 15;
 			}
 		} else {
-			var left = tcoordinates.x - 30;
-			var right = scoordinates.x + 50;
+			var left = tcoordinates.posX - 30;
+			var right = scoordinates.posX + 50;
 
-			if (scoordinates.y < tcoordinates.y) {
+			if (scoordinates.posY < tcoordinates.posY) {
 				crossingY = rect.top - 15;
 			} else {
 				crossingY = rect.bottom + 15;
 			}
 		}
-		pointList.push({x: right, y: scoordinates.y});
-		pointList.push({x: right, y: crossingY});
-		pointList.push({x: left, y: crossingY});
-		pointList.push({x: left, y: tcoordinates.y});
+		pointList.push({posX: right, posY: scoordinates.posY});
+		pointList.push({posX: right, posY: crossingY});
+		pointList.push({posX: left, posY: crossingY});
+		pointList.push({posX: left, posY: tcoordinates.posY});
 	}
 	pointList.push(tcoordinates);
 
@@ -1060,9 +1065,9 @@ WiringInterface.prototype._drawArrow = function(sourceAnchor, targetAnchor) {
 	var targetInterface = targetAnchor.getConnectableInterface();
 
 	if (sourceInterface == this.currentChannel) {
-		arrowClass = 'outToChannel'; // outFromChannel
+		arrowClass = 'outToChannel';
 	} else {
-		arrowClass = 'inFromChannel'; // inToChannel
+		arrowClass = 'inFromChannel';
 	}
 
 	// Ensure source interface visibility
@@ -1077,7 +1082,8 @@ WiringInterface.prototype._drawArrow = function(sourceAnchor, targetAnchor) {
 	if (pointList.length == 2)
 		var arrow = this.canvas.drawArrow(pointList[0], pointList[1], {});
 	else
-		var arrow = this.canvas.drawPolyLine(pointList, {}); /* 'marker-end': 'url(#inEndArrow)' }); */
+		var arrow = this.canvas.drawPolyLine(pointList, {});
+
 	arrow.setAttribute('class', arrowClass);
 
 	return new ConnectionArrow(sourceAnchor, targetAnchor, arrow);
@@ -1160,14 +1166,14 @@ WiringInterface.prototype._displayHelpWiringHeader = function(element, event) {
 	switch (element.name) {
 	case 'event':
 		helpOpElement.style.left = Event.pointerX(event)+'px';
-		helpOpElement.innerHTML = gettext('Lists of gadgets with events.\nThis events produces a value\nwhich will be received by\nother gadgets as slots.');
+		helpOpElement.innerHTML = gettext("Lists of gadgets with events.\nThis events produces a value\nwhich will be received by\nother gadgets as slots.");
 		break;
 	case 'channels':
 		helpOpElement.style.left = Event.pointerX(event)+'px';
-		helpOpElement.innerHTML = gettext('Channels allows you to manage\nthe connections between different\ninstantiated gadgets.');
+		helpOpElement.innerHTML = gettext("Channels allows you to manage\nthe connections between different\ninstantiated gadgets.");
 		break;
 	case 'slot':
-		helpOpElement.innerHTML = gettext('Lists of gadgets with slots.\nThis slots receives values\nwhich are produced by\nother gadgets as events.');
+		helpOpElement.innerHTML = gettext("Lists of gadgets with slots.\nThis slots receives values\nwhich are produced by\nother gadgets as events.");
 		helpOpElement.style.left = (Event.pointerX(event) - helpOpElement.offsetWidth) +'px';
 		break;
 	}
@@ -1223,50 +1229,6 @@ ConnectionArrow.prototype.disconnect = function() {
 		this.context = {'stroke': '#00F',
 		                'fill': 'transparent',
 		                'stroke-width': '2'};
-
-/*
-		// Markers
-		var defs = document.createElementNS(this.SVG_NAMESPACE, 'svg:defs');
-
-		var inEndArrowMarker = document.createElementNS(this.SVG_NAMESPACE, 'svg:marker');
-		inEndArrowMarker.setAttribute('id', 'inEndArrow');
-		inEndArrowMarker.setAttribute('viewBox', '0 0 16 12');
-		inEndArrowMarker.setAttribute('refX', '14');
-		inEndArrowMarker.setAttribute('refY', '6');
-		inEndArrowMarker.setAttribute('markerUnits', 'strokeWidth');
-		inEndArrowMarker.setAttribute('orient', 'auto');
-		inEndArrowMarker.setAttribute('markerWidth', '9');
-		inEndArrowMarker.setAttribute('markerHeight', '9');
-
-		var polyline = document.createElementNS(this.SVG_NAMESPACE, 'svg:polyline');
-		polyline.setAttribute('points', '0,0 16,6 0,12 4,6');
-
-		inEndArrowMarker.appendChild(polyline);
-		defs.appendChild(inEndArrowMarker);
-
-		var outEndArrowMarker = document.createElementNS(this.SVG_NAMESPACE, 'svg:marker');
-		outEndArrowMarker.setAttribute('id', 'outEndArrow');
-		outEndArrowMarker.setAttribute('viewBox', '0 0 16 12');
-		outEndArrowMarker.setAttribute('refX', '14');
-		outEndArrowMarker.setAttribute('refY', '6');
-		outEndArrowMarker.setAttribute('markerUnits', 'strokeWidth');
-		outEndArrowMarker.setAttribute('orient', 'auto');
-		outEndArrowMarker.setAttribute('markerWidth', '9');
-		outEndArrowMarker.setAttribute('markerHeight', '9');
-
-		var polyline = document.createElementNS(this.SVG_NAMESPACE, 'svg:polyline');
-		polyline.setAttribute('points', '0,0 16,6 0,12 4,6');
-
-		outEndArrowMarker.appendChild(polyline);
-		defs.appendChild(outEndArrowMarker);
-
-		this.canvasElement.appendChild(defs);
-*/
-/* FIXME
-		var a = document.createElement("div");
-		a.appendChild(document.createTextNode("hola"));
-		this.canvasElement.appendChild(a);
-*/
 	}
 
 	Canvas.prototype.SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -1382,7 +1344,7 @@ Canvas.prototype.drawPolyLine = function(points, style) {
 	var polyline = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:polyline");
 	var pointsAttr = "";
 	for (var i = 0; i < points.length; i++)
-		pointsAttr += " " + points[i].x + "," + points[i].y;
+		pointsAttr += " " + points[i].posX + "," + points[i].posY;
 
 	polyline.setAttribute('points', pointsAttr);
 	this._applyStyle(style ? style : this.context, polyline);
@@ -1391,7 +1353,7 @@ Canvas.prototype.drawPolyLine = function(points, style) {
 /*
 	var polyline = this.canvasElement.ownerDocument.createElement("div");
 	for (var i = 1; i < points.length; i++) {
-		var line = this._drawLine(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+		var line = this._drawLine(points[i-1].posX, points[i-1].posY, points[i].posX, points[i].posY);
 		polyline.appendChild(line);
 	}
 	this.canvasElement.appendChild(polyline);
@@ -1401,11 +1363,11 @@ Canvas.prototype.drawPolyLine = function(points, style) {
 Canvas.prototype.drawArrow = function(from, to, style) {
 	var polyline = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:path");
 
-	var middleX = (from.x + to.x) / 2;
+	var middleX = (from.posX + to.posX) / 2;
 
-	polyline.setAttribute("d", "M " + from.x + "," + from.y + " " +
-	                           "C " + middleX + "," + from.y + " " + middleX + "," + to.y + " " +
-	                           to.x + "," + to.y);
+	polyline.setAttribute("d", "M " + from.posX + "," + from.posY + " " +
+	                           "C " + middleX + "," + from.posY + " " + middleX + "," + to.posY + " " +
+	                           to.posX + "," + to.posY);
 	this._applyStyle(style ? style : this.context, polyline);
 	this.canvasElement.appendChild(polyline);
 	return polyline;
