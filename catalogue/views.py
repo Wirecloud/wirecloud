@@ -72,9 +72,7 @@ class GadgetsCollection(Resource):
         try:
             templateParser = TemplateParser(template_uri, user)
             templateParser.parse()
-            
-            
-            
+                        
             transaction.commit()
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
@@ -94,8 +92,8 @@ class GadgetsCollection(Resource):
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
-        xml_ok = '<ResponseOK>OK</ResponseOK>'
-        return HttpResponse(xml_ok,mimetype='application/xml; charset=UTF-8')
+        json_ok = '{"result": "ok", "contratable": %s }' % str(templateParser.is_contratable()).lower()
+        return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 
 
     def read(self, request, user_name, pag=0, offset=0):

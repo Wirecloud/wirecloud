@@ -176,6 +176,16 @@ var CatalogueFactory  = function () {
 
 		this.addResourceToShowCase = function(resourceId_) {
 			var currentResource = this.getResource(resourceId_);
+			
+			if (currentResource.isContratable()) {
+			    LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
+			      function(){ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());},
+			      function(){LayoutManagerFactory.getInstance().hideCover();}
+			    );
+			    
+			    return;
+			}
+			
 			ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
 		}
 

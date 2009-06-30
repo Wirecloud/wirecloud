@@ -59,6 +59,9 @@ class TemplateParser:
     def parse(self):
         # Parse the input
         parseString(self.xml, self.handler)
+    
+    def is_contratable(self):
+        return self.handler._contratable
 
 
 class TemplateHandler(handler.ContentHandler): 
@@ -99,7 +102,6 @@ class TemplateHandler(handler.ContentHandler):
     def processWire(self, attrs, wire):
         _friendCode = ''
         _wiring = ''
-
         if (attrs.has_key('friendcode')==True):
             _friendCode = attrs.get('friendcode')
 

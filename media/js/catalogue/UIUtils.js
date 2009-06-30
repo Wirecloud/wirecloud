@@ -53,9 +53,17 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	UIUtils.search = false;
 	
 	var newResourceOnSuccess = function (response) {
-		UIUtils.orderby = '-creation_date';
-		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
-		LayoutManagerFactory.getInstance().hideCover();
+	    var response_json = response.responseText;
+		var result = eval ('(' + response_json + ')');
+	    
+	    if (result['contratable']) {
+	    	var contratable_window = window.open("http://macvaz82.googlepages.com/kk.html", "Gestión del modelo de negocio","status=0,toolbar=0,menubar=0,scrollbars=0,resizeble=0,location=0,directories=0,height=500, width=800");
+	    }
+	    else {	
+			UIUtils.orderby = '-creation_date';
+			UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
+			LayoutManagerFactory.getInstance().hideCover();
+		}
 	}
 	
 	var newResourceOnError = function (transport, e) {

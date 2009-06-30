@@ -128,7 +128,7 @@ Resource.prototype.paint = function() {
 
 		var button_class = '';
 
-		if (this.isContratable(this._state.getCapabilities())) {
+		if (this.isContratable()) {
 			//button_message = gettext('Purchase');
 			button_class = 'contratable';
 		}
@@ -147,7 +147,7 @@ Resource.prototype.paint = function() {
 		//var button_message = gettext('Add Mashup');
 		var button_class = 'add_mashup'
 
-		if (this.isContratable(this._state.getCapabilities())) {
+		if (this.isContratable()) {
 			//button_message = gettext('Purchase');
 			button_class = 'contratable';
 		}
@@ -247,10 +247,12 @@ Resource.prototype.paint = function() {
 	resource.appendChild(bottom);
 }
 
-Resource.prototype.isContratable = function (capabilities) {
+Resource.prototype.isContratable = function () {
+	var capabilities = this._state.getCapabilities();
+
 	for (var i = 0; i < capabilities.length; i++) {
 		var capability = capabilities[i];
-		if (capability.name == 'Contratable')
+		if (capability.name.toLowerCase() == 'contratable')
 			return capability.value.toLowerCase() == "true";
 		else
 			return false

@@ -137,6 +137,9 @@ class Capability(models.Model):
     class Meta:
         unique_together = ('name', 'value', 'resource')
         
+    def __unicode__(self):
+        return self.name
+        
 
 class UserRelatedToGadgetResource(models.Model):
     gadget = models.ForeignKey(GadgetResource)

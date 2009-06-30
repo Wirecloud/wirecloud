@@ -140,6 +140,56 @@ WindowMenu.prototype.hide = function () {
 WindowMenu.prototype.setFocus = function () {
 }
 
+/**
+*
+*/
+function ContratationWindow(element) {
+	WindowMenu.call(this, gettext('Contratation Information'));
+
+	this.iframe = document.createElement('iframe');
+	this.iframe.setAttribute('src', 'http://www.google.es');
+	this.iframe.setAttribute('width', 700);
+	this.iframe.setAttribute('height', 600);
+	this.windowContent.appendChild(this.iframe);
+
+	// New Workspace button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode('Agree'));
+	this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
+	this.windowBottom.appendChild(this.acceptButton);
+
+	// Cancel button
+	this.cancelButton = document.createElement('button');
+	this.cancelButton.appendChild(document.createTextNode('Cancel'));
+	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
+	this.windowBottom.appendChild(this.cancelButton);
+	
+	this.acceptHandler = null;
+	this.cancelHandler = null;
+}
+
+ContratationWindow.prototype = new WindowMenu();
+
+//Calls the Create operation (the task the window is made for).
+ContratationWindow.prototype.executeOperation = function() {
+	alert("hola");
+}
+
+ContratationWindow.prototype.setHandler = function(acceptHandler, cancelHandler) {
+	this.acceptHandler = acceptHandler;
+	this.cancelHandler = cancelHandler;
+}
+
+ContratationWindow.prototype._newWorkspaceListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+ContratationWindow.prototype._currentWorkspaceListener = function(e) {
+	this.cancelHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
 
 /**
  * Specific class for dialogs about creating things.
