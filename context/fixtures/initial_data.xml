@@ -170,8 +170,8 @@ Returns: 'ezweb platform'</field>
         <field type="CharField" name="label">Match [Regular Expresion]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text">Searchs for a specified value in the value
-of the channel using regular expressions. 
+        <field type="TextField" name="help_text"><![CDATA[Searchs for a specified value in the value
+of the channel using <a href="http://www.regular-expressions.info/" target="_blank"> regular expressions</a>. 
 Return a JSON list with the occurrences. 
 If no occurrence is found the value is NOT propagated.
 
@@ -179,7 +179,7 @@ e.g. Looks up the characters before the first
 comma  
 Channel value: 'Getafe, Madrid'
 Regular expresion (given by user): '/[\\w|\\s]*,/'
-Returns: ['Getafe,']</field>
+Returns: ['Getafe,']]]></field>
     	<field type="TextField" name="params">[{"name": "regexp", "type": "regexp", "index": 0, "required":true, "label": "Regular Expresion"}]</field>
 	</object>
     <object pk="9" model="connectable.filter">
@@ -194,8 +194,8 @@ Returns: ['Getafe,']</field>
         <field type="CharField" name="label">Replace [Regular Expresion] [String]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text">Searchs for a specific value in the value
-of the channel using regular expressions,
+        <field type="TextField" name="help_text"><![CDATA[Searchs for a specific value in the value
+of the channel using <a href="http://www.regular-expressions.info/" target="_blank">regular expressions</a>,
 and replaces it with the string given by 
 the user.
 
@@ -203,7 +203,7 @@ e.g. Replaces the brackets with an empty
 character (removes the bracket)
 Channel value: '(304)4345454'
 Regular expresion (given by user): '/[\(\)]/g'
-Returns: '3044345454'</field>
+Returns: '3044345454']]></field>
 		<field type="TextField" name="params">[{"name": "newSubStr", "type": "S", "index": 1, "label": "String"},{"name": "regexp", "type": "regexp", "index": 0, "required":true, "label": "Regular Expresion"}]</field>
 	</object>
     <object pk="12" model="connectable.filter">
@@ -312,10 +312,10 @@ Returns: 'EZWEB'</field>
         <field type="CharField" name="label">JSON Parser</field>
         <field type="CharField" name="nature">JSLIB</field>
         <field type="CharField" name="category">JSON</field>
-        <field type="TextField" name="help_text">Find elements in JSON structures.
+        <field type="TextField" name="help_text"><![CDATA[Find elements in JSON structures.
 
-Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for further information. 
-</field>
+Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales" target="_blank">this page</a> for further information. 
+]]></field>
 		<field type="TextField" name="params">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>    
 	</object>
    <object pk="19" model="connectable.filter">
