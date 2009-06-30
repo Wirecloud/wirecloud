@@ -74,7 +74,14 @@ class Contract(models.Model):
         if (contract_info['free']):
             self.free = contract_info['free']
         
-        if (contract_info['times_used']):    
-            self.times_used = contract_info['times_used']
+        times_used = 0
+        try:
+            times_used = contract_info['times_used']
+        except KeyError:    
+            pass
+        
+        self.times_used = times_used
         
         self.save()
+        
+        return self

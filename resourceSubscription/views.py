@@ -40,6 +40,10 @@ from django.shortcuts import get_object_or_404
 from resourceSubscription.models import Contract
 from catalogue.models import GadgetResource
 
+from django.utils import simplejson
+
+from django.contrib.auth.models import User
+
 class ContractCollection(Resource):
     @login_required
     def read(request):
@@ -78,7 +82,6 @@ class ContractCollection(Resource):
     create = staticmethod(create)
     
 class ContractEntry(Resource):
-    @login_required
     def read(request, contract_id):
         contract = get_object_or_404(Contract, id=contract_id)
         
@@ -88,7 +91,6 @@ class ContractEntry(Resource):
     
     read = staticmethod(read)
 
-    @login_required
     def update(request, contract_id):
         contract_info = request.REQUEST['contract_info']
         
@@ -103,7 +105,6 @@ class ContractEntry(Resource):
         
     update = staticmethod(update)
 
-    @login_required
     def delete(request, contract_id):
         contract = get_object_or_404(Contract, id=contract_id)
         
@@ -115,9 +116,12 @@ class ContractEntry(Resource):
     delete = staticmethod(delete)
     
 class ResourceSubscriber(Resource):
-    @login_required
     def read(self, request, resource_id):
-        user = request.user
+        contract_info = request.REQUEST['contract_info']
+        
+        contract_info = simplejson.loads(contract_info)
+        
+        user = User.objects.get(username=contract_info['user'])
         
         resource = get_object_or_404(GadgetResource, id=resource_id)
     
@@ -128,7 +132,6 @@ class ResourceSubscriber(Resource):
         except Contract.DoesNotExist:
             return ContractCollection.create(request, user, resource_id)
         
-    @login_required
     def create(self, request, resource_id):
         user = request.user
         
@@ -142,6 +145,5 @@ class ResourceSubscriber(Resource):
             return ContractCollection.create(request, user, resource_id)
         
 class ResourceUnsubscriber(Resource):
-    @login_required
     def read(self, request, resource_id):
         return ContractEntry.delete(request, contract.id)
