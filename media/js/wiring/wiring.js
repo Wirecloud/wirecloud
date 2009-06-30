@@ -146,8 +146,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		for (var j = 0; j < connectable_inouts.length; j++) {
 			var out_inout = this.channelsById[connectable_inouts[j]];
 				if (!channel.isConnectable(out_inout)) {
-					var msg = gettext("Wiring: Loop detected while recovering wiring status from persistence.\n" +
-					                  "Output connection to channel \"%(targetChannel)s\" from channel \"%(sourceChannel)s\" will be ignored.");
+					var msg = gettext("Wiring: Loop detected while recovering wiring status from persistence.\nOutput connection to channel \"%(targetChannel)s\" from channel \"%(sourceChannel)s\" will be ignored.");
 					msg = interpolate(msg,
 					                  {sourceChannel: channel.getName(),
 					                   targetChannel: out_inout.getName()},

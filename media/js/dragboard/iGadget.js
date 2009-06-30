@@ -906,7 +906,7 @@ IGadget.prototype._makeConfigureInterface = function() {
 	var interfaceDiv = document.createElement("div");
 
 	if (prefs.length == 0) {
-		interfaceDiv.innerHTML = gettext("This IGadget does not have user prefs");
+		interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
 		return interfaceDiv;
 	}
 
