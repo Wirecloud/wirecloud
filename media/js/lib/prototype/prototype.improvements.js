@@ -377,64 +377,100 @@ if (useInternalComputedStyle) {
 	CSSPrimitiveValue.prototype.getFloatValue = function(unit) {
 		switch (unit) {
 		case CSSPrimitiveValue.CSS_PX:
-			var matching = CSSPrimitiveValue._ValueRegExp.exec(this.cssText);
-			var value = matching[1];
-			var units = matching[2];
-
 			var parentNode = this._element.parentNode;
 			var testElement = this._element.ownerDocument.createElement('div');
-			testElement.style.width = (value * 1000) + units;
 			testElement.style.visibility = "hidden";
 			testElement.style.padding = "0";
 			testElement.style.margin = "0";
 			testElement.style.border = "0";
 
+			var matching = CSSPrimitiveValue._ValueRegExp.exec(this.cssText);
+			if (matching === null) {
+				matching = /border-(top|right|bottom|left)-width/.exec(this._property);
+				if (matching !== null) {
+					var side = matching[1];
+					var extraElement = this._element.ownerDocument.createElement('div');
+					extraElement.style.visibility = "hidden";
+					extraElement.style.padding = "0";
+					extraElement.style.margin = "0";
+					extraElement.style.border = "0";
+					extraElement.style.height = "0";
+					extraElement.style.width = "1px";
+					extraElement.style.borderTopWidth = this.cssText;
+					var property = 'border-' + side + '-style';
+					var ieProperty = ComputedCSSStyleDeclaration.prototype._getIEProperty(property);
+					extraElement.style.borderTopStyle = _internalGetCurrentStyle(this._element, property, ieProperty);
+					testElement.appendChild(extraElement);
+					testElement.style.width = 'auto';
+					testElement.style.height = 'auto';
+				} else {
+					throw new Error();
+				}
+			} else {
+				// Not used for now
+				//var value = matching[1];
+				//var units = matching[2];
+				testElement.style.height = this.cssText;
+			}
+
 			parentNode.appendChild(testElement);
 
-			if (testElement.clientWidth != null) {
-				var result = testElement.clientWidth;
-			} else if (testElement.style.pixelWidth != null) {
-				var result = testElement.style.pixelWidth;
+			if (testElement.clientHeight != null) {
+				var result = testElement.clientHeight;
+			} else if (testElement.style.pixelHeight != null) {
+				var result = testElement.style.pixelHeight;
 			} else {
 				throw new Error();
 			}
 
 			parentNode.removeChild(testElement);
 
-			return result / 1000;
+			return result;
 			break;
 		default:
-			break;
+			throw new Error();
 		}
 	}
 
+	CSSPrimitiveValue._rgbColorParser = new RegExp('rgb\\\(\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*\\\)');
+	/**
+	 *
+	 */
 	CSSPrimitiveValue.prototype.getRGBColorValue = function() {
 		switch (this._property) {
 		case 'background-color':
-			var parentNode = this._element.parentNode;
-			var testElement = this._element.ownerDocument.createElement('table');
-			testElement.setAttribute('bgcolor', this.cssText);
-			testElement.style.visibility = "hidden";
-			parentNode.appendChild(testElement);
-			var bgColor = testElement.bgColor;
+		case 'color':
+			var matching = CSSPrimitiveValue._rgbColorParser.exec(this.cssText);
+			if (matching !== null) {
+				var red = parseInt(matching[1]);
+				var green = parseInt(matching[2]);
+				var blue = parseInt(matching[3]);
+			} else {
+				var parentNode = this._element.parentNode;
+				var testElement = this._element.ownerDocument.createElement('table');
+				testElement.setAttribute('bgcolor', this.cssText);
+				testElement.style.visibility = "hidden";
+				parentNode.appendChild(testElement);
+				var bgColor = testElement.bgColor;
 
-			parentNode.removeChild(testElement);
+				parentNode.removeChild(testElement);
 
-			// Build the result
-			var red = bgColor.substr(1,2);
-			var green = bgColor.substr(3,2);
-			var blue = bgColor.substr(5,2);
+				function hex2value(hex) {
+					hex = hex.toUpperCase();
+					return ("0123456789ABCDEF".indexOf(hex[0]) * 16) +
+					       "0123456789ABCDEF".indexOf(hex[1]);
+				}
 
-			function hex2value(hex) {
-				var hex = hex.toUpperCase();
-				return ("0123456789ABCDEF".indexOf(hex[0]) * 16) +
-				       "0123456789ABCDEF".indexOf(hex[1]);
+				// Build the result
+				var red = hex2value(bgColor.substr(1,2));
+				var green = hex2value(bgColor.substr(3,2));
+				var blue = hex2value(bgColor.substr(5,2));
 			}
 
 			var result = new Object();
-			result.red = new CSSColorComponentValue(hex2value(red));
-			result.green = new CSSColorComponentValue(hex2value(green));
-			result.blue = new CSSColorComponentValue(hex2value(blue));
+			result.red = new CSSColorComponentValue(red);
+			result.green = new CSSColorComponentValue(green);
+			result.blue = new CSSColorComponentValue(blue);
 			result.alpha = new CSSColorComponentValue("1");
 			return result;
 			break;
@@ -443,6 +479,9 @@ if (useInternalComputedStyle) {
 		}
 	}
 
+	/**
+	 *
+	 */
 	function CSSColorComponentValue(value) {
 		this.cssText = "" + value;
 	}
