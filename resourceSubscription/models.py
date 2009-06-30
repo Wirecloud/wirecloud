@@ -37,6 +37,8 @@ from django.utils.translation import ugettext as  _
 from catalogue.models import GadgetResource
 from django.contrib.auth.models import User
 
+from django.utils import simplejson
+
 CONTRACT_STATES = (
     (u'CANCELED', 'Canceled'),
     (u'SUBSCRIBED', 'Subscribed'),
@@ -44,14 +46,35 @@ CONTRACT_STATES = (
 )
 
 class Contract(models.Model):
-    price = models.IntegerField(_('Price'))
-    start_date = models.DateTimeField(_('Start Date'))
-    end_date = models.DateTimeField(_('End Date'), null=True, black=True)
+    free = models.BooleanField(_('Free'))
+    #start_date = models.DateTimeField(_('Start Date'))
+    #end_date = models.DateTimeField(_('End Date'), null=True, blank=True)
     
-    used_times = models.IntegerField(_('Price'), default=0)
+    times_used = models.IntegerField(_('Used times'), default=0)
     
     gadget_resource = models.ForeignKey(GadgetResource, verbose_name=_('Gadget Resource'))
     user = models.ForeignKey(User, verbose_name=_('User'))
     
-    state = models.CharField(choices=VOTES, _('State'), max_lenght=20)
+    state = models.CharField(_('State'), choices=CONTRACT_STATES, max_length=20)
     
+    def get_info(self):
+        result = {}
+        
+        result['free'] = self.free
+        result['times_used'] = self.times_used
+        
+        return result
+    
+    def update_info(self, contract_info):
+        contract_info = simplejson.loads(contract_info)
+        
+        if (not contract_info):
+            return None
+        
+        if (contract_info['free']):
+            self.free = contract_info['free']
+        
+        if (contract_info['times_used']):    
+            self.times_used = contract_info['times_used']
+        
+        self.save()

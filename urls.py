@@ -37,6 +37,8 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
+from catalogue.views import ResourceEnabler
+
 #from clms import admin_view as clms_admin_view
 #from clms.admin import clms_site, setup_admin
 #setup_admin(clms_site)
@@ -60,6 +62,9 @@ urlpatterns = patterns('',
 
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
+    
+    # Contracts Manager
+    (r'^contract(s)?', include('resourceSubscription.urls')),
 
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
@@ -72,6 +77,9 @@ urlpatterns = patterns('',
 
     # Catalogue Resource
     (r'^user/(?P<user_name>[\s\-\.\w]+)/catalogue/', include('catalogue.urls')),
+    
+    # Catalogue: Changing certification status
+    (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
     
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),

@@ -30,20 +30,118 @@
 
 #
 
+from commons.resource import Resource
+from commons.utils import json_encode
+
+from django.http import HttpResponse, HttpResponseServerError
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+
+from resourceSubscription.models import Contract
+from catalogue.models import GadgetResource
 
 class ContractCollection(Resource):
-    def read(self,request):
-        pass
-    
-    def create(self,request, vendor, name, version):
-        pass
+    @login_required
+    def read(request):
+        user = request.user
+        
+        result = []
+        
+        contracts = Contract.objects.filter(user=user)
+        
+        for contract in contracts:
+            result.append(contract.get_info())
+            
+        json = json_encode(result)
+        
+        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
+
+    read = staticmethod(read)
+
+    @login_required
+    def create(self, request, resource_id):
+        user = request.user
+        
+        contract_info = request.REQUEST['contract_info']
+        
+        resource = get_object_or_404(GadgetResource, id=resource_id)
+        
+        contract, created = get_or_create(Contract, user=user, gadget_resource=resource)
+        
+        if created:
+            contract.update_info(contract_info)
+        
+        json = json_encode(contract.get_info())
+        
+        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
+
+    create = staticmethod(create)
     
 class ContractEntry(Resource):
-    def read(self,request, contract_id):
-        pass
+    @login_required
+    def read(request, contract_id):
+        contract = get_object_or_404(Contract, id=contract_id)
+        
+        json = json_encode(contract.get_info())
+        
+        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
+    
+    read = staticmethod(read)
 
-    def update(self,request, contract_id):
-        pass
+    @login_required
+    def update(request, contract_id):
+        contract_info = request.REQUEST['contract_info']
+        
+        contract = Contract.objects.get(id=contract_id)
+        
+        result = contract.update_info(contract_info)
+        
+        if (result):
+            return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
+        else:
+            return HttpResponseServerError("{'result': 'error'}", mimetype='application/json; charset=UTF-8')
+        
+    update = staticmethod(update)
 
-    def delete(self,request, contract_id):
-        pass
+    @login_required
+    def delete(request, contract_id):
+        contract = get_object_or_404(Contract, id=contract_id)
+        
+        contract.delete()
+        contract.save()
+        
+        return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
+    
+    delete = staticmethod(delete)
+    
+class ResourceSubscriber(Resource):
+    @login_required
+    def read(self, request, resource_id):
+        user = request.user
+        
+        resource = get_object_or_404(GadgetResource, id=resource_id)
+    
+        try:
+            contract = Contract.objects.get(user=user, gadget_resource=resource)
+            
+            return ContractEntry.update(request, contract.id)
+        except Contract.DoesNotExist:
+            return ContractCollection.create(request, user, resource_id)
+        
+    @login_required
+    def create(self, request, resource_id):
+        user = request.user
+        
+        resource = get_object_or_404(GadgetResource, id=resource_id)
+    
+        try:
+            contract = Contract.objects.get(user=user, gadget_resource=resource)
+            
+            return ContractEntry.update(request, contract.id)
+        except Contract.DoesNotExist:
+            return ContractCollection.create(request, user, resource_id)
+        
+class ResourceUnsubscriber(Resource):
+    @login_required
+    def read(self, request, resource_id):
+        return ContractEntry.delete(request, contract.id)

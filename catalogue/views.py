@@ -50,12 +50,14 @@ from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetRe
 from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
+
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.utils import get_xml_error
 from commons.http_utils import PUT_parameter
+from commons.user_utils import get_verified_certification_group
 
 class GadgetsCollection(Resource):
 
@@ -565,3 +567,12 @@ class GadgetVotesCollection(Resource):
 
         return get_vote_response(gadget,user, format)
 
+class ResourceEnabler(Resource):
+    def read(self, request, resource_id):
+        resource = get_object_or_404(GadgetResource, id=resource_id)
+        
+        resource.certification = get_verified_certification_group()
+        
+        resource.save()
+        
+        return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
