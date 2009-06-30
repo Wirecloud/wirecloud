@@ -24,19 +24,21 @@
  */
 
 // This class represents the parameter that a filter can have
-function Param (name_, label_, type_, index_, defaultValue_){
+function Param (name_, label_, type_, index_, required_, defaultValue_){
   this._name = name_;
   this._label = label_;
   this._type = type_;
   this._index = index_;
+  this._required = required_;
   this._defaultValue = defaultValue_;
 }
 
-Param.prototype.Param = function (name_, label_, type_, index_, defaultValue_){
+Param.prototype.Param = function (name_, label_, type_, index_, required_, defaultValue_){
   this._name = name_;
   this._label = label_;
   this._type = type_;
   this._index = index_;
+  this._required = required_;
   this._defaultValue = defaultValue_;
 }
 
@@ -54,6 +56,10 @@ Param.prototype.getLabel = function() {
 
 Param.prototype.getIndex = function() {
   return this._index;
+}
+
+Param.prototype.getRequired = function() {
+  return this._required;
 }
 
 Param.prototype.getDefaultValue = function() {
@@ -82,16 +88,16 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 
 	var checkResult = function(e) {
 		var msg;
-		/*
 		
-		if(! e.target.value  || e.target.value.match(/^\s$/)){
+		/*if(this.param._required && (! e.target.value  || e.target.value.match(/^\s$/))){
+			//restore the previous value
+			paramInput.value = channel.getFilterParams()[this.param._index]['value'];
+			
 			msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
 			this.wiringGUI.showMessage(msg);
-			this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
+			//this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
 			return;
-		}
-		
-		*/
+		}*/
 		
 		// Sets the param value
 		this.channel.setFilterParam(this.param._index, e.target.value);
@@ -102,7 +108,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 		
 		// Shows a message (only with error)
 		if (this.channel.getFilter().getlastExecError() != null) {
-			this.wiringGUI.showMessage(this.channel.getFilter().getlastExecError());
+			LayoutManagerFactory.getInstance().showMessageMenu(this.channel.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
 			this.valueElement.nodeValue = gettext('undefined');
 		}
 	};
@@ -186,13 +192,13 @@ Filter.prototype.processParams = function(params_) {
   this._params = new Array();
   if (params_ != null && params_ != ''){
   	var fParam, paramObject;
-  	var jsonParams = eval (params_);  
+  	var jsonParams = params_.evalJSON();  
   	for (var i = 0; i < jsonParams.length; i++) {
 		fParam = jsonParams[i];
 		if (fParam.type == 'jpath'){
-			paramObject = new JPathParam (fParam.name, fParam.label, fParam.index, fParam.defaultValue);
+			paramObject = new JPathParam (fParam.name, fParam.label, fParam.index, fParam.required, fParam.defaultValue);
 		} else {
-			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.defaultValue);						
+			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.required, fParam.defaultValue);						
 		}
 		this.setParam(paramObject);  
   	}
@@ -215,12 +221,15 @@ Filter.prototype.fillFilterParamValues = function(filterParams, valueElement) {
 	for (var i = 0; i < paramLayers.length; i++) {
 		var paramInput = paramLayers[i].childElements()[0];
 		
-		paramInput.value = filterParams[i]['value'];
+		if(filterParams[i]['value']) 
+			paramInput.value = filterParams[i]['value'];
+		else
+			paramInput.value = null;
 	}
 }
 
 Filter.prototype.run = function(channelValue_, paramValues_, channel) {
-	var i, msg, params = '';
+	var i, msg, params = {};
 
 	// Begins to run, no errors
 	this._lastExecError = null;
@@ -231,14 +240,24 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	try{
 		// Creates the variables for other params
 		for (i=0; i < this._params.length; ++i){ 
-			if (i!=0 && params != '')
-				params += ',';
 				
 			var paramValue = paramValues_[i]['value'];
 			
-			if(!paramValue)
-				continue;
-				
+			if(!paramValue){
+				if(this._params[i].getRequired()){
+					msg = interpolate(gettext("Look out! '%(paramName)s' of '%(filterName)s' is required"), 
+						{paramName: this._params[i].getLabel(), filterName: this._label}, true);
+					LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+					this._lastExecError = msg;
+					return gettext('undefined');
+					
+				}else{
+					params [this._params[i].getName()] = null;
+					continue;
+				}
+			}
+			
+			
 			// Checks the type of parameter
 			switch (this._params[i].getType()){
 			case 'N': // Param is Number
@@ -251,29 +270,26 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 					this._lastExecError = msg;
 					return gettext('undefined');
 				}
-				eval ("var " + this._params[i].getName() + " = '" + paramValue + "';");
-				params += this._params[i].getName();
+				params[this._params[i].getName()] = paramValue;
 				break; 
 			case 'regexp': // Param is RegExp
 				if ((paramValue.indexOf('/') == 0) && (paramValue.lastIndexOf('/') > 0)){
 					var current_pattern = paramValue.substring(1, paramValue.lastIndexOf('/'));
 					var current_modifiers = paramValue.substring(paramValue.lastIndexOf('/') + 1, paramValue.length);
-					eval ("var " + this._params[i].getName() + " = new RegExp ('" + current_pattern + "', '" + current_modifiers + "');");	
+					params[this._params[i].getName()] = new RegExp(current_pattern, current_modifiers);
 				}else {
-					eval ("var " + this._params[i].getName() + " = new RegExp ('" + paramValue + "');");
+					params[this._params[i].getName()] = new RegExp (paramValue);
 				}
-				params += this._params[i].getName();
 				break;
 			case 'jpath': // Param is a JPATH expresion (for JSON)
 				var jpath_exp = this._params[i].parse(paramValue);
-				eval ("var " + this._params[i].getName() + " = this._params[i].parse(paramValue);");
-				params += this._params[i].getName();
+				params[this._params[i].getName()] = this._params[i].parse(paramValue);
 				break;
 			default: // Otherwise is String
-				eval ("var " + this._params[i].getName() + " = \"" + paramValue.replace(/"/g,"'" ) + "\";");
-				params += this._params[i].getName();
+				params[this._params[i].getName()] = paramValue.replace(/"/g,"'");
 				break;
 			}
+			
 
 		}
 	}catch(e){
@@ -287,7 +303,7 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	try{
 	
 		// Exeutes the filter code
-		switch(this._nature){
+/*		switch(this._nature){
 			case "NATIVE":
 				return eval ('channelValue_.' + this._name + '(' + params + ');');
 				break;
@@ -298,16 +314,15 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 				break;
 			case "USER":
 			case "PATT":
-				if (params != "")
-					return this._code(channelValue_, eval(params), channel);
-				else
-					return this._code(channelValue_, null, channel);
+			*/
+					return this._code(channelValue_, channel, params);
 
-				break;
+
+	/*			break;
 			default:
 				break;
 		}
-	
+	*/
 	}catch(err){
 		if(err.name == "DONT_PROPAGATE"){
 			throw new DontPropagateException(err)

@@ -80,7 +80,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			var fParams = varData.connectable.filter_params;
 
 			if (fParams)
-				fParams = eval(fParams);
+				fParams = fParams.toJSON();
 			else
 				fParams = []
 

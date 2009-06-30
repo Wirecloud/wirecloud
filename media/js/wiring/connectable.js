@@ -352,7 +352,12 @@ wChannel.prototype.getValue = function(propagating) {
 		return this.variable.get();
 	else{
 		try{
-			return this.filter.run(this.variable.get(), this.filterParams, this);
+			var value = this.filter.run(this.variable.get(), this.filterParams, this);
+			if(!propagating && (this.getFilter().getlastExecError() != null)) {
+				LayoutManagerFactory.getInstance().showMessageMenu(this.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
+			}
+			return value;
+			
 		}catch (e){
 			if(e.name == "DONT_PROPAGATE"){
 				if(propagating)

@@ -82,22 +82,45 @@
     </object>
 	<object pk="1" model="connectable.filter">
         <field type="CharField" name="name">concat</field>
-        <field type="TextField" name="code"><None></None></field>
-        <field type="CharField" name="label">Concat [String]</field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        
+        		var result;
+        		if(params["stringBefore"])
+	        		result = params["stringBefore"].concat(channelValue);
+	        	else
+	        		result = channelValue;
+	        		
+	        	if(params["stringAfter"])
+					result = result.concat(params["stringAfter"]);
+	
+				return result;
+
+        }
+        ]]>
+        </field>
+        <field type="CharField" name="label">Concat [String, String]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
         <field type="TextField" name="help_text">Concatenates the value of the channel with 
-the value of the string given by the user.
+the value of the strings given by the user. The user can give both
+a "Before" string and an "After" string to be concatenated before or after the value of the channel.
 
 e.g. 
 Channel value: 'aaa'
-String (given by user): 'bbb'
+Before (given by user):
+After (given by user): 'bbb'
 Returns: 'aaabbb'</field>
-		<field type="TextField" name="params">{[{"name": "stringToConcat", "type": "S", "index": 0, "label": "String"}]}</field>
+		<field type="TextField" name="params">[{"name": "stringBefore", "type": "S", "index": 0, "label": "Before"}, {"name": "stringAfter", "type": "S", "index": 1, "label": "After"}]</field>
 	</object>
     <object pk="2" model="connectable.filter">
         <field type="CharField" name="name">encodeURIComponent</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	return encodeURIComponent(channelValue);
+        }
+        ]]>
+        </field>
         <field type="CharField" name="label">Encode URI</field>
         <field type="CharField" name="nature">JSLIB</field>
         <field type="CharField" name="category">TRANS</field>
@@ -112,7 +135,12 @@ Returns: 'ezweb%20platform'</field>
 	</object>
     <object pk="3" model="connectable.filter">
         <field type="CharField" name="name">decodeURIComponent</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	return decodeURIComponent(channelValue);
+        }
+        ]]>
+		</field>
         <field type="CharField" name="label">Decode URI</field>
         <field type="CharField" name="nature">JSLIB</field>
         <field type="CharField" name="category">TRANS</field>
@@ -128,59 +156,95 @@ Returns: 'ezweb platform'</field>
 	</object>
     <object pk="8" model="connectable.filter">
         <field type="CharField" name="name">match</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+			result = channelValue.match(params['regexp']);
+			if(result){
+				return Object.toJSON(result);
+			}else{
+				throw new DontPropagateException("no matches");
+			}
+        }
+        ]]>
+        </field>
         <field type="CharField" name="label">Match [Regular Expresion]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
         <field type="TextField" name="help_text">Searchs for a specified value in the value
-of the channel using regular expressions.
+of the channel using regular expressions. 
+Return a JSON list with the occurrences. 
+If no occurrence is found the value is NOT propagated.
 
 e.g. Looks up the characters before the first
 comma  
 Channel value: 'Getafe, Madrid'
 Regular expresion (given by user): '/[\\w|\\s]*,/'
-Returns: 'Getafe,'</field>
-    	<field type="TextField" name="params">{[{"name": "regexp", "type": "regexp", "index": 0, "label": "Regular Expresion"}]}</field>
+Returns: ['Getafe,']</field>
+    	<field type="TextField" name="params">[{"name": "regexp", "type": "regexp", "index": 0, "required":true, "label": "Regular Expresion"}]</field>
 	</object>
     <object pk="9" model="connectable.filter">
         <field type="CharField" name="name">replace</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	var newString = (params['newSubString'])?params['newSubString']: "";
+			return channelValue.replace(params['regexp'], newString);
+        }
+        ]]>
+        </field>
         <field type="CharField" name="label">Replace [Regular Expresion] [String]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text">Searchs for a specified value in the value
+        <field type="TextField" name="help_text">Searchs for a specific value in the value
 of the channel using regular expressions,
 and replaces it with the string given by 
 the user.
 
-e.g. Replaces the brackets with a empty 
+e.g. Replaces the brackets with an empty 
 character (removes the bracket)
 Channel value: '(304)4345454'
-Regular expresion (given by user): '/[\\(\\)]/g'
+Regular expresion (given by user): '/[\(\)]/g'
 Returns: '3044345454'</field>
-		<field type="TextField" name="params">{[{"name": "newSubStr", "type": "S", "index": 1, "label": "String"},{"name": "regexp", "type": "regexp", "index": 0, "label": "Regular Expresion"}]}</field>
+		<field type="TextField" name="params">[{"name": "newSubStr", "type": "S", "index": 1, "label": "String"},{"name": "regexp", "type": "regexp", "index": 0, "required":true, "label": "Regular Expresion"}]</field>
 	</object>
     <object pk="12" model="connectable.filter">
         <field type="CharField" name="name">split</field>
-        <field type="TextField" name="code"><None></None></field>
-        <field type="CharField" name="label">Split [Delimiter]</field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	if(params['howmany'])
+        		return Object.toJSON(channelValue.split(params['separator'], params['howmany']));
+        	else
+				return Object.toJSON(channelValue.split(params['separator']));
+        }
+        ]]>
+        </field>
+        <field type="CharField" name="label">Split [Separator, How many]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
         <field type="TextField" name="help_text">Divides the value of the channel into substrings 
-using the delimiter given, and creates an array 
+using the given separator, and creates an array 
 containing the resulting substrings. The delimiter 
 value is not returned as part of the array of 
-substrings.
+substrings. If "How many" is given, it specifies 
+how many times split should occur. Must be a numeric value.
 
 e.g.  
 Channel value: 'Internet'
 Delimiter (given by user): 'e'
-Returns: 'Int, rn, t'</field>
-		<field type="TextField" name="params">{[{"name": "delimiter", "type": "S", "index": 0, "label": "Delimiter"}]}</field>
+Returns: ["Int", "rn", "t"]</field>
+		<field type="TextField" name="params">[{"name": "separator", "type": "S", "index": 0, "required": true, "label": "Separator"},{"name": "howmany", "type": "N", "index": 1, "label": "How many"}]</field>
 	</object>
     <object pk="13" model="connectable.filter">
         <field type="CharField" name="name">substr</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+			if(params['length'])
+				return channelValue.substr(params['start'], params['length']);
+			else
+				return channelValue.substr(params['start']);
+
+        }
+        ]]>
+		</field>
         <field type="CharField" name="label">Substr [Start] [Length]</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
@@ -193,11 +257,16 @@ Channel value: 'EzWeb'
 Start index (given by user): '2'
 Length (given by user): '3'
 Returns: 'Web'</field>
-    	<field type="TextField" name="params">{[{"name": "length", "type": "N", "index": 1, "label": "Length"},{"name": "start", "type": "N", "index": 0, "label": "Start"}]}</field>
+    	<field type="TextField" name="params">[{"name": "length", "type": "N", "index": 1, "label": "Length"},{"name": "start", "type": "N", "index": 0, "required":true, "label": "Start"}]</field>
 	</object>
     <object pk="16" model="connectable.filter">
         <field type="CharField" name="name">toLowerCase</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	return channelValue.toLowerCase();
+        }
+        ]]>
+        </field>
         <field type="CharField" name="label">To Lower Case</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
@@ -211,7 +280,12 @@ Returns: 'ezweb'</field>
 	</object>
     <object pk="17" model="connectable.filter">
         <field type="CharField" name="name">toUpperCase</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	return channelValue.toUpperCase();
+        }
+        ]]>
+		</field>
         <field type="CharField" name="label">To Upper Case</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
@@ -225,7 +299,16 @@ Returns: 'EZWEB'</field>
 	</object>
    <object pk="18" model="connectable.filter">
         <field type="CharField" name="name">JSONParser.parse</field>
-        <field type="TextField" name="code"><None></None></field>
+        <field type="TextField" name="code"><![CDATA[
+        function(channelValue, channel, params){
+        	result = JSONParser.parse(channelValue, params['jpExp']);
+        	if(!result || result == "")
+        		throw new DontPropagateException("not found");
+        	else
+        		return result;
+        }
+        ]]>
+        </field>
         <field type="CharField" name="label">JSON Parser</field>
         <field type="CharField" name="nature">JSLIB</field>
         <field type="CharField" name="category">JSON</field>
@@ -233,21 +316,21 @@ Returns: 'EZWEB'</field>
 
 Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for further information. 
 </field>
-		<field type="TextField" name="params">{[{"name": "jpExp", "type": "jpath", "index": 0, "label": "Expression"}]}</field>    
+		<field type="TextField" name="params">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>    
 	</object>
    <object pk="19" model="connectable.filter">
         <field type="CharField" name="name">Demultiplex</field>
         <field type="TextField" name="code"><![CDATA[
-  function(channelValue, params, channel){
+  function(channelValue, channel, params){
     			if (!channel._allInputsModified()){
-    				throw new DontPropagateException("not all imputs are modified");
+    				throw new DontPropagateException("not all imputs have been modified");
     			}
 				else{
 
-					if (params){
+					if (params["correspondence"]){
 						//change the indexes given by the user
 						var inputValues = channel._getJSONInput();
-						var userIndexes = eval('('+params+')');
+						var userIndexes = eval('('+params["correspondence"]+')');
 						var newInputs = {};
 						var newIndex, value = null;
 						var indexes = inputValues.keys();
@@ -268,11 +351,11 @@ Visit http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales for furt
         <field type="CharField" name="label">Demultiplex</field>
         <field type="CharField" name="nature">PATT</field>
         <field type="CharField" name="category">TRANS</field>
-        <field type="TextField" name="help_text">Propagate only when all the inputs have been modified.
+        <field type="TextField" name="help_text">Propagates only when all the inputs have been modified.
 If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
 That is, "{'name1':'value1', 'name2':'value2'}".
 Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
 {'name1': 'new_index1','name2': 'new_index2'}</field>
-        <field type="TextField" name="params">{[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]}</field>
+        <field type="TextField" name="params">[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]</field>
     </object>
 </django-objects>

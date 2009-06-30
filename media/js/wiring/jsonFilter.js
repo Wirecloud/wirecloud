@@ -33,8 +33,8 @@ function JPathToken (type_, value_) {
 
 // This class represents a JPATH parameter
 // JPATH is the language to access to JSON structures
-function JPathParam (name_, label_, index_, defaultValue_) {
-	Param.prototype.Param.call(this, name_, label_, 'jpath', index_, defaultValue_);
+function JPathParam (name_, label_, index_, required_, defaultValue_) {
+	Param.prototype.Param.call(this, name_, label_, 'jpath', index_, required_, defaultValue_);
 }
 
 JPathParam.prototype = new Param;
