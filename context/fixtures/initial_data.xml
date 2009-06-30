@@ -301,7 +301,11 @@ Returns: 'EZWEB'</field>
         <field type="CharField" name="name">JSONParser.parse</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
-        	result = JSONParser.parse(channelValue, params['jpExp']);
+        	if(channelValue == "")
+        		result = "";
+        	else
+	        	result = JSONParser.parse(channelValue, params['jpExp']);
+    
         	if(!result || result == "")
         		throw new DontPropagateException("not found");
         	else
