@@ -650,17 +650,28 @@ UIUtils.setResourcesWidth = function() {
 	var resources = $('resources');
 	var center = $('center');
 	var left_bar = $('left_bar');
-	var leftBarMarginRight = parseInt(left_bar.getStyle('margin-right').replace("px",""));
-	var centerBorder = parseInt(center.getStyle('border-left-width').replace("px",""));
+
+	var computedStyle;
+	computedStyle = document.defaultView.getComputedStyle(left_bar, null);
+	var extraLeftBarPixels = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+	extraLeftBarPixels += computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+	extraLeftBarPixels += computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+	extraLeftBarPixels += computedStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+	computedStyle = document.defaultView.getComputedStyle(center, null);
+	var centerBorder = computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+	centerBorder += computedStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
 	var catalogue_content = $('catalogue_content');
-	var content_padding_left = parseInt(catalogue_content.getStyle('padding-left').replace("px",""));
+	computedStyle = document.defaultView.getComputedStyle(catalogue_content, null);
+	var content_padding_left = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-	catalogue_content.style.width = catalogue.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - content_padding_left + 'px';
+	catalogue_content.style.width = (catalogue.offsetWidth - left_bar.offsetWidth - extraLeftBarPixels - content_padding_left) + 'px';
 
-	if (center){
-		center.style.width = catalogue_content.offsetWidth - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
-//		center.style.width = catalogue.offsetWidth -left_bar.offsetWidth - leftBarMarginRight - 1 - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
-		resources.style.width = center.offsetWidth - 2*centerBorder + 'px';
+	if (center) {
+		center.style.width = catalogue_content.offsetWidth - content_padding_left - centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
+//		center.style.width = catalogue.offsetWidth -left_bar.offsetWidth - extraLeftBarPixels - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
+		resources.style.width = (center.offsetWidth - centerBorder) + 'px';
 	}
 }
 
