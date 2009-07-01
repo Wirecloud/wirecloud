@@ -388,6 +388,13 @@ WiringInterface.prototype.renewInterface = function () {
 		this.channels[i].initialize();
 }
 
+WiringInterface.prototype.showMessage = function (msg, type) { 
+	if (type != undefined) 
+		LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning')); 
+	else 
+		LayoutManagerFactory.getInstance().showAlertMessage(msg); 
+} 
+
 /**
  * Toggles the connection status of the given anchor in relation to the current
  * selected channel.
@@ -395,6 +402,15 @@ WiringInterface.prototype.renewInterface = function () {
  * @param {ConnectionAnchor} anchor
  */
 WiringInterface.prototype._changeConnectionStatus = function (anchor) {
+
+	if (this.currentChannel == null) { 
+		if (this.channels.length == 0) { 
+	 		this.showMessage(gettext("Please, create a new channel before creating connections."), 10); 
+		} else { 
+	 		this.showMessage(gettext("Please, select a channel before creating connections."), 11); 
+		} 
+	  	return; 
+	 } 
 
 	/*
 	 * Change connection status on the interface and on the temporal model
