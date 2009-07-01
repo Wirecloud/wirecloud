@@ -62,6 +62,7 @@ class Contract(models.Model):
         
         result['free'] = self.free
         result['times_used'] = self.times_used
+        result['id'] = self.id
         
         return result
     

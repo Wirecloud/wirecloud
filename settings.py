@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'context',
     'translator',
     'gadgetGenerator',
+    'resourceSubscription',
 #    'clms',
 )
 

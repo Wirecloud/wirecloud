@@ -151,42 +151,32 @@ function ContratationWindow(element) {
 	this.iframe.setAttribute('width', 600);
 	this.iframe.setAttribute('height', 600);
 	this.windowContent.appendChild(this.iframe);
-
-	// New Workspace button
-	this.acceptButton = document.createElement('button');
-	this.acceptButton.appendChild(document.createTextNode('Agree'));
-	this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
-	this.windowBottom.appendChild(this.acceptButton);
-
-	// Cancel button
-	this.cancelButton = document.createElement('button');
-	this.cancelButton.appendChild(document.createTextNode('Cancel'));
-	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
-	this.windowBottom.appendChild(this.cancelButton);
 	
-	this.acceptHandler = null;
-	this.cancelHandler = null;
+	// Finish button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode('Finish'));
+	this._acceptListener = this._acceptListener.bind(this);
+	this.acceptButton.observe("click", this._acceptListener);
+	this.windowBottom.appendChild(this.acceptButton);
 }
 
 ContratationWindow.prototype = new WindowMenu();
 
-ContratationWindow.prototype.setHandler = function(acceptHandler, cancelHandler) {
-	this.acceptHandler = acceptHandler;
-	this.cancelHandler = cancelHandler;
-}
-
-ContratationWindow.prototype._newWorkspaceListener = function(e) {
-	this.acceptHandler();
-	LayoutManagerFactory.getInstance().hideCover();
-}
-
-ContratationWindow.prototype._currentWorkspaceListener = function(e) {
-	this.cancelHandler();
-	LayoutManagerFactory.getInstance().hideCover();
-}
-
 ContratationWindow.prototype.setSrc = function(src) {
 	this.iframe.src=src;
+}
+
+ContratationWindow.prototype.setCloseListener = function(closeListener) {
+	this._closeListener = closeListener;
+}
+
+ContratationWindow.prototype.setHandler = function(acceptHandler) {
+	this.acceptHandler = acceptHandler;
+}
+
+ContratationWindow.prototype._acceptListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
 }
 
 

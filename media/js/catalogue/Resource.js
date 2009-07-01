@@ -69,6 +69,7 @@ Resource.prototype.setSlots = function(slots_) { this._state.setSlots(slots_);}
 Resource.prototype.getEvents = function() { return this._state.getEvents();}
 Resource.prototype.setEvents = function(events_) { this._state.setEvents(events_);}
 Resource.prototype.getTagger = function() { return this._tagger;}
+Resource.prototype.getContract = function() { return this._state.getContract();}
 Resource.prototype.setVotes = function(voteData_) {
 	this._state.setVotes(voteData_);
 	this._rateResource();
@@ -129,8 +130,8 @@ Resource.prototype.paint = function() {
 
 		var button_class = '';
 
-		if (this.isContratable()) {
-			//button_message = gettext('Purchase');
+		if (this.isContratable() && (! this.hasContract())) {
+			button_message = gettext('Purchase');
 			button_class = 'contratable';
 		}
 
@@ -148,8 +149,8 @@ Resource.prototype.paint = function() {
 		//var button_message = gettext('Add Mashup');
 		var button_class = 'add_mashup'
 
-		if (this.isContratable()) {
-			//button_message = gettext('Purchase');
+		if (this.isContratable() && (! this.hasContract())) {
+			button_message = gettext('Purchase');
 			button_class = 'contratable';
 		}
 
@@ -258,6 +259,10 @@ Resource.prototype.isContratable = function () {
 		else
 			return false
 	}
+}
+
+Resource.prototype.hasContract = function () {
+	return this._state.getContract();
 }
 
 Resource.prototype.showInfo = function() {
@@ -1295,7 +1300,18 @@ Resource.prototype._createResource = function(urlTemplate_) {
 		userVote = voteDataJSON_.voteData[0].user_vote;
 		popularity = voteDataJSON_.voteData[0].popularity;
 	}
-
+	
+	this.getContract = function() { 
+		for (i=0; i<capabilities.length; i++) {
+			var capability = capabilities[i];
+			
+			if (capability['name'].toLowerCase() == 'contratable') {
+				return capability['contract'];
+			}
+		}
+		
+		return null;
+	}
 
 	this.getTags = function() { return tags;}
 	this.getSlots = function() { return slots;}

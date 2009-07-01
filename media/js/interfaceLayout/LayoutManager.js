@@ -715,7 +715,7 @@ var LayoutManagerFactory = function () {
 					this.menus['contratableAddInstanceMenu'] = new ContratationWindow();
 				}
 				this.currentMenu = this.menus['contratableAddInstanceMenu'];
-				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
+				this.currentMenu.setHandler(handlerYesButton);
 				this.currentMenu.setSrc(iframe_src);
 				break;
 			default:

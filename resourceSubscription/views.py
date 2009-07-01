@@ -41,8 +41,8 @@ from resourceSubscription.models import Contract
 from catalogue.models import GadgetResource
 
 from django.utils import simplejson
-
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 
 class ContractCollection(Resource):
     @login_required
@@ -62,15 +62,12 @@ class ContractCollection(Resource):
 
     read = staticmethod(read)
 
-    @login_required
-    def create(self, request, resource_id):
-        user = request.user
-        
+    def create(request, user, resource_id):        
         contract_info = request.REQUEST['contract_info']
         
         resource = get_object_or_404(GadgetResource, id=resource_id)
         
-        contract, created = get_or_create(Contract, user=user, gadget_resource=resource)
+        contract, created = Contract.objects.get_or_create(user=user, gadget_resource=resource)
         
         if created:
             contract.update_info(contract_info)

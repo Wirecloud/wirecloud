@@ -178,6 +178,13 @@ var CatalogueFactory  = function () {
 			var currentResource = this.getResource(resourceId_);
 			
 			if (currentResource.isContratable()) {
+				var contract = currentResource.getContract();
+				
+				if (contract) {
+					ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
+					return;
+				}
+				
 				var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetBuy.iface?nUser=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
 	    
 		        var gadgetUrl = currentResource.getUriTemplate();

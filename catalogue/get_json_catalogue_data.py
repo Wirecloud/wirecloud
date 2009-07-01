@@ -32,6 +32,7 @@
 from django.shortcuts import get_object_or_404
 
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Capability
+from resourceSubscription.models import Contract
 
 
 # This function gets the vote for a given user and gadget. 
@@ -135,7 +136,7 @@ def get_related_user_data(gadget_id, user_id):
         
     return data_ret
 
-def get_gadget_capabilities(gadget_id):
+def get_gadget_capabilities(gadget_id, user):
     data_ret = []
     
     try:
@@ -143,6 +144,17 @@ def get_gadget_capabilities(gadget_id):
         
         for capability in capability_list:
             cap = {}
+            
+            if capability.name.lower() == 'contratable':
+                
+                contract = None               
+                try:
+                    contract = Contract.objects.get(user=user, gadget_resource__id=gadget_id)
+                except Contract.DoesNotExist:
+                    pass
+                
+                if contract:
+                    cap['contract'] = contract.get_info()
             
             cap['name'] = capability.name
             cap['value'] = capability.value
@@ -175,7 +187,7 @@ def get_gadgetresource_data(data, user):
     data_ret['mashupId'] = data_fields['mashup_id']
     data_ret['uriTemplate'] = data_fields['template_uri']
     
-    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=data['pk'])
+    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=data['pk'],user=user)
 
     user_related_data = get_related_user_data (gadget_id=data['pk'], user_id=user.id)
     data_ret['added_by_user'] = user_related_data['added_by_user'] 
