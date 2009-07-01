@@ -80,9 +80,9 @@ var LayoutManagerFactory = function () {
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
-		if($('lite_toolbar_section')){
+		if ($('lite_toolbar_section')) {
 			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
-		}else{
+		} else {
 			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
 		}
 		
@@ -499,24 +499,22 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.wiringContainer);
 
 			wiring.wiringContainer.setStyle(showStyle);
-			//resizing the wiring table so that the scroll bar doesn't modify the table width.
+			//resizing the wiring table so that the scroll bar does not modify the table width.
 			wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
-			
-			//if(wiring.channels.length == 0){
+
 			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
 			var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
 			msg = interpolate(msg,
-				          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
-				           helpLink: videoTutorialMsg},
-				          true);
+			          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
+			           helpLink: videoTutorialMsg},
+			          true);
 			this.showTipMessage(msg, 1);
-			//}
 		}
-		
+
 		LayoutManager.prototype.hideTabs = function() {
 			$("tab_section").addClassName("hidden");
 		}
-		
+
 		LayoutManager.prototype.showTabs = function() {
 			$("tab_section").removeClassName("hidden");
 		}
@@ -535,13 +533,12 @@ var LayoutManagerFactory = function () {
 		}
 
 		//WorkSpaceMenu is dinamic so the different options must be added.
-		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces){
-			
+		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
 			workSpace.menu.clearSubmenuOptions();
-			
-			if(workspaces.length >= 1){
+
+			if(workspaces.length >= 1) {
 				workSpace.menu.submenu.className = "submenu border_bottom";
-			}else{
+			} else {
 				workSpace.menu.submenu.className = "submenu";
 			}
 
@@ -556,89 +553,89 @@ var LayoutManagerFactory = function () {
 		}
 
 		//merge Menu is dinamic so the different options must be added.
-		LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces){
-			
+		LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces) {
 			workSpace.mergeMenu.clearOptions();
 
-			for (var i=0; i<workspaces.length; i++){
-				var context = {firstWK: workSpace, scndWK: workspaces[i]}
+			for (var i = 0; i < workspaces.length; i++) {
+				var context = {firstWK: workSpace, scndWK: workspaces[i]};
 				workSpace.mergeMenu.addOption(null,
 					workspaces[i].workSpaceState.name,
 					function () {
 						this.firstWK.mergeWith(this.scndWK.workSpaceState.id);
 					}.bind(context),
-					 i);
+					i);
 			}
 		}
 
-		//Shows the asked drop down menu 
-		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, x, y) {
+		/**
+		 * Shows the asked drop down menu.
+		 */
+		LayoutManager.prototype.showDropDownMenu = function(menuType, menu, posX, posY) {
 			switch (menuType) {
 			case 'igadgetOps':
 				this.currentMenu = menu;
 				var position;
 
 				if (menu.parentMenu)
-					x = menu.parentMenu.menu.offsetLeft + menu.parentMenu.menu.offsetWidth - 10;
+					posX = menu.parentMenu.menu.offsetLeft + menu.parentMenu.menu.offsetWidth - 10;
 
-				if (x + menu.menu.getWidth() <= BrowserUtilsFactory.getInstance().getWidth()) {
+				if (posX + menu.menu.getWidth() <= BrowserUtilsFactory.getInstance().getWidth()) {
 					//the menu has enough room to be displayed from left to right
-					this.currentMenu.show('right', x, y);
+					this.currentMenu.show('right', posX, posY);
 				} else {
 					if (menu.parentMenu)
-						x = menu.parentMenu.menu.offsetLeft + 10;
+						posX = menu.parentMenu.menu.offsetLeft + 10;
 
-					this.currentMenu.show('left', x, y);
+					this.currentMenu.show('left', posX, posY);
 				}
 				this.showClickableCover();
 				break;
 			case 'workSpaceOps':
 				this.currentMenu = menu;
-				this.currentMenu.show('center', x, y);
+				this.currentMenu.show('center', posX, posY);
 				this.showClickableCover();
 				break;
 			case 'tabOps':
 				this.currentMenu = menu;
-				if (x - menu.menu.getWidth()<=0)
-					this.currentMenu.show('right', x, y);
+				if ((posX - menu.menu.getWidth()) <= 0)
+					this.currentMenu.show('right', posX, posY);
 				else
-					this.currentMenu.show('left', x, y);
+					this.currentMenu.show('left', posX, posY);
 				this.showClickableCover();
 				break;
 			case 'workSpaceOpsSubMenu':
 				this.currentMenu = menu;
-				this.currentMenu.show('right', x, y);
+				this.currentMenu.show('right', posX, posY);
 				break;
 			case 'filterMenu':
 				this.currentMenu = menu;
 				var position;
-				if (y + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()){
+				if (posY + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()) {
 					//the menu has enough room to be displayed from top to bottom
-					this.currentMenu.show('left-bottom', x, y);
-				}else{
-					this.currentMenu.show('left-top', x, y);
+					this.currentMenu.show('left-bottom', posX, posY);
+				} else {
+					this.currentMenu.show('left-top', posX, posY);
 				}
 				this.showClickableCover();
 				break;
 			case 'filterHelp':
 				this.currentMenu = menu;
 				var position;
-				if (y + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()){
+				if (posY + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()) {
 					//the menu has enough room to be displayed from top to bottom
-					this.currentMenu.show('right-bottom', x, y);
-				}else{
-					this.currentMenu.show('right-top', x, y);
+					this.currentMenu.show('right-bottom', posX, posY);
+				} else {
+					this.currentMenu.show('right-top', posX, posY);
 				}
 				break;
 			default:
 				break;
 			}
-
 		}
 
 		//Shows the asked window menu
 		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, iframe_src){
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			//the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {
 				// only if the layer is displayed.
 				this.hideCover();
@@ -737,10 +734,10 @@ var LayoutManagerFactory = function () {
 
 		//Shows the message information
 		LayoutManager.prototype.showTipMessage = function(msg, type) {
-			if (this.informationMessagesStatus[type]) // Don't show me anymore
+			if (this.informationMessagesStatus[type]) // Do not show me anymore
 				return;
 
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
@@ -757,10 +754,10 @@ var LayoutManagerFactory = function () {
 
 		// Shows a generic information dialog
 		LayoutManager.prototype.showInfoMessage = function(msg, type, title) {
-			if (this.informationMessagesStatus[type]) // Don't show me anymore
+			if (this.informationMessagesStatus[type]) // Do not show me anymore
 				return;
 
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
@@ -774,7 +771,7 @@ var LayoutManagerFactory = function () {
 
 		// Shows a generic alert dialog
 		LayoutManager.prototype.showAlertMessage = function(msg) {
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
@@ -788,7 +785,7 @@ var LayoutManagerFactory = function () {
 
 		//Show sharing workspace results!
 		LayoutManager.prototype.showSharingWorkspaceResults = function(msg, shared_ws_data) {
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
@@ -820,7 +817,7 @@ var LayoutManagerFactory = function () {
 		 *        message type. (default value: Constants.Logging.INFO_MSG)
 		 */
 		LayoutManager.prototype.showMessageMenu = function(msg, type) {
-			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
 			}
@@ -870,7 +867,7 @@ var LayoutManagerFactory = function () {
 		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
 		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
-		//we don't need arrows
+		// we do not need arrows
 		this.rightSlider.style.display = "none";
 		this.leftSlider.style.display = "none";
 	}
@@ -904,7 +901,7 @@ var LayoutManagerFactory = function () {
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
 			this.scrollTabBar.setStyle({right: 0 + "px"});
-			//we don't need arrows
+			// we do not need arrows
 			this.rightSlider.style.display = "none";
 			this.leftSlider.style.display = "none";
 		} else { //if the scrollTabBar is bigger than the fixed tab, we need arrows
