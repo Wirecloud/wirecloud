@@ -275,9 +275,10 @@ wInOut.prototype._addInput = function(wIn) {
 
 wInOut.prototype._removeInput = function(wIn) {
 	if (this.inputs.getElementById(wIn.getId()) == wIn) {
-		this.inputs.remove(wIn);
 
 		var input_position = this.inputs.indexOf(wIn);
+		this.inputs.remove(wIn);
+
 		this.modified_inputs_state.removeById(input_position);
 	}
 }
