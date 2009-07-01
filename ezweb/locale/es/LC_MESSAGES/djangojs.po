@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-30 18:19+0200\n"
+"POT-Creation-Date: 2009-07-01 11:24+0200\n"
 "PO-Revision-Date: 2008-02-20 15:55+0100\n"
 "Last-Translator: manuel <miglesia@pegaso.ls.fi.upm.es>\n"
 "Language-Team: Spanish/Spain <es@li.org>\n"
@@ -235,58 +235,58 @@ msgstr "Error al eliminar el canal %(channelName)s: el canal no existe."
 msgid "Error : %(errorMsg)s."
 msgstr "Error: %(errorMsg)s"
 
-#: media/js/catalogue/Catalogue.js:190 media/js/opManager/WorkSpace.js:149
+#: media/js/catalogue/Catalogue.js:209 media/js/opManager/WorkSpace.js:149
 msgid "Error merging workspace: %(errorMsg)s."
 msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/catalogue/Catalogue.js:214
+#: media/js/catalogue/Catalogue.js:233
 msgid "Error cloning workspace: %(errorMsg)s."
 msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/catalogue/Catalogue.js:240
+#: media/js/catalogue/Catalogue.js:259
 msgid "All common tags"
 msgstr "Todas las etiquetas comunes"
 
-#: media/js/catalogue/Catalogue.js:246
+#: media/js/catalogue/Catalogue.js:265
 msgid "My common tags"
 msgstr "Mis etiquetas comunes"
 
-#: media/js/catalogue/Catalogue.js:252
+#: media/js/catalogue/Catalogue.js:271
 msgid "Others common tags"
 msgstr "Etiquetas comunes de otros"
 
-#: media/js/catalogue/Catalogue.js:435
+#: media/js/catalogue/Catalogue.js:454
 msgid "Error retrieving catalogue data: %(errorMsg)s."
 msgstr "Error al recibir los datos del catálogo: %(errorMsg)s"
 
-#: media/js/catalogue/Catalogue.js:497 media/js/catalogue/Catalogue.js:501
-#: media/js/catalogue/Catalogue.js:504
+#: media/js/catalogue/Catalogue.js:516 media/js/catalogue/Catalogue.js:520
+#: media/js/catalogue/Catalogue.js:523
 msgid "Search"
 msgstr "Buscar"
 
-#: media/js/catalogue/Catalogue.js:507
+#: media/js/catalogue/Catalogue.js:526
 msgid "Search by Tag"
 msgstr "Buscar por etiqueta"
 
-#: media/js/catalogue/Catalogue.js:510
+#: media/js/catalogue/Catalogue.js:529
 msgid "Search by Event"
 msgstr "Buscar por evento"
 
-#: media/js/catalogue/Catalogue.js:513
+#: media/js/catalogue/Catalogue.js:532
 msgid "Search by Slot"
 msgstr "Buscar por ranura"
 
-#: media/js/catalogue/Catalogue.js:516
+#: media/js/catalogue/Catalogue.js:535
 msgid "Search by Slot connectivity for %(resourceName)s %(resourceVersion)s"
 msgstr ""
 "Buscar por conectividad de ranura para %(resourceName)s %(resourceVersion)s"
 
-#: media/js/catalogue/Catalogue.js:520
+#: media/js/catalogue/Catalogue.js:539
 msgid "Search by Event connectivity for %(resourceName)s %(resourceVersion)s"
 msgstr ""
 "Buscar por conectividad de evento para %(resourceName)s %(resourceVersion)s"
 
-#: media/js/catalogue/Catalogue.js:524
+#: media/js/catalogue/Catalogue.js:543
 msgid ""
 "Search by Event and Slot connectivity for %(resourceName)s %(resourceVersion)"
 "s"
@@ -294,321 +294,321 @@ msgstr ""
 "Buscar por conectividad de ranura y evento para %(resourceName)s %"
 "(resourceVersion)s"
 
-#: media/js/catalogue/Catalogue.js:528
+#: media/js/catalogue/Catalogue.js:547
 msgid "Global Search"
 msgstr "Búqueda global"
 
-#: media/js/catalogue/Catalogue.js:559 media/js/catalogue/Catalogue.js:561
-#: media/js/catalogue/Catalogue.js:640 media/js/catalogue/Catalogue.js:642
+#: media/js/catalogue/Catalogue.js:578 media/js/catalogue/Catalogue.js:580
+#: media/js/catalogue/Catalogue.js:659 media/js/catalogue/Catalogue.js:661
 msgid "and"
 msgstr "y"
 
-#: media/js/catalogue/Catalogue.js:571 media/js/catalogue/Catalogue.js:573
-#: media/js/catalogue/Catalogue.js:600 media/js/catalogue/Catalogue.js:613
-#: media/js/catalogue/Catalogue.js:626 media/js/catalogue/Catalogue.js:654
-#: media/js/catalogue/Catalogue.js:656 media/js/catalogue/Catalogue.js:687
-#: media/js/catalogue/Catalogue.js:707 media/js/catalogue/Catalogue.js:720
+#: media/js/catalogue/Catalogue.js:590 media/js/catalogue/Catalogue.js:592
+#: media/js/catalogue/Catalogue.js:619 media/js/catalogue/Catalogue.js:632
+#: media/js/catalogue/Catalogue.js:645 media/js/catalogue/Catalogue.js:673
+#: media/js/catalogue/Catalogue.js:675 media/js/catalogue/Catalogue.js:706
+#: media/js/catalogue/Catalogue.js:726 media/js/catalogue/Catalogue.js:739
 msgid "or"
 msgstr "o"
 
-#: media/js/catalogue/Catalogue.js:582 media/js/catalogue/Catalogue.js:666
+#: media/js/catalogue/Catalogue.js:601 media/js/catalogue/Catalogue.js:685
 msgid "not"
 msgstr "no"
 
-#: media/js/catalogue/Catalogue.js:584 media/js/catalogue/Catalogue.js:668
+#: media/js/catalogue/Catalogue.js:603 media/js/catalogue/Catalogue.js:687
 msgid "neither"
 msgstr "ni"
 
-#: media/js/catalogue/Catalogue.js:584 media/js/catalogue/Catalogue.js:589
-#: media/js/catalogue/Catalogue.js:668 media/js/catalogue/Catalogue.js:673
+#: media/js/catalogue/Catalogue.js:603 media/js/catalogue/Catalogue.js:608
+#: media/js/catalogue/Catalogue.js:687 media/js/catalogue/Catalogue.js:692
 msgid "nor"
 msgstr "no"
 
-#: media/js/catalogue/Catalogue.js:595
+#: media/js/catalogue/Catalogue.js:614
 msgid "Tags: "
 msgstr "Etiquetas: "
 
-#: media/js/catalogue/Catalogue.js:608 media/js/catalogue/Catalogue.js:702
+#: media/js/catalogue/Catalogue.js:627 media/js/catalogue/Catalogue.js:721
 msgid "Events: "
 msgstr "Eventos: "
 
-#: media/js/catalogue/Catalogue.js:621 media/js/catalogue/Catalogue.js:715
+#: media/js/catalogue/Catalogue.js:640 media/js/catalogue/Catalogue.js:734
 msgid "Slots: "
 msgstr "Ranuras: "
 
-#: media/js/catalogue/Catalogue.js:734
+#: media/js/catalogue/Catalogue.js:753
 msgid "Reload"
 msgstr "Recargar"
 
-#: media/js/catalogue/Catalogue.js:747
+#: media/js/catalogue/Catalogue.js:766
 msgid "Reload Catalogue"
 msgstr "Recargar Catálogo"
 
-#: media/js/catalogue/Catalogue.js:761
+#: media/js/catalogue/Catalogue.js:780
 msgid "Gadgets per page: "
 msgstr "Gadgets por página: "
 
-#: media/js/catalogue/Catalogue.js:817
+#: media/js/catalogue/Catalogue.js:836
 msgid "Go to first page"
 msgstr "Ir a la primera página"
 
-#: media/js/catalogue/Catalogue.js:828
+#: media/js/catalogue/Catalogue.js:847
 msgid "Go to previous page"
 msgstr "Ir a la página anterior"
 
-#: media/js/catalogue/Catalogue.js:876
+#: media/js/catalogue/Catalogue.js:895
 msgid "Go to page "
 msgstr "Ir a la página "
 
-#: media/js/catalogue/Catalogue.js:914
+#: media/js/catalogue/Catalogue.js:933
 msgid "Go to last page"
 msgstr "Ir a la última página"
 
-#: media/js/catalogue/Catalogue.js:925
+#: media/js/catalogue/Catalogue.js:944
 msgid "Go to next page"
 msgstr "Ir a la página siguiente"
 
-#: media/js/catalogue/Catalogue.js:942
+#: media/js/catalogue/Catalogue.js:961
 msgid " Order by"
 msgstr " Ordenar por"
 
-#: media/js/catalogue/Catalogue.js:959
+#: media/js/catalogue/Catalogue.js:978
 msgid "Creation date"
 msgstr "Fecha de creación"
 
-#: media/js/catalogue/Catalogue.js:965
-#: media/js/interfaceLayout/WindowMenu.js:678
-#: media/js/interfaceLayout/WindowMenu.js:730
+#: media/js/catalogue/Catalogue.js:984
+#: media/js/interfaceLayout/WindowMenu.js:725
+#: media/js/interfaceLayout/WindowMenu.js:777
 msgid "Name"
 msgstr "Nombre"
 
-#: media/js/catalogue/Catalogue.js:971
-#: media/js/interfaceLayout/WindowMenu.js:651
+#: media/js/catalogue/Catalogue.js:990
+#: media/js/interfaceLayout/WindowMenu.js:698
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: media/js/catalogue/Catalogue.js:977
-#: media/js/interfaceLayout/WindowMenu.js:653
+#: media/js/catalogue/Catalogue.js:996
+#: media/js/interfaceLayout/WindowMenu.js:700
 msgid "Author"
 msgstr "Autor"
 
-#: media/js/catalogue/Catalogue.js:983
+#: media/js/catalogue/Catalogue.js:1002
 msgid "Popularity"
 msgstr "Popularidad"
 
-#: media/js/catalogue/Resource.js:117
+#: media/js/catalogue/Resource.js:118
 #: media/js/cmsutils/widgets/SelectFilter2.js:48
 msgid "Add"
 msgstr "Añadir"
 
-#: media/js/catalogue/Resource.js:184
+#: media/js/catalogue/Resource.js:185
 msgid "Show resource details"
 msgstr "Mostrar detalles del recurso"
 
-#: media/js/catalogue/Resource.js:224 media/js/catalogue/Resource.js.py:762
+#: media/js/catalogue/Resource.js:225 media/js/catalogue/Resource.js.py:765
 msgid "More"
 msgstr "Más"
 
-#: media/js/catalogue/Resource.js:255
+#: media/js/catalogue/Resource.js:258
 msgid "Gadget details"
 msgstr "Detalles del gadget"
 
-#: media/js/catalogue/Resource.js:261
+#: media/js/catalogue/Resource.js:264
 msgid "Mashup details"
 msgstr "Detalles del mashup"
 
-#: media/js/catalogue/Resource.js:280 media/js/catalogue/Resource.js.py:281
+#: media/js/catalogue/Resource.js:283 media/js/catalogue/Resource.js.py:284
 msgid "More info"
 msgstr "Más info"
 
-#: media/js/catalogue/Resource.js:301
+#: media/js/catalogue/Resource.js:304
 msgid "Vote Me... "
 msgstr "Vótame..."
 
-#: media/js/catalogue/Resource.js:305
+#: media/js/catalogue/Resource.js:308
 msgid "Vote Saved "
 msgstr "Voto guardado"
 
-#: media/js/catalogue/Resource.js:318 media/js/catalogue/Resource.js.py:359
+#: media/js/catalogue/Resource.js:321 media/js/catalogue/Resource.js.py:362
 msgid "Ehh..."
 msgstr "Ehh..."
 
-#: media/js/catalogue/Resource.js:322 media/js/catalogue/Resource.js.py:363
+#: media/js/catalogue/Resource.js:325 media/js/catalogue/Resource.js.py:366
 msgid "Not Bad"
 msgstr "No está mal"
 
-#: media/js/catalogue/Resource.js:326 media/js/catalogue/Resource.js.py:367
+#: media/js/catalogue/Resource.js:329 media/js/catalogue/Resource.js.py:370
 msgid "Pretty Good"
 msgstr "Bueno"
 
-#: media/js/catalogue/Resource.js:330 media/js/catalogue/Resource.js.py:371
+#: media/js/catalogue/Resource.js:333 media/js/catalogue/Resource.js.py:374
 msgid "Out Standing"
 msgstr "Notable"
 
-#: media/js/catalogue/Resource.js:334 media/js/catalogue/Resource.js.py:375
+#: media/js/catalogue/Resource.js:337 media/js/catalogue/Resource.js.py:378
 msgid "Awesome!"
 msgstr "¡Fantástico!"
 
-#: media/js/catalogue/Resource.js:351
+#: media/js/catalogue/Resource.js:354
 msgid "Vote Result:"
 msgstr "Resultado de los votos:"
 
-#: media/js/catalogue/Resource.js:392
+#: media/js/catalogue/Resource.js:395
 msgid "Tagcloud"
 msgstr "Nube de etiquetas"
 
-#: media/js/catalogue/Resource.js:400 media/js/catalogue/Resource.js.py:782
-#: media/js/catalogue/Resource.js:810 media/js/catalogue/Resource.js.py:836
+#: media/js/catalogue/Resource.js:403 media/js/catalogue/Resource.js.py:785
+#: media/js/catalogue/Resource.js:813 media/js/catalogue/Resource.js.py:839
 msgid "All tags"
 msgstr "Todas las etiquetas"
 
-#: media/js/catalogue/Resource.js:403 media/js/catalogue/Resource.js.py:791
-#: media/js/catalogue/Resource.js:819 media/js/catalogue/Resource.js.py:839
+#: media/js/catalogue/Resource.js:406 media/js/catalogue/Resource.js.py:794
+#: media/js/catalogue/Resource.js:822 media/js/catalogue/Resource.js.py:842
 msgid "My tags"
 msgstr "Mis etiquetas"
 
-#: media/js/catalogue/Resource.js:412 media/js/catalogue/Resource.js.py:794
-#: media/js/catalogue/Resource.js:828 media/js/catalogue/Resource.js.py:848
+#: media/js/catalogue/Resource.js:415 media/js/catalogue/Resource.js.py:797
+#: media/js/catalogue/Resource.js:831 media/js/catalogue/Resource.js.py:851
 msgid "Others tags"
 msgstr "Etiquetas de otros"
 
-#: media/js/catalogue/Resource.js:434
+#: media/js/catalogue/Resource.js:437
 msgid "New tags"
 msgstr "Nuevas etiquetas"
 
-#: media/js/catalogue/Resource.js:469
+#: media/js/catalogue/Resource.js:472
 msgid "Tag"
 msgstr "Etiquetar"
 
-#: media/js/catalogue/Resource.js:491
+#: media/js/catalogue/Resource.js:494
 msgid "Tag the resource"
 msgstr "Etiquetar el recurso"
 
-#: media/js/catalogue/Resource.js:505
-#: media/js/interfaceLayout/WindowMenu.js:655
+#: media/js/catalogue/Resource.js:508
+#: media/js/interfaceLayout/WindowMenu.js:702
 msgid "Description"
 msgstr "Descripción"
 
-#: media/js/catalogue/Resource.js:516
+#: media/js/catalogue/Resource.js:519
 msgid "Show More..."
 msgstr "Ver más..."
 
-#: media/js/catalogue/Resource.js:530
+#: media/js/catalogue/Resource.js:533
 msgid "Resource connectivity"
 msgstr "Conectividad del recurso"
 
-#: media/js/catalogue/Resource.js:545
+#: media/js/catalogue/Resource.js:548
 msgid "All compatible gadgets by events are highlighted in this color"
 msgstr ""
 "Todos los gadgets compatibles por eventos están resaltados en este color"
 
-#: media/js/catalogue/Resource.js:551
+#: media/js/catalogue/Resource.js:554
 msgid "Search by all compatible events"
 msgstr "Buscar por todos los eventos compatibles"
 
-#: media/js/catalogue/Resource.js:552 media/js/catalogue/Resource.js.py:560
-#: media/js/interfaceLayout/WindowMenu.js:736
+#: media/js/catalogue/Resource.js:555 media/js/catalogue/Resource.js.py:563
+#: media/js/interfaceLayout/WindowMenu.js:783
 msgid "Events"
 msgstr "Eventos"
 
-#: media/js/catalogue/Resource.js:570
+#: media/js/catalogue/Resource.js:573
 msgid "All compatible gadgets by slots are highlighted in this color"
 msgstr ""
 "Todos los gadgets compatibles por ranuras están resaltados en este color"
 
-#: media/js/catalogue/Resource.js:576
+#: media/js/catalogue/Resource.js:579
 msgid "Search by all compatible slots"
 msgstr "Buscar por todos las ranuras compatibles"
 
-#: media/js/catalogue/Resource.js:577 media/js/catalogue/Resource.js.py:585
+#: media/js/catalogue/Resource.js:580 media/js/catalogue/Resource.js.py:588
 msgid "Slots"
 msgstr "Ranuras"
 
-#: media/js/catalogue/Resource.js:601
+#: media/js/catalogue/Resource.js:604
 msgid "Search all connectable gadgets"
 msgstr "Buscar todos los gadgets conectables"
 
-#: media/js/catalogue/Resource.js:617 media/js/catalogue/Resource.js.py:623
+#: media/js/catalogue/Resource.js:620 media/js/catalogue/Resource.js.py:626
 msgid "Advanced Search by connectivity"
 msgstr "Búsqueda avanzada por conectividad"
 
-#: media/js/catalogue/Resource.js:626
+#: media/js/catalogue/Resource.js:629
 msgid "Hide Advanced Search by connectivity"
 msgstr "Ocultar búsqueda avanzada por conectividad"
 
-#: media/js/catalogue/Resource.js:639
+#: media/js/catalogue/Resource.js:642
 msgid "Selected version"
 msgstr "Versión seleccionada"
 
-#: media/js/catalogue/Resource.js:656
+#: media/js/catalogue/Resource.js:659
 msgid "Choose the version you want to view"
 msgstr "Seleccione la versión que desea ver"
 
-#: media/js/catalogue/Resource.js:669 media/js/catalogue/Resource.js.py:870
+#: media/js/catalogue/Resource.js:672 media/js/catalogue/Resource.js.py:873
 msgid "Show all versions"
 msgstr "Mostrar todas las versiones"
 
-#: media/js/catalogue/Resource.js:687
+#: media/js/catalogue/Resource.js:690
 msgid "Access to the Template"
 msgstr "Acceder al template"
 
-#: media/js/catalogue/Resource.js:698
+#: media/js/catalogue/Resource.js:701
 msgid "Update code"
 msgstr "Actualizar el código"
 
-#: media/js/catalogue/Resource.js:716
+#: media/js/catalogue/Resource.js:719
 msgid "Add Gadget"
 msgstr "Añadir Gadget"
 
-#: media/js/catalogue/Resource.js:728
-#: media/js/interfaceLayout/WindowMenu.js:262
+#: media/js/catalogue/Resource.js:731
+#: media/js/interfaceLayout/WindowMenu.js:309
 msgid "Add Mashup"
 msgstr "Añadir Mashup"
 
-#: media/js/catalogue/Resource.js:738
+#: media/js/catalogue/Resource.js:741
 msgid "Merge Mashup"
 msgstr "Mezclar Mashup"
 
-#: media/js/catalogue/Resource.js:867
+#: media/js/catalogue/Resource.js:870
 msgid "Hide all versions"
 msgstr "Ocultar todas las versiones"
 
-#: media/js/catalogue/Resource.js:941 media/js/catalogue/Tag.js:38
+#: media/js/catalogue/Resource.js:944 media/js/catalogue/Tag.js:38
 #: media/js/catalogue/Tag.js.py:56
 msgid "Search by "
 msgstr "Buscar por "
 
-#: media/js/catalogue/Resource.js:975
+#: media/js/catalogue/Resource.js:978
 msgid "Select this version as preferred version"
 msgstr "Seleccionar esta versión como versión favorita"
 
-#: media/js/catalogue/Resource.js:989
+#: media/js/catalogue/Resource.js:992
 msgid "Delete this version of the gadget"
 msgstr "Eliminar esta versión del gadget"
 
-#: media/js/catalogue/Resource.js:1020
+#: media/js/catalogue/Resource.js:1023
 msgid "Delete"
 msgstr "Eliminar"
 
-#: media/js/catalogue/Resource.js:1044
+#: media/js/catalogue/Resource.js:1047
 msgid "Search by %(slotName)s"
 msgstr "Buscar por %(slotName)s"
 
-#: media/js/catalogue/Resource.js:1097
+#: media/js/catalogue/Resource.js:1100
 msgid "Delete tag"
 msgstr "Eliminar etiqueta"
 
-#: media/js/catalogue/Resource.js:1160
+#: media/js/catalogue/Resource.js:1163
 msgid "%(voteCount)s vote"
 msgid_plural "%(voteCount)s votes"
 msgstr[0] "%(errorCount)s error"
 msgstr[1] "%(errorCount)s errores"
 
-#: media/js/catalogue/Resource.js:1175
+#: media/js/catalogue/Resource.js:1178
 msgid "Error creating the resource: %(errorMsg)s."
 msgstr "Error al crear el recurso: %(errorMsg)s"
 
-#: media/js/catalogue/Tagger.js:36 media/js/catalogue/UIUtils.js:594
+#: media/js/catalogue/Tagger.js:36 media/js/catalogue/UIUtils.js:618
 msgid "Tags must have at least three characters."
 msgstr "La etiquetas deben tener al menos tres carácteres"
 
@@ -620,61 +620,61 @@ msgstr "Error al enviar las etiquetas: %(errorMsg)s"
 msgid "Error removing tag: %(errorMsg)s."
 msgstr "Error al eliminar la etiqueta: %(errorMsg)s"
 
-#: media/js/catalogue/UIUtils.js:63
+#: media/js/catalogue/UIUtils.js:87
 msgid "The resource could not be added to the catalogue: %(errorMsg)s."
 msgstr "No se pudo añadir el recurso al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/UIUtils.js:66
+#: media/js/catalogue/UIUtils.js:90
 msgid "The gadget is already added to the catalogue"
 msgstr "El gadget ha sido añadido al catálogo"
 
-#: media/js/catalogue/UIUtils.js:570
+#: media/js/catalogue/UIUtils.js:594
 msgid "Error deleting the Gadget: %(errorMsg)s."
 msgstr "Error al eliminar el gadget: %(errorMsg)s"
 
-#: media/js/catalogue/UIUtils.js:626
+#: media/js/catalogue/UIUtils.js:650
 msgid "Delete gadget"
 msgstr "Eliminar Gadget"
 
-#: media/js/catalogue/UIUtils.js:762 media/js/catalogue/UIUtils.js.py:799
-#: media/js/catalogue/UIUtils.js:848
+#: media/js/catalogue/UIUtils.js:786 media/js/catalogue/UIUtils.js.py:823
+#: media/js/catalogue/UIUtils.js:872
 msgid "Advanced Tagging"
 msgstr "Etiquetado avanzado"
 
-#: media/js/catalogue/UIUtils.js:765 media/js/catalogue/UIUtils.js.py:802
-#: media/js/catalogue/UIUtils.js:851
+#: media/js/catalogue/UIUtils.js:789 media/js/catalogue/UIUtils.js.py:826
+#: media/js/catalogue/UIUtils.js:875
 msgid "Advanced Search"
 msgstr "Búsqueda avanzada"
 
-#: media/js/catalogue/UIUtils.js:805 media/js/catalogue/UIUtils.js.py:854
+#: media/js/catalogue/UIUtils.js:829 media/js/catalogue/UIUtils.js.py:878
 msgid "Development Options"
 msgstr "Opciones de desarrollo"
 
-#: media/js/catalogue/UIUtils.js:824
+#: media/js/catalogue/UIUtils.js:848
 msgid "Hide Tagging"
 msgstr "Ocultar etiquetado"
 
-#: media/js/catalogue/UIUtils.js:827
+#: media/js/catalogue/UIUtils.js:851
 msgid "Simple Search"
 msgstr "Búsqueda sencilla"
 
-#: media/js/catalogue/UIUtils.js:830
+#: media/js/catalogue/UIUtils.js:854
 msgid "Hide Development Options"
 msgstr "Ocultar opciones de desarrollo"
 
-#: media/js/catalogue/UIUtils.js:897 media/js/catalogue/UIUtils.js.py:917
+#: media/js/catalogue/UIUtils.js:921 media/js/catalogue/UIUtils.js.py:941
 msgid "Advanced "
 msgstr "Avanzada "
 
-#: media/js/catalogue/UIUtils.js:907
+#: media/js/catalogue/UIUtils.js:931
 msgid "Simple "
 msgstr "Sencilla "
 
-#: media/js/catalogue/UIUtils.js:1190
+#: media/js/catalogue/UIUtils.js:1214
 msgid "Error POST"
 msgstr "Error de POST"
 
-#: media/js/catalogue/UIUtils.js:1233
+#: media/js/catalogue/UIUtils.js:1257
 msgid "Error updating the preferred version: %(errorMsg)s."
 msgstr "Error al actualizar la versión favorita: %(errorMsg)s."
 
@@ -866,165 +866,201 @@ msgstr ""
 "interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita los %"
 "(helpLink)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:148
+#: media/js/interfaceLayout/LayoutManager.js:624
+msgid "Do you really want to remove this tab?"
+msgstr "¿Realmente desea eliminar esta pestaña?"
+
+#: media/js/interfaceLayout/LayoutManager.js:632
+msgid "Do you want to cancel the subscription to the service?"
+msgstr "¿Realmente desea cancelar la subscripción a este servicio?"
+
+#: media/js/interfaceLayout/LayoutManager.js:640
+msgid "Do you really want to remove this workspace?"
+msgstr "¿Realmente desea eliminar este entorno de trabajo?"
+
+#: media/js/interfaceLayout/LayoutManager.js:655
+msgid "Do you really want to remove this version of the gadget?"
+msgstr "Eliminar esta versión del gadget"
+
+#: media/js/interfaceLayout/LayoutManager.js:657
+msgid ""
+"WARNING! All versions of this gadget will be removed too! Do you really want "
+"to remove this gadget?"
+msgstr ""
+"¡Atención! ¡Está a punto de eliminar todas las versiones de este gadget! "
+"¿Está seguro de que quiere realizar esta operación?"
+
+#: media/js/interfaceLayout/LayoutManager.js:678
+msgid ""
+"You are going to add a Mashup that could be composed by more than one "
+"gadget. Do you want to add it to a new Workspace or to the current one?"
+msgstr ""
+"Estas a punto de añadir un Mashup que podría estar compuesto por más de un "
+"gadget. ¿Desea añadirlo a un nuevo Workspace o al Workspace actual?"
+
+#: media/js/interfaceLayout/WindowMenu.js:143
+msgid "Contratation Information"
+msgstr "Información de contratación"
+
+#: media/js/interfaceLayout/WindowMenu.js:195
 msgid "Create workSpace"
 msgstr "Crear entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:165
+#: media/js/interfaceLayout/WindowMenu.js:212
 msgid "Nombre: "
 msgstr "Nombre: "
 
-#: media/js/interfaceLayout/WindowMenu.js:195
+#: media/js/interfaceLayout/WindowMenu.js:242
 msgid "Invalid name: the name \\\"%(newName)s\\\" is already in use"
 msgstr "Nombre inválido: el nombre \\\"%(newName)s\\\" ya se está usando."
 
-#: media/js/interfaceLayout/WindowMenu.js:216
-#: media/js/interfaceLayout/WindowMenu.js:325
+#: media/js/interfaceLayout/WindowMenu.js:263
+#: media/js/interfaceLayout/WindowMenu.js:372
 msgid "Warning"
 msgstr "Aviso"
 
-#: media/js/interfaceLayout/WindowMenu.js:220
-#: media/js/interfaceLayout/WindowMenu.js:266
-#: media/js/interfaceLayout/WindowMenu.js:347
-#: media/js/interfaceLayout/WindowMenu.js:785
+#: media/js/interfaceLayout/WindowMenu.js:267
+#: media/js/interfaceLayout/WindowMenu.js:313
+#: media/js/interfaceLayout/WindowMenu.js:394
+#: media/js/interfaceLayout/WindowMenu.js:832
 msgid "Info:"
 msgstr "Info:"
 
-#: media/js/interfaceLayout/WindowMenu.js:325
+#: media/js/interfaceLayout/WindowMenu.js:372
 msgid "Error"
 msgstr "Error"
 
-#: media/js/interfaceLayout/WindowMenu.js:325
+#: media/js/interfaceLayout/WindowMenu.js:372
 msgid "Info"
 msgstr "Info"
 
-#: media/js/interfaceLayout/WindowMenu.js:353
+#: media/js/interfaceLayout/WindowMenu.js:400
 msgid "Don't show me anymore"
 msgstr "No volver a mostrar"
 
-#: media/js/interfaceLayout/WindowMenu.js:385
+#: media/js/interfaceLayout/WindowMenu.js:432
 msgid "Do you know what ... ?"
 msgstr "¿Sabías que ... ?"
 
-#: media/js/interfaceLayout/WindowMenu.js:503
+#: media/js/interfaceLayout/WindowMenu.js:550
 msgid "required field"
 msgstr "campo obligatorio"
 
-#: media/js/interfaceLayout/WindowMenu.js:585
+#: media/js/interfaceLayout/WindowMenu.js:632
 msgid "The following required fields are empty: %(fields)s."
 msgstr "Los siguientes campos obligatorios están vacios: %(fields)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:591
+#: media/js/interfaceLayout/WindowMenu.js:638
 msgid "The following fields contain invalid characters: %(fields)s."
 msgstr "Los siguientes campos contienen caracteres inválidos: %(fields)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:597
+#: media/js/interfaceLayout/WindowMenu.js:644
 msgid "The following fields does not contain a valid URL: %(fields)s."
 msgstr "Los siguientes campos no contienen una URL válida: %(fields)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:650
+#: media/js/interfaceLayout/WindowMenu.js:697
 msgid "Mashup Name"
 msgstr "Nombre del Mashup"
 
-#: media/js/interfaceLayout/WindowMenu.js:652
+#: media/js/interfaceLayout/WindowMenu.js:699
 msgid "Version"
 msgstr "Versión"
 
-#: media/js/interfaceLayout/WindowMenu.js:654
+#: media/js/interfaceLayout/WindowMenu.js:701
 msgid "Email"
 msgstr "E-Mail"
 
-#: media/js/interfaceLayout/WindowMenu.js:656
-#: media/js/interfaceLayout/WindowMenu.js:681
-#: media/js/interfaceLayout/WindowMenu.js:739
+#: media/js/interfaceLayout/WindowMenu.js:703
+#: media/js/interfaceLayout/WindowMenu.js:728
+#: media/js/interfaceLayout/WindowMenu.js:786
 msgid "Image URL"
 msgstr "Imagen (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:657
+#: media/js/interfaceLayout/WindowMenu.js:704
 msgid "Wiki URL"
 msgstr "Wiki (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:658
-#: media/js/interfaceLayout/WindowMenu.js:693
-#: media/js/interfaceLayout/WindowMenu.js:742
+#: media/js/interfaceLayout/WindowMenu.js:705
+#: media/js/interfaceLayout/WindowMenu.js:740
+#: media/js/interfaceLayout/WindowMenu.js:789
 msgid "Organization"
 msgstr "Organización"
 
-#: media/js/interfaceLayout/WindowMenu.js:661
+#: media/js/interfaceLayout/WindowMenu.js:708
 msgid "Publish Workspace"
 msgstr "Publicar el entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:679
-#: media/js/interfaceLayout/WindowMenu.js:731
+#: media/js/interfaceLayout/WindowMenu.js:726
+#: media/js/interfaceLayout/WindowMenu.js:778
 msgid "URL"
 msgstr "URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:682
-#: media/js/interfaceLayout/WindowMenu.js:740
+#: media/js/interfaceLayout/WindowMenu.js:729
+#: media/js/interfaceLayout/WindowMenu.js:787
 msgid "iPhone Image URL"
 msgstr "Imagen para el iPhone (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:683
+#: media/js/interfaceLayout/WindowMenu.js:730
 msgid "Template color"
 msgstr "Color de la plantilla"
 
-#: media/js/interfaceLayout/WindowMenu.js:686
+#: media/js/interfaceLayout/WindowMenu.js:733
 msgid "blue"
 msgstr "azul"
 
-#: media/js/interfaceLayout/WindowMenu.js:687
+#: media/js/interfaceLayout/WindowMenu.js:734
 msgid "orange"
 msgstr "naranja"
 
-#: media/js/interfaceLayout/WindowMenu.js:688
+#: media/js/interfaceLayout/WindowMenu.js:735
 msgid "red"
 msgstr "rojo"
 
-#: media/js/interfaceLayout/WindowMenu.js:689
+#: media/js/interfaceLayout/WindowMenu.js:736
 msgid "green"
 msgstr "verde"
 
-#: media/js/interfaceLayout/WindowMenu.js:692
+#: media/js/interfaceLayout/WindowMenu.js:739
 msgid "Menu Color"
 msgstr "Color del menú"
 
-#: media/js/interfaceLayout/WindowMenu.js:696
+#: media/js/interfaceLayout/WindowMenu.js:743
 msgid "Add new feed"
 msgstr "Añadir un feed nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:733
+#: media/js/interfaceLayout/WindowMenu.js:780
 msgid "Parse URL Parameters"
 msgstr "Interpretar los parámetros de la URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:734
+#: media/js/interfaceLayout/WindowMenu.js:781
 msgid "Fixed Params"
 msgstr "Parámetros fijos"
 
-#: media/js/interfaceLayout/WindowMenu.js:735
+#: media/js/interfaceLayout/WindowMenu.js:782
 msgid "Default Param Values"
 msgstr "Valores por defecto de los parámetros"
 
-#: media/js/interfaceLayout/WindowMenu.js:738
+#: media/js/interfaceLayout/WindowMenu.js:785
 msgid "Home URL"
 msgstr "URL inicial"
 
-#: media/js/interfaceLayout/WindowMenu.js:741
+#: media/js/interfaceLayout/WindowMenu.js:788
 msgid "Menu Color (Hex.)"
 msgstr "Color del menú (Hex.)"
 
-#: media/js/interfaceLayout/WindowMenu.js:743
+#: media/js/interfaceLayout/WindowMenu.js:790
 msgid "Source"
 msgstr "Fuente"
 
-#: media/js/interfaceLayout/WindowMenu.js:744
+#: media/js/interfaceLayout/WindowMenu.js:791
 msgid "Source URL"
 msgstr "Fuente (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:747
+#: media/js/interfaceLayout/WindowMenu.js:794
 msgid "Add new site"
 msgstr "Añadir un sitio nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:780
+#: media/js/interfaceLayout/WindowMenu.js:827
 msgid "Shared WorkSpace Info"
 msgstr "Información del WorkSpace"
 
