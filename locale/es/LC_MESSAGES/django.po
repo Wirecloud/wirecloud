@@ -1153,7 +1153,7 @@ msgstr "Acceder"
 
 #: ezweb/templates/registration/login.html:314
 msgid "Your first time in EzWeb? Access with your login in"
-msgstr "Accede con tu usuario de "
+msgstr "¿Tú primera vez en EzWeb? Accede con tu usuario de"
 
 #: ezweb/templates/registration/login.html:314
 msgid "or"
@@ -1169,7 +1169,7 @@ msgid ""
 "your favourite feeds and web pages."
 msgstr ""
 "¡<b>Ayúdanos</b> a hacer que crezca nuestro catálogo! Añade fácilmente "
-"gadgets vinculadosa tus páginas web y feeds favoritos."
+"gadgets vinculados a tus páginas web y feeds favoritos."
 
 #: ezweb/templates/registration/login.html:322
 msgid ""

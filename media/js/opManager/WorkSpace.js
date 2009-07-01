@@ -534,43 +534,43 @@ function WorkSpace (workSpaceState) {
 			var result = eval ('(' + response + ')');
 			
 			if (result['result'] != 'ok')
-				LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have NOT been successfully shared!", '');
+				LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
 			else
-				LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have been successfully shared!", result);
+				LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has been successfully shared."), result);
 		}
-		
+
 		var share_workspace_error = function (transport) {
 			var response = transport.responseText;
 			var result = eval ('(' + response + ')');
 			
-			LayoutManagerFactory.getInstance().showSharingWorkspaceResults("Workspace have NOT been successfully shared!", '');
+			LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
 		}
-		
+
 		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
-		
+
 		PersistenceEngineFactory.getInstance().send_update(url, {}, this, share_workspace_success, share_workspace_error);
 	}
-	
+
 	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
 		params = 'data=' + publicationData;
 		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
 	}
-	
+
 	WorkSpace.prototype.mergeWith = function(workspace_id){
 		var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
 	}
-	
+
 	//Check if a workspace is shared with another users
 	WorkSpace.prototype.isShared = function(){
 		return eval(this.workSpaceState['shared']);
 	}
 
-    // *****************
-    //  CONSTRUCTOR
-    // *****************
+	// *****************
+	//  CONSTRUCTOR
+	// *****************
 
 	this.workSpaceState = workSpaceState;
 	this.workSpaceGlobal = null;

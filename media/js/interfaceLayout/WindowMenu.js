@@ -154,7 +154,7 @@ function ContratationWindow(element) {
 	
 	// Finish button
 	this.acceptButton = document.createElement('button');
-	this.acceptButton.appendChild(document.createTextNode('Finish'));
+	this.acceptButton.appendChild(document.createTextNode(gettext('Finish')));
 	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
 	this.windowBottom.appendChild(this.acceptButton);
@@ -197,12 +197,12 @@ function CreateWindowMenu (element) {
 
 	// Accept button
 	this.button = document.createElement('button');
-	this.button.appendChild(document.createTextNode('Create'));
+	this.button.appendChild(document.createTextNode(gettext('Create')));
 	this.windowBottom.appendChild(this.button);
 
 	// Cancel button
 	var cancelButton = document.createElement('button');
-	cancelButton.appendChild(document.createTextNode('Cancel'));
+	cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
 	cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(cancelButton);
 
@@ -270,14 +270,14 @@ function AlertWindowMenu () {
 
 	// Accept button
 	this.acceptButton = document.createElement('button');
-	this.acceptButton.appendChild(document.createTextNode('Yes'));
+	this.acceptButton.appendChild(document.createTextNode(gettext('Yes')));
 	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
 	this.windowBottom.appendChild(this.acceptButton);
 
 	// Cancel button
 	this.cancelButton = document.createElement('button');
-	this.cancelButton.appendChild(document.createTextNode('No'));
+	this.cancelButton.appendChild(document.createTextNode(gettext('No')));
 	this.cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(this.cancelButton);
 
@@ -319,13 +319,13 @@ function AddMashupWindowMenu (actions) {
 
 	// New Workspace button
 	this.acceptButton = document.createElement('button');
-	this.acceptButton.appendChild(document.createTextNode('New Workspace'));
+	this.acceptButton.appendChild(document.createTextNode(gettext('New Workspace')));
 	this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.acceptButton);
 
 	// Cancel button
 	this.cancelButton = document.createElement('button');
-	this.cancelButton.appendChild(document.createTextNode('Current Workspace'));
+	this.cancelButton.appendChild(document.createTextNode(gettext('Current Workspace')));
 	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.cancelButton);
 	
@@ -366,7 +366,7 @@ function MessageWindowMenu (element) {
 
 	// Accept button
 	this.button = document.createElement('button');
-	this.button.appendChild(document.createTextNode('Accept'));
+	this.button.appendChild(document.createTextNode(gettext('Accept')));
 	this.windowBottom.appendChild(this.button);
 	this.button.observe("click", this._closeListener);
 }
@@ -379,7 +379,7 @@ MessageWindowMenu.prototype.setFocus = function() {
 MessageWindowMenu.prototype.setType = function(type) {
 	var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
 	var icons = ['', 'error', 'warning', 'info'];
-	var iconDesc = ['', 'Error:', 'Warning:', 'Info:'];
+	var iconDesc = ['', gettext('Error:'), gettext('Warning:'), gettext('Info:')];
 
 	// Update title
 	this.titleElement.update(titles[type]);
@@ -570,14 +570,14 @@ function FormWindowMenu (fields, title) {
 
 	// Accept button
 	this.button = document.createElement('button');
-	this.button.appendChild(document.createTextNode('Accept'));
+	this.button.appendChild(document.createTextNode(gettext('Accept')));
 	this.windowBottom.appendChild(this.button);
 	this._acceptHandler = this._acceptHandler.bind(this);
 	this.button.observe("click", this._acceptHandler);
 
 	// Cancel button
 	var cancelButton = document.createElement('button');
-	cancelButton.appendChild(document.createTextNode('Cancel'));
+	cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
 	cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(cancelButton);
 }
@@ -714,7 +714,7 @@ FormWindowMenu.prototype.show = function () {
 /**
  * Especific class for publish windows
  */
-function PublishWindowMenu (element, fields) {
+function PublishWindowMenu (element) {
 	var fields = {
 		'name': {label: gettext('Mashup Name'), type:'id', required: true},
 		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
@@ -724,7 +724,7 @@ function PublishWindowMenu (element, fields) {
 		'description': {label: gettext('Description'), type:'longtext'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
-		'organization'  : {label: gettext('Organization'), type: 'text'},
+		'organization'  : {label: gettext('Organization'), type: 'text'}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
@@ -756,10 +756,10 @@ function AddFeedMenu (element) {
 		                             ['orange', gettext('orange')],
 		                             ['red', gettext('red')],
 		                             ['green', gettext('green')],
-		                            ],
+		                            ]
 		                  },
 		'menu_color'    : {label: gettext('Menu Color'), type: 'color'},
-		'organization'  : {label: gettext('Organization'), type: 'text'},
+		'organization'  : {label: gettext('Organization'), type: 'text'}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new feed'));
@@ -811,7 +811,7 @@ function AddSiteMenu (element) {
 		'menu_color': {label: gettext('Menu Color (Hex.)'), type: 'color'},
 		'organization': {label: gettext('Organization'), type: 'text'},
 		'source': {label: gettext('Source'), type: 'text'},
-		'source_URL': {label: gettext('Source URL'), type: 'url'},
+		'source_URL': {label: gettext('Source URL'), type: 'url'}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new site'));
@@ -856,41 +856,41 @@ function SharedWorkSpaceMenu() {
 	icon.setAttribute('src', _currentTheme.getIconURL('info'));
 	icon.setAttribute('alt', gettext('Info:'));
 	this.windowContent.insertBefore(icon, this.msgElement);
-	
+
 	// Extra HTML Elements (url and html_code)
-	//Table
+	// Table
 	this.addElement('tableElement', 'table', 'windowContent');
-	
-	//TR1
+
+	// TR1
 	this.addElement('tr1Element', 'tr', 'tableElement');
-	
-	//TD11
+
+	// TD11
 	this.addElement('td11Element', 'td', 'tr1Element');
-	
-	//LABEL1
+
+	// LABEL1
 	this.addElement('label1', 'label', 'td11Element');
-	this.label1.innerHTML = 'URL:';
-	
-	//TD12
+	this.label1.innerHTML = gettext('URL:');
+
+	// TD12
 	this.addElement('td12Element', 'td', 'tr1Element');
-	
-	//URL
+
+	// URL
 	this.addElement('urlElement', 'input', 'td12Element');
-	
-	//TR2
+
+	// TR2
 	this.addElement('tr2Element', 'tr', 'tableElement');
-	
-	//TD21
+
+	// TD21
 	this.addElement('td21Element', 'td', 'tr2Element');
-	
-	//LABEL2
+
+	// LABEL2
 	this.addElement('label2', 'label', 'td21Element');
-	this.label2.innerHTML = 'HTML code:';
-	
-	//TD12
+	this.label2.innerHTML = gettext('HTML code:');
+
+	// TD12
 	this.addElement('td22Element', 'td', 'tr2Element');
-	
-	//HTML
+
+	// HTML
 	this.addElement('html_codeElement', 'textarea', 'td22Element');
 	this.html_codeElement.setAttribute('cols', 30);
 	this.html_codeElement.setAttribute('rows', 3);
@@ -898,8 +898,8 @@ function SharedWorkSpaceMenu() {
 SharedWorkSpaceMenu.prototype = new WindowMenu();
 
 SharedWorkSpaceMenu.prototype.addElement = function(element_name, html_tag, father_name) {
-	eval('this.' + element_name + '= document.createElement(html_tag)');
-	eval('this.' + father_name + '.appendChild(this.' + element_name + ')');
+	this[element_name] = document.createElement(html_tag);
+	this[father_name].appendChild(this[element_name]);
 }
 
 SharedWorkSpaceMenu.prototype.setURL = function(url) {
@@ -907,7 +907,7 @@ SharedWorkSpaceMenu.prototype.setURL = function(url) {
 }
 
 SharedWorkSpaceMenu.prototype.setHTML = function(url) {
-    var html_code = '<object width="" height="" data="' + url + '"></object>';
+	var html_code = '<object width="" height="" data="' + url + '"></object>';
 	
 	this.html_codeElement.value = html_code;
 }
