@@ -318,7 +318,7 @@ h3{
 				    <input type="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
-				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {% trans 'or' %} <a href="http://ezweb.tid.es:8080/register/">{% trans 'register' %}</a>
+				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
 			</div>
 		</div>
 		<div id="tips">
