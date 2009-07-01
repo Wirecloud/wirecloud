@@ -62,6 +62,9 @@ class TemplateParser:
     
     def is_contratable(self):
         return self.handler._contratable
+    
+    def get_gadget(self):
+        return self.handler._gadget
 
 
 class TemplateHandler(handler.ContentHandler): 
@@ -84,6 +87,7 @@ class TemplateHandler(handler.ContentHandler):
         self._uri = uri
         self._gadget = None
         self._contratable = False
+        self._id = -1
         
         #Organizations
         self._organization_list = []

@@ -147,8 +147,8 @@ function ContratationWindow(element) {
 	WindowMenu.call(this, gettext('Contratation Information'));
 
 	this.iframe = document.createElement('iframe');
-	this.iframe.setAttribute('src', 'http://www.google.es');
-	this.iframe.setAttribute('width', 700);
+	this.iframe.setAttribute('src', '');
+	this.iframe.setAttribute('width', 600);
 	this.iframe.setAttribute('height', 600);
 	this.windowContent.appendChild(this.iframe);
 
@@ -170,11 +170,6 @@ function ContratationWindow(element) {
 
 ContratationWindow.prototype = new WindowMenu();
 
-//Calls the Create operation (the task the window is made for).
-ContratationWindow.prototype.executeOperation = function() {
-	alert("hola");
-}
-
 ContratationWindow.prototype.setHandler = function(acceptHandler, cancelHandler) {
 	this.acceptHandler = acceptHandler;
 	this.cancelHandler = cancelHandler;
@@ -188,6 +183,10 @@ ContratationWindow.prototype._newWorkspaceListener = function(e) {
 ContratationWindow.prototype._currentWorkspaceListener = function(e) {
 	this.cancelHandler();
 	LayoutManagerFactory.getInstance().hideCover();
+}
+
+ContratationWindow.prototype.setSrc = function(src) {
+	this.iframe.src=src;
 }
 
 

@@ -178,9 +178,18 @@ var CatalogueFactory  = function () {
 			var currentResource = this.getResource(resourceId_);
 			
 			if (currentResource.isContratable()) {
+				var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetBuy.iface?nUser=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
+	    
+		        var gadgetUrl = currentResource.getUriTemplate();
+		    	var gadgetName = currentResource.getName();
+		    	var gadgetId = currentResource.getId();
+	    
+	    		var final_url = urlTemplate.evaluate({"nDeveloper": ezweb_user_name, "nGadget": gadgetName, "template": gadgetUrl, "cApplication": gadgetId});
+			
 			    LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
 			      function(){ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());},
-			      function(){LayoutManagerFactory.getInstance().hideCover();}
+			      function(){LayoutManagerFactory.getInstance().hideCover();},
+			      final_url
 			    );
 			    
 			    return;

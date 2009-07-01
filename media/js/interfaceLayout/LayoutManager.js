@@ -637,7 +637,7 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the asked window menu
-		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton){
+		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, iframe_src){
 			//the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
 			if (this.currentMenu != null) {
 				// only if the layer is displayed.
@@ -719,6 +719,7 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['contratableAddInstanceMenu'];
 				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
+				this.currentMenu.setSrc(iframe_src);
 				break;
 			default:
 				return;

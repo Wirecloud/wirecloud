@@ -57,13 +57,29 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 		var result = eval ('(' + response_json + ')');
 	    
 	    if (result['contratable']) {
-	    	var contratable_window = window.open("http://macvaz82.googlepages.com/kk.html", "Gestión del modelo de negocio","status=0,toolbar=0,menubar=0,scrollbars=0,resizeble=0,location=0,directories=0,height=500, width=800");
+	        var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetNewApplication.iface?nDeveloper=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
+	    
+	    	var gadgetUrl = result['templateUrl'];
+	    	var gadgetName = result['gadgetName'];
+	    	var gadgetId = result['gadgetId'];
+	    
+	    	var final_url = urlTemplate.evaluate({"nDeveloper": ezweb_user_name, "nGadget": gadgetName, "template": gadgetUrl, "cApplication": gadgetId});
+	    	
+	    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
+			      function(){repaintOrderedByCreationDate()},
+			      function(){LayoutManagerFactory.getInstance().hideCover();},
+			      final_url
+			);
 	    }
 	    else {	
-			UIUtils.orderby = '-creation_date';
-			UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
-			LayoutManagerFactory.getInstance().hideCover();
+			repaintOrderedByCreationDate();
 		}
+	}
+	
+	var repaintOrderedByCreationDate = function () {
+		UIUtils.orderby = '-creation_date';
+		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
+		LayoutManagerFactory.getInstance().hideCover();	
 	}
 	
 	var newResourceOnError = function (transport, e) {

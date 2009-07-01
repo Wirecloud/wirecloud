@@ -91,8 +91,17 @@ class GadgetsCollection(Resource):
             msg = _("Problem parsing template xml")
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
+        
+        #Returning info to the catalogue of the created gadget!
+        contratable = str(templateParser.is_contratable()).lower()
+        
+        gadget = templateParser.get_gadget()
+        
+        gadgetName = gadget.short_name
+        gadgetId = gadget.id
 
-        json_ok = '{"result": "ok", "contratable": %s }' % str(templateParser.is_contratable()).lower()
+        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s}' % (contratable, template_uri, gadgetName, gadgetId)
+        
         return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 
 
