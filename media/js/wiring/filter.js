@@ -89,16 +89,6 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 	var checkResult = function(e) {
 		var msg;
 		
-		/*if(this.param._required && (! e.target.value  || e.target.value.match(/^\s$/))){
-			//restore the previous value
-			paramInput.value = channel.getFilterParams()[this.param._index]['value'];
-			
-			msg = interpolate(gettext("Filter param named '%(filterName)s' cannot be empty."), {filterName: this.param._label}, true);
-			this.wiringGUI.showMessage(msg);
-			//this.valueElement.appendChild(document.createTextNode(gettext('undefined')));
-			return;
-		}*/
-		
 		// Sets the param value
 		this.channel.setFilterParam(this.param._index, e.target.value);
 		
@@ -247,7 +237,6 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 				if(this._params[i].getRequired()){
 					msg = interpolate(gettext("Look out! '%(paramName)s' of '%(filterName)s' is required"), 
 						{paramName: this._params[i].getLabel(), filterName: this._label}, true);
-					LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
 					this._lastExecError = msg;
 					return gettext('undefined');
 					
@@ -302,27 +291,9 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
 	
 	try{
 	
-		// Exeutes the filter code
-/*		switch(this._nature){
-			case "NATIVE":
-				return eval ('channelValue_.' + this._name + '(' + params + ');');
-				break;
-			case "JSLIB":
-				if (params != '')
-					params = ',' + params;
-				return eval (this._name + '(channelValue_' + params + ');');
-				break;
-			case "USER":
-			case "PATT":
-			*/
-					return this._code(channelValue_, channel, params);
+		// Executes the filter code
+		return this._code(channelValue_, channel, params);
 
-
-	/*			break;
-			default:
-				break;
-		}
-	*/
 	}catch(err){
 		if(err.name == "DONT_PROPAGATE"){
 			throw new DontPropagateException(err)

@@ -279,7 +279,7 @@ wInOut.prototype._removeInput = function(wIn) {
 		var input_position = this.inputs.indexOf(wIn);
 		this.inputs.remove(wIn);
 
-		this.modified_inputs_state.removeById(input_position);
+		this.modified_inputs_state.splice(input_position, 1);
 	}
 }
 
