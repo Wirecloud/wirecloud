@@ -114,8 +114,10 @@ ConnectableGroupInterface.prototype.toggle = function (userAction) {
 	if (this.openedByUser && !userAction)
 		return;
 
-	if (!this.folded && this.connections > 0)
+	if (!this.folded && this.connections > 0) {
 		this.massiveToggle(userAction);
+		return;
+	}
 
 	this.forceToggle();
 	this.openedByUser = !this.fold && userAction;
@@ -176,7 +178,7 @@ ConnectableGroupInterface.prototype.massiveToggle = function(userAction) {
 	if (this.isAnyFolded())
 		this.massiveExpand(userAction);
 	else
-		this.massiveFold();
+		this.massiveFold(userAction);
 }
 
 /**
@@ -201,14 +203,14 @@ ConnectableGroupInterface.prototype.massiveExpand = function (userAction) {
  *
  * @param {Boolean} userAction
  */
-ConnectableGroupInterface.prototype.massiveFold = function () {
-	if (!this.folded) {
+ConnectableGroupInterface.prototype.massiveFold = function (userAction) {
+	if (!this.folded && (!this.openedByUser || userAction) && this.connections == 0) {
 		this.forceToggle();
 		this.openedByUser = false;
 	}
 
 	for (var i = 0; i < this.childConnectableGroups.length; i++)
-		this.childConnectableGroups[i].massiveFold();
+		this.childConnectableGroups[i].massiveFold(userAction);
 }
 
 /**
@@ -329,8 +331,7 @@ SlotTabInterface.prototype.repaintSiblings = function () {
 	if (this.wiringGUI.currentChannel == null)
 		return;
 
-	this.wiringGUI._uncheckChannelOutputs(this.wiringGUI.currentChannel);
-	this.wiringGUI._highlightChannelOutputs(this.wiringGUI.currentChannel);
+	this.wiringGUI.redrawChannelOutputs(this.wiringGUI.currentChannel);
 }
 
 /**
@@ -350,8 +351,7 @@ EventTabInterface.prototype.repaintSiblings = function () {
 	if (this.wiringGUI.currentChannel == null)
 		return;
 
-	this.wiringGUI._uncheckChannelInputs(this.wiringGUI.currentChannel);
-	this.wiringGUI._highlightChannelInputs(this.wiringGUI.currentChannel);
+	this.wiringGUI.redrawChannelInputs(this.wiringGUI.currentChannel);
 }
 
 
@@ -1129,8 +1129,7 @@ IGadgetSlotsInterface.prototype.repaintSiblings = function() {
 	if (this.wiringGUI.currentChannel == null)
 		return;
 
-	this.wiringGUI._uncheckChannelOutputs(this.wiringGUI.currentChannel);
-	this.wiringGUI._highlightChannelOutputs(this.wiringGUI.currentChannel);
+	this.wiringGUI.redrawChannelOutputs(this.wiringGUI.currentChannel);
 }
 
 IGadgetSlotsInterface.prototype._increaseConnections = function() {
@@ -1182,8 +1181,7 @@ IGadgetEventsInterface.prototype.repaintSiblings = function() {
 	if (this.wiringGUI.currentChannel == null)
 		return;
 
-	this.wiringGUI._uncheckChannelInputs(this.wiringGUI.currentChannel);
-	this.wiringGUI._highlightChannelInputs(this.wiringGUI.currentChannel);
+	this.wiringGUI.redrawChannelInputs(this.wiringGUI.currentChannel);
 }
 
 IGadgetEventsInterface.prototype._increaseConnections = function() {

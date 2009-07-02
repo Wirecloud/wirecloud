@@ -308,17 +308,15 @@ WiringInterface.prototype._registerSlot = function(slot) {
 WiringInterface.prototype.toggleEventColumn = function (expand) {
 	if (expand !== undefined) {
 		if (expand)
-			this.eventTabs.massiveExpand();
+			this.eventTabs.massiveExpand(false);
 		else
-			this.eventTabs.massiveFold();
+			this.eventTabs.massiveFold(false);
 	} else {
-		this.eventTabs.massiveToggle();
+		this.eventTabs.massiveToggle(false);
 	}
 
-	if (this.currentChannel) {
-		this._uncheckChannelInputs(this.currentChannel);
-		this._highlightChannelInputs(this.currentChannel);
-	}
+	if (this.currentChannel)
+		this.redrawChannelInputs(this.currentChannel);
 }
 
 /**
@@ -337,10 +335,8 @@ WiringInterface.prototype.toggleSlotColumn = function (expand) {
 		this.slotTabs.massiveToggle();
 	}
 
-	if (this.currentChannel) {
-		this._uncheckChannelOutputs(this.currentChannel);
-		this._highlightChannelOutputs(this.currentChannel);
-	}
+	if (this.currentChannel)
+		this.redrawChannelOutputs(this.currentChannel);
 }
 
 WiringInterface.prototype._clear = function() {
@@ -604,9 +600,8 @@ WiringInterface.prototype._highlight_friend_code = function (friend_code, highli
 	var fcBgColor = "#F7F7F7";
 	var fcElement = null;
 
-	try {
+	if (this.friend_codes[friend_code].fadder !== undefined)
 		this.friend_codes[friend_code].fadder.reset();
-	} catch(e){}
 
 	if (highlight) {
 		for (var i = 0; i < connectables.length; i++)
@@ -621,6 +616,40 @@ WiringInterface.prototype._highlight_friend_code = function (friend_code, highli
 }
 
 /**
+ * Redraws all the inputs of the given channel.
+ *
+ * @param {ChannelInterface} channel
+ */
+WiringInterface.prototype.redrawChannelInputs = function (channel) {
+	var channelAnchor = channel.getInputAnchor();
+	var connectionArrows = channelAnchor.getConnectionArrows().clone();
+	for (var i = 0; i < connectionArrows.length; i++) {
+		var arrow = connectionArrows[i];
+		var targetAnchor = arrow.getSourceAnchor();
+		arrow.disconnect();
+
+		this._drawArrow(targetAnchor, channelAnchor);
+	}
+}
+
+/**
+ * Redraws all the outputs of the given channel.
+ *
+ * @param {ChannelInterface} channel
+ */
+WiringInterface.prototype.redrawChannelOutputs = function (channel) {
+	var channelAnchor = channel.getOutputAnchor();
+	var connectionArrows = channelAnchor.getConnectionArrows().clone();
+	for (var i = 0; i < connectionArrows.length; i++) {
+		var arrow = connectionArrows[i];
+		var targetAnchor = arrow.getTargetAnchor()
+		arrow.disconnect();
+
+		this._drawArrow(channelAnchor, targetAnchor);
+	}
+}
+
+/**
  * @private
  *
  * Disconnects (on the Wiring Interface view) all the inputs of the given
@@ -630,17 +659,13 @@ WiringInterface.prototype._highlight_friend_code = function (friend_code, highli
  */
 WiringInterface.prototype._uncheckChannelInputs = function (channel) {
 	var anchor = channel.getInputAnchor();
-	var connectionArrows = anchor.getConnectionArrows().clone();
-	for (var i = 0; i < connectionArrows.length; i++) {
-		var arrow = connectionArrows[i];
-
-		// 
-		var targetInterface = arrow.getTargetAnchor().getConnectableInterface();
-		if (targetInterface.toggle) targetInterface.toggle(false);
-
+	var connection = anchor.getConnectionArrows().clone();
+	for (var i = 0; i < connection.length; i++) {
+		var arrow = connection[i];
 		arrow.disconnect();
 	}
 }
+
 
 /**
  * @private
@@ -705,9 +730,9 @@ WiringInterface.prototype._highlightChannelOutputs = function (channel) {
 		var output = connectables[i];
 
 		if (output instanceof ChannelInterface)
-			arrow = this._drawArrow(channelAnchor, output.getInputAnchor());
+			this._drawArrow(channelAnchor, output.getInputAnchor());
 		else
-			arrow = this._drawArrow(channelAnchor, output.getAnchor());
+			this._drawArrow(channelAnchor, output.getAnchor());
 	}
 }
 
