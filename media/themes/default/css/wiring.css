@@ -333,6 +333,7 @@
   border-color: #525248;
   margin: 0 8px;
   display: none;
+  overflow-x: auto;
   background: #F7F7F7;
   padding: 0.5ex 1ex 0.5ex 1ex;
   -moz-border-radius-bottomleft: 9px;
