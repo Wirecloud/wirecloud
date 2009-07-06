@@ -104,7 +104,7 @@ class GadgetResource(TransModel):
      creation_date = models.DateTimeField('creation_date', null=True)
      image_uri = models.URLField(_('imageURI'), null=True)
      iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True, blank=True)
-     wiki_page_uri = models.URLField(_('wikiURI'))
+     wiki_page_uri = models.URLField(_('wikiURI'), verify_exists=False)
      template_uri= models.URLField(_('templateURI'))
      mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
      
