@@ -2,7 +2,7 @@
 
 #...............................licence...........................................
 #
-#     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
+#     (C) Copyright 2009 Telefonica Investigacion y Desarrollo
 #     S.A.Unipersonal (Telefonica I+D)
 #
 #     This file is part of Morfeo EzWeb Platform.
@@ -27,196 +27,283 @@
 #
 #...............................licence...........................................#
 
-from processors.context_processors import ezweb_release
+import sys, os
 
-files_normal = [
-   'media/js/common/constants.js', 
-   'media/js/common/utils.js',
-     
-   'media/js/common/modules.js', 
-   'media/js/persistenceEngine/PersistenceEngine.js', 
-   
-   'media/js/gadgetModel/XHtml.js', 
-   'media/js/gadgetModel/GadgetTemplate.js',
-   'media/js/gadgetModel/Gadget.js', 
-   
-   'media/js/log/LogManager.js',
-   
-   'media/js/opManager/WorkSpace.js',
-   'media/js/opManager/Tab.js',
-   
-   'media/js/opManager/OpManager.js', 
-   'media/js/varManager/VariableGadget.js',
-   'media/js/varManager/VariablePlatform.js', 
-   'media/js/varManager/varManager.js',
-   
-   'media/js/showcase/showcase.js',
-   'media/js/showcase/util.js',
-   
-   'media/js/contextManager/ContextManager.js',
-   'media/js/contextManager/ContextPlatform.js',
-   'media/js/contextManager/Adaptors.js',
-   
-   'media/js/dragboard/DragboardLayout.js',
-   'media/js/dragboard/SmartColumnLayout.js', 
-   'media/js/dragboard/FreeLayout.js', 
-   'media/js/dragboard/iGadget.js', 
-   'media/js/dragboard/dragboard.js',
-   'media/js/dragboard/UserPref.js', 
-   'media/js/dragboard/ElementPositions.js',
-   
-   'media/js/wiring/wiring_exceptions.js',
-   'media/js/wiring/filter.js', 
-   'media/js/wiring/connectable.js', 
-   'media/js/wiring/wiring.js', 
-   'media/js/wiring/wiringGUI.js',
-   'media/js/wiring/connectableInterface.js',
-   'media/js/wiring/jsonFilter.js',
-   
-   'media/js/catalogue/UIUtils.js',
-   'media/js/catalogue/CategoryManager.js',
-   'media/js/catalogue/Catalogue.js',
-   'media/js/catalogue/Resource.js',
-   'media/js/catalogue/Tagger.js',
-   'media/js/catalogue/Tag.js',
-   
-   'media/js/interfaceLayout/BackgroundFadder.js',
-   'media/js/interfaceLayout/DropDownMenu.js',
-   'media/js/interfaceLayout/WindowMenu.js',
-   'media/js/interfaceLayout/LayoutManager.js',
-   'media/js/interfaceLayout/BrowserUtils.js',
-]
+inputFiles = {
+    'normal':  [
+        'js/common/constants.js',
+        'js/common/utils.js',
 
-files_iphone = [
-   'media/iphone/lib/mymw/mymw-core.js',
-   'media/iphone/lib/mymw/mymw-tabs.js',
-   'media/js/common/constants.js', 
-   'media/iphone/common/utils.js',  
-   'media/js/common/modules.js', 
-   'media/js/lib/prototype/prototype.improvements.js',
-   'media/js/persistenceEngine/PersistenceEngine.js',
-   'media/iphone/catalogue/Catalogue.js',
-   'media/js/gadgetModel/XHtml.js', 
-   'media/js/gadgetModel/GadgetTemplate.js',
-   'media/iphone/gadgetModel/Gadget.js', 
-   'media/iphone/opManager/WorkSpace.js',
-   'media/iphone/opManager/Tab.js',
-   'media/iphone/opManager/OpManager.js', 
-   'media/js/varManager/VariableGadget.js',
-   'media/js/varManager/VariablePlatform.js', 
-   'media/js/varManager/varManager.js',
-   'media/iphone/showcase/showcase.js',
-   'media/js/showcase/util.js',
-   'media/js/contextManager/ContextManager.js',
-   'media/js/contextManager/ContextPlatform.js',
-   'media/js/contextManager/Adaptors.js',
-   'media/iphone/dragboard/iGadget.js', 
-   'media/iphone/dragboard/dragboard.js',
-   'media/js/wiring/wiring_exceptions.js',
-   'media/js/wiring/filter.js', 
-   'media/js/wiring/connectable.js', 
-   'media/js/wiring/wiring.js',
-   'media/js/wiring/jsonFilter.js',
-   'media/iphone/add-ons/wiring.js',
-   'media/iphone/add-ons/connectable.js',
-]
+        'js/common/modules.js',
+        'js/persistenceEngine/PersistenceEngine.js',
 
-files_viewer = [
-   'media/js/common/constants.js', 
-   'media/js/common/utils.js',
-     
-   'media/js/common/modules.js', 
-   'media/js/persistenceEngine/PersistenceEngineForViewer.js', 
-   
-   'media/js/gadgetModel/XHtml.js', 
-   'media/js/gadgetModel/GadgetTemplate.js',
-   'media/js/gadgetModel/Gadget.js', 
-   
-   'media/js/log/LogManager.js',
-   
-   'media/js/opManager/WorkSpace.js',
-   'media/js/opManager/Tab.js',
-   
-   'media/js/opManager/OpManager.js', 
-   'media/js/varManager/VariableGadget.js',
-   'media/js/varManager/VariablePlatform.js', 
-   'media/js/varManager/varManager.js',
-   
-   'media/js/showcase/showcase.js',
-   'media/js/showcase/util.js',
-   
-   'media/js/contextManager/ContextManager.js',
-   'media/js/contextManager/ContextPlatform.js',
-   'media/js/contextManager/Adaptors.js',
-   
-   'media/js/dragboard/DragboardLayout.js',
-   'media/js/dragboard/SmartColumnLayout.js', 
-   'media/js/dragboard/FreeLayout.js', 
-   'media/js/dragboard/iGadget.js', 
-   'media/js/dragboard/dragboard.js',
-   'media/js/dragboard/UserPref.js', 
-   'media/js/dragboard/ElementPositions.js',
-   
-   'media/js/wiring/wiring_exceptions.js',
-   'media/js/wiring/filter.js', 
-   'media/js/wiring/connectable.js', 
-   'media/js/wiring/wiring.js', 
-   'media/js/wiring/wiringGUI.js',
-   'media/js/wiring/connectableInterface.js',
-   'media/js/wiring/jsonFilter.js',
-   
-   'media/js/catalogue/UIUtils.js',
-   'media/js/catalogue/CategoryManager.js',
-   'media/js/catalogue/Catalogue.js',
-   'media/js/catalogue/Resource.js',
-   'media/js/catalogue/Tagger.js',
-   'media/js/catalogue/Tag.js',
-   
-   'media/js/interfaceLayout/BackgroundFadder.js',
-   'media/js/interfaceLayout/DropDownMenu.js',
-   'media/js/interfaceLayout/WindowMenu.js',
-   'media/js/interfaceLayout/LayoutManager.js',
-   'media/js/interfaceLayout/BrowserUtils.js',
-]
+        'js/gadgetModel/XHtml.js',
+        'js/gadgetModel/GadgetTemplate.js',
+        'js/gadgetModel/Gadget.js',
 
-def write_file(final_file_name, file_list):
+        'js/log/LogManager.js',
+
+        'js/opManager/WorkSpace.js',
+        'js/opManager/Tab.js',
+
+        'js/opManager/OpManager.js',
+        'js/varManager/VariableGadget.js',
+        'js/varManager/VariablePlatform.js',
+        'js/varManager/varManager.js',
+
+        'js/showcase/showcase.js',
+        'js/showcase/util.js',
+
+        'js/contextManager/ContextManager.js',
+        'js/contextManager/ContextPlatform.js',
+        'js/contextManager/Adaptors.js',
+
+        'js/dragboard/DragboardLayout.js',
+        'js/dragboard/SmartColumnLayout.js',
+        'js/dragboard/FreeLayout.js',
+        'js/dragboard/iGadget.js',
+        'js/dragboard/dragboard.js',
+        'js/dragboard/UserPref.js',
+        'js/dragboard/ElementPositions.js',
+
+        'js/wiring/wiring_exceptions.js',
+        'js/wiring/filter.js',
+        'js/wiring/connectable.js',
+        'js/wiring/wiring.js',
+        'js/wiring/wiringGUI.js',
+        'js/wiring/connectableInterface.js',
+        'js/wiring/jsonFilter.js',
+
+        'js/catalogue/UIUtils.js',
+        'js/catalogue/CategoryManager.js',
+        'js/catalogue/Catalogue.js',
+        'js/catalogue/Resource.js',
+        'js/catalogue/Tagger.js',
+        'js/catalogue/Tag.js',
+
+        'js/interfaceLayout/BackgroundFadder.js',
+        'js/interfaceLayout/DropDownMenu.js',
+        'js/interfaceLayout/WindowMenu.js',
+        'js/interfaceLayout/LayoutManager.js',
+        'js/interfaceLayout/BrowserUtils.js',
+    ],
+
+    'iphone': [
+        'iphone/lib/mymw/mymw-core.js',
+        'iphone/lib/mymw/mymw-tabs.js',
+        'js/common/constants.js',
+        'iphone/common/utils.js',
+        'js/common/modules.js',
+        'js/lib/prototype/prototype.improvements.js',
+        'js/persistenceEngine/PersistenceEngine.js',
+        'iphone/catalogue/Catalogue.js',
+        'js/gadgetModel/XHtml.js',
+        'js/gadgetModel/GadgetTemplate.js',
+        'iphone/gadgetModel/Gadget.js',
+        'iphone/opManager/WorkSpace.js',
+        'iphone/opManager/Tab.js',
+        'iphone/opManager/OpManager.js',
+        'js/varManager/VariableGadget.js',
+        'js/varManager/VariablePlatform.js',
+        'js/varManager/varManager.js',
+        'iphone/showcase/showcase.js',
+        'js/showcase/util.js',
+        'js/contextManager/ContextManager.js',
+        'js/contextManager/ContextPlatform.js',
+        'js/contextManager/Adaptors.js',
+        'iphone/dragboard/iGadget.js',
+        'iphone/dragboard/dragboard.js',
+        'js/wiring/wiring_exceptions.js',
+        'js/wiring/filter.js',
+        'js/wiring/connectable.js',
+        'js/wiring/wiring.js',
+        'js/wiring/jsonFilter.js',
+        'iphone/add-ons/wiring.js',
+        'iphone/add-ons/connectable.js',
+    ],
+
+    'viewer': [
+        'js/common/constants.js',
+        'js/common/utils.js',
+
+        'js/common/modules.js',
+        'js/persistenceEngine/PersistenceEngineForViewer.js',
+
+        'js/gadgetModel/XHtml.js',
+        'js/gadgetModel/GadgetTemplate.js',
+        'js/gadgetModel/Gadget.js',
+
+        'js/log/LogManager.js',
+
+        'js/opManager/WorkSpace.js',
+        'js/opManager/Tab.js',
+
+        'js/opManager/OpManager.js',
+        'js/varManager/VariableGadget.js',
+        'js/varManager/VariablePlatform.js',
+        'js/varManager/varManager.js',
+
+        'js/showcase/showcase.js',
+        'js/showcase/util.js',
+
+        'js/contextManager/ContextManager.js',
+        'js/contextManager/ContextPlatform.js',
+        'js/contextManager/Adaptors.js',
+
+        'js/dragboard/DragboardLayout.js',
+        'js/dragboard/SmartColumnLayout.js',
+        'js/dragboard/FreeLayout.js',
+        'js/dragboard/iGadget.js',
+        'js/dragboard/dragboard.js',
+        'js/dragboard/UserPref.js',
+        'js/dragboard/ElementPositions.js',
+
+        'js/wiring/wiring_exceptions.js',
+        'js/wiring/filter.js',
+        'js/wiring/connectable.js',
+        'js/wiring/wiring.js',
+        'js/wiring/wiringGUI.js',
+        'js/wiring/connectableInterface.js',
+        'js/wiring/jsonFilter.js',
+
+        'js/catalogue/UIUtils.js',
+        'js/catalogue/CategoryManager.js',
+        'js/catalogue/Catalogue.js',
+        'js/catalogue/Resource.js',
+        'js/catalogue/Tagger.js',
+        'js/catalogue/Tag.js',
+
+        'js/interfaceLayout/BackgroundFadder.js',
+        'js/interfaceLayout/DropDownMenu.js',
+        'js/interfaceLayout/WindowMenu.js',
+        'js/interfaceLayout/LayoutManager.js',
+        'js/interfaceLayout/BrowserUtils.js',
+    ]
+}
+
+outputFileNames = {
+    'normal' : 'media/js/ezweb_%s.js',
+    'iphone' : 'media/iphone/ezweb_iphone_%s.js',
+    'viewer' : 'media/js/ezweb_viewer_%s.js'
+}
+
+listFileNames = {
+    'normal' : 'ezweb/templates/js_includes.js',
+    'iphone' : 'ezweb/templates/js_iphone_includes.js',
+    'viewer' : 'ezweb/templates/js_viewer_includes.js'
+}
+
+def which(program):
+    def is_exe(fpath):
+        return os.path.exists(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
+
+def write_file(flavour, release):
+    final_file_name = outputFileNames[flavour] % release
+    file_list = inputFiles[flavour]
+
+    sys.stdout.write ("Creating %s..." % final_file_name)
+    sys.stdout.flush()
+
     try:
         res = open(final_file_name, 'w')
-        
+
         header = open('morfeo_header.txt', 'r')
-        
+
         res.write(header.read())
-        
+
         header.close()
-        
+
         for file_name in file_list:
-           file = open(file_name,'r')
-        
+           file = open(os.path.join("media", file_name),'r')
+
            #Deleting license header
            while (True):
               line = file.readline()
-              
+
               if not line:
                   break
-              
+
               if (line.find('*     http://morfeo-project.org') >= 0):
                  break
-        
-            
+
+
            #skiping useless lines after MORFEO URL!
            file.readline()
-        
+
            #copying real js code to the resulting unique source file!
            res.write(file.read())
-        
+
            file.close()
 
         res.close()
     except Exception, e:
         print e
 
+    if java_available:
+      os.system("java -jar media/js/compressor.jar " + final_file_name + " -o " + final_file_name)
+
+    sys.stdout.write(" Done\n")
+
+def build_js_list(flavour):
+    final_file_name = listFileNames[flavour]
+    file_list = inputFiles[flavour]
+
+    sys.stdout.write ("Creating %s..." % final_file_name)
+    sys.stdout.flush()
+
+    try:
+        res = open(final_file_name, 'w')
+
+        for file_name in file_list:
+           res.write('<script type="text/javascript" src="{{ MEDIA_URL }}%s"></script>\n' % file_name)
+
+        res.close()
+    except Exception, e:
+        print e
+
+    sys.stdout.write(" Done\n")
+
+
 #Main
-write_file('media/js/ezweb_' + ezweb_release(None)['ezweb_release'] + '.js', files_normal)
-write_file('media/js/ezweb_viewer_' + ezweb_release(None)['ezweb_release'] + '.js', files_viewer)
-write_file('media/iphone/ezweb_iphone_' + ezweb_release(None)['ezweb_release'] + '.js', files_iphone)
+if len(sys.argv) == 1:
+    try:
+        from processors.context_processors import ezweb_release
+        ezweb_rel = ezweb_release(None)['ezweb_release']
+    except:
+        sys.stdout.write('Warning: Invalid settings.py detected. Assuming EZWEB_RELEASE="default".')
+        sys.stdout.write('\n')
+        ezweb_rel = 'default'
+else:
+    ezweb_rel = sys.argv[1]
+
+java_available = which('java') != None
+if not java_available:
+    sys.stdout.write('Warning: java command not found. JavaScript files will be not compressed')
+    sys.stdout.write('\n')
+
+sys.stdout.write('\n')
+
+
+
+for flavour in inputFiles:
+  build_js_list(flavour)
+
+sys.stdout.write("\n")
+
+for flavour in inputFiles:
+  write_file(flavour, ezweb_rel)
+
+sys.stdout.write("\n")
 
