@@ -313,6 +313,10 @@
 	-webkit-border-top-left-radius: 6px;
 }
 
+#left_bar a:hover {
+        text-decoration:none;
+}
+
 #catalogue #left_bar .bar_widget{
 	margin: 0 0 20px 0;
 }
