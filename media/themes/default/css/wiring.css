@@ -357,30 +357,41 @@
 	cursor: pointer;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column, #wiring .newChannel.selected .channelContent .column {
-	vertical-align: top;
+#wiring #channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {
+	line-height: 1.5;
+	padding: 0 3px 0 0;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column .labelContent, #wiring .newChannel.selected .channelContent .column .labelContent {
+#wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
 	color: #2D6F9C;
-	vertical-align: top;
 	text-align: left;
-	white-space: nowrap;
-	margin: 0px
+	margin: 0px;
+	font-size: 85%
 }
 
 
-#wiring #channels_list .channel.selected .channelContent .column .filterValue, #wiring .newChannel.selected .channelContent .column .filterValue {
-	margin-top: -1px;
+#wiring #channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
 	white-space: nowrap;
+	font-size: 90%;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
+	line-height: 1;
+	white-space: nowrap;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName label, #wiring .newChannel.selected .channelContent .paramName label{
+	white-space: normal;
 }
 
 #wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
   background: #E0E0E0;
   border:0px none;
-  margin: 0.05ex 0ex 0.05ex 0ex;
+  margin: 0.1ex 0ex;
+  padding: 2px;
   width:100%;
   cursor: text;
+  font-size: 90%;
 }
 
 #wiring #wiring_messages {

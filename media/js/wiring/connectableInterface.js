@@ -479,36 +479,20 @@ function ChannelInterface(channel, wiringGUI) {
 	var contentRow = document.createElement("tr");
 	contentTable.appendChild(contentRow);
 
-	// Creates a layer for the labels
+	// Filter name row
+	//label
 	var labelCol = document.createElement("td");
-	labelCol.addClassName("column");
 	contentRow.appendChild(labelCol);
-	var labelLayer = document.createElement("div");
-	labelLayer.addClassName("labelContent");
-	labelCol.appendChild(labelLayer);
-
-	// Creates a layer for the information
-	var contentCol = document.createElement("td");
-	contentCol.addClassName("column");
-	contentRow.appendChild(contentCol);
-	var contentLayer = document.createElement("div");
-	contentCol.appendChild(contentLayer);
-
-	// Adds all labels
-	var filterLabel = document.createElement("div");
-	labelLayer.appendChild(filterLabel);
-	filterLabel.appendChild(document.createTextNode(gettext("Filter") + ":"));
-	this.paramLabelLayer = document.createElement("div");
-	labelLayer.appendChild(this.paramLabelLayer);
-
-	var valueLabel = document.createElement("div");
-	labelLayer.appendChild(valueLabel);
-	valueLabel.appendChild(document.createTextNode(gettext("Value") + ":"));
-
-	// Adds the information
+	var labelContent = document.createElement("label");
+	labelContent.innerHTML = gettext("Filter") + ":";
+	labelCol.appendChild(labelContent);
+	
+	//value
+	var valueCol = document.createElement("td");
+	contentRow.appendChild(valueCol);
 	var filterLabelDiv = document.createElement("div");
 	filterLabelDiv.addClassName("filterValue");
-	contentLayer.appendChild(filterLabelDiv);
+	valueCol.appendChild(filterLabelDiv);
 
 	this.filterInput = document.createTextNode("");
 	filterLabelDiv.appendChild(this.filterInput);
@@ -528,14 +512,38 @@ function ChannelInterface(channel, wiringGUI) {
 				Event.pointerY(e));
 		}.bind(this)
 	);
-
+	
+	//Params row
+	//label
+	contentRow = document.createElement("tr");
+	contentTable.appendChild(contentRow);
+	labelCol = document.createElement("td");
+	contentRow.appendChild(labelCol);
+	this.paramLabelLayer = document.createElement("div");
+	labelCol.appendChild(this.paramLabelLayer);
+	
+	//value
+	valueCol = document.createElement("td");
+	contentRow.appendChild(valueCol);
 	this.paramValueLayer = document.createElement("div");
-	contentLayer.appendChild(this.paramValueLayer);
-
-	// Adds the channel value
+	valueCol.appendChild(this.paramValueLayer);
+	
+	//Channel value
+	//label
+	contentRow = document.createElement("tr");
+	contentTable.appendChild(contentRow);
+	labelCol = document.createElement("td");
+	contentRow.appendChild(labelCol);
+	labelContent = document.createElement("label");
+	labelContent.innerHTML = gettext("Value") + ":";
+	labelCol.appendChild(labelContent);
+	
+	//value
+	valueCol = document.createElement("td");
+	contentRow.appendChild(valueCol);
 	this.valueElement = document.createElement("div");
-	contentLayer.appendChild(this.valueElement);
-
+	valueCol.appendChild(this.valueElement);
+	
 
 	// Update the initial information
 	this._updateFilterInterface();

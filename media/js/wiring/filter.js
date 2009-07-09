@@ -68,10 +68,14 @@ Param.prototype.getDefaultValue = function() {
 
 Param.prototype.createHtmlLabel = function() {
   var labelLayer = document.createElement("div");
+  Element.extend(labelLayer);
+  labelLayer.addClassName('paramName');
   var img = document.createElement("img");
   img.setAttribute("src", _currentTheme.getIconURL('wiring-filter_param'));
   labelLayer.appendChild(img);
-  labelLayer.appendChild(document.createTextNode(this._label + ':'));
+  var labelElement = document.createElement("label");
+  labelElement.innerHTML = this._label + ':';
+  labelLayer.appendChild(labelElement);
   
   return labelLayer;
 }
