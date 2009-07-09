@@ -542,7 +542,7 @@ DragboardCursor.prototype.setPosition = function (position) {
 /////////////////////////////////////
 // Drag and drop support
 /////////////////////////////////////
-EzWebEffectBase = new Object();
+var EzWebEffectBase = new Object();
 EzWebEffectBase.findDragboardElement = function(element) {
 	var tmp = element.parentNode;
 	while (tmp) {
