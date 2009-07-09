@@ -397,15 +397,17 @@ IGadget.prototype.build = function() {
 			LayoutManagerFactory.getInstance().hideCover();
 		}.bind(this);
 		
-		button.observe("click", function() {
-		                            LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
-		                        },
-		               true);
+		button.observe("click",
+		               function() {
+		                   LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
+		               },
+		               false);
 	} else {
-		button.observe("click", function() {
-		                            OpManagerFactory.getInstance().removeInstance(this.id);
-		                        }.bind(this),
-		                        true);
+		button.observe("click",
+		               function() {
+		                   OpManagerFactory.getInstance().removeInstance(this.id);
+		               }.bind(this),
+		               false);
 	}
 
 	button.setAttribute("title", gettext("Close"));
@@ -425,7 +427,7 @@ IGadget.prototype.build = function() {
 	                                                                      Event.pointerX(e),
 	                                                                      Event.pointerY(e));
 	               }.bind(this),
-	               true);
+	               false);
 
 	button.setAttribute("title", gettext("Menu"));
 	button.setAttribute("alt", gettext("Menu"));
@@ -435,7 +437,7 @@ IGadget.prototype.build = function() {
 	// minimize button
 	button = document.createElement("input");
 	button.setAttribute("type", "button");
-	button.observe("click", function() {this.toggleMinimizeStatus()}.bind(this), true);
+	button.observe("click", function() {this.toggleMinimizeStatus()}.bind(this), false);
 	if (this.minimized) {
 		button.setAttribute("title", gettext("Maximize"));
 		button.setAttribute("alt", gettext("Maximize"));
@@ -454,7 +456,7 @@ IGadget.prototype.build = function() {
 	button.setAttribute("type", "button");
 	button.setAttribute("class", "button errorbutton disabled");
 	button.setAttribute("className", "button errorbutton disabled"); //IE hack
-	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, true);
+	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, false);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
 
