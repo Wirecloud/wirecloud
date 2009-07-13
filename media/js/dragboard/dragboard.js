@@ -106,6 +106,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	 * @private
 	 */
 	Dragboard.prototype._recomputeSize = function() {
+		//if (this.dragboardElement.getStyle("display") == "none")
 		// TODO check this in a compatible fashion
 		var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
 		if (cssStyle.getPropertyValue("display") == "none")
@@ -116,7 +117,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		var tmp = this.dragboardWidth;
 		tmp-= parseInt(dragboardElement.clientWidth);
-
+		if (BrowserUtilsFactory.getInstance().isIE())
+			tmp = 0;
 		if (tmp > this.scrollbarSpace)
 			this.dragboardWidth-= tmp;
 		else
@@ -546,6 +548,7 @@ var EzWebEffectBase = new Object();
 EzWebEffectBase.findDragboardElement = function(element) {
 	var tmp = element.parentNode;
 	while (tmp) {
+		//var position = tmp.getStyle("position");
 		var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
 		switch (position) {
 		case "relative":
@@ -640,7 +643,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
 		var dragboard = EzWebEffectBase.findDragboardElement(draggableElement);
 		dragboardCover = document.createElement("div");
-		dragboardCover.setAttribute("class", "cover");
+		Element.extend(dragboardCover);
+		dragboardCover.addClassName("cover");
 		dragboardCover.observe("mouseup" , enddrag, true);
 		dragboardCover.observe("mousemove", drag, true);
 
@@ -749,9 +753,9 @@ IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, 
 		element = document.elementFromPoint(event.clientX, event.clientY);
 
 	var id = null;
-	if (element != null && element instanceof Element) {
+	if (element != null && isElement(element)) {
 		id = element.getAttribute("id");
-		if (id == null && element.parentNode instanceof Element) {
+		if (id == null && isElement(element.parentNode)) {
 			element = element.parentNode;
 			id = element.getAttribute("id");
 		}
@@ -907,7 +911,8 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 
 		var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
 		dragboardCover = document.createElement("div");
-		dragboardCover.setAttribute("class", "cover");
+		Element.extend(dragboardCover);
+		dragboardCover.addClassName("cover");
 		dragboardCover.observe("mouseup" , endresize, true);
 		dragboardCover.observe("mousemove", resize, true);
 

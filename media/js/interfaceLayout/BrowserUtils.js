@@ -78,6 +78,11 @@ var BrowserUtilsFactory = function () {
 			else
 				return false;
 		}
+		
+		BrowserUtils.prototype.getTarget = function(e){
+			if (e.target) return e.target;
+			else if (e.srcElement) return e.srcElement;
+		}
 
 		BrowserUtils.prototype.getBrowser = function(){ 
 			if (/MSIE (\d+\.\d+);/.test(navigator.userAgent)){ //test for MSIE x.x;

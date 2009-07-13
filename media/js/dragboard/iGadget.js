@@ -364,10 +364,12 @@ IGadget.prototype._updateExtractOption = function() {
  */
 IGadget.prototype.build = function() {
 	this.element = document.createElement("div");
+	Element.extend(this.element);
 	this.element.addClassName("gadget_window");
 
 	// Gadget Menu
 	this.gadgetMenu = document.createElement("div");
+	Element.extend(this.gadgetMenu);
 	this.gadgetMenu.addClassName("gadget_menu");
 	this.gadgetMenu.observe("contextmenu", function(e) {Event.stop(e);}, true);
 
@@ -381,6 +383,7 @@ IGadget.prototype.build = function() {
 
 	// close button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.addClassName("closebutton");
 
@@ -416,6 +419,7 @@ IGadget.prototype.build = function() {
 
 	// iGadget's menu button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.addClassName("settingsbutton");
 	button.setAttribute("id", "settingsbutton");
@@ -436,6 +440,7 @@ IGadget.prototype.build = function() {
 
 	// minimize button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.observe("click", function() {this.toggleMinimizeStatus()}.bind(this), false);
 	if (this.minimized) {
@@ -453,9 +458,9 @@ IGadget.prototype.build = function() {
 
 	// error button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
-	button.setAttribute("class", "button errorbutton disabled");
-	button.setAttribute("className", "button errorbutton disabled"); //IE hack
+	button.addClassName("button errorbutton disabled");
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, false);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
@@ -466,32 +471,38 @@ IGadget.prototype.build = function() {
 
 	// Content wrapper
 	this.contentWrapper = document.createElement("div");
+	Element.extend(this.contentWrapper);
 	this.contentWrapper.addClassName("gadget_wrapper");
 	this.element.appendChild(this.contentWrapper);
 
 	// Gadget configuration (Initially empty and hidden)
 	this.configurationElement = document.createElement("div");
+	Element.extend(this.configurationElement);
 	this.configurationElement.addClassName("config_interface");
 	this.contentWrapper.appendChild(this.configurationElement);
 
 	// Gadget Content
 	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
-	if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
+	if (BrowserUtilsFactory.getInstance().isIE()) {
 		this.content = document.createElement("iframe");
-		this.content.setAttribute("class", "gadget_object");
+		Element.extend(this.content);
+		this.content.addClassName("gadget_object");
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
 		this.content.setAttribute("standby", "Loading...");
 //		this.content.innerHTML = "Loading...."; // TODO add an animation ?
 		this.content.setAttribute("src", codeURL);
 		this.content.setAttribute("width", "100%");
+		this.content.setAttribute("frameborder", "0");
 	} else { //non IE6
 		this.content = document.createElement("object");
-		this.content.setAttribute("class", "gadget_object");
+		Element.extend(this.content);
+		this.content.addClassName("gadget_object");
 		this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
 		this.content.setAttribute("standby", "Loading...");
 		this.content.setAttribute("data", codeURL);
-		this.content.innerHTML = "Loading...."; // TODO add an animation ?
+		//this.content.innerHTML = "Loading...."; // TODO add an animation ?
 	}
+	Element.extend(this.content);
 	this.content.observe("load",
 	                     function () {
 	                         OpManagerFactory.getInstance().igadgetLoaded(this.id);
@@ -501,7 +512,8 @@ IGadget.prototype.build = function() {
 
 	// Gadget status bar
 	this.statusBar = document.createElement("div");
-	this.statusBar.setAttribute("class", "statusBar");
+	Element.extend(this.statusBar);
+	this.statusBar.addClassName("statusBar");
 	this.element.appendChild(this.statusBar);
 	if (this.minimized) {
 		this.statusBar.setStyle({"display": "none"});
@@ -512,18 +524,21 @@ IGadget.prototype.build = function() {
 
 	// Left one
 	resizeHandle = document.createElement("div");
-	resizeHandle.setAttribute("class", "leftResizeHandle");
+	Element.extend(resizeHandle);
+	resizeHandle.addClassName("leftResizeHandle");
 	this.statusBar.appendChild(resizeHandle);
 	this.leftResizeHandle = new IGadgetResizeHandle(resizeHandle, this, true);
 
 	// Right one
 	resizeHandle = document.createElement("div");
-	resizeHandle.setAttribute("class", "rightResizeHandle");
+	Element.extend(resizeHandle);
+	resizeHandle.addClassName("rightResizeHandle");
 	this.statusBar.appendChild(resizeHandle);
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
 	// extract/snap button
 	this.extractButton = document.createElement("div");
+	Element.extend(this.extractButton);
 	this.extractButton.className = "button";
 	this.extractButton.observe("click",
 	                           function() {
@@ -534,7 +549,8 @@ IGadget.prototype.build = function() {
 
 	// wikilink
 	this.wikilink = document.createElement('a');
-	this.wikilink.setAttribute('class', 'dragboardwiki button');
+	Element.extend(this.wikilink);
+	this.wikilink.addClassName('dragboardwiki button');
 	this.wikilink.href = this.gadget.getUriWiki();
 	this.wikilink.setAttribute('target', '_blank');
 	this.wikilink.setAttribute('title', gettext('Access to Information'));
@@ -618,7 +634,7 @@ IGadget.prototype.paint = function(onInit) {
 	this.layout.dragboard.dragboardElement.appendChild(this.element);
 
 	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
-	if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
+	if (BrowserUtilsFactory.getInstance().isIE()) {
 		this.content.setAttribute("src", codeURL);
 	} else { //non IE6
 		this.content.setAttribute("data", codeURL);
@@ -675,6 +691,7 @@ IGadget.prototype.fillWithLabel = function() {
 	else{
 		//create the label
 		this.igadgetNameHTMLElement = document.createElement("span");
+		Element.extend(this.igadgetNameHTMLElement);
 		this.igadgetNameHTMLElement.innerHTML = nameToShow;
 		this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
 		//var spanHTML = nameToShow;
@@ -698,6 +715,7 @@ IGadget.prototype.fillWithInput = function () {
 		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
 	} else {
 		this.igadgetInputHTMLElement = document.createElement("input");
+		Element.extend(this.igadgetInputHTMLElement);
 		this.igadgetInputHTMLElement.addClassName("igadget_name");
 		this.igadgetInputHTMLElement.setAttribute("type", "text");
 		this.igadgetInputHTMLElement.setAttribute("value", this.name);
@@ -716,20 +734,23 @@ IGadget.prototype.fillWithInput = function () {
 		                                    function(e) {
 		                                        if(e.keyCode == Event.KEY_RETURN) {
 		                                            Event.stop(e);
-		                                            e.target.blur();
+		                                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		                                            target.blur();
 		                                        }
 		                                    }.bind(this));
 
 		this.igadgetInputHTMLElement.observe('change',
 		                                    function(e) {
 		                                        Event.stop(e);
-		                                        this.setName(e.target.value);
+		                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		                                        this.setName(target.value);
 		                                    }.bind(this));
 
 		this.igadgetInputHTMLElement.observe('keyup',
 		                                    function(e) {
 		                                        Event.stop(e);
-		                                        e.target.size = (e.target.value.length==0) ? 1 : e.target.value.length + 5;
+		                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		                                        target.size = (target.value.length==0) ? 1 : target.value.length + 5;
 		                                    }.bind(this));
 
 		/*this.igadgetInputHTMLElement.observe('click',
@@ -941,12 +962,13 @@ IGadget.prototype._makeConfigureInterface = function() {
 	interfaceDiv.appendChild(table);
 
 	var buttons = document.createElement("div");
-	buttons.setAttribute("class", "buttons");
-	buttons.setAttribute("className", "buttons"); //IE hack
+	Element.extend(buttons);
+	buttons.addClassName("buttons");
 	var button;
 
 	// "Set Defaults" button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.setAttribute("value", gettext("Set Defaults"));
 	Event.observe (button, "click", this._setDefaultPrefsInInterface.bind(this), true);
@@ -954,6 +976,7 @@ IGadget.prototype._makeConfigureInterface = function() {
 
 	// "Save" button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.setAttribute("value", gettext("Save"));
 	button.observe("click", function () {this.layout.dragboard.saveConfig(this.id)}.bind(this), true);
@@ -961,6 +984,7 @@ IGadget.prototype._makeConfigureInterface = function() {
 
 	// "Cancel" button
 	button = document.createElement("input");
+	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.setAttribute("value", gettext("Cancel"));
 	button.observe("click", function () {this.setConfigurationVisible(false)}.bind(this), true);
@@ -969,8 +993,8 @@ IGadget.prototype._makeConfigureInterface = function() {
 
 	// clean floats
 	var floatClearer = document.createElement("div");
-	floatClearer.setAttribute("class", "floatclearer");
-	floatClearer.setAttribute("className", "floatclearer"); //IE hack
+	Element.extend(floatClearer);
+	floatClearer.addClassName("floatclearer");
 	interfaceDiv.appendChild(floatClearer);
 
 	return interfaceDiv;
@@ -1301,8 +1325,8 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 		this.minimizeButtonElement.removeClassName("minimizebutton");
 		this.minimizeButtonElement.addClassName("maximizebutton");
 	} else {
-		this.contentWrapper.setStyle({"visibility": "visible", "border": null});
-		this.statusBar.setStyle({"display": null});
+		this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
+		this.statusBar.setStyle({"display": ""});
 		if (this.configurationVisible == true)
 			this.configurationElement.setStyle({"display": "block"});
 		this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));

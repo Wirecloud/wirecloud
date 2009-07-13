@@ -343,6 +343,7 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 	this.menu.addClassName("color_menu");
 
 	this.currentRow = document.createElement("div");
+	Element.extend(this.currentRow);
 	this.currentRow.className = "row";
 	this.menu.appendChild(this.currentRow);
 	this.clearer = document.createElement("div");
@@ -353,7 +354,7 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 
 	// On Mouse Over
 	this._onMouseOver = function(e) {
-		var windowStyle = document.defaultView.getComputedStyle(e.target, null);
+		var windowStyle = document.defaultView.getComputedStyle(BrowserUtilsFactory.getInstance().getTarget(e), null);
 
 		var newColor = windowStyle.getPropertyCSSValue("background-color").
 		               getRGBColorValue();
@@ -369,7 +370,7 @@ function ColorDropDownMenu(idColorMenu, parentMenu, onClick, options) {
 	}
 
 	this._onClick = function(e) {
-		var windowStyle = document.defaultView.getComputedStyle(e.target, null);
+		var windowStyle = document.defaultView.getComputedStyle(BrowserUtilsFactory.getInstance().getTarget(e), null);
 
 		var newColor = windowStyle.getPropertyCSSValue("background-color").
 		               getRGBColorValue();
@@ -381,6 +382,7 @@ ColorDropDownMenu.prototype = new DropDownMenu();
 
 ColorDropDownMenu.prototype.appendColor = function(color) {
 	var cell = document.createElement("div");
+	Element.extend(cell);
 	cell.className = "color_button";
 	cell.style.background = "#" + color;
 	this.currentRow.insertBefore(cell, this.clearer);

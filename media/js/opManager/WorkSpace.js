@@ -56,7 +56,8 @@ function WorkSpace (workSpaceState) {
 
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
-			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
+			if (!BrowserUtilsFactory.getInstance().isIE()) //temporal patch!
+				this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 
 			if (tabs.length > 0) {
 				for (var i = 0; i < tabs.length; i++)
@@ -228,14 +229,23 @@ function WorkSpace (workSpaceState) {
 		new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
 		this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
 		this.workSpaceNameHTMLElement.focus();
-		Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){Event.stop(e);
+		Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){
+					Event.stop(e);
 					this.fillWithLabel()}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
-					e.target.blur();}}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){Event.stop(e);
-					this.updateInfo(e.target.value);}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){Event.stop(e);
-					e.target.size = (e.target.value.length==0)?1:e.target.value.length;}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){
+					if(e.keyCode == Event.KEY_RETURN){
+						Event.stop(e);
+						var target = BrowserUtilsFactory.getInstance().getTarget(e);
+						target.blur();
+					}}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){
+					Event.stop(e);
+					var target = BrowserUtilsFactory.getInstance().getTarget(e);
+					this.updateInfo(target.value);}.bind(this));
+		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){
+					Event.stop(e);
+					var target = BrowserUtilsFactory.getInstance().getTarget(e);
+					target.size = (target.value.length==0)?1:target.value.length;}.bind(this));
 	}
 
 	WorkSpace.prototype.updateInfo = function (workSpaceName) {
@@ -473,6 +483,7 @@ function WorkSpace (workSpaceState) {
 			this.wiring.unload();
 		if (this.contextManager !== null)
 			this.contextManager.unload();
+			this.contextManager=null;
 
 		this.menu.remove();
 		this.mergeMenu.remove();

@@ -529,7 +529,6 @@ var LayoutManagerFactory = function () {
 			this.coverLayerElement.addClassName('disabled_background');
 			this.coverLayerElement.style.display="block";
 
-			Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
 		}
 
 		//WorkSpaceMenu is dinamic so the different options must be added.
@@ -841,6 +840,7 @@ var LayoutManagerFactory = function () {
 			this.currentMenu = null;
 			this.coverLayerElement.style.display="none";
 			this.coverLayerElement.removeClassName('disabled_background');
+			Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
 		}
 
 		LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
@@ -875,8 +875,9 @@ var LayoutManagerFactory = function () {
 	/*Insert tab in the tab bar*/
 	LayoutManager.prototype.addToTabBar = function(tabId) {
 		var tabHTMLElement = document.createElement("div");
+		Element.extend(tabHTMLElement);
 		tabHTMLElement.setAttribute("id", tabId);
-		tabHTMLElement.setAttribute("class", "tab");
+		tabHTMLElement.addClassName("tab");
 		tabHTMLElement.setStyle({"display": "none"}); // TODO
 		this.scrollTabBar.insertBefore(tabHTMLElement, this.scrollTabBar.firstChild);
 		var tabBorder= parseInt(tabHTMLElement.getStyle('border-left-width'));
@@ -890,7 +891,7 @@ var LayoutManagerFactory = function () {
 		var tabWidth = -1 * (tabHTMLElement.getWidth()-this.tabImgSize + 2*this.tabMarginRight);
 		Element.remove(tabHTMLElement);
 		this.changeTabBarSize(tabWidth);
-		this.scrollTabBar.setStyle({right: (this.fixedTabBarWidth - this.scrollTabBarWidth) + 'px', left:''});
+		this.scrollTabBar.setStyle({right: (this.fixedTabBar.getWidth() - this.scrollTabBarWidth) + 'px', left:''});
 	}
 	
 	/*change the width of the tab bar*/

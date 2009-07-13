@@ -56,9 +56,10 @@ var LogManagerFactory = function () {
 			default:
 			case Constants.Logging.ERROR_MSG:
 				icon = document.createElement("img");
+				Element.extend(icon);
 				if (_currentTheme.iconExists('error'))
 					icon.setAttribute("src", _currentTheme.getIconURL('error'));
-				icon.setAttribute("class", "icon");
+				icon.addClassName("icon");
 				icon.setAttribute("alt", "[Error] ");
 				this.logConsole.appendChild(icon);
 				try {
@@ -67,9 +68,10 @@ var LogManagerFactory = function () {
 				break;
 			case Constants.Logging.WARN_MSG:
 				icon = document.createElement("img");
+				Element.extend(icon);
 				if (_currentTheme.iconExists('warning'))
 					icon.setAttribute("src", _currentTheme.getIconURL('warning'));
-				icon.setAttribute("class", "icon"); 
+				icon.addClassName("icon"); 
 				icon.setAttribute("alt", "[Warning] ");
 				this.logConsole.appendChild(icon);
 				try {
@@ -78,9 +80,10 @@ var LogManagerFactory = function () {
 				break;
 			case Constants.Logging.INFO_MSG:
 				icon = document.createElement("img");
+				Element.extend(icon);
 				if (_currentTheme.iconExists('info'))
 					icon.setAttribute("src", _currentTheme.getIconURL('info'));
-				icon.setAttribute("class", "icon");
+				icon.addClassName("icon");
 				icon.setAttribute("alt", "[Info] ");
 				this.logConsole.appendChild(icon);
 				try {
@@ -99,7 +102,8 @@ var LogManagerFactory = function () {
 			this.logConsole.appendChild(logentry);
 
 			var clearer = document.createElement('div');
-			clearer.setAttribute('class', 'floatclearer');
+			Element.extend(clearer);
+			clearer.addClassName('floatclearer');
 			this.logConsole.appendChild(clearer);
 		}
 

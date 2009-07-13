@@ -91,8 +91,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	Event.observe($('unfold_chkItem'), "click",
 	            function(e) {
 	              //the user wants all unfolded
-	              e.target.toggleClassName('chkItem');
-	              this.unfold_on_entering = e.target.hasClassName('chkItem');
+	              var target = BrowserUtilsFactory.getInstance().getTarget(e);
+	              target.toggleClassName('chkItem');
+	              this.unfold_on_entering = target.hasClassName('chkItem');
 	            }.bind(this));
 
 	this._eventCreateChannel = function (e) {
@@ -838,6 +839,7 @@ function ConnectionAnchor(_interface) {
 	this.channelType = null;
 
 	this.htmlElement = document.createElement("div");
+	Element.extend(this.htmlElement);
 	this.htmlElement.addClassName('anchor');
 }
 
@@ -1189,6 +1191,7 @@ WiringInterface.prototype._updateFilterFunc = function(channel, filter) {
 WiringInterface.prototype._displayHelpWiringHeader = function(element, event) {
 	Event.stop(event);
 	var divout = document.createElement('div');
+	Element.extend(divout);
 	divout.setAttribute ('id', 'help_background');
 	divout.style.cssText = "top:0;bottom:0;right:0;left:0;position:absolute;z-index:3001;"
 	divout.observe('click', function (e) {
@@ -1197,6 +1200,7 @@ WiringInterface.prototype._displayHelpWiringHeader = function(element, event) {
 	});
 	// Sets the help style
 	var helpOpElement = document.createElement('div');
+	Element.extend(helpOpElement);
 	helpOpElement.addClassName ('helpwiringheader');
 	helpOpElement.style.padding = '5px';
 	helpOpElement.style.position = 'absolute';

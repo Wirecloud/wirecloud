@@ -85,7 +85,9 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 	var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
 
 	var paramValueLayer = document.createElement("div");
+	Element.extend(paramValueLayer);
 	var paramInput = document.createElement("input");
+	Element.extend(paramInput);
 	paramInput.addClassName("paramValueInput");
 	paramInput.setAttribute ("value", channel.getFilterParams()[this._index]['value']);
 	Event.observe(paramInput, 'click',function(e){Event.stop(e);});
@@ -94,7 +96,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 		var msg;
 		
 		// Sets the param value
-		this.channel.setFilterParam(this.param._index, e.target.value);
+		this.channel.setFilterParam(this.param._index, target.value);
 		
 		
 		// Sets the channel value

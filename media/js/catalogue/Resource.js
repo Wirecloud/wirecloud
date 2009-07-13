@@ -1123,7 +1123,7 @@ Resource.prototype._tagsToTagcloud = function(parent, loc) {
 			tag.appendChild(tags[i].tagToTypedHTML(option));
 			var tag_link = UIUtils.createHTMLElement("button", $H({ 
 				title: gettext('Delete tag'),
-				class_name: 'delete button',
+				class_name: 'delete button'
 			}));
 			tag_link.observe("click", function(event) {
 				UIUtils.removeTagUser(event.target.parentNode.firstChild.innerHTML, this._id);

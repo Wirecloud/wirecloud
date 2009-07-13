@@ -44,9 +44,11 @@ function ConnectableGroupInterface (wiringGUI, parentInterface, headerText) {
 
 	// Root HTML Element of this interface
 	this.htmlElement = document.createElement("div");
+	Element.extend(this.htmlElement);
 
 	// Header
 	this.headerElement = document.createElement("div");
+	Element.extend(this.headerElement);
 	this.headerElement.addClassName("header");
 	this.headerElement.appendChild(document.createTextNode(headerText));
 	this.htmlElement.appendChild(this.headerElement);
@@ -60,6 +62,7 @@ function ConnectableGroupInterface (wiringGUI, parentInterface, headerText) {
 
 	// List of connectables
 	this.contentElement = document.createElement("div");
+	Element.extend(this.contentElement);
 	this.contentElement.addClassName("content");
 	this.htmlElement.appendChild(this.contentElement);
 
@@ -416,9 +419,11 @@ function ChannelInterface(channel, wiringGUI) {
 
 	// HTML interface
 	this.htmlElement = document.createElement("div");
+	Element.extend(this.htmlElement);
 	this.htmlElement.addClassName("channel");
 
 	var channelPipe = document.createElement("div");
+	Element.extend(channelPipe);
 	channelPipe.className = 'channelPipe';
 	this.htmlElement.appendChild(channelPipe);
 
@@ -429,6 +434,7 @@ function ChannelInterface(channel, wiringGUI) {
 	                }.bind(this));
 
 	var inputDel = document.createElement("img");
+	Element.extend(inputDel);
 	channelPipe.appendChild(inputDel);
 	inputDel.setAttribute("alt", gettext("Remove"));
 	inputDel.setAttribute("src", _currentTheme.getIconURL('channel-remove'));
@@ -440,6 +446,7 @@ function ChannelInterface(channel, wiringGUI) {
 	              }.bind(this));
 
 	this.channelNameInput = document.createElement("input");
+	Element.extend(this.channelNameInput);
 	channelPipe.appendChild(this.channelNameInput);
 	this.channelNameInput.setAttribute ("value", this.name);
 	this.channelNameInput.addClassName ("channelNameInput");
@@ -450,39 +457,44 @@ function ChannelInterface(channel, wiringGUI) {
 	              }.bind(this));
 
 	var checkName = function(e) {
-		if (e.target.value == "" || e.target.value.match(/^\s$/)) {
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		if (target.value == "" || target.value.match(/^\s$/)) {
 			var msg = gettext("Channel name cannot be empty.");
 			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-			e.target.value = this.getName();
-		} else if (this.wiringGUI.channelExists(e.target.value)) {
+			target.value = this.getName();
+		} else if (this.wiringGUI.channelExists(target.value)) {
 			var msg = gettext("A channel named \"%(channelName)s\" already exists.");
-			msg = interpolate(msg, {channelName: e.target.value}, true);
+			msg = interpolate(msg, {channelName: target.value}, true);
 			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-			e.target.value = this.getName();
+			target.value = this.getName();
 		} else {
-			this.setName(e.target.value)
+			this.setName(target.value)
 		}
 	}
 	this.channelNameInput.observe('change', checkName.bind(this));
 
 	var channelContent = document.createElement("div");
+	Element.extend(channelContent);
 	this.htmlElement.appendChild(channelContent);
 	channelContent.addClassName("channelContent");
 	Event.observe(channelContent, 'click', function(e) {Event.stop(e);});
 
 	// Channel information showed when the channel is selected
 	var contentTable = document.createElement("table");
+	Element.extend(contentTable);
 	contentTable.addClassName("contentTable");
 	channelContent.appendChild(contentTable);
 
 	// Creates the row for the channel information
 	var contentRow = document.createElement("tr");
+	Element.extend(contentRow);
 	contentTable.appendChild(contentRow);
 
 	// Filter name row
 	//label
 	var labelCol = document.createElement("td");
 	contentRow.appendChild(labelCol);
+
 	var labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("Filter") + ":";
 	labelCol.appendChild(labelContent);
@@ -490,6 +502,7 @@ function ChannelInterface(channel, wiringGUI) {
 	//value
 	var valueCol = document.createElement("td");
 	contentRow.appendChild(valueCol);
+
 	var filterLabelDiv = document.createElement("div");
 	filterLabelDiv.addClassName("filterValue");
 	valueCol.appendChild(filterLabelDiv);
@@ -498,12 +511,14 @@ function ChannelInterface(channel, wiringGUI) {
 	filterLabelDiv.appendChild(this.filterInput);
 
 	var filterMenuButton = document.createElement("input");
+	Element.extend(filterMenuButton);
 	filterLabelDiv.appendChild(filterMenuButton);
 	filterMenuButton.setAttribute("type", "button");
 	filterMenuButton.addClassName("filterMenuLauncher");
 	filterMenuButton.observe('click',
 		function(e) {
-			e.target.blur();
+			var target = BrowserUtilsFactory.getInstance().getTarget(e);
+			target.blur();
 			Event.stop(e);
 			LayoutManagerFactory.getInstance().showDropDownMenu(
 				'filterMenu',
@@ -542,8 +557,10 @@ function ChannelInterface(channel, wiringGUI) {
 	valueCol = document.createElement("td");
 	contentRow.appendChild(valueCol);
 	this.valueElement = document.createElement("div");
+
 	valueCol.appendChild(this.valueElement);
 	
+
 
 	// Update the initial information
 	this._updateFilterInterface();
@@ -992,6 +1009,7 @@ function SimpleConnectableInterface (connectable, anchor, group) {
 	ConnectableInterface.call(this, connectable, anchor);
 	this.parentInterface = group;
 	this.htmlElement = document.createElement("div");
+	Element.extend(this.htmlElement);
 
 	this.htmlElement.appendChild(document.createTextNode(connectable.getLabel()));
 

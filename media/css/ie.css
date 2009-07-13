@@ -1,4 +1,24 @@
+.toolbar_section > input[type=button]{
+	width: 135px !important;
+}
 
+#toolbar_section{
+	margin-left: 10px;
+	width: 500px;
+}
+#workspace_menu_link{
+	padding-top: 0px;
+}
+
+#workspace_link_container{
+	max-width: 170px;
+}
+
+#logo {
+	background: url("/ezweb/themes/default/images/ie/Open_Ez_Logo-trans.png") no-repeat;
+}
+
+/* OLD STYLES -> REVIEW 
 #tab_section .tab {
   height:18px;
   padding: 2px 9px 1px;
@@ -24,3 +44,4 @@
 #head_control_tab {
     margin-left: -100px;
 }
+*/

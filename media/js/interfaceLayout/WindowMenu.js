@@ -32,6 +32,7 @@ function WindowMenu(title) {
 		return;
 
 	this.htmlElement = document.createElement('div');  // create the root HTML element
+	Element.extend(this.htmlElement);
 	this.htmlElement.className = "window_menu";
 
 	// Window Top
@@ -41,26 +42,31 @@ function WindowMenu(title) {
 
 	this._closeListener = this._closeListener.bind(this);
 	this.closeButton = document.createElement('input');
+	Element.extend(this.closeButton);
 	this.closeButton.type = "button";
 	this.closeButton.className = "closebutton button";
 	windowTop.appendChild(this.closeButton);
 	this.closeButton.observe("click", this._closeListener);
 
 	this.titleElement = document.createElement('div');
+	Element.extend(this.titleElement);
 	this.titleElement.className = "window_title";
 	windowTop.appendChild(this.titleElement);
 
 	// Window Content
 	this.windowContent = document.createElement('div');
+	Element.extend(this.windowContent);
 	this.windowContent.className = "window_content";
 	this.htmlElement.appendChild(this.windowContent);
 
 	this.msgElement = document.createElement('div');
+	Element.extend(this.msgElement);
 	this.msgElement.className = "msg";
 	this.windowContent.appendChild(this.msgElement);
 
 	// Window Bottom
 	this.windowBottom = document.createElement('div');
+	Element.extend(this.windowBottom);
 	this.windowBottom.className = "window_bottom";
 	this.htmlElement.appendChild(this.windowBottom);
 
@@ -197,11 +203,13 @@ function CreateWindowMenu (element) {
 
 	// Accept button
 	this.button = document.createElement('button');
+	Element.extend(this.button );
 	this.button.appendChild(document.createTextNode(gettext('Create')));
 	this.windowBottom.appendChild(this.button);
 
 	// Cancel button
 	var cancelButton = document.createElement('button');
+	Element.extend(cancelButton);
 	cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
 	cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(cancelButton);
@@ -211,6 +219,7 @@ function CreateWindowMenu (element) {
 	label.appendChild(document.createTextNode(gettext('Nombre: ')));
 
 	this.nameInput = document.createElement('input');
+	Element.extend(this.nameInput);
 	this.nameInput.setAttribute('type', 'text');
 	this.nameInput.setAttribute('value', '');
 	label.appendChild(this.nameInput);
@@ -218,7 +227,8 @@ function CreateWindowMenu (element) {
 	this.windowContent.insertBefore(label, this.msgElement);
 
 	this.operationHandler = function(e) {
-		if (e.target == this.nameInput && e.keyCode == Event.KEY_RETURN || e.target == this.button)
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		if (target == this.nameInput && e.keyCode == Event.KEY_RETURN || target == this.button)
 			this.executeOperation();
 	}.bind(this);
 
@@ -264,12 +274,15 @@ function AlertWindowMenu () {
 
 	// Warning icon
 	var icon = document.createElement('img');
+	Element.extend(icon);
 	icon.setAttribute('src', _currentTheme.getIconURL('warning'));
 	icon.setAttribute('alt', gettext('Info:'));
 	this.windowContent.insertBefore(icon, this.msgElement);
 
 	// Accept button
 	this.acceptButton = document.createElement('button');
+
+	Element.extend(this.acceptButton);
 	this.acceptButton.appendChild(document.createTextNode(gettext('Yes')));
 	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
@@ -277,6 +290,7 @@ function AlertWindowMenu () {
 
 	// Cancel button
 	this.cancelButton = document.createElement('button');
+	Element.extend(this.cancelButton);
 	this.cancelButton.appendChild(document.createTextNode(gettext('No')));
 	this.cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(this.cancelButton);
@@ -319,12 +333,14 @@ function AddMashupWindowMenu (actions) {
 
 	// New Workspace button
 	this.acceptButton = document.createElement('button');
+	Element.extend(this.acceptButton);
 	this.acceptButton.appendChild(document.createTextNode(gettext('New Workspace')));
 	this.acceptButton.observe("click", this._newWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.acceptButton);
 
 	// Cancel button
 	this.cancelButton = document.createElement('button');
+	Element.extend(this.cancelButton);
 	this.cancelButton.appendChild(document.createTextNode(gettext('Current Workspace')));
 	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.cancelButton);
@@ -366,6 +382,7 @@ function MessageWindowMenu (element) {
 
 	// Accept button
 	this.button = document.createElement('button');
+	Element.extend(this.button);
 	this.button.appendChild(document.createTextNode(gettext('Accept')));
 	this.windowBottom.appendChild(this.button);
 	this.button.observe("click", this._closeListener);
@@ -406,6 +423,7 @@ function InfoWindowMenu(title) {
 	this.windowContent.insertBefore(icon, this.msgElement);
 
 	this.checkbox = document.createElement('input');
+	Element.extend(this.checkbox);
 	this.checkbox.setAttribute('type', 'checkbox');
 	this.windowBottom.appendChild(this.checkbox);
 	this.windowBottom.appendChild(document.createTextNode(gettext('Don\'t show me anymore')));
@@ -497,14 +515,16 @@ function FormWindowMenu (fields, title) {
 		switch (field.type) {
 		case 'color':
 			var input = document.createElement('input');
+			Element.extend(input);
 			input.setAttribute('maxlength', 6);
 			input.setAttribute('type', 'text');
-			input.setAttribute('class', 'color_input');
+			input.addClassName('color_input');
 			var inputId = fieldId + '_input';
 			input.setAttribute('id', inputId);
 
 			var button = document.createElement('button');
-			button.setAttribute('class', 'color_button');
+			Element.extend(button);
+			button.addClassName('color_button');
 			extraElements.push(button);
 
 			var sample = document.createElement('input');
@@ -570,6 +590,7 @@ function FormWindowMenu (fields, title) {
 
 	// Accept button
 	this.button = document.createElement('button');
+	Element.extend(this.button);
 	this.button.appendChild(document.createTextNode(gettext('Accept')));
 	this.windowBottom.appendChild(this.button);
 	this._acceptHandler = this._acceptHandler.bind(this);
@@ -577,6 +598,7 @@ function FormWindowMenu (fields, title) {
 
 	// Cancel button
 	var cancelButton = document.createElement('button');
+	Element.extend(cancelButton);
 	cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
 	cancelButton.observe("click", this._closeListener);
 	this.windowBottom.appendChild(cancelButton);
@@ -766,8 +788,9 @@ function AddFeedMenu (element) {
 
 	// TODO remove this hackism needed by color input fields
 	var colorpicker301 = document.createElement('div');
+	Element.extend(colorpicker301);
 	colorpicker301.setAttribute('id', 'colorpicker301');
-	colorpicker301.setAttribute('class', 'colorpicker301');
+	colorpicker301.addClassName('colorpicker301');
 	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
 }
 AddFeedMenu.prototype = new FormWindowMenu();
@@ -818,8 +841,9 @@ function AddSiteMenu (element) {
 
 	// TODO remove this hackism needed by color input fields
 	var colorpicker301 = document.createElement('div');
+	Element.extend(colorpicker301);
 	colorpicker301.setAttribute('id', 'colorpicker301');
-	colorpicker301.setAttribute('class', 'colorpicker301');
+	colorpicker301.addClassName('colorpicker301');
 	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
 }
 AddSiteMenu.prototype = new FormWindowMenu();

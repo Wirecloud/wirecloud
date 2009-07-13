@@ -21,6 +21,7 @@ div.gadget_window_transparent {
 div.gadget_menu {
   cursor: move;
   overflow: hidden;
+  border: 0px;
 }
 
 div.dragboard.fixed div.gadget_menu {
@@ -131,6 +132,7 @@ div.dragboard.fixed div.gadget_window div.leftResizeHandle,
 
 div.gadget_window div.statusBar {
   overflow: hidden;
+  border: 0px;
 }
 
 /*****

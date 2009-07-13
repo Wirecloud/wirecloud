@@ -117,18 +117,28 @@ function Tab (tabInfo, workSpace) {
 		this.tabNameHTMLElement.focus();
 		Event.observe(this.tabNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
-		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){if(e.keyCode == Event.KEY_RETURN){Event.stop(e);
-					e.target.blur();} else{this.makeVisibleInTabBar();}}.bind(this));
-		Event.observe(this.tabNameHTMLElement, 'change', function(e){Event.stop(e);
-					this.updateInfo(e.target.value);}.bind(this));
-		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){Event.stop(e);
-					e.target.size = (e.target.value.length==0)?1:e.target.value.length;
-					var newTabWidth = e.target.parentNode.getWidth();
-					var difference= newTabWidth-this.tabWidth;
-					if (difference!=0)
-						LayoutManagerFactory.getInstance().changeTabBarSize(difference);
-					this.tabWidth = newTabWidth;
-				}.bind(this));
+		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							if(e.keyCode == Event.KEY_RETURN){
+								Event.stop(e);
+								target.blur();
+							} else{
+								this.makeVisibleInTabBar();
+							}}.bind(this));
+		Event.observe(this.tabNameHTMLElement, 'change', function(e){
+							Event.stop(e);
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							this.updateInfo(target.value);}.bind(this));
+		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){
+							Event.stop(e);
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							target.size = (target.value.length==0)?1:target.value.length;
+							var newTabWidth = target.parentNode.getWidth();
+							var difference= newTabWidth-this.tabWidth;
+							if (difference!=0)
+								LayoutManagerFactory.getInstance().changeTabBarSize(difference);
+							this.tabWidth = newTabWidth;
+						}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.
 	}
 	
@@ -213,6 +223,7 @@ function Tab (tabInfo, workSpace) {
 	var wrapper = $("wrapper");
 
 	this.dragboardElement = document.createElement("div");
+	Element.extend(this.dragboardElement);
 	this.dragboardElement.className = "container dragboard";
 	wrapper.insertBefore(this.dragboardElement, wrapper.firstChild);
 
@@ -228,12 +239,14 @@ function Tab (tabInfo, workSpace) {
 	
 	//fill the tab label with a span tag
 	this.fillWithLabel();
-	
+	 
 	this.tabOpsLauncher = this.tabName+"_launcher";
 	var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
 	new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);
 	var tabOpsLauncherElement = $(this.tabOpsLauncher);
-	Event.observe(tabOpsLauncherElement, "click", function(e){e.target.blur();Event.stop(e);
+	Event.observe(tabOpsLauncherElement, "click", function(e){
+													var target = BrowserUtilsFactory.getInstance().getTarget(e);
+													target.blur();Event.stop(e);
 													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 

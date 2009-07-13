@@ -122,6 +122,18 @@ Hash.prototype.clone = function() {
   return newHash;
 }
 
+var isElement = function(el){
+	var fn;
+
+	try {
+		return el instanceof Element;
+	}catch(e) {
+		return el && 'nodeType' in el && el.nodeType === 1;
+	}
+};
+
+//if (Prototype.Browser.IE || Element.prototype.getBoundingClientRect != undefined) {
+
 if (document.documentElement.getBoundingClientRect != undefined) {
 	Element.getRelativeBoundingClientRect = function(element1, element2) {
 		var rect1 = element1.getBoundingClientRect();

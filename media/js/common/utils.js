@@ -157,6 +157,7 @@ Theme.prototype.preloadImages = function(onFinishCallback) {
 
 	for (var iconId in this._iconMapping) {
 		var img = document.createElement('img');
+		Element.extend(img);
 		img.observe('load', _incLoadedCount);
 		img.observe('error', _notifyError);
 		img.observe('abort', _notifyError);

@@ -1238,6 +1238,7 @@ UIUtils.sendVotes = function(num) {
 
 UIUtils.createHTMLElement = function(type_, attributes_){
 	var newElement = document.createElement(type_);
+	Element.extend(newElement);
 	if (attributes_) {
 		attributes_.each(function(attribute) {
 			if (attribute.key != "innerHTML") {
