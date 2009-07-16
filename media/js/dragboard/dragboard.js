@@ -113,7 +113,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			return; // Do nothing
 
 		var dragboardElement = this.dragboardElement;
-		this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+		this.dragboardWidth = parseInt(BrowserUtilsFactory.getInstance().getWidth());
 
 		var tmp = this.dragboardWidth;
 		tmp-= parseInt(dragboardElement.clientWidth);
