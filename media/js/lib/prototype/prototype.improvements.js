@@ -396,41 +396,41 @@ if (useInternalComputedStyle) {
 			testElement.style.margin = "0";
 			testElement.style.border = "0";
 
-			var matching = CSSPrimitiveValue._ValueRegExp.exec(this.cssText);
-			if (matching === null) {
-				matching = /border-(top|right|bottom|left)-width/.exec(this._property);
-				if (matching !== null) {
-					var side = matching[1];
-					var extraElement = this._element.ownerDocument.createElement('div');
-					extraElement.style.visibility = "hidden";
-					extraElement.style.padding = "0";
-					extraElement.style.margin = "0";
-					extraElement.style.border = "0";
-					extraElement.style.height = "0";
-					extraElement.style.width = "1px";
-					extraElement.style.borderTopWidth = this.cssText;
-					var property = 'border-' + side + '-style';
-					var ieProperty = ComputedCSSStyleDeclaration.prototype._getIEProperty(property);
-					extraElement.style.borderTopStyle = _internalGetCurrentStyle(this._element, property, ieProperty);
-					testElement.appendChild(extraElement);
-					testElement.style.width = 'auto';
-					testElement.style.height = 'auto';
-				} else {
-					throw new Error();
-				}
+			var matching = /border-(top|right|bottom|left)-width/.exec(this._property);
+			var side = matching !== null ? matching[1] : null;
+
+			// Test if the css value has a basic value (px, em, ex)
+			matching = CSSPrimitiveValue._ValueRegExp.exec(this.cssText);
+			if (matching != null) {
+				var value = matching[1];
+				var units = matching[2];
+				if (units == "px")
+					// Value is already in pixels
+					return parseInt(value);
+				else
+					testElement.style.height = this.cssText;
+			} else if ((matching == null) && (side != null)) {
+				// border width accepts special values: medium, normal, ...
+				var extraElement = this._element.ownerDocument.createElement('div');
+				testElement.style.fontSize = "0";
+				testElement.style.lineHeight = "0";
+				extraElement.style.padding = "0";
+				extraElement.style.margin = "0";
+				extraElement.style.border = "0";
+				extraElement.style.width = "1px";
+				extraElement.style.borderTopWidth = this.cssText;
+				var property = 'border-' + side + '-style';
+				var ieProperty = ComputedCSSStyleDeclaration.prototype._getIEProperty(property);
+				extraElement.style.borderTopStyle = _internalGetCurrentStyle(this._element, property, ieProperty);
+				testElement.appendChild(extraElement);
 			} else {
-				// Not used for now
-				//var value = matching[1];
-				//var units = matching[2];
-				testElement.style.height = this.cssText;
+				throw new Error();
 			}
 
 			parentNode.appendChild(testElement);
 
-			if (testElement.clientHeight != null) {
-				var result = testElement.clientHeight;
-			} else if (testElement.style.pixelHeight != null) {
-				var result = testElement.style.pixelHeight;
+			if (testElement.offsetHeight != null) {
+				var result = testElement.offsetHeight;
 			} else {
 				throw new Error();
 			}
@@ -529,7 +529,7 @@ if (useInternalComputedStyle) {
 		                                this._getIEProperty(property));
 	}
 
-	/*
+	/**
 	 * WARNING This is not a full implementation of the getComputedStyle, some
 	 * things will not work.
 	 *
@@ -540,5 +540,6 @@ if (useInternalComputedStyle) {
 		return new ComputedCSSStyleDeclaration(element);
 	}
 
-	document.defaultView = window;
+	if (document.defaultView === undefined)
+		document.defaultView = window;
 }
