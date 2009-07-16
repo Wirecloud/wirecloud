@@ -18,30 +18,10 @@
 	background: url("/ezweb/themes/default/images/ie/Open_Ez_Logo-trans.png") no-repeat;
 }
 
-/* OLD STYLES -> REVIEW 
-#tab_section .tab {
-  height:18px;
-  padding: 2px 9px 1px;
-
+.drop_down_menu, .window_menu{
+  position:absolute;
 }
 
-#tab_section .current {
-  padding-bottom: 3px;
+body{
+	height: 100%;
 }
-
-#admin_icons {
-  float: left;
-  margin-top: -40px;
-  width: 240px;
-}
-
-#section_title h3 {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 12px;
-}
-
-#head_control_tab {
-    margin-left: -100px;
-}
-*/

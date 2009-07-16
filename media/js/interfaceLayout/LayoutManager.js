@@ -72,7 +72,7 @@ var LayoutManagerFactory = function () {
 		//another which is absolutely positioned each time a slider button is clicked
 		this.tabBarStep = 20;
 		this.tabImgSize = 14;    // launcher width
-		this.extraGap = 2;      // 15px to ensure that a new character has enough room in the scroll bar
+		this.extraGap = 3;      // 15px to ensure that a new character has enough room in the scroll bar
 		this.tabMarginRight = 3; // 6px
 		this.rightSlider = $('right_slider');
 		this.leftSlider = $('left_slider');
@@ -898,8 +898,9 @@ var LayoutManagerFactory = function () {
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
 		this.showTabs();
 		this.scrollTabBarWidth += tabSize;
-		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
 		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
+		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});		
+	var kkwidth = this.fixedTabBar.getWidth();
 		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			// we do not need arrows
