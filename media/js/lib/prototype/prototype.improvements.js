@@ -122,6 +122,33 @@ Hash.prototype.clone = function() {
   return newHash;
 }
 
+
+if (document.documentElement.textContent != undefined) {
+	/**
+	 * Changes the inner content of an Element treating it as pure text. If
+	 * the provided text contains HTML special characters they will be encoded.
+	 */
+	Element.Methods.setTextContent = function(element, text) {
+		element.textContent = text;
+	}
+
+	/**
+	 * Return the inner content of an Element treating it as pure text. All
+	 * encoded characters will be decoded.
+	 */
+	Element.Methods.getTextContent = function(element) {
+		return element.textContent;
+	}
+} else if (document.documentElement.innerText != undefined) {
+	Element.Methods.setTextContent = function(element, text) {
+		element.innerText = text;
+	}
+
+	Element.Methods.getTextContent = function(element) {
+		return element.innerText;
+	}
+}
+
 var isElement = function(el){
 	var fn;
 
