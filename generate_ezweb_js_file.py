@@ -45,6 +45,7 @@ inputFiles = {
 
         'js/opManager/WorkSpace.js',
         'js/opManager/Tab.js',
+        'js/opManager/InitialScriptExecuter.js',
 
         'js/opManager/OpManager.js',
         'js/varManager/VariableGadget.js',
@@ -137,6 +138,7 @@ inputFiles = {
 
         'js/opManager/WorkSpace.js',
         'js/opManager/Tab.js',
+        'js/opManager/InitialScriptExecuter.js',
 
         'js/opManager/OpManager.js',
         'js/varManager/VariableGadget.js',

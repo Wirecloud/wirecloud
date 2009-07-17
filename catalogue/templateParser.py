@@ -51,10 +51,10 @@ import string
 
 
 class TemplateParser:
-    def __init__(self, uri, user):
+    def __init__(self, uri, user, save=True):
         self.uri = uri
         self.xml = download_http_content(uri)
-        self.handler = TemplateHandler(user, uri)
+        self.handler = TemplateHandler(user, uri, save)
 
     def parse(self):
         # Parse the input
@@ -68,7 +68,8 @@ class TemplateParser:
 
 
 class TemplateHandler(handler.ContentHandler): 
-    def __init__(self, user, uri):
+    def __init__(self, user, uri, save):
+        self.save=save
         self._accumulator = []
         self._name = ""
         self._displayName = ""
@@ -119,11 +120,12 @@ class TemplateHandler(handler.ContentHandler):
             _wiring = 'out'
 
         if (_friendCode != '' and wire != ''):
-            wiring = GadgetWiring( friendcode = _friendCode, wiring = _wiring,
-                idResource_id = get_object_or_404(GadgetResource, 
-                short_name=self._name,vendor=self._vendor,version=self._version).id)
-
-            wiring.save()
+            if self.save:
+                wiring = GadgetWiring( friendcode = _friendCode, wiring = _wiring,
+                    idResource_id = get_object_or_404(GadgetResource, 
+                    short_name=self._name,vendor=self._vendor,version=self._version).id)
+    
+                wiring.save()
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Event or Slot element"))
         
@@ -144,9 +146,10 @@ class TemplateHandler(handler.ContentHandler):
         if (not self._gadget):
             raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
         
-        capability = Capability(name=name, value=value, resource=self._gadget)
-
-        capability.save()
+        if (self.save):
+            capability = Capability(name=name, value=value, resource=self._gadget)
+    
+            capability.save()
 
         if (capability.name.lower() == 'contratable'):
             self._contratable=True 
@@ -291,31 +294,33 @@ class TemplateHandler(handler.ContentHandler):
             gadget.creator = self._user
 
             try:
-                gadget.save()
+                if (self.save):
+                    gadget.save()
             except Exception, e:
                 raise TemplateParseException(e)
             
             self._gadget = gadget
             
-            userRelated = UserRelatedToGadgetResource ()
-            userRelated.gadget = gadget;
-            userRelated.user = self._user
-            userRelated.added_by = True
-            
-            userRelated.save()
-            
-
-            #TODO: process the resources
-            #workaround to add default tags
-            if self._mashupId!=None:
-                tag, created = Tag.objects.get_or_create(name="mashup")
-                userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)  
-                userTag.save()
-
-            if self._contratable:
-                tag, created = Tag.objects.get_or_create(name="contratable")
-                userTag = UserTag(tag= tag, idUser=self._user, idResource=gadget)      
-                userTag.save()
+            if (self.save): 
+                userRelated = UserRelatedToGadgetResource ()
+                userRelated.gadget = gadget;
+                userRelated.user = self._user
+                userRelated.added_by = True
+                
+                userRelated.save()
+                
+    
+                #TODO: process the resources
+                #workaround to add default tags
+                if self._mashupId!=None:
+                    tag, created = Tag.objects.get_or_create(name="mashup")
+                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)  
+                    userTag.save()
+    
+                if self._contratable:
+                    tag, created = Tag.objects.get_or_create(name="contratable")
+                    userTag = UserTag(tag= tag, idUser=self._user, idResource=gadget)      
+                    userTag.save()
 
             self._gadget_added = True
         elif (self._gadget_added and name=="msg"):

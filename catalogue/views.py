@@ -59,14 +59,16 @@ from commons.utils import get_xml_error
 from commons.http_utils import PUT_parameter
 from commons.user_utils import get_verified_certification_group
 
+from django.contrib.auth.decorators import login_required
+    
 class GadgetsCollection(Resource):
 
     @transaction.commit_manually
-    def create(self,request, user_name):
+    def create(self, request, user_name):
 
         user = user_authentication(request, user_name)
 
-        template_uri = request.POST.__getitem__('template_uri')
+        template_uri = request.REQUEST.__getitem__('template_uri')
         templateParser = None
 
         try:
@@ -98,9 +100,12 @@ class GadgetsCollection(Resource):
         gadget = templateParser.get_gadget()
         
         gadgetName = gadget.short_name
+        version = gadget.version
+        vendor = gadget.vendor
         gadgetId = gadget.id
 
-        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s}' % (contratable, template_uri, gadgetName, gadgetId)
+        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s"}' \
+            % (contratable, template_uri, gadgetName, gadgetId, vendor, version)
         
         return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 

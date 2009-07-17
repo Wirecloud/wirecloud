@@ -191,6 +191,7 @@ var tag_categories = '{{ tag_categories|safe }}'
 
 var public_workspace = '{{ active_workspace }}';
 var last_logged_user = '{{ last_user }}';
+var post_load_script = '{{ post_load_script|safe }}';
 
 var _THEMES = {% autoescape off %} {{ THEMES }} {% endautoescape %};
 var _INITIAL_THEME = '{{ INITIAL_THEME }}';
