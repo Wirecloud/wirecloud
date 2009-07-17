@@ -444,7 +444,9 @@ if (useInternalComputedStyle) {
 		}
 	}
 
+	CSSPrimitiveValue._rgbaColorParser = new RegExp('rgba\\\(\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*\\\,\\s*\(\\d+\)\\s*\\\)');
 	CSSPrimitiveValue._rgbColorParser = new RegExp('rgb\\\(\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*,\\s*\(\\d+\)\\s*\\\)');
+	CSSPrimitiveValue._hexColorParser = new RegExp('#\([0-9A-F]{2}\)\([0-9A-F]{2}\)\([0-9A-F]{2}\)', 'i');
 	/**
 	 *
 	 */
@@ -452,38 +454,53 @@ if (useInternalComputedStyle) {
 		switch (this._property) {
 		case 'background-color':
 		case 'color':
+			var red, green, blue, alpha = '1';
 			var matching = CSSPrimitiveValue._rgbColorParser.exec(this.cssText);
 			if (matching !== null) {
-				var red = parseInt(matching[1]);
-				var green = parseInt(matching[2]);
-				var blue = parseInt(matching[3]);
+				red = matching[1];
+				green = matching[2];
+				blue = matching[3];
 			} else {
-				var parentNode = this._element.parentNode;
-				var testElement = this._element.ownerDocument.createElement('table');
-				testElement.setAttribute('bgcolor', this.cssText);
-				testElement.style.visibility = "hidden";
-				parentNode.appendChild(testElement);
-				var bgColor = testElement.bgColor;
+				matching = CSSPrimitiveValue._rgbaColorParser.exec(this.cssText);
+				if (matching !== null) {
+					red = matching[1];
+					green = matching[2];
+					blue = matching[3];
+					alpha = matching[4];
+				} else {
+					matching = CSSPrimitiveValue._hexColorParser.exec(this.cssText);
+					if (matching === null) {
+						var parentNode = this._element.parentNode;
+						var testElement = this._element.ownerDocument.createElement('table');
+						testElement.setAttribute('bgcolor', this.cssText);
+						testElement.style.visibility = "hidden";
+						parentNode.appendChild(testElement);
+						var bgColor = testElement.bgColor;
+						matching = CSSPrimitiveValue._hexColorParser.exec(bgColor);
+						if (matching === null)
+							throw new Error('Error on getRGBColorValue');
 
-				parentNode.removeChild(testElement);
+						parentNode.removeChild(testElement);
+					}
 
-				function hex2value(hex) {
-					hex = hex.toUpperCase();
-					return ("0123456789ABCDEF".indexOf(hex[0]) * 16) +
-					       "0123456789ABCDEF".indexOf(hex[1]);
+					function hex2value(hex) {
+						hex = hex.toUpperCase();
+						return ("0123456789ABCDEF".indexOf(hex.substr(0,1)) * 16) +
+						       "0123456789ABCDEF".indexOf(hex.substr(1,1));
+					}
+
+					// Build the result
+					var red = hex2value(matching[1]);
+					var green = hex2value(matching[2]);
+					var blue = hex2value(matching[3]);
 				}
-
-				// Build the result
-				var red = hex2value(bgColor.substr(1,2));
-				var green = hex2value(bgColor.substr(3,2));
-				var blue = hex2value(bgColor.substr(5,2));
 			}
 
 			var result = new Object();
 			result.red = new CSSColorComponentValue(red);
 			result.green = new CSSColorComponentValue(green);
 			result.blue = new CSSColorComponentValue(blue);
-			result.alpha = new CSSColorComponentValue("1");
+			result.alpha = new CSSColorComponentValue(alpha);
 			return result;
 			break;
 		default:
