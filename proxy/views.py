@@ -30,37 +30,26 @@
 
 #
 
-import urllib2
-import httplib
-import urlparse
+import urllib2, httplib, urlparse, re, socket
 
 from urllib import urlencode
 
+from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.utils import get_xml_error
 
 from proxy.utils import encode_query, is_valid_header, is_localhost
 
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 
-from django.http import Http404, HttpResponse, HttpResponseServerError
+from django.http import Http404, HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
 from django.conf import settings
 
 from django.utils import simplejson
 
 import string
 
-#def getConnection(protocol, proxy, host):
-#    if (proxy != "" and not is_localhost(host)):
-#        if (protocol=="http"):
-#            return httplib.HTTPConnection(proxy)
-#        elif (protocol=="https"):
-#             return httplib.HTTPSConnection(proxy)
-#    else:
-#        if (protocol=="http"):
-#            return httplib.HTTPConnection(host)
-#        elif (protocol=="https"):
-#            return httplib.HTTPSConnection(host) 
 class MethodRequest(urllib2.Request):
   def __init__(self, method, *args, **kwargs):
     self._method = method
@@ -70,12 +59,30 @@ class MethodRequest(urllib2.Request):
     return self._method
 
 class Proxy(Resource):
-    def create(self,request):
+
+    protocolRE = re.compile('HTTP/(.*)')
+    hostRE = re.compile('([^.]+)\.(.*)')
+
+    def _do_request(self, opener, method, url, params, headers):
+        # Build a request object
+        if method == 'GET' or method == 'DELETE':
+            req = urllib2.Request(url, None, headers)
+        else:
+            req = MethodRequest(method, url, params, headers)
+
+        # Do the request
+        try:
+            return opener.open(req)
+        except urllib2.HTTPError, e:
+            return e
+
+    def create(self, request):
+
         # URI to be called
         if request.POST.has_key('url'):
             url = request.POST['url']
         else:
-            return HttpResponse(string_concat(['<error>',_(u"Url not specified"),'</error>']))
+            return HttpResponseNotFound(get_xml_error(_(u"Url not specified")), mimetype='application/xml; charset=UTF-8')
 
         # HTTP method, by default is GET
         if request.POST.has_key('method'):
@@ -85,7 +92,6 @@ class Proxy(Resource):
 
         # Params
         if request.POST.has_key('params'):
-            #params = encode_query(request.POST['params'])
             try:
                 params = urlencode(simplejson.loads(request.POST['params']))
             except Exception, e:
@@ -98,23 +104,21 @@ class Proxy(Resource):
             httplib.HTTPConnection.debuglevel = 1
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
-            
-            query = encode_query(query)
-            
-            #manage proxies with authentication (get it from environment)
-            proxy=None   	
+
+            # manage proxies with authentication (get it from environment)
+            proxy = None
             for proxy_name in settings.NOT_PROXY_FOR:
-    	        if host.startswith(proxy_name):
-    	            proxy = urllib2.ProxyHandler({})#no proxy
+                if host.startswith(proxy_name):
+                    proxy = urllib2.ProxyHandler({})#no proxy
                     break
-    
+
             if not proxy:
-	            #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
+                #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
                 proxy = urllib2.ProxyHandler()#proxies from environment
-        
-            opener = urllib2.build_opener(proxy)            
-                   
-                        
+
+            opener = urllib2.build_opener(proxy)
+
+
             # Adds original request Headers to the request (and modifies Content-Type for Servlets)
             headers = {}
             has_content_type = False
@@ -127,7 +131,7 @@ class Proxy(Resource):
                     http_content_type_value = header[1]
                 if (header[0].lower() == 'http_user_agent'):
                     headers["User-Agent"] = header[1]
-                elif (header[0].find("HTTP_")>=0 
+                elif (header[0].find("HTTP_") >= 0
                       and header[0].lower() != 'http_cache_control' #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
                       and header[0].lower() != 'http_content_length'
                       and header[0].lower() != 'http_x_forwarded_for'
@@ -138,65 +142,40 @@ class Proxy(Resource):
                       and header[0].lower() != 'http_host'
                       and header[0].lower() != 'http_referer'):
                     headers[header[0].replace("HTTP_", "", 1)] = header[1]
-            
-            #headers["HOST"] = host       
-            headers["Via"] = "EzWeb-Proxy"
+
+            protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
+            if protocolVersion != None:
+                protocolVersion = protocolVersion.group(1)
+            else:
+                protocolVersion = '1.1'
+
+            hostName = self.hostRE.match(request.META['HTTP_HOST'])
+            if hostName != None:
+                hostName = hostName.group(1)
+            else:
+                hostName = socket.gethostname()
+
+            print "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
+            headers["Via"] = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             # Add Content-Type (Servlets bug)
             if ((method == 'POST' or method == 'PUT') and not has_content_type):
                 if (http_content_type_value != ''):
                     headers['Content-Type'] = http_content_type_value
                 else:
                     headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            
+
             # The same with cookies
             cookies = ''
             for cookie in request.COOKIES.items():
-                cookies = cookies + cookie[0] + '=' + cookie[1] + '; '	
+                cookies = cookies + cookie[0] + '=' + cookie[1] + '; '
             headers['Cookie'] = cookies
 
             # Open the request
- #           if query != '':
- #               cgi = cgi + '?%s' % query
-                
-            if method == 'GET':
-                req=urllib2.Request(url, None, headers)
-            else:
-                #req=urllib2.Request(url, params, headers)
-                req=MethodRequest(method, url, params, headers)
-            
-            res = opener.open(req)
+            try:
+                res = self._do_request(opener, method, url, params, headers)
+            except urllib2.URLError, e:
+                return HttpResponseNotFound(e.reason)
 
-#            # Redirect resolution
-#            MAX_REDIRECTS = 50
-#            index_redirects = 0
-#    
-#            while (res.status >= 300) and (res.status < 400):
-#
-#                if (index_redirects >= MAX_REDIRECTS):
-#                    return HttpResponse('<error>Redirect limit has been exceeded</error>')
-#                index_redirects = index_redirects + 1
-#
-#                url = res.getheader('Location')
-#                proto, host, cgi, param, auxquery = urlparse.urlparse(url)[:5]
-#                conn = getConnection(proto, proxy, host)
-#
-#                auxquery = encode_query(auxquery)
-#
-#                if query != '':
-#                    query = query + "&" + auxquery
-#                else:
-#                    query = auxquery
-#
-#                if query != '':
-#                    cgi = cgi + '?%s' % query
-#
-#                if (proxy != ""):
-#                    conn.request(method, url, params, headers)
-#                else:
-#                    conn.request(method, cgi, params, headers)
-#
-#                res = conn.getresponse()
-                
             # Add content-type header to the response
             try:
                 response = HttpResponse (res.read(), mimetype=res.info()['Content-Type'])
@@ -215,4 +194,5 @@ class Proxy(Resource):
             return response
 
         except Exception, e:
-            return HttpResponseServerError("<html><head><title>Error HTTP 500</title></head><body>%s</body></html>" % e, mimetype='text/html; charset=UTF-8')
+            msg = _("Error processing proxy request: %s") % unicode(e)
+            raise TracedServerError(e, None, request, msg)
