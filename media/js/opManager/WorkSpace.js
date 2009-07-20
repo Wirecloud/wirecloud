@@ -246,7 +246,6 @@ function WorkSpace (workSpaceState) {
 						target.blur();
 					}}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){
-					Event.stop(e);
 					var target = BrowserUtilsFactory.getInstance().getTarget(e);
 					this.updateInfo(target.value);}.bind(this));
 		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){

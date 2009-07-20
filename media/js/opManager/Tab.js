@@ -126,7 +126,6 @@ function Tab (tabInfo, workSpace) {
 								this.makeVisibleInTabBar();
 							}}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'change', function(e){
-							Event.stop(e);
 							var target = BrowserUtilsFactory.getInstance().getTarget(e);
 							this.updateInfo(target.value);}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keyup', function(e){

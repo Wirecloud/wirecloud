@@ -740,8 +740,7 @@ IGadget.prototype.fillWithInput = function () {
 		                                    }.bind(this));
 
 		this.igadgetInputHTMLElement.observe('change',
-		                                    function(e) {
-		                                        Event.stop(e);
+		                                    function(e) {		                                    
 		                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
 		                                        this.setName(target.value);
 		                                    }.bind(this));
