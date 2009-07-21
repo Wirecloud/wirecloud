@@ -54,7 +54,6 @@ input[type="text"], input[type="password"], textarea{
 
 #greeting {
 	text-align:right;
-	float:right;
 	margin-right:15px;
 	margin-top:5px;
 }

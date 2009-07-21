@@ -59,10 +59,13 @@ td {
 #themeSelector {
   cursor: pointer;
 }
-
+#greeting>*{
+	float: right;
+	margin: 0 1px;
+}
 #greeting .languages {
-	display: inline;
 	margin-left: 5px;
+	margin-top: 2px;
 }
 
 #greeting .languages img{
@@ -294,7 +297,7 @@ td {
 }
 
 #help_section .help_button{
-	padding-left: 18px;
+	padding-left: 15px;
 }
 
 .window_menu {

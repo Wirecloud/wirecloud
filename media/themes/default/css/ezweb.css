@@ -16,6 +16,7 @@ a, a:visited{
     background: white;
     -moz-opacity: 0.6;
     opacity: 0.6;
+    filter: alpha(opacity=60);
     background-image: url("../images/loading.gif");
     background-repeat: no-repeat;
     background-position: center center;
@@ -43,7 +44,6 @@ a, a:visited{
 
 #greeting {
 	text-align:right;
-	float:right;
 	margin-right:15px;
 	margin-top:5px;
 }
