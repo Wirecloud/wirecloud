@@ -31,7 +31,7 @@
 #
 
 from commons.logs import log_exception, log_detailed_exception, log_request
-from commons.utils import get_xml_error
+from commons.utils import get_xml_error, get_json_error_response
 
 from logs_exception import TracedServerError
 
@@ -79,7 +79,7 @@ class Resource:
             
             msg = log_exception(request, e)
 
-        return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+        return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')
     
     def adaptRequest(self, request):
         request._post, request._files = QueryDict(request.raw_post_data, encoding=request._encoding), datastructures.MultiValueDict()

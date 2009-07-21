@@ -71,9 +71,8 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 			      final_url
 			);
 	    }
-	    else {	
-			repaintOrderedByCreationDate();
-		}
+		
+		repaintOrderedByCreationDate();
 	}
 	
 	var repaintOrderedByCreationDate = function () {
@@ -83,10 +82,13 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	}
 	
 	var newResourceOnError = function (transport, e) {
+		var response = transport.responseText;
+		var response_message = response.evalJSON()['message'];
+	
 		var logManager = LogManagerFactory.getInstance();
 		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
 
-		if (transport.responseXML && transport.responseXML.documentElement.textContent.match("duplicate key")) {
+		if (response_message.indexOf("IntegrityError") > 0) {
 			msg = interpolate(msg, {errorMsg: gettext("The gadget is already added to the catalogue")}, true);
 		} else {
 			msg = logManager.formatError(msg, transport, e)

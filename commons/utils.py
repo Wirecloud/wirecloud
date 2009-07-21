@@ -47,6 +47,8 @@ from catalogue.templateParser import TemplateParser as CatalogueTemplateParser
 from gadget.models import XHTML
 from gadget.templateParser import TemplateParser as GadgetTemplateParser
 
+from django.utils import simplejson
+
 
 def json_encode(data, ensure_ascii=False):
     """
@@ -113,6 +115,16 @@ def get_xml_error(value):
     doc.unlink()
 
     return errormsg
+
+def get_json_error_response(value):
+    response = {}
+    
+    response['result'] = "error"
+    response["message"] = value
+    
+    response = simplejson.dumps(response)
+
+    return response
 
 def get_gadgets_files():
     gadgets_files = []

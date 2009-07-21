@@ -79,9 +79,9 @@ class GadgetsCollection(Resource):
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
             transaction.rollback()
-            msg = _("Gadget already exists!")
             
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
+            #This is not an error! It returns the same as a successfull request!
+
         except TemplateParseException, e:
             transaction.rollback()
             msg = _("Problem parsing template xml")

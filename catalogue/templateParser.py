@@ -64,7 +64,7 @@ class TemplateParser:
         return self.handler._contratable
     
     def get_gadget(self):
-        return self.handler._gadget
+        return self.handler.get_gadget()
 
 
 class TemplateHandler(handler.ContentHandler): 
@@ -100,6 +100,21 @@ class TemplateHandler(handler.ContentHandler):
         self.default_lang = ""
         self.current_lang = ""
         self.current_text = ""
+        
+    def get_gadget(self):
+        if (not self.save):
+            self._gadget.id = -1
+            
+            return self._gadget
+        
+        if (self._gadget.id):
+            return self._gadget
+        
+        gadget = self._gadget
+        
+        valid_gadget = GadgetResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
+        
+        return valid_gadget
 
     def resetAccumulator(self):
         self._accumulator = []
@@ -292,14 +307,11 @@ class TemplateHandler(handler.ContentHandler):
             gadget.certification = get_certification_status(self._user)
             
             gadget.creator = self._user
-
-            try:
-                if (self.save):
-                    gadget.save()
-            except Exception, e:
-                raise TemplateParseException(e)
             
             self._gadget = gadget
+
+            if (self.save):
+                gadget.save()
             
             if (self.save): 
                 userRelated = UserRelatedToGadgetResource ()
