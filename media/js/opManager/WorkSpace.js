@@ -66,9 +66,6 @@ function WorkSpace (workSpaceState) {
 
 			//set the visible tab. It will be displayed as current tab afterwards
 			this.visibleTab = this.tabInstances[visibleTabId];
-			
-			//Additional information that a workspace must do after loading! 
-			this.run_post_load_script();
 
 			this.valid=true;
 		} catch (error) {

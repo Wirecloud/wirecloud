@@ -252,6 +252,7 @@ var OpManagerFactory = function () {
 		OpManager.prototype.removeInstance = function (iGadgetId) {
 			if (!this.loadCompleted)
 				return;
+				
 			this.activeWorkSpace.removeIGadget(iGadgetId);
 		}
 		
@@ -367,6 +368,7 @@ var OpManagerFactory = function () {
 			if (module == Modules.prototype.ACTIVE_WORKSPACE) {
 				this.showActiveWorkSpace(this.activeWorkSpace);
 //				this.changeActiveWorkSpace(this.activeWorkSpace);
+
 				//ezweb fly
 				if(!BrowserUtilsFactory.getInstance().isIE()) {
 					var s = document.createElement('style');
@@ -378,6 +380,9 @@ var OpManagerFactory = function () {
 
 				LayoutManagerFactory.getInstance()._notifyPlatformReady(!this.loadComplete);
 				this.loadCompleted = true;
+				
+				//Additional information that a workspace must do after loading! 
+				this.activeWorkSpace.run_post_load_script();
 			}
 		}
 
