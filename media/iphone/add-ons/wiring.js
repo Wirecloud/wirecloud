@@ -28,24 +28,33 @@
 		var events = this.iGadgets[iGadgetId].events;
 		var related = new Array();
 		var outputs = null;
-		var o = null;
-		var id = null;
-		var channelOutputs = null;
 		
-		for (i=0;i<events.length;i++){
+		for (var i=0;i<events.length;i++){
 			var outputs = events[i].outputs; //gadget outputs
-			for (j=0;j<outputs.length;j++){
+			this.getRelatedOutputs(outputs, related);
+			
+		}
+		return related;
+	}
+	
+	Wiring.prototype.getRelatedOutputs = function(outputs, related){
+			var o = null;
+			var id = null;
+			var channelOutputs = null;
+			for (var j=0;j<outputs.length;j++){
 				o = outputs[j];
-				if (o.connectableType=="inout"){ //it is a channel
+				if (o.outputs){ //it is a channel
 					channelOutputs = o.outputs;
-					for (k=0;k<channelOutputs.length;k++){ //channel outputs -> slots
-						id = channelOutputs[k].variable.iGadget;
-						if (!related.elementExists(id)){ //the iGadgetId is not in the related list already
-							related.push(id); //add to the related igadgets list the iGadgetId associated with the channel outputs
+					for (var k=0;k<channelOutputs.length;k++){ //channel outputs -> slots or channels
+						if (channelOutputs[k].outputs){ //it is a channel
+							this.getRelatedOutputs([channelOutputs[k]], related);
+						}else{ //it is a slot
+							id = channelOutputs[k].variable.iGadget;
+							if (!related.elementExists(id)){ //the iGadgetId is not in the related list already
+								related.push(id); //add to the related igadgets list the iGadgetId associated with the channel outputs
+							}
 						}
 					}
 				}
 			}
-		}
-		return related;
 	}
