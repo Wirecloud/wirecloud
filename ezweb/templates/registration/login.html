@@ -85,7 +85,7 @@ img{
 	background: #E3F0F7;
 	margin: auto;
 	width: 70%;
-	margin-bottom: 75px;
+	margin-bottom: 40px;
 	margin-top: 27px;
 	padding: 10px;
 	border-right: 2px solid;
@@ -187,6 +187,15 @@ h3{
 
 #tip_contact{
 	float: left;
+}
+
+#tip_training{
+	float: right;
+}
+
+#logo_formacion {
+	width: 400px;
+	margin-top: 5px;
 }
 
 </style>
@@ -330,6 +339,12 @@ h3{
 			</div>
 			<div id="tip_contact" class="tooltip">
 			{% trans "Don't hesitate sending us your" %} <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'opinion and feedback' %}</a>. {% trans 'Keep in touch with us!' %}
+			</div>
+			<div id="tip_training" class="tooltip">
+			{% trans "MORFEO open source community has released some <b>online training material</b> about EzWeb technology." %}
+			<a href="http://www.morfeo-formacion.org">
+				<img id="logo_formacion" src="http://www.aimme.es/imagenes/banners/MorfeoBanner.gif" />
+			</a>
 			</div>
 		</div>
 	</div>
