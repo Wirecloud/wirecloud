@@ -155,7 +155,6 @@ class Proxy(Resource):
             else:
                 hostName = socket.gethostname()
 
-            print "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             headers["Via"] = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             # Add Content-Type (Servlets bug)
             if ((method == 'POST' or method == 'PUT') and not has_content_type):
