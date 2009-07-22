@@ -33,6 +33,7 @@
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
+from django.conf import settings
 
 from commons.utils import get_xml_error, json_encode
 from commons.user_utils import CERTIFICATION_VERIFIED
@@ -61,15 +62,18 @@ def get_uniquelist(list, value = None):
 
 # Filter gadgets that don't belong to given organization
 # Also filter gadgets that are not certificated!
-def filter_gadgets_by_organization(user, gadget_list, organization_list):
+def filter_gadgets_by_organization(user, gadget_list, organization_list):  
     final_list = []
      
     for gadget in gadget_list:
-        certification_status = gadget.certification
+        if (settings.CERTIFICATION_ENABLED):
+            certification_status = gadget.certification
         
-        if (certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != gadget.creator):
-            continue
+            #Checking certification status!
+            if (certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != gadget.creator):
+                continue
         
+        #Checking organizations!
         gadget_organizations = gadget.organization.all()
         
         if (len(gadget_organizations) == 0):
