@@ -76,27 +76,7 @@ def redirected_login(request):
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
             
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-def add_to_catalogue(request, user_name=None):
-    """ Page for adding gadgets to catalogue without loading EzWeb """
-    if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
-        if (request.REQUEST.has_key('template_uri')):
-            template_uri = request.REQUEST['template_uri']
-        else:
-            return render_to_response('catalogue_adder.html', {'msg': _('A template URL must be specified!')}, context_instance=RequestContext(request))
-        
-        try:
-            templateParser = TemplateParser(template_uri, request.user, save=False)
-            templateParser.parse()
-        
-            gadget = templateParser.get_gadget()
-        except Exception, e:
-            return render_to_response('catalogue_adder.html', {'msg': _('Invalid template URL! Please, specify a valid one!')}, context_instance=RequestContext(request))
-            
-        return render_to_response('catalogue_adder.html', {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}, context_instance=RequestContext(request))
-    else:
-        return render_to_response('catalogue_adder_login.html', {'next': request.META['QUERY_STRING'] }, context_instance=RequestContext(request))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
 
 def add_gadget_script(request):  
     """ Page for adding gadgets to catalogue without loading EzWeb """
@@ -104,37 +84,63 @@ def add_gadget_script(request):
         if (request.REQUEST.has_key('template_uri')):
             template_uri = request.REQUEST['template_uri']
         else:
+            #template_uri not specified!
             return render_to_response('catalogue_adder.html', {'msg': _('A template URL must be specified!')}, context_instance=RequestContext(request))
         
-        try:
-            #Catalogue
-            gc = GadgetsCollection()
+        if (request.method.lower() == "get"):
+            #GET Request: Render HTML interface!
             
-            http_response = gc.create(request, request.user.username)
-        except Exception, e:
-            return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template: %s!') % e.msg}, context_instance=RequestContext(request))
-        
-        catalogue_response = simplejson.loads(http_response.content)
-        
-        if (catalogue_response['result'].lower() != 'ok'):
-            return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template!')}, context_instance=RequestContext(request))
-        
-        vendor = catalogue_response['vendor']
-        version = catalogue_response['version']
-        name = catalogue_response['gadgetName']
-        
-        if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
-            #Loading ezweb for automating gadget instantiation
-            post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' \
-                % (template_uri, vendor, name, version)
+            try:
+                #Parsing gadget info from the template!
+                templateParser = TemplateParser(template_uri, request.user, save=False)
+                templateParser.parse()
             
-            return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
-    
-        #No gadget instantiation, redirecting to information interface  
-        return render_to_response('catalogue_adder.html', {'msg': _('Gadget added correctly!') }, context_instance=RequestContext(request))
-    
-    #Not authenticated or anonymous 
-    return render_to_response('catalogue_adder_login.html', {}, context_instance=RequestContext(request))
+                gadget = templateParser.get_gadget()
+                
+                return render_to_response('catalogue_adder.html', {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}, context_instance=RequestContext(request))
+            except Exception, e:
+                #Error parsing the template
+                return render_to_response('catalogue_adder.html', {'msg': _('Invalid template URL! Please, specify a valid one!')}, context_instance=RequestContext(request))
+        
+        
+        if (request.method.lower() == "post"):
+            #POST Request: Adding gadget to catalogue and to workspace if specified!
+                      
+            try:
+                #Adding to catalogue if it doesn't exist!
+                gc = GadgetsCollection()
+                
+                http_response = gc.create(request, request.user.username)
+                
+                catalogue_response = simplejson.loads(http_response.content)
+            
+                if (catalogue_response['result'].lower() != 'ok'):
+                    #Error adding in the catalogue!
+                    return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template!')}, context_instance=RequestContext(request))
+                
+                #Retrieving info from catalogue for creating the "post_load_script" if the user wants to instantiate the gadget! 
+                vendor = catalogue_response['vendor']
+                version = catalogue_response['version']
+                name = catalogue_response['gadgetName']
+                
+                if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
+                    #The gadget must be instantiated in the user workspace!
+                    #Loading ezweb for automating gadget instantiation
+                    post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' \
+                        % (template_uri, vendor, name, version)
+                    
+                    return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
+                else:
+                    # No gadget instantiation, redirecting to information interface!
+                    # Gadget added to catalogue only!
+                    return render_to_response('catalogue_adder.html', {'msg': _('Gadget added correctly to Catalogue!') }, context_instance=RequestContext(request))
+                
+            except Exception, e:
+                return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template: %s!') % e.msg}, context_instance=RequestContext(request))
+        
+    else:
+        #Not authenticated or anonymous user => redirecting to login!
+        return render_to_response('catalogue_adder_login.html', {'next': request.META['QUERY_STRING'] }, context_instance=RequestContext(request))
 
 def public_ws_viewer(request, public_ws_id):
     """ EzWeb viewer """

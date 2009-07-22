@@ -38,11 +38,9 @@ urlpatterns = patterns('ezweb.views',
     (r'^lite$', 'index_lite'),
     (r'^viewer/workspace/(?P<public_ws_id>[\d]+)$', 'public_ws_viewer'),
     
+    # Login service
     (r'^interfaces/login/service$', 'redirected_login'),
-
-    #HTML interfaces (not logged-in ones)
-    (r'^interfaces/general/add/gadget$', 'add_to_catalogue'),
-    
-    #HTML interfaces (logged-in ones)
-    (r'^interfaces/catalogue/add/gadget$', 'add_gadget_script')
+   
+    # HTML interfaces
+    (r'^interfaces/gadget$', 'add_gadget_script')
 )

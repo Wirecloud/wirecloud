@@ -256,11 +256,13 @@ h3{
 		<p><b>Description:</b> {{gadget.description}}</p>
 		<p><b>Wiki:</b> {{wiki_page_uri}}</p>
 	
-		<form action="/interfaces/catalogue/add/gadget" method="post">
+		<form action="/interfaces/gadget" method="post">
 		    <input type="hidden" value="{{template_uri}}" name="template_uri" />
 		    <p><b>Add to Workspace:</b><input type="checkbox" name="add_to_ws" /></p>
 			<input type="submit" value="Add gadget">
 		</form>
+	{% else %}
+		<a href="/">Go to EzWeb</a>
 	{% endif %}
 	
 </div>
