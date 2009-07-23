@@ -14,10 +14,6 @@
 	max-width: 170px;
 }
 
-#logo {
-	background: url("/ezweb/themes/default/images/ie/Open_Ez_Logo-trans.png") no-repeat;
-}
-
 .drop_down_menu, .window_menu{
   position:absolute;
 }

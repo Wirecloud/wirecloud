@@ -898,19 +898,26 @@ var LayoutManagerFactory = function () {
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
 		this.showTabs();
 		this.scrollTabBarWidth += tabSize;
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
-		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});		
-	var kkwidth = this.fixedTabBar.getWidth();
+
+		//calculate the size of the fixed bar taking into account the max allowed width
+		var fixedWidth;
 		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
+			
+			fixedWidth = this.scrollTabBarWidth;
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			// we do not need arrows
 			this.rightSlider.style.display = "none";
 			this.leftSlider.style.display = "none";
-		} else { //if the scrollTabBar is bigger than the fixed tab, we need arrows
+			
+		}else{//if the scrollTabBar is bigger than the fixed tab, we need arrows
+			fixedWidth = this.fixedTabBarMaxWidth;
 			this.rightSlider.style.display = "inline";
 			this.leftSlider.style.display = "inline";
-			
 		}
+
+		this.fixedTabBar.setStyle({'width': fixedWidth + "px"});
+		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});		
+			
 		
 	}
 	/*change the right position of the scroll tab bar */

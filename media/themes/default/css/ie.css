@@ -1,0 +1,42 @@
+
+/*HEADER*/
+
+/*BANNER*/
+#logo {
+	background: url("../images/ie/Open_Ez_Logo-trans.png") no-repeat;
+}
+
+* html .toolbar_unmarked {
+	background-image: none;
+	background-color: #7c9ab1;
+}
+
+* html .toolbar_marked{
+	background-image: none;
+	background-color: #c4d4de;
+}
+
+* html #ws_operations_link{
+	background: url(../images/ie/menu-arrow-selected-trans.png) no-repeat;
+}
+
+* html #logs_link {
+	background: url(../images/ie/info-trans.png) no-repeat;
+}
+
+* html #logs_link.highlighted{
+	background: url(../images/ie/info_highlighted-trans.png) no-repeat;
+}
+
+* html #tab_section .tab {
+	background-image: none;
+}
+
+* html #add_tab_link{
+	background-image: none;
+	background-color: #d5d9da;
+}
+
+* html .tabOps_launcher {
+	background: url(../images/ie/tabops16px.png) no-repeat;
+}
