@@ -110,9 +110,17 @@ function ContextManager (workspace_, workSpaceInfo_) {
 						contextVar.setVarManager(this._workspace.getVarManager());
 						var relatedConcept = this._concepts[this._name2Concept[currentVar.concept]];
 						if (relatedConcept){
-							contextVar.setValue(relatedConcept._initialValue);
-							relatedConcept.setType(currentVar.aspect);
-							relatedConcept.addIGadgetVar(contextVar);
+							try{
+								contextVar.setValue(relatedConcept._initialValue);
+								relatedConcept.setType(currentVar.aspect);
+								relatedConcept.addIGadgetVar(contextVar);
+							}
+							catch (e){
+								var logManager = LogManagerFactory.getInstance();
+								var msg = logManager.formatError(gettext("Error loading gadget "+currentIGadget.name+": %(errorMsg)s."), null, e);
+								logManager.log(msg);
+								continue;
+							}
 						}
 						break;
 					default:
