@@ -71,7 +71,7 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].errorbutton {
-  background: url("../images/igadget/warning.png");
+  background: url("../images/warning.png");
 }
 
 div.color_button {
