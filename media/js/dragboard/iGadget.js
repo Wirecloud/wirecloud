@@ -492,7 +492,8 @@ IGadget.prototype.build = function() {
 //		this.content.innerHTML = "Loading...."; // TODO add an animation ?
 		this.content.setAttribute("src", codeURL);
 		this.content.setAttribute("width", "100%");
-		this.content.setAttribute("frameborder", "0");
+		this.content.setAttribute("frameBorder", "0");
+
 	} else { //non IE6
 		this.content = document.createElement("object");
 		Element.extend(this.content);
@@ -636,6 +637,10 @@ IGadget.prototype.paint = function(onInit) {
 	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
 	if (BrowserUtilsFactory.getInstance().isIE()) {
 		this.content.setAttribute("src", codeURL);
+
+/*		this.content.setAttribute("frameBorder", "0");
+		this.content.setAttribute("border", "0");
+		this.content.setAttribute("frameSpacing", "0"); */
 	} else { //non IE6
 		this.content.setAttribute("data", codeURL);
 	}
