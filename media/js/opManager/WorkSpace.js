@@ -33,6 +33,8 @@ function WorkSpace (workSpaceState) {
 	// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 	var loadWorkSpace = function (transport) {
 		var layoutManager = LayoutManagerFactory.getInstance();
+		layoutManager.logStep('');
+		layoutManager.logSubTask(gettext('Processing workspace data'));
 
 		// JSON-coded iGadget-variable mapping
 		var response = transport.responseText;
@@ -96,6 +98,7 @@ function WorkSpace (workSpaceState) {
 		else
 			this._show_creator_options();
 
+		layoutManager.logStep('');
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
 	}
 
@@ -320,6 +323,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.downloadWorkSpaceInfo = function () {
+		LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
 		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
 	}
@@ -448,7 +452,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.removeTab = function(tabId){
 		if(this.tabInstances.keys().length <= 1){
 			var msg;
-			msg = "there must be one tab at least";
+			msg = gettext("there must be one tab at least");
 
 			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {errorMsg: msg}, true);
 			LogManagerFactory.getInstance().log(msg);
@@ -479,6 +483,7 @@ function WorkSpace (workSpaceState) {
 	
 	WorkSpace.prototype.unload = function() {
 		var layoutManager = LayoutManagerFactory.getInstance();
+		layoutManager.logSubTask(gettext("Unloading current workspace"));
 
 		// Unload Wiring Interface
 		// TODO Wiring Interface should be shared between Workspaces
@@ -509,6 +514,8 @@ function WorkSpace (workSpaceState) {
 
 		this.menu.remove();
 		this.mergeMenu.remove();
+
+		layoutManager.logStep('');
 	}
 
 	WorkSpace.prototype.goTab = function(tab) {

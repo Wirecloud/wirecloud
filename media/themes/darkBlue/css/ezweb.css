@@ -21,13 +21,31 @@ input[type="text"], input[type="password"], textarea{
 	-moz-border-radius: 3%;
 }
 
-#loading-indicator {
+#loading-background {
     background: white;
     -moz-opacity: 0.6;
     opacity: 0.6;
+}
+
+#loading-indicator {
     background-image: url("../images/loading.gif");
     background-repeat: no-repeat;
     background-position: center center;
+}
+
+#loading-message {
+    margin: 50px 4ex;
+    font-size: 10pt;
+    height: 8ex;
+    font-weight: bold;
+}
+
+#loading-message .window_content {
+    margin-top: 1ex;
+}
+
+#loading-message {
+    margin: 4ex;
 }
 
 .hidden {

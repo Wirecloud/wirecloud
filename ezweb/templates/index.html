@@ -49,14 +49,23 @@
 </head>
 <body>
 
-<!-- Loading indicator -->
-<div id="loading-indicator"></div>
-
-<!-- HIDDEN MENUS -->
+<!-- Menu layer -->
 <div id="menu_layer" style="display:none">
 </div>
 
-
+<!-- Loading indicator -->
+<div id="loading-window">
+  <div id="loading-background"></div>
+  <div id="loading-message" class="window_menu">
+    <div class="window_top">
+      <div id="loading-task-title" class="window_title">{% trans "Loading EzWeb Platform" %} 0%</div>
+    </div>
+    <div class="window_content">
+      <div id="loading-indicator"></div>
+      <div id="loading-subtask-title" class="msg">{% trans "Retreiving EzWeb code" %}: 0%</div>
+    </div>
+  </div>
+</div>
 
 <!-- HEADER -->
 {% block header %}
@@ -154,6 +163,7 @@
 
 <!-- JavaScript code -->
 
+<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/json2.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/scriptaculous/scriptaculous.js"></script>
@@ -206,6 +216,7 @@ var URIs = new _URIConstants();
 
 var ezweb_user_name = '{{ user.username }}'
 var tag_categories = '{{ tag_categories|safe }}'
+var _currentTheme = null;
 
 var public_workspace = '{{ active_workspace }}';
 var last_logged_user = '{{ last_user }}';

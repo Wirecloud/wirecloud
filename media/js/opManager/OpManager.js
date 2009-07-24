@@ -89,7 +89,7 @@ var OpManagerFactory = function () {
 				this.activeWorkSpace.downloadWorkSpaceInfo();
 			}
 		}
-		
+
 		var onError = function (transport, e) {
 			var msg;
 			try {
@@ -188,9 +188,11 @@ var OpManagerFactory = function () {
 		}
 
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
-			$("loading-indicator").removeClassName("disabled"); // TODO
+			var steps = this.activeWorkSpace != null ? 2 : 1;
 
-			if(this.activeWorkSpace != null){
+			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
+
+			if (this.activeWorkSpace != null) {
 				this.activeWorkSpace.unload();
 			}
 
@@ -270,7 +272,11 @@ var OpManagerFactory = function () {
 		 */
 		OpManager.prototype.loadEnviroment = function () {
 			// Init Layout Manager
-			LayoutManagerFactory.getInstance().resizeWrapper();
+			var layoutManager = LayoutManagerFactory.getInstance();
+			layoutManager.resizeWrapper();
+			layoutManager._startComplexTask(gettext('Loading EzWeb Platform'), 3);
+			layoutManager.logSubTask(gettext('Retreiving EzWeb code'));
+			layoutManager.logStep('');
 
 			// Init log manager
 			this.logs = LogManagerFactory.getInstance();
@@ -283,21 +289,36 @@ var OpManagerFactory = function () {
 			// TODO create a Theme Manager Module
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!
-			function continueLoading(theme, loaded) {
-				if (loaded === false) {
-					// TODO log eror
+			function imagesLoaded(theme, imagesNotLoaded) {
+				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+			}
+
+			function continueLoading(theme, errorMsg) {
+				if (errorMsg !== null) {
+					var msg = gettext("Error loading \"%(theme)s\" theme. Trying with \"default\" theme.");
+					LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+					logManager.log(msg);
+					/*
+					 * Initial theme css's are pre applied, but it failed to load so we need to deapply it and
+					 * apply the style of the default theme.
+					 */
+					theme.deapplyStyle();
+					_currentTheme.applyStyle();
 				} else {
 					_currentTheme = theme;
 					// Initial theme css's are pre applied, so we don't need to apply they
 					//_currentTheme.applyStyle();
 				}
 
-				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+				_currentTheme.preloadImages(imagesLoaded);
 			}
 
-			function initTheme(theme, loaded) {
-				if (loaded === false) {
-					// TODO log eror
+			function initTheme(theme, errorMsg) {
+				if (errorMsg !== null) {
+					var msg = gettext("Error loading base theme. Expect problems.");
+					LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+					LogManagerFactory.getInstance().log(msg);
+					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
 					return;
 				}
 
@@ -306,7 +327,7 @@ var OpManagerFactory = function () {
 				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default')
 					new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
 				else
-					continueLoading(_defaultTheme, true);
+					continueLoading(_defaultTheme, null);
 			}
 			_currentTheme = new Theme('default', null, initTheme);
 		}
@@ -316,6 +337,9 @@ var OpManagerFactory = function () {
 		 * the unload event is captured.
 		 */
 		OpManager.prototype.unloadEnvironment = function() {
+			var layoutManager = LayoutManagerFactory.getInstance();
+			layoutManager._startComplexTask(gettext('Unloading Ezweb Platform'));
+
 			if (this.activeWorkSpace)
 				this.activeWorkSpace.unload();
 
@@ -370,6 +394,9 @@ var OpManagerFactory = function () {
 			}
 
 			if (module == Modules.prototype.ACTIVE_WORKSPACE) {
+				var layoutManager = LayoutManagerFactory.getInstance();
+				layoutManager.logSubTask(gettext("Activating current Workspace"));
+
 				this.showActiveWorkSpace(this.activeWorkSpace);
 //				this.changeActiveWorkSpace(this.activeWorkSpace);
 
@@ -377,12 +404,13 @@ var OpManagerFactory = function () {
 				if(!BrowserUtilsFactory.getInstance().isIE()) {
 					var s = document.createElement('style');
 					s.type = "text/css";
-					s.textContent = '#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}';
+					s.setTextContent = '#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}';
 					var h = document.getElementsByTagName("head")[0];
 					h.appendChild(s);
 				}//TODO: for IE try: document.createStyleSheet() and addRule()
 
-				LayoutManagerFactory.getInstance()._notifyPlatformReady(!this.loadComplete);
+				layoutManager.logStep('');
+				layoutManager._notifyPlatformReady(!this.loadComplete);
 				this.loadCompleted = true;
 				
 				//Additional information that a workspace must do after loading! 

@@ -39,31 +39,49 @@ function Theme(name, baseTheme, callback) {
 	else
 		this._iconMapping = new Object();
 
+	this._imagesToPreload = [];
+
 	// Internal function for theme loading
 	var _notifyLoaded = function (transport) {
-		var response = transport.responseText;
+		var themeDesc = transport.responseText;
 		try {
-			var icons = eval ('(' + response + ')');
+			themeDesc = JSON.parse(themeDesc);
 		} catch (e) {
-			var msg = gettext("The icon catalogue for the \"%(themeName)s\" theme could not be loaded.");
+			var msg = gettext("Theme description \"%(themeName)s\" could not be loaded.");
 			msg = interpolate(msg, {themeName: this.name}, true);
-			LogManagerFactory.getInstance().log(msg);
+			if (this._callback) this._callback(this, msg);
 			return;
+		}
+
+		// Retreive custom theme icons
+		if (themeDesc.icons) {
+			var icons = themeDesc.icons;
+		} else {
+			var icons = {};
 		}
 
 		for (var iconId in icons)
 			// Transform to an absolute URL
 			this._iconMapping[iconId] = this.getResource('/images/' + icons[iconId]);
 
+
+		// Retreive the list of extra images to preload
+		if (themeDesc.imagesToPreload) {
+			this._imagesToPreload = themeDesc.imagesToPreload;
+		}
+
 		this.loaded = true;
-		if (this._callback) this._callback(this, true);
+		if (this._callback) this._callback(this, null);
 	}.bind(this);
 
-	var _notifyError = function (response) {
-		if (this._callback) this._callback(this, false);
+	var _notifyError = function (response, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError("%(errorMsg)s", response, e);
+
+		if (this._callback) this._callback(this, msg);
 	}.bind(this);
 
-	new Ajax.Request(this.getResource('/icons.json'), {
+	new Ajax.Request(this.getResource('/theme.json'), {
 		method: 'get',
 		onSuccess: _notifyLoaded,
 		onFailure: _notifyError
@@ -141,27 +159,61 @@ Theme.prototype._countIcons = function() {
 }
 
 Theme.prototype.preloadImages = function(onFinishCallback) {
+	LayoutManagerFactory.getInstance().logSubTask(gettext("Loading theme images"));
+
 	this._countIcons();
-	var loadedCount = this._iconCount;
+	var loadedCount = this._iconCount + this._imagesToPreload.length;
+	var totalCount = loadedCount;
 	var imagesNotFound = new Array();
 
-	var _incLoadedCount = function() {
-		if (--loadedCount == 0)
-			onFinishCallback(this, imagesNotFound);
-	}.bind(this);
+	var _incLoadedCount = function(e, error) {
+		var target = this.target;
 
-	var _notifyError = function() {
-		imagesNotFound.push(this.src);
-		_incLoadedCount();
+		loadedCount--;
+
+		// Report
+		if ((arguments.length == 2) && error) {
+			var msg = gettext("%(current)s/%(total)s Error loading %(image)s");
+			imagesNotFound.push(target.src);
+		} else {
+			var msg = gettext("%(current)s/%(total)s %(image)s");
+		}
+		msg = interpolate(msg,
+			{
+				current: totalCount - loadedCount,
+				total: totalCount,
+				image: target.src
+			},
+			true);
+		LayoutManagerFactory.getInstance().logStep(msg, totalCount);
+
+		// Check if we have finished
+		if (loadedCount == 0)
+			onFinishCallback(this.theme, imagesNotFound);
+	}
+
+	var _notifyError = function(e) {
+		_incLoadedCount.call(this, e, true);
 	}
 
 	for (var iconId in this._iconMapping) {
 		var img = document.createElement('img');
 		Element.extend(img);
-		img.observe('load', _incLoadedCount);
-		img.observe('error', _notifyError);
-		img.observe('abort', _notifyError);
+		var context = {theme: this, target: img};
+		img.observe('load', _incLoadedCount.bind(context));
+		img.observe('error', _notifyError.bind(context));
+		img.observe('abort', _notifyError.bind(context));
 		img.src = this._iconMapping[iconId];
+	}
+
+	for (var i = 0; i < this._imagesToPreload.length; i++) {
+		var img = document.createElement('img');
+		Element.extend(img);
+		var context = {theme: this, target: img};
+		img.observe('load', _incLoadedCount.bind(context));
+		img.observe('error', _notifyError.bind(context));
+		img.observe('abort', _notifyError.bind(context));
+		img.src = this.getResource('/images/' + this._imagesToPreload[i]);
 	}
 }
 

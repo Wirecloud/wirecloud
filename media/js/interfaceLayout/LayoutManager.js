@@ -121,59 +121,135 @@ var LayoutManagerFactory = function () {
 			}else{
 				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
 			}
-	
+
 			this.changeTabBarSize(0);
 		}
 
+		LayoutManager.prototype._updateTaskProgress = function() {
+			var msg, subtaskpercentage, taskpercentage;
+
+			subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
+			if (subtaskpercentage < 0)
+				subtaskpercentage = 0;
+
+			taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
+			taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
+			taskpercentage = Math.round(taskpercentage);
+			if (taskpercentage < 0)
+				taskpercentage = 0;
+
+			msg = gettext("%(task)s %(percentage)s%");
+			percentage = Math.round((this.currentSubTask * 100) / this.totalSubTasks);
+			msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
+			$("loading-task-title").setTextContent(msg);
+
+			if (this.subTask != "")
+				msg = gettext("%(subTask)s: %(percentage)s%");
+			else
+				msg = "%(subTask)s";
+
+			msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
+			$("loading-subtask-title").setTextContent(msg);
+		}
+
+		LayoutManager.prototype._startComplexTask = function(task, subtasks) {
+			this.task = task ? task : "";
+			this.currentSubTask = -2;
+			this.totalSubTasks = subtasks != undefined ? subtasks : 1;
+			this.logSubTask("");
+			$("loading-window").removeClassName("disabled");
+		}
+
+		LayoutManager.prototype.logSubTask = function(msg, totalSteps) {
+			this.subTask = msg ? msg : "";
+
+			this.currentSubTask++;
+			if (this.currentSubTask >= this.totalSubTasks)
+				this.totalSubTasks = this.currentSubTask + 1;
+
+			this.currentStep = 0;
+			if (arguments.length == 2)
+				this.totalSteps = totalSteps;
+			else
+				this.totalSteps = 1;
+
+			this._updateTaskProgress();
+		}
+
+		LayoutManager.prototype.logStep = function(msg, totalSteps) {
+			//$("loading-step-title").setTextContent(msg ? msg : "");
+			this.currentStep++;
+			if (this.currentStep > this.totalSteps)
+				this.totalSteps = this.currentStep + 1;
+
+			if (arguments.length == 2)
+				this.totalSteps = totalSteps;
+
+			this._updateTaskProgress();
+		}
+
 		LayoutManager.prototype._notifyPlatformReady = function (firstTime) {
-			var loadingElement = $("loading-indicator");
-			loadingElement.addClassName("disabled");
+			var loadingElement = $("loading-window");
+			loadingElement.addClassName("fadding");
 
-			if (!firstTime)
-				return;
+			if (firstTime) {
 
-			// Listen to resize events
-			Event.observe(window,
-			              "resize",
-			              this.resizeWrapper.bind(this));
+				// Listen to resize events
+				Event.observe(window,
+				              "resize",
+				              this.resizeWrapper.bind(this));
 
-			// Build theme list
-			// TODO retreive this list from the server
-			if ($('themeMenu') == null) {
-				var themes = _THEMES;
-				var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
-				new Insertion.After($('menu_layer'), menuHTML);
-				var themeMenu = new DropDownMenu('themeMenu');
+				// Build theme list
+				if ($('themeMenu') == null) {
+					var themes = _THEMES;
+					var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
+					new Insertion.After($('menu_layer'), menuHTML);
+					var themeMenu = new DropDownMenu('themeMenu');
 
-				for (var i = 0; i < themes.length; i++) {
-					var themeName = themes[i]
-					themeMenu.addOption(null,
-					                    themeName,
-					                    function() {
-					                        LayoutManagerFactory.getInstance().hideCover();
-					                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
-					                    }.bind({theme:themeName}),
-					                    i);
-				}
+					for (var i = 0; i < themes.length; i++) {
+						var themeName = themes[i]
+						themeMenu.addOption(null,
+						                    themeName,
+						                    function() {
+						                        LayoutManagerFactory.getInstance().hideCover();
+						                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
+						                    }.bind({theme:themeName}),
+						                    i);
+					}
 
-				if($('themeSelector')) {
-					$('themeSelector').observe('click',
-						function (e) {
-							LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-							                                                      themeMenu,
-							                                                      Event.pointerX(e),
-							                                                      Event.pointerY(e));
-						});
+					if($('themeSelector')) {
+						$('themeSelector').observe('click',
+							function (e) {
+								LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
+								                                                      themeMenu,
+								                                                      Event.pointerX(e),
+								                                                      Event.pointerY(e));
+							});
+					}
 				}
 			}
+
+			var loadingMessage = $("loading-message");
+			var step = 0;
+			function fadder() {
+				++step;
+				if (step < 80) {
+					loadingMessage.setStyle({'opacity': 1 - (step * 0.025)});
+					setTimeout(fadder, 50);
+				} else {
+					loadingElement.addClassName('disabled');
+					loadingElement.removeClassName('fadding');
+					loadingMessage.setStyle({'opacity': '1'});
+				}
+			}
+			setTimeout(fadder, 50);
 		}
 
 		LayoutManager.prototype.changeCurrentTheme = function(newTheme) {
 			if (_currentTheme.name == newTheme)
 				return;
 
-			var loadingElement = $("loading-indicator");
-			loadingElement.removeClassName("disabled");
+			this._startComplexTask(gettext('Changing current theme'));
 
 			// Clear themed resources
 			this.menus.clear();
@@ -183,12 +259,22 @@ var LayoutManagerFactory = function () {
 				var layoutManager = LayoutManagerFactory.getInstance();
 
 				if (imagesNotFound.length > 0) {
-					// TODO log eror
+					var msg = gettext("There were errors while loading some of the images for the \"%(theme)s\" theme. Do you really want to use it?.");
+					msg = interpolate(msg, {theme: theme.name}, true);
+					layoutManager.showYesNoDialog(msg,
+						function() {
+							continueLoading2(theme, []);
+						},
+						function() {
+							layoutManager._notifyPlatformReady(false);
+						},
+						Constants.Logging.WARN_MSG);
+					return;
 				}
 
 				_currentTheme.deapplyStyle();
 				_currentTheme = theme;
-				$("themeLabel").textContent = theme.name;
+				$("themeLabel").setTextContent(theme.name);
 				_currentTheme.applyStyle();
 				layoutManager.resizeWrapper();
 
@@ -198,21 +284,24 @@ var LayoutManagerFactory = function () {
 				layoutManager._notifyPlatformReady(false);
 			}
 
-			function continueLoading(theme, loaded) {
+			function continueLoading(theme, errorMsg) {
 				var layoutManager = LayoutManagerFactory.getInstance();
 
-				if (loaded === true) {
-					theme.preloadImages(continueLoading2)
-				} else {
-					// TODO log eror
+				if (errorMsg !== null) {
+					var msg = gettext("Error loading \"%(theme)s\" theme. Current theme has not been changed.");
+					msg = interpolate(msg, {theme: theme.name}, true);
+					layoutManager.showMessageMenu(msg, Constants.Logging.WARN_MSG);
 					layoutManager._notifyPlatformReady(false);
+					return;
 				}
+
+				theme.preloadImages(continueLoading2)
 			}
 
 			if (newTheme != 'default')
 				new Theme(newTheme, _defaultTheme, continueLoading);
 			else
-				continueLoading(_defaultTheme, true);
+				continueLoading(_defaultTheme, null);
 		}
 
 		LayoutManager.prototype.getCurrentViewType = function () {
@@ -632,8 +721,31 @@ var LayoutManagerFactory = function () {
 			}
 		}
 
+		/**
+		 * Shows a yes/no question dialog.
+		 *
+		 * @param {String} msg message to show to the user
+		 * @param {function} yesHandler
+		 * @param {function}
+		 * @param {Constants.Logging} type (default: Constants.logging.INFO_MSG}
+		 */
+		LayoutManager.prototype.showYesNoDialog = function(msg, yesHandler, noHandler, type) {
+			if (this.currentMenu != null) {
+				// only if the layer is displayed.
+				this.hideCover();
+			}
+
+			if (!this.menus['alertMenu'])
+				this.menus['alertMenu'] = new AlertWindowMenu();
+
+			this.currentMenu = this.menus['alertMenu'];
+			this.currentMenu.setMsg(msg);
+			this.currentMenu.setHandler(yesHandler, noHandler);
+			this.currentMenu.show();
+		}
+
 		//Shows the asked window menu
-		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, iframe_src){
+		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, iframe_src) {
 			//the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {
 				// only if the layer is displayed.
@@ -646,6 +758,14 @@ var LayoutManagerFactory = function () {
 					this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');
 				}
 				this.currentMenu = this.menus['createWorkSpaceMenu'];
+				break;
+			case 'useBrokenTheme':
+				if (!this.menus['alertMenu']) {
+					this.menus['alertMenu'] = new AlertWindowMenu();
+				}
+				this.currentMenu = this.menus['alertMenu'];
+				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
+				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
 				break;
 			case 'deleteTab':
 				if (!this.menus['alertMenu']) {
