@@ -95,7 +95,7 @@ var OpManagerFactory = function () {
 			try {
 				var logManager = LogManagerFactory.getInstance();
 				var msg = logManager.formatError(gettext("Error loading EzWeb Platform: %(errorMsg)s."), transport, e);
-				LayoutManagerFactory.getInstance().showMessageWindowMenu(msg, Constants.Logging.ERROR_MSG);
+				LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 				logManager.log(msg);
 			} catch (e) {
 				if (msg !== null)
