@@ -6,6 +6,15 @@
 	background: url("../images/ie/Open_Ez_Logo-trans.png") no-repeat;
 }
 
+#toolbar_section{
+	*margin-left: 10px;
+}
+
+.toolbar_marked, .toolbar_unmarked {
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
 * html .toolbar_unmarked {
 	background-image: none;
 	background-color: #7c9ab1;
@@ -14,6 +23,32 @@
 * html .toolbar_marked{
 	background-image: none;
 	background-color: #c4d4de;
+}
+
+#workspace_link_container{
+	text-align:center;
+}
+
+* html #workspace_link_container{
+	width: 150px;
+}
+
+#dragboard_link{
+	float:none;
+}
+
+* html #dragboard_link{
+	overflow: hidden;
+}
+
+* html .ws_name, * html #dragboard_link span, * html #dragboard_link{
+	width: 130px !important;
+}
+
+#workspace_menu_link{
+	clear:none;
+	*margin: 0px;
+	padding-top: 0px;
 }
 
 * html #ws_operations_link{
@@ -40,3 +75,4 @@
 * html .tabOps_launcher {
 	background: url(../images/ie/tabops16px.png) no-repeat;
 }
+

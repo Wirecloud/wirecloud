@@ -2,18 +2,6 @@
 	width: 135px !important;
 }
 
-#toolbar_section{
-	margin-left: 10px;
-	width: 500px;
-}
-#workspace_menu_link{
-	padding-top: 0px;
-}
-
-#workspace_link_container{
-	max-width: 170px;
-}
-
 .drop_down_menu, .window_menu{
   position:absolute;
 }

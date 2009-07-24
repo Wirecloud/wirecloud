@@ -295,10 +295,6 @@ td {
   cursor: pointer;
 }
 
-#help_section .help_button{
-	padding-left: 15px;
-}
-
 .window_menu {
   max-width:50%;
   overflow-y: auto;
