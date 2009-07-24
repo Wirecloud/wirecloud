@@ -32,6 +32,8 @@ function WorkSpace (workSpaceState) {
 
 	// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 	var loadWorkSpace = function (transport) {
+		var layoutManager = LayoutManagerFactory.getInstance();
+
 		// JSON-coded iGadget-variable mapping
 		var response = transport.responseText;
 		this.workSpaceGlobalInfo = eval ('(' + response + ')');
@@ -67,7 +69,7 @@ function WorkSpace (workSpaceState) {
 			//set the visible tab. It will be displayed as current tab afterwards
 			this.visibleTab = this.tabInstances[visibleTabId];
 
-			this.valid=true;
+			this.valid = true;
 		} catch (error) {
 			// Error during initialization
 			// Only loading workspace menu
@@ -80,7 +82,8 @@ function WorkSpace (workSpaceState) {
 			LogManagerFactory.getInstance().log(msg);
 
 			// Show a user friend alert
-			LayoutManagerFactory.getInstance().showMessageMenu('Error during workspace load! Please, change active workspace or create a new one!', Constants.Logging.ERROR_MSG);
+			var msg = gettext('Error loading workspace. Please, change active workspace or create a new one!');
+			layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		}
 
 		this.loaded = true;
@@ -189,18 +192,31 @@ function WorkSpace (workSpaceState) {
 
 	WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
 		var igadget = this.getIgadget(igadgetId);
-		var reload = igadget.loaded;
 		igadget._notifyLoaded();
 
-		if (reload) {
-			this.wiring.refreshIGadget(igadget);
-		} else if (this._allIgadgetsLoaded()) {
-			this.wiring.propagateInitialValues();
-		}
+		// Notify to the wiring module the igadget has been loaded
+		this.wiring.iGadgetLoaded(igadget);
+
+		// Notify to the context manager the igadget has been loaded
+		this.contextManager.iGadgetLoaded(igadget);
 	}
 	
 	WorkSpace.prototype.run_post_load_script = function() {
 		run_initial_script(this);
+	}
+
+	WorkSpace.prototype.igadgetUnloaded = function(igadgetId) {
+		var igadget = this.getIgadget(igadgetId);
+		if (igadget == null)
+			return;
+
+		// Notify to the wiring module the igadget has been unloaded
+		this.wiring.iGadgetUnloaded(igadget);
+
+		// Notify to the context manager the igadget has been unloaded
+		this.contextManager.iGadgetUnloaded(igadget);
+
+		igadget._notifyUnloaded();
 	}
 
 	WorkSpace.prototype.sendBufferedVars = function () {
@@ -253,60 +269,61 @@ function WorkSpace (workSpaceState) {
 
 	WorkSpace.prototype.updateInfo = function (workSpaceName) {
 		//If the server isn't working the changes will not be saved
-		if(workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
+		if (workSpaceName == "" || workSpaceName.match(/^\s$/)){//empty name
 			var msg = interpolate(gettext("Error updating a workspace: invalid name"), true);
 			LogManagerFactory.getInstance().log(msg);
-		}else if(!OpManagerFactory.getInstance().workSpaceExists(workSpaceName)){
-			this.workSpaceState.name = workSpaceName;		
-	
+		} else if (!OpManagerFactory.getInstance().workSpaceExists(workSpaceName)) {
+			this.workSpaceState.name = workSpaceName;
+
 			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-			var o = new Object;
+			var o = new Object();
 			o.name = workSpaceName;
 			var workSpaceData = Object.toJSON(o);
 			var params = {'workspace': workSpaceData};
 			PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
-		}else{
+		} else {
 			var msg = interpolate(gettext("Error updating a workspace: the name %(workSpaceName)s is already in use."), {workSpaceName: workSpaceName}, true);
 			LogManagerFactory.getInstance().log(msg);
 		}
-    }  
-    
-    WorkSpace.prototype.deleteWorkSpace = function() {
+	}
+
+	WorkSpace.prototype.deleteWorkSpace = function() {
 		if(OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)){
 			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-			PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);		
+			PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);
 		}
 	}
-    
-    WorkSpace.prototype.getName = function () {
-    	return this.workSpaceState.name;
+
+	WorkSpace.prototype.getName = function () {
+		return this.workSpaceState.name;
 	}
 	
-    WorkSpace.prototype.getId = function () {
-    	return this.workSpaceState.id;
+
+	WorkSpace.prototype.getId = function () {
+		return this.workSpaceState.id;
 	}
-    
-    WorkSpace.prototype.getWiring = function () {
-    	return this.wiring;
+
+	WorkSpace.prototype.getWiring = function () {
+		return this.wiring;
 	}
-	
+
 	WorkSpace.prototype.getWiringInterface = function () {
-    	return this.wiringInterface;
+		return this.wiringInterface;
 	}
-    
-    WorkSpace.prototype.getVarManager = function () {
-    	return this.varManager;
+
+	WorkSpace.prototype.getVarManager = function () {
+		return this.varManager;
 	}
-	
+
 	WorkSpace.prototype.getContextManager = function () {
-    	return this.contextManager;
+		return this.contextManager;
 	}
 
 	WorkSpace.prototype.downloadWorkSpaceInfo = function () {
 		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
 	}
-	
+
 	WorkSpace.prototype.showWiring = function() {
 		if (!this.loaded)
 			return;
@@ -461,6 +478,8 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype.unload = function() {
+		var layoutManager = LayoutManagerFactory.getInstance();
+
 		// Unload Wiring Interface
 		// TODO Wiring Interface should be shared between Workspaces
 		if (this.wiringInterface !== null) {
@@ -469,7 +488,7 @@ function WorkSpace (workSpaceState) {
 			this.wiringInterface = null;
 		}
 
-		LayoutManagerFactory.getInstance().unloadCurrentView();
+		layoutManager.unloadCurrentView();
 
 		this.sendBufferedVars();
 
@@ -480,7 +499,7 @@ function WorkSpace (workSpaceState) {
 			this.unloadTab(tabKeys[i]);
 		}
 		// reset the values used to figure out the size of the tabBar
-		LayoutManagerFactory.getInstance().resetTabBar();
+		layoutManager.resetTabBar();
 
 		if (this.wiring !== null)
 			this.wiring.unload();
@@ -788,20 +807,7 @@ function WorkSpace (workSpaceState) {
 		var msg = logManager.formatError(gettext("Error marking as first active workspace, changes will not be saved: %(errorMsg)s."), transport, e);
 		logManager.log(msg);
 	}.bind(this);
-	
-	this._allIgadgetsLoaded = function() {
-		var tabs = this.tabInstances.keys();
-		for (var i = 0; i < tabs.length; i++) {
-			var tab = tabs[i];
-			var remainingIgadgets = this.tabInstances[tab].getDragboard().getRemainingIGadgets();
-			
-			if (remainingIgadgets != 0)
-				return false;
-		}
 
-		return true;
-	}
-	
 	this._hide_element = function(id) {
 		$(id).style.display = 'none';
 	}

@@ -338,21 +338,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this._deregisterIGadget(igadget);
 	}
 
-	Dragboard.prototype.igadgetLoaded = function (iGadget) {
-		if (!this.iGadgets[iGadget.id]) {
-			// TODO log
-			return;
-		}
-
-		this.igadgetsToLoad--;
-	}
-
-
-	Dragboard.prototype.getRemainingIGadgets = function () {
-		return this.igadgetsToLoad;
-	}
-
-
 	Dragboard.prototype.saveConfig = function (iGadgetId) {
 		var igadget = this.iGadgets[iGadgetId];
 		try {

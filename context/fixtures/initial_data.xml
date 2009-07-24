@@ -2,42 +2,52 @@
 <django-objects version="1.0">
     <object pk="username" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="width" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="height" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="xPosition" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="yPosition" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="language" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="lockStatus" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="widthInPixels" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="heightInPixels" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="orientation" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">GCTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="1" model="context.conceptname">

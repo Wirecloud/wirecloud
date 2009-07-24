@@ -326,6 +326,10 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace.igadgetLoaded(igadgetId);
 		}
 
+		OpManager.prototype.igadgetUnloaded = function (igadgetId) {
+			this.activeWorkSpace.igadgetUnloaded(igadgetId);
+		}
+
 		OpManager.prototype.showActiveWorkSpace = function () {
 			var workSpaceIds = this.workSpaceInstances.keys();
 			var disabledWorkSpaces= [];

@@ -215,20 +215,16 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		}
 	}
 
-	Wiring.prototype.propagateInitialValues = function () {
-		for (var i = 0; i < this.channels.length; i++) {
-			var channel = this.channels[i];
-			channel.propagate(channel.variable.value, true, null);
-		}
+	Wiring.prototype.iGadgetLoaded = function (iGadget) {
+		var entry = this.iGadgets[iGadget.getId()];
+
 	}
 
-	Wiring.prototype.refreshIGadget = function(igadget) {
-		var connectables = this.getIGadgetConnectables(igadget);
+	Wiring.prototype.iGadgetUnloaded = function (iGadget) {
+		var entry = this.iGadgets[iGadget.getId()];
 
-		for (var i = 0; i < connectables.length; i++) {
-			var connectable = connectables[i];
-			connectable.refresh();
-		}
+		for (var i = 0; i < entry.slots.length; i++)
+			entry.slots[i].variable.setHandler(null);
 	}
 
 	Wiring.prototype.addInstance = function (igadget, variables) {

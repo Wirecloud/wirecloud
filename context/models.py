@@ -42,6 +42,11 @@ class Concept(models.Model):
         ('ADAP', _('Adaptor')),
     )
     source = models.CharField(_('Source'), max_length=4, choices=SOURCE)
+    TYPE = (
+        ('ECTX', _('External')),
+        ('GCTX', _('iGadget')),
+    )
+    type = models.CharField(_('Type'), max_length=4, choices=TYPE)
     adaptor = models.CharField(_('Adaptor'), max_length=256, null=True)
 
     def __unicode__(self):
@@ -49,7 +54,7 @@ class Concept(models.Model):
 
 class ConceptName(models.Model):
     name = models.CharField(_('Name'), max_length=256)
-    concept = models.ForeignKey(Concept, verbose_name=_('Concept'))    
+    concept = models.ForeignKey(Concept, verbose_name=_('Concept'))
 
     def __unicode__(self):
         return self.name

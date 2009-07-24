@@ -135,8 +135,8 @@ IGadget.prototype.setPosition = function(position) {
 
 		// Notify Context Manager of igadget's position
 		var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x);
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
 	}
 }
 
@@ -663,15 +663,15 @@ IGadget.prototype.paint = function(onInit) {
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
 	// Notify Context Manager of igadget's position
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.XPOSITION, this.position.x);
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.YPOSITION, this.position.y);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
 
 	// Notify Context Manager of igadget's size
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
 
 	// Notify Context Manager of the current lock status
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
 	this.setMenuColor(undefined, true);
 }
@@ -1086,7 +1086,7 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 
 	// Notify Context Manager
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.LOCKSTATUS, newLockStatus);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, newLockStatus);
 
 	// Notify resize event
 	this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
@@ -1098,24 +1098,45 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
  * @private
  */
 IGadget.prototype._notifyLoaded = function() {
-	if (!this.loaded) {
-		this.loaded = true;
+	if (this.loaded)
+		return;
 
-		if (this.errorCount > 0) {
-			var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
-			                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
-			                   this.errorCount);
-			msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
-			LogManagerFactory.getInstance().log(msg);
-			this.errorButtonElement.removeClassName("disabled");
-			this._updateErrorInfo();
-		}
+	this.loaded = true;
 
-		this.layout.dragboard.igadgetLoaded(this);
+	if (this.errorCount > 0) {
+		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
+		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
+		                   this.errorCount);
+		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
+		LogManagerFactory.getInstance().log(msg);
+		this.errorButtonElement.removeClassName("disabled");
+		this._updateErrorInfo();
 	}
 
-	// Notify to the context manager the igadget has been loaded
-	this.layout.dragboard.getWorkspace().getContextManager().propagateInitialValues(this.id);
+	var unloadElement;
+	if (BrowserUtilsFactory.getInstance().isIE()) {
+		unloadElement = this.content;
+	} else {
+		unloadElement = this.content.contentDocument.defaultView;
+	}
+
+	Event.observe(unloadElement, 'unload',
+	                     function () {
+	                         OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+	                     }.bind(this),
+	                     true);
+}
+
+/**
+ * This function is called when the content of the igadget is going to be unloaded.
+ *
+ * @private
+ */
+IGadget.prototype._notifyUnloaded = function() {
+	if (!this.loaded)
+		return;
+
+	this.loaded = false;
 }
 
 /**
@@ -1129,7 +1150,7 @@ IGadget.prototype._recomputeWidth = function() {
 
 	// Notify Context Manager
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
-	contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTHINPIXELS, width);
+	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTHINPIXELS, width);
 }
 
 /**
@@ -1223,7 +1244,7 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 		this._recomputeWrapper(contentHeight);
 
 		// Notify Context Manager about the new igadget's size
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, contentHeight);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 
 	} else {
 		this._recomputeWrapper();
@@ -1234,7 +1255,7 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 
 	if (oldHeight !== this.height) {
 		// Notify Context Manager about the new igadget's size
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.height);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.height);
 	}
 }
 
@@ -1287,10 +1308,10 @@ IGadget.prototype.setSize = function(newWidth, newHeight, resizeLeftSide, persis
 	if (persist) {
 		// Notify Context Manager new igadget's sizes
 		var contextManager = this.layout.dragboard.getWorkspace().getContextManager()
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHT, this.contentHeight);
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTH, this.contentWidth);
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
-		contextManager.notifyModifiedGadgetConcept(this.id, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, this.content.offsetHeight);
+		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTHINPIXELS, this.content.offsetWidth);
 	}
 
 	// Notify resize event
@@ -1583,7 +1604,12 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 
 	var dragboardChange = this.layout.dragboard != newLayout.dragboard;
 	var oldLayout = this.layout;
+
+	// Force an unload event
+	OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+
 	oldLayout.removeIGadget(this, dragboardChange);
+
 
 	if (dragboardChange && !(newLayout instanceof FreeLayout)) {
 		this.position = null;

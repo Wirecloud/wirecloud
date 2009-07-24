@@ -354,19 +354,19 @@ def get_connectable_data(connectable):
 
 def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
-    data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)  
-    
-    # Tabs processing              
-    tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id') 
+    data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
+
+    # Tabs processing
+    tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id')
     data = serializers.serialize('python', tabs, ensure_ascii=False)
-    
+
     tabs_data = []
-    
+
     for i in range(len(tabs)):
         tabs_data.append(get_tab_data(data[i], tabs[i], user))
-    
+
     data_ret['workspace']['tabList'] = tabs_data
-    
+
     for tab in tabs_data:
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
@@ -377,17 +377,17 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
     data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
-    
+
     #Context information
     concepts = Concept.objects.all()
     concepts_data = serializers.serialize('python', concepts, ensure_ascii=False)
     data_ret['workspace']['concepts'] = [get_concept_data(d, concept_values) for d in concepts_data]
-    
+
     # Filter information
     filters = Filter.objects.all()
     filter_data = serializers.serialize('python', filters, ensure_ascii=False)
     data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]
-    
+
     return data_ret
 
 def get_tab_data(data, tab, user):
@@ -395,12 +395,9 @@ def get_tab_data(data, tab, user):
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
-    
-    if data_fields['visible']:
-        data_ret['visible'] = "true"
-    else:
-        data_ret['visible'] = "false"
-    
+
+    data_ret['visible'] = data_fields['visible']
+
     data_ret['locked'] = tab.is_locked(user)
 
     return data_ret
@@ -423,14 +420,8 @@ def get_igadget_data(data, user, workspace):
     data_ret['zIndex'] = position.posZ
     data_ret['width'] = position.width
     data_ret['height'] = position.height
-    if position.minimized:
-        data_ret['minimized'] = "true"
-    else:
-        data_ret['minimized'] = "false"
-    if data_fields['transparency']:
-        data_ret['transparency'] = "true"
-    else:
-        data_ret['transparency'] = "false"
+    data_ret['minimized'] = position.minimized
+    data_ret['transparency'] = data_fields['transparency']
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
     data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
@@ -440,23 +431,23 @@ def get_igadget_data(data, user, workspace):
 def get_variable_data(data, user, workspace):
     data_ret = {}
     data_fields = data['fields']
-    
+
     var_def = VariableDef.objects.get(id=data_fields['vardef'])
-    
+
     #Variable info is splited into 2 entities: AbstractVariable y Variable   
     abstract_var_id = data['fields']['abstract_variable']
-    
+
     abstract_var = get_abstract_variable(abstract_var_id) 
-    
+
     try:
         variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
-        
+
         variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
 
     data_ret['id'] = data['pk']
-    
+
     data_ret['aspect'] = var_def.aspect
     data_ret['value'] = variable_value.value
     data_ret['type'] = var_def.type
@@ -465,12 +456,12 @@ def get_variable_data(data, user, workspace):
     data_ret['name'] = var_def.name
     data_ret['label'] = var_def.label
     data_ret['friend_code'] = var_def.friend_code
-    
-    #Context management    
+
+    #Context management
     if var_def.aspect == 'GCTX' or var_def.aspect == 'ECTX': 
         context = ContextOption.objects.get(varDef=data_fields['vardef'])
-        data_ret['concept'] = context.concept    
-    
+        data_ret['concept'] = context.concept
+
     #Connectable management
     #Only SLOTs and EVENTs
     connectable = False
@@ -478,35 +469,36 @@ def get_variable_data(data, user, workspace):
         connectable = Out.objects.get(abstract_variable = abstract_var)
     if var_def.aspect == 'EVEN':
         connectable = In.objects.get(variable__id = data_ret['id'])
-          
+
     if connectable:
         connectable_data = get_connectable_data(connectable);
         data_ret['connectable'] = connectable_data
-    
+
     return data_ret
 
 def get_concept_data(data, concept_values):
     data_ret = {}
     data_fields = data['fields']
-    
+
     cnames = ConceptName.objects.filter(concept=data['pk']).values('name')
 
     data_ret['concept'] = data['pk']
+    data_ret['type'] = data_fields['type']
     if data_fields['source'] == 'PLAT':
         data_ret['value'] = get_concept_value(data['pk'], concept_values)
     else:
         data_ret['adaptor'] = data_fields['adaptor']
     data_ret['names'] = [cname['name'] for cname in cnames] 
-    
+
     return data_ret
 
 # Only for extenal context values (no igadget context values)
 def get_concept_value(concept_name, values):
-    res = ''    
+    res = ''
 
     if concept_name == 'username':
-        res = values['user'].username  
+        res = values['user'].username
     elif concept_name == 'language':
-        res = get_language() 
+        res = get_language()
 
     return res
