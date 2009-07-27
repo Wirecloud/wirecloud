@@ -76,3 +76,8 @@
 	background: url(../images/ie/tabops16px.png) no-repeat;
 }
 
+/*DRAGBOARD*/
+* html .container{
+	width: 100%;
+}
+

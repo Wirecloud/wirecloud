@@ -577,6 +577,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 		Event.observe (handler, "mousedown", startdrag);
 
 		document.onmousedown = null; // reenable context menu
+		document.onselectstart = null; // reenable text selection in IE
 		document.oncontextmenu = null; // reenable text selection
 
 		return false;
@@ -612,7 +613,8 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 			return false;
 
 		document.oncontextmenu = function() { return false; }; // disable context menu
-		document.onmousedown = function() { return false; }; // disable text selection
+		document.onmousedown = function() { return false; }; // disable text selection in Firefox
+		document.onselectstart = function () { return false; }; // disable text selection in IE
 		Event.stopObserving (handler, "mousedown", startdrag);
 
 		xStart = parseInt(e.screenX);
@@ -844,6 +846,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 		handleElement.observe("mousedown", startresize);
 
 		document.onmousedown = null; // reenable context menu
+		document.onselectstart = null; // reenable text selection in IE
 		document.oncontextmenu = null; // reenable text selection
 
 		return false;
@@ -885,6 +888,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 
 		document.oncontextmenu = function() { return false; }; // disable context menu
 		document.onmousedown = function() { return false; }; // disable text selection
+		document.onselectstart = function () { return false; }; // disable text selection in IE
 		handleElement.stopObserving("mousedown", startresize);
 
 		xStart = parseInt(e.screenX);

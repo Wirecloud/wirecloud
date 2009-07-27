@@ -291,6 +291,7 @@ var OpManagerFactory = function () {
 			// When it finish, it will invoke continueLoadingGlobalModules method!
 			function imagesLoaded(theme, imagesNotLoaded) {
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+				
 			}
 
 			function continueLoading(theme, errorMsg) {
@@ -375,7 +376,7 @@ var OpManagerFactory = function () {
 			// Asynchronous load of modules
 			// Each singleton module notifies OpManager it has finished loading!
 
-			if (module == Modules.prototype.THEME_MANAGER) {
+			if (module == Modules.prototype.THEME_MANAGER) {						
 				// Now global modules must be loaded... Showcase is the first!
 				this.showcaseModule = ShowcaseFactory.getInstance();
 				this.showcaseModule.init();
@@ -404,10 +405,16 @@ var OpManagerFactory = function () {
 				if(!BrowserUtilsFactory.getInstance().isIE()) {
 					var s = document.createElement('style');
 					s.type = "text/css";
-					s.setTextContent = '#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}';
+					s.setTextContent('#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}');
 					var h = document.getElementsByTagName("head")[0];
 					h.appendChild(s);
 				}//TODO: for IE try: document.createStyleSheet() and addRule()
+
+				//fixes for IE6
+				//Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs
+				if(BrowserUtilsFactory.getInstance().getBrowser() == "IE6"){
+					IE7.recalc();
+				}
 
 				layoutManager.logStep('');
 				layoutManager._notifyPlatformReady(!this.loadComplete);
