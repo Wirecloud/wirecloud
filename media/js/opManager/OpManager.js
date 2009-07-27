@@ -402,13 +402,18 @@ var OpManagerFactory = function () {
 //				this.changeActiveWorkSpace(this.activeWorkSpace);
 
 				//ezweb fly
-				if(!BrowserUtilsFactory.getInstance().isIE()) {
-					var s = document.createElement('style');
+				var s;
+				var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;';
+				if(BrowserUtilsFactory.getInstance().isIE()) {
+					s = document.createStyleSheet();
+					s.addRule('#wrapper', rules);
+				}else{
+					s = document.createElement('style');
 					s.type = "text/css";
-					s.setTextContent('#wrapper { background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;}');
+					s.setTextContent('#wrapper {' + rules + '}');
 					var h = document.getElementsByTagName("head")[0];
 					h.appendChild(s);
-				}//TODO: for IE try: document.createStyleSheet() and addRule()
+				}
 
 				//fixes for IE6
 				//Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs
