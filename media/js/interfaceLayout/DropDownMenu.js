@@ -83,8 +83,7 @@ DropDownMenu.prototype.calculatePosition = function() {
 		this.x -= smWidth/2;
 	}
 	//set position
-	this.menu.style.top = this.y +"px";
-	this.menu.style.left = this.x +"px";
+	this.menu.setStyle({"top":this.y +'px', "left":this.x +'px'});
 	}
 
 //Adds an option to the menu created from the HTML in the specified position (starting on 0).

@@ -266,7 +266,7 @@ td {
 }
 
 .drop_down_menu, .window_menu{
-  position:fixed;
+  position: absolute;
   text-align: left;
   z-index: 4;
 }
@@ -332,6 +332,7 @@ td {
   margin-right: 1ex;
   font-weight: bold;
   min-width: 31ex;
+  float: left;
 }
 .window_menu .window_top {
   position: relative;

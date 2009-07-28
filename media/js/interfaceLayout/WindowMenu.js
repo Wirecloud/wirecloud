@@ -41,10 +41,10 @@ function WindowMenu(title) {
 	this.htmlElement.appendChild(windowTop);
 
 	this._closeListener = this._closeListener.bind(this);
-	this.closeButton = document.createElement('input');
+	this.closeButton = document.createElement('a');
 	Element.extend(this.closeButton);
 	this.closeButton.type = "button";
-	this.closeButton.className = "closebutton button";
+	this.closeButton.className = "closebutton";
 	windowTop.appendChild(this.closeButton);
 	this.closeButton.observe("click", this._closeListener);
 
