@@ -1,4 +1,7 @@
+/*BODY*/
+body {
 
+}
 /*HEADER*/
 
 /*BANNER*/
@@ -77,7 +80,31 @@
 }
 
 /*DRAGBOARD*/
-* html .container{
-	width: 100%;
+/*IGADGET*/
+* html div.gadget_window div.rightResizeHandle{
+	background: url(../images/ie/iGadget/resize-handle-bottom-right.png) no-repeat;
 }
+
+* html div.gadget_window div.rightResizeHandle{
+	right: 0;
+	bottom: 0;
+}
+
+* html div.gadget_window div.leftResizeHandle {
+	background: url(../images/ie/iGadget/resize-handle-bottom-left.png) no-repeat;
+}
+
+* html div.gadget_window div.leftResizeHandle {
+	left: 0;
+	bottom: 0;	
+}
+
+* html div.gadget_window div.extractButton {
+	background: url(../images/ie/iGadget/snap.png) no-repeat;
+}
+
+* html div.gadget_window div.snapButton {
+	background: url(../images/ie/iGadget/extract.png) no-repeat;
+}
+
 

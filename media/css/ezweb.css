@@ -1,5 +1,5 @@
 body {
-    min-width: 900px;
+    /*min-width: 900px;*/ /*TODO: IE6 doesn't deal with min-width! Find a solution*/
 }
 
 td {
