@@ -4,9 +4,6 @@ div.dragboard {
   overflow-y: auto;
 }
 
-div.dragboard.fixed {
-}
-
 div.gadget_window {
   position: absolute;
 }
@@ -24,15 +21,18 @@ div.gadget_menu {
   border: 0px;
 }
 
-div.dragboard.fixed div.gadget_menu {
+/*div.dragboard.fixed*/
+div.fixed div.gadget_menu {
   cursor: default;
 }
 
-div.dragboard.fixed div.gadget_menu input[type="button"] {
+/*div.dragboard.fixed*/
+div.fixed div.gadget_window div.gadget_menu input {
   display: none;
 }
 
-div.dragboard.fixed div.gadget_menu #settingsbutton {
+/*div.dragboard.fixed*/
+div.fixed div.gadget_menu #settingsbutton {
   display: inline;
 }
 
@@ -113,9 +113,10 @@ div.gadget_window div.resizeHandle.inUse {
   height: auto;
 }
 
-div.dragboard.fixed div.gadget_window div.leftResizeHandle,
-  div.dragboard.fixed div.gadget_window div.rightResizeHandle,
-  div.dragboard.fixed div.gadget_window div.extractButton
+/*div.dragboard.fixed*/
+div.fixed div.gadget_window div.leftResizeHandle,
+  div.fixed div.gadget_window div.rightResizeHandle,
+  div.fixed div.gadget_window div.extractButton
 {
   display: none;
 }
