@@ -87,15 +87,17 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	
 		var logManager = LogManagerFactory.getInstance();
 		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-
+/*
 		if (response_message.indexOf("IntegrityError") > 0) {
 			msg = interpolate(msg, {errorMsg: gettext("The gadget is already added to the catalogue")}, true);
 		} else {
 			msg = logManager.formatError(msg, transport, e)
 		}
-
+*/
+		msg = interpolate(msg, {errorMsg: response_message}, true);
+		LayoutManagerFactory.getInstance().hideCover(); //TODO: is it necessary?
+		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		logManager.log(msg);
-		LayoutManagerFactory.getInstance().hideCover();
 	}
 
 	var persistenceEngine = PersistenceEngineFactory.getInstance();
