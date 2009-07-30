@@ -750,6 +750,12 @@ function PublishWindowMenu (element) {
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
+	
+	var warning = document.createElement('div');
+	Element.extend(warning);
+	warning.addClassName('msg warning');
+	warning.update("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!");
+	this.windowContent.appendChild(warning);
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
 

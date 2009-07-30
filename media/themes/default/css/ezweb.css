@@ -287,8 +287,19 @@ a, a:visited{
   margin-top: 3ex;
 }
 
-.window_menu .msg.error {
+.window_menu .error {
   color: red;
+  font-weight: bold;
+}
+
+.window_menu .warning{
+	font-weight: bold;
+	font-size: 8pt;
+	border: 1px solid;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	margin-top: 5px;
+	padding: 10px;
 }
 
 .required_mark{
