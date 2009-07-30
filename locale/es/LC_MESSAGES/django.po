@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-07-22 14:42+0200\n"
+"POT-Creation-Date: 2009-07-30 14:05+0200\n"
 "PO-Revision-Date: 2008-02-19 13:13+0100\n"
 "Last-Translator: manuel <(null)>\n"
 "Language-Team: Español/España\n"
@@ -43,15 +43,15 @@ msgstr ""
 "(Si el fichero settings.py ya existe, de alguna manera esta causando un "
 "error de importación.)\n"
 
-#: settings.py:89
+#: settings.py:90
 msgid "Spanish"
 msgstr "Español"
 
-#: settings.py:90
+#: settings.py:91
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:91
+#: settings.py:92
 msgid "Portuguese"
 msgstr "Portugués"
 
@@ -93,7 +93,7 @@ msgstr "Valor por defecto"
 
 #: catalogue/models.py:88 catalogue/models.py:133 connectable/models.py:41
 #: connectable/models.py:65 connectable/models.py:77 connectable/models.py:87
-#: context/models.py:51 gadget/models.py:52 gadget/models.py:97
+#: context/models.py:56 gadget/models.py:52 gadget/models.py:97
 #: gadget/models.py:106 gadget/models.py:141 gadget/models.py:150
 #: gadgetGenerator/models.py:36 igadget/models.py:54 workspace/models.py:39
 #: workspace/models.py:80 workspace/models.py:113 workspace/models.py:192
@@ -512,11 +512,11 @@ msgstr "Registrarse"
 msgid "Register"
 msgstr ""
 
-#: clms/templates/base_clms.html:57 ezweb/templates/index.html:107
+#: clms/templates/base_clms.html:57 ezweb/templates/index.html:117
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: clms/templates/base_clms.html:62 ezweb/templates/index.html:99
+#: clms/templates/base_clms.html:62 ezweb/templates/index.html:109
 msgid "Exit"
 msgstr "Salir"
 
@@ -851,7 +851,7 @@ msgstr "Fallo al guardar los connectables: %(exc)s"
 msgid "referred workspace %(workspace_name)s does not exist."
 msgstr "El entorno de trabajo %(workspace_name)s refenciado no existe."
 
-#: context/models.py:39 context/models.py:52 gadget/models.py:157
+#: context/models.py:39 context/models.py:57 gadget/models.py:157
 msgid "Concept"
 msgstr "Concepto"
 
@@ -859,13 +859,28 @@ msgstr "Concepto"
 msgid "Platform"
 msgstr "Plataforma"
 
-#: context/models.py:42 context/models.py:45
+#: context/models.py:42 context/models.py:50
 msgid "Adaptor"
 msgstr "Adaptador"
 
 #: context/models.py:44
 msgid "Source"
 msgstr "Fuente"
+
+#: context/models.py:46
+#, fuzzy
+msgid "External"
+msgstr "Contexto externo"
+
+#: context/models.py:47
+#, fuzzy
+msgid "iGadget"
+msgstr "Gadget"
+
+#: context/models.py:49 gadget/models.py:114 workspace/models.py:75
+#: workspace/models.py:112 workspace/models.py:179
+msgid "Type"
+msgstr "Tipo"
 
 #: context/views.py:68 context/views.py:115 context/views.py:144
 msgid "JSON parameter not specified"
@@ -926,7 +941,7 @@ msgstr "Plataforma EzWeb"
 
 #: ezweb/templates/catalogue_adder.html:228
 #: ezweb/templates/catalogue_adder_login.html:235
-#: ezweb/templates/registration/login.html:239
+#: ezweb/templates/registration/login.html:238
 msgid "Contact us"
 msgstr "Contacto"
 
@@ -937,7 +952,7 @@ msgid ""
 msgstr ""
 
 #: ezweb/templates/catalogue_adder_login.html:257
-#: ezweb/templates/registration/login.html:260
+#: ezweb/templates/registration/login.html:259
 msgid ""
 "Thanks to EzWeb you will be able to combine your favorite services to make "
 "your life easier"
@@ -946,12 +961,12 @@ msgstr ""
 "más sencilla"
 
 #: ezweb/templates/catalogue_adder_login.html:259
-#: ezweb/templates/registration/login.html:262
+#: ezweb/templates/registration/login.html:261
 msgid "Watch our videos!"
 msgstr "¡Echa un vistazo a nuestros vídeos!"
 
 #: ezweb/templates/catalogue_adder_login.html:267
-#: ezweb/templates/registration/login.html:270
+#: ezweb/templates/registration/login.html:269
 msgid ""
 "<b>Discover</b> new gadgets in our catalogue and import them in your "
 "workspace."
@@ -960,24 +975,24 @@ msgstr ""
 "de trabajo."
 
 #: ezweb/templates/catalogue_adder_login.html:275
-#: ezweb/templates/registration/login.html:278
+#: ezweb/templates/registration/login.html:277
 msgid "Arrange gadgets in your workspace <b>at your will</b>"
 msgstr "Personaliza los gadgets de tu espacio de trabajo <b>a tu gusto</b>"
 
 #: ezweb/templates/catalogue_adder_login.html:283
-#: ezweb/templates/registration/login.html:286
+#: ezweb/templates/registration/login.html:285
 msgid "<b>Wire</b> gadgets together."
 msgstr "<b>Conecta</b> los gadgets entre sí."
 
 #: ezweb/templates/catalogue_adder_login.html:291
-#: ezweb/templates/registration/login.html:294
+#: ezweb/templates/registration/login.html:293
 msgid "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue."
 msgstr ""
 "Comparte tus espacios de trabajo/<b>mashups</b> como elementos del catálogo "
 "de EzWeb."
 
 #: ezweb/templates/catalogue_adder_login.html:299
-#: ezweb/templates/registration/login.html:302
+#: ezweb/templates/registration/login.html:301
 msgid ""
 "Share your own workspace as an object you may <b>embed</b> in your favourite "
 "environments."
@@ -986,37 +1001,37 @@ msgstr ""
 "en tus entornos favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:312
-#: ezweb/templates/registration/login.html:315
+#: ezweb/templates/registration/login.html:314
 msgid "Username"
 msgstr "Usuario"
 
 #: ezweb/templates/catalogue_adder_login.html:317
-#: ezweb/templates/registration/login.html:320 gadget/models.py:112
+#: ezweb/templates/registration/login.html:319 gadget/models.py:112
 msgid "Password"
 msgstr "Contraseña"
 
 #: ezweb/templates/catalogue_adder_login.html:324
-#: ezweb/templates/registration/login.html:327
+#: ezweb/templates/registration/login.html:326
 msgid "Log in"
 msgstr "Acceder"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: ezweb/templates/registration/login.html:330
+#: ezweb/templates/registration/login.html:329
 msgid "Your first time in EzWeb? Access with your login in"
 msgstr "¿Tú primera vez en EzWeb? Accede con tu usuario de"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: ezweb/templates/registration/login.html:330
+#: ezweb/templates/registration/login.html:329
 msgid "or"
 msgstr "o"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: ezweb/templates/registration/login.html:330
+#: ezweb/templates/registration/login.html:329
 msgid "register"
 msgstr "regístrate"
 
 #: ezweb/templates/catalogue_adder_login.html:332
-#: ezweb/templates/registration/login.html:335
+#: ezweb/templates/registration/login.html:334
 msgid ""
 "<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to "
 "your favourite feeds and web pages."
@@ -1025,7 +1040,7 @@ msgstr ""
 "gadgets vinculados a tus páginas web y feeds favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:335
-#: ezweb/templates/registration/login.html:338
+#: ezweb/templates/registration/login.html:337
 msgid ""
 "Our <b>catalogue</b> will grow during the next months, giving you access to "
 "a richer set of services, targeted to suit your needs and tastes."
@@ -1035,69 +1050,77 @@ msgstr ""
 "gustos."
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:341
+#: ezweb/templates/registration/login.html:340
 msgid "Don't hesitate sending us your"
 msgstr "No dejes de enviarnos tu"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:341
+#: ezweb/templates/registration/login.html:340
 msgid "opinion and feedback"
 msgstr "opinión"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:341
+#: ezweb/templates/registration/login.html:340
 msgid "Keep in touch with us!"
 msgstr "¡Mantente en contacto con nosotros!"
 
-#: ezweb/templates/index.html:67 ezweb/templates/index_lite.html:10
+#: ezweb/templates/index.html:61
+msgid "Loading EzWeb Platform"
+msgstr "Cargando la Plataforma Ezweb"
+
+#: ezweb/templates/index.html:65
+msgid "Retreiving EzWeb code"
+msgstr "Recuperándo el código de EzWeb"
+
+#: ezweb/templates/index.html:77 ezweb/templates/index_lite.html:10
 msgid "Add gadgets to your workspace"
 msgstr "Añadir gadgets a tu espacio de trabajo"
 
-#: ezweb/templates/index.html:67 ezweb/templates/index_lite.html:10
+#: ezweb/templates/index.html:77 ezweb/templates/index_lite.html:10
 msgid "Add Gadgets"
 msgstr "Añadir Gadgets"
 
-#: ezweb/templates/index.html:68 ezweb/templates/index_lite.html:11
+#: ezweb/templates/index.html:78 ezweb/templates/index_lite.html:11
 msgid "Connect gadgets to another gadgets"
 msgstr "Conectar gadgets a otros gadgets"
 
-#: ezweb/templates/index.html:68 ezweb/templates/index_lite.html:11
+#: ezweb/templates/index.html:78 ezweb/templates/index_lite.html:11
 msgid "Connect Gadgets"
 msgstr "Conectar Gadgets"
 
-#: ezweb/templates/index.html:74 ezweb/templates/index_lite.html:17
+#: ezweb/templates/index.html:84 ezweb/templates/index_lite.html:17
 msgid "Workspace operations"
 msgstr "Operaciones del entorno de trabajo"
 
-#: ezweb/templates/index.html:83 ezweb/templates/index_lite.html:30
+#: ezweb/templates/index.html:93 ezweb/templates/index_lite.html:30
 msgid "Show errors console"
 msgstr "Mostrar la consola de errores"
 
-#: ezweb/templates/index.html:86
+#: ezweb/templates/index.html:96
 msgid "Theme:"
 msgstr "Tema:"
 
-#: ezweb/templates/index.html:93
+#: ezweb/templates/index.html:103
 msgid "Sign in"
 msgstr "Registrarse"
 
-#: ezweb/templates/index.html:97
+#: ezweb/templates/index.html:107
 msgid "anonymous"
 msgstr "Anónimo"
 
-#: ezweb/templates/index.html:104
+#: ezweb/templates/index.html:114
 msgid "profile"
 msgstr "perfil"
 
-#: ezweb/templates/index.html:113 ezweb/templates/index_lite.html:23
+#: ezweb/templates/index.html:123 ezweb/templates/index_lite.html:23
 msgid "Add more tabs"
 msgstr "Añadir más pestañas"
 
-#: ezweb/templates/index.html:113 ezweb/templates/index_lite.html:23
+#: ezweb/templates/index.html:123 ezweb/templates/index_lite.html:23
 msgid "Add Tab"
 msgstr "Añadir Tab"
 
-#: ezweb/templates/index.html:146
+#: ezweb/templates/index.html:156
 msgid "Clear"
 msgstr "Limpiar"
 
@@ -1241,13 +1264,13 @@ msgstr "nuevo canal"
 msgid "SLOTS"
 msgstr "RANURAS"
 
-#: ezweb/templates/registration/login.html:344
+#: ezweb/templates/registration/login.html:343
 msgid ""
 "MORFEO open source community has released some <b>online training material</"
 "b> about EzWeb technology."
 msgstr ""
-"La comunidad de software libre MORFEO ha liberado <b>material de formacion online</"
-"b> sobre la tecnología EzWeb."
+"La comunidad de software libre MORFEO ha liberado <b>material de formacion "
+"online</b> sobre la tecnología EzWeb."
 
 #: gadget/gadgetCodeParser.py:56 gadget/views.py:166
 msgid "XHTML code is not accessible"
@@ -1292,11 +1315,6 @@ msgstr "Fecha"
 #: gadget/models.py:111 workspace/models.py:177
 msgid "Boolean"
 msgstr "Booleano"
-
-#: gadget/models.py:114 workspace/models.py:75 workspace/models.py:112
-#: workspace/models.py:179
-msgid "Type"
-msgstr "Tipo"
 
 #: gadget/models.py:116
 msgid "Slot"
