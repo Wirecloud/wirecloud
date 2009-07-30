@@ -377,7 +377,9 @@ function Tab (tabInfo, workSpace) {
 	this.menu.addOption(_currentTheme.getIconURL("remove"),
 		gettext("Remove"),
 		function() {
-			LayoutManagerFactory.getInstance().showWindowMenu('deleteTab');
-		},
+			var msg = gettext('Do you really want to remove the "%(tabName)s" tab?');
+			msg = interpolate(msg, {tabName: this.tabInfo.name}, true);
+			LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();})
+		}.bind(this),
 		2);
 }

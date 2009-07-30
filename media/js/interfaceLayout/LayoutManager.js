@@ -767,14 +767,6 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
 				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
 				break;
-			case 'deleteTab':
-				if (!this.menus['alertMenu']) {
-					this.menus['alertMenu'] = new AlertWindowMenu();
-				}
-				this.currentMenu = this.menus['alertMenu'];
-				this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
-				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
-				break;
 			case 'cancelService':
 				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
@@ -782,14 +774,6 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = this.menus['alertMenu'];
 				this.currentMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
 				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
-				break;
-			case 'deleteWorkSpace':
-				if (!this.menus['alertMenu']) {
-					this.menus['alertMenu'] = new AlertWindowMenu(null);
-				}
-				this.currentMenu = this.menus['alertMenu'];
-				this.currentMenu.setMsg(gettext('Do you really want to remove this workspace?'));
-				this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();}, handlerNoButton);
 				break;
 			case 'publishWorkSpace':
 				if (!this.menus['publishWorkSpaceMenu']) {

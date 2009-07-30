@@ -700,8 +700,10 @@ function WorkSpace (workSpaceState) {
 			this.menu.addOption(_currentTheme.getIconURL('remove'),
 				gettext("Remove"),
 				function() {
-					LayoutManagerFactory.getInstance().showWindowMenu('deleteWorkSpace');
-				},
+					var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
+					msg = interpolate(msg, {workspaceName: this.workSpaceState.name}, true);
+					LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
+				}.bind(this),
 				optionPosition++);
 
 			//TODO:Intermediate window to ask for data (name, description...)
