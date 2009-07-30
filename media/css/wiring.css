@@ -234,3 +234,7 @@
   font-size:80%;
   white-space:pre;
 }
+
+#wiring .help_button{
+	display: inline;
+}

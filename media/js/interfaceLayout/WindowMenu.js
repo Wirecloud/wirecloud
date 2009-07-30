@@ -106,9 +106,15 @@ WindowMenu.prototype.calculatePosition = function() {
 
 	this.htmlElement.setStyle({'max-height' : 'none'});
 	var menuHeight = this.htmlElement.getHeight();
+	var menuWidth = this.htmlElement.getWidth();
+	
+	if (menuWidth > windowWidth/2){
+		menuWidth = windowWidth/2; //IE6 hack
+		this.htmlElement.setStyle({'width': menuWidth+'px'});
+	}
 	
 	coordenates[1] = windowHeight/2 - menuHeight/2;
-	coordenates[0] = windowWidth/2 - this.htmlElement.getWidth()/2;
+	coordenates[0] = windowWidth/2 - menuWidth/2;
 
 	if(windowHeight < menuHeight){
 		var padding = 2* parseInt(this.htmlElement.getStyle('padding-top').replace("px",""));
@@ -199,7 +205,7 @@ function CreateWindowMenu (element) {
 	}
 
 	WindowMenu.call(this, title);
-	this.htmlElement.addClassName('create_menu');
+	
 
 	// Accept button
 	this.button = document.createElement('button');
@@ -414,7 +420,7 @@ function InfoWindowMenu(title) {
 		return;
 
 	WindowMenu.call(this, title);
-	this.htmlElement.addClassName('info_menu');
+	
 
 	// Extra HTML Elements
 	var icon = document.createElement('img');
@@ -754,7 +760,7 @@ function PublishWindowMenu (element) {
 	var warning = document.createElement('div');
 	Element.extend(warning);
 	warning.addClassName('msg warning');
-	warning.update("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!");
+	warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
 	this.windowContent.appendChild(warning);
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
@@ -879,7 +885,7 @@ AddSiteMenu.prototype.executeOperation = function(form) {
  */
 function SharedWorkSpaceMenu() {
 	WindowMenu.call(this, gettext('Shared WorkSpace Info'));
-	this.htmlElement.addClassName('info_menu');
+	
 
 	// Extra HTML Elements
 	var icon = document.createElement('img');

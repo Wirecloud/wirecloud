@@ -356,6 +356,13 @@ td {
   display: inline;
   text-align: center;
 }
+.window_menu .window_content .msg {
+  display: inline;
+}
+
+.window_menu .window_content .warning{
+  display: block;
+}
 
 .window_menu .window_content .msg img {
   margin: 0 2px;
