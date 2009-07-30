@@ -1438,7 +1438,7 @@ msgstr "Cargando la Plataforma Ezweb"
 
 #: media/js/opManager/OpManager.js:267
 msgid "Retreiving EzWeb code"
-msgstr "Recuperándo el código de EzWeb"
+msgstr "Recuperando el código de EzWeb"
 
 #: media/js/opManager/OpManager.js:286
 msgid "Error loading \"%(theme)s\" theme. Trying with \"default\" theme."

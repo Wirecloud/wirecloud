@@ -1070,7 +1070,7 @@ msgstr "Cargando la Plataforma Ezweb"
 
 #: ezweb/templates/index.html:65
 msgid "Retreiving EzWeb code"
-msgstr "Recuperándo el código de EzWeb"
+msgstr "Recuperando el código de EzWeb"
 
 #: ezweb/templates/index.html:77 ezweb/templates/index_lite.html:10
 msgid "Add gadgets to your workspace"
