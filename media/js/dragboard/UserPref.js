@@ -122,19 +122,21 @@ ListUserPref.prototype.makeInterface = function (varManager, iGadgetId) {
 	var select;
 
 	select = document.createElement("select");
+	Element.extend(select);
 	select.setAttribute("name", this.varName);
 
 	var currentValue = this.getCurrentValue(varManager, iGadgetId);
-	var output = "";
+
 	for (var i = 0; i < this.options.length; i++) {
-		output += "<option value=\"" + this.options[i][0] + "\"";
-
-		if (currentValue == this.options[i][0]) output += " selected=\"selected\"";
-
-		output += ">" + this.options[i][1] + "</option>";
-	}
+		var option = document.createElement("option");
+		option.setAttribute("value", this.options[i][0])
 		
-	select.innerHTML = output;
+		if (currentValue == this.options[i][0]) 
+			option.selected = "selected";
+
+		option.innerHTML = this.options[i][1];
+		select.appendChild(option);
+	}
 
 	return select;
 }
