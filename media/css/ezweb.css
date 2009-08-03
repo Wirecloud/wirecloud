@@ -165,6 +165,10 @@ td {
   margin-left: 3px;
 }
 
+#workspace_link_container .shared{
+	cursor: default;
+}
+
 .toolbar_marked, .toolbar_unmarked {
 	position: relative;
 	float: left;
@@ -282,6 +286,10 @@ td {
   display: block;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.gadget_menu_locked .hide_on_lock{
+	display: none;
 }
 
 .drop_down_menu .submenu{

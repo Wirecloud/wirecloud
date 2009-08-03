@@ -88,7 +88,10 @@ DropDownMenu.prototype.calculatePosition = function() {
 
 //Adds an option to the menu created from the HTML in the specified position (starting on 0).
 //imgPath to be shown beside the option (may be null)-- option text -- event:function called on clicking
-DropDownMenu.prototype.addOption = function(imgPath, option, event, position) {
+DropDownMenu.prototype.addOption = function(imgPath, option, event, position, additionalClass) {
+	var newClass=additionalClass
+	if (!additionalClass)
+		newClass="";
 	var optionClass = 'option underlined';
 	var optionList = $$('#'+this.idMenu+'>.option');
 	if(position == optionList.length && position != 0){//new last option
@@ -97,6 +100,8 @@ DropDownMenu.prototype.addOption = function(imgPath, option, event, position) {
 	} else if (position == optionList.length && position == 0) {
 		optionClass = 'option';
 	}
+	
+	optionClass = optionClass + " " + newClass;
 
 	//create the HTML code for the option and insert it in the menu
 	var opId='op_'+this.idMenu+'_'+this.option_id;
@@ -136,9 +141,14 @@ DropDownMenu.prototype.removeOption = function(opId) {
 }
 
 //updates an option
-DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler) {
+DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, additionalClass) {
 	var old=$(opId);
-	var opHtml='<div id="'+ opId +'" class = "option">';
+	
+	var newClass=additionalClass
+	if (!additionalClass)
+		newClass="";
+		
+	var opHtml='<div id="'+ opId +'" class = "option '+newClass+'">';
 	if (imgPath) {
 		opHtml += '<img src="'+imgPath+'"/>';
 	}

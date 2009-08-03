@@ -73,12 +73,16 @@ div.color_button {
 }
 
 div.gadget_window .button {
-  display: block;
+  display: none;
   margin: 2px 2px 0px 2px;
   float: right;
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+div.gadget_window .snapButton, div.gadget_window .extractButton, div.gadget_window .dragboardwiki{
+	display: block;
 }
 
 div.gadget_window div.leftResizeHandle {
@@ -116,13 +120,18 @@ div.gadget_window div.resizeHandle.inUse {
 /*div.dragboard.fixed*/
 div.fixed div.gadget_window div.leftResizeHandle,
   div.fixed div.gadget_window div.rightResizeHandle,
-  div.fixed div.gadget_window div.extractButton
+  div.fixed div.gadget_window div.extractButton,
+  div.fixed div.gadget_window div.snapButton
 {
   display: none;
 }
 
 .gadget_menu span {
   cursor: pointer;
+}
+
+div.fixed .gadget_menu span {
+	cursor: default;
 }
 
 .gadget_menu .igadget_name {

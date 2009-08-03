@@ -247,27 +247,29 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.fillWithInput = function () {
-		this.workSpaceNameHTMLElement.remove();
-		var inputHTML = "<input class='ws_name' value='"+this.workSpaceState.name+"' size='"+this.workSpaceState.name.length+" maxlength=30' />";
-		new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
-		this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
-		this.workSpaceNameHTMLElement.focus();
-		Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){
-					Event.stop(e);
-					this.fillWithLabel()}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){
-					if(e.keyCode == Event.KEY_RETURN){
+		if (!this.isShared()) {
+			this.workSpaceNameHTMLElement.remove();
+			var inputHTML = "<input class='ws_name' value='"+this.workSpaceState.name+"' size='"+this.workSpaceState.name.length+" maxlength=30' />";
+			new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
+			this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
+			this.workSpaceNameHTMLElement.focus();
+			Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){
+						Event.stop(e);
+						this.fillWithLabel()}.bind(this));
+			Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){
+						if(e.keyCode == Event.KEY_RETURN){
+							Event.stop(e);
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							target.blur();
+						}}.bind(this));
+			Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){
+						var target = BrowserUtilsFactory.getInstance().getTarget(e);
+						this.updateInfo(target.value);}.bind(this));
+			Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){
 						Event.stop(e);
 						var target = BrowserUtilsFactory.getInstance().getTarget(e);
-						target.blur();
-					}}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){
-					var target = BrowserUtilsFactory.getInstance().getTarget(e);
-					this.updateInfo(target.value);}.bind(this));
-		Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){
-					Event.stop(e);
-					var target = BrowserUtilsFactory.getInstance().getTarget(e);
-					target.size = (target.value.length==0)?1:target.value.length;}.bind(this));
+						target.size = (target.value.length==0)?1:target.value.length;}.bind(this));
+		}
 	}
 
 	WorkSpace.prototype.updateInfo = function (workSpaceName) {
@@ -829,11 +831,13 @@ function WorkSpace (workSpaceState) {
 		this._hide_element('add_tab_link');
 		this._hide_element('catalogue_link');
 		this._hide_element('wiring_link');
+		this.workSpaceHTMLElement.addClassName("shared");
 	}
 	
 	this._show_creator_options = function() {
 		this._show_element('add_tab_link');
 		this._show_element('catalogue_link');
 		this._show_element('wiring_link');
+		this.workSpaceHTMLElement.removeClassName("shared");
 	}
 }

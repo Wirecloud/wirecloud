@@ -298,7 +298,7 @@ IGadget.prototype._updateExtractOption = function() {
 		                       function() {
 		                           this.toggleLayout();
 		                           LayoutManagerFactory.getInstance().hideCover();
-		                       }.bind(this));
+		                       }.bind(this), "hide_on_lock");
 
 		this.extractButton.removeClassName("extractButton");
 		this.extractButton.addClassName("snapButton");
@@ -311,28 +311,28 @@ IGadget.prototype._updateExtractOption = function() {
 		                        this.layout.lower(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    this.extractOptionOrder+1);
+		                    this.extractOptionOrder+1, "hide_on_lock");
 		this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
 		                    gettext("Raise"),
 		                    function() {
 		                        this.layout.raise(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    this.extractOptionOrder+2);
+		                    this.extractOptionOrder+2, "hide_on_lock");
 		this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
 		                    gettext("Lower To Bottom"),
 		                    function() {
 		                        this.layout.lowerToBottom(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    this.extractOptionOrder+3);
+		                    this.extractOptionOrder+3, "hide_on_lock");
 		this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
 		                    gettext("Raise To Top"),
 		                    function() {
 		                        this.layout.raiseToTop(this);
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
-		                    this.extractOptionOrder+4);
+		                    this.extractOptionOrder+4, "hide_on_lock");
 	} else {
 		this.menu.updateOption(this.extractOptionId,
 		                       _currentTheme.getIconURL('igadget-extract'),
@@ -340,7 +340,7 @@ IGadget.prototype._updateExtractOption = function() {
 		                       function() {
 		                           this.toggleLayout();
 		                           LayoutManagerFactory.getInstance().hideCover();
-		                       }.bind(this));
+		                       }.bind(this), "hide_on_lock");
 
 		this.extractButton.removeClassName("snapButton");
 		this.extractButton.addClassName("extractButton");
@@ -616,7 +616,7 @@ IGadget.prototype.paint = function(onInit) {
 
 		// Extract/Snap from/to grid option (see _updateExtractOption)
 		this.extractOptionOrder = 2;
-		this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder);
+		this.extractOptionId = this.menu.addOption("", "", function(){}, this.extractOptionOrder, "hide_on_lock");
 		
 		// Initialize snap/extract options
 		this._updateExtractOption();
@@ -625,6 +625,7 @@ IGadget.prototype.paint = function(onInit) {
 	// Initialize lock status
 	if (this.layout.dragboard.isLocked()) {
 		this.element.addClassName("gadget_window_locked");
+		this.menu.menu.addClassName("gadget_menu_locked");
 	}
 
 	// Initialize transparency status
@@ -699,9 +700,6 @@ IGadget.prototype.fillWithLabel = function() {
 		Element.extend(this.igadgetNameHTMLElement);
 		this.igadgetNameHTMLElement.innerHTML = nameToShow;
 		this.gadgetMenu.appendChild(this.igadgetNameHTMLElement);
-		//var spanHTML = nameToShow;
-		//new Insertion.Top(this.gadgetMenu, spanHTML);
-		//this.igadgetNameHTMLElement = this.gadgetMenu.firstDescendant();
 	
 		this.igadgetNameHTMLElement.observe('click',
 		                                    function(e) {
@@ -713,61 +711,63 @@ IGadget.prototype.fillWithLabel = function() {
 
 
 IGadget.prototype.fillWithInput = function () {
-	this.igadgetNameHTMLElement.hide();
-	if (this.igadgetInputHTMLElement) {
-		this.igadgetInputHTMLElement.show();
-		this.igadgetInputHTMLElement.setAttribute("value", this.name);
-		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
-	} else {
-		this.igadgetInputHTMLElement = document.createElement("input");
-		Element.extend(this.igadgetInputHTMLElement);
-		this.igadgetInputHTMLElement.addClassName("igadget_name");
-		this.igadgetInputHTMLElement.setAttribute("type", "text");
-		this.igadgetInputHTMLElement.setAttribute("value", this.name);
-		this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
-		this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
-
-		this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
-
-		this.igadgetInputHTMLElement.observe('blur',
-		                                    function(e) {
-		                                        Event.stop(e);
-		                                        this.fillWithLabel()
-		                                    }.bind(this));
-
-		this.igadgetInputHTMLElement.observe('keypress',
-		                                    function(e) {
-		                                        if(e.keyCode == Event.KEY_RETURN) {
-		                                            Event.stop(e);
-		                                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-		                                            target.blur();
-		                                        }
-		                                    }.bind(this));
-
-		this.igadgetInputHTMLElement.observe('change',
-		                                    function(e) {		                                    
-		                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-		                                        this.setName(target.value);
-		                                    }.bind(this));
-
-		this.igadgetInputHTMLElement.observe('keyup',
-		                                    function(e) {
-		                                        Event.stop(e);
-		                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-		                                        target.size = (target.value.length==0) ? 1 : target.value.length + 5;
-		                                    }.bind(this));
-
-		/*this.igadgetInputHTMLElement.observe('click',
-		                                    function(e) {
-		                                        Event.stop(e);
-		                                    }); //do not propagate to div.*/
-		this.igadgetInputHTMLElement.observe('mousedown',
-		                                    function(e) {
-		                                        e = e || window.event; // needed for IE
-		                                        Event.stop(e);
-		                                    });
+	if (!this.layout.dragboard.isLocked()){
+		this.igadgetNameHTMLElement.hide();
+		if (this.igadgetInputHTMLElement) {
+			this.igadgetInputHTMLElement.show();
+			this.igadgetInputHTMLElement.setAttribute("value", this.name);
+			this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
+		} else {
+			this.igadgetInputHTMLElement = document.createElement("input");
+			Element.extend(this.igadgetInputHTMLElement);
+			this.igadgetInputHTMLElement.addClassName("igadget_name");
+			this.igadgetInputHTMLElement.setAttribute("type", "text");
+			this.igadgetInputHTMLElement.setAttribute("value", this.name);
+			this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
+			this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
+	
+			this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
+	
+			this.igadgetInputHTMLElement.observe('blur',
+			                                    function(e) {
+			                                        Event.stop(e);
+			                                        this.fillWithLabel()
+			                                    }.bind(this));
+	
+			this.igadgetInputHTMLElement.observe('keypress',
+			                                    function(e) {
+			                                        if(e.keyCode == Event.KEY_RETURN) {
+			                                            Event.stop(e);
+			                                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
+			                                            target.blur();
+			                                        }
+			                                    }.bind(this));
+	
+			this.igadgetInputHTMLElement.observe('change',
+			                                    function(e) {		                                    
+			                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
+			                                        this.setName(target.value);
+			                                    }.bind(this));
+	
+			this.igadgetInputHTMLElement.observe('keyup',
+			                                    function(e) {
+			                                        Event.stop(e);
+			                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
+			                                        target.size = (target.value.length==0) ? 1 : target.value.length + 5;
+			                                    }.bind(this));
+	
+			/*this.igadgetInputHTMLElement.observe('click',
+			                                    function(e) {
+			                                        Event.stop(e);
+			                                    }); //do not propagate to div.*/
+			this.igadgetInputHTMLElement.observe('mousedown',
+			                                    function(e) {
+			                                        e = e || window.event; // needed for IE
+			                                        Event.stop(e);
+			                                    });
+		}
+		this.igadgetInputHTMLElement.focus();
 	}
-	this.igadgetInputHTMLElement.focus();
 }
 
 /**
@@ -1083,6 +1083,8 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 	var oldHeight = this.getHeight();
 
 	this._recomputeHeight(false);
+	
+	this.menu.menu.toggleClassName("gadget_menu_locked");
 
 	// Notify Context Manager
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
