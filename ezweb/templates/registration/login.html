@@ -206,7 +206,6 @@ h3{
    function check_browser() {
       var browser=navigator.appName;
 
-
       if (browser.toLowerCase().substring(0, 8) != 'netscape') {
            alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
 	   return false;
@@ -236,7 +235,6 @@ h3{
 	<div id="banner">
 		<div id="logo"></div>
 		<div id="greeting">
-			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
 			 <div class="languages">
 			 	<form id="languages" action="/i18n/setlang/" method="post">
 					<input name="next" type="hidden" value="/accounts/login/?next=/" />
@@ -244,6 +242,9 @@ h3{
 				</form>		 
 				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 			 </div>
+			 <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
+			 <span> | </span>
+			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span>
 		</div>
 	
 	</div>
