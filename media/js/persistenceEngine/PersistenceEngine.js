@@ -37,6 +37,18 @@ var PersistenceEngineFactory = function () {
 		// PUBLIC METHODS 
 		// ****************
 		PersitenceEngine.prototype.send_get = function (url, context, successHandler, errorHandler, parameters, requestHeaders) {
+
+			//adding a timestamp to avoid caching (specially for IE)
+			var	partitions = url.split('?');
+			var params = partitions[1];
+			if(params){
+				if(params != "")
+						url += '&';
+			}else {
+				url += '?';
+			}
+			url += new Date().getTime();
+			
 			new Ajax.Request(url, {
 				method: 'get',
 				parameters: parameters,
