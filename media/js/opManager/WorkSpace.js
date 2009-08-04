@@ -697,7 +697,7 @@ function WorkSpace (workSpaceState) {
 					LayoutManagerFactory.getInstance().hideCover();
 					this._shareWorkspace();
 				}.bind(this),
-				optionPosition++);
+				optionPosition++, null, "share_workspace");
 
 			this.menu.addOption(_currentTheme.getIconURL('remove'),
 				gettext("Remove"),
@@ -714,7 +714,7 @@ function WorkSpace (workSpaceState) {
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
 				}.bind(this),
-				optionPosition++);
+				optionPosition++, null, "publish_workspace");
 
 			if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces
 				this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),

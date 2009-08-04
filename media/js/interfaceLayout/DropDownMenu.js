@@ -88,7 +88,8 @@ DropDownMenu.prototype.calculatePosition = function() {
 
 //Adds an option to the menu created from the HTML in the specified position (starting on 0).
 //imgPath to be shown beside the option (may be null)-- option text -- event:function called on clicking
-DropDownMenu.prototype.addOption = function(imgPath, option, event, position, additionalClass) {
+// additionalClass: string used to add a specific class to the element
+DropDownMenu.prototype.addOption = function(imgPath, option, event, position, additionalClass, policy) {
 	var newClass=additionalClass
 	if (!additionalClass)
 		newClass="";
@@ -121,7 +122,7 @@ DropDownMenu.prototype.addOption = function(imgPath, option, event, position, ad
 			new Insertion.Bottom(this.menu, opHtml);
 		}
 		var newOption = $(opId);
-		Event.observe(newOption, 'click', event, false, option);
+		Event.observe(newOption, 'click', event, false, policy);
 		this.option_id++;
 	} catch(e) {
 		return null;
@@ -141,7 +142,7 @@ DropDownMenu.prototype.removeOption = function(opId) {
 }
 
 //updates an option
-DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, additionalClass) {
+DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, additionalClass, policy) {
 	var old=$(opId);
 	
 	var newClass=additionalClass
@@ -159,7 +160,7 @@ DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, a
 	if(old.hasClassName('underlined')){
 		newOp.toggleClassName('underlined');
 	}
-	Event.observe(newOp, 'click', handler);
+	Event.observe(newOp, 'click', handler, policy);
 }
 
 //submenu operations

@@ -74,8 +74,8 @@ function _EzSteroidsAPI(user) {
 
 _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
 	if (!this.userPolicies || !this.globalPolicies)
-		// if EzSteroids isn't available, the user can do the action
-		return true
+		// if EzSteroids isn't available, the user cannot do the action
+		return false
 	
 	p = String.toLowerCase(policy.replace(/ /g, "_"));
 	
