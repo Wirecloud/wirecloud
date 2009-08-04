@@ -47,7 +47,7 @@ var PersistenceEngineFactory = function () {
 			}else {
 				url += '?';
 			}
-			url += new Date().getTime();
+			url += "stamp="+new Date().getTime();
 			
 			new Ajax.Request(url, {
 				method: 'get',
