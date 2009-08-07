@@ -43,8 +43,16 @@ function _EzSteroidsAPI(user) {
 	}
 	
 	var showUserError = function(resp, e){
-		//provisional patch to return allways true if EzSteroids isn't available
-		this.userPolicies = null;
+		this.userPolicies = new Object();
+		/*try{
+			json = eval ('('+resp.responseText+')');
+			if (json["code"]==409){
+				//Anonymous user => set the minimun user policies
+				this.userPolicies = new Object();
+			}
+		}catch(e){
+			// do nothing
+		}*/
 	}
 	
 	var setGlobalPolicies = function(policies){
@@ -57,7 +65,7 @@ function _EzSteroidsAPI(user) {
 	}
 	
 	try{
-		this.userPolicies = null;
+		this.userPolicies = new Object();
 		this.globalPolicies = null;
 		
 		// get the policies
@@ -66,14 +74,14 @@ function _EzSteroidsAPI(user) {
 		this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
 	}
 	catch(e){
-		this.userPolicies = null;
+		this.userPolicies = new Object();
 		this.globalPolicies = null;
 	}
 	
 }
 
 _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
-	if (!this.userPolicies || !this.globalPolicies)
+	if (!this.globalPolicies)
 		// if EzSteroids isn't available, the user cannot do the action
 		return false
 	
