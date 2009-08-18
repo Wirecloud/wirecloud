@@ -732,20 +732,37 @@ IGadgetDraggable.prototype.startFunc = function (draggable, context) {
 	context.iGadget.setZPosition("999999");
 }
 
+IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
+	if (maxRecursion == 0)
+		return null;
+
+	// Only check elements, skip other dom nodes.
+	if (isElement(curNode) && Element.extend(curNode).hasClassName('tab')) {
+		return curNode;
+	} else {
+		var parentNode = curNode.parentNode;
+		if (parentNode != null)
+			return this._findTabElement(parentNode, maxRecursion - 1);
+		else
+			return null;
+	}
+}
+
 IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
 	var element = null;
 
 	// Check if the mouse is over a tab
-	if (y < 0)
+	if (y < 0) {
 		element = document.elementFromPoint(event.clientX, event.clientY);
+		if (element != null) {
+			// elementFromPoint may return inner tab elements
+			element = draggable._findTabElement(element, 4);
+		}
+	}
 
 	var id = null;
-	if (element != null && isElement(element)) {
+	if (element != null) {
 		id = element.getAttribute("id");
-		if (id == null && isElement(element.parentNode)) {
-			element = element.parentNode;
-			id = element.getAttribute("id");
-		}
 
 		if (id != null) {
 			var result = id.match(/tab_(\d+)_(\d+)/);
