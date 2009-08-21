@@ -1240,20 +1240,24 @@ UIUtils.sendVotes = function(num) {
 	}
 }
 
-UIUtils.createHTMLElement = function(type_, attributes_){
+UIUtils.createHTMLElement = function(type_, attributes_) {
 	var newElement = document.createElement(type_);
 	Element.extend(newElement);
 	if (attributes_) {
 		attributes_.each(function(attribute) {
 			if (attribute.key != "innerHTML") {
 				var key = attribute.key;
-				if (key == "class_name") key = "class"; 
-				else if (key == "for_") key = "for";
-					
+				if (key == "class_name") {
+					newElement.className = attribute.value;
+					return; // this return acts as a continue sentence
+				} else if (key == "for_") {
+					key = "for";
+				}
+
 				newElement.setAttribute(key, attribute.value);
-			}
-			else 
+			} else {
 				newElement.innerHTML = attribute.value;
+			}
 		});
 	}
 	return newElement;
