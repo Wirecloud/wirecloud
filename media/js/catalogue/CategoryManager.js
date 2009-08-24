@@ -43,7 +43,7 @@ var CategoryManager  = function () {
 	$$('#tag_categories .widget_content')[0].appendChild(this.categorySection);
 	
 	//CONSTRUCTOR
-	this.categories = new Hash(eval('(' + tag_categories + ')'));
+	this.categories = new Hash(JSON.parse(tag_categories));
 
 	//fill category section
 	this.createCategories();

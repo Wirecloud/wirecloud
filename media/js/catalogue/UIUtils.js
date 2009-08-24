@@ -54,7 +54,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	
 	var newResourceOnSuccess = function (response) {
 	    var response_json = response.responseText;
-		var result = eval ('(' + response_json + ')');
+		var result = JSON.parse(response_json);
 	    
 	    if (result['contratable']) {
 	        var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetNewApplication.iface?nDeveloper=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
@@ -83,7 +83,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	
 	var newResourceOnError = function (transport, e) {
 		var response = transport.responseText;
-		var response_message = response.evalJSON()['message'];
+		var response_message = JSON.parse(response)['message'];
 	
 		var logManager = LogManagerFactory.getInstance();
 		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
@@ -1225,7 +1225,7 @@ UIUtils.sendVotes = function(num) {
 			
 	var loadVotes = function(transport) {
 		var responseJSON = transport.responseText;
-		var jsonVoteData = eval ('(' + responseJSON + ')');
+		var jsonVoteData = JSON.parse(responseJSON);
 		resource.setVotes(jsonVoteData);
 	}
 

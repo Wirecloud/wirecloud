@@ -30,7 +30,7 @@ function run_initial_script (workspace) {
 		return;
 	}
 	
-	var initial_script = post_load_script.evalJSON();
+	var initial_script = JSON.parse(post_load_script);
 
 	for (var i=0; i<initial_script.length; i++) {
 		var command_object = initial_script[i];

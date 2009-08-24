@@ -819,7 +819,7 @@ AddFeedMenu.prototype.executeOperation = function(form) {
 
 	function onSuccess(transport) {
 		var response = transport.responseText;
-		var data = eval ('(' + response + ')');
+		var data = JSON.parse(response);
 		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
 	}
 
@@ -872,7 +872,7 @@ AddSiteMenu.prototype.executeOperation = function(form) {
 
 	function onSuccess(transport) {
 		var response = transport.responseText;
-		var data = eval ('(' + response + ')');
+		var data = JSON.parse(response);
 		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
 	}
 

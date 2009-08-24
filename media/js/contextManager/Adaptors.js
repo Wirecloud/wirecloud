@@ -34,7 +34,7 @@
 function UserAdaptor() {
 
 	function _onSuccess(receivedData) {
-		var usernameJson = eval ('(' + receivedData.responseText + ')');
+		var usernameJson = JSON.parse(receivedData.responseText);
 		var value = usernameJson.value;
 		OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(UserAdaptor.prototype.CONCEPT, value);
 	}
@@ -60,7 +60,7 @@ UserAdaptor.prototype.CONCEPT = 'username'
 function LanguageAdaptor() {
 	
 	function _onSuccess(receivedData) {
-		var json = eval ('(' + receivedData.responseText + ')');
+		var json = JSON.parse(receivedData.responseText);
 		var value = json.value;
 		OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(LanguageAdaptor.prototype.CONCEPT, value);
 	}

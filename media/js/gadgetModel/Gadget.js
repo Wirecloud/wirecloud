@@ -81,7 +81,7 @@ function Gadget(gadget_, url_) {
 		
 		var loadGadget = function(transport) {
 			var response = transport.responseText;
-			var objRes = eval ('(' + response + ')');
+			var objRes = JSON.parse(response);
 			state = new GadgetState(objRes);
 			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this);
 		}

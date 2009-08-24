@@ -65,7 +65,7 @@ var CatalogueFactory  = function () {
 			var onSuccess = function (transport) {
 				// Loading purchaseble gadgets!! only when a transport is received!
 				var responseJSON = transport.responseText;
-				var response = eval ('(' + responseJSON + ')'); 
+				var response = JSON.parse(responseJSON); 
 				purchasableGadgets = response['available_resources'];
 
 			    // Load catalogue data!
@@ -209,7 +209,7 @@ var CatalogueFactory  = function () {
 			/***CALLBACK methods***/
 			var cloneOk = function(transport){
 				var response = transport.responseText;
-				var wsInfo = eval ('(' + response + ')');
+				var wsInfo = JSON.parse(response);
 				//create the new workspace and go to it
 				opManager = OpManagerFactory.getInstance();
 				opManager.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
@@ -235,7 +235,7 @@ var CatalogueFactory  = function () {
 			/***CALLBACK methods***/
 			var mergeOk = function(transport){
 				var response = transport.responseText;
-				response = eval ('(' + response + ')');
+				response = JSON.parse(response);
 				
 				//create the new workspace and go to it
 				opManager = OpManagerFactory.getInstance();
@@ -487,7 +487,7 @@ var CatalogueFactory  = function () {
 
 			  var responseJSON = transport.responseText;
 			  var items = transport.getResponseHeader('items');
-			  var jsonResourceList = eval ('(' + responseJSON + ')');
+			  var jsonResourceList = JSON.parse(responseJSON);
 			  jsonResourceList = jsonResourceList.resourceList;
 
               for (var i = 0; i<jsonResourceList.length; i++) { 

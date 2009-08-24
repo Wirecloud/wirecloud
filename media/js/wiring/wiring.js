@@ -80,7 +80,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			var fParams = varData.connectable.filter_params;
 
 			if (fParams)
-				fParams = fParams.evalJSON();
+				fParams = JSON.parse(fParams);
 			else
 				fParams = []
 
@@ -409,7 +409,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	Wiring.prototype.serializationSuccess = function (transport) {
 		// JSON-coded ids mapping
 		var response = transport.responseText;
-		var json = eval ('(' + response + ')');
+		var json = JSON.parse(response);
 
 		var mappings = json['ids'];
 		for (var provisional_id in mappings) {

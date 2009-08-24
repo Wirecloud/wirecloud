@@ -1541,7 +1541,7 @@ IGadget.prototype.is_shared_workspace = function() {
  */
 IGadget.prototype.save = function() {
 	function onSuccess(transport) {
-		var igadgetInfo = eval ('(' + transport.responseText + ')');
+		var igadgetInfo = JSON.parse(transport.responseText);
 		this.id = igadgetInfo['id'];
 		this.layout.dragboard.addIGadget(this, igadgetInfo);
 	}

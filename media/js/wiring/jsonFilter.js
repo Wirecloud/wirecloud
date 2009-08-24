@@ -467,7 +467,7 @@ JSONParser.parse = function(json_, exp_) {
 				break;
 			}
 		}
-		json_objs = eval ('(' + json_ + ')');
+		json_objs = JSON.parse(json_);
 	}
 	
 	for (var i = 0; i < exp_.length; i++) {
@@ -531,7 +531,7 @@ JSONParser.parse = function(json_, exp_) {
 			}
 				
 			// Resets the json
-			json_objs = eval ('(' + json_ + ')');
+			json_objs = JSON.parse(json_);
 			break;
 		default:
 			throw "Unexpected token";

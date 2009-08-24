@@ -40,7 +40,7 @@ var OpManagerFactory = function () {
 		var loadEnvironment = function (transport) {
 			// JSON-coded user tabspaces
 			var response = transport.responseText;
-			var workSpacesStructure = eval ('(' + response + ')');
+			var workSpacesStructure = JSON.parse(response);
 			
 			var isDefaultWS = workSpacesStructure.isDefault;
 			var workSpaces = workSpacesStructure.workspaces;
@@ -108,7 +108,7 @@ var OpManagerFactory = function () {
 		/*****WORKSPACE CALLBACK***/
 		var createWSSuccess = function(transport){
 			var response = transport.responseText;
-			var wsInfo = eval ('(' + response + ')');
+			var wsInfo = JSON.parse(response);
 			this.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
 			this.changeActiveWorkSpace(this.workSpaceInstances[wsInfo.workspace.id]);
 			LayoutManagerFactory.getInstance().hideCover();

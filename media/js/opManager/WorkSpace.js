@@ -38,7 +38,7 @@ function WorkSpace (workSpaceState) {
 
 		// JSON-coded iGadget-variable mapping
 		var response = transport.responseText;
-		this.workSpaceGlobalInfo = eval ('(' + response + ')');
+		this.workSpaceGlobalInfo = JSON.parse(response);
 
 		this.varManager = new VarManager(this);
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
@@ -136,7 +136,7 @@ function WorkSpace (workSpaceState) {
 	var publishSuccess = function(transport) {
 		// JSON-coded new published workspace id and mashup url mapping
 		var response = transport.responseText;
-		var mashupInfo = eval ('(' + response + ')');
+		var mashupInfo = JSON.parse(response);
 		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', mashupInfo.url);
 	}
 
@@ -150,7 +150,7 @@ function WorkSpace (workSpaceState) {
 	var mergeSuccess = function(transport) {
 		// JSON-coded new published workspace id and mashup url mapping
 		var response = transport.responseText;
-		var data = eval ('(' + response + ')');
+		var data = JSON.parse(response);
 		//update the new wsInfo
 		opManager = OpManagerFactory.getInstance();
 		opManager.changeActiveWorkSpace(opManager.workSpaceInstances[data.merged_workspace_id]);
@@ -167,7 +167,7 @@ function WorkSpace (workSpaceState) {
 	//**** TAB CALLBACK*****
 	var createTabSuccess = function(transport) {
 		var response = transport.responseText;
-		var tabInfo = eval ('(' + response + ')');
+		var tabInfo = JSON.parse(response);
 
 		tabInfo.igadgetList=[];
 
@@ -573,7 +573,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.shareWorkspace = function(value) {
 		var share_workspace_success = function (transport) {
 			var response = transport.responseText;
-			var result = eval ('(' + response + ')');
+			var result = JSON.parse(response);
 			
 			if (result['result'] != 'ok')
 				LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
@@ -583,7 +583,7 @@ function WorkSpace (workSpaceState) {
 
 		var share_workspace_error = function (transport) {
 			var response = transport.responseText;
-			var result = eval ('(' + response + ')');
+			var result = JSON.parse(response);
 			
 			LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
 		}
@@ -606,7 +606,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	//Check if a workspace is shared with another users
-	WorkSpace.prototype.isShared = function(){
+	WorkSpace.prototype.isShared = function() {
 		return eval(this.workSpaceState['shared']);
 	}
 

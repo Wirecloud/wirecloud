@@ -53,7 +53,7 @@ var ShowcaseFactory = function () {
 
 		this.parseGadgets = function (receivedData_){
 			var response = receivedData_.responseText;
-			var jsonGadgetList = eval ('(' + response + ')');
+			var jsonGadgetList = JSON.parse(response);
 		
 			// Load all gadgets from persitence system
 			for (var i = 0; i<jsonGadgetList.length; i++) {

@@ -82,7 +82,7 @@ function Tagger(){
 
 			var loadTags = function(transport) {
 				var responseJSON = transport.responseText;
-				var jsonResourceList = eval ('(' + responseJSON + ')');
+				var jsonResourceList = JSON.parse(responseJSON);
 				resource.setTags(jsonResourceList.tagList);
 				
 				if (!UIUtils.repaintCatalogue) 
@@ -125,7 +125,7 @@ function Tagger(){
 		
 		var loadTags = function(transport) {
 			var responseJSON = transport.responseText;
-			var jsonResourceList = eval ('(' + responseJSON + ')');
+			var jsonResourceList = JSON.parse(responseJSON);
 			resource.setTags(jsonResourceList.tagList);
 			resource.updateTags();
 			if (UIUtils.tagmode) 
