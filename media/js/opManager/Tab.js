@@ -148,6 +148,9 @@ function Tab (tabInfo, workSpace) {
 	}
 
 	Tab.prototype.show = function () {
+		if (! this.painted)
+			this.getDragboard().paint();
+		
 		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
 		this.dragboard._notifyWindowResizeEvent();
@@ -190,6 +193,10 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.getDragboard = function () {
 		return this.dragboard;
 	}
+	
+	Tab.prototype.mark_as_painted = function () {
+		this.painted = true;
+	}
 
     // *****************
 	//  PRIVATE METHODS
@@ -206,6 +213,9 @@ function Tab (tabInfo, workSpace) {
 	this.tabHTMLElement;
 	this.tabNameHTMLElement = null;
 	this.tabWidth = 0;
+	
+	//Now, a TAB is painted on-demand. Only the active tab is rendered automatically!
+	this.painted = false;
 	
 	//tab event handlers
 	this.renameTabHandler = function(e){

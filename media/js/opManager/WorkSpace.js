@@ -64,8 +64,8 @@ function WorkSpace (workSpaceState) {
 				this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 
 			if (tabs.length > 0) {
-				for (var i = 0; i < tabs.length; i++)
-					this.tabInstances[tabs[i].id].getDragboard().paint();
+				//Only painting the "active" tab!
+				this.tabInstances[visibleTabId].getDragboard().paint();
 			}
 
 			//set the visible tab. It will be displayed as current tab afterwards

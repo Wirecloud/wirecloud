@@ -57,6 +57,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
+		
+		this.tab.mark_as_painted();
 	}
 
 	/**
