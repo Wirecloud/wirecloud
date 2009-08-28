@@ -157,6 +157,14 @@ function Tab (tabInfo, workSpace) {
 		this.markAsCurrent();
 	}
 	
+	Tab.prototype.is_painted = function () {
+		return this.painted;
+	}
+	
+	Tab.prototype.paint = function () {
+		this.getDragboard().paint();
+	}
+	
 		/* if the tab is out of the visible area of the tab bar, slide it to show it */
 	Tab.prototype.makeVisibleInTabBar = function(){
 		var tabLeft = Position.cumulativeOffset(this.tabHTMLElement)[0];

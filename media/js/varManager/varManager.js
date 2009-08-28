@@ -41,7 +41,7 @@ function VarManager (_workSpace) {
 			var igadgets = tabs[i]['igadgetList'];
 			
 			for (var j=0; j<igadgets.length; j++) {
-				this.parseIGadgetVariables(igadgets[j]);
+				this.parseIGadgetVariables(igadgets[j], this.workSpace.tabInstances[tabs[i].id]);
 			}
 		}
 		
@@ -107,7 +107,7 @@ function VarManager (_workSpace) {
 		this.workspaceModifiedVars.removeById(ws_varId);
 	}
 	
-	VarManager.prototype.parseIGadgetVariables = function (igadget) {
+	VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
 		var igadgetVars = igadget['variables'];
 		var objVars = []
 		for (var i = 0; i<igadgetVars.length; i++) {
@@ -121,14 +121,14 @@ function VarManager (_workSpace) {
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, tab);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, tab);
 					this.variables[id] = objVars[name];
 					break;
 			}

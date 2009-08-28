@@ -31,8 +31,8 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Variable (id, iGadget, name, varManager) {
-        // True when a the value of the variable has changed and the callback has not been invoked! 
-        this.annotated = false;
+    // True when a the value of the variable has changed and the callback has not been invoked! 
+    this.annotated = false;
 	this.varManager = null;
 	this.id = null;
 	this.iGadget = null;
@@ -40,13 +40,14 @@ function Variable (id, iGadget, name, varManager) {
 	this.label = null;
 	this.aspect = null;
 	this.value = null;
+	this.tab = null;
 }
 
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
  
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_) {
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, tab_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
@@ -54,6 +55,7 @@ Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager
     this.label = label_;
 	this.aspect = aspect_;
 	this.value = value_;
+	this.tab = tab_;
 }
 
 //////////////////////////////////////////////
@@ -98,8 +100,8 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_);
   
 	this.handler = null;
 }
@@ -126,48 +128,56 @@ RVariable.prototype.setHandler = function (handler_) {
 
 RVariable.prototype.set = function (newValue) {
     if (this.annotated) {
-	// If not annotated, the value must be managed!
+		// If annotated, the value must be managed!
         // And it must be changed to NOT annotated!
-	this.annotated = false;	
+		this.annotated = false;	
 
-	var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
-	switch (this.aspect) {
-		case Variable.prototype.USER_PREF:
-		case Variable.prototype.EXTERNAL_CONTEXT:
-		case Variable.prototype.GADGET_CONTEXT:
-		case Variable.prototype.SLOT:
-			this.varManager.markVariablesAsModified(varInfo);
-			
-			this.value = newValue;
-			
-			if (this.handler) {
-				try {
-					this.handler(newValue);
-				} catch (e) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
-					var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-					OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+		var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
+		
+		switch (this.aspect) {
+			case Variable.prototype.SLOT:
+				
+				// On-demand loading of tabs!
+				// Only wiring variables are involved!
+				if (! this.tab.is_painted() ) {
+					this.tab.paint();
 				}
-			} else {
-				var opManager = OpManagerFactory.getInstance();
-			        var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-				if (iGadget.loaded) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.name};
-					var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-					opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+			
+			case Variable.prototype.USER_PREF:
+			case Variable.prototype.EXTERNAL_CONTEXT:
+			case Variable.prototype.GADGET_CONTEXT:
+				
+				this.varManager.markVariablesAsModified(varInfo);
+				
+				this.value = newValue;
+				
+				if (this.handler) {
+					try {
+						this.handler(newValue);
+					} catch (e) {
+						var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
+						var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
+						OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+					}
+				} else {
+					var opManager = OpManagerFactory.getInstance();
+				        var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+					if (iGadget.loaded) {
+						var transObj = {iGadgetId: this.iGadget, varName: this.name};
+						var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+						opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+					}
 				}
-			}
-			
-			break;
-		case Variable.prototype.TAB:
-			this.varManager.markVariablesAsModified(varInfo);
-			
-			OpManagerFactory.getInstance().activeWorkSpace.goTab(this.connectable.tab);
-			break;
-		default:
-			break;
-	}
-	
+				
+				break;
+			case Variable.prototype.TAB:
+				this.varManager.markVariablesAsModified(varInfo);
+				
+				OpManagerFactory.getInstance().activeWorkSpace.goTab(this.connectable.tab);
+				break;
+			default:
+				break;
+		}
     }
 }
 
@@ -205,8 +215,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_);
 }
 
 //////////////////////////////////////////////

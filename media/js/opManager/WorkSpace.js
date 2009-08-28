@@ -40,7 +40,6 @@ function WorkSpace (workSpaceState) {
 		var response = transport.responseText;
 		this.workSpaceGlobalInfo = JSON.parse(response);
 
-		this.varManager = new VarManager(this);
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 
 		try {
@@ -57,9 +56,12 @@ function WorkSpace (workSpaceState) {
 					}
 				}
 			}
+			
+			this.varManager = new VarManager(this);
 
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
+			
 			if (!BrowserUtilsFactory.getInstance().isIE()) //temporal patch!
 				this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 
