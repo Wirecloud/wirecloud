@@ -169,7 +169,8 @@ class templateGenerator(Resource):
     
         #return the new template URL
         url = request.build_absolute_uri() + "/" + str(templateInstance.id)
-        return HttpResponse("{'URL': '%s'}" % (url), mimetype='application/json; charset=UTF-8')
+        response = {'URL': url}
+        return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
     
 class xhtmlGenerator(Resource):
     
