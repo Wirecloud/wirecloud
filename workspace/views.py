@@ -768,7 +768,7 @@ class  WorkSpacePublisherEntry(Resource):
         
         url= baseURL+"/workspace/templateGenerator/" + str(published_workspace.id)
 
-        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'ulr': url}
+        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
 
 class  GeneratorURL(Resource):
