@@ -577,14 +577,15 @@ class  WorkSpaceMergerEntry(Resource):
     def read(self, request, from_ws_id, to_ws_id):
         from_ws = get_object_or_404(WorkSpace, id=from_ws_id)
         to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
-        
+
         user = get_user_authentication(request)
-        
+
         packageCloner = PackageCloner()
-        
+
         to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
-        
-        return HttpResponse("{'result': 'ok', 'merged_workspace_id': %s}" % (to_workspace.id), mimetype='application/json; charset=UTF-8')
+
+        result = {'result': 'ok', 'merged_workspace_id': to_workspace.id}
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
 class  WorkSpaceSharerEntry(Resource):
@@ -596,13 +597,15 @@ class  WorkSpaceSharerEntry(Resource):
             workspace = WorkSpace.objects.get(id=workspace_id)
         except WorkSpace.DoesNotExist:
             msg = 'The workspace does not exist!'
-            HttpResponseServerError("{'result': 'error', 'description':'%s'}" % msg, mimetype='application/json; charset=UTF-8')
+            result = {'result': 'error', 'description': msg}
+            HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
         
         owner = workspace.get_creator()
         
         if (owner != user):
             msg = 'You are not the owner of the workspace, so you can not share it!'
-            return HttpResponseServerError("{'result': 'error', 'description':'%s'}" % msg, mimetype='application/json; charset=UTF-8')
+            result = {'result': 'error', 'description': msg}
+            return HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
         
         #Everything right! Linking with public user!
         public_user = get_public_user(request)
@@ -610,43 +613,47 @@ class  WorkSpaceSharerEntry(Resource):
         linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
         
         url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
-        
-        return HttpResponse("{'result': 'ok', 'url':'%s'}" % url, mimetype='application/json; charset=UTF-8')
+
+        result = {"result": "ok", "url": url}
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
 class  WorkSpaceLinkerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
-        
+
         linkWorkspace(user, workspace_id) 
-        
-        return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
+
+        result = {"result": "ok"}
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 class  WorkSpaceClonerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
-        
+
         cloned_workspace = cloneWorkspace(workspace_id, user)
-        return HttpResponse("{'result': 'ok', 'new_workspace_id': %s}" % (cloned_workspace.id), mimetype='application/json; charset=UTF-8')
-        
+        result = {'result': 'ok', 'new_workspace_id': cloned_workspace.id}
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+
 
 class  PublishedWorkSpaceMergerEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, published_ws_id, to_ws_id):
         user = get_user_authentication(request)
-        
+
         published_workspace = get_object_or_404(PublishedWorkSpace, id=published_ws_id)
-        
+
         from_ws = published_workspace.workspace
         to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
-        
+
         packageCloner = PackageCloner()
-        
+
         to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
-        
-        return HttpResponse("{'result': 'ok', 'workspace_id': %s}" % (to_workspace.id), mimetype='application/json; charset=UTF-8')
+
+        result = {'result': 'ok', 'workspace_id': to_workspace.id}
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 class  WorkSpaceAdderEntry(Resource):
     @transaction.commit_on_success
@@ -760,8 +767,9 @@ class  WorkSpacePublisherEntry(Resource):
             baseURL = settings.TEMPLATE_GENERATOR_URL
         
         url= baseURL+"/workspace/templateGenerator/" + str(published_workspace.id)
-        
-        return HttpResponse("{'result': 'ok', 'published_workspace_id': %s, 'url': '%s'}" % (published_workspace.id, url), mimetype='application/json; charset=UTF-8')
+
+        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'ulr': url}
+        return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
 
 class  GeneratorURL(Resource):
     def read(self, request, workspace_id):
