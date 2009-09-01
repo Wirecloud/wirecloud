@@ -96,9 +96,9 @@ class ContractEntry(Resource):
         result = contract.update_info(contract_info)
         
         if (result):
-            return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
+            return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
         else:
-            return HttpResponseServerError("{'result': 'error'}", mimetype='application/json; charset=UTF-8')
+            return HttpResponseServerError('{"result": "error"}', mimetype='application/json; charset=UTF-8')
         
     update = staticmethod(update)
 
@@ -108,7 +108,7 @@ class ContractEntry(Resource):
         contract.delete()
         contract.save()
         
-        return HttpResponse("{'result': 'ok'}", mimetype='application/json; charset=UTF-8')
+        return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
     
     delete = staticmethod(delete)
     
