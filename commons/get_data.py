@@ -38,7 +38,7 @@ from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption, Capabili
 from igadget.models import Variable, VariableDef, Position, IGadget
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
-from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue
+from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from django.utils.translation import get_language
 
 def get_abstract_variable(id):
@@ -234,7 +234,9 @@ def get_workspace_data(data, user, workspace):
     #First one in the users relationship is the creator of the workspace
     data_ret['shared'] = workspace.is_shared(user)
     
-    if data_fields['active']:
+    user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace);
+    
+    if user_workspace.active:
         data_ret['active'] = 'true'
     else:
         data_ret['active'] = 'false'

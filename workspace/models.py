@@ -37,10 +37,10 @@ from django.utils.translation import ugettext as  _
 class WorkSpace(models.Model):
     
     name = models.CharField(_('Name'), max_length=30)
-    active = models.BooleanField(_('Active'))
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=True, null=True)
     
-    users = models.ManyToManyField(User, verbose_name=_('Users'))
+    users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
+    targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
@@ -67,6 +67,14 @@ class WorkSpace(models.Model):
         
         return 'true'
 
+class UserWorkSpace(models.Model):
+    workspace = models.ForeignKey(WorkSpace)
+    user = models.ForeignKey(User)
+    active = models.BooleanField(_('Active'), default=False)
+    
+    def __unicode__(self):
+        return str(self.workspace) + " - " + str(self.user)
+    
 class PublishedWorkSpace(models.Model):
     WORKSPACE_TYPES = (
         ('CLONED', _('Cloned')),
@@ -96,6 +104,7 @@ class PublishedWorkSpace(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.workspace.name  
     
+#Category for which a workspace is the defalult workspace
 class Category(models.Model):
     category_id = models.IntegerField()
     default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'))

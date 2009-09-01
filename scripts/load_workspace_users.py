@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 
 #...............................licence...........................................
 #
@@ -27,18 +27,22 @@
 #
 #...............................licence...........................................#
 
+from workspace.models import UserWorkSpace, WorkSpace
+from django.contrib.auth.models import User
 
-#
+mapping_file = open('mapping.txt', 'r')
 
-from django.contrib import admin
+mapping_text = mapping_file.read()
 
-from models import *
+mapping_file.close()
 
-admin.site.register(WorkSpace)
-admin.site.register(UserWorkSpace)
-admin.site.register(PublishedWorkSpace)
-admin.site.register(AbstractVariable)
-admin.site.register(VariableValue)
-admin.site.register(WorkSpaceVariable)
-admin.site.register(Tab)
-admin.site.register(Category)
+mapping = eval(mapping_text)
+
+for (workspace_id, user_id, active) in mapping:
+     user = User.objects.get(id=user_id)
+     workspace = WorkSpace.objects.get(id=workspace_id)
+
+     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=active)
+     
+     user_workspace.save()
+     

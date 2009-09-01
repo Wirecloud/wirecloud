@@ -377,6 +377,10 @@ td {
   vertical-align: bottom;
 }
 
+.window_menu .window_multiple_select{
+	max-height: 200px;
+}
+
 .window_msg_error{
   font-size: 90%;
 }

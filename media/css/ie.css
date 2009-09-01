@@ -6,6 +6,10 @@
   position:absolute;
 }
 
+* html .window_menu .window_multiple_select{
+	height: 200px;
+}
+
 body{
 	height: 100%;
 	width: 100%;

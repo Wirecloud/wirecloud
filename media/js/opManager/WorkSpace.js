@@ -572,7 +572,7 @@ function WorkSpace (workSpaceState) {
 		return this.visibleTab.getDragboard();
 	}
 	
-	WorkSpace.prototype.shareWorkspace = function(value) {
+	WorkSpace.prototype.shareWorkspace = function(value, groups) {
 		var share_workspace_success = function (transport) {
 			var response = transport.responseText;
 			var result = JSON.parse(response);
@@ -590,9 +590,11 @@ function WorkSpace (workSpaceState) {
 			LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
 		}
 
-		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value})
-
-		PersistenceEngineFactory.getInstance().send_update(url, {}, this, share_workspace_success, share_workspace_error);
+		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value});
+		var sharingData = Object.toJSON(groups);
+		var params = (groups)?{'groups':sharingData}:{};
+		
+		PersistenceEngineFactory.getInstance().send_update(url, params, this, share_workspace_success, share_workspace_error);
 	}
 
 	WorkSpace.prototype.publish = function(data) {
@@ -696,8 +698,7 @@ function WorkSpace (workSpaceState) {
 			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
 				gettext("Share workspace"),
 				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._shareWorkspace();
+					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
 				}.bind(this),
 				optionPosition++, null, "share_workspace");
 
@@ -743,10 +744,6 @@ function WorkSpace (workSpaceState) {
 		}
 	}.bind(this);
 	
-	// Share current workspace to the rest of users
-	this._shareWorkspace = function() {
-		this.shareWorkspace(true);
-	}.bind(this);
 	
 	this._checkLock = function() {
 		var keys = this.tabInstances.keys();

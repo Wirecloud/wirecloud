@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
 
 #...............................licence...........................................
 #
@@ -27,18 +27,19 @@
 #
 #...............................licence...........................................#
 
+from workspace.models import WorkSpace
 
-#
 
-from django.contrib import admin
+workspaces = WorkSpace.objects.all()
 
-from models import *
+data_mapping = []
 
-admin.site.register(WorkSpace)
-admin.site.register(UserWorkSpace)
-admin.site.register(PublishedWorkSpace)
-admin.site.register(AbstractVariable)
-admin.site.register(VariableValue)
-admin.site.register(WorkSpaceVariable)
-admin.site.register(Tab)
-admin.site.register(Category)
+for ws in workspaces:
+    for user in ws.users.all():
+        data_mapping.append((ws.id, user.id, ws.active))
+
+res_file = open('mapping.txt', 'w')
+
+res_file.write(data_mapping.__str__())
+
+res_file.close()

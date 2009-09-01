@@ -515,8 +515,12 @@ function FormWindowMenu (fields, title) {
 
 		// Input Cell
 		var inputCell = document.createElement('td');
-		row.appendChild(inputCell);
-
+		//if the field is radio type the label must go after te input
+		if(field.type == 'radio')
+			row.insertBefore(inputCell, labelCell);
+		else
+			row.appendChild(inputCell);
+		
 		var extraElements = [];
 		switch (field.type) {
 		case 'color':
@@ -548,6 +552,17 @@ function FormWindowMenu (fields, title) {
 			break;
 		case 'select':
 			var input = document.createElement('select');
+			if(field.subtype = "multiple")
+				input.multiple = true;
+				
+				var sample = document.createElement('div');
+				Element.extend(sample);
+				var sampleId = fieldId + '_sample';
+				sample.setAttribute('id', sampleId)
+				sample.addClassName('explanation');
+				sample.update(gettext('Hold down "Control", or "Command" on a Mac, to select more than one'));
+				extraElements.push(sample);
+				
 			for (var i = 0; i < field.options.length; i++) {
 				var option = document.createElement('option');
 				option.setTextContent(field.options[i][1]);
@@ -555,6 +570,17 @@ function FormWindowMenu (fields, title) {
 				input.appendChild(option);
 			}
 			break;
+			
+		case 'radio':
+			var input = document.createElement('input');
+			Element.extend(input)
+			input.setAttribute('type', 'radio');
+			input.setAttribute('name', field.name);
+			if(field.checked) input.setAttribute('checked', 'checked');
+			//observe the events and check policies (policy name = field_id)
+			input.observe('click', field.handler, false, fieldId);
+			break;
+			
 		case 'longtext':
 			var input = document.createElement('textarea');
 			input.setAttribute('cols', '50');
@@ -674,7 +700,7 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 	}
 
 	// Extra validations
-	var extraErrorMsg = this.extraValidation(form);
+	var extraErrorMsg = this.extraValidation(this.fields);
 
 	// Build Error Message
 	if (emptyRequiredFields != "") {
@@ -740,7 +766,7 @@ FormWindowMenu.prototype.show = function () {
 }
 
 /**
- * Especific class for publish windows
+ * Specific class for publish windows
  */
 function PublishWindowMenu (element) {
 	var fields = {
@@ -773,6 +799,104 @@ PublishWindowMenu.prototype.executeOperation = function(form) {
 	OpManagerFactory.getInstance().activeWorkSpace.publish(form);
 }
 
+/**
+ * Specific class for sharing windows
+ */
+function ShareWindowMenu (element) {
+
+	wsName = OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name;
+	var label1 = interpolate(gettext('Share "%(workspace)s" workspace with everybody through either a public URL or an embed object'), {workspace: wsName}, true)
+	var label2 = interpolate(gettext('Share "%(workspace)s" workspace only with the following groups'), {workspace: wsName}, true)
+
+	var fields = {
+		'public_sharing': {label: label1, type:'radio', checked:true, name:'share',
+							handler: function(){this.hideGroups()}.bind(this)},
+		'group_sharing': {label: label2, type:'radio', checked:false, name:'share',
+							handler: function(){this.showGroups()}.bind(this)},		
+		'groups'  : {label: '', type: 'select', subtype: 'multiple', options: []}
+	}
+
+	FormWindowMenu.call(this, fields, gettext('Share Workspace'));
+	//hide the whole row where the groups select is
+	this.fields['groups'].input.parentNode.parentNode.style.display = 'none';
+	this.fields['groups'].input.addClassName('window_multiple_select');
+	
+	var warning = document.createElement('div');
+	Element.extend(warning);
+	warning.addClassName('msg warning');
+	warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
+	this.windowContent.appendChild(warning);
+}
+ShareWindowMenu.prototype = new FormWindowMenu();
+
+ShareWindowMenu.prototype.showGroups = function(){
+	function onError(transport, e) {
+		errorMsg = gettext('The available groups cannot be displayed');
+		this.setMsg(errorMsg);
+	}
+
+	function onSuccess(transport) {
+		var response = transport.responseText;
+		var groups = eval ('(' + response + ')');
+		
+		var select = this.fields['groups'].input;
+		select.update();
+		var option;
+		for (var i=0; i<groups.length; i++){
+			option = document.createElement('option');
+			option.setTextContent(groups[i]['name']);
+			option.setAttribute('value', groups[i]['id']);
+			if(groups[i]['sharing']=='true')
+				option.disabled = 'disabled';
+			select.appendChild(option);
+		}
+		
+		//Show the row where the groups select is
+		this.fields['groups'].input.parentNode.parentNode.style.display = 'table-row';
+
+		
+	}
+	var url = URIs.GET_SHARE_GROUPS.evaluate({'workspace_id': OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.id});
+	PersistenceEngineFactory.getInstance().send_get(url, this, onSuccess, onError);
+	
+}
+
+ShareWindowMenu.prototype.hideGroups = function(){
+	//Hide the row where the groups select is
+	this.fields['groups'].input.parentNode.parentNode.style.display = 'none';
+}
+
+ShareWindowMenu.prototype.setFocus = function() {
+	this.fields['public_sharing'].input.focus();
+}
+
+ShareWindowMenu.prototype.extraValidation = function(form) {
+	if(this.fields['group_sharing'].input.checked && this.fields['groups'].input.selectedIndex == -1){
+		return gettext('You must select a group');
+	}
+	return null
+}
+
+ShareWindowMenu.prototype.executeOperation = function(form) {
+
+	var groups = null;
+	
+	if(this.fields['group_sharing'].input.checked){
+		var select = this.fields['groups'].input;
+		groups = [];
+		for (var i=0; i<select.options.length; i++) {
+	        if (select.options[i].selected) {
+    	        groups.push(parseInt(select.options[i].value));
+            }
+         }
+	}
+    OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
+}
+
+ShareWindowMenu.prototype.hide = function() {
+	this.fields['public_sharing'].input.click();
+	FormWindowMenu.prototype.hide.call(this);
+}
 /**
  * Specific class for Feed creator window.
  */
@@ -883,6 +1007,7 @@ AddSiteMenu.prototype.executeOperation = function(form) {
 /**
  * Specific class for Sharing workspace results window!
  */
+ //TODO: change this class to work as the rest of windows
 function SharedWorkSpaceMenu() {
 	WindowMenu.call(this, gettext('Shared WorkSpace Info'));
 	
@@ -899,6 +1024,7 @@ function SharedWorkSpaceMenu() {
 
 	// TR1
 	this.addElement('tr1Element', 'tr', 'tableElement');
+	this.tr1Element.style.display = 'none';
 
 	// TD11
 	this.addElement('td11Element', 'td', 'tr1Element');
@@ -915,6 +1041,7 @@ function SharedWorkSpaceMenu() {
 
 	// TR2
 	this.addElement('tr2Element', 'tr', 'tableElement');
+	this.tr2Element.style.display = 'none';
 
 	// TD21
 	this.addElement('td21Element', 'td', 'tr2Element');
@@ -940,10 +1067,20 @@ SharedWorkSpaceMenu.prototype.addElement = function(element_name, html_tag, fath
 
 SharedWorkSpaceMenu.prototype.setURL = function(url) {
 	this.urlElement.value = url;
+	this.tr1Element.style.display='table-row';
 }
 
 SharedWorkSpaceMenu.prototype.setHTML = function(url) {
 	var html_code = '<object width="" height="" data="' + url + '"></object>';
 	
 	this.html_codeElement.value = html_code;
+	this.tr2Element.style.display='table-row';	
+}
+SharedWorkSpaceMenu.prototype.hide = function(url) {
+	this.urlElement.update();
+	this.html_codeElement.update();
+	this.tr1Element.style.display='none';
+	this.tr2Element.style.display='none';
+	WindowMenu.prototype.hide.call(this);
+		
 }

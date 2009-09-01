@@ -40,6 +40,7 @@ from commons.resource import Resource
 
 from django.db import transaction
 
+from django.contrib.auth.models import Group, User
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
 from commons.get_data import *
 from commons.logs import log
@@ -50,7 +51,7 @@ from igadget.models import Variable
 
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 
-from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, VariableValue, PublishedWorkSpace, Category
+from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, UserWorkSpace, VariableValue, PublishedWorkSpace, Category
 from gadget.models import Gadget, VariableDef
 from igadget.models import IGadget, Position
 
@@ -183,16 +184,18 @@ def setVisibleTab(user, workspace_id, tab):
    
 def createWorkSpace (workSpaceName, user):
     active = False
-    workspaces = WorkSpace.objects.filter(users__id=user.id, active=True)
+    workspaces = UserWorkSpace.objects.filter(user__id=user.id, active=True)
     if workspaces.count()==0:
+        # there isn't yet an active workspace
         active = True
         
     #Workspace creation
-    workspace = WorkSpace(name=workSpaceName, active=active, creator=user)
+    workspace = WorkSpace(name=workSpaceName, creator=user)
     workspace.save()
     
     #Adding user reference to workspace in the many to many relationship
-    workspace.users.add(user)
+    user_workspace = UserWorkSpace(user=user, workspace=workspace, active=active)
+    user_workspace.save()
    
     #Tab creation
     tab_ids = createTab ('MyTab', user, workspace)
@@ -211,14 +214,15 @@ def createWorkSpace (workSpaceName, user):
 
 
 def setActiveWorkspace(user, workspace):
-    activeWorkSpaces = WorkSpace.objects.filter(users__id=user.id, active=True).exclude(pk=workspace.pk)
-    for activeWorkSpace in activeWorkSpaces:
-        activeWorkSpace.active = False
-        activeWorkSpace.save()
-        
-    workspace.active = True
+    activeUserWorkSpaces = UserWorkSpace.objects.filter(user__id=user.id, active=True).exclude(workspace__pk=workspace.pk)
+    for activeUserWorkSpace in activeUserWorkSpaces:
+        activeUserWorkSpace.active = False
+        activeUserWorkSpace.save()
     
-    workspace.save()
+    currentUserWorkspace = UserWorkSpace.objects.get(workspace=workspace, user=user)    
+    currentUserWorkspace.active = True
+    
+    currentUserWorkspace.save()
     
 def cloneWorkspace(workspace_id, user):
 
@@ -256,8 +260,28 @@ class WorkSpaceCollection(Resource):
         #boolean for js
         data_list['isDefault']="false"
         try:
+        	#user workspaces
             workspaces = WorkSpace.objects.filter(users__id=user.id)
-            if workspaces.count()==0:
+            
+            #workspaces assigned to the user's organizations
+            organizations = user.groups.all()
+            wsGivenByUserOrgs = []
+            for org in organizations:
+                wsGivenByUserOrgs += list(WorkSpace.objects.filter(targetOrganizations = org))
+            
+            for ws in wsGivenByUserOrgs:
+                try:
+                    workspaces.get(id=ws.id)
+                except WorkSpace.DoesNotExist:
+                    #the user doesn't have this workspace (which is assigned to his organizations)
+                    #duplicate the workspace for the user
+                    linkWorkspace(user, ws.id, ws.get_creator())
+                    
+                    #set that the showcase will have to be reloaded
+                    #because this workspace is new for the user
+                    data_list['isDefault']="true"                    
+            
+            if data_list['isDefault'] == "false" and workspaces.count() == 0:   #There is no workspace for the user
                 cloned_workspace = None
                 #it's the first time the user has logged in.
                 #try to assign a default workspace according to user category
@@ -287,12 +311,17 @@ class WorkSpaceCollection(Resource):
                 if not cloned_workspace:
                     #create an empty workspace
                     createWorkSpace('MyWorkSpace', user)
-                
+            #Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
+            
+            if UserWorkSpace.objects.filter(user__id=user.id, active=True).count() == 0: #if there is no active workspace
+                #set the first workspace as active
+                setActiveWorkspace(user, workspaces.all()[0])
+                    
         except Exception, e:
             msg = _("error reading workspace: ") + unicode(e)
             
-            raise TracedServerError(e, arguments, request, msg)
+            raise TracedServerError(e, "bad creation of default workspaces", request, msg)
         
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
         workspace_list = []
@@ -381,7 +410,9 @@ class WorkSpaceEntry(Resource):
                     #Only one active workspace
                     setActiveWorkspace(user, workspace)
                 else:
-                    workspace.active = False
+                    currentUserWorkspace = UserWorkSpace.objects.get(workspace=workspace, user=user)    
+                    currentUserWorkspace.active = True
+                    currentUserWorkspace.save()
             
             if ts.has_key('name'):
                 workspace.name = ts.get('name')
@@ -607,16 +638,58 @@ class  WorkSpaceSharerEntry(Resource):
             result = {'result': 'error', 'description': msg}
             return HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
         
-        #Everything right! Linking with public user!
-        public_user = get_public_user(request)
-        
-        linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
-        
-        url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
+        #Everything right!
+        if not request.REQUEST.has_key('groups'):
+            #Share with everybody
+            #Linking with public user!
+            public_user = get_public_user(request)
+            
+            linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
+            
+            url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
+            
+            result = {"result": "ok", "url": url}
+            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')        
+        else:
+            #Share only with the scpecified groups
+            try:
+                groups = simplejson.loads(PUT_parameter(request, 'groups'))
+                queryGroups = Group.objects.filter(id__in=groups)
+                for g in queryGroups:
+                    workspace.targetOrganizations.add(g)
+                
+                users = User.objects.filter(groups__in=groups).distinct()
+                for user in users:
+                    #link the workspace with each user
+                    linkWorkspaceObject(user, workspace, owner, link_variable_values=True)
+               
+            except Exception, e:
+                transaction.rollback()
+                msg = _("workspace cannot be shared: ") + unicode(e)
+            
+                raise TracedServerError(e, groups, request, msg)                 
+            result = {"result": "ok"}
+            return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-        result = {"result": "ok", "url": url}
-        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
-
+    def read(self, request, workspace_id):
+        user = get_user_authentication(request)
+        
+        groups = []
+        #read the groups that can be related to a workspace
+        queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
+        for group in queryGroups:
+            data = {'name': group.name, 'id':group.id}
+            try:
+                group.workspace_set.get(id=workspace_id)
+                #boolean for js
+                data['sharing'] = 'true'
+            except WorkSpace.DoesNotExist:
+                data['sharing'] = 'false'
+                
+            groups.append(data)
+        
+        return HttpResponse(json_encode(groups), mimetype='application/json; charset=UTF-8')
+        
 
 class  WorkSpaceLinkerEntry(Resource):
     @transaction.commit_on_success
@@ -738,7 +811,6 @@ class  WorkSpacePublisherEntry(Resource):
             organization = ''
         
         try:
-            cloned_workspace.active=False
             cloned_workspace.vendor = vendor
             cloned_workspace.name = name
             cloned_workspace.version = version

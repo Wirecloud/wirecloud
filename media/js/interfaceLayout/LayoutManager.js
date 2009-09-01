@@ -781,6 +781,12 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['publishWorkSpaceMenu'];
 				break;
+			case 'shareWorkSpace':
+				if (!this.menus['shareWorkSpaceMenu']) {
+					this.menus['shareWorkSpaceMenu'] = new ShareWindowMenu(null);
+				}
+				this.currentMenu = this.menus['shareWorkSpaceMenu'];
+				break;	
 			case 'deleteAllResourceVersions':
 				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu(null);
@@ -902,8 +908,10 @@ var LayoutManagerFactory = function () {
 			this.currentMenu = this.menus['sharingWorksSpaceMenu'];
 			
 			if (shared_ws_data != []) {
-				this.currentMenu.setURL(shared_ws_data['url']);
-				this.currentMenu.setHTML(shared_ws_data['url']);
+				if(shared_ws_data['url']){
+					this.currentMenu.setURL(shared_ws_data['url']);
+					this.currentMenu.setHTML(shared_ws_data['url']);
+				}
 			}
 			
 			this.currentMenu.setMsg(msg);

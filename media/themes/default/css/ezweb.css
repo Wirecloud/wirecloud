@@ -287,6 +287,10 @@ a, a:visited{
   margin-top: 3ex;
 }
 
+.window_menu .explanation{
+	font-size: 8pt;
+}
+
 .window_menu .error {
   color: red;
   font-weight: bold;

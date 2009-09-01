@@ -30,7 +30,7 @@
 
 #
 
-from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue
+from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from igadget.models import Variable, IGadget
 
 from django.db import models, IntegrityError
@@ -43,7 +43,7 @@ class PackageLinker:
         ws_igadget_vars = self.link_gadgets(workspace, user)
         
         #Linking workspace with user!
-        workspace.users.add(user)
+        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active':False})
         
         if (update_variable_values):
             ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
@@ -73,9 +73,8 @@ class PackageLinker:
     def add_user_to_workspace(self, workspace, user):
          #Checking if user is already linked to workspace
         if (len(workspace.users.filter(id=user.id))==0):
-            workspace.users.add(user)
-            workspace.save()
-            
+            user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
+            user_workspace.save()            
     
     def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable, created):
         if (creator_value_available):           
