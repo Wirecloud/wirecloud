@@ -1100,6 +1100,9 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus) {
  * @private
  */
 IGadget.prototype._notifyLoaded = function() {
+	// ie6 bugs
+	if (window.IE7) IE7.recalc();
+
 	if (this.loaded)
 		return;
 

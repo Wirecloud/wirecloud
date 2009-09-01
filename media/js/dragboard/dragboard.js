@@ -413,10 +413,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// *******************
 	this.dragboardElement = dragboardElement;
 
-	this.dragboardElement.observe("DOMContentLoaded",
-	                              function() {alert('hola');},
-	                              true);
-
 	// Window Resize event dispacher function
 	this._notifyWindowResizeEvent = function () {
 		//var oldWidth = this.dragboardWidth;
