@@ -114,24 +114,29 @@ var LogManagerFactory = function () {
 				var context;
 				if (e.lineNumber !== undefined) {
 					// Firefox
-					context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e};
+					context = {errorFile: e.fileName, errorLine: e.lineNumber, errorDesc: e.message};
 				} else if (e.line !== undefined) {
 					// Webkit
-					context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e};
+					context = {errorFile: e.sourceURL, errorLine: e.line, errorDesc: e.message};
 				} else {
-					// Unknown
+					// Other browsers
 					var text = gettext("unknown");
-					context = {errorFile: text, errorLine: text, errorDesc: e};
+					context = {errorFile: text, errorLine: text, errorDesc: e.message};
 				}
 
 				msg = interpolate(gettext("JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %(errorDesc)s"),
 				                  context,
 				                  true);
-			} else if (transport.responseXML) {
+			} else if (transport.responseXML && transport.documentElement != null) {
 				msg = transport.responseXML.documentElement.textContent;
 			} else {
-				msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
-				msg = interpolate(msg, {errorCode: transport.status, errorDesc: transport.statusText}, true);
+				try {
+					var errorInfo = JSON.parse(transport.responseText);
+					msg = errorInfo.message;
+				} catch (e) {
+					msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
+					msg = interpolate(msg, {errorCode: transport.status, errorDesc: transport.statusText}, true);
+				}
 			}
 			msg = interpolate(format, {errorMsg: msg}, true);
 
