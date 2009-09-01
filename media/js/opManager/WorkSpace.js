@@ -533,7 +533,7 @@ function WorkSpace (workSpaceState) {
 	
 
 	WorkSpace.prototype.addIGadget = function(tab, igadget, igadgetJSON) {
-		this.varManager.addInstance(igadget, igadgetJSON);
+		this.varManager.addInstance(igadget, igadgetJSON, tab);
 		this.contextManager.addInstance(igadget, igadget.getGadget().getTemplate());
 		this.wiring.addInstance(igadget, igadgetJSON.variables);
 

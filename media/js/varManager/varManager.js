@@ -169,8 +169,8 @@ function VarManager (_workSpace) {
 		variable.set(value);
 	}
 
-	VarManager.prototype.addInstance = function (iGadget, igadgetInfo) {
-		this.parseIGadgetVariables(igadgetInfo);
+	VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
+		this.parseIGadgetVariables(igadgetInfo, tab);
 	}
 	
 	VarManager.prototype.removeInstance = function (iGadgetId) {		
