@@ -85,7 +85,7 @@ _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
 		// if EzSteroids isn't available, the user cannot do the action
 		return false
 	
-	p = String.toLowerCase(policy.replace(/ /g, "_"));
+	p = (policy.replace(/ /g, "_")).toLowerCase();
 	
 	// search in the user policies
 	for (i=0;i<this.userPolicies.length;i++){
