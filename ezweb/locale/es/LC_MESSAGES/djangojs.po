@@ -872,8 +872,8 @@ msgstr "Eliminar etiqueta"
 #: media/js/catalogue/Resource.js:1168
 msgid "%(voteCount)s vote"
 msgid_plural "%(voteCount)s votes"
-msgstr[0] "%(errorCount)s error"
-msgstr[1] "%(errorCount)s errores"
+msgstr[0] "%(voteCount)s voto"
+msgstr[1] "%(voteCount)s votos"
 
 #: media/js/catalogue/Resource.js:1183
 msgid "Error creating the resource: %(errorMsg)s."
