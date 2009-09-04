@@ -94,6 +94,7 @@ Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
 
 	var checkResult = function(e) {
 		var msg;
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
 		
 		// Sets the param value
 		this.channel.setFilterParam(this.param._index, target.value);
