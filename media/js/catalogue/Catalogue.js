@@ -985,7 +985,8 @@ var CatalogueFactory  = function () {
 			id: 'combo_order_by'
 		}));
 		select.observe("change", function(event){
-			UIUtils.setOrderby(this);
+			var target = BrowserUtilsFactory.getInstance().getTarget(event);
+			UIUtils.setOrderby(target);
 			UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, $('combo_results_per_page').options[$('combo_results_per_page').selectedIndex].value.toString(), 'first', items);
 		});
 		parent.appendChild(select);

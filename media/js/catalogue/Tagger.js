@@ -42,7 +42,7 @@ function Tagger(){
 				var id = 'new_tag_' + new_tag_id;
 				new_tag_id++;
 				tags[id] = tag_;
-				paintTag(id, tag_);
+				//paintTag(id, tag_);
 				$("tag_alert").style.display='none';
 			}
 		}
@@ -78,17 +78,22 @@ function Tagger(){
 				logManager.log(msg);
 				LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 				// Process
+				
+				_this.removeAll();
 			}
 
 			var loadTags = function(transport) {
 				var responseJSON = transport.responseText;
 				var jsonResourceList = JSON.parse(responseJSON);
-				resource.setTags(jsonResourceList.tagList);
 				
+				resource.setTags(jsonResourceList.tagList);
+								
 				if (!UIUtils.repaintCatalogue) 
 					resource.updateTags();
 				if (UIUtils.tagmode) 
 					CatalogueFactory.getInstance().updateGlobalTags();
+					
+				_this.removeAll();
 			}
 			
 			var elements = tags.values();
@@ -102,13 +107,20 @@ function Tagger(){
 			for (var i=0; i<elements.length; i++)
 			{
 				var tagXML = xmlDoc.createElement("Tag");
-				tagXML.appendChild(document.createTextNode(elements[i]));
+				tagXML.appendChild(xmlDoc.createTextNode(elements[i]));
 				tagsXML.appendChild(tagXML);
 			}
-			var param = {tags_xml: (new XMLSerializer()).serializeToString(xmlDoc)};
+			
+			/**
+			 * Serialize an Element and return it as a string.
+ 			*/
+			var param;
+		    if (typeof XMLSerializer != "undefined") //FIREFOX
+		        param = {tags_xml: (new XMLSerializer()).serializeToString(xmlDoc)};
+		    else if (xmlDoc.xml) //IE
+		    	param = {tags_xml: xmlDoc.xml};
 
 			PersistenceEngineFactory.getInstance().send_post(url + resourceURI, param, this, loadTags, onError)
-			_this.removeAll();
 		}
 	}
 	

@@ -469,10 +469,12 @@ Resource.prototype.showInfo = function() {
 		maxlength: '20'
 	}));
 	new_tag_text_input.observe("keyup", function(event){
-		UIUtils.enlargeInput(this);
+		var target = BrowserUtilsFactory.getInstance().getTarget(event);
+		UIUtils.enlargeInput(target);
 	});
 	new_tag_text_input.observe("keypress", function(event){
-		UIUtils.onReturn(event,UIUtils.sendTags,this);
+		var target = BrowserUtilsFactory.getInstance().getTarget(event);
+		UIUtils.onReturn(event,UIUtils.sendTags,target);
 	});
 	new_tag_text.appendChild(new_tag_text_input);
 	add_tags_panel.appendChild(UIUtils.createHTMLElement("div", $H({
@@ -1126,7 +1128,8 @@ Resource.prototype._tagsToTagcloud = function(parent, loc) {
 				class_name: 'delete button'
 			}));
 			tag_link.observe("click", function(event) {
-				UIUtils.removeTagUser(event.target.parentNode.firstChild.innerHTML, this._id);
+				var target = BrowserUtilsFactory.getInstance().getTarget(event);
+				UIUtils.removeTagUser(target.parentNode.firstChild.innerHTML, this._id);
 			}.bind(this));
 			tag.appendChild(tag_link);
 

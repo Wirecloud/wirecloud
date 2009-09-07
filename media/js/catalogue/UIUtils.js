@@ -1041,15 +1041,13 @@ UIUtils.deactivateTagMode = function() {
 	UIUtils.resizeResourcesContainer();
 }
 
-UIUtils.rgbConvert = function(str){
-	str = str.replace(/rgb\(|\)/g, "").split(",");
-	str[0] = parseInt(str[0], 10).toString(16).toLowerCase();
-	str[1] = parseInt(str[1], 10).toString(16).toLowerCase();
-	str[2] = parseInt(str[2], 10).toString(16).toLowerCase();
-	str[0] = (str[0].length == 1) ? '0' + str[0] : str[0];
-	str[1] = (str[1].length == 1) ? '0' + str[1] : str[1];
-	str[2] = (str[2].length == 1) ? '0' + str[2] : str[2];
-	return ('#' + str.join(""));
+UIUtils.rgbConvert = function(rgbColor){
+
+	var str = '#' + parseInt(rgbColor.red.cssText, 10).toString(16).toLowerCase();
+	str += parseInt(rgbColor.green.cssText, 10).toString(16).toLowerCase();
+	str += parseInt(rgbColor.blue.cssText, 10).toString(16).toLowerCase();
+	
+	return str;
 }
 
 UIUtils.showResourceTagCloud = function(id_){
@@ -1061,7 +1059,13 @@ UIUtils.showResourceTagCloud = function(id_){
 	tagCloudHTML.parentNode.parentNode.scrollIntoView(true);
 	
 	var FADE_CLOUD_INI = "#349ee8";
-	var FADE_CLOUD_END = this.rgbConvert(tagCloudHTML.getStyle('background-color'));
+	
+	var windowStyle = document.defaultView.getComputedStyle(tagCloudHTML, null);
+
+	var FADE_CLOUD_END = this.rgbConvert(windowStyle.getPropertyCSSValue("background-color").getRGBColorValue());
+	
+	
+//	var FADE_CLOUD_END = this.rgbConvert(tagCloudHTML.getStyle('background-color'));
 		
 	var fadder = new BackgroundFadder(tagCloudHTML, FADE_CLOUD_INI, FADE_CLOUD_END, 0, 3000);
 	fadder.fade();
@@ -1186,6 +1190,7 @@ UIUtils.filterString = function(element){
 UIUtils.onReturn = function(event_, handler_, inputText_) {
   if (!event_) event_ = window.event;
   if (event_ && event_.keyCode && event_.keyCode == 13) {
+  		Event.stop(event_);
 	  handler_(inputText_,arguments[3]);
   }
 };
