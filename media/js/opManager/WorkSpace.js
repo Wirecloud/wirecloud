@@ -61,9 +61,8 @@ function WorkSpace (workSpaceState) {
 
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
-			
-			if (!BrowserUtilsFactory.getInstance().isIE()) //temporal patch!
-				this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
+
+			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
 
 			if (tabs.length > 0) {
 				//Only painting the "active" tab!
