@@ -1201,7 +1201,8 @@ WiringInterface.prototype._displayHelpWiringHeader = function(element, event) {
 	divout.style.cssText = "top:0;bottom:0;right:0;left:0;position:absolute;z-index:3001;"
 	divout.observe('click', function (e) {
 		Event.stop(e);
-		this.parentNode.removeChild(this);
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		target.parentNode.removeChild(target);
 	});
 	// Sets the help style
 	var helpOpElement = document.createElement('div');
