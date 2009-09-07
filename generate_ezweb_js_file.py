@@ -33,6 +33,7 @@ inputFiles = {
     'normal':  [
         'js/common/constants.js',
         'js/common/utils.js',
+        'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
         'js/persistenceEngine/PersistenceEngine.js',
@@ -86,7 +87,6 @@ inputFiles = {
         'js/interfaceLayout/DropDownMenu.js',
         'js/interfaceLayout/WindowMenu.js',
         'js/interfaceLayout/LayoutManager.js',
-        'js/interfaceLayout/BrowserUtils.js',
     ],
 
     'iphone': [
@@ -126,6 +126,7 @@ inputFiles = {
     'viewer': [
         'js/common/constants.js',
         'js/common/utils.js',
+        'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
         'js/persistenceEngine/PersistenceEngineForViewer.js',
@@ -179,7 +180,6 @@ inputFiles = {
         'js/interfaceLayout/DropDownMenu.js',
         'js/interfaceLayout/WindowMenu.js',
         'js/interfaceLayout/LayoutManager.js',
-        'js/interfaceLayout/BrowserUtils.js',
     ]
 }
 

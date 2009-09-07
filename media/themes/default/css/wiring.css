@@ -443,21 +443,18 @@
   stroke: #2D6F9C;
   fill:   none;
   stroke-width: 2;
-  marker-end: url(#endArrow);
 }
 
 .canvas .inFromChannel {
   stroke: green;
   fill:   none;
   stroke-width: 2;
-  marker-end: url(#endArrow);
 }
 
 .canvas .outToChannel {
-  stroke: red;
+  stroke: #F00000;
   fill:   none;
   stroke-width: 2;
-  marker-end: url(#endArrow);
 }
 
 .helpwiringheader {

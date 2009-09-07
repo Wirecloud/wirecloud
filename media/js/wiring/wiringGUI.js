@@ -61,8 +61,8 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
 	// Create the canvas for the connection arrows
 	this.canvas = new Canvas();
+	this.canvas.addClassName('canvas');
 	this.canvasElement = this.canvas.getHTMLElement();
-	this.canvasElement.setAttribute('class', 'canvas');
 	$('wiring_wrapper').appendChild(this.canvasElement);
 
 
@@ -400,14 +400,14 @@ WiringInterface.prototype.showMessage = function (msg, type) {
  */
 WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 
-	if (this.currentChannel == null) { 
-		if (this.channels.length == 0) { 
-	 		this.showMessage(gettext("Please, create a new channel before creating connections."), 10); 
-		} else { 
-	 		this.showMessage(gettext("Please, select a channel before creating connections."), 11); 
-		} 
-	  	return; 
-	 } 
+	if (this.currentChannel == null) {
+		if (this.channels.length == 0) {
+			this.showMessage(gettext("Please, create a new channel before creating connections."), 10);
+		} else {
+			this.showMessage(gettext("Please, select a channel before creating connections."), 11);
+		}
+		return;
+	}
 
 	/*
 	 * Change connection status on the interface and on the temporal model
@@ -437,6 +437,7 @@ WiringInterface.prototype._changeConnectionStatus = function (anchor) {
 	if (anchor.isConnected()) {
 		var arrow = anchor.getConnectionArrows()[0];
 		arrow.disconnect();
+		this.canvasElement.removeChild(arrow.arrow);
 
 		this.currentChannel[disconnectMethod](connectable);
 
@@ -628,6 +629,7 @@ WiringInterface.prototype.redrawChannelInputs = function (channel) {
 		var arrow = connectionArrows[i];
 		var targetAnchor = arrow.getSourceAnchor();
 		arrow.disconnect();
+		this.canvasElement.removeChild(arrow.arrow);
 
 		this._drawArrow(targetAnchor, channelAnchor);
 	}
@@ -645,6 +647,7 @@ WiringInterface.prototype.redrawChannelOutputs = function (channel) {
 		var arrow = connectionArrows[i];
 		var targetAnchor = arrow.getTargetAnchor()
 		arrow.disconnect();
+		this.canvasElement.removeChild(arrow.arrow);
 
 		this._drawArrow(channelAnchor, targetAnchor);
 	}
@@ -664,6 +667,7 @@ WiringInterface.prototype._uncheckChannelInputs = function (channel) {
 	for (var i = 0; i < connection.length; i++) {
 		var arrow = connection[i];
 		arrow.disconnect();
+		this.canvasElement.removeChild(arrow.arrow);
 	}
 }
 
@@ -683,6 +687,7 @@ WiringInterface.prototype._uncheckChannelOutputs = function (channel) {
 	for (var i = 0; i < connections.length; i++) {
 		var arrow = connections[i];
 		arrow.disconnect();
+		this.canvasElement.removeChild(arrow.arrow);
 	}
 }
 
@@ -1127,7 +1132,7 @@ WiringInterface.prototype._drawArrow = function(sourceAnchor, targetAnchor) {
 	else
 		var arrow = this.canvas.drawPolyLine(pointList, {});
 
-	arrow.setAttribute('class', arrowClass);
+	arrow.addClassName(arrowClass);
 
 	return new ConnectionArrow(sourceAnchor, targetAnchor, arrow);
 }
@@ -1255,21 +1260,119 @@ ConnectionArrow.prototype.disconnect = function() {
 
 	this.sourceAnchor = null;
 	this.targetAnchor = null;
-	this.arrow.parentNode.removeChild(this.arrow);
 }
 
 /*
  * Canvas
  */
 
-/*if (IE) {
+if (BrowserUtilsFactory.getInstance().isIE()) {
 
-	Canvas.prototype.clear = function() {
-		this.canvasElement.innerHTML = "";
+	/* Enable vml support */
+	document.namespaces.add('vml', 'urn:schemas-microsoft-com:vml', "#default#VML");
+
+	var s = document.createStyleSheet();
+	s.addRule('vml\\: polyline', 'behavior:url(#default#VML);display:inline-block;');
+	s.addRule('vml\\: shape', 'behavior:url(#default#VML);display:inline-block;');
+
+	var Canvas = function() {
+		this.canvasElement = document.createElement('div');
+		Element.extend(this.canvasElement);
+		this.context = {'stroke': '#00F',
+		                'fill': 'none',
+		                'stroke-width': '2px'};
 	}
 
-} else {*/
-	function Canvas() {
+	Canvas.prototype.addClassName = function(className) {
+		this.canvasElement.addClassName(className);
+	}
+
+	/**
+	 * IE does not support modifing vml element attributes by css. Workarround this.
+	 */
+	Canvas.prototype._elementAddClassName = function(className) {
+		switch (className) {
+		case 'inFromChannel':
+			this.strokecolor = "green";
+			this.filled = false;
+			this.strokeweight = 2;
+			break;
+		case 'outToChannel':
+			this.strokecolor = "#F00000";
+			this.filled = false;
+			this.strokeweight = 2;
+			break;
+		}
+	}
+
+	Canvas.prototype._propMapping = {
+	    'fill': 'fillcolor',
+	    'stroke': 'strokecolor',
+	    'stroke-width': 'strokeweight'
+	};
+
+	Canvas.prototype._applyStyle = function(style, element) {
+		var key;
+		for (key in style) {
+			var value = style[key];
+
+			if (this._propMapping[key] != undefined)
+				key = this._propMapping[key];
+
+			if (key == 'fillcolor' && value == 'none')
+				element.filled = false;
+			else
+				element[key] = value;
+		}
+	}
+
+	Canvas.prototype.drawPolyLine = function(points, style) {
+		var pointsAttr = "";
+		for (var i = 0; i < points.length; i++)
+			pointsAttr += "," + points[i].posX + "," + points[i].posY;
+
+		pointsAttr = pointsAttr.substr(1);
+		var polyline = this.canvasElement.ownerDocument.createElement("<vml:polyline points=\"" + pointsAttr + "\" />"); // IE 6
+
+		this._applyStyle(style ? style : this.context, polyline);
+
+		this.canvasElement.appendChild(polyline);
+		polyline.outerHTML = polyline.outerHTML; // IE bug
+		polyline = this.canvasElement.childNodes[this.canvasElement.childNodes.length - 1];
+
+		polyline.addClassName = Canvas.prototype._elementAddClassName;
+		return polyline;
+	}
+
+	Canvas.prototype.drawArrow = function(from, to, style) {
+
+		var middleX = Math.floor((from.posX + to.posX) / 2);
+
+		var path = "m " + from.posX + "," + (from.posY - 1) + " " +
+		           "c " + middleX + "," + (from.posY - 1) + " " + middleX + "," + (to.posY - 1) + " " +
+		           to.posX + "," + (to.posY - 1) + " e";
+
+		var arrow = this.canvasElement.ownerDocument.createElement("<vml:shape path=\"" + path + "\" />"); // IE6
+		this.canvasElement.appendChild(arrow);
+		arrow.style.width = "10000px";
+		arrow.style.height = "10000px";
+		arrow.style.top = "0px";
+		arrow.style.left = "0px";
+		arrow.style.position = "absolute";
+		arrow.coordorigin = "0 0";
+		arrow.coordsize = "10000 10000";
+
+		this._applyStyle(style ? style : this.context, arrow);
+
+		arrow.outerHTML = arrow.outerHTML; // IE bug
+		arrow = this.canvasElement.childNodes[this.canvasElement.childNodes.length - 1];
+
+		arrow.addClassName = Canvas.prototype._elementAddClassName;
+		return arrow;
+	}
+
+} else {
+	var Canvas = function() {
 		this.canvasElement = document.createElementNS(this.SVG_NAMESPACE, 'svg:svg');
 		this.context = {'stroke': '#00F',
 		                'fill': 'transparent',
@@ -1278,142 +1381,59 @@ ConnectionArrow.prototype.disconnect = function() {
 
 	Canvas.prototype.SVG_NAMESPACE = "http://www.w3.org/2000/svg";
 
-	Canvas.prototype.clear = function() {
-		while (this.canvasElement.childNodes.length > 0)
-			this.canvasElement.removeChild(this.canvasElement.childNodes[0]);
+	Canvas.prototype.addClassName = function(className) {
+		this.canvasElement.setAttribute('class', className);
 	}
-/*}*/
 
+	Canvas.prototype._elementAddClassName = function(className) {
+		this.setAttribute('class', className);
+	}
+
+	Canvas.prototype._applyStyle = function(style, element) {
+		var styleAttr = element.getAttribute('style');
+		if (styleAttr == null)
+			styleAttr = "";
+
+		for (var key in style) {
+			styleAttr += key + ":" + style[key] + ";";
+		}
+		element.setAttribute('style', styleAttr);
+	}
+
+	Canvas.prototype.drawPolyLine = function(points, style) {
+		var polyline = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:polyline");
+		var pointsAttr = "";
+		for (var i = 0; i < points.length; i++)
+			pointsAttr += " " + points[i].posX + "," + points[i].posY;
+
+		polyline.setAttribute('points', pointsAttr);
+		this._applyStyle(style ? style : this.context, polyline);
+		this.canvasElement.appendChild(polyline);
+		polyline.addClassName = Canvas.prototype._elementAddClassName;
+		return polyline;
+	}
+
+	Canvas.prototype.drawArrow = function(from, to, style) {
+		var arrow = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:path");
+
+		var middleX = (from.posX + to.posX) / 2;
+
+		arrow.setAttribute("d", "M " + from.posX + "," + from.posY + " " +
+		                        "C " + middleX + "," + from.posY + " " + middleX + "," + to.posY + " " +
+		                        to.posX + "," + to.posY);
+		this._applyStyle(style ? style : this.context, arrow);
+		this.canvasElement.appendChild(arrow);
+		arrow.addClassName = Canvas.prototype._elementAddClassName;
+		return arrow;
+	}
+
+}
+
+Canvas.prototype.clear = function() {
+	while (this.canvasElement.childNodes.length > 0)
+		this.canvasElement.removeChild(this.canvasElement.childNodes[0]);
+}
 
 Canvas.prototype.getHTMLElement = function() {
 	return this.canvasElement;
-}
-
-
-Canvas.prototype._mkDiv = function(x, y, w, h) {
-	var div = this.canvasElement.ownerDocument.createElement("div");
-	div.style.position = 'absolute';
-	div.style.left = x + 'px';
-	div.style.top = y + 'px';
-	div.style.width = w + 'px';
-	div.style.height = h + 'px';
-	div.style.overflow = 'hidden';
-	div.style.backgroundColor = this.context.color;
-
-	return div;
-}
-
-Canvas.prototype._drawLine = function(x1, y1, x2, y2) {
-	var line = this.canvasElement.ownerDocument.createElement("div");
-	if (x1 > x2) {
-		var _x2 = x2;
-		var _y2 = y2;
-		x2 = x1;
-		y2 = y1;
-		x1 = _x2;
-		y1 = _y2;
-	}
-	var dx = x2-x1, dy = Math.abs(y2-y1),
-	x = x1, y = y1,
-	yIncr = (y1 > y2)? -1 : 1;
-
-	if (dx >= dy) {
-		var pr = dy<<1,
-		pru = pr - (dx<<1),
-		p = pr-dx,
-		ox = x;
-		while(dx > 0)
-		{--dx;
-			++x;
-			if(p > 0)
-			{
-				line.appendChild(this._mkDiv(ox, y, x-ox, 1));
-				y += yIncr;
-				p += pru;
-				ox = x;
-			}
-			else p += pr;
-		}
-		line.appendChild(this._mkDiv(ox, y, x2-ox+1, 1));
-	} else {
-		var pr = dx<<1,
-		pru = pr - (dy<<1),
-		p = pr-dy,
-		oy = y;
-		if(y2 <= y1) {
-			while(dy > 0)
-			{--dy;
-				if(p > 0)
-				{
-					line.appendChild(this._mkDiv(x++, y, 1, oy-y+1));
-					y += yIncr;
-					p += pru;
-					oy = y;
-				} else {
-					y += yIncr;
-					p += pr;
-				}
-			}
-			line.appendChild(this._mkDiv(x2, y2, 1, oy-y2+1));
-		} else {
-			while(dy > 0)
-			{--dy;
-				y += yIncr;
-				if(p > 0)
-				{
-					line.appendChild(this._mkDiv(x++, oy, 1, y-oy));
-					p += pru;
-					oy = y;
-				}
-				else p += pr;
-			}
-			line.appendChild(this._mkDiv(x2, oy, 1, y2-oy+1));
-		}
-	}
-
-	return line;
-}
-
-Canvas.prototype._applyStyle = function(style, element) {
-	var styleAttr = element.getAttribute('style');
-	if (styleAttr == null)
-		styleAttr = "";
-
-	for (var key in style) {
-		styleAttr += key + ":" + style[key] + ";";
-	}
-	element.setAttribute('style', styleAttr);
-}
-
-Canvas.prototype.drawPolyLine = function(points, style) {
-	var polyline = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:polyline");
-	var pointsAttr = "";
-	for (var i = 0; i < points.length; i++)
-		pointsAttr += " " + points[i].posX + "," + points[i].posY;
-
-	polyline.setAttribute('points', pointsAttr);
-	this._applyStyle(style ? style : this.context, polyline);
-	this.canvasElement.appendChild(polyline);
-	return polyline;
-/*
-	var polyline = this.canvasElement.ownerDocument.createElement("div");
-	for (var i = 1; i < points.length; i++) {
-		var line = this._drawLine(points[i-1].posX, points[i-1].posY, points[i].posX, points[i].posY);
-		polyline.appendChild(line);
-	}
-	this.canvasElement.appendChild(polyline);
-	return polyline;*/
-}
-
-Canvas.prototype.drawArrow = function(from, to, style) {
-	var polyline = this.canvasElement.ownerDocument.createElementNS(this.SVG_NAMESPACE, "svg:path");
-
-	var middleX = (from.posX + to.posX) / 2;
-
-	polyline.setAttribute("d", "M " + from.posX + "," + from.posY + " " +
-	                           "C " + middleX + "," + from.posY + " " + middleX + "," + to.posY + " " +
-	                           to.posX + "," + to.posY);
-	this._applyStyle(style ? style : this.context, polyline);
-	this.canvasElement.appendChild(polyline);
-	return polyline;
 }

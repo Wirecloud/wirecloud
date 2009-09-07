@@ -498,22 +498,27 @@ function ChannelInterface(channel, wiringGUI) {
 	var labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("Filter") + ":";
 	labelCol.appendChild(labelContent);
-	
+
 	//value
 	var valueCol = document.createElement("td");
 	contentRow.appendChild(valueCol);
 
-	var filterLabelDiv = document.createElement("div");
-	filterLabelDiv.addClassName("filterValue");
-	valueCol.appendChild(filterLabelDiv);
+	this.filterLabelDiv = document.createElement("div");
+	Element.extend(this.filterLabelDiv);
+	this.filterLabelDiv.addClassName("filterValue");
+	valueCol.appendChild(this.filterLabelDiv);
 
 	this.filterInput = document.createTextNode("");
-	filterLabelDiv.appendChild(this.filterInput);
+	this.filterLabelDiv.appendChild(this.filterInput);
 
-	var filterMenuButton = document.createElement("input");
-	Element.extend(filterMenuButton);
-	filterLabelDiv.appendChild(filterMenuButton);
-	filterMenuButton.setAttribute("type", "button");
+	if (BrowserUtilsFactory.getInstance().isIE()) {
+		var filterMenuButton = document.createElement('<input type="button" />');
+		Element.extend(filterMenuButton);
+	} else {
+		var filterMenuButton = document.createElement('input');
+		filterMenuButton.type = "button";
+	}
+	this.filterLabelDiv.appendChild(filterMenuButton);
 	filterMenuButton.addClassName("filterMenuLauncher");
 	filterMenuButton.observe('click',
 		function(e) {
@@ -535,12 +540,14 @@ function ChannelInterface(channel, wiringGUI) {
 	labelCol = document.createElement("td");
 	contentRow.appendChild(labelCol);
 	this.paramLabelLayer = document.createElement("div");
+	Element.extend(this.paramLabelLayer);
 	labelCol.appendChild(this.paramLabelLayer);
 	
 	//value
 	valueCol = document.createElement("td");
 	contentRow.appendChild(valueCol);
 	this.paramValueLayer = document.createElement("div");
+	Element.extend(this.paramValueLayer);
 	valueCol.appendChild(this.paramValueLayer);
 	
 	//Channel value
@@ -557,9 +564,9 @@ function ChannelInterface(channel, wiringGUI) {
 	valueCol = document.createElement("td");
 	contentRow.appendChild(valueCol);
 	this.valueElement = document.createElement("div");
+	Element.extend(this.valueElement);
 
 	valueCol.appendChild(this.valueElement);
-	
 
 
 	// Update the initial information
@@ -684,7 +691,7 @@ ChannelInterface.prototype._getFilterParams = function () {
 	var params = this.filter.getParams();
 	var valueNodes = this.paramValueLayer.childNodes;
 	for (var i = 0; i < valueNodes.length; i++) {
-		fParams[params[i].getIndex()] = valueNodes[i].textContent;
+		fParams[params[i].getIndex()] = valueNodes[i].getTextContent();
 	}
 
 	return fParams;
@@ -736,18 +743,24 @@ ChannelInterface.prototype._fillFilterParams = function () {
  */
 ChannelInterface.prototype._updateFilterInterface = function() {
 	// Removes the params of the previous filter
-	this.paramLabelLayer.textContent = "";
-	this.paramValueLayer.textContent = "";
+	this.paramLabelLayer.setTextContent('');
+	this.paramValueLayer.setTextContent('');
 
 	// Sets the filter name
+	var filterName;
 	if (this.filter == null) {
-		this.filterInput.textContent = gettext("None");
+		filterName = gettext("None");
 	} else {
-		this.filterInput.textContent = this.filter.getLabel();
+		filterName = this.filter.getLabel();
 	}
 
+	// Workaround "this.filterInput.setTextContent(filterName);" not working on IE
+	this.filterLabelDiv.removeChild(this.filterInput);
+	this.filterInput = document.createTextNode(filterName);
+	this.filterLabelDiv.insertBefore(this.filterInput, this.filterLabelDiv.childNodes[0]);
+
 	// Sets the channel value and the channel filter params
-	//this.valueElement.update(this.getValueWithFilter());
+	this.valueElement.setTextContent(this.getValueWithFilter());
 	this._showFilterParams();
 }
 
@@ -758,7 +771,7 @@ ChannelInterface.prototype.setFilter = function(filter, wiring) {
 	if (filter != null)
 		initial_values = this.filter.getInitialValues();
 
-	this._changeFilterToConnectable(wiring, initial_values);	
+	this._changeFilterToConnectable(wiring, initial_values);
 
 	this._updateFilterInterface()
 }
@@ -856,8 +869,8 @@ ChannelInterface.prototype.exists = function() {
 }
 
 ChannelInterface.prototype.check = function() {
-    this._fillFilterParams();
-    this.valueElement.update(this.getValueWithFilter());
+	this._fillFilterParams();
+	this.valueElement.setTextContent(this.getValueWithFilter());
 	this.htmlElement.addClassName("selected");
 	this.channelNameInput.focus();
 }
@@ -1028,13 +1041,13 @@ function SimpleConnectableInterface (connectable, anchor, group) {
 	if (friendCode != null) {
 		var context = {friendCode: friendCode, wiringGUI:this.wiringGUI};
 
-		this.htmlElement.addEventListener("mouseover",
+		this.htmlElement.observe("mouseover",
 			function () {
 				this.wiringGUI._highlight_friend_code(this.friendCode, true);
 			}.bind(context),
 			false);
 
-		this.htmlElement.addEventListener("mouseout",
+		this.htmlElement.observe("mouseout",
 			function () {
 				this.wiringGUI._highlight_friend_code(this.friendCode, false);
 			}.bind(context),
@@ -1046,7 +1059,7 @@ function SimpleConnectableInterface (connectable, anchor, group) {
 		Event.stop(e);
 	}
 
-	this.htmlElement.addEventListener("click", cancelbubbling, false);
+	this.htmlElement.observe("click", cancelbubbling, false);
 }
 SimpleConnectableInterface.prototype = new ConnectableInterface();
 

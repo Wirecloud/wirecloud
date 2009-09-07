@@ -1,5 +1,5 @@
-.toolbar_section > input[type=button]{
-	width: 135px !important;
+.toolbar_section > input[type=button] {
+  width: 135px !important;
 }
 
 .drop_down_menu, .window_menu{
@@ -7,10 +7,19 @@
 }
 
 * html .window_menu .window_multiple_select{
-	height: 200px;
+  height: 200px;
 }
 
 body{
-	height: 100%;
-	width: 100%;
+  height: 100%;
+  width: 100%;
+}
+
+#wiring_wrapper {
+  height: 800px;
+}
+
+.canvas {
+  height: 100%;
+  width: 100%;
 }
