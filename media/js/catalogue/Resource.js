@@ -355,13 +355,16 @@ Resource.prototype.showInfo = function() {
 	var rate_me_iterator = $A(rate_me_array);
 	rate_me_iterator.each(function(item){
 		item.observe("click", function(event){
-			UIUtils.sendVotes(this);
+			var target = BrowserUtilsFactory.getInstance().getTarget(event);
+			UIUtils.sendVotes(target);
 		});
 		item.observe("mouseover", function(event){
-			UIUtils.rating(this);
+			var target = BrowserUtilsFactory.getInstance().getTarget(event);
+			UIUtils.rating(target);
 		});
 		item.observe("mouseout", function(event){
-			UIUtils.off_rating(this);
+			var target = BrowserUtilsFactory.getInstance().getTarget(event);
+			UIUtils.off_rating(target);
 		});
 		rate_me.appendChild(item);
 	});

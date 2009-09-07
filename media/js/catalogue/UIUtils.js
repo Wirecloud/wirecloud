@@ -1250,18 +1250,25 @@ UIUtils.createHTMLElement = function(type_, attributes_) {
 	Element.extend(newElement);
 	if (attributes_) {
 		attributes_.each(function(attribute) {
-			if (attribute.key != "innerHTML") {
-				var key = attribute.key;
-				if (key == "class_name") {
-					newElement.className = attribute.value;
-					return; // this return acts as a continue sentence
-				} else if (key == "for_") {
-					key = "for";
-				}
-
-				newElement.setAttribute(key, attribute.value);
-			} else {
+			var key = attribute.key;
+			switch (key){
+			case "innerHTML":
 				newElement.innerHTML = attribute.value;
+				break;
+			case "class_name":
+				newElement.className = attribute.value;
+				break;
+			case "style":
+				if(BrowserUtilsFactory.getInstance().isIE() && BrowserUtilsFactory.getInstance().getBrowser() != "IE8"){ //for IE6/IE7
+					newElement.style.setAttribute('cssText', attribute.value);
+				}else{
+					newElement.setAttribute(key, attribute.value);
+				}
+				break;
+			case "for_":
+				key = "for";
+			default:
+				newElement.setAttribute(key, attribute.value);
 			}
 		});
 	}
