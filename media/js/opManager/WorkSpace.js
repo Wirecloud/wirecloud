@@ -30,6 +30,58 @@ function WorkSpace (workSpaceState) {
 	// CALLBACK METHODS
 	// ****************
 
+	/**
+	 * Initializes this WorkSpace in failsafe mode.
+	 */
+	var _failsafeInit = function(transport, e) {
+		this.valid = false;
+
+		// Log it on the log console
+		var logManager = LogManagerFactory.getInstance();
+		msg = logManager.formatError(gettext("Error loading workspace: %(errorMsg)s"), transport, e);
+		logManager.log(msg);
+
+		// Show a user friend alert
+		var layoutManager = LayoutManagerFactory.getInstance();
+		var msg = gettext('Error loading workspace. Please, change active workspace or create a new one.');
+		layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+
+		// Clean current status
+		this.varmanager = null;
+		this.contextManager = null;
+		this.wiring = null;
+		this.wiringInterface = null;
+
+		// Failsafe workspace status
+		layoutManager.currentViewType = "dragboard"; // workaround
+		var initialTab = {
+		                  'id': 0,
+		                  'locked': "true",
+		                  'igadgetList': [],
+		                  'name': gettext("Unusable Tab"),
+		                  'visible': 1
+		                 };
+
+		this.workSpaceGlobalInfo = {
+		                            'workspace': {
+		                               'tabList': [
+		                                 initialTab
+		                               ]
+		                             }
+		                           };
+		this.tabInstances = new Hash();
+		this.tabInstances[0] = new Tab(initialTab, this);
+		this.visibleTab = this.tabInstances[0];
+
+		this.loaded = true;
+
+		this._createWorkspaceMenu();
+		this._hide_creator_options();
+
+		layoutManager.logStep('');
+		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
+	};
+
 	// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 	var loadWorkSpace = function (transport) {
 		var layoutManager = LayoutManagerFactory.getInstance();
@@ -56,7 +108,7 @@ function WorkSpace (workSpaceState) {
 					}
 				}
 			}
-			
+
 			this.varManager = new VarManager(this);
 
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
@@ -75,18 +127,9 @@ function WorkSpace (workSpaceState) {
 			this.valid = true;
 		} catch (error) {
 			// Error during initialization
-			// Only loading workspace menu
-			this.valid=false;
-
-			// Log it on the log console
-			this.tabInstances = new Hash();
-			msg = interpolate(gettext("Error loading workspace: %(error)s"),
-			                  {error: error}, true);
-			LogManagerFactory.getInstance().log(msg);
-
-			// Show a user friend alert
-			var msg = gettext('Error loading workspace. Please, change active workspace or create a new one!');
-			layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+			// Loading in failsafe mode
+			_failsafeInit.call(this, transport, error);
+			return;
 		}
 
 		this.loaded = true;
@@ -104,9 +147,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	var onError = function (transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error retreiving workspace data: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+		_failsafeInit.call(this, transport, e);
 	}
 
 	var renameSuccess = function(transport) {
@@ -224,7 +265,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.sendBufferedVars = function () {
-		this.varManager.sendBufferedVars();
+		if (this.varManager) this.varManager.sendBufferedVars();
 	}
 
 	WorkSpace.prototype.fillWithLabel = function() {
@@ -236,11 +277,10 @@ function WorkSpace (workSpaceState) {
 		var spanHTML = "<span>"+nameToShow+"</span>";
 		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e){
+		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e) {
 			if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
 				this.fillWithInput();
-			}
-			else {
+			} else {
 				OpManagerFactory.getInstance().showActiveWorkSpace();
 			}
 		}.bind(this));
@@ -334,16 +374,16 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.showWiring = function() {
 		if (!this.loaded)
 			return;
-	
+
 		if (!this.isValid())
 			return;
-		
+
 		this.visibleTab.unmark();
 		this.wiringInterface.show();
 	}
-	
+
 	WorkSpace.prototype.getIgadget = function(igadgetId) {
-		var tabs = this.tabInstances.keys();	
+		var tabs = this.tabInstances.keys();
 		for (var i = 0; i < tabs.length; i++) {
 			var tab = tabs[i];
 			var igadget = this.tabInstances[tab].getDragboard().getIGadget(igadgetId);
@@ -370,7 +410,7 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 
-	WorkSpace.prototype.show = function() {	
+	WorkSpace.prototype.show = function() {
 		if (!this.loaded)
 			return;
 
@@ -394,9 +434,8 @@ function WorkSpace (workSpaceState) {
 			this.visibleTab.makeVisibleInTabBar();
 			this.visibleTab.getDragboard()._notifyWindowResizeEvent();
 		}
-
 	}
-	
+
 	WorkSpace.prototype.isValid = function() {
 		return this.valid;
 	}
@@ -451,9 +490,9 @@ function WorkSpace (workSpaceState) {
 		PersistenceEngineFactory.getInstance().send_post(tabsUrl, params, this, createTabSuccess, createTabError);
 	
 	}
-	
+
 	WorkSpace.prototype.removeTab = function(tabId){
-		if(this.tabInstances.keys().length <= 1){
+		if (this.tabInstances.keys().length <= 1) {
 			var msg;
 			msg = gettext("there must be one tab at least");
 
@@ -462,16 +501,19 @@ function WorkSpace (workSpaceState) {
 			LayoutManagerFactory.getInstance().hideCover();
 			return false;
 		}
-		
+
 		this.unloadTab(tabId);
-		
+
 		//set the first tab as current
 		this.setTab(this.tabInstances.values()[0]);
-		
-		return true
+
+		return true;
 	}
-	
-	WorkSpace.prototype.unloadTab = function(tabId){
+
+	WorkSpace.prototype.unloadTab = function(tabId) {
+		if (!this.valid)
+			return;
+
 		var tab = this.tabInstances[tabId];
 
 		this.tabInstances.remove(tabId);
@@ -633,27 +675,28 @@ function WorkSpace (workSpaceState) {
 	this.mergeMenu = null;
 	this.unlockEntryPos;
 	this.valid=false;
-	
+
 	var wsOpsLauncher = 'ws_operations_link';
 	var idMenu = 'menu_'+this.workSpaceState.id;
-	
+
+
 	//create workspace menu
-	this._createWorkspaceMenu = function(){
+	this._createWorkspaceMenu = function() {
 
 		//worksplace menu
 		var optionPosition = 0;
 		var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"><div id="submenu_'+idMenu+'" class="submenu"></div></div>';
 		new Insertion.After($('menu_layer'), menuHTML);
 		this.menu = new DropDownMenu(idMenu);
-		
+
 		//mergeWith workspace Menu
 		var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
 		var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
 		new Insertion.After($('menu_layer'), mergeMenuHTML);
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
-		
+
 		//adding options to workspace menu
-		if (this.workSpaceGlobalInfo.workspace.active != "true") {
+		if (this.valid && this.workSpaceGlobalInfo.workspace.active != "true") {
 			this.activeEntryId = this.menu.addOption(_currentTheme.getIconURL('workspace_active'),
 				gettext("Mark as Active"),
 				function() {
@@ -663,7 +706,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 			}
 
-		if (! this.isShared()) {
+		if (this.valid && !this.isShared()) {
 			//It's your own workspace.
 			//All operations are allowed!
 			
@@ -726,7 +769,17 @@ function WorkSpace (workSpaceState) {
 					}.bind(this),
 					optionPosition++);
 			}
+		} else if (!this.valid) {
+			this.menu.addOption(_currentTheme.getIconURL('remove'),
+			gettext("Remove"),
+			function() {
+				var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
+				msg = interpolate(msg, {workspaceName: this.workSpaceState.name}, true);
+				LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
+			}.bind(this),
+			optionPosition++);
 		}
+
 
 		this.menu.addOption(_currentTheme.getIconURL('add'),
 			gettext("New workspace"),

@@ -32,59 +32,56 @@ var OpManagerFactory = function () {
 	var instance = null;
 
 	function OpManager () {
-	        
-	    // ****************
-		// CALLBACK METHODS 
+
 		// ****************
-		
+		// CALLBACK METHODS
+		// ****************
+
 		var loadEnvironment = function (transport) {
 			// JSON-coded user tabspaces
 			var response = transport.responseText;
 			var workSpacesStructure = JSON.parse(response);
-			
+
 			var isDefaultWS = workSpacesStructure.isDefault;
 			var workSpaces = workSpacesStructure.workspaces;
 			var activeWorkSpace = null;
-			
-			for (var i = 0; i<workSpaces.length; i++) {
+
+			for (var i = 0; i < workSpaces.length; i++) {
 				var workSpace = workSpaces[i];
 
 				this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
 				if (public_workspace && public_workspace != '') {
-				    if (workSpace.id == public_workspace) {
-					  activeWorkSpace=this.workSpaceInstances[workSpace.id];
-					  continue;
+					if (workSpace.id == public_workspace) {
+						activeWorkSpace = this.workSpaceInstances[workSpace.id];
+						continue;
+					}
+				} else {
+					if (workSpace.active == "true") {
+						activeWorkSpace = this.workSpaceInstances[workSpace.id];
 					}
 				}
-                else {
-					if (workSpace.active == "true") {
-						activeWorkSpace=this.workSpaceInstances[workSpace.id];
-					}
-				}	
 			}
-			
+
 			// set handler for workspace options button
 			Event.observe($('ws_operations_link'), 'click', function(e){
 				if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
 					var target = BrowserUtilsFactory.getInstance().getTarget(e);
 					target.blur();
 					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
-				}
-				else {
+				} else {
 					OpManagerFactory.getInstance().showActiveWorkSpace();
 				}
 			}.bind(this));
-			
+
 			// Total information of the active workspace must be downloaded!
-			if (isDefaultWS=="true"){
+			if (isDefaultWS == "true") {
 				//the showcase must be reloaded to have all new gadgets
 				//it itself changes to the active workspace
 				ShowcaseFactory.getInstance().reload(workSpace.id);
-				
-			}else{
+			} else {
 				this.activeWorkSpace = activeWorkSpace;
-				if (this.activeWorkSpace==null && workSpaces.length > 0)
+				if (this.activeWorkSpace == null && workSpaces.length > 0)
 					this.activeWorkSpace = this.workSpaceInstances[workSpaces[0].id];
 				this.activeWorkSpace.downloadWorkSpaceInfo();
 			}
@@ -94,11 +91,11 @@ var OpManagerFactory = function () {
 			var msg;
 			try {
 				var logManager = LogManagerFactory.getInstance();
-				var msg = logManager.formatError(gettext("Error loading EzWeb Platform: %(errorMsg)s."), transport, e);
+				msg = logManager.formatError(gettext("Error loading EzWeb Platform: %(errorMsg)s."), transport, e);
 				LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 				logManager.log(msg);
 			} catch (e) {
-				if (msg !== null)
+				if (msg != null)
 					alert(msg);
 				else
 					alert (gettext("Error loading EzWeb Platform"));
@@ -291,7 +288,6 @@ var OpManagerFactory = function () {
 			// When it finish, it will invoke continueLoadingGlobalModules method!
 			function imagesLoaded(theme, imagesNotLoaded) {
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-				
 			}
 
 			function continueLoading(theme, errorMsg) {
@@ -325,10 +321,11 @@ var OpManagerFactory = function () {
 
 				_defaultTheme = theme;
 
-				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default')
+				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default') {
 					new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
-				else
+				} else {
 					continueLoading(_defaultTheme, null);
+				}
 			}
 			_currentTheme = new Theme('default', null, initTheme);
 		}
@@ -357,13 +354,11 @@ var OpManagerFactory = function () {
 
 		OpManager.prototype.showActiveWorkSpace = function () {
 			var workSpaceIds = this.workSpaceInstances.keys();
-			var disabledWorkSpaces= [];
-			var j=0;
-			for (var i=0; i<workSpaceIds.length; i++) {
+			var disabledWorkSpaces = [];
+			for (var i = 0; i < workSpaceIds.length; i++) {
 				var workSpace = this.workSpaceInstances[workSpaceIds[i]];
 				if (workSpace != this.activeWorkSpace) {
-					disabledWorkSpaces[j] = workSpace;
-					j++;
+					disabledWorkSpaces.push(workSpace);
 				}
 			}
 
@@ -376,7 +371,7 @@ var OpManagerFactory = function () {
 			// Asynchronous load of modules
 			// Each singleton module notifies OpManager it has finished loading!
 
-			if (module == Modules.prototype.THEME_MANAGER) {						
+			if (module == Modules.prototype.THEME_MANAGER) {
 				// Now global modules must be loaded... Showcase is the first!
 				this.showcaseModule = ShowcaseFactory.getInstance();
 				this.showcaseModule.init();
@@ -398,7 +393,7 @@ var OpManagerFactory = function () {
 				var layoutManager = LayoutManagerFactory.getInstance();
 				layoutManager.logSubTask(gettext("Activating current Workspace"));
 
-				this.showActiveWorkSpace(this.activeWorkSpace);
+				this.showActiveWorkSpace();
 //				this.changeActiveWorkSpace(this.activeWorkSpace);
 
 				//ezweb fly
@@ -465,10 +460,9 @@ var OpManagerFactory = function () {
 		}
 
 		OpManager.prototype.addWorkSpace = function (newName) {
-			var o = new Object;
+			var o = new Object();
 			o.name = newName;
-			var wsData = Object.toJSON(o);
-			var params = {'workspace': wsData};
+			var params = {'workspace': Object.toJSON(o)};
 			PersistenceEngineFactory.getInstance().send_post(URIs.GET_POST_WORKSPACES, params, this, createWSSuccess, createWSError);
 
 		}
