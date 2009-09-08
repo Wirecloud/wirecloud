@@ -234,8 +234,10 @@ function CreateWindowMenu (element) {
 
 	this.operationHandler = function(e) {
 		var target = BrowserUtilsFactory.getInstance().getTarget(e);
-		if (target == this.nameInput && e.keyCode == Event.KEY_RETURN || target == this.button)
+		if (target == this.nameInput && e.keyCode == Event.KEY_RETURN || target == this.button) {
+			Event.stop(e);
 			this.executeOperation();
+		}
 	}.bind(this);
 
 	this.button.observe("click", this.operationHandler);
