@@ -554,7 +554,7 @@ function FormWindowMenu (fields, title) {
 			break;
 		case 'select':
 			var input = document.createElement('select');
-			if(field.subtype = "multiple")
+			if(field.subtype == "multiple")
 				input.multiple = true;
 				
 				var sample = document.createElement('div');
@@ -562,14 +562,26 @@ function FormWindowMenu (fields, title) {
 				var sampleId = fieldId + '_sample';
 				sample.setAttribute('id', sampleId)
 				sample.addClassName('explanation');
-				sample.update(gettext('Hold down "Control", or "Command" on a Mac, to select more than one'));
+				if(input.multiple)
+					sample.update(gettext('Hold down "Control", or "Command" on a Mac, to select more than one'));
 				extraElements.push(sample);
-				
+			
+			var option;	
 			for (var i = 0; i < field.options.length; i++) {
-				var option = document.createElement('option');
+/*				var option = document.createElement('option');
 				option.setTextContent(field.options[i][1]);
 				option.setAttribute('value', field.options[i][0]);
 				input.appendChild(option);
+*/ 
+
+				option = new Option(field.options[i][1], field.options[i][0] );
+
+  				try{
+					input.add(option, null); //standards compliant
+  				}catch(ex){
+					input.add(option); //IE<8
+				}
+
 			}
 			break;
 			
@@ -845,12 +857,10 @@ ShareWindowMenu.prototype.showGroups = function(){
 		select.update();
 		var option;
 		for (var i=0; i<groups.length; i++){
-			option = document.createElement('option');
-			option.setTextContent(groups[i]['name']);
-			option.setAttribute('value', groups[i]['id']);
+			option = new Option(groups[i]['name'],groups[i]['id'] );
 			if(groups[i]['sharing']=='true')
 				option.disabled = 'disabled';
-			select.appendChild(option);
+			select.add(option, null);
 		}
 		
 		//Show the row where the groups select is
@@ -915,7 +925,7 @@ function AddFeedMenu (element) {
 		                             ['blue', gettext('blue')],
 		                             ['orange', gettext('orange')],
 		                             ['red', gettext('red')],
-		                             ['green', gettext('green')],
+		                             ['green', gettext('green')]
 		                            ]
 		                  },
 		'menu_color'    : {label: gettext('Menu Color'), type: 'color'},
