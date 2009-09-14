@@ -105,13 +105,15 @@ function updateLayout()
     if (!loaded)
     {
     
-    /*if (window.innerWidth != _currentWidth || !loaded)
+    /*Use it to test the iphone rotation in a browser
+     * if (window.innerWidth != _currentWidth || !loaded)
 	{
 		_currentWidth = window.innerWidth;
-		var orient = _currentWidth == 320 ? "portrait" : "landscape";
+		var orient = _currentWidth <= 320 ? "portrait" : "landscape";
 	*/
     	// change the orientation properties
     	document.body.setAttribute("orient", orient);
+    	document.body.className=orient;
     	if (OpManagerFactory.getInstance().loadCompleted){
     		loaded=true;
     		clearInterval(updateInterval);
@@ -124,6 +126,7 @@ function updateLayout()
     else{
     	//the onorientationchange has hapenned
     	document.body.setAttribute("orient", orient);
+    	document.body.className=orient;
     	OpManagerFactory.getInstance().activeWorkSpace.updateLayout(orient);
     }
 }

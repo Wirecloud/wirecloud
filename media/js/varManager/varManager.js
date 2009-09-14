@@ -41,7 +41,7 @@ function VarManager (_workSpace) {
 			var igadgets = tabs[i]['igadgetList'];
 			
 			for (var j=0; j<igadgets.length; j++) {
-				this.parseIGadgetVariables(igadgets[j], this.workSpace.tabInstances[tabs[i].id]);
+				this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
 			}
 		}
 		

@@ -246,6 +246,11 @@ function WorkSpace (workSpaceState) {
 		this.contextManager.iGadgetLoaded(igadget);
 	}
 	
+	WorkSpace.prototype.getTabInstance = function(tabId) {
+		return this.tabInstances[tabId];
+	}
+	
+		
 	WorkSpace.prototype.run_post_load_script = function() {
 		run_initial_script(this);
 	}

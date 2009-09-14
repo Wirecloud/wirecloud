@@ -47,7 +47,7 @@
     </object>
     <object pk="orientation" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
-        <field type="CharField" name="type">GCTX</field>
+        <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
     <object pk="1" model="context.conceptname">

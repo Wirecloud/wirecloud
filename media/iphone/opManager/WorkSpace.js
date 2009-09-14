@@ -36,7 +36,7 @@ function WorkSpace (workSpaceState) {
 		var response = transport.responseText;
 		this.workSpaceGlobalInfo = eval ('(' + response + ')');
 
-		this.varManager = new VarManager(this);
+		
 		
 		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 
@@ -52,6 +52,8 @@ function WorkSpace (workSpaceState) {
 				}
 			}
 		}
+		this.varManager = new VarManager(this);
+		
 		this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 		this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 
@@ -89,7 +91,14 @@ function WorkSpace (workSpaceState) {
 		
 		if (!this.igadgetIdsLoaded.elementExists(igadgetId)){ //to prevent from propagating unnecessary initial values
  	    	this.igadgetIdsLoaded.push(igadgetId);
- 	    	this.wiring.propagateInitialValues(true);
+ 	    	
+ 	    	var igadget = this.getIgadget(igadgetId);
+				
+			// Notify to the wiring module the igadget has been loaded
+			this.wiring.iGadgetLoaded(igadget);
+	
+			// Notify to the context manager the igadget has been loaded
+			this.contextManager.iGadgetLoaded(igadget);
 		}
 	}
 	
@@ -125,7 +134,14 @@ function WorkSpace (workSpaceState) {
 		this.varManager.sendBufferedVars();
 	} 
     
-    
+    WorkSpace.prototype.getTabInstance = function(tabId) {
+    	for (var i = 0; i < this.tabInstances.length; i++) {
+			if (this.tabInstances[i].getId() == tabId)
+				return this.tabInstances[i];
+    	}
+    	return null;
+	}
+	
     WorkSpace.prototype.getName = function () {
     	return this.workSpaceState.name;
 	}
