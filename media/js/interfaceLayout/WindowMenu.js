@@ -484,25 +484,24 @@ function FormWindowMenu (fields, title) {
 	this.fields = fields;
 	this.not_valid_characters = ['/', '?', '&', ':', '#', '=']
 
-	var table = document.createElement('table');
+	var table_ = document.createElement('table');
+	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+	table_.appendChild(table);
 	for (var fieldId in this.fields) {
 		var field = this.fields[fieldId];
-		var row = document.createElement('tr');
-		table.appendChild(row);
+		var row = table.insertRow(-1);
 
 		if (field.type === 'separator') {
-			var separator = document.createElement('td');
-			separator.setAttribute('colspan', '2');
+			var separator = row.insertCell(-1);
+			separator.setAttribute('colSpan', '2');
 			var hr = document.createElement('hr');
 			separator.appendChild(hr);
-			row.appendChild(separator);
 			delete this.fields[fieldId];
 			continue;
 		}
 
 		// Label Cell
-		var labelCell = document.createElement('td');
-		row.appendChild(labelCell);
+		var labelCell = row.insertCell(-1);
 
 		var label = document.createElement('label');
 		label.appendChild(document.createTextNode(field.label));
@@ -619,7 +618,7 @@ function FormWindowMenu (fields, title) {
 		for (var i = 0; i < extraElements.length; i++)
 			inputCell.appendChild(extraElements[i]);
 	}
-	this.windowContent.insertBefore(table, this.msgElement);
+	this.windowContent.insertBefore(table_, this.msgElement);
 
 	// Legend
 	var legend = document.createElement('div');
