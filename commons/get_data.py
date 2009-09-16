@@ -359,7 +359,17 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
 
     # Tabs processing
+    # Check if the workspace's tabs have order
     tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id')
+    if tabs[0].position != None:
+        tabs = tabs.order_by('position')
+    else:
+        #set default order
+        for i in range(len(tabs)):
+            tabs[i].position = i
+            tabs[i].save()
+    
+
     data = serializers.serialize('python', tabs, ensure_ascii=False)
 
     tabs_data = []
@@ -397,10 +407,9 @@ def get_tab_data(data, tab, user):
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
-
     data_ret['visible'] = data_fields['visible']
-
     data_ret['locked'] = tab.is_locked(user)
+    
 
     return data_ret
 

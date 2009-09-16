@@ -695,6 +695,10 @@ var LayoutManagerFactory = function () {
 				this.currentMenu = menu;
 				this.currentMenu.show('right', posX, posY);
 				break;
+			case 'TabOpsSubMenu':
+				this.currentMenu = menu;
+				this.currentMenu.show('right', posX, posY);
+				break;
 			case 'filterMenu':
 				this.currentMenu = menu;
 				var position;
@@ -997,6 +1001,46 @@ var LayoutManagerFactory = function () {
 		this.scrollTabBar.setStyle({right: 0, left:''});
 		return tabHTMLElement;
 	}
+	
+	/*Move a tab in the tab bar*/
+	LayoutManager.prototype.moveTab = function(tab, targetTab){
+		//inserting an existing node will move it
+		//tab nodes are displayed in inverted order. The most left side tab is the last node in the DOM
+		if(targetTab){
+			//insert before
+			this.scrollTabBar.insertBefore(tab.tabHTMLElement, targetTab.tabHTMLElement.nextSibling);
+		}else{
+			//insert at the end
+			this.scrollTabBar.insertBefore(tab.tabHTMLElement, this.scrollTabBar.firstChild);
+		}
+		//persistence of tabs' order
+		var ids = [];
+		var tabId;
+		var aux;
+		//tabs are displayed in inverted order
+		for (var i= this.scrollTabBar.childNodes.length-1; i>=0; i--){
+			//get the tab id (tab_workspaceid_tabId)
+			aux = this.scrollTabBar.childNodes[i].id.split("_");
+			tabId = parseInt(aux[aux.length-1]);
+			ids.push(tabId);		
+		}
+		var success = function(transport){
+			//Do nothing
+		}
+		
+		var error = function(transport){
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error updating order: %(errorMsg)s."), transport, e);
+			logManager.log(msg);		
+		}
+		
+		var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': tab.workSpace.workSpaceState.id});
+			var tabsData = Object.toJSON(ids);
+			var params = {'order': tabsData};
+			PersistenceEngineFactory.getInstance().send_update(tabsUrl, params, this, success, error);
+		
+		
+	}	
 
 	/*remove a tab from the tab bar*/
 	LayoutManager.prototype.removeFromTabBar = function(tabHTMLElement){

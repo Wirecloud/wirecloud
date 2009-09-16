@@ -201,6 +201,7 @@ class Tab(models.Model):
     name = models.CharField(_('Name'), max_length=30)
     visible = models.BooleanField(_('Visible'))
     locked = models.BooleanField(_('Locked'))
+    position = models.IntegerField(null=True, blank=True)
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
         

@@ -56,6 +56,7 @@ function Tab (tabInfo, workSpace) {
 		LayoutManagerFactory.getInstance().removeFromTabBar(this.tabHTMLElement);
 		
 		this.menu.remove();
+		this.moveMenu.remove();
 		
 		this.dragboard.destroy();
 	}
@@ -354,11 +355,13 @@ function Tab (tabInfo, workSpace) {
 			1);
 	}.bind(this);
 	
+	//Tab Menu
 	var idMenu = 'menu_'+this.tabName;
 	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
 	
+	//options for Tab Menu
 	this.menu.addOption(_currentTheme.getIconURL("rename"),
 		gettext("Rename"),
 		function() {
@@ -392,6 +395,55 @@ function Tab (tabInfo, workSpace) {
 			1);
 	}
 
+	//move before... Menu
+	var idMoveMenu = 'moveMenu_'+this.tabName;
+	var moveMenuHTML = '<div id="'+idMoveMenu+'" class="drop_down_menu"></div></div>';
+	new Insertion.After($('menu_layer'), moveMenuHTML);
+	this.moveMenu = new DropDownMenu(idMoveMenu, this.menu);
+	
+	//add an option for each tab
+	this._addMoveOptions = function(){
+		var context;
+		//tabs are displayed in inverted order
+		var nextTab = this.tabHTMLElement.previousSibling;
+		var tabIds = this.workSpace.tabInstances.keys();
+		var pos = 0;
+		for(var i = 0; i < tabIds.length; i++){
+			//don't allow moving before this tab or next tab
+			if(this.tabInfo.id != tabIds[i] && this.workSpace.tabInstances[tabIds[i]].tabHTMLElement != nextTab){
+				context = {thisTab: this, targetTab: this.workSpace.tabInstances[tabIds[i]]};
+				this.moveMenu.addOption(null,
+					this.workSpace.tabInstances[tabIds[i]].tabInfo.name,
+					function() {
+						LayoutManagerFactory.getInstance().hideCover();
+						LayoutManagerFactory.getInstance().moveTab(this.thisTab, this.targetTab);
+					}.bind(context),
+					pos);
+				pos++;
+			}
+	
+		}
+		//move to end option
+		if(nextTab){ //only if there is a next tab
+			this.moveMenu.addOption(null, gettext('move to end'),
+					function(){
+						LayoutManagerFactory.getInstance().hideCover();
+						LayoutManagerFactory.getInstance().moveTab(this, null);
+					}.bind(this),
+					pos);
+		}
+	}
+
+
+	this.menu.addOption(_currentTheme.getIconURL("move"),
+			gettext("Move before..."),
+			function(e) {
+				this.moveMenu.clearOptions();
+				this._addMoveOptions();
+				LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu', this.moveMenu, Event.pointerX(e), Event.pointerY(e));
+			}.bind(this),
+			2);
+
 	this.menu.addOption(_currentTheme.getIconURL("remove"),
 		gettext("Remove"),
 		function() {
@@ -399,5 +451,5 @@ function Tab (tabInfo, workSpace) {
 			msg = interpolate(msg, {tabName: this.tabInfo.name}, true);
 			LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();})
 		}.bind(this),
-		2);
+		3);
 }

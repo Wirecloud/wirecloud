@@ -158,8 +158,11 @@ def createTab (tab_name, user,  workspace):
     if tabs.count()==0:
         visible = True
     
+    #it's always the last tab
+    position = Tab.objects.filter(workspace=workspace).count()
+    
     # Creating tab
-    tab = Tab (name=tab_name, visible=visible, locked=False, workspace=workspace, abstract_variable=abstractVariable)
+    tab = Tab (name=tab_name, visible=visible, locked=False, position=position, workspace=workspace, abstract_variable=abstractVariable)
     tab.save()
     
     # Returning created Ids
@@ -478,6 +481,30 @@ class TabCollection(Resource):
             msg = _("tab cannot be created: ") + unicode(e)
             
             raise TracedServerError(e, t, request, msg)
+        
+    @transaction.commit_on_success
+    def update(self, request, workspace_id):
+        user = get_user_authentication(request)
+
+        received_json = PUT_parameter(request, 'order')
+        try:
+            order = simplejson.loads(received_json)
+            
+            tabs = Tab.objects.filter(id__in=order)
+            
+            for tab in tabs:
+                tab.position = order.index(tab.id)
+                tab.save()
+        
+            return HttpResponse('ok')
+    
+        except Exception, e:
+            transaction.rollback()
+            msg = _("tab order cannot be updated: ") + unicode(e)
+            
+            raise TracedServerError(e, t, request, msg)
+                
+        
 
 
 class TabEntry(Resource):
@@ -533,18 +560,25 @@ class TabEntry(Resource):
     def delete(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
         
-        tabs = Tab.objects.filter(workspace__pk=workspace_id).exclude(pk=tab_id)
+        #set new order
+        tabs = Tab.objects.filter(workspace__pk=workspace_id).order_by('position')
+
+        # Get tab, if it does not exist, an http 404 error is returned
+        tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
+        
+        #decrease the position of the following tabs
+        for t in range(tab.position, tabs.count()):
+            tabs[t].position = tabs[t].position - 1
+        
+        tabs = tabs.exclude(pk=tab_id)
         
         if tabs.count()==0:
             msg = _("tab cannot be deleted")
             log(msg, request)
             return HttpResponseServerError(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        # Gets Igadget, if it does not exist, a http 404 error is returned
-        tab = get_object_or_404(Tab, workspace__pk=workspace_id, pk=tab_id)
-        
         #Delete WorkSpace variables too!
-        deleteTab(tab, user)
+        deleteTab(tab, user) 
         
         #set a new visible tab (first tab by default)
         activeTab=tabs[0]
