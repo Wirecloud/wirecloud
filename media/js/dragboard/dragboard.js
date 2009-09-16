@@ -269,17 +269,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 				layout = this.freeLayout;
 			}
 
-			// Parse minimize status
-			minimized = curIGadget.minimized == "true" ? true : false;
-
-			// Parse transparency status
-			transparency = curIGadget.transparency == "true" ? true : false;
-
 			// Menu color
 			menu_color = curIGadget.menu_color;
 
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, minimized, transparency, menu_color);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, curIGadget.minimized, curIGadget.transparency, menu_color);
 		}
 
 		this.loaded = true;
