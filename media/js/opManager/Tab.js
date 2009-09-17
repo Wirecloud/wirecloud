@@ -404,9 +404,14 @@ function Tab (tabInfo, workSpace) {
 	//add an option for each tab
 	this._addMoveOptions = function(){
 		var context;
+
+		var tabIds = this.workSpace.tabInstances.keys();
+		if(tabIds.length == 1){
+			this.moveMenu.menu.update(gettext("no more tabs"));
+			return;
+		}
 		//tabs are displayed in inverted order
 		var nextTab = this.tabHTMLElement.previousSibling;
-		var tabIds = this.workSpace.tabInstances.keys();
 		var pos = 0;
 		for(var i = 0; i < tabIds.length; i++){
 			//don't allow moving before this tab or next tab
@@ -433,7 +438,6 @@ function Tab (tabInfo, workSpace) {
 					pos);
 		}
 	}
-
 
 	this.menu.addOption(_currentTheme.getIconURL("move"),
 			gettext("Move before..."),
