@@ -107,4 +107,8 @@ body {
 	background: url(../images/ie/iGadget/extract.png) no-repeat;
 }
 
+/*CATALOGUE*/
+#catalogue .resource .toolbar button {
+	padding: 2px;
+
 

@@ -487,6 +487,7 @@
 	height: 22px;
 	padding: 0 5px;
 	background: url(../images/catalogue/resource-left-header.png) no-repeat top left;
+	position:relative;
 }
 
 #catalogue .resource > .toolbar > div {
@@ -499,6 +500,7 @@
 	float:left;
 	font-size:11px;
 	font-weight:bold;
+	margin-top: 2px;
 }
 
 
@@ -1097,7 +1099,7 @@
  */
 #catalogue .resource .toolbar button {
 	position:absolute;
-	right: 8px;
+	right: 9px;
 	margin: 0;
 	padding: 0;
 	-moz-border-radius: 4px;

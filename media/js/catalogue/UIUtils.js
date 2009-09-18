@@ -481,7 +481,10 @@ UIUtils.removeAllGlobalTags = function() {
 	$("global_tag_alert").style.display='none';
 	$("new_global_tag_text_input").value="";
 	$("new_global_tag_text_input").size=5;
-	$("new_global_tag_text_input").focus();
+	if($("new_global_tag_text").style.display != "none" && $("new_global_tag_text_input").style.display != "none" &&
+		$('advanced_tag').style.display != "none"){
+		$("new_global_tag_text_input").focus();
+	}
 	
 }
 
@@ -731,23 +734,10 @@ UIUtils.closeInfoResource = function() {
 }
 
 UIUtils.SlideInfoResourceIntoView = function(element) {
-	$('resources_container').style.display = 'block'
-//	$(element).style.width = '0px';
 	$(element).style.overflow = 'hidden';
 	$(element).firstChild.style.position = 'relative';
 	UIUtils.setResourcesWidth();
 	Element.show(element);
-/*	new Effect.Scale(element, 100,
-	Object.extend(arguments[1] || {}, {
-		scaleContent: false,
-		scaleY: false,
-		scaleMode: 'contents',
-		scaleFrom: 0,
-		afterUpdate: function(effect){},
-		afterFinish: function(effect) {
-			UIUtils.resizeResourcesContainer();
-		}
-	}));*/
 	UIUtils.resizeResourcesContainer();
 	if (UIUtils.selectedResource != null)
 		UIUtils.lightUpConnectableResources(UIUtils.selectedResource);
@@ -757,268 +747,89 @@ UIUtils.SlideInfoResourceOutOfView = function(element) {
 	UIUtils.selectedResource= null;
 	$(element).style.overflow = 'hidden';
 	$(element).firstChild.style.position = 'relative';
-	Element.show(element);
-/*	new Effect.Scale(element, 0,
-	Object.extend(arguments[1] || {}, {
-		scaleContent: false,
-		scaleY: false,
-		afterUpdate: function(effect){},
-		afterFinish: function(effect) {
-			Element.hide(effect.element);
-			UIUtils.setResourcesWidth();
-			$('resources_container').style.display = 'none';
-			UIUtils.resizeResourcesContainer();
-		}
-	}));*/
 	Element.hide(element);
 	UIUtils.setResourcesWidth();
-	$('resources_container').style.display = 'none';
 	UIUtils.resizeResourcesContainer();
-}
-
-UIUtils.restoreSlide = function() {
-	var div = $("head");
-	var nodeList = div.childNodes;
-	var aux = '';
-	var tab = '';
-	for(i = 0; i < nodeList.length; i++) {
-		if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!='header_always') {
-			if(Element.visible(nodeList.item(i))==true) {
-				nodeList.item(i).style.display = "none";
-				//Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},});
-				aux = nodeList.item(i).id.split("_");
-				switch (aux[1].toLowerCase()) {
-	            	case "tag":
-	            		tab = gettext("Advanced Tagging");
-	            		break;
-	            	case "search":
-	            		tab = gettext("Advanced Search");
-	            		break;
-	            	default:
-	            		break;
-	            }
-	            $(nodeList.item(i).id+"_toggle").innerHTML = tab;
-	            $(nodeList.item(i).id+"_toggle").style.background="lightBlue";
-	            if(nodeList.item(i).id=="advanced_tag"){UIUtils.deactivateTagMode();}
-	        }
-	    }
-    }
-    UIUtils.resizeResourcesContainer();
 }
 
 UIUtils.SlideAdvanced = function(element,container) {
     var div = $(container);
     var nodeList = div.childNodes;
-    var queue = Effect.Queues.get('menuScope');
     var aux = '';
     var tab = '';
     UIUtils.sendPendingTags();
-    if(queue.toArray().length<1){
-        if(Element.visible(element)==false){
-            for(i=0;i<nodeList.length;i++){
-                if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!=element && nodeList.item(i).id!='header_always'){
-                    if(Element.visible(nodeList.item(i))==true){
-                        Effect.BlindUp(nodeList.item(i),{queue:{position:'end',scope:'menuScope',limit:2},
-					afterFinish: function() {
-						UIUtils.resizeResourcesContainer();
-					}
-				});
-                        aux = nodeList.item(i).id.split("_");
-                        switch (aux[1].toLowerCase()) {
-			            	case "tag":
-			            		tab = gettext("Advanced Tagging");
-			            		break;
-			            	case "search":
-			            		tab = gettext("Advanced Search");
-			            		break;
-			            	case "develop":
-			            		tab = gettext("Development Options");
-			            		break;
-			            	default:
-			            		break;
-			            }
-                        $(nodeList.item(i).id+"_toggle").innerHTML = tab;
-                        $(nodeList.item(i).id+"_toggle").removeClassName('advanced_selected');
-                        if(nodeList.item(i).id=="advanced_tag"){UIUtils.deactivateTagMode();}
-                    }
+    if(Element.visible(element)==false){
+        for(i=0;i<nodeList.length;i++){
+            if(nodeList.item(i).nodeName=="DIV" && nodeList.item(i).id!=element && nodeList.item(i).id!='header_always'){
+                if(Element.visible(nodeList.item(i))==true){
+					Element.hide(nodeList.item(i));
+					UIUtils.resizeResourcesContainer();
+
+                    aux = nodeList.item(i).id.split("_");
+                    switch (aux[1].toLowerCase()) {
+		            	case "tag":
+		            		tab = gettext("Advanced Tagging");
+		            		break;
+		            	case "search":
+		            		tab = gettext("Advanced Search");
+		            		break;
+		            	case "develop":
+		            		tab = gettext("Development Options");
+		            		break;
+		            	default:
+		            		break;
+		            }
+                    $(nodeList.item(i).id+"_toggle").innerHTML = tab;
+                    $(nodeList.item(i).id+"_toggle").removeClassName('advanced_selected');
+                    if(nodeList.item(i).id=="advanced_tag"){UIUtils.deactivateTagMode();}
                 }
             }
-            Effect.BlindDown(element, { queue:{ position:'end', scope:'menuScope', limit:2 },
-					afterFinish: function() {
-						UIUtils.resizeResourcesContainer();
-					}
-				});
-            aux = element.split("_");
-            switch (aux[1].toLowerCase()) {
-            	case "tag":
-            		tab = gettext("Hide Tagging");
-            		break;
-            	case "search":
-            		tab = gettext("Simple Search");
-            		break;
-		case "develop":
-			tab = gettext("Hide Development Options");
-			break;
-            	default:
-            		break;
-            }
-            $(element+"_toggle").innerHTML = tab;
-			$(element+"_toggle").addClassName('advanced_selected');
-			if(element=="advanced_tag"){UIUtils.activateTagMode();}
-       }
-       else {
-       		Effect.BlindUp(element,{queue:{position:'end',scope:'menuScope',limit:2},
-					afterFinish: function() {
-						UIUtils.resizeResourcesContainer();
-					}
-				});
-            aux = element.split("_");
-            switch (aux[1].toLowerCase()) {
-            	case "tag":
-            		tab = gettext('Advanced Tagging');
-            		break;
-            	case "search":
-            		tab = gettext('Advanced Search');
-            		break;
-            	case "develop":
-            		tab = gettext('Development Options');
-            		break;
-            	default:
-            		break;
-            }
-            $(element+"_toggle").innerHTML = tab;
-            $(element+"_toggle").removeClassName('advanced_selected');
-            if(element=="advanced_tag"){UIUtils.deactivateTagMode();}
-       }
+        }
+
+		Element.show(element);
+		UIUtils.resizeResourcesContainer();			
+
+
+        aux = element.split("_");
+        switch (aux[1].toLowerCase()) {
+        	case "tag":
+        		tab = gettext("Hide Tagging");
+        		break;
+        	case "search":
+        		tab = gettext("Simple Search");
+        		break;
+			case "develop":
+				tab = gettext("Hide Development Options");
+				break;
+        	default:
+        		break;
+        }
+        $(element+"_toggle").innerHTML = tab;
+		$(element+"_toggle").addClassName('advanced_selected');
+		if(element=="advanced_tag"){UIUtils.activateTagMode();}
    }
-}
-
-UIUtils.SlideAdvanced2 = function(element) {
-	switch (element) {
-		case "advanced_tag":
-			element1=$(element).cleanWhitespace();
-			element2=$("advanced_search").cleanWhitespace();
-			event="Tag";
-			break;
-		case "advanced_search":
-			element1=$(element).cleanWhitespace();
-			element2=$("advanced_tag").cleanWhitespace();
-			event="Search";
-			break;
-		default:
-			break;
-	}
-	if (element1.style.display == 'none') {
-		new Effect.BlindDown(element1,
-			{
-				duration:1,
-				beforeStart: function() {
-					if(element2.style.display != 'none')
-					{
-						new Effect.BlindUp(element2,
-						{
-							duration:1,
-							beforeStart: function() {
-								element1.style.zIndex=2;
-								element2.style.zIndex=1;
-							},
-							afterFinish: function() {
-								element2.style.display = 'none';
-								$(element2.id+"_toggle").innerHTML = gettext("Advanced "+event);
-								$(element2.id+"_toggle").style.background="lightBlue";
-							}
-						});
-					}
-					element1.style.zIndex=2;
-					element2.style.zIndex=1;
-					element1.style.display='true';
-				},
-				afterFinish: function() {
-					$(element1.id+"_toggle").innerHTML = gettext("Simple "+event);
-					$(element1.id+"_toggle").style.background="darkBlue";
-				}
-			});
-	} else {
-		new Effect.BlindUp(element1,
-			{
-				duration:1,
-				afterFinish: function() {
-					element1.style.display='none';
-					$(element1.id+"_toggle").innerHTML = gettext("Advanced "+event);
-					$(element1.id+"_toggle").style.background="lightBlue";
-				}
-			});
-	}
-    UIUtils.resizeResourcesContainer();
-}
-
-UIUtils.SlideAdvancedSearchIntoView = function(element) {
-  element = $(element).cleanWhitespace();
-  // SlideDown need to have the content of the element wrapped in a container element with fixed height!
-  var oldInnerBottom = element.down().getStyle('bottom');
-  var elementDimensions = element.getDimensions();
-  return new Effect.Scale(element, 100, Object.extend({ 
-    scaleContent: false, 
-    scaleX: false, 
-    scaleFrom: window.opera ? 0 : 1,
-    scaleMode: {originalHeight: elementDimensions.height, originalWidth: elementDimensions.width},
-    restoreAfterFinish: true,
-    afterSetup: function(effect) {
-      effect.element.makePositioned();
-      effect.element.down().makePositioned();
-      if(window.opera) effect.element.setStyle({top: ''});
-      effect.element.makeClipping().setStyle({height: '0px'}).show(); 
-    },
-    afterUpdateInternal: function(effect) {
-      	effect.element.down().setStyle({bottom:
-        (effect.dims[0] - effect.element.clientHeight) + 'px' }); 
-    },
-    afterFinishInternal: function(effect) {
-      	effect.element.undoClipping().undoPositioned();
-      	effect.element.down().undoPositioned().setStyle({bottom: oldInnerBottom}); 
-	},
-	afterFinish: function(effect) {
-		UIUtils.hidde('simple_search');
-	  	UIUtils.show('advanced_search_bottom');
-	  	$('advanced_search_text_tag').focus();
-	}
-    }, arguments[1] || {})
-  );
-
-    UIUtils.resizeResourcesContainer();
-}
-
-UIUtils.SlideAdvancedSearchOutOfView = function(element) {
-  element = $(element).cleanWhitespace();
-  var oldInnerBottom = element.down().getStyle('bottom');
-  return new Effect.Scale(element, window.opera ? 0 : 1,
-   Object.extend({ scaleContent: false, 
-    scaleX: false, 
-    scaleMode: 'box',
-    scaleFrom: 100,
-    restoreAfterFinish: true,
-    beforeStartInternal: function(effect) {
-      effect.element.makePositioned();
-      effect.element.down().makePositioned();
-      if(window.opera) effect.element.setStyle({top: ''});
-      effect.element.makeClipping().show();
-    },  
-    afterUpdateInternal: function(effect) {
-      effect.element.down().setStyle({bottom:
-        (effect.dims[0] - effect.element.clientHeight) + 'px' });
-    },
-    afterFinishInternal: function(effect) {
-      effect.element.hide().undoClipping().undoPositioned().setStyle({bottom: oldInnerBottom});
-      effect.element.down().undoPositioned();
-    },
-	afterFinish: function(effect) {
-	  	UIUtils.hidde('advanced_search_bottom');
-	  	UIUtils.show('simple_search');
-	  	$('simple_search_text').focus();
-	}
-   }, arguments[1] || {})
-  );
-    UIUtils.resizeResourcesContainer();
+   else {
+   		Element.hide(element);
+   		UIUtils.resizeResourcesContainer();
+   		
+        aux = element.split("_");
+        switch (aux[1].toLowerCase()) {
+        	case "tag":
+        		tab = gettext('Advanced Tagging');
+        		break;
+        	case "search":
+        		tab = gettext('Advanced Search');
+        		break;
+        	case "develop":
+        		tab = gettext('Development Options');
+        		break;
+        	default:
+        		break;
+        }
+        $(element+"_toggle").innerHTML = tab;
+        $(element+"_toggle").removeClassName('advanced_selected');
+        if(element=="advanced_tag"){UIUtils.deactivateTagMode();}
+   }
 }
 
 UIUtils.activateTagMode = function() {
@@ -1099,9 +910,9 @@ UIUtils._updateMyGlobalTags = function() {
  * @private
  */
 UIUtils._updateTagInfo = function(id) {
+	UIUtils._updateMyGlobalTags();
 	UIUtils.removeAllGlobalTags();
 	CatalogueFactory.getInstance().updateGlobalTags();
-	UIUtils._updateMyGlobalTags();
 }
 
 /**

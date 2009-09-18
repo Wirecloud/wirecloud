@@ -1021,7 +1021,8 @@ Resource.prototype._addVersionsToPanel = function (parent) {
 			var delete_img = UIUtils.createHTMLElement("button", $H({
 				title: gettext('Delete this version of the gadget'),
 				class_name: "delete_icon",
-				name: versions[i]
+				name: versions[i],
+				innerHTML: gettext('delete')
 			}));
 			delete_img.observe("click", function(event) {
 				UIUtils.selectedVersion = event.currentTarget.getAttribute('name')

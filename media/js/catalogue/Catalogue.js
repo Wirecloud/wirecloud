@@ -1042,7 +1042,8 @@ var CatalogueFactory  = function () {
 					class_name: 'delete button'
 				}));
 				deleteButton.observe("click", function(event) {
-					UIUtils.removeGlobalTagUser(this.parentNode.firstChild.innerHTML);
+					var target = BrowserUtilsFactory.getInstance().getTarget(event);
+					UIUtils.removeGlobalTagUser(target.parentNode.firstChild.innerHTML);
 				});
 				new_tag.appendChild(deleteButton);
 			}
