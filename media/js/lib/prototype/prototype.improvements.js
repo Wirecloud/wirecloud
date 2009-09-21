@@ -35,10 +35,9 @@ Object.extend(Event, {
 	KEY_CONTROL:  17,
 	KEY_CAPSLOCK: 20,
 	KEY_SPACE: 32,
-	keyPressed: function(event)
-	{
+	keyPressed: function(event) {
 		return Browser.isMSIE() ? window.event.keyCode : event.which;
-	},
+	}
 	/*
 	 * Event extension to manage user privileges 
 	 * */
@@ -113,13 +112,13 @@ Object.genGUID = function()
 }
 
 Hash.prototype.clone = function() {
-  var newHash = new Hash();
+	var newHash = new Hash();
 
-  this.each(function (pair) {
-    newHash[pair.key] = pair.value;
-  });
+	this.each(function (pair) {
+		newHash[pair.key] = pair.value;
+	});
 
-  return newHash;
+	return newHash;
 }
 
 
@@ -149,15 +148,15 @@ if (document.documentElement.textContent != undefined) {
 	}
 }
 
-var isElement = function(el){
-	var fn;
-
-	try {
+if (Prototype.BrowserFeatures.ElementExtensions) {
+	var isElement = function(el) {
 		return el instanceof Element;
-	}catch(e) {
-		return el && 'nodeType' in el && el.nodeType === 1;
 	}
-};
+} else {
+	var isElement = function(el) {
+		return el && ('nodeType' in el) && (el.nodeType === 1);
+	}
+}
 
 //if (Prototype.Browser.IE || Element.prototype.getBoundingClientRect != undefined) {
 
@@ -416,6 +415,9 @@ if (useInternalComputedStyle) {
 	CSSPrimitiveValue.prototype.getFloatValue = function(unit) {
 		switch (unit) {
 		case CSSPrimitiveValue.CSS_PX:
+			if (this.cssText == "")
+				return 0;
+
 			var parentNode = this._element.parentNode;
 			var testElement = this._element.ownerDocument.createElement('div');
 			testElement.style.visibility = "hidden";
@@ -437,6 +439,12 @@ if (useInternalComputedStyle) {
 				else
 					testElement.style.height = this.cssText;
 			} else if ((matching == null) && (side != null)) {
+				var property = 'border-' + side + '-style';
+				var ieProperty = ComputedCSSStyleDeclaration.prototype._getIEProperty(property);
+				var borderStyle = _internalGetCurrentStyle(this._element, property, ieProperty);
+				if (borderStyle == "none")
+					return 0;
+
 				// border width accepts special values: medium, normal, ...
 				var extraElement = this._element.ownerDocument.createElement('div');
 				testElement.style.fontSize = "0";
@@ -446,9 +454,7 @@ if (useInternalComputedStyle) {
 				extraElement.style.border = "0";
 				extraElement.style.width = "1px";
 				extraElement.style.borderTopWidth = this.cssText;
-				var property = 'border-' + side + '-style';
-				var ieProperty = ComputedCSSStyleDeclaration.prototype._getIEProperty(property);
-				extraElement.style.borderTopStyle = _internalGetCurrentStyle(this._element, property, ieProperty);
+				extraElement.style.borderTopStyle = borderStyle;
 				testElement.appendChild(extraElement);
 			} else {
 				throw new Error();
