@@ -47,6 +47,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+DATABASE_OPTIONS = {"init_command": "SET storage_engine=InnoDB"}
 DATABASE_NAME = 'ezweb'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'ezweb'             # Not used with sqlite3.
 DATABASE_PASSWORD = 'ezweb'         # Not used with sqlite3.
@@ -151,6 +152,7 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
+    'preferences',
     'translator',
     'gadgetGenerator',
     'resourceSubscription',
