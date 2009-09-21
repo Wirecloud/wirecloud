@@ -233,6 +233,20 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
 }
 
 /**
+ * Moves this layout to another layout.
+ *
+ * @param {DragboardLayout} destLayout Layout where the iGadgets are going to be
+ *        moved.
+ */
+DragboardLayout.prototype.moveTo = function(destLayout) {
+	var igadgetKeys = this.iGadgets.keys();
+	for (var i = 0; i < igadgetKeys.length; i++) {
+		iGadget = this.iGadgets[igadgetKeys[i]];
+		iGadget.moveToLayout(destLayout);
+	}
+}
+
+/**
  * This method must be called to avoid memory leaks caused by circular
  * references.
  */
@@ -242,6 +256,7 @@ DragboardLayout.prototype.destroy = function() {
 		this.iGadgets[keys[i]].destroy();
 	}
 	this.iGadgets = null;
+	this.dragboard = null;
 }
 
 /////////////////////////////////////

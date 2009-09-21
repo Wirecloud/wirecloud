@@ -63,12 +63,11 @@ function Tab (tabInfo, workSpace) {
 
 
 	Tab.prototype.updateInfo = function (tabName) {
-
 		//If the server isn't working the changes will not be saved
-		if(tabName=="" || tabName.match(/^\s$/)){//empty name
+		if (tabName=="" || tabName.match(/^\s$/)) {//empty name
 			var msg = interpolate(gettext("Error updating a tab: invalid name"), true);
 			LogManagerFactory.getInstance().log(msg);
-		}else if(!this.workSpace.tabExists(tabName)){
+		} else if (!this.workSpace.tabExists(tabName)) {
 			this.tabInfo.name = tabName;
 			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
 			var o = new Object;
@@ -76,28 +75,28 @@ function Tab (tabInfo, workSpace) {
 			var tabData = Object.toJSON(o);
 			var params = {'tab': tabData};
 			PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
-		}else{
+		} else {
 			var msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
 			LogManagerFactory.getInstance().log(msg);
 		}
 	}
 
 	Tab.prototype.deleteTab = function() {
-		if(this.workSpace.removeTab(this.tabInfo.id)==true){
+		if (this.workSpace.removeTab(this.tabInfo.id)==true) {
 			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-			PersistenceEngineFactory.getInstance().send_delete(tabUrl, this, deleteSuccess, deleteError);		
+			PersistenceEngineFactory.getInstance().send_delete(tabUrl, this, deleteSuccess, deleteError);
 		}
 	}
 
 	Tab.prototype.fillWithLabel = function() {
-		if(this.tabNameHTMLElement != null){
+		if (this.tabNameHTMLElement != null) {
 			this.tabNameHTMLElement.remove();
 		}
 		var nameToShow = (this.tabInfo.name.length>15)?this.tabInfo.name.substring(0, 15)+"..." : this.tabInfo.name;
 		var spanHTML = "<span>"+nameToShow+"</span>";
 		new Insertion.Top(this.tabHTMLElement, spanHTML);
 		var difference = this.tabHTMLElement.getWidth() - this.tabWidth;
-		if(difference!=0)
+		if (difference != 0)
 			LayoutManagerFactory.getInstance().changeTabBarSize(difference);
 		this.tabNameHTMLElement = this.tabHTMLElement.firstDescendant();
 		this.tabWidth = this.tabHTMLElement.getWidth();
@@ -194,17 +193,40 @@ function Tab (tabInfo, workSpace) {
 	}
 	
 	Tab.prototype.go = function () {
-	    LayoutManagerFactory.getInstance().goTab(this);
-	    this.show()
-	    this.makeVisibleInTabBar();
+		LayoutManagerFactory.getInstance().goTab(this);
+		this.show()
+		this.makeVisibleInTabBar();
 	}
 
 	Tab.prototype.getDragboard = function () {
 		return this.dragboard;
 	}
-	
+
 	Tab.prototype.mark_as_painted = function () {
 		this.painted = true;
+	}
+
+	Tab.prototype.preferencesChanged = function(modifiedValues) {
+		for (preferenceName in modifiedValues) {
+			var newLayout = false;
+
+			switch (preferenceName) {
+			case "smart":
+			case "columns":
+			case "cell-height":
+			case "vertical-margin":
+			case "horizontal-margin":
+				newLayout = true;
+				break;
+			default:
+				continue;
+			}
+			break;
+		}
+
+		if (newLayout) {
+			this.dragboard._updateBaseLayout();
+		}
 	}
 
     // *****************
@@ -222,7 +244,9 @@ function Tab (tabInfo, workSpace) {
 	this.tabHTMLElement;
 	this.tabNameHTMLElement = null;
 	this.tabWidth = 0;
-	
+	this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this)
+	this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
+
 	//Now, a TAB is painted on-demand. Only the active tab is rendered automatically!
 	this.painted = false;
 	
@@ -344,7 +368,7 @@ function Tab (tabInfo, workSpace) {
 		logManager.log(msg);
 	}.bind(this);
 	
-	this.addMarkAsVisible = function (){
+	this.addMarkAsVisible = function () {
 		this.firstVisible = false;
 		this.visibleEntryId = this.menu.addOption(_currentTheme.getIconURL("mark_tab_visible"),
 			gettext("Mark as Visible"),
@@ -454,6 +478,13 @@ function Tab (tabInfo, workSpace) {
 			var msg = gettext('Do you really want to remove the "%(tabName)s" tab?');
 			msg = interpolate(msg, {tabName: this.tabInfo.name}, true);
 			LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();})
+		}.bind(this),
+		3);
+
+	this.menu.addOption(_currentTheme.getIconURL('tab_preferences'),
+		gettext("Preferences"),
+		function() {
+			LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
 		}.bind(this),
 		3);
 }

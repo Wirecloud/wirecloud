@@ -29,6 +29,7 @@ function Modules () {
 }
 
 Modules.prototype.THEME_MANAGER = 3;
+Modules.prototype.PLATFORM_PREFERENCES = 4;
 
 // Singleton modules (valid for every WorkSpace)
 Modules.prototype.SHOWCASE = 0;

@@ -223,7 +223,10 @@ td {
 
 
 #logs_link {
-  height: 16px !important;
+  cursor:pointer;
+}
+
+#preferences_link {
   cursor:pointer;
 }
 

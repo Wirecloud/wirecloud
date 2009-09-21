@@ -108,20 +108,26 @@ WindowMenu.prototype.calculatePosition = function() {
 	var menuHeight = this.htmlElement.getHeight();
 	var menuWidth = this.htmlElement.getWidth();
 	
-	if (menuWidth > windowWidth/2){
+	if (menuWidth > windowWidth/2) {
 		menuWidth = windowWidth/2; //IE6 hack
 		this.htmlElement.setStyle({'width': menuWidth+'px'});
 	}
-	
+
 	coordenates[1] = windowHeight/2 - menuHeight/2;
 	coordenates[0] = windowWidth/2 - menuWidth/2;
 
-	if(windowHeight < menuHeight){
-		var padding = 2* parseInt(this.htmlElement.getStyle('padding-top').replace("px",""));
-		
-		this.htmlElement.setStyle({'max-height': windowHeight-padding + 'px'});
-		this.htmlElement.style.top = 0 + "px";
-	}else{
+	if (windowHeight < menuHeight) {
+		var windowStyle = document.defaultView.getComputedStyle(this.htmlElement, null);
+
+		var padding;
+		padding = windowStyle.getPropertyCSSValue("padding-top").
+		          getFloatValue(CSSPrimitiveValue.CSS_PX);
+		padding+= windowStyle.getPropertyCSSValue("padding-bottom").
+		          getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+		this.htmlElement.setStyle({'max-height': windowHeight - padding + 'px',
+		                           'top': '0px'});
+	} else {
 		this.htmlElement.style.top = coordenates[1]+"px";
 	}
 	this.htmlElement.style.left = coordenates[0]+"px";
@@ -352,10 +358,9 @@ function AddMashupWindowMenu (actions) {
 	this.cancelButton.appendChild(document.createTextNode(gettext('Current Workspace')));
 	this.cancelButton.observe("click", this._currentWorkspaceListener.bind(this));
 	this.windowBottom.appendChild(this.cancelButton);
-	
+
 	this.acceptHandler = null;
 	this.cancelHandler = null;
-
 }
 AddMashupWindowMenu.prototype = new WindowMenu();
 
@@ -422,7 +427,6 @@ function InfoWindowMenu(title) {
 		return;
 
 	WindowMenu.call(this, title);
-	
 
 	// Extra HTML Elements
 	var icon = document.createElement('img');
@@ -445,10 +449,7 @@ InfoWindowMenu.prototype = new WindowMenu();
 
 InfoWindowMenu.prototype._dontShowAnymore = function(e) {
 	var layoutManager = LayoutManagerFactory.getInstance();
-	layoutManager.informationMessagesStatus[this.type] = true;
-	CookieManager.createCookie('informationMessagesStatus',
-		layoutManager.informationMessagesStatus,
-		365);
+	PreferencesManagerFactory.getInstance().getPlatformPreferences().set('tip-' + this.type, false);
 
 	layoutManager.hideCover();
 }
@@ -482,7 +483,6 @@ function FormWindowMenu (fields, title) {
 	WindowMenu.call(this, title);
 
 	this.fields = fields;
-	this.not_valid_characters = ['/', '?', '&', ':', '#', '=']
 
 	var table_ = document.createElement('table');
 	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
@@ -516,107 +516,17 @@ function FormWindowMenu (fields, title) {
 
 		// Input Cell
 		var inputCell = document.createElement('td');
+		// TODO
 		//if the field is radio type the label must go after te input
-		if(field.type == 'radio')
+		if (field.type == 'radio')
 			row.insertBefore(inputCell, labelCell);
 		else
 			row.appendChild(inputCell);
-		
-		var extraElements = [];
-		switch (field.type) {
-		case 'color':
-			var input = document.createElement('input');
-			Element.extend(input);
-			input.setAttribute('maxlength', 6);
-			input.setAttribute('type', 'text');
-			input.addClassName('color_input');
-			var inputId = fieldId + '_input';
-			input.setAttribute('id', inputId);
 
-			var button = document.createElement('button');
-			Element.extend(button);
-			button.addClassName('color_button');
-			extraElements.push(button);
+		var inputInterface = InterfaceFactory.createInterface(fieldId, field);
+		inputInterface._insertInto(inputCell);
 
-			var sample = document.createElement('input');
-			var sampleId = fieldId + '_sample';
-			sample.setAttribute('id', sampleId);
-			sample.setAttribute('size', '1');
-			sample.setAttribute('type', 'text');
-			sample.setAttribute('disabled', 'disabled');
-			extraElements.push(sample);
-
-			button.observe('click',
-			    function() {
-			        showColorGrid3(inputId, sampleId);
-			    });
-			break;
-		case 'select':
-			var input = document.createElement('select');
-			if(field.subtype == "multiple")
-				input.multiple = true;
-				
-				var sample = document.createElement('div');
-				Element.extend(sample);
-				var sampleId = fieldId + '_sample';
-				sample.setAttribute('id', sampleId)
-				sample.addClassName('explanation');
-				if(input.multiple)
-					sample.update(gettext('Hold down "Control", or "Command" on a Mac, to select more than one'));
-				extraElements.push(sample);
-			
-			var option;	
-			for (var i = 0; i < field.options.length; i++) {
-/*				var option = document.createElement('option');
-				option.setTextContent(field.options[i][1]);
-				option.setAttribute('value', field.options[i][0]);
-				input.appendChild(option);
-*/ 
-
-				option = new Option(field.options[i][1], field.options[i][0] );
-
-  				try{
-					input.add(option, null); //standards compliant
-  				}catch(ex){
-					input.add(option); //IE<8
-				}
-
-			}
-			break;
-			
-		case 'radio':
-			var input = document.createElement('input');
-			Element.extend(input)
-			input.setAttribute('type', 'radio');
-			input.setAttribute('name', field.name);
-			if(field.checked) input.setAttribute('checked', 'checked');
-			//observe the events and check policies (policy name = field_id)
-			input.observe('click', field.handler, false, fieldId);
-			break;
-			
-		case 'longtext':
-			var input = document.createElement('textarea');
-			input.setAttribute('cols', '50');
-			input.setAttribute('rows', '3');
-			break;
-		case 'id':
-		case 'url':
-		case 'text':
-			var input = document.createElement('input');
-			input.setAttribute('type', 'text');
-			break;
-		case 'boolean':
-			var input = document.createElement('input');
-			input.setAttribute('type', 'checkbox');
-			break;
-		}
-		inputCell.appendChild(input);
-
-		field.input = input;
-		field.defaultValue = field.defaultValue ? field.defaultValue : "";
-
-		for (var i = 0; i < extraElements.length; i++)
-			inputCell.appendChild(extraElements[i]);
+		field.inputInterface = inputInterface;
 	}
 	this.windowContent.insertBefore(table_, this.msgElement);
 
@@ -650,89 +560,29 @@ function FormWindowMenu (fields, title) {
 }
 FormWindowMenu.prototype = new WindowMenu();
 
-FormWindowMenu.prototype._isURL = function(string) {
-	var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-	return regexp.test(string);
-}
-
-FormWindowMenu.prototype._isValidIdentifier = function(field_id) {
-	var field = this.fields[field_id];
-
-	for (var i = 0; i < this.not_valid_characters.length; i++) {
-			var character = this.not_valid_characters[i];
-			
-			if (field.input.value.indexOf(character) >= 0)
-				return false;
-	}
-	
-	return true;
-}
-
 /**
  * Does extra checks for testing field validity. This method must be overwriten
  * by child classes for providing this extra checks.
  *
- * @param {Hash} form Hash with the current values
+ * @param {Hash} fields Hash with the current fields
  */
-FormWindowMenu.prototype.extraValidation = function(form) {
+FormWindowMenu.prototype.extraValidation = function(fields) {
 	//Parent implementation, allways true if no redefined by child class!
 	return "";
 }
 
 FormWindowMenu.prototype._acceptHandler = function(e) {
-	var emptyRequiredFields = "";
-	var badURLFields = "";
-	var badIdFields = "";
-	var errorMsg = "";
 
 	// Validate input fields
-	for (var fieldId in this.fields) {
-		var field = this.fields[fieldId];
-		if (field.required && field.input.value == "")
-			emptyRequiredFields += ", " + field.label;
-
-		if (field.input.value == "")
-			continue;
-
-		switch (field.type) {
-		case 'longtext':
-		case 'text':
-			break;
-		case 'url':
-			if (!this._isURL(field.input.value))
-				badURLFields += ", " + field.label;
-			break;
-		case 'id':
-			for (var i = 0; i < this.not_valid_characters.length; i++) {
-				var character = this.not_valid_characters[i];
-				if (field.input.value.indexOf(character) >= 0)
-					badIdFields += ", " + field.label;
-			}
-			break;
-		}
-	}
+	var validationManager = new ValidationErrorManager();
+	for (var fieldId in this.fields)
+		validationManager.validate(this.fields[fieldId].inputInterface);
 
 	// Extra validations
 	var extraErrorMsg = this.extraValidation(this.fields);
 
 	// Build Error Message
-	if (emptyRequiredFields != "") {
-		var msg = gettext("The following required fields are empty: %(fields)s.");
-		msg = interpolate(msg, {'fields': emptyRequiredFields.substring(2)}, true);
-		errorMsg += "<p>" + msg + "</p>";
-	}
-
-	if (badIdFields != "") {
-		var msg = gettext("The following fields contain invalid characters: %(fields)s.");
-		msg = interpolate(msg, {'fields': badIdFields.substring(2)}, true);
-		errorMsg += "<p>" + msg + "</p>";
-	}
-
-	if (badURLFields != "") {
-		var msg = gettext("The following fields does not contain a valid URL: %(fields)s.");
-		msg = interpolate(msg, {'fields': badURLFields.substring(2)}, true);
-		errorMsg += "<p>" + msg + "</p>";
-	}
+	var errorMsg = validationManager.toHTML();
 
 	if (extraErrorMsg !== null && extraErrorMsg != "")
 		errorMsg += "<p>" + extraErrorMsg + "</p>";
@@ -747,19 +597,8 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 		var form = new Object();
 		for (var fieldId in this.fields) {
 			var field = this.fields[fieldId];
-			switch (field.type) {
-			case 'color':
-				value = this.fields[fieldId].input.value;
-				if (value.indexOf('#') !== -1)
-					value = value.substring(1);
-				break;
-			case 'boolean':
-				value = this.fields[fieldId].input.checked;
-				break;
-			default:
-				value = this.fields[fieldId].input.value;
-				break;
-			}
+			var value = field.inputInterface.getValue();
+
 			if (field.required || value !== "")
 				form[fieldId] = value;
 		}
@@ -772,7 +611,7 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 FormWindowMenu.prototype.show = function () {
 	for (var fieldId in this.fields) {
 		var field = this.fields[fieldId];
-		field.input.value = field.defaultValue;
+		field.inputInterface.reset();
 	}
 
 	WindowMenu.prototype.show.call(this);
@@ -787,7 +626,7 @@ function PublishWindowMenu (element) {
 		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
 		'version': {label: gettext('Version'), type:'id',  required: true},
 		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
-		'email': {label: gettext('Email'), type:'text',  required: true},
+		'email': {label: gettext('Email'), type:'email',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
@@ -805,7 +644,7 @@ function PublishWindowMenu (element) {
 PublishWindowMenu.prototype = new FormWindowMenu();
 
 PublishWindowMenu.prototype.setFocus = function() {
-	this.fields['name'].input.focus();
+	this.fields['name'].inputInterface.focus();
 }
 
 PublishWindowMenu.prototype.executeOperation = function(form) {
@@ -822,18 +661,17 @@ function ShareWindowMenu (element) {
 	var label2 = interpolate(gettext('Share "%(workspace)s" workspace only with the following groups'), {workspace: wsName}, true)
 
 	var fields = {
-		'public_sharing': {label: label1, type:'radio', checked:true, name:'share',
-							handler: function(){this.hideGroups()}.bind(this)},
-		'group_sharing': {label: label2, type:'radio', checked:false, name:'share',
-							handler: function(){this.showGroups()}.bind(this)},		
-		'groups'  : {label: '', type: 'select', subtype: 'multiple', options: []}
+		'public_sharing': {label: label1, type:'radio', defaultValue:true, name:'share', onclick: this.hideGroups.bind(this)},
+		'group_sharing':  {label: label2, type:'radio', defaultValue:false, name:'share', onclick: this.showGroups.bind(this)},
+		'groups':         {label: '', type: 'multiple', options: []}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Share Workspace'));
-	//hide the whole row where the groups select is
-	this.fields['groups'].input.parentNode.parentNode.style.display = 'none';
-	this.fields['groups'].input.addClassName('window_multiple_select');
-	
+	// TODO Remove this workaround
+	// hide the whole row where the groups select is
+	this.fields['groups'].inputInterface.inputElement.parentNode.parentNode.style.display = 'none';
+	this.fields['groups'].inputInterface.inputElement.addClassName('window_multiple_select');
+
 	var warning = document.createElement('div');
 	Element.extend(warning);
 	warning.addClassName('msg warning');
@@ -842,72 +680,73 @@ function ShareWindowMenu (element) {
 }
 ShareWindowMenu.prototype = new FormWindowMenu();
 
-ShareWindowMenu.prototype.showGroups = function(){
+ShareWindowMenu.prototype.showGroups = function() {
 	function onError(transport, e) {
 		errorMsg = gettext('The available groups cannot be displayed');
 		this.setMsg(errorMsg);
+		this.calculatePosition();
 	}
 
 	function onSuccess(transport) {
 		var response = transport.responseText;
-		var groups = eval ('(' + response + ')');
-		
-		var select = this.fields['groups'].input;
+		var groups = JSON.parse(response);
+
+		// TODO Remove this workaround
+		var select = this.fields['groups'].inputInterface.inputElement;
 		select.update();
 		var option;
-		for (var i=0; i<groups.length; i++){
-			option = new Option(groups[i]['name'],groups[i]['id'] );
-			if(groups[i]['sharing']=='true')
+		for (var i = 0; i < groups.length; i++) {
+			option = new Option(groups[i]['name'], groups[i]['id']);
+			if (groups[i]['sharing']=='true')
 				option.disabled = 'disabled';
-			select.add(option, null);
+			try {
+				select.add(option, null);
+			} catch (e) {
+				select.add(option); // IE < 8
+			}
 		}
-		
-		//Show the row where the groups select is
-		this.fields['groups'].input.parentNode.parentNode.style.display = 'table-row';
 
-		
+		// TODO Remove this workaround
+		// Show the row where the groups select is
+		this.fields['groups'].inputInterface.inputElement.parentNode.parentNode.style.display = 'table-row';
+
+		this.calculatePosition();
 	}
+
 	var url = URIs.GET_SHARE_GROUPS.evaluate({'workspace_id': OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.id});
 	PersistenceEngineFactory.getInstance().send_get(url, this, onSuccess, onError);
-	
 }
 
-ShareWindowMenu.prototype.hideGroups = function(){
-	//Hide the row where the groups select is
-	this.fields['groups'].input.parentNode.parentNode.style.display = 'none';
+ShareWindowMenu.prototype.hideGroups = function() {
+	// TODO Remove this workaround
+	// Hide the row where the groups select is
+	this.fields['groups'].inputInterface.inputElement.parentNode.parentNode.style.display = 'none';
+	this.calculatePosition();
 }
 
 ShareWindowMenu.prototype.setFocus = function() {
-	this.fields['public_sharing'].input.focus();
+	this.fields['public_sharing'].inputInterface.focus();
 }
 
 ShareWindowMenu.prototype.extraValidation = function(form) {
-	if(this.fields['group_sharing'].input.checked && this.fields['groups'].input.selectedIndex == -1){
+	if (this.fields['group_sharing'].inputInterface.getValue() && this.fields['groups'].input.selectedIndex == -1){
 		return gettext('You must select a group');
 	}
 	return null
 }
 
 ShareWindowMenu.prototype.executeOperation = function(form) {
-
-	var groups = null;
-	
-	if(this.fields['group_sharing'].input.checked){
-		var select = this.fields['groups'].input;
-		groups = [];
-		for (var i=0; i<select.options.length; i++) {
-	        if (select.options[i].selected) {
-    	        groups.push(parseInt(select.options[i].value));
-            }
-         }
-	}
-    OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
+	var groups = this.fields['group_sharing'].getValue();
+	OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
 }
 
-ShareWindowMenu.prototype.hide = function() {
-	this.fields['public_sharing'].input.click();
-	FormWindowMenu.prototype.hide.call(this);
+ShareWindowMenu.prototype.show = function() {
+	FormWindowMenu.prototype.show.call(this);
+	// TODO remove this workaround
+	this.hideGroups();
 }
+
+
 /**
  * Specific class for Feed creator window.
  */
@@ -915,16 +754,16 @@ function AddFeedMenu (element) {
 	var fields = {
 		'name'          : {label: gettext('Name'), type: 'id', required: true},
 		'URL'           : {label: gettext('URL'), type: 'url',  required: true},
-		'separator1': {type: 'separator', required: true},
+		'separator1'    : {type: 'separator', required: true},
 		'imageURI'      : {label: gettext('Image URL'), type: 'url'},
 		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
 		'feed_color'    : {label: gettext('Template color'),
 		                   type: 'select',
 		                   options: [
-		                             ['blue', gettext('blue')],
-		                             ['orange', gettext('orange')],
-		                             ['red', gettext('red')],
-		                             ['green', gettext('green')]
+		                              {value: 'blue', label: gettext('blue')},
+		                              {value: 'orange', label: gettext('orange')},
+		                              {value: 'red', label: gettext('red')},
+		                              {value: 'green', label: gettext('green')}
 		                            ]
 		                  },
 		'menu_color'    : {label: gettext('Menu Color'), type: 'color'},
@@ -932,18 +771,11 @@ function AddFeedMenu (element) {
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new feed'));
-
-	// TODO remove this hackism needed by color input fields
-	var colorpicker301 = document.createElement('div');
-	Element.extend(colorpicker301);
-	colorpicker301.setAttribute('id', 'colorpicker301');
-	colorpicker301.addClassName('colorpicker301');
-	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
 }
 AddFeedMenu.prototype = new FormWindowMenu();
 
 AddFeedMenu.prototype.setFocus = function() {
-	this.fields['name'].input.focus();
+	this.fields['name'].inputInterface.focus();
 }
 
 AddFeedMenu.prototype.executeOperation = function(form) {
@@ -985,18 +817,11 @@ function AddSiteMenu (element) {
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new site'));
-
-	// TODO remove this hackism needed by color input fields
-	var colorpicker301 = document.createElement('div');
-	Element.extend(colorpicker301);
-	colorpicker301.setAttribute('id', 'colorpicker301');
-	colorpicker301.addClassName('colorpicker301');
-	this.htmlElement.insertBefore(colorpicker301, this.htmlElement.firstChild);
 }
 AddSiteMenu.prototype = new FormWindowMenu();
 
 AddSiteMenu.prototype.setFocus = function() {
-	this.fields['name'].input.focus();
+	this.fields['name'].inputInterface.focus();
 }
 
 AddSiteMenu.prototype.executeOperation = function(form) {
@@ -1021,7 +846,6 @@ AddSiteMenu.prototype.executeOperation = function(form) {
  //TODO: change this class to work as the rest of windows
 function SharedWorkSpaceMenu() {
 	WindowMenu.call(this, gettext('Shared WorkSpace Info'));
-	
 
 	// Extra HTML Elements
 	var icon = document.createElement('img');
@@ -1083,15 +907,74 @@ SharedWorkSpaceMenu.prototype.setURL = function(url) {
 
 SharedWorkSpaceMenu.prototype.setHTML = function(url) {
 	var html_code = '<object width="" height="" data="' + url + '"></object>';
-	
+
 	this.html_codeElement.value = html_code;
-	this.tr2Element.style.display='table-row';	
+	this.tr2Element.style.display='table-row';
 }
+
 SharedWorkSpaceMenu.prototype.hide = function(url) {
 	this.urlElement.update();
 	this.html_codeElement.update();
 	this.tr1Element.style.display='none';
 	this.tr2Element.style.display='none';
 	WindowMenu.prototype.hide.call(this);
-		
+}
+
+/**
+ * Specific class for platform preferences windows.
+ *
+ * @param scope
+ *
+ * @author jmostazo-upm
+ */
+function PreferencesWindowMenu(scope) {
+	WindowMenu.call(this, gettext('Platform Preferences'));
+
+	var table = PreferencesManagerFactory.getInstance().getPreferencesDef(scope).getInterface();
+	this.windowContent.insertBefore(table, this.msgElement);
+
+	// Accept button
+	this.acceptButton = document.createElement('button');
+
+	Element.extend(this.acceptButton);
+	this.acceptButton.appendChild(document.createTextNode(gettext('Save')));
+	this._executeOperation = this._executeOperation.bind(this);
+	this.acceptButton.observe("click", this._executeOperation);
+	this.windowBottom.appendChild(this.acceptButton);
+
+	// Cancel button
+	this.cancelButton = document.createElement('button');
+
+	Element.extend(this.cancelButton);
+	this.cancelButton.appendChild(document.createTextNode(gettext('Cancel')));
+	this.cancelButton.observe("click", this._closeListener);
+	this.windowBottom.appendChild(this.cancelButton);
+}
+PreferencesWindowMenu.prototype = new WindowMenu();
+
+PreferencesWindowMenu.prototype.setManager = function(manager) {
+	this.manager = manager;
+}
+
+PreferencesWindowMenu.prototype._executeOperation = function() {
+	// Validate input fields
+	var validationManager = new ValidationErrorManager();
+	for (var fieldId in this.fields)
+		validationManager.validate(this.fields[fieldId].inputInterface);
+
+	// Build Error Message
+	var errorMsg = validationManager.toHTML();
+
+	// Show error message if needed
+	if (errorMsg != "") {
+		this.setMsg(errorMsg);
+	} else {
+		this.manager.save();
+		LayoutManagerFactory.getInstance().hideCover();
+	}
+}
+
+PreferencesWindowMenu.prototype.show = function () {
+	this.manager.resetInterface('platform');
+	WindowMenu.prototype.show.call(this);
 }

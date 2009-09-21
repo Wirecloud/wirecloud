@@ -93,20 +93,6 @@ var LayoutManagerFactory = function () {
 
 		this.menus = new Array();
 
-		// Information messages
-		this.informationMessagesStatus = CookieManager.readCookie('informationMessagesStatus', true);
-		if (this.informationMessagesStatus !== null) {
-			// Renew information message cookie
-			CookieManager.createCookie('informationMessagesStatus',
-				this.informationMessagesStatus,
-				365);
-		} else {
-			// TODO refactor this
-			this.informationMessagesStatus = [];
-			for (var i = 0; i < 20; i++)
-				this.informationMessagesStatus[i] = false;
-		}
-
 		// Renew theme cookie if needed
 		CookieManager.renewCookie('theme', 365);
 
@@ -384,7 +370,7 @@ var LayoutManagerFactory = function () {
 			this.dragboardLink.addClassName("toolbar_unmarked");
 			/*this.logsLink.removeClassName("toolbar_marked");
 			this.logsLink.addClassName("toolbar_unmarked");*/
-			
+
 /*			this.hideShowCase();
 			this.hideLogs();
 */
@@ -847,7 +833,9 @@ var LayoutManagerFactory = function () {
 
 		//Shows the message information
 		LayoutManager.prototype.showTipMessage = function(msg, type) {
-			if (this.informationMessagesStatus[type]) // Do not show me anymore
+			var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
+
+			if (!platformPreferences.get('tip-' + type)) // Do not show me anymore
 				return;
 
 			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
@@ -867,7 +855,9 @@ var LayoutManagerFactory = function () {
 
 		// Shows a generic information dialog
 		LayoutManager.prototype.showInfoMessage = function(msg, type, title) {
-			if (this.informationMessagesStatus[type]) // Do not show me anymore
+			var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
+
+			if (!platformPreferences.get('tip-' + type)) // Do not show me anymore
 				return;
 
 			// the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
@@ -903,7 +893,7 @@ var LayoutManagerFactory = function () {
 				this.hideCover();
 			}
 
-	        this.showUnclickableCover();
+			this.showUnclickableCover();
 
 			if (!this.menus['sharingWorksSpaceMenu']) {
 				this.menus['sharingWorksSpaceMenu'] = new SharedWorkSpaceMenu();
@@ -948,6 +938,29 @@ var LayoutManagerFactory = function () {
 			this.currentMenu.show();
 		}
 
+		/**
+		 * Shows a dialog to changing platform preferences.
+		 *
+		 * @param scope
+		 * @param manager
+		 */
+		LayoutManager.prototype.showPreferencesWindow = function(scope, manager) {
+			// the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
+			if (this.currentMenu != null) {//only if the layer is displayed.
+				this.hideCover();
+			}
+			this.showUnclickableCover();
+
+			var menuId = 'preferences/' + scope;
+			if (!(menuId in this.menus)) {
+				this.menus[menuId] = new PreferencesWindowMenu(scope);
+			}
+			var dialog = this.menus[menuId];
+			dialog.setManager(manager);
+			this.currentMenu = dialog;
+			this.currentMenu.show();
+		}
+
 		//hides the disabling layer and so, the current menu
 		LayoutManager.prototype.hideCover = function() {
 			if (this.currentMenu) {
@@ -965,13 +978,12 @@ var LayoutManagerFactory = function () {
 
 		LayoutManager.prototype.goTab = function(tab_object){
 			this.markTab(tab_object);
-			
+
 			var tab = tab_object.tabHTMLElement;
-			
+
 			var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
 			fadder.fade();
 		}
-		
 	}
 
 	/*-----------------------------*

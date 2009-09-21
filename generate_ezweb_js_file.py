@@ -36,6 +36,10 @@ inputFiles = {
         'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
+        'js/interfaceLayout/InputInterfaces.js',
+
+        'js/preferencesManager/PreferencesManager.js',
+        'js/preferencesManager/PlatformPref.js',
         'js/persistenceEngine/PersistenceEngine.js',
 
         'js/gadgetModel/XHtml.js',
@@ -129,6 +133,10 @@ inputFiles = {
         'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
+        'js/interfaceLayout/InputInterfaces.js',
+
+        'js/preferencesManager/PreferencesManager.js',
+        'js/preferencesManager/PlatformPref.js',
         'js/persistenceEngine/PersistenceEngineForViewer.js',
 
         'js/gadgetModel/XHtml.js',

@@ -59,7 +59,8 @@ function WorkSpace (workSpaceState) {
 		                  'locked': "true",
 		                  'igadgetList': [],
 		                  'name': gettext("Unusable Tab"),
-		                  'visible': 1
+		                  'visible': 1,
+		                  'preferences': {}
 		                 };
 
 		this.workSpaceGlobalInfo = {
@@ -97,11 +98,12 @@ function WorkSpace (workSpaceState) {
 		try {
 			var visibleTabId = null;
 
-			if (tabs.length>0) {
+			if (tabs.length > 0) {
 				visibleTabId = tabs[0].id;
-				for (var i=0; i<tabs.length; i++) {
+				for (var i = 0; i < tabs.length; i++) {
 					var tab = tabs[i];
-					this.tabInstances[tab.id] = new Tab(tab, this);
+					var tabInstance = new Tab(tab, this);
+					this.tabInstances[tab.id] = tabInstance;
 
 					if (tab.visible == 'true') {
 						visibleTabId = tab.id;
@@ -135,7 +137,7 @@ function WorkSpace (workSpaceState) {
 		this.loaded = true;
 
 		this._createWorkspaceMenu();
-		
+
 		//If workspace is shared, some options must be unavailable!
 		if (this.isShared())
 			this._hide_creator_options();
@@ -211,7 +213,8 @@ function WorkSpace (workSpaceState) {
 		var response = transport.responseText;
 		var tabInfo = JSON.parse(response);
 
-		tabInfo.igadgetList=[];
+		tabInfo.igadgetList = [];
+		tabInfo.preferences = {};
 
 		var newTab = new Tab(tabInfo, this);
 		this.tabInstances[tabInfo.id] = newTab;
@@ -475,12 +478,12 @@ function WorkSpace (workSpaceState) {
 		}
 		return false;
 	}
-	
+
 	WorkSpace.prototype.addTab = function() {
 		if (!this.isValid()) {
 			return;
 		}
-	
+
 		var counter = this.tabInstances.keys().length + 1;
 		var tabName = "MyTab "+counter.toString();
 		//check if there is another tab with the same name
@@ -493,7 +496,6 @@ function WorkSpace (workSpaceState) {
 		tabData = Object.toJSON(o);
 		params = 'tab=' + tabData;
 		PersistenceEngineFactory.getInstance().send_post(tabsUrl, params, this, createTabSuccess, createTabError);
-	
 	}
 
 	WorkSpace.prototype.removeTab = function(tabId){

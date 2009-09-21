@@ -69,7 +69,6 @@
 {% block header %}
 <div id="header">
 <div id="banner">
-	
 	<div id="logo"></div>
 	<div id="toolbar_section" class="toolbar_section">
 		<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
@@ -78,7 +77,7 @@
 			<div id="dragboard_link" class="toolbar_unmarked">
 				<div id="workspace_name"></div>
 			</div>
-			<div id="workspace_menu_link"> 
+			<div id="workspace_menu_link">
 				<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
 			</div>
 		</div>
@@ -88,7 +87,8 @@
 		  {% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 		</div>
 		<!-- LOGS LINK -->
-		<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+		<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+		<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
 		<span> | </span>
 		<span id="themeSelector">
 			<span>{% trans "Theme:" %}</span>
@@ -96,33 +96,32 @@
 				{{ INITIAL_THEME }}
 			</span>
 		</span>
-		<span> | </span>		
-	  {% if is_anonymous %}
-	  	<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
-	  	<span> | </span>
-	  	<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
-	  	<span> | </span>
-	  	<span id="user_section">{% trans "anonymous" %}</span>		  	
-	  {% else %}
-	  	<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
-	  	<span>  | </span>
-	  	<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>
-	  	{%if AUTHENTICATION_SERVER_URL%}
-	  		<span> | </span>
-	  		<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>		  		
-	  	{%endif%}
-	  	<span> | </span>
-	  	<span id="user_section"> {% trans "Welcome" %}, {{ user.username }}</span>		  	
-	  {% endif %}	
+		<span> | </span>
+		{% if is_anonymous %}
+			<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+			<span> | </span>
+			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
+			<span> | </span>
+			<span id="user_section">{% trans "anonymous" %}</span>
+		{% else %}
+			<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
+			<span>  | </span>
+			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>
+			{%if AUTHENTICATION_SERVER_URL%}
+				<span> | </span>
+				<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>
+			{%endif%}
+			<span> | </span>
+			<span id="user_section"> {% trans "Welcome" %}, {{ user.username }}</span>
+		{% endif %}
 	</div>
-</div>	
+</div>
 <div id="bar">
 <div id="tab_section" class="tab_section">
 	<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
 	<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
 	<div id="fixed_bar"><div id="scroll_bar"></div></div>
 	<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-
 </div>
 
 {% block ezweb_logo %}
@@ -177,6 +176,8 @@ _URIConstants.prototype.GET_GADGET = new Template ('/user/{{ user.username }}/ga
 _URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
 _URIConstants.prototype.GET_CONTEXT = '/user/{{ user.username }}/context';
 _URIConstants.prototype.GET_CONTEXT_VALUE = new Template ('/user/{{ user.username }}/context/#{concept}/value');
+_URIConstants.prototype.PLATFORM_PREFERENCES = '/user/{{ user.username }}/preferences/platform';
+_URIConstants.prototype.TAB_PREFERENCES = new Template ('/user/{{ user.username }}/preferences/tab/#{workspace_id}/#{tab_id}');
 _URIConstants.prototype.GET_POST_RESOURCES = '/user/{{ user.username }}/catalogue/resource';
 _URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
 _URIConstants.prototype.GET_RESOURCES_GLOBAL_SEARCH = '/user/{{ user.username }}/catalogue/globalsearch';

@@ -57,7 +57,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
-		
+
 		this.tab.mark_as_painted();
 	}
 
@@ -127,6 +127,35 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			this.dragboardWidth-= this.scrollbarSpace;
 	}
 
+	/**
+	 *
+	 */
+	Dragboard.prototype._buildLayoutFromPreferences = function (description) {
+		var columns = this.tab.preferences.get('columns');
+		var cell_height = this.tab.preferences.get('cell-height');
+		var vertical_margin = this.tab.preferences.get('vertical-margin');
+		var horizontal_margin = this.tab.preferences.get('horizontal-margin');
+		if (this.tab.preferences.get('smart')) {
+			return new SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+		} else {
+			return new ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
+		}
+	}
+
+	/**
+	 *
+	 */
+	Dragboard.prototype._updateBaseLayout = function () {
+		// Create the new Layout
+		var newBaseLayout = this._buildLayoutFromPreferences();
+		newBaseLayout._notifyWindowResizeEvent(this.dragboardWidth);
+		newBaseLayout.initialize();
+
+		// Change our base layout
+		this.baseLayout.moveTo(newBaseLayout);
+		this.baseLayout.destroy();
+		this.baseLayout = newBaseLayout;
+	}
 
 	// ****************
 	// PUBLIC METHODS
@@ -417,14 +446,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			this.recomputeSize();
 	}.bind(this);
 
-	/*
-	 * nº columns                         = 20
-	 * cell height                        = 12 pixels
-	 * vertical Margin between IGadgets   = 3 pixels
-	 * horizontal Margin between IGadgets = 4 pixels
-	 */
-	this.baseLayout = new SmartColumnLayout(this, 20, 12, 3, 4);
-
+	this.baseLayout = this._buildLayoutFromPreferences();
 	this.freeLayout = new FreeLayout(this);
 
 	this.parseTab(tab.tabInfo);

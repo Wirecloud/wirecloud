@@ -40,6 +40,7 @@ from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from django.utils.translation import get_language
+from preferences.views import get_tab_preference_values
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -410,6 +411,8 @@ def get_tab_data(data, tab, user):
     data_ret['visible'] = data_fields['visible']
     data_ret['locked'] = tab.is_locked(user)
     
+
+    data_ret['preferences'] = get_tab_preference_values(data['pk'])
 
     return data_ret
 

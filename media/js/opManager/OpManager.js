@@ -101,9 +101,9 @@ var OpManagerFactory = function () {
 					alert (gettext("Error loading EzWeb Platform"));
 			}
 		}
-		
+
 		/*****WORKSPACE CALLBACK***/
-		var createWSSuccess = function(transport){
+		var createWSSuccess = function(transport) {
 			var response = transport.responseText;
 			var wsInfo = JSON.parse(response);
 			this.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
@@ -127,6 +127,7 @@ var OpManagerFactory = function () {
 		this.contextManagerModule = null;
 		this.catalogue = null;
 		this.logs = null;
+		this.platformPreferences = null;
 		this.persistenceEngine = PersistenceEngineFactory.getInstance();
 		
 		this.loadCompleted = false;
@@ -182,6 +183,10 @@ var OpManagerFactory = function () {
 			LayoutManagerFactory.getInstance().clearErrors();
 			LayoutManagerFactory.getInstance().resizeTabBar();
 			this.showActiveWorkSpace();
+		}
+
+		OpManager.prototype.showPlatformPreferences = function () {
+			PreferencesManagerFactory.getInstance().show();
 		}
 
 		OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
@@ -254,11 +259,10 @@ var OpManagerFactory = function () {
 				
 			this.activeWorkSpace.removeIGadget(iGadgetId);
 		}
-		
+
 		OpManager.prototype.getActiveWorkspaceId = function () {
 			return this.activeWorkSpace.getId();
 		}
-
 
 		OpManager.prototype.sendEvent = function (gadget, event, value) {
 			this.activeWorkSpace.getWiring().sendEvent(gadget, event, value);
@@ -371,25 +375,27 @@ var OpManagerFactory = function () {
 			// Asynchronous load of modules
 			// Each singleton module notifies OpManager it has finished loading!
 
-			if (module == Modules.prototype.THEME_MANAGER) {
-				// Now global modules must be loaded... Showcase is the first!
+			switch (module) {
+			case Modules.prototype.THEME_MANAGER:
+				this.platformPreferences = PreferencesManagerFactory.getInstance();
+				break;
+
+			case Modules.prototype.PLATFORM_PREFERENCES:
 				this.showcaseModule = ShowcaseFactory.getInstance();
 				this.showcaseModule.init();
-			}
+				break;
 
-			if (module == Modules.prototype.SHOWCASE) {
+			case Modules.prototype.SHOWCASE:
 				this.catalogue = CatalogueFactory.getInstance();
-				return;
-			}
+				break;
 
-			if (module == Modules.prototype.CATALOGUE) {
+			case Modules.prototype.CATALOGUE:
 				// All singleton modules has been loaded!
 				// It's time for loading tabspace information!
 				this.loadActiveWorkSpace();
-				return;
-			}
+				break;
 
-			if (module == Modules.prototype.ACTIVE_WORKSPACE) {
+			case Modules.prototype.ACTIVE_WORKSPACE:
 				var layoutManager = LayoutManagerFactory.getInstance();
 				layoutManager.logSubTask(gettext("Activating current Workspace"));
 
@@ -419,7 +425,7 @@ var OpManagerFactory = function () {
 				layoutManager.logStep('');
 				layoutManager._notifyPlatformReady(!this.loadComplete);
 				this.loadCompleted = true;
-				
+
 				//Additional information that a workspace must do after loading! 
 				this.activeWorkSpace.run_post_load_script();
 			}
