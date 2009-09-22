@@ -100,6 +100,7 @@ TagCategory.prototype.getElement = function(){
 		
 		//category name
 		this.catNameElement = document.createElement('span');
+		Element.extend(this.catNameElement);
 		this.catNameElement.className = 'category_name';
 		this.catNameElement.onclick = function(){this.selectMyResources()}.bind(this);
 		this.catNameElement.innerHTML = this.name;
@@ -108,6 +109,7 @@ TagCategory.prototype.getElement = function(){
 		
 		//category children
 		this.catChildrenElement = document.createElement('ul');
+		Element.extend(this.catChildrenElement);
 		this.catChildrenElement.className = 'children_cats';
 		var childCatElement;
 		
