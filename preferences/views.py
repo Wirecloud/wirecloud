@@ -65,7 +65,7 @@ def update_preferences(user, preferences_json):
         else:
             preference = PlatformPreference(user=user, name=name)
 
-        preference.value = preferences_json[name]
+        preference.value = unicode(preferences_json[name])
         preference.save()
 
 

@@ -425,7 +425,7 @@ BooleanInputInterface.prototype._checkValue = function(newValue) {
 }
 
 BooleanInputInterface.prototype.parseFromPersistence = function(value) {
-	return value == '1';
+	return value == 'True';
 }
 
 /**
