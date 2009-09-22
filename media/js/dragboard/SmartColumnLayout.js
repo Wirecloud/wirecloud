@@ -427,10 +427,9 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 			affectedgadget = this.matrix[x][y];
 			if (affectedgadget != null) {
 				// only move the gadget if we didn't move it before
-				offset = iGadget.getHeight() - (y - newPosition.y);
 				affectedY = affectedgadget.getPosition().y;
-				if (affectedY < y)
-					offset += y - affectedY;
+				// y + iGadget.getHeight() - affectedY - (newPosition.y - y);
+				offset = lastY - affectedY;
 				this._moveSpaceDown(this.matrix, affectedgadget,  offset);
 				// move only the topmost gadget in the column
 				break;
@@ -614,6 +613,23 @@ ColumnLayout.prototype.disableCursor = function() {
 	this._destroyCursor(true);
 }
 
+/**
+ * @private
+ */
+ColumnLayout.prototype._restorePositions = function() {
+	this._clearMatrix();
+
+	var keys = this.iGadgets.keys();
+	for (var i = 0; i < keys.length; i++) {
+		var curIGadget = this.iGadgets[keys[i]];
+		if (curIGadget != this.igadgetToMove) {
+			curIGadget.setPosition(this._getPositionOn(this._matrix, curIGadget));
+
+			this._reserveSpace(this.matrix, curIGadget);
+		}
+	}
+}
+
 ColumnLayout.prototype.moveTemporally = function(x, y) {
 	if (this.igadgetToMove == null) {
 		var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
@@ -624,15 +640,14 @@ ColumnLayout.prototype.moveTemporally = function(x, y) {
 	var maxX = this.getColumns() - this.igadgetToMove.getWidth();
 	if (x > maxX) x = maxX;
 
-	// Check if we have to change the position of the cursor
-	y = this._searchInsertPoint(this.shadowMatrix, x, y, this.igadgetToMove.getWidth(), this.igadgetToMove.getHeight());
-
 	if (this.dragboardCursor != null) {
 		var cursorpos = this.dragboardCursor.getPosition();
 
 		if ((cursorpos.y != y) || (cursorpos.x != x)) {
+			this._restorePositions();
+
 			// Change cursor position
-			this._removeFromMatrix(this.matrix, this.dragboardCursor);
+			//this._removeFromMatrix(this.matrix, this.dragboardCursor); Done at _restorePositions
 			this._insertAt(this.dragboardCursor, x, y);
 		}
 	} else {
@@ -785,6 +800,34 @@ SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, 
 		this.searchInsertPointCache[x][y] = this._realSearchInsertPoint(_matrix, x, y, width, height);
 
 	return this.searchInsertPointCache[x][y];
+}
+
+SmartColumnLayout.prototype.moveTemporally = function(x, y) {
+	if (this.igadgetToMove == null) {
+		var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
+		LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
+		return;
+	}
+
+	var maxX = this.getColumns() - this.igadgetToMove.getWidth();
+	if (x > maxX) x = maxX;
+
+	// Check if we have to change the position of the cursor
+	y = this._searchInsertPoint(this.shadowMatrix, x, y, this.igadgetToMove.getWidth(), this.igadgetToMove.getHeight());
+
+	if (this.dragboardCursor != null) {
+		var cursorpos = this.dragboardCursor.getPosition();
+
+		if ((cursorpos.y != y) || (cursorpos.x != x)) {
+			// Change cursor position
+			this._removeFromMatrix(this.matrix, this.dragboardCursor);
+			this._insertAt(this.dragboardCursor, x, y);
+		}
+	} else {
+		this.dragboardCursor = new DragboardCursor(this.igadgetToMove);
+		this.dragboardCursor.paint(this.dragboard.dragboardElement);
+		this._insertAt(this.dragboardCursor, x, y);
+	}
 }
 
 SmartColumnLayout.prototype.initialize = function() {
