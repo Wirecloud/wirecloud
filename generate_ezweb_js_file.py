@@ -239,6 +239,7 @@ def write_file(flavour, release):
            file = open(os.path.join("media", file_name),'r')
 
            #Deleting license header
+           found = False
            while (True):
               line = file.readline()
 
@@ -246,9 +247,15 @@ def write_file(flavour, release):
                   break
 
               if (line.find('*     http://morfeo-project.org') >= 0):
+                 found = True
                  break
+                 
 
-
+           if (not found):
+               print "Error en la cabecera del fichero %s" %file_name
+               print "ABORTANDO"
+               return
+           
            #skiping useless lines after MORFEO URL!
            file.readline()
 
