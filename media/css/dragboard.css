@@ -218,8 +218,8 @@ div.config_interface select {
 }
 
 .floating_gadget_icon img{
-	width: 65px;
-	height: 65px;
+	width: 60px;
+	height: 60px;
 	display: block;
 	padding: 0 5px 2px 5px;
 }
@@ -227,5 +227,6 @@ div.config_interface select {
 .floating_gadget_icon .floating_gadget_title{
 	display: block;
 	cursor: default;
+	font-size:85%;
 }
 

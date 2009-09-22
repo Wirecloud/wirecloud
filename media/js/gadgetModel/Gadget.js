@@ -131,6 +131,7 @@ function GadgetState(gadget_) {
 	var capabilities = []; 
 	var uriwiki = null;
 	var menuColor= null;
+	var icon = null;
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
