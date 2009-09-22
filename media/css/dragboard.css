@@ -210,3 +210,22 @@ div.config_interface select {
 .dragboardwikilink:hover {
 	color: transparent;
 }
+
+.floating_gadget_icon{
+	position: absolute;
+	width: 75px;
+	text-align: center;
+}
+
+.floating_gadget_icon img{
+	width: 65px;
+	height: 65px;
+	display: block;
+	padding: 0 5px 2px 5px;
+}
+
+.floating_gadget_icon .floating_gadget_title{
+	display: block;
+	cursor: default;
+}
+

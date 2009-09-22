@@ -238,7 +238,8 @@ FreeLayout.prototype.acceptMove = function() {
 
 	this.igadgetToMove.setPosition(this.newPosition);
 	this.igadgetToMove._notifyWindowResizeEvent();
-	this.dragboard._commitChanges([this.igadgetToMove.code]);
+	this.raiseToTop(this.igadgetToMove);	
+	//this.dragboard._commitChanges([this.igadgetToMove.code]); It is done in the previous raiseToTop operation
 
 	this.igadgetToMove = null;
 	this.newPosition = null;
@@ -315,6 +316,25 @@ FreeLayout.prototype.raise = function(iGadget) {
 	zPos += 1000;
 	iGadget.setZPosition(zPos + 1);
 	nextIGadget.setZPosition(zPos);
-
+	
+	
 	this.dragboard._commitChanges([iGadget.code, nextIGadget.code]);
+}
+
+FreeLayout.prototype.fillFloatingGadgetsMenu = function(menu) {
+	var igadgetKeys = this.iGadgets.keys();
+	if (igadgetKeys.length > 0){
+		for (i = 0; i < igadgetKeys.length; i++) {
+			key = igadgetKeys[i];
+			curIGadget = this.iGadgets[key];
+	
+			var context = {"igadget":curIGadget};
+			menu.addOption(null, curIGadget.name, function() {
+	                        this.igadget.maximizeAndRaiseToTop();
+	                        LayoutManagerFactory.getInstance().hideCover();
+	                    }.bind(context), i)
+		}
+	}else{
+		menu.addOption(null, gettext("No Floating Gadgets"), function(){}, 0)
+	}
 }

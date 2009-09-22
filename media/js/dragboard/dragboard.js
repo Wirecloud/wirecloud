@@ -93,6 +93,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadgetInfo['height'] = iGadget.getContentHeight();
 			iGadgetInfo['tab'] = this.tabId;
 
+			var icon_position = iGadget.getIconPosition();
+			iGadgetInfo['icon_top'] = icon_position.y;
+			iGadgetInfo['icon_left'] = icon_position.x;
+
 			data['iGadgets'].push(iGadgetInfo);
 		}
 
@@ -260,7 +264,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 	Dragboard.prototype.parseTab = function(tabInfo) {
-		var curIGadget, position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color;
+		var curIGadget, position, icon_position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color;
 
 		var opManager = OpManagerFactory.getInstance();
 
@@ -289,6 +293,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			width = parseInt(curIGadget.width);
 			height = parseInt(curIGadget.height);
 			position = new DragboardPosition(parseInt(curIGadget.left), parseInt(curIGadget.top));
+			icon_position = new DragboardPosition(parseInt(curIGadget.icon_left), parseInt(curIGadget.icon_top));
 			zPos = parseInt(curIGadget.zIndex);
 
 			// Parse layout field
@@ -302,7 +307,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			menu_color = curIGadget.menu_color;
 
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, zPos, width, height, curIGadget.minimized, curIGadget.transparency, menu_color);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, icon_position, zPos, width, height, curIGadget.minimized, curIGadget.transparency, menu_color);
+
 		}
 
 		this.loaded = true;
@@ -345,7 +351,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, width, height, false, false, gadget.getMenuColor());
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, false, gadget.getMenuColor());
 
 		iGadget.save();
 	}
@@ -429,6 +435,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		this.iGadgets[iGadget.id] = iGadget;
 		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo);
+	}
+	
+	Dragboard.prototype.fillFloatingGadgetsMenu = function(menu){
+		this.freeLayout.fillFloatingGadgetsMenu(menu);
 	}
 
 	// *******************
@@ -593,7 +603,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 		document.onmousedown = null; // reenable context menu
 		document.onselectstart = null; // reenable text selection in IE
 		document.oncontextmenu = null; // reenable text selection
-
+		
 		return false;
 	}
 
@@ -831,9 +841,6 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 			tabElement.removeClassName("selected");
 		}, 500);
 		
-		//var fadder = new BackgroundFadder(tabElement, "#F0E68C", ((tabElement.hasClassName("current"))?"#E0E0E0":"#97A0A8"), 1000);
-		//fadder.fade();
-
 		context.selectedTab = null;
 		context.selectedTabElement = null;
 	} else {
@@ -842,6 +849,60 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 
 	context.dragboard = null;
 }
+
+
+/////////////////////////////////////
+// IGadget Icon drag & drop support
+/////////////////////////////////////
+function IGadgetIconDraggable (iGadget) {
+	var context = new Object();
+	context.iGadget = iGadget;
+	context.x = null;
+	context.y = null;
+	Draggable.call(this, iGadget.iconElement, iGadget.iconImg, context,
+	                     IGadgetIconDraggable.prototype.startFunc,
+	                     IGadgetIconDraggable.prototype.updateFunc,
+	                     IGadgetIconDraggable.prototype.finishFunc,
+	                     IGadgetIconDraggable.prototype.canBeDraggedFunc);
+}
+
+IGadgetIconDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
+	return !context.iGadget.layout.dragboard.isLocked();
+}
+
+
+IGadgetIconDraggable.prototype.startFunc = function (draggable, context) {
+	context.x = null;
+	context.y = null;
+	context.oldZIndex = context.iGadget.getZPosition();
+	context.iGadget.setZPosition("999999");
+}
+
+
+IGadgetIconDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
+	context.x = x;
+	context.y = y;
+	return;
+}
+
+IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
+	context.iGadget.setZPosition(context.oldZIndex);
+	if (context.x!=null && context.y!=null){
+		var position = context.iGadget.layout.getCellAt(context.x, context.y);
+		
+		if (position.y < 0)
+			position.y = 0;
+		if (position.x < 0)
+			position.x = 0;
+			
+		context.iGadget.setIconPosition(position);
+		context.iGadget.layout.dragboard._commitChanges([context.iGadget.code]);
+	}else{
+		context.iGadget.maximizeIcon(); //it is here instead of in a click event due to the behaviour of the IE 
+	}
+}
+
+
 
 /////////////////////////////////////
 // resize support

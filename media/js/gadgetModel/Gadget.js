@@ -46,6 +46,7 @@ function Gadget(gadget_, url_) {
 	this.getUriWiki = function() { return state.getUriWiki();}
 	this.getImage = function() { return state.getImage(); }
 	this.setImage = function(image_) { state.setImage(image_); }
+	this.getIcon = function() { return state.getIcon(); } 
 	this.getMenuColor = function() { return state.getMenuColor(); }
 	
 	this.isContratable = function() { 
@@ -139,7 +140,8 @@ function GadgetState(gadget_) {
 	displayName = gadget_.displayName
 	template = new GadgetTemplate(gadget_.variables, gadget_.size);
 	xhtml = new XHtml(gadget_.xhtml);
-	image = gadget_.image;
+	image = gadget_.imageURI;
+	icon = gadget_.iPhoneImageURI;
 	capabilities = gadget_.capabilities;
 	uriwiki = gadget_.wikiURI;
 	menuColor = gadget_.menuColor;
@@ -163,5 +165,6 @@ function GadgetState(gadget_) {
 	this.getUriWiki = function () {return uriwiki;}
 	this.getImage = function() { return image; }
 	this.setImage = function(image_) { image = image_; }
+	this.getIcon = function() { return (icon!="") ? icon :  image;  }
 	this.getMenuColor = function () {return menuColor;}
 }

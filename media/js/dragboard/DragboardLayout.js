@@ -164,8 +164,10 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	if (affectsDragboard) {
 		this.dragboard._registerIGadget(iGadget);
 
-		if (iGadget.isVisible()) // TODO
+		if (iGadget.isVisible()){ // TODO
 			this.dragboard.dragboardElement.appendChild(iGadget.element);
+			this.dragboard.dragboardElement.appendChild(iGadget.iconElement);
+		}
 	}
 
 	this.iGadgets[iGadget.code] = iGadget;
@@ -227,6 +229,8 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
 
 		if (iGadget.element != null) // TODO
 			this.dragboard.dragboardElement.removeChild(iGadget.element);
+		if (iGadget.iconElement != null)
+			this.dragboard.dragboardElement.removeChild(iGadget.iconElement);
 	}
 
 	iGadget.layout = null;

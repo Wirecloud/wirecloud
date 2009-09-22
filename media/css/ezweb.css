@@ -145,6 +145,10 @@ td {
   	cursor: pointer;
 }
 
+#floating_gadgets_launcher{
+	float: right;
+}
+
 #add_tab_link, #left_slider, #right_slider {
   position: relative;
   margin-left: 3px;

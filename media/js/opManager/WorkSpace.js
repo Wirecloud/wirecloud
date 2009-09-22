@@ -680,6 +680,7 @@ function WorkSpace (workSpaceState) {
 	this.workSpaceHTMLElement = $('workspace_name');
 	this.menu = null;
 	this.mergeMenu = null;
+	this.FloatingGadgetsMenu = null;
 	this.unlockEntryPos;
 	this.valid=false;
 
@@ -794,6 +795,16 @@ function WorkSpace (workSpaceState) {
 				LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
 			},
 			optionPosition++);
+		
+		var menuHTML = '<div id="floating_gadgets_list" class="drop_down_menu"></div>';
+		new Insertion.After($('menu_layer'), menuHTML);
+		this.FloatingGadgetsMenu = new DropDownMenu("floating_gadgets_list");
+		Event.observe($("floating_gadgets_launcher"), "click", 
+										function(e){
+											this.FloatingGadgetsMenu.clearOptions();
+											this.visibleTab.getDragboard().fillFloatingGadgetsMenu(this.FloatingGadgetsMenu)
+											LayoutManagerFactory.getInstance().showDropDownMenu('floatingGadgets',this.FloatingGadgetsMenu, Event.pointerX(e), Event.pointerY(e));
+										}.bind(this), true);
 	}
 	
 	this._lockFunc = function(locked) {

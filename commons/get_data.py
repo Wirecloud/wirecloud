@@ -431,6 +431,13 @@ def get_igadget_data(data, user, workspace):
     data_ret['gadget'] = gadget.uri
     data_ret['top'] = position.posY
     data_ret['left'] = position.posX
+    if data_fields['icon_position']:
+        icon_position = Position.objects.get(pk=data_fields['icon_position'])
+        data_ret['icon_top'] = icon_position.posY
+        data_ret['icon_left'] = icon_position.posX
+    else:
+        data_ret['icon_top'] = 0
+        data_ret['icon_left'] = 0
     data_ret['zIndex'] = position.posZ
     data_ret['width'] = position.width
     data_ret['height'] = position.height

@@ -706,6 +706,11 @@ var LayoutManagerFactory = function () {
 					this.currentMenu.show('right-top', posX, posY);
 				}
 				break;
+			case 'floatingGadgets':
+				this.currentMenu = menu;
+				this.currentMenu.show('left', posX, posY);
+				this.showClickableCover();
+				break;
 			default:
 				break;
 			}

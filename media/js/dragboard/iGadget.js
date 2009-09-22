@@ -53,7 +53,7 @@
  *                                         menu. (6 chars with a hexadecimal
  *                                         color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, height, minimized, transparency, menu_color) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, minimized, transparency, menu_color) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -89,6 +89,13 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, zPos, width, 
 	this.statusBar = null;
 	this.extractButton = null;
 
+	//Icon for the minimized floating gadgets
+	this.iconElement = null;
+	this.iconImg = null;
+	this.igadgetIconNameHTMLElement =  null;
+	this.iconPosition = iconPosition;
+	this.iconDraggable =  null;
+	
 	// Menu attributes
 	this.extractOptionId = null;
 	this.extractOptionOrder = 0;
@@ -127,6 +134,10 @@ IGadget.prototype.getGadget = function() {
  * @param {DragboardPosition} position the new position for the iGadget.
  */
 IGadget.prototype.setPosition = function(position) {
+	if (!this.iconPosition || this.iconPosition == this.position){ //set the icon position (first time) or it still follows the gadget
+		this.setIconPosition(position); 
+	}
+	
 	this.position = position;
 
 	if (this.element != null) { // if visible
@@ -141,6 +152,20 @@ IGadget.prototype.setPosition = function(position) {
 }
 
 /**
+ * Sets the position of a gadget icon. The position is calculated relative
+ * to the top-left square of the gadget instance box using cells units.
+ *
+ * @param {DragboardPosition} position the new position for the iGadget.
+ */
+IGadget.prototype.setIconPosition = function(position) {
+	this.iconPosition = position;
+	if (this.iconElement){
+		this.iconElement.style.left = this.layout.getColumnOffset(position.x) + "px";
+		this.iconElement.style.top = this.layout.getRowOffset(position.y) + "px";
+	}
+}
+
+/**
  * Sets the z coordinate position of this iGadget.
  *
  * @param {Number} zPos the new Z coordinate position for the iGadget.
@@ -150,6 +175,8 @@ IGadget.prototype.setZPosition = function(zPos) {
 
 	if (this.element)
 		this.element.style.zIndex = zPos;
+	if (this.iconElement)
+		this.iconElement.style.zIndex = zPos;
 }
 
 /**
@@ -160,6 +187,16 @@ IGadget.prototype.setZPosition = function(zPos) {
  */
 IGadget.prototype.getPosition = function() {
 	return this.position;
+}
+
+/**
+ * Gets the position of a gadget instance minimized. The position is calculated relative
+ * to the top-left square of the gadget instance box using cells units.
+ *
+ * @returns {DragboardPosition} the current position of the iGadget.
+ */
+IGadget.prototype.getIconPosition = function() {
+	return this.iconPosition;
 }
 
 /**
@@ -516,9 +553,7 @@ IGadget.prototype.build = function() {
 	Element.extend(this.statusBar);
 	this.statusBar.addClassName("statusBar");
 	this.element.appendChild(this.statusBar);
-	if (this.minimized) {
-		this.statusBar.setStyle({"display": "none"});
-	}
+	
 
 	// resize handles
 	var resizeHandle;
@@ -556,6 +591,33 @@ IGadget.prototype.build = function() {
 	this.wikilink.setAttribute('target', '_blank');
 	this.wikilink.setAttribute('title', gettext('Access to Information'));
 	this.statusBar.appendChild(this.wikilink);
+	
+	//Icon Element
+	this.iconElement = document.createElement("div");
+	Element.extend(this.iconElement);
+	this.iconElement.addClassName("floating_gadget_icon");
+	
+	this.iconImg = document.createElement("img");
+	Element.extend(this.iconImg);
+	this.iconImg.addClassName("floating_gadget_img");
+	this.iconImg.setAttribute("src",this.gadget.getIcon());
+	this.iconElement.appendChild(this.iconImg);
+	this.iconImg.ondrag=function(){return false;} //IE hack to allow drag&drop over images
+	
+	this.igadgetIconNameHTMLElement = document.createElement("a");
+	Element.extend(this.igadgetIconNameHTMLElement);
+	this.igadgetIconNameHTMLElement.update(this.name);
+	this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
+	this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
+	
+	this.igadgetIconNameHTMLElement.observe("click", function() {this.toggleMinimizeStatus();this.layout.raiseToTop(this);}.bind(this), false);
+	
+	
+}
+
+IGadget.prototype.maximizeIcon = function() {
+		this.toggleMinimizeStatus();
+		this.layout.raiseToTop(this);
 }
 
 /**
@@ -657,6 +719,17 @@ IGadget.prototype.paint = function(onInit) {
 		this._recomputeSize(true);
 	else
 		this.setContentSize(this.contentWidth, this.contentHeight, false);
+	
+	//show or hide icon
+	if (this.minimized && this.onFreeLayout()){ //minimized on Free Layout
+		this.element.setStyle({"visibility":"hidden"});
+		this.iconElement.setStyle({"display":"block"});
+	}else if (!this.minimized){ //not minimized
+		this.element.setStyle({"visibility":"visible"});
+		this.iconElement.setStyle({"display":"none"});
+	} else if (this.minimized && !this.onFreeLayout()){ //minimized on Grid Layout
+		this.statusBar.setStyle({"display": "none"});
+	}
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
@@ -675,6 +748,14 @@ IGadget.prototype.paint = function(onInit) {
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
 	this.setMenuColor(undefined, true);
+	
+	//Icon section
+	this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
+	this.iconDraggable = new IGadgetIconDraggable(this);
+	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
+	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
+	
+	this.iconElement.style.zIndex = this.zPos;
 }
 
 IGadget.prototype.fillWithLabel = function() {
@@ -790,6 +871,7 @@ IGadget.prototype.setName = function (igadgetName) {
 		this.name = igadgetName;
 		this.gadgetMenu.setAttribute("title", igadgetName);
 		this.igadgetNameHTMLElement.update(this.name);
+		this.igadgetIconNameHTMLElement.update(this.name);
 		var o = new Object;
 		o.name = igadgetName;
 		o.id = this.id;
@@ -891,6 +973,13 @@ IGadget.prototype.remove = function() {
 		                                     tabId: dragboard.tabId,
 		                                     iGadgetId: this.id});
 		persistenceEngine.send_delete(uri, this, onSuccess, onError);
+	}
+}
+
+IGadget.prototype.maximizeAndRaiseToTop = function(){
+	this.layout.raiseToTop(this);
+	if (this.minimized){
+		this.toggleMinimizeStatus();
 	}
 }
 
@@ -1347,22 +1436,34 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 	this.minimized = newStatus;
 
 	if (this.minimized) {
-		this.contentWrapper.setStyle({"visibility": "hidden" , "border": "0px"});
-		this.statusBar.setStyle({"display": "none"});
 		this.configurationElement.setStyle({"display": "none"});
-		this.minimizeButtonElement.setAttribute("title", gettext("Maximize"));
-		this.minimizeButtonElement.setAttribute("alt", gettext("Maximize"));
-		this.minimizeButtonElement.removeClassName("minimizebutton");
-		this.minimizeButtonElement.addClassName("maximizebutton");
+		if (this.onFreeLayout()){ //Floating gadget
+			this.element.setStyle({"visibility":"hidden"});
+			this.iconElement.setStyle({"display":"block"});
+		} else{ //Linked to the grid
+			this.contentWrapper.setStyle({"visibility": "hidden" , "border": "0px"});
+			this.statusBar.setStyle({"display": "none"});
+			this.minimizeButtonElement.setAttribute("title", gettext("Maximize"));
+			this.minimizeButtonElement.setAttribute("alt", gettext("Maximize"));
+			this.minimizeButtonElement.removeClassName("minimizebutton");
+			this.minimizeButtonElement.addClassName("maximizebutton");
+		}
 	} else {
-		this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
-		this.statusBar.setStyle({"display": ""});
+		//common actions
 		if (this.configurationVisible == true)
-			this.configurationElement.setStyle({"display": "block"});
+				this.configurationElement.setStyle({"display": "block"});
 		this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));
 		this.minimizeButtonElement.setAttribute("alt", gettext("Minimize"));
 		this.minimizeButtonElement.removeClassName("maximizebutton");
 		this.minimizeButtonElement.addClassName("minimizebutton");
+			
+		if (this.onFreeLayout()){ //Floating gadget
+			this.element.setStyle({"visibility":"visible"});
+			this.iconElement.setStyle({"display":"none"});
+		} else{//Linked to the grid
+			this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
+			this.statusBar.setStyle({"display": ""});
+		}
 	}
 
 	var oldHeight = this.getHeight();
@@ -1563,6 +1664,8 @@ IGadget.prototype.save = function() {
 	var data = new Hash();
 	data['left'] = this.position.x;
 	data['top'] = this.position.y;
+	data['icon_left'] = this.iconPosition.x;
+	data['icon_top'] = this.iconPosition.y;
 	data['zIndex'] = this.zPos;
 	data['width'] = this.contentWidth;
 	data['height'] = this.contentHeight;

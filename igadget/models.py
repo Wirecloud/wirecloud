@@ -42,8 +42,8 @@ class Position(models.Model):
     posX = models.IntegerField(_('PositionX'))
     posY = models.IntegerField(_('PositionY'))
     posZ = models.IntegerField(_('PositionZ'), default=0)
-    height = models.IntegerField(_('Height'))
-    width = models.IntegerField(_('Width'))
+    height = models.IntegerField(_('Height'), blank=True, null=True)
+    width = models.IntegerField(_('Width'), blank=True, null=True)
     minimized = models.BooleanField(_('Minimized'), default=False)
 
     def __unicode__(self):
@@ -56,7 +56,8 @@ class IGadget(models.Model):
     tab = models.ForeignKey(Tab, verbose_name=_('Tab'))
     layout = models.IntegerField(_('Layout'), default=0)
     transparency = models.BooleanField(_('Transparency'), default=False)
-    position = models.ForeignKey(Position, verbose_name=_('Position'))
+    position = models.ForeignKey(Position, verbose_name=_('Position'), related_name="Position")
+    icon_position = models.ForeignKey(Position, verbose_name=_('Icon Position'), related_name="Icon_Position", blank=True, null=True)
     menu_color = models.CharField(max_length=6, default="FFFFFF")
 
     def __unicode__(self):

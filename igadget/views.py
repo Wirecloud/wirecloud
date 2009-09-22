@@ -85,6 +85,8 @@ def SaveIGadget(igadget, user, tab):
     height = igadget.get('height')
     top = igadget.get('top')
     left = igadget.get('left')
+    icon_top = igadget.get('icon_top')
+    icon_left = igadget.get('icon_left')
     zIndex = igadget.get('zIndex')
     layout = igadget.get('layout')
     menu_color = igadget.get('menu_color')
@@ -92,6 +94,10 @@ def SaveIGadget(igadget, user, tab):
     # Creates IGadget position
     position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False)
     position.save()
+    
+    # Creates IGadget icon position
+    icon_position = Position(posX=icon_left, posY=icon_top)
+    icon_position.save()
 
     # Creates the new IGadget
     try:
@@ -102,7 +108,7 @@ def SaveIGadget(igadget, user, tab):
 
         gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, transparency=False, menu_color=menu_color)
+        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
         new_igadget.save()
 
         variableDefs = VariableDef.objects.filter(gadget=gadget)
@@ -174,6 +180,16 @@ def UpdateIGadget(igadget, user, tab):
 
     if igadget.has_key('transparency'):
         ig.transparency = igadget.get('transparency')
+    
+    if igadget.has_key("icon_top") and igadget.has_key("icon_left"):
+        icon_position = ig.icon_position
+        if icon_position:
+            icon_position.posX = igadget.get("icon_left")
+            icon_position.posY = igadget.get("icon_top")
+        else: #backward compatibility (old gadgets without icon position)
+            icon_position = Position(posX=igadget.get("icon_left"), posY=igadget.get("icon_top"))
+        icon_position.save()
+        ig.icon_position = icon_position
 
     ig.save()
 
