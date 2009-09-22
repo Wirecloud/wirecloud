@@ -486,7 +486,7 @@ function MultipleInputInterface(fieldId, fieldDesc) {
 	this.sample = document.createElement('div');
 	Element.extend(this.sample);
 	this.sample.addClassName('explanation');
-	this.sample.setTextContent(gettext('Hold down "Control", or "Command" on a Mac, to select more than one'));
+	this.sample.setTextContent(gettext('Hold down "Control", or "Command" on a Mac, to select more than one item'));
 
 	for (var i = 0; i < fieldDesc.options.length; i++) {
 		var option = new Option(fieldDesc.options[i].label, fieldDesc.options[i].value);

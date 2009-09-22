@@ -136,21 +136,21 @@ var PreferencesManagerFactory = function () {
 		preferences = {
 		  "tip-0": {
 		    "defaultValue": true,
-		    "label":        gettext("Show catalogue tip"),
+		    "label":        gettext("Show catalogue help dialog"),
 		    "type":         "boolean",
-		    "description":  '',
+		    "description":  ''
 		  },
 		  "tip-1": {
 		    "defaultValue": true,
-		    "label":        gettext("Show wiring tip"),
+		    "label":        gettext("Show wiring help dialog"),
 		    "type":         "boolean",
-		    "description":  '',
+		    "description":  ''
 		  },
 		  "tip-2": {
 		    "defaultValue": true,
-		    "label":        gettext("Show dragboard tip"),
+		    "label":        gettext("Show dragboard help dialog"),
 		    "type":         "boolean",
-		    "description":  '',
+		    "description":  ''
 		  }
 		};
 
@@ -163,31 +163,31 @@ var PreferencesManagerFactory = function () {
 		    "defaultValue":  true,
 		    "label":         gettext("Smart grid"),
 		    "type":          "boolean",
-		    "description":   gettext(""),
+		    "description":   gettext("iGadgets will be automatically reordered if this option is enabled. (default: enabled)")
 		  },
 		  "columns": {
 		    "defaultValue":  20,
 		    "label":         gettext("Grid columns"),
 		    "type":          "integer",
-		    "description":   gettext(""),
+		    "description":   gettext("Grid columns. (default: 20)")
 		  },
 		  "cell-height": {
 		    "defaultValue":  12,
-		    "label":         gettext("Cell Heigth (in pixels)"),
+		    "label":         gettext("Cell Height (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext(""),
+		    "description":   gettext("Cell Height. Must be specified in pixel units. (default: 13)")
 		  },
 		  "horizontal-margin": {
 		    "defaultValue":  4,
 		    "label":         gettext("Horizontal Margin between iGadgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Horizontal Margin between iGadgets. Must be specified in pixel units."),
+		    "description":   gettext("Horizontal Margin between iGadgets. Must be specified in pixel units. (default: 4)")
 		  },
 		  "vertical-margin": {
 		    "defaultValue":  3,
 		    "label":         gettext("Vertical Margin between iGadgets (in pixels)"),
 		    "type":          "integer",
-		    "description":   gettext("Vertical Margin between iGadgets. Must be specified in pixel units."),
+		    "description":   gettext("Vertical Margin between iGadgets. Must be specified in pixel units. (default: 3)")
 		  }
 		}
 		definitions = this._processDefinitions(preferences);
