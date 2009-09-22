@@ -18,7 +18,6 @@
 
 #catalogue .head {
 	position:relative;
-	width:100%;
 	padding:0px;
 	margin:0px;
 	height:auto;
@@ -114,7 +113,7 @@
 
 #catalogue .head .advanced_search .advanced_search_right {
 	padding-top: 10px;
-	width: 100%;
+	float: right;
 }
 
 #catalogue .head .advanced_search .advanced_search_right table {
@@ -305,6 +304,7 @@
 	padding: 12px 10px 0 10px;
 	margin: 0;
 	background: #f9f9f9;
+	border-width: 0;
 	border-right: 1px solid #BBBBBB;
 	border-bottom: 1px solid #BBBBBB;
 	-moz-border-radius-bottomright:6px;
@@ -393,7 +393,6 @@
 	float:left;
 	bottom:0px;
 	margin-top: 10px;
-	width:100%;
 	border:1px solid #BBBBBB;
 	border-bottom: 0px;
 	-moz-border-radius-topleft:6px;
@@ -446,10 +445,8 @@
 }
 
 #catalogue .center .resources {
-/*	height:100%;*/
 	overflow-y:auto;
 	overflow-x:hidden;
-	width:100%;
 	float:left;
 }
 
@@ -473,7 +470,7 @@
 	background: url(../images/catalogue/resource-left-top.png) no-repeat top left;
 }
 
-#catalogue .resource > .bottom {
+#catalogue .resource .bottom {
 	position: relative;
 	display: block;
 	height: 11px;
@@ -482,7 +479,7 @@
 	background: url(../images/catalogue/resource-left-bottom.gif) no-repeat top left;
 }
 
-#catalogue .resource > .toolbar {
+#catalogue .resource .toolbar {
 	display: block;
 	height: 22px;
 	padding: 0 5px;
@@ -490,7 +487,7 @@
 	position:relative;
 }
 
-#catalogue .resource > .toolbar > div {
+#catalogue .resource .toolbar div {
 	display: inline;
 }
 
@@ -505,7 +502,7 @@
 
 
 
-#catalogue .resource > .content {
+#catalogue .resource .content {
 	padding:5px 9px 0 5px;
 	display:block;
 	margin: 0px;
@@ -529,7 +526,7 @@
 	border:none;
 }
 
-#catalogue .resource > .wiki a * {
+#catalogue .resource .wiki a * {
 	border:none;
 }
 
@@ -1060,22 +1057,22 @@
 	right: 0px;
 }
 */
-#catalogue .resource:hover > .content {
+#catalogue .resource:hover .content {
 	background-image: url(../images/catalogue/resource-left-fill-select.png);
 }
 
-#catalogue .resource:hover > .bottom {
+#catalogue .resource:hover .bottom {
 	background-image: url(../images/catalogue/resource-left-bottom-select.png)
 }
 
 /*
  * Resource Selection
  */
-#catalogue .resource.selected > .content {
+#catalogue .resource.selected .content {
 	background-image: url(../images/catalogue/resource-left-fill-tagmode.png);
 }
 
-#catalogue .resource.selected > .bottom {
+#catalogue .resource.selected .bottom {
 	background-image: url(../images/catalogue/resource-left-bottom-tagmode.png)
 }
 

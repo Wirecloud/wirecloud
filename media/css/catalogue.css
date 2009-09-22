@@ -99,7 +99,7 @@
 
 #catalogue .head .advanced_search .advanced_search_right {
 	padding-top: 10px;
-	width: 100%;
+	float: right;
 }
 
 #catalogue .head .advanced_search .advanced_search_right table {
@@ -355,7 +355,6 @@
 	float:left;
 	bottom:0px;
 	margin-top: 10px;
-	width:100%;
 }
 #catalogue #resources_container {
 	position:relative;
@@ -402,10 +401,8 @@
 }
 
 #catalogue .center .resources {
-/*	height:100%;*/
 	overflow-y:auto;
 	overflow-x:hidden;
-	width:100%;
 	float:left;
 }
 

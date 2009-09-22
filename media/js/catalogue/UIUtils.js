@@ -702,7 +702,7 @@ UIUtils.setResourcesWidth = function() {
 	if (center) {
 		center.style.width = catalogue_content.offsetWidth - content_padding_left - centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
 //		center.style.width = catalogue.offsetWidth -left_bar.offsetWidth - extraLeftBarPixels - content_padding_left - 2*centerBorder - (UIUtils.isInfoResourcesOpen?(UIUtils.infoResourcesWidth + 20):0) + 'px';
-		resources.style.width = (center.offsetWidth - centerBorder) + 'px';
+		resources.style.width = center.style.width;
 	}
 }
 
@@ -804,7 +804,7 @@ UIUtils.SlideAdvanced = function(element,container) {
         	default:
         		break;
         }
-        $(element+"_toggle").innerHTML = tab;
+       	$(element+"_toggle").innerHTML = tab;
 		$(element+"_toggle").addClassName('advanced_selected');
 		if(element=="advanced_tag"){UIUtils.activateTagMode();}
    }
