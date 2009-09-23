@@ -172,7 +172,7 @@ wIn.prototype = new wConnectable();
 wIn.prototype.connect = function(out) {
 	this.outputs.push(out);
 
-	if (out instanceof wInOut)
+	//if (out instanceof wInOut)
 		out._addInput(this);
 }
 
