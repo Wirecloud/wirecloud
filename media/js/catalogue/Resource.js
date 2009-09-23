@@ -719,19 +719,23 @@ Resource.prototype.showInfo = function() {
 	}));
 	access_template_link.appendChild(access_template_submit_link);
 	if (this._state.getMashupId()==null){ //it is a Gadget (not visible in Mashups)
+
 		var update_code_link = UIUtils.createHTMLElement("div", $H({
 			id: 'update_code_link',
 			class_name: 'link'
 		}));
 		fieldset.appendChild(update_code_link);
-		var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
-			class_name: 'submit_link',
-			innerHTML: gettext('Update code')
-		}));
-		update_code_submit_link.observe("click", function(event) {
-			UIUtils.updateGadgetXHTML();
-		});
-		update_code_link.appendChild(update_code_submit_link);
+
+		if (this._state.getAddedBy() == 'Yes') {
+			var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
+				class_name: 'submit_link',
+				innerHTML: gettext('Update code')
+			}));
+			update_code_submit_link.observe("click", function(event) {
+				UIUtils.updateGadgetXHTML();
+			});
+			update_code_link.appendChild(update_code_submit_link);
+		}
 	}
 	var delete_gadget_link = UIUtils.createHTMLElement("div", $H({
 		id: 'delete_gadget_link',
