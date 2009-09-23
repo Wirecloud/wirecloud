@@ -1456,12 +1456,12 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 		this.minimizeButtonElement.setAttribute("alt", gettext("Minimize"));
 		this.minimizeButtonElement.removeClassName("maximizebutton");
 		this.minimizeButtonElement.addClassName("minimizebutton");
-			
+		this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
+		
 		if (this.onFreeLayout()){ //Floating gadget
 			this.element.setStyle({"visibility":"visible"});
 			this.iconElement.setStyle({"display":"none"});
 		} else{//Linked to the grid
-			this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
 			this.statusBar.setStyle({"display": ""});
 		}
 	}
@@ -1696,6 +1696,15 @@ IGadget.prototype.save = function() {
 IGadget.prototype.moveToLayout = function(newLayout) {
 	if (this.layout == newLayout)
 		return;
+	
+	if (this.minimized && newLayout instanceof FreeLayout){
+		//Convert the bar to an icon
+		this.toggleMinimizeStatus(); //TODO: make this and the next operation better
+		this.minimized = true
+		this.element.setStyle({"visibility":"hidden"});
+		this.contentWrapper.setStyle({"visibility":"hidden"});
+		this.iconElement.setStyle({"display":"block"});
+	}
 
 	// ##### TODO Revise this
 	var contentWidth = this.element.offsetWidth;
