@@ -215,6 +215,7 @@ div.config_interface select {
 	position: absolute;
 	width: 75px;
 	text-align: center;
+	display: none;
 }
 
 .floating_gadget_icon img{
