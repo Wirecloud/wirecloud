@@ -39,7 +39,8 @@
 # @author jmostazo-upm
 
 from django.contrib import admin
-from preferences.models import PlatformPreference, TabPreference
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
 
 admin.site.register(PlatformPreference)
+admin.site.register(WorkSpacePreference)
 admin.site.register(TabPreference)

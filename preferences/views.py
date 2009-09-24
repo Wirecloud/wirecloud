@@ -48,7 +48,7 @@ from commons.resource import Resource
 from commons.authentication import get_user_authentication
 from commons.utils import get_xml_error, json_encode
 from commons.logs_exception import TracedServerError
-from preferences.models import PlatformPreference, TabPreference
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
 from commons.http_utils import PUT_parameter
 from workspace.models import Tab
 
@@ -93,7 +93,7 @@ def update_tab_preferences(tab, preferences_json):
         else:
             preference = TabPreference(tab=tab, name=name)
 
-        preference.value = preferences_json[name]
+        preference.value = unicode(preferences_json[name])
         preference.save()
 
 
@@ -121,6 +121,39 @@ class PlatformPreferencesCollection(Resource):
         except Exception, e:
             transaction.rollback()
             msg = _("Platform Preferences cannot be updated: ") + unicode(e)
+
+            raise TracedServerError(e, {}, request, msg)
+
+class TabPreferencesCollection(Resource):
+    def read(self, request, user_name, workspace_id):
+        user = get_user_authentication(request)
+
+        # Check WorkSpace existance and owned by this user
+        get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id, pk=tab_id)
+
+        result = get_tab_preference_values(tab_id)
+
+        return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
+
+    @transaction.commit_on_success
+    def update(self, request, user_name, workspace_id):
+        user = get_user_authentication(request)
+        received_json = PUT_parameter(request, 'preferences')
+
+        if not received_json:
+            return HttpResponseBadRequest(get_xml_error(_("WorkSpace Preferences JSON expected")), mimetype='application/xml; charset=UTF-8')
+
+        try:
+            preferences_json = simplejson.loads(received_json)
+
+            # Check WorkSpace existance and owned by this user
+            tab = get_object_or_404(WorkSpace, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+
+            update_tab_preferences(tab, preferences_json)
+            return HttpResponse('ok')
+        except Exception, e:
+            transaction.rollback()
+            msg = _("WorkSpace Preferences could not be updated: ") + unicode(e)
 
             raise TracedServerError(e, {}, request, msg)
 
