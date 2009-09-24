@@ -1340,11 +1340,16 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 		// Notify Context Manager about the new igadget's size
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 
-	} else {
-		this._recomputeWrapper();
-		contentHeight = this.element.offsetHeight;
-		this.content.setStyle({height: "0px"});
-		this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
+	} else { //minimized
+		if (basedOnContent){ 
+			this._recomputeWrapper();
+			contentHeight = this.element.offsetHeight;
+			this.content.setStyle({height: "0px"});
+			this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
+		}else{//TEST IT!!!
+			contentHeight = this.element.offsetHeight;
+			this.contentHeight = contentHeight;
+		}
 	}
 
 	if (oldHeight !== this.height) {
