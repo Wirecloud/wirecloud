@@ -105,7 +105,7 @@ function WorkSpace (workSpaceState) {
 					var tabInstance = new Tab(tab, this);
 					this.tabInstances[tab.id] = tabInstance;
 
-					if (tab.visible == 'true') {
+					if (tab.visible) {
 						visibleTabId = tab.id;
 					}
 				}
