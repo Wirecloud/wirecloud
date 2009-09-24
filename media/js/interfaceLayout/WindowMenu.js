@@ -736,7 +736,7 @@ ShareWindowMenu.prototype.extraValidation = function(form) {
 }
 
 ShareWindowMenu.prototype.executeOperation = function(form) {
-	var groups = this.fields['group_sharing'].getValue();
+	var groups = this.fields['group_sharing'].inputInterface.getValue();
 	OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
 }
 
