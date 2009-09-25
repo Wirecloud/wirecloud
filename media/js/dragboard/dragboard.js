@@ -826,7 +826,12 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
 
 	if (context.selectedTab != null) {
 		context.layout.cancelMove();
-		var dragboard = context.dragboard.workSpace.getTab(context.selectedTab).getDragboard();
+		var tab = context.dragboard.workSpace.getTab(context.selectedTab)
+		// On-demand loading of tabs!  
+		if (! tab.is_painted() ) { 
+ 			tab.paint(); 
+ 		}
+		var dragboard = tab.getDragboard();
 
 		var destLayout;
 		if (context.iGadget.onFreeLayout())
