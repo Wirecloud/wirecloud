@@ -340,36 +340,39 @@ IGadget.prototype._updateExtractOption = function() {
 		this.extractButton.removeClassName("extractButton");
 		this.extractButton.addClassName("snapButton");
 		this.extractButton.setAttribute("title", gettext("This iGadget outside the grid."));
+		
+		if (this.lowerOpId == null) {
 
-		// TODO more generic code
-		this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
-		                    gettext("Lower"),
-		                    function() {
-		                        this.layout.lower(this);
-		                        LayoutManagerFactory.getInstance().hideCover();
-		                    }.bind(this),
-		                    this.extractOptionOrder+1, "hide_on_lock");
-		this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
-		                    gettext("Raise"),
-		                    function() {
-		                        this.layout.raise(this);
-		                        LayoutManagerFactory.getInstance().hideCover();
-		                    }.bind(this),
-		                    this.extractOptionOrder+2, "hide_on_lock");
-		this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
-		                    gettext("Lower To Bottom"),
-		                    function() {
-		                        this.layout.lowerToBottom(this);
-		                        LayoutManagerFactory.getInstance().hideCover();
-		                    }.bind(this),
-		                    this.extractOptionOrder+3, "hide_on_lock");
-		this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
-		                    gettext("Raise To Top"),
-		                    function() {
-		                        this.layout.raiseToTop(this);
-		                        LayoutManagerFactory.getInstance().hideCover();
-		                    }.bind(this),
-		                    this.extractOptionOrder+4, "hide_on_lock");
+			// TODO more generic code
+			this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
+			                    gettext("Lower"),
+			                    function() {
+			                        this.layout.lower(this);
+			                        LayoutManagerFactory.getInstance().hideCover();
+			                    }.bind(this),
+			                    this.extractOptionOrder+1, "hide_on_lock");
+			this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
+			                    gettext("Raise"),
+			                    function() {
+			                        this.layout.raise(this);
+			                        LayoutManagerFactory.getInstance().hideCover();
+			                    }.bind(this),
+			                    this.extractOptionOrder+2, "hide_on_lock");
+			this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
+			                    gettext("Lower To Bottom"),
+			                    function() {
+			                        this.layout.lowerToBottom(this);
+			                        LayoutManagerFactory.getInstance().hideCover();
+			                    }.bind(this),
+			                    this.extractOptionOrder+3, "hide_on_lock");
+			this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
+			                    gettext("Raise To Top"),
+			                    function() {
+			                        this.layout.raiseToTop(this);
+			                        LayoutManagerFactory.getInstance().hideCover();
+			                    }.bind(this),
+			                    this.extractOptionOrder+4, "hide_on_lock");
+		}
 	} else {
 		this.menu.updateOption(this.extractOptionId,
 		                       _currentTheme.getIconURL('igadget-extract'),
