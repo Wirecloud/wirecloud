@@ -134,7 +134,7 @@ IGadget.prototype.getGadget = function() {
  * @param {DragboardPosition} position the new position for the iGadget.
  */
 IGadget.prototype.setPosition = function(position) {
-	if (!this.iconPosition || this.iconPosition == this.position){ //set the icon position (first time) or it still follows the gadget
+	if (!this.iconPosition || this.iconPosition == this.position){ //set the icon position (first time) or it still follows the gadget (both positions are a reference to the same object)
 		this.setIconPosition(position); 
 	}
 	
@@ -1738,9 +1738,16 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	} else {
 		this.position.x = oldLayout.getColumnOffset(this.position.x);
 		this.position.x = newLayout.adaptColumnOffset(this.position.x).inLU;
-
+		
 		this.position.y = oldLayout.getRowOffset(this.position.y);
 		this.position.y = newLayout.adaptRowOffset(this.position.y).inLU;
+		
+		if (this.position != this.iconPosition){ //they aren't the same object (the icon has been moved previously)
+			this.iconPosition.x = oldLayout.getColumnOffset(this.iconPosition.x);
+			this.iconPosition.x = newLayout.adaptColumnOffset(this.iconPosition.x).inLU;
+			this.iconPosition.y = oldLayout.getRowOffset(this.iconPosition.y);
+			this.iconPosition.y = newLayout.adaptRowOffset(this.iconPosition.y).inLU;
+		}
 	}
 
 	// ##### TODO Revise this
@@ -1774,6 +1781,8 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	iGadgetInfo['id'] = this.id;
 	iGadgetInfo['top'] = this.position.y;
 	iGadgetInfo['left'] = this.position.x;
+	iGadgetInfo['icon_top'] = this.iconPosition.y;
+	iGadgetInfo['icon_left'] = this.iconPosition.x;
 	iGadgetInfo['zIndex'] = this.zPos;
 	iGadgetInfo['width'] = this.contentWidth;
 	iGadgetInfo['height'] = this.contentHeight;
