@@ -416,6 +416,15 @@ function ChannelInterface(channel, wiringGUI) {
 	// Anchors
 	this.inAnchor = new OutConnectionAnchor(this);
 	this.outAnchor = new InConnectionAnchor(this);
+	
+	// Links and tables for structuring channel's info!
+	this.filter_link = null;
+	this.filter_table = null;
+	this.remote_channel_link = null;
+	this.remote_channel_table = null;
+	
+	this.last_clicked_option_link = null;
+	this.opened_optional_table = false;
 
 	// HTML interface
 	this.htmlElement = document.createElement("div");
@@ -478,21 +487,113 @@ function ChannelInterface(channel, wiringGUI) {
 	this.htmlElement.appendChild(channelContent);
 	channelContent.addClassName("channelContent");
 	Event.observe(channelContent, 'click', function(e) {Event.stop(e);});
+	
+	////////////////////////////////////////////////
+    // MANDATORY AREA!! Impossible to fold!
+    // Channel data:
+    ////////////////////////////////////////////////
 
 	// Channel information showed when the channel is selected
 	var contentTable = document.createElement("table");
 	Element.extend(contentTable);
-	contentTable.addClassName("contentTable");
 	channelContent.appendChild(contentTable);
 
 	// Creates the row for the channel information
 	var contentRow = document.createElement("tr");
 	Element.extend(contentRow);
 	contentTable.appendChild(contentRow);
+	
+	//Channel value
+	//label
+	labelCol = document.createElement("td");
+	labelCol.setAttribute ("width", '20%');
+	contentRow.appendChild(labelCol);
+	
+	labelContent = document.createElement("label");
+	labelContent.innerHTML = gettext("Value") + ":";
+	labelCol.appendChild(labelContent);
+	
+	//value
+	valueCol = document.createElement("td");
+	contentRow.appendChild(valueCol);
+	this.valueElement = document.createElement("div");
+	Element.extend(this.valueElement);
+
+	valueCol.appendChild(this.valueElement);
+	
+	var contentRow = document.createElement("tr");
+	Element.extend(contentRow);
+	contentTable.appendChild(contentRow);
+	var labelCol = document.createElement("td");
+	contentRow.appendChild(labelCol);
+              
+    ////////////////////////////////////////////////
+    // OPTIONAL AREAS!! Hidden by default!
+    ////////////////////////////////////////////////
+    
+    ////////////////////////////////////////////////
+	// OPERATION LINKS!
+	////////////////////////////////////////////////
+	
+	// Filter link
+	var filter_link = document.createElement("div");
+	Element.extend(filter_link);
+	filter_link.addClassName('option_link');
+	filter_link.innerHTML = gettext("Filters");
+	channelContent.appendChild(filter_link);
+	
+	this.filter_link = filter_link;
+	
+	Event.observe(filter_link,
+	  'click',
+	  function (e) {
+	      Event.stop(e);
+	      this._toggle_table_status(this.filter_table, this.filter_link);
+	  }.bind(this));
+	 
+	// Separator
+	var separator = document.createElement("div");
+	Element.extend(separator);
+	separator.addClassName('option_link_separator');
+	separator.innerHTML = gettext("|");
+	channelContent.appendChild(separator);
+	
+	// External channels link
+	var remote_link = document.createElement("div");
+	Element.extend(remote_link);
+	remote_link.addClassName('option_link');
+	remote_link.innerHTML = gettext("Remote channel");
+	channelContent.appendChild(remote_link);
+	
+	this.remote_channel_link = remote_link;
+	
+	Event.observe(remote_link,
+      'click',
+      function (e) {
+          Event.stop(e);
+          this._toggle_table_status(this.remote_channel_table, this.remote_channel_link);
+      }.bind(this));
+	
+	////////////////////////////////////////////////
+	// FILTER TABLE
+	////////////////////////////////////////////////
+	
+	var contentTable = document.createElement("table");
+	Element.extend(contentTable);
+	contentTable.addClassName("contentTable");
+	channelContent.appendChild(contentTable);
+	contentTable.addClassName('fold_table');
+	
+	this.filter_table = contentTable;
 
 	// Filter name row
 	//label
+	var contentRow = document.createElement("tr");
+	Element.extend(contentRow);
+	
+	contentTable.appendChild(contentRow);
 	var labelCol = document.createElement("td");
+	labelCol.setAttribute ("width", '20%');
 	contentRow.appendChild(labelCol);
 
 	var labelContent = document.createElement("label");
@@ -550,24 +651,46 @@ function ChannelInterface(channel, wiringGUI) {
 	Element.extend(this.paramValueLayer);
 	valueCol.appendChild(this.paramValueLayer);
 	
-	//Channel value
-	//label
-	contentRow = document.createElement("tr");
+	////////////////////////////////////////////////
+	// REMOTE CHANNEL's TABLE
+    ////////////////////////////////////////////////
+	
+	var contentTable = document.createElement("table");
+	Element.extend(contentTable);
+	contentTable.addClassName("contentTable");
+	channelContent.appendChild(contentTable);
+	contentTable.addClassName('fold_table');
+	
+	this.remote_channel_table = contentTable;
+	
+	var contentRow = document.createElement("tr");
+	Element.extend(contentRow);
+	
+	// OPERATION ROW!
+	
+	// OPERATION LABEL COLUMN
 	contentTable.appendChild(contentRow);
-	labelCol = document.createElement("td");
+	var labelCol = document.createElement("td");
+	labelCol.setAttribute ("width", '20%');
 	contentRow.appendChild(labelCol);
-	labelContent = document.createElement("label");
-	labelContent.innerHTML = gettext("Value") + ":";
+
+	var labelContent = document.createElement("label");
+	labelContent.innerHTML = gettext("Operation") + ":";
 	labelCol.appendChild(labelContent);
 	
-	//value
-	valueCol = document.createElement("td");
-	contentRow.appendChild(valueCol);
-	this.valueElement = document.createElement("div");
-	Element.extend(this.valueElement);
-
-	valueCol.appendChild(this.valueElement);
-
+	contentTable.appendChild(contentRow);
+	
+	//OPERATION CONTENT COLUMN
+	var contentCol = document.createElement("td");
+	contentRow.appendChild(contentCol);
+	
+	var labelContent = document.createElement("label");
+	//labelContent.innerHTML = gettext("") + ":";
+	contentCol.appendChild(labelContent);
+	 
+	 ////////////////////////////////////////////////
+	 // END OF OPTIONAL AREAS!
+	 ////////////////////////////////////////////////
 
 	// Update the initial information
 	this._updateFilterInterface();
@@ -1001,6 +1124,48 @@ ChannelInterface.prototype._changeFilterToConnectable = function(wiring, paramVa
 		
 	this.connectable.setFilter(this.filter);
 	this.connectable.setFilterParams(paramValues);
+}
+
+/**
+ * Shows the given optional table and hides the rest of them!
+ */
+ChannelInterface.prototype._toggle_table_status = function (table, link) {
+	if (link == this.last_clicked_option_link && this.opened_optional_table) {
+		// Doing click over the same link that is already showed to user!
+		// Hidding table!
+		table.addClassName('fold_table');
+		link.removeClassName('selected_option_link');
+		
+		this.opened_optional_table = false;
+	} else {
+	    // Hiding all tables!
+	    this._fold_all_tables();
+	    	
+		// Showing given table!
+		table.removeClassName('fold_table');
+		link.toggleClassName('selected_option_link');
+		
+		this.opened_optional_table = true;
+	}
+	
+	this.last_clicked_option_link = link;
+}
+
+/**
+ * Fold all optional tables!
+ */
+ChannelInterface.prototype._fold_all_tables = function () {
+	var content_tables = $$('.contentTable');
+	
+	for (var i=0; i<content_tables.length; i++) {
+		content_tables[i].addClassName('fold_table');
+	}
+	
+	var option_links = $$('.option_link');
+	
+	for (var i=0; i<option_links.length; i++) {
+		option_links[i].removeClassName('selected_option_link');
+	}
 }
 
 /**

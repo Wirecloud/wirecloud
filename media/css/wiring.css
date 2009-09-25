@@ -105,7 +105,7 @@
   display: none;
 }
 
-#wiring .newChannel, #wiring #unfold_all_link {
+#wiring .newChannel, #wiring #unfold_all_link, #wiring .option_link {
   cursor: pointer;
 }
 
@@ -237,4 +237,25 @@
 
 #wiring .help_button{
 	display: inline;
+}
+
+#wiring .fold_table {
+  display: none;
+}
+
+#wiring .contentTable {
+  width: 100%;
+  border-top: 1px solid;
+}
+
+#wiring .option_link {
+  display: inline;
+  padding-right: 5px;
+  float: right;
+}
+
+#wiring .option_link_separator {
+  display: inline;
+  padding-right: 5px;
+  float: right;
 }
