@@ -2,6 +2,7 @@ from workspace.models import *
 from igadget.models import *
 from connectable.models import *
 from gadget.models import VariableDef, Gadget
+from preferences.models import *
 
 from django.db import models
 
