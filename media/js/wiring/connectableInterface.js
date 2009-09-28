@@ -684,9 +684,35 @@ function ChannelInterface(channel, wiringGUI) {
 	var contentCol = document.createElement("td");
 	contentRow.appendChild(contentCol);
 	
-	var labelContent = document.createElement("label");
-	//labelContent.innerHTML = gettext("") + ":";
-	contentCol.appendChild(labelContent);
+	this.remoteOperationLabelDiv = document.createElement("div");
+	Element.extend(this.remoteOperationLabelDiv);
+	this.remoteOperationLabelDiv.addClassName("filterValue");
+	contentCol.appendChild(this.remoteOperationLabelDiv);
+	
+
+	if (BrowserUtilsFactory.getInstance().isIE()) {
+		var operationsMenuButton = document.createElement('<input type="button" />');
+		Element.extend(operationsMenuButton);
+	} else {
+		var operationsMenuButton = document.createElement('input');
+		operationsMenuButton.type = "button";
+	}
+	
+	contentRow.appendChild(operationsMenuButton);
+	operationsMenuButton.addClassName("filterMenuLauncher");
+	operationsMenuButton.observe('click',
+		function(e) {
+			var target = BrowserUtilsFactory.getInstance().getTarget(e);
+			target.blur();
+			Event.stop(e);
+			LayoutManagerFactory.getInstance().showDropDownMenu(
+				'filterMenu',
+				this.wiringGUI.filterMenu,
+				Event.pointerX(e),
+				Event.pointerY(e));
+		}.bind(this)
+	);
+	
 	 
 	 ////////////////////////////////////////////////
 	 // END OF OPTIONAL AREAS!

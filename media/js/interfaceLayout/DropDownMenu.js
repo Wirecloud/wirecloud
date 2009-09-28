@@ -414,3 +414,14 @@ ColorDropDownMenu.prototype.addOption = function() {
 
 ColorDropDownMenu.prototype.removeOption = function() {
 }
+
+/////////////////////////////////////////////////////////////////////////
+// Remote Channel Operations
+/////////////////////////////////////////////////////////////////////////
+// Specific drop down menu for the remote channel operations!
+function RemoteChannelOperationsDropDownMenu(idMenu_, parentMenu) {
+	DropDownMenu.call(this, idMenu_, parentMenu);
+}
+
+// Defining inheritance
+RemoteChannelOperationsDropDownMenu.prototype = new DropDownMenu();
