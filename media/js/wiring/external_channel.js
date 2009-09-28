@@ -39,12 +39,13 @@ ExternalChannelInfo.prototype.setURL = function (url) {
 
 ExternalChannelInfo.prototype.createURL = function () {
   	var create_url_success = function (transport) {
-  		this._url = null;
+  		this._channel.set_remote_URL('kk');
   	}
   	
   	var create_url_error = function (transport) {
   		
   	}
   	
-  	PersistenceEngineFactory.getInstance.send_post();
+  	var url = URIs.POST_CREATE_EXTERNAL_CHANNEL;
+  	PersistenceEngineFactory.getInstance().send_post(url, null, this, create_url_success, create_url_error);
 }

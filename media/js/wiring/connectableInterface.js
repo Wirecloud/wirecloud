@@ -742,9 +742,9 @@ function ChannelInterface(channel, wiringGUI) {
 	var contentCol = document.createElement("td");
 	this.remote_url_row.appendChild(contentCol);
 
-	var url_input = document.createElement("input");
-	url_input.addClassName('paramValueInput');
-	contentCol.appendChild(url_input);
+	this.remote_url_input = document.createElement("input");
+	this.remote_url_input.addClassName('paramValueInput');
+	contentCol.appendChild(this.remote_url_input);
 	
 	this.url_input_label = document.createElement("label");
 	Element.extend(this.url_input_label);
@@ -895,6 +895,10 @@ ChannelInterface.prototype.paint_operation = function(op_code) {
 	
 	this.wiringGUI.remote_operations_menu.hide();
 	LayoutManagerFactory.getInstance().hideCover();
+}
+
+ChannelInterface.prototype.set_remote_URL(url) {
+	this.remote_url_input.value = url;
 }
 
 ChannelInterface.prototype._getFilterParams = function () {

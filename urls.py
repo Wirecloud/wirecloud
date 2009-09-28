@@ -67,7 +67,7 @@ urlpatterns = patterns('',
     (r'^contract(s)?', include('resourceSubscription.urls')),
 
     # External Channel Manager
-    (r'^channels(s)/external?', include('externalChannels.urls')),
+    (r'^channel(s)?/external', include('externalChannels.urls')),
 
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),

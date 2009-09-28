@@ -29,78 +29,38 @@
 
 
 #
-from django.db import IntegrityError
-
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django.http import HttpResponse, HttpResponseServerError
-from django.core import serializers
-
 from commons.resource import Resource
 
-from commons.authentication import get_user_authentication, user_authentication
-from commons.get_data import get_gadget_data
-
-from gadget.templateParser import TemplateParser
-
+from django.http import HttpResponse, HttpResponseServerError
 from django.db import transaction
-
 from django.utils.translation import ugettext as _
 
 from commons.utils import get_xml_error, json_encode
-from commons.exceptions import TemplateParseException
-from commons.http_utils import *
-
+from commons.authentication import get_user_authentication, user_authentication
 from commons.logs_exception import TracedServerError
+
+from externalChannels.models import ExternalChannel
+
+import simplejson
 
 class ExternalChannelCollection(Resource):
     @transaction.commit_on_success
-    def create(self, request, user_name=None):
-        user = user_authentication(request, user_name)
-        if request.POST.has_key('url'):
-            templateURL = request.POST['url']
-        else:
-            return HttpResponseServerError('<error>Url not specified</error>', mimetype='application/xml; charset=UTF-8')
+    def create(self, request):
+        user = get_user_authentication(request)
 
-        ########### Template Parser
-        templateParser = None
+        # Getting id
+        external_channel = ExternalChannel()
+        external_channel.save()
+
+        url = request.build_absolute_uri() + '/' + unicode(external_channel.id)
+
+        external_channel.url = url
+        external_channel.save()
+
+        response = dict()
+        response['url'] = external_channel.url;
         
-        try:
-            # Gadget is created only once
-            templateParser = TemplateParser(templateURL)
-            gadget_uri = templateParser.getGadgetUri()
-
-            try:
-                gadget = Gadget.objects.get(uri=gadget_uri)
-            except Gadget.DoesNotExist:
-                # Parser creates the gadget. It's made only if the gadget does not exist
-                templateParser.parse()
-                gadget = templateParser.getGadget()
-            
-            # A new user has added the gadget in his showcase 
-            gadget.users.add(user) 
-            transaction.commit()
-        except TemplateParseException, e:
-            transaction.rollback()
-            msg = _("Error parsing template!")
-            
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-        except IntegrityError:
-            transaction.rollback()
-            msg = _("Gadget already exists")
-
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-        except Exception, e:
-            msg = _("Error creating gadget!")
-
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-            
-        gadgetName = templateParser.getGadgetName()
-        gadgetVendor = templateParser.getGadgetVendor()
-        gadgetVersion = templateParser.getGadgetVersion()
-
-        gadget_entry = GadgetEntry()
-        # POST and GET behavior is alike, both must return a Gadget JSON representation
-        return gadget_entry.read(request, gadgetVendor, gadgetName, gadgetVersion, user_name)
+        return HttpResponse(simplejson.dumps(response), mimetype='application/json; charset=UTF-8')
 
 class ExternalChannelEntry(Resource):
     def read(self, request, user_name=None):

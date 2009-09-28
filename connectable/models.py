@@ -60,7 +60,7 @@ class Filter(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
-class ExternalChannelData(models.Model):
+class ExternalChannelSubscription(models.Model):
 
     url = models.URLField(verify_exists=False)
     
@@ -79,7 +79,7 @@ class InOut(models.Model):
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
     filter_param_values = models.TextField(_('Filter parameter values'), blank=True, null=True)
-    external_channel_data = models.ForeignKey(ExternalChannelData, verbose_name=_('ExternalChannel'), null=True)
+    external_channel_subscription = models.ForeignKey(ExternalChannelSubscription, verbose_name=_('Subscription'), null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name

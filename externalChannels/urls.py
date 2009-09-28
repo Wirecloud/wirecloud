@@ -36,7 +36,7 @@ from externalChannels.views import ExternalChannelCollection
 urlpatterns = patterns('externalChannels.views',
 
     # ExternalChannels
-    (r'^$', ExternalChannelCollection(permitted_methods=('POST'))), 
+    (r'^$', ExternalChannelCollection(permitted_methods=('POST', ))), 
 )
 
 

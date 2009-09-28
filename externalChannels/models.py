@@ -30,12 +30,12 @@
 
 #
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
 from translator.models import TransModel 
 
 class ExternalChannel(models.Model):
+
     url = models.URLField(verify_exists=False)
     value = models.TextField(_('Value'), null=True, blank=True)
     
