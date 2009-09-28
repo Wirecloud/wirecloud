@@ -156,8 +156,8 @@ WiringInterface.prototype.setFilterParam = function () {
 }
 
 WiringInterface.prototype.saveWiring = function () {
-	//if (!this.changed)
-	//	return; // Nothing to do
+	if (!this.changed)
+		return; // Nothing to do
 
 	// Phase 1. Connection deletion
 	for (var i = 0; i < this.channels.length; i++) {
