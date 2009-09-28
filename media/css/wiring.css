@@ -121,7 +121,7 @@
   margin:   5px;
 }
 
-#wiring #unfold_all_link {
+#wiring #unfold_all_link, #wiring .inline {
   display: inline;
 }
 
@@ -239,7 +239,7 @@
 	display: inline;
 }
 
-#wiring .fold_table {
+#wiring .fold_table, #wiring .hide {
   display: none;
 }
 
@@ -258,4 +258,12 @@
   display: inline;
   padding-right: 5px;
   float: right;
+}
+
+#wiring .channelContent td {
+  vertical-align: top;
+}
+
+#wiring .create_url_link, #wiring #remote_operation_tip {
+  display: inline;
 }

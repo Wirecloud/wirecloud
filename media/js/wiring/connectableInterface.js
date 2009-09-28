@@ -423,6 +423,9 @@ function ChannelInterface(channel, wiringGUI) {
 	this.remote_channel_link = null;
 	this.remote_channel_table = null;
 	
+	// Label of operation menu
+	this.operations_menu_label = null;
+	
 	this.last_clicked_option_link = null;
 	this.opened_optional_table = false;
 
@@ -663,13 +666,14 @@ function ChannelInterface(channel, wiringGUI) {
 	
 	this.remote_channel_table = contentTable;
 	
-	var contentRow = document.createElement("tr");
-	Element.extend(contentRow);
-	
 	// OPERATION ROW!
 	
-	// OPERATION LABEL COLUMN
+	var contentRow = document.createElement("tr");
+	Element.extend(contentRow);
 	contentTable.appendChild(contentRow);
+	
+	// OPERATION LABEL COLUMN
+	
 	var labelCol = document.createElement("td");
 	labelCol.setAttribute ("width", '20%');
 	contentRow.appendChild(labelCol);
@@ -684,12 +688,16 @@ function ChannelInterface(channel, wiringGUI) {
 	var contentCol = document.createElement("td");
 	contentRow.appendChild(contentCol);
 	
-	this.remoteOperationLabelDiv = document.createElement("div");
-	Element.extend(this.remoteOperationLabelDiv);
-	this.remoteOperationLabelDiv.addClassName("filterValue");
-	contentCol.appendChild(this.remoteOperationLabelDiv);
+	var operations_layer = document.createElement("div");
+	Element.extend(operations_layer);
+	operations_layer.addClassName("filterValue");
+	contentCol.appendChild(operations_layer);
 	
-
+	this.operations_menu_label = document.createElement("div");
+	this.operations_menu_label.addClassName("inline");
+	Element.extend(this.operations_menu_label);
+	operations_layer.appendChild(this.operations_menu_label);
+	
 	if (BrowserUtilsFactory.getInstance().isIE()) {
 		var operationsMenuButton = document.createElement('<input type="button" />');
 		Element.extend(operationsMenuButton);
@@ -698,7 +706,7 @@ function ChannelInterface(channel, wiringGUI) {
 		operationsMenuButton.type = "button";
 	}
 	
-	contentRow.appendChild(operationsMenuButton);
+	operations_layer.appendChild(operationsMenuButton);
 	operationsMenuButton.addClassName("filterMenuLauncher");
 	operationsMenuButton.observe('click',
 		function(e) {
@@ -706,17 +714,51 @@ function ChannelInterface(channel, wiringGUI) {
 			target.blur();
 			Event.stop(e);
 			LayoutManagerFactory.getInstance().showDropDownMenu(
-				'filterMenu',
-				this.wiringGUI.filterMenu,
+				'remoteChannelOperationsMenu',
+				this.wiringGUI.remote_operations_menu,
 				Event.pointerX(e),
 				Event.pointerY(e));
 		}.bind(this)
 	);
 	
+	// READ/WRITE URL ROW!
+	
+	this.remote_url_row = document.createElement("tr");
+	Element.extend(this.remote_url_row);
+	contentTable.appendChild(this.remote_url_row);
+	
+	// READ/WRITE URL LABEL TD
+	
+	var labelCol = document.createElement("td");
+	labelCol.setAttribute ("width", '20%');
+	this.remote_url_row.appendChild(labelCol);
+
+	var labelContent = document.createElement("label");
+	labelContent.innerHTML = gettext("URL") + ":";
+	labelCol.appendChild(labelContent);
+	
+	// READ/WRITE URL CONTENT TD
+	
+	var contentCol = document.createElement("td");
+	this.remote_url_row.appendChild(contentCol);
+
+	var url_input = document.createElement("input");
+	url_input.addClassName('paramValueInput');
+	contentCol.appendChild(url_input);
+	
+	this.url_input_label = document.createElement("label");
+	Element.extend(this.url_input_label);
+	this.url_input_label.setAttribute("id", "remote_operation_tip");
+	contentCol.appendChild(this.url_input_label);
+	
+	var create_url_link = document.createElement("div");
+	create_url_link.addClassName('create_url_link');
+	create_url_link.innerHTML = gettext("create a new URL");
+	contentCol.appendChild(create_url_link);
 	 
-	 ////////////////////////////////////////////////
-	 // END OF OPTIONAL AREAS!
-	 ////////////////////////////////////////////////
+	////////////////////////////////////////////////
+	// END OF OPTIONAL AREAS!
+	////////////////////////////////////////////////
 
 	// Update the initial information
 	this._updateFilterInterface();
@@ -831,6 +873,30 @@ ChannelInterface.prototype.getFilter = function() {
 	return this.filter;
 }
 
+ChannelInterface.prototype.paint_operation = function(op_code) {
+	var operation_text = this.wiringGUI.remote_operations_menu.getTextFromOp(op_code);
+	this.operations_menu_label.innerHTML = operation_text; 
+
+	switch (op_code) {
+		case 0:
+			this.remote_url_row.addClassName('hide');
+			break;
+		case 1:
+			// Read from remote channel!
+			this.url_input_label.innerHTML = gettext("Enter URL to read from or ");
+			this.remote_url_row.removeClassName('hide');
+			break;
+		case 2:
+			// Write to remote channel!
+			this.url_input_label.innerHTML = gettext("Enter URL to write to or ");
+			this.remote_url_row.removeClassName('hide');
+			break;			 
+	}
+	
+	this.wiringGUI.remote_operations_menu.hide();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
 ChannelInterface.prototype._getFilterParams = function () {
 	// No filter, no params
 	if (this.filter == null)
@@ -911,6 +977,9 @@ ChannelInterface.prototype._updateFilterInterface = function() {
 	// Sets the channel value and the channel filter params
 	this.valueElement.setTextContent(this.getValueWithFilter());
 	this._showFilterParams();
+	
+	// Remote channel operation!
+	this.paint_operation(0, "Disabled");
 }
 
 ChannelInterface.prototype.setFilter = function(filter, wiring) {

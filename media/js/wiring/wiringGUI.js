@@ -105,8 +105,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 
 	Event.observe(this.newChannel, 'click', this._eventCreateChannel);
 
-	// Filter Menu
+	// Menues
 	this._createFilterMenu();
+	this._createRemoteChannelOperationsMenu();
 }
 
 WiringInterface.prototype.show = function () {
@@ -1168,6 +1169,37 @@ WiringInterface.prototype._createFilterMenu = function () {
 	}
 
 	this.filterMenu = filterMenu;
+}
+
+/**
+ * Creating the menu for presenting the channel remote operations available to users.
+ *
+ * @private
+ */
+WiringInterface.prototype._createRemoteChannelOperationsMenu = function () {
+	this.remote_operations_menu = new RemoteChannelOperationsDropDownMenu('remote_channel_operations', null);
+	
+	var disabled = gettext("Disabled");
+	var read = gettext("Read");
+	var write = gettext('Write');
+	
+	var callback = function(e) {
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		target.blur();
+		
+		Event.stop(e);
+		
+		var operation_full_id = target.parentNode.id;
+		var op_code = parseInt(operation_full_id.charAt(operation_full_id.length - 1));
+		var text = target.innerHTML;
+		
+		// Update channel interface according to operation code!
+		this.currentChannel.paint_operation(op_code, target);
+	}.bind(this)
+	
+	this.remote_operations_menu.addOption(null, disabled, callback, 0, null, null);
+	this.remote_operations_menu.addOption(null, read, callback, 1, null, null);
+	this.remote_operations_menu.addOption(null, write, callback, 2, null, null);
 }
 
 /**
