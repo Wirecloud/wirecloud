@@ -613,13 +613,13 @@ IGadget.prototype.build = function() {
 	this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
 	this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
 	
-	this.igadgetIconNameHTMLElement.observe("click", function() {this.toggleMinimizeStatus();this.layout.raiseToTop(this);}.bind(this), false);
+	this.igadgetIconNameHTMLElement.observe("click", function() {this.maximizeIcon();}.bind(this), false);
 	
 	
 }
 
 IGadget.prototype.maximizeIcon = function() {
-		this.toggleMinimizeStatus();
+		this.toggleMinimizeStatus(false);
 		this.layout.raiseToTop(this);
 }
 
@@ -980,10 +980,10 @@ IGadget.prototype.remove = function() {
 }
 
 IGadget.prototype.maximizeAndRaiseToTop = function(){
-	this.layout.raiseToTop(this);
 	if (this.minimized){
-		this.toggleMinimizeStatus();
+		this.toggleMinimizeStatus(false);
 	}
+	this.layout.raiseToTop(this);
 }
 
 /**
@@ -1434,8 +1434,8 @@ IGadget.prototype.isMinimized = function() {
  *
  * @param newStatus new minimize status of the igadget
  */
-IGadget.prototype.setMinimizeStatus = function(newStatus) {
-	if (this.minimized == newStatus)
+IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
+	if (this.minimized == newStatus || this.layout.dragboard.isLocked())
 		return; // Nothing to do
 
 	// TODO add effects?
@@ -1478,14 +1478,17 @@ IGadget.prototype.setMinimizeStatus = function(newStatus) {
 	this._recomputeHeight(true);
 
 	// Notify resize event
-	this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, true);
+	var persist = persistence;
+	if (persist == null)
+		persist = true;		
+	this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist);
 }
 
 /**
  * Toggles the minimize status of this gadget
  */
-IGadget.prototype.toggleMinimizeStatus = function () {
-	this.setMinimizeStatus(!this.minimized);
+IGadget.prototype.toggleMinimizeStatus = function (persistence) {
+	this.setMinimizeStatus(!this.minimized, persistence);
 }
 
 /**
