@@ -81,9 +81,9 @@ var LayoutManagerFactory = function () {
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
 		if ($('lite_toolbar_section')) {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
 		} else {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
 		}
 		
 		//scroll bar
@@ -103,9 +103,9 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.resizeTabBar = function () {
 
 			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth -  $('floating_gadgets_launcher').offsetWidth - 30;
 			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
 			}
 
 			this.changeTabBarSize(0);
