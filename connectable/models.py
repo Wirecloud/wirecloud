@@ -60,6 +60,18 @@ class Filter(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
+class ExternalChannelData(models.Model):
+
+    url = models.URLField(verify_exists=False)
+    
+    REMOTE_OPERATION = (
+        ('DISABLED', '0'),
+        ('READ', '1'),
+        ('WRITE', '2'),
+    )
+    operation_code = models.CharField(_('Operation'), max_length=1, choices=REMOTE_OPERATION)
+
+
 class InOut(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -67,6 +79,7 @@ class InOut(models.Model):
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
     filter_param_values = models.TextField(_('Filter parameter values'), blank=True, null=True)
+    external_channel_data = models.ForeignKey(ExternalChannelData, verbose_name=_('ExternalChannel'), null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
