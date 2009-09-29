@@ -331,8 +331,45 @@ var OpManagerFactory = function () {
 					continueLoading(_defaultTheme, null);
 				}
 			}
+
+			// EzWeb fly
+			if (BrowserUtilsFactory.getInstance().isIE()) {
+				this.flyStyleSheet = document.createStyleSheet();
+			} else {
+				s = document.createElement('style');
+				s.type = "text/css";
+				var h = document.getElementsByTagName("head")[0];
+				h.appendChild(s);
+				this.flyStyleSheet = document.styleSheets[document.styleSheets.length - 1];
+			}
+
+			// Load initial theme
 			_currentTheme = new Theme('default', null, initTheme);
 		}
+
+		/**
+		 * Refresh EzWeb fly using current theme.
+		 */
+		OpManager.prototype.refreshEzWebFly = function() {
+			var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+');' +
+			            'background-repeat: no-repeat;' +
+			            'background-attachment:scroll;' +
+			            'background-position: center bottom;';
+
+			if (BrowserUtilsFactory.getInstance().isIE()) {
+				while (this.flyStyleSheet.rules.length > 0)
+					this.flyStyleSheet.removeRule(0);
+
+				this.flyStyleSheet.addRule('#wrapper', rules);
+			} else {
+				while (this.flyStyleSheet.cssRules.length > 0)
+					this.flyStyleSheet.deleteRule(0);
+
+				this.flyStyleSheet.insertRule('#wrapper {' + rules + '}',
+				                              this.flyStyleSheet.cssRules.length);
+			}
+		}
+
 
 		/**
 		 * Unloads the EzWeb Platform. This method is called, by default, when
@@ -377,6 +414,7 @@ var OpManagerFactory = function () {
 
 			switch (module) {
 			case Modules.prototype.THEME_MANAGER:
+				this.refreshEzWebFly();
 				this.platformPreferences = PreferencesManagerFactory.getInstance();
 				break;
 
@@ -401,20 +439,6 @@ var OpManagerFactory = function () {
 
 				this.showActiveWorkSpace();
 //				this.changeActiveWorkSpace(this.activeWorkSpace);
-
-				//ezweb fly
-				var s;
-				var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+'); background-repeat: no-repeat; background-attachment:scroll; background-position: center bottom;';
-				if(BrowserUtilsFactory.getInstance().isIE()) {
-					s = document.createStyleSheet();
-					s.addRule('#wrapper', rules);
-				}else{
-					s = document.createElement('style');
-					s.type = "text/css";
-					s.setTextContent('#wrapper {' + rules + '}');
-					var h = document.getElementsByTagName("head")[0];
-					h.appendChild(s);
-				}
 
 				//fixes for IE6
 				//Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs

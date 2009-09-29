@@ -267,6 +267,7 @@ var LayoutManagerFactory = function () {
 				// Save theme selection into a cookie
 				CookieManager.createCookie('theme', theme.name, 365);
 
+				OpManagerFactory.getInstance().refreshEzWebFly();
 				layoutManager._notifyPlatformReady(false);
 			}
 
