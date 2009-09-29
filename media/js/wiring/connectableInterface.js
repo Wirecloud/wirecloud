@@ -897,7 +897,7 @@ ChannelInterface.prototype.paint_operation = function(op_code) {
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
-ChannelInterface.prototype.set_remote_URL(url) {
+ChannelInterface.prototype.set_remote_URL = function(url) {
 	this.remote_url_input.value = url;
 }
 
