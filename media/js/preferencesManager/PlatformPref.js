@@ -285,6 +285,8 @@ function Preferences(definitions, values) {
 		return;
 
 	this._preferences = new Object();
+
+	var inherit, value;
 	for (var key in definitions) {
 		var definition = definitions[key];
 
