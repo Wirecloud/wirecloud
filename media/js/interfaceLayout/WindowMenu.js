@@ -509,6 +509,7 @@ function FormWindowMenu (fields, title) {
 
 		// Label Cell
 		var labelCell = row.insertCell(-1);
+		Element.extend(labelCell);
 		labelCell.addClassName('label');
 
 		var label = document.createElement('label');
