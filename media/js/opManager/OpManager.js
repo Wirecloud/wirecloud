@@ -57,7 +57,7 @@ var OpManagerFactory = function () {
 						continue;
 					}
 				} else {
-					if (workSpace.active == "true") {
+					if (workSpace.active) {
 						activeWorkSpace = this.workSpaceInstances[workSpace.id];
 					}
 				}
@@ -446,7 +446,7 @@ var OpManagerFactory = function () {
 
 				//fixes for IE6
 				//Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs
-				if(BrowserUtilsFactory.getInstance().getBrowser() == "IE6"){
+				if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
 					IE7.recalc();
 				}
 

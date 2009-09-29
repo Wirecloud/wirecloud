@@ -73,6 +73,7 @@ function WorkSpace (workSpaceState) {
 		this.tabInstances = new Hash();
 		this.tabInstances[0] = new Tab(initialTab, this);
 		this.visibleTab = this.tabInstances[0];
+		this.preferences = null;
 
 		this.loaded = true;
 
@@ -89,13 +90,18 @@ function WorkSpace (workSpaceState) {
 		layoutManager.logStep('');
 		layoutManager.logSubTask(gettext('Processing workspace data'));
 
-		// JSON-coded iGadget-variable mapping
-		var response = transport.responseText;
-		this.workSpaceGlobalInfo = JSON.parse(response);
-
-		var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
-
 		try {
+			// JSON-coded iGadget-variable mapping
+			var response = transport.responseText;
+			this.workSpaceGlobalInfo = JSON.parse(response);
+
+			// Load workspace preferences
+			var preferenceValues = this.workSpaceGlobalInfo['workspace']['preferences'];
+			this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this)
+			this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
+
+			// Load workspace tabs
+			var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 			var visibleTabId = null;
 
 			if (tabs.length > 0) {
@@ -136,6 +142,9 @@ function WorkSpace (workSpaceState) {
 
 		this.loaded = true;
 
+		var workspaceTheme = this.preferences.get('theme');
+		LayoutManagerFactory.getInstance().changeCurrentTheme(workspaceTheme);
+
 		this._createWorkspaceMenu();
 
 		//If workspace is shared, some options must be unavailable!
@@ -164,7 +173,7 @@ function WorkSpace (workSpaceState) {
 		
 		for (var i=0; i<tabList.length; i++) {
 			var tab = this.tabInstances[tabList[i]];
-			tab.destroy;
+			tab.destroy();
 			//TODO:treatment of wiring, varManager, etc.
 		}
 		LayoutManagerFactory.getInstance().hideCover();
@@ -395,7 +404,7 @@ function WorkSpace (workSpaceState) {
 		for (var i = 0; i < tabs.length; i++) {
 			var tab = tabs[i];
 			var igadget = this.tabInstances[tab].getDragboard().getIGadget(igadgetId);
-			
+
 			if (igadget)
 				return igadget;
 		}
@@ -532,7 +541,7 @@ function WorkSpace (workSpaceState) {
 
 		this.visibleTab = null;
 	}
-	
+
 	WorkSpace.prototype.unload = function() {
 		var layoutManager = LayoutManagerFactory.getInstance();
 		layoutManager.logSubTask(gettext("Unloading current workspace"));
@@ -555,6 +564,12 @@ function WorkSpace (workSpaceState) {
 		for (var i=0; i<tabKeys.length; i++) {
 			this.unloadTab(tabKeys[i]);
 		}
+
+		if (this.preferences) {
+			this.preferences.destroy();
+			this.preferences = null;
+		}
+
 		// reset the values used to figure out the size of the tabBar
 		layoutManager.resetTabBar();
 
@@ -692,8 +707,8 @@ function WorkSpace (workSpaceState) {
 			this.tabInstances[keys[i]]._lockFunc(locked);
 		}
 	}.bind(this);
-	
-	
+
+
 	this._checkLock = function() {
 		var keys = this.tabInstances.keys();
 		var all = true;
@@ -742,8 +757,8 @@ function WorkSpace (workSpaceState) {
 		}
 		return numRemoved;
 	}.bind(this);
-	
-	this.markAsActive = function (){
+
+	this.markAsActive = function () {
 		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 		var o = new Object;
 		o.active = "true"
@@ -751,14 +766,15 @@ function WorkSpace (workSpaceState) {
 		var params = {'workspace': workSpaceData};
 		PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, this.markAsActiveSuccess, this.markAsActiveError);
 	}.bind(this);
-	
+
 	this.markAsActiveSuccess = function() {
-		this.workSpaceGlobalInfo.workspace.active = "true";
-		this.workSpaceState.active = "true";
-		if(this.activeEntryId!=null){
+		this.workSpaceGlobalInfo.workspace.active = true;
+		this.workSpaceState.active = true;
+		if (this.activeEntryId != null) {
 			this.menu.removeOption(this.activeEntryId);
 			this.activeEntryId = null;
 		}
+		PreferencesManagerFactory.getInstance().getPlatformPreferences().set('initial-theme', this.preferences.get('theme'));
 	}.bind(this);
 
 	this.markAsActiveError = function(transport, e) {
@@ -830,6 +846,13 @@ WorkSpace.prototype._createWorkspaceMenu = function() {
 				OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
 				LayoutManagerFactory.getInstance().hideCover();
 			},
+			optionPosition++);
+
+		this.menu.addOption(_currentTheme.getIconURL('workspace_preferences'),
+			gettext("Preferences"),
+			function() {
+				LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
+			}.bind(this),
 			optionPosition++);
 
 		this.unlockEntryPos = optionPosition;
@@ -911,6 +934,23 @@ WorkSpace.prototype._createWorkspaceMenu = function() {
 						this.visibleTab.getDragboard().fillFloatingGadgetsMenu(this.FloatingGadgetsMenu)
 						LayoutManagerFactory.getInstance().showDropDownMenu('floatingGadgets',this.FloatingGadgetsMenu, Event.pointerX(e), Event.pointerY(e));
 					}.bind(this), true);
+}
+
+WorkSpace.prototype.preferencesChanged = function(modifiedValues) {
+	for (preferenceName in modifiedValues) {
+		var newLayout = false;
+
+		switch (preferenceName) {
+		case "theme":
+			var newTheme = modifiedValues[preferenceName];
+			LayoutManagerFactory.getInstance().changeCurrentTheme(newTheme);
+			if (this.workSpaceGlobalInfo.workspace.active)
+				PreferencesManagerFactory.getInstance().getPlatformPreferences().set('initial-theme', newTheme);
+			break;
+		default:
+			continue;
+		}
+	}
 }
 
 /**

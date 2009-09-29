@@ -53,6 +53,11 @@ function WindowMenu(title) {
 	this.titleElement.className = "window_title";
 	windowTop.appendChild(this.titleElement);
 
+	var clearer = document.createElement('div');
+	Element.extend(clearer);
+	clearer.addClassName("floatclearer");
+	windowTop.appendChild(clearer);
+
 	// Window Content
 	this.windowContent = document.createElement('div');
 	Element.extend(this.windowContent);
@@ -485,6 +490,8 @@ function FormWindowMenu (fields, title) {
 	this.fields = fields;
 
 	var table_ = document.createElement('table');
+	table_.setAttribute('cellspacing', '0');
+	table_.setAttribute('cellpadding', '0');
 	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
 	table_.appendChild(table);
 	for (var fieldId in this.fields) {
@@ -502,6 +509,7 @@ function FormWindowMenu (fields, title) {
 
 		// Label Cell
 		var labelCell = row.insertCell(-1);
+		labelCell.addClassName('label');
 
 		var label = document.createElement('label');
 		label.appendChild(document.createTextNode(field.label));
@@ -928,7 +936,7 @@ SharedWorkSpaceMenu.prototype.hide = function(url) {
  * @author jmostazo-upm
  */
 function PreferencesWindowMenu(scope) {
-	WindowMenu.call(this, gettext('Platform Preferences'));
+	WindowMenu.call(this, '');
 
 	var table = PreferencesManagerFactory.getInstance().getPreferencesDef(scope).getInterface();
 	this.windowContent.insertBefore(table, this.msgElement);
@@ -975,6 +983,7 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
 }
 
 PreferencesWindowMenu.prototype.show = function () {
+	this.titleElement.setTextContent(this.manager.buildTitle());
 	this.manager.resetInterface('platform');
 	WindowMenu.prototype.show.call(this);
 }

@@ -33,6 +33,7 @@ import stat, os
 from django.conf import settings
 from commons.utils import json_encode
 from catalogue.models import Category, Tag
+from preferences.views import get_user_theme
 
 def server_url(request):
     ret = {}
@@ -126,14 +127,15 @@ def theme_url(request):
                 themes.append(filename)
 
         themes.sort(key=str.lower)
-        settings.CACHED_THEMES = json_encode(themes)
+
+        settings.CACHED_THEMES = themes
+        settings.CACHED_THEMES_JSON = json_encode(themes)
 
     # Process current theme
-    if request.COOKIES.has_key('theme'):
-        theme = request.COOKIES['theme']
-    else:
-        theme = settings.DEFAULT_THEME
+    theme = get_user_theme(request.user, settings.DEFAULT_THEME)
+    if not (theme in settings.CACHED_THEMES):
+      theme = settings.DEFAULT_THEME
 
     theme_url = settings.MEDIA_URL + "themes/" + theme
 
-    return {'THEMES': settings.CACHED_THEMES, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
+    return {'THEMES': settings.CACHED_THEMES_JSON, 'DEFAULT_THEME': settings.DEFAULT_THEME, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}

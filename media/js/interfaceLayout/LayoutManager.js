@@ -93,9 +93,6 @@ var LayoutManagerFactory = function () {
 
 		this.menus = new Array();
 
-		// Renew theme cookie if needed
-		CookieManager.renewCookie('theme', 365);
-
 		// ***************
 		// PUBLIC METHODS 
 		// ****************
@@ -117,12 +114,16 @@ var LayoutManagerFactory = function () {
 			subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
 			if (subtaskpercentage < 0)
 				subtaskpercentage = 0;
+			else if (subtaskpercentage > 100)
+				subtaskpercentage = 100;
 
 			taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
 			taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
 			taskpercentage = Math.round(taskpercentage);
 			if (taskpercentage < 0)
 				taskpercentage = 0;
+			else if (taskpercentage > 100)
+				subtaskpercentage = 100;
 
 			msg = gettext("%(task)s %(percentage)s%");
 			percentage = Math.round((this.currentSubTask * 100) / this.totalSubTasks);
@@ -184,35 +185,6 @@ var LayoutManagerFactory = function () {
 				Event.observe(window,
 				              "resize",
 				              this.resizeWrapper.bind(this));
-
-				// Build theme list
-				if ($('themeMenu') == null) {
-					var themes = _THEMES;
-					var menuHTML = '<div id="themeMenu" class="drop_down_menu"></div>';
-					new Insertion.After($('menu_layer'), menuHTML);
-					var themeMenu = new DropDownMenu('themeMenu');
-
-					for (var i = 0; i < themes.length; i++) {
-						var themeName = themes[i]
-						themeMenu.addOption(null,
-						                    themeName,
-						                    function() {
-						                        LayoutManagerFactory.getInstance().hideCover();
-						                        LayoutManagerFactory.getInstance().changeCurrentTheme(this.theme);
-						                    }.bind({theme:themeName}),
-						                    i);
-					}
-
-					if($('themeSelector')) {
-						$('themeSelector').observe('click',
-							function (e) {
-								LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-								                                                      themeMenu,
-								                                                      Event.pointerX(e),
-								                                                      Event.pointerY(e));
-							});
-					}
-				}
 			}
 
 			var loadingMessage = $("loading-message");
@@ -260,15 +232,11 @@ var LayoutManagerFactory = function () {
 
 				_currentTheme.deapplyStyle();
 				_currentTheme = theme;
-				$("themeLabel").setTextContent(theme.name);
 				_currentTheme.applyStyle();
-				layoutManager.resizeWrapper();
 
 				// TODO move this code to opManager?
 				OpManagerFactory.getInstance().activeWorkSpace._themeLoaded();
-
-				// Save theme selection into a cookie
-				CookieManager.createCookie('theme', theme.name, 365);
+				layoutManager.resizeWrapper();
 
 				OpManagerFactory.getInstance().refreshEzWebFly();
 				layoutManager._notifyPlatformReady(false);

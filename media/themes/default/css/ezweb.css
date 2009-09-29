@@ -283,7 +283,43 @@ a, a:visited{
 }
 
 .window_menu .window_content {
-  margin-top: 2em;
+  margin-top: 2ex;
+}
+
+.window_menu .window_content tr:hover {
+  background: #C4D2DD;
+}
+
+.window_menu .window_content td {
+  padding: 0.7ex 1ex;
+}
+
+.window_menu .window_content td input {
+  vertical-align: sub;
+}
+
+.window_menu .window_content td.label {
+  text-align: left;
+  padding-right: 2ex;
+  font-weight: bold;
+}
+
+.window_menu .window_content .complexTable {
+  width: 100%;
+}
+
+.window_menu .window_content .complexTable td {
+  padding-left: 0;
+}
+
+.window_menu .window_content .complexTable td.inheritCell {
+  text-align: left;
+  padding-right: 2ex;
+  padding-left: 1ex;
+}
+
+.window_menu .window_content .complexTable td.inheritCell input {
+  margin-right: 1ex;
 }
 
 .window_menu .window_content .msg {

@@ -159,6 +159,13 @@ InputInterface.prototype.isEmpty = function() {
 	return this.getValue() == "";
 }
 
+/**
+ * @private
+ *
+ * Must be implemented by child classes. This method checks that the given value
+ * is valid for this <code>InputInterface</code>. Things as checking if the
+ * value is empty but required is out of scope of this method.
+ */
 InputInterface.prototype._checkValue = function(newValue) {
 	return InputValidationError.NO_ERROR;
 }
@@ -168,7 +175,7 @@ InputInterface.prototype._checkValue = function(newValue) {
  *
  */
 InputInterface.prototype.checkValue = function(newValue) {
-	if (newValue == undefined)
+	if (newValue === undefined)
 		newValue = this.getValue();
 
 	if (this._required && (newValue == undefined || this.isEmpty()))
@@ -215,6 +222,17 @@ InputInterface.prototype.reset = function() {
  */
 InputInterface.prototype.focus = function() {
 	this.inputElement.focus();
+}
+
+/**
+ * TODO
+ * Sets the focus on this input interface.
+ */
+InputInterface.prototype.setDisabled = function(disabled) {
+	if (disabled)
+		this.inputElement.setAttribute('disabled', 'disabled');
+	else
+		this.inputElement.removeAttribute('disabled');
 }
 
 /**

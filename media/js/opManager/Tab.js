@@ -54,10 +54,13 @@ function Tab (tabInfo, workSpace) {
 
 	Tab.prototype.destroy = function() {
 		LayoutManagerFactory.getInstance().removeFromTabBar(this.tabHTMLElement);
-		
+
+		this.preferences.destroy();
+		this.preferences = null;
+
 		this.menu.remove();
 		this.moveMenu.remove();
-		
+
 		this.dragboard.destroy();
 	}
 

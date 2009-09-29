@@ -40,7 +40,7 @@ from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from django.utils.translation import get_language
-from preferences.views import get_tab_preference_values
+from preferences.views import get_workspace_preference_values, get_tab_preference_values
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -225,30 +225,26 @@ def get_filter_data(data):
     data_ret['params'] = data_fields['params']
     
     return data_ret
-     
+
 def get_workspace_data(data, user, workspace):
+    user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace)
+
     data_ret = {}
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
-    
-    #First one in the users relationship is the creator of the workspace
+    # First one in the users relationship is the creator of the workspace
     data_ret['shared'] = workspace.is_shared(user)
-    
-    user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace);
-    
-    if user_workspace.active:
-        data_ret['active'] = 'true'
-    else:
-        data_ret['active'] = 'false'
+    data_ret['active'] = user_workspace.active
+
     return data_ret
 
 def get_workspace_variables_data(workSpaceDAO, user):
-    tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')  
+    tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')
     tabs_data = serializers.serialize('python', tab_variables, ensure_ascii=False)
     ws_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in tabs_data]
     
-    inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')  
+    inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')
     inouts_data = serializers.serialize('python', inout_variables, ensure_ascii=False)
     ws_inout_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in inouts_data]
     
@@ -359,6 +355,9 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
 
+    # Workspace preferences
+    data_ret['workspace']['preferences'] = get_workspace_preference_values(data['pk'])
+
     # Tabs processing
     # Check if the workspace's tabs have order
     tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id')
@@ -369,7 +368,6 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
         for i in range(len(tabs)):
             tabs[i].position = i
             tabs[i].save()
-    
 
     data = serializers.serialize('python', tabs, ensure_ascii=False)
 
@@ -410,7 +408,6 @@ def get_tab_data(data, tab, user):
     data_ret['name'] = data_fields['name']
     data_ret['visible'] = data_fields['visible']
     data_ret['locked'] = tab.is_locked(user)
-    
 
     data_ret['preferences'] = get_tab_preference_values(data['pk'])
 

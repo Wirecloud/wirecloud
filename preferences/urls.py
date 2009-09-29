@@ -40,13 +40,17 @@
 
 from django.conf.urls.defaults import patterns
 
-from preferences.views import PlatformPreferencesCollection, TabPreferencesCollection
+from preferences.views import PlatformPreferencesCollection, WorkSpacePreferencesCollection, TabPreferencesCollection
 
 urlpatterns = patterns('preferences.views',
 
     # Platform preferences
     (r'^/platform[/]?$',
          PlatformPreferencesCollection(permitted_methods=('GET', 'PUT'))),
+
+    # WorkSpace preferences
+    (r'^/workspace/(?P<workspace_id>\d+)[/]?$',
+         WorkSpacePreferencesCollection(permitted_methods=('GET', 'PUT'))),
 
     # Tab preferences
     (r'^/tab/(?P<workspace_id>\d+)/(?P<tab_id>\d+)[/]?$',

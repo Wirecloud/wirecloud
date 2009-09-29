@@ -41,14 +41,21 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from workspace.models import Tab
+from workspace.models import WorkSpace, Tab
 
 class PlatformPreference(models.Model):
     user = models.ForeignKey(User)
     name = models.CharField(_('Name'), max_length=250)
     value = models.CharField(_('Value'), max_length=250)
 
+class WorkSpacePreference(models.Model):
+    workspace = models.ForeignKey(WorkSpace)
+    name = models.CharField(_('Name'), max_length=250)
+    inherit = models.BooleanField(_('Inherit'), default=False)
+    value = models.CharField(_('Value'), max_length=250)
+
 class TabPreference(models.Model):
     tab = models.ForeignKey(Tab)
     name = models.CharField(_('Name'), max_length=250)
+    inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)

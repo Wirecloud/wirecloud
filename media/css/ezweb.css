@@ -338,6 +338,10 @@ td {
   margin: 0px 0px 0px 0pt;
 }
 
+.window_menu td {
+  text-align: right;
+}
+
 .window_menu .window_content input {
   margin: 0px 0px 0px 0pt;
 }
