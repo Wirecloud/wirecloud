@@ -75,7 +75,7 @@ def parseValues(values):
     _values = {}
 
     for value in values:
-        _values[value.name] = value.value
+        _values[value.name] = {'inherit': False, 'value': value.value}
 
     return _values
 
