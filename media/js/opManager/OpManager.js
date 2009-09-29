@@ -377,6 +377,7 @@ var OpManagerFactory = function () {
 		 */
 		OpManager.prototype.unloadEnvironment = function() {
 			var layoutManager = LayoutManagerFactory.getInstance();
+			layoutManager.hideCover();
 			layoutManager._startComplexTask(gettext('Unloading Ezweb Platform'));
 
 			if (this.activeWorkSpace)
