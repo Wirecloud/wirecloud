@@ -297,7 +297,10 @@ var OpManagerFactory = function () {
 			function continueLoading(theme, errorMsg) {
 				if (errorMsg !== null) {
 					var msg = gettext("Error loading \"%(theme)s\" theme. Trying with \"default\" theme.");
+					msg = interpolate(msg, {theme: theme.name}, true);
 					LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
+
+					var logManager = LogManagerFactory.getInstance();
 					logManager.log(msg);
 					/*
 					 * Initial theme css's are pre applied, but it failed to load so we need to deapply it and
