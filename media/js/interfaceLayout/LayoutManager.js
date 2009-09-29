@@ -264,6 +264,9 @@ var LayoutManagerFactory = function () {
 				_currentTheme.applyStyle();
 				layoutManager.resizeWrapper();
 
+				// TODO move this code to opManager?
+				OpManagerFactory.getInstance().activeWorkSpace._themeLoaded();
+
 				// Save theme selection into a cookie
 				CookieManager.createCookie('theme', theme.name, 365);
 

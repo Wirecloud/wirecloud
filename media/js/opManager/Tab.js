@@ -229,9 +229,9 @@ function Tab (tabInfo, workSpace) {
 		}
 	}
 
-    // *****************
+	// *****************
 	//  PRIVATE METHODS
-    // *****************
+	// *****************
 	
 	
 	/*constructor*/
@@ -378,13 +378,22 @@ function Tab (tabInfo, workSpace) {
 			}.bind(this),
 			1);
 	}.bind(this);
-	
+
+	this._createTabMenu();
+}
+
+Tab.prototype._createTabMenu = function() {
+	var idMenu = 'menu_' + this.tabName;
+
+	var menuHTML = $(idMenu);
+	if (menuHTML)
+		menuHTML.remove();
+
 	//Tab Menu
-	var idMenu = 'menu_'+this.tabName;
-	var menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
+	menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
-	
+
 	//options for Tab Menu
 	this.menu.addOption(_currentTheme.getIconURL("rename"),
 		gettext("Rename"),
@@ -400,7 +409,7 @@ function Tab (tabInfo, workSpace) {
 		this.firstVisible = true;
 		this.visibleEntryId = null;
 	}
-	
+
 	if (this.dragboard.isLocked()) {
 		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL("unlock"),
 			gettext("Unlock"),
@@ -487,4 +496,14 @@ function Tab (tabInfo, workSpace) {
 			LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
 		}.bind(this),
 		3);
+}
+
+/**
+ * @private
+ *
+ * This method must be called when a new theme is loaded to refresh some icons
+ */
+Tab.prototype._themeLoaded = function() {
+	this._createTabMenu();
+	this.dragboard._themeLoaded();
 }

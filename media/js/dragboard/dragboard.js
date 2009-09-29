@@ -161,6 +161,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.baseLayout = newBaseLayout;
 	}
 
+	Dragboard.prototype._themeLoaded = function() {
+		var igadgetKeys = this.iGadgets.keys();
+		for (var i = 0; i < igadgetKeys.length; i++) {
+			iGadget = this.iGadgets[igadgetKeys[i]];
+			iGadget._createIGadgetMenu();
+		}
+	}
+
 	// ****************
 	// PUBLIC METHODS
 	// ****************
@@ -436,8 +444,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgets[iGadget.id] = iGadget;
 		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo);
 	}
-	
-	Dragboard.prototype.fillFloatingGadgetsMenu = function(menu){
+
+	Dragboard.prototype.fillFloatingGadgetsMenu = function(menu) {
 		this.freeLayout.fillFloatingGadgetsMenu(menu);
 	}
 
