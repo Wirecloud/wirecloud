@@ -345,6 +345,7 @@ function wChannel (variable, name, id, provisional_id) {
 	this.variable.assignConnectable(this);
 	this.filter = null;
 	this.filterParams = new Array();
+	this.remoteSubscription = null;
 }
 wChannel.prototype = new wInOut();
 
@@ -376,6 +377,14 @@ wChannel.prototype.getValueWithoutFilter = function() {
 
 wChannel.prototype.getFilter = function() {
 	return this.filter;
+}
+
+wChannel.prototype.getRemoteSubscription = function() {
+	return this.remoteSubscription;
+}
+
+wChannel.prototype.setRemoteSubscription = function(remoteSubscription) {
+	this.remoteSubscription = remoteSubscription;
 }
 
 wChannel.prototype.setFilter = function(newFilter) {

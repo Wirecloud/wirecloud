@@ -399,6 +399,7 @@ function ChannelInterface(channel, wiringGUI) {
 		this.inputs = channel.inputs.clone();
 		this.outputs = channel.outputs.clone();
 		this.filter = channel.getFilter();
+		this.remote_subscription = channel.getRemoteSubscription();
 	} else {
 		// New channel
 		this.connectable = null;
@@ -406,6 +407,7 @@ function ChannelInterface(channel, wiringGUI) {
 		this.inputs = new Array();
 		this.outputs = new Array();
 		this.filter = null;
+		this.remote_subscription = new ExternalSubscription();
 	}
 
 	this.inputsForAdding = new Array();
@@ -694,8 +696,8 @@ function ChannelInterface(channel, wiringGUI) {
 	contentCol.appendChild(operations_layer);
 	
 	this.operations_menu_label = document.createElement("div");
-	this.operations_menu_label.addClassName("inline");
 	Element.extend(this.operations_menu_label);
+	this.operations_menu_label.addClassName("inline");
 	operations_layer.appendChild(this.operations_menu_label);
 	
 	if (BrowserUtilsFactory.getInstance().isIE()) {
@@ -755,6 +757,12 @@ function ChannelInterface(channel, wiringGUI) {
 	create_url_link.addClassName('create_url_link');
 	create_url_link.innerHTML = gettext("create a new URL");
 	contentCol.appendChild(create_url_link);
+	
+	Event.observe(create_url_link,
+	"click",
+	function (e) {
+		this.remote_subscription.createURL(this);
+	}.bind(this));
 	 
 	////////////////////////////////////////////////
 	// END OF OPTIONAL AREAS!
@@ -875,7 +883,8 @@ ChannelInterface.prototype.getFilter = function() {
 
 ChannelInterface.prototype.paint_operation = function(op_code) {
 	var operation_text = this.wiringGUI.remote_operations_menu.getTextFromOp(op_code);
-	this.operations_menu_label.innerHTML = operation_text; 
+	
+	this.set_remote_operation(op_code, operation_text);
 
 	switch (op_code) {
 		case 0:
@@ -899,6 +908,14 @@ ChannelInterface.prototype.paint_operation = function(op_code) {
 
 ChannelInterface.prototype.set_remote_URL = function(url) {
 	this.remote_url_input.value = url;
+	this.remote_subscription.setURL(url);
+	this.wiringGUI.setRemoteSubscription();
+}
+
+ChannelInterface.prototype.set_remote_operation = function(op_code, operation_text) {
+	this.remote_subscription.setOperation(op_code);
+	this.operations_menu_label.innerHTML = operation_text; 
+	this.wiringGUI.setRemoteSubscription();
 }
 
 ChannelInterface.prototype._getFilterParams = function () {
@@ -1058,6 +1075,9 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 	case 3: // Channel creation & general updates
 		if (this.connectable == null)
 			this.connectable = wiring.createChannel(this.name);
+			
+		// Add external channel subscription
+		this.connectable.setRemoteSubscription(this.remote_subscription)
 
 		// Update channel name
 		this.connectable._name= this.name;

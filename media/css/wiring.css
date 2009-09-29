@@ -265,5 +265,6 @@
 }
 
 #wiring .create_url_link, #wiring #remote_operation_tip {
-  display: inline;
+  display: block;
+  margin-top: -2px;
 }

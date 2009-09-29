@@ -155,6 +155,10 @@ WiringInterface.prototype.setFilterParam = function () {
 	this.changed = true;
 }
 
+WiringInterface.prototype.setRemoteSubscription = function () {
+	this.changed = true;
+}
+
 WiringInterface.prototype.saveWiring = function () {
 	if (!this.changed)
 		return; // Nothing to do

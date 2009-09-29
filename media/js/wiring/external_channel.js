@@ -23,27 +23,50 @@
 *     http://morfeo-project.org
  */
 
-function ExternalChannelInfo (channel){
-	this._channel = channel;
+function ExternalSubscription (){
 	this._op_code = null;
   	this._url = null;
+  	this._has_changed = false;
 }
 
-ExternalChannelInfo.prototype.setOperation = function (op_code) {
+function ExternalSubscription (op_code, url){
+	this._op_code = op_code;
+  	this._url = url;
+  	this._has_changed = false;
+}
+
+ExternalSubscription.prototype.setOperation = function (op_code) {
+	this._has_changed = true;
   	this._op_code = op_code;
 }
 
-ExternalChannelInfo.prototype.setURL = function (url) {
+ExternalSubscription.prototype.setURL = function (url) {
+	this._has_changed = true;
   	this._url = url;
 }
 
-ExternalChannelInfo.prototype.createURL = function () {
+ExternalSubscription.prototype.has_changed = function () {
+	return this._has_changed;
+}
+
+ExternalSubscription.prototype.get_data = function () {
+	var data = new Hash();
+	
+	data['url'] = this._url;
+	data['op_code'] = this._op_code;
+	
+	return data;
+}
+
+ExternalSubscription.prototype.createURL = function (channel_interface) {
   	var create_url_success = function (transport) {
-  		this._channel.set_remote_URL('kk');
+  		var response = JSON.parse(transport.responseText);
+  		
+  		channel_interface.set_remote_URL(response['url']);
   	}
   	
   	var create_url_error = function (transport) {
-  		
+  		alert("error en create_url");
   	}
   	
   	var url = URIs.POST_CREATE_EXTERNAL_CHANNEL;
