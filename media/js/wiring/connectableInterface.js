@@ -745,6 +745,7 @@ function ChannelInterface(channel, wiringGUI) {
 	this.remote_url_row.appendChild(contentCol);
 
 	this.remote_url_input = document.createElement("input");
+	Element.extend(this.remote_url_input);
 	this.remote_url_input.addClassName('paramValueInput');
 	contentCol.appendChild(this.remote_url_input);
 	
@@ -754,6 +755,7 @@ function ChannelInterface(channel, wiringGUI) {
 	contentCol.appendChild(this.url_input_label);
 	
 	var create_url_link = document.createElement("div");
+	Element.extend(create_url_link);
 	create_url_link.addClassName('create_url_link');
 	create_url_link.innerHTML = gettext("create a new URL");
 	contentCol.appendChild(create_url_link);
