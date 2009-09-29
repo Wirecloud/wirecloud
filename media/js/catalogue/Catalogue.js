@@ -221,7 +221,7 @@ var CatalogueFactory  = function () {
 			var cloneError = function(transport, e) {
 				var logManager = LogManagerFactory.getInstance();
 				var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
-				logManagerFactory.log(msg);
+				logManager.log(msg);
 				
 			}
 
