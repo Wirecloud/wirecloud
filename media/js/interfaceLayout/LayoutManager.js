@@ -71,9 +71,8 @@ var LayoutManagerFactory = function () {
 		// Tab bar section: to make the section scroll 2 divs are needed: one which limits the whole room and
 		//another which is absolutely positioned each time a slider button is clicked
 		this.tabBarStep = 20;
-		this.tabImgSize = 14;    // launcher width
-		this.extraGap = 3;      // 15px to ensure that a new character has enough room in the scroll bar
-		this.tabMarginRight = 3; // 6px
+		this.tabImgSize = null;    // launcher width + dragger width
+		this.extraGap = 10;      
 		this.rightSlider = $('right_slider');
 		this.leftSlider = $('left_slider');
 		this.leftTimeOut;
@@ -85,11 +84,13 @@ var LayoutManagerFactory = function () {
 		} else {
 			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
 		}
-		
+
+		this.tabMarker = $('tab_marker');		
+
 		//scroll bar
 		this.scrollTabBar = $('scroll_bar');
-		//initial width (there is always a launcher (of the current tab))
-		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
+
+		this.scrollTabBarWidth = null;
 
 		this.menus = new Array();
 
@@ -373,11 +374,13 @@ var LayoutManagerFactory = function () {
 			var launcher = tab_object.tabOpsLauncher;
 			var renameEvent = tab_object.renameTabHandler;
 			var changeEvent = tab_object.changeTabHandler;
+			var dragger = tab_object.dragger;
 		
 			tab.className = "tab";
-			//hide the launcher image for the drop down menu from the former current tab
+			//hide the launcher image for the drop down menu and the dragger from the former current tab
 			var tabOpsLauncher = $(launcher);
 			tabOpsLauncher.setStyle({'display':'none'});
+			$(dragger).setStyle({'display':'none'});
 			
 			//Rename is an operation for ws owners!
 			if (! tab_object.workSpace.isShared()) {
@@ -394,6 +397,7 @@ var LayoutManagerFactory = function () {
 			var launcher = tab_object.tabOpsLauncher;
 			var renameHandler = tab_object.renameTabHandler;
 			var changeHandler = tab_object.changeTabHandler;
+			var dragger = tab_object.dragger;
 			
 		
 			if (tab.className != "tab current") {
@@ -403,6 +407,8 @@ var LayoutManagerFactory = function () {
 				
 				if (! tab_object.workSpace.isShared())
 					tabOpsLauncher.setStyle({'display':'inline'});
+					
+				$(dragger).setStyle({'display':'inline'});
 				
 				tab.setStyle({"display": "block"}); // TODO
 			}
@@ -423,7 +429,9 @@ var LayoutManagerFactory = function () {
 			}
 		}
 
-		LayoutManager.prototype.hideTab = function(tab) {
+
+//DEPRECATED???
+/*		LayoutManager.prototype.hideTab = function(tab) {
 			try{ //remove the launcher image for the drop down menu from the former current tab
 				var tabOpsLauncher = $$('#'+tab.getAttribute('id')+' #tabOps_launcher');
 				if (tabOpsLauncher.length > 0) {
@@ -435,6 +443,7 @@ var LayoutManagerFactory = function () {
 			tab.className = "tab";
 			tab.setStyle(hideStyle);
 		}
+*/
 
 		// Dragboard operations (usually called together with Tab operations)
 		LayoutManager.prototype.showDragboard = function(dragboard) {
@@ -980,11 +989,55 @@ var LayoutManagerFactory = function () {
 	 * Tab scroll bar management   *
 	 *-----------------------------*/
 
+
+	/*get the size of the images related to a selected tab (ops launcher and dragger)because these images depend on the theme */
+	LayoutManager.prototype.getTabImgSize = function() {
+		if(!this.tabImgSize){
+			var width = null;
+			var array = $$('#scrollTabBar .tabOps_launcher');
+			var opsLauncherImg = (array.length >0)? array[0]: null;
+			if(opsLauncherImg){
+				width = opsLauncherImg.getWidth();
+			}
+			array = $$('#scrollTabBar .tab_dragger');
+			var draggerImg = (array.length >0)? array[0]: null;
+			if(draggerImg){
+				width += draggerImg.getWidth();
+			}
+			if (!width){
+				//create a dump element to calculate the images' width
+				var aux1 = document.createElement('div');
+				Element.extend(aux1);
+				aux1.addClassName('tabOps_launcher');
+				document.body.appendChild(aux1);
+				width = aux1.getWidth();
+				aux1.remove();
+				
+				var aux2 = document.createElement('div');
+				Element.extend(aux2);
+				aux2.addClassName('tab_dragger');
+				document.body.appendChild(aux2);				
+				width += aux2.getWidth();
+				aux2.remove();
+			}
+			this.tabImgSize = width;
+		}
+		return this.tabImgSize;
+	}
+
+	/* get scrollTabBar width */
+	LayoutManager.prototype.getScrollTabBarWidth = function(reset) {	
+		if(!this.scrollTabBarWidth || reset){
+			//initial width (there is always a launcher and a tab dragger (of the current tab))
+			this.scrollTabBarWidth = this.getTabImgSize() + this.extraGap + $(this.tabMarker).getWidth();
+		}
+		return this.scrollTabBarWidth;		
+	}
+
 	/*Reset the tab bar values*/
 	LayoutManager.prototype.resetTabBar = function(tabId) {
-		this.scrollTabBarWidth = this.tabImgSize + this.extraGap;
-		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});
-		this.fixedTabBar.setStyle({'width': this.scrollTabBarWidth + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
+		this.scrollTabBar.setStyle({'width': this.getScrollTabBarWidth(true) + "px"});
+		this.fixedTabBar.setStyle({'width': this.getScrollTabBarWidth() + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
 		// we do not need arrows
 		this.rightSlider.style.display = "none";
 		this.leftSlider.style.display = "none";
@@ -998,18 +1051,25 @@ var LayoutManagerFactory = function () {
 		tabHTMLElement.addClassName("tab");
 		tabHTMLElement.setStyle({"display": "none"}); // TODO
 		this.scrollTabBar.insertBefore(tabHTMLElement, this.scrollTabBar.firstChild);
-		var tabBorder= parseInt(tabHTMLElement.getStyle('border-left-width'));
-		this.changeTabBarSize(2*(this.tabMarginRight + tabBorder));
+		var computedStyle = document.defaultView.getComputedStyle(tabHTMLElement, null);
+		var tabBorder = computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		var tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		this.changeTabBarSize(2*(tabMarginRight + tabBorder));
 		this.scrollTabBar.setStyle({right: 0, left:''});
 		return tabHTMLElement;
 	}
 	
 	/*Move a tab in the tab bar*/
 	LayoutManager.prototype.moveTab = function(tab, targetTab){
+		
 		//inserting an existing node will move it
 		//tab nodes are displayed in inverted order. The most left side tab is the last node in the DOM
 		if(targetTab){
 			//insert before
+			if(targetTab == tab){
+				//do nothing
+				return;
+			}
 			this.scrollTabBar.insertBefore(tab.tabHTMLElement, targetTab.tabHTMLElement.nextSibling);
 		}else{
 			//insert at the end
@@ -1042,26 +1102,51 @@ var LayoutManagerFactory = function () {
 			PersistenceEngineFactory.getInstance().send_update(tabsUrl, params, this, success, error);
 		
 		
-	}	
+	}
+	
+	LayoutManager.prototype.insertMarker = function(tabMarker, targetTab){
+		//tab nodes are displayed in inverted order. The most left side tab is the last node in the DOM
+
+		this.scrollTabBar.insertBefore(tabMarker, targetTab.tabHTMLElement.nextSibling);
+	}
+
+	//move the separator to show where a dragged tab is going to be moved.	
+	LayoutManager.prototype.moveIndicator = function(targetTab){
+		$('tab_marker').setStyle({'display':'block', 'float':'right'});
+		if(targetTab)
+			this.scrollTabBar.insertBefore($('tab_marker'), targetTab.tabHTMLElement.nextSibling);
+		else{			
+			//move to the end
+			this.scrollTabBar.insertBefore($('tab_marker'), this.scrollTabBar.firstChild);
+		}
+	}
 
 	/*remove a tab from the tab bar*/
-	LayoutManager.prototype.removeFromTabBar = function(tabHTMLElement){
-		var tabWidth = -1 * (tabHTMLElement.getWidth()-this.tabImgSize + 2*this.tabMarginRight);
-		Element.remove(tabHTMLElement);
+	LayoutManager.prototype.removeFromTabBar = function(tab){
+		var computedStyle = document.defaultView.getComputedStyle(tab.tabHTMLElement, null);
+		var tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		var tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		
+		computedStyle = document.defaultView.getComputedStyle(tab.tabNameHTMLElement, null);
+		var tabNameMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		var tabNameMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		
+		var tabWidth = -1 * (tab.tabHTMLElement.getWidth() - (this.getTabImgSize() + tabNameMarginLeft + tabNameMarginRight) + tabMarginRight + tabMarginLeft);
+		Element.remove(tab.tabHTMLElement);
 		this.changeTabBarSize(tabWidth);
-		this.scrollTabBar.setStyle({right: (this.fixedTabBar.getWidth() - this.scrollTabBarWidth) + 'px', left:''});
+		this.scrollTabBar.setStyle({right: (this.fixedTabBar.getWidth() - this.getScrollTabBarWidth()) + 'px', left:''});
 	}
 	
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
 		this.showTabs();
-		this.scrollTabBarWidth += tabSize;
+		this.scrollTabBarWidth = this.getScrollTabBarWidth() + tabSize;
 
 		//calculate the size of the fixed bar taking into account the max allowed width
 		var fixedWidth;
-		if (this.scrollTabBarWidth <= this.fixedTabBarMaxWidth) {
+		if (this.getScrollTabBarWidth() <= this.fixedTabBarMaxWidth) {
 			
-			fixedWidth = this.scrollTabBarWidth;
+			fixedWidth = this.getScrollTabBarWidth();
 			this.scrollTabBar.setStyle({right: 0 + "px"});
 			// we do not need arrows
 			this.rightSlider.style.display = "none";
@@ -1074,14 +1159,14 @@ var LayoutManagerFactory = function () {
 		}
 
 		this.fixedTabBar.setStyle({'width': fixedWidth + "px"});
-		this.scrollTabBar.setStyle({'width': this.scrollTabBarWidth + "px"});		
+		this.scrollTabBar.setStyle({'width': this.getScrollTabBarWidth() + "px"});		
 			
 		
 	}
 	/*change the right position of the scroll tab bar */
 	LayoutManager.prototype.changeScrollBarRightPosition = function(difference){
 		var newRight = parseInt(this.scrollTabBar.getStyle('right')) + difference;
-		var minRight = this.fixedTabBarMaxWidth-this.scrollTabBarWidth;
+		var minRight = this.fixedTabBarMaxWidth-this.getScrollTabBarWidth();
 		if (newRight > 0)
 			newRight = 0;
 		else if(newRight < minRight)
@@ -1104,7 +1189,7 @@ var LayoutManagerFactory = function () {
 	/*scroll tab bar sliders*/
 	LayoutManager.prototype.goLeft = function(){
 		this.rightSlider.blur();
-		var minLeft = this.fixedTabBarMaxWidth-this.scrollTabBarWidth;
+		var minLeft = this.fixedTabBarMaxWidth-this.getScrollTabBarWidth();
 		if (parseInt(this.scrollTabBar.offsetLeft)>minLeft){
 			this.changeScrollBarRightPosition(this.tabBarStep);
 			var leftMethod = function(){this.goLeft()}.bind(this);

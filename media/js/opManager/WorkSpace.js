@@ -410,8 +410,10 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 
+
+	//DEPRECATED??
 	//hide all information about a workspace (wiring, tabs)
-	WorkSpace.prototype.hide = function() {
+/*	WorkSpace.prototype.hide = function() {
 		if (!this.loaded)
 			return;
 		
@@ -426,6 +428,7 @@ function WorkSpace (workSpaceState) {
 			tab.hide();
 		}
 	}
+*/
 
 	WorkSpace.prototype.show = function() {
 		if (!this.loaded)

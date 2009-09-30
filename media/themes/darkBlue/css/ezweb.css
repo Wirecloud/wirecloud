@@ -167,6 +167,18 @@ input[type="text"], input[type="password"], textarea{
  background: transparent url(../images/rightSlider.png) no-repeat scroll 0 0;
 }
 
+#tab_marker{
+	width: 4px;
+	height: 23px;
+	background: transparent url(../images/tab_marker.png) no-repeat scroll 0 0;
+}
+
+#tab_space{
+	-moz-opacity: 0.3;
+	filter: alpha(opacity=30);
+    opacity: 0.3;
+}
+
 #logs_link {
   height: 16px;
   border: none;
@@ -227,12 +239,9 @@ input[type="text"], input[type="password"], textarea{
 	font-weight: bold;
 }
 
-.tab span{
-  margin-right:5px;
-}
 
-.current .tab_name {
-  margin-right: 4px;
+.current .tab_name, .current span {
+  margin: 0 5px;
 }
 
 .current .tab_name {
@@ -352,6 +361,13 @@ input[type="text"], input[type="password"], textarea{
   width: 16px;
   height: 16px;
   background: transparent url(../images/menu-tab.png) no-repeat;
+}
+
+.tab_dragger{
+	width: 5px;
+	height: 16px;
+	float: left;
+	background: transparent url(../images/separator.gif) no-repeat;
 }
 
 .closebutton {

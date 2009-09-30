@@ -147,7 +147,17 @@ a, a:visited{
  background: transparent url(../images/rightSlider.png) no-repeat scroll 0 0;
 }
 
+#tab_marker{
+	width: 4px;
+	height: 23px;
+	background: transparent url(../images/tab_marker.png) no-repeat scroll 0 0;
+}
 
+#tab_space{
+	-moz-opacity: 0.2;
+	filter: alpha(opacity=20);
+    opacity: 0.2;
+}
 
 #catalogue_link {
   
@@ -224,12 +234,8 @@ a, a:visited{
   border-bottom: 0px none;
 }
 
-.tab span{
-  margin-right:5px;
-}
-
-.current .tab_name {
-  margin-right: 5px;
+.current .tab_name, .current span {
+  margin: 0 5px;
 }
 
 .tab .tab_name {
@@ -357,6 +363,13 @@ a, a:visited{
   width: 16px;
   height: 16px;
   background: transparent url(../images/tabops16px.png) no-repeat;
+}
+
+.tab_dragger{
+	width: 5px;
+	height: 16px;
+	float: left;
+	background: transparent url(../images/separator.gif) no-repeat;
 }
 
 .closebutton {

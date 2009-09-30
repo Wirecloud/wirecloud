@@ -206,6 +206,10 @@ td {
  float:right;
 }
 
+#tab_marker{
+ float: right;
+}
+
 #add_tab_link {
  margin-top:2px;
  float:right;
@@ -265,6 +269,10 @@ td {
 #tab_section .current {
   padding-bottom: 2px;
   padding-right: 3px;
+}
+
+.tab_dragger{
+ cursor: move;
 }
 
 #menu_layer{
