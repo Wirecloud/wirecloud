@@ -125,12 +125,12 @@ var PreferencesManagerFactory = function () {
 		    "hidden":        true,
 		    "label":         '',
 		    "type":          "text",
-		    "description":   '',
+		    "description":   ''
 		  },
 		  "theme": {
 		    "label":         gettext("Theme"),
 		    "type":          "select",
-		    "options":       [],
+		    "options":       []
 		  },
 		  "tip-0": {
 		    "defaultValue": true,
