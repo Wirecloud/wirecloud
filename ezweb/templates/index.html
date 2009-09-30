@@ -90,13 +90,6 @@
 		<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
 		<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
 		<span> | </span>
-		<span id="themeSelector">
-			<span>{% trans "Theme:" %}</span>
-			<span id="themeLabel">
-				{{ INITIAL_THEME }}
-			</span>
-		</span>
-		<span> | </span>
 		{% if is_anonymous %}
 			<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
 			<span> | </span>
@@ -178,6 +171,7 @@ _URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
 _URIConstants.prototype.GET_CONTEXT = '/user/{{ user.username }}/context';
 _URIConstants.prototype.GET_CONTEXT_VALUE = new Template ('/user/{{ user.username }}/context/#{concept}/value');
 _URIConstants.prototype.PLATFORM_PREFERENCES = '/user/{{ user.username }}/preferences/platform';
+_URIConstants.prototype.WORKSPACE_PREFERENCES = new Template ('/user/{{ user.username }}/preferences/workspace/#{workspace_id}');
 _URIConstants.prototype.TAB_PREFERENCES = new Template ('/user/{{ user.username }}/preferences/tab/#{workspace_id}/#{tab_id}');
 _URIConstants.prototype.GET_POST_RESOURCES = '/user/{{ user.username }}/catalogue/resource';
 _URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
@@ -225,6 +219,7 @@ var last_logged_user = '{{ last_user }}';
 var post_load_script = '{{ post_load_script|safe }}';
 
 var _THEMES = {% autoescape off %} {{ THEMES }} {% endautoescape %};
+var _DEFAULT_THEME = '{{ DEFAULT_THEME }}';
 var _INITIAL_THEME = '{{ INITIAL_THEME }}';
 var _ONLY_ONE_CSS_FILE = '{{ only_one_css_file }}' == 'True';
 var _EzWeb_RELEASE = '{{ ezweb_release }}';
