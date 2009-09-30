@@ -51,8 +51,8 @@ define("port", default=8888, help="run on the given port", type=int)
 class Push_Notifier(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r'/external/channels/notify', NotifyClientsHandler),
-            (r'/external/channels/register', RegisterSubscriptionHandler),
+            (r'/notifier/channels/notify', NotifyClientsHandler),
+            (r'/notifier/channels/register', RegisterSubscriptionHandler),
         ]
 
         tornado.web.Application.__init__(self, handlers, None)

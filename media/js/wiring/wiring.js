@@ -467,8 +467,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 			serialized_channel['filter_params'] = channel.getFilterParams();
 			
-			if (channel.getRemoteSubscription().has_changed())
-				serialized_channel['remote_subscription'] = channel.getRemoteSubscription().get_data();
+			if (channel.getRemoteSubscription().hasChanged())
+				serialized_channel['remote_subscription'] = channel.getRemoteSubscription().getData();
 			else
 				serialized_channel['remote_subscription'] = null;
 

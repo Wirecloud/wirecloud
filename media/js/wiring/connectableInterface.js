@@ -410,6 +410,8 @@ function ChannelInterface(channel, wiringGUI) {
 		this.remote_subscription = new ExternalSubscription();
 	}
 
+	this.remote_subscription.setChannelGUI(this);
+
 	this.inputsForAdding = new Array();
 	this.inputsForRemoving = new Array();
 	this.outputsForAdding = new Array();
@@ -883,11 +885,15 @@ ChannelInterface.prototype.getFilter = function() {
 	return this.filter;
 }
 
-ChannelInterface.prototype.paint_operation = function(op_code) {
+ChannelInterface.prototype.updateRemoteSubscription = function() {
+	var op_code = this.remote_subscription.getOpCode(); 
 	var operation_text = this.wiringGUI.remote_operations_menu.getTextFromOp(op_code);
+	var url = this.remote_subscription.getURL();
 	
-	this.set_remote_operation(op_code, operation_text);
-
+	// Updating remote channel interface
+	this.remote_url_input.value = url;
+	this.operations_menu_label.innerHTML = operation_text;
+	
 	switch (op_code) {
 		case 0:
 			this.remote_url_row.addClassName('hide');
@@ -905,19 +911,7 @@ ChannelInterface.prototype.paint_operation = function(op_code) {
 	}
 	
 	this.wiringGUI.remote_operations_menu.hide();
-	LayoutManagerFactory.getInstance().hideCover();
-}
-
-ChannelInterface.prototype.set_remote_URL = function(url) {
-	this.remote_url_input.value = url;
-	this.remote_subscription.setURL(url);
-	this.wiringGUI.setRemoteSubscription();
-}
-
-ChannelInterface.prototype.set_remote_operation = function(op_code, operation_text) {
-	this.remote_subscription.setOperation(op_code);
-	this.operations_menu_label.innerHTML = operation_text; 
-	this.wiringGUI.setRemoteSubscription();
+	LayoutManagerFactory.getInstance().hideCover();	
 }
 
 ChannelInterface.prototype._getFilterParams = function () {
@@ -1001,13 +995,8 @@ ChannelInterface.prototype._updateFilterInterface = function() {
 	this.valueElement.setTextContent(this.getValueWithFilter());
 	this._showFilterParams();
 	
-	// Remote channel operation!
-	var remote_op_code = this.remote_subscription.getOpCode();
-	var remote_url = this.remote_subscription.getURL();
-	
-	this.set_remote_URL(remote_url);
-	this.paint_operation(remote_op_code);
-	this.remote_subscription.reset_changes();
+	// Updating remote channel interface!
+	this.updateRemoteSubscription();
 }
 
 ChannelInterface.prototype.setFilter = function(filter, wiring) {

@@ -27,6 +27,8 @@
 #
 #...............................licence...........................................#
 
+import logging
+
 class ExternalChannel(object):
     def __init__(self, channel_id):
         self.blocked_clients = []

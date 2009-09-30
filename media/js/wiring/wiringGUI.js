@@ -155,7 +155,7 @@ WiringInterface.prototype.setFilterParam = function () {
 	this.changed = true;
 }
 
-WiringInterface.prototype.setRemoteSubscription = function () {
+WiringInterface.prototype.notifyRemoteSubscriptionChange = function () {
 	this.changed = true;
 }
 
@@ -1198,7 +1198,8 @@ WiringInterface.prototype._createRemoteChannelOperationsMenu = function () {
 		var text = target.innerHTML;
 		
 		// Update channel interface according to operation code!
-		this.currentChannel.paint_operation(op_code, target);
+		this.currentChannel.remote_subscription.setOpCode(op_code);
+		this.currentChannel.updateRemoteSubscription();
 	}.bind(this)
 	
 	this.remote_operations_menu.addOption(null, disabled, callback, 0, null, null);

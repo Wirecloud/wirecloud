@@ -25,37 +25,52 @@
 
 function ExternalSubscription (){
 	this._op_code = null;
+	this._id = null;
   	this._url = null;
   	this._has_changed = false;
+  	this._channel_GUI = null;
+  	this._initializing = false;
 }
 
 function ExternalSubscription (subscription_data){
 	if (subscription_data) {
 		this._op_code = subscription_data['op_code'];
   		this._url = subscription_data['url'];
+  		this._id = subscription_data['id'];
   	} else {
   		this._op_code = 0; // Disabled
   		this._url = null;
+  		this._id = null;
   	}
   	
   	this._has_changed = false;
+  	this._channel_GUI = null;
+  	this._initializing = false;
 }
 
-ExternalSubscription.prototype.setOperation = function (op_code) {
+ExternalSubscription.prototype.setChannelGUI = function (channel_GUI) {
+	this._channel_GUI = channel_GUI;
+}
+
+ExternalSubscription.prototype.setOpCode = function (op_code) {
 	this._has_changed = true;
   	this._op_code = op_code;
-}
-
-ExternalSubscription.prototype.reset_changes = function (op_code) {
-	this._has_changed = false;
+  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 
 ExternalSubscription.prototype.setURL = function (url) {
 	this._has_changed = true;
   	this._url = url;
+  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 
-ExternalSubscription.prototype.has_changed = function () {
+ExternalSubscription.prototype.setID = function (id) {
+	this._has_changed = true;
+  	this._id = id;
+  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
+}
+
+ExternalSubscription.prototype.hasChanged = function () {
 	return this._has_changed;
 }
 
@@ -67,20 +82,28 @@ ExternalSubscription.prototype.getURL = function () {
 	return this._url;
 }
 
-ExternalSubscription.prototype.get_data = function () {
+ExternalSubscription.prototype.getID = function () {
+	return this._id;
+}
+
+ExternalSubscription.prototype.getData = function () {
 	var data = new Hash();
 	
 	data['url'] = this._url;
 	data['op_code'] = this._op_code;
+	data['id'] = this._id;
 	
 	return data;
 }
 
-ExternalSubscription.prototype.createURL = function (channel_interface) {
+ExternalSubscription.prototype.createURL = function () {
   	var create_url_success = function (transport) {
   		var response = JSON.parse(transport.responseText);
   		
-  		channel_interface.set_remote_URL(response['url']);
+  		this.setURL(response['url']);
+  		this.setID(response['id']);
+  		
+  		this._channel_GUI.updateRemoteSubscription();
   	}
   	
   	var create_url_error = function (transport) {

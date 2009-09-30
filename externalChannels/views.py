@@ -41,7 +41,7 @@ from commons.logs_exception import TracedServerError
 
 from externalChannels.models import ExternalChannel
 
-import simplejson
+from django.utils import simplejson
 
 class ExternalChannelCollection(Resource):
     @transaction.commit_on_success
@@ -59,6 +59,7 @@ class ExternalChannelCollection(Resource):
 
         response = dict()
         response['url'] = external_channel.url;
+        response['id'] = int(external_channel.id);
         
         return HttpResponse(simplejson.dumps(response), mimetype='application/json; charset=UTF-8')
 
