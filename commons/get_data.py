@@ -290,7 +290,17 @@ def get_workspace_variable_data(data, user, workspace):
 
     return data_ret
 
-
+def get_remote_subscription_data(connectable):
+    if connectable.remote_subscription:    
+        subscription = {}
+        
+        subscription['url'] = connectable.remote_subscription.url
+        subscription['op_code'] = connectable.remote_subscription.operation_code
+        
+        return subscription
+    else:
+        return None
+    
 def get_connectable_data(connectable):
     res_data = {}
 
@@ -325,6 +335,9 @@ def get_connectable_data(connectable):
         #Locating the filter linked to this conectable!
         res_data['filter'] = connectable.filter_id
         res_data['filter_params'] = connectable.filter_param_values
+        
+        #RemoteChannel data
+        res_data['remote_subscription'] = get_remote_subscription_data(connectable)
 
     elif isinstance(connectable, Out):
         connectable_type = "out"

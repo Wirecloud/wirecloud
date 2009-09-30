@@ -76,6 +76,10 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 			// Setting channel filter
 			channel.setFilter(this.filters[varData.connectable.filter]);
+			
+			// Setting channel remote operation data
+			var remote_subscription = new ExternalSubscription(varData.connectable.remote_subscription);
+			channel.setRemoteSubscription(remote_subscription);
 
 			var fParams = varData.connectable.filter_params;
 

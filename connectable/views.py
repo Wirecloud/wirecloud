@@ -46,7 +46,7 @@ from commons.utils import json_encode, get_xml_error
 
 from igadget.models import IGadget, Variable
 from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
-from connectable.models import In, Out, RelatedInOut, InOut, Filter
+from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubscription
 
 from commons.logs_exception import TracedServerError
 
@@ -108,6 +108,9 @@ class ConnectableEntry(Resource):
 
                 abstract_variable.delete()
                 deleted_channel.workspace_variable.delete()
+                
+                if deleted_channel.remote_subscription:
+                    deleted_channel.remote_subscription.delete()
 
             # Erasing all channels of the workspace!!
             old_channels = InOut.objects.filter(workspace_variable__workspace=workspace)
@@ -122,6 +125,9 @@ class ConnectableEntry(Resource):
                 rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
                 for channel_delete in rel_old_channels:
                     channel_delete.delete()
+                    
+                if old_channel.remote_subscription:
+                    old_channel.remote_subscription.delete()
 
                 # Now delete the current channel
                 old_channel.delete()
@@ -129,6 +135,16 @@ class ConnectableEntry(Resource):
             # Adding channels recreating JSON structure!
             new_channels = json['inOutList']
             for new_channel_data in new_channels:
+                # Remote subscriptions!
+                remote_subscription = None
+                if new_channel_data['remote_subscription']:
+                        op_code = unicode(new_channel_data['remote_subscription']['op_code'])
+                        url = new_channel_data['remote_subscription']['url']
+                        
+                        if op_code != '0':
+                            remote_subscription = RemoteSubscription(operation_code=op_code, url=url)
+                            remote_subscription.save()
+                
                 if (new_channel_data['provisional_id']):
                     #It's necessary to create all objects!
 
@@ -152,7 +168,7 @@ class ConnectableEntry(Resource):
                         except Filter.DoesNotExist:
                             pass
 
-                    channel = InOut(name=new_channel_data['name'], workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
+                    channel = InOut(name=new_channel_data['name'], remote_subscription=remote_subscription, workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
                     channel.save()
 
                     # A channel has been generated. It's necessary to correlate provisional and definitive ids!
@@ -172,7 +188,7 @@ class ConnectableEntry(Resource):
                         filter = None
                         fparam_values = None
 
-                    channel = InOut(id=new_channel_data['id'], name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
+                    channel = InOut(id=new_channel_data['id'], remote_subscription=remote_subscription, name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
                     channel.save()
 
                 # In connections

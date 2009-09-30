@@ -34,8 +34,6 @@ import time
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login, load_backend
 
-from commons import authentication 
-
 SESSION_KEY = '_auth_user_id'
 BACKEND_SESSION_KEY = '_auth_user_backend'
 

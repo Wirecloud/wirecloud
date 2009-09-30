@@ -60,16 +60,19 @@ class Filter(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
-class ExternalChannelSubscription(models.Model):
+class RemoteSubscription(models.Model):
 
     url = models.URLField(verify_exists=False)
     
     REMOTE_OPERATION = (
-        ('DISABLED', '0'),
-        ('READ', '1'),
-        ('WRITE', '2'),
+        ('0', 'DISABLED'),
+        ('1', 'READ'),
+        ('2', 'WRITE'),
     )
     operation_code = models.CharField(_('Operation'), max_length=1, choices=REMOTE_OPERATION)
+    
+    def __unicode__(self):
+        return self.url
 
 
 class InOut(models.Model):
@@ -79,7 +82,7 @@ class InOut(models.Model):
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
     filter_param_values = models.TextField(_('Filter parameter values'), blank=True, null=True)
-    external_channel_subscription = models.ForeignKey(ExternalChannelSubscription, verbose_name=_('Subscription'), null=True)
+    remote_subscription = models.ForeignKey(RemoteSubscription, verbose_name=_('Subscription'), null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name

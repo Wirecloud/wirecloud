@@ -31,11 +31,8 @@
 #
 
 from django.contrib import admin
-from connectable.models import In, Out, InOut, Filter, RemoteSubscription
+from externalChannels.models import ExternalChannel
 
-admin.site.register(In)
-admin.site.register(Out)
-admin.site.register(InOut)
-admin.site.register(Filter)
-admin.site.register(RemoteSubscription)
+admin.site.register(ExternalChannel)
+
 

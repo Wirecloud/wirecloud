@@ -1002,7 +1002,12 @@ ChannelInterface.prototype._updateFilterInterface = function() {
 	this._showFilterParams();
 	
 	// Remote channel operation!
-	this.paint_operation(0, "Disabled");
+	var remote_op_code = this.remote_subscription.getOpCode();
+	var remote_url = this.remote_subscription.getURL();
+	
+	this.set_remote_URL(remote_url);
+	this.paint_operation(remote_op_code);
+	this.remote_subscription.reset_changes();
 }
 
 ChannelInterface.prototype.setFilter = function(filter, wiring) {
@@ -1014,7 +1019,7 @@ ChannelInterface.prototype.setFilter = function(filter, wiring) {
 
 	this._changeFilterToConnectable(wiring, initial_values);
 
-	this._updateFilterInterface()
+	this._updateFilterInterface();
 }
 
 ChannelInterface.prototype.getFilterParams = function() {

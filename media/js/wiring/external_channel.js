@@ -29,15 +29,25 @@ function ExternalSubscription (){
   	this._has_changed = false;
 }
 
-function ExternalSubscription (op_code, url){
-	this._op_code = op_code;
-  	this._url = url;
+function ExternalSubscription (subscription_data){
+	if (subscription_data) {
+		this._op_code = subscription_data['op_code'];
+  		this._url = subscription_data['url'];
+  	} else {
+  		this._op_code = 0; // Disabled
+  		this._url = null;
+  	}
+  	
   	this._has_changed = false;
 }
 
 ExternalSubscription.prototype.setOperation = function (op_code) {
 	this._has_changed = true;
   	this._op_code = op_code;
+}
+
+ExternalSubscription.prototype.reset_changes = function (op_code) {
+	this._has_changed = false;
 }
 
 ExternalSubscription.prototype.setURL = function (url) {
@@ -47,6 +57,14 @@ ExternalSubscription.prototype.setURL = function (url) {
 
 ExternalSubscription.prototype.has_changed = function () {
 	return this._has_changed;
+}
+
+ExternalSubscription.prototype.getOpCode = function () {
+	return this._op_code;
+}
+
+ExternalSubscription.prototype.getURL = function () {
+	return this._url;
 }
 
 ExternalSubscription.prototype.get_data = function () {
