@@ -1780,6 +1780,15 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	// ##### END TODO
 	newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();
+	
+	if (!this.loaded){
+		if (BrowserUtilsFactory.getInstance().isIE()){
+			//IE hack to reload the iframe
+			this.content.src=this.content.src;
+		} else if (!dragboardChange){
+			this.content.data=this.content.data;
+		}
+	}
 
 	// Persistence
 	var onSuccess = function(transport) { }
