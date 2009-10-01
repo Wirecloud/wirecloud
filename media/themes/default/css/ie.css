@@ -116,6 +116,13 @@ body {
   background-color:red;
 }
 
+#menu_layer.disabled_background {
+  background-color: #6699cc;
+  opacity: .2;
+  moz-opacity: .5;
+  filter: alpha(opacity=50);
+}
+
 /*CATALOGUE*/
 #catalogue .resource .toolbar button {
 	padding: 2px;
