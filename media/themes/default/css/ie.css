@@ -107,6 +107,15 @@ body {
 	background: url(../images/ie/iGadget/extract.png) no-repeat;
 }
 
+/*MENU_LAYER*/
+#menu_layer{
+/*ie hack to show a clickable transparent layer*/
+  opacity: .0;
+  moz-opacity: .0;
+  filter: alpha(opacity=0);
+  background-color:red;
+}
+
 /*CATALOGUE*/
 #catalogue .resource .toolbar button {
 	padding: 2px;
