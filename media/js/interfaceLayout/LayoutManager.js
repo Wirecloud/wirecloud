@@ -723,6 +723,8 @@ var LayoutManagerFactory = function () {
 				// only if the layer is displayed.
 				this.hideCover();
 			}
+			
+			this.showUnclickableCover();
 
 			if (!this.menus['alertMenu'])
 				this.menus['alertMenu'] = new AlertWindowMenu();
