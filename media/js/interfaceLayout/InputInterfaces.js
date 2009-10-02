@@ -328,7 +328,7 @@ function EMailInputInterface(fieldId, options) {
 }
 EMailInputInterface.prototype = new TextInputInterface();
 
-EMailInputInterface.prototype._EMailChecker = /[^\W\d]\w*@[^\W\d]+\.[^\W\d]+/;
+EMailInputInterface.prototype._EMailChecker = /[\w\d][\w-]*@[\w\d-]+\.[\w\d]+/;
 
 EMailInputInterface.prototype._checkValue = function(newValue) {
 	return this._EMailChecker.test(newValue) ? InputValidationError.NO_ERROR : InputValidationError.EMAIL_ERROR;
