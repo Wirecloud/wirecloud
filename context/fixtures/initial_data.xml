@@ -196,7 +196,7 @@ Returns: ['Getafe,']]]></field>
         <field type="CharField" name="name">replace</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
-        	var newString = (params['newSubString'])?params['newSubString']: "";
+        	var newString = (params['newSubStr'])?params['newSubStr']: "";
 			return channelValue.replace(params['regexp'], newString);
         }
         ]]>
