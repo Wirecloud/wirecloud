@@ -416,7 +416,7 @@ wChannel.prototype._getJSONInput = function() {
 	var json = new Hash();
 
 	for (var i = 0; i < this.inputs.length; i++) {
-		json[this.inputs[i].getName()] = this.inputs[i].variable.value;
+		json[this.inputs[i].getName()] = this.inputs[i].getValue();
 	}
 
 	return json;
