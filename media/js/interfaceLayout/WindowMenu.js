@@ -494,6 +494,7 @@ function FormWindowMenu (fields, title) {
 	table_.setAttribute('cellpadding', '0');
 	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
 	table_.appendChild(table);
+
 	for (var fieldId in this.fields) {
 		var field = this.fields[fieldId];
 		var row = table.insertRow(-1);
@@ -864,7 +865,10 @@ function SharedWorkSpaceMenu() {
 
 	// Extra HTML Elements (url and html_code)
 	// Table
-	this.addElement('tableElement', 'table', 'windowContent');
+	this.addElement('mainTable', 'table', 'windowContent');
+	
+	//IE6 and IE7 need a tbody for dynamic tables
+	this.addElement('tableElement', 'tbody', 'mainTable');
 
 	// TR1
 	this.addElement('tr1Element', 'tr', 'tableElement');
@@ -906,6 +910,7 @@ SharedWorkSpaceMenu.prototype = new WindowMenu();
 
 SharedWorkSpaceMenu.prototype.addElement = function(element_name, html_tag, father_name) {
 	this[element_name] = document.createElement(html_tag);
+	Element.extend(this[element_name]);
 	this[father_name].appendChild(this[element_name]);
 }
 
@@ -922,8 +927,8 @@ SharedWorkSpaceMenu.prototype.setHTML = function(url) {
 }
 
 SharedWorkSpaceMenu.prototype.hide = function(url) {
-	this.urlElement.update();
-	this.html_codeElement.update();
+	this.urlElement.value = "";
+	this.html_codeElement.value = "";
 	this.tr1Element.style.display='none';
 	this.tr2Element.style.display='none';
 	WindowMenu.prototype.hide.call(this);

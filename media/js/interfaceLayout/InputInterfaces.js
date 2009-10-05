@@ -264,6 +264,7 @@ function TextInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('type', 'text');
 }
 TextInputInterface.prototype = new InputInterface();
@@ -278,6 +279,7 @@ function IntegerInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('type', 'text');
 }
 IntegerInputInterface.prototype = new InputInterface();
@@ -301,6 +303,7 @@ function LongTextInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('textarea');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('cols', '50');
 	this.inputElement.setAttribute('rows', '3');
 }
@@ -328,7 +331,7 @@ function EMailInputInterface(fieldId, options) {
 }
 EMailInputInterface.prototype = new TextInputInterface();
 
-EMailInputInterface.prototype._EMailChecker = /[\w\d][\w-]*@[\w\d-]+\.[\w\d]+/;
+EMailInputInterface.prototype._EMailChecker = /[^\W\d]\w*@[^\W\d]+\.[^\W\d]+/;
 
 EMailInputInterface.prototype._checkValue = function(newValue) {
 	return this._EMailChecker.test(newValue) ? InputValidationError.NO_ERROR : InputValidationError.EMAIL_ERROR;
@@ -361,6 +364,7 @@ function ColorInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('maxlength', 7);
 	this.inputElement.setAttribute('type', 'text');
 	this.inputElement.setAttribute('class', 'color_input');
@@ -372,6 +376,7 @@ function ColorInputInterface(fieldId, options) {
 	this.button.addClassName('color_button');
 
 	this.sample = document.createElement('input');
+	Element.extend(this.sample);
 	var sampleId = this.fieldId + '_sample';
 	this.sample.setAttribute('id', sampleId);
 	this.sample.setAttribute('size', '1');
@@ -419,6 +424,7 @@ function BooleanInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('type', 'checkbox');
 }
 BooleanInputInterface.prototype = new InputInterface();
@@ -453,8 +459,11 @@ function RadioButtonInputInterface(fieldId, options) {
 	InputInterface.call(this, fieldId, options);
 
 	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
 	this.inputElement.setAttribute('type', 'radio');
 	this.inputElement.setAttribute('name', options.name);
+	if(this._defaultValue)
+		this.inputElement.setAttribute('defaultChecked', 'defaultChecked');
 
 	if ('onclick' in options)
 		this.inputElement.observe('click', options['onclick'], true);
@@ -498,6 +507,7 @@ function MultipleInputInterface(fieldId, fieldDesc) {
 	InputInterface.call(this, fieldId, fieldDesc);
 
 	this.inputElement = document.createElement('select');
+	Element.extend(this.inputElement);
 
 	this.inputElement.multiple = true;
 
