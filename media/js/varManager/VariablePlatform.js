@@ -129,8 +129,6 @@ RVariable.prototype.setHandler = function (handler_) {
 RVariable.prototype.set = function (newValue) {
     if (this.annotated) {
 		// If annotated, the value must be managed!
-        // And it must be changed to NOT annotated!
-		this.annotated = false;	
 
 		var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
 		
@@ -141,6 +139,8 @@ RVariable.prototype.set = function (newValue) {
 				// Only wiring variables are involved!
 				if (! this.tab.is_painted() ) {
 					this.tab.paint();
+					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
+					return;
 				}
 			
 			case Variable.prototype.USER_PREF:
@@ -178,6 +178,8 @@ RVariable.prototype.set = function (newValue) {
 			default:
 				break;
 		}
+		// And it must be changed to NOT annotated!
+		this.annotated = false;	
     }
 }
 

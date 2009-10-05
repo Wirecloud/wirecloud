@@ -256,6 +256,10 @@ function WorkSpace (workSpaceState) {
 
 		// Notify to the context manager the igadget has been loaded
 		this.contextManager.iGadgetLoaded(igadget);
+		
+		// Notify to the variable manager the igadget has been loaded
+		this.varManager.dispatchPendingVariables(igadgetId);
+		
 	}
 	
 	WorkSpace.prototype.getTabInstance = function(tabId) {

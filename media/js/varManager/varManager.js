@@ -168,6 +168,24 @@ function VarManager (_workSpace) {
 		
 		variable.set(value);
 	}
+	
+	VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
+		var variables = this.pendingVariables[iGadgetId];
+		if (!variables){
+			this.pendingVariables[iGadgetId] = new Array();
+			variables = this.pendingVariables[iGadgetId];
+		}
+		variables.push({"name":variableName, "value":value});
+	}
+	
+	VarManager.prototype.dispatchPendingVariables = function (iGadgetId) {
+		var variables = this.pendingVariables.remove(iGadgetId);
+		if (variables){
+			for (var i=0;i<variables.length;i++){
+				this.setVariable(iGadgetId, variables[i]["name"], variables[i]["value"]);
+			}
+		}
+	}
 
 	VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
 		this.parseIGadgetVariables(igadgetInfo, tab);
@@ -329,6 +347,8 @@ function VarManager (_workSpace) {
 	this.nestingLevel = 0;
 	
 	this.buffered_requests = 0;
+	
+	this.pendingVariables = new Hash(); //to manage igadgets loaded on demand caused by a wiring propagation
 	
 	// Creation of ALL EzWeb variables regarding one workspace
 	this.parseVariables(this.workSpace.workSpaceGlobalInfo);
