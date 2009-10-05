@@ -125,9 +125,10 @@ class AbstractVariable(models.Model):
         return str(self.pk) + " " + self.name
 
     def has_public_value(self):
-       #If it's a workspace variable, it has a public value!
+       #In workspace variables, channel values are not public
        if self.type=='WORKSPACE':
-           return True
+           ws_var = WorkSpaceVariable.objects.get(abstract_variable=self)   
+           return ws_var.has_public_value()
        
        #Cycling import 
        from igadget.models import Variable
@@ -192,6 +193,9 @@ class WorkSpaceVariable(models.Model):
         ('TAB', _('Tab')),
     )
     aspect = models.CharField(_('Aspect'), max_length=12, choices=ASPECTS)
+
+    def has_public_value(self):
+        return self.aspect!="CHANNEL"
 
     def __unicode__(self):
         return str(self.pk) + " " + self.aspect
