@@ -798,6 +798,7 @@ IGadget.prototype.fillWithLabel = function() {
 		this.igadgetNameHTMLElement.observe('click',
 		                                    function(e) {
 		                                        Event.stop(e);
+		                                        this.layout.raiseToTop(this);
 		                                        this.fillWithInput();
 		                                    }.bind(this)); //do not propagate to div.
 	}
