@@ -363,9 +363,9 @@ function Tab (tabInfo, workSpace) {
 		this.tabHTMLElement.style.left = this.x + 'px';
 		
 			// calculate where the user wants to put the tab
-			//x-10: do not return the draggable element
+			//x-15: do not return the draggable element
 			//y+2: problems with border in IE<8
-		var element = document.elementFromPoint(e.clientX - 10, this.y +2);
+		var element = document.elementFromPoint(e.clientX - 15, this.y +2);
 		if (element != null) {
 			// elementFromPoint may return inner tab elements
 			element = this._findTabElement(element, 4);

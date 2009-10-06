@@ -364,7 +364,7 @@ input[type="text"], input[type="password"], textarea{
 }
 
 .tab_dragger{
-	width: 5px;
+	width: 8px;
 	height: 16px;
 	float: left;
 	background: transparent url(../images/separator.gif) no-repeat;
