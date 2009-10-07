@@ -210,11 +210,13 @@ var CatalogueFactory  = function () {
 			var cloneOk = function(transport){
 				var response = transport.responseText;
 				var wsInfo = JSON.parse(response);
-				//create the new workspace and go to it
+				//create the new workspace and go to it				
 				opManager = OpManagerFactory.getInstance();
 				opManager.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
 		
 				ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
+				
+				LayoutManagerFactory.getInstance().logStep(''); 
 				
 			}
 
@@ -222,9 +224,10 @@ var CatalogueFactory  = function () {
 				var logManager = LogManagerFactory.getInstance();
 				var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
 				logManager.log(msg);
-				
+				LayoutManagerFactory.getInstance().logStep('');
 			}
-
+			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
+			LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 			var currentResource = this.getResource(resourceId_);
 			var workSpaceId = currentResource.getMashupId();
 			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId});
@@ -241,14 +244,18 @@ var CatalogueFactory  = function () {
 				opManager = OpManagerFactory.getInstance();
 		
 				ShowcaseFactory.getInstance().reload(response['workspace_id']);
+				LayoutManagerFactory.getInstance().logStep('');
 				
 			}
 			var mergeError = function(transport, e) {
 				var logManager = LogManagerFactory.getInstance();
 				var msg = logManager.formatError(gettext("Error cloning workspace: %(errorMsg)s."), transport, e);
 				logManager.log(msg);
+				LayoutManagerFactory.getInstance().logStep('');
 			}
 
+			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
+			LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 			var currentResource = this.getResource(resourceId_);
 			var workSpaceId = currentResource.getMashupId();
 			
