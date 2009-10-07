@@ -372,7 +372,8 @@
 #wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
 	text-align: left;
 	margin: 0px;
-	font-size: 95%
+	font-size: 95%;
+	color: #000000;
 }
 
 
