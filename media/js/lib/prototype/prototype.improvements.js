@@ -40,7 +40,7 @@ Object.extend(Event, {
 	}
 });
 
-if (window.EzSteroidsAPI) {
+//if (window.EzSteroidsAPI) {
 	// Backup prototype observe method
 	var _observe = Event.observe;
 
@@ -62,7 +62,7 @@ if (window.EzSteroidsAPI) {
 			this._observe(element, name, observer);
 		}
 	});
-}
+//}
 
 var Browser = {
 	
