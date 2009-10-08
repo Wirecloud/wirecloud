@@ -40,7 +40,6 @@ Object.extend(Event, {
 	}
 });
 
-//if (window.EzSteroidsAPI) {
 	// Backup prototype observe method
 	var _observe = Event.observe;
 
@@ -52,17 +51,19 @@ Object.extend(Event, {
 		 * Event extension to manage user privileges
 		 */
 		observe: function(element, name, observer, useCapture, featureId) {
-			if (featureId && !EzSteroidsAPI.evaluePolicy(featureId)) {
-				// If the user isn't allowed
-				observer = function(msg) {
-					var msg = gettext("You are not allowed to perform this operation");
-					LogManagerFactory.getInstance().showMessage(msg);
+			try{
+				if (featureId && !EzSteroidsAPI.evaluePolicy(featureId)) {
+					// If the user isn't allowed
+					observer = function(msg) {
+						var msg = gettext("You are not allowed to perform this operation");
+						LogManagerFactory.getInstance().showMessage(msg);
+					}
 				}
+			}catch(e){
 			}
 			this._observe(element, name, observer);
 		}
 	});
-//}
 
 var Browser = {
 	
