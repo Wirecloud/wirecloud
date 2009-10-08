@@ -27,3 +27,19 @@ body{
 #catalogue .head{
 	float:left;
 }
+
+/* WIRING HACKS  to gain layout and paint the arrows properly*/
+
+#event_list, 
+#slot_list,
+#channels_list{
+	width: 100%;
+}
+
+#wiring .tab, 
+#wiring .content, 
+#wiring .igadget,
+#wiring .connectable_row,
+#wiring .channel{
+	height: 1%;
+}

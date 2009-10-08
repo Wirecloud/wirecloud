@@ -1303,8 +1303,13 @@ function SimpleConnectableInterface (connectable, anchor, group) {
 	this.parentInterface = group;
 	this.htmlElement = document.createElement("div");
 	Element.extend(this.htmlElement);
-
-	this.htmlElement.appendChild(document.createTextNode(connectable.getLabel()));
+	this.htmlElement.addClassName("connectable_row")
+	
+	var span = document.createElement("span");
+	Element.extend(span);
+	span.update(connectable.getLabel());
+	//this.htmlElement.appendChild(document.createTextNode(connectable.getLabel()));
+	this.htmlElement.appendChild(span);
 
 	var chkItem = anchor.getHTMLElement();
 	this.htmlElement.appendChild(chkItem);

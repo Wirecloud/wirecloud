@@ -936,7 +936,6 @@ Coordinates.prototype.getAngle = function(angle) {
 ConnectionAnchor.prototype.getCoordinates = function(baseElement) {
 	var coordinates = {posX: this.htmlElement.offsetLeft,
 	                   posY: this.htmlElement.offsetTop};
-
 	var parentNode = this.htmlElement.parentNode;
 	while (parentNode != baseElement) {
 		var p = Element.getStyle(parentNode, 'position');
