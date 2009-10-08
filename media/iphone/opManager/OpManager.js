@@ -49,7 +49,7 @@ var OpManagerFactory = function () {
 			    
 			    this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
 
-			    if (workSpace.active == "true") {
+			    if (workSpace.active) {
 			    	this.activeWorkSpace=this.workSpaceInstances[workSpace.id];
 			    }
 			    

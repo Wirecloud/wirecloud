@@ -121,6 +121,7 @@ inputFiles = {
         'iphone/dragboard/dragboard.js',
         'js/wiring/wiring_exceptions.js',
         'js/wiring/filter.js',
+        'js/wiring/external_channel.js',
         'js/wiring/connectable.js',
         'js/wiring/wiring.js',
         'js/wiring/jsonFilter.js',

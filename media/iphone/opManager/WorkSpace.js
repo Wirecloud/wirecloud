@@ -47,7 +47,7 @@ function WorkSpace (workSpaceState) {
 				var tab = tabs[i];
 				this.tabInstances.push(new Tab(tab, this, i));
 				
-				if (tab.visible == 'true') {
+				if (tab.visible) {
 					this.visibleTabIndex = i;
 				}
 			}
