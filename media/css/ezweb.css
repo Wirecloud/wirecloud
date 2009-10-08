@@ -240,7 +240,7 @@ td {
 
 .message_section{
 	position: absolute;
-	top: 6px;
+	bottom: 0px;
 	z-index: 3;
 	display: none;
 	width:100%;
