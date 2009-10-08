@@ -466,7 +466,7 @@ function RadioButtonInputInterface(fieldId, options) {
 		this.inputElement.setAttribute('defaultChecked', 'defaultChecked');
 
 	if ('onclick' in options)
-		this.inputElement.observe('click', options['onclick'], true);
+		this.inputElement.observe('click', options['onclick'], true, fieldId);
 }
 RadioButtonInputInterface.prototype = new InputInterface();
 
