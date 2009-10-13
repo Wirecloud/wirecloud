@@ -37,28 +37,32 @@ Object.extend(Event, {
 	KEY_SPACE: 32,
 	keyPressed: function(event) {
 		return Browser.isMSIE() ? window.event.keyCode : event.which;
-	},
-	/*
-	 * Event extension to manage user privileges 
-	 * */
-	observe: function(element, name, observer, useCapture, featureId){
-		var _observer = observer;
-		if (featureId && typeof(EzSteroidsAPI)!="undefined"){
-			//check the user policies
-			if (!EzSteroidsAPI.evaluePolicy(featureId)){
-				//if the user isn't allowed
-				_observer = function(msg){LogManagerFactory.getInstance().showMessage("You are not allowed to perform this operation");};
-			}
-		}
-		element = $(element);
-    	useCapture = useCapture || false;
-
-    	if (name == 'keypress' && (Prototype.Browser.WebKit || element.attachEvent))
-      		name = 'keydown';
-
-   		Event._observeAndCache(element, name, _observer, useCapture);
 	}
 });
+
+if (window.EzSteroidsAPI) {
+	// Backup prototype observe method
+	var _observe = Event.observe;
+
+	Object.extend(Event, {
+		// Old prototype observe method
+		_observe: _observe,
+
+		/*
+		 * Event extension to manage user privileges
+		 */
+		observe: function(element, name, observer, useCapture, featureId) {
+			if (featureId && !EzSteroidsAPI.evaluePolicy(featureId)) {
+				// If the user isn't allowed
+				observer = function(msg) {
+					var msg = gettext("You are not allowed to perform this operation");
+					LogManagerFactory.getInstance().showMessage(msg);
+				}
+			}
+			this._observe(element, name, observer, useCapture);
+		}
+	});
+}
 
 var Browser = {
 	
@@ -127,7 +131,7 @@ if (document.documentElement.textContent != undefined) {
 	 * Changes the inner content of an Element treating it as pure text. If
 	 * the provided text contains HTML special characters they will be encoded.
 	 */
-	Element.Methods.setTextContent = function(element, text) {
+	Element.prototype.setTextContent = function(element, text) {
 		element.textContent = text;
 	}
 
@@ -135,7 +139,7 @@ if (document.documentElement.textContent != undefined) {
 	 * Return the inner content of an Element treating it as pure text. All
 	 * encoded characters will be decoded.
 	 */
-	Element.Methods.getTextContent = function(element) {
+	Element.prototype.getTextContent = function(element) {
 		return element.textContent;
 	}
 } else if (document.documentElement.innerText != undefined) {
