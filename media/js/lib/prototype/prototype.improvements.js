@@ -131,16 +131,16 @@ if (document.documentElement.textContent != undefined) {
 	 * Changes the inner content of an Element treating it as pure text. If
 	 * the provided text contains HTML special characters they will be encoded.
 	 */
-	Element.prototype.setTextContent = function(element, text) {
-		element.textContent = text;
+	Element.prototype.setTextContent = function(text) {
+		this.textContent = text;
 	}
 
 	/**
 	 * Return the inner content of an Element treating it as pure text. All
 	 * encoded characters will be decoded.
 	 */
-	Element.prototype.getTextContent = function(element) {
-		return element.textContent;
+	Element.prototype.getTextContent = function() {
+		return this.textContent;
 	}
 } else if (document.documentElement.innerText != undefined) {
 	Element.Methods.setTextContent = function(element, text) {
