@@ -449,7 +449,7 @@ BooleanInputInterface.prototype._checkValue = function(newValue) {
 }
 
 BooleanInputInterface.prototype.parseFromPersistence = function(value) {
-	return typeof value == 'boolean' ? value : valuevalue == 'True';
+	return typeof value == 'boolean' ? value : value == 'True';
 }
 
 /**

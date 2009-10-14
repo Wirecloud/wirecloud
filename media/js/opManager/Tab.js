@@ -455,7 +455,7 @@ function Tab (tabInfo, workSpace) {
 	 *
 	 * Callback function for the Lock menu entry.
 	 */
-	this._setLock = function(locked) {
+	this._setLock = function() {
 		LayoutManagerFactory.getInstance().hideCover();
 		this.setLock(true);
 	}.bind(this);
@@ -465,7 +465,7 @@ function Tab (tabInfo, workSpace) {
 	 *
 	 * Callback function for the Unlock menu entry.
 	 */
-	this._unsetLock = function(locked) {
+	this._unsetLock = function() {
 		LayoutManagerFactory.getInstance().hideCover();
 		this.setLock(false);
 	}.bind(this);
@@ -567,18 +567,12 @@ Tab.prototype._createTabMenu = function() {
 	if (this.preferences.get('locked')) {
 		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL("unlock"),
 			gettext("Unlock"),
-			function() {
-				LayoutManagerFactory.getInstance().hideCover();
-				this._setLock(false);
-			}.bind(this),
+			this._unsetLock,
 			1);
 	} else {
 		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
 			gettext("Lock"),
-			function() {
-				LayoutManagerFactory.getInstance().hideCover();
-				this._setLock(true);
-			}.bind(this),
+			this._setLock,
 			1);
 	}
 
