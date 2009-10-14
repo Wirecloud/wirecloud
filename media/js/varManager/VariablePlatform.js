@@ -138,7 +138,13 @@ RVariable.prototype.set = function (newValue) {
 				// On-demand loading of tabs!
 				// Only wiring variables are involved!
 				if (! this.tab.is_painted() ) {
+					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
 					this.tab.paint();
+					return;
+				}
+				var opManager = OpManagerFactory.getInstance();
+				var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+				if (!iGadget.loaded) { //the tab is being painted due to another variable in the same tab and this gadget isn't fully loaded
 					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
 					return;
 				}
@@ -161,7 +167,7 @@ RVariable.prototype.set = function (newValue) {
 					}
 				} else {
 					var opManager = OpManagerFactory.getInstance();
-				        var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+				    var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
 					if (iGadget.loaded) {
 						var transObj = {iGadgetId: this.iGadget, varName: this.name};
 						var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
