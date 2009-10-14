@@ -94,8 +94,13 @@ def get_user_theme(user, fallbackTheme):
       return fallbackTheme
 
 
-def get_tab_preference_values(tab_id):
-    return parseInheritableValues(TabPreference.objects.filter(tab=tab_id))
+def get_tab_preference_values(tab, user):
+    preferences = parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
+
+    if tab.workspace.is_shared(user):
+      preferences['locked']['value'] = True;
+
+    return preferences
 
 def update_tab_preferences(tab, preferences_json):
     _currentPreferences = TabPreference.objects.filter(tab=tab)
@@ -210,9 +215,9 @@ class TabPreferencesCollection(Resource):
         user = get_user_authentication(request)
 
         # Check Tab existance and owned by this user
-        get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
 
-        result = get_tab_preference_values(tab_id)
+        result = get_tab_preference_values(tab, user)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 

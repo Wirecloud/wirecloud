@@ -247,21 +247,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadget = this.iGadgets[igadgetKeys[i]];
 			iGadget._notifyLockEvent(this.fixed);
 		}
-
-		// Save to persistence
-		var onSuccess = function (transport) {}
-
-		var onError = function (transport, e) {
-			var logManager = LogManagerFactory.getInstance();
-			var msg = logManager.formatError(gettext("Error changing tab lock status: %(errorMsg)s."), transport, e);
-			logManager.log(msg);
-		}
-
-		var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabId});
-		var data = new Hash();
-		data.locked = newLockStatus ? "true" : "false";
-		var params = {'tab': data.toJSON()};
-		PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, onSuccess, onError);
 	}
 
 	/**
@@ -280,7 +265,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgets = new Hash();
 		this.iGadgetsByCode = new Hash();
 
-		if (tabInfo.locked == "true") {
+		if (tab.preferences.get('locked')) {
 			this.fixed = true;
 			this.dragboardElement.addClassName("fixed");
 		}

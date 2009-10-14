@@ -420,9 +420,8 @@ def get_tab_data(data, tab, user):
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
     data_ret['visible'] = data_fields['visible']
-    data_ret['locked'] = tab.is_locked(user)
 
-    data_ret['preferences'] = get_tab_preference_values(data['pk'])
+    data_ret['preferences'] = get_tab_preference_values(tab, user)
 
     return data_ret
 

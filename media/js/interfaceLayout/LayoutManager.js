@@ -127,7 +127,6 @@ var LayoutManagerFactory = function () {
 				subtaskpercentage = 100;
 
 			msg = gettext("%(task)s %(percentage)s%");
-			percentage = Math.round((this.currentSubTask * 100) / this.totalSubTasks);
 			msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
 			$("loading-task-title").setTextContent(msg);
 

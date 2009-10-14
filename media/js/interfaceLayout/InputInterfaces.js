@@ -449,7 +449,7 @@ BooleanInputInterface.prototype._checkValue = function(newValue) {
 }
 
 BooleanInputInterface.prototype.parseFromPersistence = function(value) {
-	return value == 'True';
+	return typeof value == 'boolean' ? value : valuevalue == 'True';
 }
 
 /**
@@ -554,7 +554,7 @@ MultipleInputInterface.prototype._setValue = function(newValue) {
 /**
  *
  */
-InterfaceFactory = new Object();
+var InterfaceFactory = new Object();
 InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 	switch (fieldDesc.type) {
 	case 'boolean':

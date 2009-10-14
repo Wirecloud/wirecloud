@@ -211,29 +211,6 @@ function Tab (tabInfo, workSpace) {
 		this.painted = true;
 	}
 
-	Tab.prototype.preferencesChanged = function(modifiedValues) {
-		for (preferenceName in modifiedValues) {
-			var newLayout = false;
-
-			switch (preferenceName) {
-			case "smart":
-			case "columns":
-			case "cell-height":
-			case "vertical-margin":
-			case "horizontal-margin":
-				newLayout = true;
-				break;
-			default:
-				continue;
-			}
-			break;
-		}
-
-		if (newLayout) {
-			this.dragboard._updateBaseLayout();
-		}
-	}
-
 	// *****************
 	//  PRIVATE METHODS
 	// *****************
@@ -249,6 +226,7 @@ function Tab (tabInfo, workSpace) {
 	this.tabHTMLElement;
 	this.tabNameHTMLElement = null;
 	this.tabWidth = 0;
+
 	this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this)
 	this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
 
@@ -442,6 +420,7 @@ function Tab (tabInfo, workSpace) {
 	this.dragboardElement.setAttribute('id', this.dragboardLayerName);
 
 	this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
+
 	
 	//LayoutManagerFactory.getInstance().resizeContainer(this.dragboardElement);
 	
@@ -471,30 +450,26 @@ function Tab (tabInfo, workSpace) {
 													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 
-
-	//create tab menu
-	this._lockFunc = function(locked) {
-		if (locked) {
-			this.menu.updateOption(this.lockEntryId,
-				_currentTheme.getIconURL('unlock'),
-				gettext("Unlock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(false);
-				}.bind(this));
-		} else {
-			this.menu.updateOption(this.lockEntryId,
-				_currentTheme.getIconURL('lock'),
-				gettext("Lock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(true);
-				}.bind(this));
-		}
-		this.dragboard.setLock(locked);
-		this.workSpace._checkLock();
+	/**
+	 * @private
+	 *
+	 * Callback function for the Lock menu entry.
+	 */
+	this._setLock = function(locked) {
+		LayoutManagerFactory.getInstance().hideCover();
+		this.setLock(true);
 	}.bind(this);
-	
+
+	/**
+	 * @private
+	 *
+	 * Callback function for the Unlock menu entry.
+	 */
+	this._unsetLock = function(locked) {
+		LayoutManagerFactory.getInstance().hideCover();
+		this.setLock(false);
+	}.bind(this);
+
 	this.markAsVisibleSuccess = function() {
 		var tabIds = this.workSpace.tabInstances.keys();
 		for(var i = 0; i < tabIds.length; i++){
@@ -589,12 +564,12 @@ Tab.prototype._createTabMenu = function() {
 		this.visibleEntryId = null;
 	}
 
-	if (this.dragboard.isLocked()) {
+	if (this.preferences.get('locked')) {
 		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL("unlock"),
 			gettext("Unlock"),
 			function() {
 				LayoutManagerFactory.getInstance().hideCover();
-				this._lockFunc(false);
+				this._setLock(false);
 			}.bind(this),
 			1);
 	} else {
@@ -602,7 +577,7 @@ Tab.prototype._createTabMenu = function() {
 			gettext("Lock"),
 			function() {
 				LayoutManagerFactory.getInstance().hideCover();
-				this._lockFunc(true);
+				this._setLock(true);
 			}.bind(this),
 			1);
 	}
@@ -675,6 +650,60 @@ Tab.prototype._createTabMenu = function() {
 			LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
 		}.bind(this),
 		3);
+}
+
+/**
+ * @private
+ *
+ * This method is called when tab preferences are changed
+ */
+Tab.prototype.preferencesChanged = function(modifiedValues) {
+	for (preferenceName in modifiedValues) {
+		var newLayout = false;
+
+		switch (preferenceName) {
+		case "smart":
+		case "columns":
+		case "cell-height":
+		case "vertical-margin":
+		case "horizontal-margin":
+			newLayout = true;
+			break;
+		case "locked":
+			var locked = modifiedValues[preferenceName];
+
+			if (modifiedValues[preferenceName]) {
+				this.menu.updateOption(this.lockEntryId,
+				    _currentTheme.getIconURL('unlock'),
+				    gettext("Unlock"),
+				    this._unsetLock);
+			} else {
+				this.menu.updateOption(this.lockEntryId,
+				    _currentTheme.getIconURL('lock'),
+				    gettext("Lock"),
+				    this._setLock);
+			}
+
+			this.dragboard.setLock(locked);
+			this.workSpace._checkLock();
+
+		default:
+			continue;
+		}
+		break;
+	}
+
+	if (newLayout) {
+		this.dragboard._updateBaseLayout();
+	}
+}
+
+
+/**
+ * Locks/unlocks this tab.
+ */
+Tab.prototype.setLock = function(locked) {
+	this.preferences.set({'locked': {value: locked}});
 }
 
 /**

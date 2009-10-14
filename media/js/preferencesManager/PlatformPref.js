@@ -286,13 +286,13 @@ function Preferences(definitions, values) {
 
 	this._preferences = new Object();
 
-	var inherit, value;
+	var inherit, value, definition;
 	for (var key in definitions) {
-		var definition = definitions[key];
+		definition = definitions[key];
 
-		if (definition.name in values) {
+		if (key in values) {
 			inherit = values[definition.name].inherit;
-			value = definition.inputInterface.parseFromPersistence(values[definition.name].value);
+			value = definition.inputInterface.parseFromPersistence(values[key].value);
 		} else {
 			value = definition.inputInterface.getDefaultValue();
 			inherit = definition.inheritByDefault;
@@ -329,12 +329,38 @@ Preferences.prototype.get = function(name) {
 	return this._preferences[name].getEffectiveValue();
 }
 
-Preferences.prototype.set = function(name, newValue) {
-	this._preferences[name].setValue(newValue);
-
+/**
+ * Allows to change some preferences programatically.
+ *
+ * Example:
+ * <code>
+ * preferences.set({
+ *                  'theme':  {inherit: true},
+ *                  'locked': {value: true}
+ *                 });
+ * </code>
+ *
+ * @param {Object} newValues a hash with preferenceName/changes pairs
+ */
+Preferences.prototype.set = function(newValues) {
+	var newEffectiveValues = {};
 	var modifiedValues = {};
-	modifiedValues[name] = {value: newValue};
-	this._notifyCommitHandlers(modifiedValues)
+
+	for (var name in newValues) {
+		var preference = this._preferences[name];
+		var changes = newValues[name];
+
+		if ('inherit' in changes)
+			preference.setInheritValue(changes.inherit);
+
+		if ('value' in changes)
+			preference.setValue(changes.value);
+
+		modifiedValues[name] = changes;
+		newEffectiveValues[name] = preference.getEffectiveValue();
+	}
+
+	this._notifyCommitHandlers(newEffectiveValues)
 	this._save(modifiedValues);
 }
 
@@ -367,13 +393,17 @@ Preferences.prototype._handleParentChanges = function(modifiedValues) {
  * notify modified values to each specific preference handlers.
  */
 Preferences.prototype._notifyCommitHandlers = function(modifiedValues) {
-	var len = this.handlers.length
+	var len = this.handlers.length;
 	for (var i = 0; i < len; i++) {
 		this.handlers[i](modifiedValues);
 	}
 }
 
-Preferences.prototype.save = function(modifiedPreferences) {
+/**
+ * Saves the modified preferences. The new values are taken from the relevant
+ * <code>PreferencesWindowMenu</code>.
+ */
+Preferences.prototype.save = function() {
 	var modifiedPreferences = [];
 	var modifiedValues = {};
 	var newEffectiveValues = {};

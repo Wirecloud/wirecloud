@@ -28,7 +28,6 @@
     <object pk="1" model="workspace.tab">
         <field type="CharField" name="name">MyTab</field>
         <field type="BooleanField" name="visible">True</field>
-        <field type="BooleanField" name="locked">False</field>
         <field to="workspace.workspace" name="workspace" rel="ManyToOneRel">1</field>
         <field to="workspace.abstractvariable" name="abstract_variable" rel="ManyToOneRel">1</field>
     </object>

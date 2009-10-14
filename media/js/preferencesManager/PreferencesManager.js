@@ -196,6 +196,12 @@ var PreferencesManagerFactory = function () {
 
 		// Tab preferences
 		var tabPreferences = {
+		  "locked": {
+		    "defaultValue": false,
+		    "label":        gettext('Locked'),
+		    "type":         "boolean",
+		    "description":  gettext('If the Tab is locked, you will not be able to move, resize and do other task over its iGadgets.')
+		  },
 		  "smart": {
 		    "inheritable":   true,
 		    "inheritByDefault": true,

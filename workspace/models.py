@@ -201,28 +201,15 @@ class WorkSpaceVariable(models.Model):
         return str(self.pk) + " " + self.aspect
 
 class Tab(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     visible = models.BooleanField(_('Visible'))
-    locked = models.BooleanField(_('Locked'))
     position = models.IntegerField(null=True, blank=True)
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-        
+
     class Admin:
         pass
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
-    
-    def is_locked(self, user):
-        is_shared = self.workspace.is_shared(user)
-        if (is_shared == 'true'):
-            return is_shared
-        
-        #Not shared! 
-        #Returning data form data model! 
-        if (self.locked):
-            return 'true'
-        
-        return 'false'

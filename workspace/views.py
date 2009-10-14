@@ -162,7 +162,7 @@ def createTab (tab_name, user,  workspace):
     position = Tab.objects.filter(workspace=workspace).count()
     
     # Creating tab
-    tab = Tab (name=tab_name, visible=visible, locked=False, position=position, workspace=workspace, abstract_variable=abstractVariable)
+    tab = Tab (name=tab_name, visible=visible, position=position, workspace=workspace, abstract_variable=abstractVariable)
     tab.save()
     
     # Returning created Ids
@@ -540,13 +540,7 @@ class TabEntry(Resource):
             
             if t.has_key('name'):
                 tab.name = t.get('name')
-            
-            if t.has_key('locked'):
-                if t.get('locked') == 'true':
-                    tab.locked = True
-                else:
-                    tab.locked = False
-            
+
             tab.save()
             
             return HttpResponse('ok')

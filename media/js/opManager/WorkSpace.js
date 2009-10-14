@@ -54,6 +54,8 @@ function WorkSpace (workSpaceState) {
 
 		// Failsafe workspace status
 		layoutManager.currentViewType = "dragboard"; // workaround
+		this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', {}, this)
+
 		var initialTab = {
 		                  'id': 0,
 		                  'locked': "true",
@@ -73,7 +75,6 @@ function WorkSpace (workSpaceState) {
 		this.tabInstances = new Hash();
 		this.tabInstances[0] = new Tab(initialTab, this);
 		this.visibleTab = this.tabInstances[0];
-		this.preferences = null;
 
 		this.loaded = true;
 
@@ -781,7 +782,7 @@ function WorkSpace (workSpaceState) {
 			this.menu.removeOption(this.activeEntryId);
 			this.activeEntryId = null;
 		}
-		PreferencesManagerFactory.getInstance().getPlatformPreferences().set('initial-theme', this.preferences.get('theme'));
+		PreferencesManagerFactory.getInstance().getPlatformPreferences().set({'initial-theme': {value: this.preferences.get('theme')}});
 	}.bind(this);
 
 	this.markAsActiveError = function(transport, e) {
@@ -952,7 +953,7 @@ WorkSpace.prototype.preferencesChanged = function(modifiedValues) {
 			var newTheme = modifiedValues[preferenceName];
 			LayoutManagerFactory.getInstance().changeCurrentTheme(newTheme);
 			if (this.workSpaceGlobalInfo.workspace.active)
-				PreferencesManagerFactory.getInstance().getPlatformPreferences().set('initial-theme', newTheme);
+				PreferencesManagerFactory.getInstance().getPlatformPreferences().set({'initial-theme': {value: newTheme}});
 			break;
 		default:
 			continue;

@@ -454,7 +454,9 @@ InfoWindowMenu.prototype = new WindowMenu();
 
 InfoWindowMenu.prototype._dontShowAnymore = function(e) {
 	var layoutManager = LayoutManagerFactory.getInstance();
-	PreferencesManagerFactory.getInstance().getPlatformPreferences().set('tip-' + this.type, false);
+	var changes = {};
+	changes['tip-' + this.type] = {value: false};
+	PreferencesManagerFactory.getInstance().getPlatformPreferences().set(changes);
 
 	layoutManager.hideCover();
 }
