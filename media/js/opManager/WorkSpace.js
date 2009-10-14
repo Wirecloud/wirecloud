@@ -682,7 +682,7 @@ function WorkSpace (workSpaceState) {
 
 	//Check if a workspace is shared with another users
 	WorkSpace.prototype.isShared = function() {
-		return eval(this.workSpaceState['shared']);
+		return this.workSpaceState['shared'];
 	}
 
 	// *****************

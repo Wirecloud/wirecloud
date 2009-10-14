@@ -60,12 +60,9 @@ class WorkSpace(models.Model):
 
     def is_shared(self, user):
         if (len(self.users.all()) < 2):
-            return 'false'
-        
-        if (self.get_creator() == user):
-            return 'false'
-        
-        return 'true'
+            return False
+
+        return self.get_creator() != user
 
 class UserWorkSpace(models.Model):
     workspace = models.ForeignKey(WorkSpace)
