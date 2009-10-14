@@ -92,10 +92,14 @@ class Proxy(Resource):
 
         # Params
         if request.POST.has_key('params'):
-            try:
-                params = urlencode(simplejson.loads(request.POST['params']))
-            except Exception, e:
-                params = encode_query(request.POST['params'])
+            # if Content-Type is xml format then skipping encode function.
+            if re.search("(application|text)/xml|application/([a-zA-Z-]*)\+xml", request.META['CONTENT_TYPE']) != None:
+                params = request.POST['params'].encode('utf-8')                
+            else:
+                try:
+                    params = urlencode(simplejson.loads(request.POST['params']))
+                except Exception, e:
+                    params = encode_query(request.POST['params'])
         else:
             params = ''
 
@@ -127,10 +131,16 @@ class Proxy(Resource):
                 if (header[0].lower() == 'content-type'):
                     if (header[1] != None and header[1].lower() != 'none'):
                         has_content_type = True
+                # Considering proper header string to forward the right content-type to the remote server       
+                if (header[0].lower() == 'content_type'):
+                    has_content_type = True
+                    headers['Content-Type'] = header[1]
                 if (header[0].lower() == 'http_content_type'):
                     http_content_type_value = header[1]
                 if (header[0].lower() == 'http_user_agent'):
                     headers["User-Agent"] = header[1]
+                if (header[0].lower() == 'http_accept_language'):
+                    headers["Accept-Language"] = header[1]
                 elif (header[0].find("HTTP_") >= 0
                       and header[0].lower() != 'http_cache_control' #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
                       and header[0].lower() != 'http_content_length'
