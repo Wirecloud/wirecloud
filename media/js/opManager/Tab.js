@@ -198,8 +198,8 @@ function Tab (tabInfo, workSpace) {
 */
 	
 	Tab.prototype.go = function () {
+		this.show();
 		LayoutManagerFactory.getInstance().goTab(this);
-		this.show()
 		this.makeVisibleInTabBar();
 	}
 

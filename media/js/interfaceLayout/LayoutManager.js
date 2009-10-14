@@ -977,7 +977,6 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
 
 		LayoutManager.prototype.goTab = function(tab_object){
-			this.markTab(tab_object);
 
 			var tab = tab_object.tabHTMLElement;
 
