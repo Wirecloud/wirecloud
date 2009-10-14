@@ -68,7 +68,7 @@ class Gadget(TransModel):
     
     menuColor = models.CharField(max_length=6, default="FFFFFF")
     
-    shared = models.BooleanField(_('Shared'), default=False, null=True)
+    shared = models.NullBooleanField(_('Shared'), default=False, null=True)
     users = models.ManyToManyField(User, verbose_name=_('Users'))
     last_update = models.DateTimeField(_('Last update'), null=True)
 

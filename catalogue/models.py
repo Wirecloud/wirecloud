@@ -144,8 +144,8 @@ class Capability(models.Model):
 class UserRelatedToGadgetResource(models.Model):
     gadget = models.ForeignKey(GadgetResource)
     user = models.ForeignKey(User)
-    added_by = models.BooleanField(_('Added by'), null = True)
-    preferred_by = models.BooleanField(_('Preferred by'), null = True)
+    added_by = models.NullBooleanField(_('Added by'), null = True)
+    preferred_by = models.NullBooleanField(_('Preferred by'), null = True)
     
     class Meta:
         unique_together = ("gadget", "user")
