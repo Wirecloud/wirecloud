@@ -93,13 +93,31 @@ function WorkSpace (workSpaceState) {
  	    	this.igadgetIdsLoaded.push(igadgetId);
  	    	
  	    	var igadget = this.getIgadget(igadgetId);
+ 	    	igadget._notifyLoaded();
 				
 			// Notify to the wiring module the igadget has been loaded
 			this.wiring.iGadgetLoaded(igadget);
 	
 			// Notify to the context manager the igadget has been loaded
 			this.contextManager.iGadgetLoaded(igadget);
+			
+			// Notify to the variable manager the igadget has been loaded
+			this.varManager.dispatchPendingVariables(igadgetId);
 		}
+	}
+	
+	WorkSpace.prototype.igadgetUnloaded = function(igadgetId) {
+		var igadget = this.getIgadget(igadgetId);
+		if (igadget == null)
+			return;
+
+		// Notify to the wiring module the igadget has been unloaded
+		this.wiring.iGadgetUnloaded(igadget);
+
+		// Notify to the context manager the igadget has been unloaded
+		this.contextManager.iGadgetUnloaded(igadget);
+
+		igadget._notifyUnloaded();
 	}
 	
 	WorkSpace.prototype.unload = function(){

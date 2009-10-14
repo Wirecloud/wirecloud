@@ -36,6 +36,8 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard) {
 	this.dragboard = dragboard;
 	this.iGadgetElement=$('mymw-content');
 	this.iGadgetTabBar=$('mymw-nav');
+	
+	this.loaded = false;
 
 }
 
@@ -89,7 +91,7 @@ IGadget.prototype.paint = function() {
 			html += 'gadget_content">';
 	else
 		html +='gadget_content_full">';
-	html += '<object onload=\'OpManagerFactory.getInstance().igadgetLoaded('+this.id+');\' class="gadget_object" type="text/html" data="'+this.gadget.getXHtml().getURICode()+'?id='+this.id+'" standby="Loading...">'; 
+	html += '<object id="object_'+this.id+'" onload=\'OpManagerFactory.getInstance().igadgetLoaded('+this.id+');\' class="gadget_object" type="text/html" data="'+this.gadget.getXHtml().getURICode()+'?id='+this.id+'" standby="Loading...">'; 
 	html += '"Loading...."';
 	html += '</object></div>';
 	
@@ -102,6 +104,27 @@ IGadget.prototype.paint = function() {
 		});
 	this.dragboard.workSpace.tabView.addTab(tab);
 	this.dragboard.workSpace.tabView.set('activeTab', tab);
+}
+
+IGadget.prototype._notifyLoaded = function() {
+	if (this.loaded) return;
+	
+	this.loaded = true;
+	
+	var unloadElement = $("object_"+this.id).contentDocument.defaultView;
+
+	Event.observe(unloadElement, 'unload',
+	                     function () {
+	                         OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+	                     }.bind(this),
+	                     true);
+}
+
+IGadget.prototype._notifyUnloaded = function() {
+	if (!this.loaded)
+		return;
+
+	this.loaded = false;
 }
 
 
