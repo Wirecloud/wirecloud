@@ -712,7 +712,7 @@ function WorkSpace (workSpaceState) {
 	this._lockFunc = function(locked) {
 		var keys = this.tabInstances.keys();
 		for (var i = 0; i < keys.length; i++) {
-			this.tabInstances[keys[i]]._lockFunc(locked);
+			this.tabInstances[keys[i]].setLock(locked);
 		}
 	}.bind(this);
 
