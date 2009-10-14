@@ -29,14 +29,14 @@
 
 
 #
-
+import cookielib
+import urllib2
+from urllib import urlcleanup, urlencode
 from urlparse import urlparse
 
-from urllib import urlcleanup, urlencode
-import urllib2
+from django.conf import settings
 from django.utils import simplejson
 
-from django.conf import settings
 
 def download_http_content (uri, params=None):
     urlcleanup()
@@ -58,8 +58,30 @@ def download_http_content (uri, params=None):
         proxy = urllib2.ProxyHandler()#proxies from environment
 
     opener = urllib2.build_opener(proxy)
-    
-    if params:
+    referer = getattr(settings, 'HTTP_REFERER', None)
+    if referer:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
+            'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+            'Accept-Language': 'en-gb,en;q=0.5',
+            'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+            'Referer': referer,
+        }
+        if 'username' in (params or {}):
+            headers.update({
+                'Remote-User': params['username'],
+            })
+        if 'cookie' in (params or {}):
+            headers.update({
+                'Cookie': params['cookie'],
+            })
+        cookies = cookielib.LWPCookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookies))
+        urllib2.install_opener(opener)
+        data = params and urlencode(params) or None
+        request = urllib2.Request(uri, data, headers)
+        return urllib2.urlopen(request).read()
+    elif params:
         return opener.open(uri,data=urlencode(params)).read()
     else:
         return opener.open(uri).read()
