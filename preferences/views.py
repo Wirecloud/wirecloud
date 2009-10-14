@@ -98,7 +98,7 @@ def get_tab_preference_values(tab, user):
     preferences = parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
 
     if tab.workspace.is_shared(user):
-      preferences['locked']['value'] = True;
+      preferences['locked'] = {'value': True};
 
     return preferences
 
