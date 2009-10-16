@@ -89,7 +89,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 	this.statusBar = null;
 	this.extractButton = null;
 
-	//Icon for the minimized floating gadgets
+	// Icon element for the iconified mode
 	this.iconElement = null;
 	this.iconImg = null;
 	this.igadgetIconNameHTMLElement =  null;
@@ -134,10 +134,12 @@ IGadget.prototype.getGadget = function() {
  * @param {DragboardPosition} position the new position for the iGadget.
  */
 IGadget.prototype.setPosition = function(position) {
-	if (!this.iconPosition || this.iconPosition == this.position){ //set the icon position (first time) or it still follows the gadget (both positions are a reference to the same object)
-		this.setIconPosition(position); 
+	// Set a initial icon position (first time) or it still follows the gadget (both positions are a reference to the same object)
+	if (!this.iconPosition || this.iconPosition == this.position) {
+		this.setIconPosition(position);
 	}
-	
+
+
 	this.position = position;
 
 	if (this.element != null) { // if visible
@@ -152,14 +154,15 @@ IGadget.prototype.setPosition = function(position) {
 }
 
 /**
- * Sets the position of a gadget icon. The position is calculated relative
- * to the top-left square of the gadget instance box using cells units.
+ * Sets the position of the associated icon for this iGadget. The position must
+ * be specified relative to the top-left square of the icon and using pixels
+ * units.
  *
- * @param {DragboardPosition} position the new position for the iGadget.
+ * @param {DragboardPosition} position the new position for the iGadget icon
  */
 IGadget.prototype.setIconPosition = function(position) {
 	this.iconPosition = position;
-	if (this.iconElement){
+	if (this.iconElement) {
 		this.iconElement.style.left = this.layout.getColumnOffset(position.x) + "px";
 		this.iconElement.style.top = this.layout.getRowOffset(position.y) + "px";
 	}
@@ -594,28 +597,30 @@ IGadget.prototype.build = function() {
 	this.wikilink.setAttribute('target', '_blank');
 	this.wikilink.setAttribute('title', gettext('Access to Information'));
 	this.statusBar.appendChild(this.wikilink);
-	
-	//Icon Element
+
+	// Icon Element
 	this.iconElement = document.createElement("div");
 	Element.extend(this.iconElement);
 	this.iconElement.addClassName("floating_gadget_icon");
-	
+
 	this.iconImg = document.createElement("img");
 	Element.extend(this.iconImg);
 	this.iconImg.addClassName("floating_gadget_img");
 	this.iconImg.setAttribute("src",this.gadget.getIcon());
 	this.iconElement.appendChild(this.iconImg);
-	this.iconImg.ondrag=function(){return false;} //IE hack to allow drag&drop over images
-	
+
+	// IE hack to allow drag & drop over images
+	this.iconImg.ondrag = function() {
+		return false;
+	}
+
 	this.igadgetIconNameHTMLElement = document.createElement("a");
 	Element.extend(this.igadgetIconNameHTMLElement);
 	this.igadgetIconNameHTMLElement.update(this.name);
 	this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
 	this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
-	
-	this.igadgetIconNameHTMLElement.observe("click", function() {this.maximizeIcon();}.bind(this), false);
-	
-	
+
+	this.igadgetIconNameHTMLElement.observe("click", this.maximizeIcon.bind(this), false);
 }
 
 IGadget.prototype.maximizeIcon = function() {
@@ -658,21 +663,29 @@ IGadget.prototype.paint = function(onInit) {
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 	this.element.style.zIndex = this.zPos;
 
-	// Recompute size
-	if (onInit)
-		this._recomputeSize(true);
-	else
-		this.setContentSize(this.contentWidth, this.contentHeight, false);
-	
-	//show or hide icon
-	if (this.minimized && this.onFreeLayout()){ //minimized on Free Layout
+	// Select the correct representation for this iGadget (iconified, minimized or normal)
+	var recomputeSize = false;
+	if (this.minimized && this.onFreeLayout()) {
+		// Iconified
 		this.element.setStyle({"visibility":"hidden"});
 		this.iconElement.setStyle({"display":"block"});
-	}else if (!this.minimized){ //not minimized
+	} else if (!this.minimized) {
+		// Normal
 		this.element.setStyle({"visibility":"visible"});
 		this.iconElement.setStyle({"display":"none"});
-	} else if (this.minimized && !this.onFreeLayout()){ //minimized on Grid Layout
+		recomputeSize = true;
+	} else if (this.minimized && !this.onFreeLayout()) {
+		// Minimized
 		this.statusBar.setStyle({"display": "none"});
+		recomputeSize = true;
+	}
+
+	// Recompute size if needed
+	if (recomputeSize) {
+		if (onInit)
+			this._recomputeSize(true);
+		else
+			this.setContentSize(this.contentWidth, this.contentHeight, false);
 	}
 
 	// Mark as draggable
