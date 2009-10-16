@@ -803,7 +803,7 @@ function WorkSpace (workSpaceState) {
 		this._hide_element('add_tab_link');
 		this._hide_element('catalogue_link');
 		this._hide_element('wiring_link');
-		this.workSpaceHTMLElement.addClassName("shared");
+		document.body.className = "shared";
 	}
 	
 	this._show_creator_options = function() {
@@ -811,6 +811,7 @@ function WorkSpace (workSpaceState) {
 		this._show_element('catalogue_link');
 		this._show_element('wiring_link');
 		this.workSpaceHTMLElement.removeClassName("shared");
+		document.body.className = "";
 	}
 }
 

@@ -169,7 +169,7 @@ td {
   margin-left: 3px;
 }
 
-#workspace_link_container .shared{
+body.shared #workspace_link_container span{
 	cursor: default;
 }
 
@@ -273,6 +273,10 @@ td {
 
 .tab_dragger{
  cursor: move;
+}
+
+body.shared .tab_dragger{
+	visibility: hidden;
 }
 
 #menu_layer{
