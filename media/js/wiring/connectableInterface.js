@@ -501,9 +501,12 @@ function ChannelInterface(channel, wiringGUI) {
     ////////////////////////////////////////////////
 
 	// Channel information showed when the channel is selected
-	var contentTable = document.createElement("table");
+	var table = document.createElement("table");
+	Element.extend(table);
+	var contentTable = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+	table.appendChild(contentTable)
 	Element.extend(contentTable);
-	channelContent.appendChild(contentTable);
+	channelContent.appendChild(table);
 
 	// Creates the row for the channel information
 	var contentRow = document.createElement("tr");
@@ -585,13 +588,16 @@ function ChannelInterface(channel, wiringGUI) {
 	// FILTER TABLE
 	////////////////////////////////////////////////
 	
-	var contentTable = document.createElement("table");
+	var table = document.createElement("table");
+	Element.extend(table);
+	var contentTable = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
 	Element.extend(contentTable);
-	contentTable.addClassName("contentTable");
-	channelContent.appendChild(contentTable);
-	contentTable.addClassName('fold_table');
+	table.appendChild(contentTable)
+	table.addClassName("contentTable");
+	table.addClassName('fold_table');
+	channelContent.appendChild(table);
 	
-	this.filter_table = contentTable;
+	this.filter_table = table;
 
 	// Filter name row
 	//label
@@ -600,7 +606,6 @@ function ChannelInterface(channel, wiringGUI) {
 	
 	contentTable.appendChild(contentRow);
 	var labelCol = document.createElement("td");
-	labelCol.setAttribute ("width", '20%');
 	contentRow.appendChild(labelCol);
 
 	var labelContent = document.createElement("label");

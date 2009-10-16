@@ -245,7 +245,7 @@
 
 #wiring .contentTable {
   width: 100%;
-  border-top: 1px solid;
+  border-top: 1px solid #000000;
 }
 
 #wiring .option_link {

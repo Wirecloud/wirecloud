@@ -355,6 +355,9 @@
 	margin-left: 5px;
 	border: 0;
 	cursor: pointer;
+	width: 21px;
+	height: 21px;
+	vertical-align: middle;
 }
 
 #wiring #channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {

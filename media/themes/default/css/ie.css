@@ -126,5 +126,10 @@ body {
 /*CATALOGUE*/
 #catalogue .resource .toolbar button {
 	padding: 2px;
+}
 
-
+/*WIRING*/
+/* Filter params */
+#wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
+	white-space: normal;
+}
