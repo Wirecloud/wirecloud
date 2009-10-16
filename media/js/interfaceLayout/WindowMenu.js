@@ -741,14 +741,14 @@ ShareWindowMenu.prototype.setFocus = function() {
 }
 
 ShareWindowMenu.prototype.extraValidation = function(form) {
-	if (this.fields['group_sharing'].inputInterface.getValue() && this.fields['groups'].input.selectedIndex == -1){
+	if (this.fields['group_sharing'].inputInterface.getValue() && this.fields['groups'].inputInterface.inputElement.selectedIndex == -1){
 		return gettext('You must select a group');
 	}
 	return null
 }
 
 ShareWindowMenu.prototype.executeOperation = function(form) {
-	var groups = this.fields['group_sharing'].inputInterface.getValue();
+	var groups = this.fields['groups'].inputInterface.getValue();
 	OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
 }
 
