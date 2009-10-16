@@ -938,9 +938,9 @@ ConnectionAnchor.prototype.getCoordinates = function(baseElement) {
 	                   posY: this.htmlElement.offsetTop};
 	var parentNode = this.htmlElement.parentNode;
 	while (parentNode != baseElement) {
-		var p = Element.getStyle(parentNode, 'position');
+		var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
+		var p = cssStyle.getPropertyValue('position');
 		if (p != 'static') {
-			var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
 			coordinates.posY += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 			coordinates.posX += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		}
