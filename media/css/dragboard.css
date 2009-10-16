@@ -27,7 +27,7 @@ div.fixed div.gadget_menu {
 }
 
 /*div.dragboard.fixed*/
-div.fixed div.gadget_window div.gadget_menu input {
+div.fixed div.gadget_window div.gadget_menu .closebutton {
   display: none;
 }
 

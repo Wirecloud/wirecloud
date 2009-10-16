@@ -88,10 +88,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadgetInfo['top'] = position.y;
 			iGadgetInfo['left'] = position.x;
 			iGadgetInfo['zIndex'] = iGadget.zPos;
-			iGadgetInfo['minimized'] = iGadget.isMinimized() ? "true" : "false";
 			iGadgetInfo['width'] = iGadget.getContentWidth();
 			iGadgetInfo['height'] = iGadget.getContentHeight();
 			iGadgetInfo['tab'] = this.tabId;
+			if (!this.workSpace.isShared()){
+				iGadgetInfo['minimized'] = iGadget.isMinimized() ? "true" : "false";
+			}
 
 			var icon_position = iGadget.getIconPosition();
 			iGadgetInfo['icon_top'] = icon_position.y;
@@ -885,7 +887,7 @@ IGadgetIconDraggable.prototype.updateFunc = function (event, draggable, context,
 
 IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 	context.iGadget.setZPosition(context.oldZIndex);
-	if (context.x!=null && context.y!=null){
+	if (context.x && context.y){
 		var position = context.iGadget.layout.getCellAt(context.x, context.y);
 		
 		if (position.y < 0)

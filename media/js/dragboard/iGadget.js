@@ -713,6 +713,10 @@ IGadget.prototype.paint = function(onInit) {
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
 
 	this.iconElement.style.zIndex = this.zPos;
+	
+	if (this.layout.dragboard.isLocked()){
+		Event.observe(this.iconImg, "click", function(){this.maximizeIcon()}.bind(this), true);
+	}
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
@@ -981,7 +985,7 @@ IGadget.prototype.destroy = function() {
  * remove the igadget form persistence.
  */
 IGadget.prototype.remove = function() {
-	if (this.element != null) {
+	if (this.element != null && !this.layout.dragboard.isLocked()) {
 		function onSuccess() {}
 		function onError(transport, e) {
 			var logManager = LogManagerFactory.getInstance();
@@ -1188,7 +1192,7 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
 IGadget.prototype._notifyLockEvent = function(newLockStatus) {
 	if (!this.element)
 		return;
-
+		
 	if (newLockStatus) {
 		this.element.addClassName("gadget_window_locked");
 	} else {
@@ -1459,7 +1463,7 @@ IGadget.prototype.isMinimized = function() {
  * @param newStatus new minimize status of the igadget
  */
 IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
-	if (this.minimized == newStatus || this.layout.dragboard.isLocked())
+	if (this.minimized == newStatus)
 		return; // Nothing to do
 
 	// TODO add effects?
