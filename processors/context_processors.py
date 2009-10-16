@@ -139,3 +139,9 @@ def theme_url(request):
     theme_url = settings.MEDIA_URL + "themes/" + theme
 
     return {'THEMES': settings.CACHED_THEMES_JSON, 'DEFAULT_THEME': settings.DEFAULT_THEME, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
+
+def installed_apps(request):
+    if hasattr(settings, 'INSTALLED_APPS'):
+       return {'installed_apps': settings.INSTALLED_APPS}
+    else:
+        return {'installed_apps': None}

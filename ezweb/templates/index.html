@@ -223,6 +223,8 @@ var _INITIAL_THEME = '{{ INITIAL_THEME }}';
 var _ONLY_ONE_CSS_FILE = '{{ only_one_css_file }}' == 'True';
 var _EzWeb_RELEASE = '{{ ezweb_release }}';
 
+var installed_apps = {{ installed_apps|safe }};
+
 </script>
 
 {% block includes %}
