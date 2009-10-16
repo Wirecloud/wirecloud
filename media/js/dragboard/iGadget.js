@@ -1762,7 +1762,8 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	var oldLayout = this.layout;
 
 	// Force an unload event
-	OpManagerFactory.getInstance().igadgetUnloaded(this.id);
+	if (oldLayout.dragboard != newLayout.dragboard)
+		OpManagerFactory.getInstance().igadgetUnloaded(this.id);
 
 	oldLayout.removeIGadget(this, dragboardChange);
 
@@ -1798,14 +1799,10 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	// ##### END TODO
 	newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();
-	
-	if (!this.loaded){
-		if (BrowserUtilsFactory.getInstance().isIE()){
-			//IE hack to reload the iframe
-			this.content.src=this.content.src;
-		} else if (!dragboardChange){
-			this.content.data=this.content.data;
-		}
+
+	if (!this.loaded && BrowserUtilsFactory.getInstance().isIE()) {
+		// IE hack to reload the iframe
+		this.content.src = this.content.src;
 	}
 
 	// Persistence
