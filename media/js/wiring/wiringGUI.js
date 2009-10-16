@@ -1192,7 +1192,12 @@ WiringInterface.prototype._createRemoteChannelOperationsMenu = function () {
 		
 		Event.stop(e);
 		
-		var operation_full_id = target.parentNode.id;
+		var operation_full_id = null;
+		if (target.id)
+			operation_full_id = target.id;
+		else
+			operation_full_id = target.parentNode.id;;
+		
 		var op_code = parseInt(operation_full_id.charAt(operation_full_id.length - 1));
 		var text = target.innerHTML;
 		
