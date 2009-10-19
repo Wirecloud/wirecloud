@@ -31,61 +31,79 @@ import simplejson
 
 import tornado.web
 
-from push_notifier.external_channel import ChannelCollection
-from push_notifier.client_response import ClientResponse
+from push_notifier.channel_manager import ChannelManager
+from push_notifier.user_manager import UserManager
 
-class NotifyClientsHandler(tornado.web.RequestHandler):
+class NotifyUsersRequestHandler(tornado.web.RequestHandler):
     def get(self):
         channel_values_json = self.get_argument('channels', None)
 
         if (not channel_values_json):
+            self.write("Missing channels! Error!")
+            self.finish()
             return
 
         channel_values = simplejson.loads(channel_values_json)
 
-        clients_to_notify = dict()
+        users_to_notify = dict()
 
         for channel_dict in channel_values:
             channel_id = channel_dict['id']
             channel_value = channel_dict['value']
 
-            channel = ChannelCollection.get_external_channel(channel_id)
+            channel = ChannelManager.get_channel(channel_id)
 
-            channel_clients = channel.get_clients()
-            channel.reset_clients()
+            channel_users = channel.get_users()
+            
+            #Deleting users assotiated with channel!
+            channel.reset()
 
-            for client in channel_clients:
-                try:
-                    client_response = clients_to_notify[client]
-                except KeyError:
-                    client_response = ClientResponse()
-
+            for user in channel_users:
                 #Merging response
-                client_response.merge(channel_id, channel_value)
+                user.merge_response(channel_id, channel_value)
 
-                #Storing response
-                clients_to_notify[client] = client_response
+                #Storing users to be notified!
+                users_to_notify[user.username] = user
                     
-        clients = clients_to_notify.keys()
+        user_keys = users_to_notify.keys()
 
-        for client_callback in clients:
-            client_response = clients_to_notify[client_callback]
+        for user_key in user_keys:
+            user = users_to_notify[user_key]
 
-            #Deleting client callback from all channels!
-            ChannelCollection.unsubscribe_client(client_callback)
+            #Deleting user subscriptions from all channels!
+            user.unsubscribe()
+            
+            user.notify()
 
-            client_callback(client_response.get_json())
-
-class RegisterSubscriptionHandler(tornado.web.RequestHandler):
+class UserSubscriptionRequestHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
         channel_json = self.get_argument('channels', None)
-
+        
+        if (not channel_json):
+            self.write("Missing channels! Error!")
+            self.finish()
+            return
+        
         channel_ids = simplejson.loads(channel_json)
+        
+        username = self.get_argument('username', None)
 
-        channel = ChannelCollection.subscribe_channels(self.async_callback(self.on_subscription_change), channel_ids)
+        if (not username):
+            self.write("Missing username! Error!")
+            self.finish()
+            return
+        
+        user = UserManager.get_user(username)
+        
+        user.set_callback(self.async_callback(self.on_subscription_change))
+        
+        for channel_id in channel_ids:
+            channel = ChannelManager.get_channel(channel_id)
 
-        ChannelCollection.print_channels_status()
+            channel.subscribe_user(user)
+
+        ChannelManager.print_channels_status()
 
     def on_subscription_change(self, json_value):
         #Connection closed by client

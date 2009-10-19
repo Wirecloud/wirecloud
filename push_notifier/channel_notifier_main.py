@@ -37,8 +37,7 @@ import tornado.options
 import tornado.web
 import os.path
 
-from push_notifier.external_channel import ExternalChannel, ChannelCollection
-from push_notifier.services import NotifyClientsHandler, RegisterSubscriptionHandler
+from push_notifier.request_handlers import UserSubscriptionRequestHandler, NotifyUsersRequestHandler
 
 from tornado.options import define, options
 
@@ -51,8 +50,8 @@ define("port", default=8888, help="run on the given port", type=int)
 class Push_Notifier(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r'/notifier/channels/notify', NotifyClientsHandler),
-            (r'/notifier/channels/register', RegisterSubscriptionHandler),
+            (r'/notifier/channels/notify', NotifyUsersRequestHandler),
+            (r'/notifier/channels/register', UserSubscriptionRequestHandler),
         ]
 
         tornado.web.Application.__init__(self, handlers, None)

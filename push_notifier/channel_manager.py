@@ -27,18 +27,50 @@
 #
 #...............................licence...........................................#
 
-class ClientResponse(object):
+import logging
+
+class ChannelManager:
+    channels = dict()
     
-    def __init__(self):
-        self.response = ''
+    def print_channels_status(self):
+        channel_ids = ChannelManager.channels.keys()
 
-    def merge(self, id, value):
-        #Dealing with last comma problem!
-        if (self.response):
-            self.response = self.response + ', '
+        for channel_id in channel_ids: 
+            channel = ChannelManager.get_channel(channel_id)
 
-        self.response = self.response + '{"id": %s, "value": "%s"}' % (id, value)
-            
+            channel.print_status()
+    print_channels_status = classmethod(print_channels_status)
 
-    def get_json(self):
-        return '[' + self.response + ']'
+    def get_channel(self, id):
+        try:
+            return ChannelManager.channels[id]
+        except KeyError:
+            ChannelManager.channels[id] = Channel(id)
+
+            return ChannelManager.channels[id]
+    get_channel = classmethod(get_channel) 
+
+class Channel:
+    def __init__(self, id):
+        self.users = []
+        self.id = id
+
+    def subscribe_user(self, user):
+        self.users.append(user)
+
+    def print_status(self):
+        logging.info('###### CHANNEL: %s' % self.id)
+        for user in self.users:
+            logging.info('  # USER: %s' % user)
+
+    def get_users(self):
+        return self.users
+
+    def reset(self):
+        self.users = []
+
+    def unsubscribe_user(self, user):
+        try:
+            self.users.remove(user)
+        except ValueError:
+            pass
