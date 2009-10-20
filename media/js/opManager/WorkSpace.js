@@ -663,7 +663,7 @@ function WorkSpace (workSpaceState) {
 
 		var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value});
 		var sharingData = Object.toJSON(groups);
-		var params = (groups)?{'groups':sharingData}:{};
+		var params = (groups.length>0)?{'groups':sharingData}:{};
 		
 		PersistenceEngineFactory.getInstance().send_update(url, params, this, share_workspace_success, share_workspace_error);
 	}
