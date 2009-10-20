@@ -234,11 +234,8 @@ var LayoutManagerFactory = function () {
 				_currentTheme = theme;
 				_currentTheme.applyStyle();
 
-				// TODO move this code to opManager?
-				OpManagerFactory.getInstance().activeWorkSpace._themeLoaded();
-				layoutManager.resizeWrapper();
+				OpManagerFactory.getInstance()._themeLoaded();
 
-				OpManagerFactory.getInstance().refreshEzWebFly();
 				layoutManager._notifyPlatformReady(false);
 			}
 

@@ -138,7 +138,41 @@ var OpManagerFactory = function () {
 		this.workSpaceInstances = new Hash();
 		this.activeWorkSpace = null;
 
-		
+		/**
+		 * @private
+		 *
+		 * This method updates the active workspace menu with the available workspaces.
+		 */
+		OpManager.prototype._refreshWorkspaceMenu = function() {
+			var workSpaceIds = this.workSpaceInstances.keys();
+			var disabledWorkSpaces = [];
+			for (var i = 0; i < workSpaceIds.length; i++) {
+				var workSpace = this.workSpaceInstances[workSpaceIds[i]];
+				if (workSpace != this.activeWorkSpace) {
+					disabledWorkSpaces.push(workSpace);
+				}
+			}
+
+			LayoutManagerFactory.getInstance().refreshChangeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
+			LayoutManagerFactory.getInstance().refreshMergeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
+		}
+
+		/**
+		 * @private
+		 *
+		 * This method is called after changing current theme.
+		 */
+		OpManager.prototype._themeLoaded = function() {
+			var layoutManager = LayoutManagerFactory.getInstance();
+
+			this.activeWorkSpace._themeLoaded();
+			this._refreshWorkspaceMenu();
+
+			layoutManager.resizeWrapper();
+
+			OpManagerFactory.getInstance().refreshEzWebFly();
+		}
+
 		// ****************
 		// PUBLIC METHODS 
 		// ****************
@@ -398,18 +432,9 @@ var OpManagerFactory = function () {
 		}
 
 		OpManager.prototype.showActiveWorkSpace = function () {
-			var workSpaceIds = this.workSpaceInstances.keys();
-			var disabledWorkSpaces = [];
-			for (var i = 0; i < workSpaceIds.length; i++) {
-				var workSpace = this.workSpaceInstances[workSpaceIds[i]];
-				if (workSpace != this.activeWorkSpace) {
-					disabledWorkSpaces.push(workSpace);
-				}
-			}
-
 			this.activeWorkSpace.show();
-			LayoutManagerFactory.getInstance().refreshChangeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
-			LayoutManagerFactory.getInstance().refreshMergeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
+
+			this._refreshWorkspaceMenu();
 		}
 
 		OpManager.prototype.continueLoadingGlobalModules = function (module) {

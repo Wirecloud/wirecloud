@@ -822,19 +822,19 @@ WorkSpace.prototype._createWorkspaceMenu = function() {
 	if (menuHTML)
 		menuHTML.remove();
 
-	//worksplace menu
+	// worksplace menu
 	var optionPosition = 0;
 	menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"><div id="submenu_'+idMenu+'" class="submenu"></div></div>';
 	new Insertion.After($('menu_layer'), menuHTML);
 	this.menu = new DropDownMenu(idMenu);
 
-	//mergeWith workspace Menu
+	// mergeWith workspace Menu
 	var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
 	var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
 	new Insertion.After($('menu_layer'), mergeMenuHTML);
 	this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 
-	//adding options to workspace menu
+	// adding options to workspace menu
 	if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
 		this.activeEntryId = this.menu.addOption(_currentTheme.getIconURL('workspace_active'),
 			gettext("Mark as Active"),
