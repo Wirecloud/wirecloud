@@ -70,6 +70,10 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
   background: url("../images/warning.png");
 }
 
+div.gadget_window div.gadget_menu input[type="button"].versionbutton {
+  background: url("../images/new.png");
+}
+
 div.color_button {
   border: 1px solid #888;
   -moz-border-radius: 4px;

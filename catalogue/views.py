@@ -38,6 +38,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db import transaction
 from django.db import IntegrityError
 from django.db.models import Q
+from django.utils import simplejson
 
 from django.utils.translation import ugettext as _
 
@@ -579,6 +580,18 @@ class GadgetVotesCollection(Resource):
 
         return get_vote_response(gadget,user, format)
 
+class GadgetVersionsCollection(Resource):
+    def create(selfself, request, user_name):
+        gadgets = simplejson.loads(request.POST["gadgets"]);
+        result = []
+        for g in gadgets:
+            version = get_last_gadget_version(g["name"], g["vendor"])
+            if version: #the gadget is still in the catalogue
+                g["lastVersion"] = version
+                result.append(g)
+        json_result = {'gadgets': result}
+        return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
+        
 class ResourceEnabler(Resource):
     def read(self, request, resource_id):
         resource = get_object_or_404(GadgetResource, id=resource_id)

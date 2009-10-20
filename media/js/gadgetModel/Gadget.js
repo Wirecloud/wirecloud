@@ -48,6 +48,9 @@ function Gadget(gadget_, url_) {
 	this.setImage = function(image_) { state.setImage(image_); }
 	this.getIcon = function() { return state.getIcon(); } 
 	this.getMenuColor = function() { return state.getMenuColor(); }
+	this.isUpToDate = function() { return state.isUpToDate(); }
+	this.setUpdatedState = function(lastVersion) { return state.setUpdatedState(lastVersion); }
+	this.getLastVersion = function(){return state.getLastVersion()}
 	
 	this.isContratable = function() { 
 		var capabilities = state.getCapabilities();
@@ -132,6 +135,8 @@ function GadgetState(gadget_) {
 	var uriwiki = null;
 	var menuColor= null;
 	var icon = null;
+	var upToDate = true; 
+	var lastVersion = null; 
 	
 	// JSON-coded Gadget mapping
 	// Constructing the structure
@@ -146,6 +151,7 @@ function GadgetState(gadget_) {
 	capabilities = gadget_.capabilities;
 	uriwiki = gadget_.wikiURI;
 	menuColor = gadget_.menuColor;
+	lastVersion = version;
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -168,4 +174,7 @@ function GadgetState(gadget_) {
 	this.setImage = function(image_) { image = image_; }
 	this.getIcon = function() { return (icon!="") ? icon :  image;  }
 	this.getMenuColor = function () {return menuColor;}
+	this.isUpToDate = function() { return upToDate; }
+	this.setUpdatedState = function(v) { upToDate = (version == v); lastVersion = v; }
+	this.getLastVersion = function() {return lastVersion;}
 }

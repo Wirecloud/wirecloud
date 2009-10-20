@@ -423,6 +423,7 @@ IGadget.prototype.build = function() {
 	// buttons. Inserted from right to left
 	//#######################################
 	var button;
+	
 
 	// close button
 	button = document.createElement("input");
@@ -507,6 +508,18 @@ IGadget.prototype.build = function() {
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, false);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
+	
+	//New Version button
+	if (!this.gadget.isUpToDate()){
+		button = document.createElement("input");
+		Element.extend(button);
+		button.setAttribute("type", "button");
+		button.setAttribute("title", "There is a new version of this gadget available. Current version: "+ 
+										this.gadget.getVersion()+" - Last version: "+this.gadget.getLastVersion());
+		button.addClassName("button versionbutton");
+		//Event.observe (button, "click", function() {alert("hola");}, false);
+		this.gadgetMenu.appendChild(button);
+	}
 
 	this.fillWithLabel();
 

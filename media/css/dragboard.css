@@ -27,7 +27,7 @@ div.fixed div.gadget_menu {
 }
 
 /*div.dragboard.fixed*/
-div.fixed div.gadget_window div.gadget_menu .closebutton {
+div.fixed div.gadget_window div.gadget_menu .closebutton, div.fixed div.gadget_window div.gadget_menu .versionbutton {
   display: none;
 }
 

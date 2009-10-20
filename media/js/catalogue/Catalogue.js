@@ -126,6 +126,17 @@ var CatalogueFactory  = function () {
 			return resources[id_];
 		}
 		
+		this.getResourceByData = function(nameRes, vendor) {
+			var resourceKeys = resources.keys();
+			for (var i=0;i<resourceKeys.length;i++){
+				var res = resources.get(resourceKeys[i]);
+				if (res.getName() == nameRes && res.getVendor == vendor){
+					return res;
+				}
+			}
+			return null;
+		}
+		
 		this.getVersionManager = function(id_) {
 			return verManager;
 		}
@@ -1061,8 +1072,24 @@ var CatalogueFactory  = function () {
 			parent.appendChild(new_tag);
 		}
 	}
-
-	OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+	//Callbacks
+	this.onLoadSuccess = function(transport){
+		//update gadget info in the showcase
+		var response = transport.responseText;
+		var data = JSON.parse(response);
+		ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
+		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+	}
+	this.onLoadError = function(transport){
+		//the gadget version is not updated
+		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+	}
+	
+	//check the version of the showcase gadgets
+	var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
+	var params = {"gadgets":Object.toJSON(showcase_gadgets)};
+	PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
+	
 	
 	}
 	

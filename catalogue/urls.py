@@ -56,5 +56,8 @@ urlpatterns = patterns('catalogue.views',
     # Vote Gadgets
     (r'^voting/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
         GadgetVotesCollection(permitted_methods=('GET','POST','PUT',))),
-
+    
+    #version check
+    (r'^versions',
+        GadgetVersionsCollection(permitted_methods=('POST',))),
  )

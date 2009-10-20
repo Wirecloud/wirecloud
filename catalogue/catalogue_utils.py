@@ -275,4 +275,10 @@ def get_resources_that_must_be_shown (user):
       return GadgetResource.objects.extra(where=['catalogue_gadgetresource.id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])
     else:
       return GadgetResource.objects.none()
-
+
+def get_last_gadget_version(name, vendor):
+    version_list = get_all_gadget_versions(vendor, name)
+    if version_list:
+        version = max(version_list)
+        return version
+    return None

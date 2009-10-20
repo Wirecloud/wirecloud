@@ -164,6 +164,25 @@ var ShowcaseFactory = function () {
 			return this.gadgets[gadgetId_];
 		}
 		
+		//Get all the gadgets name and vendor
+		Showcase.prototype.getGadgetsData = function () {
+			var data = [];
+			var keys = this.gadgets.keys();
+			for (var i=0;i<keys.length;i++){
+				var g = this.gadgets[keys[i]];
+				data.push({"name":g.getName(), "vendor":g.getVendor(), "version":g.getVersion()});
+			}
+			return data;
+		}
+		
+		//Get all the gadgets name and vendor
+		Showcase.prototype.setGadgetsState = function (data) {
+			for (var i = 0; i< data.length; i++){
+				var gadgetId = data[i]["vendor"] + '_' + data[i]["name"] + '_' + data[i]["version"];
+				this.gadgets[gadgetId].setUpdatedState(data[i]["lastVersion"]);
+			}
+		}
+		
 		// Set gadget properties (User Interface)
 		Showcase.prototype.setGadgetProperties = function (gadgetId_, imageSrc_, tags_) {
 			var gadget = this.gadgets[gadgetId_];

@@ -103,6 +103,9 @@
     "wiring/outAnchorOutEnabled.png",
     "wiring/pipe.png",
     "wiring/unchecked14px.png",
-    "wiring/wiringArrow.png"
+    "wiring/wiringArrow.png",
+    
+    "error.png",
+    "new.png"
   ]
 }
