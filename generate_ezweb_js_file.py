@@ -51,9 +51,9 @@ inputFiles = {
         'js/opManager/WorkSpace.js',
         'js/opManager/Tab.js',
         'js/opManager/InitialScriptExecuter.js',
-        'js/opManager/OpManager.js',
         'js/opManager/RemoteChannelManager.js',
-        
+        'js/opManager/OpManager.js',
+
         'js/varManager/VariableGadget.js',
         'js/varManager/VariablePlatform.js',
         'js/varManager/varManager.js',
@@ -151,8 +151,8 @@ inputFiles = {
         'js/opManager/WorkSpace.js',
         'js/opManager/Tab.js',
         'js/opManager/InitialScriptExecuter.js',
-        'js/opManager/OpManager.js',
         'js/opManager/RemoteChannelManager.js',
+        'js/opManager/OpManager.js',
         
         'js/varManager/VariableGadget.js',
         'js/varManager/VariablePlatform.js',
