@@ -264,58 +264,70 @@ var LayoutManagerFactory = function () {
 		}
 
 		LayoutManager.prototype.resizeContainer = function (container) {
-			// We have to take into account the bottom margin and border widths.
-			// Bottom margin = 4px
-			// Border width = 2px => Top border + bottom border = 4px
-			// Total 8px
-			container.setStyle({"height" : (BrowserUtilsFactory.getInstance().getHeight() - $("header").offsetHeight - 8) + "px"});
+			var wrapperElement = $("wrapper");
+
+			var newHeight = BrowserUtilsFactory.getInstance().getHeight();
+
+			// We have to take into account the header and the wrapper margins and borders.
+			var computedStyle = document.defaultView.getComputedStyle(wrapperElement, null);
+			var wrapperHeight = newHeight -
+			                    $("header").offsetHeight -
+			                    computedStyle.getPropertyCSSValue("margin-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX) -
+			                    computedStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX) -
+			                    computedStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+
+			wrapperElement.setStyle({"height" : wrapperHeight + "px"});
+			container.setStyle({"height" : wrapperHeight + "px"});
+
+			return wrapperHeight;
 		}
 
 		LayoutManager.prototype.resizeWrapper = function () {
-			// We have to take into account the bottom margin and border widths.
-			// Bottom margin = 4px
-			// Border width = 2px => Top border + bottom border = 4px
-			// Total 8px
-			var newHeight=BrowserUtilsFactory.getInstance().getHeight();
-			$("wrapper").setStyle({"height" : (newHeight - $("header").offsetHeight - 8) + "px"});
-			
+			var newHeight = BrowserUtilsFactory.getInstance().getHeight();
+
 			var opManager = OpManagerFactory.getInstance();
-			if(opManager.loadCompleted) {
-				//resize cover layer
+			if (opManager.loadCompleted) {
+				// Resize cover layer
 				var newWidth = BrowserUtilsFactory.getInstance().getWidth();
 				this.coverLayerElement.setStyle({"height" : newHeight + "px", "width": newWidth +"px"});
-				
-				//resize the current view element and its related elemets
-				if (this.currentViewType=="catalogue"){
+
+				// Resize the current view element and its related elemets
+				switch (this.currentViewType) {
+				case "catalogue":
 					this.resizeContainer(this.currentView.catalogueElement);
+
 					// Recalculate catalogue sizes
 					UIUtils.setResourcesWidth();
 					UIUtils.resizeResourcesContainer();
-				}else if (this.currentViewType=="wiring"){	
-					// Recalculate wiring position			
+					break;
+				case "wiring":
+					// Recalculate wiring position
 					this.resizeContainer(this.currentView.wiringContainer);
 					var wiringInterface = opManager.activeWorkSpace.getWiringInterface()
 					wiringInterface.wiringTable.setStyle({'width' : (wiringInterface.wiringContainer.getWidth()-20)+"px"});
-					if(wiringInterface.currentChannel){
+					if (wiringInterface.currentChannel) {
 						wiringInterface.uncheckChannel(wiringInterface.currentChannel);
 						wiringInterface.highlightChannel(wiringInterface.currentChannel);
 					}
-				}else if (this.currentViewType=="logs"){ 
+					break;
+				case "logs":
 					this.resizeContainer(this.currentView.logContainer);
-				}else{ //dragboard
+					break;
+				case "dragboard":
 					this.resizeContainer(this.currentView.dragboardElement);
 					opManager.activeWorkSpace.getActiveDragboard()._notifyWindowResizeEvent();
 					// recalculate the tab bar
 					this.resizeTabBar();
+					break;
 				}
-				
 
 				// Recalculate menu positions
 				if (this.currentMenu)
 					this.currentMenu.calculatePosition();
 			}
 		}
-		
+
 		LayoutManager.prototype.unloadCurrentView = function () {
 			if (this.currentView) {
 				this.currentView.hide();

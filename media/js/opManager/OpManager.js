@@ -168,9 +168,9 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace._themeLoaded();
 			this._refreshWorkspaceMenu();
 
-			layoutManager.resizeWrapper();
-
 			OpManagerFactory.getInstance().refreshEzWebFly();
+
+			layoutManager.resizeWrapper();
 		}
 
 		// ****************

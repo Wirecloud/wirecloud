@@ -419,6 +419,11 @@ button {
 
 /* containers --------------------------------------------------------------------------------------- */
 
+#wrapper {
+  min-width: 600px;
+  margin: 0 4px 4px 4px;
+}
+
 .dragboard, #wiring {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
