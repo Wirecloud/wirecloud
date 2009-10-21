@@ -44,6 +44,8 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
             return
 
         channel_values = simplejson.loads(channel_values_json)
+        
+        print channel_values
 
         users_to_notify = dict()
 

@@ -124,6 +124,8 @@ function WorkSpace (workSpaceState) {
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 
 			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
+			
+			this.remoteChannelManager = new RemoteChannelManager();
 
 			if (tabs.length > 0) {
 				//Only painting the "active" tab!
@@ -696,6 +698,7 @@ function WorkSpace (workSpaceState) {
 	this.tabInstances = new Hash();
 	this.wiring = null;
 	this.varManager = null;
+	this.remoteChannelManager = null;
 	this.contextManager = null;
 	this.loaded = false;
 	this.wiringLayer = null;
