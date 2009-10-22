@@ -196,7 +196,7 @@ _URIConstants.prototype.GET_SHARE_GROUPS = new Template('/workspace/#{workspace_
 _URIConstants.prototype.GADGET_TEMPLATE_GENERATOR = new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}');
 _URIConstants.prototype.GET_MERGE_PUBLISHED_WORKSPACE = new Template('/workspace/published_workspace/#{published_ws}/merge/#{to_ws}');
 _URIConstants.prototype.POST_CREATE_EXTERNAL_CHANNEL = '/channel/external';
-_URIConstants.prototype.GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS = '/notifier/channels/register';
+_URIConstants.prototype.GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS = new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}');
 _URIConstants.prototype.POST_PUBLISH_REMOTE_CHANNELS = new Template('/notifier/channels/notify?channels=#{channels}');
 _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalogue/versions';
 

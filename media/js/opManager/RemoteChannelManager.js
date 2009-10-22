@@ -23,25 +23,35 @@
 *     http://morfeo-project.org
  */
  
-function RemoteChannelManager() {
+function RemoteChannelManager(wiring) {
 
 	RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT = 3000;
  
 	//  CONSTRUCTOR
 	this.nested_delayed_updates = 0;
 	this.waiting_for_response = false;
-	this.subscribed_channels = new Array();
+	this.subscribed_channels = null;
 	this.uncommited_channel_values = new Hash();
 	
 	this.persistence_engine = PersistenceEngineFactory.getInstance();
+	this.wiring = wiring;
  	
  	////////////////////////////////////////////////////////////////////////
  	// PUBLIC METHODS!
  	////////////////////////////////////////////////////////////////////////
  	
  	// Subscribe with only one connection to all given channels!
- 	RemoteChannelManager.prototype.subscribe_to_channels = function(channel_ids) {
+ 	RemoteChannelManager.prototype.subscribe_to_channels = function(remote_channels) {
+ 		this.subscribed_channels = new Hash();
+ 		
+ 		for (var i=0; i<remote_channels.length; i++) {
+ 			var channel = remote_channels[i];
+ 			var remote_id = channel.getRemoteSubscription().getID(); 
+ 			
+ 			this.subscribed_channels[remote_id] = channel;
+ 		}
 		
+		this.subscribe_remote_channels();
 	}
 	
 	// Mark channel to be published!
@@ -68,13 +78,21 @@ function RemoteChannelManager() {
  	
  	// AJAX CALLBACKS
 	var subscribe_success = function(transport) {
-		var response = transport.responseText;
-		var data = JSON.parse(response);
+		var response_text = transport.responseText;
+		var modified_channels = JSON.parse(response_text);
+		
+		this.propagate_channels(modified_channels);
+		
+		// Reconnecting!
+		this.subscribe_remote_channels();
 	}
 	
 	 var subscribe_error = function(transport) {
 		var response = transport.responseText;
-		var data = JSON.parse(response);
+		//var data = JSON.parse(response);
+		
+		// Reconnecting!
+		this.subscribe_remote_channels();
 	}
  
   	var publish_success = function(transport) {
@@ -141,6 +159,35 @@ function RemoteChannelManager() {
 		this.nested_delayed_updates--;
 	}
 	
+	this.get_subscribed_channels_json = function() {
+		var keys = this.subscribed_channels.keys();
+		var ids = new Array();
+		
+		for (var i=0; i<keys.length; i++) {
+			ids.push(parseInt(keys[i]));
+		}
+		
+		return ids.toJSON();
+	}
+	
+	this.propagate_channels = function(channels) {
+		for (var i=0; i<channels.length; i++) {
+			var id = channels[i]['id'];
+			var value = channels[i]['value'];
+			
+			this.subscribed_channels[id].propagate(value);
+		}
+	} 
+	
+	// Register to remote channels!
+	this.subscribe_remote_channels = function() {
+		var channels_json = this.get_subscribed_channels_json();
+	
+		var url = URIs.GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS.evaluate({'channels': channels_json});
+		
+		this.persistence_engine.send_get(url, this, subscribe_success, subscribe_error);
+	}
+	
 	// Publish new channel's value!
 	this.update_remote_channels = function() {
 		this.waiting_for_response = true;
@@ -179,6 +226,10 @@ function RemoteChannelManager() {
 	this.ready_for_new_request = function() {
 		this.waiting_for_response = false;
 	}
+	
+	
+	// INITIALIZATION:
+	this.subscribe_to_channels(this.wiring.get_remote_channels_ids());
 }
 
 function RemoteChannelValue (id, value){

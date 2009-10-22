@@ -387,6 +387,10 @@ wChannel.prototype.setRemoteSubscription = function(remoteSubscription) {
 	this.remoteSubscription = remoteSubscription;
 }
 
+wChannel.prototype.is_remote_channel = function() {
+	return this.remoteSubscription.is_active();
+}
+
 wChannel.prototype.setFilter = function(newFilter) {
 	this.filter = newFilter;
 	this.filterParams = new Array();

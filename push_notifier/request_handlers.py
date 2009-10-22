@@ -89,7 +89,7 @@ class UserSubscriptionRequestHandler(tornado.web.RequestHandler):
         
         channel_ids = simplejson.loads(channel_json)
         
-        username = self.get_argument('username', None)
+        username = self.get_argument('user', None)
 
         if (not username):
             self.write("Missing username! Error!")

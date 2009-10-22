@@ -38,7 +38,7 @@ function ExternalSubscription (subscription_data){
   		this._url = subscription_data['url'];
   		this._id = subscription_data['id'];
   	} else {
-  		this._op_code = 0; // Disabled
+  		this._op_code = ExternalSubscription.prototype.DISABLED; 
   		this._url = null;
   		this._id = null;
   	}
@@ -47,6 +47,8 @@ function ExternalSubscription (subscription_data){
   	this._channel_GUI = null;
   	this._initializing = false;
 }
+
+ExternalSubscription.prototype.DISABLED = 0;
 
 ExternalSubscription.prototype.setChannelGUI = function (channel_GUI) {
 	this._channel_GUI = channel_GUI;
@@ -62,6 +64,13 @@ ExternalSubscription.prototype.setURL = function (url) {
 	this._has_changed = true;
   	this._url = url;
   	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
+}
+
+ExternalSubscription.prototype.is_active = function () {
+	if (! this._op_code)
+		return false;
+		
+	return this._op_code != ExternalSubscription.prototype.DISABLED;
 }
 
 ExternalSubscription.prototype.setID = function (id) {

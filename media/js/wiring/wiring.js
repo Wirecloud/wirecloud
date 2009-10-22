@@ -209,6 +209,18 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	// PUBLIC METHODS
 	// ****************
 
+	Wiring.prototype.get_remote_channels_ids = function () {
+		var channels = new Array(); 
+		
+		for (var i=0; i<this.channels.length; i++) {
+			if (this.channels[i].is_remote_channel()) {
+				channels.push(this.channels[i]);
+			}
+		}
+		
+		return channels;
+	}
+
 	Wiring.prototype.getConnectableId = function (variables, name, igadgetId) {
 		for (var i = 0; i < variables.length; i++) {
 			var variable = variables[i];

@@ -224,7 +224,10 @@ FORCE_SCRIPT_NAME=""
 # you must set the EZWEB_RELEASE property to generate a versioned .js file
 #ONLY_ONE_JS_FILE=True
 #ONLY_ONE_CSS_FILE=True
-#EZWEB_RELEASE='1237'
+#EZWEB_RELEASE='2603'
+
+# Remote channels notifier
+#REMOTE_CHANNEL_NOTIFIER_URL = 'http://localhost:8888/notifier/channels/notify'
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 

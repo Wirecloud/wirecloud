@@ -42,6 +42,9 @@ from commons.logs_exception import TracedServerError
 from externalChannels.models import ExternalChannel
 
 from django.utils import simplejson
+from django.conf import settings
+
+import urllib
 
 class ExternalChannelCollection(Resource):
     @transaction.commit_on_success
@@ -62,6 +65,36 @@ class ExternalChannelCollection(Resource):
         response['id'] = int(external_channel.id);
         
         return HttpResponse(simplejson.dumps(response), mimetype='application/json; charset=UTF-8')
+    
+    @transaction.commit_on_success
+    def update(self, request):
+        user = get_user_authentication(request)
+        
+        channel_json = None
+        if (request.POST.has_key('channels')):
+            channel_json = request.POST['channels']
+        else:
+            return HttpResponseServerError('{"error": "Missing channel list!"}',  mimetype='application/json; charset=UTF-8')
+        
+        try:
+            channel_list = simplejson.loads(request_json)
+        except:
+            return HttpResponseServerError('{"error": "Not valid JSON argument!"}',  mimetype='application/json; charset=UTF-8')
+        
+        for channel_data in channel_list:
+            channel = ExternalChannel.objects.get(id=channel_data['id'])
+            
+            channel.value = channel_data['value']
+            channel.save()           
+        
+        if hasattr(settings,'REMOTE_CHANNEL_NOTIFIER_URL'):
+            url = settings.REMOTE_CHANNEL_NOTIFIER_URL + '?channels=%s'%(channel_json)
+            
+            request = urllib2.Request(url)
+            
+            return urllib2.urlopen(url)
+        
+        return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
 
 class ExternalChannelEntry(Resource):
     def read(self, request, user_name=None):
