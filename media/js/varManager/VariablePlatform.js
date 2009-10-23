@@ -83,6 +83,10 @@ Variable.prototype.getConnectable = function () {
 	return this.connectable;
 }
 
+Variable.prototype.getWorkspace = function () {
+	return this.varManager.getWorkspace();
+}
+
 //////////////////////////////////////////////
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////

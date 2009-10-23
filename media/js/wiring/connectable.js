@@ -426,6 +426,17 @@ wChannel.prototype._getJSONInput = function() {
 	return json;
 }
 
+
+wChannel.prototype.notifyRemoteChannel = function(value) {
+	// Provisional! 
+	return;
+
+	var workspace = this.variable.getWorkspace();
+	var remote_channel_id = this.remoteSubscription.getID();
+	
+	workspace.remoteChannelManager.publish_channel_value(remote_channel_id, value);
+}
+
 /**
  * @param newValue new value for this <code>wChannel</code>
  * @param {Boolean} initial true for initial propagations
@@ -442,6 +453,7 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 	try {
 		//getValue applys filter if needed!
 		var filteredValue = this.getValue(propagating=true);
+		this.notifyRemoteChannel(filteredValue);
 		this._unmarkAllInputsAsModified();
 	}
 	catch (err) {

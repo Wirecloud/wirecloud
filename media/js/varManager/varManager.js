@@ -322,6 +322,10 @@ function VarManager (_workSpace) {
 		return this.findVariable(igadgetId, varName);
 	}
 	
+	VarManager.prototype.getWorkspace = function () {
+		return this.workSpace;
+	}
+	
 	// *********************************
 	// PRIVATE VARIABLES AND CONSTRUCTOR
 	// *********************************

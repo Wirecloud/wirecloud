@@ -118,14 +118,14 @@ function RemoteChannelManager(wiring) {
 		//var data = JSON.parse(response);
 		
 		this.remove_sent_values();
-		this.schelule_delay_between_requests();
+		this.schedule_delay_between_requests();
 	}
 	
 	var publish_error = function(transport) {
 		var response = transport.responseText;
 		//var data = JSON.parse(response);
 		
-		this.schelule_delay_between_requests();
+		this.schedule_delay_between_requests();
 	}
 	
 	
