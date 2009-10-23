@@ -1481,10 +1481,13 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
 
 	if (this.minimized) {
 		this.configurationElement.setStyle({"display": "none"});
-		if (this.onFreeLayout()){ //Floating gadget
-			this.element.setStyle({"visibility":"hidden"});
-			this.iconElement.setStyle({"display":"block"});
-		} else{ //Linked to the grid
+
+		if (this.onFreeLayout()) {
+			// Floating gadget
+			this.element.setStyle({"visibility": "hidden"});
+			this.iconElement.setStyle({"display": "block"});
+		} else {
+			// Linked to the grid
 			this.contentWrapper.setStyle({"visibility": "hidden" , "border": "0px"});
 			this.statusBar.setStyle({"display": "none"});
 			this.minimizeButtonElement.setAttribute("title", gettext("Maximize"));
@@ -1493,7 +1496,6 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
 			this.minimizeButtonElement.addClassName("maximizebutton");
 		}
 	} else {
-		//common actions
 		if (this.configurationVisible == true)
 				this.configurationElement.setStyle({"display": "block"});
 		this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));
@@ -1501,11 +1503,13 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
 		this.minimizeButtonElement.removeClassName("maximizebutton");
 		this.minimizeButtonElement.addClassName("minimizebutton");
 		this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
-		
-		if (this.onFreeLayout()){ //Floating gadget
-			this.element.setStyle({"visibility":"visible"});
-			this.iconElement.setStyle({"display":"none"});
-		} else{//Linked to the grid
+
+		if (this.onFreeLayout()) {
+			// Floating gadget
+			this.element.setStyle({"visibility": "visible"});
+			this.iconElement.setStyle({"display": "none"});
+		} else {
+			//Linked to the grid
 			this.statusBar.setStyle({"display": ""});
 		}
 	}
@@ -1516,7 +1520,7 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
 	// Notify resize event
 	var persist = persistence;
 	if (persist == null)
-		persist = true;		
+		persist = true;
 	this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist);
 }
 
@@ -1743,14 +1747,11 @@ IGadget.prototype.save = function() {
 IGadget.prototype.moveToLayout = function(newLayout) {
 	if (this.layout == newLayout)
 		return;
-	
-	if (this.minimized && newLayout instanceof FreeLayout){
-		//Convert the bar to an icon
-		this.toggleMinimizeStatus(); //TODO: make this and the next operation better
-		this.minimized = true
-		this.element.setStyle({"visibility":"hidden"});
-		this.contentWrapper.setStyle({"visibility":"hidden"});
-		this.iconElement.setStyle({"display":"block"});
+
+	var minimizeOnFinish = false;
+	if (this.minimized) {
+		minimizeOnFinish = true;
+		this.toggleMinimizeStatus();
 	}
 
 	// ##### TODO Revise this
@@ -1807,6 +1808,10 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	// ##### END TODO
 	newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();
+
+	if (minimizeOnFinish) {
+		this.toggleMinimizeStatus();
+	}
 
 	if (!this.loaded && BrowserUtilsFactory.getInstance().isIE()) {
 		// IE hack to reload the iframe

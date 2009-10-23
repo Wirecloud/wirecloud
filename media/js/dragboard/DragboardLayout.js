@@ -190,9 +190,11 @@ DragboardLayout.prototype._adaptIGadget = function(iGadget) {
 
 /**
  * @private
+ *
+ * Checks that the given iGadget has a minimal size. This check is performed using
+ * iGadget content size.
  */
 DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
-	// Ensure a minimal size
 	var minWidth = Math.ceil(this.fromPixelsToHCells(80));
 	var minHeight = Math.ceil(this.fromPixelsToVCells(24));
 
