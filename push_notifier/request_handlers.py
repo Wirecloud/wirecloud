@@ -98,12 +98,17 @@ class UserSubscriptionRequestHandler(tornado.web.RequestHandler):
         
         user = UserManager.get_user(username)
         
-        user.set_callback(self.async_callback(self.on_subscription_change))
-        
-        for channel_id in channel_ids:
-            channel = ChannelManager.get_channel(channel_id)
-
-            channel.subscribe_user(user)
+        if (len(channel_ids) == 0):
+            #Disconnecting user
+            user.unsubscribe()
+            self.on_subscription_change("[]")
+        else:
+            user.set_callback(self.async_callback(self.on_subscription_change))
+            
+            for channel_id in channel_ids:
+                channel = ChannelManager.get_channel(channel_id)
+    
+                channel.subscribe_user(user)
 
         ChannelManager.print_channels_status()
 

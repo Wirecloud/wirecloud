@@ -250,6 +250,10 @@ function WorkSpace (workSpaceState) {
 	// PUBLIC METHODS
 	// ****************
 
+	WorkSpace.prototype.subscribe_to_channels = function() {
+		this.remoteChannelManager.subscribe_to_channels();
+	}
+
 	WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
 		var igadget = this.getIgadget(igadgetId);
 		igadget._notifyLoaded();

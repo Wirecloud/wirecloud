@@ -26,12 +26,14 @@
 function RemoteChannelManager(wiring) {
 
 	RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT = 3000;
+	RemoteChannelManager.prototype.MAX_SECONDS_TO_WAIT = 1800;
  
 	//  CONSTRUCTOR
 	this.nested_delayed_updates = 0;
 	this.waiting_for_response = false;
 	this.subscribed_channels = null;
 	this.uncommited_channel_values = new Hash();
+	this.error_delay = 0;
 	
 	this.persistence_engine = PersistenceEngineFactory.getInstance();
 	this.wiring = wiring;
@@ -41,7 +43,8 @@ function RemoteChannelManager(wiring) {
  	////////////////////////////////////////////////////////////////////////
  	
  	// Subscribe with only one connection to all given channels!
- 	RemoteChannelManager.prototype.subscribe_to_channels = function(remote_channels) {
+ 	RemoteChannelManager.prototype.subscribe_to_channels = function() {
+ 		var remote_channels = this.wiring.get_remote_channels_ids()
  		this.subscribed_channels = new Hash();
  		
  		for (var i=0; i<remote_channels.length; i++) {
@@ -55,7 +58,7 @@ function RemoteChannelManager(wiring) {
 	}
 	
 	// Mark channel to be published!
-	// Programs a remote update operation SECONDS_TO_WAIT after now!
+	// Programs a remote update operation MILLISECONDS_TO_WAIT from now!
 	RemoteChannelManager.prototype.publish_channel_value = function(channel_id, channel_value) {		
 		if (! this.uncommited_channel_values[channel_id]) {
 			// Creating  array of values for this channel
@@ -81,10 +84,25 @@ function RemoteChannelManager(wiring) {
 		var response_text = transport.responseText;
 		var modified_channels = JSON.parse(response_text);
 		
-		this.propagate_channels(modified_channels);
+		/* ****************************************************************************
+		   - modified_channels.length == 0 
+		      Connection closed by server: the same client has connected 2 times!
+		      Noting to do!
+		   - modified_channels.length > 0
+		      Propagate through channels!
+		      Connect again to push notifier!
+		**************************************************************************** */
 		
-		// Reconnecting!
-		this.subscribe_remote_channels();
+		if (modified_channels.length > 0) {
+		
+			// Propagate values
+			this.propagate_channels(modified_channels);
+			
+			// Reconnecting!
+			this.subscribe_remote_channels();
+		}
+		
+		this.error_delay = 0;
 	}
 	
 	 var subscribe_error = function(transport) {
@@ -92,7 +110,7 @@ function RemoteChannelManager(wiring) {
 		//var data = JSON.parse(response);
 		
 		// Reconnecting!
-		this.subscribe_remote_channels();
+		this.schedule_subscribe_operation();
 	}
  
   	var publish_success = function(transport) {
@@ -199,7 +217,6 @@ function RemoteChannelManager(wiring) {
 		this.persistence_engine.send_get(url, this, publish_success, publish_error);
 	}
 
-
 	this.delayed_update = function() {
 		if (this.waiting_for_response) {
 			setTimeout(this.delayed_update.bind(this), RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT);
@@ -210,6 +227,23 @@ function RemoteChannelManager(wiring) {
 		this.update_remote_channels();
 	}
 
+	this.schedule_subscribe_operation = function() {
+		setTimeout(this.subscribe_remote_channels.bind(this), this.get_error_delay_milliseconds());
+	}
+	
+	this.get_error_delay_milliseconds = function() {
+		if (this.error_delay == 0) {
+			this.error_delay = 1;
+		}
+		else {
+			if (this.error_delay > RemoteChannelManager.prototype.MAX_SECONDS_TO_WAIT)
+				this.error_delay = RemoteChannelManager.prototype.MAX_SECONDS_TO_WAIT;
+			else
+				this.error_delay *= 4;
+		}
+		
+		return this.error_delay*1000;
+	}
 	
 	this.schedule_update_operation = function(new_delayed_update) {
 		// Creating new delayed update (if needed)
@@ -219,7 +253,7 @@ function RemoteChannelManager(wiring) {
 		}
 	}
 	
-	this.schelule_delay_between_requests = function() {
+	this.schedule_delay_between_requests = function() {
 		setTimeout(this.ready_for_new_request.bind(this), RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT);
 	}
 	
@@ -229,7 +263,7 @@ function RemoteChannelManager(wiring) {
 	
 	
 	// INITIALIZATION:
-	this.subscribe_to_channels(this.wiring.get_remote_channels_ids());
+	this.subscribe_to_channels();
 }
 
 function RemoteChannelValue (id, value){

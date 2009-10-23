@@ -49,6 +49,10 @@ class User:
         self.response = ''
     
     def reset(self):
+        if (self.callback):
+            #Finishing connection with no changes on channels!
+            self.callback("[]")
+            
         self.callback = None
         self.channels = dict()
         self.response = ''   
@@ -61,6 +65,8 @@ class User:
             channel.subscribe(self)
             
     def unsubscribe(self):
+        self.reset()
+        
         channel_keys = self.channels.keys()
         
         for channel_key in channel_keys:
