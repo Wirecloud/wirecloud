@@ -1385,15 +1385,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 
 	} else { //minimized
-		if (basedOnContent){ 
-			this._recomputeWrapper();
-			contentHeight = this.element.offsetHeight;
-			this.content.setStyle({height: "0px"});
-			this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
-		}else{//TEST IT!!!
-			contentHeight = this.element.offsetHeight;
-			this.contentHeight = contentHeight;
-		}
+		this._recomputeWrapper();
+		contentHeight = this.element.offsetHeight;
+		this.content.setStyle({height: "0px"});
+		this.height = Math.ceil(this.layout.fromPixelsToVCells(contentHeight));
 	}
 
 	if (oldHeight !== this.height) {

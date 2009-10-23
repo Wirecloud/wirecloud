@@ -192,9 +192,6 @@ DragboardLayout.prototype._adaptIGadget = function(iGadget) {
  * @private
  */
 DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
-	if (iGadget.minimized) 
-		return;
-		
 	// Ensure a minimal size
 	var minWidth = Math.ceil(this.fromPixelsToHCells(80));
 	var minHeight = Math.ceil(this.fromPixelsToVCells(24));
