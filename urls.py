@@ -101,8 +101,8 @@ urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),
  #   (r'^logout$', 'django.contrib.auth.views.logout'),    
     # custom logouts (to enable anonymous access)
-    (r'^logout$', 'authentication.logout', {'next_page': '/'}),
-    (r'^admin/logout/$', 'authentication.logout', {'next_page': '/'}),
+    (r'^logout$', 'authentication.logout'),
+    (r'^admin/logout/$', 'authentication.logout'),
     
     #Admin CLMS interface
     #(r'^admin/clms/(?P<layout_id>\d+)/content/popup/', clms_admin_view.panel_list_popup),
