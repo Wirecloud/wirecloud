@@ -312,7 +312,7 @@ function WorkSpace (workSpaceState) {
 				OpManagerFactory.getInstance().showActiveWorkSpace();
 			}
 		}.bind(this));
-		LayoutManagerFactory.getInstance().resizeTabBar();
+//		LayoutManagerFactory.getInstance().resizeTabBar();
 	}
 
 	WorkSpace.prototype.fillWithInput = function () {
@@ -458,6 +458,9 @@ function WorkSpace (workSpaceState) {
 			else
 				tab.unmark();
 		}
+
+		//resize tab bar after displaying tabs
+		LayoutManagerFactory.getInstance().resizeTabBar();
 
 		if (this.visibleTab) {
 			//show the current tab in the tab bar if it isn't within the visible area

@@ -294,7 +294,7 @@ function Tab (tabInfo, workSpace) {
 		var y = this.tabHTMLElement.offsetTop;
 		this.tabHTMLElement.style.position = "absolute";
 		this.tabHTMLElement.style.zIndex = "999999";
-		this.xStart = parseInt(e.screenX);		
+		this.xStart = parseInt(Event.pointerX(e));		
 		this.tabHTMLElement.style.left = this.x + 'px';
 		this.tabHTMLElement.style.top = y + 'px';
 		
@@ -324,9 +324,10 @@ function Tab (tabInfo, workSpace) {
 		
 		e = e || window.event; // needed for IE
 
-		var screenX = parseInt(e.screenX);
+		var screenX = parseInt(Event.pointerX(e));
 		this.xDelta = this.xStart - screenX;
 		this.xStart = screenX;
+
 		this.x = this.x - this.xDelta;
 		if(this.x < 0)
 			this.x = 0;
@@ -339,11 +340,14 @@ function Tab (tabInfo, workSpace) {
 			return false;
 		}
 		this.tabHTMLElement.style.left = this.x + 'px';
-		
-			// calculate where the user wants to put the tab
-			//x-15: do not return the draggable element
-			//y+2: problems with border in IE<8
-		var element = document.elementFromPoint(e.clientX - 15, this.y +2);
+	
+		// calculate where the user wants to put the tab
+		//y+2: problems with border in IE<8
+		// hide the draggable element
+		// in order not to return it in elementFromPoint()
+		this.tabHTMLElement.hide();
+		var element = document.elementFromPoint(Event.pointerX(e), this.y +2);
+		this.tabHTMLElement.show();
 		if (element != null) {
 			// elementFromPoint may return inner tab elements
 			element = this._findTabElement(element, 4);

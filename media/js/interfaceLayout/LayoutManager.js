@@ -71,8 +71,8 @@ var LayoutManagerFactory = function () {
 		// Tab bar section: to make the section scroll 2 divs are needed: one which limits the whole room and
 		//another which is absolutely positioned each time a slider button is clicked
 		this.tabBarStep = 20;
-		this.tabImgSize = null;    // launcher width + dragger width
-		this.extraGap = 10;      
+		this.tabImgSize = null;		// launcher width + dragger width
+		this.extraGap = 15;			//for margin of the current tab name and extra room on renaming tabs
 		this.rightSlider = $('right_slider');
 		this.leftSlider = $('left_slider');
 		this.leftTimeOut;
@@ -80,9 +80,9 @@ var LayoutManagerFactory = function () {
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
 		if ($('lite_toolbar_section')) {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
 		} else {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
 		}
 
 		this.tabMarker = $('tab_marker');		
@@ -101,9 +101,9 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.resizeTabBar = function () {
 
 			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth -  $('floating_gadgets_launcher').offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() -  $('floating_gadgets_launcher').offsetWidth - 30;
 			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.offsetWidth - this.rightSlider.offsetWidth - $('floating_gadgets_launcher').offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
 			}
 
 			this.changeTabBarSize(0);
@@ -464,7 +464,6 @@ var LayoutManagerFactory = function () {
 
 			this.dragboardLink.removeClassName("toolbar_unmarked");
 			this.dragboardLink.addClassName("toolbar_marked");
-			this.showTabs();
 			this.dragboardLink.blur();
 			$("ws_operations_link").blur();
 			$("ws_operations_link").removeClassName("hidden");
@@ -473,8 +472,6 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.dragboardElement);
 
 			dragboard.dragboardElement.setStyle(showStyle);
-
-			LayoutManagerFactory.getInstance().resizeTabBar();
 
 			if (dragboard.getNumberOfIGadgets() == 0) {
 				var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
@@ -1043,6 +1040,37 @@ var LayoutManagerFactory = function () {
 		return this.scrollTabBarWidth;		
 	}
 
+
+	/* recalculate scrollTabBar width */
+	LayoutManager.prototype.recalculateScrollTabBarWidth = function(){
+		var nodes = this.scrollTabBar.childNodes;
+		var computedStyle;
+		var nameNode, tabMarginRight, tabMarginLeft, namMarginRight, nameMarginLeft;
+		
+		this.scrollTabBarWidth = 0;
+		for (var i=0; i<nodes.length;i++){
+			//add the node width. If it is a tab, border width are includes
+			this.scrollTabBarWidth += nodes[i].getWidth();
+			
+			// current name margins are taken into account in this.extraGap
+			if (nodes[i].hasClassName('current')){
+				nameNode = nodes[i].getElementsByTagName('span')[0];
+				computedStyle = document.defaultView.getComputedStyle(nameNode, null);
+				nameMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);	
+				nameMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);		
+				this.scrollTabBarWidth -= nameMarginRight + nameMarginLeft;
+			}
+			
+			//add the node margins.
+			computedStyle = document.defaultView.getComputedStyle(nodes[i], null);
+			tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+			tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+			this.scrollTabBarWidth += tabMarginRight + tabMarginLeft;
+		}
+		this.scrollTabBarWidth += this.extraGap;
+		return this.scrollTabBarWidht;
+	}
+
 	/*Reset the tab bar values*/
 	LayoutManager.prototype.resetTabBar = function(tabId) {
 		this.scrollTabBar.setStyle({'width': this.getScrollTabBarWidth(true) + "px"});
@@ -1063,7 +1091,8 @@ var LayoutManagerFactory = function () {
 		var computedStyle = document.defaultView.getComputedStyle(tabHTMLElement, null);
 		var tabBorder = computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		var tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-		this.changeTabBarSize(2*(tabMarginRight + tabBorder));
+		var tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+		this.changeTabBarSize(2*tabBorder + tabMarginRight + tabMarginLeft);
 		this.scrollTabBar.setStyle({right: 0, left:''});
 		return tabHTMLElement;
 	}
@@ -1149,7 +1178,13 @@ var LayoutManagerFactory = function () {
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
 		this.showTabs();
-		this.scrollTabBarWidth = this.getScrollTabBarWidth() + tabSize;
+		
+		if (tabSize == 0){//it is a resize event (maybe a change of theme) the scrollTabBar was painted but perhaps its width is different now
+			this.recalculateScrollTabBarWidth();
+			
+		}else{
+			this.scrollTabBarWidth = this.getScrollTabBarWidth() + tabSize;
+		}
 
 		//calculate the size of the fixed bar taking into account the max allowed width
 		var fixedWidth;
