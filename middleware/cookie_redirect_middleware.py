@@ -13,7 +13,7 @@ class CookieRedirectMiddleware(object):
             and hasattr(settings, 'HTTP_REFERER')
             and view_func == logout):
             auth_server = getattr(settings, 'AUTHENTICATION_SERVER_URL')
-            next_page = view_kwargs.get('next_page', '/')
+            next_page = view_kwargs.get('next_page', settings.LOGOUT_URL)
             view_kwargs['next_page'] = "%s/api/logout/?next=%s" % (auth_server,
                                                                    next_page)
             return view_func(request, *view_args, **view_kwargs)
