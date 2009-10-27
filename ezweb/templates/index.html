@@ -89,17 +89,14 @@
 		<!-- LOGS LINK -->
 		<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
 		<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
+		<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
 		<span> | </span>
 		{% if is_anonymous %}
 			<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
 			<span> | </span>
-			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
-			<span> | </span>
 			<span id="user_section">{% trans "anonymous" %}</span>
 		{% else %}
 			<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
-			<span>  | </span>
-			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button"  target="_blank"></a></span>
 			{%if AUTHENTICATION_SERVER_URL%}
 				<span> | </span>
 				<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>

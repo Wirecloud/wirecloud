@@ -16,12 +16,11 @@
 <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
 
 
-
 <style>
 body{
   overflow: visible;
   color: #19446A;
-    background: url("/ezweb/themes/default/images/fond.gif") top left;
+	background: url("/ezweb/themes/default/images/fond.gif") top left;
     margin:0;
     padding:0;
     font-size:80%;
@@ -208,17 +207,6 @@ h3{
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
 <script type="text/javascript">
-	function check_browser() {
-		var browser = navigator.appName;
-
-		if (browser.toLowerCase().substring(0, 8) != 'netscape') {
-			alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
-			return false;
-		}
-
-		return true;
-	}
-
 	function setLanguage(language) {
 		document.getElementById("language").value = language;
 		document.getElementById("languages").submit();
@@ -241,7 +229,7 @@ h3{
 			 	<form id="languages" action="/i18n/setlang/" method="post">
 					<input name="next" type="hidden" value="/accounts/login/?next=/" />
 					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}">
-				</form>
+				</form>		 
 				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 			 </div>
 			 <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
@@ -251,102 +239,11 @@ h3{
 	
 	</div>
 </div>
-{% if error_message %}
-<p class="errornote">{{ error_message }}</p>
-{% endif %}
-
 
 <div id="content-main">
-	
-	<!-- Training -->
-	<div id="training" class="training">
-		<h2 id="title"> {% trans 'Thanks to EzWeb you will be able to combine your favorite services to make your life easier' %}</h2>
-		<div id="training-content" class="training-content">
-			<h3>{% trans 'Watch our videos!' %}</h3>
-			<table cellspacing="0">
-				<tr>
-					<td width="110px" align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Discover"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Discover</b> new gadgets in our catalogue and import them in your workspace.' %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Arrange"/>
-						</a> 
-					</td>
-					<td>{% trans 'Arrange gadgets in your workspace <b>at your will</b>' %}.</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Connect"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Wire</b> gadgets together.' %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
-						</a>
-					</td>
-					<td>{% trans "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue." %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embed"/>
-						</a>
-					</td>
-					<td>{% trans 'Share your own workspace as an object you may <b>embed</b> in your favourite environments.' %}</td>
-				</tr>
-			</table>
-		</div>
-	</div>
-		
-	<!-- Registration -->
-	<div id="right-section">
-		
-		<div id="login-section">
-			<form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="form" class="form-row">
-				<table>
-					<tr><td>
-						<label for="id_username">{% trans 'Username' %} </label>
-					</td><td>
-				    		<input type="text" name="username" id="id_username" size="15"/>
-				    	</td></tr>
-				    	<tr><td>
-				    		<label for="id_password">{% trans 'Password' %} </label> 
-				    	</td><td>
-				    		<input type="password" name="password" id="id_password" size="15"/>
-				    	</td></tr>
-				    </table>
-				    <input type="hidden" name="this_is_the_login_form" value="1" />
-				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
-				    <input type="submit" value="{% trans 'Log in' %}" />
-				  </form>
-			{% if AUTHENTICATION_SERVER_URL %}
-			<div id="registration" class="registration">
-				<a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Create an account' %}</a>
-			</div>
-			{% endif %}
-		</div>
-		<div id="tips">
-			<div id="tip_catalogue" class="tooltip">
-			{% trans '<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages.' %}
-			</div>
-			<div id="tip_grow" class="tooltip">
-			{% trans 'Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes.' %}
-			</div>
-			<div id="tip_contact" class="tooltip">
-			{% trans "Don't hesitate sending us your" %} <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'opinion and feedback' %}</a>. {% trans 'Keep in touch with us!' %}
-			</div>
-		</div>
-	</div>
+  <h1>{% trans "Error 500 - Internal Server Error" %}</h1>
 </div>
+
 </body>
 </html>
+
