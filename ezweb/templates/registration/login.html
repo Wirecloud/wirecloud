@@ -79,6 +79,17 @@ img{
         text-align: center;
 }
 
+.errornote {
+	background: #FFDDDD;
+	border: 1px solid darkRed;
+	left:5%;
+	margin: 0;
+	padding: 1ex;
+	position:absolute;
+	text-align:center;
+	width:90%;
+}
+
 #right-section a{
         color:#2D6F9C;
         cursor:pointer;
@@ -251,10 +262,10 @@ h3{
 	
 	</div>
 </div>
-{% if error_message %}
-<p class="errornote">{{ error_message }}</p>
-{% endif %}
 
+{% if form.errors %}
+<p class="errornote">{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
 
 <div id="content-main">
 	
