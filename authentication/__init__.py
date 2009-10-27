@@ -36,7 +36,7 @@ from django.http import HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
-def logout(request, next_page=None, template_name='registration/logged_out.html'):
+def logout(request, next_page=settings.LOGOUT_URL, template_name='registration/logged_out.html'):
     "Logs out the user and displays 'You are logged out' message."
     request.session.clear()
     request.session.delete()
