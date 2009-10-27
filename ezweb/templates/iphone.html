@@ -113,6 +113,7 @@ var URIs = new _URIConstants();
     	checkInterval = setInterval(checkTab, 400);
     	updateInterval = setInterval(updateLayout, 300);
     }
+    
     var loaded = false;
     var updateInterval;
     var checkInterval;
@@ -122,6 +123,12 @@ var URIs = new _URIConstants();
     var _currentWidth = 0;
     
     var last_logged_user = '{{ last_user }}';
+    var installed_apps = {{ installed_apps|safe }};
+	var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
+	
+	var public_workspace = '{{ active_workspace }}';
+	var last_logged_user = '{{ last_user }}';
+	var post_load_script = '{{ post_load_script|safe }}';
     
 </script>
 </body>

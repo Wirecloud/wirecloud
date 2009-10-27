@@ -27,6 +27,7 @@ function RemoteChannelManager(wiring) {
 
 	RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT = 1000;
 	RemoteChannelManager.prototype.MAX_SECONDS_TO_WAIT = 1800;
+	RemoteChannelManager.prototype.ENABLED = remote_channels_enabled;
  
 	//  CONSTRUCTOR
 	this.nested_delayed_updates = 0;
@@ -44,6 +45,10 @@ function RemoteChannelManager(wiring) {
  	
  	// Subscribe with only one connection to all given channels!
  	RemoteChannelManager.prototype.subscribe_to_channels = function() {
+ 	
+ 		if  (! RemoteChannelManager.prototype.ENABLED)
+ 			return;
+ 	
  		var remote_channels = this.wiring.get_remote_channels_for_reading_ids()
  		this.subscribed_channels = new Hash();
  		
@@ -59,7 +64,10 @@ function RemoteChannelManager(wiring) {
 	
 	// Mark channel to be published!
 	// Programs a remote update operation MILLISECONDS_TO_WAIT from now!
-	RemoteChannelManager.prototype.publish_channel_value = function(channel_id, channel_value) {		
+	RemoteChannelManager.prototype.publish_channel_value = function(channel_id, channel_value) {
+		if  (! RemoteChannelManager.prototype.ENABLED)
+ 			return;
+ 			
 		if (! this.uncommited_channel_values[channel_id]) {
 			// Creating  array of values for this channel
 			this.uncommited_channel_values[channel_id] = new Array();

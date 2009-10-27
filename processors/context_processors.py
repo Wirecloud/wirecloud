@@ -75,6 +75,10 @@ def only_one_css_file(request):
     else:
         return {'only_one_css_file': False}
     
+def remote_channels_enabled(request):
+    return {'remote_channels_enabled': hasattr(settings, 'REMOTE_CHANNEL_NOTIFIER_URL') }
+
+    
 def ezweb_release(request):
     if hasattr(settings, 'EZWEB_RELEASE'):
        return {'ezweb_release': settings.EZWEB_RELEASE}

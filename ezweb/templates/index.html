@@ -229,6 +229,8 @@ var _EzWeb_RELEASE = '{{ ezweb_release }}';
 
 var installed_apps = {{ installed_apps|safe }};
 
+var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
+
 </script>
 
 {% block includes %}
