@@ -465,6 +465,7 @@ var LayoutManagerFactory = function () {
 
 			this.dragboardLink.removeClassName("toolbar_unmarked");
 			this.dragboardLink.addClassName("toolbar_marked");
+			this.showTabs();
 			this.dragboardLink.blur();
 			$("ws_operations_link").blur();
 			$("ws_operations_link").removeClassName("hidden");
@@ -578,7 +579,9 @@ var LayoutManagerFactory = function () {
 		}
 
 		LayoutManager.prototype.showTabs = function() {
-			$("tab_section").removeClassName("hidden");
+			var tabSection = $("tab_section");
+			if(tabSection.hasClassName("hidden"))
+				tabSection.removeClassName("hidden");
 		}
 
 		//the disabling layer can be clicable (in order to hide a menu) or not
