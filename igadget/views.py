@@ -52,6 +52,8 @@ from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable
 from connectable.models import In, Out
 from igadget.models import Position, IGadget, Variable
 
+from gadget.utils import get_or_create_gadget
+
 from commons.logs_exception import TracedServerError
 
 def createConnectable(var):
@@ -77,7 +79,29 @@ def createConnectable(var):
     connectableId['name'] = name
 
     return connectableId
+   
+def addIGadgetVariable(igadget, user, varDef):    
+    # Sets the default value of variable
+    if varDef.default_value:
+        var_value = varDef.default_value
+    else:
+        var_value = ''
 
+     # Creating the Abstract Variable
+    abstractVar = AbstractVariable(type="IGADGET", name=varDef.name)
+    abstractVar.save()
+
+    # Creating Value for Abstract Variable
+    variableValue =  VariableValue (user=user, value=var_value, abstract_variable=abstractVar)
+    variableValue.save()
+
+    var = Variable(vardef=varDef, igadget=igadget, abstract_variable=abstractVar)
+    var.save()
+
+    #Wiring related vars (SLOT&EVENTS) have implicit connectables!
+    connectableId = createConnectable(var)
+
+      
 def SaveIGadget(igadget, user, tab):
     gadget_uri = igadget.get('gadget')
     igadget_name = igadget.get('name')
@@ -113,26 +137,8 @@ def SaveIGadget(igadget, user, tab):
 
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
-            # Sets the default value of variable
-            if varDef.default_value:
-                var_value = varDef.default_value
-            else:
-                var_value = ''
-
-             # Creating the Abstract Variable
-            abstractVar = AbstractVariable(type="IGADGET", name=varDef.name)
-            abstractVar.save()
-
-            # Creating Value for Abstract Variable
-            variableValue =  VariableValue (user=user, value=var_value, abstract_variable=abstractVar)
-            variableValue.save()
-
-            var = Variable(vardef=varDef, igadget=new_igadget, abstract_variable=abstractVar)
-            var.save()
-
-            #Wiring related vars (SLOT&EVENTS) have implicit connectables!
-            connectableId = createConnectable(var)
-
+            addIGadgetVariable(new_igadget, user, varDef)
+        
         transaction.commit()
 
         igadget_data =  serializers.serialize('python', [new_igadget], ensure_ascii=False)
@@ -236,6 +242,41 @@ def UpdateIGadget(igadget, user, tab):
 
     # save the changes
     position.save()
+
+def UpgradeIGadget(igadget, user):
+    igadget_pk = igadget.get('id')
+    url = igadget.get('newResourceURL')
+
+    # get the iGadget object
+    ig = get_object_or_404(IGadget, pk=igadget_pk)
+    currentGadget = ig.gadget
+    
+    result = get_or_create_gadget(url, user)
+    lastGadget = result["gadget"]
+    
+    #check equivalency and add the variables needed
+    newVariableDefs = VariableDef.objects.filter(gadget=lastGadget)
+    equivalentVarDefs = []
+    for varDef in newVariableDefs:
+        # search for an equivalent variableDef
+        equivalentVarDef = VariableDef.objects.filter(name=varDef.name, type=varDef.type, aspect=varDef.aspect, gadget=currentGadget)
+        if equivalentVarDef:
+            equivalentVarDefs.append(varDef)
+            #reassign the variableDef of the Variable
+            var = Variable.objects.get(igadget=ig, vardef=equivalentVarDef[0])
+            var.vardef = varDef
+            var.save()
+        else:
+            addIGadgetVariable(ig, user, varDef)
+    
+    # check if the last version gadget hasn't a super-set of the current version gadget variableDefs
+    currentGadgetVarDefs = VariableDef.objects.filter(gadget=currentGadget)
+    if len(currentGadgetVarDefs) > len(equivalentVarDefs):
+        #some of the current version gadget variableDefs aren't in the last version gadget
+        raise Exception("The gadget cannot be automatically updated because it is incompatible with the last version.")     
+
+    ig.gadget = lastGadget
+    ig.save()
 
 def deleteIGadget(igadget, user):
 
@@ -375,6 +416,29 @@ class IGadgetEntry(Resource):
 
         return HttpResponse('ok')
 
+class IGadgetVersion(Resource):
+    
+    @transaction.commit_on_success
+    def update(self, request, workspace_id, tab_id, igadget_id):
+        user = get_user_authentication(request)
+        
+        received_json = PUT_parameter(request, 'igadget')
+
+        if not received_json:
+            return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
+        
+        try:
+            igadget = simplejson.loads(received_json) 
+            UpgradeIGadget(igadget, user)
+            
+            return HttpResponse('ok')
+        except Exception, e:
+            transaction.rollback()
+            msg = unicode(e)
+            
+            raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
+        
+        return
 
 class IGadgetVariableCollection(Resource):
     def read(self, request, workspace_id, tab_id, igadget_id):

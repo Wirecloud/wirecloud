@@ -29,21 +29,26 @@
 
 
 #
-from django.conf.urls.defaults import patterns
 
-from igadget.views import IGadgetCollection, IGadgetEntry, IGadgetVariableCollection, IGadgetVariable, IGadgetVersion
+from gadget.templateParser import TemplateParser
+from gadget.models import Gadget
 
-urlpatterns = patterns('igadget.views',
+def get_or_create_gadget (templateURL, user):
+    ########### Template Parser
+    templateParser = None
+       
+    # Gadget is created only once
+    templateParser = TemplateParser(templateURL)
+    gadget_uri = templateParser.getGadgetUri()
 
-    # IGadgets
-    (r'^[/]?$', IGadgetCollection(permitted_methods=('GET', 'POST', 'PUT',))),
-    (r'^/((?P<igadget_id>\d+)[/]?)?$',
-	    IGadgetEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
-    (r'^/((?P<igadget_id>\d+)/version[/]?)?$',
-        IGadgetVersion(permitted_methods=('PUT',))),
-    (r'^/((?P<igadget_id>\d+)/variables[/]?)?$',
-        IGadgetVariableCollection(permitted_methods=('GET',))),
-    (r'^/((?P<igadget_id>\d+)/variables/(?P<var_id>[-ÑñáéíóúÁÉÍÓÚ\w]+)[/]?)?$',
-         IGadgetVariable(permitted_methods=('GET', 'POST', 'PUT',))),
-    (r'^/variables[/]?$', IGadgetVariableCollection(permitted_methods=('GET','PUT',))),
-)
+    try:
+        gadget = Gadget.objects.get(uri=gadget_uri)
+    except Gadget.DoesNotExist:
+        # Parser creates the gadget. It's made only if the gadget does not exist
+        templateParser.parse()
+        gadget = templateParser.getGadget()
+    
+    # A new user has added the gadget in his showcase 
+    gadget.users.add(user) 
+       
+    return {"gadget":gadget, "templateParser":templateParser}

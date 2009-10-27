@@ -588,6 +588,8 @@ class GadgetVersionsCollection(Resource):
             version = get_last_gadget_version(g["name"], g["vendor"])
             if version: #the gadget is still in the catalogue
                 g["lastVersion"] = version
+                url = GadgetResource.objects.get(short_name=g["name"], vendor=g["vendor"], version=version).template_uri
+                g["lastVersionURL"] = url
                 result.append(g)
         json_result = {'gadgets': result}
         return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')

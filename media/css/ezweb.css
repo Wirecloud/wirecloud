@@ -383,11 +383,7 @@ body.shared .tab_dragger{
   vertical-align: bottom;
 }
 .window_msg {
-  display: inline;
   text-align: center;
-}
-.window_menu .window_content .msg {
-  display: inline;
 }
 
 .window_menu .window_content .warning{

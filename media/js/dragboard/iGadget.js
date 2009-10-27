@@ -514,10 +514,15 @@ IGadget.prototype.build = function() {
 		button = document.createElement("input");
 		Element.extend(button);
 		button.setAttribute("type", "button");
-		button.setAttribute("title", "There is a new version of this gadget available. Current version: "+ 
-										this.gadget.getVersion()+" - Last version: "+this.gadget.getLastVersion());
+		var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
+		msg = interpolate(msg, {currentVersion: this.gadget.getVersion(), lastVersion:this.gadget.getLastVersion()}, true);
+		button.setAttribute("title", msg);
 		button.addClassName("button versionbutton");
-		//Event.observe (button, "click", function() {alert("hola");}, false);
+		Event.observe (button, "click", function() {
+											var msg = gettext('Do you really want to update "%(igadgetName)s" to its latest version? The gadget state and connections will be kept, if possible.<br/>Note: It will reload the platform');
+											msg = interpolate(msg, {igadgetName: this.name}, true);
+											LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this));
+										}.bind(this), false);
 		this.gadgetMenu.appendChild(button);
 	}
 
@@ -927,6 +932,35 @@ IGadget.prototype.setName = function (igadgetName) {
 		PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
 	}
 }
+
+//update the gadget to its newest version
+IGadget.prototype.upgradeIGadget = function(){
+	
+	function onUpgradeOk(transport){
+		window.location.reload();
+	}
+	function onUpgradeError(transport, e){
+		var msg = gettext('Sorry but the "%(igadgetName)s" gadget cannot be automatically updated because its version is not compatible ' +
+				'with the last version. If you want to update the gadget you must replace by hand the existing one with the gadget ' +
+				'available in the catalogue.');
+		msg = interpolate(msg, {igadgetName: this.name}, true);
+		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+		var logManager = LogManagerFactory.getInstance();
+		var error = logManager.formatError(gettext("Error upgrading the igadget "+this.name+": %(errorMsg)s."), transport, e);
+		logManager.log(msg, Constants.Logging.INFO_MSG);
+	}
+	
+	var o = new Object;
+	o.id = this.id;
+	o.newResourceURL = this.gadget.getLastVersionURL();
+	var igadgetData = Object.toJSON(o);
+	var params = {'igadget': igadgetData};
+	var igadgetUrl = URIs.PUT_IGADGET_VERSION.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
+	                                            tabId: this.layout.dragboard.tabId,
+	                                            iGadgetId: this.id});
+	PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onUpgradeOk, onUpgradeError);
+}
+
 
 /**
  * Sets the background color of the iGadget's menu bar.

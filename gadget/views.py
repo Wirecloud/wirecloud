@@ -40,8 +40,6 @@ from commons.resource import Resource
 from commons.authentication import get_user_authentication, user_authentication
 from commons.get_data import get_gadget_data
 
-from gadget.templateParser import TemplateParser
-
 from django.db import transaction
 
 from django.utils.translation import ugettext as _
@@ -54,6 +52,9 @@ from gadget.models import Gadget
 from workspace.views import get_user_gadgets
 
 from commons.logs_exception import TracedServerError
+
+from gadget.utils import * 
+    
 
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
@@ -80,38 +81,29 @@ class GadgetCollection(Resource):
         else:
             return HttpResponseServerError('<error>Url not specified</error>', mimetype='application/xml; charset=UTF-8')
 
-        ########### Template Parser
-        templateParser = None
-        
         try:
-            # Gadget is created only once
-            templateParser = TemplateParser(templateURL)
-            gadget_uri = templateParser.getGadgetUri()
-
-            try:
-                gadget = Gadget.objects.get(uri=gadget_uri)
-            except Gadget.DoesNotExist:
-                # Parser creates the gadget. It's made only if the gadget does not exist
-                templateParser.parse()
-                gadget = templateParser.getGadget()
-            
-            # A new user has added the gadget in his showcase 
-            gadget.users.add(user) 
+            #get or create the Gadget
+            result = get_or_create_gadget(templateURL, user)
             transaction.commit()
+            
+            gadget = result["gadget"]
+            templateParser = result["templateParser"]
+            
         except TemplateParseException, e:
             transaction.rollback()
             msg = _("Error parsing template!")
-            
+        
             raise TracedServerError(e, {'url': templateURL}, request, msg)
         except IntegrityError:
             transaction.rollback()
             msg = _("Gadget already exists")
-
+        
             raise TracedServerError(e, {'url': templateURL}, request, msg)
         except Exception, e:
             msg = _("Error creating gadget!")
-
+        
             raise TracedServerError(e, {'url': templateURL}, request, msg)
+        
             
         gadgetName = templateParser.getGadgetName()
         gadgetVendor = templateParser.getGadgetVendor()

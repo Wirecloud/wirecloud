@@ -179,7 +179,7 @@ var ShowcaseFactory = function () {
 		Showcase.prototype.setGadgetsState = function (data) {
 			for (var i = 0; i< data.length; i++){
 				var gadgetId = data[i]["vendor"] + '_' + data[i]["name"] + '_' + data[i]["version"];
-				this.gadgets[gadgetId].setUpdatedState(data[i]["lastVersion"]);
+				this.gadgets[gadgetId].setUpdatedState(data[i]["lastVersion"], data[i]["lastVersionURL"]);
 			}
 		}
 		

@@ -49,8 +49,9 @@ function Gadget(gadget_, url_) {
 	this.getIcon = function() { return state.getIcon(); } 
 	this.getMenuColor = function() { return state.getMenuColor(); }
 	this.isUpToDate = function() { return state.isUpToDate(); }
-	this.setUpdatedState = function(lastVersion) { return state.setUpdatedState(lastVersion); }
-	this.getLastVersion = function(){return state.getLastVersion()}
+	this.setUpdatedState = function(lastVersion, URL) { return state.setUpdatedState(lastVersion, URL); }
+	this.getLastVersion = function(){return state.getLastVersion();}
+	this.getLastVersionURL = function() {return state.getLastVersionURL();}
 	
 	this.isContratable = function() { 
 		var capabilities = state.getCapabilities();
@@ -137,7 +138,8 @@ function GadgetState(gadget_) {
 	var icon = null;
 	var upToDate = true; 
 	var lastVersion = null; 
-	
+	var lastVersionURL = null;
+		
 	// JSON-coded Gadget mapping
 	// Constructing the structure
 	vendor = gadget_.vendor;
@@ -175,6 +177,11 @@ function GadgetState(gadget_) {
 	this.getIcon = function() { return (icon!="") ? icon :  image;  }
 	this.getMenuColor = function () {return menuColor;}
 	this.isUpToDate = function() { return upToDate; }
-	this.setUpdatedState = function(v) { upToDate = (version == v); lastVersion = v; }
 	this.getLastVersion = function() {return lastVersion;}
+	this.getLastVersionURL = function() {return lastVersionURL;}
+	this.setUpdatedState = function(v, URL) { 
+		upToDate = (version == v); 
+		lastVersion = v;
+		lastVersionURL = URL; 
+	}
 }
