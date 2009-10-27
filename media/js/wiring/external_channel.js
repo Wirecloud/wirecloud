@@ -56,18 +56,6 @@ RemoteSubscription.prototype.setChannelGUI = function (channel_GUI) {
 	this._channel_GUI = channel_GUI;
 }
 
-RemoteSubscription.prototype.setOpCode = function (op_code) {
-	this._has_changed = true;
-  	this._op_code = op_code;
-  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
-}
-
-RemoteSubscription.prototype.setURL = function (url) {
-	this._has_changed = true;
-  	this._url = url;
-  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
-}
-
 RemoteSubscription.prototype.is_reading = function () {		
 	return this._op_code == RemoteSubscription.prototype.READ;
 }
@@ -77,8 +65,29 @@ RemoteSubscription.prototype.is_writing = function () {
 }
 
 RemoteSubscription.prototype.setID = function (id) {
+	if (! this._channel_GUI.wiringGUI)
+		return;
+
 	this._has_changed = true;
   	this._id = id;
+  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
+}
+
+RemoteSubscription.prototype.setURL = function (url) {
+	if (! this._channel_GUI.wiringGUI)
+		return;
+		
+	this._has_changed = true;
+  	this._url = url;
+  	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
+}
+
+RemoteSubscription.prototype.setOpCode = function (op_code) {
+	if (! this._channel_GUI.wiringGUI)
+		return;
+		
+	this._has_changed = true;
+  	this._op_code = op_code;
   	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 

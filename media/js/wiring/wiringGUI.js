@@ -149,6 +149,9 @@ WiringInterface.prototype.unload = function () {
 	var filterMenu = $('wiring_filter_menu');
 	this.filterMenu.remove();
 	this.filterMenu = null;
+	
+	// Remove Operation Menu
+	this.remote_operations_menu.remove();
 }
 
 WiringInterface.prototype.setFilterParam = function () {
