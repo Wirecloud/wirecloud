@@ -39,7 +39,7 @@ def load_template_source(template_name, template_dirs=None):
     # TODO improve this check
     if template_name == "500.html" or template_name == "400.html" or template_name == "registration/login.html":
         # Theme templates
-        filepath = safe_join(settings.BASEDIR, 'media', settings.DEFAULT_THEME, 'templates', template_name)
+        filepath = safe_join(settings.BASEDIR, 'media', 'themes', settings.DEFAULT_THEME, 'templates', template_name)
         try:
             return (open(filepath).read().decode(settings.FILE_CHARSET), filepath)
         except IOError:
