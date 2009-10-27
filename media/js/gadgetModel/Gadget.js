@@ -180,7 +180,7 @@ function GadgetState(gadget_) {
 	this.getLastVersion = function() {return lastVersion;}
 	this.getLastVersionURL = function() {return lastVersionURL;}
 	this.setUpdatedState = function(v, URL) { 
-		upToDate = (version == v); 
+		upToDate = (version >= v); 
 		lastVersion = v;
 		lastVersionURL = URL; 
 	}
