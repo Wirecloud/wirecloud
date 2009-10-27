@@ -99,6 +99,7 @@ var LayoutManagerFactory = function () {
 		// ****************
 		
 		LayoutManager.prototype.resizeTabBar = function () {
+			this.showTabs();
 
 			if($('lite_toolbar_section')){
 				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() -  $('floating_gadgets_launcher').offsetWidth - 30;
@@ -1071,15 +1072,6 @@ var LayoutManagerFactory = function () {
 		return this.scrollTabBarWidht;
 	}
 
-	/*Reset the tab bar values*/
-	LayoutManager.prototype.resetTabBar = function(tabId) {
-		this.scrollTabBar.setStyle({'width': this.getScrollTabBarWidth(true) + "px"});
-		this.fixedTabBar.setStyle({'width': this.getScrollTabBarWidth() + "px", "max-width": this.fixedTabBarMaxWidth + "px"});
-		// we do not need arrows
-		this.rightSlider.style.display = "none";
-		this.leftSlider.style.display = "none";
-	}
-
 	/*Insert tab in the tab bar*/
 	LayoutManager.prototype.addToTabBar = function(tabId) {
 		var tabHTMLElement = document.createElement("div");
@@ -1177,8 +1169,7 @@ var LayoutManagerFactory = function () {
 	
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
-		this.showTabs();
-		
+
 		if (tabSize == 0){//it is a resize event (maybe a change of theme) the scrollTabBar was painted but perhaps its width is different now
 			this.recalculateScrollTabBarWidth();
 			

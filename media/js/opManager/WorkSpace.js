@@ -587,9 +587,6 @@ function WorkSpace (workSpaceState) {
 			this.preferences = null;
 		}
 
-		// reset the values used to figure out the size of the tabBar
-		layoutManager.resetTabBar();
-
 		if (this.wiring !== null)
 			this.wiring.unload();
 		if (this.contextManager !== null)
