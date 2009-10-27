@@ -63,10 +63,8 @@ class User:
             
             self.channels.append(channel)
             channel.subscribe(self)
-            
-    def unsubscribe(self):
-        self.reset()
         
+    def delete_channels(self):    
         channel_keys = self.channels.keys()
         
         for channel_key in channel_keys:
@@ -75,6 +73,11 @@ class User:
             channel.unsubscribe_user(self)
         
         self.channels.clear()
+            
+    def unsubscribe(self):
+        self.reset()
+        
+        self.delete_channels()
     
     def set_callback(self, callback):
         self.reset()
@@ -82,6 +85,8 @@ class User:
     
     def notify(self):
         self.callback(self.get_response_json())
+        
+        self.callback = None
         
     def merge_response(self, id, value):
         #Dealing with last comma problem!

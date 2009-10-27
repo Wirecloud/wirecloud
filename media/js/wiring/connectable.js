@@ -387,8 +387,16 @@ wChannel.prototype.setRemoteSubscription = function(remoteSubscription) {
 	this.remoteSubscription = remoteSubscription;
 }
 
+wChannel.prototype.is_remote_reading_channel = function() {
+	return this.remoteSubscription.is_reading();
+}
+
+wChannel.prototype.is_remote_writing_channel = function() {
+	return this.remoteSubscription.is_writing();
+}
+
 wChannel.prototype.is_remote_channel = function() {
-	return this.remoteSubscription.is_active();
+	return this.is_remote_writing_channel() || this.is_remote_reading_channel();
 }
 
 wChannel.prototype.setFilter = function(newFilter) {
@@ -428,8 +436,11 @@ wChannel.prototype._getJSONInput = function() {
 
 
 wChannel.prototype.notifyRemoteChannel = function(value) {
-	// Provisional! 
-	return;
+	// Update value of a remote channel! Write operation!
+	if (! this.remoteSubscription.is_writing()) {
+		// Nothing to do!
+		return;
+	}
 
 	var workspace = this.variable.getWorkspace();
 	var remote_channel_id = this.remoteSubscription.getID();

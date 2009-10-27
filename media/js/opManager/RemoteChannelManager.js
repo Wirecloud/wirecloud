@@ -25,7 +25,7 @@
  
 function RemoteChannelManager(wiring) {
 
-	RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT = 3000;
+	RemoteChannelManager.prototype.MILLISECONDS_TO_WAIT = 1000;
 	RemoteChannelManager.prototype.MAX_SECONDS_TO_WAIT = 1800;
  
 	//  CONSTRUCTOR
@@ -44,7 +44,7 @@ function RemoteChannelManager(wiring) {
  	
  	// Subscribe with only one connection to all given channels!
  	RemoteChannelManager.prototype.subscribe_to_channels = function() {
- 		var remote_channels = this.wiring.get_remote_channels_ids()
+ 		var remote_channels = this.wiring.get_remote_channels_for_reading_ids()
  		this.subscribed_channels = new Hash();
  		
  		for (var i=0; i<remote_channels.length; i++) {

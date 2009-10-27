@@ -188,9 +188,6 @@ WiringInterface.prototype.saveWiring = function () {
 
 	// The wiring engine is notified in order to persist state!
 	this.wiring.serialize();
-	
-	// Re-subscribing to all external channels!
-	this.workspace.subscribe_to_channels();
 
 	// TODO error control
 	this.changed = false;

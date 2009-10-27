@@ -35,6 +35,7 @@ from django.utils.translation import ugettext as _
 
 from igadget.models import Variable
 from workspace.models import WorkSpaceVariable, AbstractVariable
+from remoteChannel.models import RemoteChannel
 
 class Filter(models.Model):
 
@@ -61,8 +62,7 @@ class Filter(models.Model):
         return str(self.pk) + " " + self.name
 
 class RemoteSubscription(models.Model):
-
-    url = models.URLField(verify_exists=False)
+    remote_channel = models.ForeignKey(RemoteChannel, verbose_name=_('Remote Channel'))
     
     REMOTE_OPERATION = (
         ('0', 'DISABLED'),

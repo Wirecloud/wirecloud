@@ -78,7 +78,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			channel.setFilter(this.filters[varData.connectable.filter]);
 			
 			// Setting channel remote operation data
-			var remote_subscription = new ExternalSubscription(varData.connectable.remote_subscription);
+			var remote_subscription = new RemoteSubscription(varData.connectable.remote_subscription);
 			channel.setRemoteSubscription(remote_subscription);
 
 			var fParams = varData.connectable.filter_params;
@@ -209,11 +209,11 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	// PUBLIC METHODS
 	// ****************
 
-	Wiring.prototype.get_remote_channels_ids = function () {
+	Wiring.prototype.get_remote_channels_for_reading_ids = function () {
 		var channels = new Array(); 
 		
 		for (var i=0; i<this.channels.length; i++) {
-			if (this.channels[i].is_remote_channel()) {
+			if (this.channels[i].is_remote_reading_channel()) {
 				channels.push(this.channels[i]);
 			}
 		}
@@ -439,6 +439,24 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			curChannel.variable.id = mapping.new_wv_id;
 			this.workspace.getVarManager().addWorkspaceVariable(mapping.new_wv_id, curChannel.variable);
 		}
+
+		var mappings = json['urls'];
+			
+		for (var i=0; i<mappings.length; i++) {
+			var mapping = mappings[i];
+			
+			for (var i=0; i<this.channels.length; i++) {
+				var channel = this.channels[i];
+				
+				if (channel.is_remote_channel() && channel.getRemoteSubscription().getURL() == mapping['url']) {
+					channel.getRemoteSubscription().setID(mapping['id']);	
+				}
+			}
+		}
+		
+		// Changes in the mapping of URLs and remote channels ids!
+		// Re-subscribing to all external channels!
+		this.workspace.subscribe_to_channels();
 
 		// Cleaning state variables
 		this.channelsForRemoving = [];

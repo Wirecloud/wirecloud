@@ -294,9 +294,10 @@ def get_remote_subscription_data(connectable):
     if connectable.remote_subscription:    
         subscription = {}
         
-        subscription['url'] = connectable.remote_subscription.url
+        subscription['url'] = connectable.remote_subscription.remote_channel.url
         subscription['op_code'] = connectable.remote_subscription.operation_code
         subscription['id'] = connectable.remote_subscription.id
+        subscription['remote_channel_id'] = connectable.remote_subscription.remote_channel.id
         
         return subscription
     else:

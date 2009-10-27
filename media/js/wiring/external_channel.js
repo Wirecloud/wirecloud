@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-function ExternalSubscription (){
+function RemoteSubscription (){
 	this._op_code = null;
 	this._id = null;
   	this._url = null;
@@ -32,13 +32,13 @@ function ExternalSubscription (){
   	this._initializing = false;
 }
 
-function ExternalSubscription (subscription_data){
+function RemoteSubscription (subscription_data){
 	if (subscription_data) {
 		this._op_code = subscription_data['op_code'];
   		this._url = subscription_data['url'];
-  		this._id = subscription_data['id'];
+  		this._id = subscription_data['remote_channel_id'];
   	} else {
-  		this._op_code = ExternalSubscription.prototype.DISABLED; 
+  		this._op_code = RemoteSubscription.prototype.DISABLED; 
   		this._url = null;
   		this._id = null;
   	}
@@ -48,55 +48,64 @@ function ExternalSubscription (subscription_data){
   	this._initializing = false;
 }
 
-ExternalSubscription.prototype.DISABLED = 0;
+RemoteSubscription.prototype.DISABLED = 0;
+RemoteSubscription.prototype.READ = 1;
+RemoteSubscription.prototype.WRITE = 2;
 
-ExternalSubscription.prototype.setChannelGUI = function (channel_GUI) {
+RemoteSubscription.prototype.setChannelGUI = function (channel_GUI) {
 	this._channel_GUI = channel_GUI;
 }
 
-ExternalSubscription.prototype.setOpCode = function (op_code) {
+RemoteSubscription.prototype.setOpCode = function (op_code) {
 	this._has_changed = true;
   	this._op_code = op_code;
   	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 
-ExternalSubscription.prototype.setURL = function (url) {
+RemoteSubscription.prototype.setURL = function (url) {
 	this._has_changed = true;
   	this._url = url;
   	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 
-ExternalSubscription.prototype.is_active = function () {
-	if (! this._op_code)
-		return false;
-		
-	return this._op_code != ExternalSubscription.prototype.DISABLED;
+RemoteSubscription.prototype.is_reading = function () {		
+	return this._op_code == RemoteSubscription.prototype.READ;
 }
 
-ExternalSubscription.prototype.setID = function (id) {
+RemoteSubscription.prototype.is_writing = function () {		
+	return this._op_code == RemoteSubscription.prototype.WRITE;
+}
+
+RemoteSubscription.prototype.setID = function (id) {
 	this._has_changed = true;
   	this._id = id;
   	this._channel_GUI.wiringGUI.notifyRemoteSubscriptionChange();
 }
 
-ExternalSubscription.prototype.hasChanged = function () {
+RemoteSubscription.prototype.hasChanged = function () {
 	return this._has_changed;
 }
 
-ExternalSubscription.prototype.getOpCode = function () {
+RemoteSubscription.prototype.markAsChanged = function () {
+	return this._has_changed = true;
+}
+
+RemoteSubscription.prototype.getOpCode = function () {
 	return this._op_code;
 }
 
-ExternalSubscription.prototype.getURL = function () {
+RemoteSubscription.prototype.getURL = function () {
 	return this._url;
 }
 
-ExternalSubscription.prototype.getID = function () {
+RemoteSubscription.prototype.getID = function () {
 	return this._id;
 }
 
-ExternalSubscription.prototype.getData = function () {
+RemoteSubscription.prototype.getData = function () {
 	var data = new Hash();
+	
+	this._url = this._channel_GUI.remote_url_input.value;
 	
 	data['url'] = this._url;
 	data['op_code'] = this._op_code;
@@ -105,7 +114,7 @@ ExternalSubscription.prototype.getData = function () {
 	return data;
 }
 
-ExternalSubscription.prototype.createURL = function () {
+RemoteSubscription.prototype.createURL = function () {
   	var create_url_success = function (transport) {
   		var response = JSON.parse(transport.responseText);
   		

@@ -155,7 +155,7 @@ INSTALLED_APPS = (
     'translator',
     'gadgetGenerator',
     'resourceSubscription',
-    'externalChannels',
+    'remoteChannel',
 #    'clms',
 )
 

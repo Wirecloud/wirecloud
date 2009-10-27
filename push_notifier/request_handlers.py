@@ -71,10 +71,10 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
 
         for user_key in user_keys:
             user = users_to_notify[user_key]
-
+        
             #Deleting user subscriptions from all channels!
-            user.unsubscribe()
-            
+            user.delete_channels()
+        
             user.notify()
 
 class UserSubscriptionRequestHandler(tornado.web.RequestHandler):

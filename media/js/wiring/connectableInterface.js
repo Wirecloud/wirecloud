@@ -407,7 +407,7 @@ function ChannelInterface(channel, wiringGUI) {
 		this.inputs = new Array();
 		this.outputs = new Array();
 		this.filter = null;
-		this.remote_subscription = new ExternalSubscription();
+		this.remote_subscription = new RemoteSubscription();
 	}
 
 	this.remote_subscription.setChannelGUI(this);
@@ -581,6 +581,8 @@ function ChannelInterface(channel, wiringGUI) {
       'click',
       function (e) {
           Event.stop(e);
+          this.wiringGUI.notifyRemoteSubscriptionChange();
+          this.remote_subscription.markAsChanged();
           this._toggle_table_status(this.remote_channel_table, this.remote_channel_link);
       }.bind(this));
 	
