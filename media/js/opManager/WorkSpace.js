@@ -322,6 +322,7 @@ function WorkSpace (workSpaceState) {
 			new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
 			this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
 			this.workSpaceNameHTMLElement.focus();
+			this.workSpaceNameHTMLElement.select();
 			Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){
 						Event.stop(e);
 						this.fillWithLabel()}.bind(this));

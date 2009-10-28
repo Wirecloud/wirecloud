@@ -118,6 +118,7 @@ function Tab (tabInfo, workSpace) {
 		this.tabWidth = newTabWidth;
 		
 		this.tabNameHTMLElement.focus();
+		this.tabNameHTMLElement.select();
 		Event.observe(this.tabNameHTMLElement, 'blur', function(e){Event.stop(e);
 					this.fillWithLabel()}.bind(this));
 		Event.observe(this.tabNameHTMLElement, 'keypress', function(e){
