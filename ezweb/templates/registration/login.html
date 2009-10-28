@@ -63,6 +63,10 @@ img{
 	margin-top:5px;
 }
 
+#content-main{
+	position: relative;
+}
+
 .form-row {
 	width: 220px;
 	margin: auto;
@@ -219,8 +223,9 @@ h3{
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
 <script type="text/javascript">
-	function check_browser() {
-		var browser = navigator.appName;
+
+   function check_browser() {
+      var browser=navigator.appName;
 
 		if (browser.toLowerCase().substring(0, 8) != 'netscape') {
 			alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');

@@ -63,6 +63,10 @@ img{
 	margin-top:5px;
 }
 
+#content-main{
+	position: relative;
+}
+
 .form-row {
 	width: 220px;
 	margin: auto;
@@ -70,7 +74,7 @@ img{
 	padding: 10px;
 }
 
-.form-row input[type="submit"] {
+.form-row #submit {
 	background: transparent url("/ezweb/themes/default/images/header_deg.gif") repeat;
 	color: white;
 }
@@ -341,7 +345,7 @@ h3{
 				    </table>
 				    <input type="hidden" name="this_is_the_login_form" value="1" />
 				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
-				    <input type="submit" value="{% trans 'Log in' %}" />
+				    <input type="submit" id="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
 				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
