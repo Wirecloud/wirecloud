@@ -494,11 +494,11 @@ function ChannelInterface(channel, wiringGUI) {
 	this.htmlElement.appendChild(channelContent);
 	channelContent.addClassName("channelContent");
 	Event.observe(channelContent, 'click', function(e) {Event.stop(e);});
-	
+
 	////////////////////////////////////////////////
-    // MANDATORY AREA!! Impossible to fold!
-    // Channel data:
-    ////////////////////////////////////////////////
+	// MANDATORY AREA!! Impossible to fold!
+	// Channel data:
+	////////////////////////////////////////////////
 
 	// Channel information showed when the channel is selected
 	var table = document.createElement("table");
@@ -1257,20 +1257,23 @@ ChannelInterface.prototype._toggle_table_status = function (table, link) {
 		// Hidding table!
 		table.addClassName('fold_table');
 		link.removeClassName('selected_option_link');
-		
+
 		this.opened_optional_table = false;
 	} else {
-	    // Hiding all tables!
-	    this._fold_all_tables();
-	    	
+		// Hiding all tables!
+		this._fold_all_tables();
+
 		// Showing given table!
 		table.removeClassName('fold_table');
 		link.toggleClassName('selected_option_link');
-		
+
 		this.opened_optional_table = true;
 	}
-	
+
 	this.last_clicked_option_link = link;
+
+	this.wiringGUI.redrawChannelOutputs(this.wiringGUI.currentChannel);
+	this.wiringGUI.redrawChannelInputs(this.wiringGUI.currentChannel);
 }
 
 /**
