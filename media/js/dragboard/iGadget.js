@@ -661,50 +661,42 @@ IGadget.prototype.paint = function(onInit) {
 	// Initialize iGadget's preferences menu
 	this._createIGadgetMenu();
 
-	// Insert it into the dragboard
+
+	// Insert it into the dragboard (initially hidden)
+	this.element.style.visibility = "hidden";
 	this.layout.dragboard.dragboardElement.appendChild(this.element);
 
 	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
 	if (BrowserUtilsFactory.getInstance().isIE()) {
 		this.content.setAttribute("src", codeURL);
-
-/*		this.content.setAttribute("frameBorder", "0");
-		this.content.setAttribute("border", "0");
-		this.content.setAttribute("frameSpacing", "0"); */
 	} else { //non IE6
 		this.content.setAttribute("data", codeURL);
 	}
 
-	// TODO use setStyle from prototype
 	// Position
 	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 	this.element.style.zIndex = this.zPos;
 
 	// Select the correct representation for this iGadget (iconified, minimized or normal)
-	var recomputeSize = false;
-	if (this.minimized && this.onFreeLayout()) {
-		// Iconified
-		this.element.setStyle({"visibility":"hidden"});
-		this.iconElement.setStyle({"display":"block"});
-	} else if (!this.minimized) {
-		// Normal
-		this.element.setStyle({"visibility":"visible"});
-		this.iconElement.setStyle({"display":"none"});
-		recomputeSize = true;
-	} else if (this.minimized && !this.onFreeLayout()) {
-		// Minimized
-		this.statusBar.setStyle({"display": "none"});
-		recomputeSize = true;
+	var minimizedStatusBackup = this.minimized;
+	this.minimized = false;
+	this._recomputeSize(true);
+
+	this.setMinimizeStatus(minimizedStatusBackup, false, false);
+
+	// Initialize lock status
+	var locked = this.layout.dragboard.isLocked();
+	if (locked) {
+		this._notifyLockEvent(true, false);
 	}
 
-	// Recompute size if needed
-	if (recomputeSize) {
-		if (onInit)
-			this._recomputeSize(true);
-		else
-			this.setContentSize(this.contentWidth, this.contentHeight, false);
-	}
+	// Initialize transparency status
+	if (this.transparency)
+		this.element.addClassName("gadget_window_transparent");
+
+	// Time to show the igadget
+	this.element.style.visibility = "visible";
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
@@ -790,16 +782,6 @@ IGadget.prototype._createIGadgetMenu = function() {
 		// Initialize snap/extract options
 		this._updateExtractOption();
 	}
-
-	// Initialize lock status
-	if (this.layout.dragboard.isLocked()) {
-		this.element.addClassName("gadget_window_locked");
-		this.menu.menu.addClassName("gadget_menu_locked");
-	}
-
-	// Initialize transparency status
-	if (this.transparency)
-		this.element.addClassName("gadget_window_transparent");
 }
 
 IGadget.prototype.fillWithLabel = function() {
@@ -1232,29 +1214,31 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
  * @private
  * @param {Boolean} newLockStatus
  */
-IGadget.prototype._notifyLockEvent = function(newLockStatus) {
+IGadget.prototype._notifyLockEvent = function(newLockStatus, reserveSpace) {
 	if (!this.element)
 		return;
-		
-	if (newLockStatus) {
-		this.element.addClassName("gadget_window_locked");
-	} else {
-		this.element.removeClassName("gadget_window_locked");
-	}
 
 	var oldWidth = this.getWidth();
 	var oldHeight = this.getHeight();
 
+	if (newLockStatus) {
+		this.element.addClassName("gadget_window_locked");
+		this.menu.menu.addClassName("gadget_menu_locked");
+	} else {
+		this.element.removeClassName("gadget_window_locked");
+		this.menu.menu.removeClassName("gadget_menu_locked");
+	}
+
 	this._recomputeHeight(false);
-	
-	this.menu.menu.toggleClassName("gadget_menu_locked");
 
 	// Notify Context Manager
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, newLockStatus);
 
 	// Notify resize event
-	this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
+	reserveSpace = reserveSpace != null ? reserveSpace : true;
+	if (reserveSpace)
+		this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
 }
 
 /**
@@ -1500,7 +1484,7 @@ IGadget.prototype.isMinimized = function() {
  *
  * @param newStatus new minimize status of the igadget
  */
-IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
+IGadget.prototype.setMinimizeStatus = function(newStatus, persistence, reserveSpace) {
 	if (this.minimized == newStatus)
 		return; // Nothing to do
 
@@ -1548,10 +1532,13 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence) {
 	this._recomputeHeight(true);
 
 	// Notify resize event
-	var persist = persistence;
-	if (persist == null)
-		persist = true;
-	this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist);
+	reserveSpace = reserveSpace != null ? reserveSpace : true;
+	if (reserveSpace) {
+		var persist = persistence;
+		if (persist == null)
+			persist = true;
+		this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
+	}
 }
 
 /**
