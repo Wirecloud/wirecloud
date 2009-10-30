@@ -731,10 +731,6 @@ IGadget.prototype.paint = function(onInit) {
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
 
 	this.iconElement.style.zIndex = this.zPos;
-	
-	if (this.layout.dragboard.isLocked()){
-		Event.observe(this.iconImg, "click", function(){this.maximizeIcon()}.bind(this), true);
-	}
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
