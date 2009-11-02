@@ -695,8 +695,9 @@ IGadget.prototype.paint = function(onInit) {
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
 
-	// Time to show the igadget
-	this.element.style.visibility = "visible";
+	// Time to show the igadget (we need to take into account the gadget can be iconified)
+	if (!this.onFreeLayout() || !minimizedStatusBackup)
+		this.element.style.visibility = "visible";
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
