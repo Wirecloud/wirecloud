@@ -234,9 +234,10 @@ var LayoutManagerFactory = function () {
 				_currentTheme.deapplyStyle();
 				_currentTheme = theme;
 				_currentTheme.applyStyle();
-
-				OpManagerFactory.getInstance()._themeLoaded();
-
+				
+//				OpManagerFactory.getInstance()._themeLoaded();
+				//wait for CSS application
+				setTimeout(OpManagerFactory.getInstance()._themeLoaded.bind(OpManagerFactory.getInstance()), 500);
 				layoutManager._notifyPlatformReady(false);
 			}
 
