@@ -39,7 +39,6 @@ function FreeLayout(dragboard, scrollbarSpace) {
 		return; // Allow empty constructor (allowing hierarchy)
 
 	this.initialized = false;
-	this.orderList = new Array();
 	DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
 
@@ -127,14 +126,6 @@ FreeLayout.prototype.initialize = function () {
 	for (i = 0; i < igadgetKeys.length; i++) {
 		key = igadgetKeys[i];
 		iGadget = this.iGadgets[key];
-
-		zPos = iGadget.getZPosition() - 1000;
-		if (this.orderList[zPos]) {
-			iGadgetsToReinsert.push(iGadget);
-		} else {
-			this.orderList[zPos] = iGadget;
-		}
-
 		iGadget.paint(true);
 	}
 
@@ -142,17 +133,7 @@ FreeLayout.prototype.initialize = function () {
 	for (i = 0; i < iGadgetsToReinsert.length; i++) {
 		iGadget = iGadgetsToReinsert[i];
 		zPos = this.orderList.push(iGadget) - 1;
-		iGadget.setZPosition(1000 + zPos);
 		iGadget.paint(true);
-	}
-
-	// Check if we have to readjust the z positions
-	var oldLength = this.orderList.length;
-	this.orderList = this.orderList.compact();
-	if (oldLength != this.orderList.length) {
-		for ( i = 0; i < this.orderList.length; i++) {
-			this.orderList[i].setZPosition(1000 + i);
-		}
 	}
 
 	this.initialized = true;
@@ -175,23 +156,7 @@ FreeLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	if (iGadget.getPosition() == null)
 		iGadget.setPosition(new DragboardPosition(0, 0));
 
-	var posZ = this.orderList.push(iGadget) - 1;
-	iGadget.setZPosition(1000 + posZ);
-
 	this._adaptIGadget(iGadget);
-}
-
-FreeLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
-	var posZ = iGadget.getZPosition() - 1000;
-	delete this.orderList[posZ];
-	this.orderList = this.orderList.compact();
-
-	var i = 0;
-	for (; i < this.orderList.length; i++) {
-		this.orderList[i].setZPosition(1000 + i);
-	}
-
-	DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
 }
 
 FreeLayout.prototype.initializeMove = function(igadget, draggable) {
@@ -238,7 +203,6 @@ FreeLayout.prototype.acceptMove = function() {
 
 	this.igadgetToMove.setPosition(this.newPosition);
 	this.igadgetToMove._notifyWindowResizeEvent();
-	this.raiseToTop(this.igadgetToMove);	
 	//this.dragboard._commitChanges([this.igadgetToMove.code]); It is done in the previous raiseToTop operation
 
 	this.igadgetToMove = null;
@@ -257,84 +221,21 @@ FreeLayout.prototype.cancelMove = function() {
 	this.newPosition = null;
 }
 
-FreeLayout.prototype.lowerToBottom = function(iGadget) {
-	var zPos = iGadget.getZPosition() - 1000;
-	delete this.orderList[zPos];
-	this.orderList = [iGadget].concat(this.orderList).compact();
-
-	var i = 0;
-	for (; i < this.orderList.length; i++) {
-		this.orderList[i].setZPosition(1000 + i);
-	}
-
-	this.dragboard._commitChanges();
-}
-
-FreeLayout.prototype.lower = function(iGadget) {
-	var zPos = iGadget.getZPosition() - 1000;
-	if (zPos == 0) {
-		// Nothing to do if we are already in the bottom
-		return;
-	}
-
-	var prevIGadget = this.orderList[zPos - 1];
-	this.orderList[zPos - 1] = iGadget;
-	this.orderList[zPos] = prevIGadget;
-
-	zPos += 1000;
-	iGadget.setZPosition(zPos -1);
-	prevIGadget.setZPosition(zPos);
-
-	this.dragboard._commitChanges([iGadget.code, prevIGadget.code]);
-}
-
-FreeLayout.prototype.raiseToTop = function(iGadget) {
-	var zPos = iGadget.getZPosition() - 1000;
-	delete this.orderList[zPos];
-	this.orderList = this.orderList.compact();
-	this.orderList.push(iGadget);
-
-	var i = 0;
-	for (; i < this.orderList.length; i++) {
-		this.orderList[i].setZPosition(1000 + i);
-	}
-
-	this.dragboard._commitChanges();
-}
-
-FreeLayout.prototype.raise = function(iGadget) {
-	var zPos = iGadget.getZPosition() - 1000;
-	if (zPos == (this.orderList.length - 1)) {
-		// Nothing to do if we are already in the top
-		return;
-	}
-
-	var nextIGadget = this.orderList[zPos + 1];
-	this.orderList[zPos + 1] = iGadget;
-	this.orderList[zPos] = nextIGadget;
-
-	zPos += 1000;
-	iGadget.setZPosition(zPos + 1);
-	nextIGadget.setZPosition(zPos);
-	
-	
-	this.dragboard._commitChanges([iGadget.code, nextIGadget.code]);
-}
-
 FreeLayout.prototype.fillFloatingGadgetsMenu = function(menu) {
 	var igadgetKeys = this.iGadgets.keys();
-	if (igadgetKeys.length > 0){
+	if (igadgetKeys.length > 0) {
 		for (i = 0; i < igadgetKeys.length; i++) {
 			key = igadgetKeys[i];
 			curIGadget = this.iGadgets[key];
-	
-			var context = {"igadget":curIGadget};
+
+			var context = {"igadget": curIGadget};
 			menu.addOption(null, curIGadget.name, function() {
-	                        this.igadget.maximizeAndRaiseToTop();
-	                        LayoutManagerFactory.getInstance().hideCover();
-	                    }.bind(context), i)
+					this.igadget.setMinimizeStatus(false);
+					this.igadget.layout.dragboard.raiseToTop(this.igadget);
+					LayoutManagerFactory.getInstance().hideCover();
+				}.bind(context), i)
 		}
-	}else{
+	} else {
 		menu.addOption(null, gettext("No Floating Gadgets"), function(){}, 0)
 	}
 }

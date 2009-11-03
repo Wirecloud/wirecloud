@@ -252,11 +252,6 @@ DragboardLayout.prototype.moveTo = function(destLayout) {
 	}
 }
 
-DragboardLayout.prototype.raiseToTop = function(iGadget) {
-	//not implemented here
-	return;
-}
-
 /**
  * This method must be called to avoid memory leaks caused by circular
  * references.

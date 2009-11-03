@@ -58,6 +58,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
 
+		// Check if we have to readjust the z positions
+		var oldLength = this.orderList.length;
+		this.orderList = this.orderList.compact();
+		if (oldLength != this.orderList.length) {
+			for (i = 0; i < this.orderList.length; i++) {
+				this.orderList[i].setZPosition(i);
+			}
+		}
+
 		this.tab.mark_as_painted();
 	}
 
@@ -360,8 +369,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		igadget.remove();
 		igadget.destroy();
-
-		this._deregisterIGadget(igadget);
 	}
 
 	Dragboard.prototype.saveConfig = function (iGadgetId) {
@@ -409,6 +416,24 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		iGadget.code = this.currentCode++
 
 		this.iGadgetsByCode[iGadget.code] = iGadget;
+		var zpos = iGadget.getZPosition();
+		if (zpos != null) {
+			if (this.orderList[zpos] != undefined) {
+				this.orderList.splice(zpos, 1, this.orderList[zpos], iGadget);
+
+				// Update following iGadgets
+				for (var i = zpos + 1; i < this.orderList.length; i++) {
+					if (this.orderList[i] != undefined)
+						this.orderList[i].setZPosition(i);
+				}
+			} else {
+				this.orderList[zpos] = iGadget;
+			}
+		} else {
+			zpos = this.orderList.length;
+			iGadget.setZPosition(zpos);
+			this.orderList[zpos] = iGadget;
+		}
 	}
 
 	/**
@@ -421,6 +446,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		delete this.iGadgets[iGadget.id];
 		delete this.iGadgetsByCode[iGadget.code];
 
+		// Update z order List
+		var zpos = iGadget.getZPosition();
+		this.orderList.splice(zpos, 1);
+		iGadget.setZPosition(null);
+
+		for (var i = zpos; i < this.orderList.length; i++) {
+			this.orderList[i].setZPosition(i);
+		}
+
 		iGadget.code = null;
 	}
 
@@ -429,17 +463,85 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			throw new Exception();
 
 		this.iGadgets[iGadget.id] = iGadget;
+
+		var oldHeight = iGadget.getHeight();
+		var oldWidth = iGadget.getWidth();
+
 		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo);
+
+		// Notify resize event
+		iGadget.layout._notifyResizeEvent(iGadget, oldWidth, oldHeight, iGadget.getWidth(), iGadget.getHeight(), false, true);
 	}
 
 	Dragboard.prototype.fillFloatingGadgetsMenu = function(menu) {
 		this.freeLayout.fillFloatingGadgetsMenu(menu);
 	}
 
+	Dragboard.prototype.lowerToBottom = function(iGadget) {
+		var zPos = iGadget.getZPosition();
+		delete this.orderList[zPos];
+		this.orderList = [iGadget].concat(this.orderList).compact();
+
+		for (var i = 0; i < this.orderList.length; i++) {
+			this.orderList[i].setZPosition(i);
+		}
+
+		this._commitChanges();
+	}
+
+	Dragboard.prototype.lower = function(iGadget) {
+		var zPos = iGadget.getZPosition();
+		if (zPos == 0) {
+			// Nothing to do if we are already in the bottom
+			return;
+		}
+
+		var prevIGadget = this.orderList[zPos - 1];
+		this.orderList[zPos - 1] = iGadget;
+		this.orderList[zPos] = prevIGadget;
+
+		iGadget.setZPosition(zPos -1);
+		prevIGadget.setZPosition(zPos);
+
+		this._commitChanges([iGadget.code, prevIGadget.code]);
+	}
+
+	Dragboard.prototype.raiseToTop = function(iGadget) {
+		var zPos = iGadget.getZPosition();
+		delete this.orderList[zPos];
+		this.orderList = this.orderList.compact();
+		this.orderList.push(iGadget);
+
+		var i = 0;
+		for (; i < this.orderList.length; i++) {
+			this.orderList[i].setZPosition(i);
+		}
+
+		this._commitChanges();
+	}
+
+	Dragboard.prototype.raise = function(iGadget) {
+		var zPos = iGadget.getZPosition();
+		if (zPos == (this.orderList.length - 1)) {
+			// Nothing to do if we are already in the top
+			return;
+		}
+
+		var nextIGadget = this.orderList[zPos + 1];
+		this.orderList[zPos + 1] = iGadget;
+		this.orderList[zPos] = nextIGadget;
+
+		iGadget.setZPosition(zPos + 1);
+		nextIGadget.setZPosition(zPos);
+
+		this._commitChanges([iGadget.code, nextIGadget.code]);
+	}
+
 	// *******************
 	// INITIALIZING CODE
 	// *******************
 	this.dragboardElement = dragboardElement;
+	this.orderList = new Array();
 
 	// Window Resize event dispacher function
 	this._notifyWindowResizeEvent = function () {
@@ -484,6 +586,8 @@ DragboardPosition.prototype.clone = function() {
  *                cursor
  */
 function DragboardCursor(iGadget) {
+	this.refIGadget = iGadget;
+
 	var positiontmp = iGadget.getPosition();
 	this.position = positiontmp.clone();
 
@@ -515,7 +619,7 @@ DragboardCursor.prototype.paint = function(dragboard) {
 	dragboardCursor.style.top = (this.layout.getRowOffset(this.position.y) - 2) + "px"; // TODO -2 px for borders
 
 	// assign the created element
-	dragboard.appendChild(dragboardCursor);
+	dragboard.insertBefore(dragboardCursor, this.refIGadget.element);
 	this.element = dragboardCursor;
 }
 
@@ -747,8 +851,7 @@ IGadgetDraggable.prototype.startFunc = function (draggable, context) {
 	context.dragboard = context.layout.dragboard;
 	context.currentTab = context.dragboard.tabId;
 	context.layout.initializeMove(context.iGadget, draggable);
-	context.oldZIndex = context.iGadget.getZPosition();
-	context.iGadget.setZPosition("999999");
+	context.dragboard.raiseToTop(context.iGadget);
 }
 
 IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
@@ -817,15 +920,13 @@ IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, 
 }
 
 IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
-	context.iGadget.setZPosition(context.oldZIndex);
-
 	if (context.selectedTab != null) {
 		context.layout.cancelMove();
 		var tab = context.dragboard.workSpace.getTab(context.selectedTab)
-		// On-demand loading of tabs!  
-		if (! tab.is_painted() ) { 
- 			tab.paint(); 
- 		}
+		// On-demand loading of tabs!
+		if (!tab.is_painted()) {
+			tab.paint();
+		}
 		var dragboard = tab.getDragboard();
 
 		var destLayout;
@@ -887,18 +988,20 @@ IGadgetIconDraggable.prototype.updateFunc = function (event, draggable, context,
 
 IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 	context.iGadget.setZPosition(context.oldZIndex);
-	if (context.x && context.y){
+	if (context.x && context.y) {
 		var position = context.iGadget.layout.getCellAt(context.x, context.y);
-		
+
 		if (position.y < 0)
 			position.y = 0;
 		if (position.x < 0)
 			position.x = 0;
-			
+
 		context.iGadget.setIconPosition(position);
 		context.iGadget.layout.dragboard._commitChanges([context.iGadget.code]);
-	}else{
-		context.iGadget.maximizeIcon(); //it is here instead of in a click event due to the behaviour of the IE 
+	} else {
+		// It is here instead of in a click event due to the behaviour of the IE
+		context.iGadget.setMinimizeStatus(false);
+		context.iGadget.layout.dragboard.raiseToTop(context.iGadget);
 	}
 }
 

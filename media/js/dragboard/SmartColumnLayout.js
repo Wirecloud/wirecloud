@@ -512,8 +512,6 @@ ColumnLayout.prototype.getCellAt = function (x, y) {
 ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 
-	iGadget.setZPosition(0);
-
 	if (!this.initialized)
 		return;
 

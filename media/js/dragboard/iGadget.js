@@ -342,40 +342,7 @@ IGadget.prototype._updateExtractOption = function() {
 
 		this.extractButton.removeClassName("extractButton");
 		this.extractButton.addClassName("snapButton");
-		this.extractButton.setAttribute("title", gettext("This iGadget outside the grid."));
-		
-		if (this.lowerOpId == null) {
-
-			// TODO more generic code
-			this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
-			                    gettext("Lower"),
-			                    function() {
-			                        this.layout.lower(this);
-			                        LayoutManagerFactory.getInstance().hideCover();
-			                    }.bind(this),
-			                    this.extractOptionOrder+1, "hide_on_lock");
-			this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
-			                    gettext("Raise"),
-			                    function() {
-			                        this.layout.raise(this);
-			                        LayoutManagerFactory.getInstance().hideCover();
-			                    }.bind(this),
-			                    this.extractOptionOrder+2, "hide_on_lock");
-			this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
-			                    gettext("Lower To Bottom"),
-			                    function() {
-			                        this.layout.lowerToBottom(this);
-			                        LayoutManagerFactory.getInstance().hideCover();
-			                    }.bind(this),
-			                    this.extractOptionOrder+3, "hide_on_lock");
-			this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
-			                    gettext("Raise To Top"),
-			                    function() {
-			                        this.layout.raiseToTop(this);
-			                        LayoutManagerFactory.getInstance().hideCover();
-			                    }.bind(this),
-			                    this.extractOptionOrder+4, "hide_on_lock");
-		}
+		this.extractButton.setAttribute("title", gettext("This iGadget is outside the grid."));
 	} else {
 		this.menu.updateOption(this.extractOptionId,
 		                       _currentTheme.getIconURL('igadget-extract'),
@@ -388,17 +355,6 @@ IGadget.prototype._updateExtractOption = function() {
 		this.extractButton.removeClassName("snapButton");
 		this.extractButton.addClassName("extractButton");
 		this.extractButton.setAttribute("title", gettext("This iGadget is aligned to the grid."));
-
-		if (this.lowerOpId != null) {
-			this.menu.removeOption(this.lowerOpId);
-			this.menu.removeOption(this.raiseOpId);
-			this.menu.removeOption(this.lowerToBottomOpId);
-			this.menu.removeOption(this.raiseToTopOpId);
-			this.lowerOpId = null;
-			this.raiseOpId = null;
-			this.lowerToBottomOpId = null;
-			this.raiseToTopOpId = null;
-		}
 	}
 }
 
@@ -637,13 +593,6 @@ IGadget.prototype.build = function() {
 	this.igadgetIconNameHTMLElement.update(this.name);
 	this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
 	this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
-
-	this.igadgetIconNameHTMLElement.observe("click", this.maximizeIcon.bind(this), false);
-}
-
-IGadget.prototype.maximizeIcon = function() {
-		this.toggleMinimizeStatus(false);
-		this.layout.raiseToTop(this);
 }
 
 /**
@@ -676,7 +625,7 @@ IGadget.prototype.paint = function(onInit) {
 	// Position
 	this.element.style.left = this.layout.getColumnOffset(this.position.x) + "px";
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
-	this.element.style.zIndex = this.zPos;
+	this.setZPosition(this.zPos);
 
 	// Select the correct representation for this iGadget (iconified, minimized or normal)
 	var minimizedStatusBackup = this.minimized;
@@ -717,13 +666,11 @@ IGadget.prototype.paint = function(onInit) {
 
 	this.setMenuColor(undefined, true);
 
-	//Icon section
+	// Icon section
 	this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
 	this.iconDraggable = new IGadgetIconDraggable(this);
 	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
-
-	this.iconElement.style.zIndex = this.zPos;
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
@@ -782,6 +729,35 @@ IGadget.prototype._createIGadgetMenu = function() {
 
 		// Initialize snap/extract options
 		this._updateExtractOption();
+
+		this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
+		                    gettext("Lower"),
+		                    function() {
+		                        this.layout.dragboard.lower(this);
+		                        LayoutManagerFactory.getInstance().hideCover();
+		                    }.bind(this),
+		                    this.extractOptionOrder+1, "hide_on_lock");
+		this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
+		                    gettext("Raise"),
+		                    function() {
+		                        this.layout.dragboard.raise(this);
+		                        LayoutManagerFactory.getInstance().hideCover();
+		                    }.bind(this),
+		                    this.extractOptionOrder+2, "hide_on_lock");
+		this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
+		                    gettext("Lower To Bottom"),
+		                    function() {
+		                        this.layout.dragboard.lowerToBottom(this);
+		                        LayoutManagerFactory.getInstance().hideCover();
+		                    }.bind(this),
+		                    this.extractOptionOrder+3, "hide_on_lock");
+		this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
+		                    gettext("Raise To Top"),
+		                    function() {
+		                        this.layout.dragboard.raiseToTop(this);
+		                        LayoutManagerFactory.getInstance().hideCover();
+		                    }.bind(this),
+		                    this.extractOptionOrder+4, "hide_on_lock");
 	}
 }
 
@@ -812,7 +788,7 @@ IGadget.prototype.fillWithLabel = function() {
 		this.igadgetNameHTMLElement.observe('click',
 		                                    function(e) {
 		                                        Event.stop(e);
-		                                        this.layout.raiseToTop(this);
+		                                        this.layout.dragboard.raiseToTop(this);
 		                                        this.fillWithInput();
 		                                    }.bind(this)); //do not propagate to div.
 	}
@@ -1031,13 +1007,6 @@ IGadget.prototype.remove = function() {
 		                                     iGadgetId: this.id});
 		persistenceEngine.send_delete(uri, this, onSuccess, onError);
 	}
-}
-
-IGadget.prototype.maximizeAndRaiseToTop = function(){
-	if (this.minimized){
-		this.toggleMinimizeStatus(false);
-	}
-	this.layout.raiseToTop(this);
 }
 
 /**
