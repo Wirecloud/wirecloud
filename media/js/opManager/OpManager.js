@@ -317,7 +317,7 @@ var OpManagerFactory = function () {
 			this.logs = LogManagerFactory.getInstance();
 
 			Event.observe(window,
-			              "unload",
+			              "beforeunload",
 			              this.unloadEnvironment.bind(this),
 			              true);
 
