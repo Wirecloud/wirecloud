@@ -304,8 +304,11 @@ function Tab (tabInfo, workSpace) {
 		Element.extend(this.tabMarker);
 		this.tabMarker.id = "tab_space";
 		this.tabMarker.addClassName('tab');
-		var borderWidth = parseInt(this.tabHTMLElement.getStyle('borderLeftWidth')) * 2;
-		var padding = parseInt(this.tabHTMLElement.getStyle('paddingLeft')) + parseInt(this.tabHTMLElement.getStyle('paddingRight'));
+		
+		var	computedStyle = document.defaultView.getComputedStyle(this.tabHTMLElement, null);
+		var borderWidth= computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) * 2;
+		var padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX) +
+					  computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		var width = this.tabHTMLElement.getWidth() - borderWidth - padding;
 		this.tabMarker.style.width = width + "px";
 		//this.tabMarker.style.visibility = "hidden";
