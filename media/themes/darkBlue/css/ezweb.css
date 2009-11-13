@@ -91,7 +91,7 @@ input[type="text"], input[type="password"], textarea{
 	margin-top:5px;
 	background: url("../images/Open_Ez_Logo.png") no-repeat;
 	width: 226px;
-	height: 30px;
+	height: 35px;
 }
 
 #add_tab_link, #left_slider, #right_slider {
@@ -133,7 +133,7 @@ input[type="text"], input[type="password"], textarea{
 
 #ws_operations_link {
 	width: 19px;
-	height: 8px;
+	height: 11px;
   	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 
