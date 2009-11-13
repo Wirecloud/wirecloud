@@ -128,6 +128,10 @@ body {
 	padding: 2px;
 }
 
+#catalogue .center .resources .resource .content .image{
+	*margin-left: 0;
+}
+
 /*WIRING*/
 /* Filter params */
 #wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {

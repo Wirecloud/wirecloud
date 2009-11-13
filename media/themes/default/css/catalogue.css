@@ -445,6 +445,7 @@
 }
 
 #catalogue .center .resources {
+	position:relative;
 	overflow-y:auto;
 	overflow-x:hidden;
 	float:left;

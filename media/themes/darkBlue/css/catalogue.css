@@ -469,10 +469,9 @@
 }
 
 #catalogue .center .resources {
-/*	height:100%;*/
+	position: relative;
 	overflow-y:auto;
 	overflow-x:hidden;
-/*	width:100%;*/
 	float:left;
 }
 
