@@ -127,13 +127,13 @@ input[type="text"], input[type="password"], textarea{
 #workspace_menu_link{
 	margin: 0 auto;
 	width: 19px;
-	height: 8px;
+	height: 11px;
 	padding-top: 5px;
 }
 
 #ws_operations_link {
 	width: 19px;
-	height: 11px;
+	height: 9px;
   	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 

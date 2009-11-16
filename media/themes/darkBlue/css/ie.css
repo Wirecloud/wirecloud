@@ -18,34 +18,14 @@ body {
 	padding-right: 4px;
 }
 
-* html .toolbar_unmarked {
-	background-image: none;
-	background-color: #7c9ab1;
-}
-
-* html .toolbar_marked{
-	background-image: none;
-	background-color: #c4d4de;
-}
 
 #workspace_link_container{
 	text-align:center;
 }
 
-* html #workspace_link_container{
-	width: 150px;
-}
 
 #dragboard_link{
 	float:none;
-}
-
-* html #dragboard_link{
-	overflow: hidden;
-}
-
-* html .ws_name, * html #dragboard_link span, * html #dragboard_link{
-	width: 130px !important;
 }
 
 #workspace_menu_link{
@@ -54,58 +34,6 @@ body {
 	padding-top: 0px;
 }
 
-* html #ws_operations_link{
-	background: url(../images/ie/menu-arrow-selected-trans.png) no-repeat;
-}
-
-* html #logs_link {
-	background: url(../images/ie/info-trans.png) no-repeat;
-}
-
-* html #logs_link.highlighted{
-	background: url(../images/ie/info_highlighted-trans.png) no-repeat;
-}
-
-* html #tab_section .tab {
-	background-image: none;
-}
-
-* html #add_tab_link{
-	background-image: none;
-	background-color: #d5d9da;
-}
-
-* html .tabOps_launcher {
-	background: url(../images/ie/tabops16px.png) no-repeat;
-}
-
-/*DRAGBOARD*/
-/*IGADGET*/
-* html div.gadget_window div.rightResizeHandle{
-	background: url(../images/ie/iGadget/resize-handle-bottom-right.png) no-repeat;
-}
-
-* html div.gadget_window div.rightResizeHandle{
-	right: 0;
-	bottom: 0;
-}
-
-* html div.gadget_window div.leftResizeHandle {
-	background: url(../images/ie/iGadget/resize-handle-bottom-left.png) no-repeat;
-}
-
-* html div.gadget_window div.leftResizeHandle {
-	left: 0;
-	bottom: 0;	
-}
-
-* html div.gadget_window div.extractButton {
-	background: url(../images/ie/iGadget/snap.png) no-repeat;
-}
-
-* html div.gadget_window div.snapButton {
-	background: url(../images/ie/iGadget/extract.png) no-repeat;
-}
 
 /*MENU_LAYER*/
 #menu_layer{

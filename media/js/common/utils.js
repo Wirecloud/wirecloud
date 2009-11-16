@@ -223,6 +223,7 @@ Theme.prototype.applyStyle = function() {
 		this._appendStyle(this.getResource('/css/wiring.css'));
 		this._appendStyle(this.getResource('/css/catalogue.css'));
 		this._appendStyle(this.getResource('/css/dragboard.css'));
+		this._appendStyle(this.getResource('/css/ie.css'));
 	} else {
 		this._appendStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
 	}
@@ -234,6 +235,7 @@ Theme.prototype.deapplyStyle = function() {
 		this._removeStyle(this.getResource('/css/wiring.css'));
 		this._removeStyle(this.getResource('/css/catalogue.css'));
 		this._removeStyle(this.getResource('/css/dragboard.css'));
+		this._removeStyle(this.getResource('/css/ie.css'));
 	} else {
 		this._removeStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
 	}
