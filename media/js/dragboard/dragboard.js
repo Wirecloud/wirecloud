@@ -268,7 +268,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 	Dragboard.prototype.parseTab = function(tabInfo) {
-		var curIGadget, position, icon_position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color;
+		var curIGadget, position, icon_position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color, refusedVersion;
 
 		var opManager = OpManagerFactory.getInstance();
 
@@ -309,9 +309,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 			// Menu color
 			menu_color = curIGadget.menu_color;
+			
+			//refused version for upgrade
+			refusedVersion = curIGadget.refused_version;
 
 			// Create instance model
-			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, icon_position, zPos, width, height, curIGadget.minimized, curIGadget.transparency, menu_color);
+			igadget = new IGadget(gadget, curIGadget.id, curIGadget.name, layout, position, icon_position, zPos, width, height, curIGadget.minimized, curIGadget.transparency, menu_color, refusedVersion);
 
 		}
 
@@ -355,7 +358,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, false, gadget.getMenuColor());
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, false, gadget.getMenuColor(), null);
 
 		iGadget.save();
 	}

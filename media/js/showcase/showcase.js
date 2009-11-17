@@ -54,12 +54,20 @@ var ShowcaseFactory = function () {
 		this.parseGadgets = function (receivedData_){
 			var response = receivedData_.responseText;
 			var jsonGadgetList = JSON.parse(response);
+			
+			var oldGadgets = this.gadgets;
+			this.gadgets = new Hash()
 		
 			// Load all gadgets from persitence system
 			for (var i = 0; i<jsonGadgetList.length; i++) {
 				var jsonGadget = jsonGadgetList[i];
 				var gadget = new Gadget (jsonGadget, null);
 				var gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
+				
+				//check the if this gadget exists to set its updated state
+				if (oldGadgets && oldGadgets[gadgetId]){
+					gadget.setUpdatedState(oldGadgets[gadgetId].getLastVersion(), oldGadgets[gadgetId].getLastVersionURL());
+				}
 				
 				// Insert gadget object in showcase object model
 				this.gadgets[gadgetId] = gadget;
@@ -69,8 +77,6 @@ var ShowcaseFactory = function () {
 		Showcase.prototype.reload = function (workspace_id) {
 			
 			var id = workspace_id;
-			
-			this.gadgets = []
 			
 			var onSuccess = function (receivedData_) {
 

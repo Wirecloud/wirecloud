@@ -325,8 +325,8 @@ AlertWindowMenu.prototype._acceptListener = function(e) {
 }
 
 AlertWindowMenu.prototype._closeListener = function(e) {
-	if (this.cancelHandler) this.cancelHandler();
 	WindowMenu.prototype._closeListener(e);
+	if (this.cancelHandler) this.cancelHandler();
 }
 
 AlertWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {

@@ -196,6 +196,10 @@ def UpdateIGadget(igadget, user, tab):
             icon_position = Position(posX=igadget.get("icon_left"), posY=igadget.get("icon_top"))
         icon_position.save()
         ig.icon_position = icon_position
+    
+    if igadget.has_key('refused_version'):
+        refused_version = igadget.get('refused_version')
+        ig.refused_version = refused_version
 
     ig.save()
 

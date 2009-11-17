@@ -53,7 +53,7 @@
  *                                         menu. (6 chars with a hexadecimal
  *                                         color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, minimized, transparency, menu_color) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, minimized, transparency, menu_color, refusedVersion) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -74,6 +74,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 
 	this.configurationVisible = false;
 	this.minimized = minimized;
+	
+	this.refusedVersion = refusedVersion;
 
 	// Elements
 	this.element = null;
@@ -466,18 +468,19 @@ IGadget.prototype.build = function() {
 	this.errorButtonElement = button;
 	
 	//New Version button
-	if (!this.gadget.isUpToDate()){
+	if (!this.gadget.isUpToDate() && !this.isRefusedUpgrade()){
 		button = document.createElement("input");
 		Element.extend(button);
 		button.setAttribute("type", "button");
 		var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
 		msg = interpolate(msg, {currentVersion: this.gadget.getVersion(), lastVersion:this.gadget.getLastVersion()}, true);
 		button.setAttribute("title", msg);
+		button.setAttribute("id", "version_button_"+this.id);
 		button.addClassName("button versionbutton");
 		Event.observe (button, "click", function() {
-											var msg = gettext('Do you really want to update "%(igadgetName)s" to its latest version? The gadget state and connections will be kept, if possible.<br/>Note: It will reload the platform');
+											var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
 											msg = interpolate(msg, {igadgetName: this.name}, true);
-											LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this));
+											LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
 										}.bind(this), false);
 		this.gadgetMenu.appendChild(button);
 	}
@@ -888,21 +891,51 @@ IGadget.prototype.setName = function (igadgetName) {
 	}
 }
 
+IGadget.prototype.askForIconVersion = function() {
+	var msg = gettext('Do you want to remove the notice of the new version available?');
+	msg = interpolate(msg, {igadgetName: this.name}, true);
+	LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){this.setRefusedVersion(this.gadget.getLastVersion());}.bind(this));
+}
+
+IGadget.prototype.setRefusedVersion = function (v) {
+	function onSuccess() {}
+	function onError(transport, e) {
+		var logManager = LogManagerFactory.getInstance();
+		var msg = logManager.formatError(gettext("Error setting the refused version of the igadget to persistence: %(errorMsg)s."), transport, e);
+		logManager.log(msg);
+	}
+
+	this.refusedVersion = v;
+	$("version_button_"+this.id).hide();
+	
+	var o = new Object;
+	o.refused_version = this.refusedVersion;
+	o.id = this.id;
+	var igadgetData = Object.toJSON(o);
+	var params = {'igadget': igadgetData};
+	var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
+		                                            tabId: this.layout.dragboard.tabId,
+		                                            iGadgetId: this.id});
+	PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+}
+
+//checks if the refused version is lower than the last one
+IGadget.prototype.isRefusedUpgrade = function(){
+	return this.refusedVersion && this.refusedVersion == this.gadget.getLastVersion();
+}
+
 //update the gadget to its newest version
 IGadget.prototype.upgradeIGadget = function(){
 	
 	function onUpgradeOk(transport){
-		window.location.reload();
+		ShowcaseFactory.getInstance().reload(this.layout.dragboard.workSpaceId);
 	}
 	function onUpgradeError(transport, e){
-		var msg = gettext('Sorry but the "%(igadgetName)s" gadget cannot be automatically updated because its version is not compatible ' +
-				'with the last version. If you want to update the gadget you must replace by hand the existing one with the gadget ' +
-				'available in the catalogue.');
+		var msg = gettext('<p>Sorry but the "%(igadgetName)s" gadget <b>cannot be automatically updated</b> because its version is not compatible ' +
+				'with the last version.<br/>If you want to update the gadget you must replace <b>by hand</b> the existing one with the gadget ' +
+				'available in the catalogue.</p><b>Do you want to remove the notice of the new version available?</b>');
 		msg = interpolate(msg, {igadgetName: this.name}, true);
-		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-		var logManager = LogManagerFactory.getInstance();
-		var error = logManager.formatError(gettext("Error upgrading the igadget "+this.name+": %(errorMsg)s."), transport, e);
-		logManager.log(msg, Constants.Logging.INFO_MSG);
+		LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){this.setRefusedVersion(this.gadget.getLastVersion());}.bind(this));
 	}
 	
 	var o = new Object;

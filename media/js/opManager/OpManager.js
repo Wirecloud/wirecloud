@@ -235,6 +235,7 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace = workSpace;
 			this.activeWorkSpace.downloadWorkSpaceInfo();
 		}
+		
 
 		/**
 		 * Method called when the user clicks the logout link. As this action
