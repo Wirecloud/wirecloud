@@ -318,7 +318,7 @@ Returns: 'EZWEB'</field>
 	        	result = JSONParser.parse(channelValue, params['jpExp']);
     
         	if(!result || result == "")
-        		throw new DontPropagateException("not found");
+        		throw new DontPropagateException("Not found");
         	else
         		return result;
         }
@@ -338,7 +338,7 @@ Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales
         <field type="TextField" name="code"><![CDATA[
   function(channelValue, channel, params){
     			if (!channel._allInputsModified()){
-    				throw new DontPropagateException("not all imputs have been modified");
+    				throw new DontPropagateException("Waiting for inputs");
     			}
 				else{
 
@@ -381,7 +381,7 @@ Optionally, you can change the indexes of the structure by giving a string like 
 			if(result){
 				return channelValue;
 			}else{
-				throw new DontPropagateException("no matches");
+				throw new DontPropagateException("No matches");
 			}
         }
         ]]>

@@ -365,7 +365,7 @@ wChannel.prototype.getValue = function(propagating) {
 				if(propagating)
 					throw new DontPropagateException(e)
 				else
-					return gettext("undefined");
+					return gettext(e.message.message);
 			}
 		}
 	}
