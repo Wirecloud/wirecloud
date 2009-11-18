@@ -36,7 +36,7 @@ from django.utils.translation import ugettext as _
 from translator.models import TransModel 
 
 class XHTML(models.Model):
-    uri = models.CharField(_('URI'), max_length=500, unique=True)
+    uri = models.CharField(_('URI'), max_length=255, unique=True)
     code = models.TextField(_('Code'))
     url = models.URLField(_('URL'), max_length=500)
     content_type = models.CharField(_('Content type'), max_length=50, blank=True, null=True)

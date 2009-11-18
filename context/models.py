@@ -31,12 +31,12 @@
 #
 
 from django.db import models
-from django.utils.translation import gettext_lazy as _ 
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
 class Concept(models.Model):
-    concept = models.CharField(_('Concept'), max_length=256, primary_key=True)
+    concept = models.CharField(_('Concept'), max_length=255, primary_key=True)
     SOURCE = (
         ('PLAT', _('Platform')),
         ('ADAP', _('Adaptor')),
