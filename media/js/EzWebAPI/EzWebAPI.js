@@ -109,6 +109,31 @@ _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler
 	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
 }
 
+_EzWebAPI.prototype.send = function(url, context, options) {
+	//Add the binding to each handler
+	var handlerRegExp = new RegExp(/^onCreate$|^onComplete$|^onException$|^onFailure$|^onInteractive$|^onLoaded$|^onLoading$|^onSuccess$|^onUninitialized$|^on\d{3}$/);
+	for (index in options){
+		if (index.match(handlerRegExp)){
+			options[index].bind = EzWebAPI.platform.Function.prototype.bind;
+			options[index].bind(context);
+		}
+	}
+			
+	//Add url and processed parameters to adapt them to the proxy required data
+	var newParams = {url:url, method: options["method"]};	
+	if (options["parameters"]){
+		if (typeof(options["parameters"])=="string")
+			var p = parameters;
+		else
+			var p = this.platform.Object.toJSON(options["parameters"]);
+		newParams["params"] = p;
+	}
+	options["parameters"] = newParams;
+	options["method"] = "POST";
+
+	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(this.platform.URIs.PROXY, options);
+}
+
 _EzWebAPI.prototype.getConnection = function() {
     return Ajax.getTransport();
 }

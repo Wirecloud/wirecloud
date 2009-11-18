@@ -91,6 +91,10 @@ var PersistenceEngineFactory = function () {
 			});
 		}
 		
+		PersitenceEngine.prototype.send = function (url, options) {		
+			new Ajax.Request(url, options);
+		}
+		
 	}
 	
 	// *********************************

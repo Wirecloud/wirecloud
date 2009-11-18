@@ -86,7 +86,7 @@ class Proxy(Resource):
 
         # HTTP method, by default is GET
         if request.POST.has_key('method'):
-            method = request.POST['method']
+            method = request.POST['method'].upper()
         else:
             method = "GET"
 
