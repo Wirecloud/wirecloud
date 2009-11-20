@@ -34,7 +34,6 @@ files_css_normal = [
    'media/css/catalogue.css',
    'media/css/dragboard.css', 
    'media/css/wiring.css',
-   'media/css/ie.css', 
 ]
 
 files_css_theme_default = [
@@ -42,7 +41,6 @@ files_css_theme_default = [
    'media/themes/default/css/catalogue.css',
    'media/themes/default/css/dragboard.css', 
    'media/themes/default/css/wiring.css',
-   'media/themes/default/css/ie.css',  
 ]
 
 files_css_theme_darkBlue = [
@@ -50,7 +48,6 @@ files_css_theme_darkBlue = [
    'media/themes/darkBlue/css/catalogue.css',
    'media/themes/darkBlue/css/dragboard.css', 
    'media/themes/darkBlue/css/wiring.css',
-   'media/themes/darkBlue/css/ie.css',
 ]
 
 def write_file(final_file_name, file_list):
