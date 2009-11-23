@@ -66,6 +66,10 @@ var PersistenceEngineFactory = function () {
 			return;
 		}
 		
+		PersitenceEngine.prototype.send = function (url, options) {
+			return;
+		}
+		
 	}
 	
 	// *********************************

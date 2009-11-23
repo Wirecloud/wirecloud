@@ -91,7 +91,7 @@ class Proxy(Resource):
             method = "GET"
 
         # Params
-        if request.POST.has_key('params'):
+        if method != 'GET' and request.POST.has_key('params'):
             # if Content-Type is xml format then skipping encode function.
             if re.search("(application|text)/xml|application/([a-zA-Z-]*)\+xml", request.META['CONTENT_TYPE']) != None:
                 params = request.POST['params'].encode('utf-8')                
