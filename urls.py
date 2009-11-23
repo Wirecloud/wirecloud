@@ -79,7 +79,7 @@ urlpatterns = patterns('',
     (r'^user/(?P<user_name>[\s\-\.\w]+)/context(s)?', include('context.urls')),
 
     # Platform Preferences
-    (r'^user/(?P<user_name>[_\w]+)/preference(s)?', include('preferences.urls')),
+    (r'^user/(?P<user_name>[\s\-\.\w]+)/preference(s)?', include('preferences.urls')),
 
     # Catalogue Resource
     (r'^user/(?P<user_name>[\s\-\.\w]+)/catalogue/', include('catalogue.urls')),
