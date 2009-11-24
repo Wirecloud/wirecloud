@@ -139,6 +139,7 @@ input[type="text"], input[type="password"], textarea{
 
 .toolbar_marked, .toolbar_unmarked {
 	-moz-border-radius: 15%;
+	-webkit-border-radius:15px;
 	height: 21px;
 	margin: 0 7px;
 }

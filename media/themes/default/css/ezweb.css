@@ -122,6 +122,7 @@ a, a:visited{
 
 .toolbar_marked, .toolbar_unmarked {
 	-moz-border-radius: 6px;
+	-webkit-border-radius:6px;
 	height: 21px;
 	margin: 0 7px;
 	color: #2D6F9C;
