@@ -596,7 +596,8 @@ function WorkSpace (workSpaceState) {
 
 		this.menu.remove();
 		this.mergeMenu.remove();
-		this.FloatingGadgetsMenu.remove();
+		if (this.FloatingGadgetsMenu)
+			this.FloatingGadgetsMenu.remove();
 		
 		Event.stopObserving($("floating_gadgets_launcher"), "click", this.showFloatingGadgetsMenu);
 
@@ -692,7 +693,12 @@ function WorkSpace (workSpaceState) {
 
 	//Check if a workspace is shared with another users
 	WorkSpace.prototype.isShared = function() {
-		return this.workSpaceState['shared'];
+		return this.workSpaceState['shared'] || this.forceRestrictedSharing();
+	}
+	
+	//Check if the workspace has to be forced to work as a Shared environment (IE6 only)
+	WorkSpace.prototype.forceRestrictedSharing = function() {
+		return (BrowserUtilsFactory.getInstance().getBrowser() == "IE6");
 	}
 	
 	WorkSpace.prototype._createWorkspaceMenu = function() {
@@ -723,54 +729,82 @@ function WorkSpace (workSpaceState) {
 					this.markAsActive();
 				}.bind(this),
 				optionPosition++);
-			}
-	
-		if (this.valid && !this.isShared()) {
+		}
+		
+		if (!this.isShared()){
 			//It's your own workspace.
-			//All operations are allowed!
-	
-			this.menu.addOption(_currentTheme.getIconURL('rename'),
-				gettext("Rename"),
-				function() {
-					OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
-					LayoutManagerFactory.getInstance().hideCover();
-				},
-				optionPosition++);
-	
-			this.menu.addOption(_currentTheme.getIconURL('workspace_preferences'),
-				gettext("Preferences"),
-				function() {
-					LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
-				}.bind(this),
-				optionPosition++);
-	
-			this.unlockEntryPos = optionPosition;
-			this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
-				gettext("Unlock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(false);
-				}.bind(this),
-				optionPosition++);
-	
-			this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
-				gettext("Lock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(true);
-				}.bind(this),
-				optionPosition++);
-			var res = this._checkLock();
-			optionPosition -= res;
-	
-			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
-				gettext("Share workspace"),
-				function() {
-					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
-				}.bind(this),
-				optionPosition++, null, "share_workspace");
-	
-			this.menu.addOption(_currentTheme.getIconURL('remove'),
+			if (this.valid) {
+				//All operations are allowed!
+		
+				this.menu.addOption(_currentTheme.getIconURL('rename'),
+					gettext("Rename"),
+					function() {
+						OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
+						LayoutManagerFactory.getInstance().hideCover();
+					},
+					optionPosition++);
+		
+				this.menu.addOption(_currentTheme.getIconURL('workspace_preferences'),
+					gettext("Preferences"),
+					function() {
+						LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
+					}.bind(this),
+					optionPosition++);
+		
+				this.unlockEntryPos = optionPosition;
+				this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
+					gettext("Unlock"),
+					function() {
+						LayoutManagerFactory.getInstance().hideCover();
+						this._lockFunc(false);
+					}.bind(this),
+					optionPosition++);
+		
+				this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
+					gettext("Lock"),
+					function() {
+						LayoutManagerFactory.getInstance().hideCover();
+						this._lockFunc(true);
+					}.bind(this),
+					optionPosition++);
+				var res = this._checkLock();
+				optionPosition -= res;
+		
+				this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
+					gettext("Share workspace"),
+					function() {
+						LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
+					}.bind(this),
+					optionPosition++, null, "share_workspace");
+		
+				this.menu.addOption(_currentTheme.getIconURL('remove'),
+					gettext("Remove"),
+					function() {
+						var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
+						msg = interpolate(msg, {workspaceName: this.workSpaceState.name}, true);
+						LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
+					}.bind(this),
+					optionPosition++);
+		
+				//TODO:Intermediate window to ask for data (name, description...)
+				this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
+					gettext("Publish workspace"),
+					function() {
+						LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
+					}.bind(this),
+					optionPosition++, null, "publish_workspace");
+		
+				if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces
+					this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),
+						gettext("Merge with workspace..."),
+						function(e) {
+							LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
+						}.bind(this),
+						optionPosition++);
+				}
+			} else {
+				//options for an invalid workspace
+				this.menu.addOption(_currentTheme.getIconURL('remove'),
 				gettext("Remove"),
 				function() {
 					var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
@@ -778,46 +812,23 @@ function WorkSpace (workSpaceState) {
 					LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
 				}.bind(this),
 				optionPosition++);
-	
-			//TODO:Intermediate window to ask for data (name, description...)
-			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
-				gettext("Publish workspace"),
-				function() {
-					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
-				}.bind(this),
-				optionPosition++, null, "publish_workspace");
-	
-			if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces
-				this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),
-					gettext("Merge with workspace..."),
-					function(e) {
-						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
-					}.bind(this),
-					optionPosition++);
 			}
-		} else if (!this.valid) {
-			this.menu.addOption(_currentTheme.getIconURL('remove'),
-			gettext("Remove"),
-			function() {
-				var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
-				msg = interpolate(msg, {workspaceName: this.workSpaceState.name}, true);
-				LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
-			}.bind(this),
-			optionPosition++);
 		}
 	
-	
-		this.menu.addOption(_currentTheme.getIconURL('add'),
-			gettext("New workspace"),
-			function() {
-				LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
-			},
-			optionPosition++);
-	
+		if (!this.forceRestrictedSharing()){ //EzWeb IE6 version doesn't allow creating new Workspaces
+			this.menu.addOption(_currentTheme.getIconURL('add'),
+				gettext("New workspace"),
+				function() {
+					LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
+				},
+				optionPosition++);
+		}
+		
+		//Floating gadgets menu
 		var menuHTML = '<div id="floating_gadgets_list" class="drop_down_menu"></div>';
 		new Insertion.After($('menu_layer'), menuHTML);
 		this.FloatingGadgetsMenu = new DropDownMenu("floating_gadgets_list");
-		Event.observe($("floating_gadgets_launcher"), "click", this.showFloatingGadgetsMenu, false);
+		Event.observe($("floating_gadgets_launcher"), "click", this.showFloatingGadgetsMenu);
 	}
 
 	// *****************

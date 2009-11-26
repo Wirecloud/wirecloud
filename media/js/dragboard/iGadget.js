@@ -674,6 +674,13 @@ IGadget.prototype.paint = function(onInit) {
 	this.iconDraggable = new IGadgetIconDraggable(this);
 	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
+	
+	if (this.layout.dragboard.isLocked()){
+		Event.observe(this.iconImg, "click", function(){
+												this.setMinimizeStatus(false);
+												this.layout.dragboard.raiseToTop(this);
+											 }.bind(this), true);
+	}
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
