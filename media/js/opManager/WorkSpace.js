@@ -595,7 +595,8 @@ function WorkSpace (workSpaceState) {
 			this.contextManager=null;
 
 		this.menu.remove();
-		this.mergeMenu.remove();
+		if (this.mergeMenu)
+			this.mergeMenu.remove();
 		if (this.FloatingGadgetsMenu)
 			this.FloatingGadgetsMenu.remove();
 		
@@ -713,7 +714,7 @@ function WorkSpace (workSpaceState) {
 		menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"><div id="submenu_'+idMenu+'" class="submenu"></div></div>';
 		new Insertion.After($('menu_layer'), menuHTML);
 		this.menu = new DropDownMenu(idMenu);
-	
+		
 		// mergeWith workspace Menu
 		var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
 		var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
@@ -794,7 +795,7 @@ function WorkSpace (workSpaceState) {
 					}.bind(this),
 					optionPosition++, null, "publish_workspace");
 		
-				if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces
+				if (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1) { //there are several workspaces					
 					this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),
 						gettext("Merge with workspace..."),
 						function(e) {
@@ -812,6 +813,10 @@ function WorkSpace (workSpaceState) {
 					LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.deleteWorkSpace();})
 				}.bind(this),
 				optionPosition++);
+			}
+		} else{ //shared workspace
+			if (OpManagerFactory.getInstance().workSpaceInstances.keys().length == 1) { //there are only one workspace
+				this.menu.addOption(null, gettext("No WorkSpaces availables"), function(){}, 0);				
 			}
 		}
 	
