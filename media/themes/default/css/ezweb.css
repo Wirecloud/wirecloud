@@ -276,8 +276,10 @@ a, a:visited{
 	border-bottom: 4px double #2D6F9C;
 }
 
-.drop_down_menu div .help_buttom {
+.drop_down_menu div .help_button {
   background: transparent url(../images/help.gif) no-repeat scroll 0 0;
+  width: 16px;
+  height: 16px;
 }
 
 .underlined {

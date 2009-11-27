@@ -1,3 +1,8 @@
+/* 
+	*identifier{attribute:value} -> IE6
+	identifier{*attribute:value} -> IE6 and IE7
+	identifier{*attribute:value !important} -> IE7
+*/
 .toolbar_section > input[type=button] {
   width: 135px !important;
 }
@@ -43,3 +48,7 @@ body{
 #wiring .channel{
 	height: 1%;
 }
+
+.drop_down_menu .help_text{
+	*white-space: normal;
+} 

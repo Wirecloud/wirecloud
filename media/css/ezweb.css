@@ -306,6 +306,14 @@ body.shared .tab_dragger{
   white-space: nowrap;
 }
 
+.drop_down_menu .help_text{
+	font-size: 80%;
+	padding: 0px;
+	white-space: pre;
+	cursor: default;
+}
+
+
 .gadget_menu_locked .hide_on_lock{
 	display: none;
 }
@@ -329,7 +337,7 @@ body.shared .tab_dragger{
  font-size: 90%;
 }
 
-.drop_down_menu div .help_buttom {
+.drop_down_menu div .help_button {
   position: absolute;
   right: 10px;
   margin-left: 5px;

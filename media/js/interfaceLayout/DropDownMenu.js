@@ -260,7 +260,7 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 	opHtml += '<span>' + option + '</span>';
 
 	//creates the element for the rigth side (help buttom)
-	opHtml += '<input class="help_buttom" type="button"/></div>';
+	opHtml += '<a class="help_button" type="button"></a></div>';
 
 	//inserts the option in the menu
 	try {
@@ -285,13 +285,11 @@ FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpT
 
 		// Sets the help style
 		var helpOpElement = helpMenu.menu.getElementsBySelector("#" + helpOpId)[0];
-		helpOpElement.style.fontSize = '80%';
-		helpOpElement.style.padding = '0px';
-		helpOpElement.style.whiteSpace = 'pre';
-		helpOpElement.style.cursor = 'default';
+		Element.extend(helpOpElement);
+		helpOpElement.addClassName("help_text");
 
 		// Adds the help launcher
-		var helpButtom = newOption.getElementsBySelector('.help_buttom')[0]
+		var helpButtom = newOption.getElementsBySelector('.help_button')[0]
 		Event.observe(helpButtom, 'click',
 			function(e){
 				Event.stop(e);
