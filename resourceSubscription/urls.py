@@ -37,7 +37,7 @@ urlpatterns = patterns('resourceSubscription.views',
     (r'^/?$', ContractCollection(permitted_methods=('GET', 'POST', ))),
     (r'^/?$', ContractEntry(permitted_methods=('GET', 'PUT', 'DELETE', ))),
     
-    (r'^/subscribe/resource/(?P<resource_id>\d+)?$', ResourceSubscriber(permitted_methods=('GET', ))),
-    (r'^/unsubscribe/resource/(?P<resource_id>\d+)?$', ResourceUnsubscriber(permitted_methods=('GET', ))),
+    (r'^/subscribe/resource/(?P<resource_id>\d+)?$', ResourceSubscriber(permitted_methods=('GET', 'POST', ))),
+    (r'^/unsubscribe/resource/(?P<resource_id>\d+)?$', ResourceUnsubscriber(permitted_methods=('GET', 'POST', ))),
 )
 

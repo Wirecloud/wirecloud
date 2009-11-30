@@ -44,6 +44,20 @@ from django.utils import simplejson
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
+def check_arguments(request):
+    contract_info = None
+    if (request.REQUEST.__contains__('contract_info')):
+            contract_info = request.REQUEST['contract_info']
+            
+            try:
+                contract_info = simplejson.loads(contract_info)
+            except Exception, e:
+                return HttpResponseServerError('{"error": "Badformed JSON argument"}', mimetype='application/json; charset=UTF-8'), None
+    else:
+        return HttpResponseServerError('{"error": "Missing contrat_info parameter"}', mimetype='application/json; charset=UTF-8'), None
+    
+    return None, contract_info 
+
 class ContractCollection(Resource):
     @login_required
     def read(request):
@@ -62,8 +76,13 @@ class ContractCollection(Resource):
 
     read = staticmethod(read)
 
-    def create(request, user, resource_id):        
-        contract_info = request.REQUEST['contract_info']
+    def create(request, resource_id):        
+        error, contract_info = check_arguments(request)
+        
+        if (error):
+            return error
+        
+        user = User.objects.get(username=contract_info['username'])
         
         resource = get_object_or_404(GadgetResource, id=resource_id)
         
@@ -79,6 +98,7 @@ class ContractCollection(Resource):
     create = staticmethod(create)
     
 class ContractEntry(Resource):
+    @login_required
     def read(request, contract_id):
         contract = get_object_or_404(Contract, id=contract_id)
         
@@ -89,7 +109,10 @@ class ContractEntry(Resource):
     read = staticmethod(read)
 
     def update(request, contract_id):
-        contract_info = request.REQUEST['contract_info']
+        error, contract_info = check_arguments(request)
+        
+        if (error):
+            return error
         
         contract = Contract.objects.get(id=contract_id)
         
@@ -102,6 +125,7 @@ class ContractEntry(Resource):
         
     update = staticmethod(update)
 
+    @login_required
     def delete(request, contract_id):
         contract = get_object_or_404(Contract, id=contract_id)
         
@@ -113,12 +137,14 @@ class ContractEntry(Resource):
     delete = staticmethod(delete)
     
 class ResourceSubscriber(Resource):
+    @login_required
     def read(self, request, resource_id):
-        contract_info = request.REQUEST['contract_info']
+        error, contract_info = check_arguments(request)
         
-        contract_info = simplejson.loads(contract_info)
+        if (error):
+            return error
         
-        user = User.objects.get(username=contract_info['user'])
+        user = User.objects.get(username=contract_info['username'])
         
         resource = get_object_or_404(GadgetResource, id=resource_id)
     
@@ -127,10 +153,15 @@ class ResourceSubscriber(Resource):
             
             return ContractEntry.update(request, contract.id)
         except Contract.DoesNotExist:
-            return ContractCollection.create(request, user, resource_id)
+            return ContractCollection.create(request, resource_id)
         
     def create(self, request, resource_id):
-        user = request.user
+        error, contract_info = check_arguments(request)
+        
+        if (error):
+            return error
+        
+        user = User.objects.get(username=contract_info['username'])
         
         resource = get_object_or_404(GadgetResource, id=resource_id)
     
@@ -139,8 +170,9 @@ class ResourceSubscriber(Resource):
             
             return ContractEntry.update(request, contract.id)
         except Contract.DoesNotExist:
-            return ContractCollection.create(request, user, resource_id)
+            return ContractCollection.create(request, resource_id)
         
 class ResourceUnsubscriber(Resource):
+    @login_required
     def read(self, request, resource_id):
         return ContractEntry.delete(request, contract.id)

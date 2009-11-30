@@ -67,8 +67,6 @@ class Contract(models.Model):
         return result
     
     def update_info(self, contract_info):
-        contract_info = simplejson.loads(contract_info)
-        
         if (not contract_info):
             return None
         
