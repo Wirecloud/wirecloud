@@ -21,6 +21,8 @@
     "go-previous": "go-previous.png",
     "go-previous-disabled": "go-previous-disabled.png",
     "igadget-extract": "igadget/extract.png",
+    "igadget-exit_fulldragboard": "igadget/exit_fulldragboard.png",
+    "igadget-fulldragboard": "igadget/fulldragboard.png",
     "igadget-lower": "igadget/lower.png",
     "igadget-lower_to_bottom": "igadget/lowerToBottom.png",
     "igadget-menu_colors": "igadget/menu_colors.png",

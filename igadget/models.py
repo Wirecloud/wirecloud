@@ -45,6 +45,7 @@ class Position(models.Model):
     height = models.IntegerField(_('Height'), blank=True, null=True)
     width = models.IntegerField(_('Width'), blank=True, null=True)
     minimized = models.BooleanField(_('Minimized'), default=False)
+    fulldragboard = models.BooleanField(_('Fulldragboard'), default=False)
 
     def __unicode__(self):
         return str(self.pk)

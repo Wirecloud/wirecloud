@@ -453,6 +453,7 @@ def get_igadget_data(data, user, workspace):
     data_ret['zIndex'] = position.posZ
     data_ret['width'] = position.width
     data_ret['height'] = position.height
+    data_ret['fulldragboard'] = position.fulldragboard
     data_ret['minimized'] = position.minimized
     data_ret['transparency'] = data_fields['transparency']
     variables = Variable.objects.filter (igadget__pk=data['pk'])

@@ -313,11 +313,6 @@ body.shared .tab_dragger{
 	cursor: default;
 }
 
-
-.gadget_menu_locked .hide_on_lock{
-	display: none;
-}
-
 .drop_down_menu .submenu{
   padding: 2px;
 }

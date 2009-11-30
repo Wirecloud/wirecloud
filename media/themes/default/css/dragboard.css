@@ -23,6 +23,27 @@ div.gadget_menu {
   font-size: 12px;
 }
 
+/********************************************/
+div.fulldragboard div.statusBar {
+  display: none;
+}
+
+div.fulldragboard {
+  border: 0px none;
+  -moz-border-radius-bottomleft:  6px;
+  -moz-border-radius-bottomright: 6px;
+}
+
+div.fulldragboard div.gadget_menu input[type="button"].minimizebutton {
+  display: none;
+}
+
+div.fulldragboard div.gadget_menu {
+  cursor: default;
+}
+
+/********************************************/
+
 div.dragboard.fixed div.gadget_menu {
 }
 

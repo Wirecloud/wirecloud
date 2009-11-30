@@ -8,6 +8,10 @@ div.gadget_window {
   position: absolute;
 }
 
+div.fulldragboard {
+  position: fixed;
+}
+
 div.gadget_window_locked {
 }
 
@@ -186,6 +190,10 @@ div.config_interface table input[type="checkbox"] {
 
 div.config_interface select {
   padding: 0px;
+}
+
+.gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard {
+	display: none;
 }
 
 /***

@@ -461,7 +461,7 @@ var LayoutManagerFactory = function () {
 			if (this.currentView != null) {
 				this.currentView.hide();
 			}
-			this.currentView = dragboard;
+			this.currentView = dragboard.tab;
 			this.currentViewType = 'dragboard';
 
 			this.dragboardLink.removeClassName("toolbar_unmarked");

@@ -151,20 +151,10 @@ function Tab (tabInfo, workSpace) {
 
 	}
 
-	Tab.prototype.show = function () {
-		if (! this.painted)
-			this.getDragboard().paint();
-		
-		LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
-
-		this.dragboard._notifyWindowResizeEvent();
-		this.markAsCurrent();
-	}
-	
 	Tab.prototype.is_painted = function () {
 		return this.painted;
 	}
-	
+
 	Tab.prototype.paint = function () {
 		this.getDragboard().paint();
 	}
@@ -190,14 +180,7 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.markAsCurrent = function (){
 		LayoutManagerFactory.getInstance().markTab(this);
 	}
-	
-	//DEPRECATED???
-/*	Tab.prototype.hide = function () {
-		LayoutManagerFactory.getInstance().hideTab(this.tabHTMLElement);
-		//this.hideDragboard();
-	}
-*/
-	
+
 	Tab.prototype.go = function () {
 		this.show();
 		LayoutManagerFactory.getInstance().goTab(this);
@@ -652,6 +635,26 @@ Tab.prototype._createTabMenu = function() {
 			LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
 		}.bind(this),
 		3);
+}
+
+/**
+ *
+ */
+Tab.prototype.show = function() {
+	if (!this.painted)
+		this.getDragboard().paint();
+
+	LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
+
+	this.dragboard._notifyVisibilityChange(true);
+	this.markAsCurrent();
+}
+
+/**
+ *
+ */
+Tab.prototype.hide = function() {
+	this.dragboard._notifyVisibilityChange(false);
 }
 
 /**
