@@ -29,6 +29,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/DragboardLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/SmartColumnLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/FreeLayout.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/FullDragboardLayout.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/iGadget.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/dragboard.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/dragboard/UserPref.js"></script>
