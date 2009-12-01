@@ -184,7 +184,7 @@ FullDragboardLayout.prototype._notifyDragboardVisibilityChange = function(visibi
 	if (visibility) {
 		for (var i = 0; i < igadgetKeys.length; i++) {
 			iGadget = this.iGadgets[igadgetKeys[i]];
-			iGadget.element.style.position = null;
+			iGadget.element.style.position = '';
 		}
 	} else {
 		for (var i = 0; i < igadgetKeys.length; i++) {
