@@ -472,7 +472,7 @@ var LayoutManagerFactory = function () {
 			$("ws_operations_link").removeClassName("hidden");
 			$("dragboard_link").title = "";
 
-			this.resizeContainer(this.currentView.dragboardElement);
+			this.resizeContainer(dragboard.dragboardElement);
 
 			dragboard.dragboardElement.setStyle(showStyle);
 

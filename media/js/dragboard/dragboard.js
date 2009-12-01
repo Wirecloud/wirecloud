@@ -36,6 +36,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// TODO or initialized with the scroll bar's real with?
 	this.dragboardElement;
 	this.dragboardWidth = 800;
+	this.dragboardHeight = 600;
 	this.baseLayout = null;
 	this.freeLayout = null;
 	this.gadgetToMove = null;
@@ -141,7 +142,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype._updateBaseLayout = function () {
 		// Create the new Layout
 		var newBaseLayout = this._buildLayoutFromPreferences();
-		newBaseLayout._notifyWindowResizeEvent(this.dragboardWidth);
+		newBaseLayout._notifyWindowResizeEvent(true, true);
 		newBaseLayout.initialize();
 
 		// Change our base layout
@@ -168,8 +169,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.freeLayout._notifyDragboardVisibilityChange(visibility);
 		this.fulldragboardLayout._notifyDragboardVisibilityChange(visibility);
 
-		if (!visibility)
+		if (!visibility) {
 			LayoutManagerFactory.getInstance().hideView(this.dragboardElement);
+		} else {
+			this._notifyWindowResizeEvent();
+		}
 	}
 
 	// ****************
