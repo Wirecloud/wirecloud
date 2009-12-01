@@ -1933,6 +1933,11 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 		this.content.src = this.content.src;
 	}
 
+	if (!dragboardChange) {
+		// This is needed to check if the scrollbar status has changed (visible/hidden)
+		newLayout.dragboard._notifyWindowResizeEvent();
+	}
+
 	// TODO create a changes manager
 	// Persistence
 	var onSuccess = function(transport) { }
