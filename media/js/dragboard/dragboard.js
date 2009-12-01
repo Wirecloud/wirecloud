@@ -121,35 +121,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 	/**
-	 * This function is slow. Please, only call it when really necessary.
-	 *
-	 * @private
-	 */
-	Dragboard.prototype._recomputeSize = function() {
-		var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
-		if (cssStyle.getPropertyValue("display") == "none")
-			return; // Do nothing
-
-		var dragboardElement = this.dragboardElement;
-		this.dragboardWidth = parseInt(dragboardElement.clientWidth);
-
-		/*
-		Pre reserve scroll bar space
-
-		this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
-
-		var tmp = this.dragboardWidth;
-		tmp-= parseInt(dragboardElement.clientWidth);
-
-		if (tmp > this.scrollbarSpace)
-			this.dragboardWidth-= tmp;
-		else
-			this.dragboardWidth-= this.scrollbarSpace;*/
-
-		this.dragboardHeight = parseInt($("wrapper").clientHeight);
-	}
-
-	/**
 	 *
 	 */
 	Dragboard.prototype._buildLayoutFromPreferences = function (description) {
@@ -221,18 +192,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	 */
 	Dragboard.prototype.getHeight = function() {
 		return this.dragboardHeight;
-	}
-
-	/**
-	 * This method forces recomputing of the iGadgets' sizes.
-	 *
-	 * @param {boolean} widthChanged
-	 * @param {boolean} heightChanged
-	 */
-	Dragboard.prototype.recomputeSize = function(widthChanged, heightChanged) {
-		this.baseLayout._notifyWindowResizeEvent(this.dragboardWidth, widthChanged, heightChanged);
-		this.freeLayout._notifyWindowResizeEvent(this.dragboardWidth, widthChanged, heightChanged);
-		this.fulldragboardLayout._notifyWindowResizeEvent(this.dragboardWidth, widthChanged, heightChanged);
 	}
 
 	/**
@@ -593,7 +552,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var widthChanged = oldWidth !== newWidth;
 		var heightChanged = oldHeight !== newHeight;
 		if (widthChanged || heightChanged)
-			this.recomputeSize(widthChanged, heightChanged);
+			this._updateIGadgetSizes(widthChanged, heightChanged);
 	}.bind(this);
 
 	this.baseLayout = this._buildLayoutFromPreferences();
@@ -602,6 +561,53 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	this.parseTab(tab.tabInfo);
 }
+
+/**
+ * @private
+ *
+ * This function is slow. Please, only call it when really necessary.
+ *
+ * Updates the width and height info for this dragboard.
+ */
+Dragboard.prototype._recomputeSize = function() {
+	var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
+	if (cssStyle.getPropertyValue("display") == "none")
+		return; // Do nothing
+
+	this.dragboardWidth = parseInt(this.dragboardElement.clientWidth);
+
+	/*
+	Pre reserve scroll bar space
+
+	var dragboardElement = this.dragboardElement;
+
+	this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+
+	var tmp = this.dragboardWidth;
+	tmp-= parseInt(dragboardElement.clientWidth);
+
+	if (tmp > this.scrollbarSpace)
+		this.dragboardWidth-= tmp;
+	else
+		this.dragboardWidth-= this.scrollbarSpace;*/
+
+	this.dragboardHeight = parseInt($("wrapper").clientHeight);
+}
+
+/**
+ * @private
+ *
+ * This method forces recomputing of the iGadgets' sizes.
+ *
+ * @param {boolean} widthChanged
+ * @param {boolean} heightChanged
+ */
+Dragboard.prototype._updateIGadgetSizes = function(widthChanged, heightChanged) {
+	this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+	this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+	this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
+}
+
 
 /////////////////////////////////////
 // DragboardPosition
@@ -1021,6 +1027,7 @@ IGadgetIconDraggable.prototype.startFunc = function (draggable, context) {
 	context.y = null;
 	context.oldZIndex = context.iGadget.getZPosition();
 	context.iGadget.setZPosition("999999");
+	context.dragboard = context.iGadget.layout.dragboard;
 }
 
 
@@ -1047,6 +1054,9 @@ IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 		context.iGadget.setMinimizeStatus(false);
 		context.iGadget.layout.dragboard.raiseToTop(context.iGadget);
 	}
+
+	// This is needed to check if the scrollbar status has changed (visible/hidden)
+	context.dragboard._notifyWindowResizeEvent();
 }
 
 
@@ -1198,6 +1208,7 @@ IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElem
 	data.iGadget.igadgetNameHTMLElement.blur();
 	data.oldZIndex = data.iGadget.getZPosition();
 	data.iGadget.setZPosition("999999");
+	data.dragboard = data.iGadget.layout.dragboard;
 }
 
 IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, data, x, y) {
@@ -1234,4 +1245,7 @@ IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleEle
 	data.iGadget.setZPosition(data.oldZIndex);
 	iGadget.setSize(iGadget.getWidth(), iGadget.getHeight(), data.resizeLeftSide, true);
 	handleElement.removeClassName("inUse");
+
+	// This is needed to check if the scrollbar status has changed (visible/hidden)
+	data.dragboard._notifyWindowResizeEvent();
 }

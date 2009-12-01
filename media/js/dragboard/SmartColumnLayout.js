@@ -694,6 +694,9 @@ ColumnLayout.prototype.acceptMove = function() {
 		this.dragboard._commitChanges();
 	}
 
+	// This is needed to check if the scrollbar status has changed (visible/hidden)
+	this.dragboard._notifyWindowResizeEvent();
+
 	this.shadowMatrix = null;
 	this.igadgetToMove = null;
 	this.dragboardCursor = null;
@@ -840,6 +843,11 @@ SmartColumnLayout.prototype.initialize = function() {
 		iGadget = this.iGadgets[keys[i]];
 		this._moveSpaceUp(this.matrix, iGadget);
 	}
+}
+
+SmartColumnLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
+	if (widthChanged)
+		DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
 }
 
 SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {

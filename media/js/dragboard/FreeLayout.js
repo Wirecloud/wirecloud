@@ -100,6 +100,12 @@ FreeLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
 	return new MultiValuedSize(this.fromHCellsToPixels(widthInLU), widthInLU);
 }
 
+FreeLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
+	if (widthChanged)
+		DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
+}
+
+
 FreeLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
 	if (resizeLeftSide) {
 		var widthDiff = newWidth - oldWidth;
@@ -198,8 +204,11 @@ FreeLayout.prototype.acceptMove = function() {
 		this.newPosition.y = 0;
 
 	this.igadgetToMove.setPosition(this.newPosition);
+	// This is needed to check if the scrollbar status has changed (visible/hidden)
+	this.dragboard._notifyWindowResizeEvent();
+	// But at least "igadgetToMove" must be updated, so force a call to its _notifyWindowResizeEvent method
 	this.igadgetToMove._notifyWindowResizeEvent();
-	//this.dragboard._commitChanges([this.igadgetToMove.code]); It is done in the previous raiseToTop operation
+	this.dragboard._commitChanges([this.igadgetToMove.code]);
 
 	this.igadgetToMove = null;
 	this.newPosition = null;

@@ -51,7 +51,7 @@ function DragboardLayout(dragboard) {
 /**
  *
  */
-DragboardLayout.prototype._notifyWindowResizeEvent = function() {
+DragboardLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
 	// Notify each igadget
 	var iGadget;
 	var igadgetKeys = this.iGadgets.keys();
