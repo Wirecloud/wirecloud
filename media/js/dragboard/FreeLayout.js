@@ -119,20 +119,13 @@ FreeLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight,
 }
 
 FreeLayout.prototype.initialize = function () {
-	var iGadget, i, key, zPos, iGadgetsToReinsert = new Array();
+	var iGadget, i, key;
 
 	// Insert igadgets
 	var igadgetKeys = this.iGadgets.keys();
 	for (i = 0; i < igadgetKeys.length; i++) {
 		key = igadgetKeys[i];
 		iGadget = this.iGadgets[key];
-		iGadget.paint(true);
-	}
-
-	// Reinsert the igadgets that didn't fit in their positions
-	for (i = 0; i < iGadgetsToReinsert.length; i++) {
-		iGadget = iGadgetsToReinsert[i];
-		zPos = this.orderList.push(iGadget) - 1;
 		iGadget.paint(true);
 	}
 
@@ -153,8 +146,11 @@ FreeLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	if (!this.initialized)
 		return;
 
-	if (iGadget.getPosition() == null)
-		iGadget.setPosition(new DragboardPosition(0, 0));
+	var position = iGadget.getPosition();
+	if (position == null)
+		position = new DragboardPosition(0, 0)
+
+	iGadget.setPosition(position);
 
 	this._adaptIGadget(iGadget);
 }

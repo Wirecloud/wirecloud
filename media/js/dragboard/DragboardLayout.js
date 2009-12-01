@@ -62,6 +62,18 @@ DragboardLayout.prototype._notifyWindowResizeEvent = function() {
 }
 
 /**
+ *
+ */
+DragboardLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+}
+
+/**
+ *
+ */
+DragboardLayout.prototype._notifyDragboardVisibilityChange = function(visibility) {
+}
+
+/**
  * Returns the size of the menu bar.
  *
  * @returns {MultiValuedSize} the size of the menu bar
@@ -146,6 +158,15 @@ DragboardLayout.prototype.isInside = function (x, y) {
  */
 DragboardLayout.prototype.getWidth = function() {
 	return this.dragboard.getWidth();
+}
+
+/**
+ * Gets the height of the usable dragboard area.
+ *
+ * @returns The height of the usable dragboard area
+ */
+DragboardLayout.prototype.getHeight = function() {
+	return this.dragboard.getHeight();
 }
 
 /**

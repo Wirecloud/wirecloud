@@ -30,30 +30,30 @@
  *
  * @class Represents an instance of a Gadget.
  *
- * @param {Gadget}            gadget       Gadget of this iGadget
- * @param {Number}            iGadgetId    iGadget id in persistence. This
- *                                         parameter can be null for new
- *                                         iGadgets (not coming from
- *                                         persistence)
- * @param {String}            iGadgetName  current gadget
- * @param {DragboardLayout}   layout       associated layout
- * @param {DragboardPosition} position     initial position. This parameter can
- *                                         be null for new iGadgets (not coming
- *                                         from persistence)
- * @param {Number}            zPos         initial z coordinate position. This
- *                                         parameter can be null for new
- *                                         iGadgets (not coming from
- *                                         persistence)
- * @param {Number}            width        initial content width
- * @param {Number}            height       initial content height
- * @param {Boolean}           minimized    initial minimized status
- * @param {Boolean}           transparency initial transparency status (true for
- *                                         enabled and false for disabled)
- * @param {String}            menu_color   background color for the iGadget's
- *                                         menu. (6 chars with a hexadecimal
- *                                         color)
+ * @param {Gadget}            gadget        Gadget of this iGadget
+ * @param {Number}            iGadgetId     iGadget id in persistence. This
+ *                                          parameter can be null for new
+ *                                          iGadgets (not coming from
+ *                                          persistence)
+ * @param {String}            iGadgetName   current gadget
+ * @param {DragboardLayout}   layout        associated layout
+ * @param {DragboardPosition} position      initial position. This parameter can
+ *                                          be null for new iGadgets (not coming
+ *                                          from persistence)
+ * @param {Number}            zPos          initial z coordinate position. This
+ *                                          parameter can be null for new
+ *                                          iGadgets (not coming from
+ *                                          persistence)
+ * @param {Number}            width         initial content width
+ * @param {Number}            height        initial content height
+ * @param {Boolean}           fulldragboard initial fulldragboard mode
+ * @param {Boolean}           minimized     initial minimized status
+ * @param {Boolean}           transparency  initial transparency status
+ * @param {String}            menu_color    background color for the iGadget's
+ *                                          menu. (6 chars with a hexadecimal
+ *                                          color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, minimized, transparency, menu_color, refusedVersion) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -66,15 +66,28 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 	this.transparency = transparency;
 	this.draggable = null;
 	this.visible = false;
-
-	if (!minimized)
-		this.height = this.contentHeight;
-	else
-		this.height = layout.getMenubarSize().inLU;
-
-	this.configurationVisible = false;
 	this.minimized = minimized;
-	
+	this.configurationVisible = false;
+
+
+	if (fulldragboard) {
+		this.minimized = false;
+		this.previousContentWidth = this.contentWidth;
+		this.previousHeight = this.contentHeight + layout.getMenubarSize().inLU; // TODO
+		this.previousLayout = layout;
+		this.previousPosition = this.position.clone();
+		this.height = 1;
+		this.width = 1;
+		this.position.x = 0;
+		this.position.y = 0;
+
+		layout = layout.dragboard.fulldragboardLayout;
+	} else if (!minimized) {
+		this.height = this.contentHeight;
+	} else {
+		this.height = layout.getMenubarSize().inLU;
+	}
+
 	this.refusedVersion = refusedVersion;
 
 	// Elements
@@ -141,7 +154,6 @@ IGadget.prototype.setPosition = function(position) {
 		this.setIconPosition(position);
 	}
 
-
 	this.position = position;
 
 	if (this.element != null) { // if visible
@@ -177,6 +189,8 @@ IGadget.prototype.setIconPosition = function(position) {
  */
 IGadget.prototype.setZPosition = function(zPos) {
 	this.zPos = zPos;
+
+	zPos = zPos !== null ? zPos : "";
 
 	if (this.element)
 		this.element.style.zIndex = zPos;
@@ -340,7 +354,7 @@ IGadget.prototype._updateExtractOption = function() {
 		                       function() {
 		                           this.toggleLayout();
 		                           LayoutManagerFactory.getInstance().hideCover();
-		                       }.bind(this), "hide_on_lock");
+		                       }.bind(this), "hide_on_lock hide_on_fulldragboard");
 
 		this.extractButton.removeClassName("extractButton");
 		this.extractButton.addClassName("snapButton");
@@ -352,11 +366,38 @@ IGadget.prototype._updateExtractOption = function() {
 		                       function() {
 		                           this.toggleLayout();
 		                           LayoutManagerFactory.getInstance().hideCover();
-		                       }.bind(this), "hide_on_lock");
+		                       }.bind(this), "hide_on_lock hide_on_fulldragboard");
 
 		this.extractButton.removeClassName("snapButton");
 		this.extractButton.addClassName("extractButton");
 		this.extractButton.setAttribute("title", gettext("This iGadget is aligned to the grid."));
+	}
+}
+
+/**
+ * Updates the fulldragboard option on the iGadget's menu.
+ *
+ * @private
+ */
+IGadget.prototype._updateFulldragboardOption = function() {
+	if (this.isInFullDragboardMode()) {
+		this.menu.updateOption(this.fulldragboardOpId,
+		                       _currentTheme.getIconURL('igadget-exit_fulldragboard'),
+		                       gettext("Exit Full Dragboard"),
+		                       function() {
+		                           LayoutManagerFactory.getInstance().hideCover();
+		                           this.setFullDragboardMode(!this.isInFullDragboardMode());
+		                       }.bind(this),
+		                       "hide_on_lock");
+	} else {
+		this.menu.updateOption(this.fulldragboardOpId,
+		                       _currentTheme.getIconURL('igadget-fulldragboard'),
+		                       gettext("Full Dragboard"),
+		                       function() {
+		                           LayoutManagerFactory.getInstance().hideCover();
+		                           this.setFullDragboardMode(!this.isInFullDragboardMode());
+		                       }.bind(this),
+		                       "hide_on_lock");
 	}
 }
 
@@ -526,7 +567,7 @@ IGadget.prototype.build = function() {
 	Element.extend(this.content);
 	this.content.observe("load",
 	                     function () {
-	                         OpManagerFactory.getInstance().igadgetLoaded(this.id);
+	                         this.layout.dragboard.workSpace.igadgetLoaded(this.id);
 	                     }.bind(this),
 	                     true);
 	this.contentWrapper.appendChild(this.content);
@@ -653,6 +694,7 @@ IGadget.prototype.paint = function(onInit) {
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
+	this.gadgetMenu.observe('dblclick', function() {this.setFullDragboardMode(!this.isInFullDragboardMode());}.bind(this), false);
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
@@ -761,6 +803,7 @@ IGadget.prototype._createIGadgetMenu = function() {
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    this.extractOptionOrder+3, "hide_on_lock");
+
 		this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
 		                    gettext("Raise To Top"),
 		                    function() {
@@ -768,6 +811,13 @@ IGadget.prototype._createIGadgetMenu = function() {
 		                        LayoutManagerFactory.getInstance().hideCover();
 		                    }.bind(this),
 		                    this.extractOptionOrder+4, "hide_on_lock");
+
+		this.fulldragboardOpOrder =  this.extractOptionOrder + 5;
+		this.fulldragboardOpId = this.menu.addOption("", "", function(){}, this.fulldragboardOpOrder, "hide_on_lock");
+		this._updateFulldragboardOption();
+		if (this.isInFullDragboardMode()) {
+			this.menu.menu.addClassName("gadget_menu_fulldragboard");
+		}
 	}
 }
 
@@ -1308,6 +1358,10 @@ IGadget.prototype._recomputeWidth = function() {
 	var width = this.layout.getWidthInPixels(this.contentWidth);
 
 	width-= this._computeExtraWidthPixels();
+
+	if (width < 0)
+		width = 0;
+
 	this.element.style.width = width + "px";
 
 	// Notify Context Manager
@@ -1319,6 +1373,8 @@ IGadget.prototype._recomputeWidth = function() {
  * @private
  */
 IGadget.prototype._recomputeWrapper = function(contentHeight) {
+	var wrapperHeight;
+
 	if (!this.minimized) {
 		contentHeight = contentHeight ? contentHeight : parseInt(this.content.offsetHeight);
 		wrapperHeight = contentHeight + this.configurationElement.offsetHeight;
@@ -1390,7 +1446,7 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 			            this.configurationElement.offsetHeight;
 			fullSize += this._computeExtraHeightPixels();
 
-			processedSize = this.layout.adaptHeight(contentHeight, fullSize);
+			var processedSize = this.layout.adaptHeight(contentHeight, fullSize);
 			contentHeight = processedSize.inPixels;
 			this.height = processedSize.inLU;
 			this.content.setStyle({height: contentHeight + "px"});
@@ -1399,6 +1455,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 			contentHeight = this.layout.getHeightInPixels(this.height);
 			contentHeight -= this.configurationElement.offsetHeight + this.gadgetMenu.offsetHeight + this.statusBar.offsetHeight;
 			contentHeight -= this._computeExtraHeightPixels();
+
+			if (contentHeight < 0)
+				contentHeight = 0;
+
 			this.content.setStyle({height: contentHeight + "px"});
 			this.contentHeight = Math.floor(this.layout.fromPixelsToVCells(contentHeight));
 		}
@@ -1549,6 +1609,32 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence, reserveSp
 			persist = true;
 		this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
 	}
+}
+
+IGadget.prototype.isInFullDragboardMode = function() {
+	return this.layout instanceof FullDragboardLayout;
+}
+
+IGadget.prototype.setFullDragboardMode = function(enable) {
+	if (this.isInFullDragboardMode() == enable)
+		return;
+
+	var dragboard = this.layout.dragboard;
+
+	if (enable) {
+		this.previousContentWidth = this.contentWidth;
+		this.previousHeight = this.height;
+		this.previousLayout = this.layout;
+		this.previousPosition = this.position.clone();
+
+		this.moveToLayout(dragboard.fulldragboardLayout);
+		dragboard.raiseToTop(this);
+		this.menu.menu.addClassName("gadget_menu_fulldragboard");
+	} else {
+		this.moveToLayout(this.previousLayout);
+		this.menu.menu.removeClassName("gadget_menu_fulldragboard");
+	}
+
 }
 
 /**
@@ -1798,7 +1884,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	var oldLayout = this.layout;
 
 	// Force an unload event
-	if (oldLayout.dragboard != newLayout.dragboard)
+	if (dragboardChange)
 		OpManagerFactory.getInstance().igadgetUnloaded(this.id);
 
 	oldLayout.removeIGadget(this, dragboardChange);
@@ -1806,35 +1892,37 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 
 	if (dragboardChange && !(newLayout instanceof FreeLayout)) {
 		this.position = null;
+	} else if (oldLayout instanceof FullDragboardLayout) {
+		this.position = this.previousPosition;
 	} else {
 		this.position.x = oldLayout.getColumnOffset(this.position.x);
 		this.position.x = newLayout.adaptColumnOffset(this.position.x).inLU;
-		
+
 		this.position.y = oldLayout.getRowOffset(this.position.y);
 		this.position.y = newLayout.adaptRowOffset(this.position.y).inLU;
-		
-		if (this.position != this.iconPosition){ //they aren't the same object (the icon has been moved previously)
-			this.iconPosition.x = oldLayout.getColumnOffset(this.iconPosition.x);
-			this.iconPosition.x = newLayout.adaptColumnOffset(this.iconPosition.x).inLU;
-			this.iconPosition.y = oldLayout.getRowOffset(this.iconPosition.y);
-			this.iconPosition.y = newLayout.adaptRowOffset(this.iconPosition.y).inLU;
-		}
 	}
 
 	// ##### TODO Revise this
-	//console.debug("prev width: " + this.contentWidth);
-	var newWidth = newLayout.adaptWidth(contentWidth, fullWidth)
-	this.contentWidth = newWidth.inLU;
-	//console.debug("new width: " + this.contentWidth);
+	if (oldLayout instanceof FullDragboardLayout) {
+		this.contentWidth = this.previousContentWidth;
+		this.height = this.previousHeight;
+	} else {
+		//console.debug("prev width: " + this.contentWidth);
+		var newWidth = newLayout.adaptWidth(contentWidth, fullWidth)
+		this.contentWidth = newWidth.inLU;
+		//console.debug("new width: " + this.contentWidth);
 
-	//console.debug("prev height: " + this.height);
-	var newHeight = newLayout.adaptHeight(contentHeight, fullHeight)
-	this.height = newHeight.inLU;
-	//console.debug("new height: " + this.height);
-
+		//console.debug("prev height: " + this.height);
+		var newHeight = newLayout.adaptHeight(contentHeight, fullHeight)
+		this.height = newHeight.inLU;
+		//console.debug("new height: " + this.height);
+	}
 	// ##### END TODO
+
 	newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();
+	if (oldLayout instanceof FullDragboardLayout || newLayout instanceof FullDragboardLayout)
+		this._updateFulldragboardOption();
 
 	if (minimizeOnFinish) {
 		this.toggleMinimizeStatus();
@@ -1845,6 +1933,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 		this.content.src = this.content.src;
 	}
 
+	// TODO create a changes manager
 	// Persistence
 	var onSuccess = function(transport) { }
 
@@ -1859,23 +1948,30 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 
 	var iGadgetInfo = new Hash();
 	iGadgetInfo['id'] = this.id;
-	iGadgetInfo['top'] = this.position.y;
-	iGadgetInfo['left'] = this.position.x;
+	if (!(newLayout instanceof FullDragboardLayout)) {
+		iGadgetInfo['top'] = this.position.y;
+		iGadgetInfo['left'] = this.position.x;
+		iGadgetInfo['width'] = this.contentWidth;
+		iGadgetInfo['height'] = this.contentHeight;
+
+		if (this.onFreeLayout())
+			iGadgetInfo['layout'] = 1;
+		else
+			iGadgetInfo['layout'] = 0;
+
+		iGadgetInfo['fulldragboard'] = false;
+	} else {
+		iGadgetInfo['fulldragboard'] = true;
+	}
+
 	iGadgetInfo['icon_top'] = this.iconPosition.y;
 	iGadgetInfo['icon_left'] = this.iconPosition.x;
 	iGadgetInfo['zIndex'] = this.zPos;
-	iGadgetInfo['width'] = this.contentWidth;
-	iGadgetInfo['height'] = this.contentHeight;
 	iGadgetInfo['tab'] = this.layout.dragboard.tabId;
-
-	if (this.onFreeLayout())
-		iGadgetInfo['layout'] = 1;
-	else
-		iGadgetInfo['layout'] = 0;
 
 	data['iGadgets'].push(iGadgetInfo);
 
-	data = {igadgets: data.toJSON()};
+	data = {'igadgets': data.toJSON()};
 	var persistenceEngine = PersistenceEngineFactory.getInstance();
 	uri = URIs.GET_IGADGETS.evaluate({workspaceId: oldLayout.dragboard.workSpaceId, tabId: oldLayout.dragboard.tabId});
 	persistenceEngine.send_update(uri, data, this, onSuccess, onError);
