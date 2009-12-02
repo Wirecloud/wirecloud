@@ -508,11 +508,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 	Dragboard.prototype.raiseToTop = function(iGadget) {
 		var oldZPos = iGadget.getZPosition();
-		delete this.orderList[oldZPos];
-		this.orderList = this.orderList.compact();
-		var newZPos = this.orderList.push(iGadget);
+		var newZPos = this.orderList.length - 1;
+
 		if (oldZPos == newZPos)
-			return; // Nothing has changed
+			return; // Nothing to do
+
+		delete this.orderList[oldZPos];
+		this.orderList.push(iGadget);
+		this.orderList = this.orderList.compact();
 
 		var i = 0;
 		for (; i < this.orderList.length; i++) {

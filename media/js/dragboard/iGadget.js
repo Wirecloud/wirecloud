@@ -190,7 +190,7 @@ IGadget.prototype.setIconPosition = function(position) {
 IGadget.prototype.setZPosition = function(zPos) {
 	this.zPos = zPos;
 
-	zPos = zPos !== null ? zPos : "";
+	zPos = zPos !== null ? zPos + 1: "";
 
 	if (this.element)
 		this.element.style.zIndex = zPos;
