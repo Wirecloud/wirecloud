@@ -907,8 +907,8 @@ IGadgetDraggable.prototype.startFunc = function (draggable, context) {
 	context.layout = context.iGadget.layout;
 	context.dragboard = context.layout.dragboard;
 	context.currentTab = context.dragboard.tabId;
-	context.layout.initializeMove(context.iGadget, draggable);
 	context.dragboard.raiseToTop(context.iGadget);
+	context.layout.initializeMove(context.iGadget, draggable);
 }
 
 IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
