@@ -694,7 +694,12 @@ IGadget.prototype.paint = function(onInit) {
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
-	this.gadgetMenu.observe('dblclick', function() {this.setFullDragboardMode(!this.isInFullDragboardMode());}.bind(this), false);
+	this.gadgetMenu.observe('dblclick',
+		function() {
+			if (!this.isMinimized())
+				this.setFullDragboardMode(!this.isInFullDragboardMode());
+		}.bind(this),
+		false);
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
