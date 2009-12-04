@@ -388,7 +388,7 @@ IGadget.prototype._updateFulldragboardOption = function() {
 		                           LayoutManagerFactory.getInstance().hideCover();
 		                           this.setFullDragboardMode(!this.isInFullDragboardMode());
 		                       }.bind(this),
-		                       "hide_on_lock");
+		                       "hide_on_lock hide_on_minimize");
 	} else {
 		this.menu.updateOption(this.fulldragboardOpId,
 		                       _currentTheme.getIconURL('igadget-fulldragboard'),
@@ -397,7 +397,7 @@ IGadget.prototype._updateFulldragboardOption = function() {
 		                           LayoutManagerFactory.getInstance().hideCover();
 		                           this.setFullDragboardMode(!this.isInFullDragboardMode());
 		                       }.bind(this),
-		                       "hide_on_lock");
+		                       "hide_on_lock hide_on_minimize");
 	}
 }
 
@@ -1564,6 +1564,7 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence, reserveSp
 	this.minimized = newStatus;
 
 	if (this.minimized) {
+		this.menu.menu.addClassName('gadget_menu_minimized');
 		this.configurationElement.setStyle({"display": "none"});
 
 		if (this.onFreeLayout()) {
@@ -1580,6 +1581,7 @@ IGadget.prototype.setMinimizeStatus = function(newStatus, persistence, reserveSp
 			this.minimizeButtonElement.addClassName("maximizebutton");
 		}
 	} else {
+		this.menu.menu.removeClassName('gadget_menu_minimized');
 		if (this.configurationVisible == true)
 				this.configurationElement.setStyle({"display": "block"});
 		this.minimizeButtonElement.setAttribute("title", gettext("Minimize"));

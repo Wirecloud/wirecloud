@@ -192,8 +192,8 @@ div.config_interface select {
   padding: 0px;
 }
 
-.gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard {
-	display: none;
+.gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard, .gadget_menu_minimized .hide_on_minimize {
+  display: none;
 }
 
 /***

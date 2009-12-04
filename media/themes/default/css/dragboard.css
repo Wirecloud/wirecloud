@@ -30,8 +30,6 @@ div.fulldragboard div.statusBar {
 
 div.fulldragboard {
   border: 0px none;
-  -moz-border-radius-bottomleft:  6px;
-  -moz-border-radius-bottomright: 6px;
 }
 
 div.fulldragboard div.gadget_menu input[type="button"].minimizebutton {
