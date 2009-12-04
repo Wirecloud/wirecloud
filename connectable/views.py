@@ -289,7 +289,10 @@ class ConnectableEntry(Resource):
 
             # Now it is time to recreate channel to channel connections
             for new_channel_data in new_channels:
-                channel = InOut(id=new_channel_data['id'])
+                inout_id = new_channel_data['id']
+                if new_channel_data['provisional_id']:
+                    inout_id =  id_mapping[inout_id]['new_id']
+                channel = InOut(id=inout_id)
                 inouts = new_channel_data['inouts']
                 for inout_to_add in inouts:
                     inout_id = inout_to_add['id']
