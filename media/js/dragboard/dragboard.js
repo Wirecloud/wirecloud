@@ -54,6 +54,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	Dragboard.prototype.paint = function () {
 		this.dragboardElement.innerHTML = "";
 
+		if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
+			IE7.recalc();
+			this._recomputeSize();
+		}
+
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
 		this.fulldragboardLayout.initialize();

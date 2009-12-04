@@ -347,6 +347,9 @@ IGadget.prototype.toggleTransparency = function() {
  * @private
  */
 IGadget.prototype._updateExtractOption = function() {
+	if (this.extractOptionId == null)
+		return;
+
 	if (this.onFreeLayout()) {
 		this.menu.updateOption(this.extractOptionId,
 		                       _currentTheme.getIconURL('igadget-snap'),
@@ -380,6 +383,9 @@ IGadget.prototype._updateExtractOption = function() {
  * @private
  */
 IGadget.prototype._updateFulldragboardOption = function() {
+	if (this.fulldragboardOpId == null)
+		return;
+
 	if (this.isInFullDragboardMode()) {
 		this.menu.updateOption(this.fulldragboardOpId,
 		                       _currentTheme.getIconURL('igadget-exit_fulldragboard'),
@@ -694,12 +700,14 @@ IGadget.prototype.paint = function(onInit) {
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
-	this.gadgetMenu.observe('dblclick',
-		function() {
-			if (!this.isMinimized())
-				this.setFullDragboardMode(!this.isInFullDragboardMode());
-		}.bind(this),
-		false);
+	if (BrowserUtilsFactory.getInstance().getBrowser() != "IE6") {
+		this.gadgetMenu.observe('dblclick',
+			function() {
+				if (!this.isMinimized())
+					this.setFullDragboardMode(!this.isInFullDragboardMode());
+			}.bind(this),
+			false);
+	}
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
