@@ -69,13 +69,13 @@ JPathParam.prototype.parse = function(text_) {
 	
 	do {
 	
-		if ((text_[index] == undefined) && (state != 1)) {
+		if ((text_.charAt(index) == "") && (state != 1)) {
 			throw "Unexpected end of expression";
 		} 
 		
 		switch(state){
 		case 1:
-			switch(text_[index]){
+			switch(text_.charAt(index)){
 				case '\\':
 					text_ = text_.substring (0, index) + text_.substring(index + 1);
 					state = 2;
@@ -88,7 +88,7 @@ JPathParam.prototype.parse = function(text_) {
 					index = 0;
 					state = 3;
 					break;
-				case undefined:
+				case "":
 					if (index != 0){
 						tokens.push(new JPathToken ('text', text_.substring(0, index)));
 					}
@@ -105,7 +105,7 @@ JPathParam.prototype.parse = function(text_) {
 			break;
 		case 3:
 		case 5:
-			if (this.isChar (text_[index])){
+			if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 4;
 			}else{
@@ -113,7 +113,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 4:
-			switch(text_[index]){
+			switch(text_.charAt(index)){
 				case ']':
 					tokens.push(new JPathToken ('element', text_.substring(0, index)));
 					tokens.push(new JPathToken ('separator', ''));
@@ -159,7 +159,7 @@ JPathParam.prototype.parse = function(text_) {
 				text_ = text_.substring(index + 5);
 				index = 0;
 				state = 16;
-			} else if (this.isChar (text_[index])){
+			} else if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 9;
 			} else {
@@ -177,7 +177,7 @@ JPathParam.prototype.parse = function(text_) {
 				text_ = text_.substring(index + 4);
 				index = 0;
 				state = 18;
-			} else if (!isNaN(parseInt(text_[index]))){
+			} else if (!isNaN(parseInt(text_.charAt(index)))){
 				index++;
 				state = 8;
 			} else {
@@ -185,15 +185,15 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 8:
-			if (!isNaN(parseInt(text_[index]))){
+			if (!isNaN(parseInt(text_.charAt(index)))){
 				index++;
 				state = 8;
-			} else if (text_[index] == ':'){
+			} else if (text_.charAt(index) == ':'){
 				tokens.push(new JPathToken ('value', parseInt(text_.substring(0, index))));
 				text_ = text_.substring(index + 1);
 				index = 0;
 				state = 12;
-			} else if (text_[index] == ']'){
+			} else if (text_.charAt(index) == ']'){
 				tokens.push(new JPathToken ('value', parseInt(text_.substring(0, index))));
 				tokens.push(new JPathToken ('separator', ''));
 				text_ = text_.substring(index + 1);
@@ -204,7 +204,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 9:
-			switch(text_[index]){
+			switch(text_.charAt(index)){
 				case '.':
 					tokens.push(new JPathToken ('condition', text_.substring(0, index)));
 					text_ = text_.substring(index + 1);
@@ -230,11 +230,11 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 10:
-			if (text_[index] == '"'){
+			if (text_.charAt(index) == '"'){
 				text_ = text_.substring(index + 1);
 				index = 0;
 				state = 17;									
-			} else if (this.isChar (text_[index])){
+			} else if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 11;
 			}else{
@@ -242,12 +242,12 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 11:
-			if (text_[index] == ':'){
+			if (text_.charAt(index) == ':'){
 				tokens.push(new JPathToken ('value', text_.substring(0, index)));
 				text_ = text_.substring(index + 1);
 				index = 0;
 				state = 12;
-			} else if (this.isChar (text_[index])){
+			} else if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 11;
 			}else{
@@ -255,7 +255,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 12:
-			if (this.isChar (text_[index])){
+			if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 13;
 			}else{
@@ -263,18 +263,18 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 13:
-			if (text_[index] == ']'){
+			if (text_.charAt(index) == ']'){
 				tokens.push(new JPathToken ('element', text_.substring(0, index)));
 				tokens.push(new JPathToken ('separator', ''));
 				text_ = text_.substring(index + 1);
 				index = 0;
 				state = 1;
-			}else if (text_[index] == '.'){
+			}else if (text_.charAt(index) == '.'){
 				tokens.push(new JPathToken ('element', text_.substring(0, index)));
 				text_ = text_.substring(index + 1);
 				index = 0;
 				state = 14;
-			}else if (this.isChar (text_[index])){
+			}else if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 13;
 			}else{
@@ -282,7 +282,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 14:
-			if (this.isChar (text_[index])){
+			if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 13;
 			}else{
@@ -291,7 +291,7 @@ JPathParam.prototype.parse = function(text_) {
 			break;
 		case 15:
 		case 16:
-			if (this.isChar (text_[index])){
+			if (this.isChar (text_.charAt(index))){
 				index++;
 				state = 9;
 			}else{
@@ -299,7 +299,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 17:
-			switch (text_[index]){
+			switch (text_.charAt(index)){
 			case '"':
 				tokens.push(new JPathToken ('value', text_.substring(0, index)));
 				text_ = text_.substring(index + 1);
@@ -313,7 +313,7 @@ JPathParam.prototype.parse = function(text_) {
 			}
 			break;
 		case 18:
-			switch (text_[index]){
+			switch (text_.charAt(index)){
 			case ']':
 				tokens.push(new JPathToken ('separator', ''));
 				text_ = text_.substring(index + 1);
