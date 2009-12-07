@@ -170,9 +170,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	 * This method must only be used by <code>Tab</code>.
 	 */
 	Dragboard.prototype._notifyVisibilityChange = function (visibility) {
-		this.baseLayout._notifyDragboardVisibilityChange(visibility);
-		this.freeLayout._notifyDragboardVisibilityChange(visibility);
-		this.fulldragboardLayout._notifyDragboardVisibilityChange(visibility);
+		if (this.baseLayout)
+			this.baseLayout._notifyDragboardVisibilityChange(visibility);
+		if (this.freeLayout)
+			this.freeLayout._notifyDragboardVisibilityChange(visibility);
+		if (this.fulldragboardLayout)
+			this.fulldragboardLayout._notifyDragboardVisibilityChange(visibility);
 
 		if (!visibility) {
 			LayoutManagerFactory.getInstance().hideView(this.dragboardElement);
