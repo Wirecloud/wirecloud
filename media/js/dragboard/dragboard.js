@@ -56,7 +56,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
 			IE7.recalc();
-			this._recomputeSize();
+			//this._recomputeSize();
 		}
 
 		this.baseLayout.initialize();
