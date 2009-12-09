@@ -63,7 +63,7 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	    	var gadgetName = result['gadgetName'];
 	    	var gadgetId = result['gadgetId'];
 	    
-	    	var final_url = urlTemplate.evaluate({"nDeveloper": ezweb_user_name, "nGadget": gadgetName, "template": gadgetUrl, "cApplication": gadgetId});
+	    	var final_url = urlTemplate.evaluate({"template": gadgetUrl});
 	    	
 	    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
 			      function(){repaintOrderedByCreationDate()},
