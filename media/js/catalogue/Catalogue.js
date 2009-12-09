@@ -196,11 +196,9 @@ var CatalogueFactory  = function () {
 					return;
 				}
 				
-				var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetBuy.iface?nUser=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
+				var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetBuy.iface?nUser=#{nUser}&templateUrl=#{template}");
 	    
 		        var gadgetUrl = currentResource.getUriTemplate();
-		    	var gadgetName = currentResource.getName();
-		    	var gadgetId = currentResource.getId();
 	    
 	    		var final_url = urlTemplate.evaluate({"nUser": ezweb_user_name, "template": gadgetUrl});
 			
