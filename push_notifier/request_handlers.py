@@ -45,7 +45,7 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
 
         channel_values = simplejson.loads(channel_values_json)
         
-        print channel_values
+        #print channel_values
 
         users_to_notify = dict()
 
@@ -110,7 +110,7 @@ class UserSubscriptionRequestHandler(tornado.web.RequestHandler):
     
                 channel.subscribe_user(user)
 
-        ChannelManager.print_channels_status()
+        #ChannelManager.print_channels_status()
 
     def on_subscription_change(self, json_value):
         #Connection closed by client
