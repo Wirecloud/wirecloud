@@ -284,6 +284,9 @@ def get_last_gadget_version(name, vendor):
     return None
 
 def get_gadget_popularity(votes_sum, votes_number):
+    if votes_number == 0:
+      return 0
+
     floor = votes_sum//votes_number
     mod = votes_sum % votes_number
     mod = mod/votes_number
