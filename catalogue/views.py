@@ -468,37 +468,6 @@ class GadgetTagsCollection(Resource):
         return get_tag_response(gadget,user, format)
 
 
-def update_popularity(gadget):
-    #Get all the votes on this gadget
-    votes = UserVote.objects.filter(idResource=gadget)
-    #Get the number of votes
-    votes_number = UserVote.objects.filter(idResource=gadget).count()
-    #Sum all the votes
-    votes_sum = 0.0
-    for e in votes:
-        votes_sum = votes_sum + e.vote
-    #Calculate the gadget popularity
-    popularity = get_popularity(votes_sum,votes_number)
-    #Update the gadget in the database
-    gadget.popularity = unicode(popularity)
-    gadget.save()
-
-
-def get_popularity(votes_sum, votes_number):
-    floor = votes_sum//votes_number
-    mod = votes_sum % votes_number
-    mod = mod/votes_number
-
-    if mod <= 0.25:
-        mod = 0.0
-    elif mod > 0.75:
-        mod = 1.0
-    else:
-        mod = 0.5
-    result = floor + mod
-    return result
-
-
 class GadgetVotesCollection(Resource):
 
     def create(self,request, user_name, vendor, name, version):
@@ -524,7 +493,7 @@ class GadgetVotesCollection(Resource):
             return HttpResponseServerError(get_xml_error(unicode(ex)), mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_popularity(gadget)
+            update_gadget_popularity(gadget)
         except Exception, ex:
             log (ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)), mimetype='application/xml; charset=UTF-8')
@@ -573,7 +542,7 @@ class GadgetVotesCollection(Resource):
             return HttpResponseServerError(get_xml_error(unicode(ex)), mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_popularity(gadget)
+            update_gadget_popularity(gadget)
         except Exception, ex:
             log (ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)), mimetype='application/xml; charset=UTF-8')

@@ -39,9 +39,10 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from xml.sax import parseString, handler
+from xml.sax import parseString, handler
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, Tag, Capability, Translation
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability, Translation
+from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
 from commons.translation_utils import get_trans_index
 
 from commons.user_utils import get_certification_status
@@ -231,7 +232,7 @@ class TemplateHandler(handler.ContentHandler):
         if not self._gadget_added:
             #add index to the translation list
             value = self.addIndex(self._accumulator)
-            
+
         if (name == 'Name'):
             if value:
                 raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
@@ -275,85 +276,127 @@ class TemplateHandler(handler.ContentHandler):
             self._wikiURI = self._accumulator[0]
             return
         if (name == 'IncludedResources'):
-            return            
+            return
         if (name == 'Resource'):
-            return            
+            return
+        if (name == 'Catalog.ResourceDescription'):
 
-        if (self._name != '' and self._vendor != '' and self._version != '' and self._author != '' and self._description != '' and \
-            self._mail != '' and self._imageURI != '' and self._wikiURI != '' and name == 'Catalog.ResourceDescription' \
-            and not self._gadget_added):
+            if self._gadget_added:
+                return
 
-            gadget=GadgetResource()
-            gadget.short_name=self._name
-            gadget.display_name=self._displayName
-            gadget.vendor=self._vendor
-            gadget.version=self._version
-            gadget.author=self._author
-            gadget.description=self._description
-            gadget.mail=self._mail
-            gadget.image_uri=self._imageURI
-            gadget.iphone_image_uri=self._iPhoneImageURI
-            gadget.wiki_page_uri=self._wikiURI
-            gadget.template_uri=self._uri
-            gadget.mashup_id = self._mashupId
-            gadget.creation_date=datetime.today()
-            gadget.popularity = '0.0'
+            required_fields = []
+            if self._name == '':
+                required_fields.append('name')
+            if self._vendor == '':
+                required_fields.append('vendor')
+            if self._version == '':
+                required_fields.append('version')
+            if self._author == '':
+                required_fields.append('author')
+            if self._description == '':
+                required_fields.append('description')
+            if self._mail == '':
+                required_fields.append('mail')
+            if self._imageURI == '':
+                required_fields.append('imageURI')
+            if self._wikiURI == '':
+                required_fields.append('wikiURI')
+
+            if len(required_fields) > 0:
+               raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
+
+            # Fetch the current list of versions for this resource (can be empty if there is not any version of this resource)
+            currentVersions = get_all_gadget_versions(self._vendor, self._name)
+
+            gadget = GadgetResource()
+            gadget.short_name       = self._name
+            gadget.display_name     = self._displayName
+            gadget.vendor           = self._vendor
+            gadget.version          = self._version
+            gadget.author           = self._author
+            gadget.description      = self._description
+            gadget.mail             = self._mail
+            gadget.image_uri        = self._imageURI
+            gadget.iphone_image_uri = self._iPhoneImageURI
+            gadget.wiki_page_uri    = self._wikiURI
+            gadget.template_uri     = self._uri
+            gadget.mashup_id        = self._mashupId
+            gadget.creation_date    = datetime.today()
+            gadget.popularity       = '0.0'
 
             # A gadget belongs to many organizations
             for organization in self._organization_list:
                 gadget.organization.add(organization)
-                
-            #Checking certification status
+
+            # Checking certification status
             gadget.certification = get_certification_status(self._user)
-            
+
             gadget.creator = self._user
-            
+
             self._gadget = gadget
 
             if (self.save):
                 gadget.save()
-            
-            if (self.save): 
-                userRelated = UserRelatedToGadgetResource ()
-                userRelated.gadget = gadget;
-                userRelated.user = self._user
-                userRelated.added_by = True
-                
-                userRelated.save()
-                
-    
-                #TODO: process the resources
-                #workaround to add default tags
-                if self._mashupId!=None:
-                    tag, created = Tag.objects.get_or_create(name="mashup")
-                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)  
-                    userTag.save()
-    
-                if self._contratable:
-                    tag, created = Tag.objects.get_or_create(name="contratable")
-                    userTag = UserTag(tag= tag, idUser=self._user, idResource=gadget)      
-                    userTag.save()
+
+            if (self.save):
+               userRelated = UserRelatedToGadgetResource()
+               userRelated.gadget = gadget;
+               userRelated.user = self._user
+               userRelated.added_by = True
+
+               userRelated.save()
+
+               # TODO: process the resources
+               # workaround to add default tags
+               if self._mashupId != None:
+                   tag, created = Tag.objects.get_or_create(name = "mashup")
+                   userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                   userTag.save()
+
+               if self._contratable:
+                   tag, created = Tag.objects.get_or_create(name = "contratable")
+                   userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                   userTag.save()
+
+               # Copy all UserTag and UserVote entry from previous version
+               if len(currentVersions) > 0:
+                  previousVersion = GadgetResource.objects.get(vendor = self._vendor, short_name = self._name, version = max(currentVersions))
+
+                  previousUserTags = UserTag.objects.filter(idResource = previousVersion)
+
+                  for previousUserTag in previousUserTags:
+                     newUserTag = UserTag(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
+                     newUserTag.save()
+
+                  previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
+
+                  for previousUserVote in previousUserVotes:
+                     newUserVote = UserVote(idUser = previousUserVote.idUser, vote = previousUserVote.vote, idResource = gadget)
+                     newUserVote.save()
+
+                  update_gadget_popularity(gadget)
 
             self._gadget_added = True
-        elif (self._gadget_added and name=="msg"):
+
+        elif (self._gadget_added and name == "msg"):
             if not self.current_text in self.translatable_list:
                 #message not used in the catalogue
                 return;
             if self.current_lang==self.default_lang:
                 self.translated_list.append(self.current_text)
-                
+
             table_ = self._gadget.__class__.__module__+"."+self._gadget.__class__.__name__
             trans = Translation(text_id=self.current_text, element_id=self._gadget.id, table=table_, language=self.current_lang, value=self._accumulator[0], default=(self.current_lang==self.default_lang))
             trans.save()
-        elif (self._gadget_added and name=="Translation"):
+        elif (self._gadget_added and name == "Translation"):
             if self.current_lang==self.default_lang:
                 for ind in self.translatable_list:
                     self.translated_list.remove(ind)
-                if len(self.translated_list)>0:
-                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: "+str(self.translated_list)))
-        elif (self._gadget_added and name=="Translations"):
-            if len(self.lang_list)>0 and not self.default_lang in self.lang_list:
-                raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language ("+ self.default_lang +") translations"))
+                if len(self.translated_list) > 0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: %(list)s") % {list: str(self.translated_list)})
+        elif self._gadget_added and (name == "Translations"):
+            if len(self.lang_list) > 0 and not self.default_lang in self.lang_list:
+                raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self.default_lang})
         elif (self._gadget_added):
             return
         else:

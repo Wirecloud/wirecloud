@@ -43,7 +43,6 @@ from django.utils import simplejson
 
 from commons.http_utils import download_http_content
 from catalogue.models import GadgetResource
-from catalogue.templateParser import TemplateParser as CatalogueTemplateParser
 from gadget.models import XHTML
 from gadget.templateParser import TemplateParser as GadgetTemplateParser
 
@@ -155,6 +154,8 @@ def load_gadgets():
         gadget_resources = GadgetResource.objects.filter(template_uri=template_uri)
         for gadget_resource in gadget_resources:
             gadget_resource.delete()
+
+        from catalogue.templateParser import TemplateParser as CatalogueTemplateParser
         try:
             catalogue_template_parser = CatalogueTemplateParser(template_uri, user)
             catalogue_template_parser.parse()

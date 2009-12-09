@@ -40,7 +40,7 @@ from commons.user_utils import CERTIFICATION_VERIFIED
 
 from catalogue.get_json_catalogue_data import get_gadgetresource_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
-from catalogue.models import GadgetResource, UserTag, UserRelatedToGadgetResource
+from catalogue.models import GadgetResource, UserTag, UserVote, UserRelatedToGadgetResource
 
 from django.utils.translation import ugettext as _
 
@@ -281,4 +281,33 @@ def get_last_gadget_version(name, vendor):
     if version_list:
         version = max(version_list)
         return version
-    return None
+    return None
+
+def get_gadget_popularity(votes_sum, votes_number):
+    floor = votes_sum//votes_number
+    mod = votes_sum % votes_number
+    mod = mod/votes_number
+
+    if mod <= 0.25:
+        mod = 0.0
+    elif mod > 0.75:
+        mod = 1.0
+    else:
+        mod = 0.5
+    result = floor + mod
+    return result
+
+def update_gadget_popularity(gadget):
+    #Get all the votes on this gadget
+    votes = UserVote.objects.filter(idResource=gadget)
+    #Get the number of votes
+    votes_number = UserVote.objects.filter(idResource=gadget).count()
+    #Sum all the votes
+    votes_sum = 0.0
+    for e in votes:
+        votes_sum = votes_sum + e.vote
+    #Calculate the gadget popularity
+    popularity = get_gadget_popularity(votes_sum,votes_number)
+    #Update the gadget in the database
+    gadget.popularity = unicode(popularity)
+    gadget.save()
