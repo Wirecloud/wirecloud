@@ -71,8 +71,6 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 			      final_url
 			);
 	    }
-		
-		this.repaintOrderedByCreationDate();
 	}
 	
 	var newResourceOnError = function (transport, e) {

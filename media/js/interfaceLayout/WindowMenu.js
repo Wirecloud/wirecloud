@@ -171,8 +171,8 @@ function ContratationWindow(element) {
 
 	this.iframe = document.createElement('iframe');
 	this.iframe.setAttribute('src', '');
-	this.iframe.setAttribute('width', 600);
-	this.iframe.setAttribute('height', 600);
+	this.iframe.setAttribute('width', 480);
+	this.iframe.setAttribute('height', 550);
 	this.windowContent.appendChild(this.iframe);
 	
 	// Finish button
