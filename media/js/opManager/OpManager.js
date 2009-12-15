@@ -200,7 +200,8 @@ var OpManagerFactory = function () {
 				this.firstAccessToTheCatalogue = false;
 				this.catalogueIsCurrentTab = false;
 			} else {
-				UIUtils.repaintCatalogue=false;
+				UIUtils.repaintCatalogue=true;
+				UIUtils.repaintOrderedByCreationDate();
 			}
 			UIUtils.resizeResourcesContainer();
 		}

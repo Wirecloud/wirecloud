@@ -203,7 +203,7 @@ var CatalogueFactory  = function () {
 	    		var final_url = urlTemplate.evaluate({"nUser": ezweb_user_name, "template": gadgetUrl});
 			
 			    LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
-			      function(){ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());},
+			      function(){UIUtils.repaintOrderedByCreationDate();},
 			      function(){LayoutManagerFactory.getInstance().hideCover();},
 			      final_url
 			    );

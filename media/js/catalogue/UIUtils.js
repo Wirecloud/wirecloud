@@ -66,18 +66,13 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	    	var final_url = urlTemplate.evaluate({"template": gadgetUrl});
 	    	
 	    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
-			      function(){repaintOrderedByCreationDate()},
+			      function(){UIUtils.repaintOrderedByCreationDate()},
 			      function(){LayoutManagerFactory.getInstance().hideCover();},
 			      final_url
 			);
 	    }
 		
-		repaintOrderedByCreationDate();
-	}
-	
-	var repaintOrderedByCreationDate = function () {
-		UIUtils.orderby = '-creation_date';
-		UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
+		this.repaintOrderedByCreationDate();
 	}
 	
 	var newResourceOnError = function (transport, e) {
@@ -105,6 +100,11 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	params[paramName] = paramValue;
 
 	persistenceEngine.send_post(url, params, this, newResourceOnSuccess, newResourceOnError);
+}
+
+UIUtils.repaintOrderedByCreationDate = function () {
+	UIUtils.orderby = '-creation_date';
+	UIUtils.cataloguePaginate(URIs.GET_POST_RESOURCES, UIUtils.getOffset(), 1, UIUtils.getNum_items());
 }
 
 UIUtils.getSelectedResource = function() {
