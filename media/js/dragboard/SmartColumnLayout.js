@@ -409,7 +409,7 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
 		this._clearSpace2(this.matrix, step2X, position.y + newHeight, step2Width, oldHeight - newHeight);
 	}
 
-	this._notifyWindowResizeEvent(); // TODO
+	this._notifyWindowResizeEvent(true, true); // TODO
 	if (persist)
 		this.dragboard._commitChanges(); // FIXME
 }
@@ -962,7 +962,7 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
 				this._moveSpaceUp(this.matrix, this.matrix[x][y]);
 	}
 
-	this._notifyWindowResizeEvent(); // TODO
+	this._notifyWindowResizeEvent(true, true); // TODO
 	if (persist) {
 		this._moveSpaceUp(this.matrix, iGadget);
 		// Save new positions into persistence
