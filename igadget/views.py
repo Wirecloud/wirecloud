@@ -102,7 +102,7 @@ def addIGadgetVariable(igadget, user, varDef):
     connectableId = createConnectable(var)
 
 
-def SaveIGadget(igadget, user, tab):
+def SaveIGadget(igadget, user, tab, request):
     gadget_uri = igadget.get('gadget')
     igadget_name = igadget.get('name')
     width = igadget.get('width')
@@ -333,7 +333,7 @@ class IGadgetCollection(Resource):
             received_json = request.POST['igadget']
             igadget = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
-            ids = SaveIGadget(igadget, user, tab)
+            ids = SaveIGadget(igadget, user, tab, request)
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist, e:
