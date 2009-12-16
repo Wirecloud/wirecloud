@@ -70,6 +70,8 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 			      function(){LayoutManagerFactory.getInstance().hideCover();},
 			      final_url
 			);
+	    } else {
+	    	UIUtils.repaintOrderedByCreationDate();
 	    }
 	}
 	
