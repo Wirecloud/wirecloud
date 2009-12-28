@@ -92,10 +92,10 @@ class GadgetResource(TransModel):
 
      author = models.CharField(_('Author'), max_length=250)
      mail = models.CharField(_('Mail'), max_length=100)
-     
+
      #Person how added the resource to catalogue!
      creator = models.ForeignKey(User, null=True, blank=True)
-           
+
      description = models.TextField(_('Description'))
      size = models.CharField(_('Size'),max_length=10, null=True, blank=True)
      license = models.CharField(_('License'),max_length=20, null=True, blank=True)
@@ -107,7 +107,7 @@ class GadgetResource(TransModel):
      wiki_page_uri = models.URLField(_('wikiURI'), verify_exists=False)
      template_uri= models.URLField(_('templateURI'))
      mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
-     
+
      #For implementing "private gadgets" only visible for users that belongs to some concrete organizations
      organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
 
@@ -116,7 +116,8 @@ class GadgetResource(TransModel):
      certification = models.ForeignKey(Group, related_name='certification', null=True, blank=True)
 
      popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
-     
+     fromWGT = models.BooleanField(_('fromWGT'), default=False)
+
      def resource_type(self):
          if (self.mashup_id):
             return 'mashup'

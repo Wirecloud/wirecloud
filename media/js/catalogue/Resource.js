@@ -726,7 +726,8 @@ Resource.prototype.showInfo = function() {
 		}));
 		fieldset.appendChild(update_code_link);
 
-		if (this._state.getAddedBy() == 'Yes') {
+    var fromWGT = !this.getUriTemplate().startsWith("http");
+		if (this._state.getAddedBy() == 'Yes' && !fromWGT) {
 			var update_code_submit_link = UIUtils.createHTMLElement("a", $H({
 				class_name: 'submit_link',
 				innerHTML: gettext('Update code')

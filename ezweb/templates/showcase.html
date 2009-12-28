@@ -34,9 +34,30 @@
 			<div id="header_always_error" class="message_error"></div>
 		</div>
 		<div id="advanced_develop" class="advanced_develop" style="display:none">
-			<label for="template_uri">{% trans "Template URL:" %}</label>
-			<input id="template_uri" name="template_uri" type="text"/>
-			<a id="submit_link" class="submit_link" href="#" >{% trans "Create resource" %}</a>
+			<table>
+			<tr>
+				<td>
+					<label for="template_uri">{% trans "Template URL:" %}</label>
+				</td>
+				<td>
+					<input id="template_uri" name="template_uri" type="text"/>
+					<a id="submit_link" class="submit_link" href="#" >{% trans "Create resource" %}</a>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<label for="gadget_uri">{% trans "Gadget Wgt:" %}</label>
+				</td>
+				<td>
+					<form id="upload_form" action="/deployment/gadgets/" method="post" enctype="multipart/form-data" class="uploadGadget" style="margin:0px;" target="upload">				
+						<input name="add_to_ws" type="hidden" value="off"/>
+						<input id="gadget_uri" name="file" type="file"/>
+						<a id="gadget_link" class="submit_link" href="#" onclick="UIUtils.uploadFile();">{% trans "Create resource" %}</a>
+					</form>
+				</td>
+			</tr>
+			</table>
+			<iframe name="upload" id="upload" frameborder="0" style="display:none"></iframe>
 		</div>
 
 		<div id="advanced_search" class="advanced_search" style="display:none;">

@@ -50,10 +50,24 @@ from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Ca
 from commons.translation_utils import get_trans_index
 from translator.models import Translation
 
+from urllib import url2pathname
+
 class TemplateParser:
-    def __init__(self, uri):
+    def __init__(self, uri, fromWGT):
         self.uri = uri
-        self.xml = download_http_content(uri)
+        self.fromWGT = fromWGT
+        if not fromWGT:
+            self.xml = download_http_content(uri)
+        else:
+            # In this case 'uri' is a filesystem URL
+            if uri[0] == '/':
+                uri = uri[1:]
+
+            localpath = path.join(settings.BASEDIR, url2pathname(uri))
+            f = open(localpath, 'r')
+            self.xml = f.read()
+            f.close()
+            
         self.handler = None
         self._capabilities = [] 
         self.uriHandler = UriGadgetHandler ()
@@ -61,7 +75,7 @@ class TemplateParser:
 
     def parse(self):
         # Parse the input
-        self.handler = TemplateHandler()
+        self.handler = TemplateHandler(self.fromWGT)
         parseString(self.xml, self.handler)
         
     def getGadget (self):
@@ -156,7 +170,7 @@ class TemplateHandler(handler.ContentHandler):
     _SLOT = "SLOT"
     _EVENT = "EVEN"
         
-    def __init__(self):
+    def __init__(self, fromWGT):
         self._relationships = []
         self._accumulator = []
         self._link = []
@@ -186,6 +200,7 @@ class TemplateHandler(handler.ContentHandler):
         self.default_lang = ""
         self.current_lang = ""
         self.current_text = ""
+        self.fromWGT = fromWGT
         
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
@@ -500,22 +515,19 @@ class TemplateHandler(handler.ContentHandler):
 
         if (attrs.has_key('href')):
             _href = attrs.get('href')
-        
+
         _content_type = None
         if (attrs.has_key('content-type')):
             _content_type = attrs.get('content-type')
-        
+
         if (_href != ""):
             try:
                 # Gadget Code Parsing
-                if environ.get("RUN_MAIN_DEV") == "true" and hasattr(settings, 'GADGETS_ROOT'):
-                    if path.isfile(path.join(settings.GADGETS_ROOT, _href)):
-                        _href = "file://%s" % path.join(settings.GADGETS_ROOT, _href)
                 gadgetParser = GadgetCodeParser()
-                gadgetParser.parse(_href, self._gadgetURI, _content_type)
+                gadgetParser.parse(_href, self._gadgetURI, _content_type, self.fromWGT)
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:
-                raise TemplateParseException(_("ERROR: XHTML could not be read") + " - " + unicode(e))
+                raise TemplateParseException(_("ERROR: XHTML could not be read: %(errorMsg)s") % {'errorMsg': e.message})
         else:
             raise TemplateParseException(_("ERROR: missing attribute at XHTML element"))            
 

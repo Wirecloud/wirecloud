@@ -32,7 +32,7 @@
 from django.db import IntegrityError
 
 from django.shortcuts import get_object_or_404, get_list_or_404
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.core import serializers
 
 from commons.resource import Resource
@@ -83,7 +83,8 @@ class GadgetCollection(Resource):
 
         try:
             #get or create the Gadget
-            result = get_or_create_gadget(templateURL, user)
+            fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
+            result = get_or_create_gadget(templateURL, user, fromWGT)
             transaction.commit()
             
             gadget = result["gadget"]
@@ -140,17 +141,22 @@ class GadgetCodeEntry(Resource):
         code = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
         
         content_type = gadget.xhtml.content_type
-        if (content_type):
+        if not content_type:
+            content_type = 'text/html'
+
+        if (content_type != 'text/html') and (content_type != 'application/xml+html'):
             return HttpResponse(code.code, mimetype='%s; charset=UTF-8' % content_type)
         else:
-            return HttpResponse(code.code, mimetype='text/html; charset=UTF-8')
+            return HttpResponse(includeTagBase(code.code, code.url, request), mimetype='%s; charset=UTF-8' % content_type)
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
 
         xhtml = gadget.xhtml;
-
+        if (not xhtml.url.startswith("http")):
+            return HttpResponseBadRequest(get_xml_error(_("This gadget could not be updated")), mimetype='application/xml; charset=UTF-8')
+        
         try:
             xhtml.code = download_http_content(xhtml.url)
             xhtml.save()

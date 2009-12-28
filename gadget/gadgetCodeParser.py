@@ -30,6 +30,7 @@
 
 #
 
+from django.conf import settings
 from django.utils.http import urlquote
 
 from commons.http_utils import download_http_content
@@ -38,22 +39,39 @@ from commons.exceptions import TemplateParseException
 from django.utils.translation import ugettext as _
 
 from gadget.models import XHTML
+from urllib import url2pathname
+from os import path
 
 class GadgetCodeParser:
     xHTML = None
 
-    def parse(self, codeURI, gadgetURI, content_type):
+    def parse(self, codeURI, gadgetURI, content_type, fromWGT):
         xhtml = ""
 
-        # TODO Fixme!! This works for now, but we have to check if a part of a url is empty
-        address = codeURI.split('://')
-        query = address[1].split('/',1)
-        codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
+        if fromWGT:
+            localPath = codeURI
+            if localPath[0] == '/':
+                localPath = localPath[1:]
 
-        try:
-            xhtml = download_http_content(codeURI)
-        except Exception:
-            raise TemplateParseException(_("XHTML code is not accessible"))
+            localPath = url2pathname(localPath)
+            localPath = path.join(settings.BASEDIR, localPath)
+            if not path.isfile(localPath):
+                raise TemplateParseException(_("'%(file)s' is not a file") % {'file': localPath})
+
+            f = open(localPath, 'r')
+            xhtml = f.read()
+            f.close()
+
+        else:
+            # TODO Fixme!! This works for now, but we have to check if a part of a url is empty
+            address = codeURI.split('://')
+            query = address[1].split('/',1)
+            codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
+
+            try:
+                xhtml = download_http_content(codeURI)
+            except Exception:
+                raise TemplateParseException(_("XHTML code is not accessible"))
 
         uri = gadgetURI + "/xhtml"
         

@@ -40,21 +40,21 @@ from django.utils import simplejson
 
 def download_http_content (uri, params=None):
     urlcleanup()
-    
+
     #proxy = settings.PROXY_SERVER
-    
+
     #The proxy must not be used with local address
     host = urlparse(uri)[1]
 
     #manage proxies with authentication (get it from environment)
-    proxy=None   
+    proxy = None
     for proxy_name in settings.NOT_PROXY_FOR:
-	if host.startswith(proxy_name):
-	    proxy = urllib2.ProxyHandler({})#no proxy
+        if host.startswith(proxy_name):
+            proxy = urllib2.ProxyHandler({})#no proxy
             break
-    
+
     if not proxy:
-	    #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
+        #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
         proxy = urllib2.ProxyHandler()#proxies from environment
 
     opener = urllib2.build_opener(proxy)
@@ -86,7 +86,7 @@ def download_http_content (uri, params=None):
     else:
         return opener.open(uri).read()
 
-def PUT_parameter (request, parameter_name):    
+def PUT_parameter (request, parameter_name):
     # Checking GET and POST space!
     return request.POST[parameter_name]
 

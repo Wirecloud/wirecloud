@@ -35,6 +35,7 @@ from datetime import datetime
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content 
 
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -48,14 +49,33 @@ from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
 
 import string
+from urllib import url2pathname
+from os import path
 
 
 
 class TemplateParser:
-    def __init__(self, uri, user, save=True):
+    def __init__(self, uri, user, save=True, fromWGT = False):
+
+        if fromWGT:
+            if uri[0] == '/':
+              uri = uri[1:]
+
+            localPath = url2pathname(uri)
+
+            localPath = path.join(settings.BASEDIR, localPath)
+            if not path.isfile(localPath):
+                raise Exception(_("'%(file)s' is not a file") % {'file': localPath})
+
+            f = open(localPath, 'r')
+            self.xml = f.read()
+            f.close()
+        else:
+            self.xml = download_http_content(uri)
+
+
         self.uri = uri
-        self.xml = download_http_content(uri)
-        self.handler = TemplateHandler(user, uri, save)
+        self.handler = TemplateHandler(user, uri, save, fromWGT)
 
     def parse(self):
         # Parse the input
@@ -69,7 +89,7 @@ class TemplateParser:
 
 
 class TemplateHandler(handler.ContentHandler): 
-    def __init__(self, user, uri, save):
+    def __init__(self, user, uri, save, fromWGT):
         self.save=save
         self._accumulator = []
         self._name = ""
@@ -102,6 +122,9 @@ class TemplateHandler(handler.ContentHandler):
         self.default_lang = ""
         self.current_lang = ""
         self.current_text = ""
+
+        self.fromWGT = fromWGT
+
         
     def get_gadget(self):
         if (not self.save):
@@ -338,7 +361,8 @@ class TemplateHandler(handler.ContentHandler):
             gadget.mashup_id        = self._mashupId
             gadget.creation_date    = datetime.today()
             gadget.popularity       = '0.0'
-            
+            gadget.fromWGT          = self.fromWGT
+
             if (self._application):
                 gadget.id = self._application
 

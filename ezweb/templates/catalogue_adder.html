@@ -229,7 +229,7 @@ h3{
 			 <div class="languages">
 			 	<form id="languages" action="/i18n/setlang/" method="post">
 					<input name="next" type="hidden" value="/accounts/login/?next=/" />
-					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}">
+					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}"/>
 				</form>		 
 				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
 			 </div>

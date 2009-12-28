@@ -36,12 +36,13 @@ from django.contrib.auth.decorators import login_required
 
 from commons.authentication import login_public_user
 from commons.utils import get_xml_error, json_encode
+from commons.logs_exception import TracedServerError
 
 from workspace.models import WorkSpace
 
 from catalogue.templateParser import TemplateParser
 
-from django.http import HttpResponseServerError
+from django.http import HttpResponseServerError, HttpResponseBadRequest
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -51,6 +52,7 @@ from django.utils import simplejson
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponseRedirect, Http404
+from django.template import Context, loader
 
 @login_required
 def index(request, user_name=None, template="index.html"):
@@ -78,14 +80,16 @@ def redirected_login(request):
             
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
 
-def add_gadget_script(request):  
+def add_gadget_script(request, fromWGT = False):  
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if (request.REQUEST.has_key('template_uri')):
             template_uri = request.REQUEST['template_uri']
         else:
             #template_uri not specified!
-            return render_to_response('catalogue_adder.html', {'msg': _('A template URL must be specified!')}, context_instance=RequestContext(request))
+            t = loader.get_template('catalogue_adder.html')
+            c = Context({'msg': _('A template URL must be specified!')})
+            return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
         
         if (request.method.lower() == "get"):
             #GET Request: Render HTML interface!
@@ -100,7 +104,9 @@ def add_gadget_script(request):
                 return render_to_response('catalogue_adder.html', {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}, context_instance=RequestContext(request))
             except Exception, e:
                 #Error parsing the template
-                return render_to_response('catalogue_adder.html', {'msg': _('Invalid template URL! Please, specify a valid one!')}, context_instance=RequestContext(request))
+                t = loader.get_template('catalogue_adder.html')
+                c = Context({'msg': _('Invalid template URL! Please, specify a valid one!')})
+                return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
         
         
         if (request.method.lower() == "post"):
@@ -110,13 +116,15 @@ def add_gadget_script(request):
                 #Adding to catalogue if it doesn't exist!
                 gc = GadgetsCollection()
                 
-                http_response = gc.create(request, request.user.username)
+                http_response = gc.create(request, request.user.username, fromWGT=fromWGT)
                 
                 catalogue_response = simplejson.loads(http_response.content)
             
                 if (catalogue_response['result'].lower() != 'ok'):
                     #Error adding in the catalogue!
-                    return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template!')}, context_instance=RequestContext(request))
+                    t = loader.get_template('catalogue_adder.html')
+                    c = Context({'msg': _('Error ocurred processing template!')})
+                    return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
                 
                 #Retrieving info from catalogue for creating the "post_load_script" if the user wants to instantiate the gadget! 
                 vendor = catalogue_response['vendor']
@@ -133,10 +141,17 @@ def add_gadget_script(request):
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
-                    return render_to_response('catalogue_adder.html', {'msg': _('Gadget added correctly to Catalogue!') }, context_instance=RequestContext(request))
-                
+                    t = loader.get_template('catalogue_adder.html')
+                    c = Context({'msg': _('Gadget added correctly to Catalogue!')})
+                    return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
+            except TracedServerError, e:
+                raise e
             except Exception, e:
-                return render_to_response('catalogue_adder.html', {'msg': _('Error ocurred processing template: %s!') % e.msg}, context_instance=RequestContext(request))
+                msg = _('Error ocurred processing template: %s!') % e.message
+                raise TracedServerError(e, {}, request, msg)
+                t = loader.get_template('catalogue_adder.html')
+                c = Context({'msg': _('Error ocurred processing template: %s!') % e.message})
+                return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
         
     else:
         #Not authenticated or anonymous user => redirecting to login!

@@ -48,6 +48,7 @@ UIUtils.searchCriteria = '';
 UIUtils.counter=0;
 UIUtils.globalTags='all';
 
+
 UIUtils.addResource = function(url, paramName, paramValue) {
 	UIUtils.repaintCatalogue=true;
 	UIUtils.search = false;
@@ -1111,6 +1112,36 @@ UIUtils.resizeResourcesContainer = function (){
 	document.getElementById('resources').style.height = height+'px';
 	document.getElementById('resources_container').style.height = $('center').offsetHeight + 'px';
 	UIUtils.setInfoResourceHeight();
+
+// Upload Wgt files
+UIUtils.uploadFile = function (){
+	var upload = document.getElementById("upload_form");
+	var iframe = document.getElementById("upload");
+	if(!iframe.onload)
+		iframe.onload = function(){UIUtils.checkFile();};
+	upload.submit();
+}
+
+// Check upload status wgt file
+UIUtils.checkFile = function (){
+	var i = document.getElementById("upload");
+	if (i.contentDocument) {
+		var d = i.contentDocument;
+	} else if (i.contentWindow) {
+		var d = i.contentWindow.document;
+	} else {
+		var d = window.frames["upload"].document;
+	}
+	if (d.location.href.search("error") >= 0){
+		var logManager = LogManagerFactory.getInstance();
+		var msg = gettext("The resource could not be added to the catalogue");
+		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+		logManager.log(msg);		
+		return;
+	}
+	this.viewAll();
+}
+
 	
 /*	var resources_container_margin = parseInt($('resources_container').getStyle('margin-top').replace("px",""));
 	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight;

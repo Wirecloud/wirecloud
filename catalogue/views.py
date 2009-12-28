@@ -31,6 +31,12 @@
 #
 
 import sys
+import os
+from shutil import rmtree
+import re
+import settings
+
+from urllib import url2pathname
 
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden
@@ -65,7 +71,7 @@ from django.contrib.auth.decorators import login_required
 class GadgetsCollection(Resource):
 
     @transaction.commit_manually
-    def create(self, request, user_name):
+    def create(self, request, user_name, fromWGT = False):
 
         user = user_authentication(request, user_name)
 
@@ -73,7 +79,7 @@ class GadgetsCollection(Resource):
         templateParser = None
 
         try:
-            templateParser = TemplateParser(template_uri, user)
+            templateParser = TemplateParser(template_uri, user, fromWGT=fromWGT)
             templateParser.parse()
                         
             transaction.commit()
@@ -91,7 +97,7 @@ class GadgetsCollection(Resource):
         except Exception, e:
             # Internal error
             transaction.rollback()
-            msg = _("Problem parsing template xml")
+            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.message}
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
         
@@ -215,8 +221,29 @@ def deleteOneGadget(resource, user):
         
         # Delete the related votes for that gadget
         UserVote.objects.filter(idResource=resource.id).delete()
+        # Delete the gadget if it is saved in the platform 
+        if resource.fromWGT:
+            # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
+            print 1
+            exp = re.compile('[/]?(?P<path>.+/.+/.+/.+/.+/.+/).*$')
+            print 2
+            print resource.template_uri
+            print resource.template_uri.__class__
+            if exp.search(resource.template_uri):
+                print 3
+                v = exp.search(resource.template_uri)
+                print 4
+                path = url2pathname(v.group('path'))
+                print 5
+                path = os.path.join(settings.BASEDIR, path)
+                print 6
+                if os.path.isdir(path):
+                    print 7
+                    rmtree(path)
         # Delete the object
         resource.delete()
+        
+        
     except UserRelatedToGadgetResource.DoesNotExist:
         #Do nothing, the user is not the owner
         pass
