@@ -203,7 +203,8 @@ AUTHENTICATION_BACKENDS = (
 #AUTHENTICATION_SERVER_URL = 'http://localhost:8002'
 
 # Absolute path to the directory that holds in development gadgets.
-GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
+GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
+GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
 CERTIFICATION_ENABLED = False
 

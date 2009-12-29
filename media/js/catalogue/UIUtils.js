@@ -1123,8 +1123,9 @@ UIUtils.uploadFile = function (){
 }
 
 // Check upload status wgt file
-UIUtils.checkFile = function (){
+UIUtils.checkFile = function () {
 	var i = document.getElementById("upload");
+
 	if (i.contentDocument) {
 		var d = i.contentDocument;
 	} else if (i.contentWindow) {
@@ -1132,19 +1133,16 @@ UIUtils.checkFile = function (){
 	} else {
 		var d = window.frames["upload"].document;
 	}
-	if (d.location.href.search("error") >= 0){
+
+	if (d.location.href.search("error") >= 0) {
 		var logManager = LogManagerFactory.getInstance();
-		var msg = gettext("The resource could not be added to the catalogue");
+		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
+		msg = interpolate(msg, {errorMsg: d.body.textContent}, true);
 		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-		logManager.log(msg);		
+		logManager.log(msg);
 		return;
 	}
 	this.viewAll();
 }
 
-	
-/*	var resources_container_margin = parseInt($('resources_container').getStyle('margin-top').replace("px",""));
-	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight;
-	document.getElementById('resources_container').style.height = height - resources_container_margin +'px';
-*/
 }
