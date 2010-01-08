@@ -122,7 +122,7 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 }
 
 * html div.gadget_window div.rightResizeHandle{
-	background: url(../images/ie/iGadget/resize-handle-bottom-right.png) no-repeat;
+	background: url(../images/ie/igadget/resize-handle-bottom-right.png) no-repeat;
 }
 
 * html div.gadget_window div.rightResizeHandle{
@@ -131,7 +131,7 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 }
 
 * html div.gadget_window div.leftResizeHandle {
-	background: url(../images/ie/iGadget/resize-handle-bottom-left.png) no-repeat;
+	background: url(../images/ie/igadget/resize-handle-bottom-left.png) no-repeat;
 }
 
 * html div.gadget_window div.leftResizeHandle {
@@ -140,11 +140,11 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 }
 
 * html div.gadget_window div.extractButton {
-	background: url(../images/ie/iGadget/snap.png) no-repeat;
+	background: url(../images/ie/igadget/snap.png) no-repeat;
 }
 
 * html div.gadget_window div.snapButton {
-	background: url(../images/ie/iGadget/extract.png) no-repeat;
+	background: url(../images/ie/igadget/extract.png) no-repeat;
 }
 
 /*MENU_LAYER*/
