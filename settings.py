@@ -151,7 +151,8 @@ INSTALLED_APPS = (
     'gadgetGenerator',
     'resourceSubscription',
     'remoteChannel',
-#    'clms',
+    'user',
+#   'clms',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -188,6 +189,7 @@ LOGIN_REDIRECT_URL = '/'
 
 #Authentication
 AUTHENTICATION_BACKENDS = (  
+#'authentication.tcloud_access.TCloudBackend',
 'authentication.public_access.PublicBackend',
 'authentication.anonymousaccess.AnonymousBackend',
 #'authentication.ldapaccess.LDAPBackend',
@@ -207,6 +209,8 @@ GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
 CERTIFICATION_ENABLED = False
+
+SESSION_COOKIE_DOMAIN = '.mac.hi.inet'
 
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
