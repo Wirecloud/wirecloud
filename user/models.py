@@ -31,8 +31,52 @@
 #
 
 from django.db import models
+from django.contrib.auth.models import User
+
+from django.utils.translation import get_language, ugettext as _
+from commons import utils
+
+import simplejson 
+
 
 class UserProfile(models.Model):
+    user = models.ForeignKey(User, unique=True)
     
-    username = models.CharField(_('username'), max_length=30, unique=True, validator_list=[validators.isAlphaNumeric], help_text=_("Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores)."))
-    password = models.CharField(_('password'), max_length=128, help_text=_("Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/\">change password form</a>."))
+    load_script = models.TextField(_('load_script'), blank=True, null=True)
+    
+    def execute_server_script(self, request):
+        script = simplejson.loads(self.load_script)
+        
+        for command in script: 
+            if (not command.has_key('command')):
+                # Bad-formed command!
+                continue
+            
+            if (command['command'] == 'change_language'):
+                utils.change_language(request, command['language'])
+                continue
+    
+    def merge_client_scripts(self, script):
+        #TODO
+        return self.load_script
+    
+    def create_load_script(self, profile):
+        profile = simplejson.loads(profile)
+        script = []
+        
+        if (profile.has_key('theme')):
+            command = {}
+            command["command"]="change_theme"
+            command["theme"]=profile["theme"]
+            
+            script.append(command)
+        
+        if (profile.has_key('localeLanguage')):
+            command = {}
+            command["command"]="change_language"
+            command["language"]=profile["localeLanguage"]
+            
+            script.append(command)
+            
+        self.load_script = simplejson.dumps(script)
+        self.save()

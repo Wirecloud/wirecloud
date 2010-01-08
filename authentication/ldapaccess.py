@@ -56,7 +56,7 @@ class LDAPBackend:
             return None
 
     def is_valid (self,username=None,password=None):
-        if password == None or password == '':
+        if username == None or password == '':
             return False
         try:
             l = ldap.initialize(settings.AD_LDAP_URL)

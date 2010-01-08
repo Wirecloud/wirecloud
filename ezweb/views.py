@@ -183,5 +183,14 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
         return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
     else:
-        return render_to_response(template, {'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user, 'post_load_script': post_load_script},
+        #Checking profile!
+        try:
+            user_profile = request.user.get_profile()
+            user_profile.execute_server_script(request)
+            
+            script = user_profile.merge_client_scripts(post_load_script)
+        except Exception:
+            script = post_load_script
+        
+        return render_to_response(template, {'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user, 'post_load_script': script},
                   context_instance=RequestContext(request))

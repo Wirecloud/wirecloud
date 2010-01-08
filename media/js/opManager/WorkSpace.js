@@ -146,11 +146,16 @@ function WorkSpace (workSpaceState) {
 		this.loaded = true;
 
 		var workspaceTheme = this.preferences.get('theme');
+		var scriptTheme = ScriptManagerFactory.getInstance().get_theme();
+		
+		if (scriptTheme)
+			workspaceTheme = scriptTheme 
+		
 		LayoutManagerFactory.getInstance().changeCurrentTheme(workspaceTheme);
 
 		this._createWorkspaceMenu();
 
-		//If workspace is shared, some options must be unavailable!
+		// If workspace is shared, some options must be unavailable!
 		if (this.isShared())
 			this._hide_creator_options();
 		else
@@ -274,8 +279,8 @@ function WorkSpace (workSpaceState) {
 	}
 	
 		
-	WorkSpace.prototype.run_post_load_script = function() {
-		run_initial_script(this);
+	WorkSpace.prototype.run_script = function() {
+		ScriptManagerFactory.getInstance().run_script(this);
 	}
 
 	WorkSpace.prototype.igadgetUnloaded = function(igadgetId) {

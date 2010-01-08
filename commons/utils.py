@@ -47,7 +47,12 @@ from gadget.models import XHTML
 from gadget.templateParser import TemplateParser as GadgetTemplateParser
 
 from django.utils import simplejson
+from django.utils import translation
 
+def change_language(request, language):
+    request.session['django_language'] = language
+    request.LANGUAGE_CODE = language
+    translation.activate(language)
 
 def json_encode(data, ensure_ascii=False):
     """

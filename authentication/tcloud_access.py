@@ -31,26 +31,35 @@
 #
 
 from django.contrib.auth.models import User, Group
+from user.models import UserProfile
+
 from django.conf import settings
 from commons.http_utils import download_http_content
 from django.utils import simplejson
 
-class EzSteroidsBackend:
+class TCloudBackend:
+    
+    TCLOUD_AUTH_URL = "http://192.168.8.46:8080/TCloud/resources/validate/user/"
 
     def authenticate(self,username=None,password=None):
-        (is_valid, groups) = self.is_valid(username,password)
+        (valid, tcloud_profile) = self.is_valid(username,password)
         
-        if (not is_valid):
+        if not valid:
             return None
         
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User(username=username)
-            user.set_password(password)
             user.save()
-            
-        self.manage_groups(user, groups)
+        
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        
+        profile.create_load_script(tcloud_profile)
+        profile.save()
+        
+        user.set_password(password)
+        user.save()
 
         return user
 
@@ -61,27 +70,20 @@ class EzSteroidsBackend:
             return None
 
     def is_valid (self,username=None,password=None):
-        if username == None or password == '':
-            return None
+        if not username or not password:
+            return (False, None)
         
-        #ask PBUMS about the authentication
-        if hasattr(settings,'AUTHENTICATION_SERVER_URL'):
-            urlBase=settings.AUTHENTICATION_SERVER_URL;
-            url = urlBase+"/api/login"
-            params = {'username':username, 'password':password}
+        #ask TCLOUD about the authentication
+        if hasattr(self,'TCLOUD_AUTH_URL'):
+            urlBase=self.TCLOUD_AUTH_URL;
+            
+            url = urlBase + username + "/"
+            params = {}
+        
             try:
-            	result = download_http_content(url,params)
-            	result = simplejson.loads(result)
-            	
-                return (result['isValid'], result['groups'])
+            	result_json = download_http_content(url,params)
+            	result = simplejson.loads(result_json)
+                
+                return (result['validateSession'], result_json)
             except Exception, e:
             	return (False, None)
-    
-    def manage_groups(self, user, groups):
-        user.groups.clear()
-        
-        for group in groups:
-            group, created = Group.objects.get_or_create(name=group)
-            user.groups.add(group)
-        
-        user.save()

@@ -62,6 +62,12 @@ var OpManagerFactory = function () {
 					}
 				}
 			}
+			
+			// When a profile is set to a user, profile options prevail over user options!
+			var active_ws_from_script = ScriptManagerFactory.getInstance().get_ws_id();
+			if (active_ws_from_script && this.workSpaceInstances[active_ws_from_script]) {
+				activeWorkSpace = this.workSpaceInstances[active_ws_from_script];
+			}
 
 			// set handler for workspace options button
 			Event.observe($('ws_operations_link'), 'click', function(e){
@@ -81,8 +87,10 @@ var OpManagerFactory = function () {
 				ShowcaseFactory.getInstance().reload(workSpace.id);
 			} else {
 				this.activeWorkSpace = activeWorkSpace;
+				
 				if (this.activeWorkSpace == null && workSpaces.length > 0)
 					this.activeWorkSpace = this.workSpaceInstances[workSpaces[0].id];
+					
 				this.activeWorkSpace.downloadWorkSpaceInfo();
 			}
 		}
@@ -481,7 +489,7 @@ var OpManagerFactory = function () {
 				this.loadCompleted = true;
 
 				//Additional information that a workspace must do after loading! 
-				this.activeWorkSpace.run_post_load_script();
+				this.activeWorkSpace.run_script();
 			}
 		}
 
