@@ -11,6 +11,14 @@
   position:absolute;
 }
 
+.drop_down_menu .help_text{
+	*white-space: normal;
+}
+
+.helpwiringheader {
+	white-space: normal;
+}
+
 * html .window_menu .window_multiple_select{
   height: 200px;
 }
@@ -47,8 +55,4 @@ body{
 #wiring .connectable_row,
 #wiring .channel{
 	height: 1%;
-}
-
-.drop_down_menu .help_text{
-	*white-space: normal;
 } 
