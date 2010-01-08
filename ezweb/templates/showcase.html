@@ -114,8 +114,8 @@
 					<div class="title">{% trans "Tagcloud" %} </div>
 					<div id="view_global_tags_links" class="link">
 						<span>{% trans "All common tags" %}  </span>
-						<a href="javascript:CatalogueFactory.getInstance().changeGlobalTagcloud('mytags');">{% trans "My common tags" %} </a>
-						<a href="javascript:CatalogueFactory.getInstance().changeGlobalTagcloud('others');">{% trans "Others common tags" %}</a>
+						<a href="#" onclick="CatalogueFactory.getInstance().changeGlobalTagcloud('mytags');">{% trans "My common tags" %} </a>
+						<a href="#" onclick="CatalogueFactory.getInstance().changeGlobalTagcloud('others');">{% trans "Others common tags" %}</a>
 					</div>
 					<div id="global_tagcloud" class="tags"></div>
 				</div>
@@ -129,8 +129,8 @@
 					</div></div>
 					<div id="global_tag_alert" class="global_tag_alert"></div>
 					<div class="buttons">
-						<a href="#" class="submit_link" onclick="javascript:UIUtils.sendGlobalTags();">{% trans "Tag" %}</a>
-						<a href="#" class="submit_link" onclick="javascript:UIUtils.removeAllGlobalTags();">{% trans "Cancel" %}</a>
+						<a href="#" class="submit_link" onclick="UIUtils.sendGlobalTags();">{% trans "Tag" %}</a>
+						<a href="#" class="submit_link" onclick="UIUtils.removeAllGlobalTags();">{% trans "Cancel" %}</a>
 					</div>
 				</div>
 			</div>		
@@ -151,11 +151,7 @@
 		</button>
 		<div id="info_resource_content" class="content"></div>
 		</div></div>
-<!--			<div id="tab_info_resource" class="tab_info_resource">
-				<a id="tab_info_resource_close" title="{% trans  'Hide resource details' %}" href="javascript:UIUtils.sendPendingTags();UIUtils.closeInfoResource();" onmouseover="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close_selected.png');" onmouseout="UIUtils.changeImage('tab_info_resource_close_img', '{{ MEDIA_URL }}images/info_resource_close.png');" style="display:none;">
-				<img id="tab_info_resource_close_img" src="{{ MEDIA_URL }}images/info_resource_close.png" alt="Close" />
-				</a>
-			</div>-->
+
 	</div>
 	</div> <!--catalogue_content -->
 </div>

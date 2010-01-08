@@ -867,3 +867,7 @@
 #catalogue .resource.selected > .bottom {
 	background-image: url(/ezweb/images/resource-left-bottom-tagmode.png)
 }
+
+#colorpicker301{
+	position: fixed;
+}
