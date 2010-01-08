@@ -213,6 +213,7 @@ body.shared #workspace_link_container span{
 #add_tab_link {
  margin-top:2px;
  float:right;
+ top: 5px;
 }
 
 #workspace_link_container {
@@ -268,6 +269,10 @@ body.shared #workspace_link_container span{
 
 #tab_section .current {
   padding-bottom: 2px;
+}
+
+.current .tab_name, .current span {
+  float:left;
 }
 
 .tab_dragger{

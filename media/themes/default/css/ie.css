@@ -80,7 +80,47 @@ body {
 }
 
 /*DRAGBOARD*/
-/*IGADGET*/
+/*igadget*/
+div.gadget_window div.gadget_menu input[type="button"].closebutton {
+  background: url("../images/ie/igadget/close.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
+  background: url("../images/ie/igadget/close.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
+  background: url("../images/ie/igadget/minimize.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
+  background: url("../images/ie/igadget/minimize.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
+  background: url("../images/ie/igadget/maximize.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
+  background: url("../images/ie/igadget/maximize.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
+  background: url("../images/ie/igadget/settings.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
+  background: url("../images/ie/igadget/settings.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button {
+  background: url("../images/ie/igadget/settings2.png");
+}
+
+div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
+  background: url("../images/ie/igadget/settings2.png");
+}
+
 * html div.gadget_window div.rightResizeHandle{
 	background: url(../images/ie/iGadget/resize-handle-bottom-right.png) no-repeat;
 }
@@ -128,7 +168,34 @@ body {
 	padding: 2px;
 }
 
+#catalogue .center .resources .resource .top {
+	background: url(../images/ie/resource-left-top.png) no-repeat top left;
+}
+
+#catalogue .resource .toolbar {
+	background: url(../images/ie/resource-left-header.png) no-repeat top left;
+}
+
+#catalogue .resource > .bottom {
+	background: url(../images/ie/resource-left-bottom.gif) no-repeat top left;
+}
+
+#catalogue .resource.current > .bottom {
+	background-image: url(../images/ie/resource-left-bottom-select.png);
+}
+
+
+#catalogue .resource:hover > .bottom {
+	background-image: url(../images/ie/resource-left-bottom-select.png);
+}
+
+
+#catalogue .resource.selected > .bottom {
+	background-image: url(../images/ie/resource-left-bottom-tagmode.png);
+}
+
 /*WIRING*/
+
 /* Filter params */
 #wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
 	white-space: normal;

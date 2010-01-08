@@ -80,7 +80,7 @@ input[type="text"], input[type="password"], textarea{
 }
 
 #greeting a, #greeting a:visited{
-	color:#b5d7ed;
+	color:#0094C6;
 }
 
 #greeting .languages a{
@@ -133,7 +133,7 @@ input[type="text"], input[type="password"], textarea{
 
 #ws_operations_link {
 	width: 19px;
-	height: 9px;
+	height: 11px;
   	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 
@@ -213,7 +213,7 @@ input[type="text"], input[type="password"], textarea{
 
 #add_tab_link {
 	color: #B5D7ED;
-	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
+	background: #01bbef url(../images/button.png) repeat-x scroll left top;
 }
 
 #tab_section .tab {
@@ -223,6 +223,8 @@ input[type="text"], input[type="password"], textarea{
   -webkit-border-top-left-radius: 10px;
   -webkit-border-top-right-radius: 10px;
   color: #b5d7ed;
+  /* this theme has not got any tab botom border, we need more padding*/
+  padding: 4px 5px 2px;
 }
 
 #tab_section .tab:hover {
