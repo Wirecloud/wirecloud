@@ -34,10 +34,13 @@ body {
 	text-align:center;
 }
 
-
 #dragboard_link{
 	float:none;
-	height:19px;
+	height: 19px;
+}
+
+#dragboard_link span {
+	font-size: 90%;
 }
 
 #workspace_menu_link{

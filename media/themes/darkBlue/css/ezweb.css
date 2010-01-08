@@ -122,6 +122,7 @@ input[type="text"], input[type="password"], textarea{
 
 #dragboard_link span {
 	top: 2px;
+	vertical-align: middle;
 }
 
 #workspace_menu_link{
