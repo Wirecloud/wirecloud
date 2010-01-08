@@ -91,7 +91,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	Event.observe($('unfold_chkItem'), "click",
 	            function(e) {
 	              //the user wants all unfolded
-	              var target = BrowserUtilsFactory.getInstance().getTarget(e);
+	              var target = Element.extend(BrowserUtilsFactory.getInstance().getTarget(e));
 	              target.toggleClassName('chkItem');
 	              this.unfold_on_entering = target.hasClassName('chkItem');
 	            }.bind(this));

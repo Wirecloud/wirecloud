@@ -292,16 +292,13 @@
   display:inline;
 }
 
-#wiring #wiring_options label {
-  margin-right: 20px;
-}
 
 #wiring #unfold_chkItem{
   display: inline;
   width: 15px;
   height: 15px;
   border: 0px;
-  padding: 0px;
+  padding: 0 20px 0 0;
   cursor: pointer;
 }
 
