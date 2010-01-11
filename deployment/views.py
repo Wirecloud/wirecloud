@@ -92,56 +92,57 @@ class Resources(Resource):
 		# Copy .wgt file into user temporal folder and extract file .wgt into 
 		# gadgets folder
 		try:
-			file_wgt = request.FILES['file']
-			file_wgt_path = path.join(info.TMPDIR, file_wgt.name)
-			f = open(file_wgt_path, "w")
-			f.write(file_wgt.read())
-			f.close()
-
-			# Extract file .wgt into temporal folder
-			pkg = WgtPackageUtils()
-
-			extractiondir = mkdtemp(dir=info.TMPDIR)
-			pkg.extract(file_wgt_path, extractiondir)
-
-			# Parser XML config file
-			xmlDoc = parse(path.join(extractiondir, 'config.xml'))
-			info.get_info_config(xmlDoc, request)
-
-			# Extract .wgt file in user gadget folder
-			final_gadget_dir = path.join(info.USERGADGETSDIR, info.VENDOR, info.NAME, info.VERSION)
-			info.create_folder(final_gadget_dir)
-			pkg.extract(file_wgt_path, final_gadget_dir)
-
-			# Change links XHTML Tag and Image tag in template gadget
-			xmlDoc = parse(path.join(final_gadget_dir, info.ID))
-			xmlDoc = info.get_new_template(xmlDoc)
-			f = open(path.join(final_gadget_dir, info.ID), 'w')
-			f.write(xmlDoc.toxml())
-			f.close()
-
-			# Redirect to EzWeb to add_gadget_script function
-			request.POST.appendlist(unicode('template_uri'), info.URLTEMPLATE)
-			response = add_gadget_script(request, fromWGT=True)
-
-			if (response.status_code != 200):
-				# Redirect if the param "add_to_ws" isn't in the request
-				if (not request.POST.has_key('add_to_ws')):
-					raise Exception('Gadget could not be added to the catalogue')
-
-				# Redirect if the value of param "add_to_ws" isn't 'on'
-				if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
-					raise Exception('Gadget could not be added to the catalogue or to the workspace')
-
-		except Exception, e:
-			msg = _("Error extracting gadget files: %(errorMsg)s")
-
-			e = TracedServerError(e, {}, request, msg)
-
-			log_request(request, None, 'access')
-
-			msg = log_detailed_exception(request, e)
-			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
+			try:
+				file_wgt = request.FILES['file']
+				file_wgt_path = path.join(info.TMPDIR, file_wgt.name)
+				f = open(file_wgt_path, "w")
+				f.write(file_wgt.read())
+				f.close()
+	
+				# Extract file .wgt into temporal folder
+				pkg = WgtPackageUtils()
+	
+				extractiondir = mkdtemp(dir=info.TMPDIR)
+				pkg.extract(file_wgt_path, extractiondir)
+	
+				# Parser XML config file
+				xmlDoc = parse(path.join(extractiondir, 'config.xml'))
+				info.get_info_config(xmlDoc, request)
+	
+				# Extract .wgt file in user gadget folder
+				final_gadget_dir = path.join(info.USERGADGETSDIR, info.VENDOR, info.NAME, info.VERSION)
+				info.create_folder(final_gadget_dir)
+				pkg.extract(file_wgt_path, final_gadget_dir)
+	
+				# Change links XHTML Tag and Image tag in template gadget
+				xmlDoc = parse(path.join(final_gadget_dir, info.ID))
+				xmlDoc = info.get_new_template(xmlDoc)
+				f = open(path.join(final_gadget_dir, info.ID), 'w')
+				f.write(xmlDoc.toxml())
+				f.close()
+	
+				# Redirect to EzWeb to add_gadget_script function
+				request.POST.appendlist(unicode('template_uri'), info.URLTEMPLATE)
+				response = add_gadget_script(request, fromWGT=True)
+	
+				if (response.status_code != 200):
+					# Redirect if the param "add_to_ws" isn't in the request
+					if (not request.POST.has_key('add_to_ws')):
+						raise Exception('Gadget could not be added to the catalogue')
+	
+					# Redirect if the value of param "add_to_ws" isn't 'on'
+					if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
+						raise Exception('Gadget could not be added to the catalogue or to the workspace')
+	
+			except Exception, e:
+				msg = _("Error extracting gadget files: %(errorMsg)s")
+	
+				e = TracedServerError(e, {}, request, msg)
+	
+				log_request(request, None, 'access')
+	
+				msg = log_detailed_exception(request, e)
+				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
 		finally:
 			# Remove temporal files
@@ -167,34 +168,35 @@ class Resources(Resource):
 
 		# Create temporal folder and user folder
 		try:
-			info.create_folders()
-
-			# Parser XML config file
-			gadget_path = path.join(settings.GADGETS_ROOT, username, vendor, name, version)
-			xmlDoc = parse(path.join(gadget_path, 'config.xml'))
-			info.get_info_config(xmlDoc, request)
-
-			# Get template file
-			xmlDoc = parse(path.join(gadget_path, info.ID))
-
-			# Restore original template
-			xmlDoc = info.return_original_template(xmlDoc, username, vendor, name, version)
-
-			info.change_working_folder(gadget_path)
-			pkg = WgtPackageUtils()
-			pkg.create('./', path.join(info.TMPDIR, vendor+'_'+name+'_'+version), xmlDoc.toxml(), info.ID)
-			file_wgt = open(path.join(info.TMPDIR, vendor+'_'+name+'_'+version+'.wgt'), 'r')
-			content_file = file_wgt.read()
-			file_wgt.close()
-			info.change_working_folder(BASEDIR_PLATFORM)
-
-			# Return .wgt file
-			response = HttpResponse(content_file, mimetype='application/zip')
-			response['Content-Disposition'] = 'attachment; filename='+vendor+'_'+name+'_'+version+'.wgt'
-
-		except Exception, e:
-			msg = _("This gadget could not be exported: %(errorMsg)s") % {'errorMsg': e.message}
-			raise TracedServerError(e, {}, request, msg)
+			try:
+				info.create_folders()
+	
+				# Parser XML config file
+				gadget_path = path.join(settings.GADGETS_ROOT, username, vendor, name, version)
+				xmlDoc = parse(path.join(gadget_path, 'config.xml'))
+				info.get_info_config(xmlDoc, request)
+	
+				# Get template file
+				xmlDoc = parse(path.join(gadget_path, info.ID))
+	
+				# Restore original template
+				xmlDoc = info.return_original_template(xmlDoc, username, vendor, name, version)
+	
+				info.change_working_folder(gadget_path)
+				pkg = WgtPackageUtils()
+				pkg.create('./', path.join(info.TMPDIR, vendor+'_'+name+'_'+version), xmlDoc.toxml(), info.ID)
+				file_wgt = open(path.join(info.TMPDIR, vendor+'_'+name+'_'+version+'.wgt'), 'r')
+				content_file = file_wgt.read()
+				file_wgt.close()
+				info.change_working_folder(BASEDIR_PLATFORM)
+	
+				# Return .wgt file
+				response = HttpResponse(content_file, mimetype='application/zip')
+				response['Content-Disposition'] = 'attachment; filename='+vendor+'_'+name+'_'+version+'.wgt'
+	
+			except Exception, e:
+				msg = _("This gadget could not be exported: %(errorMsg)s") % {'errorMsg': e.message}
+				raise TracedServerError(e, {}, request, msg)
 		finally:
 			# Remove temporal files
 			info.remove_folder(info.TMPDIR)
