@@ -41,6 +41,7 @@ body {
 
 #dragboard_link span {
 	font-size: 90%;
+	top: 2px;
 }
 
 #workspace_menu_link{

@@ -40,6 +40,10 @@ body {
 	float:none;
 }
 
+#dragboard_link span{
+	top: 2px;
+}
+
 * html #dragboard_link{
 	overflow: hidden;
 }

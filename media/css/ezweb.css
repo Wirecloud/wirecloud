@@ -226,7 +226,6 @@ body.shared #workspace_link_container span{
 
 #dragboard_link span {
   position:relative;
-  vertical-align:top;
   margin-right:3px;
 }
 
