@@ -35,8 +35,7 @@ from django.contrib.auth.models import User
 
 from django.utils.translation import get_language, ugettext as _
 from commons import utils
-
-import simplejson 
+from django.utils import simplejson 
 
 
 class UserProfile(models.Model):
