@@ -184,11 +184,6 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 	background: url(../images/ie/resource-left-bottom.gif) no-repeat top left;
 }
 
-#catalogue .resource.current > .bottom {
-	background-image: url(../images/ie/resource-left-bottom-select.png);
-}
-
-
 #catalogue .resource:hover > .bottom {
 	background-image: url(../images/ie/resource-left-bottom-select.png);
 }
