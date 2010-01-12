@@ -1114,10 +1114,12 @@ UIUtils.resizeResourcesContainer = function (){
 	UIUtils.setInfoResourceHeight();
 
 // Upload Wgt files
-UIUtils.uploadFile = function (){
+UIUtils.uploadFile = function () {
+	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
+
 	var upload = document.getElementById("upload_form");
 	var iframe = document.getElementById("upload");
-	if(!iframe.onload)
+	if (!iframe.onload)
 		iframe.onload = function(){UIUtils.checkFile();};
 	upload.submit();
 }
@@ -1134,14 +1136,23 @@ UIUtils.checkFile = function () {
 		var d = window.frames["upload"].document;
 	}
 
+	var layoutManager = LayoutManagerFactory.getInstance();
+
 	if (d.location.href.search("error") >= 0) {
 		var logManager = LogManagerFactory.getInstance();
 		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
 		msg = interpolate(msg, {errorMsg: d.body.textContent}, true);
-		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+
+		layoutManager._notifyPlatformReady();
+		layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		logManager.log(msg);
 		return;
+	} else {
+		layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
+		layoutManager.logStep('');
+		layoutManager._notifyPlatformReady();
 	}
+
 	this.viewAll();
 }
 
