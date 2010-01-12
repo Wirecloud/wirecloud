@@ -90,19 +90,6 @@ class Proxy(Resource):
         else:
             method = "GET"
 
-        # Params
-        if method != 'GET' and request.POST.has_key('params'):
-            # if Content-Type is xml or json then skipping encode function.
-            if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", request.META['CONTENT_TYPE']) != None:
-                params = request.POST['params'].encode('utf-8')
-            else:
-                try:
-                    params = urlencode(simplejson.loads(request.POST['params']))
-                except Exception, e:
-                    params = encode_query(request.POST['params'])
-        else:
-            params = None
-
         # HTTP call
         try:
             httplib.HTTPConnection.debuglevel = 1
@@ -124,29 +111,25 @@ class Proxy(Resource):
 
             # Adds original request Headers to the request (and modifies Content-Type for Servlets)
             headers = {}
-            has_content_type = False
-            http_content_type_value = ''
             for header in request.META.items():
-                if (header[0].lower() == 'content-type'):
-                    if (header[1] != None and header[1].lower() != 'none'):
-                        has_content_type = True
+                if (header[0].lower() == 'content-type' and header[1]):
+                    headers["Content-Type"] = header[1]
                 # Considering proper header string to forward the right content-type to the remote server
-                elif (header[0].lower() == 'content_type'):
-                    has_content_type = True
-                    headers['Content-Type'] = header[1]
-                elif (header[0].lower() == 'http_content_type'):
-                    http_content_type_value = header[1]
-                elif (header[0].lower() == 'http_user_agent'):
+                elif (header[0].lower() == 'content_type' and header[1]):
+                    headers["Content-Type"] = header[1]
+                elif (header[0].lower() == 'http_content_type' and header[1]): #mod_python
+                    headers["Content-Type"] = header[1]
+                elif (header[0].lower() == 'http_user_agent' and header[1]):
                     headers["User-Agent"] = header[1]
-                elif (header[0].lower() == 'http_accept_language'):
+                elif (header[0].lower() == 'http_accept_language' and header[1]):
                     headers["Accept-Language"] = header[1]
-                elif (header[0].lower() == 'http_accept'):
+                elif (header[0].lower() == 'http_accept' and header[1]):
                     headers["Accept"] = header[1]
-                elif (header[0].lower() == 'http_connection'):
+                elif (header[0].lower() == 'http_connection' and header[1]):
                     headers["Connection"] = header[1]
-                elif (header[0].lower() == 'http_accept_charset'):
+                elif (header[0].lower() == 'http_accept_charset' and header[1]):
                     headers["Accept-Charset"] = header[1]
-                elif (header[0].lower() == 'http_accept_encoding'):
+                elif (header[0].lower() == 'http_accept_encoding' and header[1]):
                     headers["Accept-Encoding"] = header[1]
                 elif (header[0].find("HTTP_") >= 0
                       and header[0].lower() != 'http_cache_control' #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
@@ -158,7 +141,8 @@ class Proxy(Resource):
                       and header[0].lower() != 'http_x_prototype_version'
                       and header[0].lower() != 'http_host'
                       and header[0].lower() != 'http_referer'
-                      and header[0].lower() != 'http_keep_alive'):
+                      and header[0].lower() != 'http_keep_alive'
+                      and header[1]):
                     headers[header[0].replace("HTTP_", "", 1)] = header[1]
 
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
@@ -175,12 +159,10 @@ class Proxy(Resource):
 
             headers["Via"] = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             # Add Content-Type (Servlets bug)
-            if ((method == 'POST' or method == 'PUT') and not has_content_type):
-                if (http_content_type_value != ''):
-                    headers['Content-Type'] = http_content_type_value
-                else:
-                    headers['Content-Type'] = 'application/x-www-form-urlencoded'
-            elif (method == 'GET'): # Remove useless Content-Type (method == 'GET')
+            if (method == 'POST' or method == 'PUT'):
+                if (not headers.has_key("Content-Type") or not headers["Content-Type"]):
+                    headers['Content-Type'] = "application/x-www-form-urlencoded"
+            elif (method == 'GET' and headers.has_key("Content-Type")): # Remove useless Content-Type (method == 'GET')
                 del headers['Content-Type']
 
             # The same with cookies
@@ -192,6 +174,18 @@ class Proxy(Resource):
             if headers.has_key('COOKIE'):
                 del headers['COOKIE']
 
+            # Params
+            if method != 'GET' and request.POST.has_key('params'):
+                # if Content-Type is xml or json then skipping encode function.
+                if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", headers["Content-Type"]) != None:
+                    params = request.POST['params'].encode('utf-8')
+                else:
+                    try:
+                        params = urlencode(simplejson.loads(request.POST['params']))
+                    except Exception, e:
+                        params = encode_query(request.POST['params'])
+            else:
+                params = None
 
             # Open the request
             try:
@@ -203,9 +197,9 @@ class Proxy(Resource):
                     return HttpResponseNotFound(e.reason)
 
             # Add content-type header to the response
-            try:
+            if (res.info().has_key('Content-Type')):
                 response = HttpResponse (res.read(), mimetype=res.info()['Content-Type'])
-            except:
+            else:
                 response = HttpResponse (res.read())
 
             # Set status code to the response
@@ -222,3 +216,4 @@ class Proxy(Resource):
         except Exception, e:
             msg = _("Error processing proxy request: %s") % unicode(e)
             raise TracedServerError(e, None, request, msg)
+
