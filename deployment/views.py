@@ -47,6 +47,7 @@ from wgtPackageUtils import WgtPackageUtils
 from settings import BASEDIR as BASEDIR_PLATFORM
 from xml.dom.minidom import parse # XML Parser
 from ezweb.views import add_gadget_script
+import codecs
 import re
 
 
@@ -117,7 +118,7 @@ class Resources(Resource):
 				# Change links XHTML Tag and Image tag in template gadget
 				xmlDoc = parse(path.join(final_gadget_dir, info.ID))
 				xmlDoc = info.get_new_template(xmlDoc)
-				f = open(path.join(final_gadget_dir, info.ID), 'w')
+				f = codecs.open(path.join(final_gadget_dir, info.ID), 'w', 'utf-8')
 				f.write(xmlDoc.toxml())
 				f.close()
 	
