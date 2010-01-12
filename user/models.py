@@ -56,8 +56,18 @@ class UserProfile(models.Model):
                 continue
     
     def merge_client_scripts(self, script):
-        #TODO
-        return self.load_script
+        extra_script = simplejson.loads(script)
+        
+        if (len(extra_script) == 0):
+            return  self.load_script
+        
+        stored_script = simplejson.loads(self.load_script)
+        for command in extra_script:
+            stored_script.append(command)
+            
+        #It's not saved! "script" variable is passed when needed and not should be saved in the UserProfile
+        
+        return simplejson.dumps(stored_script)
     
     def create_load_script(self, profile):
         profile = simplejson.loads(profile)

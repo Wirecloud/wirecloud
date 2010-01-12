@@ -177,7 +177,7 @@ def public_ws_viewer(request, public_ws_id):
     
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
-def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script=''):
+def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """ 
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
         return render_to_response('iphone.html', {},
