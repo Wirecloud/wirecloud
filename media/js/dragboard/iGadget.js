@@ -26,7 +26,7 @@
 /**
  * Creates an instance of a Gadget.
  *
- * @author �lvaro Arranz
+ * @author Álvaro Arranz
  *
  * @class Represents an instance of a Gadget.
  *
@@ -49,9 +49,8 @@
  * @param {Boolean}           fulldragboard initial fulldragboard mode
  * @param {Boolean}           minimized     initial minimized status
  * @param {Boolean}           transparency  initial transparency status
- * @param {String}            menu_color    background color for the iGadget's
- *                                          menu. (6 chars with a hexadecimal
- *                                          color)
+ * @param {String}            menu_color    background color for the menu.
+ *                                          (6 chars with a hexadecimal color)
  */
 function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion) {
 	this.id = iGadgetId;
@@ -160,7 +159,7 @@ IGadget.prototype.setPosition = function(position) {
 		this.element.style.left = this.layout.getColumnOffset(position.x) + "px";
 		this.element.style.top = this.layout.getRowOffset(position.y) + "px";
 
-		// Notify Context Manager of igadget's position
+		// Notify Context Manager about the new position
 		var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
@@ -256,8 +255,8 @@ IGadget.prototype.getTab = function() {
 
 /**
  * Returns the current width of the gadget in LU. This is not the same to the
- * iGadget's content with as it depends in the current status of the iGadget
- * (minimized, with the configuration dialog, etc...)
+ * content with as it depends in the current status of the iGadget (minimized,
+ * with the configuration dialog, etc...)
  *
  * @returns {Number} the current width of the gadget in LU
  *
@@ -330,7 +329,7 @@ IGadget.prototype.toggleTransparency = function() {
 	this.transparency = !this.transparency;
 
 	//Persist the new state
-	var o = new Object;
+	var o = new Object();
 	o.transparency = this.transparency;
 	o.id = this.id;
 	var igadgetData = Object.toJSON(o);
@@ -342,7 +341,7 @@ IGadget.prototype.toggleTransparency = function() {
 }
 
 /**
- * Updates the extract/snap from/to grid option on the iGadget's menu.
+ * Updates the extract/snap from/to grid option.
  *
  * @private
  */
@@ -378,7 +377,7 @@ IGadget.prototype._updateExtractOption = function() {
 }
 
 /**
- * Updates the fulldragboard option on the iGadget's menu.
+ * Updates the fulldragboard option.
  *
  * @private
  */
@@ -428,7 +427,6 @@ IGadget.prototype.build = function() {
 	// buttons. Inserted from right to left
 	//#######################################
 	var button;
-	
 
 	// close button
 	button = document.createElement("input");
@@ -466,7 +464,7 @@ IGadget.prototype.build = function() {
 	button.setAttribute("alt", gettext("Close"));
 	this.gadgetMenu.appendChild(button);
 
-	// iGadget's menu button
+	// Menu button
 	button = document.createElement("input");
 	Element.extend(button);
 	button.setAttribute("type", "button");
@@ -513,9 +511,9 @@ IGadget.prototype.build = function() {
 	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, false);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
-	
-	//New Version button
-	if (!this.gadget.isUpToDate() && !this.isRefusedUpgrade()){
+
+	// New Version button
+	if (!this.gadget.isUpToDate() && !this.isRefusedUpgrade()) {
 		button = document.createElement("input");
 		Element.extend(button);
 		button.setAttribute("type", "button");
@@ -561,7 +559,7 @@ IGadget.prototype.build = function() {
 		this.content.setAttribute("width", "100%");
 		this.content.setAttribute("frameBorder", "0");
 
-	} else { //non IE6
+	} else { // non IE6
 		this.content = document.createElement("object");
 		Element.extend(this.content);
 		this.content.addClassName("gadget_object");
@@ -583,7 +581,6 @@ IGadget.prototype.build = function() {
 	Element.extend(this.statusBar);
 	this.statusBar.addClassName("statusBar");
 	this.element.appendChild(this.statusBar);
-	
 
 	// resize handles
 	var resizeHandle;
@@ -657,7 +654,7 @@ IGadget.prototype.paint = function(onInit) {
 
 	this.visible = true;
 
-	// Initialize iGadget's preferences menu
+	// Initialize preferences menu
 	this._createIGadgetMenu();
 
 
@@ -668,7 +665,7 @@ IGadget.prototype.paint = function(onInit) {
 	var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
 	if (BrowserUtilsFactory.getInstance().isIE()) {
 		this.content.setAttribute("src", codeURL);
-	} else { //non IE6
+	} else { // non IE6
 		this.content.setAttribute("data", codeURL);
 	}
 
@@ -711,15 +708,15 @@ IGadget.prototype.paint = function(onInit) {
 
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
-	// Notify Context Manager of igadget's position
+	// Notify Context Manager about the new position
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.XPOSITION, this.position.x);
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.YPOSITION, this.position.y);
 
-	// Notify Context Manager of igadget's size
+	// Notify Context Manager about the new sizes
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
 
-	// Notify Context Manager of the current lock status
+	// Notify Context Manager about the new sizes
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
 	this.setMenuColor(undefined, true);
@@ -729,9 +726,9 @@ IGadget.prototype.paint = function(onInit) {
 	this.iconDraggable = new IGadgetIconDraggable(this);
 	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
-	
-	if (this.layout.dragboard.isLocked()){
-		Event.observe(this.iconImg, "click", function(){
+
+	if (this.layout.dragboard.isLocked()) {
+		Event.observe(this.iconImg, "click", function() {
 												this.setMinimizeStatus(false);
 												this.layout.dragboard.raiseToTop(this);
 											 }.bind(this), true);
@@ -780,13 +777,13 @@ IGadget.prototype._createIGadgetMenu = function() {
 		                                       }.bind(this),
 		                                       1);
 
-		this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
-		                    gettext("Transparency"),
-		                    function() {
-		                        this.toggleTransparency();
-		                        LayoutManagerFactory.getInstance().hideCover();
-		                    }.bind(this),
-		                    2);
+		this.transparencyEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
+		                                               gettext("Transparency"),
+		                                               function() {
+		                                                   this.toggleTransparency();
+		                                                   LayoutManagerFactory.getInstance().hideCover();
+		                                               }.bind(this),
+		                                               2);
 
 		// Extract/Snap from/to grid option (see _updateExtractOption)
 		this.extractOptionOrder = 2;
@@ -949,7 +946,7 @@ IGadget.prototype.setName = function (igadgetName) {
 		this.gadgetMenu.setAttribute("title", igadgetName);
 		this.igadgetNameHTMLElement.update(this.name);
 		this.igadgetIconNameHTMLElement.update(this.name);
-		var o = new Object;
+		var o = new Object();
 		o.name = igadgetName;
 		o.id = this.id;
 		var igadgetData = Object.toJSON(o);
@@ -977,7 +974,7 @@ IGadget.prototype.setRefusedVersion = function (v) {
 
 	this.refusedVersion = v;
 	$("version_button_"+this.id).hide();
-	
+
 	var o = new Object;
 	o.refused_version = this.refusedVersion;
 	o.id = this.id;
@@ -989,25 +986,31 @@ IGadget.prototype.setRefusedVersion = function (v) {
 	PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
 }
 
-//checks if the refused version is lower than the last one
-IGadget.prototype.isRefusedUpgrade = function(){
+/**
+ * Checks if the refused version is lower than the last one
+ *
+ * @returns {Boolean}
+ */
+IGadget.prototype.isRefusedUpgrade = function() {
 	return this.refusedVersion && this.refusedVersion == this.gadget.getLastVersion();
 }
 
-//update the gadget to its newest version
-IGadget.prototype.upgradeIGadget = function(){
-	
-	function onUpgradeOk(transport){
+/**
+ * Update the gadget to its newest version
+ */
+IGadget.prototype.upgradeIGadget = function() {
+	function onUpgradeOk(transport) {
 		ShowcaseFactory.getInstance().reload(this.layout.dragboard.workSpaceId);
 	}
-	function onUpgradeError(transport, e){
+
+	function onUpgradeError(transport, e) {
 		var msg = gettext('<p>Sorry but the "%(igadgetName)s" gadget <b>cannot be automatically updated</b> because its version is not compatible ' +
 				'with the last version.<br/>If you want to update the gadget you must replace <b>by hand</b> the existing one with the gadget ' +
 				'available in the catalogue.</p><b>Do you want to remove the notice of the new version available?</b>');
 		msg = interpolate(msg, {igadgetName: this.name}, true);
 		LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){this.setRefusedVersion(this.gadget.getLastVersion());}.bind(this));
 	}
-	
+
 	var o = new Object;
 	o.id = this.id;
 	o.newResourceURL = this.gadget.getLastVersionURL();
@@ -1016,12 +1019,13 @@ IGadget.prototype.upgradeIGadget = function(){
 	var igadgetUrl = URIs.PUT_IGADGET_VERSION.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
 	                                            tabId: this.layout.dragboard.tabId,
 	                                            iGadgetId: this.id});
+
 	PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onUpgradeOk, onUpgradeError);
 }
 
 
 /**
- * Sets the background color of the iGadget's menu bar.
+ * Sets the background color of the menu bar.
  *
  * @param {String|Color} newColor
  */
@@ -1223,7 +1227,7 @@ IGadget.prototype._makeConfigureInterface = function() {
 }
 
 /**
- * Sets the size of the igadget's content.
+ * Sets the content size.
  *
  * @param {Number} newWidth
  * @param {Number} newHeight
@@ -1478,10 +1482,10 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 
 		this._recomputeWrapper(contentHeight);
 
-		// Notify Context Manager about the new igadget's size
+		// Notify Context Manager about the new size
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHTINPIXELS, contentHeight);
 
-	} else { //minimized
+	} else { // minimized
 		this._recomputeWrapper();
 		contentHeight = this.element.offsetHeight;
 		this.content.setStyle({height: "0px"});
@@ -1489,7 +1493,7 @@ IGadget.prototype._recomputeHeight = function(basedOnContent) {
 	}
 
 	if (oldHeight !== this.height) {
-		// Notify Context Manager about the new igadget's size
+		// Notify Context Manager about new size
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.height);
 	}
 }
@@ -1541,7 +1545,7 @@ IGadget.prototype.setSize = function(newWidth, newHeight, resizeLeftSide, persis
 	this._recomputeSize(false);
 
 	if (persist) {
-		// Notify Context Manager new igadget's sizes
+		// Notify Context Manager new sizes
 		var contextManager = this.layout.dragboard.getWorkspace().getContextManager()
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.HEIGHT, this.contentHeight);
 		contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.WIDTH, this.contentWidth);
