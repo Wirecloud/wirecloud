@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-12 12:11+0100\n"
+"POT-Creation-Date: 2010-01-13 09:28+0100\n"
 "PO-Revision-Date: 2008-02-19 13:13+0100\n"
 "Last-Translator: manuel <(null)>\n"
 "Language-Team: Español/España\n"
@@ -203,9 +203,8 @@ msgstr ""
 "recurso!"
 
 #: catalogue/templateParser.py:204
-#, fuzzy
 msgid "ERROR: missing attribute at Application element"
-msgstr "ERROR: falta un atributo en el elemento Option"
+msgstr "ERROR: falta un atributo en el elemento Application"
 
 #: catalogue/templateParser.py:234
 msgid "ERROR: missing attribute at Resource"
@@ -386,9 +385,8 @@ msgid "Object-URL"
 msgstr ""
 
 #: clms/models.py:24
-#, fuzzy
 msgid "Image-URL"
-msgstr "imagenURI"
+msgstr "URL de la imagen"
 
 #: clms/models.py:25
 msgid "Image-File"
@@ -871,14 +869,12 @@ msgid "AbstractVariable"
 msgstr "Variable abstracta"
 
 #: connectable/models.py:112
-#, fuzzy
 msgid "In InOut"
-msgstr "Entrada-Salida"
+msgstr "In InOut"
 
 #: connectable/models.py:113
-#, fuzzy
 msgid "Out InOut"
-msgstr "Entrada-Salida"
+msgstr "Out InOut"
 
 #: connectable/views.py:92 connectable/views.py:328
 msgid "JSON parameter expected"
@@ -916,7 +912,6 @@ msgid "Source"
 msgstr "Fuente"
 
 #: context/models.py:46
-#, fuzzy
 msgid "External"
 msgstr "Contexto externo"
 
@@ -946,25 +941,25 @@ msgstr ""
 msgid "Concept does not exist. You must use POST HTTP method in this case"
 msgstr "El concepto no existe. Use el metodo HTTP POST para este caso"
 
-#: deployment/views.py:75
+#: deployment/views.py:76
 msgid "This gadget cannot be created"
 msgstr "No se pudo crear el gadget"
 
-#: deployment/views.py:83
+#: deployment/views.py:84
 #, python-format
 msgid "Error creating deployment dirs: %(errorMsg)s"
 msgstr "Error al crear los directorios de despliegue: %(errorMsg)s"
 
-#: deployment/views.py:137
+#: deployment/views.py:139
 #, python-format
 msgid "Error extracting gadget files: %(errorMsg)s"
 msgstr "Error extrayendo los ficheros del gadget: %(errorMsg)s"
 
-#: deployment/views.py:164
+#: deployment/views.py:166
 msgid "This gadget could not be exported"
 msgstr "No se pudo exportar el gadget"
 
-#: deployment/views.py:196
+#: deployment/views.py:199
 #, python-format
 msgid "This gadget could not be exported: %(errorMsg)s"
 msgstr "No se pudo exportar el gadget: %(errorMsg)s"
@@ -982,7 +977,6 @@ msgid "Invalid template URL! Please, specify a valid one!"
 msgstr ""
 
 #: ezweb/views.py:126
-#, fuzzy
 msgid "Error ocurred processing template!"
 msgstr "Error al parsear el template"
 
@@ -1596,14 +1590,12 @@ msgid "Position"
 msgstr "Posición"
 
 #: igadget/models.py:61
-#, fuzzy
 msgid "Icon Position"
-msgstr "Posición"
+msgstr "Posición del icono"
 
 #: igadget/models.py:63
-#, fuzzy
 msgid "Refused Version"
-msgstr "Versión"
+msgstr "Versión Rechazada"
 
 #: igadget/models.py:70
 msgid "Variable definition"
@@ -1691,7 +1683,7 @@ msgstr "No se pudo actualizar las preferencias de la pestaña: "
 msgid "Url not specified"
 msgstr "URL no especificada"
 
-#: proxy/views.py:223
+#: proxy/views.py:217
 #, python-format
 msgid "Error processing proxy request: %s"
 msgstr "Error procesando la petición del proxy: %s"
@@ -1705,9 +1697,8 @@ msgid "Used times"
 msgstr ""
 
 #: resourceSubscription/models.py:55
-#, fuzzy
 msgid "Gadget Resource"
-msgstr "Crear recurso"
+msgstr "Gadget Resource"
 
 #: resourceSubscription/models.py:58
 msgid "State"
@@ -1721,38 +1712,17 @@ msgstr ""
 msgid "Change:"
 msgstr "Cambiar:"
 
-#: user/models.py:37
-msgid "username"
-msgstr "nombre de usuario"
-
-#: user/models.py:37
-msgid ""
-"Required. 30 characters or fewer. Alphanumeric characters only (letters, "
-"digits and underscores)."
-msgstr ""
-"Obligatorio. 30 caracteres o menos. Sólo se admiten carácteres alfanuméricos "
-"(letras, dígitos y guiones bajos)."
-
-#: user/models.py:38
-msgid "password"
-msgstr "Contraseña"
-
-#: user/models.py:38
-msgid ""
-"Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/\">change "
-"password form</a>."
-msgstr ""
-"Utilice '[contraseña]$[salt]$[hexdigest]' o utilice el <a href=\"password/"
-"\">formulario para cambio de contraseña</a>."
+#: user/models.py:44
+msgid "load_script"
+msgstr "load_script"
 
 #: workspace/models.py:40
 msgid "Creator"
 msgstr "Creador"
 
 #: workspace/models.py:43
-#, fuzzy
 msgid "Target Organizations"
-msgstr "Organización"
+msgstr "Organizaciones objetivo"
 
 #: workspace/models.py:70
 msgid "Active"
@@ -1875,3 +1845,23 @@ msgstr "No se pudo publicar el mashup: "
 #: workspace/views.py:860
 msgid "mashup cannot be published: duplicated mashup"
 msgstr "No se pudo publicar el mashup: está duplicado"
+
+#~ msgid "username"
+#~ msgstr "nombre de usuario"
+
+#~ msgid ""
+#~ "Required. 30 characters or fewer. Alphanumeric characters only (letters, "
+#~ "digits and underscores)."
+#~ msgstr ""
+#~ "Obligatorio. 30 caracteres o menos. Sólo se admiten carácteres "
+#~ "alfanuméricos (letras, dígitos y guiones bajos)."
+
+#~ msgid "password"
+#~ msgstr "Contraseña"
+
+#~ msgid ""
+#~ "Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/"
+#~ "\">change password form</a>."
+#~ msgstr ""
+#~ "Utilice '[contraseña]$[salt]$[hexdigest]' o utilice el <a href=\"password/"
+#~ "\">formulario para cambio de contraseña</a>."

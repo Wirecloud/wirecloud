@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-12 14:55+0100\n"
+"POT-Creation-Date: 2010-01-13 16:29+0100\n"
 "PO-Revision-Date: 2008-02-20 15:55+0100\n"
 "Last-Translator: manuel <miglesia@pegaso.ls.fi.upm.es>\n"
 "Language-Team: Spanish/Spain <es@li.org>\n"
@@ -23,12 +23,6 @@ msgstr "Fichero"
 msgid "Wizard"
 msgstr "Asistente"
 
-#: media/iphone/ezweb_iphone_default.js:1
-#: media/js/lib/prototype/prototype.improvements.js:58
-msgid "You are not allowed to perform this operation"
-msgstr "No estás autorizado a realizar esta operación"
-
-#: media/iphone/ezweb_iphone_default.js:1
 #: media/iphone/dragboard/iGadget.js:145 media/iphone/gadgetModel/Gadget.js:60
 #: media/iphone/opManager/WorkSpace.js:69 media/js/log/LogManager.js:126
 msgid ""
@@ -38,56 +32,10 @@ msgstr ""
 "Excepción de Javascript en el fichero %(errorFile)s (line: %(errorLine)s): %"
 "(errorDesc)s"
 
-#: media/iphone/ezweb_iphone_default.js:1
-#: media/iphone/gadgetModel/Gadget.js:69 media/js/gadgetModel/Gadget.js:75
-msgid "The gadget could not be added to the showcase: %(errorMsg)s."
-msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
-
-#: media/iphone/ezweb_iphone_default.js:1
-msgid ""
-"Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)"
-"s: %(exceptionMsg)s."
-msgstr ""
-"Error en el manejador de \"%(varName)s\" RVariable en el iGadget %(iGadgetId)"
-"s: %(exceptionMsg)s."
-
-#: media/iphone/ezweb_iphone_default.js:1
-msgid ""
-"IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" "
-"RVariable."
-msgstr ""
-"El iGadget %(iGadgetId)s no proporciona un manejador para la RVariable \"%"
-"(varName)s\"."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/varManager/varManager.js:67
-msgid "Error saving variables to persistence: %(errorMsg)s."
-msgstr "Error al guardar las variables en el servidor: %(errorMsg)s."
-
-#: media/iphone/ezweb_iphone_default.js:1
-msgid ""
-"IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\\nIf "
-"you need it, please insert it into the gadget's template."
-msgstr ""
-"El IGadget %(iGadgetId)s no dispone de ninguna variable llamada \"%(varName)s"
-"\".\n"
-"Si la necesita, añádala al template del gadget."
-
-#: media/iphone/ezweb_iphone_default.js:1
-#: media/js/contextManager/ContextManager.js:46
-#: media/js/contextManager/ContextManager.js:106
-msgid ""
-"There is not any concept of type \"%(type)s\" called \"%(concept)s\", the "
-"value of the iGadget variable \"%(varName)s\" will be empty."
-msgstr ""
-"No existe ningún concepto del tipo \"%(type)s\" llamada \"%(concept)s\", el "
-"valor de la variable \"%(varName)s\" iGadget estará vacia."
-
-#: media/iphone/ezweb_iphone_default.js:1
 #: media/iphone/dragboard/iGadget.js:154
 msgid "Error adding igadget to persistence: %(errorMsg)s."
 msgstr "Error al añadir el igadget en la persistencia: %(errorMsg)s."
 
-#: media/iphone/ezweb_iphone_default.js:1
 #: media/iphone/dragboard/iGadget.js:159 media/js/dragboard/dragboard.js:329
 msgid ""
 "The destination tab (%(tabName)s) is locked. Try to unlock it or select an "
@@ -96,108 +44,9 @@ msgstr ""
 "La pestaña de destino (%(tabName)s) está bloqueada. Intente desbloquearla o "
 "seleccione una pestaña no bloqueada."
 
-#: media/iphone/ezweb_iphone_default.js:1
-#: media/js/wiring/connectableInterface.js:987
-#: media/js/wiring/connectableInterface.js:995
-#: media/js/wiring/connectableInterface.js:1003 media/js/wiring/filter.js:104
-#: media/js/wiring/filter.js.py:237 media/js/wiring/filter.js:254
-#: media/js/wiring/filter.js.py:283 media/js/wiring/filter.js:303
-msgid "undefined"
-msgstr "indefinido"
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:134
-msgid "Error loading code of the filter '%(filterName)s'."
-msgstr "Error al cargar el código del filtro '%(filterName)s'."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:234
-msgid "Look out! '%(paramName)s' of '%(filterName)s' is required"
-msgstr ""
-"Cuidado, el parámetro '%(paramName)s' del filtro '%(filterName)s' es "
-"obligatorio"
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:250
-msgid ""
-"Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It "
-"must be a number"
-msgstr ""
-"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s'. "
-"Debe ser un número."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:279
-msgid ""
-"Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)"
-"s."
-msgstr ""
-"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s': %"
-"(error)"
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:295
-msgid "Error executing code of the filter '%(filterName)s'."
-msgstr "Error al ejecutar el código del filtro '%(filterName)s'."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/filter.js:301
-msgid ""
-"Error executing code of the filter '%(filterName)s'. Check the parametres."
-msgstr ""
-"Error al ejecutar el código del filtro '%(filterName)s'. Comprueba los "
-"parámetros."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/connectable.js:53
-#: media/js/wiring/connectable.js.py:65 media/js/wiring/connectable.js:89
-msgid "Unimplemented function: %(funcName)s"
-msgstr "Función sin implemencación: %(funcName)s"
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/dragboard/dragboard.js:86
-#: media/js/wiring/connectable.js:475
-msgid "Error committing dragboard changes to persistence: %(errorMsg)s."
-msgstr "Error al almacenar los cambios en el servidor: %(errorMsg)s."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:100
-msgid "Error in processVar: Channel input connectables can only be events."
-msgstr ""
-"Error in processVar: El atributo input de los conectables sólo puede "
-"contener eventos."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:122
-msgid ""
-"Error in processVar: Channel output connectables can only be slots or tabs."
-msgstr ""
-"Error in processVar: El atributo output de los conectables sólo puede "
-"contener slots o tabs."
-
-#: media/iphone/ezweb_iphone_default.js:1
-msgid ""
-"Wiring: Loop detected while recovering wiring status from persistence."
-"\\nOutput connection to channel \"%(targetChannel)s\" from channel \"%"
-"(sourceChannel)s\" will be ignored."
-msgstr ""
-"Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
-"persistencia.\n"
-" La conexión de salida al canal \"%(targetChannel)s\" desde el canal \"%"
-"(sourceChannel)s\" será ignorada."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:241
-msgid ""
-"Error adding iGadget into the wiring module of the workspace: Gadget "
-"instance already exists."
-msgstr ""
-"Error al añadir el iGadget al módulo de wiring del entorno de trabajo: la "
-"instancia de gadget ya existe."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:308
-msgid ""
-"Wiring error: Trying to retreive the connectables of an inexistent igadget."
-msgstr ""
-"Error de wiring: se intentó obtener los conectables de un igadget "
-"inexistente."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:354
-msgid "Error creating channel %(channelName)s: Channel already exists"
-msgstr "Error al crear el canal %(channelName)s: el canal ya existe."
-
-#: media/iphone/ezweb_iphone_default.js:1 media/js/wiring/wiring.js:452
-msgid "Error saving wiring status: %(errorMsg)s."
-msgstr "Error al guardar el estado del wiring: %(errorMsg)s"
+#: media/iphone/gadgetModel/Gadget.js:69 media/js/gadgetModel/Gadget.js:75
+msgid "The gadget could not be added to the showcase: %(errorMsg)s."
+msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
 
 #: media/iphone/gadgetModel/Gadget.js:140 media/js/gadgetModel/Gadget.js:158
 msgid ""
@@ -206,7 +55,7 @@ msgstr ""
 "[Distribuidor del gadget: %(vendor)s, nombre del gadget: %(name)s, versión: %"
 "(version)s]"
 
-#: media/js/catalogue/Catalogue.js:227 media/js/opManager/WorkSpace.js:208
+#: media/js/catalogue/Catalogue.js:227 media/js/opManager/WorkSpace.js:213
 msgid "Error merging workspace: %(errorMsg)s."
 msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
 
@@ -599,7 +448,7 @@ msgstr[1] "%(voteCount)s votos"
 msgid "Error creating the resource: %(errorMsg)s."
 msgstr "Error al crear el recurso: %(errorMsg)s"
 
-#: media/js/catalogue/Tagger.js:36 media/js/catalogue/UIUtils.js:625
+#: media/js/catalogue/Tagger.js:36 media/js/catalogue/UIUtils.js:630
 msgid "Tags must have at least three characters."
 msgstr "La etiquetas deben tener al menos tres carácteres"
 
@@ -615,55 +464,55 @@ msgstr "Error al eliminar la etiqueta: %(errorMsg)s"
 msgid "The resource could not be added to the catalogue: %(errorMsg)s."
 msgstr "No se pudo añadir el recurso al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/UIUtils.js:601
+#: media/js/catalogue/UIUtils.js:606
 msgid "Error deleting the Gadget: %(errorMsg)s."
 msgstr "Error al eliminar el gadget: %(errorMsg)s"
 
-#: media/js/catalogue/UIUtils.js:657
+#: media/js/catalogue/UIUtils.js:662
 msgid "Delete gadget"
 msgstr "Eliminar Gadget"
 
-#: media/js/catalogue/UIUtils.js:769 media/js/catalogue/UIUtils.js.py:816
+#: media/js/catalogue/UIUtils.js:774 media/js/catalogue/UIUtils.js.py:821
 msgid "Advanced Tagging"
 msgstr "Etiquetado avanzado"
 
-#: media/js/catalogue/UIUtils.js:772 media/js/catalogue/UIUtils.js.py:819
+#: media/js/catalogue/UIUtils.js:777 media/js/catalogue/UIUtils.js.py:824
 msgid "Advanced Search"
 msgstr "Búsqueda avanzada"
 
-#: media/js/catalogue/UIUtils.js:775 media/js/catalogue/UIUtils.js.py:822
+#: media/js/catalogue/UIUtils.js:780 media/js/catalogue/UIUtils.js.py:827
 msgid "Development Options"
 msgstr "Opciones de desarrollo"
 
-#: media/js/catalogue/UIUtils.js:794
+#: media/js/catalogue/UIUtils.js:799
 msgid "Hide Tagging"
 msgstr "Ocultar etiquetado"
 
-#: media/js/catalogue/UIUtils.js:797
+#: media/js/catalogue/UIUtils.js:802
 msgid "Simple Search"
 msgstr "Búsqueda sencilla"
 
-#: media/js/catalogue/UIUtils.js:800
+#: media/js/catalogue/UIUtils.js:805
 msgid "Hide Development Options"
 msgstr "Ocultar opciones de desarrollo"
 
-#: media/js/catalogue/UIUtils.js:1032
+#: media/js/catalogue/UIUtils.js:1037
 msgid "Error POST"
 msgstr "Error de POST"
 
-#: media/js/catalogue/UIUtils.js:1087
+#: media/js/catalogue/UIUtils.js:1092
 msgid "Error updating the preferred version: %(errorMsg)s."
 msgstr "Error al actualizar la versión favorita: %(errorMsg)s."
 
-#: media/js/catalogue/UIUtils.js:1111
+#: media/js/catalogue/UIUtils.js:1116
 msgid "Uploading packaged gadget"
 msgstr "Subiendo gadget empaquetado"
 
-#: media/js/catalogue/UIUtils.js:1135
+#: media/js/catalogue/UIUtils.js:1140
 msgid "The resource could not be added to the catalogue: %(errorMsg)s"
 msgstr "El recurso no pudo ser añadido al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/UIUtils.js:1143
+#: media/js/catalogue/UIUtils.js:1148
 msgid "Gadget uploaded successfully"
 msgstr "Gadget subido correctamente"
 
@@ -672,7 +521,7 @@ msgid "Choose all"
 msgstr "Elegir todo"
 
 #: media/js/cmsutils/widgets/SelectFilter2.js:50 media/js/opManager/Tab.js:600
-#: media/js/opManager/WorkSpace.js:753 media/js/opManager/WorkSpace.js:779
+#: media/js/opManager/WorkSpace.js:756 media/js/opManager/WorkSpace.js:782
 #: media/js/wiring/connectableInterface.js:445
 msgid "Remove"
 msgstr "Eliminar"
@@ -716,6 +565,15 @@ msgstr "%(current)s/%(total)s %(image)s"
 msgid "Error getting concept %(concept)s: %(errorMsg)s."
 msgstr "Error al recibir el concepto %(concept)s: %(errorMsg)s."
 
+#: media/js/contextManager/ContextManager.js:46
+#: media/js/contextManager/ContextManager.js:106
+msgid ""
+"There is not any concept of type \"%(type)s\" called \"%(concept)s\", the "
+"value of the iGadget variable \"%(varName)s\" will be empty."
+msgstr ""
+"No existe ningún concepto del tipo \"%(type)s\" llamada \"%(concept)s\", el "
+"valor de la variable \"%(varName)s\" iGadget estará vacia."
+
 #: media/js/contextManager/ContextManager.js:75
 msgid ""
 "WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New "
@@ -756,6 +614,10 @@ msgstr ""
 "Hay un movimiento pendiente que ha sido cancelado sin haber terminado dado "
 "que se ha llamado a la función initializeMove."
 
+#: media/js/dragboard/dragboard.js:86 media/js/wiring/connectable.js:475
+msgid "Error committing dragboard changes to persistence: %(errorMsg)s."
+msgstr "Error al almacenar los cambios en el servidor: %(errorMsg)s."
+
 #: media/js/dragboard/iGadget.js:318 media/js/dragboard/iGadget.js.py:897
 msgid "Error renaming igadget from persistence: %(errorMsg)s."
 msgstr "Error al renombrar el igadget de la persistencia: %(errorMsg)s."
@@ -778,11 +640,11 @@ msgstr "Este iGadget está alineado a la rejilla."
 
 #: media/js/dragboard/iGadget.js:384
 msgid "Exit Full Dragboard"
-msgstr ""
+msgstr "Salir de Pantalla Completa"
 
 #: media/js/dragboard/iGadget.js:393
 msgid "Full Dragboard"
-msgstr ""
+msgstr "Pantalla Completa"
 
 #: media/js/dragboard/iGadget.js:452 media/js/dragboard/iGadget.js.py:453
 msgid "Close"
@@ -825,7 +687,7 @@ msgid "Access to Information"
 msgstr "Acceder a la información"
 
 #: media/js/dragboard/iGadget.js:715 media/js/opManager/Tab.js:609
-#: media/js/opManager/WorkSpace.js:720
+#: media/js/opManager/WorkSpace.js:723
 msgid "Preferences"
 msgstr "Preferencias"
 
@@ -858,11 +720,12 @@ msgid "Do you want to remove the notice of the new version available?"
 msgstr "¿Desea eliminar el aviso de dispoinibilidad de nueva versión?"
 
 #: media/js/dragboard/iGadget.js:928
-#, fuzzy
 msgid ""
 "Error setting the refused version of the igadget to persistence: %(errorMsg)"
 "s."
-msgstr "Error al añadir el igadget en la persistencia: %(errorMsg)s."
+msgstr ""
+"Error al hacer persistente la versión rechazada en la actualización del "
+"igadget: %(errorMsg)s."
 
 #: media/js/dragboard/iGadget.js:964
 msgid ""
@@ -1198,10 +1061,14 @@ msgid ""
 "Share \"%(workspace)s\" workspace with everybody through either a public URL "
 "or an embed object"
 msgstr ""
+"Compartir el workspace \"%(workspace)s\" públicamente por medio de una URL o "
+"de un objeto embebible en otro sitio web"
 
 #: media/js/interfaceLayout/WindowMenu.js:641
 msgid "Share \"%(workspace)s\" workspace only with the following groups"
 msgstr ""
+"Compartir el espacio de trabajo \"%(workspace)s\" con uno de los siguientes "
+"grupos "
 
 #: media/js/interfaceLayout/WindowMenu.js:649
 msgid "Share Workspace"
@@ -1209,11 +1076,11 @@ msgstr "Compartir el entorno de trabajo"
 
 #: media/js/interfaceLayout/WindowMenu.js:665
 msgid "The available groups cannot be displayed"
-msgstr ""
+msgstr "No se pueden mostrar los grupos disponibles"
 
 #: media/js/interfaceLayout/WindowMenu.js:711
 msgid "You must select a group"
-msgstr ""
+msgstr "Debes seleccionar un grupo"
 
 #: media/js/interfaceLayout/WindowMenu.js:734
 #: media/js/interfaceLayout/WindowMenu.js:781
@@ -1298,6 +1165,10 @@ msgstr "URL:"
 msgid "HTML code:"
 msgstr "Código HTML:"
 
+#: media/js/lib/prototype/prototype.improvements.js:58
+msgid "You are not allowed to perform this operation"
+msgstr "No estás autorizado a realizar esta operación"
+
 #: media/js/log/LogManager.js:122
 msgid "unknown"
 msgstr "desconocido"
@@ -1306,48 +1177,48 @@ msgstr "desconocido"
 msgid "HTTP Error %(errorCode)s - %(errorDesc)s"
 msgstr "Error HTTP %(errorCode)s - %(errorDesc)s"
 
-#: media/js/opManager/OpManager.js:90
+#: media/js/opManager/OpManager.js:97
 msgid "Error loading EzWeb Platform: %(errorMsg)s."
 msgstr "Error al cargar la Plataforma EzWeb: %(errorMsg)s"
 
-#: media/js/opManager/OpManager.js:97
+#: media/js/opManager/OpManager.js:104
 msgid "Error loading EzWeb Platform"
 msgstr "Error al cargar la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:112
+#: media/js/opManager/OpManager.js:119
 msgid "Error creating a workspace: %(errorMsg)s."
 msgstr "Error al crear un entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:219
+#: media/js/opManager/OpManager.js:226
 msgid "Changing current workspace"
 msgstr "Cambiando el entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:303
+#: media/js/opManager/OpManager.js:310
 msgid "Loading EzWeb Platform"
 msgstr "Cargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:304
+#: media/js/opManager/OpManager.js:311
 msgid "Retreiving EzWeb code"
 msgstr "Descargando el código de la Plataforma EzWeb"
 
-#: media/js/opManager/OpManager.js:322
+#: media/js/opManager/OpManager.js:329
 msgid "Error loading \"%(theme)s\" theme. Trying with \"default\" theme."
 msgstr ""
 "Error cargando el tema \"%(theme)s\". Intentándolo con el tema por defecto"
 
-#: media/js/opManager/OpManager.js:345
+#: media/js/opManager/OpManager.js:352
 msgid "Error loading base theme. Expect problems."
 msgstr "Error cargando el tema base."
 
-#: media/js/opManager/OpManager.js:405
+#: media/js/opManager/OpManager.js:412
 msgid "Unloading Ezweb Platform"
 msgstr "Descargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:454
+#: media/js/opManager/OpManager.js:461
 msgid "Activating current Workspace"
 msgstr "Entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:482
+#: media/js/opManager/OpManager.js:489
 msgid ""
 "Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when "
 "it did not exist or it was not loaded yet. This is an error in EzWeb "
@@ -1359,7 +1230,7 @@ msgstr ""
 "error de la Plataforma EzWeb, por favor informe de ello.\n"
 "Mensaje de error: %(errorMsg)s"
 
-#: media/js/opManager/OpManager.js:523
+#: media/js/opManager/OpManager.js:530
 msgid "Error removing workspace: %(errorMsg)s."
 msgstr "Error al eliminar entorno de trabajo: %(errorMsg)s."
 
@@ -1403,32 +1274,31 @@ msgstr ""
 msgid "Mark as Visible"
 msgstr "Marcar como visible"
 
-#: media/js/opManager/Tab.js:522 media/js/opManager/WorkSpace.js:712
+#: media/js/opManager/Tab.js:522 media/js/opManager/WorkSpace.js:715
 msgid "Rename"
 msgstr "Renombrar"
 
 #: media/js/opManager/Tab.js:538 media/js/opManager/Tab.js.py:659
-#: media/js/opManager/WorkSpace.js:728
+#: media/js/opManager/WorkSpace.js:731
 msgid "Unlock"
 msgstr "Desbloquear"
 
 #: media/js/opManager/Tab.js:543 media/js/opManager/Tab.js.py:664
-#: media/js/opManager/WorkSpace.js:736
+#: media/js/opManager/WorkSpace.js:739
 msgid "Lock"
 msgstr "Bloquear"
 
 #: media/js/opManager/Tab.js:558
 msgid "no more tabs"
-msgstr ""
+msgstr "no hay más pestañas"
 
 #: media/js/opManager/Tab.js:581
 msgid "move to end"
-msgstr ""
+msgstr "mover al final"
 
 #: media/js/opManager/Tab.js:591
-#, fuzzy
 msgid "Move before..."
-msgstr "Ver más..."
+msgstr "Mover antes de..."
 
 #: media/js/opManager/Tab.js:602
 msgid "Do you really want to remove the \"%(tabName)s\" tab?"
@@ -1453,82 +1323,82 @@ msgstr "Tab no usable"
 msgid "Processing workspace data"
 msgstr "Procesando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:161
+#: media/js/opManager/WorkSpace.js:166
 msgid "Error renaming workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al renombrar el entorno de trabajo, los cambios no se guardarán: %"
 "(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:177
+#: media/js/opManager/WorkSpace.js:182
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al eliminar el entorno de trabajo, los cambios no se guardarán: %"
 "(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:191
+#: media/js/opManager/WorkSpace.js:196
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr "Error al publicar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:234
+#: media/js/opManager/WorkSpace.js:239
 msgid "Error creating a tab: %(errorMsg)s."
 msgstr "Error al crear una pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:333
+#: media/js/opManager/WorkSpace.js:336
 msgid "Error updating a workspace: invalid name"
 msgstr "Error al actualizar el entorno de trabajo: nombre no válido"
 
-#: media/js/opManager/WorkSpace.js:345
+#: media/js/opManager/WorkSpace.js:348
 msgid ""
 "Error updating a workspace: the name %(workSpaceName)s is already in use."
 msgstr ""
 "Error al actualizar un entorno de trabajo: el nombre %(workSpaceName)s ya se "
 "está usando."
 
-#: media/js/opManager/WorkSpace.js:383
+#: media/js/opManager/WorkSpace.js:386
 msgid "Downloading workspace data"
 msgstr "Descargando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:511
+#: media/js/opManager/WorkSpace.js:514
 msgid "there must be one tab at least"
-msgstr ""
+msgstr "debe haber al menos una pestaña"
 
-#: media/js/opManager/WorkSpace.js:513
+#: media/js/opManager/WorkSpace.js:516
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error al eliminar la pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:544
+#: media/js/opManager/WorkSpace.js:547
 msgid "Unloading current workspace"
 msgstr "Cerrando el entorno de trabajo actual"
 
-#: media/js/opManager/WorkSpace.js:640 media/js/opManager/WorkSpace.js:649
+#: media/js/opManager/WorkSpace.js:643 media/js/opManager/WorkSpace.js:652
 msgid "The Workspace has NOT been successfully shared."
 msgstr "El entorno de trabajo no ha podido ser compartido."
 
-#: media/js/opManager/WorkSpace.js:642
+#: media/js/opManager/WorkSpace.js:645
 msgid "The Workspace has been successfully shared."
 msgstr "El entorno de trabajo ha sido compartido correctamente."
 
-#: media/js/opManager/WorkSpace.js:698
+#: media/js/opManager/WorkSpace.js:701
 msgid "Mark as Active"
 msgstr "Marcar como activo"
 
-#: media/js/opManager/WorkSpace.js:746
+#: media/js/opManager/WorkSpace.js:749
 msgid "Share workspace"
 msgstr "Compartir el entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:755 media/js/opManager/WorkSpace.js:781
+#: media/js/opManager/WorkSpace.js:758 media/js/opManager/WorkSpace.js:784
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr "¿Realmente desea eliminar el entorno de trabajo \"%(workspaceName)s\"?"
 
-#: media/js/opManager/WorkSpace.js:762
+#: media/js/opManager/WorkSpace.js:765
 msgid "Publish workspace"
 msgstr "Publicar el entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:770
+#: media/js/opManager/WorkSpace.js:773
 msgid "Merge with workspace..."
 msgstr "Mezclar con entorno de trabajo..."
 
-#: media/js/opManager/WorkSpace.js:789
+#: media/js/opManager/WorkSpace.js:792
 msgid "No WorkSpaces availables"
 msgstr "No hay entornos de trabajo disponibles"
 
@@ -1653,6 +1523,10 @@ msgstr ""
 msgid "Theme to use by default. (default: %(defaultValue)s)"
 msgstr "Tema por defecto. (por defecto: %(defaultValue)s)"
 
+#: media/js/varManager/varManager.js:67
+msgid "Error saving variables to persistence: %(errorMsg)s."
+msgstr "Error al guardar las variables en el servidor: %(errorMsg)s."
+
 #: media/js/varManager/varManager.js:145
 msgid ""
 "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\n"
@@ -1661,6 +1535,11 @@ msgstr ""
 "El IGadget %(iGadgetId)s no dispone de ninguna variable llamada \"%(varName)s"
 "\".\n"
 "Si la necesita, añádala al template del gadget."
+
+#: media/js/wiring/connectable.js:53 media/js/wiring/connectable.js.py:65
+#: media/js/wiring/connectable.js:89
+msgid "Unimplemented function: %(funcName)s"
+msgstr "Función sin implemencación: %(funcName)s"
 
 #: media/js/wiring/connectableInterface.js:468
 msgid "Channel name cannot be empty."
@@ -1680,7 +1559,7 @@ msgstr "Filtros"
 
 #: media/js/wiring/connectableInterface.js:549
 msgid "|"
-msgstr ""
+msgstr "|"
 
 #: media/js/wiring/connectableInterface.js:555
 msgid "Remote channel"
@@ -1711,6 +1590,64 @@ msgstr "Introduzca la URL en donde se escribirá o "
 msgid "None"
 msgstr "Ninguno"
 
+#: media/js/wiring/connectableInterface.js:987
+#: media/js/wiring/connectableInterface.js:995
+#: media/js/wiring/connectableInterface.js:1003 media/js/wiring/filter.js:104
+#: media/js/wiring/filter.js.py:237 media/js/wiring/filter.js:254
+#: media/js/wiring/filter.js.py:283 media/js/wiring/filter.js:303
+msgid "undefined"
+msgstr "indefinido"
+
+#: media/js/wiring/filter.js:134
+msgid "Error loading code of the filter '%(filterName)s'."
+msgstr "Error al cargar el código del filtro '%(filterName)s'."
+
+#: media/js/wiring/filter.js:234
+msgid "Look out! '%(paramName)s' of '%(filterName)s' is required"
+msgstr ""
+"Cuidado, el parámetro '%(paramName)s' del filtro '%(filterName)s' es "
+"obligatorio"
+
+#: media/js/wiring/filter.js:250
+msgid ""
+"Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It "
+"must be a number"
+msgstr ""
+"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s'. "
+"Debe ser un número."
+
+#: media/js/wiring/filter.js:279
+msgid ""
+"Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)"
+"s."
+msgstr ""
+"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s': %"
+"(error)"
+
+#: media/js/wiring/filter.js:295
+msgid "Error executing code of the filter '%(filterName)s'."
+msgstr "Error al ejecutar el código del filtro '%(filterName)s'."
+
+#: media/js/wiring/filter.js:301
+msgid ""
+"Error executing code of the filter '%(filterName)s'. Check the parametres."
+msgstr ""
+"Error al ejecutar el código del filtro '%(filterName)s'. Comprueba los "
+"parámetros."
+
+#: media/js/wiring/wiring.js:100
+msgid "Error in processVar: Channel input connectables can only be events."
+msgstr ""
+"Error in processVar: El atributo input de los conectables sólo puede "
+"contener eventos."
+
+#: media/js/wiring/wiring.js:122
+msgid ""
+"Error in processVar: Channel output connectables can only be slots or tabs."
+msgstr ""
+"Error in processVar: El atributo output de los conectables sólo puede "
+"contener slots o tabs."
+
 #: media/js/wiring/wiring.js:147
 msgid ""
 "Wiring: Loop detected while recovering wiring status from persistence.\n"
@@ -1722,9 +1659,32 @@ msgstr ""
 " La conexión de salida al canal \"%(targetChannel)s\" desde el canal \"%"
 "(sourceChannel)s\" será ignorada."
 
+#: media/js/wiring/wiring.js:241
+msgid ""
+"Error adding iGadget into the wiring module of the workspace: Gadget "
+"instance already exists."
+msgstr ""
+"Error al añadir el iGadget al módulo de wiring del entorno de trabajo: la "
+"instancia de gadget ya existe."
+
 #: media/js/wiring/wiring.js:282
 msgid "Wiring error: Trying to remove an inexistent igadget."
 msgstr "Error de wiring: se intentó eliminar un igadget inexistente."
+
+#: media/js/wiring/wiring.js:308
+msgid ""
+"Wiring error: Trying to retreive the connectables of an inexistent igadget."
+msgstr ""
+"Error de wiring: se intentó obtener los conectables de un igadget "
+"inexistente."
+
+#: media/js/wiring/wiring.js:354
+msgid "Error creating channel %(channelName)s: Channel already exists"
+msgstr "Error al crear el canal %(channelName)s: el canal ya existe."
+
+#: media/js/wiring/wiring.js:452
+msgid "Error saving wiring status: %(errorMsg)s."
+msgstr "Error al guardar el estado del wiring: %(errorMsg)s"
 
 #: media/js/wiring/wiringGUI.js:47
 msgid "Channel"
@@ -1794,3 +1754,35 @@ msgstr ""
 "Estas ranuras reciben los valores\n"
 "producidos por los eventos de\n"
 "otros gadgets."
+
+#~ msgid ""
+#~ "Error in the handler of the \"%(varName)s\" RVariable in iGadget %"
+#~ "(iGadgetId)s: %(exceptionMsg)s."
+#~ msgstr ""
+#~ "Error en el manejador de \"%(varName)s\" RVariable en el iGadget %"
+#~ "(iGadgetId)s: %(exceptionMsg)s."
+
+#~ msgid ""
+#~ "IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" "
+#~ "RVariable."
+#~ msgstr ""
+#~ "El iGadget %(iGadgetId)s no proporciona un manejador para la RVariable \"%"
+#~ "(varName)s\"."
+
+#~ msgid ""
+#~ "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\"."
+#~ "\\nIf you need it, please insert it into the gadget's template."
+#~ msgstr ""
+#~ "El IGadget %(iGadgetId)s no dispone de ninguna variable llamada \"%"
+#~ "(varName)s\".\n"
+#~ "Si la necesita, añádala al template del gadget."
+
+#~ msgid ""
+#~ "Wiring: Loop detected while recovering wiring status from persistence."
+#~ "\\nOutput connection to channel \"%(targetChannel)s\" from channel \"%"
+#~ "(sourceChannel)s\" will be ignored."
+#~ msgstr ""
+#~ "Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
+#~ "persistencia.\n"
+#~ " La conexión de salida al canal \"%(targetChannel)s\" desde el canal \"%"
+#~ "(sourceChannel)s\" será ignorada."
