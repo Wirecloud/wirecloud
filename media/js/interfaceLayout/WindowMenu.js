@@ -813,6 +813,7 @@ function AddSiteMenu (element) {
 	var fields = {
 		'name': {label: gettext('Name'), type: 'id', required: true},
 		'URL': {label: gettext('URL'), type: 'url', required: true},
+		'method': {label: gettext('Method'), type: 'select', options: [{value: 'GET', label: 'GET'}, {value: 'POST', label: 'POST'}]},
 		'separator1': {type: 'separator', required: true},
 		'parse_parameters': {label: gettext('Parse URL Parameters'), type: 'boolean'},
 		'fixed_params': {label: gettext('Fixed Params'), type: 'text'},

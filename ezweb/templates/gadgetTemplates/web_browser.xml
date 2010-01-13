@@ -15,6 +15,10 @@
   </Catalog.ResourceDescription>
   <!-- EzWeb Gadgets Tags -->
   <Platform.Preferences>
+     <Preference name="htmlVerb" type="list" description="HTML verb" label="HTML verb" {% if method %}default="{{method}}" {% else %} default="GET" {% endif %}>
+       <Option value="GET" name="GET"/>
+       <Option value="POST" name="POST"/>
+     </Preference>
      <Preference name="urlPref" type="text" description="HTML base URL" label="Base URL" default="{{URL}}"/>
      <Preference name="homeUrl" type="text" description="Home page URL" label="Home page URL" default="{{home_URL}}"/>
      <Preference name="refreshingTime" type="text" description="Refreshing interval (minutes)" label="Refresh every... (minutes)" default="0"/>
@@ -42,6 +46,12 @@
     <Event name="{{event}}" type="text" label="{{event}}" friendcode="{{event}}"/>
     {% endfor %}
   </Platform.Wiring>
+  <!-- EzWeb Context -->
+  <Platform.Context>
+	<Context name="language" type="text" concept="language"/>
+	<GadgetContext name="height" type="text" concept="heightInPixels"/>
+  </Platform.Context> 
+
   <Platform.Link>
     <XHTML href="{{XHTML}}"/>
   </Platform.Link>

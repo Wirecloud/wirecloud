@@ -26,8 +26,9 @@
 
 }
 #header div.param{
-	display: inline-table;
-	margin: 0 3px;
+	margin: 0 5px 0 0;
+	white-space: nowrap;
+	float:left;
 	padding: 1px;
 }
 
@@ -35,15 +36,17 @@
 	font-size:85%;
 }
 .param label{
-	display:block;
+	display: inline;
 	font-size:90%;
 	font-weight:bold;
+	margin-right: 4px;
 }
 #header div.event{
 	background: #DEDEDE;
 }
 button{
 	vertical-align:bottom;
+	float:left;
 }
 form, body {
 	margin: 0;
@@ -52,10 +55,50 @@ form{
 	display: inline;
 	margin: 0 5px;
 }
+
+#video{
+	clear:both;
+}
+
 </style>
 
 <script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
+
 <script>
+var languages = {"en":{
+					"home":"Home",
+					"refresh":"Refresh",
+					"show_link":"Show variables",
+					"hide_link":"Hide variables"
+				},
+				"es":{
+					"home":"Inicio",
+					"refresh":"Actualizar",
+					"show_link":"Mostrar parámetros",
+					"hide_link":"Ocultar parámetros"
+				}};
+
+var _ = function(key) {
+	if (document.getElementById(key)){
+		element = document.getElementById(key);
+		element.innerHTML= "";
+
+		if (languages[language.get()] && languages[language.get()][key]){
+			element.appendChild(document.createTextNode(languages[language.get()][key]));
+		}
+		else {
+			element.appendChild(document.createTextNode(key));
+		}
+	}
+};
+
+var language = EzWebAPI.createRGadgetVariable("language", function(){
+	_("refresh");
+	_("home");
+	_("show_link");
+	_("hide_link");
+	});
+
 
 var agent=navigator.userAgent;
 var is_iphone = (agent.indexOf('iPhone')!=-1);
@@ -94,10 +137,42 @@ function URLDecode( url )
    return plaintext;
 }
 
+function parseURL(url) {
+	var a =  document.createElement('a');
+	a.href = url;
+	return {
+	    source: url,
+	    protocol: a.protocol.replace(':',''),
+	    host: a.hostname,
+	    port: a.port,
+	    query: a.search,
+	    params: (function(){
+	        var ret = {},
+	            seg = a.search.replace(/^\?/,'').split('&'),
+	            len = seg.length, i = 0, s;
+	        for (;i<len;i++) {
+	            if (!seg[i]) { continue; }
+	            s = seg[i].split('=');
+	            ret[s[0]] = s[1];
+	        }
+	        return ret;
+	    })(),
+	    file: (a.pathname.match(/\/([^\/?#]+)$/i) || [,''])[1],
+	    hash: a.hash.replace('#',''),
+	    path: a.pathname.replace(/^([^\/])/,'/$1'),
+	    relative: (a.href.match(/tp:\/\/[^\/]+(.+)/) || [,''])[1],
+	    segments: a.pathname.replace(/^\//,'').split('/')
+	};
+}
+
+// CONTEXT
+var height = EzWebAPI.createRGadgetVariable("height", repaint);
 //PREFERENCES
 var urlPref = EzWebAPI.createRGadgetVariable("urlPref", setURL);
 var homeUrl = EzWebAPI.createRGadgetVariable("homeUrl", setHomeURL);
 var refreshingTime = EzWebAPI.createRGadgetVariable("refreshingTime", setRefreshingTime);
+var httpVerb = EzWebAPI.createRGadgetVariable("htmlVerb", setHttpVerb);
+
 //WIRING
 {% if params %}
 var params = EzWebAPI.createRGadgetVariable("parameters", setParams);
@@ -112,7 +187,7 @@ var slotValuesArray = new Array();
 slotValuesArray[{{forloop.counter0}}] = {
 	'name': '{{ param }}',
 	'value': null,
-	'withValue': false,
+	'withValue': false
 };
 var {{ param }}_event = EzWebAPI.createRWGadgetVariable("{{ param }}_event");
 var {{ param }}_slot = EzWebAPI.createRGadgetVariable("{{ param }}_slot",{{ param }}_slot_handler);
@@ -139,14 +214,26 @@ var {{ event }} = EzWebAPI.createRWGadgetVariable("{{ event }}");
 
 //GLOBAL
 var real_url;
-var current_url;
 var idInterval;
 
+function repaint(){
+	var heightHeader = document.getElementById("header").offsetHeight;
+	if(height.get() > (heightHeader))
+		document.getElementById("video").style.height = (height.get() - heightHeader) + 'px';
+}
+
 function init(){
-	resizeIframe()
+
 	//the url comes from the urlPref or homeUrl preferences
 	var home_url = homeUrl.get();
 	real_url = urlPref.get();
+	
+	//print the preference values
+	{% for param in params %}
+		if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
+			document.getElementById("{{ param }}_event").value={{ param }}_pref.get()
+		}
+	{% endfor %}
 	
 	{% if params %}
 	if (!params.get() || params.get()==""){
@@ -163,12 +250,6 @@ function init(){
 	}
 	{% endif %}
 
-	//print the preference values
-	{% for param in params %}
-		if ({{ param }}_pref.get() && {{ param }}_pref.get()!=""){
-			document.getElementById("{{ param }}_event").value={{ param }}_pref.get()
-		}
-	{% endfor %}
 	if (home_url=="")
 		document.getElementById("home").style.display="none";
 	//else -> wait the wiring propagation
@@ -192,33 +273,28 @@ function init(){
 	}
 	if(refreshingTime.get() > 0)
 		idInterval = setInterval("refresh()",parseInt(refreshingTime.get()) * 60000);
+	
 }
-
-function resizeIframe(){
-	iframe = document.getElementById("browser");
-	header = document.getElementById("header");
-	iframe.height = window.innerHeight - header.offsetHeight; 
-}
-
 function loadURL(url_){
-
- if(url_ && url_!=""){
-   url_ = URLDecode (url_);
-   var frm = document.getElementById("browser");
-   frm.setAttribute('src',url_);
-	current_url = url_;
- }
+	if (url_ && url_!="" && url_!="http://") {
+		url_ = URLDecode(url_);
+		loadURLForm(url_.replace(/^\s*|\s*$/g,""));
+		
+	}
 }
+function setURL(value){
+	if (value.indexOf('http')!=0)
+		real_url = 'http://'+value;
+	else
+		real_url = value;
+	loadURL(real_url + params.get());
+}
+
 function setHomeURL(value){
 	if (value && value!="")
 		document.getElementById("home").style.display="inline";
 	else
 		document.getElementById("home").style.display="none";
-}
-
-function setURL(value){
-	real_url = value;
-	//loadURL(real_url + params.get());
 }
 
 {% if params %}
@@ -238,8 +314,13 @@ function setParams(value){
 {% endif %}
 
 function refresh(){
-	loadURL(current_url);
+	loadURL(real_url);
 }
+
+function setHttpVerb(value) {
+	refresh();
+}
+
 
 function setRefreshingTime(value){
 	if(parseInt(value) > 0){
@@ -254,47 +335,27 @@ function goHome(){
 
 function sendParameters(){
 	var elements = document.getElementById('parameters').elements;
-	var params_query = '';
-	//var URL =""
 	// Send form values through the events variables
 	for (index=0;index<elements.length;index++){
 		var field = elements[index]
 		if (field.nodeName.toLowerCase()=="input"){
 			if (field.value!=""){
-				eval(field.name).set(field.value);
-				// Build query string 
-				params_query = params_query + '&' + field.name.substring(0,field.name.lastIndexOf('_event')) + '=' + field.value;
+				eval(field.id).set(field.value);
 			}else{
-				eval(field.name).set(null);
+				eval(field.id).set(null);
 			}
 		}		
 	}
-	buildQueryAndInvoke(real_url, params_query);
-	
-	//return false;
-}
+	loadURL(real_url);
 
-// Build query string and invoke URL
-function buildQueryAndInvoke(real_url, params_query) {
-	if (real_url.charAt(real_url.length-1) == '?') {
-		// If the last character is a '?', we don't have fixed params, so we remove the initial '&'
-		params_query = params_query.substring(1); 
-	}
-	loadURL(real_url + params_query);
 }
 
 function checkSlotValues(){
-	var params_query = '';
 
 	for (var i = 0; i<slotValuesArray.length; i++) {
 		if (!slotValuesArray[i].withValue) {
 			// If we've found some 'false' element, do nothing
 			return; 
-		} else {
-			if (slotValuesArray[i].value != null){
-				// Build query string 
-				params_query = params_query + '&' + slotValuesArray[i].name + '=' + slotValuesArray[i].value;
-			}
 		}
 	}
 	// If we get here, all the elements of the slotWithValueArray are 'true'. 
@@ -302,26 +363,55 @@ function checkSlotValues(){
 	for (var i = 0; i<slotValuesArray.length; i++) {
 		slotValuesArray[i].withValue = false;
 	}
-	buildQueryAndInvoke(real_url, params_query)
+	loadURL(real_url);
 }
+
+function loadURLForm(value) {
+
+	if (!value) return;
+	var frm = document.getElementById('parameters');
+	var url = parseURL(value);
+
+	//add the fixed params as hidden inputs	
+	var fixed_params_div = document.getElementById('fixed_params');
+	for (var k in url.params) {
+		var prm = document.createElement('input');
+		prm.setAttribute('type', 'hidden');
+		prm.setAttribute('name', k);
+		prm.setAttribute('value', url.params[k]);
+		fixed_params_div.appendChild(prm);
+	}
+
+	var current_url = url.protocol+'://'+url.host+(url.protocol = '' ? ':'+url.protocol : '')+url.path;
+	frm.setAttribute('action', current_url);
+	frm.setAttribute('method', httpVerb.get());
+	frm.setAttribute('target', 'browser');
+	frm.submit();
+	
+	//remove the fixed params in case the URLpref changes
+	fixed_params_div.innerHTML = "";
+}
+
 
 function showVariables(){
 	document.getElementById("show_link").style.display="none";
 	document.getElementById("hide_link").style.display="inline";	
 	document.getElementById("parameters").style.display="block";
-	resizeIframe();
+	repaint();
 }
 
 function hideVariables(){
 	document.getElementById("hide_link").style.display="none";
 	document.getElementById("show_link").style.display="inline";	
 	document.getElementById("parameters").style.display="none";
-	resizeIframe();
+	repaint();
 }
 
 </script>
+
 </head>
-<body onload="init()" onresize="resizeIframe()">
+
+<body onload="init()">
 <div id="header">
 	<div id="source" style="display:none"><label>source: </label></div>
 	<div id="home" onclick="goHome()" class="link">home</div>
@@ -330,9 +420,10 @@ function hideVariables(){
 	<div id="show_link" onclick="showVariables()" class="link">show variables</div>
 	<div id="hide_link" onclick="hideVariables()" style="display:none" class="link">hide variables</div>
 	{% endif %}
-	<form id="parameters" name="parameters" style="display:none" onsubmit="return false;">
+	<form id="parameters" name="parameters" style="display:none" method="get" target="browser">
+	<div id="fixed_params" style="display:none"></div>
 	{% for param in params %}
-		<div class="param"><label>{{ param }}</label><input size="9" type="text" name="{{ param }}_event" id="{{ param }}_event" /></div>
+		<div class="param"><label>{{ param }}</label><input size="9" type="text" name="{{ param }}" id="{{ param }}_event" /></div>
 	{% endfor %}
 	{% for event in events %}
 		<div class="param event"><label>{{ event }}</label><input size="9" type="text" name="{{ event }}" id="{{ event }}" /></div>
@@ -343,7 +434,7 @@ function hideVariables(){
 	</form>
 </div>
 <div id="video">
-<iframe id="browser" frameborder="0" width="100%"></iframe>
+<iframe id="browser" name="browser" frameborder="0" width="100%" height="100%"></iframe>
 </div>
 </body>
 </html>
