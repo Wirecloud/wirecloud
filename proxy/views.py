@@ -48,6 +48,8 @@ from django.conf import settings
 
 from django.utils import simplejson
 
+from django.contrib.auth.decorators import login_required
+
 import string
 
 class MethodRequest(urllib2.Request):
@@ -75,9 +77,15 @@ class Proxy(Resource):
             return opener.open(req)
         except urllib2.HTTPError, e:
             return e
-
+        
+    @login_required
     def create(self, request):
-
+        try:
+            if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
+                return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+        except:
+            return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+        
         # URI to be called
         if request.POST.has_key('url'):
             url = request.POST['url']

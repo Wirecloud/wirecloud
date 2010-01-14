@@ -55,11 +55,20 @@ class FileLogManager:
                 user = "[" + _("Anonymous") + "]"
             else:
                 user = request.user.username
-            
+                      
             if response == None:
                 line = unicode('\n[%s]  %s  %s  %s  %s' % ( datetime.today().strftime('%d/%m/%Y %H:%M:%S'), request.method, request.path, user, 'ERROR'))
             else:
                 line = unicode('\n[%s]  %s  %s  %s  %s' % ( datetime.today().strftime('%d/%m/%Y %H:%M:%S'), request.method, request.path, user, response.status_code))
+            
+            #proxy section
+            if request.path.startswith("/proxy"):
+                try:
+                    proxy_url = request.POST['url']
+                    from_ip = request.META["REMOTE_ADDR"]
+                    line += unicode('  %s  %s' % (from_ip, proxy_url))
+                except:
+                    pass
                 
             f.write(line)
             
