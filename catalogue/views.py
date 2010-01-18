@@ -134,22 +134,20 @@ class GadgetsCollection(Resource):
         a= int(pag)
         b= int(offset)
 
-        items = get_resources_that_must_be_shown(user=user).count()
-
         # Get all the gadgets in the catalogue
-        if a == 0 or b == 0:
-            gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)
+        gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)
+        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
+        items = len(gadgetlist)
+        
+        if not(a == 0 or b == 0):
         # Get the requested gadgets
-        else:
             c=((a-1)*b)
             d= (b*a)
 
             if a==1:
                 c=0
-            gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)[c:d]
+            gadgetlist = gadgetlist[c:d]
             
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
-
         return get_resource_response(gadgetlist, format, items, user)
 
 
@@ -394,9 +392,9 @@ class GadgetsCollectionByGlobalSearch(Resource):
             gadgetlist = get_uniquelist(gadgetlist,fields)
         else:
             gadgetlist = get_uniquelist(gadgetlist)
-        items = len(gadgetlist)
         
         gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
+        items = len(gadgetlist)
         
         gadgetlist = get_sortedlist(gadgetlist, orderby)
         gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
