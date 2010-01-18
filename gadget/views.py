@@ -54,6 +54,8 @@ from workspace.views import get_user_gadgets
 from commons.logs_exception import TracedServerError
 
 from gadget.utils import * 
+
+from HTMLParser import HTMLParseError
     
 
 class GadgetCollection(Resource):
@@ -147,7 +149,11 @@ class GadgetCodeEntry(Resource):
         if (content_type != 'text/html') and (content_type != 'application/xml+html'):
             return HttpResponse(code.code, mimetype='%s; charset=UTF-8' % content_type)
         else:
-            return HttpResponse(includeTagBase(code.code, code.url, request), mimetype='%s; charset=UTF-8' % content_type)
+            try:
+                return HttpResponse(includeTagBase(code.code, code.url, request), mimetype='%s; charset=UTF-8' % content_type)
+            except HTMLParseError, e:
+                msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg' : e.msg}
+                return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
