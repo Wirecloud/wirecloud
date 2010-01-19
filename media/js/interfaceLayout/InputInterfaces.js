@@ -518,7 +518,11 @@ function MultipleInputInterface(fieldId, fieldDesc) {
 
 	for (var i = 0; i < fieldDesc.options.length; i++) {
 		var option = new Option(fieldDesc.options[i].label, fieldDesc.options[i].value);
-		this.inputElement.add(option, null);
+		try {
+			this.inputElement.add(option, null);
+		} catch (e) {
+			this.inputElement.add(option); // IE < 8
+		}
 	}
 }
 MultipleInputInterface.prototype = new InputInterface();

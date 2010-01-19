@@ -26,6 +26,7 @@
 /**
  * Base class for managing window menus whose HTML code is in templates/index.html.
  */
+  
 function WindowMenu(title) {
 	// Allow hierarchy
 	if (arguments.length == 0)
@@ -77,6 +78,7 @@ function WindowMenu(title) {
 
 	// Initial title
 	this.titleElement.update(title);
+	
 }
 
 /**
@@ -633,6 +635,18 @@ FormWindowMenu.prototype.show = function () {
  * Specific class for publish windows
  */
 function PublishWindowMenu (element) {
+
+	//ezweb_organizations as options to be used in select inputs
+	var orgs = JSON.parse(ezweb_organizations);
+	this.organizations = new Array();
+	//first option (empty value)
+	this.organizations.push({label: '------', value: ''});
+	for (var i = 0; i < orgs.length; i++) {
+		//org__groupname: name = groupname, value = org__groupname
+		name = orgs[i].split('__')[1];
+		this.organizations.push({label: name, value: orgs[i]});
+	}
+
 	var fields = {
 		'name': {label: gettext('Mashup Name'), type:'id', required: true},
 		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
@@ -642,11 +656,12 @@ function PublishWindowMenu (element) {
 		'description': {label: gettext('Description'), type:'longtext'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
-		'organization'  : {label: gettext('Organization'), type: 'text'}
+		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
-	
+
+	//fill a warning message	
 	var warning = document.createElement('div');
 	Element.extend(warning);
 	warning.addClassName('msg warning');
@@ -763,6 +778,18 @@ ShareWindowMenu.prototype.show = function() {
  * Specific class for Feed creator window.
  */
 function AddFeedMenu (element) {
+
+	//ezweb_organizations as options to be used in select inputs
+	var orgs = JSON.parse(ezweb_organizations);
+	this.organizations = new Array();
+	//first option (empty value)
+	this.organizations.push({label: '------', value: ''});
+	for (var i = 0; i < orgs.length; i++) {
+		//org__groupname: name = groupname, value = org__groupname
+		name = orgs[i].split('__')[1];
+		this.organizations.push({label: name, value: orgs[i]});
+	}
+
 	var fields = {
 		'name'          : {label: gettext('Name'), type: 'id', required: true},
 		'URL'           : {label: gettext('URL'), type: 'url',  required: true},
@@ -779,7 +806,7 @@ function AddFeedMenu (element) {
 		                            ]
 		                  },
 		'menu_color'    : {label: gettext('Menu Color'), type: 'color'},
-		'organization'  : {label: gettext('Organization'), type: 'text'}
+		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new feed'));
@@ -810,6 +837,18 @@ AddFeedMenu.prototype.executeOperation = function(form) {
  * Specific class for Site creator window.
  */
 function AddSiteMenu (element) {
+
+	//ezweb_organizations as options to be used in select inputs
+	var orgs = JSON.parse(ezweb_organizations);
+	this.organizations = new Array();
+	//first option (empty value)
+	this.organizations.push({label: '------', value: ''});
+	for (var i = 0; i < orgs.length; i++) {
+		//org__groupname: name = groupname, value = org__groupname
+		name = orgs[i].split('__')[1];
+		this.organizations.push({label: name, value: orgs[i]});
+	}
+
 	var fields = {
 		'name': {label: gettext('Name'), type: 'id', required: true},
 		'URL': {label: gettext('URL'), type: 'url', required: true},
@@ -824,7 +863,7 @@ function AddSiteMenu (element) {
 		'imageURI': {label: gettext('Image URL'), type: 'url'},
 		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
 		'menu_color': {label: gettext('Menu Color (Hex.)'), type: 'color'},
-		'organization': {label: gettext('Organization'), type: 'text'},
+		'organization': {label: gettext('Organization'), type: 'select', options:this.organizations},
 		'source': {label: gettext('Source'), type: 'text'},
 		'source_URL': {label: gettext('Source URL'), type: 'url'}
 	}

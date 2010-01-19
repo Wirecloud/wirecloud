@@ -214,8 +214,9 @@ _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalog
 
 var URIs = new _URIConstants();
 
-var ezweb_user_name = '{{ user.username }}'
-var tag_categories = '{{ tag_categories|safe }}'
+var ezweb_user_name = '{{ user.username }}';
+var ezweb_organizations = '{{ ezweb_organizations|safe }}';
+var tag_categories = '{{ tag_categories|safe }}';
 var _currentTheme = null;
 
 var public_workspace = '{{ active_workspace }}';

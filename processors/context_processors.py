@@ -34,6 +34,7 @@ from django.conf import settings
 from commons.utils import json_encode
 from catalogue.models import Category, Tag
 from preferences.views import get_user_theme
+from django.contrib.auth.models import Group
 
 def server_url(request):
     ret = {}
@@ -149,3 +150,8 @@ def installed_apps(request):
        return {'installed_apps': settings.INSTALLED_APPS}
     else:
         return {'installed_apps': None}
+    
+# Organizations available in EzWeb
+def ezweb_organizations(request):
+    queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')   
+    return {'ezweb_organizations': json_encode([g.name for g in queryGroups])}

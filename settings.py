@@ -171,6 +171,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.theme_url',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
+    'processors.context_processors.ezweb_organizations',
 )
 
 SESSION_COOKIE_AGE = 5184000    #2 months
