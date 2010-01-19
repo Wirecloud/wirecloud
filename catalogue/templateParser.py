@@ -212,7 +212,7 @@ class TemplateHandler(handler.ContentHandler):
         
         organization_name=organization_accumulator[0]
         
-        organization, created = Group.objects.get_or_create(name=organization_name.upper())
+        organization, created = Group.objects.get_or_create(name__iexact=organization_name)
             
         self._organization_list.append(organization)
 
@@ -366,9 +366,6 @@ class TemplateHandler(handler.ContentHandler):
             if (self._application):
                 gadget.id = self._application
 
-            # A gadget belongs to many organizations
-            for organization in self._organization_list:
-                gadget.organization.add(organization)
 
             # Checking certification status
             gadget.certification = get_certification_status(self._user)
@@ -387,6 +384,10 @@ class TemplateHandler(handler.ContentHandler):
                userRelated.added_by = True
 
                userRelated.save()
+               
+               # A gadget belongs to many organizations
+               for organization in self._organization_list:
+                   gadget.organization.add(organization)
 
                # TODO: process the resources
                # workaround to add default tags
