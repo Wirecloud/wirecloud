@@ -38,7 +38,6 @@ class HTMLHeadParser(HTMLParser):
 		self.starthtml = None
 		self.baseHref = None
 		self.feed(document)
-		self.close()
 		
 	def handle_starttag(self, tag, attrs):
 		# Check if base tag has href attribute
