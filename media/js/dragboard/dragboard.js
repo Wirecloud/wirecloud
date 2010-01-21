@@ -56,8 +56,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
 			IE7.recalc();
-			//this._recomputeSize();
 		}
+
+		this._recomputeSize();
 
 		this.baseLayout.initialize();
 		this.freeLayout.initialize();
@@ -589,7 +590,11 @@ Dragboard.prototype._recomputeSize = function() {
 	if (cssStyle.getPropertyValue("display") == "none")
 		return; // Do nothing
 
-	this.dragboardWidth = parseInt(this.dragboardElement.clientWidth);
+	if(BrowserUtilsFactory.getInstance().isIE()){
+		this.dragboardWidth = parseInt(this.dragboardElement.offsetWidth);
+	}else{
+		this.dragboardWidth = parseInt(this.dragboardElement.clientWidth);
+	}
 
 	/*
 	Pre reserve scroll bar space
