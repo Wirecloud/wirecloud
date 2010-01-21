@@ -238,7 +238,8 @@ a, a:visited{
   border-bottom: 0px none;
 }
 
-.current .tab_name, .current span {
+
+.current .tab_name, #tab_section .current span {
   margin: 0 5px;
 }
 

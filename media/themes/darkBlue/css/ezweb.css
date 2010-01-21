@@ -246,7 +246,7 @@ input[type="text"], input[type="password"], textarea{
 }
 
 
-.current .tab_name, .current span {
+.current .tab_name, #tab_section .current span{
   margin: 0 5px;
 }
 

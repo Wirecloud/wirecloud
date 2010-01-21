@@ -270,7 +270,7 @@ body.shared #workspace_link_container span{
   padding-bottom: 2px;
 }
 
-.current .tab_name, .current span {
+.current .tab_name, #tab_section .current span {
   float:left;
 }
 
