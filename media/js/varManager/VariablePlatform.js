@@ -152,6 +152,7 @@ RVariable.prototype.set = function (newValue) {
 					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
 					return;
 				}
+				iGadget.notifyEvent();
 			
 			case Variable.prototype.USER_PREF:
 			case Variable.prototype.EXTERNAL_CONTEXT:

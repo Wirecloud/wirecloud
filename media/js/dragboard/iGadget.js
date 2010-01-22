@@ -52,7 +52,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion, freeLayoutAfterLoading) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -88,6 +88,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 	}
 
 	this.refusedVersion = refusedVersion;
+	this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the gadget is used to change its layout after loading to FreeLayout
 
 	// Elements
 	this.element = null;
@@ -640,6 +641,11 @@ IGadget.prototype.build = function() {
 	this.igadgetIconNameHTMLElement.update(this.name);
 	this.igadgetIconNameHTMLElement.addClassName("floating_gadget_title");
 	this.iconElement.appendChild(this.igadgetIconNameHTMLElement);
+	
+	this.igadgetIconNameHTMLElement.observe("click", function() {
+														this.toggleMinimizeStatus(false);
+														this.layout.dragboard.raiseToTop(this);
+													  }.bind(this), false);
 }
 
 /**
@@ -727,12 +733,13 @@ IGadget.prototype.paint = function(onInit) {
 	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
 	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
 
-	if (this.layout.dragboard.isLocked()) {
-		Event.observe(this.iconImg, "click", function() {
-												this.setMinimizeStatus(false);
-												this.layout.dragboard.raiseToTop(this);
+	Event.observe(this.iconImg, "click", function() {
+												if (this.layout.dragboard.isLocked()) {
+													//alert("kk");
+													this.setMinimizeStatus(false);
+													this.layout.dragboard.raiseToTop(this);
+												}
 											 }.bind(this), true);
-	}
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
@@ -956,6 +963,21 @@ IGadget.prototype.setName = function (igadgetName) {
 		                                            iGadgetId: this.id});
 		PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
 	}
+}
+
+/*
+ * Perform the properly actions to show to the user that the gadget has received and event
+ */
+IGadget.prototype.notifyEvent = function(){
+	
+	if (this.isIconified()){
+		//maximize iconified gadget
+		this.toggleMinimizeStatus(false);
+	}
+}
+
+IGadget.prototype.isIconified = function(){
+	return (this.layout instanceof FreeLayout && this.minimized); 
 }
 
 IGadget.prototype.askForIconVersion = function() {
@@ -1354,6 +1376,12 @@ IGadget.prototype._notifyLoaded = function() {
 	                         OpManagerFactory.getInstance().igadgetUnloaded(this.id);
 	                     }.bind(this),
 	                     true);
+	
+	// Check if the gadget has its correct layout
+	if (this.freeLayoutAfterLoading){
+		//Change the layout to extract the igadget from the grid
+		this.toggleLayout();
+	}                 
 }
 
 /**
@@ -1831,6 +1859,7 @@ IGadget.prototype.save = function() {
 		var igadgetInfo = JSON.parse(transport.responseText);
 		this.id = igadgetInfo['id'];
 		this.layout.dragboard.addIGadget(this, igadgetInfo);
+		
 	}
 
 	function onError(transport, e) {

@@ -135,6 +135,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var cell_height = this.tab.preferences.get('cell-height');
 		var vertical_margin = this.tab.preferences.get('vertical-margin');
 		var horizontal_margin = this.tab.preferences.get('horizontal-margin');
+		
 		if (this.tab.preferences.get('smart')) {
 			return new SmartColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
 		} else {
@@ -321,7 +322,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			                      curIGadget.minimized,
 			                      curIGadget.transparency,
 			                      curIGadget.menu_color,
-			                      curIGadget.refused_version);
+			                      curIGadget.refused_version,
+			                      false);
 		}
 
 		this.loaded = true;
@@ -343,15 +345,20 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
 			return;
 		}
-
-		// This is the layout where the iGadget will be inserted
-		var layout = this.baseLayout; // TODO For now insert it always in the baseLayout
-
+		
 		var template = gadget.getTemplate();
 		//var width = layout.unitConvert(template.getWidth() + "cm", CSSPrimitiveValue.CSS_PX)[0];
 		//width = layout.adaptWidth(width, width).inLU;
 		var width = template.getWidth();
 		var height = template.getHeight();
+		var minimized = false;
+		var freeLayoutAfterLoading = false;
+		var layout = this.baseLayout;
+		
+		if (this.tab.preferences.get('layout') == "Free") {
+			minimized = false; //NOTE: this variable is useless, it could be used in the future to add gadgets as icons directly 
+			freeLayoutAfterLoading = true; //To change the layout to FreeLayout after loading the gadget
+		}
 
 		// Check if the gadget doesn't fit in the dragboard
 		if (layout instanceof ColumnLayout) {
@@ -364,7 +371,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, false, false, gadget.getMenuColor(), null);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading);
 
 		iGadget.save();
 	}
@@ -477,9 +484,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var oldWidth = iGadget.getWidth();
 
 		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo);
-
+		
 		// Notify resize event
 		iGadget.layout._notifyResizeEvent(iGadget, oldWidth, oldHeight, iGadget.getWidth(), iGadget.getHeight(), false, true);
+		
 	}
 
 	Dragboard.prototype.fillFloatingGadgetsMenu = function(menu) {
@@ -1059,7 +1067,8 @@ IGadgetIconDraggable.prototype.updateFunc = function (event, draggable, context,
 
 IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 	context.iGadget.setZPosition(context.oldZIndex);
-	if (context.x && context.y) {
+	//alert(context.x);
+	if (context.x) {
 		var position = context.iGadget.layout.getCellAt(context.x, context.y);
 
 		if (position.y < 0)
@@ -1070,6 +1079,7 @@ IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 		context.iGadget.setIconPosition(position);
 		context.iGadget.layout.dragboard._commitChanges([context.iGadget.code]);
 	} else {
+		//alert(context.x);
 		// It is here instead of in a click event due to the behaviour of the IE
 		context.iGadget.setMinimizeStatus(false);
 		context.iGadget.layout.dragboard.raiseToTop(context.iGadget);

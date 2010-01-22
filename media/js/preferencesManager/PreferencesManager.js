@@ -162,9 +162,16 @@ var PreferencesManagerFactory = function () {
 		    "options":       [],
 		    "description":   gettext("Theme to use as default. (default: inherit)")
 		  },
+		  "layout": {
+		    "defaultValue":  "Fixed",
+		    "label":         gettext("Default grid layout"),
+		    "type":          "select",
+		    "options":       [{value:"Fixed",label:"Fixed to the grid"},{value:"Free",label:"Out of the grid"}],
+		    "description":   gettext("Default layout for the new gadgets.")
+		  },
 		  "smart": {
 		    "defaultValue":  true,
-		    "label":         gettext("Smart grid"),
+		    "label":         gettext("Smart grid for gadgets fixed to the grid"),
 		    "type":          "boolean",
 		    "description":   gettext("iGadgets will be automatically reordered if this option is enabled. (default: enabled)")
 		  },
@@ -202,11 +209,20 @@ var PreferencesManagerFactory = function () {
 		    "type":         "boolean",
 		    "description":  gettext('If the Tab is locked, you will not be able to move, resize and do other task over its iGadgets.')
 		  },
+		  "layout": {
+		  	"inheritable":   true,
+		    "inheritByDefault": true,
+		    "defaultValue":  "Fixed",
+		    "label":         gettext("Default grid layout"),
+		    "type":          "select",
+		    "options":       [{value:"Fixed",label:"Fixed to the grid"},{value:"Free",label:"Out of the grid"}],
+		    "description":   gettext("Default layout for the new gadgets.")
+		  },
 		  "smart": {
 		    "inheritable":   true,
 		    "inheritByDefault": true,
 		    "defaultValue":  true,
-		    "label":         gettext("Smart grid"),
+		    "label":         gettext("Smart grid for gadgets fixed to the grid"),
 		    "type":          "boolean",
 		    "description":   gettext("iGadgets will be automatically reordered if this option is enabled. (default: enabled)")
 		  },
