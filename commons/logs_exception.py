@@ -40,7 +40,9 @@ class TracedServerError(Exception):
         return self.info
     
     def get_inner_exception_message(self):
-    	if hasattr(self.exception, 'msg'):
+        if self.msg:
+            return self.msg
+    	elif hasattr(self.exception, 'msg'):
     	    return self.exception.msg
         else:
             return self.inner_exception_description

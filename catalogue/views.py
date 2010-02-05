@@ -91,13 +91,13 @@ class GadgetsCollection(Resource):
 
         except TemplateParseException, e:
             transaction.rollback()
-            msg = _("Problem parsing template xml")
+            msg = _("Problem parsing template xml: %(errorMsg)s") %{'errorMsg':e.msg}
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)        
         except Exception, e:
             # Internal error
             transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.message}
+            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.msg}
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
         
@@ -158,12 +158,12 @@ class GadgetsCollection(Resource):
         if version != None:
             #Delete only the specified version of the gadget 
             resource=get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
-            deleteOneGadget(resource, user)
+            deleteOneGadget(resource, user, request)
         else:
             #Delete all versions of the gadget
             resources=get_list_or_404(GadgetResource, short_name=name,vendor=vendor)
             for resource in resources:
-                deleteOneGadget(resource, user)
+                deleteOneGadget(resource, user, request)
         
         xml_ok = '<ResponseOK>OK</ResponseOK>'
         return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
@@ -200,7 +200,7 @@ class GadgetsCollection(Resource):
             xml_ok = '<ResponseOK>OK</ResponseOK>'
             return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
 
-def deleteOneGadget(resource, user):
+def deleteOneGadget(resource, user, request):
     try:
         # Delete the gadget only if this user is the owner
         userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
@@ -242,9 +242,11 @@ def deleteOneGadget(resource, user):
         resource.delete()
         
         
-    except UserRelatedToGadgetResource.DoesNotExist:
-        #Do nothing, the user is not the owner
-        pass
+    except UserRelatedToGadgetResource.DoesNotExist, e:
+        #the user is not the owner
+        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") %{'username':user.username, 'resource_id':resource.id}
+
+        raise TracedServerError(e, {'resource_id': resource.id, 'username': user.username}, request, msg)
 
 
 class GadgetsCollectionBySimpleSearch(Resource):

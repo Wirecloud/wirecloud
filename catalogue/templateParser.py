@@ -50,6 +50,7 @@ from commons.user_utils import get_certification_status
 
 import string
 from urllib import url2pathname
+from urllib2 import URLError, HTTPError
 from os import path
 
 
@@ -71,7 +72,14 @@ class TemplateParser:
             self.xml = f.read()
             f.close()
         else:
-            self.xml = download_http_content(uri)
+            try:
+                self.xml = download_http_content(uri)
+            except HTTPError, e:
+                msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {'errorCode': e.code, 'errorMsg':e.msg}
+                raise TemplateParseException(msg)
+            except URLError, e:
+                msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
+                raise TemplateParseException(msg)
 
 
         self.uri = uri
