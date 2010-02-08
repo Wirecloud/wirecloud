@@ -152,6 +152,7 @@ INSTALLED_APPS = (
     'resourceSubscription',
     'remoteChannel',
     'user',
+    'API',
 #   'clms',
 )
 
@@ -211,7 +212,7 @@ GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
 CERTIFICATION_ENABLED = False
 
-#SESSION_COOKIE_DOMAIN = '.mac.hi.inet'
+#SESSION_COOKIE_DOMAIN = '.domain'
 
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)

@@ -293,7 +293,11 @@ ColumnLayout.prototype._moveSpaceUp = function(_matrix, iGadget) {
 		var i;
 		for (i = 0; i < keys.length; i++)
 			this._moveSpaceUp(_matrix, affectedIGadgets[keys[i]]);
+		
+		//return true if the igadget position has been modified
+		return true;
 	}
+	return false;
 }
 
 ColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
@@ -481,16 +485,21 @@ ColumnLayout.prototype.initialize = function () {
 			iGadgetsToReinsert.push(iGadget);
 		}
 	}
-
-	// Reinsert the igadgets that didn't fit in their positions
-	for (i = 0; i < iGadgetsToReinsert.length; i++) {
-		position = this._searchFreeSpace(iGadgetsToReinsert[i].getWidth(),
-		                                 iGadgetsToReinsert[i].getHeight());
-		iGadgetsToReinsert[i].setPosition(position);
-		this._reserveSpace(this.matrix, iGadgetsToReinsert[i]);
+	
+	var modified = false;
+	if (iGadgetsToReinsert.length > 0){
+		// Reinsert the igadgets that didn't fit in their positions
+		for (i = 0; i < iGadgetsToReinsert.length; i++) {
+			position = this._searchFreeSpace(iGadgetsToReinsert[i].getWidth(),
+			                                 iGadgetsToReinsert[i].getHeight());
+			iGadgetsToReinsert[i].setPosition(position);
+			this._reserveSpace(this.matrix, iGadgetsToReinsert[i]);
+		}
+		modified = true;
 	}
 
 	this.initialized = true;
+	return modified;
 }
 
 /**
@@ -834,15 +843,20 @@ SmartColumnLayout.prototype.moveTemporally = function(x, y) {
 }
 
 SmartColumnLayout.prototype.initialize = function() {
-	ColumnLayout.prototype.initialize.call(this);
+	var modified = ColumnLayout.prototype.initialize.call(this);
 
 	// remove holes moving igadgets to the topmost positions
 	var iGadget;
 	var keys = this.iGadgets.keys();
 	for (var i = 0; i < keys.length; i++) {
 		iGadget = this.iGadgets[keys[i]];
-		this._moveSpaceUp(this.matrix, iGadget);
+		modified = modified || this._moveSpaceUp(this.matrix, iGadget);
 	}
+	if (modified){
+		//save these changes in the server side
+		this.dragboard._commitChanges(keys);
+	}
+	
 }
 
 SmartColumnLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {

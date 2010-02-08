@@ -57,7 +57,37 @@ from gadget.utils import *
 
 from HTMLParser import HTMLParseError
     
-
+def parseAndCreateGadget(request, user_name):
+    try:
+        user = user_authentication(request, user_name)
+        
+        if request.POST.has_key('url'):
+            templateURL = request.POST['url']
+        else:
+            msg = _("Missing url parameter")    
+            raise TracedServerError(e, None, request, msg)
+        
+        #get or create the Gadget
+        fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
+        result = get_or_create_gadget(templateURL, user, fromWGT)
+        
+        return result
+        
+        
+    except TemplateParseException, e:
+        msg = _("Error parsing the template: %(msg)s" % {"msg":e.msg})    
+        raise TracedServerError(e, {'url': templateURL}, request, msg)
+    except IntegrityError, e:
+        msg = _("Gadget already exists")    
+        raise TracedServerError(e, {'url': templateURL}, request, msg)
+    except IOError, e:
+        msg = _("The url is not accesible")    
+        raise TracedServerError(e, {'url': templateURL}, request, msg)
+    except Exception, e:
+        msg = _("Error creating gadget!")    
+        raise TracedServerError(e, {'url': templateURL}, request, msg)
+    
+    
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
@@ -75,39 +105,14 @@ class GadgetCollection(Resource):
             data_list.append(data_fields)
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_manually
+    @transaction.commit_on_success
     def create(self, request, user_name=None):
-        user = user_authentication(request, user_name)
-        if request.POST.has_key('url'):
-            templateURL = request.POST['url']
-        else:
-            return HttpResponseServerError('<error>Url not specified</error>', mimetype='application/xml; charset=UTF-8')
-
-        try:
-            #get or create the Gadget
-            fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
-            result = get_or_create_gadget(templateURL, user, fromWGT)
-            transaction.commit()
-            
-            gadget = result["gadget"]
-            templateParser = result["templateParser"]
-            
-        except TemplateParseException, e:
-            transaction.rollback()
-            msg = _("Error parsing template!")
         
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-        except IntegrityError:
-            transaction.rollback()
-            msg = _("Gadget already exists")
+        #create the gadget
+        result = parseAndCreateGadget(request, user_name)
+        templateParser = result["templateParser"]
         
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-        except Exception, e:
-            msg = _("Error creating gadget!")
-        
-            raise TracedServerError(e, {'url': templateURL}, request, msg)
-        
-            
+        #return the data
         gadgetName = templateParser.getGadgetName()
         gadgetVendor = templateParser.getGadgetVendor()
         gadgetVersion = templateParser.getGadgetVersion()

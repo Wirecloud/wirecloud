@@ -160,7 +160,7 @@ class UriGadgetHandler(handler.ContentHandler):
 
         if len(emptyRequiredFields) > 0:
             print emptyRequiredFields
-            raise TemplateParseException(_("Missing required field(s): %(fields)s") % {fields: unicode(emptyRequiredFields)})
+            raise TemplateParseException(_("Missing required field(s): %(fields)s") % {"fields": unicode(emptyRequiredFields)})
                  
     def reset_Accumulator(self):
         self._accumulator = ""

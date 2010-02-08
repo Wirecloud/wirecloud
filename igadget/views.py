@@ -307,6 +307,8 @@ def deleteIGadget(igadget, user):
     # Delete IGadget and its position
     position = igadget.position
     position.delete()
+    icon_position = igadget.icon_position
+    icon_position.delete()
     igadget.delete()
 
 class IGadgetCollection(Resource):
