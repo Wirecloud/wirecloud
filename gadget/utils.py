@@ -57,7 +57,8 @@ def get_or_create_gadget (templateURL, user, fromWGT = False):
 
 def includeTagBase(document, url, request):
 	# Get info url Gadget: host, username, Vendor, NameGadget and Version 
-	exp = re.compile(r'/deployment/gadgets/(?P<username>.+)/(?P<vendor>.+)/(?P<name>.+)/(?P<version>.+)/.*')
+	
+	exp = re.compile(r'.*/deployment/gadgets/')
 	expScript = re.compile(r'<script.*</script>', re.I|re.S)
 	expLink = re.compile(r'<style.*</style>', re.I|re.S)
 
@@ -66,16 +67,16 @@ def includeTagBase(document, url, request):
 		return document
 
 	# Get href base
-	v = exp.search(url)
+	elements = exp.sub("", url).split("/")
 	if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
 		host = "https://"+request.META['HTTP_HOST']
 	else:
 		host = "http://"+request.META['HTTP_HOST']
 	href = '%s/deployment/gadgets/%s/%s/%s/%s/' % (host, 
-													v.group('username'), 
-													v.group('vendor'), 
-													v.group('name'), 
-													v.group('version')) 
+													elements[0], 
+													elements[1], 
+													elements[2], 
+													elements[3]) 
 	# HTML Parser
 	subDocument = expScript.sub("",document)
 	subDocument = expLink.sub("",subDocument)
