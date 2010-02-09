@@ -125,6 +125,11 @@ urlpatterns = patterns('',
     
     (r'^API', include('API.urls')),
 
+
+    #Catalogue API
+    (r'^catalogue/API/', include('catalogue.API.urls')),
+
+
 )
 
 handler404 = "django.views.defaults.page_not_found"
