@@ -39,7 +39,7 @@ import settings
 from urllib import url2pathname
 
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db import transaction
 from django.db import IntegrityError
@@ -49,6 +49,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.resource import Resource
+from commons.utils import json_encode
 
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
@@ -74,7 +75,12 @@ class GadgetsCollection(Resource):
     def create(self, request, user_name, fromWGT = False):
 
         user = user_authentication(request, user_name)
+        if not request.POST.has_key('template_uri'):
+            msg = _("template_uri param expected")
+            json = {"message": msg, "result": "error"}
 
+            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
+        
         template_uri = request.REQUEST.__getitem__('template_uri')
         templateParser = None
 
@@ -97,7 +103,7 @@ class GadgetsCollection(Resource):
         except Exception, e:
             # Internal error
             transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.msg}
+            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
             
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
         
@@ -165,8 +171,8 @@ class GadgetsCollection(Resource):
             for resource in resources:
                 deleteOneGadget(resource, user, request)
         
-        xml_ok = '<ResponseOK>OK</ResponseOK>'
-        return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
+        json_ok = '{"result":"ok"}'
+        return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
     
     def update(self, request, user_name, vendor, name, version):
         user = user_authentication(request, user_name)
