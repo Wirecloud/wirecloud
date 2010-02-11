@@ -42,7 +42,7 @@ from workspace.models import WorkSpace
 
 from catalogue.templateParser import TemplateParser
 
-from django.http import HttpResponseServerError, HttpResponseBadRequest
+from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -143,7 +143,7 @@ def add_gadget_script(request, fromWGT = False):
                     # Gadget added to catalogue only!
                     t = loader.get_template('catalogue_adder.html')
                     c = Context({'msg': _('Gadget added correctly to Catalogue!')})
-                    return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
+                    return HttpResponse(t.render(c), mimetype="application/xhtml+xml")
             except TracedServerError, e:
                 raise e
             except Exception, e:
