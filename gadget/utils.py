@@ -33,6 +33,7 @@ import re
 from gadget.templateParser import TemplateParser
 from gadget.models import Gadget
 from gadget.htmlHeadParser import HTMLHeadParser
+from django.utils.http import urlquote
 
 def get_or_create_gadget (templateURL, user, fromWGT = False):
 	########### Template Parser
@@ -72,11 +73,12 @@ def includeTagBase(document, url, request):
 		host = "https://"+request.META['HTTP_HOST']
 	else:
 		host = "http://"+request.META['HTTP_HOST']
-	href = '%s/deployment/gadgets/%s/%s/%s/%s/' % (host, 
-													elements[0], 
-													elements[1], 
-													elements[2], 
-													elements[3]) 
+	href = '%s/deployment/gadgets/%s/%s/%s/%s/' % (host,
+													urlquote(elements[0]),
+													urlquote(elements[1]),
+													urlquote(elements[2]),
+													urlquote(elements[3]))
+
 	# HTML Parser
 	subDocument = expScript.sub("",document)
 	subDocument = expLink.sub("",subDocument)

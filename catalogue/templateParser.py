@@ -62,7 +62,7 @@ class TemplateParser:
             if uri[0] == '/':
               uri = uri[1:]
 
-            localPath = url2pathname(uri)
+            localPath = url2pathname(uri.encode("utf8"))
 
             localPath = path.join(settings.BASEDIR, localPath)
             if not path.isfile(localPath):

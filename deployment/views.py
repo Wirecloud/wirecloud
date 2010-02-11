@@ -49,7 +49,11 @@ from xml.dom.minidom import parse # XML Parser
 from ezweb.views import add_gadget_script
 import codecs
 import re
+from django.views.static import serve
 
+class Static(Resource):
+	def read(self, request, path):
+		return serve(request, path.encode("utf8"), settings.GADGETS_ROOT, False)
 
 class Error(Resource):
 	def read(self, request):
@@ -62,7 +66,6 @@ class Error(Resource):
 		response['Pragma'] = 'no-cache'
 
 		return response
-
 
 class Resources(Resource):
 
@@ -92,63 +95,64 @@ class Resources(Resource):
 
 		# Copy .wgt file into user temporal folder and extract file .wgt into 
 		# gadgets folder
+		
 		try:
 			try:
 				file_wgt = request.FILES['file']
-				file_wgt_path = path.join(info.TMPDIR, file_wgt.name)
+				file_wgt_path = path.join(info.TMPDIR.encode("utf8"), file_wgt.name.encode("utf8"))
 				f = open(file_wgt_path, "w")
 				f.write(file_wgt.read())
 				f.close()
-	
+				
 				# Extract file .wgt into temporal folder
 				pkg = WgtPackageUtils()
-	
 				extractiondir = mkdtemp(dir=info.TMPDIR)
+				extractiondir = extractiondir.encode("utf8")
 				pkg.extract(file_wgt_path, extractiondir)
-	
+				
 				# Parser XML config file
 				xmlDoc = parse(path.join(extractiondir, 'config.xml'))
 				info.get_info_config(xmlDoc, request)
-	
+				
 				# Extract .wgt file in user gadget folder
-				final_gadget_dir = path.join(info.USERGADGETSDIR, info.VENDOR, info.NAME, info.VERSION)
+				final_gadget_dir = path.join(info.USERGADGETSDIR.encode("utf8"), info.VENDOR.encode("utf8"), info.NAME.encode("utf8"), info.VERSION.encode("utf8"))
 				info.create_folder(final_gadget_dir)
 				pkg.extract(file_wgt_path, final_gadget_dir)
-	
+				
 				# Change links XHTML Tag and Image tag in template gadget
-				xmlDoc = parse(path.join(final_gadget_dir, info.ID))
+				final_dir = path.join(final_gadget_dir, info.ID.encode("utf8"))
+				xmlDoc = parse(final_dir)
 				xmlDoc = info.get_new_template(xmlDoc)
-				f = codecs.open(path.join(final_gadget_dir, info.ID), 'w', 'utf-8')
+				f = codecs.open(final_dir, 'w', 'utf-8')
 				f.write(xmlDoc.toxml())
 				f.close()
-	
+				
 				# Redirect to EzWeb to add_gadget_script function
-				request.POST.appendlist(unicode('template_uri'), info.URLTEMPLATE)
+				request.POST.appendlist('template_uri', info.URLTEMPLATE.encode("utf8"))
 				response = add_gadget_script(request, fromWGT=True)
-	
+				
 				if (response.status_code != 200):
 					# Redirect if the param "add_to_ws" isn't in the request
 					if (not request.POST.has_key('add_to_ws')):
 						raise Exception('Gadget could not be added to the catalogue')
-	
+					
 					# Redirect if the value of param "add_to_ws" isn't 'on'
 					if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
 						raise Exception('Gadget could not be added to the catalogue or to the workspace')
-	
+					
+			except TracedServerError, e:
+				raise e
+			
 			except Exception, e:
-				msg = _("Error extracting gadget files: %(errorMsg)s")
-	
+				msg = _("Error extracting gadget files: %(errorMsg)s")  % {'errorMsg': "[" + str(e.__class__) + "] " + e.message}
 				e = TracedServerError(e, {}, request, msg)
-	
 				log_request(request, None, 'access')
-	
-				msg = log_detailed_exception(request, e)
+				log_detailed_exception(request, e)
 				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
 		finally:
 			# Remove temporal files
 			info.remove_folder(info.TMPDIR)
-
 
 		return response
 
@@ -208,8 +212,8 @@ class Resources(Resource):
 class InfoDeployment:
 	def __init__(self,request):
 		# Info folders
-		self.USERGADGETSDIR = path.join(settings.GADGETS_ROOT, request.user.username)
 		self.userName = request.user.username
+		self.USERGADGETSDIR = path.join(settings.GADGETS_ROOT, self.userName)
 		self._abs_re = re.compile('/*(.*)')
 
 	def create_folders(self):
@@ -235,6 +239,7 @@ class InfoDeployment:
 	# Parser info config.xml
 	def get_info_config(self, xmldoc, request):
 		widget = xmldoc.getElementsByTagName("widget")[0]
+		
 		# Info config
 		self.ID = self._normalize(widget.getAttribute("id"))
 		self.USERNAME = request.user.username.replace(" ", "_")
@@ -244,14 +249,14 @@ class InfoDeployment:
 		self.HTTP_HOST = request.META['HTTP_HOST']
 		self.PATH_INFO = request.META['PATH_INFO']
 
-
 		if (request.META['SERVER_PROTOCOL'].lower().find('https') >= 0):
 			self.URL = "https://%s" % self.HTTP_HOST
 		else:
 			self.URL = "http://%s" % self.HTTP_HOST
 
 		# the new url of template
-		self.BASEURL = pathname2url(path.join(url2pathname(self.PATH_INFO), self.USERNAME, self.VENDOR, self.NAME, self.VERSION))
+		self.BASEURL = path.join(url2pathname(self.PATH_INFO), self.USERNAME, self.VENDOR, self.NAME, self.VERSION)
+		self.BASEURL = pathname2url(self.BASEURL.encode("utf8"))
 		self.URLTEMPLATE = self.BASEURL + '/' + self.ID
 
 	def _normalize(self, url):

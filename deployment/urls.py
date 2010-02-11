@@ -29,7 +29,7 @@
 from django.conf.urls.defaults import patterns
 from deployment.views import *
 from os import path
-import settings
+#import settings
 
 deployment = "deployment/gadgets"
 urlpatterns = patterns('',
@@ -44,6 +44,7 @@ urlpatterns = patterns('',
 		(r'^gadgets/$', Resources(permitted_methods=('POST','UPDATE'))),
 
 		# Static content
-		(r'^gadgets/(.*)$', 'django.views.static.serve', {'document_root': settings.GADGETS_ROOT}),
+		#(r'^gadgets/(.*)$', 'django.views.static.serve', {'document_root': settings.GADGETS_ROOT}),
+		(r'^gadgets/(?P<path>.+)$', Static(permitted_methods=('GET',))),
 
 	)

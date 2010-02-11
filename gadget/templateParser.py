@@ -63,7 +63,7 @@ class TemplateParser:
             if uri[0] == '/':
                 uri = uri[1:]
 
-            localpath = path.join(settings.BASEDIR, url2pathname(uri))
+            localpath = path.join(settings.BASEDIR, url2pathname(uri.encode("utf8")))
             f = open(localpath, 'r')
             self.xml = f.read()
             f.close()
@@ -514,7 +514,7 @@ class TemplateHandler(handler.ContentHandler):
         _href=""
 
         if (attrs.has_key('href')):
-            _href = attrs.get('href')
+            _href = url2pathname(attrs.get('href').encode("utf8"))
 
         _content_type = None
         if (attrs.has_key('content-type')):

@@ -49,7 +49,6 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.resource import Resource
-from commons.utils import json_encode
 
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
@@ -73,40 +72,35 @@ class GadgetsCollection(Resource):
 
     @transaction.commit_manually
     def create(self, request, user_name, fromWGT = False):
-
+		
         user = user_authentication(request, user_name)
         if not request.POST.has_key('template_uri'):
             msg = _("template_uri param expected")
             json = {"message": msg, "result": "error"}
-
-            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
-        
-        template_uri = request.REQUEST.__getitem__('template_uri')
+            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')        template_uri = request.REQUEST.__getitem__('template_uri')
         templateParser = None
 
         try:
             templateParser = TemplateParser(template_uri, user, fromWGT=fromWGT)
             templateParser.parse()
-                        
             transaction.commit()
+
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
-            transaction.rollback()
-            
+            transaction.rollback()    
             #This is not an error! It returns the same as a successfull request!
 
         except TemplateParseException, e:
             transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") %{'errorMsg':e.msg}
-            
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)        
+            msg = _("Problem parsing template xml: %(errorMsg)s") %{'errorMsg':str(e)}
+            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
+
         except Exception, e:
             # Internal error
             transaction.rollback()
             msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
-            
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
-        
+
         #Returning info to the catalogue of the created gadget!
         contratable = str(templateParser.is_contratable()).lower()
         
@@ -172,7 +166,7 @@ class GadgetsCollection(Resource):
                 deleteOneGadget(resource, user, request)
         
         json_ok = '{"result":"ok"}'
-        return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_ok, mimetype='application/json; charset=UTF-8')
     
     def update(self, request, user_name, vendor, name, version):
         user = user_authentication(request, user_name)
@@ -228,25 +222,15 @@ def deleteOneGadget(resource, user, request):
         # Delete the gadget if it is saved in the platform 
         if resource.fromWGT:
             # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
-            print 1
             exp = re.compile('[/]?(?P<path>.+/.+/.+/.+/.+/.+/).*$')
-            print 2
-            print resource.template_uri
-            print resource.template_uri.__class__
             if exp.search(resource.template_uri):
-                print 3
                 v = exp.search(resource.template_uri)
-                print 4
                 path = url2pathname(v.group('path'))
-                print 5
-                path = os.path.join(settings.BASEDIR, path)
-                print 6
+                path = os.path.join(settings.BASEDIR, path).encode("utf8")
                 if os.path.isdir(path):
-                    print 7
                     rmtree(path)
         # Delete the object
         resource.delete()
-        
         
     except UserRelatedToGadgetResource.DoesNotExist, e:
         #the user is not the owner

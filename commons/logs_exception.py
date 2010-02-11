@@ -28,7 +28,7 @@ class TracedServerError(Exception):
             info += line
     
         exc_name = unicode(exc_type.__name__)
-        exc_desc = str(exc_value).decode("utf-8")
+        exc_desc = str(exc_value)
     
         self.inner_exception_description = "[%(exc_name)s] %(exc_desc)s" % {"exc_name": exc_name, "exc_desc": exc_desc}
         self.info = info
