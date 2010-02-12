@@ -60,12 +60,15 @@ from HTMLParser import HTMLParseError
 def parseAndCreateGadget(request, user_name):
     try:
         user = user_authentication(request, user_name)
+        templateURL = None
         
         if request.POST.has_key('url'):
             templateURL = request.POST['url']
+        elif request.POST.has_key('template_uri'):
+            templateURL = request.POST['template_uri']
         else:
-            msg = _("Missing url parameter")    
-            raise TracedServerError(e, None, request, msg)
+            msg = _("Missing template URL parameter")    
+            raise Exception(msg)
         
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
@@ -84,8 +87,9 @@ def parseAndCreateGadget(request, user_name):
         msg = _("The url is not accesible")    
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except Exception, e:
-        msg = _("Error creating gadget!")    
+        msg = _("Error creating gadget: %(msg)s" % {"msg":str(e)})    
         raise TracedServerError(e, {'url': templateURL}, request, msg)
+
     
     
 class GadgetCollection(Resource):

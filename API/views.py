@@ -30,8 +30,9 @@
 
 #
 
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.core import serializers
+from django.utils.translation import ugettext as _
 
 from commons.resource import Resource
 from commons.logs_exception import TracedServerError
@@ -52,6 +53,10 @@ class IGadgetCollection(Resource):
     @basicauth()
     @transaction.commit_on_success
     def create(self, request):
+        if not request.POST.has_key('template_uri'):
+            msg = _("Missing template URL parameter")
+            json = json_encode({"message":msg, "result":"error"})
+            return HttpResponseBadRequest(json, mimetype='application/json; charset=UTF-8')
         #
         #Get or Create the Gadget in the Showcase
         #
