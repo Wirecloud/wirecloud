@@ -341,7 +341,7 @@ Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales
     				throw new DontPropagateException("Waiting for inputs");
     			}
 				else{
-
+					channel._unmarkAllInputsAsModified();
 					if (params["correspondence"]){
 						//change the indexes given by the user
 						var inputValues = channel._getJSONInput();
@@ -402,4 +402,43 @@ String (given by user): 'EzWeb'
 Returns: 'Welcome to EzWeb platform']]></field>
     	<field type="TextField" name="params">[{"name": "string", "type": "S", "index": 0, "required":true, "label": "String"}]</field>
 	</object>
+	<object pk="21" model="connectable.filter">
+        <field type="CharField" name="name">Acumulator</field>
+        <field type="TextField" name="code"><![CDATA[
+  function(channelValue, channel, params){
+    			if (!channel._allInputsModified()){
+    				throw new DontPropagateException("Waiting for inputs");
+    			}
+				else{
+					if (params["correspondence"]){
+						//change the indexes given by the user
+						var inputValues = channel._getJSONInput();
+						var userIndexes = eval('('+params["correspondence"]+')');
+						var newInputs = {};
+						var newIndex, value = null;
+						var indexes = inputValues.keys();
+						for(var i=0; i < indexes.length;i++){
+							value = inputValues[indexes[i]];
+							newIndex = userIndexes[indexes[i]];
+							if(!newIndex){
+								newIndex = indexes[i];
+							}
+							newInputs[newIndex] = value;
+						}
+						return Object.toJSON(newInputs);
+					}
+					return channel._getJSONInput().toJSON();
+				}
+			}
+        ]]></field>
+        <field type="CharField" name="label">Accumulator</field>
+        <field type="CharField" name="nature">PATT</field>
+        <field type="CharField" name="category">TRANS</field>
+        <field type="TextField" name="help_text">Propagates only when all the inputs have any value but it doesn't wait for new values.
+If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
+That is, "{'name1':'value1', 'name2':'value2'}".
+Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
+{'name1': 'new_index1','name2': 'new_index2'}</field>
+        <field type="TextField" name="params">[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]</field>
+    </object>
 	</django-objects>

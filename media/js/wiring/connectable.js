@@ -465,7 +465,6 @@ wChannel.prototype.propagate = function(newValue, initial, source) {
 		//getValue applys filter if needed!
 		var filteredValue = this.getValue(propagating=true);
 		this.notifyRemoteChannel(filteredValue);
-		this._unmarkAllInputsAsModified();
 	}
 	catch (err) {
 		if (err.name == "DONT_PROPAGATE") {
