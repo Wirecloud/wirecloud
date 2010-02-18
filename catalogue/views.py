@@ -92,7 +92,7 @@ class GadgetsCollection(Resource):
 
         except TemplateParseException, e:
             transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") %{'errorMsg':str(e)}
+            msg = _("Problem parsing template xml: %(errorMsg)s") %{'errorMsg':e.msg}
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         except Exception, e:
@@ -110,9 +110,12 @@ class GadgetsCollection(Resource):
         version = gadget.version
         vendor = gadget.vendor
         gadgetId = gadget.id
+        
+        #Inform about the last version of the gadget.
+        last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
 
-        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s"}' \
-            % (contratable, template_uri, gadgetName, gadgetId, vendor, version)
+        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s"}' \
+            % (contratable, template_uri, gadgetName, gadgetId, vendor, version, last_version)
         
         return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 

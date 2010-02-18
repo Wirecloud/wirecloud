@@ -35,7 +35,7 @@ InputValidationError.EMAIL_ERROR    = 3;
 InputValidationError.ID_ERROR       = 4;
 InputValidationError.COLOR_ERROR    = 5;
 InputValidationError.BOOLEAN_ERROR  = 6;
-
+InputValidationError.VERSION_ERROR  = 7;
 
 
 function ValidationErrorManager() {
@@ -69,6 +69,9 @@ ValidationErrorManager.prototype._buildErrorMsg = function(errorCode) {
 	case InputValidationError.EMAIL_ERROR:
 		msg = gettext("The following fields do not contain a valid E-Mail address: %(fields)s.");
 		break;
+	case InputValidationError.VERSION_ERROR:
+		msg = gettext("The following field do not contain a valid version number: %(fields)s.");
+		break;	
 	case InputValidationError.ID_ERROR:
 		msg = gettext("The following fields contain invalid characters: %(fields)s.");
 		break;
@@ -340,6 +343,35 @@ EMailInputInterface.prototype._checkValue = function(newValue) {
 /**
  *
  */
+function VersionInputInterface(fieldId, options) {
+	TextInputInterface.call(this, fieldId, options);
+	
+	this.sample = document.createElement('div');
+	Element.extend(this.sample);
+	this.sample.addClassName('explanation');
+	this.sample.innerHTML = gettext('Format: X.X.X, where X is an integer.') + "<br/>" +
+	gettext('Ex. "0.1", "1.11". NOTE: 1.01 should be 1.0.1');
+	
+}
+VersionInputInterface.prototype = new TextInputInterface();
+
+
+VersionInputInterface.prototype._checkValue = function(newValue) {
+	var regexp1 = /^(\d+\.)*\d+$/;		//Format: XX.XX.XX
+	var regexp2 = /^(0\d+\.)|(\.0\d+)/;	//01.01 not valid => 1.1
+
+	//let's check if it is the correct format and there aren't any left 0
+	return (regexp1.test(newValue) && !regexp2.test(newValue))? InputValidationError.NO_ERROR : InputValidationError.VERSION_ERROR;
+}
+
+VersionInputInterface.prototype._insertInto = function(element){
+	element.appendChild(this.inputElement);
+	element.appendChild(this.sample);
+}
+
+/**
+ *
+ */
 function IdInputInterface(fieldId, options) {
 	TextInputInterface.call(this, fieldId, options);
 }
@@ -577,6 +609,8 @@ InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 		return new URLInputInterface(fieldId, fieldDesc);
 	case 'email':
 		return new EMailInputInterface(fieldId, fieldDesc);
+	case 'version':
+		return new VersionInputInterface(fieldId, fieldDesc);
 	case 'select':
 		return new SelectInputInterface(fieldId, fieldDesc);
 	case 'multiple':

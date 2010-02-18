@@ -322,8 +322,8 @@ function AlertWindowMenu () {
 AlertWindowMenu.prototype = new WindowMenu();
 
 AlertWindowMenu.prototype._acceptListener = function(e) {
-	this.acceptHandler();
 	LayoutManagerFactory.getInstance().hideCover();
+	this.acceptHandler();	
 }
 
 AlertWindowMenu.prototype._closeListener = function(e) {
@@ -650,7 +650,7 @@ function PublishWindowMenu (element) {
 	var fields = {
 		'name': {label: gettext('Mashup Name'), type:'id', required: true},
 		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
-		'version': {label: gettext('Version'), type:'id',  required: true},
+		'version': {label: gettext('Version'), type:'version',  required: true},
 		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
 		'email': {label: gettext('Email'), type:'email',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},

@@ -49,6 +49,7 @@ from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
 
 import string
+import re
 from urllib import url2pathname
 from urllib2 import URLError, HTTPError
 from os import path
@@ -223,6 +224,18 @@ class TemplateHandler(handler.ContentHandler):
         organization, created = Group.objects.get_or_create(name__iexact=organization_name)
             
         self._organization_list.append(organization)
+        
+    def processVersion(self, version_accumulator):
+        if version_accumulator:
+            #format 'XX.XX.XX'
+            if re.match('^(\d+\.)*\d+$', version_accumulator[0]) and \
+                        re.search('^(0\d+\.)|(\.0\d+)', version_accumulator[0]) == None:
+                self._version = version_accumulator[0]
+            else:
+                raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. \
+                 Ex. "0.1", "1.11" NOTE: "1.01" should be "1.0.1"'))
+        else:
+            raise TemplateParseException(_("ERROR: missing Resource version"))
 
     def processMashupResource(self, attrs):
         if (attrs.has_key('name')):
@@ -297,7 +310,7 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Version'):
             if value:
                 raise TemplateParseException(_("ERROR: The element Version cannot be translated"))
-            self._version = self._accumulator[0]
+            self.processVersion(self._accumulator)
             return
         if (name == 'Author'):
             self._author = self._accumulator[0]

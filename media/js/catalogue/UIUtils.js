@@ -56,24 +56,67 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	var newResourceOnSuccess = function (response) {
 	    var response_json = response.responseText;
 		var result = JSON.parse(response_json);
+	 
+		//showYesNoDialog handlers
+		//"Yes" handler
+	 	var continueAdding = function (result){
+	 		//leave that gadget version and continue
+	 		if (result['contratable']) {
+		        var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetNewApplication.iface?nDeveloper=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
+		    
+		    	var gadgetUrl = result['templateUrl'];
+		    	var gadgetName = result['gadgetName'];
+		    	var gadgetId = result['gadgetId'];
+		    
+		    	var final_url = urlTemplate.evaluate({"template": gadgetUrl});
+		    	
+		    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
+				      function(){UIUtils.repaintOrderedByCreationDate()},
+				      function(){LayoutManagerFactory.getInstance().hideCover();},
+				      final_url
+				);
+		    } else {
+		    	UIUtils.repaintOrderedByCreationDate();
+		    }
+	 	}
+	 
+	 	//"No" handler
+		var rollback = function(result)	{
+
+			var resourceURI = URIs.GET_POST_RESOURCES + "/" + result['vendor'] + "/" + result['gadgetName'] + "/" + result['version'];
+	
+			var onError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
+				LayoutManagerFactory.getInstance().hideCover();
+				// Process
+			}
+
+			//Send request to delete de gadget
+			PersistenceEngineFactory.getInstance().send_delete(resourceURI, this, function (){LayoutManagerFactory.getInstance().hideCover();}, onError);
+			
+		}
 	    
-	    if (result['contratable']) {
-	        var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetNewApplication.iface?nDeveloper=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
-	    
-	    	var gadgetUrl = result['templateUrl'];
-	    	var gadgetName = result['gadgetName'];
-	    	var gadgetId = result['gadgetId'];
-	    
-	    	var final_url = urlTemplate.evaluate({"template": gadgetUrl});
-	    	
-	    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
-			      function(){UIUtils.repaintOrderedByCreationDate()},
-			      function(){LayoutManagerFactory.getInstance().hideCover();},
-			      final_url
-			);
-	    } else {
-	    	UIUtils.repaintOrderedByCreationDate();
+	    var context = {result: result, continueAdding: continueAdding, rollback: rollback};
+	    //check if the new gadget is the last version
+	    if (result['last_version'] != result['version']) {
+	    	//inform the user about the situation
+	    	var msg = gettext("The resource you are adding to the catalogue is not the latest version. " +
+	    			"The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
+	    			" Do you really want to continue to add version %(curr_version)s ");
+	    	msg = interpolate(msg, {curr_version: result['version'], last_version: result['last_version'] }, true);
+	    	LayoutManagerFactory.getInstance().showYesNoDialog(msg, function (){
+	    																this.continueAdding(this.result)
+	    															}.bind(context),
+	    															function (){
+	    																this.rollback(this.result)
+	    															}.bind(context), Constants.Logging.WARN_MSG);
 	    }
+	    else{
+	    	continueAdding(result);
+	    }    
+	 
 	}
 	
 	var newResourceOnError = function (transport, e) {

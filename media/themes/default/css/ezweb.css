@@ -346,6 +346,7 @@ a, a:visited{
 
 .window_menu .explanation{
 	font-size: 8pt;
+	color: dimGray;
 }
 
 .window_menu .error {

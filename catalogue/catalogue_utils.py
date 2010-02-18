@@ -266,7 +266,8 @@ def get_resources_that_must_be_shown (user):
     # All gadget in 'gadget names without version' list have not preferred version. Latest version is the preferred version by default
     for gadget_name in gadget_names_without_version:
         versions_list = get_all_gadget_versions(vendor=gadget_name[0], name=gadget_name[1])
-        gadget_max_version = GadgetResource.objects.get(vendor=gadget_name[0], short_name=gadget_name[1], version=max(versions_list))
+        max_version = get_last_gadget_version(gadget_name[1], gadget_name[0])
+        gadget_max_version = GadgetResource.objects.get(short_name=gadget_name[1], vendor=gadget_name[0], version=max_version)
         # Adds the identifier of the latest version of the current gadget to the list of the gadgets that will be displayed in the catalog
         shown_gadget_ids.append(gadget_max_version.id)
     
@@ -277,10 +278,20 @@ def get_resources_that_must_be_shown (user):
       return GadgetResource.objects.none()
 
 def get_last_gadget_version(name, vendor):
+    
     version_list = get_all_gadget_versions(vendor, name)
     if version_list:
-        version = max(version_list)
+        #convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
+        #allow comparing integers
+        versions = [map(int, v.split(".")) for v in version_list]
+        
+        index=0
+        for k in range(len(versions)):
+                if max(versions[index],versions[k]) == versions[k]:
+                        index = k
+        version = version_list[index]
         return version
+
     return None
 
 def get_gadget_popularity(votes_sum, votes_number):

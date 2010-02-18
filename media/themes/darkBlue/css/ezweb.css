@@ -344,6 +344,7 @@ input[type="text"], input[type="password"], textarea{
 
 .window_menu .explanation{
 	font-size: 8pt;
+	color: dimGray;
 }
 
 .window_menu .error {

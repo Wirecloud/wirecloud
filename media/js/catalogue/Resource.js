@@ -266,6 +266,7 @@ Resource.prototype.hasContract = function () {
 }
 
 Resource.prototype.showInfo = function() {
+	UIUtils.selectedVersion = this._state.getVersion();
 	$("info_resource_content").innerHTML = '';
 	if (this._state.getMashupId()==null) {
 		//Gadget
