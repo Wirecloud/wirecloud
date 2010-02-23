@@ -29,6 +29,7 @@
 
 
 #
+
 from django.db import IntegrityError
 
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -44,7 +45,7 @@ from django.db import transaction
 
 from django.utils.translation import ugettext as _
 
-from commons.utils import get_xml_error, json_encode
+from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 
@@ -56,6 +57,7 @@ from commons.logs_exception import TracedServerError
 from gadget.utils import * 
 
 from HTMLParser import HTMLParseError
+
     
 def parseAndCreateGadget(request, user_name):
     try:
@@ -167,13 +169,13 @@ class GadgetCodeEntry(Resource):
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
-
         xhtml = gadget.xhtml;
-        if (not xhtml.url.startswith("http")):
-            return HttpResponseBadRequest(get_xml_error(_("This gadget could not be updated")), mimetype='application/xml; charset=UTF-8')
         
         try:
-            xhtml.code = download_http_content(xhtml.url)
+            if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
+                xhtml.code = get_xhtml_content(xhtml.url)
+            else:
+                xhtml.code = download_http_content(xhtml.url)
             xhtml.save()
         except Exception, e:
             msg = _("XHTML code is not accessible")

@@ -32,8 +32,12 @@
 
 import os
 import types
+import codecs
+import settings
 from decimal import Decimal
 from xml.dom.minidom import getDOMImplementation
+
+from urllib import url2pathname
 
 from django.db import models
 from django.conf import settings
@@ -179,3 +183,15 @@ def load_gadgets():
                 print "Unable get contents of %s (%s)." % (code_file, e)
 
     print "%s errors found" % errors
+    
+
+def get_xhtml_content(path):
+    if path.startswith("/") or path.startswith("\\"):
+        path = os.path.join(settings.BASEDIR, url2pathname(path[1:]))
+    else:
+        path = os.path.join(settings.BASEDIR, url2pathname(path))
+    f = codecs.open(path, "r", "utf8")
+    content = f.read()
+    f.close()
+    return content
+    
