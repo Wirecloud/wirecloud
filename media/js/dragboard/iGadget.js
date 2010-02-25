@@ -582,6 +582,9 @@ IGadget.prototype.build = function() {
 	Element.extend(this.statusBar);
 	this.statusBar.addClassName("statusBar");
 	this.element.appendChild(this.statusBar);
+	this.statusBar.observe("click", function () {
+										this.layout.dragboard.raiseToTop(this)
+									}.bind(this), false);
 
 	// resize handles
 	var resizeHandle;
