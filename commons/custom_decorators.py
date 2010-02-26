@@ -61,14 +61,8 @@ def view_or_basicauth(view, request, realm = "", *args, **kwargs):
                 user = authenticate(username=uname, password=passwd)
                 if user is not None:
                     if user.is_active:
-                        login(request, user)
                         request.user = user
-                        try:
-                            return view(*args, **kwargs)
-                        finally:
-                            #no state: logout the user
-                            request.session.clear()
-                            request.session.delete()
+                        return view(*args, **kwargs)
 
     # Either they did not provide an authorization header or
     # something in the authorization attempt failed. Send a 401
