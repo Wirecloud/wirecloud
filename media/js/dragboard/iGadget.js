@@ -973,9 +973,9 @@ IGadget.prototype.setName = function (igadgetName) {
  */
 IGadget.prototype.notifyEvent = function(){
 	
-	this.layout.dragboard.raiseToTop(this);
 	if (this.isIconified()){
 		//maximize iconified gadget
+		this.layout.dragboard.raiseToTop(this);
 		this.toggleMinimizeStatus(false);
 	}
 }
