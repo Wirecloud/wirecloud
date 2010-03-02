@@ -47,6 +47,7 @@ var CatalogueFactory  = function () {
 		var selectedResourceName = "";
 		var selectedResourceVersion = "";
 		var purchasableGadgets = []; 
+		var availableApps = []; 
 
 		this.catalogueElement = $('showcase_container');
 	    //paint tag categories
@@ -137,6 +138,25 @@ var CatalogueFactory  = function () {
 			return null;
 		}
 		
+		this.contractApplication = function (resourceId, appId) {
+			var contratationSuccess = function (transport) {
+				var responseJSON = transport.responseText;
+				var response = JSON.parse(responseJSON); 
+				
+				CatalogueFactory.getInstance().reloadCompleteCatalogue();
+			}
+			
+			var contratationError = function () {
+				alert("Error contracting application");
+			}
+			
+			var url = URIs.CONTRACT_APPLICATION.evaluate({'application_id': appId});
+			var arguments = {'username': ezweb_user_name, 'free': true}
+			var params = {'contract_info': Object.toJSON(arguments)};
+			
+			PersistenceEngineFactory.getInstance().send_post(url, params, this, contratationSuccess, contratationError);
+		}
+		
 		this.getVersionManager = function(id_) {
 			return verManager;
 		}
@@ -195,17 +215,11 @@ var CatalogueFactory  = function () {
 					ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
 					return;
 				}
-				
-				var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetBuy.iface?nUser=#{nUser}&templateUrl=#{template}");
-	    
-		        var gadgetUrl = currentResource.getUriTemplate();
-	    
-	    		var final_url = urlTemplate.evaluate({"nUser": ezweb_user_name, "template": gadgetUrl});
 			
-			    LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
-			      function(){UIUtils.repaintOrderedByCreationDate();},
+			    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
+			      CatalogueFactory.getInstance().contractApplication,
 			      function(){LayoutManagerFactory.getInstance().hideCover();},
-			      final_url
+			      this.getResource(resourceId_)
 			    );
 			    
 			    return;
@@ -282,6 +296,14 @@ var CatalogueFactory  = function () {
 
 		this.orderby = function(items){
 			_orderby($("orderby"), items);
+		}
+		
+		this.setAvailableApps = function(availableApps){
+			this.availableApps = availableApps;
+		}
+		
+		this.getAvailableApps = function(){
+			return this.availableApps;
 		}
 
 		this.changeGlobalTagcloud = function(type){	

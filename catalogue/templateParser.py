@@ -119,7 +119,6 @@ class TemplateHandler(handler.ContentHandler):
         self._gadget = None
         self._contratable = False
         self._id = -1
-        self._application = None;
         
         #Organizations
         self._organization_list = []
@@ -203,17 +202,6 @@ class TemplateHandler(handler.ContentHandler):
         if (capability.name.lower() == 'contratable'):
             self._contratable=True 
             
-    def processApplication(self, attrs):         
-        id = None
-        
-        if (attrs.has_key('id')):
-            id = attrs.get('id')
-        
-        if (not id):
-            raise TemplateParseException(_("ERROR: missing attribute at Application element"))
-        
-        self._application = id
-            
     def processOrganization(self, organization_accumulator):         
         if (not organization_accumulator):
             #Not specifiying organization is valid!
@@ -293,8 +281,6 @@ class TemplateHandler(handler.ContentHandler):
             if value:
                 raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
             self._name = self._accumulator[0]
-            return
-        if (name == 'Application'):
             return
         if (name == 'DisplayName'):
             self._displayName = self._accumulator[0]
@@ -383,10 +369,6 @@ class TemplateHandler(handler.ContentHandler):
             gadget.creation_date    = datetime.today()
             gadget.popularity       = '0.0'
             gadget.fromWGT          = self.fromWGT
-
-            if (self._application):
-                gadget.id = self._application
-
 
             # Checking certification status
             gadget.certification = get_certification_status(self._user)
@@ -495,10 +477,6 @@ class TemplateHandler(handler.ContentHandler):
         if (name == 'Capability'):
             self.processCapability(attrs)
             return
-        
-        if (name == 'Application'):
-           self.processApplication(attrs)
-           return
         
         #Translation elements
         if (name == 'Translations'):

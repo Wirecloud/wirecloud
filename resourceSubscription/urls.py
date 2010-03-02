@@ -30,14 +30,13 @@
 
 #
 from django.conf.urls.defaults import patterns
-from resourceSubscription.views import ContractCollection, ResourceSubscriber, ContractEntry, ResourceUnsubscriber
+from resourceSubscription.views import ContractCollection, ApplicationSubscriber, ContractEntry
 
 urlpatterns = patterns('resourceSubscription.views',
                        
     (r'^/?$', ContractCollection(permitted_methods=('GET', 'POST', ))),
     (r'^/?$', ContractEntry(permitted_methods=('GET', 'PUT', 'DELETE', ))),
     
-    (r'^/subscribe/resource/(?P<resource_id>\d+)?$', ResourceSubscriber(permitted_methods=('GET', 'POST', ))),
-    (r'^/unsubscribe/resource/(?P<resource_id>\d+)?$', ResourceUnsubscriber(permitted_methods=('GET', 'POST', ))),
+    (r'^/subscribe/application/(?P<application_id>\d+)?$', ApplicationSubscriber(permitted_methods=('GET', 'POST', ))),
 )
 

@@ -168,7 +168,7 @@ WindowMenu.prototype.setFocus = function () {
 /**
 *
 */
-function ContratationWindow(element) {
+function ContratationWindow() {
 	WindowMenu.call(this, gettext('Contratation Information'));
 
 	this.iframe = document.createElement('iframe');
@@ -204,6 +204,169 @@ ContratationWindow.prototype._acceptListener = function(e) {
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
+/**
+*
+*/
+function AddingGadgetToApplicationWindow() {
+	WindowMenu.call(this, gettext('Assign Gadget to Application'));
+
+	this.content = document.createElement('div');
+	
+	this.content.innerHTML = '<b>Application:</b> <select id="app_appList"></select><br /><hr /><div id="app_name_vendor"><b>Name:</b><div class="inline_field" id="app_name"></div><br /><b>Vendor:</b><div class="inline_field" id="app_vendor"></div><br /><b>Business model:</b><div class="inline_field" id="app_business">App Business Model</div><br /><b>List of Gadgets:</b><div class="inline_field" id="app_gadgets"></div><br /><b>Description:</b><div class="inline_field" id="app_desc"></div><br /><br /></div><div id="app_img_container"><img class="app_image" id="app_img" src="" /></div><div id="app_gadgets_desc"></div>';
+	
+	document.body.insertBefore(this.htmlElement, $("header"));
+	
+	this.windowContent.appendChild(this.content);
+	
+	this.link = document.createElement('div')
+	
+	this.link.innerHTML = '<a style="float: right; padding-top: 5px;" target="_blank" href="http://emarketplace1.hi.inet:3980/BOCL/BMPS_BOCL.html">View business model description</a>'
+	
+	this.windowContent.appendChild(this.link);
+	
+	this.app_select = document.getElementById('app_appList');
+	this.app_name = document.getElementById('app_name');
+	this.app_vendor = document.getElementById('app_vendor');
+	this.app_image = document.getElementById('app_img');
+	this.app_desc = document.getElementById('app_desc');
+	this.app_gadgets = document.getElementById('app_gadgets');
+	
+	var select_options = "";
+	var apps = CatalogueFactory.getInstance().getAvailableApps();
+	
+	for (var i=0; i<apps.length; i++) {
+		var app = apps[i];
+		var select_option = '<option value="' + app['app_code'] + '">' + app['short_name'] + '</option>'; 
+		
+		select_options += select_option;
+		
+		this.app_select.innerHTML = select_options;
+	}
+	
+	Event.observe(this.app_select, 'change', function () { this.update_window() }.bind(this));
+	
+	// Finish button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
+	this._acceptListener = this._acceptListener.bind(this);
+	this.acceptButton.observe("click", this._acceptListener);
+	this.windowBottom.appendChild(this.acceptButton);
+}
+
+AddingGadgetToApplicationWindow.prototype = new WindowMenu();
+
+AddingGadgetToApplicationWindow.prototype.setCloseListener = function(closeListener) {
+	this._closeListener = closeListener;
+}
+
+AddingGadgetToApplicationWindow.prototype.setHandler = function(acceptHandler) {
+	this.acceptHandler = function(){acceptHandler(this._gadgetId, this._appId);}.bind(this);
+}
+
+AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+AddingGadgetToApplicationWindow.prototype.setExtraData = function(gadgetId) {
+	this._gadgetId = gadgetId;
+	
+	this.update_window();
+}
+
+AddingGadgetToApplicationWindow.prototype.update_window = function() {
+	var selectedIndex = this.app_select.selectedIndex;
+	
+	if (selectedIndex != -1) {
+		this._appId = this.app_select[selectedIndex].value;
+		
+		var apps = CatalogueFactory.getInstance().getAvailableApps();
+		
+		var app = apps[selectedIndex];
+		
+		this.app_name.innerHTML = app['name'];
+		this.app_vendor.innerHTML = app['vendor'];
+		this.app_gadgets.innerHTML = app['gadget_list'];
+		this.app_desc.innerHTML = app['description'];
+		this.app_image.setAttribute('src', app['image_uri']);
+	} 
+}
+
+/**
+*
+*/
+function BuyingApplicationWindow() {
+	WindowMenu.call(this, gettext('Purchase Application'));
+
+	this.content = document.createElement('div');
+	
+	this.content.innerHTML = '<b>Application:</b><div class="inline_field" id="buy_app_shortname"></div><br /><hr /><div id="buy_name_vendor"><b>Name:</b><div class="inline_field" id="buy_name"></div><br /><b>Vendor:</b><div class="inline_field" id="buy_vendor"></div><br /><b>List of Gadgets:</b><div class="inline_field" id="buy_gadgets"></div><br /><b>Description:</b><div class="inline_field" id="buy_desc"></div></div><div id="app_img_container"><img class="app_image" id="buy_img" src="" /></div><div id="buy_gadgets_desc"></div>';
+	
+	document.body.insertBefore(this.htmlElement, $("header"));
+	
+	this.windowContent.appendChild(this.content);
+	
+	this.link = document.createElement('div')
+	
+	this.link.innerHTML = '<a id="buy_link" style="float: right; padding-top: 5px;" target="_blank" href="">View pricing</a>'
+	
+	this.windowContent.appendChild(this.link);
+	
+	this.app_shortname = document.getElementById('buy_app_shortname');
+	this.app_name = document.getElementById('buy_name');
+	this.app_vendor = document.getElementById('buy_vendor');
+	this.app_image = document.getElementById('buy_img');
+	this.app_desc = document.getElementById('buy_desc');
+	this.app_gadgets = document.getElementById('buy_gadgets');
+	this.app_link = document.getElementById('buy_link');
+	
+	// Finish button
+	this.acceptButton = document.createElement('button');
+	this.acceptButton.appendChild(document.createTextNode(gettext('Contract')));
+	this._acceptListener = this._acceptListener.bind(this);
+	this.acceptButton.observe("click", this._acceptListener);
+	this.windowBottom.appendChild(this.acceptButton);
+}
+
+BuyingApplicationWindow.prototype = new WindowMenu();
+
+BuyingApplicationWindow.prototype.setCloseListener = function(closeListener) {
+	this._closeListener = closeListener;
+}
+
+BuyingApplicationWindow.prototype.setHandler = function(acceptHandler) {
+	this.acceptHandler = function(){acceptHandler(this._gadgetId, this._appId);}.bind(this);
+}
+
+BuyingApplicationWindow.prototype._acceptListener = function(e) {
+	this.acceptHandler();
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
+BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
+	this._resource = extra_data;
+	
+	var gadget_apps = this._resource.getGadgetApps();
+	var gadget_app = null;
+	
+	if (gadget_apps.length > 0)
+		gadget_app = gadget_apps[0];
+	else {
+		this.app_shortname.innerHTML = "Gadget not linked to any Application! Can't continue!";
+		return;
+	}
+		
+	this._gadgetId = this._resource.getId();
+	this._appId = gadget_app['app_code'];
+	
+	this.app_shortname.innerHTML = gadget_app['short_name'];
+	this.app_name.innerHTML = gadget_app['name'];
+	this.app_vendor.innerHTML = gadget_app['vendor'];
+	this.app_gadgets.innerHTML = gadget_app['gadget_list'];
+	this.app_desc.innerHTML = gadget_app['description'];
+	this.app_image.setAttribute('src', gadget_app['image_uri']);
+	this.app_link.setAttribute('href', gadget_app['template_uri']);
+}
 
 /**
  * Specific class for dialogs about creating things.

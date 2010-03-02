@@ -34,17 +34,11 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext as  _
 
-from catalogue.models import GadgetResource
+from catalogue.models import Application
 from django.contrib.auth.models import User
 
 from django.utils import simplejson
-
-CONTRACT_STATES = (
-    (u'CANCELED', 'Canceled'),
-    (u'SUBSCRIBED', 'Subscribed'),
-    (u'EXPIRED', 'Expired'),
-)
-
+    
 class Contract(models.Model):
     free = models.BooleanField(_('Free'))
     #start_date = models.DateTimeField(_('Start Date'))
@@ -52,17 +46,17 @@ class Contract(models.Model):
     
     times_used = models.IntegerField(_('Used times'), default=0)
     
-    gadget_resource = models.ForeignKey(GadgetResource, verbose_name=_('Gadget Resource'))
+    application = models.ForeignKey(Application, verbose_name=_('Application'))
     user = models.ForeignKey(User, verbose_name=_('User'))
-    
-    state = models.CharField(_('State'), choices=CONTRACT_STATES, max_length=20)
     
     def get_info(self):
         result = {}
         
-        result['free'] = self.free
-        result['times_used'] = self.times_used
-        result['id'] = self.id
+        result["free"] = self.free
+        result["times_used"] = self.times_used
+        result["app_tag"] = self.application.tag
+        result["app_code"] = self.application.app_code
+        result["id"] = self.id
         
         return result
     
@@ -84,3 +78,6 @@ class Contract(models.Model):
         self.save()
         
         return self
+
+    def __unicode__(self):
+        return unicode(self.application) + " - " + unicode(self.user)

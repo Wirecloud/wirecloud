@@ -1,3 +1,16 @@
+.app_image {
+	position:absolute;
+	right:8px;
+	top:30px;
+	width:140px;
+	height: 65px;
+}
+
+.inline_field {
+	display: inline;
+ 	padding-left: 5px;
+}
+
 #showcase_container {overflow:hidden;}
 #catalogue a {
 	text-decoration:none;

@@ -69,16 +69,17 @@ Resource.prototype.setSlots = function(slots_) { this._state.setSlots(slots_);}
 Resource.prototype.getEvents = function() { return this._state.getEvents();}
 Resource.prototype.setEvents = function(events_) { this._state.setEvents(events_);}
 Resource.prototype.getTagger = function() { return this._tagger;}
-Resource.prototype.getContract = function() { return this._state.getContract();}
-Resource.prototype.setVotes = function(voteData_) {
-	this._state.setVotes(voteData_);
-	this._rateResource();
-}
 Resource.prototype.getVotes = function() {return this._state.getVotes();}
 Resource.prototype.getUserVote = function() {return this._state.getUserVote();}
 Resource.prototype.getPopularity = function() {return this._state.getPopularity();}
 Resource.prototype.getSelectedVersion = function() {return this._versionSelected;}
 Resource.prototype.setSelectedVersion = function(version) {this._versionSelected = version;}
+Resource.prototype.getContract = function() { return this._state.getContract();}
+Resource.prototype.setVotes = function(voteData_) {
+	this._state.setVotes(voteData_);
+	this._rateResource();
+}
+Resource.prototype.getGadgetApps = function() {return this._state.getGadgetApps();}
 
 /**
  * @private
@@ -131,7 +132,7 @@ Resource.prototype.paint = function() {
 		var button_class = '';
 
 		if (this.isContratable() && (! this.hasContract())) {
-			button_message = gettext('Purchase');
+			button_message = gettext('Buy');
 			button_class = 'contratable';
 		}
 
@@ -150,7 +151,7 @@ Resource.prototype.paint = function() {
 		var button_class = 'add_mashup'
 
 		if (this.isContratable() && (! this.hasContract())) {
-			button_message = gettext('Purchase');
+			button_message = gettext('Buy');
 			button_class = 'contratable';
 		}
 
@@ -1323,6 +1324,18 @@ Resource.prototype._createResource = function(urlTemplate_) {
 		}
 		
 		return null;
+	}
+	
+	this.getGadgetApps = function() { 
+		for (i=0; i<capabilities.length; i++) {
+			var capability = capabilities[i];
+			
+			if (capability['name'].toLowerCase() == 'contratable') {
+				return capability['applications'];
+			}
+		}
+		
+		return [];
 	}
 
 	this.getTags = function() { return tags;}

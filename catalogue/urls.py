@@ -29,11 +29,12 @@
 
 
 #
+
 from django.conf.urls.defaults import patterns
+
 from catalogue.views import *
 
 urlpatterns = patterns('catalogue.views',
-
     # Gadgets
     (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', GadgetsCollection(permitted_methods=('DELETE','PUT'))),
     (r'^resource/(?P<pag>\d+)/(?P<offset>\d+)$', GadgetsCollection(permitted_methods=('GET',))),
@@ -41,11 +42,8 @@ urlpatterns = patterns('catalogue.views',
     (r'^resource$', GadgetsCollection(permitted_methods=('GET', 'POST',))),
 
     # Search Gadgets
-
-    (r'^globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$',
-        GadgetsCollectionByGlobalSearch(permitted_methods=('GET',))),
-    (r'^search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$',
-        GadgetsCollectionBySimpleSearch(permitted_methods=('GET',))),
+    (r'^globalsearch/(?P<pag>\d+)/(?P<offset>\d+)$', GadgetsCollectionByGlobalSearch(permitted_methods=('GET',))),
+    (r'^search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$', GadgetsCollectionBySimpleSearch(permitted_methods=('GET',))),
 
     # Tags
     (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<tag>\d+)$',
@@ -58,6 +56,8 @@ urlpatterns = patterns('catalogue.views',
         GadgetVotesCollection(permitted_methods=('GET','POST','PUT',))),
     
     #version check
-    (r'^versions',
-        GadgetVersionsCollection(permitted_methods=('POST',))),
+    (r'^versions', GadgetVersionsCollection(permitted_methods=('POST',))),
+    
+    #Applications!
+    (r'^application/(?P<application_id>\d+)/resource/(?P<resource_id>\d+)/link', ApplicationManager(permitted_methods=('POST', 'GET',))),
  )

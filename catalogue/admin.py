@@ -32,7 +32,7 @@
 
 from django.contrib import admin
 
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, Tag, Category, UserVote, Translation, Capability
+from catalogue.models import *
 
 class CategoyAdminView(admin.ModelAdmin):     
     filter_horizontal = ('tags',)
@@ -48,6 +48,7 @@ admin.site.register(GadgetWiring)
 admin.site.register(UserRelatedToGadgetResource)
 admin.site.register(UserTag)
 admin.site.register(UserVote)
+admin.site.register(Application)
 admin.site.register(Tag)
 admin.site.register(Category,CategoyAdminView)
 admin.site.register(Translation)

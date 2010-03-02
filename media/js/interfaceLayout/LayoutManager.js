@@ -746,7 +746,7 @@ var LayoutManagerFactory = function () {
 		}
 
 		//Shows the asked window menu
-		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, iframe_src) {
+		LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, extra_data) {
 			//the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
 			if (this.currentMenu != null) {
 				// only if the layer is displayed.
@@ -826,7 +826,23 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['contratableAddInstanceMenu'];
 				this.currentMenu.setHandler(handlerYesButton);
-				this.currentMenu.setSrc(iframe_src);
+				this.currentMenu.setSrc(extra_data);
+				break;
+			case 'addGadgetToAppMenu':
+				if (!this.menus['addGadgetToAppMenu']) {
+					this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow();
+				}
+				this.currentMenu = this.menus['addGadgetToAppMenu'];
+				this.currentMenu.setHandler(UIUtils.addResourceToApplication);
+				this.currentMenu.setExtraData(extra_data);
+				break;
+			case 'purchaseAppMenu':
+				if (!this.menus['purchaseAppMenu']) {
+					this.menus['purchaseAppMenu'] = new BuyingApplicationWindow();
+				}
+				this.currentMenu = this.menus['purchaseAppMenu'];
+				this.currentMenu.setHandler(handlerYesButton);
+				this.currentMenu.setExtraData(extra_data);
 				break;
 			default:
 				return;

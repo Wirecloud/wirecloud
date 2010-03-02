@@ -53,7 +53,7 @@ from commons.resource import Resource
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource, UserTag, Tag, UserVote
+from catalogue.models import *
 from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
@@ -111,11 +111,24 @@ class GadgetsCollection(Resource):
         vendor = gadget.vendor
         gadgetId = gadget.id
         
+        availableApps = []
+        
+        #Managing available Applications
+        if 'resourceSubscription' in settings.INSTALLED_APPS:
+            from resourceSubscription.models import Application
+            
+            apps = Application.objects.all()
+        
+            for app in apps:
+                availableApps.append(app.get_info())
+        
+        availableApps = simplejson.dumps(availableApps)
+        
         #Inform about the last version of the gadget.
         last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
 
-        json_ok = '{"result": "ok", "contratable": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s"}' \
-            % (contratable, template_uri, gadgetName, gadgetId, vendor, version, last_version)
+        json_ok = '{"result": "ok", "contratable": %s, "availableApps": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s"}' \
+            % (contratable, availableApps, template_uri, gadgetName, gadgetId, vendor, version, last_version)
         
         return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 
@@ -152,7 +165,6 @@ class GadgetsCollection(Resource):
             gadgetlist = gadgetlist[c:d]
             
         return get_resource_response(gadgetlist, format, items, user)
-
 
     def delete(self, request, user_name, vendor, name, version=None):
 
@@ -203,21 +215,29 @@ class GadgetsCollection(Resource):
             xml_ok = '<ResponseOK>OK</ResponseOK>'
             return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
 
+@transaction.commit_on_success
 def deleteOneGadget(resource, user, request):
     try:
+        #Delete data from Application model         
+        apps = Application.objects.filter(resources=resource)
+            
+        for app in apps:
+            app.remove_resource(resource)
+        
         # Delete the gadget only if this user is the owner
         userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
         # Delete the related user information to that gadget
         userRelated.delete()
         # Delete the related wiring information for that gadget
         GadgetWiring.objects.filter(idResource=resource.id).delete()
+        
         # Delete the related tags for that gadget
         
         #if there is no more gadgets tagged with these tags, delete the Tag
         resourceTags = UserTag.objects.filter(idResource=resource.id)
         for t in resourceTags:
-            if UserTag.objects.filter(tag = t.tag).count() == 1:
-                t.tag.delete()
+            #if UserTag.objects.filter(tag = t.tag).count() == 1:
+            #    t.tag.delete()
             t.delete()
         
         # Delete the related votes for that gadget
@@ -232,6 +252,7 @@ def deleteOneGadget(resource, user, request):
                 path = os.path.join(settings.BASEDIR, path).encode("utf8")
                 if os.path.isdir(path):
                     rmtree(path)
+        
         # Delete the object
         resource.delete()
         
@@ -592,3 +613,17 @@ class ResourceEnabler(Resource):
         resource.save()
         
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
+
+class ApplicationManager(Resource):
+    def read(self, request, user_name, application_id, resource_id):
+        pass
+    
+    def create(self, request, user_name, application_id, resource_id):
+        try:
+            application = Application.objects.get(app_code=application_id)
+            resource = GadgetResource.objects.get(id=resource_id)
+            application.add_resource(resource)
+            
+            return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
+        except Application.DoesNotExist, GadgetResource.DoesNotExist:
+            return HttpResponseServerError('{"result": "error"}', mimetype='application/json; charset=UTF-8')

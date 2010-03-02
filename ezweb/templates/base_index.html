@@ -201,7 +201,8 @@ _URIConstants.prototype.POST_CREATE_EXTERNAL_CHANNEL = '/channel/external';
 _URIConstants.prototype.GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS = new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}');
 _URIConstants.prototype.POST_PUBLISH_REMOTE_CHANNELS = new Template('/notifier/channels/notify?channels=#{channels}');
 _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalogue/versions';
-
+_URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
+_URIConstants.prototype.CONTRACT_APPLICATION = new Template('/contract/subscribe/application/#{application_id}');
 
 {% if home_gateway_dispatcher_url %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';

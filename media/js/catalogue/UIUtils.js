@@ -49,6 +49,23 @@ UIUtils.counter=0;
 UIUtils.globalTags='all';
 
 
+UIUtils.addResourceToApplication = function(resource_id, application_id) {
+	var addingToAppSuccess = function (response) {
+		UIUtils.repaintOrderedByCreationDate();
+	}
+	
+	var addingToAppError = function (response) {
+		alert ("Error en addingToApp");
+	}
+	
+	//Send request the application manager
+	var params = new Hash();
+	var url = URIs.ADD_RESOURCE_TO_APP.evaluate({"application_id":application_id,"resource_id":resource_id});
+	
+	PersistenceEngineFactory.getInstance().send_post(url, params, this, addingToAppSuccess, addingToAppError);
+}
+
+
 UIUtils.addResource = function(url, paramName, paramValue) {
 	UIUtils.repaintCatalogue=true;
 	UIUtils.search = false;
@@ -62,19 +79,13 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	 	var continueAdding = function (result){
 	 		//leave that gadget version and continue
 	 		if (result['contratable']) {
-		        var urlTemplate = new Template("http://emarketplace2.hi.inet:8080/ICEfacesProject/gadgetNewApplication.iface?nDeveloper=#{nDeveloper}&nGadget=#{nGadget}&templateUrl=#{template}&cApplication=#{cApplication}");
-		    
-		    	var gadgetUrl = result['templateUrl'];
-		    	var gadgetName = result['gadgetName'];
-		    	var gadgetId = result['gadgetId'];
-		    
-		    	var final_url = urlTemplate.evaluate({"template": gadgetUrl});
-		    	
-		    	LayoutManagerFactory.getInstance().showWindowMenu('contratableAddInstanceMenu', 
-				      function(){UIUtils.repaintOrderedByCreationDate()},
-				      function(){LayoutManagerFactory.getInstance().hideCover();},
-				      final_url
-				);
+				// Link gadget with application
+				var gadget_id = result['gadgetId'];
+				var available_apps = result['availableApps'];
+				
+				CatalogueFactory.getInstance().setAvailableApps(available_apps);
+				
+				LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', UIUtils.addResourceToApplication, function () { LayoutManagerFactory.getInstance().hideCover() }, gadget_id);
 		    } else {
 		    	UIUtils.repaintOrderedByCreationDate();
 		    }

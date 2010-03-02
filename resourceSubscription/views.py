@@ -38,11 +38,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
 from resourceSubscription.models import Contract
-from catalogue.models import GadgetResource
+from catalogue.models import Application
 
 from django.utils import simplejson
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+
+from django.db import transaction
 
 def check_arguments(request):
     contract_info = None
@@ -76,7 +78,7 @@ class ContractCollection(Resource):
 
     read = staticmethod(read)
 
-    def create(request, resource_id):        
+    def create(request, application_id):        
         error, contract_info = check_arguments(request)
         
         if (error):
@@ -84,9 +86,9 @@ class ContractCollection(Resource):
         
         user = User.objects.get(username=contract_info['username'])
         
-        resource = get_object_or_404(GadgetResource, id=resource_id)
+        application = get_object_or_404(Application, app_code=application_id)
         
-        contract, created = Contract.objects.get_or_create(user=user, gadget_resource=resource)
+        contract, created = Contract.objects.get_or_create(user=user, application=application)
         
         if created:
             contract.update_info(contract_info)
@@ -136,9 +138,9 @@ class ContractEntry(Resource):
     
     delete = staticmethod(delete)
     
-class ResourceSubscriber(Resource):
+class ApplicationSubscriber(Resource):
     @login_required
-    def read(self, request, resource_id):
+    def read(self, request, application_id):
         error, contract_info = check_arguments(request)
         
         if (error):
@@ -146,16 +148,17 @@ class ResourceSubscriber(Resource):
         
         user = User.objects.get(username=contract_info['username'])
         
-        resource = get_object_or_404(GadgetResource, id=resource_id)
+        application = get_object_or_404(Application, app_code=application_id)
     
         try:
-            contract = Contract.objects.get(user=user, gadget_resource=resource)
+            contract = Contract.objects.get(user=user, application=application)
             
             return ContractEntry.update(request, contract.id)
         except Contract.DoesNotExist:
-            return ContractCollection.create(request, resource_id)
-        
-    def create(self, request, resource_id):
+            return ContractCollection.create(request, application_id)
+    
+    @login_required   
+    def create(self, request, application_id):
         error, contract_info = check_arguments(request)
         
         if (error):
@@ -163,16 +166,12 @@ class ResourceSubscriber(Resource):
         
         user = User.objects.get(username=contract_info['username'])
         
-        resource = get_object_or_404(GadgetResource, id=resource_id)
+        application = get_object_or_404(Application, app_code=application_id)
     
         try:
-            contract = Contract.objects.get(user=user, gadget_resource=resource)
+            contract = Contract.objects.get(user=user, application=application)
             
             return ContractEntry.update(request, contract.id)
         except Contract.DoesNotExist:
-            return ContractCollection.create(request, resource_id)
+            return ContractCollection.create(request, application_id)
         
-class ResourceUnsubscriber(Resource):
-    @login_required
-    def read(self, request, resource_id):
-        return ContractEntry.delete(request, contract.id)

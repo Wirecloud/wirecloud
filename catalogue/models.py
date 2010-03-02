@@ -31,9 +31,12 @@
 #
 
 from django.db import models 
-from django.conf import settings
 from django.contrib.auth.models import User, Group
+from django.conf import settings
+
 from django.utils.translation import get_language, ugettext as _
+from django.utils import simplejson
+
 from django.core.exceptions import ObjectDoesNotExist
 
 ###### Translation Section ######
@@ -217,3 +220,65 @@ class UserVote(models.Model):
 
     def __unicode__(self):
         return u'%s: %s on %s' % (self.idUser, self.vote, self.idResource)
+
+###### MarketPlace section ######
+
+class Application(TransModel):
+    resources = models.ManyToManyField(GadgetResource, related_name='resources', null=True, blank=True)
+    tag = models.ForeignKey(Tag, verbose_name=_('Tag'))
+    app_code = models.IntegerField(_('application_code'), primary_key=True)
+    template_uri = models.URLField(_('templateURI'), null=True, blank=True)
+    
+    name = models.CharField(_('Name'), max_length=250)
+    short_name = models.CharField(_('Shortname'), max_length=100)
+    description = models.TextField(_('Description'))
+    image_uri = models.URLField(_('imageURI'), null=True)
+    vendor = models.CharField(_('Vendor'), max_length=250)
+    
+    def get_gadget_list(self):
+        gadget_list = ""
+        
+        gadgets = self.resources.all()
+        for gadget in gadgets:
+            if (gadget_list):
+                gadget_list += ','
+            
+            gadget_signature = "%s %s" % (gadget.short_name, gadget.version)
+            
+            gadget_list += gadget_signature
+        
+        return gadget_list
+    
+    def get_info(self):
+        result = {}
+        
+        result["gadget_list"] = self.get_gadget_list()
+        result["app_code"] = self.app_code
+        result["name"] = self.name
+        result["short_name"] = self.short_name
+        result["description"] = self.description
+        result["image_uri"] = self.image_uri
+        result["vendor"] = self.vendor
+        result["template_uri"] = self.template_uri
+        
+        return result
+    
+    def add_resource(self, resource):
+        self.resources.add(resource)
+        self.save()
+        
+        user_tag, created = UserTag.objects.get_or_create(idUser=resource.creator, idResource=resource, tag=self.tag)
+        user_tag.save()
+
+    def remove_resource(self, resource):
+        self.resources.remove(resource)
+        self.save()
+        
+        usertags = UserTag.objects.filter(idResource=resource)
+        for utag in usertags:
+            if (utag.tag.name == self.tag.name):
+                utag.delete()
+                utag.save()
+    
+    def __unicode__(self):
+        return unicode(self.tag)
