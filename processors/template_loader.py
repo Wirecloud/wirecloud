@@ -33,11 +33,14 @@ from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.utils._os import safe_join
 
-allowed_templates = ["index.html", "500.html", "400.html", "registration/login.html"]
 
 def load_template_source(template_name, template_dirs=None):
     tried = []
 
+    allowed_templates = getattr(settings, "ALLOWED_TEMPLATES_IN_THEMES", None)
+    if not isinstance(allowed_templates, (tuple, list)):
+        allowed_templates = ["index.html", "500.html", "400.html",
+                             "registration/login.html"]
     if template_name in allowed_templates:
         # Theme templates
         filepath = safe_join(settings.BASEDIR, 'media', 'themes', settings.DEFAULT_THEME, 'templates', template_name)

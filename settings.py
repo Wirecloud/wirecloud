@@ -69,6 +69,9 @@ LOGGING_LEVEL = 2
 #################################################################
 # Uncomment this to override the default Theme.
 #DEFAULT_THEME = "default"
+# Uncomment this to edit allowed templates to overwrite by themes
+#ALLOWED_TEMPLATES_IN_THEMES = ["index.html", "500.html", "400.html",
+#                               "registration/login.html"]
 #################################################################
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
