@@ -706,15 +706,7 @@ IGadget.prototype.paint = function(onInit) {
 
 	// Mark as draggable
 	this.draggable = new IGadgetDraggable(this);
-	if (BrowserUtilsFactory.getInstance().getBrowser() != "IE6") {
-		this.gadgetMenu.observe('dblclick',
-			function() {
-				if (!this.isMinimized())
-					this.setFullDragboardMode(!this.isInFullDragboardMode());
-			}.bind(this),
-			false);
-	}
-
+	
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 
 	// Notify Context Manager about the new position
@@ -738,7 +730,6 @@ IGadget.prototype.paint = function(onInit) {
 
 	Event.observe(this.iconImg, "click", function() {
 												if (this.layout.dragboard.isLocked()) {
-													//alert("kk");
 													this.setMinimizeStatus(false);
 													this.layout.dragboard.raiseToTop(this);
 												}
@@ -920,16 +911,6 @@ IGadget.prototype.fillWithInput = function () {
 			                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
 			                                        target.size = (target.value.length==0) ? 1 : target.value.length + 5;
 			                                    }.bind(this));
-	
-			/*this.igadgetInputHTMLElement.observe('click',
-			                                    function(e) {
-			                                        Event.stop(e);
-			                                    }); //do not propagate to div.*/
-			this.igadgetInputHTMLElement.observe('mousedown',
-			                                    function(e) {
-			                                        e = e || window.event; // needed for IE
-			                                        Event.stop(e);
-			                                    });
 		}
 		this.igadgetInputHTMLElement.focus();
 	}

@@ -812,6 +812,10 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
 		if (!canBeDragged(draggable, data))
 			return false;
+			
+		var target = BrowserUtilsFactory.getInstance().getTarget(e);
+		if (target != handler)
+			return false;
 
 		document.oncontextmenu = function() { return false; }; // disable context menu
 		document.onmousedown = function() { return false; }; // disable text selection in Firefox
@@ -1235,6 +1239,8 @@ IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElem
 	// TODO merge with igadget minimum sizes
 	data.minWidth = Math.ceil(data.iGadget.layout.fromPixelsToHCells(80));
 	data.minHeight = Math.ceil(data.iGadget.layout.fromPixelsToVCells(50));
+	data.innitialWidth = data.iGadget.getWidth();
+	data.innitialHeight = data.iGadget.getHeight();
 	data.iGadget.igadgetNameHTMLElement.blur();
 	data.oldZIndex = data.iGadget.getZPosition();
 	data.iGadget.setZPosition("999999");
@@ -1273,7 +1279,8 @@ IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleEle
 IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, data) {
 	var iGadget = data.iGadget;
 	data.iGadget.setZPosition(data.oldZIndex);
-	iGadget.setSize(iGadget.getWidth(), iGadget.getHeight(), data.resizeLeftSide, true);
+	if (data.innitialWidth != data.iGadget.getWidth() || data.innitialHeight != data.iGadget.getHeight())
+		iGadget.setSize(iGadget.getWidth(), iGadget.getHeight(), data.resizeLeftSide, true);
 	handleElement.removeClassName("inUse");
 
 	// This is needed to check if the scrollbar status has changed (visible/hidden)
