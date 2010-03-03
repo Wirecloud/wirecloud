@@ -40,7 +40,7 @@ def get_or_create_gadget (templateURL, user, fromWGT = False):
 	templateParser = None
 		 
 	# Gadget is created only once
-	templateParser = TemplateParser(templateURL, fromWGT)
+	templateParser = TemplateParser(templateURL, user, fromWGT)
 	gadget_uri = templateParser.getGadgetUri()
 
 	try:

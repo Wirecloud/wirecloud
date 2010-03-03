@@ -59,19 +59,25 @@ def download_http_content (uri, params=None):
 
     opener = urllib2.build_opener(proxy)
     referer = getattr(settings, 'HTTP_REFERER', None)
-    if referer:
+    params = params or {}
+    has_remote_user = 'username' in params
+    has_cookie = 'cookie' in params
+    if referer or has_remote_user or has_cookie:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
             'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
             'Accept-Language': 'en-gb,en;q=0.5',
             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
-            'Referer': referer,
         }
-        if 'username' in (params or {}):
+        if referer:
+            headers.update({
+                'Referer': referer,
+            })
+        if has_remote_user:
             headers.update({
                 'Remote-User': params['username'],
             })
-        if 'cookie' in (params or {}):
+        if has_cookie:
             headers.update({
                 'Cookie': params['cookie'],
             })

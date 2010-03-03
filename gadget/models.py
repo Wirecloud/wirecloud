@@ -40,6 +40,7 @@ class XHTML(models.Model):
     code = models.TextField(_('Code'))
     url = models.URLField(_('URL'), max_length=500)
     content_type = models.CharField(_('Content type'), max_length=50, blank=True, null=True)
+    cacheable = models.BooleanField(_('Cacheable'), default=True, blank=True)
 
     def __unicode__(self):
         return self.uri

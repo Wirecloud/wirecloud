@@ -38,14 +38,11 @@ from django.db import transaction
 from django.template import Context, Template
 from django.utils.translation import ugettext as _
 
-from gadgetCodeParser import GadgetCodeParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML
-
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 
 from gadgetCodeParser import GadgetCodeParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability
 
 from commons.translation_utils import get_trans_index
 from translator.models import Translation
@@ -53,11 +50,12 @@ from translator.models import Translation
 from urllib import url2pathname
 
 class TemplateParser:
-    def __init__(self, uri, fromWGT):
+    def __init__(self, uri, user,fromWGT):
         self.uri = uri
+        self.user = user
         self.fromWGT = fromWGT
         if not fromWGT:
-            self.xml = download_http_content(uri)
+            self.xml = download_http_content(uri, {"username": user.username})
         else:
             # In this case 'uri' is a filesystem URL
             if uri[0] == '/':
@@ -75,7 +73,7 @@ class TemplateParser:
 
     def parse(self):
         # Parse the input
-        self.handler = TemplateHandler(self.fromWGT)
+        self.handler = TemplateHandler(self.fromWGT, user=self.user)
         parseString(self.xml, self.handler)
         
     def getGadget (self):
@@ -170,7 +168,7 @@ class TemplateHandler(handler.ContentHandler):
     _SLOT = "SLOT"
     _EVENT = "EVEN"
         
-    def __init__(self, fromWGT):
+    def __init__(self, fromWGT, user=None):
         self._relationships = []
         self._accumulator = []
         self._link = []
@@ -201,6 +199,7 @@ class TemplateHandler(handler.ContentHandler):
         self.current_lang = ""
         self.current_text = ""
         self.fromWGT = fromWGT
+        self.user = user
         
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
@@ -515,6 +514,10 @@ class TemplateHandler(handler.ContentHandler):
 
         if (attrs.has_key('href')):
             _href = url2pathname(attrs.get('href').encode("utf8"))
+        
+        _cacheable = True
+        if 'cacheable' in attrs:
+            _cacheable = attrs.get('cacheable').encode("utf8").lower() == "true"
 
         _content_type = None
         if (attrs.has_key('content-type')):
@@ -524,7 +527,8 @@ class TemplateHandler(handler.ContentHandler):
             try:
                 # Gadget Code Parsing
                 gadgetParser = GadgetCodeParser()
-                gadgetParser.parse(_href, self._gadgetURI, _content_type, self.fromWGT)
+                gadgetParser.parse(_href, self._gadgetURI, _content_type,
+                                   self.fromWGT, cacheable=_cacheable)
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:
                 raise TemplateParseException(_("ERROR: XHTML could not be read: %(errorMsg)s") % {'errorMsg': e.message})

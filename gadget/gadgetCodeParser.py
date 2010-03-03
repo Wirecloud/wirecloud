@@ -45,9 +45,9 @@ from os import path
 class GadgetCodeParser:
     xHTML = None
 
-    def parse(self, codeURI, gadgetURI, content_type, fromWGT):
+    def parse(self, codeURI, gadgetURI, content_type, fromWGT, cacheable=True, user=None):
         xhtml = ""
-
+        
         if fromWGT:
             localPath = codeURI
             if localPath[0] == '/':
@@ -69,13 +69,17 @@ class GadgetCodeParser:
             codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
 
             try:
-                xhtml = download_http_content(codeURI)
+                params = {}
+                if user:
+                    params.update({"username": user.username})
+                xhtml = download_http_content(codeURI, params=params)
             except Exception:
                 raise TemplateParseException(_("XHTML code is not accessible"))
 
         uri = gadgetURI + "/xhtml"
         
-        self.xHTML = XHTML (uri=uri, code=xhtml, url=codeURI, content_type=content_type)
+        self.xHTML = XHTML(uri=uri, code=xhtml, url=codeURI,
+                           content_type=content_type, cacheable=bool(cacheable))
         self.xHTML.save()
                 
         return

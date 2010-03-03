@@ -151,17 +151,34 @@ class GadgetCodeEntry(Resource):
     def read(self, request, vendor, name, version, user_name=None):
         #user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version)
-        code = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
-        
+        xhtml = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
+        xhtml_code = xhtml.code
+
         content_type = gadget.xhtml.content_type
         if not content_type:
             content_type = 'text/html'
 
+        if not xhtml.cacheable:
+            params = None
+            if request.user:
+                params = {'username': request.user.username}
+            try:
+                if (not xhtml.url.startswith('http')
+                    and not xhtml.url.startswith('https')):
+                    xhtml.code = get_xhtml_content(xhtml.url)
+                else:
+                    xhtml.code = download_http_content(xhtml.url,
+                                                       params=params)
+                xhtml.save()
+            except Exception, e:
+                # FIXME: Send the error or use the cached original code?
+                msg = _("XHTML code is not accessible")
+
         if (content_type != 'text/html') and (content_type != 'application/xml+html'):
-            return HttpResponse(code.code, mimetype='%s; charset=UTF-8' % content_type)
+            return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
         else:
             try:
-                return HttpResponse(includeTagBase(code.code, code.url, request), mimetype='%s; charset=UTF-8' % content_type)
+                return HttpResponse(includeTagBase(xhtml_code, xhtml.url, request), mimetype='%s; charset=UTF-8' % content_type)
             except HTMLParseError, e:
                 msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg' : e.msg}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
@@ -170,12 +187,15 @@ class GadgetCodeEntry(Resource):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         xhtml = gadget.xhtml;
-        
+
+        params = None
+        if request.user:
+            params = {'username': request.user.username}
         try:
             if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
                 xhtml.code = get_xhtml_content(xhtml.url)
             else:
-                xhtml.code = download_http_content(xhtml.url)
+                xhtml.code = download_http_content(xhtml.url, params=params)
             xhtml.save()
         except Exception, e:
             msg = _("XHTML code is not accessible")
