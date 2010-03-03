@@ -21,6 +21,7 @@
 body{
   overflow: visible;
   color: #19446A;
+  position:relative;
 	background: url("/ezweb/themes/default/images/fond.gif") top left;
     margin:0;
     padding:0;
@@ -111,6 +112,19 @@ img{
 	border-right: 2px solid;
 	border-bottom: 2px solid;
 }
+
+#openid_link{
+    color: #2D6F9C;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+input.openid {
+  background: white url("/ezweb/themes/default/images/login-openid-bg.gif") no-repeat;
+  background-position: 0 50%;
+  padding-left: 16px;
+}
+
 
 #content-main .training{
         color:#19446A;
@@ -223,8 +237,11 @@ h3{
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
 <script type="text/javascript">
+
+var installed_apps = {{ installed_apps|safe }};
+
    function check_browser() {
-      var browser=navigator.appName;
+/*     var browser=navigator.appName;
 
       if (browser.toLowerCase().substring(0, 8) != 'netscape') {
            alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
@@ -232,6 +249,7 @@ h3{
       }     
 
       return true;
+*/
 }
 
 /* Initialization code */
@@ -242,6 +260,14 @@ h3{
 		
 		return false;
 	}
+    
+    function toggleOpenId() {
+        var divOpenid = document.getElementById("openid");
+        if (divOpenid.style.display == "none")
+            divOpenid.style.display = "block";
+        else
+            divOpenid.style.display = "none";
+    }   
 
 </script>
 
@@ -272,6 +298,9 @@ h3{
 
 {% if form.errors %}
 <p class="errornote">{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
+{% if openid_form.errors %}
+     <p class="errornote">{% trans "The OpenID authentication process failed. Please, try again." %}</p>
 {% endif %}
 
 <div id="content-main">
@@ -350,6 +379,17 @@ h3{
 			<div id="registration" class="registration">
 				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
 			</div>
+            {% for app in installed_apps %}
+                {% ifequal app 'openid_auth' %} 
+                    <div class="registration">{% trans "Do you have an OpenID account?" %} <label id="openid_link" onclick="toggleOpenId();">{% trans "Login using OpenID" %}</label></div>
+                    <div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
+                        <form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
+                            {{ openid_form }}
+                            <input type="submit" id="submit" value="{% trans 'Log in' %}" />
+                        </form>
+                    </div>
+                {% endifequal %}
+            {% endfor %}
 		</div>
 		<div id="tips">
 			<div id="tip_catalogue" class="tooltip">

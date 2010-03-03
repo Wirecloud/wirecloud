@@ -153,6 +153,9 @@ INSTALLED_APPS = (
     'remoteChannel',
     'user',
     'API',
+    #openid authentication not compatible with EzSteroids
+    #'openid_auth',
+    #'openid_auth.django_openidconsumer',
 #   'clms',
 )
 
@@ -194,6 +197,7 @@ AUTHENTICATION_BACKENDS = (
 #'authentication.tcloud_access.TCloudBackend',
 'authentication.public_access.PublicBackend',
 'authentication.anonymousaccess.AnonymousBackend',
+#'openid_auth.models.OpenIDBackend',
 #'authentication.ldapaccess.LDAPBackend',
 #'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',

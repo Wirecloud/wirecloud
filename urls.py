@@ -102,7 +102,7 @@ urlpatterns = patterns('',
 
     # Django contrib
     #(r'^registration/login_form/$', 'registration.views.login_form'),
-    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+
  #   (r'^logout$', 'django.contrib.auth.views.logout'),    
     # custom logouts (to enable anonymous access)
     (r'^logout$', 'authentication.logout'),
@@ -131,6 +131,18 @@ urlpatterns = patterns('',
 
 
 )
+
+if 'openid_auth' in settings.INSTALLED_APPS:
+    #urls needed for OpenID authentication
+    urlpatterns += patterns('',
+                            (r'^accounts/login/$', 'openid_auth.views.login'),
+                            (r'^openid/complete/$', 'openid_auth.views.complete_openid_login'),
+                    )
+else:
+    #Usual login
+    urlpatterns += patterns('',
+                             (r'^accounts/login/$', 'django.contrib.auth.views.login'),
+                    )
 
 handler404 = "django.views.defaults.page_not_found"
 handler500 = "django.views.defaults.server_error"
