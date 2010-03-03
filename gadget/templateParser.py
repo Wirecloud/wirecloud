@@ -516,7 +516,7 @@ class TemplateHandler(handler.ContentHandler):
             _href = url2pathname(attrs.get('href').encode("utf8"))
         
         _cacheable = True
-        if 'cacheable' in attrs:
+        if attrs.has_key('cacheable'):
             _cacheable = attrs.get('cacheable').encode("utf8").lower() == "true"
 
         _content_type = None
