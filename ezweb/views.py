@@ -34,7 +34,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
-from commons.authentication import login_public_user
+from commons.authentication import login_public_user, logout_request
 from commons.utils import get_xml_error, json_encode
 from commons.logs_exception import TracedServerError
 
@@ -56,7 +56,11 @@ from django.template import Context, loader
 
 @login_required
 def index(request, user_name=None, template="index.html"):
-    return render_ezweb(request, user_name, template)
+    if request.user.username != "public":
+        return render_ezweb(request, user_name, template)
+    else:
+        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+
 
 @login_required
 def wiring(request, user_name=None):
@@ -66,7 +70,10 @@ def wiring(request, user_name=None):
 @login_required
 def index_lite(request, user_name=None):
     """ EzWeb with no header"""
-    return render_ezweb(request, template="index_lite.html")
+    if request.user.username != "public":
+        return render_ezweb(request, template="index_lite.html")
+    else:
+        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
 def redirected_login(request):
     if request.method == "POST":
