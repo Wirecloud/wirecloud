@@ -57,6 +57,7 @@ from catalogue.models import *
 from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
+from catalogue.get_json_catalogue_data import get_available_apps_info
 
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
@@ -111,18 +112,8 @@ class GadgetsCollection(Resource):
         vendor = gadget.vendor
         gadgetId = gadget.id
         
-        availableApps = []
-        
         #Managing available Applications
-        if 'resourceSubscription' in settings.INSTALLED_APPS:
-            from resourceSubscription.models import Application
-            
-            apps = Application.objects.all()
-        
-            for app in apps:
-                availableApps.append(app.get_info())
-        
-        availableApps = simplejson.dumps(availableApps)
+        availableApps = simplejson.dumps(get_available_apps_info())
         
         #Inform about the last version of the gadget.
         last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)

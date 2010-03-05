@@ -144,8 +144,17 @@ def get_apps_info(apps):
         
     return data_ret
 
+def get_available_apps_info():
+    data_ret = []
+    apps = Application.objects.all().order_by('tag__name')
+    
+    for app in apps:
+        data_ret.append(app.get_info())
+        
+    return data_ret
+
 def get_apps_by_gadget_resource(gadget_id):
-    return Application.objects.filter(resources__id=gadget_id)
+    return Application.objects.filter(resources__id=gadget_id).order_by('tag__name')
 
 def get_gadget_capabilities(gadget_id, user):
     data_ret = []

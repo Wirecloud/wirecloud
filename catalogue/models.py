@@ -238,7 +238,7 @@ class Application(TransModel):
     def get_gadget_list(self):
         gadget_list = ""
         
-        gadgets = self.resources.all()
+        gadgets = self.resources.all().order_by( 'short_name' )
         for gadget in gadgets:
             if (gadget_list):
                 gadget_list += ','
