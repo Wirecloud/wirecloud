@@ -341,6 +341,9 @@ def get_connectable_data(connectable):
         
         #RemoteChannel data
         res_data['remote_subscription'] = get_remote_subscription_data(connectable)
+        
+        #ReadOnly data
+        res_data['readOnly'] = connectable.readOnly
 
     elif isinstance(connectable, Out):
         connectable_type = "out"
@@ -366,18 +369,10 @@ def get_connectable_data(connectable):
 
     return res_data
 
-def get_workspace_readonly_data(data):
-    data_fields = data['fields']    
-    readOnlyData = data_fields["readOnlyItems"]
-    if readOnlyData:
-        return simplejson.loads(readOnlyData)
 
 def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
-    
-    # Workspace preferences
-    data_ret['workspace']['readOnlyItems'] = get_workspace_readonly_data(data)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(data['pk'])
@@ -468,6 +463,7 @@ def get_igadget_data(data, user, workspace):
     variables = Variable.objects.filter (igadget__pk=data['pk'])
     data = serializers.serialize('python', variables, ensure_ascii=False)
     data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
+    data_ret['readOnly'] = data_fields["readOnly"]
 
     return data_ret
 

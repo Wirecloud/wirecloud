@@ -101,8 +101,6 @@ function WorkSpace (workSpaceState) {
 			this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this)
 			this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
 			
-			//Load read-only items
-			this.readOnlyItems = this.workSpaceGlobalInfo['workspace']['readOnlyItems'];
 			// Load workspace tabs
 			var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 			var visibleTabId = null;
@@ -520,7 +518,7 @@ function WorkSpace (workSpaceState) {
 			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
 				errorMsg: msg
 			}, true);
-		}else if (tab.hasIGadget(this.readOnlyItems["igadgets"])){
+		}else if (tab.hasReadOnlyIGadgets()){
 			msg = gettext("it contains some gadgets that cannot be removed");
 			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
 				errorMsg: msg
@@ -694,26 +692,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.isShared = function() {
 		return this.workSpaceState['shared'] || this.forceRestrictedSharing();
 	}
-	
-	//Check if an object (iGadget, Channel, etc) is a read-only element. 
-	//That is, an element that cannot be removed, and then it is shown in a special way.
-	WorkSpace.prototype.isReadOnly = function(object) {
-		if (this.readOnlyItems) {
-			if (object instanceof IGadget) {
-				if (this.readOnlyItems["igadgets"].indexOf(object.id) >= 0) {
-					return true;
-				}
-			}
-			else 
-				if (object instanceof wChannel) {
-					if (this.readOnlyItems["channels"].indexOf(object.id) >= 0) {
-						return true;
-					}
-				}
-		}
-		return false;
-	}
-	
+		
 	//Check if the workspace has to be forced to work as a Shared environment (IE6 only)
 	WorkSpace.prototype.forceRestrictedSharing = function() {
 		return (BrowserUtilsFactory.getInstance().getBrowser() == "IE6");
@@ -875,7 +854,6 @@ function WorkSpace (workSpaceState) {
 	this.FloatingGadgetsMenu = null;
 	this.unlockEntryPos;
 	this.valid=false;
-	this.readOnlyItems=null;
 
 	var wsOpsLauncher = 'ws_operations_link';
 	

@@ -205,6 +205,13 @@ function Tab (tabInfo, workSpace) {
 		}
 		return false;
 	}
+	
+	Tab.prototype.hasReadOnlyIGadgets = function(){
+		if (this.dragboard.hasReadOnlyIGadgets()){
+				return true;
+		}
+		return false;
+	}
 
 	// *****************
 	//  PRIVATE METHODS

@@ -300,6 +300,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			position = new DragboardPosition(parseInt(curIGadget.left), parseInt(curIGadget.top));
 			icon_position = new DragboardPosition(parseInt(curIGadget.icon_left), parseInt(curIGadget.icon_top));
 			zPos = parseInt(curIGadget.zIndex);
+			readOnly = curIGadget.readOnly
 
 			// Parse layout field
 			if (curIGadget.layout == 0) {
@@ -323,7 +324,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			                      curIGadget.transparency,
 			                      curIGadget.menu_color,
 			                      curIGadget.refused_version,
-			                      false);
+			                      false,
+								  readOnly);
 		}
 
 		this.loaded = true;
@@ -371,7 +373,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
 		// Create the instance
 		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading);
+		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading, false);
 
 		iGadget.save();
 	}
@@ -416,6 +418,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			return this.iGadgets[iGadgetId];
 		else
 			return null;
+	}
+	
+	Dragboard.prototype.hasReadOnlyIGadgets = function(){
+		var igadgetKeys = this.iGadgets.keys();
+		for (var i = 0; i < igadgetKeys.length; i++) {
+			if (this.iGadgets[igadgetKeys[i]].readOnly)
+				return true;
+		}
+		return false;
 	}
 
 	Dragboard.prototype.getWorkspace = function () {

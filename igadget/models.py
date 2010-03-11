@@ -61,6 +61,7 @@ class IGadget(models.Model):
     icon_position = models.ForeignKey(Position, verbose_name=_('Icon Position'), related_name="Icon_Position", blank=True, null=True)
     menu_color = models.CharField(max_length=6, default="FFFFFF")
     refused_version = models.CharField(_('Refused Version'), max_length=150, blank=True, null=True)
+    readOnly = models.BooleanField(_('Read Only'), default=False)
 
     def __unicode__(self):
         return str(self.pk)

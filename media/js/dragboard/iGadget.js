@@ -52,7 +52,7 @@
  * @param {String}            menu_color    background color for the menu.
  *                                          (6 chars with a hexadecimal color)
  */
-function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion, freeLayoutAfterLoading) {
+function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion, freeLayoutAfterLoading, readOnly) {
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -90,7 +90,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 	this.refusedVersion = refusedVersion;
 	this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the gadget is used to change its layout after loading to FreeLayout
 	
-	this.readOnly = layout.dragboard.workSpace.isReadOnly(this);
+	this.readOnly = readOnly;
 
 	// Elements
 	this.element = null;

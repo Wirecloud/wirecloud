@@ -42,7 +42,6 @@ class WorkSpace(models.Model):
     
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
-    readOnlyItems = models.TextField(_('Read-only items'), blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
@@ -66,80 +65,24 @@ class WorkSpace(models.Model):
 
         return self.get_creator() != user
     
-    # substract two list of items
-    def substractItems(self, firstTerm, secondTerm):
-        if firstTerm and secondTerm:
-            # Get the difference between gadgets
-            firstGadgets = set(firstTerm["igadgets"])
-            secondGadgets = set(secondTerm["igadgets"])
-            differenceGadgets = list(firstGadgets-secondGadgets)
-            
-            # Get the difference between channels
-            firstChannels = set(firstTerm["channels"])
-            secondChannels = set(secondTerm["channels"])
-            differenceChannels = list(firstChannels-secondChannels)
-            
-            return {"channels":differenceChannels, "igadgets":differenceGadgets}
-        elif firstTerm:
-            return firstTerm
-        else:
-            return None
-        
-    def addItems(self, firstTerm, secondTerm):
-        if firstTerm and secondTerm:
-            # Get the difference between gadgets
-            firstGadgets = set(firstTerm["igadgets"])
-            secondGadgets = set(secondTerm["igadgets"])
-            differenceGadgets = list(firstGadgets+secondGadgets)
-            
-            # Get the difference between channels
-            firstChannels = set(firstTerm["channels"])
-            secondChannels = set(secondTerm["channels"])
-            differenceChannels = list(firstChannels+secondChannels)
-            
-            return {"channels":differenceChannels, "igadgets":differenceGadgets}
-        elif firstTerm:
-            return firstTerm
-        elif secondTerm:
-            return secondTerm
-        else:
-            return None
-        
-        
-    # Used to create the list of the read only items. 
-    # Those items would be the existent ones when the workspace is just created.
-    def get_current_items(self, previous_items=None):
-        
-        if previous_items:  #Used to get the new read only elements (without the existent non read-only elements) after merging workspaces
-            #First: retrieve the elements that were not read only in this workspace (all the elements minus old read only elements, because the new elements are all readonly)
-            previous_readonly = {"channels":[], "igadgets":[]}
-            if (self.readOnlyItems):
-                previous_readonly = simplejson.loads(self.readOnlyItems);
-            nonreadonly_items = self.substractItems(previous_items, previous_readonly)
-            
-            #Second: Get the current read only elements (all the elements minus non-readonly elements)
-            readonly_items = self.substractItems(self.get_current_items(), nonreadonly_items)            
-            return readonly_items
-            #else return all the current elements => pass
-            
-        ### Retrieve the current items ###
-        
+    def setReadOnlyFields(self, readOnly):
         #Get the igadget identifiers
         tabs = self.tab_set.all()
         try:
-            igobjs = [list(t.igadget_set.all()) for t in tabs]
-            igadgets = map(lambda ig: ig.id, reduce(lambda x,y: x+y, igobjs))
+            for ig in reduce(lambda x,y: x+y, [list(t.igadget_set.all()) for t in tabs]):
+                ig.readOnly = readOnly
+                ig.save()
         except Exception, e:
-            igadgets=[]
+            pass
             
         #Get the channel identifiers
         try:
             wsvars = self.workspacevariable_set.filter(workspace=self,aspect="CHANNEL") #there must be at most one  
-            channels = map(lambda c: c.id, [wsvar.inout_set.all()[0] for wsvar in wsvars])
+            for c in [wsvar.inout_set.all()[0] for wsvar in wsvars]:
+                c.readOnly = readOnly
+                c.save()
         except WorkSpaceVariable.DoesNotExist, e:
-            channels = []
-        
-        return {"channels":channels, "igadgets":igadgets}     
+            pass
             
 
 class UserWorkSpace(models.Model):
@@ -175,9 +118,6 @@ class PublishedWorkSpace(models.Model):
     organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
-    
-    #Does it have unchangeable items (gadgets, connections, ...)?
-    readOnly = models.BooleanField(_('Read Only'), default=False)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.workspace.name  
