@@ -44,6 +44,8 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/jsonFilter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/UIUtils.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/CategoryManager.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/CatalogueListView.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/CatalogueMosaicView.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Catalogue.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Resource.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/Tagger.js"></script>

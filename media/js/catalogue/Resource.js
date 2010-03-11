@@ -93,11 +93,204 @@ Resource.prototype._setDefaultImage = function(e) {
 }
 
 Resource.prototype.paint = function() {
+	var resourcesElement = CatalogueFactory.getInstance().getResourcesElement();
+	var activeCalogueView = CatalogueFactory.getViewName();
+	
+	if (activeCalogueView == "LIST_VIEW") {
+		this.paint_as_list(resourcesElement);
+		return;
+	}
+	
+	if (activeCalogueView == "MOSAIC_VIEW") {
+		this.paint_as_mosaic(resourcesElement);
+		return;
+	}
+}
+
+Resource.prototype.paint_as_list = function(resourcesElement) {
 	var resource = UIUtils.createHTMLElement("div", $H({
 		id: this._id,
 		class_name: 'resource'
 	}));
-	$("resources").appendChild(resource);
+	
+	resourcesElement.appendChild(resource);
+	
+	/////////////////////////////////////////////////////////
+	// STRUCTURE (TWO COLUMNS PER RESOURCE) AND FOOTER
+	/////////////////////////////////////////////////////////
+	
+	var header_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'header_resource'
+	}));
+	resource.appendChild(header_div);
+	
+	var left_column_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'left_column_resource'
+	}));
+	resource.appendChild(left_column_div);
+	
+	var right_column_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'right_column_resource'
+	}));
+	resource.appendChild(right_column_div);
+	
+	var footer_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'footer_resource'
+	}));
+	resource.appendChild(footer_div);
+	
+	/////////////////////////////
+	// LEFT COLUMN
+	/////////////////////////////
+	
+	 /////////////////////////////
+	 // Image
+	 /////////////////////////////
+	
+	var image_div = UIUtils.createHTMLElement("div", $H({}));
+	left_column_div.appendChild(image_div);
+	
+	var image_img = UIUtils.createHTMLElement("img", $H({
+		src: this._state.getUriImage(),
+		class_name: 'app_catalogue_image'
+	}));
+	image_div.appendChild(image_img);
+	
+	 /////////////////////////////
+	 // Button
+	 /////////////////////////////
+	
+	// Depending on capabilities, the add button can be different!
+	// Depending on resource type (Gadget, mashup), the add button can be different!
+
+	var button_message = gettext('Add');
+
+	if (this._state.getMashupId() == null) {
+		//Gadget
+
+		var button_class = '';
+
+		if (this.isContratable() && (! this.hasContract())) {
+			button_message = gettext('Buy');
+			button_class = 'contratable';
+		}
+
+		var button = UIUtils.createHTMLElement("button", $H({
+			innerHTML: button_message,
+			class_name: button_class
+		}));
+
+		button.observe("click", function(event) {
+			CatalogueFactory.getInstance().addResourceToShowCase(this._id);
+		}.bind(this), false, "instance_gadget");
+	} else {
+		//Mashup
+
+		//var button_message = gettext('Add Mashup');
+		var button_class = 'add_mashup'
+
+		if (this.isContratable() && (! this.hasContract())) {
+			button_message = gettext('Buy');
+			button_class = 'contratable';
+		}
+
+		var button = UIUtils.createHTMLElement("button", $H({
+			innerHTML: button_message,
+			class_name: button_class
+		}));
+
+		button.observe("click", function(event) {
+			LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
+				function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(this),
+				function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(this));
+		}.bind(this), false, "instance_mashup");
+	}
+	left_column_div.appendChild(button);
+	
+	/////////////////////////////
+	// RIGHT COLUMN
+	/////////////////////////////
+	
+	 /////////////////////////////
+	 // Name
+	 /////////////////////////////
+	
+	var first_row_div = UIUtils.createHTMLElement("div", $H({}));
+	right_column_div.appendChild(first_row_div);
+	
+	var name_div = UIUtils.createHTMLElement("div", $H({
+		'class': 'resource_name' })
+	);
+	first_row_div.appendChild(name_div);
+	
+	name_div.innerHTML = this._state.getName();
+	
+	var popularity_div = UIUtils.createHTMLElement("div", $H({
+		'class': 'popularity' })
+	);
+	first_row_div.appendChild(popularity_div);
+	
+	var resource_popularity = this.getPopularity();
+	var popularity_ceil = Math.ceil(resource_popularity);
+	var popularity_floor = Math.floor(resource_popularity);
+	
+	var popularity_html = '';
+	
+	for (var i=0; i<5; i++) {
+		if (popularity_floor > i) 
+			popularity_html += '<a class="on"></a>';
+		else {
+			if (popularity_floor == i && popularity_ceil != popularity_floor)
+				popularity_html += '<a class="md"</a>';
+			else
+				popularity_html += '<a></a>';
+		}
+	}
+	
+	popularity_div.innerHTML = popularity_html;
+	
+	 /////////////////////////////
+	 // Description
+	 /////////////////////////////
+	
+	var desc_div = UIUtils.createHTMLElement("div", $H({
+		'class': 'resource_desc' }));
+	right_column_div.appendChild(desc_div);
+	
+	desc_div.innerHTML = this._state.getDescription();
+	
+	 /////////////////////////////
+	 // Tags
+	 /////////////////////////////
+	  
+	var resource_tags_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'tags'
+	}));
+	right_column_div.appendChild(resource_tags_div);
+	
+	var tags_label_div = UIUtils.createHTMLElement("div", $H({
+		class_name: 'tags_label'
+	}));
+	resource_tags_div.appendChild(tags_label_div);
+	
+	tags_label_div.innerHTML = gettext('Tags:');
+	
+	var important_tags = UIUtils.createHTMLElement("div", $H({
+		id: this._id + '_important_tags',
+		class_name: 'important_tags'
+	}));
+	resource_tags_div.appendChild(important_tags);
+	
+	var numTags =this._tagsToMoreImportantTags(important_tags, 7);
+}
+
+Resource.prototype.paint_as_mosaic = function(resourcesElement) {
+	var resource = UIUtils.createHTMLElement("div", $H({
+		id: this._id,
+		class_name: 'resource'
+	}));
+	
+	resourcesElement.appendChild(resource);
 
 	// TOP
 	resource.appendChild(UIUtils.createHTMLElement("div", $H({

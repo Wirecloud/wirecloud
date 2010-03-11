@@ -85,6 +85,8 @@ inputFiles = {
 
         'js/catalogue/UIUtils.js',
         'js/catalogue/CategoryManager.js',
+        'js/catalogue/CatalogueMosaicView.js',
+        'js/catalogue/CatalogueListView.js',
         'js/catalogue/Catalogue.js',
         'js/catalogue/Resource.js',
         'js/catalogue/Tagger.js',
@@ -186,6 +188,8 @@ inputFiles = {
 
         'js/catalogue/UIUtils.js',
         'js/catalogue/CategoryManager.js',
+        'js/catalogue/CatalogueListView.js',
+        'js/catalogue/CatalogueMosaicView.js',
         'js/catalogue/Catalogue.js',
         'js/catalogue/Resource.js',
         'js/catalogue/Tagger.js',

@@ -1,0 +1,35 @@
+{% load i18n %}
+
+<div id="app_catalogue" class="container_content">
+	<div id="app_catalogue_left_bar">
+		<div id="menu_options" class="bar_widget">
+			<div class = "widget_content">
+				<div id="simple_search" class="simple_search">
+					<input type="text" id="app_catalogue_simple_search_text" name="simple_search_text" value="{% trans "Search"%}" onclick="if(this.value == '{% trans "Search" %}') this.value =''" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"/>
+					<span class="link" onclick="UIUtils.viewAll(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or')">{% trans  "View All" %}</span>
+				</div>
+			</div>
+		</div>
+		<div id="tag_categories" class="bar_widget">
+			<span class="widget_title">{% trans 'Search by category:' %}</span>
+			<div class="widget_content"></div>
+		</div> 
+	</div>
+	<div id="app_catalogue_content">
+	<div id="app_catalogue_head" class="head">
+		<div id="header_always" class="header_always">
+			<div id="header_always_error" class="message_error"></div>
+		</div>
+	</div>
+	<div id="app_catalogue_center" class="center">
+		<div id="app_catalogue_resources_header" class="resources_header">
+			<div id="app_catalogue_paginate_show" class="paginate_show"></div>
+			<div id="app_catalogue_orderby" class="orderby"></div>
+			<div id="app_catalogue_paginate" class="paginate"></div>
+		</div>
+		<div id="app_catalogue_resources" class="resources"></div>
+	</div>
+	<div id="app_catalogue_resources_container">
+	</div>
+	</div> 
+</div>

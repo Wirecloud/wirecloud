@@ -284,7 +284,7 @@ UIUtils.simpleSearch = function(url, criteria) {
 	UIUtils.searchValue = [];
 	switch (criteria) {
 	case 'simple_or':
-		UIUtils.searchValue[0] = $('simple_search_text').value;
+		UIUtils.searchValue[0] = CatalogueFactory.getInstance().getSimpleSearchElement().value;
 		break;
 	case 'and':
 		UIUtils.searchValue[0] = $('advanced_search_text_and').value;
@@ -730,11 +730,12 @@ UIUtils.paintGlobalTag = function(id_, tag_) {
 }
 
 UIUtils.setResourcesWidth = function() {
-	//var tab = $('tab_info_resource');
-	var catalogue = $('catalogue');
-	var resources = $('resources');
-	var center = $('center');
-	var left_bar = $('left_bar');
+	var catalogueInstance = CatalogueFactory.getInstance();
+	var catalogue = catalogueInstance.getMainCatalogueElement();
+	var resources = catalogueInstance.getResourcesElement();
+	var center = catalogueInstance.getCenterElement();
+	var left_bar = catalogueInstance.getLeftBarElement();
+	var catalogue_content = catalogueInstance.getCatalogueContentElement();
 
 	var computedStyle;
 	computedStyle = document.defaultView.getComputedStyle(left_bar, null);
@@ -747,7 +748,6 @@ UIUtils.setResourcesWidth = function() {
 	var centerBorder = computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 	centerBorder += computedStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
-	var catalogue_content = $('catalogue_content');
 	computedStyle = document.defaultView.getComputedStyle(catalogue_content, null);
 	var content_padding_left = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
 
@@ -766,7 +766,7 @@ UIUtils.setInfoResourceHeight = function(){
 	if (difference > 0)
 		$('info_resource').style.height = $('info_resource_content').getHeight() + difference -1 + 'px'; 
 	else
-				$('info_resource').style.height = $('info_resource_content').getHeight() + 'px'; 
+		$('info_resource').style.height = $('info_resource_content').getHeight() + 'px'; 
 
 
 }
@@ -1162,9 +1162,17 @@ UIUtils.setPreferredGadgetVersion = function(preferredVersion_){
 }
 
 UIUtils.resizeResourcesContainer = function (){
-	var height = document.getElementById('showcase_container').offsetHeight - document.getElementById('head').offsetHeight - document.getElementById('resources_header').offsetHeight - 18;
-	document.getElementById('resources').style.height = height+'px';
-	document.getElementById('resources_container').style.height = $('center').offsetHeight + 'px';
+	var container_element = CatalogueFactory.getInstance().getContainerElement();
+	var head_element = CatalogueFactory.getInstance().getHeadElement();
+	var resources_header_element = CatalogueFactory.getInstance().getResourcesHeaderElement();
+	var resources_element = CatalogueFactory.getInstance().getResourcesElement();
+	var resources_container_element = CatalogueFactory.getInstance().getResourcesContainerElement();
+	var center_element = CatalogueFactory.getInstance().getCenterElement();
+	
+	var height = container_element.offsetHeight - head_element.offsetHeight - resources_header_element.offsetHeight - 18;
+	
+	resources_element.style.height = height+'px';
+	resources_container_element.style.height = center_element.offsetHeight + 'px';
 	UIUtils.setInfoResourceHeight();
 
 // Upload Wgt files

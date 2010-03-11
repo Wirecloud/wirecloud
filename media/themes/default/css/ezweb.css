@@ -450,7 +450,7 @@ button {
 
 /* showcase ---------------------------------------------------------------------------------------- */
 
-#showcase_container {
+#showcase_container, #app_catalogue_container {
   background: #FFF;
 }
 

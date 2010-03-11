@@ -29,7 +29,7 @@
 	text-decoration:underline;
 }
 
-#catalogue .head {
+#catalogue .head, #app_catalogue .head {
 	position:relative;
 	width:100%;
 	padding:0px;
@@ -289,7 +289,7 @@
 	border: 1px solid #B22222;
 }
 
-#catalogue #left_bar {
+#catalogue #left_bar, #app_catalogue #app_catalogue_left_bar {
 	float:left;
 	display:inline;
 	position:relative;
@@ -298,11 +298,11 @@
 	margin: 0;
 }
 
-#catalogue #left_bar .bar_widget{
+#catalogue #left_bar .bar_widget, #app_catalogue #app_catalogue_left_bar .bar_widget{
 	margin: 0 0 20px 0;
 }
 
-#catalogue #left_bar .widget_title{
+#catalogue #left_bar .widget_title, #app_catalogue #app_catalogue_left_bar .widget_title{
 	font-size: 105%;
 	margin: 10px 0;
 }
@@ -316,7 +316,7 @@
 	position: relative;
 }
 
-#catalogue #menu_options .simple_search #simple_search_text{
+#catalogue #menu_options .simple_search #simple_search_text, #app_catalogue #menu_options .simple_search #app_catalogue_simple_search_text{
 	width:95%;
 	margin-bottom: 3px;
 }
@@ -357,13 +357,18 @@
 #catalogue #left_bar .advanced_selected, #catalogue #tag_categories .selected_cat{
 }
 
-#catalogue #catalogue_content{
+#catalogue #catalogue_content, #app_catalogue #app_catalogue_content{
 	position:relative;
 	float:left;
 	padding-left: 10px;
 }
 
-#catalogue .center {
+#app_catalogue #app_catalogue_content{
+	position:relative;
+	float:left;
+}
+
+#catalogue .center, #app_catalogue .center{
 	position:relative;
 	float:left;
 	bottom:0px;
@@ -376,7 +381,7 @@
 	overflow-x:auto;
 	overflow-y:auto;
 }
-#catalogue .resources_header {
+#catalogue .resources_header, #app_catalogue .resources_header {
 	position:relative;
 	float:left;
 	width:100%;
@@ -385,19 +390,19 @@
 	margin-bottom: 0px;
 }
 
-#catalogue .paginate_show {
+#catalogue .paginate_show, #app_catalogue .paginate_show {
     display: inline;
     float:left;
     margin-left: 10px;
 }	
 
-#catalogue .orderby {
+#catalogue .orderby, #app_catalogue .orderby{
 	display:inline;
 	float:left;
 	margin-left: 10px;
 }
 
-#catalogue .paginate {
+#catalogue .paginate, #app_catalogue .paginate {
 	padding-top:5px;
 	padding-bottom:5px;
 	float:right;
@@ -413,14 +418,13 @@
 	margin-right:5px;
 }
 
-#catalogue .center .resources {
+#catalogue .center .resources, #app_catalogue .center .resources {
 	overflow-y:auto;
 	overflow-x:hidden;
 	float:left;
 }
 
-#catalogue .center .resources .resource
-{
+#catalogue .center .resources .resource {
 	position:relative;
 	display:inline;
 	float:left;
@@ -430,6 +434,75 @@
 	background:none;
 	text-align:center;
 }
+
+#app_catalogue .center .resources .resource {
+	position:relative;
+	margin-left:10px;
+	margin-top:10px;
+	margin-right:10px;
+	clear: both;
+}
+
+#app_catalogue .center .resources .resource .resource_name {
+	max-width: 350px;
+	float:left;
+}
+
+#app_catalogue .center .resources .resource .app_catalogue_image {
+	width: 170px;
+	height: 80px;
+	border: 1px solid #BBBBBB;
+}
+
+#app_catalogue .center .resources .resource .popularity {
+	float: left;
+	margin: 5px;
+}
+
+#app_catalogue .center .resources .resource .resource_desc {
+	clear: both;
+	max-width: 650px;
+}
+
+#app_catalogue .center .resources .resource .tags {
+	float: left;
+	padding-top: 10px;
+}
+
+#app_catalogue .center .resources .resource .tags .tags_label {
+	float: left;
+	font-weight: bold;
+}
+
+#app_catalogue .center .resources .resource .tags .important_tags {
+	float: left;
+	padding-left: 10px;
+}
+
+#app_catalogue .center .resources .resource .footer_resource {
+	height: 10px;
+	clear: both;
+	bottom: 0px;
+	float: left;
+}
+
+#app_catalogue .center .resources .resource .left_column_resource {
+	float: left;
+	width: 25%;
+	text-align: center;
+}
+
+#app_catalogue .center .resources .resource .right_column_resource {
+	float: left;
+	width: 75%;
+}
+
+#app_catalogue .center .resources .resource .header_resource {
+	height: 10px;
+	clear: both;
+	top: 0px;
+}
+
 #catalogue .resource > .toolbar > div {
 	display: inline;
 }
@@ -475,7 +548,7 @@
 	float:left;
 }
 
-#catalogue .center .resources .resource .toolbar button{
+#catalogue .center .resources .resource .toolbar button {
 	color:white;
 	border:none;
 	font-size:75%;
@@ -488,7 +561,8 @@
 	background: url("/ezweb/images/button_mashup.gif") top left;
 }
 
-#catalogue .center .resources .resource .toolbar button.contratable{
+#catalogue .center .resources .resource .toolbar button.contratable,
+#app_catalogue .center .resources .resource button.contratable {
 	background: url("/ezweb/images/contratable.gif") top left;
 }
 
@@ -851,6 +925,54 @@
 	z-index:2;
 	right:10px;
 	top:10px;
+}
+
+.purchase_window_text {
+	max-width: 500px;
+}
+
+.purchase_window_table {
+	margin-top:10px;
+	width: 95%;
+}
+
+.purchase_window_table th {
+	border-bottom:1px solid #000000;
+	border-left:1px solid #CCCCCC;
+	padding-left: 6px;
+	text-align: left;
+}
+
+.purchase_window_table th.app_name {
+	width: 70%;
+}
+
+.purchase_window_table th.app_price {
+	width: 30%;
+}
+
+.purchase_window_table td {
+	border-left:1px solid #CCCCCC;
+	padding-left: 6px;
+	text-align: left;
+	padding: 6px;
+	margin: 0px;
+}
+
+.purchase_window_table td.app_name {
+	cursor: pointer;
+	cursor: hand;
+}
+
+.help_text_enabled {
+	display: block;
+	position: absolute;
+	z-index: 5;
+}
+
+.help_text_disabled {
+	display: none;	
+	position: absolute;
 }
 
 /*

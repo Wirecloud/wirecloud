@@ -296,29 +296,25 @@ AddingGadgetToApplicationWindow.prototype.update_window = function() {
 *
 */
 function BuyingApplicationWindow() {
-	WindowMenu.call(this, gettext('Purchase Application'));
+	WindowMenu.call(this, gettext('Purchase Element'));
+
+	var text_introduction = gettext("Activating all these applications is required.");
+	var text_hint = gettext("Click on any to see its detailed description (including princing info).");
 
 	this.content = document.createElement('div');
-	
-	this.content.innerHTML = '<b>Application:</b><div class="inline_field" id="buy_app_shortname"></div><br /><hr /><div id="buy_name_vendor"><b>Name:</b><div class="inline_field" id="buy_name"></div><br /><b>Vendor:</b><div class="inline_field" id="buy_vendor"></div><br /><b>List of Gadgets:</b><div class="inline_field" id="buy_gadgets"></div><br /><b>Description:</b><div class="inline_field" id="buy_desc"></div></div><div id="app_img_container"><img class="app_image" id="buy_img" src="" /></div><div id="buy_gadgets_desc"></div>';
+	this.content.innerHTML = '<div class="purchase_window_text">' + text_introduction + " " +  text_hint + '</div>';
 	
 	document.body.insertBefore(this.htmlElement, $("header"));
-	
 	this.windowContent.appendChild(this.content);
 	
-	this.link = document.createElement('div')
+	this.help_menu = document.createElement('div');
+	this.help_menu.className = "help_text_disabled";
+	document.body.insertBefore(this.help_menu, $("header"));
 	
-	this.link.innerHTML = '<a id="buy_link" style="float: right; padding-top: 5px;" target="_blank" href="">View pricing</a>'
+	this._apps_table = document.createElement('div');
+	this.content.appendChild(this._apps_table);
 	
-	this.windowContent.appendChild(this.link);
-	
-	this.app_shortname = document.getElementById('buy_app_shortname');
-	this.app_name = document.getElementById('buy_name');
-	this.app_vendor = document.getElementById('buy_vendor');
-	this.app_image = document.getElementById('buy_img');
-	this.app_desc = document.getElementById('buy_desc');
-	this.app_gadgets = document.getElementById('buy_gadgets');
-	this.app_link = document.getElementById('buy_link');
+	this.table_html = '<center><table cellpadding="0px" cellspacing="0px" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_price">' + gettext("Price") + '</th></thead>';
 	
 	// Finish button
 	this.acceptButton = document.createElement('button');
@@ -335,7 +331,7 @@ BuyingApplicationWindow.prototype.setCloseListener = function(closeListener) {
 }
 
 BuyingApplicationWindow.prototype.setHandler = function(acceptHandler) {
-	this.acceptHandler = function(){acceptHandler(this._gadgetId, this._appId);}.bind(this);
+	this.acceptHandler = function(){acceptHandler(this._resourceId, this._appId);}.bind(this);
 }
 
 BuyingApplicationWindow.prototype._acceptListener = function(e) {
@@ -346,26 +342,53 @@ BuyingApplicationWindow.prototype._acceptListener = function(e) {
 BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 	this._resource = extra_data;
 	
-	var gadget_apps = this._resource.getGadgetApps();
-	var gadget_app = null;
+	this._resourceId = this._resource.getId();
+	var resource_apps = this._resource.getGadgetApps();
 	
-	if (gadget_apps.length > 0)
-		gadget_app = gadget_apps[0];
-	else {
-		this.app_shortname.innerHTML = "Gadget not linked to any Application! Can't continue!";
-		return;
-	}
+	var apps_html = "<tbody>";
+	
+	for (var i=0; i<resource_apps.length; i++) {
+		var app = resource_apps[i];
 		
-	this._gadgetId = this._resource.getId();
-	this._appId = gadget_app['app_code'];
+		var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + app['price'] + '</td></tr>';
+		
+		apps_html += html;
+	}
 	
-	this.app_shortname.innerHTML = gadget_app['short_name'];
-	this.app_name.innerHTML = gadget_app['name'];
-	this.app_vendor.innerHTML = gadget_app['vendor'];
-	this.app_gadgets.innerHTML = gadget_app['gadget_list'];
-	this.app_desc.innerHTML = gadget_app['description'];
-	this.app_image.setAttribute('src', gadget_app['image_uri']);
-	this.app_link.setAttribute('href', gadget_app['template_uri']);
+	apps_html += "</tbody></table></center>";
+	final_html = this.table_html + apps_html;
+	
+	this._apps_table.innerHTML = final_html;
+	
+	var app_names = $$(".purchase_window_table td.app_name");
+	for (var i=0; i<app_names.length; i++) {
+		var element = app_names[i];
+		var app = resource_apps[i];
+		
+		app['window_menu'] = this;
+		app['help_menu'] = this.help_menu;
+		
+		Event.observe(element, 'mouseover', function (e) { BuyingApplicationWindow.prototype.showApplicationPopUp(e, this, this['help_menu']) }.bind(app));
+		Event.observe(element, 'mouseout', function (e) { BuyingApplicationWindow.prototype.hideApplicationPopUp(e, this, this['help_menu']) }.bind(app));
+	}
+	
+	BuyingApplicationWindow.prototype.showApplicationPopUp = function(e, app, help_menu) {
+		help_menu.innerHTML = app['name'];
+		help_menu.className = "help_text_enabled drop_down_menu";
+		
+		var posX = Event.pointerX(e);
+		var posY = Event.pointerY(e);
+		
+		help_menu.style.top = posY + 'px';
+		help_menu.style.left = posX + 'px';
+		
+		
+	}
+	
+	BuyingApplicationWindow.prototype.hideApplicationPopUp = function(e, app, help_menu) {
+		help_menu.className = "help_text_disabled";
+	}
+	
 }
 
 /**
