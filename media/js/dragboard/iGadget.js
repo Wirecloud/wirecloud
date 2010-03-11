@@ -89,6 +89,8 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 
 	this.refusedVersion = refusedVersion;
 	this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the gadget is used to change its layout after loading to FreeLayout
+	
+	this.readOnly = layout.dragboard.workSpace.isReadOnly(this);
 
 	// Elements
 	this.element = null;
@@ -699,8 +701,12 @@ IGadget.prototype.paint = function(onInit) {
 	// Initialize transparency status
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
-
-	// Time to show the igadget (we need to take into account the gadget can be iconified)
+	
+	//Initialize read-only status
+	if (this.readOnly)
+		this.element.addClassName("gadget_window_readonly");
+		
+	// Time to SHOW the igadget (we need to take into account the gadget can be iconified)
 	if (!this.onFreeLayout() || !minimizedStatusBackup)
 		this.element.style.visibility = "visible";
 

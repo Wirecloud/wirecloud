@@ -25,19 +25,24 @@ div.gadget_menu {
   border: 0px;
 }
 
-/*div.dragboard.fixed*/
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.gadget_menu {
   cursor: default;
 }
 
-/*div.dragboard.fixed*/
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.gadget_window div.gadget_menu .closebutton, div.fixed div.gadget_window div.gadget_menu .versionbutton {
   display: none;
 }
 
-/*div.dragboard.fixed*/
+/*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
 div.fixed div.gadget_menu #settingsbutton {
   display: inline;
+}
+
+/*div.gadget_window_readonly -> READONLY STATUS*/
+div.gadget_window.gadget_window_readonly div.gadget_menu .closebutton {
+  display: none;
 }
 
 div.gadget_window div.gadget_menu input[type="button"] {

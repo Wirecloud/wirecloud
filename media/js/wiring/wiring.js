@@ -72,7 +72,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
 		if (varData.aspect == "CHANNEL" && varData.connectable) {
 			var connectableId = varData.connectable.id;
-			var channel = new wChannel(variable, varData.name, connectableId, false);
+			var readOnly = this.readOnlyChannels.indexOf(connectableId) >= 0;
+			var channel = new wChannel(variable, varData.name, connectableId, false, readOnly);
 
 			// Setting channel filter
 			channel.setFilter(this.filters[varData.connectable.filter]);
@@ -171,7 +172,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 */
 	Wiring.prototype._loadWiring = function (workSpaceData) {
 		var workSpace = workSpaceData['workspace'];
-		var ws_vars_info = workSpace['workSpaceVariableList'];
+		var ws_vars_info = workSpace['workSpaceVariableList']; 
 		var tabs = workSpace['tabList'];
 		var filters = workSpace['filters'];
 
@@ -561,6 +562,11 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	this.channelsForRemoving = [];
 	this.provisionalChannels = [];
 	this.currentProvisionalId = 1;
+	this.readOnlyChannels = new Array();
+	
+	var readOnlyItems = workSpaceGlobalInfo['workspace']['readOnlyItems'];
+	if (readOnlyItems)
+		this.readOnlyChannels = readOnlyItems['channels'];
 
 	this._loadWiring(workSpaceGlobalInfo);
 

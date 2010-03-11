@@ -100,7 +100,9 @@ function WorkSpace (workSpaceState) {
 			var preferenceValues = this.workSpaceGlobalInfo['workspace']['preferences'];
 			this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this)
 			this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
-
+			
+			//Load read-only items
+			this.readOnlyItems = this.workSpaceGlobalInfo['workspace']['readOnlyItems'];
 			// Load workspace tabs
 			var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 			var visibleTabId = null;
@@ -427,26 +429,6 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 
-
-	//DEPRECATED??
-	//hide all information about a workspace (wiring, tabs)
-/*	WorkSpace.prototype.hide = function() {
-		if (!this.loaded)
-			return;
-		
-		//this.wiringInterface.hide();
-
-		
-		var tabList = this.tabInstances.keys();
-		
-		for (var i=0; i<tabList.length; i++) {
-			var tab = this.tabInstances[tabList[i]];
-			
-			tab.hide();
-		}
-	}
-*/
-
 	WorkSpace.prototype.show = function() {
 		if (!this.loaded)
 			return;
@@ -530,18 +512,29 @@ function WorkSpace (workSpaceState) {
 		PersistenceEngineFactory.getInstance().send_post(tabsUrl, params, this, createTabSuccess, createTabError);
 	}
 
-	WorkSpace.prototype.removeTab = function(tabId){
+	//It returns if the tab can be removed and shows an error window if it isn't possible
+	WorkSpace.prototype.removeTab = function(tab){
+		var msg=null;
 		if (this.tabInstances.keys().length <= 1) {
-			var msg;
 			msg = gettext("there must be one tab at least");
-
-			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {errorMsg: msg}, true);
+			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
+				errorMsg: msg
+			}, true);
+		}else if (tab.hasIGadget(this.readOnlyItems["igadgets"])){
+			msg = gettext("it contains some gadgets that cannot be removed");
+			msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
+				errorMsg: msg
+			}, true);
+		}
+		
+		if (msg){ //It cannot be deleted
 			LogManagerFactory.getInstance().log(msg);
-			LayoutManagerFactory.getInstance().hideCover();
+			//LayoutManagerFactory.getInstance().hideCover();
+			LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);			
 			return false;
 		}
 
-		this.unloadTab(tabId);
+		this.unloadTab(tab.getId());
 
 		//set the first tab as current
 		this.setTab(this.tabInstances.values()[0]);
@@ -700,6 +693,25 @@ function WorkSpace (workSpaceState) {
 	//Check if a workspace is shared with another users
 	WorkSpace.prototype.isShared = function() {
 		return this.workSpaceState['shared'] || this.forceRestrictedSharing();
+	}
+	
+	//Check if an object (iGadget, Channel, etc) is a read-only element. 
+	//That is, an element that cannot be removed, and then it is shown in a special way.
+	WorkSpace.prototype.isReadOnly = function(object) {
+		if (this.readOnlyItems) {
+			if (object instanceof IGadget) {
+				if (this.readOnlyItems["igadgets"].indexOf(object.id) >= 0) {
+					return true;
+				}
+			}
+			else 
+				if (object instanceof wChannel) {
+					if (this.readOnlyItems["channels"].indexOf(object.id) >= 0) {
+						return true;
+					}
+				}
+		}
+		return false;
 	}
 	
 	//Check if the workspace has to be forced to work as a Shared environment (IE6 only)
@@ -863,6 +875,7 @@ function WorkSpace (workSpaceState) {
 	this.FloatingGadgetsMenu = null;
 	this.unlockEntryPos;
 	this.valid=false;
+	this.readOnlyItems=null;
 
 	var wsOpsLauncher = 'ws_operations_link';
 	

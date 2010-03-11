@@ -412,7 +412,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	}
 
 	Dragboard.prototype.getIGadget = function (iGadgetId) {
-		return this.iGadgets[iGadgetId];
+		if (this.iGadgets[iGadgetId])
+			return this.iGadgets[iGadgetId];
+		else
+			return null;
 	}
 
 	Dragboard.prototype.getWorkspace = function () {

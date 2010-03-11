@@ -38,7 +38,7 @@ from django.utils import simplejson
 
 from commons.resource import Resource
 
-from django.db import transaction
+from django.db import transaction, IntegrityError
 
 from django.contrib.auth.models import Group, User
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
@@ -643,6 +643,20 @@ class  WorkSpaceMergerEntry(Resource):
         packageCloner = PackageCloner()
 
         to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
+        
+        if from_ws.readOnlyItems: 
+            from_roItems = simplejson.loads(from_ws.readOnlyItems)
+        else: 
+            from_roItems = None
+        
+        if to_workspace.readOnlyItems: 
+            to_roItems = simplejson.loads(to_workspace.readOnlyItems)
+        else: 
+            to_roItems = None
+        roItems = to_workspace.addItems(from_roItems, to_roItems)
+        if roItems:
+            to_workspace.readOnlyItems = json_encode(roItems)
+            to_workspace.save()
 
         result = {'result': 'ok', 'merged_workspace_id': to_workspace.id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -740,7 +754,7 @@ class  WorkSpaceClonerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class  PublishedWorkSpaceMergerEntry(Resource):
+class  PublishedWorkSpaceMergerEntry(Resource):        
     @transaction.commit_on_success
     def read(self, request, published_ws_id, to_ws_id):
         user = get_user_authentication(request)
@@ -749,10 +763,17 @@ class  PublishedWorkSpaceMergerEntry(Resource):
 
         from_ws = published_workspace.workspace
         to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        
+        #get all the items (read-only and not read-only). This will be used to get the new read-only set
+        previous_elements = to_ws.get_current_items()
 
         packageCloner = PackageCloner()
 
         to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
+        
+        if published_workspace.readOnly:   
+            to_workspace.readOnlyItems = json_encode(to_workspace.get_current_items(previous_elements))
+            to_workspace.save()
 
         result = {'result': 'ok', 'workspace_id': to_workspace.id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
@@ -767,6 +788,11 @@ class  WorkSpaceAdderEntry(Resource):
         original_workspace = published_workspace.workspace
         
         cloned_workspace = cloneWorkspace(workspace_id, user)
+        
+        if published_workspace.readOnly:
+            cloned_workspace.readOnlyItems = json_encode(cloned_workspace.get_current_items())
+            cloned_workspace.save()
+        
         linkWorkspace(user, cloned_workspace.id, original_workspace.get_creator())
         
         data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
@@ -839,21 +865,25 @@ class  WorkSpacePublisherEntry(Resource):
         if (not organization):
             organization = ''
         
+        readOnly = mashup.get('readOnly')
+        if (not readOnly):
+            readOnly = False
+            
         try:
-            cloned_workspace.vendor = vendor
+            #cloned_workspace.vendor = vendor
             cloned_workspace.name = name
-            cloned_workspace.version = version
-            cloned_workspace.author = author
-            cloned_workspace.mail = email
-            cloned_workspace.description = description
-            cloned_workspace.imageURI = imageURI
-            cloned_workspace.wikiURI = wikiURI
+            #cloned_workspace.version = version
+            #cloned_workspace.author = author
+            #cloned_workspace.mail = email
+            #cloned_workspace.description = description
+            #cloned_workspace.imageURI = imageURI
+            #cloned_workspace.wikiURI = wikiURI
             cloned_workspace.creator = user
             cloned_workspace.save()
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 
                                                      name=name, version=version, description=description,
-                                                     imageURI=imageURI, wikiURI=wikiURI, organization = organization)
+                                                     imageURI=imageURI, wikiURI=wikiURI, organization = organization, readOnly = readOnly)
             
             published_workspace.save()
         except IntegrityError, e:

@@ -1,4 +1,4 @@
-﻿#-*- coding: utf-8 -*-
+#-*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -40,6 +40,7 @@ from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from django.utils.translation import get_language
+from django.utils import simplejson
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 
 def get_abstract_variable(id):
@@ -365,10 +366,18 @@ def get_connectable_data(connectable):
 
     return res_data
 
+def get_workspace_readonly_data(data):
+    data_fields = data['fields']    
+    readOnlyData = data_fields["readOnlyItems"]
+    if readOnlyData:
+        return simplejson.loads(readOnlyData)
 
 def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
+    
+    # Workspace preferences
+    data_ret['workspace']['readOnlyItems'] = get_workspace_readonly_data(data)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(data['pk'])

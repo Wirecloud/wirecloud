@@ -52,6 +52,9 @@ function Tab (tabInfo, workSpace) {
 	// PUBLIC METHODS
 	// ****************
 
+	Tab.prototype.getId = function(){
+		return this.tabInfo.id;
+	}
 	Tab.prototype.destroy = function() {
 		LayoutManagerFactory.getInstance().removeFromTabBar(this);
 
@@ -85,7 +88,7 @@ function Tab (tabInfo, workSpace) {
 	}
 
 	Tab.prototype.deleteTab = function() {
-		if (this.workSpace.removeTab(this.tabInfo.id)==true) {
+		if (this.workSpace.removeTab(this)) { //check if it can be deleted (if not it displays an error window)
 			var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
 			PersistenceEngineFactory.getInstance().send_delete(tabUrl, this, deleteSuccess, deleteError);
 		}
@@ -193,6 +196,14 @@ function Tab (tabInfo, workSpace) {
 
 	Tab.prototype.mark_as_painted = function () {
 		this.painted = true;
+	}
+	
+	Tab.prototype.hasIGadget = function(iGadgetIds){
+		for (i in iGadgetIds){
+			if (this.dragboard.getIGadget(iGadgetIds[i]))
+				return true;
+		}
+		return false;
 	}
 
 	// *****************

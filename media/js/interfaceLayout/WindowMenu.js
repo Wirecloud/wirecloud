@@ -817,6 +817,7 @@ function PublishWindowMenu (element) {
 		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
 		'email': {label: gettext('Email'), type:'email',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},
+		'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
 		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}

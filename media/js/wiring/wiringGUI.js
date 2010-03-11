@@ -385,8 +385,9 @@ WiringInterface.prototype.renewInterface = function () {
 	for (var i = 0; i < channels.length; i++) {
 		var chInterface = new ChannelInterface(channels[i], this);
 		this._registerChannel(chInterface);
-
-		this.channels_list.appendChild(chInterface.getHTMLElement());
+		if (!channels[i].is_read_only()) {
+			this.channels_list.appendChild(chInterface.getHTMLElement());
+		}
 	}
 
 	for (var i = 0; i < this.channels.length; i++)

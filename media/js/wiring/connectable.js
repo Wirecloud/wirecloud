@@ -338,7 +338,7 @@ wEvent.prototype.getValue = function() {
  * @param id
  * @param provisional_id
  */
-function wChannel (variable, name, id, provisional_id) {
+function wChannel (variable, name, id, provisional_id, readOnly) {
 	this.variable = variable;
 	this.provisional_id=provisional_id;
 	wInOut.call(this, name, null, null, id);
@@ -346,6 +346,7 @@ function wChannel (variable, name, id, provisional_id) {
 	this.filter = null;
 	this.filterParams = new Array();
 	this.remoteSubscription = null;
+	this.readOnly = readOnly;
 }
 wChannel.prototype = new wInOut();
 
@@ -399,6 +400,9 @@ wChannel.prototype.is_remote_channel = function() {
 	return this.is_remote_writing_channel() || this.is_remote_reading_channel();
 }
 
+wChannel.prototype.is_read_only = function(){
+	return this.readOnly;
+}
 wChannel.prototype.setFilter = function(newFilter) {
 	this.filter = newFilter;
 	this.filterParams = new Array();
