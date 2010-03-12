@@ -127,7 +127,7 @@ function CatalogueListView() {
 			return null;
 		}
 		
-		this.contractApplication = function (resourceId) {
+		this.contractApplication = function (resource) {
 			var contratationSuccess = function (transport) {
 				var responseJSON = transport.responseText;
 				var response = JSON.parse(responseJSON); 
@@ -147,7 +147,7 @@ function CatalogueListView() {
 			for (var i=0; i<gadget_apps.length; i++) {
 				var app = gadget_apps[i];
 				
-				if (app['has_contract']) {
+				if (! app['has_contract']) {
 					var contract = {'username': ezweb_user_name, 'free': true, 'app_id': app['app_code']};
 				
 					contract_list.push(contract);
@@ -254,15 +254,21 @@ function CatalogueListView() {
 				var contract = currentResource.getContract();
 				
 				if (contract) {
-					ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
-					return;
-				}
-			
-			    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
-			      CatalogueFactory.getInstance().contractApplication,
-			      LayoutManagerFactory.getInstance().hideCover,
-			      this.getResource(resourceId_)
-			    );
+					if (currentResource.getMashupId()) {
+						LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
+								function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(currentResource),
+								function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(currentResource));
+					} else {
+						ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
+						return;
+					}
+				} else {
+				    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
+				      CatalogueFactory.getInstance().contractApplication,
+				      LayoutManagerFactory.getInstance().hideCover,
+				      this.getResource(resourceId_)
+				    );
+			    }
 			    
 			    return;
 			}

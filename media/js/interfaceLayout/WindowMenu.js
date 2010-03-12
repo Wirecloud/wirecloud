@@ -315,7 +315,7 @@ function BuyingApplicationWindow() {
 	this._apps_table = document.createElement('div');
 	this.content.appendChild(this._apps_table);
 	
-	this.table_html = '<center><table cellpadding="0px" cellspacing="0px" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_price">' + gettext("Price") + '</th></thead>';
+	this.table_html = '<center><table cellpadding="0px" cellspacing="0px" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_price">' + gettext("Total Price") + '</th></thead>';
 	
 	// Finish button
 	this.acceptButton = document.createElement('button');
@@ -356,8 +356,11 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 	for (var i=0; i<resource_apps.length; i++) {
 		var app = resource_apps[i];
 		
-		if (app['has_contract']) {
-			var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + app['price'] + '</td></tr>';
+		if (! app['has_contract']) {
+			var price = parseInt(app['subscription_price']) + parseInt(app['monthly_price']);
+			price = price + ' €';
+			
+			var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + price + '</td></tr>';
 		
 			apps_html += html;
 		}
@@ -400,8 +403,8 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 		app_vendor.innerHTML = app['vendor'];
 		app_desc.innerHTML = app['description'];
 		app_gadget_list.innerHTML = app['gadget_list'];
-		app_signup_fee.innerHTML = app['signup_fee'];
-		app_monthly_fee.innerHTML = app['monthly_fee'];
+		app_signup_fee.innerHTML = app['subscription_price'] + ' €';
+		app_monthly_fee.innerHTML = app['monthly_price'] + ' €' ;
 		
 		help_menu.className = "help_text_enabled drop_down_menu";
 		

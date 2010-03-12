@@ -32,7 +32,7 @@ var CatalogueFactory  = function () {
 	var list = null;
 	var active_catalogue = null;
 	var active_catalogue_name = null;
-	var DEFAULT_VIEW = "MOSAIC_VIEW";
+	var DEFAULT_VIEW = "LIST_VIEW";
 
 	
 	// ************************

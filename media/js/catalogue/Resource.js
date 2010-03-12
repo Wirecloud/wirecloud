@@ -200,9 +200,7 @@ Resource.prototype.paint_as_list = function(resourcesElement) {
 		}));
 
 		button.observe("click", function(event) {
-			LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
-				function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(this),
-				function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(this));
+			CatalogueFactory.getInstance().addResourceToShowCase(this._id);
 		}.bind(this), false, "instance_mashup");
 	}
 	left_column_div.appendChild(button);

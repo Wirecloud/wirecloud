@@ -204,7 +204,7 @@ function CatalogueMosaicView() {
 			for (var i=0; i<gadget_apps.length; i++) {
 				var app = gadget_apps[i];
 				
-				if (app['has_contract']) {
+				if (! app['has_contract']) {
 					var contract = {'username': ezweb_user_name, 'free': true, 'app_id': app['app_code']};
 				
 					contract_list.push(contract);
