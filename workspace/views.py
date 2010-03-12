@@ -89,6 +89,12 @@ def get_workspace_gadgets(workspace):
     return ws_gadgets
     
 
+def get_mashup_gadgets(mashup_id):
+    
+    published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
+        
+    return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
+
 def clone_original_variable_value(abstract_variable, creator, new_user):
     try:
         original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)

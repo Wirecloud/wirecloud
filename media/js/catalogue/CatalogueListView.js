@@ -384,19 +384,21 @@ function CatalogueListView() {
 		this.isContratableResource = function (resource) {
 		  for (var i=0; i<resource.capabilities.length; i++) {
 		      var capability = resource.capabilities[i];
-                      if (capability.name == 'Contratable') 
+                      if (capability.name.toLowerCase() == 'contratable') 
 		      	 return capability.value.toLowerCase() == "true";
 		      else
 			return false;
 		  }
  	        } 
  	                 
- 	    this.isAvailableResource = function(resource) { 
- 	        for (var i=0; i<purchasableGadgets.length; i++) { 
-		      if (resource.uriTemplate == purchasableGadgets[i].gadget)  	            
- 	                 return true; 
- 	              } 
- 	          return false; 
+ 	        this.isAvailableResource = function(resource) {
+ 	        	if (!URIs.HOME_GATEWAY_DISPATCHER_URL)
+ 	        		return true
+ 	          	for (var i=0; i<purchasableGadgets.length; i++) { 
+		      		if (resource.uriTemplate == purchasableGadgets[i].gadget)  	            
+ 	                	return true; 
+ 	            } 
+ 	          	return false; 
  	        } 
 
 		this.loadCatalogue = function(urlCatalogue_) {
