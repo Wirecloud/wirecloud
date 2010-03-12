@@ -959,7 +959,7 @@
 	margin: 0px;
 }
 
-.purchase_window_table td.app_name {
+.purchase_window_table tr {
 	cursor: pointer;
 	cursor: hand;
 }
@@ -968,11 +968,55 @@
 	display: block;
 	position: absolute;
 	z-index: 5;
+	max-width: 450px;
 }
 
 .help_text_disabled {
 	display: none;	
 	position: absolute;
+}
+
+#app_image {
+	width: 150px;	
+	height: 70px;
+	border: none;
+	clear: both;
+	float: right;
+}
+
+#app_name {
+	clear: both;
+	font-size: 16px;
+	font-weight: bold;
+	float: left;	
+	padding-bottom: 10px;
+	min-width: 400px;
+}
+
+#app_desc, #app_gadget_list {
+	clear: both;
+}
+
+#app_vendor, #app_signup_fee, #app_monthly_fee {
+	padding-left: 6px;
+	float: left;
+}
+
+#app_close{
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.floating_left {
+	float: left;
+	font-weight: bold;
+	clear: left;
+}
+
+.clearing_both {
+	clear: both;
+	font-weight: bold;
 }
 
 /*

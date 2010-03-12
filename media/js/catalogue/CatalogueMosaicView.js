@@ -184,7 +184,7 @@ function CatalogueMosaicView() {
 			return null;
 		}
 		
-		this.contractApplication = function (resourceId, appId) {
+		this.contractApplication = function (resource) {
 			var contratationSuccess = function (transport) {
 				var responseJSON = transport.responseText;
 				var response = JSON.parse(responseJSON); 
@@ -196,9 +196,22 @@ function CatalogueMosaicView() {
 				alert("Error contracting application");
 			}
 			
-			var url = URIs.CONTRACT_APPLICATION.evaluate({'application_id': appId});
-			var arguments = {'username': ezweb_user_name, 'free': true}
-			var params = {'contract_info': Object.toJSON(arguments)};
+			var url = URIs.CONTRACT_APPLICATIONS_TRANSACTION;
+			var contract_list = []
+			
+			var gadget_apps = resource.getGadgetApps();
+			
+			for (var i=0; i<gadget_apps.length; i++) {
+				var app = gadget_apps[i];
+				
+				if (app['has_contract']) {
+					var contract = {'username': ezweb_user_name, 'free': true, 'app_id': app['app_code']};
+				
+					contract_list.push(contract);
+				}
+			}
+			
+			var params = {'contract_list': Object.toJSON(contract_list)};
 			
 			PersistenceEngineFactory.getInstance().send_post(url, params, this, contratationSuccess, contratationError);
 		}
@@ -264,7 +277,7 @@ function CatalogueMosaicView() {
 			
 			    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
 			      CatalogueFactory.getInstance().contractApplication,
-			      function(){LayoutManagerFactory.getInstance().hideCover();},
+			      LayoutManagerFactory.getInstance().hideCover,
 			      this.getResource(resourceId_)
 			    );
 			    

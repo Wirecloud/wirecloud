@@ -47,131 +47,35 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 
 def check_arguments(request):
-    contract_info = None
-    if (request.REQUEST.__contains__('contract_info')):
-            contract_info = request.REQUEST['contract_info']
-            
-            try:
-                contract_info = simplejson.loads(contract_info)
-            except Exception, e:
-                return HttpResponseServerError('{"error": "Badformed JSON argument"}', mimetype='application/json; charset=UTF-8'), None
-    else:
-        return HttpResponseServerError('{"error": "Missing contrat_info parameter"}', mimetype='application/json; charset=UTF-8'), None
+    if (not request.REQUEST.__contains__('contract_list')):
+        return HttpResponseServerError('{"error": "Missing contract_info parameter"}', mimetype='application/json; charset=UTF-8'), None
     
-    return None, contract_info 
-
-class ContractCollection(Resource):
-    @login_required
-    def read(request):
+    contract_list = request.REQUEST['contract_list']
+    
+    try:
+        contract_list = simplejson.loads(contract_list)
+    except Exception, e:
+        return HttpResponseServerError('{"error": "Badformed JSON argument"}', mimetype='application/json; charset=UTF-8'), None
+    
+    return None, contract_list 
+    
+class ApplicationsSubscriber(Resource):
+    @login_required  
+    @transaction.commit_on_success 
+    def create(self, request):
+        error, contract_list = check_arguments(request)
+        
+        if (error):
+            return error
+        
         user = request.user
         
-        result = []
+        for contract_info in contract_list:
+            app_id = contract_info['app_id']
+            application = get_object_or_404(Application, app_code=app_id)
         
-        contracts = Contract.objects.filter(user=user)
-        
-        for contract in contracts:
-            result.append(contract.get_info())
+            contract, created = Contract.objects.get_or_create(user=user, application=application)
             
-        json = json_encode(result)
-        
-        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
-
-    read = staticmethod(read)
-
-    def create(request, application_id):        
-        error, contract_info = check_arguments(request)
-        
-        if (error):
-            return error
-        
-        user = User.objects.get(username=contract_info['username'])
-        
-        application = get_object_or_404(Application, app_code=application_id)
-        
-        contract, created = Contract.objects.get_or_create(user=user, application=application)
-        
-        if created:
             contract.update_info(contract_info)
         
-        json = json_encode(contract.get_info())
-        
-        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
-
-    create = staticmethod(create)
-    
-class ContractEntry(Resource):
-    @login_required
-    def read(request, contract_id):
-        contract = get_object_or_404(Contract, id=contract_id)
-        
-        json = json_encode(contract.get_info())
-        
-        return HttpResponse(json, mimetype='application/json; charset=UTF-8')
-    
-    read = staticmethod(read)
-
-    def update(request, contract_id):
-        error, contract_info = check_arguments(request)
-        
-        if (error):
-            return error
-        
-        contract = Contract.objects.get(id=contract_id)
-        
-        result = contract.update_info(contract_info)
-        
-        if (result):
-            return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
-        else:
-            return HttpResponseServerError('{"result": "error"}', mimetype='application/json; charset=UTF-8')
-        
-    update = staticmethod(update)
-
-    @login_required
-    def delete(request, contract_id):
-        contract = get_object_or_404(Contract, id=contract_id)
-        
-        contract.delete()
-        contract.save()
-        
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
-    
-    delete = staticmethod(delete)
-    
-class ApplicationSubscriber(Resource):
-    @login_required
-    def read(self, request, application_id):
-        error, contract_info = check_arguments(request)
-        
-        if (error):
-            return error
-        
-        user = User.objects.get(username=contract_info['username'])
-        
-        application = get_object_or_404(Application, app_code=application_id)
-    
-        try:
-            contract = Contract.objects.get(user=user, application=application)
-            
-            return ContractEntry.update(request, contract.id)
-        except Contract.DoesNotExist:
-            return ContractCollection.create(request, application_id)
-    
-    @login_required   
-    def create(self, request, application_id):
-        error, contract_info = check_arguments(request)
-        
-        if (error):
-            return error
-        
-        user = User.objects.get(username=contract_info['username'])
-        
-        application = get_object_or_404(Application, app_code=application_id)
-    
-        try:
-            contract = Contract.objects.get(user=user, application=application)
-            
-            return ContractEntry.update(request, contract.id)
-        except Contract.DoesNotExist:
-            return ContractCollection.create(request, application_id)
-        

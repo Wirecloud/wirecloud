@@ -308,6 +308,7 @@ function BuyingApplicationWindow() {
 	this.windowContent.appendChild(this.content);
 	
 	this.help_menu = document.createElement('div');
+	Element.extend(this.help_menu);
 	this.help_menu.className = "help_text_disabled";
 	document.body.insertBefore(this.help_menu, $("header"));
 	
@@ -326,12 +327,12 @@ function BuyingApplicationWindow() {
 
 BuyingApplicationWindow.prototype = new WindowMenu();
 
-BuyingApplicationWindow.prototype.setCloseListener = function(closeListener) {
-	this._closeListener = closeListener;
+BuyingApplicationWindow.prototype.setCloseListener = function(closeHandler) {
+	this._closeHandler = closeHandler;
 }
 
 BuyingApplicationWindow.prototype.setHandler = function(acceptHandler) {
-	this.acceptHandler = function(){acceptHandler(this._resourceId, this._appId);}.bind(this);
+	this.acceptHandler = function(){this.hideApplicationPopUp(this.help_menu); acceptHandler(this._resource);}.bind(this);
 }
 
 BuyingApplicationWindow.prototype._acceptListener = function(e) {
@@ -339,10 +340,15 @@ BuyingApplicationWindow.prototype._acceptListener = function(e) {
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
+BuyingApplicationWindow.prototype._closeListener = function(e) {
+	this.hideApplicationPopUp(this.help_menu);
+	LayoutManagerFactory.getInstance().hideCover();
+}
+
 BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
+	this.show();
 	this._resource = extra_data;
-	
-	this._resourceId = this._resource.getId();
+
 	var resource_apps = this._resource.getGadgetApps();
 	
 	var apps_html = "<tbody>";
@@ -350,15 +356,18 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 	for (var i=0; i<resource_apps.length; i++) {
 		var app = resource_apps[i];
 		
-		var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + app['price'] + '</td></tr>';
+		if (app['has_contract']) {
+			var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + app['price'] + '</td></tr>';
 		
-		apps_html += html;
+			apps_html += html;
+		}
 	}
 	
 	apps_html += "</tbody></table></center>";
 	final_html = this.table_html + apps_html;
 	
-	this._apps_table.innerHTML = final_html;
+	this._apps_table.update();
+	this._apps_table.update(final_html);
 	
 	var app_names = $$(".purchase_window_table td.app_name");
 	for (var i=0; i<app_names.length; i++) {
@@ -368,25 +377,78 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 		app['window_menu'] = this;
 		app['help_menu'] = this.help_menu;
 		
-		Event.observe(element, 'mouseover', function (e) { BuyingApplicationWindow.prototype.showApplicationPopUp(e, this, this['help_menu']) }.bind(app));
-		Event.observe(element, 'mouseout', function (e) { BuyingApplicationWindow.prototype.hideApplicationPopUp(e, this, this['help_menu']) }.bind(app));
+		Event.observe(element, 'click', function (e) { BuyingApplicationWindow.prototype.showApplicationPopUp(e, this, this['help_menu']) }.bind(app));
 	}
 	
 	BuyingApplicationWindow.prototype.showApplicationPopUp = function(e, app, help_menu) {
-		help_menu.innerHTML = app['name'];
+		var app_name = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_name');
+		var app_image = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_image');
+		var app_signup_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_signup_fee', 'Sing-up fee:');
+		var app_monthly_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_monthly_fee', 'Monthly fee:');
+		var app_vendor = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_vendor', 'Vendor:');
+		var app_desc = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_desc', 'Description:');
+		var app_gadget_list = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_gadget_list', 'List of Gadgets:');
+		var app_close = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_close');
+		
+		if (app['name'] == app_name.innerHTML && app['vendor'] == app_vendor.innerHTML) {
+			help_menu.className = "help_text_enabled drop_down_menu";
+			return;
+		} 
+		
+		app_image.setAttribute('src', app['image_uri']);
+		app_name.innerHTML = app['name'];
+		app_vendor.innerHTML = app['vendor'];
+		app_desc.innerHTML = app['description'];
+		app_gadget_list.innerHTML = app['gadget_list'];
+		app_signup_fee.innerHTML = app['signup_fee'];
+		app_monthly_fee.innerHTML = app['monthly_fee'];
+		
 		help_menu.className = "help_text_enabled drop_down_menu";
 		
-		var posX = Event.pointerX(e);
-		var posY = Event.pointerY(e);
+		var element = Event.element(e);
+		var cumulativeOffset = Position.cumulativeOffset(element);
 		
-		help_menu.style.top = posY + 'px';
-		help_menu.style.left = posX + 'px';
-		
-		
+		help_menu.style.top = cumulativeOffset[1] + 'px';
+		help_menu.style.left = element.getWidth() + cumulativeOffset[0] + 'px';
 	}
 	
-	BuyingApplicationWindow.prototype.hideApplicationPopUp = function(e, app, help_menu) {
+	BuyingApplicationWindow.prototype.hideApplicationPopUp = function(help_menu) {
 		help_menu.className = "help_text_disabled";
+	}
+	
+	BuyingApplicationWindow.prototype.getOrCreateById = function (help_menu, id, text) {
+		var element_type = 'div';
+		if (id == 'app_image') 
+			element_type = 'img';
+			
+		var selector =  element_type+'#'+id;
+		var elements_by_id = help_menu.getElementsBySelector(selector);
+		
+		if (elements_by_id.length == 1) {
+			return elements_by_id[0];
+		} else {
+			if (text) {	
+				var container = document.createElement('div');
+				container.innerHTML = gettext(text)
+				help_menu.appendChild(container);
+				if (id == 'app_desc') 
+					container.className = "clearing_both";
+				else
+					container.className = "floating_left";
+			}
+				
+			var element = document.createElement(element_type);
+			Element.extend(element);
+			help_menu.appendChild(element);
+			element.setAttribute('id', id); 
+			
+			if (id == "app_close") {
+				element.className = "closebutton"
+				Event.observe (element, 'click', function () { BuyingApplicationWindow.prototype.hideApplicationPopUp(this) }.bind(help_menu));
+			}
+			
+			return element;
+		}
 	}
 	
 }

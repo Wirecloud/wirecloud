@@ -842,6 +842,7 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['purchaseAppMenu'];
 				this.currentMenu.setHandler(handlerYesButton);
+				this.currentMenu.setCloseListener(handlerNoButton);
 				this.currentMenu.setExtraData(extra_data);
 				break;
 			default:
