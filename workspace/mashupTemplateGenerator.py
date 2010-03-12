@@ -79,7 +79,8 @@ class TemplateGenerator:
         
         xml += '</IncludedResources>'
         xml += '</Catalog.ResourceDescription>'
-        
+        if published_workspace.contratable:
+            xml += '<Capability name="contratable" value="true"/>'
         xml += '<Platform.Preferences></Platform.Preferences>'
         xml += '<Platform.StateProperties></Platform.StateProperties>'
         

@@ -118,6 +118,8 @@ class PublishedWorkSpace(models.Model):
     organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
     
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
+    
+    contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.workspace.name  

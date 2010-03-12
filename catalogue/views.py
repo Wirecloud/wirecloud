@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -63,7 +63,7 @@ from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.logs import log
 from commons.logs_exception import TracedServerError
-from commons.utils import get_xml_error
+from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
 from commons.user_utils import get_verified_certification_group
 
@@ -111,6 +111,9 @@ class GadgetsCollection(Resource):
         version = gadget.version
         vendor = gadget.vendor
         gadgetId = gadget.id
+        mashupId = ""
+        if gadget.mashup_id:
+            mashupId = gadget.mashup_id
         
         #Managing available Applications
         availableApps = simplejson.dumps(get_available_apps_info())
@@ -118,8 +121,8 @@ class GadgetsCollection(Resource):
         #Inform about the last version of the gadget.
         last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
 
-        json_ok = '{"result": "ok", "contratable": %s, "availableApps": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s"}' \
-            % (contratable, availableApps, template_uri, gadgetName, gadgetId, vendor, version, last_version)
+        json_ok = '{"result": "ok", "contratable": %s, "availableApps": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s", "mashupId": "%s"}' \
+            % (contratable, availableApps, template_uri, gadgetName, gadgetId, vendor, version, last_version, mashupId)
         
         return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
 

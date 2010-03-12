@@ -843,6 +843,10 @@ class  WorkSpacePublisherEntry(Resource):
         readOnly = mashup.get('readOnly')
         if (not readOnly):
             readOnly = False
+        
+        contratable = mashup.get('contratable')
+        if (not contratable):
+            contratable = False
             
         try:
             cloned_workspace.name = name
@@ -852,7 +856,8 @@ class  WorkSpacePublisherEntry(Resource):
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 
                                                      name=name, version=version, description=description,
-                                                     imageURI=imageURI, wikiURI=wikiURI, organization = organization)
+                                                     imageURI=imageURI, wikiURI=wikiURI, organization = organization,
+                                                     contratable=contratable)
             
             published_workspace.save()
         except IntegrityError, e:

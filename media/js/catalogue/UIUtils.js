@@ -79,13 +79,20 @@ UIUtils.addResource = function(url, paramName, paramValue) {
 	 	var continueAdding = function (result){
 	 		//leave that gadget version and continue
 	 		if (result['contratable']) {
-				// Link gadget with application
-				var gadget_id = result['gadgetId'];
-				var available_apps = result['availableApps'];
-				
-				CatalogueFactory.getInstance().setAvailableApps(available_apps);
-				
-				LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', UIUtils.addResourceToApplication, function () { LayoutManagerFactory.getInstance().hideCover() }, gadget_id);
+				if (result['mashupId'] == "") {
+					// Link gadget with application
+					var gadget_id = result['gadgetId'];
+					var available_apps = result['availableApps'];
+					
+					CatalogueFactory.getInstance().setAvailableApps(available_apps);
+					
+					LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', UIUtils.addResourceToApplication, function(){
+						LayoutManagerFactory.getInstance().hideCover()
+					}, gadget_id);
+				}
+				else {
+					UIUtils.repaintOrderedByCreationDate();
+				}
 		    } else {
 		    	UIUtils.repaintOrderedByCreationDate();
 		    }
