@@ -235,6 +235,9 @@ class Application(TransModel):
     image_uri = models.URLField(_('imageURI'), null=True)
     vendor = models.CharField(_('Vendor'), max_length=250)
     
+    subscription_price = models.CharField(_('Subscription Price'), max_length=100)
+    monthly_price = models.CharField(_('Monthly Price'), max_length=100)
+    
     def get_gadget_list(self):
         gadget_list = ""
         
@@ -260,6 +263,8 @@ class Application(TransModel):
         result["image_uri"] = self.image_uri
         result["vendor"] = self.vendor
         result["template_uri"] = self.template_uri
+        result["subscription_price"] = self.subscription_price
+        result["monthly_price"] = self.monthly_price
         
         return result
     
