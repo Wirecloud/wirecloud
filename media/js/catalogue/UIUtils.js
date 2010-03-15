@@ -592,13 +592,15 @@ UIUtils.sendPendingTags = function() {
   {
     UIUtils.sendGlobalTags();
   } else {
-	if (UIUtils.selectedResource!=null)
-	{
+	if (UIUtils.selectedResource != null) {
 		var resource = CatalogueFactory.getInstance().getResource(UIUtils.selectedResource);
-		var tagger = resource.getTagger();
-
-		if (tagger.getTags().size() != 0) {
-			UIUtils.sendTags();
+		if (resource) {
+			
+			var tagger = resource.getTagger();
+			
+			if (tagger.getTags().size() != 0) {
+				UIUtils.sendTags();
+			}
 		}
 	}
   }

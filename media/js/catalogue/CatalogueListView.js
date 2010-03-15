@@ -379,6 +379,7 @@ function CatalogueListView() {
 		}
 		
 		this.show = function(){
+			UIUtils.closeInfoResource();
             LayoutManagerFactory.getInstance().showCatalogue();
             UIUtils.setResourcesWidth();               
         }
