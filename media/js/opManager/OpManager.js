@@ -139,7 +139,6 @@ var OpManagerFactory = function () {
 		this.persistenceEngine = PersistenceEngineFactory.getInstance();
 		
 		this.loadCompleted = false;
-		this.firstAccessToTheCatalogue = true;
 		this.catalogueIsCurrentTab = false;
 		
 		// Variables for controlling the collection of wiring and dragboard instances of a user
@@ -202,15 +201,24 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace.getVisibleTab().markAsCurrent();
 
 			// Load catalogue data!
-			if (this.firstAccessToTheCatalogue || this.catalogueIsCurrentTab)
+			if (!this.catalogue.initialized || this.catalogueIsCurrentTab)
 			{
 				this.catalogue.initCatalogue();
-				this.firstAccessToTheCatalogue = false;
 				this.catalogueIsCurrentTab = false;
 			} else {
 				UIUtils.repaintCatalogue=false;
 			}
 			UIUtils.resizeResourcesContainer();
+		}
+		
+		OpManager.prototype.showListCatalogue = function () {
+			this.catalogue = CatalogueFactory.getInstance("LIST_VIEW")
+			this.showCatalogue();
+		}
+		
+		OpManager.prototype.showMosaicCatalogue = function () {
+			this.catalogue = CatalogueFactory.getInstance("MOSAIC_VIEW")
+			this.showCatalogue();
 		}
 
 		OpManager.prototype.showLogs = function () {
@@ -475,8 +483,13 @@ var OpManagerFactory = function () {
 				var layoutManager = LayoutManagerFactory.getInstance();
 				layoutManager.logSubTask(gettext("Activating current Workspace"));
 
-				this.showActiveWorkSpace();
-//				this.changeActiveWorkSpace(this.activeWorkSpace);
+				if (this.activeWorkSpace.isEmpty() && this.workSpaceInstances.keys().length ==1){
+					this.activeWorkSpace.fillWithLabel();
+					this.showListCatalogue();
+				}
+				else{
+					this.showActiveWorkSpace();
+				}
 
 				//fixes for IE6
 				//Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs

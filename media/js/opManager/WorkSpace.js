@@ -398,6 +398,13 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.getContextManager = function () {
 		return this.contextManager;
 	}
+	
+	WorkSpace.prototype.isEmpty = function () {
+		if (this.tabInstances.keys().length == 1){
+		 return this.visibleTab.dragboard.getIGadgets().length == 0; 
+		}
+		return false;
+	}
 
 	WorkSpace.prototype.downloadWorkSpaceInfo = function () {
 		LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);

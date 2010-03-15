@@ -25,6 +25,9 @@
 
 var CatalogueFactory  = function () {
 
+	Event.observe($('catalogue_link'), "click", function(){
+				OpManagerFactory.getInstance().showMosaicCatalogue()}, false, "show_catalogue");
+
 	// *********************************
 	// SINGLETON INSTANCE
 	// *********************************
@@ -41,7 +44,43 @@ var CatalogueFactory  = function () {
 				
 	return new function() {
 		this.getInstance = function(view_type) {
+			if (!list && !mosaic){
+			
+				//Callbacks
+				this.onLoadSuccess = function(transport){
+					//update gadget info in the showcase
+					var response = transport.responseText;
+					var data = JSON.parse(response);
+					ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
+					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+				}
+				this.onLoadError = function(transport){
+					//the gadget version is not updated
+					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+				}
 				
+				//check the version of the showcase gadgets
+				var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
+				var params = {"gadgets":Object.toJSON(showcase_gadgets)};
+				PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
+			
+			}
+			
+			if (view_type == "LIST_VIEW"){
+				if (!list)
+					list = new CatalogueListView();
+				active_catalogue = list;
+				active_catalogue_name = "LIST_VIEW";
+			}
+			
+			if (view_type =="MOSAIC_VIEW"){
+				if(!mosaic)
+					mosaic = new CatalogueMosaicView();
+				active_catalogue = mosaic;
+				active_catalogue_name = "MOSAIC_VIEW";
+			}
+			
+
 			// DEFAULT_VIEW
 			if (! active_catalogue) {
 				if (DEFAULT_VIEW == "LIST_VIEW")	{			
@@ -49,7 +88,7 @@ var CatalogueFactory  = function () {
 					active_catalogue = list;
 					active_catalogue_name = "LIST_VIEW";
 				}
-		    	
+	    	
 		    	if (DEFAULT_VIEW == "MOSAIC_VIEW") {
 					mosaic = new CatalogueMosaicView();
 					active_catalogue = mosaic;

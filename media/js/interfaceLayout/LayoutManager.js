@@ -496,9 +496,7 @@ var LayoutManagerFactory = function () {
 				this.currentView.hide();
 			}
 
-			if (!this.catalogue) {
-				this.catalogue = CatalogueFactory.getInstance();
-			}
+			this.catalogue = CatalogueFactory.getInstance();
 
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';

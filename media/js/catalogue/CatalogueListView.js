@@ -52,10 +52,11 @@ function CatalogueListView() {
 		this.catalogueContentElement = $('app_catalogue_content');
 		this.simpleSearchElement = $('app_catalogue_simple_search_text');
 		
+		this.initialized = false;
+		
 	    //paint tag categories
 	    this.categoryManager = new CategoryManager();
 		
-		Event.observe($('catalogue_link'), "click", function(){OpManagerFactory.getInstance().showCatalogue()}, false, "show_catalogue");
 		
 		// ********************
 		//  PRIVILEGED METHODS
@@ -73,6 +74,7 @@ function CatalogueListView() {
 	
 				    // Load catalogue data!
 				    this.repaintCatalogue(URIs.GET_POST_RESOURCES + "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
+				    this.initialized = true;
 				}
 				
 				var onError = function () {
@@ -799,23 +801,6 @@ function CatalogueListView() {
 			parent.appendChild(new_tag);
 		}
 	}
-	//Callbacks
-	this.onLoadSuccess = function(transport){
-		//update gadget info in the showcase
-		var response = transport.responseText;
-		var data = JSON.parse(response);
-		ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	}
-	this.onLoadError = function(transport){
-		//the gadget version is not updated
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	}
-	
-	//check the version of the showcase gadgets
-	var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
-	var params = {"gadgets":Object.toJSON(showcase_gadgets)};
-	PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
 }
 
 

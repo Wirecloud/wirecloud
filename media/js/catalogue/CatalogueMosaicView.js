@@ -52,10 +52,11 @@ function CatalogueMosaicView() {
 	    this.catalogueContentElement = $('catalogue_content');
 	    this.simpleSearchElement = $('simple_search_text');
 	    
+	    this.initialized = false;
+	    
 	    //paint tag categories
 	    this.categoryManager = new CategoryManager();
 		
-		Event.observe($('catalogue_link'), "click", function(){OpManagerFactory.getInstance().showCatalogue()}, false, "show_catalogue");
 		Event.observe($('add_feed_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addFeed")}, false, "show_feed_window");
 		Event.observe($('add_site_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addSite")}, false, "show_site_window");
 		
@@ -77,6 +78,8 @@ function CatalogueMosaicView() {
 			    UIUtils.setResourcesWidth();
 			    UIUtils.resizeResourcesContainer();
 			    this.getSimpleSearchElement().focus();
+			    
+			    this.initialized = true;
 			}
 			
 			var onError = function () {
@@ -1157,23 +1160,7 @@ function CatalogueMosaicView() {
 			parent.appendChild(new_tag);
 		}
 	}
-	//Callbacks
-	this.onLoadSuccess = function(transport){
-		//update gadget info in the showcase
-		var response = transport.responseText;
-		var data = JSON.parse(response);
-		ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	}
-	this.onLoadError = function(transport){
-		//the gadget version is not updated
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	}
-	
-	//check the version of the showcase gadgets
-	var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
-	var params = {"gadgets":Object.toJSON(showcase_gadgets)};
-	PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
+
 }
 
 

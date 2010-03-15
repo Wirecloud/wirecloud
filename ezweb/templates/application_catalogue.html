@@ -7,6 +7,7 @@
 				<div id="simple_search" class="simple_search">
 					<input type="text" id="app_catalogue_simple_search_text" name="simple_search_text" value="{% trans "Search"%}" onclick="if(this.value == '{% trans "Search" %}') this.value =''" onkeyup="if(this.value.length&lt;20){;}else if (this.value.length >= 16 &amp;&amp; this.value.length &lt; 30){this.size=this.value.length + 2;}" onkeypress="UIUtils.onReturn(event,UIUtils.simpleSearch,URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or');"/>
 					<span class="link" onclick="UIUtils.viewAll(URIs.GET_RESOURCES_SIMPLE_SEARCH, 'simple_or')">{% trans  "View All" %}</span>
+					<span class="link" onclick="OpManagerFactory.getInstance().showMosaicCatalogue()">{% trans  "Advanced View" %}</span>
 				</div>
 			</div>
 		</div>
