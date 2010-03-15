@@ -1067,6 +1067,15 @@
 	color: darkBlue;
 }
 
+.purchase_window_table tr.total_row td {
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #000000;
+}
+
+.purchase_window_table tr.total_row {
+	cursor: default;
+}
+
 /*
  * Resource Highlighting
  */
@@ -1112,7 +1121,7 @@
 	margin: 0;
 }
 
-#catalogue .resource button,  #app_catalogue .resource button {
+#catalogue .resource button,  #app_catalogue .resource button, .contratable {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }

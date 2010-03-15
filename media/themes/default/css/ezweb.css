@@ -287,11 +287,11 @@ a, a:visited{
   border-bottom: solid 1px #AAAAAA;
 }
 
-.window_menu {
+.window_menu, .help_text_enabled {
   border: 2px solid #2D6F9C;
 }
 
-.window_menu .window_title {
+.window_menu .window_title, .help_text_enabled #app_name {
   color: #2D6F9C;
 }
 
