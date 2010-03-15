@@ -817,6 +817,12 @@ function WorkSpace (workSpaceState) {
 		}
 	
 		if (!this.forceRestrictedSharing()){ //EzWeb IE6 version doesn't allow creating new Workspaces
+			this.menu.addOption(_currentTheme.getIconURL('solution'),
+				gettext("Add a built solution"),
+				function() {
+					OpManagerFactory.getInstance().showListCatalogue();
+				},
+				optionPosition++);
 			this.menu.addOption(_currentTheme.getIconURL('add'),
 				gettext("New workspace"),
 				function() {
