@@ -296,10 +296,10 @@ AddingGadgetToApplicationWindow.prototype.update_window = function() {
 *
 */
 function BuyingApplicationWindow() {
-	WindowMenu.call(this, gettext('Purchase Element'));
+	WindowMenu.call(this, gettext('Buying composed application'));
 
-	var text_introduction = gettext("Activating all these applications is required.");
-	var text_hint = gettext("Click on any to see its detailed description (including princing info).");
+	var text_introduction = gettext("Buying this composed solution implies paying for the following applications.");
+	var text_hint = gettext("Click on any of them to see a detailed description, including princing info.");
 
 	this.content = document.createElement('div');
 	this.content.innerHTML = '<div class="purchase_window_text">' + text_introduction + " " +  text_hint + '</div>';
@@ -315,11 +315,12 @@ function BuyingApplicationWindow() {
 	this._apps_table = document.createElement('div');
 	this.content.appendChild(this._apps_table);
 	
-	this.table_html = '<center><table cellpadding="0px" cellspacing="0px" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_price">' + gettext("Total Price") + '</th></thead>';
+	this.table_html = '<center><table cellpadding="0px" cellspacing="0px" id="purchase_window_table" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_signup_price">' + gettext("Sign-up fee") + '</th><th class="app_monthly_price">' + gettext("Monthly fee") + '</th></thead>';
 	
 	// Finish button
 	this.acceptButton = document.createElement('button');
-	this.acceptButton.appendChild(document.createTextNode(gettext('Contract')));
+	this.acceptButton.appendChild(document.createTextNode(gettext('Buy')));
+	this.acceptButton.className = 'contratable';
 	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
 	this.windowBottom.appendChild(this.acceptButton);
@@ -353,19 +354,36 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 	
 	var apps_html = "<tbody>";
 	
+	var total_signup_price = 0;
+	var total_monthly_price = 0;
+	
 	for (var i=0; i<resource_apps.length; i++) {
 		var app = resource_apps[i];
 		
 		if (! app['has_contract']) {
-			var price = parseInt(app['subscription_price']) + parseInt(app['monthly_price']);
-			price = price + ' €';
+			var signup_price = parseInt(app['subscription_price']) ;
+			var monthly_price = parseInt(app['monthly_price']);
 			
-			var html = '<tr><td class="app_name">' + app['name'] + '</td><td>' + price + '</td></tr>';
-		
-			apps_html += html;
+			total_signup_price += signup_price;
+			total_monthly_price += monthly_price;
+			
+			signup_price += ' €';
+			monthly_price += ' €';
+			
+			var html = '<tr><td class="app_name">' + app['name'] + '</td><td class="center_text">' + signup_price + '</td><td class="center_text right_border">' + monthly_price + '</td></tr>';
+		} else {
+			var html = '<tr><td class="app_name">' + app['name'] + '</td><td class="center_text">' + gettext('already paid') + '</td><td class="center_text right_border">' + gettext('already paid') + '</td></tr>';
 		}
+		
+		apps_html += html;
 	}
 	
+	total_signup_price += ' €';
+	total_monthly_price += ' €';
+	
+	var total_row = '<tr class="total_row"><td class="total_name">' + gettext('TOTAL') + '</td><td class="center_text">' + total_signup_price + '</td><td class="center_text right_border">' + total_monthly_price + '</td></tr>'; 
+	
+	apps_html += total_row;
 	apps_html += "</tbody></table></center>";
 	final_html = this.table_html + apps_html;
 	

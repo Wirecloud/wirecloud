@@ -352,9 +352,7 @@ Resource.prototype.paint_as_mosaic = function(resourcesElement) {
 		}));
 
 		button.observe("click", function(event) {
-			LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
-				function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(this),
-				function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(this));
+			CatalogueFactory.getInstance().addResourceToShowCase(this._id);
 		}.bind(this), false, "instance_mashup");
 	}
 	content_toolbar.appendChild(button);
@@ -454,7 +452,16 @@ Resource.prototype.isContratable = function () {
 }
 
 Resource.prototype.hasContract = function () {
-	return this._state.getContract();
+	var gadgetApps = this.getGadgetApps();
+	
+	for (var i=0; i<gadgetApps.length; i++) {
+		var app = gadgetApps[i];
+		
+		if (! app['has_contract'])
+			return false;
+	}
+
+	return true;
 }
 
 Resource.prototype.showInfo = function() {

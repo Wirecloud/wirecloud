@@ -562,8 +562,17 @@
 }
 
 #catalogue .center .resources .resource .toolbar button.contratable,
-#app_catalogue .center .resources .resource button.contratable {
+#app_catalogue .center .resources .resource button.contratable,
+.contratable {
 	background: url("/ezweb/images/contratable.gif") top left;
+}
+
+#purchase_window_table .center_text {
+	text-align: center;
+}
+
+#purchase_window_table .right_border {
+	border-right: 1px solid #cccccc;
 }
 
 .description_balloon
@@ -933,22 +942,25 @@
 
 .purchase_window_table {
 	margin-top:10px;
-	width: 95%;
+	width: 100%;
 }
 
 .purchase_window_table th {
 	border-bottom:1px solid #000000;
-	border-left:1px solid #CCCCCC;
 	padding-left: 6px;
 	text-align: left;
 }
 
-.purchase_window_table th.app_name {
-	width: 70%;
+.purchase_window_table td.total_name {
+	font-weight: bold;
 }
 
-.purchase_window_table th.app_price {
-	width: 30%;
+.purchase_window_table th.app_name {
+	width: 60%;
+}
+
+.purchase_window_table th.app_signup_price,  .purchase_window_table th.app_monthly_price {
+	width: 20%;
 }
 
 .purchase_window_table td {

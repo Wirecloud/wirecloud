@@ -268,18 +268,22 @@ function CatalogueMosaicView() {
 			var currentResource = this.getResource(resourceId_);
 			
 			if (currentResource.isContratable()) {
-				var contract = currentResource.getContract();
-				
-				if (contract) {
-					ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
-					return;
-				}
-			
-			    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
-			      CatalogueFactory.getInstance().contractApplication,
-			      LayoutManagerFactory.getInstance().hideCover,
-			      this.getResource(resourceId_)
-			    );
+				if (currentResource.hasContract()) {
+					if (currentResource.getMashupId()) {
+						LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
+								function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(currentResource),
+								function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(currentResource));
+					} else {
+						ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
+						return;
+					}
+				} else {
+				    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
+				      CatalogueFactory.getInstance().contractApplication,
+				      LayoutManagerFactory.getInstance().hideCover,
+				      this.getResource(resourceId_)
+				    );
+			    }
 			    
 			    return;
 			}

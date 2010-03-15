@@ -251,9 +251,7 @@ function CatalogueListView() {
 			var currentResource = this.getResource(resourceId_);
 			
 			if (currentResource.isContratable()) {
-				var contract = currentResource.getContract();
-				
-				if (contract) {
+				if (currentResource.hasContract()) {
 					if (currentResource.getMashupId()) {
 						LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
 								function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(currentResource),
