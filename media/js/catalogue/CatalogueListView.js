@@ -472,11 +472,14 @@ function CatalogueListView() {
 			  
 			  UIUtils.repaintCatalogue=false;
 			}
-			
+			// Initialize the parameters			
 			if (UIUtils.searchValue != "")
 				var param = {orderby: UIUtils.orderby, search_criteria: UIUtils.searchValue, search_boolean:$("global_search_boolean").value};
 			else
-				var param = {orderby: UIUtils.orderby, search_boolean:$("global_search_boolean").value}	
+				var param = {orderby: UIUtils.orderby, search_boolean:$("global_search_boolean").value}
+			
+			//This Catalogue only shows mashups
+			param["scope"] = "mashup"	
 
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
 

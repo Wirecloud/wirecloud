@@ -139,6 +139,11 @@ class GadgetsCollection(Resource):
             orderby = request.GET.__getitem__('orderby')
         except:
             orderby = '-creation_date'
+        
+        try:
+            scope = request.GET.__getitem__('scope')
+        except:
+            scope = 'all'
 
         #paginate
         a= int(pag)
@@ -146,7 +151,7 @@ class GadgetsCollection(Resource):
 
         # Get all the gadgets in the catalogue
         gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
+        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
         items = len(gadgetlist)
         
         if not(a == 0 or b == 0):
@@ -272,6 +277,11 @@ class GadgetsCollectionBySimpleSearch(Resource):
             format = request.GET.__getitem__('format')
         except:
             format = 'default'
+        
+        try:
+            scope = request.GET.__getitem__('scope')
+        except:
+            scope = 'all'
 
         if criteria == 'connectEventSlot':
             search_criteria = request.GET.getlist('search_criteria')
@@ -328,7 +338,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
 
         gadgetlist = get_uniquelist(gadgetlist)
         
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
+        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
         
         items = len(gadgetlist)
         gadgetlist = get_sortedlist(gadgetlist, orderby)
@@ -352,6 +362,11 @@ class GadgetsCollectionByGlobalSearch(Resource):
             format = request.GET.__getitem__('format')
         except:
             format = 'default'
+        
+        try:
+            scope = request.GET.__getitem__('scope')
+        except:
+            scope = 'all'
 
         search_criteria = request.GET.getlist('search_criteria')
         search_boolean = request.GET.__getitem__('search_boolean')
@@ -403,7 +418,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
         else:
             gadgetlist = get_uniquelist(gadgetlist)
         
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all())
+        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
         items = len(gadgetlist)
         
         gadgetlist = get_sortedlist(gadgetlist, orderby)

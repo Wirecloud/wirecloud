@@ -62,7 +62,8 @@ def get_uniquelist(list, value = None):
 
 # Filter gadgets that don't belong to given organization
 # Also filter gadgets that are not certificated!
-def filter_gadgets_by_organization(user, gadget_list, organization_list):  
+#Also filters depending on the scope of the search (it could be mashup, gadget, all, ...)
+def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):  
     final_list = []
      
     for gadget in gadget_list:
@@ -72,6 +73,13 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list):
             #Checking certification status!
             if (certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != gadget.creator):
                 continue
+        
+        #checking the scope of the query
+        if scope == "mashup" and not gadget.mashup_id:
+            continue
+        elif scope == "gadget" and gadget.mashup_id:
+            continue
+        #else: (scope=="all") -> add to the list
         
         #Checking organizations!
         gadget_organizations = gadget.organization.all()
@@ -87,6 +95,7 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list):
                 if gadget_organization == user_organization:
                     final_list.append(gadget)
                     continue
+        
                     
     return final_list
 
