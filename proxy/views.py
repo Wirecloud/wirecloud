@@ -195,6 +195,10 @@ class Proxy(Resource):
             else:
                 params = None
 
+            # Remote user header
+            if not request.user.is_anonymous():
+                headers['Remote-User'] = request.user.username
+
             # Open the request
             try:
                 res = self._do_request(opener, method, url, params, headers)
