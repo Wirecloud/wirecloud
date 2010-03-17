@@ -69,10 +69,7 @@ class GadgetCodeParser:
             codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
 
             try:
-                params = {}
-                if user:
-                    params.update({"username": user.username})
-                xhtml = download_http_content(codeURI, params=params)
+                xhtml = download_http_content(codeURI, user=user)
             except Exception:
                 raise TemplateParseException(_("XHTML code is not accessible"))
 

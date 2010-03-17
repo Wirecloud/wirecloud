@@ -50,12 +50,12 @@ from translator.models import Translation
 from urllib import url2pathname
 
 class TemplateParser:
-    def __init__(self, uri, user,fromWGT):
+    def __init__(self, uri, user, fromWGT):
         self.uri = uri
         self.user = user
         self.fromWGT = fromWGT
         if not fromWGT:
-            self.xml = download_http_content(uri, {"username": user.username})
+            self.xml = download_http_content(uri, user=user)
         else:
             # In this case 'uri' is a filesystem URL
             if uri[0] == '/':
@@ -528,7 +528,8 @@ class TemplateHandler(handler.ContentHandler):
                 # Gadget Code Parsing
                 gadgetParser = GadgetCodeParser()
                 gadgetParser.parse(_href, self._gadgetURI, _content_type,
-                                   self.fromWGT, cacheable=_cacheable)
+                                   self.fromWGT, cacheable=_cacheable,
+                                   user=self.user)
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:
                 raise TemplateParseException(_("ERROR: XHTML could not be read: %(errorMsg)s") % {'errorMsg': e.message})

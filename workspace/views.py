@@ -299,9 +299,8 @@ class WorkSpaceCollection(Resource):
                     try:
                         url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
                         params = None
-                        if request.user:
-                            params = {'username': request.user.username}
-                        received_json = download_http_content(url, params=params)
+                        received_json = download_http_content(url,
+                                                              user=request.user)
                         categories = simplejson.loads(received_json)['category_list']
                         if len(categories) > 0:
                             #take the first one which has a default workspace

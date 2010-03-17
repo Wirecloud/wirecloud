@@ -38,7 +38,7 @@ from django.conf import settings
 from django.utils import simplejson
 
 
-def download_http_content (uri, params=None):
+def download_http_content (uri, params=None, user=None):
     urlcleanup()
 
     #proxy = settings.PROXY_SERVER
@@ -60,9 +60,8 @@ def download_http_content (uri, params=None):
     opener = urllib2.build_opener(proxy)
     referer = getattr(settings, 'HTTP_REFERER', None)
     params = params or {}
-    has_remote_user = 'username' in params
     has_cookie = 'cookie' in params
-    if referer or has_remote_user or has_cookie:
+    if referer or user or has_cookie:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
             'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
@@ -73,9 +72,9 @@ def download_http_content (uri, params=None):
             headers.update({
                 'Referer': referer,
             })
-        if has_remote_user:
+        if user and not user.is_anonymous():
             headers.update({
-                'Remote-User': params['username'],
+                'Remote-User': user.username,
             })
         if has_cookie:
             headers.update({

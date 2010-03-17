@@ -35,53 +35,46 @@ from django.conf import settings
 from commons.http_utils import download_http_content
 from django.utils import simplejson
 
+
 class EzSteroidsBackend:
 
-    def authenticate(self,username=None,password=None):
-        (is_valid, groups) = self.is_valid(username,password)
-        
-        if (not is_valid):
+    def authenticate(self, username=None, password=None):
+        (is_valid, groups) = self.is_valid(username, password)
+        if not is_valid:
             return None
-        
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User(username=username)
             user.set_password(password)
             user.save()
-            
         self.manage_groups(user, groups)
-
         return user
 
-    def get_user(self,user_id):
+    def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
 
-    def is_valid (self,username=None,password=None):
+    def is_valid(self, username=None, password=None):
         if username == None or password == '':
             return None
-        
-        #ask PBUMS about the authentication
-        if hasattr(settings,'AUTHENTICATION_SERVER_URL'):
-            urlBase=settings.AUTHENTICATION_SERVER_URL;
-            url = urlBase+"/api/login"
-            params = {'username':username, 'password':password}
+        # Ask PBUMS about the authentication
+        if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+            urlBase = settings.AUTHENTICATION_SERVER_URL
+            url = urlBase + "/api/login"
+            params = {'username': username, 'password': password}
             try:
-            	result = download_http_content(url,params)
-            	result = simplejson.loads(result)
-            	
+                result = download_http_content(url, params)
+                result = simplejson.loads(result)
                 return (result['isValid'], result['groups'])
-            except Exception, e:
-            	return (False, None)
-    
+            except Exception:
+                return (False, None)
+
     def manage_groups(self, user, groups):
         user.groups.clear()
-        
         for group in groups:
             group, created = Group.objects.get_or_create(name=group)
             user.groups.add(group)
-        
         user.save()

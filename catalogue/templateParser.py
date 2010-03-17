@@ -33,7 +33,7 @@
 from datetime import datetime
 
 from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content 
+from commons.http_utils import download_http_content
 
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -74,7 +74,7 @@ class TemplateParser:
             f.close()
         else:
             try:
-                self.xml = download_http_content(uri)
+                self.xml = download_http_content(uri, user=user)
             except HTTPError, e:
                 msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {'errorCode': e.code, 'errorMsg':e.msg}
                 raise TemplateParseException(msg)

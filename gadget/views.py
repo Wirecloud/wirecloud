@@ -159,16 +159,13 @@ class GadgetCodeEntry(Resource):
             content_type = 'text/html'
 
         if not xhtml.cacheable:
-            params = None
-            if request.user:
-                params = {'username': request.user.username}
             try:
                 if (not xhtml.url.startswith('http')
                     and not xhtml.url.startswith('https')):
                     xhtml.code = get_xhtml_content(xhtml.url)
                 else:
                     xhtml.code = download_http_content(xhtml.url,
-                                                       params=params)
+                                                       user=request.user)
                 xhtml.save()
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
@@ -188,14 +185,12 @@ class GadgetCodeEntry(Resource):
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
         xhtml = gadget.xhtml;
 
-        params = None
-        if request.user:
-            params = {'username': request.user.username}
         try:
             if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
                 xhtml.code = get_xhtml_content(xhtml.url)
             else:
-                xhtml.code = download_http_content(xhtml.url, params=params)
+                xhtml.code = download_http_content(xhtml.url,
+                                                   user=user)
             xhtml.save()
         except Exception, e:
             msg = _("XHTML code is not accessible")
