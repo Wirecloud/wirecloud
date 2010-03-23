@@ -1,3 +1,46 @@
+.purchase_window_table th {
+	color: #FFFFFF;
+}
+
+.purchase_window_table td {
+	border-left: 1px solid #999999;
+}
+
+.purchase_window_table td.app_name {
+	color: #FFFFFF;
+}
+
+.purchase_window_table tr.total_row td {
+	border-top: 1px solid #999999;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.purchase_window_table tr.total_row {
+	cursor: default;
+}
+
+.purchase_window_table th {
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.purchase_window_table tr {
+	border-left: 1px solid #999999;
+}
+
+.drop_down_menu {
+	color: #FFFFFF;
+}
+
+.window_menu .window_title, .help_text_enabled #app_name {
+	color:#FFFFFF;
+}
+
+#purchase_window_table .right_border {
+	border-right:1px solid #999999;
+}
+.
+###########################################################
+
 #showcase_container {overflow:hidden;}
 #catalogue a {
 	text-decoration:none;

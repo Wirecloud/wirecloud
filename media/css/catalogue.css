@@ -7,7 +7,7 @@
 }
 
 #gadgetToAppWindow .app_info {
-	max-width: 525px;
+	width: 525px;
 }
 
 #gadgetToAppWindow .app_desc, #gadgetToAppWindow .app_gadgets {
