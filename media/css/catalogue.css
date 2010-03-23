@@ -1,4 +1,4 @@
-.app_image {
+#gadgetToAppWindow .app_image {
 	position:absolute;
 	right:8px;
 	top:30px;
@@ -6,9 +6,22 @@
 	height: 65px;
 }
 
-.inline_field {
-	display: inline;
- 	padding-left: 5px;
+#gadgetToAppWindow .app_info {
+	max-width: 525px;
+}
+
+#gadgetToAppWindow .app_desc, #gadgetToAppWindow .app_gadgets {
+	clear: both;
+}
+
+.show_external_link {
+	padding-bottom: 10px;
+}
+
+#gadgetToAppWindow b {
+	clear: both;
+	float: left;
+	padding-right: 5px;
 }
 
 #showcase_container {overflow:hidden;}

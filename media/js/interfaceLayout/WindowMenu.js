@@ -127,7 +127,7 @@ WindowMenu.prototype.calculatePosition = function() {
 		var windowStyle = document.defaultView.getComputedStyle(this.htmlElement, null);
 
 		var padding;
-		padding = windowStyle.getPropertyCSSValue("padding-top").
+		padding = windowStyle.getPropertyCSSValue("p-top").
 		          getFloatValue(CSSPrimitiveValue.CSS_PX);
 		padding+= windowStyle.getPropertyCSSValue("padding-bottom").
 		          getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -211,25 +211,28 @@ function AddingGadgetToApplicationWindow() {
 	WindowMenu.call(this, gettext('Assign Gadget to Application'));
 
 	this.content = document.createElement('div');
+	this.content.setAttribute('id', 'gadgetToAppWindow');
+	Element.extend(this.content);
 	
-	this.content.innerHTML = '<b>Application:</b> <select id="app_appList"></select><br /><hr /><div id="app_name_vendor"><b>Name:</b><div class="inline_field" id="app_name"></div><br /><b>Vendor:</b><div class="inline_field" id="app_vendor"></div><br /><b>Business model:</b><div class="inline_field" id="app_business">App Business Model</div><br /><b>List of Gadgets:</b><div class="inline_field" id="app_gadgets"></div><br /><b>Description:</b><div class="inline_field" id="app_desc"></div><br /><br /></div><div id="app_img_container"><img class="app_image" id="app_img" src="" /></div><div id="app_gadgets_desc"></div>';
+	this.content.innerHTML = '<b>Application:</b> <select class="app_appList"></select><br /><br /><div class="app_info"><b>Name:</b><div class="app_name"></div><b>Vendor:</b><div class="app_vendor"></div><b>Business model:</b><div class="app_business">App Business Model</div><b>List of Gadgets:</b><div class="app_gadgets"></div><b>Description:</b><div class="app_desc"></div></div><div class="app_img_container"><img class="app_image app_img" src="" /></div><div class="app_gadgets_desc"></div>';
 	
 	document.body.insertBefore(this.htmlElement, $("header"));
 	
 	this.windowContent.appendChild(this.content);
 	
-	this.link = document.createElement('div')
+	this.link = document.createElement('div');
+	this.link.className = ('show_external_link');
 	
 	this.link.innerHTML = '<a style="float: right; padding-top: 5px;" target="_blank" href="http://emarketplace1.hi.inet:3980/BOCL/BMPS_BOCL.html">View business model description</a>'
 	
 	this.windowContent.appendChild(this.link);
 	
-	this.app_select = document.getElementById('app_appList');
-	this.app_name = document.getElementById('app_name');
-	this.app_vendor = document.getElementById('app_vendor');
-	this.app_image = document.getElementById('app_img');
-	this.app_desc = document.getElementById('app_desc');
-	this.app_gadgets = document.getElementById('app_gadgets');
+	this.app_select = this.content.getElementsBySelector('.app_appList')[0];
+	this.app_name = this.content.getElementsBySelector('.app_name')[0];
+	this.app_vendor = this.content.getElementsBySelector('.app_vendor')[0];
+	this.app_image = this.content.getElementsBySelector('.app_img')[0];
+	this.app_desc = this.content.getElementsBySelector('.app_desc')[0];
+	this.app_gadgets = this.content.getElementsBySelector('.app_gadgets')[0];
 	
 	var select_options = "";
 	var apps = CatalogueFactory.getInstance().getAvailableApps();
@@ -407,8 +410,8 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 		var app_signup_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_signup_fee', 'Sing-up fee:');
 		var app_monthly_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_monthly_fee', 'Monthly fee:');
 		var app_vendor = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_vendor', 'Vendor:');
-		var app_desc = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_desc', 'Description:');
 		var app_gadget_list = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_gadget_list', 'List of Gadgets:');
+		var app_desc = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_desc', 'Description:');
 		var app_close = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_close');
 		
 		if (app['name'] == app_name.innerHTML && app['vendor'] == app_vendor.innerHTML) {
@@ -452,7 +455,7 @@ BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 				var container = document.createElement('div');
 				container.innerHTML = gettext(text)
 				help_menu.appendChild(container);
-				if (id == 'app_desc') 
+				if (id == 'app_desc' || id == "app_gadget_list") 
 					container.className = "clearing_both";
 				else
 					container.className = "floating_left";
