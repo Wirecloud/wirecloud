@@ -600,7 +600,7 @@ class GadgetVotesCollection(Resource):
         return get_vote_response(gadget,user, format)
 
 class GadgetVersionsCollection(Resource):
-    def create(selfself, request, user_name):
+    def create(self, request, user_name):
         gadgets = simplejson.loads(request.POST["gadgets"]);
         result = []
         for g in gadgets:

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -133,7 +133,7 @@ class VariableDef(TransModel):
 
     #Values that cannot be public: passwords, produced events and consumed events
     def has_public_value(self):   
-       return self.type!='P' and self.aspect!='SLOT' and self.aspect!='EVENT'
+        return self.type!='P' and self.aspect!='SLOT' and self.aspect!='EVENT'
    
     def get_default_value(self):
         return self.default_value

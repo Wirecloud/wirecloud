@@ -75,6 +75,6 @@ class EzSteroidsBackend:
     def manage_groups(self, user, groups):
         user.groups.clear()
         for group in groups:
-            group, created = Group.objects.get_or_create(name=group)
+            group, None = Group.objects.get_or_create(name=group)
             user.groups.add(group)
         user.save()

@@ -33,18 +33,13 @@ from commons.resource import Resource
 
 from django.http import HttpResponse, HttpResponseServerError
 from django.db import transaction
-from django.utils.translation import ugettext as _
 
-from commons.utils import get_xml_error, json_encode
 from commons.authentication import get_user_authentication, user_authentication
-from commons.logs_exception import TracedServerError
 
 from remoteChannel.models import RemoteChannel
 
 from django.utils import simplejson
 from django.conf import settings
-
-import urllib
 
 class RemoteChannelCollection(Resource):
     @transaction.commit_on_success

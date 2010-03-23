@@ -30,12 +30,10 @@
 
 #
 
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
-from django.core import serializers
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext as _
 
 from commons.resource import Resource
-from commons.logs_exception import TracedServerError
 from commons.utils import json_encode
 
 from django.db import transaction
@@ -74,7 +72,7 @@ class IGadgetCollection(Resource):
             activeWS = wsList[0]
         except:
             wsList = UserWorkSpace.objects.filter(user=request.user)
-            activeWS = ws[0]
+            activeWS = wsList[0]
             
         try:
             tabList = Tab.objects.filter(workspace=activeWS, visible=True)

@@ -39,7 +39,7 @@ class AnonymousBackend:
             try:
                 user = User.objects.get(username=username)
                 return user
-            except User.DoesNotExist, e:
+            except User.DoesNotExist:
                 #the user must exist
                 pass
 

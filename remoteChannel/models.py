@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -31,8 +31,6 @@
 #
 from django.db import models
 from django.utils.translation import ugettext as _
-
-from translator.models import TransModel 
 
 class RemoteChannel(models.Model):
 

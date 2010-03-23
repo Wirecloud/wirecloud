@@ -30,10 +30,9 @@
 
 #
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from user.models import UserProfile
 
-from django.conf import settings
 from commons.http_utils import download_http_content
 from django.utils import simplejson
 
@@ -53,7 +52,7 @@ class TCloudBackend:
             user = User(username=username)
             user.save()
         
-        profile, created = UserProfile.objects.get_or_create(user=user)
+        profile, None = UserProfile.objects.get_or_create(user=user)
         
         profile.create_load_script(tcloud_profile)
         profile.save()
@@ -81,9 +80,9 @@ class TCloudBackend:
             params = {}
         
             try:
-            	result_json = download_http_content(url,params)
-            	result = simplejson.loads(result_json)
+                result_json = download_http_content(url,params)
+                result = simplejson.loads(result_json)
                 
                 return (result['validateSession'], result_json)
-            except Exception, e:
-            	return (False, None)
+            except Exception:
+                return (False, None)
