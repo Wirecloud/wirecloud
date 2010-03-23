@@ -404,6 +404,7 @@
   	-webkit-border-top-left-radius: 6px;
   	-webkit-border-top-right-radius: 6px;
 }
+
 #catalogue #resources_container {
 	position:relative;
 	bottom: 0px;
@@ -1048,7 +1049,7 @@
 	background:url("../images/catalogue/ico_vot_md.gif") no-repeat;
 	width:15px; 
 	height:15px;
-        float: left;
+    float: left;
 }
 
 #catalogue #resources_container .info_resource .content #votes {
