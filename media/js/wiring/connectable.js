@@ -114,8 +114,9 @@ function wOut(name, type, friendCode, id) {
 
 wOut.prototype = new wConnectable();
 
-wOut.prototype._annotate = function(value) {
-	this.variable.annotate(value);
+wOut.prototype._annotate = function(value, source, initial) {
+	if (!initial)
+		this.variable.annotate(value, this);
 }
 
 /**
@@ -196,12 +197,12 @@ wIn.prototype.fullDisconnect = function() {
  * Sets the value for this <code>wIn</code>. Also, this method propagates this
  * new value to the output connectables.
  */
-wIn.prototype.propagate = function(value, initial) {
+wIn.prototype.propagate = function(value) {
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i]._annotate(value);
+		this.outputs[i]._annotate(value, this, false);
 
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i].propagate(value, initial, this);
+		this.outputs[i].propagate(value);
 }
 
 wIn.prototype.refresh = function() {
@@ -214,7 +215,6 @@ wIn.prototype.refresh = function() {
  * @param name
  * @param type
  * @param friendCode
- * @param id
  */
 function wInOut(name, type, friendCode, id) {
 	wIn.call(this, name, type, friendCode, id);
@@ -259,9 +259,14 @@ wInOut.prototype._checkLoop = function(inout, depth) {
  * Stablish a new value for this <code>wConnectable</code> but without
  * propagating any event.
  */
-wInOut.prototype._annotate = function(value) {
+wInOut.prototype._annotate = function(value, source, initial) {
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i]._annotate(value);
+		this.outputs[i]._annotate(value, source, initial);
+}
+
+wInOut.prototype.propagate = function(value) {
+	for (var i = 0; i < this.outputs.length; ++i)
+		this.outputs[i].propagate(value);
 }
 
 wInOut.prototype.connect = function(out) {
@@ -347,6 +352,7 @@ function wChannel (variable, name, id, provisional_id, readOnly) {
 	this.filterParams = new Array();
 	this.remoteSubscription = null;
 	this.readOnly = readOnly;
+	this.annotated = true;
 }
 wChannel.prototype = new wInOut();
 
@@ -408,6 +414,45 @@ wChannel.prototype.setFilter = function(newFilter) {
 	this.filterParams = new Array();
 }
 
+/*
+ * @param {string} value new value for this <code>wChannel</code>
+ * @param {Boolean} initial true for initial propagations
+ * @param {wIn} source connectable the new value comes from.
+ */
+wChannel.prototype._annotate = function(value, source, initial){
+	//Get the real value (filtered if necessary)
+	var oldValue = this.variable.get();
+	this.variable.set(value);
+
+	try {
+		if (!initial)
+			this._markInputAsModified(source);
+		else
+			this._markAllInputsAsModified(source);
+		//getValue applys filter if needed!
+		var filteredValue = this.getValue(true);
+		this.variable.set(filteredValue);
+		this.annotated = true;
+	}
+	catch (err) {
+		if (err.name == "DONT_PROPAGATE") {
+			//Exception getting value from channel => there is a filter which cannot continue
+			//When a filter throws an Exception, the old value is restored and it is marked as not annotated
+			this.variable.set(oldValue);
+			this.annotated = false;
+			return;
+		}
+		//Loggin error
+		var msg = interpolate(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), {errorMsg: err.msg}, true);
+		LogManagerFactory.getInstance().log(msg);
+		return;
+		
+	}
+	if (this.annotated) {
+		wInOut.prototype._annotate.call(this, filteredValue, this, initial);
+	}
+}
+
 /**
  * @param {fParamsHash} fParams
  */
@@ -454,36 +499,16 @@ wChannel.prototype.notifyRemoteChannel = function(value) {
 
 /**
  * @param newValue new value for this <code>wChannel</code>
- * @param {Boolean} initial true for initial propagations
- * @param {wIn} source connectable the new value comes from.
  */
-wChannel.prototype.propagate = function(newValue, initial, source) {
-	if (!initial)
-		this._markInputAsModified(source);
-	else
-		this._markAllInputsAsModified(source);
+wChannel.prototype.propagate = function(newValue) {
+	//if there was a filter, its value had been extracted in the annotate method
+	value = this.variable.get();
 		
-	this.variable.set(newValue);
-	
-	try {
-		//getValue applys filter if needed!
-		var filteredValue = this.getValue(propagating=true);
-		this.notifyRemoteChannel(filteredValue);
+	if (this.annotated){ //it must be propagated
+		this.notifyRemoteChannel(value);		
+		wInOut.prototype.propagate.call(this, value);
 	}
-	catch (err) {
-		if (err.name == "DONT_PROPAGATE") {
-			//Exception when getting value from channel => there is a filter
-			//When a filter thorws an Exception, the propagation stops;
-			return;
-		}
-		
-		//Loggin error
-		var msg = interpolate(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), {errorMsg: err.msg}, true);
-		LogManagerFactory.getInstance().log(msg);
-		return;
-	}
-
-	wInOut.prototype.propagate.call(this, filteredValue, initial);
+	this.annotated = true;
 }
 
 wChannel.prototype.getQualifiedName = function () {
@@ -544,8 +569,7 @@ function wTab (variable, name, tab, id) {
 }
 wTab.prototype = new wOut();
 
-wTab.prototype.propagate = function(newValue, initial) {
-	if (!initial)
+wTab.prototype.propagate = function(newValue) {
 		this.variable.set(newValue);
 }
 
@@ -568,7 +592,7 @@ function wSlot(variable, type, friendCode, id) {
 }
 wSlot.prototype = new wOut();
 
-wSlot.prototype.propagate = function(newValue, initial) {
+wSlot.prototype.propagate = function(newValue) {
 	this.variable.set(newValue);
 }
 
