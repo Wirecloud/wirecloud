@@ -31,6 +31,7 @@
 
 import stat, os
 from django.conf import settings
+from django.db.models import Q
 from commons.utils import json_encode
 from catalogue.models import Category, Tag
 from preferences.views import get_user_theme
@@ -88,27 +89,43 @@ def ezweb_release(request):
     
 
 #private method: gets the tags and category children from an specific category (Category model)
-def _get_Category_Info(cat):
+def _get_Category_Info(cat, userOrgs):
     catObject = {}
-    #get the related tag names
-    catObject['tags'] = [t.name for t in cat.tags.all()]
-    #get its category children
-    children = Category.objects.filter(parent = cat)
+    
+    if cat:
+        #get the related tag names
+        catObject['tags'] = [t.name for t in cat.tags.all()]
+        
+    #get its category children filtering by both the user orgs and the general categories
+    #categories with no organizations are general and every user have to see them
+    children = Category.objects.filter(Q(organizations__in=list(userOrgs)) | Q(organizations=None), parent=cat).distinct()
     catObject['children'] = {}
     for catChild in children:
         #make the same with all its children
-        catObject['children'][catChild.name]= _get_Category_Info(catChild)
+        catObject['children'][catChild.name]= _get_Category_Info(catChild, userOrgs)
 
     return catObject
 
 # tag categories from the catalogue specified by db admin
 def tag_categories(request):
-    categories = {}
-    catQuerySet = Category.objects.filter(parent = None)
-    for cat in catQuerySet:
-        categories[cat.name] =_get_Category_Info(cat)
+    try:
+        userOrgs = request.user.groups.exclude(name__startswith="cert__")
+    except:
+        userOrgs={}
+        
+    #Categories whose parent is None are root categories
+    root = _get_Category_Info(None, userOrgs)
+    categories = root['children']
+        
+    return {'tag_categories': json_encode(categories)}     
+    
+    
 
-    return {'tag_categories': json_encode(categories)}
+#    catQuerySet = Category.objects.filter(parent = None, Q(organizations_in=list(userOrgs) | Q(organizations=None))).distinct()
+#    for cat in catQuerySet:
+#        categories[cat.name] =_get_Category_Info(cat)
+#
+#    return {'tag_categories': json_encode(categories)}
 
 # themes url
 def theme_url(request):

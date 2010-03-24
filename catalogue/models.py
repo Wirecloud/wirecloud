@@ -193,6 +193,7 @@ class Category(TransModel):
     name = models.CharField(max_length=50, unique = True)
     tags = models.ManyToManyField(Tag)
     parent = models.ForeignKey('self', blank=True, null = True)
+    organizations = models.ManyToManyField(Group, related_name='organizations', null=True, blank=True)
 
     def __unicode__(self):
         return self.name

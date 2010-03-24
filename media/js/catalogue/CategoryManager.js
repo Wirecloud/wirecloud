@@ -33,14 +33,17 @@ var _createCatElement = function(catName, category, parent){
 
 //CategoryManager
 
-var CategoryManager  = function () {
+var CategoryManager  = function (htmlElement) {
 	
 	// *********************************
 	//  PRIVATE VARIABLES AND FUNCTIONS
 	// *********************************
 	this.categories;				//tree structure for categories
 	this.categorySection = document.createElement('ul');
-	$$('#tag_categories .widget_content')[0].appendChild(this.categorySection);
+	
+	//append the new category section to the catalogue html element
+	var element_selector= '#' + htmlElement.id;
+	$$(element_selector+' #tag_categories .widget_content')[0].appendChild(this.categorySection);
 	
 	//CONSTRUCTOR
 	this.categories = new Hash(JSON.parse(tag_categories));

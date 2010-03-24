@@ -330,7 +330,7 @@
 	font-weight: bold;
 }
 
-#catalogue #left_bar .widget_content {
+#catalogue #left_bar .widget_content, #app_catalogue_left_bar .widget_content{
 	overflow-x: auto;
 	margin-top: 10px;
 }
@@ -352,27 +352,27 @@
 
 }
 
-#catalogue #tag_categories .children_cats{
+#catalogue #tag_categories .children_cats, #app_catalogue #tag_categories .children_cats{
 	display:none;
 	padding-left:15px;
 }
 
-#catalogue #tag_categories .open{
+#catalogue #tag_categories .open, #app_catalogue #tag_categories .open{
 	display: block;
 }
 
-#catalogue #tag_categories ul{
+#catalogue #tag_categories ul, #app_catalogue #tag_categories ul{
 	margin: 5px 0 0 0;
 	padding-left: 0;
 	list-style-type: none;
 }
 
-#catalogue #tag_categories li{
+#catalogue #tag_categories li, #app_catalogue #tag_categories li{
 	margin: 0 0 5px 0;
 }
 
-#catalogue #tag_categories .category_name, #catalogue #left_bar .link,
-#app_catalogue #tag_categories .category_name, #app_catalogue #app_catalogue_left_bar .link {
+#catalogue #tag_categories .category_name,#catalogue #left_bar .link,
+#app_catalogue #tag_categories .category_name, #app_catalogue_left_bar .link {
 	cursor:pointer;
 	color: darkBlue;
 }

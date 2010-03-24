@@ -55,7 +55,7 @@ function CatalogueListView() {
 		this.initialized = false;
 		
 	    //paint tag categories
-	    this.categoryManager = new CategoryManager();
+	    this.categoryManager = new CategoryManager($('app_catalogue'));
 		
 		
 		// ********************

@@ -55,7 +55,7 @@ function CatalogueMosaicView() {
 	    this.initialized = false;
 	    
 	    //paint tag categories
-	    this.categoryManager = new CategoryManager();
+	    this.categoryManager = new CategoryManager($('catalogue'));
 		
 		Event.observe($('add_feed_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addFeed")}, false, "show_feed_window");
 		Event.observe($('add_site_link'), "click", function(){LayoutManagerFactory.getInstance().showWindowMenu("addSite")}, false, "show_site_window");
