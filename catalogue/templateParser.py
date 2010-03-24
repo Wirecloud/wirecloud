@@ -30,13 +30,16 @@
 
 #
 
+import string
+import re
+
 from datetime import datetime
 
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 
 from django.conf import settings
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -44,12 +47,10 @@ from xml.sax import parseString, handler
 
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability, Translation
 from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
-from commons.translation_utils import get_trans_index
 
+from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
 
-import string
-import re
 from urllib import url2pathname
 from urllib2 import URLError, HTTPError
 from os import path
@@ -61,7 +62,7 @@ class TemplateParser:
 
         if fromWGT:
             if uri[0] == '/':
-              uri = uri[1:]
+                uri = uri[1:]
 
             localPath = url2pathname(uri.encode("utf8"))
 
@@ -195,7 +196,7 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
         
         if (self.save):
-            capability = Capability(name=name, value=value, resource=self._gadget)
+            capability = Capability(name=name.lower(), value=value.lower(), resource=self._gadget)
     
             capability.save()
 
@@ -204,7 +205,7 @@ class TemplateHandler(handler.ContentHandler):
             
     def processOrganization(self, organization_accumulator):         
         if (not organization_accumulator):
-            #Not specifiying organization is valid!
+            #Not specifying organization is valid!
             return
         
         organization_name=organization_accumulator[0]
@@ -226,19 +227,8 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing Resource version"))
 
     def processMashupResource(self, attrs):
-        if (attrs.has_key('name')):
-            name = attrs.get('name')
-            
-        if (attrs.has_key('value')):
-            value = attrs.get('value')
-
         if (attrs.has_key('vendor') and attrs.has_key('name') and attrs.has_key('version')):
-             pass
-            
-             #resource_id = get_object_or_404(GadgetResource, 
-             #   short_name=attrs.get('name'),vendor=attrs.get('vendor'),version=attrs.get('version')).id
-
-             #self._includedResources.append(resource_id)
+            pass
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Resource"))
         
@@ -347,7 +337,7 @@ class TemplateHandler(handler.ContentHandler):
                 required_fields.append('wikiURI')
 
             if len(required_fields) > 0:
-               raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
+                raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
 
             # Fetch the current list of versions for this resource (can be empty if there is not any version of this resource)
             currentVersions = get_all_gadget_versions(self._vendor, self._name)
@@ -381,46 +371,46 @@ class TemplateHandler(handler.ContentHandler):
                 gadget.save()
 
             if (self.save):
-               userRelated = UserRelatedToGadgetResource()
-               userRelated.gadget = gadget;
-               userRelated.user = self._user
-               userRelated.added_by = True
+                userRelated = UserRelatedToGadgetResource()
+                userRelated.gadget = gadget;
+                userRelated.user = self._user
+                userRelated.added_by = True
 
-               userRelated.save()
+                userRelated.save()
                
-               # A gadget belongs to many organizations
-               for organization in self._organization_list:
-                   gadget.organization.add(organization)
+                #A gadget belongs to many organizations
+                for organization in self._organization_list:
+                    gadget.organization.add(organization)
 
-               # TODO: process the resources
-               # workaround to add default tags
-               if self._mashupId != None:
-                   tag, created = Tag.objects.get_or_create(name = "mashup")
-                   userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
-                   userTag.save()
+                # TODO: process the resources
+                # workaround to add default tags
+                if self._mashupId != None:
+                    tag, created = Tag.objects.get_or_create(name = "mashup")
+                    userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                    userTag.save()
 
-               if self._contratable:
-                   tag, created = Tag.objects.get_or_create(name = "contratable")
-                   userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
-                   userTag.save()
+                if self._contratable:
+                    tag, created = Tag.objects.get_or_create(name = "contratable")
+                    userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                    userTag.save()
 
-               # Copy all UserTag and UserVote entry from previous version
-               if len(currentVersions) > 0:
-                  previousVersion = GadgetResource.objects.get(vendor = self._vendor, short_name = self._name, version = max(currentVersions))
+                # Copy all UserTag and UserVote entry from previous version
+                if len(currentVersions) > 0:
+                    previousVersion = GadgetResource.objects.get(vendor = self._vendor, short_name = self._name, version = max(currentVersions))
 
-                  previousUserTags = UserTag.objects.filter(idResource = previousVersion)
+                    previousUserTags = UserTag.objects.filter(idResource = previousVersion)
 
-                  for previousUserTag in previousUserTags:
-                     newUserTag = UserTag(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
-                     newUserTag.save()
+                    for previousUserTag in previousUserTags:
+                        newUserTag = UserTag(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
+                        newUserTag.save()
 
-                  previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
+                    previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
 
-                  for previousUserVote in previousUserVotes:
-                     newUserVote = UserVote(idUser = previousUserVote.idUser, vote = previousUserVote.vote, idResource = gadget)
-                     newUserVote.save()
+                    for previousUserVote in previousUserVotes:
+                        newUserVote = UserVote(idUser = previousUserVote.idUser, vote = previousUserVote.vote, idResource = gadget)
+                        newUserVote.save()
 
-                  update_gadget_popularity(gadget)
+                    update_gadget_popularity(gadget)
 
             self._gadget_added = True
 

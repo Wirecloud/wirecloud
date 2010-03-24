@@ -32,8 +32,7 @@
 
 from django.shortcuts import get_object_or_404
 
-from workspace.models import WorkSpace, PublishedWorkSpace
-from gadget.models import Gadget
+from workspace.models import PublishedWorkSpace
 from igadget.models import IGadget
 
 class TemplateGenerator:
@@ -56,14 +55,16 @@ class TemplateGenerator:
         xml += '<ImageURI>%s</ImageURI>' % published_workspace.imageURI
         xml += '<WikiURI>%s</WikiURI>' % published_workspace.wikiURI
         xml += '<Organization>%s</Organization>' % published_workspace.organization
-        xml += '<IncludedResources mashupId="%s">'%(workspace_id)
-        
-        included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
+        xml += '<IncludedResources mashupId="%s">' % workspace_id
         
         wiring = ''
+        contratable = False
         
         for igadget in included_igadgets:    
             gadget = igadget.gadget
+            
+            if (not contratable):
+                contratable = gadget.is_contratable()
             
             xml += '<Resource vendor="%s" name="%s" version="%s" />' % (gadget.vendor, gadget.name, gadget.version)
             
@@ -79,8 +80,10 @@ class TemplateGenerator:
         
         xml += '</IncludedResources>'
         xml += '</Catalog.ResourceDescription>'
-        if published_workspace.contratable:
+        
+        if contratable:
             xml += '<Capability name="contratable" value="true"/>'
+            
         xml += '<Platform.Preferences></Platform.Preferences>'
         xml += '<Platform.StateProperties></Platform.StateProperties>'
         

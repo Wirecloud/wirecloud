@@ -31,7 +31,7 @@
 #
 
 from django.contrib import admin
-from gadget.models import Gadget, XHTML, VariableDef, UserPrefOption, VariableDefAttr, ContextOption
+from gadget.models import Gadget, XHTML, VariableDef, UserPrefOption, VariableDefAttr, ContextOption, Capability
 
 admin.site.register(Gadget)
 admin.site.register(XHTML)
@@ -39,3 +39,4 @@ admin.site.register(VariableDef)
 admin.site.register(UserPrefOption)
 admin.site.register(VariableDefAttr)
 admin.site.register(ContextOption)
+admin.site.register(Capability)

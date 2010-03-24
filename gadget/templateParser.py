@@ -434,7 +434,7 @@ class TemplateHandler(handler.ContentHandler):
         if (not self._gadget):
             raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
         
-        self._capabilities.append(Capability(name=name, value=value, gadget=self._gadget))
+        self._capabilities.append(Capability(name=name.lower(), value=value.lower(), gadget=self._gadget))
 
             
     def processGadgetContext(self, attrs):
