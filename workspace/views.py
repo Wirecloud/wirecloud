@@ -90,7 +90,6 @@ def get_workspace_gadgets(workspace):
     
 
 def get_mashup_gadgets(mashup_id):
-    
     published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
         
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
@@ -796,7 +795,7 @@ class  WorkSpacePublisherEntry(Resource):
         try:
             mashup = simplejson.loads(received_json) 
             if not mashup.has_key('name'):
-            	raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
+                raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
             if not mashup.has_key('vendor'):
                 raise Exception(_('Malformed mashup JSON: expecting mashup vendor.'))
             if not mashup.has_key('version'):
