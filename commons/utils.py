@@ -33,8 +33,9 @@
 import os
 import types
 import codecs
-import settings
+
 from decimal import Decimal
+
 from xml.dom.minidom import getDOMImplementation
 
 from urllib import url2pathname
@@ -43,12 +44,11 @@ from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.contrib.auth.models import User
-from django.utils import simplejson
 
 from commons.http_utils import download_http_content
 from catalogue.models import GadgetResource
+
 from gadget.models import XHTML
-from gadget.templateParser import TemplateParser as GadgetTemplateParser
 
 from django.utils import simplejson
 from django.utils import translation

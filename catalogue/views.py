@@ -30,25 +30,19 @@
 
 #
 
-import sys
 import os
-from shutil import rmtree
 import re
-import settings
+
+from shutil import rmtree
 
 from urllib import url2pathname
 
-from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.db import transaction
 from django.db import IntegrityError
-from django.db.models import Q
-from django.utils import simplejson
 
 from django.utils.translation import ugettext as _
-
-from commons.resource import Resource
 
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
@@ -59,6 +53,7 @@ from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import *
 from catalogue.get_json_catalogue_data import get_available_apps_info
 
+from commons.resource import Resource
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.logs import log
@@ -66,14 +61,11 @@ from commons.logs_exception import TracedServerError
 from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
 from commons.user_utils import get_verified_certification_group
-
-from django.contrib.auth.decorators import login_required
     
 class GadgetsCollection(Resource):
 
     @transaction.commit_manually
     def create(self, request, user_name, fromWGT = False):
-		
         user = user_authentication(request, user_name)
         if not request.POST.has_key('template_uri'):
             msg = _("template_uri param expected")

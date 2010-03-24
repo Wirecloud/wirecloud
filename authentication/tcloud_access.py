@@ -52,7 +52,7 @@ class TCloudBackend:
             user = User(username=username)
             user.save()
         
-        profile, None = UserProfile.objects.get_or_create(user=user)
+        profile, created = UserProfile.objects.get_or_create(user=user)
         
         profile.create_load_script(tcloud_profile)
         profile.save()
