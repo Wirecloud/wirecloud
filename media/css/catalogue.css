@@ -1,9 +1,17 @@
+#showcase_container, #app_catalogue_container {
+	overflow:hidden;
+}
+
 #gadgetToAppWindow .app_image {
 	position:absolute;
 	right:8px;
 	top:30px;
 	width:140px;
 	height: 65px;
+}
+
+#resources_header label, #app_catalogue_resources_header label {
+	padding-right: 5px;
 }
 
 #gadgetToAppWindow .app_info {
@@ -24,7 +32,6 @@
 	padding-right: 5px;
 }
 
-#showcase_container {overflow:hidden;}
 #catalogue a {
 	text-decoration:none;
 	cursor:pointer;

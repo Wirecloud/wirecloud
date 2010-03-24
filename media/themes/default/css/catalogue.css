@@ -1,7 +1,3 @@
-#showcase_container, #app_catalogue_container {
-   	overflow:hidden;
-}
-
 #catalogue a , #app_catalogue a {
 	text-decoration:none;
 	cursor:pointer;

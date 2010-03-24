@@ -1,50 +1,3 @@
-.purchase_window_table th {
-	color: #FFFFFF;
-}
-
-.purchase_window_table td {
-	border-left: 1px solid #999999;
-}
-
-.purchase_window_table td.app_name {
-	color: #FFFFFF;
-}
-
-.purchase_window_table tr.total_row td {
-	border-top: 1px solid #999999;
-	border-bottom: 1px solid #FFFFFF;
-}
-
-.purchase_window_table tr.total_row {
-	cursor: default;
-}
-
-.purchase_window_table th {
-	border-bottom: 1px solid #FFFFFF;
-}
-
-.purchase_window_table tr {
-	border-left: 1px solid #999999;
-}
-
-.drop_down_menu {
-	color: #FFFFFF;
-}
-
-.window_menu .window_title, .help_text_enabled #app_name {
-	color:#FFFFFF;
-}
-
-#purchase_window_table .right_border {
-	border-right:1px solid #999999;
-}
-
-###########################################################
-
-#showcase_container, #app_catalogue_container {
-   	overflow:hidden;
-}
-
 #catalogue a , #app_catalogue a {
 	text-decoration:none;
 	cursor:pointer;
@@ -106,10 +59,11 @@
   	-moz-border-radius-topright:10px;
   	-webkit-border-top-left-radius: 10px;
   	-webkit-border-top-right-radius: 10px;
+  	color: #FFFFFF;
 }
 
 #app_catalogue .center .resources .header_resource {
-	border-top: 1px solid #DDDDDD;
+	border-top: 1px solid #999999;
 }
 
 #app_catalogue .center .resources .resource_name {
@@ -121,14 +75,14 @@
 #catalogue #resources_container .info_resource .content #rateResult a,
 #app_catalogue .popularity a {
 	float:left; 
-	background:url("../images/catalogue/ico_vot_no.gif") no-repeat; 
+	background:url("../images/catalogue/ico_vot_no.png") no-repeat; 
 	width:15px; 
 	height:15px;
 }
 
 #catalogue #resources_container .info_resource .content #rateResult .on,
 #app_catalogue .popularity .on {
-	background: url("../images/catalogue/ico_vot_ok.gif") no-repeat;
+	background: url("../images/catalogue/ico_vot_ok.png") no-repeat;
 	width:15px; 
 	height:15px;
         float: left;
@@ -136,7 +90,7 @@
 
 #catalogue #resources_container .info_resource .content #rateResult .md, 
 #app_catalogue .popularity .md {
-	background:url("../images/catalogue/ico_vot_md.gif") no-repeat;
+	background:url("../images/catalogue/ico_vot_md.png") no-repeat;
 	width:15px; 
 	height:15px;
     float: left;
@@ -148,6 +102,49 @@
 }
 
 ##################################################################
+
+.purchase_window_table th {
+	color: #FFFFFF;
+}
+
+.purchase_window_table td {
+	border-left: 1px solid #999999;
+}
+
+.purchase_window_table td.app_name {
+	color: #FFFFFF;
+}
+
+.purchase_window_table tr.total_row td {
+	border-top: 1px solid #999999;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.purchase_window_table tr.total_row {
+	cursor: default;
+}
+
+.purchase_window_table th {
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.purchase_window_table tr {
+	border-left: 1px solid #999999;
+}
+
+.drop_down_menu {
+	color: #FFFFFF;
+}
+
+.window_menu .window_title, .help_text_enabled #app_name {
+	color:#FFFFFF;
+}
+
+#purchase_window_table .right_border {
+	border-right:1px solid #999999;
+}
+
+###########################################################
 
 #catalogue a:active {
 	outline: none;
@@ -1109,31 +1106,27 @@
 	float:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe{
+#catalogue #resources_container .info_resource .content #rateMe {
 	float:left;
 	clear:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe a
-{
+#catalogue #resources_container .info_resource .content #rateMe a {
 	float:left; 
 	background:url("../images/catalogue/ico_vot_no.png") no-repeat; 
 	width:15px; 
 	height:15px;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe .on
-{
+#catalogue #resources_container .info_resource .content #rateMe .on {
 	background:url("../images/catalogue/ico_vot_ok.png") no-repeat;
 }
 
-#catalogue #resources_container .info_resource .content #ratingSaved
-{
+#catalogue #resources_container .info_resource .content #ratingSaved {
 	display:none;
 }
 
-#catalogue #resources_container .info_resource .content #votes
-{
+#catalogue #resources_container .info_resource .content #votes {
 	font-size: 70%;
 	margin-left:10px;
 }
