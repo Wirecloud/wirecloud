@@ -23,7 +23,7 @@ class WgtPackageUtils:
 	def addFolder(self, zip_file, folder, templateFileName):
 		# check if folder is empty
 		if len(os.listdir(folder)) == 0:
-			zip_file.write(folder + "/")
+			zip_file.write(folder + os.sep)
 			return
 
 		for file in os.listdir(folder):
@@ -45,17 +45,17 @@ class WgtPackageUtils:
 			os.mkdir(path, 0777)
 
 		for name in zip_file.namelist():
-			listnames = name.split('/')[:-1]
+			listnames = name.split(os.sep)[:-1]
 			folder = path
-			if name.endswith('/'):
+			if name.endswith(os.sep):
 				for namedir in listnames:
-					folder += '/' + namedir
+					folder += os.sep + namedir
 					if (not os.path.exists(folder)) or ((os.path.exists(folder)) 
 						and (not os.path.isdir(folder))):
 						os.mkdir(folder)
 			else:
 				for namedir in listnames:
-					folder += '/' + namedir
+					folder += os.sep + namedir
 					if (not os.path.exists(folder)) or ((os.path.exists(folder)) 
 						and (not os.path.isdir(folder))):
 						os.mkdir(folder)

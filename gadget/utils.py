@@ -69,15 +69,13 @@ def includeTagBase(document, url, request):
 
 	# Get href base
 	elements = exp.sub("", url).split("/")
+	
 	if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
 		host = "https://"+request.META['HTTP_HOST']
 	else:
 		host = "http://"+request.META['HTTP_HOST']
-	href = '%s/deployment/gadgets/%s/%s/%s/%s/' % (host,
-													urlquote(elements[0]),
-													urlquote(elements[1]),
-													urlquote(elements[2]),
-													urlquote(elements[3]))
+
+	href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
 	# HTML Parser
 	subDocument = expScript.sub("",document)

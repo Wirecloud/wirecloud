@@ -120,7 +120,9 @@ class GadgetsCollection(Resource):
 
 
     def read(self, request, user_name, pag=0, offset=0):
+
         user = user_authentication(request, user_name)
+        isIE = is_ie(request)
 
         try:
             format = request.GET.__getitem__('format')
@@ -142,7 +144,7 @@ class GadgetsCollection(Resource):
         b= int(offset)
 
         # Get all the gadgets in the catalogue
-        gadgetlist = get_resources_that_must_be_shown(user=user).order_by(orderby)
+        gadgetlist = get_resources_that_must_be_shown(user, isIE).order_by(orderby)
         gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
         items = len(gadgetlist)
         
@@ -259,6 +261,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
     def read(self, request, user_name,criteria, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
+        isIE = is_ie(request)
 
         try:
             orderby = request.GET.__getitem__('orderby')
@@ -283,50 +286,50 @@ class GadgetsCollectionBySimpleSearch(Resource):
         gadgetlist = []
 
         if criteria == 'and':
-            gadgetlist= get_and_list(search_criteria, user)
+            gadgetlist= get_and_list(search_criteria, user, isIE)
         elif (criteria == 'or' or criteria=='simple_or'):
-            gadgetlist= get_or_list(search_criteria, user)
+            gadgetlist= get_or_list(search_criteria, user, isIE)
         elif criteria == 'not':
-            gadgetlist= get_not_list(search_criteria, user)
+            gadgetlist= get_not_list(search_criteria, user, isIE)
         elif criteria == 'event':
             #get all the gadgets that match any of the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
 
         elif criteria == 'slot':
             #get all the gadgets that match any of the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
 
         elif criteria == 'tag':
             #get all the gadgets that match any of the given tags
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(usertag__tag__name__icontains = e)
 
         elif criteria == 'connectSlot':
             #get all the gadgets compatible with the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
 
         elif criteria == 'connectEvent':
             #get all the gadgets compatible with the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
 
         elif criteria == 'connectEventSlot':
             #get all the gadgets compatible with the given slots
             search_criteria[0] = search_criteria[0].split()
             for e in search_criteria[0]:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'in'))
             #get all the gadgets compatible with the given events
             search_criteria[1] = search_criteria[1].split()
             for e in search_criteria[1]:
-                gadgetlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
+                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode = e), Q(gadgetwiring__wiring = 'out'))
 
         gadgetlist = get_uniquelist(gadgetlist)
         
@@ -344,6 +347,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
     def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
+        isIE = is_ie(request)
 
         try:
             orderby = request.GET.__getitem__('orderby')
@@ -374,33 +378,33 @@ class GadgetsCollectionByGlobalSearch(Resource):
         fields = 0
 
         if (search_criteria[0] != ""):
-            andlist = get_and_list(search_criteria[0], user)
+            andlist = get_and_list(search_criteria[0], user, isIE)
             fields = fields+1
         if (search_criteria[1] != ""):
-            orlist = get_or_list(search_criteria[1], user)
+            orlist = get_or_list(search_criteria[1], user, isIE)
             fields = fields+1
         if (search_criteria[2] != ""):
-            notlist = get_not_list(search_criteria[2], user)
+            notlist = get_not_list(search_criteria[2], user, isIE)
             fields = fields+1
         if (search_criteria[3] != ""):
             #get all the gadgets that match any of the given tags
             criteria = search_criteria[3].split()
             for e in criteria:
-                taglist += get_resources_that_must_be_shown(user=user).filter(usertag__tag__name__icontains = e)
+                taglist += get_resources_that_must_be_shown(user, isIE).filter(usertag__tag__name__icontains = e)
             taglist = get_uniquelist(taglist)
             fields = fields+1
         if (search_criteria[4] != ""):
             #get all the gadgets that match any of the given events
             criteria = search_criteria[4].split()
             for e in criteria:
-                eventlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
+                eventlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'out'))
             eventlist = get_uniquelist(eventlist)
             fields = fields+1
         if (search_criteria[5] != ""):
             #get all the gadgets that match any of the given slots
             criteria = search_criteria[5].split()
             for e in criteria:
-                slotlist += get_resources_that_must_be_shown(user=user).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
+                slotlist += get_resources_that_must_be_shown(user, isIE).filter(Q(gadgetwiring__friendcode__icontains = e), Q(gadgetwiring__wiring = 'in'))
             slotlist = get_uniquelist(slotlist)
             fields = fields+1
 

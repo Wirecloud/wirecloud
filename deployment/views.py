@@ -189,7 +189,7 @@ class Resources(Resource):
 	
 				info.change_working_folder(gadget_path)
 				pkg = WgtPackageUtils()
-				pkg.create('./', path.join(info.TMPDIR, vendor+'_'+name+'_'+version), xmlDoc.toxml(), info.ID)
+				pkg.create('.', path.join(info.TMPDIR, vendor+'_'+name+'_'+version), xmlDoc.toxml(), info.ID)
 				file_wgt = open(path.join(info.TMPDIR, vendor+'_'+name+'_'+version+'.wgt'), 'r')
 				content_file = file_wgt.read()
 				file_wgt.close()
@@ -255,8 +255,10 @@ class InfoDeployment:
 			self.URL = "http://%s" % self.HTTP_HOST
 
 		# the new url of template
-		self.BASEURL = path.join(url2pathname(self.PATH_INFO), self.USERNAME, self.VENDOR, self.NAME, self.VERSION)
-		self.BASEURL = pathname2url(self.BASEURL.encode("utf8"))
+		if self.PATH_INFO[-1] == "/":
+			self.PATH_INFO = self.PATH_INFO[:-1]
+		self.BASEURL = "/".join(self.PATH_INFO.split("/")+[self.USERNAME, self.VENDOR, self.NAME, self.VERSION])
+		#self.BASEURL = self.BASEURL.encode("utf8") TODO Encoding
 		self.URLTEMPLATE = self.BASEURL + '/' + self.ID
 
 	def _normalize(self, url):
