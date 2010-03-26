@@ -929,8 +929,7 @@ function PublishWindowMenu (element) {
 		'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'},
 		'imageURI': {label: gettext('Image URL'), type:'url'},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
-		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations},
-		'contratable': {label: gettext('Does it contains purchasable gadgets?'), type: 'boolean'},
+		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
