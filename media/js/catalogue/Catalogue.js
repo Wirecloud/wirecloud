@@ -44,28 +44,7 @@ var CatalogueFactory  = function () {
 				
 	return new function() {
 		this.getInstance = function(view_type) {
-			if (!list && !mosaic){
-			
-				//Callbacks
-				this.onLoadSuccess = function(transport){
-					//update gadget info in the showcase
-					var response = transport.responseText;
-					var data = JSON.parse(response);
-					ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
-					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-				}
-				this.onLoadError = function(transport){
-					//the gadget version is not updated
-					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-				}
-				
-				//check the version of the showcase gadgets
-				var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
-				var params = {"gadgets":Object.toJSON(showcase_gadgets)};
-				PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
-			
-			}
-			
+		
 			if (view_type == "LIST_VIEW"){
 				if (!list)
 					list = new CatalogueListView();
@@ -94,6 +73,26 @@ var CatalogueFactory  = function () {
 					active_catalogue = mosaic;
 					active_catalogue_name = "MOSAIC_VIEW";
 				}
+				
+					
+				//Callbacks
+				this.onLoadSuccess = function(transport){
+					//update gadget info in the showcase
+					var response = transport.responseText;
+					var data = JSON.parse(response);
+					ShowcaseFactory.getInstance().setGadgetsState(data["gadgets"]);
+					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+				}
+				this.onLoadError = function(transport){
+					//the gadget version is not updated
+					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+				}
+				
+				//check the version of the showcase gadgets
+				var showcase_gadgets = ShowcaseFactory.getInstance().getGadgetsData();
+				var params = {"gadgets":Object.toJSON(showcase_gadgets)};
+				PersistenceEngineFactory.getInstance().send_post(URIs.POST_CHECK_VERSIONS, params, this, this.onLoadSuccess, this.onLoadError);
+			
 			}
 		
 			return active_catalogue;

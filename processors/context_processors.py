@@ -116,7 +116,7 @@ def tag_categories(request):
     #Categories whose parent is None are root categories
     root = _get_Category_Info(None, userOrgs)
     categories = root['children']
-        
+    
     return {'tag_categories': json_encode(categories)}     
     
     

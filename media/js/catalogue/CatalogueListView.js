@@ -252,28 +252,24 @@ function CatalogueListView() {
 		this.addResourceToShowCase = function(resourceId_) {
 			var currentResource = this.getResource(resourceId_);
 			
-			if (currentResource.isContratable()) {
-				if (currentResource.hasContract()) {
-					if (currentResource.getMashupId()) {
-						LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
-								function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(currentResource),
-								function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(currentResource));
-					} else {
-						ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
-						return;
-					}
-				} else {
-				    LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
-				      CatalogueFactory.getInstance().contractApplication,
-				      LayoutManagerFactory.getInstance().hideCover,
-				      this.getResource(resourceId_)
-				    );
-			    }
-			    
-			    return;
+			//contratables
+			if (currentResource.isContratable() && currentResource.hasContract()) {
+				LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
+					      CatalogueFactory.getInstance().contractApplication,
+					      LayoutManagerFactory.getInstance().hideCover,
+					      this.getResource(resourceId_));
+				return;
 			}
 			
-			ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
+			//is mashup?
+			if (currentResource.getMashupId()) {
+				LayoutManagerFactory.getInstance().showWindowMenu("addMashup",
+							function(){CatalogueFactory.getInstance().addMashupResource(this._id);}.bind(currentResource),
+							function(){CatalogueFactory.getInstance().mergeMashupResource(this._id);}.bind(currentResource));
+			} else {
+					ShowcaseFactory.getInstance().addGadget(currentResource.getVendor(), currentResource.getName(),  currentResource.getVersion(), currentResource.getUriTemplate());
+					return;
+			}
 		}
 
 		this.addMashupResource = function(resourceId_) {
@@ -480,7 +476,7 @@ function CatalogueListView() {
 				var param = {orderby: UIUtils.orderby, search_boolean:$("global_search_boolean").value}
 			
 			//This Catalogue only shows mashups
-			param["scope"] = "mashup"	
+			param["scope"] = "solution"	
 
 			var persistenceEngine = PersistenceEngineFactory.getInstance();
 

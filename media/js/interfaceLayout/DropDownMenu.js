@@ -50,6 +50,18 @@ function DropDownMenu(idMenu_, parentMenu) {
 	}
 }
 
+DropDownMenu.prototype.setParentMenu = function(parentMenu){
+	this.parentMenu = parentMenu;
+	if(this.parentMenu){
+		// In Firefox 3.0 is necessary to increase the z-index of submenus
+		if ((this.parentMenu.menu.style.zIndex == "") || isNaN(this.parentMenu.menu.style.zIndex)) {
+			this.menu.style.zIndex = 5;
+		} else {
+			this.menu.style.zIndex = parseInt(this.parentMenu.menu.style.zIndex) + 1;
+		}
+	}
+}
+
 //Calculates the absolute position of the menu according to the point from which it is launched
 //The menu can be displayed either on the right or left of the launcher point
 DropDownMenu.prototype.calculatePosition = function() {
@@ -122,7 +134,8 @@ DropDownMenu.prototype.addOption = function(imgPath, option, event, position, ad
 			new Insertion.Bottom(this.menu, opHtml);
 		}
 		var newOption = $(opId);
-		Event.observe(newOption, 'click', event, false, policy);
+		var context = {'menu':this, 'handler':event}
+		Event.observe(newOption, 'click', function(e){this.menu.executeHandler(e,this.handler)}.bind(context), false, policy);
 		this.option_id++;
 	} catch(e) {
 		return null;
@@ -160,7 +173,9 @@ DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, a
 	if(old.hasClassName('underlined')){
 		newOp.toggleClassName('underlined');
 	}
-	Event.observe(newOp, 'click', handler, policy);
+	
+	var context = {'menu':this, 'handler':handler}
+	Event.observe(newOp, 'click', function(e){this.menu.executeHandler(e,this.handler)}.bind(context), false, policy);
 }
 
 //submenu operations
@@ -196,12 +211,29 @@ DropDownMenu.prototype.removeSecondaryOption = function(opId) {
 	}
 }
 
+//make some arrangements before executing the handler of the option
+//for example, hide a submenu if another menu option is clicked 
+DropDownMenu.prototype.executeHandler = function(e, handler){
+
+	//perhaps one of the submenus or a chain of submenus are being displayed. The LayoutManager knows who they are, so hide them
+	LayoutManagerFactory.getInstance().hideSubmenusOfMenu(this);
+	
+	//now, execute the handler	
+	handler(e);
+
+}
+
 //hides the menu and changes the image of the launcher (in case it has to)
-DropDownMenu.prototype.hide = function () {
+DropDownMenu.prototype.hide = function (hideParents) {
+	if(hideParents == null){
+		//default value
+		hideParents = true;
+	}
+	 
 	this.menu.style.display="none";
 	//if it's a submenu
-	if(this.parentMenu)
-		this.parentMenu.hide();
+	if(this.parentMenu && hideParents)
+		this.parentMenu.hide(hideParents);
 }
 
 DropDownMenu.prototype.remove = function () {

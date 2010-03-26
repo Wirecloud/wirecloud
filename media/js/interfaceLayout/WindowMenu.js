@@ -127,7 +127,7 @@ WindowMenu.prototype.calculatePosition = function() {
 		var windowStyle = document.defaultView.getComputedStyle(this.htmlElement, null);
 
 		var padding;
-		padding = windowStyle.getPropertyCSSValue("p-top").
+		padding = windowStyle.getPropertyCSSValue("padding-top").
 		          getFloatValue(CSSPrimitiveValue.CSS_PX);
 		padding+= windowStyle.getPropertyCSSValue("padding-bottom").
 		          getFloatValue(CSSPrimitiveValue.CSS_PX);

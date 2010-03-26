@@ -997,6 +997,20 @@ var LayoutManagerFactory = function () {
 			this.coverLayerElement.removeClassName('disabled_background');
 			Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
 		}
+		
+		//hides a submenu or a chain of submenus which are children of the specified menu.
+		//The specified menu must become the currentMenu.
+		LayoutManager.prototype.hideSubmenusOfMenu = function(parentMenu){
+
+			var displayedMenu = this.currentMenu;
+			while( this.currentMenu != parentMenu){
+				//hide the submenu one by one (hideParents=false)
+				this.currentMenu.hide(false);
+				this.currentMenu = this.currentMenu.parentMenu;	
+			}
+			//now, the current menu is parentMenu
+			
+	}
 
 		LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
 		LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";

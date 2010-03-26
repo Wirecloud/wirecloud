@@ -723,6 +723,11 @@ function WorkSpace (workSpaceState) {
 		var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
 		new Insertion.After($('menu_layer'), mergeMenuHTML);
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
+		
+		//Solutions menu, taken from the categoryManager of the current catalogue. If there aren't any category, the menu is null
+		this.solutionsMenu = CatalogueFactory.getInstance("LIST_VIEW").categoryManager.getSolutionsMenu();
+		if(this.solutionsMenu)
+			this.solutionsMenu.setParentMenu(this.menu)
 	
 		// adding options to workspace menu
 		if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
@@ -824,13 +829,25 @@ function WorkSpace (workSpaceState) {
 		}
 	
 		if (!this.forceRestrictedSharing()){ //EzWeb IE6 version doesn't allow creating new Workspaces
+			
 			this.menu.addOption(_currentTheme.getIconURL('solution'),
-				gettext("Find built-in solutions"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					OpManagerFactory.getInstance().showListCatalogue();
-				},
+				gettext("Find built-in solutions..."),
+				function(e) {
+					//if there are any category
+					if(this.solutionsMenu){
+						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',
+																			 this.solutionsMenu,
+																			 Event.pointerX(e),
+																			 Event.pointerY(e));
+					}else{
+						//There aren't any cateogories, so show all solutions (the catalogue list view)
+						LayoutManagerFactory.getInstance().hideCover();
+						OpManagerFactory.getInstance().showListCatalogue();
+					}
+					
+				}.bind(this),
 				optionPosition++);
+				
 			this.menu.addOption(_currentTheme.getIconURL('add'),
 				gettext("New workspace"),
 				function() {

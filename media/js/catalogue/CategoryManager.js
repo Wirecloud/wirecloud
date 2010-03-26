@@ -25,12 +25,6 @@
 
 var lastOpenCategory = null;
 
-var _createCatElement = function(catName, category, parent){
-
-		var catObject = new TagCategory(catName, category['tags'], new Hash(category['children']), parent);
-		return catObject.getElement();
-}
-
 //CategoryManager
 
 var CategoryManager  = function (htmlElement) {
@@ -41,16 +35,42 @@ var CategoryManager  = function (htmlElement) {
 	this.categories;				//tree structure for categories
 	this.categorySection = document.createElement('ul');
 	
+	this.solutionsMenu; 			//a prepared menu to be used by workspaces to access the catalogue list view
+	
 	//append the new category section to the catalogue html element
 	var element_selector= '#' + htmlElement.id;
 	$$(element_selector+' #tag_categories .widget_content')[0].appendChild(this.categorySection);
 	
 	//CONSTRUCTOR
 	this.categories = new Hash(JSON.parse(tag_categories));
-
-	//fill category section
-	this.createCategories();
 	
+	//paint the workspace "find solutions" menu
+	if (this.categories.keys().length > 0){
+		var idSolutionsMenu = 'solutionsMenu_'+htmlElement.id;
+		var solutionsMenuHTML = '<div id="'+idSolutionsMenu+'" class="drop_down_menu"></div></div>';
+		new Insertion.After($('menu_layer'), solutionsMenuHTML);
+		this.solutionsMenu = new DropDownMenu(idSolutionsMenu, null);
+		
+		//The first option is always "View all solutions"
+		this.solutionsMenu.addOption(null,
+									 gettext('View all solutions'),
+									 function () {
+									 		LayoutManagerFactory.getInstance().hideCover();
+											OpManagerFactory.getInstance().showListCatalogue(); 
+					 				 }.bind(this),
+					 				 0);
+
+		//fill category section
+		this.createCategories();
+	}
+	
+}
+
+CategoryManager.prototype._createCatElement = function(catName, category, parent){
+
+		var catObject = new TagCategory(catName, category, parent, this);
+		catObject.addOptionToWSMenu();
+		return catObject.getElement();
 }
 
 CategoryManager.prototype.createCategories = function(){
@@ -59,7 +79,7 @@ CategoryManager.prototype.createCategories = function(){
 
 	var catKeys = this.categories.keys().sort();
 	for (var i=0;i<catKeys.length;i++){
-		catElement = _createCatElement(catKeys[i], this.categories[catKeys[i]]);
+		catElement = this._createCatElement(catKeys[i], this.categories[catKeys[i]]);
 		this.categorySection.appendChild(catElement);
 	}
 }
@@ -75,20 +95,41 @@ CategoryManager.prototype.closeCategories = function(){
 	}
 }
 
+CategoryManager.prototype.getSolutionsMenu = function(){
+	return this.solutionsMenu;
+}
+
 //TagCategory
 
-var TagCategory = function(name, tags, children, parent){
+var TagCategory = function(name, categoryStructure, parent, categoryManager){
 		
 	// *********************************
 	//  PRIVATE VARIABLES AND FUNCTIONS
 	// *********************************
 	this.name = name;
-	this.tags = tags;
-	this.children = children;
+	this.tags = categoryStructure['tags'];
+	this.children = new Hash(categoryStructure['children']);
 	this.catNameElement;
 	this.catChildrenElement;
 	this.parent = parent;
+	this.categoryManager = categoryManager;
 	
+}
+
+//Tag categories have an option in the "find solution" workspace submenu in order to navigate to the
+//correspondent category in the catalogue List view from the dragboard view.
+TagCategory.prototype.addOptionToWSMenu = function(){
+
+	this.categoryManager.solutionsMenu.addOption(null,
+					this.name,
+					function () {
+						LayoutManagerFactory.getInstance().hideCover();
+						CatalogueFactory.getInstance('LIST_VIEW').show();
+						this.selectMyResources();
+						
+					}.bind(this),
+					0);
+
 }
 
 //creates the HTML element that represents a category
@@ -118,7 +159,7 @@ TagCategory.prototype.getElement = function(){
 		
 		var childKeys = this.children.keys().sort();
 		for (var i=0;i<childKeys.length;i++){
-			childCatElement = _createCatElement(childKeys[i], this.children[childKeys[i]], this);
+			childCatElement = this.categoryManager._createCatElement(childKeys[i], this.children[childKeys[i]], this);
 			this.catChildrenElement.appendChild(childCatElement);
 		}
 		catElement.appendChild(this.catChildrenElement);
@@ -133,6 +174,7 @@ TagCategory.prototype.selectMyResources = function(){
 	var element = lastOpenCategory;
 	if(lastOpenCategory && lastOpenCategory != this)
 		lastOpenCategory.catNameElement.removeClassName('selected_cat');
+
 	while(element && element != this && element != this.parent){
 		element.close();
 		element = element.parent;
@@ -149,6 +191,14 @@ TagCategory.prototype.selectMyResources = function(){
 }
 
 TagCategory.prototype.open = function(){
+	//if I'm not visible I have to tell my parent to open itself.
+	if (this.parent && !this.parent.catChildrenElement.hasClassName('open')){
+		this.parent.open();
+	}
+	
+	if(lastOpenCategory)
+		lastOpenCategory.catNameElement.removeClassName('selected_cat');
+	
 	lastOpenCategory = this;
 	this.catNameElement.addClassName('selected_cat');
 	this.catChildrenElement.addClassName('open');
