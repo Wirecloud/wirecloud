@@ -79,6 +79,8 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):
             continue
         elif scope == "gadget" and gadget.mashup_id:
             continue
+        elif scope == "solution" and not gadget.solution:
+            continue
         #else: (scope=="all") -> add to the list
         
         #Checking organizations!
@@ -93,6 +95,7 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):
         for gadget_organization in gadget_organizations:           
             for user_organization in organization_list:
                 if gadget_organization == user_organization:
+                    #ADD THE GADGET TO THE RESULT LIST
                     final_list.append(gadget)
                     continue
         
