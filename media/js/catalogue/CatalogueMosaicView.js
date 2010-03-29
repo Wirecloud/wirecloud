@@ -272,7 +272,7 @@ function CatalogueMosaicView() {
 			var currentResource = this.getResource(resourceId_);
 			
 			//contratables
-			if (currentResource.isContratable() && currentResource.hasContract()) {
+			if (currentResource.isContratable() && !currentResource.hasContract()) {
 				LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', 
 					      CatalogueFactory.getInstance().contractApplication,
 					      LayoutManagerFactory.getInstance().hideCover,
