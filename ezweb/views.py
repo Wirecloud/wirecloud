@@ -37,6 +37,7 @@ from django.contrib.auth.decorators import login_required
 from commons.authentication import login_public_user, logout_request
 from commons.utils import get_xml_error, json_encode
 from commons.logs_exception import TracedServerError
+from commons.http_utils import download_http_content
 
 from workspace.models import WorkSpace
 
@@ -198,6 +199,18 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
             script = user_profile.merge_client_scripts(post_load_script)
         except Exception:
             script = post_load_script
+        
+        if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+            url = settings.AUTHENTICATION_SERVER_URL
+            
+            if (not url.endswith('/')):
+                url += '/'
+            
+            url = "%sapi/user/%s/policies.json" % (url, request.user.username)
+            
+            request.session['policies'] = download_http_content(url)
+        else:
+            request.session['policies'] = "null"
         
         return render_to_response(template, {'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user, 'post_load_script': script},
                   context_instance=RequestContext(request))

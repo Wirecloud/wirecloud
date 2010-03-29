@@ -36,51 +36,18 @@
  */
  
 
-function _EzSteroidsAPI(user) {
+function _EzSteroidsAPI(policies) {
+	this.userPolicies = null;
+	this.globalPolicies = null;
 	
-	var setUserPolicies = function(policies){
-		this.userPolicies = policies;
-		
-		var opManager = OpManagerFactory.getInstance();
-		opManager.loadEnviroment();
+	if (policies) {
+		this.userPolicies = policies['user_policies']['policy_list'];
+		this.globalPolicies = policies['all_policies']['policy_list'];
 	}
-	
-	var showUserError = function(resp, e){
-		this.userPolicies = new Object();
-		/*try{
-			json = eval ('('+resp.responseText+')');
-			if (json["code"]==409){
-				//Anonymous user => set the minimun user policies
-				this.userPolicies = new Object();
-			}
-		}catch(e){
-			// do nothing
-		}*/
-	}
-	
-	var setGlobalPolicies = function(policies){
-		this.globalPolicies = policies;
-	}
-	
-	var showGlobalError = function(resp, e){
-		//provisional patch to return allways true if EzSteroids isn't available
-		this.globalPolicies = null;
-	}
-	
-	try{
-		this.userPolicies = new Object();
-		this.globalPolicies = null;
-		
-		// get the policies
-		this.API = new API(URIs.EZSTEROIDS_API, URIs.PROXY);
-		this.API.getUserPolicies(user, setUserPolicies.bind(this), showUserError);
-		//this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
-	}
-	catch(e){
-		this.userPolicies = new Object();
-		this.globalPolicies = null;
-	}
-	
+}
+
+_EzSteroidsAPI.prototype.is_activated = function () {
+	return this.userPolicies && this.globalPolicies;
 }
 
 _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
@@ -108,4 +75,4 @@ _EzSteroidsAPI.prototype.evaluePolicy = function(policy){
 	return true;
 }
 
-var EzSteroidsAPI = new _EzSteroidsAPI(ezweb_user_name);
+var EzSteroidsAPI = new _EzSteroidsAPI(policy_lists);

@@ -119,7 +119,11 @@ def tag_categories(request):
     
     return {'tag_categories': json_encode(categories)}     
     
+def policy_lists(request):
+    user_policies = request.session.get("policies")
     
+    return { 'policies': user_policies }  
+
 
 #    catQuerySet = Category.objects.filter(parent = None, Q(organizations_in=list(userOrgs) | Q(organizations=None))).distinct()
 #    for cat in catQuerySet:

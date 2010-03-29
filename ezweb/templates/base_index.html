@@ -100,10 +100,12 @@
 				<span id="user_section">{% trans "anonymous" %}</span>
 			{% else %}
 				<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
+				
 				{%if AUTHENTICATION_SERVER_URL %}
 					<span> | </span>
 					<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>
 				{%endif%}
+				
 				<span> | </span>
 				<span id="user_section"> {% trans "Welcome" %}, {{ user.username }}</span>
 			{% endif %}
@@ -168,7 +170,7 @@
 
 <script type="text/javascript">
 _URIConstants = function(){}
-_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
+
 _URIConstants.prototype.USER = '/user/{{ user.username }}';
 _URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
 _URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
@@ -210,6 +212,10 @@ _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalog
 _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
 
+{% if AUTHENTICATION_SERVER_URL %}
+	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
+{% endif %}
+
 {% if home_gateway_dispatcher_url %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_UNSUBSCRIBE_URL = '{{ home_gateway_dispatcher_url }}unsubscribeServices';
@@ -240,23 +246,27 @@ var installed_apps = {{ installed_apps|safe }};
 
 var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
 
+var policy_lists = {{ policies|safe }};
+
+
 </script>
 
 {% block includes %}
+
+	{% if AUTHENTICATION_SERVER_URL %}
+    	<script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
+    {% endif %}
+    
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
+
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
+    <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+
     {% if only_one_js_file %}
       <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb_{{ ezweb_release }}.js"></script>
     {% else %}
        {% include "js_includes.js" %}
     {% endif %}
-
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
-    <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
-
-    {% if AUTHENTICATION_SERVER_URL %}
-    <script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
-    {% endif %}
-
 
 {% endblock %}
 
@@ -278,13 +288,8 @@ var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
 		return false;
 	}
 
-    {% if not AUTHENTICATION_SERVER_URL %}
-		var opManager = OpManagerFactory.getInstance();
-		opManager.loadEnviroment();
-    {% endif %}
-
-    // TODO: Change this, the platform must load and EzSteroids must be invoked when needed!
-    // If EzSteroids, the environment is loaded from its code!
+	var opManager = OpManagerFactory.getInstance();
+	opManager.loadEnviroment();
 </script>
 
 

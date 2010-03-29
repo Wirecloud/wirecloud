@@ -40,7 +40,7 @@ Object.extend(Event, {
 	}
 });
 
-if (window.EzSteroidsAPI) {
+if ( window.EzSteroidsAPI.is_activated() ) {
 	// Backup prototype observe method
 	var _observe = Event.observe;
 
