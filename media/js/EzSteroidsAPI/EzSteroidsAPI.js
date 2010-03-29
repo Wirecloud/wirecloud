@@ -40,6 +40,9 @@ function _EzSteroidsAPI(user) {
 	
 	var setUserPolicies = function(policies){
 		this.userPolicies = policies;
+		
+		var opManager = OpManagerFactory.getInstance();
+		opManager.loadEnviroment();
 	}
 	
 	var showUserError = function(resp, e){
@@ -71,7 +74,7 @@ function _EzSteroidsAPI(user) {
 		// get the policies
 		this.API = new API(URIs.EZSTEROIDS_API, URIs.PROXY);
 		this.API.getUserPolicies(user, setUserPolicies.bind(this), showUserError);
-		this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
+		//this.API.getAllPolicies(setGlobalPolicies.bind(this), showGlobalError);
 	}
 	catch(e){
 		this.userPolicies = new Object();
