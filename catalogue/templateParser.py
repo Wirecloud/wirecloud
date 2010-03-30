@@ -401,9 +401,8 @@ class TemplateHandler(handler.ContentHandler):
                     previousUserTags = UserTag.objects.filter(idResource = previousVersion)
 
                     for previousUserTag in previousUserTags:
-                        newUserTag = UserTag(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
-                        newUserTag.save()
-
+                        newUserTag, created = UserTag.objects.get_or_create(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
+ 
                     previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
 
                     for previousUserVote in previousUserVotes:
