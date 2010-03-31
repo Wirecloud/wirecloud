@@ -301,11 +301,21 @@ AddingGadgetToApplicationWindow.prototype.update_window = function() {
 function BuyingApplicationWindow() {
 	WindowMenu.call(this, gettext('Buying composed application'));
 
-	var text_introduction = gettext("Buying this composed solution implies paying for the following applications.");
-	var text_hint = gettext("Click on any of them to see a detailed description, including princing info.");
+	// Text messages for SOLUTIONS
+	this.text_introduction_solution = gettext("Buying this composed solution implies paying for the following applications.");
+	this.text_hint_solution = gettext("Click on any of them to see a detailed description, including princing info.");
+	
+	// Text messages for GADGETS
+	this.text_introduction_gadget = gettext("Buying this gadget implies paying for the following application.");
+	this.text_hint_gadget = gettext("Click on it to see a detailed description, including princing info.");
 
 	this.content = document.createElement('div');
-	this.content.innerHTML = '<div class="purchase_window_text">' + text_introduction + " " +  text_hint + '</div>';
+	Element.extend(this.content);
+	
+	this.text_message = document.createElement('div');
+	Element.extend(this.text_message);
+	this.text_message.className = "purchase_window_text";
+	this.content.appendChild(this.text_message);
 	
 	document.body.insertBefore(this.htmlElement, $("header"));
 	this.windowContent.appendChild(this.content);
@@ -352,6 +362,14 @@ BuyingApplicationWindow.prototype._closeListener = function(e) {
 BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
 	this.show();
 	this._resource = extra_data;
+	
+	if (this._resource.isMashup()) {
+		this.titleElement.update(gettext('Buying composed application'));
+		this.text_message.update('<div class="purchase_window_text">' + this.text_introduction_solution + " " +  this.text_hint_solution + '</div>');
+	} else {
+		this.titleElement.update(gettext('Buying gadget'));
+		this.text_message.update('<div class="purchase_window_text">' + this.text_introduction_gadget + " " +  this.text_hint_gadget + '</div>');
+	}
 
 	var resource_apps = this._resource.getGadgetApps();
 	

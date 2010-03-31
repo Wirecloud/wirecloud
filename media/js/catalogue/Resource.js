@@ -80,6 +80,8 @@ Resource.prototype.setVotes = function(voteData_) {
 	this._rateResource();
 }
 Resource.prototype.getGadgetApps = function() {return this._state.getGadgetApps();}
+Resource.prototype.isMashup = function() { return this._state.getMashupId() != null}
+Resource.prototype.isGadget = function() { return this._state.getMashupId() == null}
 
 /**
  * @private
@@ -165,7 +167,7 @@ Resource.prototype.paint_as_list = function(resourcesElement) {
 
 	var button_message = gettext('Add');
 
-	if (this._state.getMashupId() == null) {
+	if (this.isGadget()) {
 		//Gadget
 
 		var button_class = '';
@@ -317,7 +319,7 @@ Resource.prototype.paint_as_mosaic = function(resourcesElement) {
 
 	var button_message = gettext('Add');
 
-	if (this._state.getMashupId() == null) {
+	if (this.isGadget()) {
 		//Gadget
 
 		var button_class = '';
@@ -467,7 +469,7 @@ Resource.prototype.hasContract = function () {
 Resource.prototype.showInfo = function() {
 	UIUtils.selectedVersion = this._state.getVersion();
 	$("info_resource_content").innerHTML = '';
-	if (this._state.getMashupId()==null) {
+	if (this.isGadget()) {
 		//Gadget
 		$("info_resource_content").appendChild(UIUtils.createHTMLElement("div", $H({ 
 			class_name: 'title_fieldset',
@@ -918,7 +920,7 @@ Resource.prototype.showInfo = function() {
 		innerHTML: gettext('Access to the Template')
 	}));
 	access_template_link.appendChild(access_template_submit_link);
-	if (this._state.getMashupId()==null){ //it is a Gadget (not visible in Mashups)
+	if (this.isGadget()){ //it is a Gadget (not visible in Mashups)
 
 		var update_code_link = UIUtils.createHTMLElement("div", $H({
 			id: 'update_code_link',
@@ -943,7 +945,7 @@ Resource.prototype.showInfo = function() {
 	}));
 	fieldset.appendChild(delete_gadget_link);
 	this._deleteGadget(delete_gadget_link);
-	if (this._state.getMashupId()==null){ //add gadget button
+	if (this.isGadget()){ //add gadget button
 		var add_gadget_button = UIUtils.createHTMLElement("button", $H({
 			id: 'add_gadget_button',
 			class_name: 'add_gadget',
@@ -1480,8 +1482,8 @@ Resource.prototype._createResource = function(urlTemplate_) {
 
 	this.setTags = function(tagsJSON_) {
 		tags.clear();
-		for (var i=0; i<tagsJSON_.length; i++)
-		{
+		
+		for (var i=0; i<tagsJSON_.length; i++) {
 			tags.push(new Tag(tagsJSON_[i]));
 		}
 	}
@@ -1492,16 +1494,16 @@ Resource.prototype._createResource = function(urlTemplate_) {
 	
 	this.setSlots = function(slotsJSON_) {
 		slots.clear();
-		for (var i=0; i<slotsJSON_.length; i++)
-		{
+		
+		for (var i=0; i<slotsJSON_.length; i++) {
 			slots.push(slotsJSON_[i].friendcode);
 		}
 	}
 	
 	this.setEvents = function(eventsJSON_) {
 		events.clear();
-		for (var i=0; i<eventsJSON_.length; i++)
-		{
+		
+		for (var i=0; i<eventsJSON_.length; i++) {
 			events.push(eventsJSON_[i].friendcode);
 		}
 	}
