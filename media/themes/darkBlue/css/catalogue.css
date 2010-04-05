@@ -544,6 +544,11 @@
 	margin-left: 10px;
 }
 
+#catalogue .category_header, #app_catalogue .category_header{
+    font-size: 20px;
+    font-weight: bold;
+}
+
 #catalogue .paginate {
 	padding-top:5px;
 	padding-bottom:5px;

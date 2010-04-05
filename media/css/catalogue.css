@@ -422,6 +422,11 @@
 	margin-left: 10px;
 }
 
+#catalogue .category_header, #app_catalogue .category_header{
+	display:inline;
+	margin: 10px;
+}
+
 #catalogue .paginate, #app_catalogue .paginate {
 	padding-top:5px;
 	padding-bottom:5px;

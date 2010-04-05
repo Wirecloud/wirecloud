@@ -1,5 +1,5 @@
 #catalogue a , #app_catalogue a {
-	text-decoration:none;
+    text-decoration:none;
 	cursor:pointer;
 }
 
@@ -381,7 +381,7 @@
 #catalogue #left_bar .advanced_selected,
 #catalogue #tag_categories .selected_cat,
 #app_catalogue #tag_categories .selected_cat{
-	color: #276395;
+	color: CadetBlue;
 }
 
 #catalogue #catalogue_content{
@@ -429,6 +429,11 @@
 	display:inline;
 	float:left;
 	margin-left: 10px;
+}
+
+#catalogue .category_header, #app_catalogue .category_header{
+    font-size: 20px;
+    font-weight: bold;
 }
 
 #catalogue .paginate {

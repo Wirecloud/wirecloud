@@ -37,6 +37,9 @@ var CategoryManager  = function (htmlElement) {
 	
 	this.solutionsMenu; 			//a prepared menu to be used by workspaces to access the catalogue list view
 	
+	//element which shows the name of the selected category in the catalogue header
+	this.catNameHeaderElement = $(htmlElement.id+"_category_header");
+	
 	//append the new category section to the catalogue html element
 	var element_selector= '#' + htmlElement.id;
 	$$(element_selector+' #tag_categories .widget_content')[0].appendChild(this.categorySection);
@@ -97,6 +100,11 @@ CategoryManager.prototype.closeCategories = function(){
 			openCategories[i].removeClassName('open');
 		}
 		lastOpenCategory = null;
+		
+		//remove the cat name from the header if it exists
+		if (this.catNameHeaderElement){
+			this.catNameHeaderElement.update();
+		}
 	}
 }
 
@@ -192,6 +200,11 @@ TagCategory.prototype.selectMyResources = function(){
 		//open the child elements
 		this.open();
 	
+		//show the name of the category in the header
+		if(this.categoryManager.catNameHeaderElement){
+			this.categoryManager.catNameHeaderElement.update(this.name);
+		}
+		
 		//show related gadgets
 		var tags = this.tags.join(' ');
 		UIUtils.searchByTag(URIs.GET_RESOURCES_SIMPLE_SEARCH, tags, true);
