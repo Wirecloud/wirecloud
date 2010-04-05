@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 09:28+0100\n"
-"PO-Revision-Date: 2008-02-19 13:13+0100\n"
-"Last-Translator: manuel <(null)>\n"
+"POT-Creation-Date: 2010-04-05 08:25+0200\n"
+"PO-Revision-Date: 2010-04-05 08:48+0100\n"
+"Last-Translator: jjmr <jjmr@tid.es>\n"
 "Language-Team: Español/España\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,276 +18,369 @@ msgstr ""
 
 #: manage.py:94
 #, python-format
-msgid ""
-"Error: cannot find the file 'settings.py' in the directory containing %(file)"
-"r.\n"
-msgstr ""
-"Error: El fichero 'settings.py' no se encuentra en el directorio que "
-"contiene %(file)r.\n"
+msgid "Error: cannot find the file 'settings.py' in the directory containing %(file)r.\n"
+msgstr "Error: El fichero 'settings.py' no se encuentra en el directorio que contiene %(file)r.\n"
 
 #: manage.py:95
 msgid "It seems you have customized things.\n"
 msgstr "Parece que ha modificado la configuración.\n"
 
 #: manage.py:96
-msgid ""
-"You will have to run django-admin.py, passing it your settings module.\n"
-msgstr ""
-"Deberá ejecutar django-admin.py, pasándole su módulo de configuración.\n"
+msgid "You will have to run django-admin.py, passing it your settings module.\n"
+msgstr "Deberá ejecutar django-admin.py, pasándole su módulo de configuración.\n"
 
 #: manage.py:97
-msgid ""
-"(If the file settings.py does indeed exist, it is causing an ImportError "
-"somehow.)\n"
-msgstr ""
-"(Si el fichero settings.py ya existe, de alguna manera esta causando un "
-"error de importación.)\n"
+msgid "(If the file settings.py does indeed exist, it is causing an ImportError somehow.)\n"
+msgstr "(Si el fichero settings.py ya existe, de alguna manera esta causando un error de importación.)\n"
 
-#: settings.py:90
+#: settings.py:92
 msgid "Spanish"
 msgstr "Español"
 
-#: settings.py:91
+#: settings.py:93
 msgid "English"
 msgstr "Inglés"
 
-#: settings.py:92
+#: settings.py:94
 msgid "Portuguese"
 msgstr "Portugués"
 
+#: API/views.py:55
+#: gadget/views.py:72
+msgid "Missing template URL parameter"
+msgstr "Parametro URL del template no encontrado"
+
 #: authentication/__init__.py:44
 msgid "Logged out"
-msgstr ""
+msgstr "Logged out"
 
-#: catalogue/catalogue_utils.py:206 catalogue/catalogue_utils.py:222
-#: catalogue/catalogue_utils.py:237
+#: catalogue/catalogue_utils.py:218
+#: catalogue/catalogue_utils.py:234
+#: catalogue/catalogue_utils.py:249
 msgid "Invalid format. Format must be either xml or json"
 msgstr "Formato inválido. El formato debe ser xml o json"
 
-#: catalogue/models.py:74 translator/models.py:90
+#: catalogue/models.py:77
+#: translator/models.py:90
 msgid "Text Identifier"
 msgstr "Identificador del literal"
 
-#: catalogue/models.py:75 translator/models.py:91
+#: catalogue/models.py:78
+#: translator/models.py:91
 msgid "Object Identifier"
 msgstr "Identificador del objeto"
 
-#: catalogue/models.py:76 translator/models.py:92
+#: catalogue/models.py:79
+#: translator/models.py:92
 msgid "Model"
 msgstr "Modelo"
 
-#: catalogue/models.py:77 clms/templates/base_clms.html:76
+#: catalogue/models.py:80
+#: clms/templates/base_clms.html:76
 #: translator/models.py:93
 msgid "Language"
 msgstr "Idioma"
 
-#: catalogue/models.py:78 catalogue/models.py:135 gadget/models.py:98
-#: gadget/models.py:141 gadget/models.py:150 preferences/models.py:49
-#: preferences/models.py:55 preferences/models.py:61
-#: remoteChannel/models.py:40 translator/models.py:95 workspace/models.py:157
+#: catalogue/models.py:81
+#: catalogue/models.py:140
+#: gadget/models.py:106
+#: gadget/models.py:149
+#: gadget/models.py:158
+#: preferences/models.py:49
+#: preferences/models.py:55
+#: preferences/models.py:61
+#: remoteChannel/models.py:38
+#: translator/models.py:95
+#: workspace/models.py:180
 msgid "Value"
 msgstr "Valor"
 
-#: catalogue/models.py:79 translator/models.py:94
+#: catalogue/models.py:82
+#: translator/models.py:94
 msgid "Default Value"
 msgstr "Valor por defecto"
 
-#: catalogue/models.py:88 catalogue/models.py:134 connectable/models.py:42
-#: connectable/models.py:80 connectable/models.py:93 connectable/models.py:103
-#: context/models.py:56 gadget/models.py:52 gadget/models.py:97
-#: gadget/models.py:106 gadget/models.py:142 gadget/models.py:151
-#: gadgetGenerator/models.py:36 igadget/models.py:55 preferences/models.py:48
-#: preferences/models.py:53 preferences/models.py:59 workspace/models.py:39
-#: workspace/models.py:85 workspace/models.py:119 workspace/models.py:202
+#: catalogue/models.py:91
+#: catalogue/models.py:139
+#: catalogue/models.py:235
+#: connectable/models.py:42
+#: connectable/models.py:80
+#: connectable/models.py:94
+#: connectable/models.py:104
+#: context/models.py:56
+#: gadget/models.py:53
+#: gadget/models.py:105
+#: gadget/models.py:114
+#: gadget/models.py:150
+#: gadget/models.py:159
+#: gadgetGenerator/models.py:36
+#: igadget/models.py:55
+#: preferences/models.py:48
+#: preferences/models.py:53
+#: preferences/models.py:59
+#: workspace/models.py:40
+#: workspace/models.py:106
+#: workspace/models.py:142
+#: workspace/models.py:225
 msgid "Name"
 msgstr "Nombre"
 
-#: catalogue/models.py:89 gadget/models.py:54
+#: catalogue/models.py:92
+#: gadget/models.py:55
 msgid "Display Name"
 msgstr "Nombre del mashup"
 
-#: catalogue/models.py:90 gadget/models.py:51 workspace/models.py:84
+#: catalogue/models.py:93
+#: catalogue/models.py:239
+#: gadget/models.py:52
+#: workspace/models.py:105
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: catalogue/models.py:91 gadget/models.py:53 workspace/models.py:86
+#: catalogue/models.py:94
+#: gadget/models.py:54
+#: workspace/models.py:107
 msgid "Version"
 msgstr "Versión"
 
-#: catalogue/models.py:93 gadget/models.py:58 workspace/models.py:93
+#: catalogue/models.py:95
+msgid "IE Compatible"
+msgstr "IE Compatible"
+
+#: catalogue/models.py:96
+msgid "Is Solution"
+msgstr "Is Solution"
+
+#: catalogue/models.py:98
+#: gadget/models.py:59
+#: workspace/models.py:114
 msgid "Author"
 msgstr "Autor"
 
-#: catalogue/models.py:94 gadget/models.py:59 workspace/models.py:94
+#: catalogue/models.py:99
+#: gadget/models.py:60
+#: workspace/models.py:115
 msgid "Mail"
 msgstr "Correo"
 
-#: catalogue/models.py:99 gadget/models.py:67 gadget/models.py:125
-#: workspace/models.py:91
+#: catalogue/models.py:104
+#: catalogue/models.py:237
+#: gadget/models.py:68
+#: gadget/models.py:133
+#: workspace/models.py:112
 msgid "Description"
 msgstr "Descripción"
 
-#: catalogue/models.py:100
+#: catalogue/models.py:105
 msgid "Size"
 msgstr "Tamaño"
 
-#: catalogue/models.py:101
+#: catalogue/models.py:106
 msgid "License"
 msgstr "Licencia"
 
-#: catalogue/models.py:103
+#: catalogue/models.py:108
 msgid "gadgetURI"
 msgstr "gadgetURI"
 
-#: catalogue/models.py:105 gadget/models.py:62 workspace/models.py:89
+#: catalogue/models.py:110
+#: catalogue/models.py:238
+#: gadget/models.py:63
+#: workspace/models.py:110
 msgid "imageURI"
 msgstr "imagenURI"
 
-#: catalogue/models.py:106 gadget/models.py:63
+#: catalogue/models.py:111
+#: gadget/models.py:64
 msgid "iPhoneImageURI"
 msgstr "iPhoneImagenURI"
 
-#: catalogue/models.py:107 gadget/models.py:61 workspace/models.py:88
+#: catalogue/models.py:112
+#: gadget/models.py:62
+#: workspace/models.py:109
 msgid "wikiURI"
 msgstr "wikiURI"
 
-#: catalogue/models.py:108
+#: catalogue/models.py:113
+#: catalogue/models.py:233
 msgid "templateURI"
 msgstr "templateURI"
 
-#: catalogue/models.py:109
+#: catalogue/models.py:114
 msgid "mashupId"
 msgstr "id del mashup"
 
-#: catalogue/models.py:118
+#: catalogue/models.py:123
 msgid "popularity"
 msgstr "popularidad"
 
-#: catalogue/models.py:119
+#: catalogue/models.py:124
 msgid "fromWGT"
-msgstr ""
+msgstr "fromWGT"
 
-#: catalogue/models.py:148
+#: catalogue/models.py:153
 msgid "Added by"
 msgstr "Añadido por"
 
-#: catalogue/models.py:149
+#: catalogue/models.py:154
 msgid "Preferred by"
 msgstr "Preferido por"
 
-#: catalogue/models.py:160 connectable/models.py:82 gadget/models.py:126
+#: catalogue/models.py:165
+#: connectable/models.py:82
+#: gadget/models.py:134
 msgid "Friend code"
 msgstr "Código relacionado"
 
-#: catalogue/models.py:161
+#: catalogue/models.py:166
 msgid "Wiring"
 msgstr "Conexiones"
 
-#: catalogue/templateParser.py:68 gadget/gadgetCodeParser.py:59
+#: catalogue/models.py:231
+#: ezweb/templates/showcase.html:133
+msgid "Tag"
+msgstr "Etiquetar"
+
+#: catalogue/models.py:232
+msgid "application_code"
+msgstr "application_code"
+
+#: catalogue/models.py:236
+msgid "Shortname"
+msgstr "nombre"
+
+#: catalogue/models.py:241
+msgid "Subscription Price"
+msgstr "Precio de subscripción"
+
+#: catalogue/models.py:242
+msgid "Monthly Price"
+msgstr "Tarifa mensual"
+
+#: catalogue/templateParser.py:71
+#: gadget/gadgetCodeParser.py:59
 #, python-format
 msgid "'%(file)s' is not a file"
 msgstr "'%(file)s' no es un fichero"
 
-#: catalogue/templateParser.py:154 catalogue/templateParser.py:170
+#: catalogue/templateParser.py:80
+#, python-format
+msgid "Error opening URL: code %(errorCode)s(%(errorMsg)s)"
+msgstr "Error al acceder a la URL: codigo %(errorCode)s(%(errorMsg)s)"
+
+#: catalogue/templateParser.py:83
+#, python-format
+msgid "Error opening URL: %(errorMsg)s"
+msgstr "Error abriendo la URL: %(errorMsg)s"
+
+#: catalogue/templateParser.py:163
+#: catalogue/templateParser.py:179
 msgid "ERROR: missing attribute at Event or Slot element"
 msgstr "ERROR: falta un atributo en el elemento Event o Slot"
 
-#: catalogue/templateParser.py:184 gadget/templateParser.py:433
+#: catalogue/templateParser.py:193
+#: gadget/templateParser.py:432
 msgid "ERROR: missing attribute at Capability element"
 msgstr "ERROR: falta un atributo en el elemento Capability"
 
-#: catalogue/templateParser.py:187 gadget/templateParser.py:436
+#: catalogue/templateParser.py:196
+#: gadget/templateParser.py:435
 msgid "ERROR: capabilities must be placed AFTER Resource definition!"
-msgstr ""
-"ERROR: el campo capabilities debe aparecer DESPUES de la definicion del "
-"recurso!"
+msgstr "ERROR: el campo capabilities debe aparecer DESPUES de la definicion del recurso!"
 
-#: catalogue/templateParser.py:204
-msgid "ERROR: missing attribute at Application element"
-msgstr "ERROR: falta un atributo en el elemento Application"
+#: catalogue/templateParser.py:224
+msgid "ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. \"0.1\", \"1.11\" NOTE: \"1.01\" should be \"1.0.1\""
+msgstr "ERROR: el formato del número de versión es inválido. Formato esperado: X.X.X, siendo X un número entero. Ejemplo: \"0.1\", \"1.11\" NOTA: \"1.01\" debería ser \"1.0.1\""
 
-#: catalogue/templateParser.py:234
+#: catalogue/templateParser.py:226
+msgid "ERROR: missing Resource version"
+msgstr "ERROR: falta la versión del Recurso"
+
+#: catalogue/templateParser.py:232
 msgid "ERROR: missing attribute at Resource"
 msgstr "ERROR: falta un atributo en el Recurso"
 
-#: catalogue/templateParser.py:240 gadget/templateParser.py:577
+#: catalogue/templateParser.py:238
+#: gadget/templateParser.py:582
 msgid "ERROR: missing the 'default' attribute at Translations element"
 msgstr "ERROR: falta el attributo 'default' en el elemento Translation"
 
-#: catalogue/templateParser.py:247 catalogue/templateParser.py:253
-#: gadget/templateParser.py:584 gadget/templateParser.py:590
+#: catalogue/templateParser.py:245
+#: catalogue/templateParser.py:251
+#: gadget/templateParser.py:589
+#: gadget/templateParser.py:595
 msgid "ERROR: missing the language attribute at Translation element"
 msgstr "ERROR: falta el atributo \"language\" en el elemento Translation"
 
-#: catalogue/templateParser.py:273 gadget/templateParser.py:688
+#: catalogue/templateParser.py:271
+#: gadget/templateParser.py:693
 msgid "ERROR: The element Name cannot be translated"
 msgstr "ERROR: El elemento Name no puede traducirse"
 
-#: catalogue/templateParser.py:286 gadget/templateParser.py:700
+#: catalogue/templateParser.py:282
+#: gadget/templateParser.py:705
 msgid "ERROR: The element Vendor cannot be translated"
 msgstr "ERROR: El elemento Vendor no puede traducirse"
 
-#: catalogue/templateParser.py:291 gadget/templateParser.py:694
+#: catalogue/templateParser.py:287
+#: gadget/templateParser.py:699
 msgid "ERROR: The element Version cannot be translated"
 msgstr "ERROR: El elemento Version no puede traducirse"
 
-#: catalogue/templateParser.py:343
+#: catalogue/templateParser.py:339
 #, python-format
-msgid ""
-"ERROR: The following fields are missing in resource description: %(fields)s"
-msgstr ""
-"ERROR: Los siguientes campos faltan en la descripción del recurso: %(fields)s"
+msgid "ERROR: The following fields are missing in resource description: %(fields)s"
+msgstr "ERROR: Los siguientes campos faltan en la descripción del recurso: %(fields)s"
 
-#: catalogue/templateParser.py:438
+#: catalogue/templateParser.py:430
 #, python-format
 msgid "ERROR: the following translation indexes need a default value: %(list)s"
-msgstr ""
-"ERROR: los siguientes índices de traducción necesitan un valor por defecto: %"
-"(list)s"
+msgstr "ERROR: los siguientes índices de traducción necesitan un valor por defecto: %(list)s"
 
-#: catalogue/templateParser.py:441
+#: catalogue/templateParser.py:433
 #, python-format
-msgid ""
-"ERROR: There isn't a Translation element with the default language (%"
-"(default_lang)s) translations"
-msgstr ""
-"ERROR: No hay un elemento Translation con el lenguaje por defecto (%"
-"(default_lang)s)"
+msgid "ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations"
+msgstr "ERROR: No hay un elemento Translation con el lenguaje por defecto (%(default_lang)s)"
 
-#: catalogue/templateParser.py:445
-msgid ""
-"ERROR: missing Resource description field at Resource element! Check schema!"
-msgstr ""
-"ERROR: falta la descripción del recurso en el elemento Resource. ¡Compruebe "
-"el esquema!"
+#: catalogue/templateParser.py:437
+msgid "ERROR: missing Resource description field at Resource element! Check schema!"
+msgstr "ERROR: falta la descripción del recurso en el elemento Resource. ¡Compruebe el esquema!"
 
+#: catalogue/views.py:71
+msgid "template_uri param expected"
+msgstr "se esperaba un parámetro template_uri"
+
+#: catalogue/views.py:88
 #: catalogue/views.py:94
-msgid "Problem parsing template xml"
-msgstr "Problema al parsear el template xml"
-
-#: catalogue/views.py:100
 #, python-format
 msgid "Problem parsing template xml: %(errorMsg)s"
 msgstr "Problema al parsear el template xml: %(errorMsg)s"
 
-#: catalogue/views.py:449
+#: catalogue/views.py:254
+#, python-format
+msgid "user %(username)s is not the owner of the resource %(resource_id)s"
+msgstr "el usuario %(username)s no es el dueño del recurso %(resource_id)s"
+
+#: catalogue/views.py:468
 msgid "Error tagging resource!!"
 msgstr "Error al etiquetar el recurso"
 
-#: catalogue/views.py:477
+#: catalogue/views.py:496
 msgid "This tag cannot be deleted: "
 msgstr "Esta etiqueta no puede ser eliminada: "
 
 #: clms/admin.py:44
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was added successfully."
-msgstr ""
+msgstr "El  %(name)s \"%(obj)s\" ha sido añadido correctamente"
 
-#: clms/admin.py:48 clms/admin.py:83
+#: clms/admin.py:48
+#: clms/admin.py:83
 msgid "You may edit it again below."
 msgstr ""
 
-#: clms/admin.py:58 clms/admin.py:93
+#: clms/admin.py:58
+#: clms/admin.py:93
 #, python-format
 msgid "You may add another %s below."
 msgstr ""
@@ -299,15 +392,17 @@ msgstr ""
 
 #: clms/admin.py:89
 #, python-format
-msgid ""
-"The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
+msgid "The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
 msgstr ""
 
-#: clms/admin.py:162 clms/admin.py:229 clms/templates/panels_db.html:18
+#: clms/admin.py:162
+#: clms/admin.py:229
+#: clms/templates/panels_db.html:18
 msgid "All Users"
 msgstr "Todos los Usuarios"
 
-#: clms/admin.py:165 connectable/models.py:57
+#: clms/admin.py:165
+#: connectable/models.py:57
 msgid "Category"
 msgstr "Categoría"
 
@@ -323,7 +418,8 @@ msgstr "Elige un panel "
 msgid "Change some content"
 msgstr ""
 
-#: clms/admin.py:241 clms/templates/panel_list_popup.html:450
+#: clms/admin.py:241
+#: clms/templates/panel_list_popup.html:450
 #: clms/templates/panels_db.html:9
 msgid "All Languages"
 msgstr "Tdos los idiomas"
@@ -332,7 +428,8 @@ msgstr "Tdos los idiomas"
 msgid "Choose some content"
 msgstr ""
 
-#: clms/admin.py:260 clms/models.py:154
+#: clms/admin.py:260
+#: clms/models.py:154
 #: clms/templates/panel_list_popup.html:428
 msgid "Categories"
 msgstr "Categorías"
@@ -341,11 +438,14 @@ msgstr "Categorías"
 msgid " "
 msgstr " "
 
-#: clms/admin.py:354 clms/models.py:147
+#: clms/admin.py:354
+#: clms/models.py:147
 msgid "Layout Template"
 msgstr "templateURI"
 
-#: clms/admin.py:391 clms/models.py:193 clms/models.py:202
+#: clms/admin.py:391
+#: clms/models.py:193
+#: clms/models.py:202
 #: igadget/models.py:58
 msgid "Layout"
 msgstr ""
@@ -371,12 +471,14 @@ msgstr "No"
 msgid "All"
 msgstr "Todos"
 
-#: clms/forms.py:21 clms/templates/panel_list_popup.html:422
+#: clms/forms.py:21
+#: clms/templates/panel_list_popup.html:422
 #: clms/templates/panel_list_popup.html:488
 msgid "Contents"
 msgstr "Conceptos"
 
-#: clms/models.py:22 clms/models.py:107
+#: clms/models.py:22
+#: clms/models.py:107
 msgid "HTML"
 msgstr ""
 
@@ -396,11 +498,17 @@ msgstr ""
 msgid "EzWeb"
 msgstr ""
 
-#: clms/models.py:28 clms/models.py:76 clms/models.py:105 clms/models.py:141
+#: clms/models.py:28
+#: clms/models.py:76
+#: clms/models.py:105
+#: clms/models.py:141
 msgid "name"
 msgstr "nombre"
 
-#: clms/models.py:29 clms/models.py:77 clms/models.py:106 clms/models.py:142
+#: clms/models.py:29
+#: clms/models.py:77
+#: clms/models.py:106
+#: clms/models.py:142
 msgid "Enter the name"
 msgstr "Introduce el nombre"
 
@@ -472,7 +580,8 @@ msgstr "Introduce el Html"
 msgid "Tokens"
 msgstr ""
 
-#: clms/models.py:113 clms/models.py:152
+#: clms/models.py:113
+#: clms/models.py:152
 msgid "Image"
 msgstr "Imagen"
 
@@ -493,9 +602,8 @@ msgid "description"
 msgstr "Descripción"
 
 #: clms/models.py:156
-#, fuzzy
 msgid "Enter the description"
-msgstr "Descripción"
+msgstr "Introduzca la descripción"
 
 #: clms/views.py:116
 msgid "Layout added to favourites"
@@ -538,7 +646,6 @@ msgid "Ezsteroids portal"
 msgstr ""
 
 #: clms/templates/base_clms.html:44
-#, fuzzy
 msgid "Login"
 msgstr "Registrarse"
 
@@ -546,19 +653,23 @@ msgstr "Registrarse"
 msgid "Register"
 msgstr ""
 
-#: clms/templates/base_clms.html:57 ezweb/templates/base_index.html:108
+#: clms/templates/base_clms.html:57
+#: ezweb/templates/base_index.html:110
 msgid "Welcome"
 msgstr "Bienvenido"
 
-#: clms/templates/base_clms.html:62 ezweb/templates/base_index.html:102
+#: clms/templates/base_clms.html:62
+#: ezweb/templates/base_index.html:102
 msgid "Exit"
 msgstr "Salir"
 
-#: clms/templates/base_clms.html:73 clms/templates/base_clms.html.py:79
+#: clms/templates/base_clms.html:73
+#: clms/templates/base_clms.html.py:79
 msgid "Profile"
 msgstr ""
 
-#: clms/templates/base_clms.html:74 clms/templates/base_clms.html.py:77
+#: clms/templates/base_clms.html:74
+#: clms/templates/base_clms.html.py:77
 #: clms/templates/base_clms.html:80
 msgid "Layouts"
 msgstr ""
@@ -585,14 +696,12 @@ msgid "Favourite"
 msgstr ""
 
 #: clms/templates/layout_catalogue_view.html:13
-#, fuzzy
 msgid "Layout catalogue"
-msgstr "Mi Catálogo"
+msgstr "Layout catalogue"
 
 #: clms/templates/layout_catalogue_view.html:16
-#, fuzzy
 msgid "Layout catalogue "
-msgstr "Mi Catálogo"
+msgstr "Layout catalogue "
 
 #: clms/templates/layout_detail.html:66
 msgid "Layout view"
@@ -619,20 +728,21 @@ msgid "Languages"
 msgstr ""
 
 #: clms/templates/panel_list_popup.html:431
-#: clms/templates/panel_list_popup.html:463 clms/templates/panels_db.html:26
+#: clms/templates/panel_list_popup.html:463
+#: clms/templates/panels_db.html:26
 msgid "Modify"
 msgstr ""
 
 #: clms/templates/panel_list_popup.html:434
-#: clms/templates/panel_list_popup.html:467 clms/templates/panels_db.html:30
-#: clms/templates/panels_db.html.py:33 stdimage/widgets.py:21
-#, fuzzy
+#: clms/templates/panel_list_popup.html:467
+#: clms/templates/panels_db.html:30
+#: clms/templates/panels_db.html.py:33
+#: stdimage/widgets.py:21
 msgid "Delete"
-msgstr "Fecha"
+msgstr "Eliminar"
 
 #: clms/templates/panel_list_popup.html:437
 #: clms/templates/panel_list_popup.html:470
-#, fuzzy
 msgid "Default"
 msgstr "Valor por defecto"
 
@@ -640,7 +750,8 @@ msgstr "Valor por defecto"
 msgid "All users"
 msgstr ""
 
-#: clms/templates/panel_list_popup.html:464 clms/templates/panels_db.html:27
+#: clms/templates/panel_list_popup.html:464
+#: clms/templates/panels_db.html:27
 msgid "Assign"
 msgstr ""
 
@@ -648,18 +759,22 @@ msgstr ""
 msgid "Add Other "
 msgstr ""
 
-#: clms/templates/panel_list_popup.html:482 ezweb/templates/showcase.html:8
-#: ezweb/templates/showcase.html.py:69 ezweb/templates/showcase.html:74
-#: ezweb/templates/showcase.html.py:79 ezweb/templates/showcase.html:88
-#: ezweb/templates/showcase.html.py:93 ezweb/templates/showcase.html:98
+#: clms/templates/panel_list_popup.html:482
+#: ezweb/templates/application_catalogue.html:8
+#: ezweb/templates/showcase.html:8
+#: ezweb/templates/showcase.html.py:70
+#: ezweb/templates/showcase.html:75
+#: ezweb/templates/showcase.html.py:80
+#: ezweb/templates/showcase.html:89
+#: ezweb/templates/showcase.html.py:94
+#: ezweb/templates/showcase.html:99
 msgid "Search"
 msgstr "Buscar"
 
 #: clms/templates/panel_list_popup.html:491
 #: clms/templates/panel_list_popup.html:499
-#, fuzzy
 msgid "Select"
-msgstr "Ranura"
+msgstr "Seleccionar"
 
 #: clms/templates/panel_list_popup.html:507
 msgid "Results"
@@ -682,14 +797,12 @@ msgid "Next Page "
 msgstr ""
 
 #: clms/templates/panel_list_popup.html:526
-#, fuzzy
 msgid "Last Page "
-msgstr "Última actualización"
+msgstr "Last Page "
 
 #: clms/templates/panel_list_popup.html:535
-#, fuzzy
 msgid "Save"
-msgstr "Compartido"
+msgstr "Salvar"
 
 #: clms/templates/admin/app_index_clms.html:8
 #: clms/templates/admin/clms/layout/change_form.html:18
@@ -725,8 +838,9 @@ msgstr "Cambiar"
 msgid "Add Groups"
 msgstr "Añadir Grupos"
 
-#: clms/templates/admin/index_clms.html:42 gadget/models.py:72
-#: workspace/models.py:42
+#: clms/templates/admin/index_clms.html:42
+#: gadget/models.py:73
+#: workspace/models.py:43
 msgid "Users"
 msgstr "Usuarios"
 
@@ -744,9 +858,8 @@ msgid "Add"
 msgstr "Añadir"
 
 #: clms/templates/admin/index_clms.html:90
-#, fuzzy
 msgid "You don't have permission to edit anything."
-msgstr "No tiene permiso"
+msgstr "No tiene permiso para editar nada."
 
 #: clms/templates/admin/clms/layouttemplate/change_form.html:6
 msgid "History"
@@ -757,9 +870,8 @@ msgid "View on site"
 msgstr ""
 
 #: clms/templates/admin/clms/layouttemplate/change_form.html:8
-#, fuzzy
 msgid "Create Layout"
-msgstr "Crear recurso"
+msgstr "Crear layout"
 
 #: clms/templates/admin/clms/layouttemplate/change_list.html:8
 #, python-format
@@ -770,7 +882,8 @@ msgstr ""
 msgid "Form filled has errors. Please correct"
 msgstr ""
 
-#: commons/authentication.py:51 commons/authentication.py:61
+#: commons/authentication.py:51
+#: commons/authentication.py:61
 msgid "You must be logged"
 msgstr "Debe registrarse"
 
@@ -782,11 +895,13 @@ msgstr "No tienes permiso"
 msgid "Anonymous"
 msgstr "Anónimo"
 
-#: connectable/models.py:43 gadget/models.py:40
+#: connectable/models.py:43
+#: gadget/models.py:40
 msgid "Code"
 msgstr "Código"
 
-#: connectable/models.py:44 gadget/models.py:124
+#: connectable/models.py:44
+#: gadget/models.py:132
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -798,8 +913,9 @@ msgstr ""
 msgid "JavaScript Lib"
 msgstr "Librería JavaScript"
 
-#: connectable/models.py:48 resourceSubscription/models.py:56
-#: workspace/models.py:156
+#: connectable/models.py:48
+#: resourceSubscription/models.py:50
+#: workspace/models.py:179
 msgid "User"
 msgstr "Usuario"
 
@@ -819,7 +935,9 @@ msgstr "Condicional"
 msgid "Transformation"
 msgstr "Transformación"
 
-#: connectable/models.py:55 gadget/models.py:109 workspace/models.py:182
+#: connectable/models.py:55
+#: gadget/models.py:117
+#: workspace/models.py:205
 msgid "String"
 msgstr "Cadena"
 
@@ -855,47 +973,60 @@ msgstr "Valores de los parametros del filtro"
 msgid "Subscription"
 msgstr "Subscripción"
 
-#: connectable/models.py:94 gadget/models.py:159
+#: connectable/models.py:86
+#: igadget/models.py:64
+msgid "Read Only"
+msgstr ""
+
+#: connectable/models.py:95
+#: gadget/models.py:167
 msgid "Variable"
 msgstr "Variable"
 
-#: connectable/models.py:95 connectable/models.py:105
+#: connectable/models.py:96
+#: connectable/models.py:106
 msgid "InOut"
 msgstr "Entrada-Salida"
 
-#: connectable/models.py:104 igadget/models.py:72 workspace/models.py:158
-#: workspace/models.py:178 workspace/models.py:206
+#: connectable/models.py:105
+#: igadget/models.py:73
+#: workspace/models.py:181
+#: workspace/models.py:201
+#: workspace/models.py:229
 msgid "AbstractVariable"
 msgstr "Variable abstracta"
 
-#: connectable/models.py:112
+#: connectable/models.py:113
 msgid "In InOut"
 msgstr "In InOut"
 
-#: connectable/models.py:113
+#: connectable/models.py:114
 msgid "Out InOut"
 msgstr "Out InOut"
 
-#: connectable/views.py:92 connectable/views.py:328
+#: connectable/views.py:91
+#: connectable/views.py:327
 msgid "JSON parameter expected"
 msgstr "Se esperaba el parámetro JSON"
 
-#: connectable/views.py:311
+#: connectable/views.py:310
 #, python-format
 msgid "referred workspace (id: %(workspace_id)s) does not exist."
 msgstr "el entorno de trabajo referenciado (id: %(workspace_id)s) no existe."
 
-#: connectable/views.py:315
+#: connectable/views.py:314
 #, python-format
 msgid "connectables cannot be saved: %(exc)s"
 msgstr "Fallo al guardar los connectables: %(exc)s"
 
-#: connectable/views.py:333
+#: connectable/views.py:332
 #, python-format
 msgid "referred workspace %(workspace_name)s does not exist."
 msgstr "El entorno de trabajo %(workspace_name)s refenciado no existe."
 
-#: context/models.py:39 context/models.py:57 gadget/models.py:158
+#: context/models.py:39
+#: context/models.py:57
+#: gadget/models.py:166
 msgid "Concept"
 msgstr "Concepto"
 
@@ -903,7 +1034,8 @@ msgstr "Concepto"
 msgid "Platform"
 msgstr "Plataforma"
 
-#: context/models.py:42 context/models.py:50
+#: context/models.py:42
+#: context/models.py:50
 msgid "Adaptor"
 msgstr "Adaptador"
 
@@ -919,93 +1051,103 @@ msgstr "Contexto externo"
 msgid "iGadget"
 msgstr "iGadget"
 
-#: context/models.py:49 gadget/models.py:114 workspace/models.py:80
-#: workspace/models.py:118 workspace/models.py:186
+#: context/models.py:49
+#: gadget/models.py:122
+#: workspace/models.py:101
+#: workspace/models.py:141
+#: workspace/models.py:209
 msgid "Type"
 msgstr "Tipo"
 
-#: context/views.py:68 context/views.py:115 context/views.py:144
+#: context/views.py:68
+#: context/views.py:115
+#: context/views.py:144
 msgid "JSON parameter not specified"
 msgstr "Parametro del JSON no especificado"
 
-#: context/views.py:73 context/views.py:120 context/views.py:149
+#: context/views.py:73
+#: context/views.py:120
+#: context/views.py:149
 msgid "Expecting data in JSON format."
 msgstr "Los datos se esperan en formato JSON"
 
-#: context/views.py:80 context/views.py:126
+#: context/views.py:80
+#: context/views.py:126
 msgid "Attempted update. You must use PUT HTTP method in this case"
-msgstr ""
-"Actualización intentada. Para este caso debe utilizar el metodo HTTP PUT"
+msgstr "Actualización intentada. Para este caso debe utilizar el metodo HTTP PUT"
 
 #: context/views.py:159
 msgid "Concept does not exist. You must use POST HTTP method in this case"
 msgstr "El concepto no existe. Use el metodo HTTP POST para este caso"
 
-#: deployment/views.py:76
+#: deployment/views.py:79
 msgid "This gadget cannot be created"
 msgstr "No se pudo crear el gadget"
 
-#: deployment/views.py:84
+#: deployment/views.py:87
 #, python-format
 msgid "Error creating deployment dirs: %(errorMsg)s"
 msgstr "Error al crear los directorios de despliegue: %(errorMsg)s"
 
-#: deployment/views.py:139
+#: deployment/views.py:147
 #, python-format
 msgid "Error extracting gadget files: %(errorMsg)s"
 msgstr "Error extrayendo los ficheros del gadget: %(errorMsg)s"
 
-#: deployment/views.py:166
+#: deployment/views.py:170
 msgid "This gadget could not be exported"
 msgstr "No se pudo exportar el gadget"
 
-#: deployment/views.py:199
+#: deployment/views.py:203
 #, python-format
 msgid "This gadget could not be exported: %(errorMsg)s"
 msgstr "No se pudo exportar el gadget: %(errorMsg)s"
 
-#: ezweb/views.py:91
+#: ezweb/views.py:99
 msgid "A template URL must be specified!"
-msgstr ""
+msgstr "Debe especificarse la URL de la plantilla"
 
-#: ezweb/views.py:104
+#: ezweb/views.py:112
 msgid "Adding a gadget to EzWeb!"
-msgstr ""
+msgstr "Añadiendo un gadget a EzWeb"
 
-#: ezweb/views.py:108
+#: ezweb/views.py:116
 msgid "Invalid template URL! Please, specify a valid one!"
-msgstr ""
+msgstr "URL de la plantilla inválida. Por favor, especifique una URL correcta."
 
-#: ezweb/views.py:126
+#: ezweb/views.py:134
 msgid "Error ocurred processing template!"
 msgstr "Error al parsear el template"
 
-#: ezweb/views.py:145
+#: ezweb/views.py:153
 msgid "Gadget added correctly to Catalogue!"
-msgstr ""
+msgstr "Gadget añadido correctamente al catálogo."
 
-#: ezweb/views.py:150 ezweb/views.py:153
-#, fuzzy, python-format
+#: ezweb/views.py:158
+#: ezweb/views.py:161
+#, python-format
 msgid "Error ocurred processing template: %s!"
-msgstr "Error al parsear el template"
+msgstr "Error al parsear el template: %s"
 
-#: ezweb/views.py:165
+#: ezweb/views.py:173
 msgid "the workspace does not exist"
 msgstr "el entorno de trabajo no existe."
 
-#: ezweb/views.py:178
+#: ezweb/views.py:186
 msgid "the workspace is not shared"
 msgstr "el workspace no esta compartido"
 
-#: ezweb/templates/404.html:7 ezweb/templates/404.html.py:242
+#: ezweb/templates/404.html:7
+#: ezweb/templates/404.html.py:242
 msgid "Error 404 - Not Found"
 msgstr "Error 404 - No encontrado"
 
-#: ezweb/templates/404.html:234 ezweb/templates/500.html:235
+#: ezweb/templates/404.html:234
+#: ezweb/templates/500.html:235
 #: ezweb/templates/catalogue_adder.html:228
 #: ezweb/templates/catalogue_adder_login.html:235
-#: ezweb/templates/registration/login.html:263
-#: media/themes/default/templates/registration/login.html:265
+#: ezweb/templates/registration/login.html:284
+#: media/themes/default/templates/registration/login.html:291
 msgid "Contact us"
 msgstr "Contacto"
 
@@ -1014,10 +1156,13 @@ msgstr "Contacto"
 msgid "The requested URL \"%(request_path)s\" was not found on this server."
 msgstr "La URL pedida \"%(request_path)s\" no se encuentra en este servidor."
 
-#: ezweb/templates/500.html:7 ezweb/templates/base_index.html:9
+#: ezweb/templates/500.html:7
+#: ezweb/templates/base_index.html:9
 #: ezweb/templates/catalogue_adder.html:7
-#: ezweb/templates/catalogue_adder_login.html:7 ezweb/templates/index.html:4
-#: ezweb/templates/iphone.html:8 ezweb/templates/registration/login.html:7
+#: ezweb/templates/catalogue_adder_login.html:7
+#: ezweb/templates/index.html:4
+#: ezweb/templates/iphone.html:8
+#: ezweb/templates/registration/login.html:7
 #: media/themes/default/templates/registration/login.html:7
 msgid "EzWeb Platform"
 msgstr "Plataforma EzWeb"
@@ -1025,6 +1170,20 @@ msgstr "Plataforma EzWeb"
 #: ezweb/templates/500.html:244
 msgid "Error 500 - Internal Server Error"
 msgstr "Error 500 - Error interno del servidor"
+
+#: ezweb/templates/application_catalogue.html:9
+#: ezweb/templates/showcase.html:9
+msgid "View All"
+msgstr "Ver todos"
+
+#: ezweb/templates/application_catalogue.html:10
+msgid "Advanced View"
+msgstr "Vista avanzada"
+
+#: ezweb/templates/application_catalogue.html:15
+#: ezweb/templates/showcase.html:20
+msgid "Search by category:"
+msgstr "Buscar por categoría:"
 
 #: ezweb/templates/base_index.html:62
 msgid "Loading EzWeb Platform"
@@ -1034,27 +1193,33 @@ msgstr "Cargando la Plataforma Ezweb"
 msgid "Retreiving EzWeb code"
 msgstr "Descargando el código de la Plataforma EzWeb"
 
-#: ezweb/templates/base_index.html:77 ezweb/templates/index_lite.html:10
+#: ezweb/templates/base_index.html:77
+#: ezweb/templates/index_lite.html:10
 msgid "Add gadgets to your workspace"
 msgstr "Añadir gadgets a tu espacio de trabajo"
 
-#: ezweb/templates/base_index.html:77 ezweb/templates/index_lite.html:10
+#: ezweb/templates/base_index.html:77
+#: ezweb/templates/index_lite.html:10
 msgid "Add Gadgets"
 msgstr "Añadir Gadgets"
 
-#: ezweb/templates/base_index.html:78 ezweb/templates/index_lite.html:11
+#: ezweb/templates/base_index.html:78
+#: ezweb/templates/index_lite.html:11
 msgid "Connect gadgets to another gadgets"
 msgstr "Conectar gadgets a otros gadgets"
 
-#: ezweb/templates/base_index.html:78 ezweb/templates/index_lite.html:11
+#: ezweb/templates/base_index.html:78
+#: ezweb/templates/index_lite.html:11
 msgid "Connect Gadgets"
 msgstr "Conectar Gadgets"
 
-#: ezweb/templates/base_index.html:84 ezweb/templates/index_lite.html:17
+#: ezweb/templates/base_index.html:84
+#: ezweb/templates/index_lite.html:17
 msgid "Workspace operations"
 msgstr "Operaciones del entorno de trabajo"
 
-#: ezweb/templates/base_index.html:93 ezweb/templates/index_lite.html:31
+#: ezweb/templates/base_index.html:93
+#: ezweb/templates/index_lite.html:31
 msgid "Show errors console"
 msgstr "Mostrar la consola de errores"
 
@@ -1070,165 +1235,140 @@ msgstr "Registrarse"
 msgid "anonymous"
 msgstr "Anónimo"
 
-#: ezweb/templates/base_index.html:105
+#: ezweb/templates/base_index.html:106
 msgid "profile"
 msgstr "perfil"
 
-#: ezweb/templates/base_index.html:114 ezweb/templates/index_lite.html:23
+#: ezweb/templates/base_index.html:116
+#: ezweb/templates/index_lite.html:23
 msgid "Show floating gadgets"
 msgstr "Mostrar los gadgets flotantes"
 
-#: ezweb/templates/base_index.html:115 ezweb/templates/index_lite.html:24
+#: ezweb/templates/base_index.html:117
+#: ezweb/templates/index_lite.html:24
 msgid "Add more tabs"
 msgstr "Añadir más pestañas"
 
-#: ezweb/templates/base_index.html:115 ezweb/templates/index_lite.html:24
+#: ezweb/templates/base_index.html:117
+#: ezweb/templates/index_lite.html:24
 msgid "Add Tab"
 msgstr "Añadir Tab"
 
-#: ezweb/templates/base_index.html:148
+#: ezweb/templates/base_index.html:156
 msgid "Clear"
 msgstr "Limpiar"
 
 #: ezweb/templates/catalogue_adder_login.html:255
-msgid ""
-"Adding a Gadget to EzWeb catalogue is a login-required operation. Please "
-"sing-in into the EzWeb platform!"
-msgstr ""
-"Añadir un Gadget al catalogo de EzWeb es una operación que requiere estar "
-"autenticado. Por favor, autenticate en la plataforma EzWeb y reintentalo."
+msgid "Adding a Gadget to EzWeb catalogue is a login-required operation. Please sing-in into the EzWeb platform!"
+msgstr "Añadir un Gadget al catalogo de EzWeb es una operación que requiere estar autenticado. Por favor, autenticate en la plataforma EzWeb y reintentalo."
 
 #: ezweb/templates/catalogue_adder_login.html:257
-#: ezweb/templates/registration/login.html:279
-#: media/themes/default/templates/registration/login.html:281
-msgid ""
-"Thanks to EzWeb you will be able to combine your favorite services to make "
-"your life easier"
-msgstr ""
-"Gracias a EzWeb podrás combinar tus servicios favoritos para hacer tu vida "
-"más sencilla"
+#: ezweb/templates/registration/login.html:304
+#: media/themes/default/templates/registration/login.html:310
+msgid "Thanks to EzWeb you will be able to combine your favorite services to make your life easier"
+msgstr "Gracias a EzWeb podrás combinar tus servicios favoritos para hacer tu vida más sencilla"
 
 #: ezweb/templates/catalogue_adder_login.html:259
-#: ezweb/templates/registration/login.html:281
-#: media/themes/default/templates/registration/login.html:283
+#: ezweb/templates/registration/login.html:306
+#: media/themes/default/templates/registration/login.html:312
 msgid "Watch our videos!"
 msgstr "¡Echa un vistazo a nuestros vídeos!"
 
 #: ezweb/templates/catalogue_adder_login.html:267
-#: ezweb/templates/registration/login.html:289
-#: media/themes/default/templates/registration/login.html:291
-msgid ""
-"<b>Discover</b> new gadgets in our catalogue and import them in your "
-"workspace."
-msgstr ""
-"<b>Descubre</b> nuevos gadgets en nuestro catálogo y añádelos a tu espacio "
-"de trabajo."
+#: ezweb/templates/registration/login.html:314
+#: media/themes/default/templates/registration/login.html:320
+msgid "<b>Discover</b> new gadgets in our catalogue and import them in your workspace."
+msgstr "<b>Descubre</b> nuevos gadgets en nuestro catálogo y añádelos a tu espacio de trabajo."
 
 #: ezweb/templates/catalogue_adder_login.html:275
-#: ezweb/templates/registration/login.html:297
-#: media/themes/default/templates/registration/login.html:299
+#: ezweb/templates/registration/login.html:322
+#: media/themes/default/templates/registration/login.html:328
 msgid "Arrange gadgets in your workspace <b>at your will</b>"
 msgstr "Personaliza los gadgets de tu espacio de trabajo <b>a tu gusto</b>"
 
 #: ezweb/templates/catalogue_adder_login.html:283
-#: ezweb/templates/registration/login.html:305
-#: media/themes/default/templates/registration/login.html:307
+#: ezweb/templates/registration/login.html:330
+#: media/themes/default/templates/registration/login.html:336
 msgid "<b>Wire</b> gadgets together."
 msgstr "<b>Conecta</b> los gadgets entre sí."
 
 #: ezweb/templates/catalogue_adder_login.html:291
-#: ezweb/templates/registration/login.html:313
-#: media/themes/default/templates/registration/login.html:315
+#: ezweb/templates/registration/login.html:338
+#: media/themes/default/templates/registration/login.html:344
 msgid "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue."
-msgstr ""
-"Comparte tus espacios de trabajo/<b>mashups</b> como elementos del catálogo "
-"de EzWeb."
+msgstr "Comparte tus espacios de trabajo/<b>mashups</b> como elementos del catálogo de EzWeb."
 
 #: ezweb/templates/catalogue_adder_login.html:299
-#: ezweb/templates/registration/login.html:321
-#: media/themes/default/templates/registration/login.html:323
-msgid ""
-"Share your own workspace as an object you may <b>embed</b> in your favourite "
-"environments."
-msgstr ""
-"Comparte tu propio espacio de trabajo como objeto que puedes <b>embeber</b> "
-"en tus entornos favoritos."
+#: ezweb/templates/registration/login.html:346
+#: media/themes/default/templates/registration/login.html:352
+msgid "Share your own workspace as an object you may <b>embed</b> in your favourite environments."
+msgstr "Comparte tu propio espacio de trabajo como objeto que puedes <b>embeber</b> en tus entornos favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:312
-#: ezweb/templates/registration/login.html:334
-#: media/themes/default/templates/registration/login.html:336
+#: ezweb/templates/registration/login.html:359
+#: media/themes/default/templates/registration/login.html:365
 msgid "Username"
 msgstr "Usuario"
 
 #: ezweb/templates/catalogue_adder_login.html:317
-#: ezweb/templates/registration/login.html:339 gadget/models.py:112
-#: media/themes/default/templates/registration/login.html:341
+#: ezweb/templates/registration/login.html:364
+#: gadget/models.py:120
+#: media/themes/default/templates/registration/login.html:370
 msgid "Password"
 msgstr "Contraseña"
 
 #: ezweb/templates/catalogue_adder_login.html:324
-#: ezweb/templates/registration/login.html:346
-#: media/themes/default/templates/registration/login.html:348
+#: ezweb/templates/registration/login.html:371
+#: ezweb/templates/registration/login.html:384
+#: media/themes/default/templates/registration/login.html:377
+#: media/themes/default/templates/registration/login.html:388
 msgid "Log in"
 msgstr "Acceder"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: media/themes/default/templates/registration/login.html:351
+#: media/themes/default/templates/registration/login.html:380
 msgid "Your first time in EzWeb? Access with your login in"
 msgstr "¿Tú primera vez en EzWeb? Accede con tu usuario de"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: media/themes/default/templates/registration/login.html:351
+#: media/themes/default/templates/registration/login.html:380
 msgid "or"
 msgstr "o"
 
 #: ezweb/templates/catalogue_adder_login.html:327
-#: media/themes/default/templates/registration/login.html:351
+#: media/themes/default/templates/registration/login.html:380
 msgid "register"
 msgstr "regístrate"
 
 #: ezweb/templates/catalogue_adder_login.html:332
-#: ezweb/templates/registration/login.html:356
-#: media/themes/default/templates/registration/login.html:356
-msgid ""
-"<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to "
-"your favourite feeds and web pages."
-msgstr ""
-"¡<b>Ayúdanos</b> a hacer que crezca nuestro catálogo! Añade fácilmente "
-"gadgets vinculados a tus páginas web y feeds favoritos."
+#: ezweb/templates/registration/login.html:392
+#: media/themes/default/templates/registration/login.html:396
+msgid "<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages."
+msgstr "¡<b>Ayúdanos</b> a hacer que crezca nuestro catálogo! Añade fácilmente gadgets vinculados a tus páginas web y feeds favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:335
-#: ezweb/templates/registration/login.html:359
-#: media/themes/default/templates/registration/login.html:359
-msgid ""
-"Our <b>catalogue</b> will grow during the next months, giving you access to "
-"a richer set of services, targeted to suit your needs and tastes."
-msgstr ""
-"Nuestro <b>catálogo</b> crecerá en los próximos meses, poniendo a tu alcance "
-"un universo cada vez más rico de servicios, enfocado a tus necesidades y "
-"gustos."
+#: ezweb/templates/registration/login.html:395
+#: media/themes/default/templates/registration/login.html:399
+msgid "Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes."
+msgstr "Nuestro <b>catálogo</b> crecerá en los próximos meses, poniendo a tu alcance un universo cada vez más rico de servicios, enfocado a tus necesidades y gustos."
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:362
+#: ezweb/templates/registration/login.html:398
+#: media/themes/default/templates/registration/login.html:402
 msgid "Don't hesitate sending us your"
 msgstr "No dejes de enviarnos tu"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:362
+#: ezweb/templates/registration/login.html:398
+#: media/themes/default/templates/registration/login.html:402
 msgid "opinion and feedback"
 msgstr "opinión"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:362
+#: ezweb/templates/registration/login.html:398
+#: media/themes/default/templates/registration/login.html:402
 msgid "Keep in touch with us!"
 msgstr "¡Mantente en contacto con nosotros!"
-
-#: ezweb/templates/showcase.html:9
-msgid "View All"
-msgstr "Ver todos"
 
 #: ezweb/templates/showcase.html:10
 msgid "Advanced Search"
@@ -1242,107 +1382,104 @@ msgstr "Etiquetado avanzado"
 msgid "Development Options"
 msgstr "Opciones de desarrollo"
 
-#: ezweb/templates/showcase.html:19
-msgid "Search by category:"
-msgstr "Buscar por categoría:"
+#: ezweb/templates/showcase.html:15
+msgid "Find Built-in Solutions"
+msgstr "Encontrar soluciones pre-construidas"
 
-#: ezweb/templates/showcase.html:23
+#: ezweb/templates/showcase.html:24
 msgid "Add your custom Gadget:"
 msgstr "Genera un gadget personalizado:"
 
-#: ezweb/templates/showcase.html:25
+#: ezweb/templates/showcase.html:26
 msgid "Add new feed"
 msgstr "Añadir un nuevo feed"
 
-#: ezweb/templates/showcase.html:26
+#: ezweb/templates/showcase.html:27
 msgid "Add new site"
 msgstr "Añadir un nuevo sitio"
 
-#: ezweb/templates/showcase.html:40
+#: ezweb/templates/showcase.html:41
 msgid "Template URL:"
 msgstr "URL del template:"
 
-#: ezweb/templates/showcase.html:44 ezweb/templates/showcase.html.py:55
+#: ezweb/templates/showcase.html:45
+#: ezweb/templates/showcase.html.py:56
 msgid "Create resource"
 msgstr "Crear recurso"
 
-#: ezweb/templates/showcase.html:49
+#: ezweb/templates/showcase.html:50
 msgid "Gadget Wgt:"
 msgstr "Gadget Wgt:"
 
-#: ezweb/templates/showcase.html:67
+#: ezweb/templates/showcase.html:68
 msgid "Search by tags:"
 msgstr "Buscar por etiquetas:"
 
-#: ezweb/templates/showcase.html:72
+#: ezweb/templates/showcase.html:73
 msgid "Search by events:"
 msgstr "Buscar por eventos:"
 
-#: ezweb/templates/showcase.html:77
+#: ezweb/templates/showcase.html:78
 msgid "Search by slots:"
 msgstr "Buscar por ranuras:"
 
-#: ezweb/templates/showcase.html:86
+#: ezweb/templates/showcase.html:87
 msgid "All of these words:"
 msgstr "Todas estas palabras:"
 
-#: ezweb/templates/showcase.html:91
+#: ezweb/templates/showcase.html:92
 msgid "Any of these words:"
 msgstr "Alguna de estas palabras:"
 
-#: ezweb/templates/showcase.html:96
+#: ezweb/templates/showcase.html:97
 msgid "None of these words:"
 msgstr "Ninguna de estas palabras:"
 
-#: ezweb/templates/showcase.html:103
+#: ezweb/templates/showcase.html:104
 msgid "Search by all the fields of the formulary"
 msgstr "Buscar por todos los campos del formulario"
 
-#: ezweb/templates/showcase.html:103
+#: ezweb/templates/showcase.html:104
 msgid "Global Search"
 msgstr "Búsqueda global"
 
-#: ezweb/templates/showcase.html:105
+#: ezweb/templates/showcase.html:106
 msgid "AND"
 msgstr "Y"
 
-#: ezweb/templates/showcase.html:106
+#: ezweb/templates/showcase.html:107
 msgid "OR"
 msgstr "O"
 
-#: ezweb/templates/showcase.html:108
+#: ezweb/templates/showcase.html:109
 msgid "Clear Search Form"
 msgstr "Vaciar formulario de búsqueda"
 
-#: ezweb/templates/showcase.html:114
+#: ezweb/templates/showcase.html:115
 msgid "Tagcloud"
 msgstr "Nube de etiquetas"
 
-#: ezweb/templates/showcase.html:116
+#: ezweb/templates/showcase.html:117
 msgid "All common tags"
 msgstr "Todas la etiquetas comunes"
 
-#: ezweb/templates/showcase.html:117
+#: ezweb/templates/showcase.html:118
 msgid "My common tags"
 msgstr "Mis etiquetas comunes"
 
-#: ezweb/templates/showcase.html:118
+#: ezweb/templates/showcase.html:119
 msgid "Others common tags"
 msgstr "Etiquetas comunes de otros"
 
-#: ezweb/templates/showcase.html:125
+#: ezweb/templates/showcase.html:126
 msgid "New tags:"
 msgstr "Nuevas etiquetas:"
 
-#: ezweb/templates/showcase.html:132
-msgid "Tag"
-msgstr "Etiquetar"
-
-#: ezweb/templates/showcase.html:133
+#: ezweb/templates/showcase.html:134
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: ezweb/templates/showcase.html:150
+#: ezweb/templates/showcase.html:151
 msgid "Hide resource details"
 msgstr "Ocultar información del recurso"
 
@@ -1370,20 +1507,38 @@ msgstr "nuevo canal"
 msgid "SLOTS"
 msgstr "RANURAS"
 
-#: ezweb/templates/registration/login.html:272
-#: media/themes/default/templates/registration/login.html:274
+#: ezweb/templates/registration/login.html:293
+#: media/themes/default/templates/registration/login.html:300
 msgid "Your username and password didn't match. Please try again."
 msgstr "Usuario o contraseña incorrecta. Por favor, intentalo otra vez."
 
-#: ezweb/templates/registration/login.html:350
+#: ezweb/templates/registration/login.html:297
+#: media/themes/default/templates/registration/login.html:303
+msgid "The OpenID authentication process failed. Please, try again."
+msgstr "El proceso de autenticación con OpenId falló. Por favor, inténtalo de nuevo."
+
+#: ezweb/templates/registration/login.html:375
 msgid "Create an account"
 msgstr "Crear una cuenta"
 
-#: gadget/gadgetCodeParser.py:74 gadget/views.py:164
+#: ezweb/templates/registration/login.html:380
+#: media/themes/default/templates/registration/login.html:384
+msgid "Do you have an OpenID account?"
+msgstr "¿Tienes una cuenta OpenID?"
+
+#: ezweb/templates/registration/login.html:380
+#: media/themes/default/templates/registration/login.html:384
+msgid "Login using OpenID"
+msgstr "Autenticarse con OpenID"
+
+#: gadget/gadgetCodeParser.py:74
+#: gadget/views.py:172
+#: gadget/views.py:196
 msgid "XHTML code is not accessible"
 msgstr "Código XHTML inaccesible"
 
-#: gadget/models.py:39 gadget/models.py:49
+#: gadget/models.py:39
+#: gadget/models.py:50
 msgid "URI"
 msgstr "URI"
 
@@ -1395,139 +1550,158 @@ msgstr "URL"
 msgid "Content type"
 msgstr "Tipo de contenido"
 
-#: gadget/models.py:65 igadget/models.py:46
+#: gadget/models.py:43
+msgid "Cacheable"
+msgstr "Cacheable"
+
+#: gadget/models.py:66
+#: igadget/models.py:46
 msgid "Width"
 msgstr "Anchura"
 
-#: gadget/models.py:66 igadget/models.py:45
+#: gadget/models.py:67
+#: igadget/models.py:45
 msgid "Height"
 msgstr "Altura"
 
-#: gadget/models.py:71 workspace/models.py:78
+#: gadget/models.py:72
+#: workspace/models.py:99
 msgid "Shared"
 msgstr "Compartido"
 
-#: gadget/models.py:73
+#: gadget/models.py:74
 msgid "Last update"
 msgstr "Última actualización"
 
-#: gadget/models.py:108 workspace/models.py:181
+#: gadget/models.py:116
+#: workspace/models.py:204
 msgid "Number"
 msgstr "Número"
 
-#: gadget/models.py:110 workspace/models.py:183
+#: gadget/models.py:118
+#: workspace/models.py:206
 msgid "Date"
 msgstr "Fecha"
 
-#: gadget/models.py:111 workspace/models.py:184
+#: gadget/models.py:119
+#: workspace/models.py:207
 msgid "Boolean"
 msgstr "Booleano"
 
-#: gadget/models.py:116
+#: gadget/models.py:124
 msgid "Slot"
 msgstr "Ranura"
 
-#: gadget/models.py:117
+#: gadget/models.py:125
 msgid "Event"
 msgstr "Evento"
 
-#: gadget/models.py:118
+#: gadget/models.py:126
 msgid "Preference"
 msgstr "Preferencia"
 
-#: gadget/models.py:119
+#: gadget/models.py:127
 msgid "Property"
 msgstr "Propiedad"
 
-#: gadget/models.py:120
+#: gadget/models.py:128
 msgid "GadgetContext"
 msgstr "Contexto de gadget"
 
-#: gadget/models.py:121
+#: gadget/models.py:129
 msgid "ExternalContext"
 msgstr "Contexto externo"
 
-#: gadget/models.py:123 workspace/models.py:192
+#: gadget/models.py:131
+#: workspace/models.py:215
 msgid "Aspect"
 msgstr "Aspecto"
 
-#: gadget/models.py:127
+#: gadget/models.py:135
 msgid "Default value"
 msgstr "Valor por defecto"
 
-#: gadget/templateParser.py:163 gadget/templateParser.py:820
+#: gadget/templateParser.py:161
+#: gadget/templateParser.py:825
 #, python-format
 msgid "Missing required field(s): %(fields)s"
 msgstr "No se encuentra(n) el/los fichero(s) requerido(s): %(fields)s"
 
-#: gadget/templateParser.py:219
+#: gadget/templateParser.py:218
 msgid "ERROR: unkown TEXT TYPE "
 msgstr "ERROR: tipo TEXT desconocido "
 
-#: gadget/templateParser.py:256
+#: gadget/templateParser.py:255
 msgid "ERROR: missing attribute at Property element"
 msgstr "ERROR: falta un atributo en el elemento Property"
 
-#: gadget/templateParser.py:311
+#: gadget/templateParser.py:310
 msgid "ERROR: missing attribute at UserPreference element"
 msgstr "ERROR: falta un atributo en el elemento UserPreference"
 
-#: gadget/templateParser.py:366
+#: gadget/templateParser.py:365
 msgid "ERROR: missing attribute at Event element"
 msgstr "ERROR: falta un atributo en el elemento Event"
 
-#: gadget/templateParser.py:419
+#: gadget/templateParser.py:418
 msgid "ERROR: missing attribute at Slot element"
 msgstr "ERROR: falta un atributo en el elemento Slot"
 
-#: gadget/templateParser.py:475
+#: gadget/templateParser.py:474
 msgid "ERROR: missing attribute at Gadget Context element"
 msgstr "ERROR: falta un atributo en el elemento Gadget Context"
 
-#: gadget/templateParser.py:511
+#: gadget/templateParser.py:510
 msgid "ERROR: missing attribute at External Context element"
 msgstr "ERROR: falta un atributo en el elemento External Context"
 
-#: gadget/templateParser.py:530
+#: gadget/templateParser.py:535
 #, python-format
 msgid "ERROR: XHTML could not be read: %(errorMsg)s"
 msgstr "ERROR: No se pudo leer el código XHTML: %(errorMsg)s"
 
-#: gadget/templateParser.py:532
+#: gadget/templateParser.py:537
 msgid "ERROR: missing attribute at XHTML element"
 msgstr "ERROR: falta un atributo en el elemento XHTML"
 
-#: gadget/templateParser.py:555
+#: gadget/templateParser.py:560
 msgid "ERROR: missing attribute at Option element"
 msgstr "ERROR: falta un atributo en el elemento Option"
 
-#: gadget/templateParser.py:571
+#: gadget/templateParser.py:576
 msgid "ERROR: missing attribute at Rendering element"
 msgstr "ERROR: falta un atributo en el elemento Rendering"
 
-#: gadget/templateParser.py:739
+#: gadget/templateParser.py:744
 msgid "ERROR: the following translation indexes need a default value: "
 msgstr "ERROR: los siguientes índices necesitan un valor por defecto: "
 
-#: gadget/templateParser.py:824
+#: gadget/templateParser.py:829
 msgid "ERROR: There isn't a Translation element with the default language ("
 msgstr "ERROR: No hay un elemento Translation con el lenguaje por defecto ("
 
-#: gadget/views.py:95
-msgid "Error parsing template!"
-msgstr "Error al parsear el template"
+#: gadget/views.py:83
+#, python-format
+msgid "Error parsing the template: %(msg)s"
+msgstr "Error al parsear el template: %(msg)s"
 
-#: gadget/views.py:100
+#: gadget/views.py:86
 msgid "Gadget already exists"
 msgstr "El gadget ya existe"
 
-#: gadget/views.py:104
-msgid "Error creating gadget!"
-msgstr "Error al crear el gadget"
+#: gadget/views.py:89
+msgid "The url is not accesible"
+msgstr "La URL no está accesible"
 
-#: gadget/views.py:158
-msgid "This gadget could not be updated"
-msgstr "No se pudo actualizar el gadget"
+#: gadget/views.py:92
+#, python-format
+msgid "Error creating gadget: %(msg)s"
+msgstr "Error al crear el gadget: %(msg)s"
+
+#: gadget/views.py:180
+#, python-format
+msgid "Error when the code was parsed: %(errorMsg)s"
+msgstr "Error al paresear el código: %(errorMsg)s"
 
 #: gadgetGenerator/models.py:37
 msgid "Default context"
@@ -1571,13 +1745,14 @@ msgstr "Minimizar"
 
 #: igadget/models.py:48
 msgid "Fulldragboard"
-msgstr ""
+msgstr "Pantalla completa"
 
 #: igadget/models.py:56
 msgid "Gadget"
 msgstr "Gadget"
 
-#: igadget/models.py:57 workspace/models.py:190
+#: igadget/models.py:57
+#: workspace/models.py:213
 msgid "Tab"
 msgstr "Pestaña"
 
@@ -1597,11 +1772,12 @@ msgstr "Posición del icono"
 msgid "Refused Version"
 msgstr "Versión Rechazada"
 
-#: igadget/models.py:70
+#: igadget/models.py:71
 msgid "Variable definition"
 msgstr "Definición de variable"
 
-#: igadget/models.py:71 workspace/models.py:115
+#: igadget/models.py:72
+#: workspace/models.py:138
 msgid "IGadget"
 msgstr "IGadget"
 
@@ -1610,56 +1786,94 @@ msgstr "IGadget"
 msgid "referred gadget %(gadget_uri)s does not exist."
 msgstr "el Gadget %(gadget_uri)s referenciado no existe."
 
-#: igadget/views.py:173 igadget/views.py:213 igadget/views.py:219
-#: igadget/views.py:225 igadget/views.py:231 igadget/views.py:237
-#: igadget/views.py:243 igadget/views.py:249
+#: igadget/views.py:173
+#: igadget/views.py:213
+#: igadget/views.py:219
+#: igadget/views.py:225
+#: igadget/views.py:231
+#: igadget/views.py:237
+#: igadget/views.py:243
+#: igadget/views.py:249
 msgid "Malformed iGadget JSON"
 msgstr "JSON de IGadget incorrecto"
 
-#: igadget/views.py:330 igadget/views.py:357 igadget/views.py:398
-#: igadget/views.py:437 igadget/views.py:520
+#: igadget/views.py:332
+#: igadget/views.py:359
+#: igadget/views.py:400
+#: igadget/views.py:439
+#: igadget/views.py:522
 msgid "iGadget JSON expected"
 msgstr "Se esperaba un JSON de IGadget"
 
-#: igadget/views.py:340
+#: igadget/views.py:342
 #, python-format
 msgid "referred workspace %(workspace_id)s does not exist."
 msgstr "el entorno de trabajo %(workspace_id)s refenciado no existe."
 
-#: igadget/views.py:345
+#: igadget/views.py:347
 msgid "iGadget cannot be created: "
 msgstr "No se pudo actualizar el IGadget: "
 
-#: igadget/views.py:370 igadget/views.py:407 igadget/views.py:488
+#: igadget/views.py:372
+#: igadget/views.py:409
+#: igadget/views.py:490
 #, python-format
 msgid "referred tab %(tab_id)s does not exist."
 msgstr "el tab %(tab_id)s referenciado no existe."
 
-#: igadget/views.py:375 igadget/views.py:412
+#: igadget/views.py:377
+#: igadget/views.py:414
 msgid "iGadgets cannot be updated: "
 msgstr "No se pudo actualizar el IGadget: "
 
-#: igadget/views.py:471
+#: igadget/views.py:473
 msgid "iGadget variables JSON expected"
 msgstr "Se esperaba un JSON con las variables del IGadget"
 
-#: igadget/views.py:493 igadget/views.py:531
+#: igadget/views.py:495
+#: igadget/views.py:533
 msgid "igadget varaible cannot be updated: "
 msgstr "no se pudo actualizar el IGadget: "
 
-#: media/themes/default/templates/registration/login.html:365
-msgid ""
-"MORFEO open source community has released some <b>online training material</"
-"b> about EzWeb technology."
-msgstr ""
-"La comunidad de software libre MORFEO ha liberado <b>material de formacion "
-"online</b> sobre la tecnología EzWeb."
+#: media/themes/default/templates/registration/login.html:405
+msgid "MORFEO open source community has released some <b>online training material</b> about EzWeb technology."
+msgstr "La comunidad de software libre MORFEO ha liberado <b>material de formacion online</b> sobre la tecnología EzWeb."
 
-#: preferences/models.py:54 preferences/models.py:60
+#: openid_auth/forms.py:36
+msgid "Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."
+msgstr "Parece que tu navegador web no tiene las cookies habilitadas. Las cookies son necesarias para la autenticación en EzWeb."
+
+#: openid_auth/forms.py:48
+msgid "i-names are not allowed"
+msgstr "i-names no están permitidos"
+
+#: openid_auth/forms.py:54
+msgid "OpenID Discovery Failure"
+msgstr "Error en el descubrikiento de OpenID"
+
+#: openid_auth/views.py:185
+msgid "The request was cancelled."
+msgstr "La petición fue cancelada"
+
+#: openid_auth/views.py:189
+msgid "Setup needed.  Please check your OpenID provider and try again."
+msgstr "Es necesario un proceso de onfiguración. Por favor, comprueba tu proovedor OpenID e inténtalo de nuevo"
+
+#: openid_auth/views.py:191
+msgid "Bad openid status"
+msgstr "Estado de OpenID erroneo"
+
+#: openid_auth/views.py:230
+msgid "The OpenID doesn't match any registered user."
+msgstr "tu identidad OpenID no concuerda con ningún usuario registrado."
+
+#: preferences/models.py:54
+#: preferences/models.py:60
 msgid "Inherit"
 msgstr "Heredar"
 
-#: preferences/views.py:168 preferences/views.py:230
+#: preferences/views.py:168
+#: preferences/views.py:230
 msgid "Platform Preferences JSON expected"
 msgstr "Se esperaba un JSON con preferencias de plataforma"
 
@@ -1680,29 +1894,30 @@ msgid "Tab Preferences could not be updated: "
 msgstr "No se pudo actualizar las preferencias de la pestaña: "
 
 #: proxy/views.py:85
+#: proxy/views.py:87
+msgid "Invalid request Referer"
+msgstr "Referer inválido"
+
+#: proxy/views.py:93
 msgid "Url not specified"
 msgstr "URL no especificada"
 
-#: proxy/views.py:217
+#: proxy/views.py:229
 #, python-format
 msgid "Error processing proxy request: %s"
 msgstr "Error procesando la petición del proxy: %s"
 
-#: resourceSubscription/models.py:49
+#: resourceSubscription/models.py:43
 msgid "Free"
-msgstr ""
+msgstr "Free"
 
-#: resourceSubscription/models.py:53
+#: resourceSubscription/models.py:47
 msgid "Used times"
 msgstr ""
 
-#: resourceSubscription/models.py:55
-msgid "Gadget Resource"
-msgstr "Gadget Resource"
-
-#: resourceSubscription/models.py:58
-msgid "State"
-msgstr "Stado"
+#: resourceSubscription/models.py:49
+msgid "Application"
+msgstr "Applicación"
 
 #: stdimage/widgets.py:19
 msgid "Currently:"
@@ -1716,152 +1931,166 @@ msgstr "Cambiar:"
 msgid "load_script"
 msgstr "load_script"
 
-#: workspace/models.py:40
+#: workspace/models.py:41
 msgid "Creator"
 msgstr "Creador"
 
-#: workspace/models.py:43
+#: workspace/models.py:44
 msgid "Target Organizations"
 msgstr "Organizaciones objetivo"
 
-#: workspace/models.py:70
+#: workspace/models.py:91
 msgid "Active"
 msgstr "Activo"
 
-#: workspace/models.py:77
+#: workspace/models.py:98
 msgid "Cloned"
 msgstr "Clonado"
 
-#: workspace/models.py:82
+#: workspace/models.py:103
 msgid "Credentials"
 msgstr "Credenciales"
 
-#: workspace/models.py:97
+#: workspace/models.py:118
 msgid "Organization"
 msgstr "Organización"
 
-#: workspace/models.py:99
+#: workspace/models.py:120
 msgid "Workspace"
 msgstr "Entorno de trabajo"
 
-#: workspace/models.py:107
+#: workspace/models.py:122
+msgid "Contratable"
+msgstr "Contratable"
+
+#: workspace/models.py:130
 msgid "Default Workspace"
 msgstr "Entorno de trabajo por defecto"
 
-#: workspace/models.py:116 workspace/models.py:177 workspace/models.py:205
+#: workspace/models.py:139
+#: workspace/models.py:200
+#: workspace/models.py:228
 msgid "WorkSpace"
 msgstr "Entorno de trabajo"
 
-#: workspace/models.py:189
+#: workspace/models.py:212
 msgid "Channel"
 msgstr "Canales"
 
-#: workspace/models.py:203
+#: workspace/models.py:226
 msgid "Visible"
 msgstr "Visible"
 
-#: workspace/views.py:325
+#: workspace/views.py:332
 msgid "error reading workspace: "
 msgstr "error leyendo el entorno de trabajo: "
 
-#: workspace/views.py:344 workspace/views.py:404
+#: workspace/views.py:351
+#: workspace/views.py:409
 msgid "workspace JSON expected"
 msgstr "Se esperaba un JSON de entorno de trabajo"
 
-#: workspace/views.py:353
+#: workspace/views.py:360
 msgid "Malformed workspace JSON: expecting workspace uri."
-msgstr ""
-"JSON de entorno de trabajo incorrecto: se esperaba de la URI de un entorno "
-"de trabajo"
+msgstr "JSON de entorno de trabajo incorrecto: se esperaba de la URI de un entorno de trabajo"
 
-#: workspace/views.py:371
+#: workspace/views.py:378
 msgid "workspace cannot be created: "
 msgstr "No se pudo crear el entorno de trabajo: "
 
-#: workspace/views.py:428
+#: workspace/views.py:433
 msgid "workspace cannot be updated: "
 msgstr "No se pudo actualizar el entorno de trabajo: "
 
-#: workspace/views.py:440
+#: workspace/views.py:445
 msgid "workspace cannot be deleted"
 msgstr "No se pudo eliminar el entorno de trabajo: "
 
-#: workspace/views.py:461 workspace/views.py:527
+#: workspace/views.py:466
+#: workspace/views.py:532
 msgid "tab JSON expected"
 msgstr "Se esperaba un JSON de pestaña"
 
-#: workspace/views.py:470
+#: workspace/views.py:475
 msgid "Malformed tab JSON: expecting tab name."
 msgstr "JSON de pestaña incorrecto: se esperaba la URI de una pestaña"
 
-#: workspace/views.py:481
+#: workspace/views.py:486
 msgid "tab cannot be created: "
 msgstr "No se pudo crear la pestaña: "
 
-#: workspace/views.py:503
+#: workspace/views.py:508
 msgid "tab order cannot be updated: "
 msgstr "No se pudo actualizar el orden de las pestañas: "
 
-#: workspace/views.py:549
+#: workspace/views.py:554
 msgid "tab cannot be updated: "
 msgstr "No se pudo actualizar la pestaña: "
 
-#: workspace/views.py:570
+#: workspace/views.py:575
 msgid "tab cannot be deleted"
 msgstr "No se pudo borrar la pestaña: "
 
-#: workspace/views.py:593
+#: workspace/views.py:598
 msgid "variables JSON expected"
 msgstr "Se esperaba un JSON con variables"
 
-#: workspace/views.py:620
+#: workspace/views.py:625
 msgid "cannot update variables: "
 msgstr "no se pudieron actualizar las variables"
 
-#: workspace/views.py:696
+#: workspace/views.py:701
 msgid "workspace cannot be shared: "
 msgstr "No se puede compartir el entorno de trabajo: "
 
-#: workspace/views.py:786
+#: workspace/views.py:792
 msgid "mashup data expected"
 msgstr "datos del mashup incorrectos"
 
-#: workspace/views.py:792
+#: workspace/views.py:798
 msgid "Malformed mashup JSON: expecting mashup name."
 msgstr "JSON de mashup incorrecto: se esperaba el nombre"
 
-#: workspace/views.py:794
+#: workspace/views.py:800
 msgid "Malformed mashup JSON: expecting mashup vendor."
 msgstr "JSON de mashup incorrecto: se esperaba el proveedor del gadget."
 
-#: workspace/views.py:796
+#: workspace/views.py:802
 msgid "Malformed mashup JSON: expecting mashup version."
 msgstr "JSON de mashup incorrecto: se esperaba la versión."
 
-#: workspace/views.py:800
+#: workspace/views.py:806
 msgid "mashup cannot be published: "
 msgstr "No se pudo publicar el mashup: "
 
-#: workspace/views.py:860
+#: workspace/views.py:869
 msgid "mashup cannot be published: duplicated mashup"
 msgstr "No se pudo publicar el mashup: está duplicado"
 
+#~ msgid "ERROR: missing attribute at Application element"
+#~ msgstr "ERROR: falta un atributo en el elemento Application"
+#~ msgid "Problem parsing template xml"
+#~ msgstr "Problema al parsear el template xml"
+#~ msgid "This gadget could not be updated"
+#~ msgstr "No se pudo actualizar el gadget"
+#~ msgid "Gadget Resource"
+#~ msgstr "Gadget Resource"
+#~ msgid "State"
+#~ msgstr "Stado"
 #~ msgid "username"
 #~ msgstr "nombre de usuario"
-
 #~ msgid ""
 #~ "Required. 30 characters or fewer. Alphanumeric characters only (letters, "
 #~ "digits and underscores)."
 #~ msgstr ""
 #~ "Obligatorio. 30 caracteres o menos. Sólo se admiten carácteres "
 #~ "alfanuméricos (letras, dígitos y guiones bajos)."
-
 #~ msgid "password"
 #~ msgstr "Contraseña"
-
 #~ msgid ""
 #~ "Use '[password]$[salt]$[hexdigest]' or use the <a href=\"password/"
 #~ "\">change password form</a>."
 #~ msgstr ""
 #~ "Utilice '[contraseña]$[salt]$[hexdigest]' o utilice el <a href=\"password/"
 #~ "\">formulario para cambio de contraseña</a>."
+

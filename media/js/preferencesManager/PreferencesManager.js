@@ -166,7 +166,7 @@ var PreferencesManagerFactory = function () {
 		    "defaultValue":  "Fixed",
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
-		    "options":       [{value:"Fixed",label:"Fixed to the grid"},{value:"Free",label:"Out of the grid"}],
+		    "options":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
 		    "description":   gettext("Default layout for the new gadgets.")
 		  },
 		  "smart": {
@@ -215,7 +215,7 @@ var PreferencesManagerFactory = function () {
 		    "defaultValue":  "Fixed",
 		    "label":         gettext("Default grid layout"),
 		    "type":          "select",
-		    "options":       [{value:"Fixed",label:"Fixed to the grid"},{value:"Free",label:"Out of the grid"}],
+		    "options":       [{value:"Fixed",label:gettext("Fixed to the grid")},{value:"Free",label:gettext("Out of the grid")}],
 		    "description":   gettext("Default layout for the new gadgets.")
 		  },
 		  "smart": {

@@ -221,8 +221,7 @@ class TemplateHandler(handler.ContentHandler):
                         re.search('^(0\d+\.)|(\.0\d+)', version_accumulator[0]) == None:
                 self._version = version_accumulator[0]
             else:
-                raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. \
-                 Ex. "0.1", "1.11" NOTE: "1.01" should be "1.0.1"'))
+                raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be "1.0.1"'))
         else:
             raise TemplateParseException(_("ERROR: missing Resource version"))
 
