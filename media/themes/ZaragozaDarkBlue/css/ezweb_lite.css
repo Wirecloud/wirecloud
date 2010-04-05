@@ -1,0 +1,42 @@
+#header {
+	background: none !important;
+	height: 25px !important;
+}
+
+#lite_toolbar_section {
+	margin-top:0;
+	position: relative;
+	float:left;
+}
+
+#lite_toolbar_section .toolbar_marked, #lite_toolbar_section .toolbar_unmarked{
+	background-color: #666666;
+	top:2px;
+}
+
+#ws_operations_link{
+	background: transparent url(../images/menu-tab.png) no-repeat scroll 0 0 !important;
+	height: auto !important;
+}
+
+#workspace_menu_link{
+	float:left;
+	clear:none;
+	margin: auto 0 0 0;
+	
+}
+
+#tab_section {
+	top:3px;
+	width: auto;
+	right: 20px !important;
+}
+
+#bar{
+	bottom: auto !important;
+}
+
+#logs_link {
+	margin-top:4px;
+	float:right;
+}

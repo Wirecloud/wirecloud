@@ -1,0 +1,46 @@
+#header {
+	background: none !important;
+	height: 25px !important;
+}
+
+#lite_toolbar_section {
+	margin-top:0;
+	position: relative;
+	float:left;
+}
+
+#lite_toolbar_section .toolbar_marked, #lite_toolbar_section .toolbar_unmarked{
+	top: 2px;
+	font-size: 10px;
+	color: #333333;
+}
+
+#lite_toolbar_section .toolbar_marked{
+	background-color: transparent;
+}
+
+#ws_operations_link{
+	height: auto !important;
+	background: transparent url(../images/tabops16px.png) no-repeat scroll 0 0 !important;
+}
+
+#workspace_menu_link{
+	float:left;
+	clear:none;
+	margin: auto 0 0 0;
+}
+
+#tab_section {
+	top:2px;
+	width: auto;
+}
+
+#bar{
+	bottom: auto !important;
+}
+
+#logs_link {
+	top: 10px !important;
+	right: 0 !important;
+	visibility: hidden;
+}
