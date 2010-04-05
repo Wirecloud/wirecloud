@@ -725,9 +725,11 @@ function WorkSpace (workSpaceState) {
 		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
 		
 		//Solutions menu, taken from the categoryManager of the current catalogue. If there aren't any category, the menu is null
+/* *******By now we don't use the solutions menu ********
 		this.solutionsMenu = CatalogueFactory.getInstance("LIST_VIEW").categoryManager.getSolutionsMenu();
 		if(this.solutionsMenu)
 			this.solutionsMenu.setParentMenu(this.menu)
+*/
 	
 		// adding options to workspace menu
 		if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
@@ -833,6 +835,8 @@ function WorkSpace (workSpaceState) {
 			this.menu.addOption(_currentTheme.getIconURL('solution'),
 				gettext("Find built-in solutions..."),
 				function(e) {
+				
+	/*				****By now we don't use the categories menu. Show the general List View ******
 					//if there are any category
 					if(this.solutionsMenu){
 						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu',
@@ -844,6 +848,11 @@ function WorkSpace (workSpaceState) {
 						LayoutManagerFactory.getInstance().hideCover();
 						OpManagerFactory.getInstance().showListCatalogue();
 					}
+	*/
+					//Go to the catalogue list view
+					LayoutManagerFactory.getInstance().hideCover();
+					OpManagerFactory.getInstance().showListCatalogue();
+					
 					
 				}.bind(this),
 				optionPosition++);

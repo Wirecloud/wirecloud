@@ -44,8 +44,11 @@ var CategoryManager  = function (htmlElement) {
 	//CONSTRUCTOR
 	this.categories = new Hash(JSON.parse(tag_categories));
 	
-	//paint the workspace "find solutions" menu
+	
 	if (this.categories.keys().length > 0){
+
+/* ****By now we don't use the solutions submenu ****
+		//paint the workspace "find solutions" menu
 		var idSolutionsMenu = 'solutionsMenu_'+htmlElement.id;
 		var solutionsMenuHTML = '<div id="'+idSolutionsMenu+'" class="drop_down_menu"></div></div>';
 		new Insertion.After($('menu_layer'), solutionsMenuHTML);
@@ -59,7 +62,7 @@ var CategoryManager  = function (htmlElement) {
 											OpManagerFactory.getInstance().showListCatalogue(); 
 					 				 }.bind(this),
 					 				 0);
-
+*/
 		//fill category section
 		this.createCategories();
 	}
@@ -69,7 +72,9 @@ var CategoryManager  = function (htmlElement) {
 CategoryManager.prototype._createCatElement = function(catName, category, parent){
 
 		var catObject = new TagCategory(catName, category, parent, this);
+/* ****By now we don't use the solutions submenu **** 
 		catObject.addOptionToWSMenu();
+*/
 		return catObject.getElement();
 }
 
@@ -116,6 +121,7 @@ var TagCategory = function(name, categoryStructure, parent, categoryManager){
 	
 }
 
+/* ****We don't use the solutions submenu ****
 //Tag categories have an option in the "find solution" workspace submenu in order to navigate to the
 //correspondent category in the catalogue List view from the dragboard view.
 TagCategory.prototype.addOptionToWSMenu = function(){
@@ -131,6 +137,8 @@ TagCategory.prototype.addOptionToWSMenu = function(){
 					0);
 
 }
+
+*/
 
 //creates the HTML element that represents a category
 TagCategory.prototype.getElement = function(){
