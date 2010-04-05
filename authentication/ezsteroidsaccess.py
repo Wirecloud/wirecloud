@@ -64,7 +64,7 @@ class EzSteroidsBackend:
         if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
             urlBase = settings.AUTHENTICATION_SERVER_URL
             url = urlBase + "/api/login"
-            params = {'username': username, 'password': password}
+            params = {'username': username.encode('utf-8'), 'password': password.encode('utf-8')}
             try:
                 result = download_http_content(url, params)
                 result = simplejson.loads(result)
