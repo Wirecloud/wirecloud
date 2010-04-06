@@ -109,5 +109,9 @@
     
     "error.png",
     "new.png"
-  ]
+  ],
+  
+  "links": {
+  	"logo": "http://www.zaragoza.es"
+  }
 }
