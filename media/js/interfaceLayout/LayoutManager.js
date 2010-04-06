@@ -232,8 +232,10 @@ var LayoutManagerFactory = function () {
 				}
 
 				_currentTheme.deapplyStyle();
+				_currentTheme.unsetLinks();
 				_currentTheme = theme;
 				_currentTheme.applyStyle();
+				_currentTheme.setLinks();
 				
 //				OpManagerFactory.getInstance()._themeLoaded();
 				//wait for CSS application

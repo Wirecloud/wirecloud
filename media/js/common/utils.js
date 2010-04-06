@@ -34,10 +34,14 @@ function Theme(name, baseTheme, callback) {
 	this._themeURL = "/ezweb/themes/" + name;
 
 	this._callback = callback;
-	if (baseTheme)
+	if (baseTheme) {
 		this._iconMapping = Object.clone(baseTheme._iconMapping);
-	else
+		this._links = Object.clone(baseTheme._imageLinks)
+	}
+	else {
 		this._iconMapping = new Object();
+		this._links = new Object();
+	}
 
 	this._imagesToPreload = [];
 
@@ -70,6 +74,11 @@ function Theme(name, baseTheme, callback) {
 			this._imagesToPreload = themeDesc.imagesToPreload;
 		}
 
+		// Retrieve the list of links related to elements
+		if (themeDesc.links) {
+			this._links = themeDesc.links;
+		}
+	
 		this.loaded = true;
 		if (this._callback) this._callback(this, null);
 	}.bind(this);
@@ -214,6 +223,26 @@ Theme.prototype.preloadImages = function(onFinishCallback) {
 		img.observe('error', _notifyError.bind(context));
 		img.observe('abort', _notifyError.bind(context));
 		img.src = this.getResource('/images/' + this._imagesToPreload[i]);
+	}
+}
+/*set an onclick event to each element of the links' list*/
+Theme.prototype.setLinks = function(){
+	var element;
+	for (var linkId in this._links){
+		element = $(linkId);
+		element.onclick = function(){
+			window.open(this._links[linkId]);
+		}.bind(this);
+		element.addClassName('clickable');
+	}
+}
+
+Theme.prototype.unsetLinks = function(){
+	var element;
+	for (var linkId in this._links){
+		element = $(linkId);
+		element.onclick = null;
+		element.removeClassName('clickable');
 	}
 }
 

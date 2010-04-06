@@ -342,6 +342,7 @@ var OpManagerFactory = function () {
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!
 			function imagesLoaded(theme, imagesNotLoaded) {
+				_currentTheme.setLinks();
 				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
 			}
 
