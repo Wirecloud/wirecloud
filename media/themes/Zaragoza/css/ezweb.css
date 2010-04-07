@@ -230,7 +230,7 @@ a, a:visited{
 
 #tab_section .tab {
   font-size: 11px;
-  border: 1px solid #4c5054;
+  border: 1px solid #C2CBD2;
   font-weight:normal;
   color: black;
   background: #DDDDDD url(../images/degradado.png) no-repeat scroll left top;
@@ -252,7 +252,7 @@ a, a:visited{
 #tab_section .current {
   color: #4c5054;
   background: url("../images/fond.gif") repeat scroll left top transparent;
-  border: 1px solid #4c5054;
+  border: 1px solid #C2CBD2;
   border-bottom: 0px none;
   font-weight:bold;
 }
@@ -456,7 +456,7 @@ button {
 /* containers --------------------------------------------------------------------------------------- */
 
 #wrapper {
-  border: 1px solid #4c5054;
+  border: 1px solid #C2CBD2;
   -moz-border-radius-topleft: 6px;
   -moz-border-radius-topright: 6px;
   -webkit-border-top-left-radius: 6px;
