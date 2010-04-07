@@ -42,7 +42,7 @@ var CategoryManager  = function (htmlElement) {
 	
 	//append the new category section to the catalogue html element
 	var element_selector= '#' + htmlElement.id;
-	$$(element_selector+' #tag_categories .widget_content')[0].appendChild(this.categorySection);
+	$$(element_selector+' .tag_categories .widget_content')[0].appendChild(this.categorySection);
 	
 	//CONSTRUCTOR
 	this.categories = new Hash(JSON.parse(tag_categories));
