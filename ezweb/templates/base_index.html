@@ -246,7 +246,7 @@ var installed_apps = {{ installed_apps|safe }};
 
 var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
 
-var policy_lists = {{ policies|safe }};
+var policy_lists = {{ policies|safe|default:"null" }};
 
 
 </script>
