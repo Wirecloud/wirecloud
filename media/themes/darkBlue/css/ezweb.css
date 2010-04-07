@@ -94,6 +94,10 @@ input[type="text"], input[type="password"], textarea{
 	height: 35px;
 }
 
+#powered {
+	display:none;
+}
+
 #add_tab_link, #left_slider, #right_slider {
   background-color: transparent;
   background-repeat: no-repeat;
