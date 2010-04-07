@@ -1,6 +1,5 @@
-#showcase_container {overflow:hidden;}
-#catalogue a {
-	text-decoration:none;
+#catalogue a , #app_catalogue a {
+    text-decoration:none;
 	cursor:pointer;
 }
 
@@ -296,7 +295,7 @@
 	border: 1px solid #B22222;
 }
 
-#catalogue #left_bar {
+#catalogue #left_bar, #app_catalogue #app_catalogue_left_bar {
 	float:left;
 	display:inline;
 	position:relative;
@@ -317,17 +316,17 @@
         text-decoration:none;
 }
 
-#catalogue #left_bar .bar_widget{
+#catalogue #left_bar .bar_widget, #app_catalogue #app_catalogue_left_bar .bar_widget{
 	margin: 0 0 20px 0;
 }
 
-#catalogue #left_bar .widget_title{
+#catalogue #left_bar .widget_title, #app_catalogue #app_catalogue_left_bar .widget_title{
 	font-size: 105%;
 	margin: 10px 0;
 	font-weight: bold;
 }
 
-#catalogue #left_bar .widget_content {
+#catalogue #left_bar .widget_content, #app_catalogue_left_bar .widget_content{
 	overflow-x: auto;
 	margin-top: 10px;
 }
@@ -336,7 +335,7 @@
 	position: relative;
 }
 
-#catalogue #menu_options .simple_search #simple_search_text{
+#catalogue #menu_options .simple_search #simple_search_text, #app_catalogue #menu_options .simple_search #app_catalogue_simple_search_text {
 	width:95%;
 	margin-bottom: 3px;
 	background: #e6f3ff;
@@ -349,37 +348,40 @@
 
 }
 
-#catalogue #tag_categories .children_cats{
+#catalogue #tag_categories .children_cats, #app_catalogue #tag_categories .children_cats{
 	display:none;
 	padding-left:15px;
 }
 
-#catalogue #tag_categories .open{
+#catalogue #tag_categories .open, #app_catalogue #tag_categories .open{
 	display: block;
 }
 
-#catalogue #tag_categories ul{
+#catalogue #tag_categories ul, #app_catalogue #tag_categories ul{
 	margin: 5px 0 0 0;
 	padding-left: 0;
 	list-style-type: none;
 }
 
-#catalogue #tag_categories li{
+#catalogue #tag_categories li, #app_catalogue #tag_categories li{
 	margin: 0 0 5px 0;
 }
 
-#catalogue #tag_categories .category_name, #catalogue #left_bar .link{
+#catalogue #tag_categories .category_name,#catalogue #left_bar .link,
+#app_catalogue #tag_categories .category_name, #app_catalogue_left_bar .link {
 	cursor:pointer;
 	color: darkBlue;
 }
 
-#catalogue #left_bar .link{
+#catalogue #left_bar .link, #app_catalogue #app_catalogue_left_bar .link{
 	display: block;
 	padding-bottom: 5px;
 }
 
-#catalogue #left_bar .advanced_selected, #catalogue #tag_categories .selected_cat{
-	color: #276395;
+#catalogue #left_bar .advanced_selected,
+#catalogue #tag_categories .selected_cat,
+#app_catalogue #tag_categories .selected_cat{
+	color: CadetBlue;
 }
 
 #catalogue #catalogue_content{
@@ -388,7 +390,7 @@
 	padding-left: 10px;
 }
 
-#catalogue .center {
+#catalogue .center, #app_catalogue .center {
 	position:relative;
 	float:left;
 	bottom:0px;
@@ -400,6 +402,7 @@
   	-webkit-border-top-left-radius: 6px;
   	-webkit-border-top-right-radius: 6px;
 }
+
 #catalogue #resources_container {
 	position:relative;
 	bottom: 0px;
@@ -428,6 +431,11 @@
 	margin-left: 10px;
 }
 
+#catalogue .category_header, #app_catalogue .category_header{
+    font-size: 20px;
+    font-weight: bold;
+}
+
 #catalogue .paginate {
 	padding-top:5px;
 	padding-bottom:5px;
@@ -451,8 +459,7 @@
 	float:left;
 }
 
-#catalogue .center .resources .resource
-{
+#catalogue .center .resources .resource {
 	position:relative;
 	display:inline;
 	float:left;
@@ -461,6 +468,16 @@
 	margin-top:10px;
 	background:none;
 	text-align:center;
+}
+
+#app_catalogue .center .resources .header_resource {
+	border-top: 1px solid #DDDDDD;
+}
+
+#app_catalogue .center .resources .resource_name {
+	font-size: 20px;
+	font-weight: bold;
+	padding-bottom: 8px;
 }
 
 #catalogue .center .resources .resource .top {
@@ -994,57 +1011,73 @@
 	float:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe{
+#catalogue #resources_container .info_resource .content #rateMe {
 	float:left;
 	clear:left;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe a
-{
+#catalogue #resources_container .info_resource .content #rateMe a {
 	float:left; 
 	background:url("../images/catalogue/ico_vot_vo.gif") no-repeat; 
 	width:15px; 
 	height:15px;
 }
 
-#catalogue #resources_container .info_resource .content #rateMe .on
-{
+#catalogue #resources_container .info_resource .content #rateMe .on {
 	background:url("../images/catalogue/ico_vot_ok.gif") no-repeat;
 }
 
-#catalogue #resources_container .info_resource .content #ratingSaved
-{
+#catalogue #resources_container .info_resource .content #ratingSaved {
 	display:none;
 }
 
-#catalogue #resources_container .info_resource .content #rateResult a
-{
+#catalogue #resources_container .info_resource .content #rateResult a,
+#app_catalogue .popularity a {
 	float:left; 
 	background:url("../images/catalogue/ico_vot_no.gif") no-repeat; 
 	width:15px; 
 	height:15px;
 }
 
-#catalogue #resources_container .info_resource .content #rateResult .on
-{
-	background:url("../images/catalogue/ico_vot_ok.gif") no-repeat;
+#catalogue #resources_container .info_resource .content #rateResult .on,
+#app_catalogue .popularity .on {
+	background: url("../images/catalogue/ico_vot_ok.gif") no-repeat;
+	width:15px; 
+	height:15px;
+        float: left;
 }
 
-#catalogue #resources_container .info_resource .content #rateResult .md
-{
+#catalogue #resources_container .info_resource .content #rateResult .md, 
+#app_catalogue .popularity .md {
 	background:url("../images/catalogue/ico_vot_md.gif") no-repeat;
+	width:15px; 
+	height:15px;
+    float: left;
 }
 
-#catalogue #resources_container .info_resource .content #votes
-{
+#catalogue #resources_container .info_resource .content #votes {
 	font-size: 70%;
 	margin-left:10px;
 }
+
 #close_info_resource {
 	position:absolute;
 	z-index:2;
 	right:10px;
 	top:12px;
+}
+
+.purchase_window_table td.app_name {
+	color: darkBlue;
+}
+
+.purchase_window_table tr.total_row td {
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #000000;
+}
+
+.purchase_window_table tr.total_row {
+	cursor: default;
 }
 
 /*
@@ -1092,10 +1125,15 @@
 	margin: 0;
 }
 
+#catalogue .resource button,  #app_catalogue .resource button, .contratable {
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
 /*
  * Resource icons
  */
-#catalogue .resource .toolbar button {
+#catalogue .resource .toolbar button  {
 	position:absolute;
 	right: 9px;
 	margin: 0;
