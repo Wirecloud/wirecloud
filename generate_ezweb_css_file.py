@@ -50,6 +50,20 @@ files_css_theme_darkBlue = [
    'media/themes/darkBlue/css/wiring.css',
 ]
 
+files_css_theme_Zaragoza = [
+   'media/themes/Zaragoza/css/ezweb.css', 
+   'media/themes/Zaragoza/css/catalogue.css',
+   'media/themes/Zaragoza/css/dragboard.css', 
+   'media/themes/Zaragoza/css/wiring.css',
+]
+
+files_css_theme_ZaragozaDarkBlue = [
+   'media/themes/ZaragozaDarkBlue/css/ezweb.css', 
+   'media/themes/ZaragozaDarkBlue/css/catalogue.css',
+   'media/themes/ZaragozaDarkBlue/css/dragboard.css', 
+   'media/themes/ZaragozaDarkBlue/css/wiring.css',
+]
+
 def write_file(final_file_name, file_list):
     try:
         res = open(final_file_name, 'w')
@@ -77,3 +91,5 @@ def write_file(final_file_name, file_list):
 write_file('media/css/ezweb_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_normal)
 write_file('media/themes/darkBlue/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_darkBlue)
 write_file('media/themes/default/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_default)
+write_file('media/themes/Zaragoza/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_Zaragoza)
+write_file('media/themes/ZaragozaDarkBlue/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_ZaragozaDarkBlue)
