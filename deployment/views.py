@@ -72,7 +72,7 @@ class Resources(Resource):
 	def create(self, request):
 		# Deployment Info
 		info = InfoDeployment(request)
-
+        
 		try:
 			user = user_authentication(request, request.user.username)
 		except Http403, e:
@@ -100,7 +100,7 @@ class Resources(Resource):
 			try:
 				file_wgt = request.FILES['file']
 				file_wgt_path = path.join(info.TMPDIR.encode("utf8"), file_wgt.name.encode("utf8"))
-				f = open(file_wgt_path, "w")
+				f = open(file_wgt_path, "wb")
 				f.write(file_wgt.read())
 				f.close()
 				
@@ -160,7 +160,6 @@ class Resources(Resource):
 		return self.create(request)
 
 	def read(self, request, username, vendor, name, version):
-
 		# Get info deployment
 		info = InfoDeployment(request)
 
@@ -190,7 +189,7 @@ class Resources(Resource):
 				info.change_working_folder(gadget_path)
 				pkg = WgtPackageUtils()
 				pkg.create('.', path.join(info.TMPDIR, vendor+'_'+name+'_'+version), xmlDoc.toxml(), info.ID)
-				file_wgt = open(path.join(info.TMPDIR, vendor+'_'+name+'_'+version+'.wgt'), 'r')
+				file_wgt = open(path.join(info.TMPDIR, vendor+'_'+name+'_'+version+'.wgt'), 'rb')
 				content_file = file_wgt.read()
 				file_wgt.close()
 				info.change_working_folder(BASEDIR_PLATFORM)

@@ -58,9 +58,8 @@ class TemplateParser:
             self.xml = download_http_content(uri, user=user)
         else:
             # In this case 'uri' is a filesystem URL
-            if uri[0] == '/':
+            if uri[0] == '/': #TODO Revisar
                 uri = uri[1:]
-
             localpath = path.join(settings.BASEDIR, url2pathname(uri.encode("utf8")))
             f = open(localpath, 'r')
             self.xml = f.read()
@@ -200,7 +199,7 @@ class TemplateHandler(handler.ContentHandler):
         self.current_text = ""
         self.fromWGT = fromWGT
         self.user = user
-        
+
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
                 return 'S'
@@ -513,7 +512,8 @@ class TemplateHandler(handler.ContentHandler):
         _href=""
 
         if (attrs.has_key('href')):
-            _href = url2pathname(attrs.get('href').encode("utf8"))
+            #_href = url2pathname(attrs.get('href').encode("utf8"))
+            _href = attrs.get('href').encode("utf8")
         
         _cacheable = True
         if attrs.has_key('cacheable'):

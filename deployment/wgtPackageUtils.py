@@ -14,7 +14,7 @@ class WgtPackageUtils:
 		self.addFolder(zip_file, folder, templateFileName)
 
 		# Template file
-		zip_file.writestr(str(templateFileName), templateFileContents)
+		zip_file.writestr(str(templateFileName.encode("utf-8").replace(os.sep, '/')), templateFileContents.encode("utf-8"))
 
 		zip_file.close()
 
@@ -45,20 +45,20 @@ class WgtPackageUtils:
 			os.mkdir(path, 0777)
 
 		for name in zip_file.namelist():
-			listnames = name.split(os.sep)[:-1]
+			listnames = name.split("/")[:-1]
 			folder = path
-			if name.endswith(os.sep):
+			if name.endswith("/"):
 				for namedir in listnames:
-					folder += os.sep + namedir
+					folder += os.sep + namedir.replace("/", os.sep)
 					if (not os.path.exists(folder)) or ((os.path.exists(folder)) 
 						and (not os.path.isdir(folder))):
 						os.mkdir(folder)
 			else:
 				for namedir in listnames:
-					folder += os.sep + namedir
+					folder += os.sep + namedir.replace("/", os.sep)
 					if (not os.path.exists(folder)) or ((os.path.exists(folder)) 
 						and (not os.path.isdir(folder))):
 						os.mkdir(folder)
-				outfile = open(os.path.join(path, name), 'wb')
+				outfile = open(os.path.join(path, name.replace("/", os.sep)), 'wb')
 				outfile.write(zip_file.read(name))
 				outfile.close()

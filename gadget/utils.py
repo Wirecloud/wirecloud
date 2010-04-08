@@ -36,72 +36,72 @@ from gadget.htmlHeadParser import HTMLHeadParser
 from django.utils.http import urlquote
 
 def get_or_create_gadget (templateURL, user, fromWGT = False):
-	########### Template Parser
-	templateParser = None
-		 
-	# Gadget is created only once
-	templateParser = TemplateParser(templateURL, user, fromWGT)
-	gadget_uri = templateParser.getGadgetUri()
+    ########### Template Parser
+    templateParser = None
 
-	try:
-		gadget = Gadget.objects.get(uri=gadget_uri)
-	except Gadget.DoesNotExist:
-		# Parser creates the gadget. It's made only if the gadget does not exist
-		templateParser.parse()
-		gadget = templateParser.getGadget()
+    # Gadget is created only once
+    templateParser = TemplateParser(templateURL, user, fromWGT)
+    gadget_uri = templateParser.getGadgetUri()
 
-	# A new user has added the gadget in his showcase 
-	gadget.users.add(user) 
-		 
-	return {"gadget":gadget, "templateParser":templateParser}
-      
+    try:
+        gadget = Gadget.objects.get(uri=gadget_uri)
+    except Gadget.DoesNotExist:
+        # Parser creates the gadget. It's made only if the gadget does not exist
+        templateParser.parse()
+        gadget = templateParser.getGadget()
+
+    # A new user has added the gadget in his showcase 
+    gadget.users.add(user) 
+        
+    return {"gadget":gadget, "templateParser":templateParser}
+    
 
 def includeTagBase(document, url, request):
-	# Get info url Gadget: host, username, Vendor, NameGadget and Version 
-	
-	exp = re.compile(r'.*/deployment/gadgets/')
-	expScript = re.compile(r'<script.*</script>', re.I|re.S)
-	expLink = re.compile(r'<style.*</style>', re.I|re.S)
+    # Get info url Gadget: host, username, Vendor, NameGadget and Version 
 
-	# Is the gadget in the platform?
-	if not exp.search(url):
-		return document
+    exp = re.compile(r'.*/deployment/gadgets/')
+    expScript = re.compile(r'<script.*</script>', re.I|re.S)
+    expLink = re.compile(r'<style.*</style>', re.I|re.S)
 
-	# Get href base
-	elements = exp.sub("", url).split("/")
-	
-	if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
-		host = "https://"+request.META['HTTP_HOST']
-	else:
-		host = "http://"+request.META['HTTP_HOST']
+    # Is the gadget in the platform?
+    if not exp.search(url):
+        return document
 
-	href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
+    # Get href base
+    elements = exp.sub("", url).split("/")
 
-	# HTML Parser
-	subDocument = expScript.sub("",document)
-	subDocument = expLink.sub("",subDocument)
-	parser = HTMLHeadParser(subDocument)
-	# Split document by lines
-	lines = document.split("\n")
+    if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
+        host = "https://"+request.META['HTTP_HOST']
+    else:
+        host = "http://"+request.META['HTTP_HOST']
 
-	# HTML document has not head tag
-	if not parser.getPosStartHead() and parser.getPosStartHtml():
-		htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)',re.I)
-		if(htmlExp.search(lines[parser.getPosStartHtml()-1])):
-			v = htmlExp.search(lines[parser.getPosStartHtml()-1])
-			element1 = v.group("element1")
-			element2 = v.group("element2")
-			html = "<html><head><base href='"+href+"'/></head>"
-			lines[parser.getPosStartHtml()-1] = element1 + html + element2
-	
-	# HTML document has head tag but has not base tag
-	if parser.getPosStartHead() and not parser.getHrefBase():
-		headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)',re.I)
-		if(headExp.search(lines[parser.getPosStartHead()-1])):
-			v = headExp.search(lines[parser.getPosStartHead()-1])
-			element1 = v.group("element1")
-			element2 = v.group("element2")
-			head = "<head><base href='"+ href + "'/>"
-			lines[parser.getPosStartHead()-1] = element1 + head + element2
-	return "".join("\n").join(lines)
+    href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
+    # HTML Parser
+    subDocument = expScript.sub("",document)
+    subDocument = expLink.sub("",subDocument)
+    parser = HTMLHeadParser(subDocument)
+    # Split document by lines
+    lines = document.split("\n")
+
+    # HTML document has not head tag
+    if not parser.getPosStartHead() and parser.getPosStartHtml():
+        htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)',re.I)
+        if(htmlExp.search(lines[parser.getPosStartHtml()-1])):
+            v = htmlExp.search(lines[parser.getPosStartHtml()-1])
+            element1 = v.group("element1")
+            element2 = v.group("element2")
+            html = "<html><head><base href='"+href+"'/></head>"
+            lines[parser.getPosStartHtml()-1] = element1 + html + element2
+
+    # HTML document has head tag but has not base tag
+    if parser.getPosStartHead() and not parser.getHrefBase():
+        headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)',re.I)
+        if(headExp.search(lines[parser.getPosStartHead()-1])):
+            v = headExp.search(lines[parser.getPosStartHead()-1])
+            element1 = v.group("element1")
+            element2 = v.group("element2")
+            head = "<head><base href='"+ href + "'/>"
+            lines[parser.getPosStartHead()-1] = element1 + head + element2
+
+    return "".join("\n").join(lines)
