@@ -833,7 +833,7 @@ function WorkSpace (workSpaceState) {
 		if (!this.forceRestrictedSharing()){ //EzWeb IE6 version does not allow creating new Workspaces
 			
 			this.menu.addOption(_currentTheme.getIconURL('solution'),
-				gettext("Find built-in solutions..."),
+				gettext("Find built-in applications"),
 				function(e) {
 				
 	/*				****By now we don't use the categories menu. Show the general List View ******
