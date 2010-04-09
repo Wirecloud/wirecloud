@@ -297,7 +297,7 @@ function CatalogueListView() {
 			LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 			var currentResource = this.getResource(resourceId_);
 			var workSpaceId = currentResource.getMashupId();
-			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId});
+			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId, 'active': 'true'});
 			PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
 		}
 		

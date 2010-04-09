@@ -199,7 +199,7 @@ _URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}/la
 _URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
 _URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
 _URIConstants.prototype.POST_PUBLISH_WORKSPACE = new Template('/workspace/#{workspace_id}/publish');
-_URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
+_URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add?active=#{active}');
 _URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
 _URIConstants.prototype.PUT_SHARE_WORKSPACE = new Template('/workspace/#{workspace_id}/share/#{share_boolean}');
 _URIConstants.prototype.GET_SHARE_GROUPS = new Template('/workspace/#{workspace_id}/share/groups');

@@ -774,6 +774,10 @@ class  WorkSpaceAdderEntry(Resource):
         
         linkWorkspace(user, cloned_workspace.id, original_workspace.get_creator())
         
+        #Mark the mashup as the active workspace if it's requested. For example, solutions
+        if request.GET.has_key('active') and request.GET['active']=="true":
+            setActiveWorkspace(user, cloned_workspace);
+        
         data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
         concept_data = {}
         concept_data['user'] = user
