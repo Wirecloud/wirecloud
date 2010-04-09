@@ -144,6 +144,10 @@ IGadget.prototype.getGadget = function() {
 	return this.gadget;
 }
 
+IGadget.prototype.invalidIconPosition = function(){
+	return (this.iconPosition.x == -1 && this.iconPosition.y == -1); 
+}
+
 /**
  * Sets the position of a gadget instance. The position is calculated relative
  * to the top-left square of the gadget instance box using cells units.
@@ -152,7 +156,10 @@ IGadget.prototype.getGadget = function() {
  */
 IGadget.prototype.setPosition = function(position) {
 	// Set a initial icon position (first time) or it still follows the gadget (both positions are a reference to the same object)
-	if (!this.iconPosition || this.iconPosition == this.position) {
+	if (!this.iconPosition){
+		this.setIconPosition(new DragboardPosition(-1, -1));
+	}
+	if (this.onFreeLayout() && this.invalidIconPosition()) {
 		this.setIconPosition(position);
 	}
 
@@ -177,10 +184,10 @@ IGadget.prototype.setPosition = function(position) {
  * @param {DragboardPosition} position the new position for the iGadget icon
  */
 IGadget.prototype.setIconPosition = function(position) {
-	this.iconPosition = position;
+	this.iconPosition = position.clone();
 	if (this.iconElement) {
-		this.iconElement.style.left = this.layout.getColumnOffset(position.x) + "px";
-		this.iconElement.style.top = this.layout.getRowOffset(position.y) + "px";
+		this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+		this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 	}
 }
 
@@ -731,8 +738,8 @@ IGadget.prototype.paint = function(onInit) {
 	// Icon section
 	this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
 	this.iconDraggable = new IGadgetIconDraggable(this);
-	this.iconElement.style.left = this.layout.getColumnOffset(this.iconPosition.x) + "px";
-	this.iconElement.style.top = this.layout.getRowOffset(this.iconPosition.y) + "px";
+	this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
+	this.iconElement.style.top = this.layout.dragboard.freeLayout.getRowOffset(this.iconPosition.y) + "px";
 
 	Event.observe(this.iconImg, "click", function() {
 												if (this.layout.dragboard.isLocked()) {
@@ -1936,7 +1943,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	} else {
 		this.position.x = oldLayout.getColumnOffset(this.position.x);
 		this.position.x = newLayout.adaptColumnOffset(this.position.x).inLU;
-
+		
 		this.position.y = oldLayout.getRowOffset(this.position.y);
 		this.position.y = newLayout.adaptRowOffset(this.position.y).inLU;
 	}
