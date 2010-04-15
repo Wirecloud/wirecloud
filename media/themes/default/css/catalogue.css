@@ -304,8 +304,8 @@
 	margin: 0;
 	background: #f9f9f9;
 	border-width: 0;
-	border-right: 1px solid #BBBBBB;
-	border-bottom: 1px solid #BBBBBB;
+	border-right: 1px solid #C2CBD2;
+	border-bottom: 1px solid #C2CBD2;
 	-moz-border-radius-bottomright:6px;
 	-moz-border-radius-topleft:4px;
 	-webkit-border-bottom-left-radius: 6px;
@@ -395,7 +395,7 @@
 	float:left;
 	bottom:0px;
 	margin-top: 10px;
-	border:1px solid #BBBBBB;
+	border:1px solid #C2CBD2;
 	border-bottom: 0px;
 	-moz-border-radius-topleft:6px;
   	-moz-border-radius-topright:6px;

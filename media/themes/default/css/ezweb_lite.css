@@ -11,10 +11,12 @@
 
 #lite_toolbar_section .toolbar_marked, #lite_toolbar_section .toolbar_unmarked{
 	top: 2px;
+	font-size: 10px;
+	color: #333333;
 }
 
 #lite_toolbar_section .toolbar_marked{
-	background-color: #333333;
+	background-color: transparent;
 }
 
 #ws_operations_link{

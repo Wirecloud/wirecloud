@@ -3,7 +3,7 @@ div.gadget_window {
   -moz-border-radius-topright: 6px;
   -webkit-border-top-left-radius: 6px;
   -webkit-border-top-right-radius: 6px;
-  border: 1px solid #4c5054;
+  border: 1px solid #C2CBD2;
   background: white;
 }
 
@@ -18,7 +18,6 @@ div.gadget_menu {
   -webkit-border-top-left-radius: 4px;
   -webkit-border-top-right-radius: 4px;
   height: 16px;
-  font-weight: bold;
   background: #FFFFFF;
   font-size: 12px;
 }
@@ -46,7 +45,7 @@ div.dragboard.fixed div.gadget_menu {
 }
 
 div.dragboard.fixed {
-  background: #ffffff;
+  background: transparent;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
