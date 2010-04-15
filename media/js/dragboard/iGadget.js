@@ -967,10 +967,14 @@ IGadget.prototype.setName = function (igadgetName) {
  */
 IGadget.prototype.notifyEvent = function(){
 	
-	if (this.isIconified()){
-		//maximize iconified gadget
+	//if the igadget is out of the grid it has to be raised to the top
+	if (this.layout instanceof FreeLayout){
 		this.layout.dragboard.raiseToTop(this);
-		this.toggleMinimizeStatus(false);
+		//Moreover, if the igadget is iconified it has to be opened
+		if (this.isIconified()) {
+			//maximize iconified gadget
+			this.toggleMinimizeStatus(false);
+		}
 	}
 }
 
