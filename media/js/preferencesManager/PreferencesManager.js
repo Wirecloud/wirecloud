@@ -261,7 +261,7 @@ var PreferencesManagerFactory = function () {
 		}
 
 		// Initialize some dynamic preferences (theme...)
-		platformPreferences['initial-theme']['defaultValue'] = _DEFAULT_THEME;
+		platformPreferences['initial-theme']['defaultValue'] = _INITIAL_THEME;
 		platformPreferences['theme']['defaultValue'] = _DEFAULT_THEME;
 		var desc = gettext("Theme to use by default. (default: %(defaultValue)s)");
 		platformPreferences['theme']['description'] = interpolate(desc, {defaultValue: _DEFAULT_THEME}, true);

@@ -237,7 +237,9 @@ var last_logged_user = '{{ last_user }}';
 var post_load_script = '{{ post_load_script|safe }}';
 
 var _THEMES = {% autoescape off %} {{ THEMES }} {% endautoescape %};
+/*theme assigned to the user organization or default theme*/
 var _DEFAULT_THEME = '{{ DEFAULT_THEME }}';
+/*Default theme or theme of the active workspace*/
 var _INITIAL_THEME = '{{ INITIAL_THEME }}';
 var _ONLY_ONE_CSS_FILE = '{{ only_one_css_file }}' == 'True';
 var _EzWeb_RELEASE = '{{ ezweb_release }}';

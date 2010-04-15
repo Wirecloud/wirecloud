@@ -124,13 +124,22 @@ def policy_lists(request):
     
     return { 'policies': user_policies }  
 
-
-#    catQuerySet = Category.objects.filter(parent = None, Q(organizations_in=list(userOrgs) | Q(organizations=None))).distinct()
-#    for cat in catQuerySet:
-#        categories[cat.name] =_get_Category_Info(cat)
-#
-#    return {'tag_categories': json_encode(categories)}
-
+#private method: return the theme related to the user's organizations
+def get_theme_by_user_orgs_or_default(user):
+    #workarround: this is an ad-hoc function. Remove it after changing the
+    #Organization-Group model (changing it into a hierarchy or so).
+    #at that moment, we will set relationships between organizations and themes, categories, etc.
+    try:
+        
+        user.groups.get(name__icontains="zaragoza")
+        return "Zaragoza"
+    
+    except:
+        # there are no themes related to the user organizations. Return the default one
+        return settings.DEFAULT_THEME
+         
+    
+    
 # themes url
 def theme_url(request):
 
@@ -158,13 +167,15 @@ def theme_url(request):
         settings.CACHED_THEMES_JSON = json_encode(themes)
 
     # Process current theme
-    theme = get_user_theme(request.user, settings.DEFAULT_THEME)
+    user_default_theme = get_theme_by_user_orgs_or_default(request.user)
+    #check if the user has set the theme preference
+    theme = get_user_theme(request.user, user_default_theme)
     if not (theme in settings.CACHED_THEMES):
       theme = settings.DEFAULT_THEME
 
     theme_url = settings.MEDIA_URL + "themes/" + theme
 
-    return {'THEMES': settings.CACHED_THEMES_JSON, 'DEFAULT_THEME': settings.DEFAULT_THEME, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
+    return {'THEMES': settings.CACHED_THEMES_JSON, 'DEFAULT_THEME': user_default_theme, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
 
 def installed_apps(request):
     if hasattr(settings, 'INSTALLED_APPS'):

@@ -435,7 +435,9 @@ Preferences.prototype.save = function() {
 			preference.setInheritValue(newInheritanceSetting);
 		}
 
-		if (valueChange) {
+		//if the value of the combo has changed or we don't want to use the inherited value
+		//take the value of the combo.
+		if (newInheritanceSetting == false || valueChange) {
 			changes['value'] = newValue;
 			preference.setValue(newValue);
 		}
