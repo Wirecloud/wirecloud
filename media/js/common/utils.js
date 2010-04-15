@@ -230,10 +230,12 @@ Theme.prototype.setLinks = function(){
 	var element;
 	for (var linkId in this._links){
 		element = $(linkId);
-		element.onclick = function(){
-			window.open(this._links[linkId]);
-		}.bind(this);
-		element.addClassName('clickable');
+		if ($(linkId)) {
+			element.onclick = function(){
+				window.open(this._links[linkId]);
+			}.bind(this);
+			element.addClassName('clickable');
+		}
 	}
 }
 
