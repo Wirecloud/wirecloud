@@ -973,7 +973,7 @@ IGadget.prototype.notifyEvent = function(){
 		//Moreover, if the igadget is iconified it has to be opened
 		if (this.isIconified()) {
 			//maximize iconified gadget
-			this.toggleMinimizeStatus(false);
+			this.toggleMinimizeStatus();
 		}
 	}
 }
