@@ -302,6 +302,7 @@ ColumnLayout.prototype._moveSpaceUp = function(_matrix, iGadget) {
 
 ColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
 	this._clearSpace(_matrix, iGadget);
+	return false;
 }
 
 ColumnLayout.prototype._reserveSpace2 = function(_matrix, iGadget, positionX, positionY, width, height) {
@@ -423,6 +424,7 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 
 	// Move other instances
 	var affectedgadget, offset, affectedY;
+	var affectedGadgets = false;
 	var lastX = newPosition.x + iGadget.getWidth();
 	var lastY = newPosition.y + iGadget.getHeight();
 
@@ -436,6 +438,7 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 				offset = lastY - affectedY;
 				this._moveSpaceDown(this.matrix, affectedgadget,  offset);
 				// move only the topmost gadget in the column
+				affectedGadgets = true;
 				break;
 			}
 		}
@@ -444,6 +447,9 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 	iGadget.setPosition(newPosition);
 
 	this._reserveSpace(this.matrix, iGadget);
+	
+	//returns if any gadget's position has been modified
+	return affectedGadgets;
 }
 
 ColumnLayout.prototype._searchFreeSpace = function(width, height) {
@@ -516,9 +522,12 @@ ColumnLayout.prototype.getCellAt = function (x, y) {
  * Inserts the given iGadget into this layout.
  *
  * @param iGadget the iGadget to insert in this layout
- * @param affectsDragboard if true, the dragbaord associated to this layout will be notified
+ * @param affectsDragboard if true, the dragboard associated to this layout will be notified
+ * @return whether any gadget's position has been modified
  */
 ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+	var affectedGadgets = false;
+
 	DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 
 	if (!this.initialized)
@@ -535,8 +544,8 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 		if (diff > 0)
 			position.x -= diff
 
-		// Insert it
-		this._insertAt(iGadget, position.x, position.y);
+		// Insert it. Returns if there are any affected gadget
+		affectedGadgets = this._insertAt(iGadget, position.x, position.y);
 	} else {
 		// Search a position for the gadget
 		position = this._searchFreeSpace(iGadget.getWidth(), iGadget.getHeight());
@@ -547,11 +556,15 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 	}
 
 	this._adaptIGadget(iGadget);
+	return affectedGadgets;
 }
 
+//Returns if any gadget's position has been modified
 ColumnLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
-	this._removeFromMatrix(this.matrix, iGadget);
+	var affectedGadgets; 
+	affectedGadgets = this._removeFromMatrix(this.matrix, iGadget);
 	DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
+	return affectedGadgets;
 }
 
 ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
@@ -983,13 +996,17 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
 		this.dragboard._commitChanges(); // FIXME
 	}
 }
-
+//Returns if any gadget's position has been modified
 SmartColumnLayout.prototype._insertAt = function(iGadget, x, y) {
-	ColumnLayout.prototype._insertAt.call(this, iGadget, x, y);
+
+	var affectedGadgets = ColumnLayout.prototype._insertAt.call(this, iGadget, x, y);
 
 	this._moveSpaceUp(this.matrix, iGadget);
+	
+	return affectedGadgets;
 }
 
+//Returns if any gadget's position has been modified
 SmartColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
 	this._clearSpace(_matrix, iGadget);
 
@@ -1010,4 +1027,5 @@ SmartColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
 			}
 		}
 	}
+	return affectedIGadgets.keys().length > 0;
 }

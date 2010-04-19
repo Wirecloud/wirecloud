@@ -1909,7 +1909,10 @@ IGadget.prototype.save = function() {
  */
 IGadget.prototype.moveToLayout = function(newLayout) {
 	if (this.layout == newLayout)
-		return;
+		return;	
+
+	var affectedGadgetsRemoving = false;
+	var affectedGadgetsAdding = false;		//is there any other gadget's postion affected
 
 	var minimizeOnFinish = false;
 	if (this.minimized) {
@@ -1937,7 +1940,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	if (dragboardChange)
 		OpManagerFactory.getInstance().igadgetUnloaded(this.id);
 
-	oldLayout.removeIGadget(this, dragboardChange);
+	affectedGadgetsRemoving = oldLayout.removeIGadget(this, dragboardChange);
 
 
 	if (dragboardChange && !(newLayout instanceof FreeLayout)) {
@@ -1969,7 +1972,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 	}
 	// ##### END TODO
 
-	newLayout.addIGadget(this, dragboardChange);
+	 affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
 	this._updateExtractOption();
 	if (oldLayout instanceof FullDragboardLayout || newLayout instanceof FullDragboardLayout)
 		this._updateFulldragboardOption();
@@ -1988,48 +1991,69 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 		newLayout.dragboard._notifyWindowResizeEvent();
 	}
 
-	// TODO create a changes manager
-	// Persistence
-	var onSuccess = function(transport) { }
 
-	var onError = function(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error saving changes to persistence: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+	//if the gadget hasn't been taken to another tab and
+	//the movement affects the rest of gadgets
+	if (!dragboardChange && (affectedGadgetsRemoving || affectedGadgetsAdding)) {
+		//commit all the dragboard changes
+		this.layout.dragboard._commitChanges();
 	}
-
-	var data = new Hash();
-	data['iGadgets'] = new Array();
-
-	var iGadgetInfo = new Hash();
-	iGadgetInfo['id'] = this.id;
-	if (!(newLayout instanceof FullDragboardLayout)) {
-		iGadgetInfo['top'] = this.position.y;
-		iGadgetInfo['left'] = this.position.x;
-		iGadgetInfo['width'] = this.contentWidth;
-		iGadgetInfo['height'] = this.contentHeight;
-
-		if (this.onFreeLayout())
-			iGadgetInfo['layout'] = 1;
-		else
-			iGadgetInfo['layout'] = 0;
-
-		iGadgetInfo['fulldragboard'] = false;
-	} else {
-		iGadgetInfo['fulldragboard'] = true;
+	else { //commit only the info about this igadget. If it has changed dragboards, it won't
+			//affect the positions of the gadgets of the new tab because it's placed at the
+			//end of the dragboard. It won't either affect the old dragboard's gadgets because
+			//they will reallocate themselves and this will be notified in the next action.
+		
+		// TODO create a changes manager
+		// Persistence
+		var onSuccess = function(transport){
+		}
+		
+		var onError = function(transport, e){
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error saving changes to persistence: %(errorMsg)s."), transport, e);
+			logManager.log(msg);
+		}
+		
+		var data = new Hash();
+		data['iGadgets'] = new Array();
+		
+		var iGadgetInfo = new Hash();
+		iGadgetInfo['id'] = this.id;
+		if (!(newLayout instanceof FullDragboardLayout)) {
+			iGadgetInfo['top'] = this.position.y;
+			iGadgetInfo['left'] = this.position.x;
+			iGadgetInfo['width'] = this.contentWidth;
+			iGadgetInfo['height'] = this.contentHeight;
+			
+			if (this.onFreeLayout()) 
+				iGadgetInfo['layout'] = 1;
+			else 
+				iGadgetInfo['layout'] = 0;
+			
+			iGadgetInfo['fulldragboard'] = false;
+		}
+		else {
+			iGadgetInfo['fulldragboard'] = true;
+		}
+		
+		iGadgetInfo['icon_top'] = this.iconPosition.y;
+		iGadgetInfo['icon_left'] = this.iconPosition.x;
+		iGadgetInfo['zIndex'] = this.zPos;
+		iGadgetInfo['tab'] = this.layout.dragboard.tabId;
+		
+		data['iGadgets'].push(iGadgetInfo);
+		
+		data = {
+			'igadgets': data.toJSON()
+		};
+		var persistenceEngine = PersistenceEngineFactory.getInstance();
+		uri = URIs.GET_IGADGETS.evaluate({
+			workspaceId: oldLayout.dragboard.workSpaceId,
+			tabId: oldLayout.dragboard.tabId
+		});
+		persistenceEngine.send_update(uri, data, this, onSuccess, onError);
+		
 	}
-
-	iGadgetInfo['icon_top'] = this.iconPosition.y;
-	iGadgetInfo['icon_left'] = this.iconPosition.x;
-	iGadgetInfo['zIndex'] = this.zPos;
-	iGadgetInfo['tab'] = this.layout.dragboard.tabId;
-
-	data['iGadgets'].push(iGadgetInfo);
-
-	data = {'igadgets': data.toJSON()};
-	var persistenceEngine = PersistenceEngineFactory.getInstance();
-	uri = URIs.GET_IGADGETS.evaluate({workspaceId: oldLayout.dragboard.workSpaceId, tabId: oldLayout.dragboard.tabId});
-	persistenceEngine.send_update(uri, data, this, onSuccess, onError);
 }
 
 function IGadgetColorManager () {

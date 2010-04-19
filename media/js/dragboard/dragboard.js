@@ -107,12 +107,18 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			if (!iGadget.isInFullDragboardMode()) {
 				iGadgetInfo['top'] = iGadget.position.y;
 				iGadgetInfo['left'] = iGadget.position.x;
+				iGadgetInfo['zIndex'] = iGadget.zPos;
 				iGadgetInfo['width'] = iGadget.contentWidth;
 				iGadgetInfo['height'] = iGadget.contentHeight;
 				iGadgetInfo['fulldragboard'] = false;
 			} else {
 				iGadgetInfo['fulldragboard'] = true;
 			}
+			
+			 if (iGadget.onFreeLayout())
+				iGadgetInfo['layout'] = 1;
+			else
+				iGadgetInfo['layout'] = 0; 
 
 			var icon_position = iGadget.getIconPosition();
 			iGadgetInfo['icon_top'] = icon_position.y;
