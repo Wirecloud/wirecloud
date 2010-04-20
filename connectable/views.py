@@ -231,7 +231,10 @@ class ConnectableEntry(Resource):
                         filter = None
                         fparam_values = None
 
-                    channel = InOut(id=new_channel_data['id'], remote_subscription=remote_subscription, name=new_channel_data['name'], workspace_variable=workspace_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
+                    channel = InOut(id=new_channel_data['id'], remote_subscription=remote_subscription, \
+                                    name=new_channel_data['name'], workspace_variable=workspace_variable, \
+                                    filter=filter, filter_param_values=fparam_values, \
+                                    friend_code="", readOnly= new_channel_data['readOnly'])
                     channel.save()
                     
                     channel_info = old_channels_info[new_channel_data['id']]

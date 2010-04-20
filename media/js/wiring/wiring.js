@@ -491,6 +491,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			serialized_channel['friend_code'] = channel._friendCode;
 			serialized_channel['var_id'] = channel.variable.id;
 			serialized_channel['provisional_id'] = channel.provisional_id;
+			serialized_channel['readOnly'] = channel.readOnly;
 			if (channel.getFilter() == null)
 				serialized_channel['filter'] = null;
 			else
