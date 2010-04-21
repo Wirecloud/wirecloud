@@ -92,13 +92,8 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):
             continue
         
         #There are organizations, if a gadget organization corresponds to a user organization
-        for gadget_organization in gadget_organizations:           
-            for user_organization in organization_list:
-                if gadget_organization == user_organization:
-                    #ADD THE GADGET TO THE RESULT LIST
-                    final_list.append(gadget)
-                    continue
-        
+        if len(set(gadget_organizations) & set(organization_list)) > 0:
+            final_list.append(gadget)        
                     
     return final_list
 
