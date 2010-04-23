@@ -343,7 +343,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	 *
 	 * @param gadget the gadget to use for creating the instance
 	 */
-	Dragboard.prototype.addInstance = function (gadget) {
+	Dragboard.prototype.addInstance = function (gadget, options_) {
+		var options = {
+			"igadgetName": gadget.getDisplayName() + ' (' + this.currentCode + ')',
+			"setDefaultValues" : function(){}
+		}
+
+		Object.extend(options, options_);
+	
 		if ((gadget == null) || !(gadget instanceof Gadget))
 			return; // TODO exception
 
@@ -378,10 +385,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		}
 
 		// Create the instance
-		var igadgetName = gadget.getDisplayName() + ' (' + this.currentCode + ')';
-		var iGadget = new IGadget(gadget, null, igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading, false);
+		var iGadget = new IGadget(gadget, null, options.igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading, false);
 
-		iGadget.save();
+		iGadget.save(options);
 	}
 
 	Dragboard.prototype.getNumberOfIGadgets = function () {
@@ -494,7 +500,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		iGadget.code = null;
 	}
 
-	Dragboard.prototype.addIGadget = function (iGadget, igadgetInfo) {
+	Dragboard.prototype.addIGadget = function (iGadget, igadgetInfo, options) {
 		if (!this.iGadgetsByCode[iGadget.code])
 			throw new Exception();
 
@@ -503,7 +509,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		var oldHeight = iGadget.getHeight();
 		var oldWidth = iGadget.getWidth();
 
-		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo);
+		this.workSpace.addIGadget(this.tab, iGadget, igadgetInfo, options);
 		
 		// Notify resize event
 		iGadget.layout._notifyResizeEvent(iGadget, oldWidth, oldHeight, iGadget.getWidth(), iGadget.getHeight(), false, true);

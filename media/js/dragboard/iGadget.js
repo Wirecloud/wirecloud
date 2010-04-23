@@ -1856,12 +1856,11 @@ IGadget.prototype.is_shared_workspace = function() {
  * Saves the igadget into persistence. Used only for the first time, that is,
  * for creating igadgets.
  */
-IGadget.prototype.save = function() {
+IGadget.prototype.save = function(options) {
 	function onSuccess(transport) {
 		var igadgetInfo = JSON.parse(transport.responseText);
 		this.id = igadgetInfo['id'];
-		this.layout.dragboard.addIGadget(this, igadgetInfo);
-		
+		this.layout.dragboard.addIGadget(this, igadgetInfo, options);
 	}
 
 	function onError(transport, e) {

@@ -262,12 +262,12 @@ var OpManagerFactory = function () {
 			window.open("/logout", "_self");
 		}
 
-		OpManager.prototype.addInstance = function (gadgetId) {
+		OpManager.prototype.addInstance = function (gadgetId, options) {
 			if (!this.loadCompleted)
 				return;
 
 			var gadget = this.showcaseModule.getGadget(gadgetId);
-			this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(gadget);
+			this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(gadget, options);
 		}
 
 		OpManager.prototype.unsubscribeServices = function (gadgetId) {

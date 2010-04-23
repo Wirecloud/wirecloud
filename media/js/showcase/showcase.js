@@ -134,23 +134,60 @@ var ShowcaseFactory = function () {
 		// ****************
 		
 		// Add a new gadget from Internet
-		Showcase.prototype.addGadget = function (vendor_, name_, version_, url_) {
+		Showcase.prototype.addGadget = function (vendor_, name_, version_, url_, options_) {
 			var gadgetId = vendor_ + '_' + name_ + '_' + version_;
 			var gadget = this.gadgets[gadgetId];
 
 			if (gadget == null){
-				gadget = new Gadget (null, url_);		
+				gadget = new Gadget (null, url_, options_);
 			}else{
-				this.opManager.addInstance(gadgetId);
+				this.opManager.addInstance(gadgetId, options_);
 			}
+		}
+
+		// Add a new parameterized gadget from Internet
+		// Help:
+		//     - igadget_name_: String. New name for the iGadget
+		//     - variable_values_: Object. New values for the user preferences.
+		//         Example:
+		//             variable_values = {"var1":"value1", "var2": "value2"};
+		Showcase.prototype.addParameterizedGadget = function (vendor_, name_, version_, igadget_name_, variable_values_, url_) {
+			var url_ = (url_)?url_:null;
+			var options = {
+				"igadgetName": igadget_name_,
+				"setDefaultValues" : function(igadgetId_){
+					var varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
+					$H(variable_values_).each(function(pair) {
+						var msg = "";
+						var variable = varManager.getVariableByName(igadgetId_, pair.key);
+						if (variable) {
+							if(variable.aspect == Variable.prototype.USER_PREF) {
+								variable.annotate(pair.value);
+								variable.set(pair.value);
+							}
+							else {
+								msg = gettext("\"%(variable)s\" variable is not an User Preference");
+							}
+						}
+						else {
+							msg = gettext("\"%(variable)s\" variable doesn't exists");
+						}
+						if (msg != "") {
+							msg = interpolate(msg, {"variable": pair.key}, true);
+							OpManagerFactory.getInstance().logIGadgetError(igadgetId_, msg, Constants.Logging.WARN_MSG);
+						}
+					});
+				}
+			}
+			this.addGadget(vendor_, name_, version_, url_, options);
 		}
 		
 		// Insert gadget object in showcase object model
-		Showcase.prototype.gadgetToShowcaseGadgetModel = function(gadget_) {
+		Showcase.prototype.gadgetToShowcaseGadgetModel = function(gadget_, options_) {
 			var gadgetId = gadget_.getId();
 
 			this.gadgets[gadgetId] = gadget_;
-			this.opManager.addInstance(gadgetId);
+			this.opManager.addInstance(gadgetId, options_);
 		}
 		
 		// Remove a Showcase gadget

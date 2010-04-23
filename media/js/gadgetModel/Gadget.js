@@ -29,7 +29,7 @@
 //                  GADGET                  //
 //////////////////////////////////////////////
 
-function Gadget(gadget_, url_) {
+function Gadget(gadget_, url_, options_) {
 	
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -88,7 +88,7 @@ function Gadget(gadget_, url_) {
 			var response = transport.responseText;
 			var objRes = JSON.parse(response);
 			state = new GadgetState(objRes);
-			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this);
+			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this, options_);
 		}
 		
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
