@@ -158,8 +158,13 @@ WindowMenu.prototype.show = function () {
 }
 
 WindowMenu.prototype.hide = function () {
-	document.body.removeChild(this.htmlElement);
-	this.msgElement.update();
+	try{
+		document.body.removeChild(this.htmlElement);
+		this.msgElement.update();
+	}
+	catch (err){
+		//do nothing
+	}
 }
 
 WindowMenu.prototype.setFocus = function () {
@@ -945,7 +950,13 @@ function PublishWindowMenu (element) {
 		'email': {label: gettext('Email'), type:'email',  required: true},
 		'description': {label: gettext('Description'), type:'longtext'},
 		'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'},
-		'imageURI': {label: gettext('Image URL'), type:'url'},
+		'imageURI': {
+			label: gettext('Image URL'),
+			type: 'fileUrl',
+			linkHandler: function(){
+										this.openUploadWindow('imageURI');
+									}.bind(this)
+		},
 		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
 		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}
 	}
@@ -958,6 +969,10 @@ function PublishWindowMenu (element) {
 	warning.addClassName('msg warning');
 	warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
 	this.windowContent.appendChild(warning);
+	
+	//Window for uploading local files
+	this.uploadWindow = new UploadWindowMenu('Upload File');
+		
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
 
@@ -967,6 +982,17 @@ PublishWindowMenu.prototype.setFocus = function() {
 
 PublishWindowMenu.prototype.executeOperation = function(form) {
 	OpManagerFactory.getInstance().activeWorkSpace.publish(form);
+}
+
+PublishWindowMenu.prototype.openUploadWindow = function(targetElementName){
+	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
+	this.uploadWindow.show(targetElement);
+}
+
+PublishWindowMenu.prototype.hide = function(){
+	this.uploadWindow.hide();
+	
+	WindowMenu.prototype.hide.call(this);
 }
 
 /**
@@ -1085,8 +1111,18 @@ function AddFeedMenu (element) {
 		'name'          : {label: gettext('Name'), type: 'id', required: true},
 		'URL'           : {label: gettext('URL'), type: 'url',  required: true},
 		'separator1'    : {type: 'separator', required: true},
-		'imageURI'      : {label: gettext('Image URL'), type: 'url'},
-		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
+		'imageURI'      : {label: gettext('Image URL'),
+							type: 'fileUrl',
+							linkHandler: function(){
+											this.openUploadWindow('imageURI');
+										 }.bind(this)
+						},
+		'iPhoneImageURI': {label: gettext('iPhone Image URL'),
+							type: 'fileUrl',
+							linkHandler: function(){
+											this.openUploadWindow('iPhoneImageURI');
+										 }.bind(this)
+							},
 		'feed_color'    : {label: gettext('Template color'),
 		                   type: 'select',
 		                   options: [
@@ -1101,8 +1137,22 @@ function AddFeedMenu (element) {
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new feed'));
+	
+	//Window for uploading local files
+	this.uploadWindow = new UploadWindowMenu('Upload File');
 }
 AddFeedMenu.prototype = new FormWindowMenu();
+
+AddFeedMenu.prototype.openUploadWindow = function(targetElementName){
+	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
+	this.uploadWindow.show(targetElement);
+}	
+
+AddFeedMenu.prototype.hide = function(){
+	this.uploadWindow.hide();
+	
+	WindowMenu.prototype.hide.call(this);
+}
 
 AddFeedMenu.prototype.setFocus = function() {
 	this.fields['name'].inputInterface.focus();
@@ -1151,8 +1201,18 @@ function AddSiteMenu (element) {
 		'events': {label: gettext('Events'), type: 'text'},
 		'separator2': {type: 'separator', required: true},
 		'home_URL': {label: gettext('Home URL'), type: 'url'},
-		'imageURI': {label: gettext('Image URL'), type: 'url'},
-		'iPhoneImageURI': {label: gettext('iPhone Image URL'), type: 'url'},
+		'imageURI': {label: gettext('Image URL'),
+					 type: 'fileUrl',
+					 linkHandler: function(){
+									this.openUploadWindow('imageURI');
+								 }.bind(this)
+						},
+		'iPhoneImageURI': {label: gettext('iPhone Image URL'),
+						   type: 'fileUrl',
+						   linkHandler: function(){
+											this.openUploadWindow('iPhoneImageURI');
+										 }.bind(this)
+						},
 		'menu_color': {label: gettext('Menu Color (Hex.)'), type: 'color'},
 		'organization': {label: gettext('Organization'), type: 'select', options:this.organizations},
 		'source': {label: gettext('Source'), type: 'text'},
@@ -1160,8 +1220,23 @@ function AddSiteMenu (element) {
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Add new site'));
+	
+	//Window for uploading local files
+	this.uploadWindow = new UploadWindowMenu('Upload File');	
+	
 }
 AddSiteMenu.prototype = new FormWindowMenu();
+
+AddSiteMenu.prototype.openUploadWindow = function(targetElementName){
+	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
+	this.uploadWindow.show(targetElement);
+}	
+
+AddSiteMenu.prototype.hide = function(){
+	this.uploadWindow.hide();
+	
+	WindowMenu.prototype.hide.call(this);
+}
 
 AddSiteMenu.prototype.setFocus = function() {
 	this.fields['name'].inputInterface.focus();
@@ -1325,4 +1400,69 @@ PreferencesWindowMenu.prototype.show = function () {
 	this.titleElement.setTextContent(this.manager.buildTitle());
 	this.manager.resetInterface('platform');
 	WindowMenu.prototype.show.call(this);
+}
+
+/**
+ * Specific class for uploading files.
+ *
+ * @param scope
+ *
+ */
+function UploadWindowMenu (title, targetElement) {
+	WindowMenu.call(this, gettext(title));
+
+	this.targetElement = null;
+	this.iframe = document.createElement('iframe');
+	this.iframe.setAttribute('id', 'uploader_frame');
+	this.iframe.setAttribute('src', URIs.FILE_UPLOADER);
+	this.iframe.setAttribute('width', "100%");
+	this.iframe.setAttribute("frameBorder", "0");
+	
+	var iframeDiv = document.createElement('div');
+	Element.extend(iframeDiv);
+	iframeDiv.addClassName('iframeDiv');
+	this.windowContent.appendChild(iframeDiv)
+	
+	iframeDiv.appendChild(this.iframe);
+	
+	var warning = document.createElement('div');
+	Element.extend(warning);
+	warning.addClassName('msg warning');
+	warning.update(gettext("WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not responsible for the content of the uploaded files."));
+	this.windowContent.appendChild(warning);
+}
+
+UploadWindowMenu.prototype = new WindowMenu();
+
+UploadWindowMenu.prototype.show = function(targetElement){
+	//reload the iframe for IE
+	this.iframe.setAttribute('src', URIs.FILE_UPLOADER);
+	this.targetElement = targetElement;
+	
+	WindowMenu.prototype.show.call(this);
+}
+
+UploadWindowMenu.prototype._closeListener = function(){
+
+	//Take the value of the URL if it succeed and set that value to the targetElement  
+	try {
+		if (this.iframe.contentDocument) {
+			var urlElement = this.iframe.contentDocument.getElementById('url');
+		}
+		else { //IE
+			var urlElement = this.iframe.contentWindow.document.getElementById('url')
+		}
+		
+		if (urlElement) {
+			this.targetElement.value = urlElement.innerHTML;
+		}
+	} 
+	catch (err) {
+	//do nothing
+	}
+	finally {
+		//hide the window
+		this.hide();
+	}
+	
 }

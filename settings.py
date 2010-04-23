@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     #openid authentication not compatible with EzSteroids
     #'openid_auth',
     #'openid_auth.django_openidconsumer',
+    'uploader'
 #   'clms',
 )
 

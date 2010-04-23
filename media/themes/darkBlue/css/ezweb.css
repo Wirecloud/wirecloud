@@ -21,6 +21,12 @@ input[type="text"], input[type="password"], textarea{
 	-moz-border-radius: 3%;
 }
 
+.window_link{
+	color:#C5E2F4;
+	text-decoration:underline;
+	cursor: pointer;
+}
+
 #loading-background {
     background: white;
     -moz-opacity: 0.6;
@@ -339,7 +345,11 @@ input[type="text"], input[type="password"], textarea{
 
 .window_menu .window_content .msg {
   text-align: justify;
-  margin-left: 20px;
+}
+
+.window_menu .window_content .iframeDiv {
+  background-color: white;
+  -moz-border-radius: 6px;
 }
 
 .window_menu .legend {

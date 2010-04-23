@@ -316,6 +316,9 @@ LongTextInputInterface.prototype = new InputInterface();
  *
  */
 function URLInputInterface(fieldId, options) {
+	if (arguments.length == 0)
+		return;
+	
 	TextInputInterface.call(this, fieldId, options);
 }
 URLInputInterface.prototype = new TextInputInterface();
@@ -325,6 +328,27 @@ URLInputInterface.prototype._URLChecker = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?
 URLInputInterface.prototype._checkValue = function(newValue) {
 	return this._URLChecker.test(newValue) ? InputValidationError.NO_ERROR : InputValidationError.URL_ERROR;
 }
+
+/**
+ *
+ */
+function FileURLInputInterface(fieldId, options) {
+	URLInputInterface.call(this, fieldId, options);
+	
+	this.link = document.createElement('div');
+	Element.extend(this.link);
+	this.link.addClassName('window_link');
+	this.link.innerHTML = gettext("Choose a local file");
+	Event.observe(this.link, 'click', options.linkHandler)
+}
+FileURLInputInterface.prototype = new URLInputInterface();
+
+FileURLInputInterface.prototype._insertInto = function(element){
+	element.appendChild(this.inputElement);
+	element.appendChild(this.link);
+}
+
+
 
 /**
  *
@@ -607,6 +631,8 @@ InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 		return new ColorInputInterface(fieldId, fieldDesc);
 	case 'url':
 		return new URLInputInterface(fieldId, fieldDesc);
+	case 'fileUrl':
+		return new FileURLInputInterface(fieldId, fieldDesc);
 	case 'email':
 		return new EMailInputInterface(fieldId, fieldDesc);
 	case 'version':

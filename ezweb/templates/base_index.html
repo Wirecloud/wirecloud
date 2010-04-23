@@ -211,6 +211,7 @@ _URIConstants.prototype.POST_PUBLISH_REMOTE_CHANNELS = new Template('/notifier/c
 _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalogue/versions';
 _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
+_URIConstants.prototype.FILE_UPLOADER = '/uploader';
 
 {% if AUTHENTICATION_SERVER_URL %}
 	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';

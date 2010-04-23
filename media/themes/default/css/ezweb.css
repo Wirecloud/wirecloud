@@ -12,6 +12,12 @@ a, a:visited{
 	color:darkBlue;
 }
 
+.window_link{
+	color:darkBlue;
+	text-decoration:underline;
+	cursor: pointer;
+}
+
 #loading-background {
     background: white;
     -moz-opacity: 0.6;
@@ -362,7 +368,6 @@ a, a:visited{
 
 .window_menu .window_content .msg {
   text-align: justify;
-  margin-left: 20px;
 }
 
 .window_menu .legend {
