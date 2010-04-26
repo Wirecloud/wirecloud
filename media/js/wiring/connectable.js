@@ -353,6 +353,7 @@ function wChannel (variable, name, id, provisional_id, readOnly) {
 	this.remoteSubscription = null;
 	this.readOnly = readOnly;
 	this.annotated = true;
+	this.valueWithoutFilter = null;
 }
 wChannel.prototype = new wInOut();
 
@@ -361,7 +362,7 @@ wChannel.prototype.getValue = function(propagating) {
 		return this.variable.get();
 	else{
 		try{
-			var value = this.filter.run(this.variable.get(), this.filterParams, this);
+			var value = this.filter.run(this.valueWithoutFilter, this.filterParams, this);
 			if(!propagating && (this.getFilter().getlastExecError() != null)) {
 				LayoutManagerFactory.getInstance().showMessageMenu(this.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
 			}
@@ -379,7 +380,7 @@ wChannel.prototype.getValue = function(propagating) {
 }
 
 wChannel.prototype.getValueWithoutFilter = function() {
-	return this.variable.get();
+	return this.valueWithoutFilter();
 }
 
 wChannel.prototype.getFilter = function() {
@@ -422,7 +423,7 @@ wChannel.prototype.setFilter = function(newFilter) {
 wChannel.prototype._annotate = function(value, source, initial){
 	//Get the real value (filtered if necessary)
 	var oldValue = this.variable.get();
-	this.variable.set(value);
+	this.valueWithoutFilter = value;
 
 	try {
 		if (!initial)
