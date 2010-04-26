@@ -124,14 +124,16 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-#    'django.contrib.sessions.middleware.SessionMiddleware',
-    'middleware.session_middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+#    'middleware.session_middleware.SessionMiddleware',
+#    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
 #    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'middleware.auth_middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'middleware.console_middleware.ConsoleExceptionMiddleware',
+#    'facebookconnect.middleware.FacebookConnectMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -156,11 +158,14 @@ INSTALLED_APPS = (
     'remoteChannel',
     'user',
     'API',
-    #openid authentication not compatible with EzSteroids
+    ### openid authentication not compatible with EzSteroids ###
     #'openid_auth',
     #'openid_auth.django_openidconsumer',
     'uploader'
 #   'clms',
+    ### facebook applications ###
+#    'facebook',
+#    'facebookconnect',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -206,6 +211,7 @@ AUTHENTICATION_BACKENDS = (
 #'authentication.ldapaccess.LDAPBackend',
 #'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
+#'facebookconnect.models.FacebookBackend',
 )
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
@@ -247,6 +253,29 @@ FORCE_SCRIPT_NAME=""
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
+
+#################################
+##### Facebook Connect data #####
+#################################
+
+# To enable Facebook Connect authentication in EzWeb (having your application set up in Facebook) you must:
+#    1. Enable the facebook and facebookconnect applications
+#    2. Enable the Middlewares (facebook.djangofb.FacebookMiddleware, facebookconnect.middleware.FacebookConnectMiddleware)
+#    3. Enable the backend facebookconnect.models.FacebookBackend
+#    4. Uncomment the following constants and configure the keys: FACEBOOK_API_KEY and FACEBOOK_SECRET_KEY
+#    5. Uncomment the sections of the login templates (change # with %}. These sections are:
+#        * {# load facebook_tags #}
+#        * {# facebook_js #}
+#        * {# initialize_facebook_connect #}
+#        * {# show_connect_button #}
+#FACEBOOK_API_KEY = "54b180140f0587620c9e5de03ab71f6c"
+#FACEBOOK_SECRET_KEY = "8f31a102ba838d1cb70231d5a0e9f82f"
+#FACEBOOK_INTERNAL = True
+#FACEBOOK_CACHE_TIMEOUT = 1800
+
+#################################
+
+# External settings configuration
 try:
     from clms.settings import *
 except ImportError:

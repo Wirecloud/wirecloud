@@ -1,0 +1,30 @@
+{% extends "facebook/base.html" %}
+{% load facebook_tags %}
+{% block content %}
+  <h1>Login</h1>
+  <div>{% show_facebook_photo user %}</div>
+  <h2>{% show_facebook_greeting user %}</h2>
+  <p>If you already have an account, enter your username and password below to link your account with your facebook account. If you do not have an account, you can create one below to be linked with your facebook account or click Connect with facebook only - you won't have to remember a name and password.</p>
+  
+  {% if login_form.errors %}
+  <p class="error">Your username and password didn't match. Please try again.</p>
+  {% endif %}
+   <h4>Link facebook to an existing account:</h4>
+  <form action="" method="post" accept-charset="utf-8" class="nice-form">
+    <input type="hidden" name="login" value="true" id="login">
+    {{ login_form.as_p }}
+    {% if next %}
+    <input type="hidden" name="next" value="{{ next }}" id="next">        
+    {% endif %}
+    <p><input type="submit" value="Link my accounts and log in"></p>
+  </form>
+  <hr/>
+   <h4>Use facebook only:</h4>
+  <form action="" method="post" accept-charset="utf-8" class="nice-form">
+    <input type="hidden" name="facebook_only" value="true" id="facebook_only">
+    {% if next %}
+    <input type="hidden" name="next" value="{{ next }}" id="next">        
+    {% endif %}
+    <p><input type="submit" value="Connect with facebook only"></p>
+  </form>
+{% endblock %}

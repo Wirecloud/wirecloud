@@ -1,4 +1,7 @@
 {% load i18n %}
+{% load useful_tags %}
+
+{# load facebook_tags #}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -234,6 +237,8 @@ h3{
 
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
+{# facebook_js #}
+
 <script type="text/javascript">
 
    function check_browser() {
@@ -375,17 +380,19 @@ h3{
 				<a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Create an account' %}</a>
 			</div>
 			{% endif %}
-			{% for app in installed_apps %}
-                {% ifequal app 'openid_auth' %} 
-                    <div class="registration">{% trans "Do you have an OpenID account?" %} <label id="openid_link" onclick="toggleOpenId();">{% trans "Login using OpenID" %}</label></div>
-                    <div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
-                        <form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
-                            {{ openid_form }}
-                            <input type="submit" id="submit" value="{% trans 'Log in' %}" />
-                        </form>
-                    </div>
-                {% endifequal %}
-            {% endfor %}
+			{% if "facebookconnect"|in_list:installed_apps %}
+				<div id="facebook_access" class="registration">{% trans 'Access with your Facebook account' %}</div>
+				{# show_connect_button #}
+			{% endif %}
+			{% if "openid_auth"|in_list:installed_apps %}
+                <div class="registration">{% trans "Do you have an OpenID account?" %} <label id="openid_link" onclick="toggleOpenId();">{% trans "Login using OpenID" %}</label></div>
+                <div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
+                    <form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
+                        {{ openid_form }}
+                        <input type="submit" id="submit" value="{% trans 'Log in' %}" />
+                    </form>
+                </div>
+            {% endif %}
 		</div>
 		<div id="tips">
 			<div id="tip_catalogue" class="tooltip">
@@ -400,5 +407,7 @@ h3{
 		</div>
 	</div>
 </div>
+
+{# initialize_facebook_connect #}
 </body>
 </html>

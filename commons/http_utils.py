@@ -38,7 +38,7 @@ from django.conf import settings
 from django.utils import simplejson
 
 
-def download_http_content (uri, params=None, user=None):
+def download_http_content (uri, params=None, user=None, headers={}):
     urlcleanup()
 
     #proxy = settings.PROXY_SERVER
@@ -87,9 +87,12 @@ def download_http_content (uri, params=None, user=None):
         request = urllib2.Request(uri, data, headers)
         return urllib2.urlopen(request).read()
     elif params:
-        return opener.open(uri,data=urlencode(params)).read()
+        data = params and urlencode(params)
+        request = urllib2.Request(url=uri, data=data, headers=headers)
+        return urllib2.urlopen(request).read()
     else:
-        return opener.open(uri).read()
+        request = urllib2.Request(url=uri, headers=headers)
+        return urllib2.urlopen(request).read()
 
 def PUT_parameter (request, parameter_name):
     # Checking GET and POST space!
