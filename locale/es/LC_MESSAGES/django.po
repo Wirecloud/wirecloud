@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-15 13:03+0200\n"
-"PO-Revision-Date: 2010-04-15 13:04+0100\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2010-04-27 11:29+0200\n"
+"PO-Revision-Date: 2010-04-27 11:30+0100\n"
+"Last-Translator: jjmr <jjmr@tid.es>\n"
 "Language-Team: Español/España\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -54,9 +54,9 @@ msgstr "Parametro URL del template no encontrado"
 msgid "Logged out"
 msgstr "Logged out"
 
-#: catalogue/catalogue_utils.py:218
-#: catalogue/catalogue_utils.py:234
-#: catalogue/catalogue_utils.py:249
+#: catalogue/catalogue_utils.py:213
+#: catalogue/catalogue_utils.py:229
+#: catalogue/catalogue_utils.py:244
 msgid "Invalid format. Format must be either xml or json"
 msgstr "Formato inválido. El formato debe ser xml o json"
 
@@ -1005,21 +1005,21 @@ msgid "Out InOut"
 msgstr "Out InOut"
 
 #: connectable/views.py:91
-#: connectable/views.py:327
+#: connectable/views.py:330
 msgid "JSON parameter expected"
 msgstr "Se esperaba el parámetro JSON"
 
-#: connectable/views.py:310
+#: connectable/views.py:313
 #, python-format
 msgid "referred workspace (id: %(workspace_id)s) does not exist."
 msgstr "el entorno de trabajo referenciado (id: %(workspace_id)s) no existe."
 
-#: connectable/views.py:314
+#: connectable/views.py:317
 #, python-format
 msgid "connectables cannot be saved: %(exc)s"
 msgstr "Fallo al guardar los connectables: %(exc)s"
 
-#: connectable/views.py:332
+#: connectable/views.py:335
 #, python-format
 msgid "referred workspace %(workspace_name)s does not exist."
 msgstr "El entorno de trabajo %(workspace_name)s refenciado no existe."
@@ -1146,9 +1146,9 @@ msgstr "Error 404 - No encontrado"
 #: ezweb/templates/500.html:235
 #: ezweb/templates/catalogue_adder.html:228
 #: ezweb/templates/catalogue_adder_login.html:235
-#: ezweb/templates/registration/login.html:284
+#: ezweb/templates/registration/login.html:289
 #: media/themes/Zaragoza/templates/registration/login.html:265
-#: media/themes/default/templates/registration/login.html:291
+#: media/themes/default/templates/registration/login.html:297
 msgid "Contact us"
 msgstr "Contacto"
 
@@ -1163,9 +1163,9 @@ msgstr "La URL pedida \"%(request_path)s\" no se encuentra en este servidor."
 #: ezweb/templates/catalogue_adder_login.html:7
 #: ezweb/templates/index.html:4
 #: ezweb/templates/iphone.html:8
-#: ezweb/templates/registration/login.html:7
+#: ezweb/templates/registration/login.html:10
 #: media/themes/Zaragoza/templates/registration/login.html:7
-#: media/themes/default/templates/registration/login.html:7
+#: media/themes/default/templates/registration/login.html:11
 msgid "EzWeb Platform"
 msgstr "Plataforma EzWeb"
 
@@ -1265,75 +1265,76 @@ msgid "Adding a Gadget to EzWeb catalogue is a login-required operation. Please 
 msgstr "Añadir un Gadget al catalogo de EzWeb es una operación que requiere estar autenticado. Por favor, autenticate en la plataforma EzWeb y reintentalo."
 
 #: ezweb/templates/catalogue_adder_login.html:257
-#: ezweb/templates/registration/login.html:304
+#: ezweb/templates/registration/login.html:309
 #: media/themes/Zaragoza/templates/registration/login.html:281
-#: media/themes/default/templates/registration/login.html:310
+#: media/themes/default/templates/registration/login.html:316
 msgid "Thanks to EzWeb you will be able to combine your favorite services to make your life easier"
 msgstr "Gracias a EzWeb podrás combinar tus servicios favoritos para hacer tu vida más sencilla"
 
 #: ezweb/templates/catalogue_adder_login.html:259
-#: ezweb/templates/registration/login.html:306
+#: ezweb/templates/registration/login.html:311
 #: media/themes/Zaragoza/templates/registration/login.html:283
-#: media/themes/default/templates/registration/login.html:312
+#: media/themes/default/templates/registration/login.html:318
 msgid "Watch our videos!"
 msgstr "¡Echa un vistazo a nuestros vídeos!"
 
 #: ezweb/templates/catalogue_adder_login.html:267
-#: ezweb/templates/registration/login.html:314
+#: ezweb/templates/registration/login.html:319
 #: media/themes/Zaragoza/templates/registration/login.html:291
-#: media/themes/default/templates/registration/login.html:320
+#: media/themes/default/templates/registration/login.html:326
 msgid "<b>Discover</b> new gadgets in our catalogue and import them in your workspace."
 msgstr "<b>Descubre</b> nuevos gadgets en nuestro catálogo y añádelos a tu espacio de trabajo."
 
 #: ezweb/templates/catalogue_adder_login.html:275
-#: ezweb/templates/registration/login.html:322
+#: ezweb/templates/registration/login.html:327
 #: media/themes/Zaragoza/templates/registration/login.html:299
-#: media/themes/default/templates/registration/login.html:328
+#: media/themes/default/templates/registration/login.html:334
 msgid "Arrange gadgets in your workspace <b>at your will</b>"
 msgstr "Personaliza los gadgets de tu espacio de trabajo <b>a tu gusto</b>"
 
 #: ezweb/templates/catalogue_adder_login.html:283
-#: ezweb/templates/registration/login.html:330
+#: ezweb/templates/registration/login.html:335
 #: media/themes/Zaragoza/templates/registration/login.html:307
-#: media/themes/default/templates/registration/login.html:336
+#: media/themes/default/templates/registration/login.html:342
 msgid "<b>Wire</b> gadgets together."
 msgstr "<b>Conecta</b> los gadgets entre sí."
 
 #: ezweb/templates/catalogue_adder_login.html:291
-#: ezweb/templates/registration/login.html:338
+#: ezweb/templates/registration/login.html:343
 #: media/themes/Zaragoza/templates/registration/login.html:315
-#: media/themes/default/templates/registration/login.html:344
+#: media/themes/default/templates/registration/login.html:350
 msgid "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue."
 msgstr "Comparte tus espacios de trabajo/<b>mashups</b> como elementos del catálogo de EzWeb."
 
 #: ezweb/templates/catalogue_adder_login.html:299
-#: ezweb/templates/registration/login.html:346
+#: ezweb/templates/registration/login.html:351
 #: media/themes/Zaragoza/templates/registration/login.html:323
-#: media/themes/default/templates/registration/login.html:352
+#: media/themes/default/templates/registration/login.html:358
 msgid "Share your own workspace as an object you may <b>embed</b> in your favourite environments."
 msgstr "Comparte tu propio espacio de trabajo como objeto que puedes <b>embeber</b> en tus entornos favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:312
-#: ezweb/templates/registration/login.html:359
+#: ezweb/templates/registration/login.html:364
+#: facebookconnect/forms.py:9
 #: media/themes/Zaragoza/templates/registration/login.html:336
-#: media/themes/default/templates/registration/login.html:365
+#: media/themes/default/templates/registration/login.html:371
 msgid "Username"
 msgstr "Usuario"
 
 #: ezweb/templates/catalogue_adder_login.html:317
-#: ezweb/templates/registration/login.html:364
+#: ezweb/templates/registration/login.html:369
 #: gadget/models.py:120
 #: media/themes/Zaragoza/templates/registration/login.html:341
-#: media/themes/default/templates/registration/login.html:370
+#: media/themes/default/templates/registration/login.html:376
 msgid "Password"
 msgstr "Contraseña"
 
 #: ezweb/templates/catalogue_adder_login.html:324
-#: ezweb/templates/registration/login.html:371
-#: ezweb/templates/registration/login.html:384
+#: ezweb/templates/registration/login.html:376
+#: ezweb/templates/registration/login.html:392
 #: media/themes/Zaragoza/templates/registration/login.html:348
-#: media/themes/default/templates/registration/login.html:377
-#: media/themes/default/templates/registration/login.html:388
+#: media/themes/default/templates/registration/login.html:383
+#: media/themes/default/templates/registration/login.html:397
 msgid "Log in"
 msgstr "Acceder"
 
@@ -1350,37 +1351,37 @@ msgid "register"
 msgstr "regístrate"
 
 #: ezweb/templates/catalogue_adder_login.html:332
-#: ezweb/templates/registration/login.html:392
+#: ezweb/templates/registration/login.html:399
 #: media/themes/Zaragoza/templates/registration/login.html:356
-#: media/themes/default/templates/registration/login.html:396
+#: media/themes/default/templates/registration/login.html:405
 msgid "<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages."
 msgstr "¡<b>Ayúdanos</b> a hacer que crezca nuestro catálogo! Añade fácilmente gadgets vinculados a tus páginas web y feeds favoritos."
 
 #: ezweb/templates/catalogue_adder_login.html:335
-#: ezweb/templates/registration/login.html:395
+#: ezweb/templates/registration/login.html:402
 #: media/themes/Zaragoza/templates/registration/login.html:359
-#: media/themes/default/templates/registration/login.html:399
+#: media/themes/default/templates/registration/login.html:408
 msgid "Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes."
 msgstr "Nuestro <b>catálogo</b> crecerá en los próximos meses, poniendo a tu alcance un universo cada vez más rico de servicios, enfocado a tus necesidades y gustos."
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:398
+#: ezweb/templates/registration/login.html:405
 #: media/themes/Zaragoza/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:402
+#: media/themes/default/templates/registration/login.html:411
 msgid "Don't hesitate sending us your"
 msgstr "No dejes de enviarnos tu"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:398
+#: ezweb/templates/registration/login.html:405
 #: media/themes/Zaragoza/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:402
+#: media/themes/default/templates/registration/login.html:411
 msgid "opinion and feedback"
 msgstr "opinión"
 
 #: ezweb/templates/catalogue_adder_login.html:338
-#: ezweb/templates/registration/login.html:398
+#: ezweb/templates/registration/login.html:405
 #: media/themes/Zaragoza/templates/registration/login.html:362
-#: media/themes/default/templates/registration/login.html:402
+#: media/themes/default/templates/registration/login.html:411
 msgid "Keep in touch with us!"
 msgstr "¡Mantente en contacto con nosotros!"
 
@@ -1521,30 +1522,77 @@ msgstr "nuevo canal"
 msgid "SLOTS"
 msgstr "RANURAS"
 
-#: ezweb/templates/registration/login.html:293
+#: ezweb/templates/registration/login.html:298
 #: media/themes/Zaragoza/templates/registration/login.html:274
-#: media/themes/default/templates/registration/login.html:300
+#: media/themes/default/templates/registration/login.html:306
 msgid "Your username and password didn't match. Please try again."
 msgstr "Usuario o contraseña incorrecta. Por favor, intentalo otra vez."
 
-#: ezweb/templates/registration/login.html:297
-#: media/themes/default/templates/registration/login.html:303
+#: ezweb/templates/registration/login.html:302
+#: media/themes/default/templates/registration/login.html:309
 msgid "The OpenID authentication process failed. Please, try again."
 msgstr "El proceso de autenticación con OpenId falló. Por favor, inténtalo de nuevo."
 
-#: ezweb/templates/registration/login.html:375
+#: ezweb/templates/registration/login.html:380
 msgid "Create an account"
 msgstr "Crear una cuenta"
 
-#: ezweb/templates/registration/login.html:380
-#: media/themes/default/templates/registration/login.html:384
+#: ezweb/templates/registration/login.html:384
+#: media/themes/default/templates/registration/login.html:389
+msgid "Access with your Facebook account"
+msgstr "Accede con tu cuenta de Facebook"
+
+#: ezweb/templates/registration/login.html:388
+#: media/themes/default/templates/registration/login.html:393
 msgid "Do you have an OpenID account?"
 msgstr "¿Tienes una cuenta OpenID?"
 
-#: ezweb/templates/registration/login.html:380
-#: media/themes/default/templates/registration/login.html:384
+#: ezweb/templates/registration/login.html:388
+#: media/themes/default/templates/registration/login.html:393
 msgid "Login using OpenID"
 msgstr "Autenticarse con OpenID"
+
+#: facebookconnect/forms.py:10
+msgid "Required. 30 characters or fewer. Alphanumeric characters only (letters, digits and underscores)."
+msgstr "Obligatorio. 30 caracteres o menos. Sólo se admiten carácteres alfanuméricos (letras, dígitos y guiones bajos)."
+
+#: facebookconnect/forms.py:11
+msgid "This value must contain only letters, numbers and underscores."
+msgstr "El valor solo debe contener letras, números y guiones bajos."
+
+#: facebookconnect/forms.py:12
+msgid "E-mail"
+msgstr "Correo Electrónico"
+
+#: facebookconnect/templates/facebook/setup.html:21
+msgid "If you already have an account, enter your username and password below to link your account with your facebook account. If you do not have an account, you can Connect with facebook only so as you won't have to remember a name and a password."
+msgstr "Si dispones de una cuenta en EzWeb, introduce tu usuario y contraseña para unir tu cuenta en EzWeb con tu cuenta de Facebook. Si no la tienes, puedes conectarte únicamente a traves de tu cuenta de Facebook y no tendrás que recordar tus datos de usuario."
+
+#: facebookconnect/templates/facebook/setup.html:27
+msgid "Link facebook to an existing account:"
+msgstr "Unir mi cuenta de Facebook a mi usuario:"
+
+#: facebookconnect/templates/facebook/setup.html:33
+msgid "Link my accounts and log in"
+msgstr "Unir mi cuenta y acceder"
+
+#: facebookconnect/templates/facebook/setup.html:37
+msgid "Use facebook only:"
+msgstr "Utilizar solo Facebook:"
+
+#: facebookconnect/templates/facebook/setup.html:43
+msgid "Connect with facebook only"
+msgstr "Connectarme con Facebook"
+
+#: facebookconnect/templatetags/facebook_tags.py:77
+#, python-format
+msgid "Hello, <fb:name uid=\"%s\" useyou=\"false\" firstnameonly=\"true\" />"
+msgstr "Hola, <fb:name uid=\"%s\" useyou=\"false\" firstnameonly=\"true\" />"
+
+#: facebookconnect/templatetags/facebook_tags.py:79
+#, python-format
+msgid "Hello, <a href=\"%(url)s\">%(name)s</a>!"
+msgstr "Hola, <a href=\"%(url)s\">%(name)s</a>!"
 
 #: gadget/gadgetCodeParser.py:74
 #: gadget/views.py:172
@@ -1851,17 +1899,17 @@ msgid "igadget varaible cannot be updated: "
 msgstr "no se pudo actualizar el IGadget: "
 
 #: media/themes/Zaragoza/templates/registration/login.html:351
-#: media/themes/default/templates/registration/login.html:380
+#: media/themes/default/templates/registration/login.html:386
 msgid "Your first time in EzWeb?"
 msgstr "¿Tu primera vez en EzWeb?"
 
 #: media/themes/Zaragoza/templates/registration/login.html:351
-#: media/themes/default/templates/registration/login.html:380
+#: media/themes/default/templates/registration/login.html:386
 msgid "Sign up now"
 msgstr "Regístrate ahora"
 
 #: media/themes/Zaragoza/templates/registration/login.html:365
-#: media/themes/default/templates/registration/login.html:405
+#: media/themes/default/templates/registration/login.html:414
 msgid "MORFEO open source community has released some <b>online training material</b> about EzWeb technology."
 msgstr "La comunidad de software libre MORFEO ha liberado <b>material de formacion online</b> sobre la tecnología EzWeb."
 
@@ -1952,6 +2000,49 @@ msgstr ""
 #: stdimage/widgets.py:20
 msgid "Change:"
 msgstr "Cambiar:"
+
+#: uploader/views.py:70
+#, python-format
+msgid "Please keep the file size under %(format)s. The current file size is %(size)s"
+msgstr "Por favor, seleccione un fichero con un tamaño menor que %(format)s. El tamaño del fichero actual es %(size)s"
+
+#: uploader/views.py:72
+#, python-format
+msgid "The %s file type is not supported"
+msgstr "El tipo de fichero %s no está soportado"
+
+#: uploader/views.py:93
+#, python-format
+msgid "Problem storing the file: %(errorMsg)s"
+msgstr "Problema al almacenar el fichero: %(errorMsg)s"
+
+#: uploader/views.py:107
+msgid "Missing file parameter"
+msgstr "Falta el parámetro file"
+
+#: uploader/templates/upload_file.html:17
+msgid "Select a file from your local system"
+msgstr "Seleccione un fichero de su sistema local"
+
+#: uploader/templates/upload_file.html:20
+msgid "upload"
+msgstr "subir"
+
+#: uploader/templates/upload_file.html:22
+msgid "permitted types: "
+msgstr "tipos permitidos:"
+
+#: uploader/templates/upload_file.html:22
+msgid " Max. size: "
+msgstr "Tamaño máximo:"
+
+#: uploader/templates/upload_success.html:23
+msgid "Your file is now available at:"
+msgstr "Su fichero esta disponible ahora en:"
+
+#: uploader/templates/upload_success.html:25
+msgid "(Don't forget to copy this URL)"
+msgstr "(No olvide copiar esta URL)"
 
 #: user/models.py:44
 msgid "load_script"
@@ -2107,12 +2198,6 @@ msgstr "No se pudo publicar el mashup: está duplicado"
 #~ msgstr "Stado"
 #~ msgid "username"
 #~ msgstr "nombre de usuario"
-#~ msgid ""
-#~ "Required. 30 characters or fewer. Alphanumeric characters only (letters, "
-#~ "digits and underscores)."
-#~ msgstr ""
-#~ "Obligatorio. 30 caracteres o menos. Sólo se admiten carácteres "
-#~ "alfanuméricos (letras, dígitos y guiones bajos)."
 #~ msgid "password"
 #~ msgstr "Contraseña"
 #~ msgid ""

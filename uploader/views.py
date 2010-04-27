@@ -67,8 +67,8 @@ class FileCollection(Resource):
             if file.size < self.MAX_UPLOAD_SIZE:
                 return None
             else:
-                return _('Please keep the file size under %s. The current file size is %s') \
-                % (filesizeformat(self.MAX_UPLOAD_SIZE), filesizeformat(file.size))
+                return _('Please keep the file size under %(format)s. The current file size is %(size)s') % \
+                        {"format":filesizeformat(self.MAX_UPLOAD_SIZE), "size":filesizeformat(file.size)}
         return _('The %s file type is not supported') %(content_type)
      
     

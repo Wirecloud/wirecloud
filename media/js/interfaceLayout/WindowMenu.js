@@ -971,7 +971,7 @@ function PublishWindowMenu (element) {
 	this.windowContent.appendChild(warning);
 	
 	//Window for uploading local files
-	this.uploadWindow = new UploadWindowMenu('Upload File');
+	this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));
 		
 }
 PublishWindowMenu.prototype = new FormWindowMenu();

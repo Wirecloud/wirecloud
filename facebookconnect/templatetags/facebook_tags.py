@@ -23,6 +23,7 @@ from django.core.urlresolvers import reverse
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.utils.translation import ugettext as _
 
 from facebook.djangofb import get_facebook_client
 from facebookconnect.models import FacebookTemplate, FacebookProfile
@@ -73,9 +74,9 @@ def show_facebook_greeting(context, user):
         p = user.facebook_profile
     if getattr(settings, 'WIDGET_MODE', None):
         #if we're rendering widgets, link direct to facebook
-        return {'string':u'Hello, <fb:name uid="%s" useyou="false" firstnameonly="true" />' % (p.facebook_id)}
+        return {'string':_('Hello, <fb:name uid="%s" useyou="false" firstnameonly="true" />') % (p.facebook_id)}
     else:
-        return {'string':u'Hello, <a href="%s">%s</a>!' % (p.get_absolute_url(), p.first_name)}
+        return {'string':_('Hello, <a href="%(url)s">%(name)s</a>!') % {"url":p.get_absolute_url(), "name":p.first_name}}
 
 @register.inclusion_tag('facebook/show_string.html', takes_context=True)
 def show_facebook_status(context, user):
