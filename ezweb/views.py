@@ -43,7 +43,7 @@ from workspace.models import WorkSpace
 
 from catalogue.templateParser import TemplateParser
 
-from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -52,7 +52,7 @@ from catalogue.views import GadgetsCollection
 from django.utils import simplejson
 
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponseRedirect, Http404
+from django.contrib.auth.models import Group
 from django.template import Context, loader
 
 @login_required
@@ -185,6 +185,13 @@ def public_ws_viewer(request, public_ws_id):
     
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
+def manage_groups(user, groups):
+    user.groups.clear()
+    for group in groups:
+        group, created = Group.objects.get_or_create(name=group)
+        user.groups.add(group)
+    user.save()
+
 def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """ 
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
@@ -206,9 +213,12 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
             if (not url.endswith('/')):
                 url += '/'
             
-            url = "%sapi/user/%s/policies.json" % (url, request.user.username)
+            url = "%sapi/user/%s/data.json" % (url, request.user.username)
             
-            request.session['policies'] = download_http_content(url)
+            user_data = simplejson.loads(download_http_content(url))
+            
+            manage_groups(request.user, user_data['groups'])
+            request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
         else:
             request.session['policies'] = "null"
         

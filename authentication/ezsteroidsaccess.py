@@ -39,7 +39,7 @@ from django.utils import simplejson
 class EzSteroidsBackend:
 
     def authenticate(self, username=None, password=None):
-        (is_valid, groups) = self.is_valid(username, password)
+        is_valid = self.is_valid(username, password)
         if not is_valid:
             return None
         try:
@@ -48,7 +48,6 @@ class EzSteroidsBackend:
             user = User(username=username)
             user.set_password(password)
             user.save()
-        self.manage_groups(user, groups)
         return user
 
     def get_user(self, user_id):
@@ -68,13 +67,7 @@ class EzSteroidsBackend:
             try:
                 result = download_http_content(url, params)
                 result = simplejson.loads(result)
-                return (result['isValid'], result['groups'])
+                return result['isValid']
             except Exception:
                 return (False, None)
 
-    def manage_groups(self, user, groups):
-        user.groups.clear()
-        for group in groups:
-            group, created = Group.objects.get_or_create(name=group)
-            user.groups.add(group)
-        user.save()
