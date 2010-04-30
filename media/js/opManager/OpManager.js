@@ -114,9 +114,12 @@ var OpManagerFactory = function () {
 		var createWSSuccess = function(transport) {
 			var response = transport.responseText;
 			var wsInfo = JSON.parse(response);
+
+			//create the new workspace and go to it	
 			this.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
-			this.changeActiveWorkSpace(this.workSpaceInstances[wsInfo.workspace.id]);
+
 			LayoutManagerFactory.getInstance().hideCover();
+			ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
 		}
 
 		var createWSError = function(transport, e) {

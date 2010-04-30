@@ -597,7 +597,9 @@ function WorkSpace (workSpaceState) {
 			this.contextManager.unload();
 			this.contextManager=null;
 
-		this.menu.remove();
+		if (this.menu)
+			this.menu.remove();
+
 		if (this.mergeMenu)
 			this.mergeMenu.remove();
 		if (this.FloatingGadgetsMenu)

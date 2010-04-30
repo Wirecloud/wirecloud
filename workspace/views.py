@@ -186,11 +186,61 @@ def setVisibleTab(user, workspace_id, tab):
     for visibleTab in visibleTabs:
         visibleTab.visible = False
         visibleTab.save()
-        
     tab.visible = True
     tab.save()
-   
-def createWorkSpace (workSpaceName, user):
+
+def getCategories (user):
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        # Use EzSteroids
+        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
+        params = None
+        received_json = download_http_content(url, user=user)
+        return simplejson.loads(received_json)['category_list']
+    else:
+        # Not use EzSteroids
+        return user.groups.get_query_set()
+
+def getCategoryId (category):
+    if category.__class__ == {}.__class__:
+        return category["id"]
+    else:
+        return category.id
+
+def createWorkSpace (workspaceName, user):
+    cloned_workspace = None
+    #try to assign a new workspace according to user category
+    try:
+        categories = getCategories(user)
+        if len(categories) > 0:
+            #take the first one which has a new workspace
+            for category in categories:
+                try:
+                    new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
+                    #duplicate the workspace for the user
+                    cloned_workspace = cloneWorkspace(new_workspace.id, user)
+                    linkWorkspace(user, cloned_workspace.id, new_workspace.workspace.get_creator())
+
+                    cloned_workspace.name = workspaceName
+                    cloned_workspace.save()
+
+                    setActiveWorkspace(user, cloned_workspace)
+                    break
+                except Category.DoesNotExist:
+                    #the user category doesn't have a new workspace
+                    #try with other categories
+                    continue
+
+    except Exception, e:
+        pass
+
+    if not cloned_workspace:
+        #create an empty workspace
+        return createEmptyWorkSpace(workspaceName, user)
+
+    # Returning created Ids
+    return cloned_workspace
+
+def createEmptyWorkSpace (workSpaceName, user):
     active = False
     workspaces = UserWorkSpace.objects.filter(user__id=user.id, active=True)
     if workspaces.count()==0:
@@ -206,19 +256,9 @@ def createWorkSpace (workSpaceName, user):
     user_workspace.save()
    
     #Tab creation
-    tab_ids = createTab ('MyTab', user, workspace)
-    
-    # Returning created Ids
-    ids = {}
-    
-    ids['workspace'] = {}
-    
-    ids['workspace']['id'] = workspace.id
-    ids['workspace']['name'] = workspace.name
-    
-    ids['workspace']['tab'] = tab_ids
+    createTab ('MyTab', user, workspace)
 
-    return ids
+    return workspace
 
 
 def setActiveWorkspace(user, workspace):
@@ -291,36 +331,34 @@ class WorkSpaceCollection(Resource):
             
             if data_list['isDefault'] == "false" and workspaces.count() == 0:   #There is no workspace for the user
                 cloned_workspace = None
+
                 #it's the first time the user has logged in.
                 #try to assign a default workspace according to user category
-                if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
-                    #ask PBUMS for the category
-                    try:
-                        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
-                        params = None
-                        received_json = download_http_content(url,
-                                                              user=request.user)
-                        categories = simplejson.loads(received_json)['category_list']
-                        if len(categories) > 0:
-                            #take the first one which has a default workspace
-                            for category in categories:
-                                try:
-                                    default_workspace = Category.objects.get(category_id=category['id']).default_workspace
-                                    #duplicate the workspace for the user
-                                    cloned_workspace = cloneWorkspace(default_workspace.id, user)
-                                    linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.get_creator())
-                                    setActiveWorkspace(user, cloned_workspace)
-                                    data_list['isDefault']="true"
-                                    break
-                                except Category.DoesNotExist:
-                                    #the user category doesn't have a default workspace
-                                    #try with other categories
-                                    continue
-                    except Exception, e:
-                        pass
+                try:
+                    categories = getCategories(user)
+                    if len(categories) > 0:
+                        #take the first one which has a default workspace
+                        for category in categories:
+                            try:
+                                default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
+                                #duplicate the workspace for the user
+                                cloned_workspace = cloneWorkspace(default_workspace.id, user)
+                                linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.get_creator())
+                                setActiveWorkspace(user, cloned_workspace)
+                                data_list['isDefault']="true"
+                                break
+                            except Category.DoesNotExist:
+                                #the user category doesn't have a default workspace
+                                #try with other categories
+                                continue
+
+                except Exception, e:
+                    pass
+
                 if not cloned_workspace:
                     #create an empty workspace
-                    createWorkSpace('MyWorkSpace', user)
+                    createEmptyWorkSpace('MyWorkSpace', user)
+
             #Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
             
@@ -355,21 +393,20 @@ class WorkSpaceCollection(Resource):
 
         try:
             ts = simplejson.loads(received_json)
-            
+
             if not ts.has_key('name'):
                 raise Exception(_('Malformed workspace JSON: expecting workspace uri.'))
-            
+
             workspace_name = ts.get('name')
 
-            ids = createWorkSpace (workspace_name, user)          
-            
-            workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=ids['workspace']['id'])
-            data = serializers.serialize('python', workspaces, ensure_ascii=False)
-            
-            
+            workspace = createWorkSpace (workspace_name, user)
+
+            data = serializers.serialize('python', [workspace], ensure_ascii=False)
+
+
             concept_data = {}
             concept_data['user'] = user
-            workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+            workspace_data = get_global_workspace_data(data[0], workspace, concept_data, user)
             
             return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
             
