@@ -20,8 +20,8 @@ from twitterauth.oauthtwitter import OAuthApi
 from twitterauth.models import TwitterUserProfile
 
 
-CONSUMER_KEY = getattr(settings, 'CONSUMER_KEY', 'YOUR_KEY')
-CONSUMER_SECRET = getattr(settings, 'CONSUMER_SECRET', 'YOUR_SECRET')
+CONSUMER_KEY = getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY')
+CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET')
 
 
 class TwitterBackend:

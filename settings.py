@@ -284,8 +284,8 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 #################################
 
 #Authentication against Twitter (Sign in with twitter)
-#CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
-#CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
+#TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
+#TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
 
 # External settings configuration
