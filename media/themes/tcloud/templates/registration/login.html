@@ -1,0 +1,423 @@
+{% load i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+<title>{% trans "EzWeb Platform" %}</title>
+<meta name="viewport" content="width=device-width" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+<!--[if lt IE 7]>
+<script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
+<![endif]-->
+
+<!-- Base css -->
+<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+
+
+
+<style>
+body{
+  overflow: visible;
+  color: #19446A;
+  position:relative;
+	background: url("/ezweb/themes/default/images/fond.gif") top left;
+    margin:0;
+    padding:0;
+    font-size:80%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+ul{
+  margin-top: 0;
+  margin-bottom:0;
+}
+img{
+  border: none;
+}
+
+#banner {
+  position:relative;
+  overflow:hidden;
+}
+
+#header {
+    height: 51px;
+    position: relative;
+    width:100%;
+    z-index: 2;
+    background: url("/ezweb/themes/default/images/header_deg.gif") repeat-x left top;
+	color:white;
+	height: 65px;
+}
+#logo {
+	margin-top:5px;
+	background: url("/ezweb/themes/default/images/Open_Ez_Logo.png") no-repeat;
+	_background: url("/ezweb/themes/default/images/ie/Open_Ez_Logo-trans.png") no-repeat;
+	width: 244px;
+	height: 46px;
+}
+#greeting {
+	text-align:right;
+	float:right;
+	margin-right:15px;
+	margin-top:5px;
+}
+
+#content-main{
+	position: relative;
+}
+
+.form-row {
+	width: 220px;
+	margin: auto;
+	text-align: center;
+	padding: 10px;
+}
+
+.form-row #submit {
+	background: transparent url("/ezweb/themes/default/images/header_deg.gif") repeat;
+	color: white;
+}
+
+#content-main .registration{
+        text-align: center;
+}
+
+.errornote {
+	background: #FFDDDD;
+	border: 1px solid darkRed;
+	left:5%;
+	padding: 1ex;
+	margin: 0;
+	position:absolute;
+	text-align:center;
+	width:90%;
+}
+
+#right-section a{
+        color:#2D6F9C;
+        cursor:pointer;
+}
+
+#login-section{
+	border: 1px solid;
+	-moz-border-radius: 6px;
+	background: #E3F0F7;
+	margin: auto;
+	width: 70%;
+	margin-bottom: 40px;
+	margin-top: 27px;
+	padding: 10px;
+	border-right: 2px solid;
+	border-bottom: 2px solid;
+}
+
+#openid_link{
+    color: #2D6F9C;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+input.openid {
+  background: white url("/ezweb/themes/default/images/login-openid-bg.gif") no-repeat;
+  background-position: 0 50%;
+  padding-left: 16px;
+}
+
+
+#content-main .training{
+        color:#19446A;
+	    padding: 5px;
+		text-align:justify;
+	    position: relative;
+		margin-top: 15px;
+		margin-left: 5px;
+		float: left;
+		width: 40%;
+}
+
+.training .training-content{
+        width: 90%;
+        margin: auto;
+        background:#E3F0F7;
+        padding: 10px;
+        font-size:110%;
+        -moz-border-radius: 6px;
+        border:1px solid;
+        border-right: 2px solid;
+		border-bottom: 2px solid;
+}
+
+.training-content td{
+	padding: 2px;
+}
+
+#content-main #right-section{
+	float: left;
+	width: 57%;
+	padding: 14px 0;
+}
+
+table{
+  border: 0;
+}
+
+#greeting{
+        position:relative;
+        float:right;
+        width:400px;
+        margin-right:15px;
+        margin-top:5px;
+}
+
+#greeting a{
+        color:white;
+}
+#greeting .languages{
+        display:inline;
+        margin-left: 20px;
+}
+
+#greeting .languages #languages{
+	display:inline;
+}
+
+#greeting .languages a{
+        text-decoration:none;
+}
+#greeting .languages img{
+        border:0px none;
+	cursor:pointer;
+}
+
+h3{
+        color: #19446A;
+}
+
+.subtitle{
+	  display: block;
+	  width: 100px;
+	  font-size:85%;
+}
+
+.tooltip{
+	padding: 10px;
+	border: 1px solid;
+	border-right: 2px solid;
+	border-bottom: 2px solid;
+	-moz-border-radius: 6px;
+	width: 400px;
+	margin: 10px;
+	background: white;
+	color: #19446A;
+	background:white;
+    color:#19446A;
+}
+
+#tip_grow{
+	float: right;
+}
+
+#tip_contact{
+	float: left;
+}
+
+#tip_training{
+	float: right;
+}
+
+#logo_formacion {
+	width: 400px;
+	margin-top: 5px;
+}
+
+</style>
+
+<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+
+<script type="text/javascript">
+
+var installed_apps = {{ installed_apps|safe }};
+
+   function check_browser() {
+/*     var browser=navigator.appName;
+
+      if (browser.toLowerCase().substring(0, 8) != 'netscape') {
+           alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
+	   return false;
+      }     
+
+      return true;
+*/
+}
+
+/* Initialization code */
+	function setLanguage(language) {
+		
+		document.getElementById("language").value = language;
+		document.getElementById("languages").submit();
+		
+		return false;
+	}
+    
+    function toggleOpenId() {
+        var divOpenid = document.getElementById("openid");
+        if (divOpenid.style.display == "none")
+            divOpenid.style.display = "block";
+        else
+            divOpenid.style.display = "none";
+    }   
+
+</script>
+
+
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header">
+	<div id="banner">
+		<div id="logo"></div>
+		<div id="greeting">
+			 <div class="languages">
+			 	<form id="languages" action="/i18n/setlang/" method="post">
+					<input name="next" type="hidden" value="/accounts/login/?next=/" />
+					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}">
+				</form>		 
+				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
+			 </div>
+			 <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
+			 <span> | </span>
+			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span>
+		</div>
+	
+	</div>
+</div>
+
+{% if form.errors %}
+<p class="errornote">{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
+{% if openid_form.errors %}
+     <p class="errornote">{% trans "The OpenID authentication process failed. Please, try again." %}</p>
+{% endif %}
+
+<div id="content-main">
+	
+	<!-- Training -->
+	<div id="training" class="training">
+		<h2 id="title"> {% trans 'Thanks to EzWeb you will be able to combine your favorite services to make your life easier' %}</h2>
+		<div id="training-content" class="training-content">
+			<h3>{% trans 'Watch our videos!' %}</h3>
+			<table cellspacing="0">
+				<tr>
+					<td width="110px" align="center">
+						<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
+							<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Discover"/>
+						</a>
+					</td>
+					<td>{% trans '<b>Discover</b> new gadgets in our catalogue and import them in your workspace.' %}</td>
+				</tr>					
+				<tr>
+					<td align="center">
+						<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
+							<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Arrange"/>
+						</a> 
+					</td>
+					<td>{% trans 'Arrange gadgets in your workspace <b>at your will</b>' %}.</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
+							<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Connect"/>
+						</a>
+					</td>
+					<td>{% trans '<b>Wire</b> gadgets together.' %}</td>
+				</tr>										
+				<tr>
+					<td align="center">
+						<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
+							<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
+						</a> 
+					</td>
+					<td>{% trans "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue." %}</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
+							<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embed"/>
+						</a>
+					</td>
+					<td>{% trans 'Share your own workspace as an object you may <b>embed</b> in your favourite environments.' %}</td>
+				</tr>			
+			</table>
+		</div>
+	</div>
+		
+	<!-- Registration -->
+	<div id="right-section">
+		
+		<div id="login-section">				
+				  <form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="form" class="form-row">
+				  	<table>
+				  		<tr><td>
+				    		<label for="id_username">{% trans 'Username' %} </label> 
+				    	</td><td>
+				    		<input type="text" name="username" id="id_username" size="15"/>
+				    	</td></tr>
+				    	<tr><td>
+				    		<label for="id_password">{% trans 'Password' %} </label> 
+				    	</td><td>	
+				    		<input type="password" name="password" id="id_password" size="15"/>
+				    	</td></tr>
+				    </table>
+				    <input type="hidden" name="this_is_the_login_form" value="1" />
+				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
+				    <input type="submit" id="submit" value="{% trans 'Log in' %}" />
+				  </form>
+			<div id="registration" class="registration">
+				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}{% endif %}</a>
+			</div>
+            {% for app in installed_apps %}
+                {% ifequal app 'openid_auth' %} 
+                    <div class="registration">{% trans "Do you have an OpenID account?" %} <label id="openid_link" onclick="toggleOpenId();">{% trans "Login using OpenID" %}</label></div>
+                    <div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
+                        <form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
+                            {{ openid_form }}
+                            <input type="submit" id="submit" value="{% trans 'Log in' %}" />
+                        </form>
+                    </div>
+                {% endifequal %}
+            {% endfor %}
+		</div>
+		<div id="tips">
+			<div id="tip_catalogue" class="tooltip">
+			{% trans '<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages.' %}
+			</div>
+			<div id="tip_grow" class="tooltip">
+			{% trans 'Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes.' %}
+			</div>
+			<div id="tip_contact" class="tooltip">
+			{% trans "Don't hesitate sending us your" %} <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'opinion and feedback' %}</a>. {% trans 'Keep in touch with us!' %}
+			</div>
+			<div id="tip_training" class="tooltip">
+			{% trans "MORFEO open source community has released some <b>online training material</b> about EzWeb technology." %}
+			<a href="http://www.morfeo-formacion.org">
+				<img id="logo_formacion" src="http://www.aimme.es/imagenes/banners/MorfeoBanner.gif" />
+			</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var is_iphone = (navigator.userAgent.indexOf('iPhone')!=-1 || navigator.userAgent.indexOf('iPod')!=-1 );
+
+if (is_iphone){
+  document.getElementById('training').style.display="none";
+  document.getElementById('tips').style.display="none";
+}
+</script>
+</body>
+</html>
+

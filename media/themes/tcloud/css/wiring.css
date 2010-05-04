@@ -1,0 +1,488 @@
+
+#wiring #wiring_table {
+  margin-top: 10px;
+}
+
+#wiring #wiring_table .anchor{
+	display: none;
+}
+
+#wiring #wiring_table.selected_channel .anchor{
+	display: block;
+}
+
+#wiring #channels_list {
+  margin: 2ex 0px;
+  padding: 0px;
+}
+
+#wiring .tableCell {
+  position:relative;
+  float:left;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: auto;
+  margin-top: 1ex;
+}
+
+#wiring .connectableColumn {
+  width: 25%;
+  vertical-align: top;
+}
+
+#wiring .eventColumn, #wiring .slotColumn {
+  width: 20%;
+  padding: 0 20px;
+}
+
+#wiring .inoutColumn {
+  width: 20%;
+}
+
+#wiring .title {
+  font-weight: bold;
+  font-size: 120%;
+  text-align: center;
+  margin-bottom: 1ex;
+}
+
+.eventColumn > .title, .slotColumn > .title {
+  cursor:pointer;
+}
+
+#wiring .borderLeftCell {
+  border-collapse: collapse;
+  padding: 0 0 0 1ex;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid #AAA;
+  border-right: none;
+}
+
+#wiring .columnCell ul input[type="radio"] {
+  display: none;
+}
+
+#wiring .columnCell ul li {
+  padding: 2px;
+}
+
+#wiring .columnCell ul li div {
+  padding: 2px;
+}
+
+.form-row input[type="submit"] {
+  background-image: url("../images/kgpg.png");
+  background-repeat: no-repeat;
+  padding-left: 18px;
+}
+
+#wiring .igadget {
+  background: #F7F7F7;
+  margin:3px 2px;
+  position: relative;
+  font-weight: bold;
+  padding: 3px 3px 0px;
+  color: black;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+
+#wiring .igadget > .content {
+  padding: 0px 0px 1px 0px;
+  font-weight: normal;
+  position: relative;
+  margin: 6px 0px;
+}
+
+#wiring .igadget > .content > div {
+  line-height: 24px;
+}
+
+#wiring .eventColumn .igadget > .content > div {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  cursor: hand; cursor:pointer;
+}
+
+#wiring .slotColumn .igadget > .content > div {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
+}
+
+#wiring .igadget.folded > .content {
+  display: none;
+}
+
+#wiring .igadget > .content > div > .anchor {
+  position: absolute;
+  width: 35px;
+  height: 18px;
+  border: 0px;
+  padding: 0px;
+  top: 3px;
+}
+
+#wiring .eventColumn .igadget .anchor {
+  right: -35px;
+  background: url("../images/wiring/inAnchor.png");
+}
+
+#wiring .slotColumn .igadget .anchor {
+  left: -35px;
+  background: url("../images/wiring/outAnchor.png");
+}
+
+#wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
+  background: url("../images/wiring/inAnchorInEnabled.png");
+}
+
+#wiring #channels_list .channel.selected .outAnchor, #wiring #channels_list .channel.selected .inAnchor{
+  background: none;
+}
+
+#wiring #channels_list .channel.selected .outAnchor.checked {
+  background: url("../images/wiring/inAnchorOutEnabled.png");
+}
+
+#wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
+  background: url("../images/wiring/outAnchorOutEnabled.png");
+}
+
+#wiring #channels_list .channel.selected .inAnchor.checked {
+  background: url("../images/wiring/outAnchorInEnabled.png");
+}
+
+#wiring #channels_list .channel .inAnchor, #wiring #channels_list .channel .outAnchor {
+  height:   18px;
+  top:      3px; /* TEMP */
+  width:    35px;
+}
+
+#wiring #channels_list .channel .inAnchor {
+  background: url("../images/wiring/outAnchorChannel.png");
+  left: -25px;
+}
+
+#wiring #channels_list .channel .outAnchor {
+  background: url("../images/wiring/inAnchorChannel.png");
+  right: -25px;
+}
+
+#wiring .tab {
+  margin: 5px 0px;
+  position: relative;
+  background: #97A0A8 url(../images/degradado.png) no-repeat scroll left top;
+  -moz-border-radius-topleft:10px;
+  -moz-border-radius-topright:4px;
+  -moz-border-radius-bottomleft:3px;
+  -moz-border-radius-bottomright:3px;
+  border: 1px solid #000000;
+}
+
+#wiring .tab > .header {
+  clear: both;
+  z-index: 1;
+}
+
+#wiring .tab.folded > .content, #wiring .tab.empty > .content {
+  height: 0px;
+  overflow: hidden;
+}
+
+#wiring .tab > .content {
+  padding: 2px;
+  clear: both;
+  z-index: 0;
+  position: relative;
+  top: -1px;
+  -moz-border-radius-bottomleft: 3px;
+  -moz-border-radius-bottomright: 3px;
+}
+
+#wiring .eventColumn .tab > .header, #wiring .slotColumn .tab > .header {
+  padding: 6px 24px 2px 34px;
+  text-align: right;
+}
+
+#wiring .eventColumn .tab > .header{
+  text-align: right;
+  background: url("../images/wiring/tree.gif") no-repeat scroll 2px 5px;
+}
+
+#wiring .slotColumn .tab > .header {
+  text-align: left;
+  background: url("../images/wiring/tree.gif") no-repeat scroll 99% 5px;
+}
+
+#wiring .tab > .header {
+  color:       white;
+  cursor:      pointer;
+  font-weight: bold;
+  position:    relative;
+}
+
+#wiring .tab.empty > .header {
+  cursor: default;
+  background: none;
+}
+
+#wiring .tab > .header > .anchor {
+  background: url("../images/wiring/outAnchor.png");
+  position: absolute;
+  left: -28px;
+  top: 5px;
+  width: 35px;
+  height: 18px;
+  border: 0px;
+  padding: 0px;
+}
+
+#wiring .tab > .header > .anchor.checked {
+  background: url("../images/wiring/outAnchorOutEnabled.png");
+}
+
+#wiring .igadget > .header {
+  padding-left: 20px;
+  cursor:pointer;
+  background: url("../images/wiring/Lminus.png") no-repeat scroll left top;
+}
+
+#wiring .igadget.folded > .header {
+  background: url("../images/wiring/Lplus.png") no-repeat scroll left top;
+}
+
+#wiring .igadget.unfoldable > .header {
+  background: url("../images/wiring/LminusDisabled.png") no-repeat scroll left top;
+}
+
+#wiring #newChannelForm .addSubmit {
+  cursor: pointer; cursor: hand;
+  padding: 0px;
+  height: 16px;
+  width: 16px;
+  background: url("../images/wiring/add.png");
+  border: 0px none;
+}
+
+#wiring .newChannel, #wiring #unfold_all_link {
+  cursor: pointer; cursor: hand;
+  color: #2D6F9C;
+  text-decoration: underline;
+}
+
+#wiring .newChannel {
+  margin:     2ex 1ex;
+  text-align: center;
+}
+
+#wiring #wiring_options {
+  color:     #2D6F9C;
+  font-size: 90%;
+}
+
+#wiring #unfold_all_link {
+  display:inline;
+}
+
+#wiring #unfold_chkItem{
+  display: inline;
+  width: 15px;
+  height: 15px;
+  border: 0px;
+  padding: 0 20px 0 0;
+  cursor: pointer;
+}
+
+#wiring #unfold_chkItem{
+  background: url("../images/wiring/unchecked14px.png") no-repeat right bottom;
+ }
+
+#wiring #unfold_chkItem.chkItem{
+  background: url("../images/wiring/checked14px.png") no-repeat right bottom;
+}
+
+#wiring #channels_list .channel {
+  margin: 20px 1ex;
+  padding: 0px;
+}
+
+#wiring #channels_list .channel .channelPipe {
+  border: 1px solid #2D6F9C;
+  background: #97A0A8 url("../images/wiring/pipe.png");
+  cursor: pointer; cursor: hand;
+  height: 25px;
+  padding: 0 8px;
+  -moz-border-radius:5%;
+  -webkit-border-radius: 5%;
+}
+
+
+#wiring img {
+  margin: 2px;
+  vertical-align: middle;
+}
+
+#wiring #channels_list .channel .channelContent {
+  border-width: 0px 1px 1px 1px;
+  border-style: solid;
+  border-color: #525248;
+  margin: 0 8px;
+  display: none;
+  overflow-x: auto;
+  background: #F7F7F7;
+  padding: 0.5ex 1ex 0.5ex 1ex;
+  -moz-border-radius-bottomleft: 9px;
+  -moz-border-radius-bottomright: 9px;
+  -webkit-border-top-left-radius: 9px;
+  -webkit-border-top-right-radius: 9px
+}
+
+#wiring #channels_list .channel.selected .channelPipe {
+  background-color: #2D6F9C;
+}
+
+#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
+  display: block;
+}
+
+#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+	background: transparent url("../images/ops21px.png") no-repeat scroll 0 0;
+	margin-left: 5px;
+	border: 0;
+	cursor: pointer;
+	width: 21px;
+	height: 21px;
+	vertical-align: middle;
+}
+
+#wiring #channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {
+	line-height: 1.5;
+	padding: 0 3px 0 0;
+}
+
+#wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
+	text-align: left;
+	margin: 0px;
+	font-size: 95%
+}
+
+
+#wiring #channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
+	white-space: nowrap;
+	font-size: 90%;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
+	line-height: 1;
+	white-space: nowrap;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName label, #wiring .newChannel.selected .channelContent .paramName label{
+	white-space: normal;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
+  background: #E0E0E0;
+  border:0px none;
+  margin: 0.1ex 0ex;
+  padding: 2px;
+  width:100%;
+  cursor: text;
+  font-size: 90%;
+}
+
+#wiring #wiring_messages {
+  border: 1px solid orange;
+  background: lightyellow;
+  margin: 1ex 20px;
+  padding: 1ex 2ex;
+}
+
+#wiring #newChannelForm .linkSubmit {
+   color: blue;
+   background-color:#E0E0E0;
+   border-style:none;
+   border-color:#FFFFFF;
+   cursor: pointer;
+   text-decoration: underline;
+}
+
+#wiring .newChannelInput {
+   border:1px solid #4C5054;
+   margin:0px 1ex;
+}
+
+#wiring .channelNameInput {
+   border:0px;
+   margin:2px 1ex;
+   cursor:pointer;
+   background: transparent;
+}
+
+#wiring .selected .channelNameInput {
+	background: transparent url("../images/fond.gif") repeat;
+	cursor: text;
+}
+
+/*.canvas div div {
+  z-index: 3;
+}
+
+.canvas .arrow {
+  position: absolute;
+  z-index: 3;
+  width: 20px;
+  height: 16px;
+  background: transparent url("../images/wiringArrow.png") no-repeat;
+}*/
+
+.canvas .arrow {
+  stroke: #2D6F9C;
+  fill:   none;
+  stroke-width: 2;
+}
+
+.canvas .inFromChannel {
+  stroke: green;
+  fill:   none;
+  stroke-width: 2;
+}
+
+.canvas .outToChannel {
+  stroke: #F00000;
+  fill:   none;
+  stroke-width: 2;
+}
+
+.helpwiringheader {
+  border: 1px solid #AAA;
+  -moz-border-radius:6px;
+  background:white;
+}
+
+#wiring .option_link {
+  color: #2D6F9C;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+#wiring .option_link_separator {
+  color: #000000;
+  font-size: 10px;
+}
+
+#wiring .selected_option_link {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#wiring .create_url_link {
+  color: #2D6F9C;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+#wiring .channel.selected .channelContent label#remote_operation_tip {
+  font-size: 10px;
+}
