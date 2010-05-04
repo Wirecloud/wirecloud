@@ -226,11 +226,6 @@ AUTHENTICATION_BACKENDS = (
 # third parties. It must be used along with the corresponding authentication backend
 #AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
 
-#Authentication against Twitter (Sign in with twitter)
-CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
-
-CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
-
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
@@ -281,12 +276,17 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 #        * {# facebook_js #}
 #        * {# initialize_facebook_connect #}
 #        * {# show_connect_button #}
-FACEBOOK_API_KEY = "YOUR API KEY FROM FACEBOOK"
-FACEBOOK_SECRET_KEY = "YOUR SECRET KEY FROM FACEBOOK"
+#FACEBOOK_API_KEY = "YOUR API KEY FROM FACEBOOK"
+#FACEBOOK_SECRET_KEY = "YOUR SECRET KEY FROM FACEBOOK"
 #FACEBOOK_INTERNAL = True
 #FACEBOOK_CACHE_TIMEOUT = 1800
 
 #################################
+
+#Authentication against Twitter (Sign in with twitter)
+#CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
+#CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
+
 
 # External settings configuration
 try:
