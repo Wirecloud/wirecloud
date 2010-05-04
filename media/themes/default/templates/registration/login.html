@@ -72,11 +72,15 @@ img{
 	position: relative;
 }
 
-.form-row, #facebookconnect-login-form {
+.form-row {
 	width: 220px;
 	margin: auto;
 	text-align: center;
 	padding: 10px;
+}
+
+#facebookconnect-login-form, #twitter, #openid_link{
+	display:inline;
 }
 
 .form-row #submit, #facebookconnect-login-form #submit{
@@ -86,6 +90,11 @@ img{
 
 #content-main .registration{
         text-align: center;
+		margin-bottom: 5px;
+}
+
+#other-methods{
+	text-align:center;	
 }
 
 .errornote {
@@ -118,9 +127,7 @@ img{
 }
 
 #openid_link{
-    color: #2D6F9C;
-    text-decoration: underline;
-    cursor: pointer;
+
 }
 
 input.openid {
@@ -383,21 +390,30 @@ var installed_apps = {{ installed_apps|safe }};
 				    <input type="submit" id="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
-				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}{% endif %}</a>
+				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}</a>{% endif %}
 			</div>
-			{% if "facebookconnect"|in_list:installed_apps %}
-				<div id="facebook_access" class="registration">{% trans 'Access with your Facebook account' %}</div>
-				{# show_connect_button #}
-			{% endif %}
-			{% if "openid_auth"|in_list:installed_apps %}
-                <div class="registration">{% trans "Do you have an OpenID account?" %} <label id="openid_link" onclick="toggleOpenId();">{% trans "Login using OpenID" %}</label></div>
-                <div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
-                    <form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
-                        {{ openid_form }}
-                        <input type="submit" id="submit" value="{% trans 'Log in' %}" />
-                    </form>
-                </div>
-            {% endif %}
+			<div id="other-methods">
+				{% if "facebookconnect"|in_list:installed_apps or "twitterauth"|in_list:installed_apps or "openid_auth"|in_list:installed_apps %}
+					<div id="access" class="registration">{% trans 'or access with:' %}</div>
+					{# show_connect_button #}
+					{% if "twitterauth"|in_list:installed_apps %}
+						<div id="twitter">
+							<a id="twitter_button" href="{% url twitter_signin %}">
+								<img src="{{MEDIA_URL}}/images/twitter_button.png"/>
+							</a>
+						</div>
+					{% endif %}
+					{% if "openid_auth"|in_list:installed_apps %}
+	                	<div id="openid_link" class="registration" onclick="toggleOpenId();"><img src="{{MEDIA_URL}}/images/openid.png"/></div>
+	                	<div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
+	                    	<form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
+	                        	{{ openid_form }}
+	                        	<input type="submit" id="submit" value="{% trans 'Log in' %}" />
+	                    	</form>
+	                	</div>
+	            	{% endif %}
+				{% endif %}
+			</div>
 
 		</div>
 		<div id="tips">

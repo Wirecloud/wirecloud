@@ -34,6 +34,8 @@ from facebook.djangofb import require_login as require_fb_login
 from facebookconnect.models import FacebookProfile
 from facebookconnect.forms import FacebookUserCreationForm
 
+from commons.utils import add_user_to_EzSteroids
+
 def facebook_login(request, redirect_url=None,
                    template_name='facebook/login.html',
                    extra_context=None):
@@ -209,17 +211,13 @@ def setup(request,redirect_url=None,
             profile.user = user
             profile.save()
             log.info("Added user and profile for %s!" % request.facebook.uid)
-            # Add the user to EzSteroids if it is enabled
-            from django.conf import settings
-            from commons.http_utils import download_http_content
-            urlBase = settings.AUTHENTICATION_SERVER_URL
-            url = urlBase + "/api/register"
-            params = {'username': user.username.encode('utf-8')}
-            headers = {'Referer': request.META['HTTP_REFERER']}
-            result = download_http_content(uri=url, params=params, headers=headers)
                 
             user = authenticate(request=request)
             login(request, user)
+            
+            # Add the user to EzSteroids if it is enabled
+            add_user_to_EzSteroids(request.META['HTTP_REFERER'], user)
+            
             return HttpResponseRedirect(redirect_url)
         
         # user setup his/her own local account in addition to their facebook
@@ -264,17 +262,17 @@ def setup(request,redirect_url=None,
     
     #user didn't submit a form, but is logged in already. We'll just link up their facebook
     #account automatically.
-    elif request.user.is_authenticated():
-        log.debug('Already logged in')
-        try:
-            request.user.facebook_profile
-        except FacebookProfile.DoesNotExist:
-            profile = FacebookProfile(facebook_id=request.facebook.uid)
-            profile.user = request.user
-            profile.save()
-            log.info("Attached facebook profile %s to user %s!" % (profile.facebook_id,profile.user))
-
-        return HttpResponseRedirect(redirect_url)
+#    elif request.user.is_authenticated():
+#        log.debug('Already logged in')
+#        try:
+#            request.user.facebook_profile
+#        except FacebookProfile.DoesNotExist:
+#            profile = FacebookProfile(facebook_id=request.facebook.uid)
+#            profile.user = request.user
+#            profile.save()
+#            log.info("Attached facebook profile %s to user %s!" % (profile.facebook_id,profile.user))
+#
+#        return HttpResponseRedirect(redirect_url)
     
     # user just showed up
     else:

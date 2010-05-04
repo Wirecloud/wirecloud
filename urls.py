@@ -152,6 +152,13 @@ if 'facebookconnect' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
                              (r'^facebook/', include('facebookconnect.urls')),
                     )
+    
+##Sign in with Twitter
+if 'twitterauth' in settings.INSTALLED_APPS:
+    #add twitter urls
+    urlpatterns += patterns('',
+                            (r'^twitter/', include('twitterauth.urls')),
+                    )
 
 handler404 = "django.views.defaults.page_not_found"
 handler500 = "django.views.defaults.server_error"

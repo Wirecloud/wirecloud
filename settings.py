@@ -133,7 +133,9 @@ MIDDLEWARE_CLASSES = (
 #    'middleware.auth_middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'middleware.console_middleware.ConsoleExceptionMiddleware',
-#    'facebookconnect.middleware.FacebookConnectMiddleware',
+ #   'middleware.cookie_redirect_middleware.CookieRedirectMiddleware',
+ #   'facebookconnect.middleware.FacebookConnectMiddleware',
+
 )
 
 ROOT_URLCONF = 'urls'
@@ -158,14 +160,16 @@ INSTALLED_APPS = (
     'remoteChannel',
     'user',
     'API',
+    'uploader',
     ### openid authentication not compatible with EzSteroids ###
-    #'openid_auth',
-    #'openid_auth.django_openidconsumer',
-    'uploader'
-#   'clms',
+#    'openid_auth',
+#    'openid_auth.django_openidconsumer',
+    # sign in with twitter app 
+#    'twitterauth',
     ### facebook applications ###
 #    'facebook',
 #    'facebookconnect',
+#   'clms',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -212,6 +216,7 @@ AUTHENTICATION_BACKENDS = (
 #'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
 #'facebookconnect.models.FacebookBackend',
+#'authentication.twitteroauth.TwitterBackend',
 )
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
@@ -219,7 +224,13 @@ AUTHENTICATION_BACKENDS = (
 
 # Authentication Server URL. This URL is only needed to allow the authentication against
 # third parties. It must be used along with the corresponding authentication backend
-#AUTHENTICATION_SERVER_URL = 'http://localhost:8002'
+#AUTHENTICATION_SERVER_URL = 'http://localhost:8001'
+
+#Authentication against Twitter (Sign in with twitter)
+CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
+
+CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
+
 
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
@@ -232,7 +243,9 @@ CERTIFICATION_ENABLED = False
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
-#TEMPLATE_GENERATOR_URL = 'http://localhost:9000'
+
+#TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
+
 
 # Gadget Template Generator URL. This URL is only needed to allow creating
 # a Gadget when EzWeb is running with the develop server (manage.py)
@@ -268,8 +281,8 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 #        * {# facebook_js #}
 #        * {# initialize_facebook_connect #}
 #        * {# show_connect_button #}
-#FACEBOOK_API_KEY = "54b180140f0587620c9e5de03ab71f6c"
-#FACEBOOK_SECRET_KEY = "8f31a102ba838d1cb70231d5a0e9f82f"
+FACEBOOK_API_KEY = "YOUR API KEY FROM FACEBOOK"
+FACEBOOK_SECRET_KEY = "YOUR SECRET KEY FROM FACEBOOK"
 #FACEBOOK_INTERNAL = True
 #FACEBOOK_CACHE_TIMEOUT = 1800
 

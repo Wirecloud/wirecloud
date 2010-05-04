@@ -32,6 +32,7 @@
 
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 
 from commons.authentication import login_public_user, logout_request
@@ -185,12 +186,25 @@ def public_ws_viewer(request, public_ws_id):
     
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
+
+def get_user_screen_name(request):
+    #the backend is the one who knows where to look for the screen name of the user
+    backend_path = request.session._session['_auth_user_backend']
+    user_backend = load_backend(backend_path)
+    
+    try:
+        return user_backend.get_screen_name(request.user)
+    except:
+        return None
+        
+        
 def manage_groups(user, groups):
     user.groups.clear()
     for group in groups:
         group, created = Group.objects.get_or_create(name=group)
         user.groups.add(group)
     user.save()
+
 
 def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """ 
@@ -221,6 +235,8 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
             request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
         else:
             request.session['policies'] = "null"
+            
+        screen_name = get_user_screen_name(request)
         
-        return render_to_response(template, {'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user, 'post_load_script': script},
+        return render_to_response(template, {'screen_name': screen_name, 'current_tab': 'dragboard', 'active_workspace': public_workspace, 'last_user': last_user, 'post_load_script': script},
                   context_instance=RequestContext(request))

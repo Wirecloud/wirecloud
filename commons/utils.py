@@ -195,3 +195,16 @@ def get_xhtml_content(path):
     f.close()
     return content
     
+
+def add_user_to_EzSteroids(referer, user):
+            
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        urlBase = settings.AUTHENTICATION_SERVER_URL
+        
+        if (not urlBase.endswith('/')):
+            urlBase += '/'
+        
+        url = urlBase + "api/register"
+        params = {'username': user.username.encode('utf-8')}
+        headers = {'Referer': referer}
+        result = download_http_content(uri=url, params=params, headers=headers)

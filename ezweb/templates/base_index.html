@@ -107,7 +107,7 @@
 				{%endif%}
 				
 				<span> | </span>
-				<span id="user_section"> {% trans "Welcome" %}, {{ user.username }}</span>
+				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
 			{% endif %}
 		</div>
 	</div>
@@ -229,6 +229,7 @@ _URIConstants.prototype.FILE_UPLOADER = '/uploader';
 var URIs = new _URIConstants();
 
 var ezweb_user_name = '{{ user.username }}';
+var ezweb_user_screen_name = '{{ screen_name }}';
 var ezweb_organizations = '{{ ezweb_organizations|safe }}';
 var tag_categories = '{{ tag_categories|safe }}';
 var _currentTheme = null;
