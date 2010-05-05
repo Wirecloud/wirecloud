@@ -63,6 +63,10 @@ class FacebookBackend:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+    
+    def get_screen_name(self, request):
+        data = request.facebook.users.getInfo([request.facebook.uid], ['first_name'])
+        return unicode(data[0]["first_name"]).encode("utf8")
         
 class BigIntegerField(models.IntegerField):
     empty_strings_allowed=False

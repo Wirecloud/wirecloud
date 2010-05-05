@@ -75,5 +75,5 @@ class TwitterBackend:
         except:
             return None
         
-    def get_screen_name(self, user):
-        return TwitterUserProfile.objects.get(user=user).screen_name
+    def get_screen_name(self, request):
+        return TwitterUserProfile.objects.get(user=request.user).screen_name

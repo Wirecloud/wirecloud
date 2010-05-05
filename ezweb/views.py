@@ -193,7 +193,7 @@ def get_user_screen_name(request):
     user_backend = load_backend(backend_path)
     
     try:
-        return user_backend.get_screen_name(request.user)
+        return user_backend.get_screen_name(request)
     except:
         return None
         
@@ -207,7 +207,8 @@ def manage_groups(user, groups):
 
 
 def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
-    """ Main view """ 
+    """ Main view """
+        
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
         return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
