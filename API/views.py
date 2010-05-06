@@ -44,11 +44,11 @@ from workspace.models import UserWorkSpace, Tab
 from igadget.views import SaveIGadget, deleteIGadget
 from igadget.models import IGadget
 
-from commons.custom_decorators import basicauth
+from commons.custom_decorators import basicauth_or_logged_in
 
 class IGadgetCollection(Resource):
 
-    @basicauth()
+    @basicauth_or_logged_in()
     @transaction.commit_on_success
     def create(self, request):
         if not request.POST.has_key('template_uri'):
@@ -90,7 +90,7 @@ class IGadgetCollection(Resource):
         
         return HttpResponse(json_encode({"igadget_id":resp["id"], "gadget_id":gadget.id}), mimetype='application/json; charset=UTF-8')
 
-    @basicauth()
+    @basicauth_or_logged_in()
     @transaction.commit_on_success
     def delete(self, request, gadget_id):
         gadget = Gadget.objects.get(id=gadget_id)
@@ -109,7 +109,7 @@ class IGadgetCollection(Resource):
 
 class IGadgetEntry(Resource):
     
-    @basicauth()
+    @basicauth_or_logged_in()
     @transaction.commit_on_success
     def delete(self, request, igadget_id):
         ig = IGadget.objects.get(id=igadget_id, tab__workspace__users__id=request.user.id)

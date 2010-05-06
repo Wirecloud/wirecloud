@@ -36,20 +36,15 @@ from django.contrib.auth import authenticate, login
 
 #############################################################################
 #
-#def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
-def view_or_basicauth(view, request, realm = "", *args, **kwargs):
+def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
     """
-    This is a helper function used by both 'logged_in_or_basicauth' and
+    This is a helper function used by both 'basicauth_or_logged_in' and
     'has_perm_or_basicauth' that does the nitty of determining if they
     are already logged in or if they have provided proper http-authorization
     and returning the view if all goes well, otherwise responding with a 401.
     """
-#    if test_func(request.user):
-        # Already logged in, just return the view.
-        #
- #       return view(*args, **kwargs)
-
-    # They are not logged in. See if they provided login credentials
+ 
+    # See if they provided login credentials
     #
     if 'HTTP_AUTHORIZATION' in request.META:
         auth = request.META['HTTP_AUTHORIZATION'].split()
@@ -64,6 +59,11 @@ def view_or_basicauth(view, request, realm = "", *args, **kwargs):
                         request.user = user
                         return view(*args, **kwargs)
 
+    #They don't provide login credentials. Check if they are logged in                
+    if test_func(request.user):
+        #Already logged in, just return the view.
+        return view(*args, **kwargs)
+
     # Either they did not provide an authorization header or
     # something in the authorization attempt failed. Send a 401
     # back to them to ask them to authenticate.
@@ -75,7 +75,7 @@ def view_or_basicauth(view, request, realm = "", *args, **kwargs):
     
 #############################################################################
 #
-def basicauth(realm = ""):
+def basicauth_or_logged_in(realm = ""):
     """
     A simple decorator that requires a user to be logged in. If they are not
     logged in the request is examined for a 'authorization' header.
@@ -88,7 +88,7 @@ def basicauth(realm = ""):
 
     Use is simple:
 
-    @logged_in_or_basicauth
+    @basicauth_or_logged_in
     def your_view:
         ...
 
@@ -101,10 +101,9 @@ def basicauth(realm = ""):
             else:
                 request = args[0]
             
-#            return view_or_basicauth(func, request,
-#                                     lambda u: u.is_authenticated(),
-#                                     realm, *args, **kwargs)
-            return view_or_basicauth(func, request, realm, *args, **kwargs)                                     
+            return view_or_basicauth(func, request,
+                                     lambda u: u.is_authenticated(),
+                                     realm, *args, **kwargs)                                     
         return wrapper
     return view_decorator
 
