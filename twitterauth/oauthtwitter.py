@@ -16,8 +16,7 @@ __version__ = "0.2"
 from twitterauth.twitter import Api, User
 from twitterauth.oauth import *
 
-import simplejson
-
+from django.utils import simplejson
 
 
 # Taken from oauth implementation at: http://github.com/harperreed/twitteroauth-python/tree/master

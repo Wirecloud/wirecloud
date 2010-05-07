@@ -56,7 +56,7 @@ def twitter_return(request):
         return HttpResponse("Unable to authenticate you!")
 
     #Add the user to EzSteroids if it is enabled
-    add_user_to_EzSteroids(request.META['HTTP_REFERER'], auth_user)
+    add_user_to_EzSteroids("http://"+request.get_host(), auth_user)
 
     # authentication was successful, use is now logged in
     #redirect to a proper page

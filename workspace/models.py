@@ -44,7 +44,7 @@ class WorkSpace(models.Model):
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name
+        return unicode(self.pk) + " " + unicode(self.name)
     
     def get_creator(self):
         if self.creator:
@@ -91,7 +91,7 @@ class UserWorkSpace(models.Model):
     active = models.BooleanField(_('Active'), default=False)
     
     def __unicode__(self):
-        return str(self.workspace) + " - " + str(self.user)
+        return unicode(self.workspace) + " - " + unicode(self.user)
     
 class PublishedWorkSpace(models.Model):
     WORKSPACE_TYPES = (
@@ -122,7 +122,7 @@ class PublishedWorkSpace(models.Model):
     contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.workspace.name  
+        return unicode(self.pk) + " " + unicode(self.workspace.name)
 
 #Category for which a workspace is the defalult workspace
 class Category(models.Model):
@@ -131,7 +131,7 @@ class Category(models.Model):
     new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
 
     def __unicode__(self):
-        return str(self.category_id) + " " + str(self.default_workspace)
+        return unicode(self.category_id)
 
 class AbstractVariable(models.Model):
     
@@ -143,7 +143,7 @@ class AbstractVariable(models.Model):
     name = models.CharField(_('Name'), max_length=30)
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name
+        return unicode(self.pk) + " " + unicode(self.name)
 
     def has_public_value(self):
        #In workspace variables, channel values are not public
@@ -194,7 +194,7 @@ class VariableValue(models.Model):
         return self.abstract_variable.get_default_value()
 
     def __unicode__(self):
-        return self.abstract_variable.name + self.value
+        return unicode(self.abstract_variable.name) + " - " +unicode(self.value)
     
 class WorkSpaceVariable(models.Model):
     
@@ -219,7 +219,7 @@ class WorkSpaceVariable(models.Model):
         return self.aspect!="CHANNEL"
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.aspect
+        return unicode(self.pk) + " " + unicode(self.aspect)
 
 class Tab(models.Model):
 
@@ -233,4 +233,4 @@ class Tab(models.Model):
         pass
 
     def __unicode__(self):
-        return str(self.pk) + " " + self.name
+        return unicode(self.pk) + " " + unicode(self.name)

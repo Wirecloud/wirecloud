@@ -216,7 +216,7 @@ def setup(request,redirect_url=None,
             login(request, user)
             
             # Add the user to EzSteroids if it is enabled
-            add_user_to_EzSteroids(request.META['HTTP_REFERER'], user)
+            add_user_to_EzSteroids("http://"+request.get_host(), user)
             
             return HttpResponseRedirect(redirect_url)
         

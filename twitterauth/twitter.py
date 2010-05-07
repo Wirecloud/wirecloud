@@ -24,7 +24,7 @@ import base64
 import calendar
 import os
 import rfc822
-import simplejson
+from django.utils import simplejson
 import sys
 import tempfile
 import textwrap
