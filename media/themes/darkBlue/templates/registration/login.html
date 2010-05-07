@@ -1,4 +1,8 @@
 {% load i18n %}
+{% load useful_tags %}
+
+{# load facebook_tags #}
+
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -21,6 +25,7 @@
 body{
   overflow: visible;
   color: #19446A;
+  position:relative;
 	background: url("/ezweb/themes/default/images/fond.gif") top left;
     margin:0;
     padding:0;
@@ -74,13 +79,22 @@ img{
 	padding: 10px;
 }
 
-.form-row #submit {
+#facebookconnect-login-form, #twitter, #openid_link{
+	display:inline;
+}
+
+.form-row #submit, #facebookconnect-login-form #submit{
 	background: transparent url("/ezweb/themes/default/images/header_deg.gif") repeat;
 	color: white;
 }
 
 #content-main .registration{
         text-align: center;
+		margin-bottom: 5px;
+}
+
+#other-methods{
+	text-align:center;	
 }
 
 .errornote {
@@ -111,6 +125,17 @@ img{
 	border-right: 2px solid;
 	border-bottom: 2px solid;
 }
+
+#openid_link{
+
+}
+
+input.openid {
+  background: white url("/ezweb/themes/default/images/login-openid-bg.gif") no-repeat;
+  background-position: 0 50%;
+  padding-left: 16px;
+}
+
 
 #content-main .training{
         color:#19446A;
@@ -222,7 +247,12 @@ h3{
 
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
+{# facebook_js #}
+
 <script type="text/javascript">
+
+var installed_apps = {{ installed_apps|safe }};
+
    function check_browser() {
       var browser=navigator.appName;
 
@@ -247,6 +277,14 @@ h3{
 		
 		return false;
 	}
+    
+    function toggleOpenId() {
+        var divOpenid = document.getElementById("openid");
+        if (divOpenid.style.display == "none")
+            divOpenid.style.display = "block";
+        else
+            divOpenid.style.display = "none";
+    }   
 
 </script>
 
@@ -277,6 +315,9 @@ h3{
 
 {% if form.errors %}
 <p class="errornote">{% trans "Your username and password didn't match. Please try again." %}</p>
+{% endif %}
+{% if openid_form.errors %}
+     <p class="errornote">{% trans "The OpenID authentication process failed. Please, try again." %}</p>
 {% endif %}
 
 <div id="content-main">
@@ -353,8 +394,31 @@ h3{
 				    <input type="submit" id="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
-				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
+				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}</a>{% endif %}
 			</div>
+			<div id="other-methods">
+				{% if "facebookconnect"|in_list:installed_apps or "twitterauth"|in_list:installed_apps or "openid_auth"|in_list:installed_apps %}
+					<div id="access" class="registration">{% trans 'or access with:' %}</div>
+					{# show_connect_button #}
+					{% if "twitterauth"|in_list:installed_apps %}
+						<div id="twitter">
+							<a id="twitter_button" href="{% url twitter_signin %}">
+								<img src="{{MEDIA_URL}}/images/twitter_button.png"/>
+							</a>
+						</div>
+					{% endif %}
+					{% if "openid_auth"|in_list:installed_apps %}
+	                	<div id="openid_link" class="registration" onclick="toggleOpenId();"><img src="{{MEDIA_URL}}/images/openid.png"/></div>
+	                	<div id="openid" {% if not openid_form.errors %}style="display:none" {% else %} style="display=block"{% endif %}>
+	                    	<form id="openid_form" action="{{app_path}}"method="POST" class="form-row">
+	                        	{{ openid_form }}
+	                        	<input type="submit" id="submit" value="{% trans 'Log in' %}" />
+	                    	</form>
+	                	</div>
+	            	{% endif %}
+				{% endif %}
+			</div>
+
 		</div>
 		<div id="tips">
 			<div id="tip_catalogue" class="tooltip">
@@ -383,6 +447,8 @@ if (is_iphone){
   document.getElementById('tips').style.display="none";
 }
 </script>
+
+{# initialize_facebook_connect #}
 </body>
 </html>
 
