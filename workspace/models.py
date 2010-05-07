@@ -127,8 +127,8 @@ class PublishedWorkSpace(models.Model):
 #Category for which a workspace is the defalult workspace
 class Category(models.Model):
     category_id = models.IntegerField()
-    default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'))
-    new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_")
+    default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'), null=True, blank=True)
+    new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
 
     def __unicode__(self):
         return str(self.category_id) + " " + str(self.default_workspace)
