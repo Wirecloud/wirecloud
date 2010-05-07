@@ -359,7 +359,7 @@ wChannel.prototype = new wInOut();
 
 wChannel.prototype.getValue = function(propagating) {
 	if (this.filter == null)
-		return this.variable.get();
+		return this.valueWithoutFilter;
 	else{
 		try{
 			var value = this.filter.run(this.valueWithoutFilter, this.filterParams, this);
