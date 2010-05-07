@@ -373,7 +373,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var channelVar = this.workspace.getVarManager().createWorkspaceVariable(channelName);
 		var channelId = this._newProvisionalChannelId();
 
-		var channel = new wChannel(channelVar, channelName, channelId, true);
+		//create a channel. Params: variable, name, id, provisional id, readOnly
+		var channel = new wChannel(channelVar, channelName, channelId, true, false);
 		this.channels.push(channel);
 
 		// Save it on the provisional channel list
