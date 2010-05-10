@@ -80,9 +80,11 @@ def createConnectable(var):
 
     return connectableId
 
-def addIGadgetVariable(igadget, user, varDef):
+def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     # Sets the default value of variable
-    if varDef.default_value:
+    if initial_value:
+        var_value = initial_value 
+    elif varDef.default_value:
         var_value = varDef.default_value
     else:
         var_value = ''
@@ -134,10 +136,18 @@ def SaveIGadget(igadget, user, tab, request):
 
         new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
         new_igadget.save()
-
+        
+        initial_variable_values = None
+        if request.POST.has_key('variable_values'):
+            initial_variable_values = simplejson.loads(request.POST['variable_values'])
+            
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
-            addIGadgetVariable(new_igadget, user, varDef)
+            try:
+                initial_value = initial_variable_values[varDef.name]
+            except:
+                initial_value = None
+            addIGadgetVariable(new_igadget, user, varDef, initial_value)
         
         transaction.commit()
 

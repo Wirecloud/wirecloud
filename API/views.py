@@ -55,6 +55,7 @@ class IGadgetCollection(Resource):
             msg = _("Missing template URL parameter")
             json = json_encode({"message":msg, "result":"error"})
             return HttpResponseBadRequest(json, mimetype='application/json; charset=UTF-8')
+        
         #
         #Get or Create the Gadget in the Showcase
         #
@@ -80,11 +81,16 @@ class IGadgetCollection(Resource):
         except:
             tabList = Tab.objects.filter(workspace=activeWS)
             activeTab = tabList[0]
+            
+        # Get the iGadget name
+        igadget_name = gadget.name
+        if request.POST.has_key('igadget_name'):
+            igadget_name = request.POST['igadget_name']
         
         #instance the Gadget            
         #currentIGadgetsTabURI = "/workspace/" + activeWS.id + "/tab/" + activeTab.id + "/igadgets"
         data = {"left": 0, "top": 0, "icon_left": 0, "icon_top": 0, "zIndex": 0, 
-                "width": gadget.width, "height": gadget.height, "name": gadget.name, 
+                "width": gadget.width, "height": gadget.height, "name": igadget_name, 
                 "menu_color": "FFFFFF", "layout": 0, "gadget": gadget.uri}
         resp = SaveIGadget(data, request.user, activeTab, request)
         
