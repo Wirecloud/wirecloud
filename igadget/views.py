@@ -270,7 +270,11 @@ def UpgradeIGadget(igadget, user):
     ig = get_object_or_404(IGadget, pk=igadget_pk)
     currentGadget = ig.gadget
 
-    result = get_or_create_gadget(url, user)
+    # get the workspace in which the igadget is being added in order to
+    # check if it is shared
+    workspaceId = ig.tab.workspace.id
+    
+    result = get_or_create_gadget(url, user, workspaceId)
     lastGadget = result["gadget"]
 
     #check equivalency and add the variables needed

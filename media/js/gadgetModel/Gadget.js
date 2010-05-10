@@ -92,9 +92,12 @@ function Gadget(gadget_, url_, options_) {
 		}
 		
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
+		var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
 		// Post Gadget to PersistenceEngine. Asyncrhonous call!
-		var param = {url: url_};
-		persistenceEngine.send_post(URIs.GET_GADGETS, param, this, loadGadget, onError);
+		// params: url of the template, id of the current workspace to check if it is shared
+		// and with who it is shared.  
+		var params = {url: url_, workspaceId: workspaceId_};
+		persistenceEngine.send_post(URIs.GET_GADGETS, params, this, loadGadget, onError);
 	}
 	
 	this.getId = function() {

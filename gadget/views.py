@@ -72,9 +72,15 @@ def parseAndCreateGadget(request, user_name):
             msg = _("Missing template URL parameter")    
             raise Exception(msg)
         
+        if not request.POST.has_key('workspaceId'):
+            msg = _("Missing workspaceId parameter")    
+            raise Exception(msg)
+    
+        workspaceId = request.POST['workspaceId']
+            
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
-        result = get_or_create_gadget(templateURL, user, fromWGT)
+        result = get_or_create_gadget(templateURL, user, workspaceId, fromWGT)
         
         return result
         

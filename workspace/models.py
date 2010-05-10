@@ -65,6 +65,11 @@ class WorkSpace(models.Model):
 
         return self.get_creator() != user
     
+    def has_several_users(self):
+        if (len(self.users.all()) < 2):
+            return False
+        return True
+    
     def setReadOnlyFields(self, readOnly):
         #Get the igadget identifiers
         tabs = self.tab_set.all()
