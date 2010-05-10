@@ -35,7 +35,7 @@ from django.template import RequestContext
 from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 
-from commons.authentication import login_public_user, logout_request
+from commons.authentication import login_public_user, logout_request, login_with_third_party_cookie
 from commons.utils import get_xml_error, json_encode
 from commons.logs_exception import TracedServerError
 from commons.http_utils import download_http_content
@@ -69,10 +69,15 @@ def wiring(request, user_name=None):
     """ Wiring view """
     return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
 
-@login_required
 def index_lite(request, user_name=None):
+    if (not request.user.is_authenticated()):
+      (response, user) = login_with_third_party_cookie(request)
+    
+    if (response):
+        return response
+    
     """ EzWeb with no header"""
-    if request.user.username != "public":
+    if request.user.username != "public": 
         return render_ezweb(request, template="index_lite.html")
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
