@@ -38,10 +38,10 @@ from django.utils import simplejson
 
 class TCloudBackend:
     
-    TCLOUD_AUTH_URL = "http://192.168.8.46:8080/TCloud/resources/validate/user/"
+    TCLOUD_AUTH_URL = "http://192.168.8.46:8080/tcloud/resources/org/%s/validate?username=%s"
 
-    def authenticate(self,username=None,password=None):
-        (valid, tcloud_profile) = self.is_valid(username,password)
+    def authenticate(self,username=None,password=None,request=None):
+        (valid, tcloud_profile) = self.is_valid(username,password, request)
         
         if not valid:
             return None
@@ -68,21 +68,36 @@ class TCloudBackend:
         except User.DoesNotExist:
             return None
 
-    def is_valid (self,username=None,password=None):
-        if not username or not password:
+    def is_valid (self,username=None,password=None, request=None):
+        if not username:
             return (False, None)
         
         #ask TCLOUD about the authentication
         if hasattr(self,'TCLOUD_AUTH_URL'):
             urlBase=self.TCLOUD_AUTH_URL;
             
-            url = urlBase + username + "/"
+            org = None
+            cookie = None
+            
+            if not org or not cookie:
+              return (False, None)
+            
+            # Getting user's organization
+            if (request.REQUEST.get('org')):
+              org = request.REQUEST.get('org')
+            
+            if (request.COOKIES.has_key('JSESSIONID')):
+              cookie = request.COOKIES['JSESSIONID']
+            
+            url = self.TCLOUD_AUTH_URL % (org, username)
+            
             params = {}
+            params['cookie'] = cookie
         
             try:
                 result_json = download_http_content(url,params)
                 result = simplejson.loads(result_json)
                 
                 return (result['validateSession'], result_json)
-            except Exception:
+            except Exception , e:
                 return (False, None)

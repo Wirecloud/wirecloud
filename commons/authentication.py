@@ -35,10 +35,9 @@ from django.utils.translation import ugettext as _
 from commons.logs_exception import TracedServerError
 
 from django.utils.translation import ugettext as _
-
 from django.contrib.auth.models import User
-
 from django.contrib.auth import authenticate, login, load_backend, logout
+from django.http import HttpResponseRedirect
 
 import middleware
 
@@ -61,6 +60,20 @@ def get_user_authentication(request):
         raise Http403 (_("You must be logged"))
 
     return user
+
+def login_with_third_party_cookie(request):
+    if (not request.REQUEST.has_key('username')):
+      return (HttpResponseRedirect('/accounts/login/'), None)
+    
+    username = request.REQUEST.get('username')
+    
+    user = authenticate(username=username, password=None, request=request)
+    
+    if (not user):
+       return (HttpResponseRedirect('/accounts/login/'), None)
+   
+    login(request, user)
+    return (None, user)
 
 def get_public_user(request):
     try:
