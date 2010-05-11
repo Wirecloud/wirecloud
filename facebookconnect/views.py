@@ -28,6 +28,7 @@ from django.contrib.auth import authenticate, login, logout, REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.db import transaction
 
 from facebook.djangofb import require_login as require_fb_login
 
@@ -134,7 +135,8 @@ def facebook_logout(request, redirect_url=None):
         request.facebook.uid = None
     url = getattr(settings,'LOGOUT_REDIRECT_URL',redirect_url) or '/'
     return HttpResponseRedirect(url)
-    
+
+@transaction.commit_on_success
 def setup(request,redirect_url=None,
           registration_form_class=FacebookUserCreationForm,
           template_name='facebook/setup.html',
