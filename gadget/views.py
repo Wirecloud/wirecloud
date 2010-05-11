@@ -59,9 +59,9 @@ from gadget.utils import *
 from HTMLParser import HTMLParseError
 
     
-def parseAndCreateGadget(request, user_name):
+def parseAndCreateGadget(request, user, workspaceId):
     try:
-        user = user_authentication(request, user_name)
+
         templateURL = None
         
         if request.POST.has_key('url'):
@@ -72,11 +72,9 @@ def parseAndCreateGadget(request, user_name):
             msg = _("Missing template URL parameter")    
             raise Exception(msg)
         
-        if not request.POST.has_key('workspaceId'):
+        if not workspaceId:
             msg = _("Missing workspaceId parameter")    
             raise Exception(msg)
-    
-        workspaceId = request.POST['workspaceId']
             
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
@@ -120,8 +118,15 @@ class GadgetCollection(Resource):
     @transaction.commit_on_success
     def create(self, request, user_name=None):
         
+        if not request.POST.has_key('workspaceId'):
+            msg = _("Missing workspaceId parameter")    
+            json = json_encode({"message":msg, "result":"error"})
+            return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
+        
+        user = user_authentication(request, user_name)
+        
         #create the gadget
-        result = parseAndCreateGadget(request, user_name)
+        result = parseAndCreateGadget(request, user, request.POST['workspaceId'])
         templateParser = result["templateParser"]
         
         #return the data
