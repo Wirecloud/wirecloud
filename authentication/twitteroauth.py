@@ -15,6 +15,7 @@ The profile models should have following fields:
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import transaction
 
 from twitterauth.oauthtwitter import OAuthApi
 from twitterauth.models import TwitterUserProfile
@@ -27,7 +28,7 @@ CONSUMER_SECRET = getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET')
 class TwitterBackend:
     """TwitterBackend for authentication
     """
-    
+    @transaction.commit_on_success
     def authenticate(self, access_token):
         '''authenticates the token by requesting user information from twitter
         '''
@@ -65,7 +66,6 @@ class TwitterBackend:
         userprofile.description = userinfo.description
         userprofile.profile_image_url = userinfo.profile_image_url
         userprofile.save()
-        
         return user
         
     
