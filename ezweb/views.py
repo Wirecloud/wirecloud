@@ -235,10 +235,13 @@ def render_ezweb(request, user_name=None, template='index.html', public_workspac
             
             url = "%sapi/user/%s/data.json" % (url, request.user.username)
             
-            user_data = simplejson.loads(download_http_content(url))
+            try:
+                user_data = simplejson.loads(download_http_content(url))
             
-            manage_groups(request.user, user_data['groups'])
-            request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
+                manage_groups(request.user, user_data['groups'])
+                request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
+            except:
+                request.session['policies'] = "null"
         else:
             request.session['policies'] = "null"
             
