@@ -84,7 +84,7 @@ class TCloudBackend:
               org = request.REQUEST.get('org')
             
             if (request.COOKIES.has_key('JSESSIONID')):
-              cookie = 'JSESSIONID' + request.COOKIES['JSESSIONID']
+              cookie = 'JSESSIONID=' + request.COOKIES['JSESSIONID']
             
             if not org or not cookie:
               return (False, None)
