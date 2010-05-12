@@ -84,7 +84,7 @@ class TCloudBackend:
               org = request.REQUEST.get('org')
             
             if (request.COOKIES.has_key('JSESSIONID')):
-              cookie = request.COOKIES['JSESSIONID']
+              cookie = 'JSESSIONID' + request.COOKIES['JSESSIONID']
             
             if not org or not cookie:
               return (False, None)
@@ -92,11 +92,13 @@ class TCloudBackend:
             url = self.TCLOUD_AUTH_URL % (org, username)
             
             params = {}
-            params['cookie'] = cookie
-            params['accept'] = 'application/json'
+            
+            headers = {}
+            headers['Cookie'] = cookie
+            headers['Accept'] = 'application/json'
         
             try:
-                result_json = download_http_content(url,params)
+                result_json = download_http_content(url,params, None, headers)
                 result = simplejson.loads(result_json)
                 
                 return (result['validateSession'], result_json)
