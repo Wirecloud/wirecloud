@@ -73,7 +73,7 @@ def index_lite(request, user_name=None):
     if (not request.user.is_authenticated()):
       (response, user) = login_with_third_party_cookie(request)
     
-    if (response):
+      if (response):
         return response
     
     """ EzWeb with no header"""

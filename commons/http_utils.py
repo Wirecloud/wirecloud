@@ -61,13 +61,19 @@ def download_http_content (uri, params=None, user=None, headers={}):
     referer = getattr(settings, 'HTTP_REFERER', None)
     params = params or {}
     has_cookie = 'cookie' in params
-    if referer or user or has_cookie:
+    accept = 'accept' in params
+    
+    if referer or user or has_cookie or accept:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
             'Accept': 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
             'Accept-Language': 'en-gb,en;q=0.5',
             'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
         }
+        if accept:
+            headers.update({
+                'Accept': params['accept'],
+            })
         if referer:
             headers.update({
                 'Referer': referer,

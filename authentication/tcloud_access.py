@@ -79,9 +79,6 @@ class TCloudBackend:
             org = None
             cookie = None
             
-            if not org or not cookie:
-              return (False, None)
-            
             # Getting user's organization
             if (request.REQUEST.get('org')):
               org = request.REQUEST.get('org')
@@ -89,10 +86,14 @@ class TCloudBackend:
             if (request.COOKIES.has_key('JSESSIONID')):
               cookie = request.COOKIES['JSESSIONID']
             
+            if not org or not cookie:
+              return (False, None)
+            
             url = self.TCLOUD_AUTH_URL % (org, username)
             
             params = {}
             params['cookie'] = cookie
+            params['accept'] = 'application/json'
         
             try:
                 result_json = download_http_content(url,params)
