@@ -92,10 +92,10 @@ class IGadgetCollection(Resource):
         #get the active Tab and Workspace
         try:
             wsList = UserWorkSpace.objects.filter(user=user, active=True)
-            activeWS = wsList[0]
+            activeWS = wsList[0].workspace
         except:
             wsList = UserWorkSpace.objects.filter(user=user)
-            activeWS = wsList[0]
+            activeWS = wsList[0].workspace
             
         try:
             tabList = Tab.objects.filter(workspace=activeWS, visible=True)

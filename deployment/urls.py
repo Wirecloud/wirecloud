@@ -38,7 +38,7 @@ urlpatterns = patterns('',
 		(r'^gadgets/error$', Error(permitted_methods=('GET',))),
 
 		# Gadgets .wgt
-		(r'^gadgets/(?P<username>.+)/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[^/\t\n\r\f\v]+)/$', Resources(permitted_methods=('GET',))),
+		(r'^gadgets/(?P<username>[\.\-\w]+)/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[^/\t\n\r\f\v]+)/$', Resources(permitted_methods=('GET',))),
 
 		# Upload Gadget
 		(r'^gadgets/$', Resources(permitted_methods=('POST','UPDATE'))),
