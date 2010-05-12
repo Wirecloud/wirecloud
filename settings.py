@@ -262,6 +262,10 @@ FORCE_SCRIPT_NAME=""
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
 
+#Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
+#OPENID_PROVIDERS = ["myopenid.com", "google.com"]
+
+
 #################################
 ##### Facebook Connect data #####
 #################################

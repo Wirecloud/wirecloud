@@ -147,6 +147,19 @@ def begin_openid_login(request, openid_url,
     #Set up the openid authorization request
     consumer = Consumer(request.session, DjangoOpenIDStore())
     openid_auth = consumer.begin(openid_url)
+    
+    #Check if the openId provider is allowed
+    if hasattr(settings, 'OPENID_PROVIDERS') and settings.OPENID_PROVIDERS:
+        found = False
+        for provider_name in settings.OPENID_PROVIDERS:
+            if provider_name in openid_auth.endpoint.server_url:
+                found = True
+                break
+            
+        if not found:
+            error_message = "%s: %s" % (_("Not allowed OpenID provider"), openid_auth.endpoint.server_url)
+            return failure_openid_login(request, openid_url, error_message, redirect_field_name=redirect_field_name)
+    
     #Add openid extension args (for things like simple registration)
     extension_args = extension_args or {}
     #If we want simple registration, set the correct extension argument
