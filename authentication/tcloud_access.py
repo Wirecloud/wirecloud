@@ -38,7 +38,7 @@ from django.utils import simplejson
 
 class TCloudBackend:
     
-    TCLOUD_AUTH_URL = "http://192.168.8.46:8080/tcloud/resources/org/%s/validate?username=%s"
+    TCLOUD_AUTH_URL = "http://192.168.8.46:8080/tcloud/resources/org/%s/users/validate?username=%s"
 
     def authenticate(self,username=None,password=None,request=None):
         (valid, tcloud_profile) = self.is_valid(username,password, request)
