@@ -875,7 +875,7 @@ class  WorkSpacePublisherEntry(Resource):
             
         imageURI = mashup.get('imageURI')
         if (not imageURI):
-            imageURI = 'http://share.skype.com/sites/devzone/headshot_mashup.jpg'
+            imageURI = settings.MEDIA_URL+'images/headshot_mashup.jpg'
             
         wikiURI = mashup.get('wikiURI')
         if (not wikiURI):
