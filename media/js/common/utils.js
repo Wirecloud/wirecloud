@@ -230,7 +230,7 @@ Theme.prototype.setLinks = function(){
 	var element;
 	for (var linkId in this._links){
 		element = $(linkId);
-		if ($(linkId)) {
+		if (element) {
 			element.onclick = function(){
 				window.open(this._links[linkId]);
 			}.bind(this);
@@ -243,8 +243,10 @@ Theme.prototype.unsetLinks = function(){
 	var element;
 	for (var linkId in this._links){
 		element = $(linkId);
-		element.onclick = null;
-		element.removeClassName('clickable');
+		if (element) {
+			element.onclick = null;
+			element.removeClassName('clickable');
+		}
 	}
 }
 
