@@ -69,7 +69,7 @@ class TCloudBackend:
             return None
 
     def is_valid (self,username=None,password=None, request=None):
-        if not username:
+        if not username or not request:
             return (False, None)
         
         #ask TCLOUD about the authentication
@@ -80,7 +80,7 @@ class TCloudBackend:
             cookie = None
             
             # Getting user's organization
-            if (request.REQUEST.get('org')):
+            if (request.REQUEST.has_key('org')):
               org = request.REQUEST.get('org')
             
             if (request.COOKIES.has_key('JSESSIONID')):
