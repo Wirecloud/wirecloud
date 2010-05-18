@@ -30,7 +30,7 @@
 
 #
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from user.models import UserProfile
 
 from commons.http_utils import download_http_content
@@ -39,6 +39,7 @@ from django.utils import simplejson
 class TCloudBackend:
     
     TCLOUD_AUTH_URL = "http://192.168.8.46:8080/tcloud/resources/org/%s/users/validate?username=%s"
+    TCLOUD_ORGANIZATION = "org_tcloud"
 
     def authenticate(self,username=None,password=None,request=None):
         (valid, tcloud_profile) = self.is_valid(username,password, request)
@@ -53,6 +54,10 @@ class TCloudBackend:
             user.save()
         
         profile, created = UserProfile.objects.get_or_create(user=user)
+        
+        tcloud_org, created = Group.objects.get_or_create(name=self.TCLOUD_ORGANIZATION)
+        
+        user.groups.add(tcloud_org)
         
         profile.create_load_script(tcloud_profile)
         profile.save()
