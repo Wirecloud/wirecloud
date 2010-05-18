@@ -61,7 +61,16 @@ function VarManager (_workSpace) {
 	VarManager.prototype.sendBufferedVars = function () {
 		// Asynchronous handlers 
 		function onSuccess(transport) {
-			//varManager.resetModifiedVariables(); Race Condition
+			var response = transport.responseText;
+			var modifiedVariables = JSON.parse(response);
+			var igadgetVars = modifiedVariables['igadgetVars']
+			this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
+			for (var i=0;i<igadgetVars.length;i++){
+				var id = igadgetVars[i].id;
+				var variable = this.getVariableById(id);
+				variable.set(igadgetVars[i].value) //set willl not add the variable to the modified variables to be sent due to the 'disableModifications'
+			}
+			this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
 		}
 
 		function onError(transport, e) {
@@ -117,18 +126,19 @@ function VarManager (_workSpace) {
 			var label = igadgetVars[i].label;
 			var aspect = igadgetVars[i].aspect;
 			var value = igadgetVars[i].value;
+			var shared = igadgetVars[i].shared;
 				
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, tab);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, tab);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 			}
@@ -214,7 +224,7 @@ function VarManager (_workSpace) {
 
 	VarManager.prototype.commitModifiedVariables = function() {		
 		//If it have not been buffered all the requests, it's not time to send a PUT request
-		if (this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
+		if (!this.force_commit && this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
 			this.buffered_requests++;
 			return
 		}
@@ -247,64 +257,81 @@ function VarManager (_workSpace) {
 	    for (gadgetIndex in this.iGadgets) {
 		vars = this.iGadgets[gadgetIndex];
 
-		for (varIndex in vars) {
-		    variable = vars[varIndex];
-
-		    if (variable.aspect == "SLOT" && variable.handler) {
-			try {
-			    variable.handler(variable.value);
-			} catch (e) {
+			for (varIndex in vars) {
+			    variable = vars[varIndex];
+	
+			    if (variable.aspect == "SLOT" && variable.handler) {
+					try {
+					    variable.handler(variable.value);
+					} catch (e) {
+					}
+			    }
 			}
-		    }
-		}
 		
 	    }
+	}
+	
+	VarManager.prototype.findVariableInCollection = function(varCollection, id){
+		for (var i = 0; i < varCollection.length; i++){
+			var modVar = varCollection[i];
+			
+			if (modVar.id == id) {
+				return modVar
+			}
+		}
+		return null;
 	}
 
 
 	VarManager.prototype.markVariablesAsModified = function (variables) {
-		var varCollection;
-		
-		for (var j=0; j < variables.length; j++) {
-			var variable = variables[j];
+		if (this.modificationsEnabled) {
+			var varCollection;
 			
-			// Is it a igadgetVar or a workspaceVar?
-			if (variable.aspect == Variable.prototype.INOUT
-				|| variable.aspect == Variable.prototype.TAB) {
-				varCollection = this.workspaceModifiedVars;
-			} else {
-				varCollection = this.igadgetModifiedVars;
-			}
-		 
-			for (var i=0; i<varCollection.length; i++) {
-			    var modVar = varCollection[i];
-		
-			    if (modVar.id == variable.id) {
+			for (var j = 0; j < variables.length; j++) {
+				var variable = variables[j];
+				
+				// Is it a igadgetVar or a workspaceVar?
+				if (variable.aspect == Variable.prototype.INOUT ||
+				variable.aspect == Variable.prototype.TAB) {
+					varCollection = this.workspaceModifiedVars;
+				}
+				else {
+					varCollection = this.igadgetModifiedVars;
+				}
+				
+				var modVar = this.findVariableInCollection(varCollection, variable.id)
+				if (modVar) {
 					modVar.value = variable.value;
 					return;
-			    }	
+				}
+				
+				//It's doesn't exist in the list
+				//It's time to create it!
+				var varInfo = {}
+				
+				varInfo['id'] = variable.id
+				varInfo['value'] = variable.value
+				if (variable.shared != null) { //it is a possible shared variable 
+					varInfo['shared'] = variable.shared
+				}
+				
+				varCollection.push(varInfo);
 			}
-
-			//It's doesn't exist in the list
-			//It's time to create it!
-			var varInfo = {}
-			
-			varInfo['id'] = variable.id
-			varInfo['value'] = variable.value
-			
-			varCollection.push(varInfo);	    
 		}
 	
 	}
 
 	VarManager.prototype.incNestingLevel = function() {
-	    this.nestingLevel++;
+		if (this.modificationsEnabled)
+	    	this.nestingLevel++;
 	}
 
 	VarManager.prototype.decNestingLevel = function() {
-	    this.nestingLevel--;
-	    if (this.nestingLevel == 0)
-		this.commitModifiedVariables();
+		if (this.modificationsEnabled) {
+			this.nestingLevel--;
+			if (this.nestingLevel == 0) 
+				this.commitModifiedVariables();
+		}
 	}
 
 	VarManager.prototype.resetModifiedVariables = function () {
@@ -312,6 +339,13 @@ function VarManager (_workSpace) {
 	    this.buffered_requests = 0;
 	    this.igadgetModifiedVars = [];
 	    this.workspaceModifiedVars = [];
+		this.force_commit = false;
+	}
+	
+	VarManager.prototype.forceCommit = function(){
+		if (this.modificationsEnabled){ 
+			this.force_commit = true;
+		}
 	}
 	
 	VarManager.prototype.getVariableById = function (varId) {
@@ -351,6 +385,10 @@ function VarManager (_workSpace) {
 	this.nestingLevel = 0;
 	
 	this.buffered_requests = 0;
+	
+	this.force_commit = false;
+	
+	this.modificationsEnabled = true;
 	
 	this.pendingVariables = new Hash(); //to manage igadgets loaded on demand caused by a wiring propagation
 	

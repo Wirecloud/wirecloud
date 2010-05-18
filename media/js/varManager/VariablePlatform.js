@@ -41,13 +41,14 @@ function Variable (id, iGadget, name, varManager) {
 	this.aspect = null;
 	this.value = null;
 	this.tab = null;
+	this.shared = null; //null means no sharing at all (true or false means that could be shared)
 }
 
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
  
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, tab_) {
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, tab_, shared_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
@@ -56,6 +57,7 @@ Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager
 	this.aspect = aspect_;
 	this.value = value_;
 	this.tab = tab_;
+	this.shared = shared_;
 }
 
 //////////////////////////////////////////////
@@ -104,8 +106,8 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_);
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_);
   
 	this.handler = null;
 }
@@ -135,6 +137,10 @@ RVariable.prototype.set = function (newValue) {
 		// If annotated, the value must be managed!
 
 		var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
+		
+		if (this.shared != null){ //its a possible shared variable
+			varInfo[0]["shared"] = this.shared;
+		}
 		
 		switch (this.aspect) {
 			case Variable.prototype.SLOT:
@@ -189,6 +195,9 @@ RVariable.prototype.set = function (newValue) {
 			default:
 				break;
 		}
+		if (this.shared==true){
+			this.varManager.forceCommit();
+		}
 		// And it must be changed to NOT annotated!
 		this.annotated = false;	
     }
@@ -228,8 +237,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_);
 }
 
 //////////////////////////////////////////////
@@ -251,6 +260,9 @@ RWVariable.prototype.set = function (value_) {
     	this.value = value_;
 	
         this.varManager.markVariablesAsModified([this]);
+		if (this.shared==true){
+			this.varManager.forceCommit();
+		}
     }
 
     // Propagate changes to wiring module
