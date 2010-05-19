@@ -43,6 +43,18 @@ class UserProfile(models.Model):
     
     load_script = models.TextField(_('load_script'), blank=True, null=True)
     
+    def adapt_language_code(self, language):
+        ezweb_language = None
+        
+        if (language.lower().startswith('es')):
+            ezweb_language = 'es'
+        elif (language.lower().startswith('en')):
+            ezweb_language = 'en'
+        else:
+            ezweb_language = 'en'
+        
+        return ezweb_language
+    
     def execute_server_script(self, request):
         script = simplejson.loads(self.load_script)
         
@@ -70,6 +82,8 @@ class UserProfile(models.Model):
         return simplejson.dumps(stored_script)
     
     def create_load_script(self, profile):
+        self.adapt_language_code('es_es')
+                
         profile = simplejson.loads(profile)
         script = []
         
@@ -83,7 +97,7 @@ class UserProfile(models.Model):
         if (profile.has_key('localeLanguage')):
             command = {}
             command["command"]="change_language"
-            command["language"]=profile["localeLanguage"]
+            command["language"]=self.adapt_language_code(profile["localeLanguage"])
             
             script.append(command)
             
