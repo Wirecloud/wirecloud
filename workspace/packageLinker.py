@@ -30,7 +30,7 @@
 
 #
 
-from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
+from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace, SharedVariableValue
 from igadget.models import Variable, IGadget
 
 from django.db import models, IntegrityError
@@ -77,7 +77,8 @@ class PackageLinker:
             user_workspace.save()            
     
     def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable, created):
-        if (creator_value_available):           
+        if (creator_value_available):
+                       
             user_variable_value.value = creator_value_available.get_variable_value()
         else:
             #Creator VariableValue not available (workspace published with old cloning algorithm)
@@ -108,9 +109,34 @@ class PackageLinker:
                 
                 user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
                 created = True
-            
+                            
             #Updating User VariableValue value!   
             user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, abstract_var, created)
+                
+            if created:
+                if creator_variable_value:
+                    
+                    #check if it's shared (only for igadget variables)
+                    if variable and variable.vardef.shared_var_def:
+                        shared_concept = variable.vardef.shared_var_def
+                        shared_var_value, is_new = SharedVariableValue.objects.get_or_create(user=user,
+                                                                                              shared_var_def=shared_concept)
+                        if is_new:
+                            if variable.has_public_value():
+                                #clone the value the creator has set
+                                shared_var_value.value = SharedVariableValue.objects.get(user=creator,
+                                                                                         shared_var_def = shared_concept).value
+                            else:
+                                #set the default value
+                                shared_var_value.value = variable.get_default_value()
+                            
+                            shared_var_value.save()
+                        
+                        if creator_variable_value.shared_var_value:
+                            user_variable_value.shared_var_value = shared_var_value
+                            
+                    #remove the cloned variable value
+                    creator_variable_value.delete()
                 
             user_variable_value.save()
                 

@@ -51,7 +51,7 @@ from igadget.models import Variable
 
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 
-from workspace.models import AbstractVariable, WorkSpaceVariable, Tab, WorkSpace, UserWorkSpace, VariableValue, PublishedWorkSpace, Category
+from workspace.models import *
 from gadget.models import Gadget, VariableDef
 from igadget.models import IGadget, Position
 
@@ -647,16 +647,52 @@ class WorkSpaceVariableCollection(Resource):
                    
                 variable_value.value=unicode(wsVar['value'])
                 variable_value.save()
-               
+
+            
+            variables_to_notify = []
             for igVar in igadgetVariables:
                 igVarDAO = Variable.objects.get(pk=igVar['id'])
-                
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
+    
+                if igVar.has_key('shared'):
+                    if not igVar['shared']:
+                        #do not share the value: remove the relationship
+                        variable_value.shared_var_value = None
+                    else:
+                        shared_variable_def = igVarDAO.vardef.shared_var_def
+                        variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
+                                                                                          shared_var_def=shared_variable_def)
+                        #share the specified value
+                        variable_value.shared_var_value.value = unicode(igVar['value'])
+                        variable_value.shared_var_value.save()
+                        
+                        #notify the rest of variables that are sharing the value
+                        #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
+                        variable_values = VariableValue.objects.filter(shared_var_value= variable_value.shared_var_value).exclude(id=variable_value.id)
+                        #Variables that correspond with these values
+                        for value in variable_values:
+                            try:
+                                variable = Variable.objects.get(abstract_variable = value.abstract_variable,
+                                                                igadget__tab__workspace__id = workspace_id)
+                                exists = False 
+                                for var in variables_to_notify:
+                                    if var['id'] == variable.id:
+                                        var['value'] = value.shared_var_value.value
+                                        exists = True
+                                        break
+                                if not exists:
+                                    variables_to_notify.append({'id':variable.id, 'value': value.shared_var_value.value})
+                            except Variable.DoesNotExist:
+                                #it's not from the same workspace. Do nothing
+                                pass
+                                
    
                 variable_value.value=unicode(igVar['value'])
                 variable_value.save()
+                
+            data = {'igadgetVars':variables_to_notify}
+            return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
             
-            return HttpResponse(str('OK'))
         except Exception, e:
             transaction.rollback()
             msg = _("cannot update variables: ") + unicode(e)

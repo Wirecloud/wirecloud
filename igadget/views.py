@@ -48,7 +48,7 @@ from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
 
 from gadget.models import Gadget, VariableDef
-from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable
+from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable, SharedVariableValue
 from connectable.models import In, Out
 from igadget.models import Position, IGadget, Variable
 
@@ -93,8 +93,22 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     abstractVar = AbstractVariable(type="IGADGET", name=varDef.name)
     abstractVar.save()
 
+    #check if there is a shared value or set a new one
+    shared_value = None
+    if varDef.shared_var_def:
+        shared_value,created= SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
+        if created:
+            #init the value to share
+            shared_value.value = var_value
+            shared_value.save()
+        else:
+            #this VariableValue will take the previously shared value
+            var_value = shared_value.value
+        
+
     # Creating Value for Abstract Variable
-    variableValue =  VariableValue (user=user, value=var_value, abstract_variable=abstractVar)
+    variableValue =  VariableValue (user=user, value=var_value,
+                                    abstract_variable=abstractVar, shared_var_value= shared_value)
     variableValue.save()
 
     var = Variable(vardef=varDef, igadget=igadget, abstract_variable=abstractVar)

@@ -35,6 +35,8 @@ from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext as  _
 from django.utils import simplejson
 
+from gadget.models import SharedVariableDef
+
 class WorkSpace(models.Model):
     
     name = models.CharField(_('Name'), max_length=30)
@@ -180,11 +182,24 @@ class AbstractVariable(models.Model):
        
         
 
+#sharing variables. Each user can have a value for a specified concept (SharedVariableDef)    
+class SharedVariableValue(models.Model):
+    shared_var_def = models.ForeignKey(SharedVariableDef)
+    user = models.ForeignKey(User)
+    value = models.TextField(_('Value'), null=True, blank=True)
+    
+    class Meta:
+        unique_together = ('shared_var_def', 'user')    
+        
+    def __unicode__(self):
+        return unicode(self.shared_var_def.name) + " - " +unicode(self.user)    
+
 class VariableValue(models.Model):
     
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'), null=True, blank=True)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+    shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
     
     def clone_variable_value(self, user):
         cloned_value = VariableValue(user=user, value=self.get_variable_value(), abstract_variable=self.abstract_variable)
@@ -199,7 +214,15 @@ class VariableValue(models.Model):
         return self.abstract_variable.get_default_value()
 
     def __unicode__(self):
-        return unicode(self.abstract_variable.name) + " - " +unicode(self.value)
+        return unicode(self.abstract_variable.name) + " - " +unicode(self.user)
+    
+    def __getattribute__(self, name):
+        #return the shared value if it's shared
+        if name=='value' and object.__getattribute__(self, 'shared_var_value'):
+            return object.__getattribute__(self,'shared_var_value').value
+        
+        return object.__getattribute__(self, name)
+
     
 class WorkSpaceVariable(models.Model):
     

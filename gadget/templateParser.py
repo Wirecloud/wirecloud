@@ -42,7 +42,7 @@ from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 
 from gadgetCodeParser import GadgetCodeParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability, SharedVariableDef
 
 from commons.translation_utils import get_trans_index
 from translator.models import Translation
@@ -163,6 +163,14 @@ class UriGadgetHandler(handler.ContentHandler):
         self._accumulator = ""
         
 
+def get_shared_var_def(attrs):
+    
+    if (attrs.has_key('shared_concept')):
+            name = attrs.get('shared_concept')
+            shared_var_def, create = SharedVariableDef.objects.get_or_create(name=name)
+            return shared_var_def
+    return None
+
 class TemplateHandler(handler.ContentHandler):
     _SLOT = "SLOT"
     _EVENT = "EVEN"
@@ -236,11 +244,15 @@ class TemplateHandler(handler.ContentHandler):
             _default_value = attrs.get('default')
 
         if (_name != '' and _type != ''):
+            #check if it's shared
+            shared_concept = get_shared_var_def(attrs)
+            
             vDef = VariableDef ( name = _name, description =_description,
                                  type=self.typeText2typeCode(_type), 
                                  aspect = 'PROP', friend_code = None,
                                  default_value = _default_value,
-                                 gadget = self._gadget )
+                                 gadget = self._gadget,
+                                 shared_var_def = shared_concept )
 
             #vDef.save()
             relationship_eltos = {}

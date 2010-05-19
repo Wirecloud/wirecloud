@@ -495,6 +495,8 @@ def get_variable_data(data, user, workspace):
     data_ret['name'] = var_def.name
     data_ret['label'] = var_def.label
     data_ret['friend_code'] = var_def.friend_code
+    if var_def.shared_var_def:
+        data_ret['shared'] = variable_value.shared_var_value != None
 
     #Context management
     if var_def.aspect == 'GCTX' or var_def.aspect == 'ECTX': 

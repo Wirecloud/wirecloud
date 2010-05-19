@@ -188,7 +188,7 @@ class PackageCloner:
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
-        self.final_tables = ['User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel']
+        self.final_tables = ['User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue']
     
     def is_final_table(self, table_name):
         return (table_name in self.final_tables)
