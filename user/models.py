@@ -82,8 +82,6 @@ class UserProfile(models.Model):
         return simplejson.dumps(stored_script)
     
     def create_load_script(self, profile):
-        self.adapt_language_code('es_es')
-                
         profile = simplejson.loads(profile)
         script = []
         
