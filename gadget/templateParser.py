@@ -289,12 +289,17 @@ class TemplateHandler(handler.ContentHandler):
             _default_value = attrs.get('default')
 
         if (_name != '' and _type != '' and _description != '' and _label != ''):
+            
+            #check if it's shared
+            shared_concept = get_shared_var_def(attrs)
+            
             vDef = VariableDef( name=_name, description =_description,
                                 type=self.typeText2typeCode(_type), 
                                 aspect='PREF', friend_code=None,
                                 label = _label,
                                 default_value = _default_value,
-                                gadget=self._gadget )
+                                gadget=self._gadget,
+                                shared_var_def = shared_concept )
     
             #vDef.save()            
             relationship_eltos = {}
