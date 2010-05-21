@@ -41,9 +41,6 @@ div.fulldragboard div.gadget_menu {
 
 /********************************************/
 
-div.dragboard.fixed div.gadget_menu {
-}
-
 div.dragboard.fixed {
   background: transparent;
 }
@@ -101,10 +98,6 @@ div.color_button {
   -moz-border-radius: 4px;
 }
 
-div.gadget_window_locked div.gadget_wrapper {
-  border: none;
-}
-
 div.gadget_window div.snapButton {
   /* This icon represents that the iGadget is outside the grid */
   background: transparent url("../images/igadget/extract.png") no-repeat left bottom;
@@ -145,10 +138,6 @@ div.gadget_window div.statusBar {
 div.gadget_window div.statusBar .button {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-div.gadget_window_locked div.statusBar {
-  padding: 0 4px;
 }
 
 /*****

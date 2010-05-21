@@ -210,6 +210,21 @@ div.config_interface select {
   display: none;
 }
 
+/******************************
+ * Locked Dragboard
+ ******************************/
+
+div.gadget_window_locked {
+    -moz-border-radius: 0 !important;
+    -webkit-border-radius: 0 !important;
+    border-radius: 0 !important;
+    border: 1px solid transparent !important;
+}
+
+div.gadget_window_locked div.gadget_menu, div.gadget_window_locked div.statusBar {
+    display: none;
+}
+
 /***
  *
  */

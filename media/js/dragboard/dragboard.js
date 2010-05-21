@@ -267,6 +267,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadget = this.iGadgets[igadgetKeys[i]];
 			iGadget._notifyLockEvent(this.fixed);
 		}
+
+                this._commitChanges();
 	}
 
 	/**

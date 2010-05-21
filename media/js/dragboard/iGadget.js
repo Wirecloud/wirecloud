@@ -692,18 +692,19 @@ IGadget.prototype.paint = function(onInit) {
 	this.element.style.top = this.layout.getRowOffset(this.position.y) + "px";
 	this.setZPosition(this.zPos);
 
+	// Initialize lock status
+	var locked = this.layout.dragboard.isLocked();
+	if (locked) {
+		this.element.addClassName("gadget_window_locked");
+		this.menu.menu.addClassName("gadget_menu_locked");
+	}
+
 	// Select the correct representation for this iGadget (iconified, minimized or normal)
 	var minimizedStatusBackup = this.minimized;
 	this.minimized = false;
 	this._recomputeSize(true);
 
 	this.setMinimizeStatus(minimizedStatusBackup, false, false);
-
-	// Initialize lock status
-	var locked = this.layout.dragboard.isLocked();
-	if (locked) {
-		this._notifyLockEvent(true, false);
-	}
 
 	// Initialize transparency status
 	if (this.transparency)
@@ -1330,16 +1331,11 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus, reserveSpace) {
 		this.menu.menu.removeClassName("gadget_menu_locked");
 	}
 
-	this._recomputeHeight(false);
+	this.setSize(oldWidth, oldHeight, false, false);
 
 	// Notify Context Manager
 	var contextManager = this.layout.dragboard.getWorkspace().getContextManager();
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, newLockStatus);
-
-	// Notify resize event
-	reserveSpace = reserveSpace != null ? reserveSpace : true;
-	if (reserveSpace)
-		this.layout._notifyResizeEvent(this, oldWidth, oldHeight, this.getWidth(), this.getHeight(), false);
 }
 
 /**
