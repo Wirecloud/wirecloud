@@ -161,7 +161,7 @@ INSTALLED_APPS = (
     'user',
     'API',
     'uploader',
-    ### openid authentication not compatible with EzSteroids ###
+    ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
     # sign in with twitter app 

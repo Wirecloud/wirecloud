@@ -30,6 +30,8 @@ try:
 except ImportError:
     from cgi import parse_qsl
 
+from commons.utils import add_user_to_EzSteroids
+
 
 SREG= 'nickname'
 
@@ -226,6 +228,10 @@ def success_openid_login(request, openid_response, redirect_field_name=REDIRECT_
     if user:
         #Log in the user with the built-in django function
         auth_login(request, user)
+        
+        #Add the user to EzSteroids if it is enabled
+        add_user_to_EzSteroids("http://"+request.get_host(), user)
+        
         #Do we not yet have any openids in the session?
         if OPENIDS_SESSION_NAME not in request.session.keys():
             request.session[OPENIDS_SESSION_NAME] = []
