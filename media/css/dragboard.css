@@ -206,6 +206,38 @@ div.config_interface select {
   padding: 0px;
 }
 
+div.config_interface h4{
+	margin: 10px 0;
+}
+
+div.shared_conf_area label {
+	display:inline;
+	margin:0 10px 0 0;
+	vertical-align:middle;
+}
+
+div.shared_conf_area input{
+	margin-right:2px;
+	vertical-align:middle;
+}
+
+div.shared_conf_area a{
+	cursor: pointer;
+}
+
+div.shared_conf_area a{
+	vertical-align:middle;
+}
+
+table.shared_prefs {
+	border-collapse: collapse;
+}
+
+table.shared_prefs td{
+	border-bottom:1px solid #CCCCCC;
+	padding: 3px 0;
+}
+
 .gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard, .gadget_menu_minimized .hide_on_minimize {
   display: none;
 }

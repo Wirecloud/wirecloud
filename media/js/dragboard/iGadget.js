@@ -1150,7 +1150,7 @@ IGadget.prototype._setDefaultPrefsInInterface = function() {
 
 	for (var i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
-		curPref.setDefaultValueInInterface(this.prefElements[curPref.getVarName()]);
+		curPref.setDefaultValueInInterface();
 	}
 }
 
@@ -1170,22 +1170,12 @@ IGadget.prototype.setDefaultPrefs = function() {
 }
 
 /**
- * This function builds the igadget configuration form.
+ *  Auxiliar function to create a table interface with a set of preferences
  */
-IGadget.prototype._makeConfigureInterface = function() {
-
+IGadget.prototype._createPrefsInterface = function(prefs){
+	
 	var varManager = this.layout.dragboard.getWorkspace().getVarManager();
-	var prefs = this.gadget.getTemplate().getUserPrefs();
-
-	var interfaceDiv = document.createElement("div");
-
-	if (prefs.length == 0) {
-		interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
-		return interfaceDiv;
-	}
-
-	this.prefElements = new Array();
-
+	
 	var row, cell, label, table = document.createElement("table");
 	tbody = document.createElement("tbody");
 	table.appendChild(tbody);
@@ -1203,14 +1193,52 @@ IGadget.prototype._makeConfigureInterface = function() {
 		cell = document.createElement("td");
 		cell.setAttribute("width", "60%"); // TODO
 		curPrefInterface = prefs[i].makeInterface(varManager, this.id);
-		this.prefElements[curPrefInterface.name] = curPrefInterface;
+		this.prefElements[prefs[i].getVarName()] = curPrefInterface;
 		Element.extend(this.prefElements[curPrefInterface.name]);
 		cell.appendChild(curPrefInterface);
 		row.appendChild(cell);
 
 		tbody.appendChild(row);
 	}
+	
+	return table;
+}
+
+/**
+ * This function builds the igadget configuration form.
+ */
+IGadget.prototype._makeConfigureInterface = function() {
+	var gadgetPrefs = this.gadget.getTemplate().getGadgetPrefs();
+	var sharedPrefs = this.gadget.getTemplate().getSharedPrefs();
+	
+	var interfaceDiv = document.createElement("div");
+	if (gadgetPrefs.length == 0 && sharedPrefs.length == 0) {
+		interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
+		return interfaceDiv;
+	}
+
+	this.prefElements = new Array();
+	
+	//Add the gadget-only variables	
+	var table = this._createPrefsInterface(gadgetPrefs);
 	interfaceDiv.appendChild(table);
+	
+	//add the shareable variables
+	if (sharedPrefs.length > 0) {
+		//add a separator
+		var separator = document.createElement("hr");
+		interfaceDiv.appendChild(separator);
+		var shared_title = document.createElement("h4");
+		Element.extend(shared_title);
+		shared_title.appendChild(document.createTextNode(gettext("Shared Values")));
+		interfaceDiv.appendChild(shared_title);
+		
+		//create the shared prefs interface
+		var table = this._createPrefsInterface(sharedPrefs);
+		table.className = "shared_prefs"
+		interfaceDiv.appendChild(table);
+	}
+	
 
 	var buttons = document.createElement("div");
 	Element.extend(buttons);
@@ -1790,7 +1818,7 @@ IGadget.prototype.saveConfig = function() {
 		curPref = prefs[i];
 		prefName = curPref.getVarName();
 		prefElement = this.prefElements[prefName];
-		if (!curPref.validate(curPref.getValueFromInterface(prefElement))) {
+		if (!curPref.validate(curPref.getValueFromInterface())) {
 			validData = false;
 			prefElement.addClassName("invalid");
 		} else {
@@ -1814,10 +1842,8 @@ IGadget.prototype.saveConfig = function() {
 	var oldValue, newValue;
 	for (i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
-		prefName = curPref.getVarName();
-		prefElement = this.prefElements[prefName];
 		var oldValue = curPref.getCurrentValue(varManager, this.id);
-		var newValue = curPref.getValueFromInterface(prefElement);
+		var newValue = curPref.getValueFromInterface();
 
 		if (newValue != oldValue)
 			curPref.annotate(varManager, this.id, newValue);
@@ -1827,11 +1853,8 @@ IGadget.prototype.saveConfig = function() {
 	// Commit new value of the variable
 	for (i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
-		prefName = curPref.getVarName();
-		prefElement = this.prefElements[prefName];
-		var oldValue = curPref.getCurrentValue(varManager, this.id);
-		var newValue = curPref.getValueFromInterface(prefElement);
-
+		var newValue = curPref.getValueFromInterface();
+		
 		curPref.setValue(varManager, this.id, newValue);
 	}
 

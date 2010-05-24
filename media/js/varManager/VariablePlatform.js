@@ -72,6 +72,10 @@ Variable.prototype.setHandler = function () { }
 
 Variable.prototype.set = function (value) { } 
 
+Variable.prototype.setSharedState = function (shared_) {
+	this.shared = shared_;
+}
+
 Variable.prototype.annotate = function (value) {
         this.annotated = true;
         this.value=value;
@@ -253,6 +257,10 @@ RWVariable.prototype = new Variable;
 
 
 RWVariable.prototype.set = function (value_) {
+	if (this.aspect == Variable.prototype.PROPERTY && this.shared==true){
+		//it is a shared property. Gadgets cannot set its value
+		throw new Error("Shared properties cannot be changed by gadgets");
+	}
     this.varManager.incNestingLevel();
 
     if (this.value != value_) {

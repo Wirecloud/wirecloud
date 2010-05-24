@@ -33,6 +33,7 @@ function UserPref(varName_, label_, desc_, defaultValue_) {
 	this.label = null;
 	this.desc = null;
 	this.defaultValue = null;
+	this.inputElement = null;
 }
 
 UserPref.prototype.UserPref = function (varName_, label_, desc_, defaultValue_) {
@@ -63,6 +64,10 @@ UserPref.prototype.getCurrentValue = function (varManager, iGadgetId) {
 UserPref.prototype.setValue = function (varManager, iGadgetId, newValue) {
 	if (this.validate(newValue)) {
 		var variable = varManager.getVariableByName(iGadgetId, this.varName);
+		if (this.sharedElement){
+			//set the shared state in the variable
+			variable.setSharedState(this.sharedElement.checked);
+		}
 		variable.set(newValue);
 	}
 }
@@ -79,12 +84,12 @@ UserPref.prototype.setToDefault = function (varManager, iGadgetId) {
 	this.setValue(varManager, this.defaultValue);
 }
 
-UserPref.prototype.getValueFromInterface = function (element) {
-	return element.value;
+UserPref.prototype.getValueFromInterface = function () {
+	return this.inputElement.value;
 }
 
-UserPref.prototype.setDefaultValueInInterface = function (element) {
-	element.value = this.defaultValue;
+UserPref.prototype.setDefaultValueInInterface = function () {
+	this.inputElement.value = this.defaultValue;
 }
 
 UserPref.prototype.getLabel = function () {
@@ -95,6 +100,78 @@ UserPref.prototype.getLabel = function () {
 
 	return label;
 }
+
+UserPref.prototype.addSharedInterface = function(varManager, IGadgetId, prefField, container){
+	
+	function toggleEditLink(e){
+		cb = BrowserUtilsFactory.getInstance().getTarget(e);
+		if (cb.checked) {
+			this.link.show();
+			this.field.disabled = true;
+		}
+		else {
+			this.link.hide();
+			this.field.disabled = false;
+		}	
+	}
+	
+	function toggleField(e){
+		edit_link = BrowserUtilsFactory.getInstance().getTarget(e);
+		edit_link.toggleClassName("edit")
+		this.field.disabled = !this.field.disabled;
+	}
+	
+	var variable = varManager.getVariableByName(IGadgetId, this.varName);
+	
+	if (variable.shared != null){ //it is shareable
+
+		var shared_element = document.createElement("div")
+		Element.extend(shared_element);
+		shared_element.addClassName("shared_conf_area")
+		//checkbox
+		var cb = document.createElement('input');
+		Element.extend(cb);
+	    cb.type = 'checkbox';
+	    cb.id = this.varName + "_shared_cb";
+	    cb.checked = variable.shared;
+		shared_element.appendChild(cb);
+			
+		var label = document.createElement('label')
+		label.htmlFor = cb.id;
+		label.appendChild(document.createTextNode(gettext('is shared?')));
+		shared_element.appendChild(label);
+		
+		//edit link	
+	    var edit_link = document.createElement("a")
+		Element.extend(edit_link);
+		edit_link.addClassName("edit")
+		edit_link.appendChild(document.createTextNode(gettext('edit shared value')));
+		shared_element.appendChild(edit_link);
+		
+		if (variable.shared){
+			prefField.disabled = true;
+		}
+		else {
+			prefField.disabled = false;
+			edit_link.setStyle({
+				"display": "none"
+			});
+		}
+		
+		//add listeners
+		context = {"link":edit_link, "field":prefField};
+		Event.observe(cb, "click", toggleEditLink.bind(context))
+		context = {"field":prefField};
+		Event.observe(edit_link, "click", toggleField.bind(context))
+		
+		//add all to the container
+		container.appendChild(shared_element);
+		
+		this.sharedElement = cb;
+	}
+
+}
+
 
 //////////////////////////////////////////////
 // PUBLIC CONSTANTS
@@ -118,14 +195,14 @@ function ListUserPref(name_, label_, desc_, defaultValue_, ValueOptions_) {
 
 ListUserPref.prototype = new UserPref();
 
-ListUserPref.prototype.makeInterface = function (varManager, iGadgetId) {
-	var select;
+ListUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
+	var element = document.createElement("div");
 
-	select = document.createElement("select");
-	Element.extend(select);
-	select.setAttribute("name", this.varName);
+	var input = document.createElement("select");
+	Element.extend(input);
+	input.setAttribute("name", this.varName);
 
-	var currentValue = this.getCurrentValue(varManager, iGadgetId);
+	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 
 	for (var i = 0; i < this.options.length; i++) {
 		var option = document.createElement("option");
@@ -135,10 +212,14 @@ ListUserPref.prototype.makeInterface = function (varManager, iGadgetId) {
 			option.selected = "selected";
 
 		option.innerHTML = this.options[i][1];
-		select.appendChild(option);
+		input.appendChild(option);
 	}
+	
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
 
-	return select;
+	this.inputElement = input;
+	return element;
 }
 
 ListUserPref.prototype.validate = function (newValue) {
@@ -162,16 +243,20 @@ function IntUserPref(name_, label_, desc_, defaultValue_) {
 IntUserPref.prototype = new UserPref();
 
 IntUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
-	var element;
+	var element = document.createElement("div");
 
-	element = document.createElement("input");
-	element.setAttribute("name", this.varName);
-	element.setAttribute("type", "text");
+	var input = document.createElement("input");
+	input.setAttribute("name", this.varName);
+	input.setAttribute("type", "text");
 
 	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue != null)
-		element.setAttribute("value", currentValue);
+		input.setAttribute("value", currentValue);
+		
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
 
+	this.inputElement = input;
 	return element;
 }
 
@@ -190,16 +275,20 @@ function TextUserPref(name_, label_, desc_, defaultValue_) {
 TextUserPref.prototype = new UserPref();
 
 TextUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
-	var element;
+	var element = document.createElement("div");
 
-	element = document.createElement("input");
-	element.setAttribute("name", this.varName);
-	element.setAttribute("type", "text");
+	var input = document.createElement("input");
+	input.setAttribute("name", this.varName);
+	input.setAttribute("type", "text");
 
 	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue != null)
-		element.setAttribute("value", currentValue);
+		input.setAttribute("value", currentValue);
+		
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
 
+	this.inputElement = input;
 	return element;
 }
 
@@ -214,16 +303,20 @@ function DateUserPref(name_, label_, desc_, defaultValue_) {
 DateUserPref.prototype = new UserPref();
 
 DateUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
-	var element;
+	var element = document.createElement("div");
 
-	element = document.createElement("input");
-	element.setAttribute("name", this.varName);
-	element.setAttribute("type", "text");
+	var input = document.createElement("input");
+	input.setAttribute("name", this.varName);
+	input.setAttribute("type", "text");
 
-	var currentValue = this.getCurrentValue(IGadgetId);
+	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue != null)
-		element.setAttribute("value", currentValue);
+		input.setAttribute("value", currentValue);
 
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
+
+	this.inputElement = input;
 	return element;
 }
 
@@ -238,21 +331,25 @@ function BoolUserPref(name_, label_, desc_, defaultValue_) {
 BoolUserPref.prototype = new UserPref();
 
 BoolUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
-	var element;
+	var element = document.createElement("div");
 
-	element = document.createElement("input");
-	element.setAttribute("name", this.varName);
-	element.setAttribute("type", "checkbox");
+	var input = document.createElement("input");
+	input.setAttribute("name", this.varName);
+	input.setAttribute("type", "checkbox");
 
 	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue.strip().toLowerCase() == "true")
-		element.setAttribute("checked", "true");
+		input.setAttribute("checked", "true");
+	
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
 
+	this.inputElement = input;
 	return element;
 }
 
 BoolUserPref.prototype.getValueFromInterface = function(element) {
-	return element.checked ? "true" : "false";
+	return this.inputElement.checked ? "true" : "false";
 }
 
 /**
@@ -266,16 +363,20 @@ function PasswordUserPref(name_, label_, desc_, defaultValue_) {
 PasswordUserPref.prototype = new UserPref();
 
 PasswordUserPref.prototype.makeInterface = function (varManager, IGadgetId) {
-	var element;
+	var element = document.createElement("div");
 
-	element = document.createElement("input");
-	element.setAttribute("name", this.varName);
-	element.setAttribute("type", "password");
+	var input = document.createElement("input");
+	input.setAttribute("name", this.varName);
+	input.setAttribute("type", "password");
 
 	var currentValue = this.getCurrentValue(varManager, IGadgetId);
 	if (currentValue != null)
-		element.setAttribute("value", currentValue);
+		input.setAttribute("value", currentValue);
 
+	element.appendChild(input);	
+	this.addSharedInterface(varManager, IGadgetId, input, element);
+
+	this.inputElement = input;
 	return element;
 }
 

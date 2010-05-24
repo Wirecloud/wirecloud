@@ -68,7 +68,12 @@ function VarManager (_workSpace) {
 			for (var i=0;i<igadgetVars.length;i++){
 				var id = igadgetVars[i].id;
 				var variable = this.getVariableById(id);
-				variable.set(igadgetVars[i].value) //set willl not add the variable to the modified variables to be sent due to the 'disableModifications'
+				variable.annotate(igadgetVars[i].value)
+			}
+			for (var i=0;i<igadgetVars.length;i++){
+				var id = igadgetVars[i].id;
+				var variable = this.getVariableById(id);
+				variable.set(igadgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
 			}
 			this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
 		}

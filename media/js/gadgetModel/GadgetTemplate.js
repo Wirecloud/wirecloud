@@ -38,6 +38,11 @@ function GadgetTemplate(variables_, size_) {
    var variableList = variables_;
    var width = size_.width;
    var height = size_.height;
+   
+   //preferences section
+   var prefs =  null;
+   var sharedPrefs = null;
+   var gadgetPrefs = null;
 
 	// ******************
 	//  PUBLIC FUNCTIONS
@@ -81,42 +86,66 @@ function GadgetTemplate(variables_, size_) {
         return objVars;
     }
 	
-	this.getUserPrefs = function () {
+	this._newUserPref = function(rawVar){
+		
+		switch (rawVar.type) {
+			case UserPref.prototype.TEXT:  
+				return new TextUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+			case UserPref.prototype.INTEGER:  
+				return new IntUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+			case UserPref.prototype.BOOLEAN:
+				return new BoolUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+			case UserPref.prototype.DATE:
+				return new DateUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+			case UserPref.prototype.PASSWORD:
+				return new PasswordUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+			case UserPref.prototype.LIST:
+				return new ListUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value, rawVar.value_options);
+		}
+	}
+	
+	this._generateUserPrefs = function () {
 
-		if (this.prefs == null) {
-			// JSON-coded Template-Variables mapping	
-			// Constructing the structure 
-		 
-			this.prefs = new Array();
-			var rawVar = null;
-			for (var i = 0; i < variableList.length; i++) {
-				rawVar = variableList[i];
-				if (rawVar.aspect == Variable.prototype.USER_PREF) {
-					switch (rawVar.type) {
-						case UserPref.prototype.TEXT:  
-							this.prefs.push(new TextUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value));
-							break;
-						case UserPref.prototype.INTEGER:  
-							this.prefs.push(new IntUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value));
-							break;
-						case UserPref.prototype.BOOLEAN:
-							this.prefs.push(new BoolUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value));
-							break;
-						case UserPref.prototype.DATE:
-							this.prefs.push(new DateUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value));
-							break;
-						case UserPref.prototype.PASSWORD:
-							this.prefs.push(new PasswordUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value));
-							break;
-						case UserPref.prototype.LIST:
-							this.prefs.push(new ListUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value, rawVar.value_options));
-							break;
-					}
+		prefs =  new Array();
+		sharedPrefs = new Array();
+		gadgetPrefs = new Array();
+		
+		var rawVar = null;
+		var pref = null;
+		for (var i = 0; i < variableList.length; i++) {
+			rawVar = variableList[i];
+			if (rawVar.aspect == Variable.prototype.USER_PREF) {
+				pref = this._newUserPref(rawVar);
+				//add to the global list
+				prefs.push(pref);
+				if (!rawVar.shareable){
+					//add it to the user-only prefs
+					gadgetPrefs.push(pref);
+				}else{
+					//add it to the shared prefs
+					sharedPrefs.push(pref);
 				}
 			}
 		}
-
-		return this.prefs;
+		return prefs;
+	}
+	
+	this.getUserPrefs = function () {
+		if (!prefs)
+			this._generateUserPrefs();
+		return prefs;
+	}
+	
+	this.getSharedPrefs = function () {
+		if (!sharedPrefs)
+			this._generateUserPrefs();
+		return sharedPrefs;
+	}
+	
+	this.getGadgetPrefs = function () {
+		if (!gadgetPrefs)
+			this._generateUserPrefs();
+		return gadgetPrefs;
 	}
 	
 	this.getExternalContextVars = function (igadget_) {
@@ -256,4 +285,10 @@ function GadgetTemplate(variables_, size_) {
 		}
         return objVars;
     }
+	
+	/*
+	 * CONSTRUCTOR
+	 */
+	//this._generateUserPrefs();
+	
 }
