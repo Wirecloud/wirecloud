@@ -218,6 +218,7 @@ AUTHENTICATION_BACKENDS = (
 #'facebookconnect.models.FacebookBackend',
 #'authentication.twitteroauth.TwitterBackend',
 )
+
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
 #AD_SEARCH_DN = 'uid=%s,ou=OUExample,o=OExample'
@@ -230,6 +231,9 @@ AUTHENTICATION_BACKENDS = (
 # Absolute path to the directory that holds in development gadgets.
 GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
+
+# URL prefix in order to complete gadget relative URL
+#DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS = 'http://mac.hi.inet'
 
 CERTIFICATION_ENABLED = False
 

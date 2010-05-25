@@ -105,12 +105,12 @@ class GadgetResource(TransModel):
      size = models.CharField(_('Size'),max_length=10, null=True, blank=True)
      license = models.CharField(_('License'),max_length=20, null=True, blank=True)
 
-     gadget_uri = models.URLField(_('gadgetURI'), null=True, blank=True)
+     gadget_uri = models.CharField(_('gadgetURI'), max_length=200, null=True, blank=True)
      creation_date = models.DateTimeField('creation_date', null=True)
-     image_uri = models.URLField(_('imageURI'), null=True)
-     iphone_image_uri = models.URLField(_('iPhoneImageURI'), null=True, blank=True)
-     wiki_page_uri = models.URLField(_('wikiURI'), verify_exists=False)
-     template_uri= models.URLField(_('templateURI'))
+     image_uri = models.CharField(_('imageURI'), max_length=200, null=True)
+     iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, null=True, blank=True)
+     wiki_page_uri = models.CharField(_('wikiURI'), max_length=200)
+     template_uri= models.CharField(_('templateURI'), max_length=200)
      mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
 
      #For implementing "private gadgets" only visible for users that belongs to some concrete organizations

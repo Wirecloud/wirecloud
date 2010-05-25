@@ -38,7 +38,7 @@ from translator.models import TransModel
 class XHTML(models.Model):
     uri = models.CharField(_('URI'), max_length=255, unique=True)
     code = models.TextField(_('Code'))
-    url = models.URLField(_('URL'), max_length=500)
+    url = models.CharField(_('URL'), max_length=500)
     content_type = models.CharField(_('Content type'), max_length=50, blank=True, null=True)
     cacheable = models.BooleanField(_('Cacheable'), default=True, blank=True)
 

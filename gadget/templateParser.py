@@ -39,7 +39,7 @@ from django.template import Context, Template
 from django.utils.translation import ugettext as _
 
 from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
+from commons.http_utils import download_http_content, get_absolute_url
 
 from gadgetCodeParser import GadgetCodeParser
 from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability, SharedVariableDef
@@ -50,10 +50,12 @@ from translator.models import Translation
 from urllib import url2pathname
 
 class TemplateParser:
-    def __init__(self, uri, user, fromWGT):
+    def __init__(self, uri, user, fromWGT, request):
         self.uri = uri
         self.user = user
         self.fromWGT = fromWGT
+        self.request = request
+        
         if not fromWGT:
             self.xml = download_http_content(uri, user=user)
         else:
@@ -72,7 +74,7 @@ class TemplateParser:
 
     def parse(self):
         # Parse the input
-        self.handler = TemplateHandler(self.fromWGT, user=self.user)
+        self.handler = TemplateHandler(self.fromWGT, self.request, user=self.user)
         parseString(self.xml, self.handler)
         
     def getGadget (self):
@@ -175,7 +177,7 @@ class TemplateHandler(handler.ContentHandler):
     _SLOT = "SLOT"
     _EVENT = "EVEN"
         
-    def __init__(self, fromWGT, user=None):
+    def __init__(self, fromWGT, request, user=None):
         self._relationships = []
         self._accumulator = []
         self._link = []
@@ -207,6 +209,7 @@ class TemplateHandler(handler.ContentHandler):
         self.current_text = ""
         self.fromWGT = fromWGT
         self.user = user
+        self.request = request
 
     def typeText2typeCode (self, typeText):
         if typeText == 'text':
@@ -542,10 +545,21 @@ class TemplateHandler(handler.ContentHandler):
 
         if (_href != ""):
             try:
+                #Checking if _href is a relative URL
+                if (not _href.lower().startswith('http')):
+                    #Relative URL. Appending request.get_host()
+                    
+                    if _href[0] != '/':
+                        _href = '/' + _href
+                        
+                    _relative_url = _href
+                        
+                    _href = get_absolute_url(self.request, _relative_url)
+                        
                 # Gadget Code Parsing
                 gadgetParser = GadgetCodeParser()
                 gadgetParser.parse(_href, self._gadgetURI, _content_type,
-                                   self.fromWGT, cacheable=_cacheable,
+                                   self.fromWGT, _relative_url, cacheable=_cacheable,
                                    user=self.user)
                 self._xhtml = gadgetParser.getXHTML()
             except Exception, e:

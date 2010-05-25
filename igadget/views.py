@@ -276,7 +276,7 @@ def UpdateIGadget(igadget, user, tab):
     # save the changes
     position.save()
 
-def UpgradeIGadget(igadget, user):
+def UpgradeIGadget(igadget, user, request):
     igadget_pk = igadget.get('id')
     url = igadget.get('newResourceURL')
 
@@ -288,7 +288,7 @@ def UpgradeIGadget(igadget, user):
     # check if it is shared
     workspaceId = ig.tab.workspace.id
     
-    result = get_or_create_gadget(url, user, workspaceId)
+    result = get_or_create_gadget(url, user, workspaceId, request)
     lastGadget = result["gadget"]
 
     #check equivalency and add the variables needed
@@ -468,7 +468,7 @@ class IGadgetVersion(Resource):
 
         try:
             igadget = simplejson.loads(received_json) 
-            UpgradeIGadget(igadget, user)
+            UpgradeIGadget(igadget, user, request)
 
             return HttpResponse('ok')
         except Exception, e:

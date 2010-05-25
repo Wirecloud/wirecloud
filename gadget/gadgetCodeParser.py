@@ -45,7 +45,7 @@ from os import path
 class GadgetCodeParser:
     xHTML = None
 
-    def parse(self, codeURI, gadgetURI, content_type, fromWGT, cacheable=True, user=None):
+    def parse(self, codeURI, gadgetURI, content_type, fromWGT, relative_url, cacheable=True, user=None):
         xhtml = ""
         
         if fromWGT:
@@ -70,8 +70,11 @@ class GadgetCodeParser:
 
             try:
                 xhtml = download_http_content(codeURI, user=user)
-            except Exception:
+            except Exception, e:
                 raise TemplateParseException(_("XHTML code is not accessible"))
+            
+        if (relative_url):
+            codeURI = relative_url
 
         uri = gadgetURI + "/xhtml"
         

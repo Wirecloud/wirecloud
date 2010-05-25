@@ -78,7 +78,7 @@ def parseAndCreateGadget(request, user, workspaceId):
             
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
-        result = get_or_create_gadget(templateURL, user, workspaceId, fromWGT)
+        result = get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
         
         return result
         
@@ -197,11 +197,20 @@ class GadgetCodeEntry(Resource):
         xhtml = gadget.xhtml;
 
         try:
-            if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
-                xhtml.code = get_xhtml_content(xhtml.url)
+            url = xhtml.url
+            if (url.startswith('http')):
+                #Absolute URL
+                xhtml.code = download_http_content(url, user=user)
             else:
-                xhtml.code = download_http_content(xhtml.url,
-                                                   user=user)
+                #Relative URL
+                if (url.startswith('/deployment/gadgets')):
+                    #GWT gadget package
+                    xhtml.code = get_xhtml_content(url)
+                else:
+                    #Gadget with relative url and it's not a GWT package
+                    url = get_absolute_url(request, url)
+                    xhtml.code = download_http_content(url, user=user)
+                    
             xhtml.save()
         except Exception, e:
             msg = _("XHTML code is not accessible")

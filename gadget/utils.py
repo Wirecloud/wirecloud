@@ -36,12 +36,12 @@ from workspace.models import WorkSpace, UserWorkSpace
 from gadget.htmlHeadParser import HTMLHeadParser
 from django.utils.http import urlquote
 
-def get_or_create_gadget (templateURL, user, workspaceId, fromWGT = False):
+def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = False):
     ########### Template Parser
     templateParser = None
 
     # Gadget is created only once
-    templateParser = TemplateParser(templateURL, user, fromWGT)
+    templateParser = TemplateParser(templateURL, user, fromWGT, request)
     gadget_uri = templateParser.getGadgetUri()
 
     try:
