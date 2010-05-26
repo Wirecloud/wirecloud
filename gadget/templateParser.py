@@ -546,6 +546,8 @@ class TemplateHandler(handler.ContentHandler):
         if (_href != ""):
             try:
                 #Checking if _href is a relative URL
+                _relative_url  = ''
+                
                 if (not _href.lower().startswith('http')):
                     #Relative URL. Appending request.get_host()
                     
