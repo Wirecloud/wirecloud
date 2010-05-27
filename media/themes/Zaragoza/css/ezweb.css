@@ -1,6 +1,28 @@
+#navigation-bar {
+//background:transparent url(http://eyeos.org/css/../images/bg-nav.png) no-repeat scroll 0 0;
+background:transparent url(/ezweb/images/bg-nav.png) no-repeat scroll 0 0;
+height:33px;
+margin-top:12px;
+margin-left: 250px;
+position:relative;
+width:960px;
+z-index:10000;
+top: -52px;
+float: left;
+}
+
+#navigation-bar .nav-bar-button {
+float:left;
+font-family:sans-serif;
+font-size:15px;
+font-weight:bold;
+padding-left:25px;
+padding-top:9px;
+}
+
 body {
 	color:#000;
-    background: url("../images/fond.gif") top left;
+    //background: url("../images/fond.gif") top left;
     margin:0;
     padding:0;
     font-size:80%;
@@ -55,7 +77,8 @@ a, a:visited{
 
 /* header ------------------------------------------------------------------------------------------ */
 #header {
-	background: url("../images/header_deg.png") repeat-x top left;
+	//background: url("../images/header_deg.png") repeat-x top left;
+	background-color: white;
 	color:white;
 	height: 74px;
 }
@@ -84,17 +107,21 @@ a, a:visited{
 }
 
 #logo {
-	margin-top:1px;
-	background: url("../images/logoAyto_azulOsc02.png") no-repeat;
-	width: 220px;
+	//margin-top:1px;
+	//background: url("../images/logoAyto_azulOsc02.png") no-repeat;
+	//width: 220px;
+	margin-top:5px;
+	width: 150px;
 	height: 46px;
 }
 
 #powered {	
-	display:block;
-	position:absolute;
-	bottom:0;
-	right:-38px;
+bottom:0;
+display:block;
+position:absolute;
+right:-38px;
+top:-2px;
+width:180px;
 }
 
 #add_tab_link, #left_slider, #right_slider {
@@ -103,6 +130,7 @@ a, a:visited{
   background-position: center center;
   border: 0px none;
   cursor: pointer;
+  display: none;
 }
 
 #toolbar_section {
@@ -229,6 +257,7 @@ a, a:visited{
 
 #add_tab_link {
 	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
+	display:none;
 }
 
 /*#add_tab_link:hover {
@@ -239,6 +268,7 @@ a, a:visited{
 	background: transparent;
 	font-size: 10px;
 	margin-top:-6px !important;
+	display:none;
 }
 
 #tab_section .tab {
@@ -246,7 +276,7 @@ a, a:visited{
   border: 1px solid #C2CBD2;
   font-weight:normal;
   color: black;
-  background: #DDDDDD url(../images/degradado.png) no-repeat scroll left top;
+  //background: #DDDDDD url(../images/degradado.png) no-repeat scroll left top;
   -moz-border-radius-topleft:4px;
   -moz-border-radius-topright:4px;
   -webkit-border-top-left-radius: 4px;
@@ -264,7 +294,7 @@ a, a:visited{
 
 #tab_section .current {
   color: #4c5054;
-  background: url("../images/fond.gif") repeat scroll left top transparent;
+  //background: url("../images/fond.gif") repeat scroll left top transparent;
   border: 1px solid #C2CBD2;
   border-bottom: 0px none;
   font-weight:bold;
@@ -469,16 +499,16 @@ button {
 /* containers --------------------------------------------------------------------------------------- */
 
 #wrapper {
-  border: 1px solid #C2CBD2;
-  -moz-border-radius-topleft: 6px;
-  -moz-border-radius-topright: 6px;
-  -webkit-border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
   min-width: 600px;
   margin: 0 4px 4px 4px;
 }
 
 .container {
+  border-top: 1px solid #C2CBD2;
+  -moz-border-radius-topleft: 6px;
+  -moz-border-radius-topright: 6px;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
   background-color:#E0E0E0 url(../images/init.dat) no-repeat scroll bottom center;
   -moz-border-radius: 5px;
   -webkit-border-radius: 6px;

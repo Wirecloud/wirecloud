@@ -18,7 +18,6 @@
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
 	{% else %}
 	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
 	{% endif %}
@@ -29,7 +28,6 @@
 	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb_theme_{{ ezweb_release }}.css"/>
 	{% else %}
 	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/catalogue.css" />
 	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/dragboard.css" />
 	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/wiring.css" />
 	{% endif %}
@@ -139,17 +137,25 @@
 	</div>
 	<!-- WIRING LAYER -->
 
-	<!-- SHOWCASE LAYER -->
-	<div style="display:none" id="showcase_container" class="container">
-		{% include "showcase.html" %}
+	<!-- CATALOGUE LAYER -->
+	<div id="catalogue_views">
+	  <!-- CATALOGUE VIEWS STRUCTURE -->
+	  <script id="list_view_catalogue_structure" type="html/template">
+	    {% include "catalogue/views/list/list_view_template.html" %}
+      </script>
+        
+      <script id="list_view_resource_structure_template" type="html/template">
+	    {% include "catalogue/views/list/list_view_resource.html" %}
+      </script>
+      
+      <script id="pagination_structure" type="html/template">
+	    {% include "catalogue/pagination_template.html" %}
+      </script>
 	</div>
-	<!-- SHOWCASE LAYER -->
-    
-    <!-- APPLICATON CATALOGUE LAYER -->
-    <div id="app_catalogue_container" class="container">
-        {% include "application_catalogue.html" %}
-    </div>
-    <!-- APPLICATON CATALOGUE LAYER -->
+	<div id="showcase" class="container no_border">
+
+	</div>
+	<!-- CATALOGUE LAYER -->
 
 	<!-- LOGS LAYER -->
 	<div id="logs_container" class="container">

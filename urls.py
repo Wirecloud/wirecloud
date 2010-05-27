@@ -70,8 +70,8 @@ urlpatterns = patterns('',
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
 
-		# Deployment Tool
-		(r'^deployment/', include('deployment.urls')),
+	# Deployment Tool
+	(r'^deployment/', include('deployment.urls')),
 
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),

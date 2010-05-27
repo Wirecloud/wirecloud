@@ -1,0 +1,58 @@
+{% load i18n %}
+
+<link href="http://mac.hi.inet:8000/ezweb/js/catalogue/views/list/style.css" type="text/css" rel="stylesheet" />
+<link href="http://mac.hi.inet:8000/ezweb/themes/Zaragoza/css/catalogue.css" type="text/css" rel="stylesheet" />
+<div id="catalogue" class="container_content">
+ <div id="left_bar">
+  <div id="menu_options" class="bar_widget">
+   <div class="widget_content">
+	<div id="simple_search" class="simple_search">
+	 <input id="simple_search_text" type="text"></input>
+	 <span id="view_all" class="link">{% trans  "View All" %}</span>
+	</div>
+   </div>
+  </div>
+  <div id="tag_categories" class="bar_widget tag_categories">
+   <span class="widget_title">{% trans 'Search by category:' %}</span>
+   <div class="widget_content"></div>
+  </div>
+ </div>
+ <div id="catalogue_content">
+  <div id="catalogue_head" class="head">
+   <div id="header_always" class="header_always">
+    <div id="header_always_error" class="message_error"></div>
+   </div>
+  </div>
+  <div id="toolbar" class="toolbar">
+   <div class="toolbar_menu">
+    <div class="first_toolbar_button">Gadgets</div>
+    <div class="selected_section">Aplicaciones</div>
+    <div>Mis aplicaciones</div>
+    <div class="last_toolbar_button">Para desarrolladores</div>
+   </div>
+  </div>
+  <div id="catalogue_center" class="center">
+   <div id="catalogue_resources_header" class="resources_header">
+    <div id="paginate" class="paginate"></div>
+	<div id="orderby" class="orderby">
+	 <label for="results_order">{% trans 'Order by:' %}</label>
+	 <select id="results_order">
+	   {% include "catalogue/order_by_template.html" %}
+	 </select>
+	</div>
+	<div id="number_of_results" class="paginate_show">
+	 <label for="results_per_page">{% trans 'Gadgets per page:' %} </label>
+	 <select id="results_per_page">
+	   {% include "catalogue/results_per_page_template.html" %}
+	 </select>
+	</div>
+   </div>
+   <div id="gadgets" class="resources">
+   </div>
+   <div id="mashups" class="resources">
+   </div>
+   <div id="resource_details" class="resources">
+   </div>
+  </div>
+ </div>
+</div>

@@ -126,6 +126,7 @@ class VariableDef(TransModel):
         ('D', _('Date')),
         ('B', _('Boolean')),
         ('P', _('Password')),
+        ('L', _('List')),
     )
     type = models.CharField(_('Type'), max_length=1, choices=TYPES)
     ASPECTS = (

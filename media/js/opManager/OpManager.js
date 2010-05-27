@@ -192,26 +192,8 @@ var OpManagerFactory = function () {
 				//Nothing to do!
 				return;
 			}
-
-			UIUtils.repaintCatalogue=true;
-			UIUtils.sendPendingTags();
 			
-			if (LayoutManagerFactory.getInstance().getCurrentViewType() == 'catalogue') { 
-				this.catalogueIsCurrentTab = true;
-			}
-			this.catalogue.show();
-
-			this.activeWorkSpace.getVisibleTab().markAsCurrent();
-
-			// Load catalogue data!
-			if (!this.catalogue.initialized || this.catalogueIsCurrentTab)
-			{
-				this.catalogue.initCatalogue();
-				this.catalogueIsCurrentTab = false;
-			} else {
-				UIUtils.repaintCatalogue=false;
-			}
-			UIUtils.resizeResourcesContainer();
+			CatalogueFactory.getInstance().render();
 		}
 		
 		OpManager.prototype.showListCatalogue = function () {
@@ -229,6 +211,67 @@ var OpManagerFactory = function () {
 				this.activeWorkSpace.getVisibleTab().unmark();
 			
 			LogManagerFactory.getInstance().show();
+		}
+		
+		OpManager.prototype.mergeMashupResource = function(resource) {
+			var mergeOk = function(transport){
+				var response = transport.responseText;
+				response = JSON.parse(response);
+				
+				//create the new workspace and go to it
+				opManager = OpManagerFactory.getInstance();
+		
+				ShowcaseFactory.getInstance().reload(response['workspace_id']);
+				LayoutManagerFactory.getInstance().logStep('');
+				
+			}
+			var mergeError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error cloning workspace: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
+				LayoutManagerFactory.getInstance().logStep('');
+			}
+
+			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
+			LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
+			
+			var workSpaceId = resource.getMashupId();
+			
+			var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
+			
+			var mergeURL = URIs.GET_MERGE_PUBLISHED_WORKSPACE.evaluate({'published_ws': workSpaceId, 'to_ws': active_ws_id});
+			
+			PersistenceEngineFactory.getInstance().send_get(mergeURL, this, mergeOk, mergeError);
+		}
+		
+		OpManager.prototype.addMashupResource = function(resource) {
+			var cloneOk = function(transport){
+				var response = transport.responseText;
+				var wsInfo = JSON.parse(response);
+				//create the new workspace and go to it				
+				opManager = OpManagerFactory.getInstance();
+				opManager.workSpaceInstances[wsInfo.workspace.id] = new WorkSpace(wsInfo.workspace);
+		
+				ShowcaseFactory.getInstance().reload(wsInfo.workspace.id);
+				
+				LayoutManagerFactory.getInstance().logStep(''); 
+				
+			}
+
+			var cloneError = function(transport, e) {
+				var logManager = LogManagerFactory.getInstance();
+				var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+				logManager.log(msg);
+				LayoutManagerFactory.getInstance().logStep('');
+			}
+			
+			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
+			LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
+			
+			var workSpaceId = resource.getMashupId();
+			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId, 'active': 'true'});
+			
+			PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
 		}
 
 		OpManager.prototype.clearLogs = function () {
@@ -441,7 +484,7 @@ var OpManagerFactory = function () {
 			if (this.activeWorkSpace)
 				this.activeWorkSpace.unload();
 
-			UIUtils.sendPendingTags();
+			//TODO: unloadCatalogue
 		}
 
 		OpManager.prototype.igadgetLoaded = function (igadgetId) {
@@ -489,7 +532,8 @@ var OpManagerFactory = function () {
 
 				if (this.activeWorkSpace.isEmpty() && this.workSpaceInstances.keys().length ==1){
 					this.activeWorkSpace.fillWithLabel();
-					this.showListCatalogue();
+					this.showActiveWorkSpace();
+					//TODO: Show list view catalogue
 				}
 				else{
 					this.showActiveWorkSpace();

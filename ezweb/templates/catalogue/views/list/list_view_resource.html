@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<div class="header_resource"></div>
+<div class="left_column_resource">
+ <div><img src="#{image_url}" class="image"></div>
+ <button class="#{type}">#{button_text}</button>
+</div>
+<div class="right_column_resource">
+ <div>
+  <div class="resource_name">#{name}</div>
+  <div class="popularity"></div>
+ </div>
+ <div class="desc">#{description}</div>
+ <div class="tags">
+  <div class="tags_label">{% trans 'Tags:' %}</div>
+ </div>
+ <div class="footer_resource"></div>
+</div>

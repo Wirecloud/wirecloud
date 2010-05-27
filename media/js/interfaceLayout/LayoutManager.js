@@ -299,11 +299,10 @@ var LayoutManagerFactory = function () {
 				// Resize the current view element and its related elemets
 				switch (this.currentViewType) {
 				case "catalogue":
-					this.resizeContainer(this.currentView.catalogueElement);
+					this.resizeContainer(this.currentView.get_dom_element());
 
-					// Recalculate catalogue sizes
-					UIUtils.setResourcesWidth();
-					UIUtils.resizeResourcesContainer();
+					this.currentView.fit_height();
+					
 					break;
 				case "wiring":
 					// Recalculate wiring position
@@ -510,8 +509,9 @@ var LayoutManagerFactory = function () {
 			this.hideTabs();
 			this.catalogueLink.blur();
 			
-			this.resizeContainer(this.currentView.catalogueElement);
-			this.catalogue.catalogueElement.setStyle(showStyle);
+			this.resizeContainer(this.catalogue.get_dom_element());
+			this.catalogue.set_style(showStyle);
+			
 			var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
 			var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
 			msg = interpolate(msg,
