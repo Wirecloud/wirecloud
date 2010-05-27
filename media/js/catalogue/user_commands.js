@@ -62,11 +62,8 @@ var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom
 	  // Do nothing!
 	  return;
 	}
-	
-	if (! this.data)
-	  this.services.search('SIMPLE_SEARCH', 1, 'AND');
-	else
-	  this.services.search('SIMPLE_SEARCH', this.data['starting_page'], 'AND');
+
+    this.services.search('SIMPLE_SEARCH', this.data['starting_page'], this.data['boolean_operator'], this.data['scope']);
   }
 	
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
@@ -105,7 +102,7 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
 
 var ShowResourceDetailsCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
-    var response_command = this.services.create_local_command('PAINT_RESOURCE_DETAILS', data)
+    var response_command = this.services.create_local_command('PAINT_RESOURCE_DETAILS', data);
     
     response_command.process();
   }

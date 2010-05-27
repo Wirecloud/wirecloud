@@ -40,14 +40,29 @@ var CatalogueService = function () {
 var CatalogueSearcher = function () {
   CatalogueService.call(this);
   
-  this.solutions_only = false;
+  this.scope = null;
   this.view_all_template = null;
   this.simple_search_template = null;
   this.configured = false;
   this.resp_command_processor = null;
   
-  this.set_solutions_only = function (boolean_value) {
-	this.solutions_only = boolean_value;
+  this.set_scope = function (scope) {
+	this.scope = scope;
+  }
+  
+  this.get_scope = function () {
+	return this.scope;
+  }
+  
+  this.get_command_id_by_scope = function () {
+    if (this.scope == 'gadget')
+      return 'PAINT_GADGETS'
+    
+    if (this.scope == 'mashup')
+      return 'PAINT_MASHUPS'
+    
+    alert ('Missing scope type');
+    return '';
   }
   
   this.configure = function () {
@@ -86,13 +101,18 @@ var CatalogueSearcher = function () {
 	}
   }
   
-  this.search = function (operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean) {
+  this.search = function (operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, search_scope) {
 	if (! this.configured)
 	  this.configure();
 	
+	if (search_scope)
+	  this.set_scope(search_scope);
+	
 	var url = null;
-	var params = new Hash({'orderby': order_by, 'search_criteria': search_criteria, 'search_boolean': search_boolean});
+	var params = new Hash({'orderby': order_by, 'search_criteria': search_criteria, 'search_boolean': search_boolean, 'scope': this.scope});
 	var response_command = new ResponseCommand(this.resp_command_processor, this);
+	var command_id = this.get_command_id_by_scope();
+	
 	
 	response_command.resources_per_page = resources_per_page;
 	response_command.current_page = starting_page;
@@ -100,12 +120,12 @@ var CatalogueSearcher = function () {
 	switch (operation) {
 	case 'VIEW_ALL':
 	  url = this.view_all_template.evaluate({'starting_page': starting_page, 'resources_per_page': resources_per_page}); 
-	  response_command.set_id('PAINT_GADGETS');
+	  response_command.set_id(command_id);
 	  
 	  break;
 	case 'SIMPLE_SEARCH':
 	  url = this.simple_search_template.evaluate({'starting_page': starting_page, 'resources_per_page': resources_per_page});	
-	  response_command.set_id('PAINT_GADGETS');
+	  response_command.set_id(command_id);
 	  
 	  break;
 	default:

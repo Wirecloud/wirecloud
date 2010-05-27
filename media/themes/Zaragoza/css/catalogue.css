@@ -32,6 +32,10 @@
    padding: 1px;
 }
 
+#catalogue .toolbar_menu div {
+  float: left;
+}
+
 #catalogue .head .submit_link:hover {
 	background-color: transparent;
 }
@@ -451,9 +455,8 @@
 }
 
 #catalogue .center .resources .resource .resource_name {
-	font-size: 20px;
-	font-weight: bold;
 	padding-bottom: 8px;
+	max-width: 350px;
 }
 
 

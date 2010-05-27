@@ -63,21 +63,29 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.order_by_combo = this.dom_wrapper.get_element_by_code('ORDER_BY_COMBO');
     this.search_input = this.dom_wrapper.get_element_by_code('SEARCH_INPUT');
     
+    this.mashups_button = this.dom_wrapper.get_element_by_code('MASHUPS_BUTTON');
+    this.gadgets_button = this.dom_wrapper.get_element_by_code('GADGETS_BUTTON');
+    
     this.configured = true;
   }
   
-  this.search = function (operation, starting_page, search_boolean) {
+  this.search = function (operation, starting_page, search_boolean, scope) {
 	if (! this.configured)
 	  this.configure();
 	
-    resources_per_page = this.get_selected_option(this.resources_per_page_combo);  
-	order_by = this.get_selected_option(this.order_by_combo); 
-	search_criteria = this.search_input.value;
+    var resources_per_page = this.get_selected_option(this.resources_per_page_combo);  
+	var order_by = this.get_selected_option(this.order_by_combo); 
+	var search_criteria = this.search_input.value;
+	
+	if (scope)
+	  this.searcher.set_scope(scope);
+	
+	this.mark_selected_section();
 	  
 	if (operation == 'SIMPLE_SEARCH' && ! search_criteria)
 	  operation = 'VIEW_ALL';
 		
-    this.searcher.search(operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean);
+    this.searcher.search(operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, scope);
   }
   
   this.vote = function (data) {
@@ -105,5 +113,25 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	var index = combo_element.selectedIndex;
 		
 	return combo_element.options[index].value;
+  }
+  
+  this.mark_selected_section = function () {		  
+    var scope = this.searcher.get_scope();
+    
+	if (scope == 'gadget') {
+	  this.gadgets_button.addClassName('selected_section');
+	  this.mashups_button.removeClassName('selected_section');
+	  
+	  return;
+	}
+	
+	if (scope == 'mashup') {
+	  this.gadgets_button.removeClassName('selected_section');
+	  this.mashups_button.addClassName('selected_section');
+	  
+	  return;
+	}
+	
+	alert('no search scope selected');
   }
 }

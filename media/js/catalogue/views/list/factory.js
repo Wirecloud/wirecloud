@@ -26,16 +26,20 @@
 var ListViewFactory  = function () {
 	
   this.COMMANDS_INFO = new Hash({'#view_all': 'VIEW_ALL', '#simple_search input': 'SIMPLE_SEARCH',
-	                             '#results_per_page': 'SIMPLE_SEARCH', '#results_order': 'SIMPLE_SEARCH'});
+	                             '#results_per_page': 'SIMPLE_SEARCH', '#results_order': 'SIMPLE_SEARCH',
+	                             '#gadgets_button': 'SIMPLE_SEARCH', '#mashups_button': 'SIMPLE_SEARCH',
+	                             '#developers_button': 'SHOW_DEVELOPER_INFO'});
   
   this.DOM_ELEMENT_IDS = new Hash({'ORDER_BY_COMBO': '#results_order', 'RESULTS_PER_PAGE_COMBO': '#results_per_page', 
 	                               'PAGINATION_AREA': '#paginate', 'GADGET_LIST': '#gadgets', 
 	                               'SEARCH_INPUT': '#simple_search input', 'RESOURCE_DETAILS_AREA': '#resource_details', 
-	                               'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header'});
+	                               'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
+	                               'GADGETS_BUTTON': '#gadgets_button', 'MASHUPS_BUTTON': '#mashups_button'});
   
   this.catalogue_structure_dom = $('list_view_catalogue_structure');
   this.resource_structure_dom = $('list_view_resource_structure_template');
   this.pagination_structure_dom = $('pagination_structure');
+  this.resource_details_structure_dom = $('list_view_resource_structure_template');
   
   this.catalogue = null;
   this.user_command_manager = null;
@@ -67,9 +71,9 @@ var ListViewFactory  = function () {
 	this.resp_command_dispatcher = new ListView_ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
 	
 	this.gadgets_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
+	this.mashups_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
 	this.pagination_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-	this.mashups_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-	this.resource_details_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
+	this.resource_details_painter = new ListView_PaginationPainter(this.resource_details_structure_dom);
 	
 	this.catalogue = new Catalogue(catalogue_element, this.dom_wrapper);
 	
@@ -98,7 +102,7 @@ var ListViewFactory  = function () {
     this.tagger = new CatalogueTagger();
     
     // Configuring searcher
-    this.searcher.set_solutions_only(true);
+    this.searcher.set_scope('gadget');
     
     this.services.set_voter(this.voter);
     this.services.set_tagger(this.tagger);

@@ -36,7 +36,8 @@
 }
 
 #catalogue .toolbar_menu .selected_section {
-	background: #dddddd;
+	background: #C7C7C7;
+	color:#404040;
 }
 
 #catalogue .toolbar_menu {
@@ -44,24 +45,26 @@
 }
 
 #catalogue .toolbar_menu div {
-  float: left;
   padding-left: 10px;
   padding-right: 10px;
   color: #666666;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  font-size: 14px;
+  font-weight: bold;
+  border-left: 1px solid #C2CBD2;
+  cursor: pointer;
+  background: #e9e9e9;
+}
+
+#catalogue .toolbar_menu div:hover {
+  color: red;
 }
 
 .no_border {
   border-top: 0px;
   border-right: 0px; 
   border-bottom: 0px; 
-}
-
-#catalogue .toolbar_menu div {
-  padding-top: 7px;
-  padding-bottom: 7px;
-  font-size: 14px;
-  font-weight: bold;
-  border-left: 1px solid #C2CBD2;
 }
 
 #gadgetToAppWindow .app_image {
@@ -480,17 +483,17 @@
   border-style:none;
 }
 
-/////////////////////////////////////////
-
 #catalogue .center .resources .resource .resource_name {
-  max-width: 350px;
-  float:left;
+	cursor: pointer;
+	font-size: 20px;
+	font-weight: bold;
 }
 
 #catalogue .center .resources .resource .image {
   width: 170px;
   height: 80px;
   border: 1px solid #BBBBBB;
+  cursor:pointer;
 }
 
 #catalogue .center .resources .resource .popularity {

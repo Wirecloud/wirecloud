@@ -55,16 +55,17 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   
   switch (command_id) {
   case 'PAINT_GADGETS':
-	this.show_gadgets_tab();
+	this.show_gadgets_section();
 	this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	break;
   case 'PAINT_MASHUPS':
+	this.show_mashups_section();
 	this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	break;
   case 'PAINT_RESOURCE_DETAILS':
-	this.show_resource_details_tab();
+	this.show_resource_details_section();
 	break;
   default:
 	alert('Missing command code at ResponseCommandProcessor!');
@@ -72,7 +73,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   }
 }
 
-ListView_ResponseCommandDispatcher.prototype.show_gadgets_tab = function () {
+ListView_ResponseCommandDispatcher.prototype.show_gadgets_section = function () {
   this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'block'});
   this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'block'});
   this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'block'});
@@ -80,12 +81,19 @@ ListView_ResponseCommandDispatcher.prototype.show_gadgets_tab = function () {
   this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'none'});
 }
 
-ListView_ResponseCommandDispatcher.prototype.show_resource_details_tab = function () {
+ListView_ResponseCommandDispatcher.prototype.show_mashups_section = function () {
+  this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'block'});
+  this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'block'});
+  this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'none'});
+  this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': 'block'});
+  this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'none'});
+}
+
+ListView_ResponseCommandDispatcher.prototype.show_resource_details_section = function () {
   this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'none'});
   this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'none'});
   this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'none'});
   this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': 'none'});
   this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'block'});
 }
-
 

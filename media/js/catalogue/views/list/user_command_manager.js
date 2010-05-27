@@ -77,6 +77,7 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	  break;
 	case 'SIMPLE_SEARCH':
 	  var element_code = this.dom_wrapper.get_code_by_element(dom_element);
+	  var data = {'starting_page': 1, 'scope': '', 'boolean_operator': 'AND'};
 	  
 	  if (element_code ==  'SEARCH_INPUT')
 		html_event = 'keypress';
@@ -84,7 +85,19 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	  if (element_code ==  'RESULTS_PER_PAGE_COMBO' || element_code == 'PAGINATION_AREA')
 		html_event = 'change';
 	  
-	  var command = new SimpleSearchCommand(dom_element, html_event, this.services, this.dom_wrapper, null);
+	  if (element_code ==  'GADGETS_BUTTON') {
+		html_event = 'click';
+	    data['scope'] = 'gadget';
+	  }
+	  
+	  if (element_code ==  'MASHUPS_BUTTON') {
+		html_event = 'click';
+		data['scope'] = 'mashup';
+	  }
+	  
+	  var command = new SimpleSearchCommand(dom_element, html_event, this.services, this.dom_wrapper, data);
+	  break;
+	case 'SHOW_DEVELOPER_INFO':
 	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
@@ -111,5 +124,9 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		
+  }
+  
+  this.run_initial_commands = function () {
+	this.services.search('VIEW_ALL', 1, 'AND');
   }
 }

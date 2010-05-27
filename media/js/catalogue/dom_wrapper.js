@@ -27,13 +27,11 @@ var DOM_Wrapper = function (root_element, element_ids) {
   this.root_element = root_element;
   this.dom_element_ids = element_ids;
   
-  this.dom_elements = null;
-  this.element_codes = null;
+  this.dom_codes = null;
 }
 
 DOM_Wrapper.prototype.init = function () {
-  this.dom_elements = new Hash();
-  this.element_codes = new Hash();
+  this.dom_codes = new Hash();
   
   var element_codes = this.dom_element_ids.keys();
   
@@ -50,15 +48,26 @@ DOM_Wrapper.prototype.init = function () {
 	  
     var element = elements[0];
 	  
-    this.dom_elements[element_code] = element;
-    this.element_codes[element] = element_code;
+    this.dom_codes[element_code] = element;
   }
 }
 
 DOM_Wrapper.prototype.get_element_by_code = function (element_code) {
-  return this.dom_elements[element_code];
+  return this.dom_codes[element_code];
 }
 
 DOM_Wrapper.prototype.get_code_by_element = function (element) {
-  return this.element_codes[element];
+  var codes = this.dom_codes.keys();
+  
+  for (var i=0; i<codes.length; i++) {
+	var code = codes[i];
+    var html_element = this.dom_codes[code];
+    
+    if (html_element == element)
+      return code;
+  }
+  
+  alert ('Missing element!');
+  
+  return null;
 }
