@@ -109,3 +109,13 @@ var ShowResourceDetailsCommand = function (dom_element, html_event, service_faca
 	
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
+
+var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+    var response_command = this.services.create_local_command('SHOW_DEVELOPER_INFO', data);
+    
+    response_command.process();
+  }
+	
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}

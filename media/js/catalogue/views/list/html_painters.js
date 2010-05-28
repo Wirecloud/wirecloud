@@ -95,6 +95,16 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
   }
 }
 
+var ListView_DeveloperInfoPainter = function (structure_element) {
+  HTML_Painter.call(this);
+  
+  this.structure_template_element = structure_element;
+  
+  this.paint = function (command, user_command_manager) {
+	this.dom_element.update(this.structure_template_element);
+  }
+}
+
 var ListView_PaginationPainter = function (pagination_structure_element) {
   HTML_Painter.call(this);
   

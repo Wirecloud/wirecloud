@@ -98,6 +98,7 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	  var command = new SimpleSearchCommand(dom_element, html_event, this.services, this.dom_wrapper, data);
 	  break;
 	case 'SHOW_DEVELOPER_INFO':
+	  var command = new ShowDeveloperInfoCommand(dom_element, html_event, this.services, this.dom_wrapper);
 	  break;
 	default:
 	  return alert('event not identified! ' + command_id);

@@ -127,36 +127,8 @@
 {% endblock %}
 
 <div id="wrapper">
-	<!-- DRAGBOARD LAYERS -->
-		<!-- Initially empty -->
-	<!-- DRAGBOARD LAYERS -->
-
-	<!-- WIRING LAYER -->
-	<div id="wiring" class="container">
-		{% include "wiring.html" %}
-	</div>
-	<!-- WIRING LAYER -->
-
-	<!-- CATALOGUE LAYER -->
-	<div id="catalogue_views">
-	  <!-- CATALOGUE VIEWS STRUCTURE -->
-	  <script id="list_view_catalogue_structure" type="html/template">
-	    {% include "catalogue/views/list/list_view_template.html" %}
-      </script>
-        
-      <script id="list_view_resource_structure_template" type="html/template">
-	    {% include "catalogue/views/list/list_view_resource.html" %}
-      </script>
-      
-      <script id="pagination_structure" type="html/template">
-	    {% include "catalogue/pagination_template.html" %}
-      </script>
-	</div>
-	<div id="showcase" class="container no_border">
-
-	</div>
-	<!-- CATALOGUE LAYER -->
-
+	{% include "layouts/default.html" %}
+	
 	<!-- LOGS LAYER -->
 	<div id="logs_container" class="container">
 		<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>

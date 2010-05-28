@@ -51,21 +51,45 @@ ListView_ResponseCommandDispatcher.prototype.init = function () {
 }
 
 ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
-  var command_id = resp_command.get_id();
+  var display_options = {'search_options': 'none', 'pagination':'none', 'developer_info': 'none',
+		                 'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none'};
   
+  var command_id = resp_command.get_id();
+
   switch (command_id) {
   case 'PAINT_GADGETS':
-	this.show_gadgets_section();
+	display_options['search_options'] = 'block';
+	display_options['pagination'] = 'block';
+	display_options['gadget_list'] = 'block';
+	
+	this.show_section(display_options);
+	  
 	this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	
 	break;
   case 'PAINT_MASHUPS':
-	this.show_mashups_section();
+	display_options['search_options'] = 'block';
+	display_options['pagination'] = 'block';
+	display_options['mashup_list'] = 'block';
+	
+	this.show_section(display_options);
+	
 	this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	
 	break;
   case 'PAINT_RESOURCE_DETAILS':
-	this.show_resource_details_section();
+	display_options['resource_details'] = 'block';
+		
+	this.show_section(display_options);
+	
+	break;
+  case 'SHOW_DEVELOPER_INFO':
+	display_options['developer_info'] = 'block';
+	
+	this.show_section(display_options);
+	
 	break;
   default:
 	alert('Missing command code at ResponseCommandProcessor!');
@@ -73,27 +97,20 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   }
 }
 
-ListView_ResponseCommandDispatcher.prototype.show_gadgets_section = function () {
-  this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'none'});
-}
-
-ListView_ResponseCommandDispatcher.prototype.show_mashups_section = function () {
-  this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': 'block'});
-  this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'none'});
-}
-
-ListView_ResponseCommandDispatcher.prototype.show_resource_details_section = function () {
-  this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': 'none'});
-  this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': 'block'});
+ListView_ResponseCommandDispatcher.prototype.show_section = function (display_options) {
+  var search_options = display_options['search_options'];
+  var pagination = display_options['pagination'];
+  var gadget_list = display_options['gadget_list'];
+  var mashup_list = display_options['mashup_list'];
+  var resource_details = display_options['resource_details'];
+  var developer_info = display_options['developer_info'];
+  
+  
+  this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': search_options});
+  this.dom_wrapper.get_element_by_code('PAGINATION_AREA').setStyle({'display': pagination});
+  this.dom_wrapper.get_element_by_code('GADGET_LIST').setStyle({'display': gadget_list});
+  this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': mashup_list});
+  this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': resource_details});
+  this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA').setStyle({'display': developer_info});
 }
 
