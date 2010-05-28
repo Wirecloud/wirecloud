@@ -63,9 +63,6 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.order_by_combo = this.dom_wrapper.get_element_by_code('ORDER_BY_COMBO');
     this.search_input = this.dom_wrapper.get_element_by_code('SEARCH_INPUT');
     
-    this.mashups_button = this.dom_wrapper.get_element_by_code('MASHUPS_BUTTON');
-    this.gadgets_button = this.dom_wrapper.get_element_by_code('GADGETS_BUTTON');
-    
     this.configured = true;
   }
   
@@ -79,8 +76,6 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	
 	if (scope)
 	  this.searcher.set_scope(scope);
-	
-	this.mark_selected_section();
 	  
 	if (operation == 'SIMPLE_SEARCH' && ! search_criteria)
 	  operation = 'VIEW_ALL';
@@ -113,25 +108,5 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	var index = combo_element.selectedIndex;
 		
 	return combo_element.options[index].value;
-  }
-  
-  this.mark_selected_section = function () {		  
-    var scope = this.searcher.get_scope();
-    
-	if (scope == 'gadget') {
-	  this.gadgets_button.addClassName('selected_section');
-	  this.mashups_button.removeClassName('selected_section');
-	  
-	  return;
-	}
-	
-	if (scope == 'mashup') {
-	  this.gadgets_button.removeClassName('selected_section');
-	  this.mashups_button.addClassName('selected_section');
-	  
-	  return;
-	}
-	
-	alert('no search scope selected');
   }
 }

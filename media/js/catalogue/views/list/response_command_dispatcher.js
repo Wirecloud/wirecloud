@@ -37,6 +37,7 @@ ListView_ResponseCommandDispatcher.prototype.set_painter = function (painter_cod
 }
 
 ListView_ResponseCommandDispatcher.prototype.init = function () { 
+  //PAINTERS
   var pagination_div = this.dom_wrapper.get_element_by_code('PAGINATION_AREA');
   this.painters['PAGINATION_PAINTER'].set_dom_element(pagination_div);
 	 
@@ -46,8 +47,16 @@ ListView_ResponseCommandDispatcher.prototype.init = function () {
   var mashups_div = this.dom_wrapper.get_element_by_code('MASHUP_LIST');
   this.painters['MASHUPS_PAINTER'].set_dom_element(mashups_div);
   
+  var developers_div = this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA');
+  this.painters['DEVELOPERS_PAINTER'].set_dom_element(developers_div);
+  
   var resource_details_div = this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA');
   this.painters['RESOURCE_DETAILS_PAINTER'].set_dom_element(resource_details_div);
+  
+  // NAVIGATION BAR BUTTONS
+  this.mashups_button = this.dom_wrapper.get_element_by_code('MASHUPS_BUTTON');
+  this.gadgets_button = this.dom_wrapper.get_element_by_code('GADGETS_BUTTON');
+  this.developers_button = this.dom_wrapper.get_element_by_code('DEVELOPERS_BUTTON');
 }
 
 ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
@@ -62,7 +71,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	display_options['pagination'] = 'block';
 	display_options['gadget_list'] = 'block';
 	
-	this.show_section(display_options);
+	this.show_section(display_options, command_id);
 	  
 	this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
@@ -73,7 +82,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	display_options['pagination'] = 'block';
 	display_options['mashup_list'] = 'block';
 	
-	this.show_section(display_options);
+	this.show_section(display_options, command_id);
 	
 	this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
 	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
@@ -88,7 +97,9 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   case 'SHOW_DEVELOPER_INFO':
 	display_options['developer_info'] = 'block';
 	
-	this.show_section(display_options);
+	this.show_section(display_options, command_id);
+	
+	this.painters['DEVELOPERS_PAINTER'].paint(resp_command, this.user_command_manager);
 	
 	break;
   default:
@@ -97,7 +108,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   }
 }
 
-ListView_ResponseCommandDispatcher.prototype.show_section = function (display_options) {
+ListView_ResponseCommandDispatcher.prototype.show_section = function (display_options, command_id) {
   var search_options = display_options['search_options'];
   var pagination = display_options['pagination'];
   var gadget_list = display_options['gadget_list'];
@@ -112,5 +123,25 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
   this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': mashup_list});
   this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': resource_details});
   this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA').setStyle({'display': developer_info});
+  
+  // Updating Navigation Bar
+  switch (command_id) {
+  case 'PAINT_MASHUPS':
+	this.mashups_button.addClassName('selected_section');
+	this.gadgets_button.removeClassName('selected_section');
+	this.developers_button.removeClassName('selected_section');
+	break;
+  case 'PAINT_GADGETS':
+	this.gadgets_button.addClassName('selected_section');
+	this.mashups_button.removeClassName('selected_section');
+	this.developers_button.removeClassName('selected_section');
+	break;
+  case 'SHOW_DEVELOPER_INFO':
+	this.developers_button.addClassName('selected_section');
+	this.gadgets_button.removeClassName('selected_section');
+	this.mashups_button.removeClassName('selected_section');
+	break;
+  default:
+	alert ('Error activating tab!');
+  }
 }
-

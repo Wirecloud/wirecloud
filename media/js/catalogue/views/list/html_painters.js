@@ -101,7 +101,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
   this.structure_template_element = structure_element;
   
   this.paint = function (command, user_command_manager) {
-	this.dom_element.update(this.structure_template_element);
+	this.dom_element.update(this.structure_template_element.innerHTML);
   }
 }
 

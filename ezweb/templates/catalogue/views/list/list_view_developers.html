@@ -1,5 +1,29 @@
 {% load i18n %}
 
-<div>
-  <a>HOLA!</a>
+<div class="advanced_develop" id="advanced_develop">
+<table>
+<tbody><tr>
+	<td>
+		<label for="template_uri">URL del template:</label>
+	</td>
+	<td>
+		<input type="text" name="template_uri" id="template_uri">
+		<a href="#" class="submit_link" id="submit_link">Crear recurso</a>
+	</td>
+</tr>
+<tr>
+	<td>
+		<label for="gadget_uri">Gadget Wgt:</label>
+	</td>
+	<td>
+		<form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/deployment/gadgets/" id="upload_form">				
+			<input type="hidden" value="off" name="add_to_ws">
+			<input type="file" name="file" id="gadget_uri">
+			<a onclick="UIUtils.uploadFile();" href="#" class="submit_link" id="gadget_link">Crear recurso</a>
+			</form>
+		</td>
+	</tr>
+	</tbody></table>
+	<iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
 </div>
+

@@ -35,7 +35,7 @@ var ListViewFactory  = function () {
 	                               'SEARCH_INPUT': '#simple_search input', 'RESOURCE_DETAILS_AREA': '#resource_details', 
 	                               'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
 	                               'GADGETS_BUTTON': '#gadgets_button', 'MASHUPS_BUTTON': '#mashups_button',
-	                               'DEVELOPER_INFO_AREA': '#developer_info'});
+	                               'DEVELOPERS_BUTTON': '#developers_button', 'DEVELOPER_INFO_AREA': '#developer_info'});
   
   this.catalogue_structure_dom = $('list_view_catalogue_structure');
   this.resource_structure_dom = $('list_view_resource_structure_template');
@@ -89,7 +89,7 @@ var ListViewFactory  = function () {
 	this.resp_command_dispatcher.set_painter('PAGINATION_PAINTER', this.pagination_painter);
 	this.resp_command_dispatcher.set_painter('MASHUPS_PAINTER', this.mashups_painter);
 	this.resp_command_dispatcher.set_painter('RESOURCE_DETAILS_PAINTER', this.resource_details_painter);
-	this.resp_command_dispatcher.set_painter('DEVELOPER_INFO_PAINTER', this.developer_info_painter);
+	this.resp_command_dispatcher.set_painter('DEVELOPERS_PAINTER', this.developer_info_painter);
 	
 	this.catalogue.set_html_code(this.get_html_code());
     this.catalogue.set_user_command_manager(this.user_command_manager);
