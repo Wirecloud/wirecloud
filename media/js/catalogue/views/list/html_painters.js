@@ -30,6 +30,10 @@ var HTML_Painter = function () {
 	this.dom_element = dom_element;
   }
   
+  this.set_dom_wrapper = function (dom_wrapper) {
+    this.dom_wrapper = dom_wrapper;
+  }
+  
   this.paint = function (command, user_command_manager) { }
 }
 
@@ -98,10 +102,22 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
 var ListView_DeveloperInfoPainter = function (structure_element) {
   HTML_Painter.call(this);
   
+  this.local_ids = new Hash({'GADGET_SUBMIT_LINK': '#submit_link', 'GADGET_TEMPLATE_INPUT': '#template_uri'})
+  
   this.structure_template_element = structure_element;
   
   this.paint = function (command, user_command_manager) {
 	this.dom_element.update(this.structure_template_element.innerHTML);
+	
+	var submit_link_selector = this.local_ids['GADGET_SUBMIT_LINK'];
+	var submit_link = this.dom_wrapper.get_element_by_selector(submit_link_selector);
+	
+	var submit_input_selector = this.local_ids['GADGET_TEMPLATE_INPUT'];
+	var submit_input = this.dom_wrapper.get_element_by_selector(submit_input_selector);
+	
+	var data = new Hash({'template_url_element': submit_input}); 
+	
+	user_command_manager.create_command_from_data('SUBMIT_GADGET', submit_link, data, 'click');
   }
 }
 

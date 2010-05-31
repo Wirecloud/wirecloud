@@ -152,6 +152,111 @@ var CatalogueSearcher = function () {
   }
 }
 
+var CatalogueResourceSubmitter = function () {
+  CatalogueService.call(this);
+  
+  this.configured = false;
+  this.resp_command_processor = null;
+  
+  this.configure = function () {
+	this.submit_gadget_url = URIs.GET_POST_RESOURCES;
+	
+	this.configured = true;
+  }
+  
+  this.process_response = function (response, command) {
+	
+  }
+  
+  this.add_gadget_from_template = function (template_uri) {
+	
+    var error_callback = function (transport, e) {
+	  var response = transport.responseText;
+	  var response_message = JSON.parse(response)['message'];
+	
+	  var logManager = LogManagerFactory.getInstance();
+	  var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
+	
+	  msg = interpolate(msg, {errorMsg: response_message}, true);
+	  LayoutManagerFactory.getInstance().hideCover(); //TODO: is it necessary?
+	  LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+	  logManager.log(msg);
+	}
+	
+    var success_callback = function (response) {
+      var response_json = response.responseText;
+	  var result = JSON.parse(response_json);
+ 
+	  //showYesNoDialog handlers
+	  //"Yes" handler
+ 	  var continueAdding = function (result){
+ 		//leave that gadget version and continue
+ 		if (result['contratable']) {
+		  if (result['mashupId'] == "") {
+		    // Link gadget with application
+			var gadget_id = result['gadgetId'];
+			var available_apps = result['availableApps'];
+				
+			CatalogueFactory.getInstance().setAvailableApps(available_apps);
+			
+			LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', UIUtils.addResourceToApplication, function(){
+			  LayoutManagerFactory.getInstance().hideCover()
+			}, gadget_id);
+		  }
+		  else {
+			//UIUtils.repaintOrderedByCreationDate();
+		  }
+	    } 
+ 		else {
+	      //UIUtils.repaintOrderedByCreationDate();
+	    }
+ 	  }
+ 
+ 	  //"No" handler
+	  var rollback = function(result)	{
+		var resourceURI = URIs.GET_POST_RESOURCES + "/" + result['vendor'] + "/" + result['gadgetName'] + "/" + result['version'];
+
+		var onError = function(transport, e) {
+			var logManager = LogManagerFactory.getInstance();
+			var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+			
+			logManager.log(msg);
+			LayoutManagerFactory.getInstance().hideCover();
+			// Process
+		}
+
+		//Send request to delete de gadget
+		this.persistence_engine.send_delete(resourceURI, this, function (){LayoutManagerFactory.getInstance().hideCover();}, onError);
+	  }
+    
+      var context = {result: result, continueAdding: continueAdding, rollback: rollback};
+      
+      //check if the new gadget is the last version
+      if (result['last_version'] != result['version']) {
+    	//inform the user about the situation
+    	var msg = gettext("The resource you are adding to the catalogue is not the latest version. " +
+    			"The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
+    			" Do you really want to continue to add version %(curr_version)s ");
+    	msg = interpolate(msg, {curr_version: result['version'], last_version: result['last_version'] }, true);
+    	
+    	LayoutManagerFactory.getInstance().showYesNoDialog(msg, 
+    			function (){ this.continueAdding(this.result) }.bind(context),
+    			function (){ this.rollback(this.result) }.bind(context), 
+    			Constants.Logging.WARN_MSG);
+      }
+      else{
+    	continueAdding(result);
+      }   
+    }
+    
+    var params = new Hash();
+    
+    params['template_uri'] = template_uri;
+	
+	this.persistence_engine.send_post(URIs.GET_POST_RESOURCES, params, this, success_callback, error_callback);
+  }
+}
+
 var CatalogueVoter = function () {
   CatalogueService.call(this);
 	  

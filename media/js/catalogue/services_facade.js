@@ -58,10 +58,18 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	this.voter.set_response_command_processor(this.resp_command_processor);
   }
   
+  this.set_resource_submitter = function (submitter) {
+	this.resource_submitter = submitter;
+	this.resource_submitter.set_persistence_engine(this.persistence_engine);
+	this.resource_submitter.set_response_command_processor(this.resp_command_processor);
+  }
+  
   this.configure = function () {
     this.resources_per_page_combo = this.dom_wrapper.get_element_by_code('RESULTS_PER_PAGE_COMBO');
     this.order_by_combo = this.dom_wrapper.get_element_by_code('ORDER_BY_COMBO');
     this.search_input = this.dom_wrapper.get_element_by_code('SEARCH_INPUT');
+    
+    this.template_input = this.dom_wrapper.get_element_by_code('SUBMIT_GADGET_INPUT');
     
     this.configured = true;
   }
@@ -89,6 +97,12 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
   
   this.tag = function (data) {
 	this.tagger.tag(data);
+  }
+  
+  this.submit_gadget_to_catalogue = function (data) {
+	var template_url = data['template_url_element'].value;
+	  
+    this.resource_submitter.add_gadget_from_template(template_url);
   }
   
   this.create_local_command = function (command_code, data) {

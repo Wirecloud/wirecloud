@@ -120,153 +120,59 @@ var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
-var AddGadgetToCatalogueCommand = function(url, paramName, paramValue) {
-	UIUtils.repaintCatalogue=true;
-	UIUtils.search = false;
-	
-	var newResourceOnSuccess = function (response) {
-	    var response_json = response.responseText;
-		var result = JSON.parse(response_json);
-	 
-		//showYesNoDialog handlers
-		//"Yes" handler
-	 	var continueAdding = function (result){
-	 		//leave that gadget version and continue
-	 		if (result['contratable']) {
-				if (result['mashupId'] == "") {
-					// Link gadget with application
-					var gadget_id = result['gadgetId'];
-					var available_apps = result['availableApps'];
-					
-					CatalogueFactory.getInstance().setAvailableApps(available_apps);
-					
-					LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', UIUtils.addResourceToApplication, function(){
-						LayoutManagerFactory.getInstance().hideCover()
-					}, gadget_id);
-				}
-				else {
-					UIUtils.repaintOrderedByCreationDate();
-				}
-		    } else {
-		    	UIUtils.repaintOrderedByCreationDate();
-		    }
-	 	}
-	 
-	 	//"No" handler
-		var rollback = function(result)	{
+var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+    UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
 
-			var resourceURI = URIs.GET_POST_RESOURCES + "/" + result['vendor'] + "/" + result['gadgetName'] + "/" + result['version'];
-	
-			var onError = function(transport, e) {
-				var logManager = LogManagerFactory.getInstance();
-				var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
-				logManager.log(msg);
-				LayoutManagerFactory.getInstance().hideCover();
-				// Process
-			}
+    var upload = document.getElementById("upload_form");
+    var iframe = document.getElementById("upload");
+  
+    if (!iframe.onload)
+	  iframe.onload = function(){checkFile();};
+  
+    upload.submit();
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  
+  ////////////////////////////////////////////////////////////
+  // INTERNAL AUX FUNCTIONS FOR THIS COMMAND
+  ////////////////////////////////////////////////////////////
+  var checkFile = function () {
+  	var i = document.getElementById("upload");
 
-			//Send request to delete de gadget
-			PersistenceEngineFactory.getInstance().send_delete(resourceURI, this, function (){LayoutManagerFactory.getInstance().hideCover();}, onError);
-			
-		}
-	    
-	    var context = {result: result, continueAdding: continueAdding, rollback: rollback};
-	    //check if the new gadget is the last version
-	    if (result['last_version'] != result['version']) {
-	    	//inform the user about the situation
-	    	var msg = gettext("The resource you are adding to the catalogue is not the latest version. " +
-	    			"The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
-	    			" Do you really want to continue to add version %(curr_version)s ");
-	    	msg = interpolate(msg, {curr_version: result['version'], last_version: result['last_version'] }, true);
-	    	LayoutManagerFactory.getInstance().showYesNoDialog(msg, function (){
-	    																this.continueAdding(this.result)
-	    															}.bind(context),
-	    															function (){
-	    																this.rollback(this.result)
-	    															}.bind(context), Constants.Logging.WARN_MSG);
-	    }
-	    else{
-	    	continueAdding(result);
-	    }    
-	 
-	}
-	
-	var newResourceOnError = function (transport, e) {
-		var response = transport.responseText;
-		var response_message = JSON.parse(response)['message'];
-	
-		var logManager = LogManagerFactory.getInstance();
-		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-/*
-		if (response_message.indexOf("IntegrityError") > 0) {
-			msg = interpolate(msg, {errorMsg: gettext("The gadget is already added to the catalogue")}, true);
-		} else {
-			msg = logManager.formatError(msg, transport, e)
-		}
-*/
-		msg = interpolate(msg, {errorMsg: response_message}, true);
-		LayoutManagerFactory.getInstance().hideCover(); //TODO: is it necessary?
-		LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-		logManager.log(msg);
-	}
+  	if (i.contentDocument) {
+  		var d = i.contentDocument;
+  	} else if (i.contentWindow) {
+  		var d = i.contentWindow.document;
+  	} else {
+  		var d = window.frames["upload"].document;
+  	}
 
-	var persistenceEngine = PersistenceEngineFactory.getInstance();
+  	var layoutManager = LayoutManagerFactory.getInstance();
 
-	var params = new Hash();
-	params[paramName] = paramValue;
+  	if (d.location.href.search("error") >= 0) {
+  		var logManager = LogManagerFactory.getInstance();
+  		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
+  		msg = interpolate(msg, {errorMsg: d.body.textContent}, true);
 
-	persistenceEngine.send_post(url, params, this, newResourceOnSuccess, newResourceOnError);
+  		layoutManager._notifyPlatformReady();
+  		layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+  		logManager.log(msg);
+  		return;
+  	} else {
+  		layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
+  		layoutManager.logStep('');
+  		layoutManager._notifyPlatformReady();
+  	}
+  }
 }
 
-//Upload Wgt files
-UIUtils.uploadFile = function () {
-	LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
-
-	var upload = document.getElementById("upload_form");
-	var iframe = document.getElementById("upload");
-	if (!iframe.onload)
-		iframe.onload = function(){UIUtils.checkFile();};
-	upload.submit();
+var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.submit_gadget_to_catalogue(this.data);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
-
-//Check upload status wgt file
-UIUtils.checkFile = function () {
-	var i = document.getElementById("upload");
-
-	if (i.contentDocument) {
-		var d = i.contentDocument;
-	} else if (i.contentWindow) {
-		var d = i.contentWindow.document;
-	} else {
-		var d = window.frames["upload"].document;
-	}
-
-	var layoutManager = LayoutManagerFactory.getInstance();
-
-	if (d.location.href.search("error") >= 0) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
-		msg = interpolate(msg, {errorMsg: d.body.textContent}, true);
-
-		layoutManager._notifyPlatformReady();
-		layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-		logManager.log(msg);
-		return;
-	} else {
-		layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
-		layoutManager.logStep('');
-		layoutManager._notifyPlatformReady();
-	}
-
-	this.viewAll();
-}
-
-UIUtils.viewAll = function (url, criteria) {
-	$('header_always_error').style.display = 'none';
-	UIUtils.page = 1;
-	UIUtils.off = 10;
-	UIUtils.search = false;
-	UIUtils.searchCriteria = '';
-	CatalogueFactory.getInstance().repaintCatalogue(URIs.GET_POST_RESOURCES+ "/" + UIUtils.getPage() + "/" + UIUtils.getOffset());
-}
-

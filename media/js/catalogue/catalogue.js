@@ -50,9 +50,9 @@ var Catalogue = function (dom_element, dom_wrapper) {
 	
 	this.dom_element.update(this.html_code);
 	
-	this.dom_wrapper.init();
-    this.user_command_manager.init(this.dom_element);
+    this.dom_wrapper.init();
     this.resp_command_dispatcher.init();
+    this.user_command_manager.init(this.dom_element);
     this.user_command_manager.run_initial_commands();
     
     this.rendered = true;

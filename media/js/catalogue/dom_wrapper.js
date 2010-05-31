@@ -71,3 +71,15 @@ DOM_Wrapper.prototype.get_code_by_element = function (element) {
   
   return null;
 }
+
+DOM_Wrapper.prototype.get_element_by_selector = function (selector) {
+  var elements = this.root_element.getElementsBySelector(selector);
+  
+  if (! elements || elements.length != 1) {
+      alert("Error in catalogue rendering!")
+	  return;
+    }
+	  
+  return elements[0];
+}
+

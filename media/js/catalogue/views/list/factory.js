@@ -50,6 +50,7 @@ var ListViewFactory  = function () {
   this.searcher = null;
   this.voter = null;
   this.tagger = null;
+  this.resource_submitter = null;
 
   this.get_html_code = function () {
 	return this.catalogue_structure_dom.innerHTML;
@@ -104,6 +105,7 @@ var ListViewFactory  = function () {
     this.searcher = new CatalogueSearcher();
     this.voter = new CatalogueVoter();
     this.tagger = new CatalogueTagger();
+    this.resource_submitter = new CatalogueResourceSubmitter();
     
     // Configuring searcher
     this.searcher.set_scope('gadget');
@@ -111,6 +113,7 @@ var ListViewFactory  = function () {
     this.services.set_voter(this.voter);
     this.services.set_tagger(this.tagger);
     this.services.set_searcher(this.searcher);
+    this.services.set_resource_submitter(this.resource_submitter);
     
     /////////////////////////////////////////////
     // Linking HTML and Services main classes

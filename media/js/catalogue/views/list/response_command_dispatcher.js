@@ -29,11 +29,11 @@ var ListView_ResponseCommandDispatcher = function (dom_wrapper, user_command_man
   
   // Painter's Hash
   this.painters = new Hash();
-
 }
 
 ListView_ResponseCommandDispatcher.prototype.set_painter = function (painter_code, painter) {
   this.painters[painter_code] = painter;
+  this.painters[painter_code].set_dom_wrapper(this.dom_wrapper);
 }
 
 ListView_ResponseCommandDispatcher.prototype.init = function () { 
