@@ -170,6 +170,7 @@ var CatalogueResourceSubmitter = function () {
 	resource_state['added_by_user'] = 'Yes';
 	resource_state['uriTemplate'] = resource_state['templateUrl'];
 	resource_state['name'] = resource_state['gadgetName'];
+	resource_state['id'] = resource_state['gadgetId'];
 	                                               
     var votes = new Hash();
 	
@@ -207,6 +208,8 @@ var CatalogueResourceSubmitter = function () {
 	var addingToAppError = function (response) {
 		alert ("Error en addingToApp");
 	}
+	
+	var resource_id = gadget.getId();
 	
 	//Send request the application manager
 	var params = new Hash();

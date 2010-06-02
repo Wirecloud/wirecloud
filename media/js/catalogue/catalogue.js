@@ -50,6 +50,10 @@ var Catalogue = function (dom_element, dom_wrapper) {
 	this.available_apps = available_apps;
   }
   
+  this.add_gadget_to_app = function (gadget, app) {
+    this.user_command_manager.add_gadget_to_app(gadget, app);
+  }
+  
   this.render = function () {
 	if (this.rendered)
 	  return;

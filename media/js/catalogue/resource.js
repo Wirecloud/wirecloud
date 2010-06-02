@@ -178,8 +178,8 @@ function ResourceState(resourceJSON_) {
 	popularity = voteDataJSON_.voteData[0].popularity;
   }
   
-  this.setAvailableApps = function (availableApps) {
-    this.availableApps = availableApps;
+  this.setAvailableApps = function (availableAppsObj) {
+    availableApps = availableAppsObj;
   }
 
   /////////////////////////////

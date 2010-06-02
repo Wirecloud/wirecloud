@@ -109,12 +109,14 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.resource_submitter.delete_resource(resource);
   }
   
-  this.add_gadget_to_app = function (gadget) { 
-    this.resource_submitter.add_gadget_to_app(gadget);
+  this.add_gadget_to_app = function (gadget, app) { 
+    this.resource_submitter.add_gadget_to_app(gadget, app);
   }
   
   this.search_by_creation_date = function () {
-    
+	var order_by = this.set_option(this.order_by_combo, '-creation_date'); 
+	  
+	this.search('VIEW_ALL', 1, 'AND');
   }
   
   this.create_local_command = function (command_code, data) {
@@ -134,5 +136,16 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	var index = combo_element.selectedIndex;
 		
 	return combo_element.options[index].value;
+  }
+  
+  this.set_option = function (combo_element, option_value) {
+	for (var i=0; i<combo_element.options.length; i++) {
+	  if (combo_element.options[i].value == option_value) {
+	    combo_element.selectedIndex = i;
+	    return;
+	  }
+	}
+
+	alert('Not option found in <select>!');
   }
 }

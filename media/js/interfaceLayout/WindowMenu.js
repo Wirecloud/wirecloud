@@ -239,25 +239,30 @@ function AddingGadgetToApplicationWindow() {
 	this.app_desc = this.content.getElementsBySelector('.app_desc')[0];
 	this.app_gadgets = this.content.getElementsBySelector('.app_gadgets')[0];
 	
+	var catalogue = CatalogueFactory.getInstance();
+	var apps = catalogue.get_available_apps();
+	
 	var select_options = "";
-	var apps = CatalogueFactory.getInstance().get_available_apps();
 	
 	for (var i=0; i<apps.length; i++) {
 		var app = apps[i];
 		var select_option = '<option value="' + app['app_code'] + '">' + app['short_name'] + '</option>'; 
 		
 		select_options += select_option;
-		
-		this.app_select.innerHTML = select_options;
 	}
+	
+	this.app_select.innerHTML = select_options;
 	
 	Event.observe(this.app_select, 'change', function () { this.update_window() }.bind(this));
 	
 	// Finish button
 	this.acceptButton = document.createElement('button');
 	this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
-	this._acceptListener = this._acceptListener.bind(this);
+	
+	this._acceptListener = function ()  { CatalogueFactory.getInstance().add_gadget_to_app(this._gadget, this._appId) }.bind(this);
+	
 	this.acceptButton.observe("click", this._acceptListener);
+	
 	this.windowBottom.appendChild(this.acceptButton);
 }
 
@@ -276,8 +281,9 @@ AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
 	LayoutManagerFactory.getInstance().hideCover();
 }
 
-AddingGadgetToApplicationWindow.prototype.setExtraData = function(gadgetId) {
-	this._gadgetId = gadgetId;
+AddingGadgetToApplicationWindow.prototype.setExtraData = function(resource) {
+	this._gadgetId = resource.getId();
+	this._gadget = resource;
 	
 	this.update_window();
 }

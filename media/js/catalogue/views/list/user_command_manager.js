@@ -125,9 +125,6 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'SUBMIT_GADGET':
 	  var command = new SubmitGadgetCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
-	case 'ADD_GADGET_TO_APP':
-	  var command = new AddGadgetToApplicationCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
-	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		
@@ -139,6 +136,10 @@ var ListView_UserCommandManager = function (dom_wrapper) {
   
   this.delete_resource = function (resource) {
 	this.services.delete_resource(resource);
+  }
+  
+  this.add_gadget_to_app = function (gadget, app) {
+    this.services.add_gadget_to_app(gadget, app);
   }
   
   this.set_available_apps = function (available_apps) {

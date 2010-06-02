@@ -121,13 +121,6 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	user_command_manager.create_command_from_data('SUBMIT_GADGET', submit_link, data, 'click');
   }
   
-  this.paint_new_resource_data = function (resource) {
-	var resource_details_selector = this.local_ids['SUBMITTED_RESOURCE_DETAILS'];
-	var submitted_resource_element = this.dom_wrapper.get_element_by_selector(resource_details_selector);
-	
-	submitted_resource_element.update('<div>hola</div>');
-  }
-  
   this.paint_adding_gadget_results = function (command, user_command_manager) {
 	  
 	var resource = command.get_data();
@@ -138,19 +131,17 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	  //leave that gadget version and continue
 	  if (resource.isContratable() && resource.isGadget()) {
 	    // Link gadget with application
-		var gadget_id = resource.getId();
 		var available_apps = resource.getAvailableApps();
 			
 		user_command_manager.set_available_apps(available_apps);
 		
 		LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', 
-				function(){ UIUtils.addResourceToApplication }, 
+				null, 
 				function(){ LayoutManagerFactory.getInstance().hideCover() }, 
-				gadget_id);
-		
+				resource);
 	  }
 	  else {
-	    this.paint_new_resource_data(resource);  
+	    user_command_manager.search_by_creation_date();  
 	  }
     }.bind(this);
     
