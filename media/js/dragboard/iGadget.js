@@ -98,6 +98,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 	this.contentWrapper = null;
 	this.content = null;
 	this.configurationElement = null;
+	this.closeButtonElement = null;
 	this.settingsButtonElement = null;
 	this.minimizeButtonElement = null;
 	this.errorButtonElement = null;
@@ -450,13 +451,13 @@ IGadget.prototype.build = function() {
 			OpManagerFactory.getInstance().cancelServices(this.id);
 			LayoutManagerFactory.getInstance().hideCover();
 		}.bind(this);
-		
+
 		var remove = function () {
 			OpManagerFactory.getInstance().removeInstance(this.id);
 			OpManagerFactory.getInstance().unsubscribeServices(this.id);
 			LayoutManagerFactory.getInstance().hideCover();
 		}.bind(this);
-		
+
 		button.observe("click",
 		               function() {
 		                   LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
@@ -469,10 +470,10 @@ IGadget.prototype.build = function() {
 		               }.bind(this),
 		               false);
 	}
-
 	button.setAttribute("title", gettext("Close"));
 	button.setAttribute("alt", gettext("Close"));
-	this.gadgetMenu.appendChild(button);
+	this.closeButtonElement = button;
+
 
 	// Menu button
 	button = document.createElement("input");
@@ -480,7 +481,7 @@ IGadget.prototype.build = function() {
 	button.setAttribute("type", "button");
 	button.addClassName("settingsbutton");
 	button.setAttribute("id", "settingsbutton");
-	
+
 	button.observe("click",
 	               function(e) {
 	                  LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
@@ -492,7 +493,6 @@ IGadget.prototype.build = function() {
 
 	button.setAttribute("title", gettext("Menu"));
 	button.setAttribute("alt", gettext("Menu"));
-	this.gadgetMenu.appendChild(button);
 	this.settingsButtonElement = button;
 
 	// minimize button
@@ -509,8 +509,6 @@ IGadget.prototype.build = function() {
 		button.setAttribute("alt", gettext("Minimize"));
 		button.addClassName("minimizebutton");
 	}
-
-	this.gadgetMenu.appendChild(button);
 	this.minimizeButtonElement = button;
 
 	// error button
@@ -602,7 +600,7 @@ IGadget.prototype.build = function() {
 	resizeHandle = document.createElement("div");
 	Element.extend(resizeHandle);
 	resizeHandle.addClassName("leftResizeHandle");
-	this.statusBar.appendChild(resizeHandle);
+	this.leftResizeHandleElement = resizeHandle;
 	this.leftResizeHandle = new IGadgetResizeHandle(resizeHandle, this, true);
 
 	// Right one
@@ -610,6 +608,7 @@ IGadget.prototype.build = function() {
 	Element.extend(resizeHandle);
 	resizeHandle.addClassName("rightResizeHandle");
 	this.statusBar.appendChild(resizeHandle);
+	this.rightResizeHandleElement = resizeHandle;
 	this.rightResizeHandle = new IGadgetResizeHandle(resizeHandle, this, false);
 
 	// extract/snap button
@@ -658,6 +657,51 @@ IGadget.prototype.build = function() {
 														this.toggleMinimizeStatus(false);
 														this.layout.dragboard.raiseToTop(this);
 													  }.bind(this), false);
+}
+
+IGadget.prototype.isAllowed = function(action) {
+	switch (action) {
+	case "close":
+		return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_igadgets');
+	case "move":
+	case "resize":
+	case "minimize":
+		var dragboard = this.layout.dragboard
+		return !dragboard.isLocked() && dragboard.getWorkspace().isAllowed('edit_layout');
+	default:
+		return false;
+	}
+}
+
+IGadget.prototype._updateButtons = function() {
+	if (this.closeButtonElement.parentNode)
+		this.closeButtonElement.remove();
+	if (this.settingsButtonElement.parentNode)
+		this.settingsButtonElement.remove();
+	if (this.closeButtonElement.parentNode)
+		this.closeButtonElement.remove();
+	if (this.leftResizeHandleElement.parentNode)
+		this.leftResizeHandleElement.remove();
+	if (this.rightResizeHandleElement.parentNode)
+		this.rightResizeHandleElement.remove();
+
+
+
+	if (this.isAllowed('close')) {
+		this.gadgetMenu.appendChild(this.closeButtonElement);
+	}
+
+	this.gadgetMenu.appendChild(this.settingsButtonElement);
+
+	if (this.isAllowed('minimize')) {
+		this.gadgetMenu.appendChild(this.minimizeButtonElement);
+	}
+
+	if (this.isAllowed('resize')) {
+		this.statusBar.appendChild(this.leftResizeHandleElement);
+		this.statusBar.appendChild(this.rightResizeHandleElement);
+	}
+
 }
 
 /**
@@ -709,11 +753,11 @@ IGadget.prototype.paint = function(onInit) {
 	// Initialize transparency status
 	if (this.transparency)
 		this.element.addClassName("gadget_window_transparent");
-	
+
 	//Initialize read-only status
 	if (this.readOnly)
 		this.element.addClassName("gadget_window_readonly");
-		
+
 	// Time to SHOW the igadget (we need to take into account the gadget can be iconified)
 	if (!this.onFreeLayout() || !minimizedStatusBackup)
 		this.element.style.visibility = "visible";
@@ -735,8 +779,9 @@ IGadget.prototype.paint = function(onInit) {
 	contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
 	this.setMenuColor(undefined, true);
+	this._updateButtons();
 
-	// Icon section
+	// Icon
 	this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
 	this.iconDraggable = new IGadgetIconDraggable(this);
 	this.iconElement.style.left = this.layout.dragboard.freeLayout.getColumnOffset(this.iconPosition.x) + "px";
@@ -748,6 +793,10 @@ IGadget.prototype.paint = function(onInit) {
 													this.layout.dragboard.raiseToTop(this);
 												}
 											 }.bind(this), true);
+}
+
+IGadget.prototype.isPainted = function() {
+	return this.menu != null;
 }
 
 IGadget.prototype._createIGadgetMenu = function() {
@@ -895,15 +944,15 @@ IGadget.prototype.fillWithInput = function () {
 			this.igadgetInputHTMLElement.setAttribute("value", this.name);
 			this.igadgetInputHTMLElement.setAttribute("size", this.name.length+5);
 			this.igadgetInputHTMLElement.setAttribute("maxlength", 30);
-	
+
 			this.gadgetMenu.appendChild(this.igadgetInputHTMLElement);
-	
+
 			this.igadgetInputHTMLElement.observe('blur',
 			                                    function(e) {
 			                                        Event.stop(e);
 			                                        this.fillWithLabel()
 			                                    }.bind(this));
-	
+
 			this.igadgetInputHTMLElement.observe('keypress',
 			                                    function(e) {
 			                                        if(e.keyCode == Event.KEY_RETURN) {
@@ -912,13 +961,13 @@ IGadget.prototype.fillWithInput = function () {
 			                                            target.blur();
 			                                        }
 			                                    }.bind(this));
-	
+
 			this.igadgetInputHTMLElement.observe('change',
-			                                    function(e) {		                                    
+			                                    function(e) {
 			                                        var target = BrowserUtilsFactory.getInstance().getTarget(e);
 			                                        this.setName(target.value);
 			                                    }.bind(this));
-	
+
 			this.igadgetInputHTMLElement.observe('keyup',
 			                                    function(e) {
 			                                        Event.stop(e);
@@ -1119,7 +1168,7 @@ IGadget.prototype.destroy = function() {
  * remove the igadget form persistence.
  */
 IGadget.prototype.remove = function() {
-	if (this.element != null && !this.layout.dragboard.isLocked()) {
+	if (this.layout != null && !this.layout.dragboard.isLocked()) {
 		function onSuccess() {}
 		function onError(transport, e) {
 			var logManager = LogManagerFactory.getInstance();
@@ -1289,7 +1338,7 @@ IGadget.prototype._makeConfigureInterface = function() {
 IGadget.prototype.setContentSize = function(newWidth, newHeight, persist) {
 	persist = persist != undefined ? persist : true;
 
-	if (!this.element) {
+	if (!this.isPainted()) {
 		this.contentWidth = newWidth;
 		this.contentHeight = newHeight;
 		return;
@@ -1313,7 +1362,7 @@ IGadget.prototype.setContentSize = function(newWidth, newHeight, persist) {
  * @private
  */
 IGadget.prototype._notifyWindowResizeEvent = function() {
-	if (!this.element)
+	if (!this.isPainted())
 		return;
 
 	/* TODO this is a temporally workaround needed when using display:none to hide tabs */
@@ -1345,7 +1394,7 @@ IGadget.prototype._notifyWindowResizeEvent = function() {
  * @param {Boolean} newLockStatus
  */
 IGadget.prototype._notifyLockEvent = function(newLockStatus, reserveSpace) {
-	if (!this.element)
+	if (!this.isPainted())
 		return;
 
 	var oldWidth = this.getWidth();
@@ -1359,6 +1408,7 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus, reserveSpace) {
 		this.menu.menu.removeClassName("gadget_menu_locked");
 	}
 
+	this._updateButtons();
 	this.setSize(oldWidth, oldHeight, false, false);
 
 	// Notify Context Manager
@@ -1582,7 +1632,7 @@ IGadget.prototype.setSize = function(newWidth, newHeight, resizeLeftSide, persis
 	resizeLeftSide = resizeLeftSide != undefined ? resizeLeftSide : false;
 	persist = persist != undefined ? persist : true;
 
-	if (!this.element) {
+	if (!this.isPainted()) {
 		this.contentWidth = newWidth;
 		this.height = newHeight;
 		return;
@@ -2065,7 +2115,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
 			'igadgets': data.toJSON()
 		};
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
-		uri = URIs.GET_IGADGETS.evaluate({
+		var uri = URIs.GET_IGADGETS.evaluate({
 			workspaceId: oldLayout.dragboard.workSpaceId,
 			tabId: oldLayout.dragboard.tabId
 		});

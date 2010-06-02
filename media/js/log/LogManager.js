@@ -46,12 +46,13 @@ var LogManagerFactory = function () {
 //				$("logs_tab").className="tab";
 //			}
 
-			labelContent = ngettext("%(errorCount)s error", "%(errorCount)s errors", ++this.errorCount);
+			var labelContent = ngettext("%(errorCount)s error", "%(errorCount)s errors", ++this.errorCount);
 			labelContent = interpolate(labelContent, {errorCount: this.errorCount}, true);
 			LayoutManagerFactory.getInstance().notifyError(labelContent);
 
 			var logentry = document.createElement("p");
 
+			var icon;
 			switch (level) {
 			default:
 			case Constants.Logging.ERROR_MSG:

@@ -159,10 +159,6 @@ div.gadget_window div.statusBar {
   border: 0px;
 }
 
-div.statusBar {
-	cursor:pointer;
-}
-
 /*****
  * config_interface
  */

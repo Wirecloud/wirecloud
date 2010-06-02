@@ -840,7 +840,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
 		if (!canBeDragged(draggable, data))
 			return false;
-			
+
 		var target = BrowserUtilsFactory.getInstance().getTarget(e);
 		if (target != handler)
 			return false;
@@ -952,7 +952,7 @@ function IGadgetDraggable (iGadget) {
 }
 
 IGadgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
-	return !context.iGadget.layout.dragboard.isLocked() && !(context.iGadget.layout instanceof FullDragboardLayout);
+	return context.iGadget.isAllowed('move') && !(context.iGadget.layout instanceof FullDragboardLayout);
 }
 
 
@@ -1127,11 +1127,13 @@ IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 // resize support
 /////////////////////////////////////
 
-function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish) {
+function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish, canBeResized) {
 	var xDelta = 0, yDelta = 0;
 	var xStart = 0, yStart = 0;
 	var dragboardCover;
 	var x, y;
+	canBeResized = canBeResized ? canBeResized : function() {return true;};
+
 
 	// remove the events
 	function endresize(e) {
@@ -1192,6 +1194,9 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
 	// initiate the resizing
 	function startresize(e) {
 		e = e || window.event; // needed for IE
+
+		if (!canBeResized(resizableElement, data))
+			return false;
 
 		// Only attend to left button (or right button for left-handed persons) events
 		if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
@@ -1259,7 +1264,12 @@ function IGadgetResizeHandle(handleElement, iGadget, resizeLeftSide) {
 	                        {iGadget: iGadget, resizeLeftSide: resizeLeftSide},
 	                        IGadgetResizeHandle.prototype.startFunc,
 	                        IGadgetResizeHandle.prototype.updateFunc,
-	                        IGadgetResizeHandle.prototype.finishFunc);
+	                        IGadgetResizeHandle.prototype.finishFunc,
+	                        IGadgetResizeHandle.prototype.canBeResizedFunc);
+}
+
+IGadgetResizeHandle.prototype.canBeResizedFunc = function (resizableElement, data) {
+	return data.iGadget.isAllowed('resize');
 }
 
 IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, data) {
