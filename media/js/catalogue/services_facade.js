@@ -105,6 +105,18 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.resource_submitter.add_gadget_from_template(template_url);
   }
   
+  this.delete_resource = function (resource) { 
+    this.resource_submitter.delete_resource(resource);
+  }
+  
+  this.add_gadget_to_app = function (gadget) { 
+    this.resource_submitter.add_gadget_to_app(gadget);
+  }
+  
+  this.search_by_creation_date = function () {
+    
+  }
+  
   this.create_local_command = function (command_code, data) {
 	var response_command = new ResponseCommand(this.resp_command_processor, null);
 	

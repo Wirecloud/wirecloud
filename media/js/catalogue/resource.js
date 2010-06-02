@@ -32,6 +32,7 @@ function ResourceState(resourceJSON_) {
   var name = null;
   var displayName = null;
   var version = null;
+  var last_version = null;
   var id = null;
   var description = null;
   var uriImage = null;
@@ -47,6 +48,7 @@ function ResourceState(resourceJSON_) {
   var popularity = null;
   var userVote = null;
   var capabilities = [];
+  var availableApps = [];
 	
   //////////////////////////
   // GETTERS
@@ -65,6 +67,10 @@ function ResourceState(resourceJSON_) {
 	
   this.getVersion = function() { 
 	return version;
+  }
+  
+  this.getLastVersion = function() { 
+	return last_version;
   }
 	
   this.getId = function() { 
@@ -97,6 +103,10 @@ function ResourceState(resourceJSON_) {
   
   this.isMashup = function() { 
 	return mashupId != null;
+  }
+  
+  this.isGadget = function() { 
+	return mashupId == null;
   }
   
   this.getAddedBy = function() { 
@@ -167,6 +177,10 @@ function ResourceState(resourceJSON_) {
 	userVote = voteDataJSON_.voteData[0].user_vote;
 	popularity = voteDataJSON_.voteData[0].popularity;
   }
+  
+  this.setAvailableApps = function (availableApps) {
+    this.availableApps = availableApps;
+  }
 
   /////////////////////////////
   // CONVENIENCE FUNCTIONS
@@ -195,6 +209,10 @@ function ResourceState(resourceJSON_) {
 	return [];
   }
   
+  this.getAvailableApps = function() { 	
+	return availableApps;
+  }
+  
   this.isContratable = function () {
 	for (var i = 0; i < capabilities.length; i++) {
 	  var capability = capabilities[i];
@@ -204,6 +222,8 @@ function ResourceState(resourceJSON_) {
 	  else
 		return false 
     }
+	
+	return false;
   }
 
   this.hasContract = function () {
@@ -226,6 +246,10 @@ function ResourceState(resourceJSON_) {
   name = resourceJSON_.name;
   displayName = resourceJSON_.displayName;
   version = resourceJSON_.version;
+  
+  if (resourceJSON_.last_version)
+    last_version = resourceJSON_.last_version;
+  
   id = resourceJSON_.id;
   allVersions = resourceJSON_.versions;
   description = resourceJSON_.description;
@@ -241,6 +265,9 @@ function ResourceState(resourceJSON_) {
   userVote = resourceJSON_.votes[0].user_vote;
   popularity = resourceJSON_.votes[0].popularity;	
   capabilities = resourceJSON_.capabilities;
+  
+  if (resourceJSON_.availableApps)
+	this.setAvailableApps(resourceJSON_.availableApps);
   
   this.setEvents(resourceJSON_.events);
   this.setSlots(resourceJSON_.slots);

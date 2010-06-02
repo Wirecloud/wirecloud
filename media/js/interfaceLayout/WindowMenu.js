@@ -240,7 +240,7 @@ function AddingGadgetToApplicationWindow() {
 	this.app_gadgets = this.content.getElementsBySelector('.app_gadgets')[0];
 	
 	var select_options = "";
-	var apps = CatalogueFactory.getInstance().getAvailableApps();
+	var apps = CatalogueFactory.getInstance().get_available_apps();
 	
 	for (var i=0; i<apps.length; i++) {
 		var app = apps[i];

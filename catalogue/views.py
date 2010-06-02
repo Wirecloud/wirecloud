@@ -81,7 +81,12 @@ class GadgetsCollection(Resource):
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
             transaction.rollback()    
-            #This is not an error! It returns the same as a successfull request!
+            
+            msg = _('Gadget already exists!')
+            
+            json_error = {"result": "error", "message": msg}
+            
+            return HttpResponseBadRequest(simplejson.dumps(json_error), mimetype='application/json; charset=UTF-8')
 
         except TemplateParseException, e:
             transaction.rollback()

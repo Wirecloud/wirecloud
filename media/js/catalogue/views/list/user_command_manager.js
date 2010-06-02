@@ -125,6 +125,9 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'SUBMIT_GADGET':
 	  var command = new SubmitGadgetCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
+	case 'ADD_GADGET_TO_APP':
+	  var command = new AddGadgetToApplicationCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		
@@ -132,5 +135,17 @@ var ListView_UserCommandManager = function (dom_wrapper) {
   
   this.run_initial_commands = function () {
 	this.services.search('VIEW_ALL', 1, 'AND');
+  }
+  
+  this.delete_resource = function (resource) {
+	this.services.delete_resource(resource);
+  }
+  
+  this.set_available_apps = function (available_apps) {
+	this.catalogue.set_available_apps(available_apps);
+  }
+  
+  this.search_by_creation_date = function () {
+	this.services.search_by_creation_date();
   }
 }

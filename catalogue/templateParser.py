@@ -312,6 +312,8 @@ class TemplateHandler(handler.ContentHandler):
             return
         if (name == 'Resource'):
             return
+        if (name == 'Capability'):
+            return
         if (name == 'Catalog.ResourceDescription'):
 
             if self._gadget_added:

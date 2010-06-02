@@ -102,7 +102,8 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
 var ListView_DeveloperInfoPainter = function (structure_element) {
   HTML_Painter.call(this);
   
-  this.local_ids = new Hash({'GADGET_SUBMIT_LINK': '#submit_link', 'GADGET_TEMPLATE_INPUT': '#template_uri'})
+  this.local_ids = new Hash({'GADGET_SUBMIT_LINK': '#submit_link', 'GADGET_TEMPLATE_INPUT': '#template_uri',
+	                         'SUBMITTED_RESOURCE_DETAILS': '#submitted_resource_details'})
   
   this.structure_template_element = structure_element;
   
@@ -118,6 +119,65 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	var data = new Hash({'template_url_element': submit_input}); 
 	
 	user_command_manager.create_command_from_data('SUBMIT_GADGET', submit_link, data, 'click');
+  }
+  
+  this.paint_new_resource_data = function (resource) {
+	var resource_details_selector = this.local_ids['SUBMITTED_RESOURCE_DETAILS'];
+	var submitted_resource_element = this.dom_wrapper.get_element_by_selector(resource_details_selector);
+	
+	submitted_resource_element.update('<div>hola</div>');
+  }
+  
+  this.paint_adding_gadget_results = function (command, user_command_manager) {
+	  
+	var resource = command.get_data();
+	  
+    //showYesNoDialog handlers
+    //"Yes" handler
+    var continueAdding = function (resource){
+	  //leave that gadget version and continue
+	  if (resource.isContratable() && resource.isGadget()) {
+	    // Link gadget with application
+		var gadget_id = resource.getId();
+		var available_apps = resource.getAvailableApps();
+			
+		user_command_manager.set_available_apps(available_apps);
+		
+		LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', 
+				function(){ UIUtils.addResourceToApplication }, 
+				function(){ LayoutManagerFactory.getInstance().hideCover() }, 
+				gadget_id);
+		
+	  }
+	  else {
+	    this.paint_new_resource_data(resource);  
+	  }
+    }.bind(this);
+    
+    //"No" handler
+    var rollback = function(resource)	{
+      user_command_manager.delete_resource(resource);
+    }.bind(this);
+    
+    var context = {result: resource, continueAdding: continueAdding, rollback: rollback};
+      
+    //check if the new gadget is the last version
+    if (resource.getLastVersion() != resource.getVersion()) {
+      //inform the user about the situation
+      var msg = gettext("The resource you are adding to the catalogue is not the latest version. " +
+    			"The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
+    			" Do you really want to continue to add version %(curr_version)s ");
+      
+      msg = interpolate(msg, {curr_version: resource.getVersion(), last_version: resource.getLastVersion() }, true);
+    	
+      LayoutManagerFactory.getInstance().showYesNoDialog(msg, 
+    			function (){ continueAdding(resource) },
+    			function (){ rollback(resource) }, 
+    			Constants.Logging.WARN_MSG);
+    }
+    else {
+      continueAdding(resource);
+    }  
   }
 }
 

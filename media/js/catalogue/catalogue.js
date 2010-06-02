@@ -32,6 +32,8 @@ var Catalogue = function (dom_element, dom_wrapper) {
   this.user_command_manager = null;
   this.resp_command_dispatcher = null;
   
+  this.available_apps = [];
+  
   this.set_html_code = function (html_code) {
 	this.html_code = html_code;
   }
@@ -42,6 +44,10 @@ var Catalogue = function (dom_element, dom_wrapper) {
   
   this.set_response_command_dispatcher = function (command_processor) {
 	this.resp_command_dispatcher = command_processor;
+  }
+  
+  this.set_available_apps = function (available_apps) {
+	this.available_apps = available_apps;
   }
   
   this.render = function () {
@@ -89,6 +95,10 @@ var Catalogue = function (dom_element, dom_wrapper) {
   
   this.get_dom_element = function () {
 	return this.dom_element;
+  }
+  
+  this.get_available_apps = function () {
+	return this.available_apps;
   }
   
   this.set_style = function (style) {

@@ -176,3 +176,21 @@ var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom
   
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
+
+var DeleteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.delete_resource(this.data);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+var AddGadgetToApplicationCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.add_gadget_to_app(this.data);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+
