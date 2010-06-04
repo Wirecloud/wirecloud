@@ -2,6 +2,10 @@
   overflow:hidden;
 }
 
+button.contratable {
+  background:transparent url(/ezweb/images/contratable.gif) repeat scroll 0 0;
+}
+
 #catalogue .center .resources {
   overflow-y:auto;
   overflow-x:hidden;
@@ -108,10 +112,6 @@
 
 #catalogue a:focus {
   outline: none;
-}
-
-#catalogue a:hover {
-  text-decoration:underline;
 }
 
 #catalogue .head {
@@ -514,6 +514,7 @@
 #catalogue .center .resources .resource .tags .tags_label {
   float: left;
   font-weight: bold;
+  margin-right:10px;
 }
 
 #catalogue .center .resources .resource .tags .important_tags {

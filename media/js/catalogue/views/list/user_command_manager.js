@@ -77,12 +77,12 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	  break;
 	case 'SIMPLE_SEARCH':
 	  var element_code = this.dom_wrapper.get_code_by_element(dom_element);
-	  var data = {'starting_page': 1, 'scope': '', 'boolean_operator': 'AND'};
+	  var data = {'starting_page': 1, 'scope': '', 'boolean_operator': 'AND', 'criteria': ''};
 	  
 	  if (element_code ==  'SEARCH_INPUT')
 		html_event = 'keypress';
 	  
-	  if (element_code ==  'RESULTS_PER_PAGE_COMBO' || element_code == 'PAGINATION_AREA')
+	  if (element_code ==  'RESULTS_PER_PAGE_COMBO' || element_code == 'ORDER_BY_COMBO')
 		html_event = 'change';
 	  
 	  if (element_code ==  'GADGETS_BUTTON') {
@@ -131,7 +131,7 @@ var ListView_UserCommandManager = function (dom_wrapper) {
   }
   
   this.run_initial_commands = function () {
-	this.services.search('VIEW_ALL', 1, 'AND');
+	this.services.search('VIEW_ALL', 1, 'AND', '', '');
   }
   
   this.delete_resource = function (resource) {

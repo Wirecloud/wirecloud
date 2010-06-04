@@ -63,7 +63,7 @@ var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom
 	  return;
 	}
 
-    this.services.search('SIMPLE_SEARCH', this.data['starting_page'], this.data['boolean_operator'], this.data['scope']);
+    this.services.search('SIMPLE_SEARCH', this.data['starting_page'], this.data['boolean_operator'], this.data['scope'], this.data['criteria']);
   }
 	
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);

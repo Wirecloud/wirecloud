@@ -51,13 +51,19 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
     this.dom_element.update('');
     
     for (var i=0; i<resources.length; i++) {
-      var resource_state = resources[i];
+      var resource = resources[i];
       
-      var name = resource_state.getName();
-      var image_url = resource_state.getUriImage();
-      var description = resource_state.getDescription();
+      var name = resource.getName();
+      var image_url = resource.getUriImage();
+      var description = resource.getDescription();
+      
       var type = '';
       var button_text = 'Add';
+      
+      if (resource.isContratable() && ! resource.hasContract()) {
+        button_text = 'Buy';
+        type = 'contratable';
+      }
       
       var resource_element = document.createElement('div');
       Element.extend(resource_element);
@@ -84,7 +90,7 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       
       var button = button_list[0];
       
-      user_command_manager.create_command_from_data('INSTANTIATE_RESOURCE', button, resource_state, 'click');
+      user_command_manager.create_command_from_data('INSTANTIATE_RESOURCE', button, resource, 'click');
       
       // "Show details"
       var resource_name_list = resource_element.getElementsBySelector('.right_column_resource .resource_name')
@@ -94,7 +100,36 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       
       var resource_name = resource_name_list[0];
       
-      user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', resource_name, resource_state, 'click');
+      user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', resource_name, resource, 'click');
+      
+      // Tags
+      var tag_links_list = resource_element.getElementsBySelector('.right_column_resource .tags .tag_links');
+      if (! tag_links_list || tag_links_list.length != 1) {
+      	alert('Problem parsing resource template!');
+      }
+      
+      var tag_links = tag_links_list[0];
+      
+      var search_options = new Hash();
+      
+      search_options['starting_page'] = 1
+      search_options['boolean_operator'] = 'AND';
+      search_options['scope'] = '';
+      
+      var tags = resource.getTags();
+      for (var j=0; j<tags.length; j++) {
+    	var tag = tags[j];
+    	
+        var tag_element = document.createElement('a');
+        
+        Element.extend(tag_element);
+        tag_element.update(tag.value);
+        tag_links.appendChild(tag_element);
+        
+        search_options['criteria'] = tag.value;
+        
+        user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+      }
     }
   }
 }

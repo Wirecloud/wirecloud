@@ -74,7 +74,7 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.configured = true;
   }
   
-  this.search = function (operation, starting_page, search_boolean, scope) {
+  this.search = function (operation, starting_page, search_boolean, scope, criteria) {
 	if (! this.configured)
 	  this.configure();
 	
@@ -84,6 +84,9 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	
 	if (scope)
 	  this.searcher.set_scope(scope);
+	
+	if (criteria)
+	  search_criteria = criteria;
 	  
 	if (operation == 'SIMPLE_SEARCH' && ! search_criteria)
 	  operation = 'VIEW_ALL';

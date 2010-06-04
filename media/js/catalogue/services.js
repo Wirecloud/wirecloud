@@ -202,11 +202,12 @@ var CatalogueResourceSubmitter = function () {
   
   this.add_gadget_to_app = function (gadget, application_id) {
     var addingToAppSuccess = function (response) {
-		alert('Added gadget to App');
+      // processing command
+      this.process();
 	}
 	
 	var addingToAppError = function (response) {
-		alert ("Error en addingToApp");
+	  alert ("Error en addingToApp");
 	}
 	
 	var resource_id = gadget.getId();
@@ -215,7 +216,11 @@ var CatalogueResourceSubmitter = function () {
 	var params = new Hash();
 	var url = URIs.ADD_RESOURCE_TO_APP.evaluate({"application_id": application_id, "resource_id":resource_id});
 	
-	this.persistence_engine.send_post(url, params, this, addingToAppSuccess, addingToAppError);
+	// CommandResponse creation
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('ADD_GADGET_TO_APP');
+	
+	this.persistence_engine.send_post(url, params, response_command, addingToAppSuccess, addingToAppError);
   }
   
   this.add_gadget_from_template = function (template_uri) {

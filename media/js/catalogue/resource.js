@@ -145,17 +145,9 @@ function ResourceState(resourceJSON_) {
   // SETTERS
   //////////////
   this.setTags = function(tagsJSON_) {
-	tags.clear();
-		
-	for (var i=0; i<tagsJSON_.length; i++) {
-	  tags.push(new Tag(tagsJSON_[i]));
-	}
+	tags = tagsJSON_;
   }
-	
-  this.addTag = function(tag) { 
-	tags.push(new Tag(tag)); 
-  }
-	
+  
   this.setSlots = function(slotsJSON_) {
 	slots.clear();
 		
@@ -228,6 +220,9 @@ function ResourceState(resourceJSON_) {
 
   this.hasContract = function () {
     var gadgetApps = this.getGadgetApps();
+    
+    if (gadgetApps.length == 0)
+      return false;
 		
 	for (var i=0; i<gadgetApps.length; i++) {
 	  var app = gadgetApps[i];

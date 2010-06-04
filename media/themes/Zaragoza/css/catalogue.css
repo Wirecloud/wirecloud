@@ -11,10 +11,6 @@
 	outline: none;
 }
 
-#catalogue a:hover {
-	text-decoration:underline;
-}
-
 #catalogue .head {
 	position:relative;
 	padding:0px;
@@ -1038,9 +1034,18 @@ padding-bottom:8px;
 	margin: 0;
 }
 
-#catalogue .resource button, .contratable {
+#catalogue .resource button {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
+}
+
+.window_menu button {
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+.tags .tag_links {
+	float: left;
 }
 
 /*

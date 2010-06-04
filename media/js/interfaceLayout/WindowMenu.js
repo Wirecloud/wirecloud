@@ -259,7 +259,10 @@ function AddingGadgetToApplicationWindow() {
 	this.acceptButton = document.createElement('button');
 	this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
 	
-	this._acceptListener = function ()  { CatalogueFactory.getInstance().add_gadget_to_app(this._gadget, this._appId) }.bind(this);
+	this._acceptListener = function ()  { 
+	  CatalogueFactory.getInstance().add_gadget_to_app(this._gadget, this._appId);
+	  LayoutManagerFactory.getInstance().hideCover();
+	}.bind(this);
 	
 	this.acceptButton.observe("click", this._acceptListener);
 	
@@ -270,10 +273,6 @@ AddingGadgetToApplicationWindow.prototype = new WindowMenu();
 
 AddingGadgetToApplicationWindow.prototype.setCloseListener = function(closeListener) {
 	this._closeListener = closeListener;
-}
-
-AddingGadgetToApplicationWindow.prototype.setHandler = function(acceptHandler) {
-	this.acceptHandler = function(){acceptHandler(this._gadgetId, this._appId);}.bind(this);
 }
 
 AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
@@ -294,7 +293,7 @@ AddingGadgetToApplicationWindow.prototype.update_window = function() {
 	if (selectedIndex != -1) {
 		this._appId = this.app_select[selectedIndex].value;
 		
-		var apps = CatalogueFactory.getInstance().getAvailableApps();
+		var apps = CatalogueFactory.getInstance().get_available_apps();
 		
 		var app = apps[selectedIndex];
 		

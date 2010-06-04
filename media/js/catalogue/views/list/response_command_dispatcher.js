@@ -110,6 +110,14 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
     this.painters['DEVELOPERS_PAINTER'].paint_adding_gadget_results(resp_command, this.user_command_manager);
     
     break;
+  case 'ADD_GADGET_TO_APP':
+	display_options['developer_info'] = 'block';
+	
+	this.show_section(display_options, command_id);
+	
+	this.user_command_manager.search_by_creation_date();
+	
+	break;
   default:
 	alert('Missing command code at ResponseCommandProcessor!');
 	return;
@@ -146,6 +154,7 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
 	break;
   case 'SHOW_DEVELOPER_INFO':
   case 'SUBMIT_GADGET':
+  case 'ADD_GADGET_TO_APP':
 	this.developers_button.addClassName('selected_section');
 	this.gadgets_button.removeClassName('selected_section');
 	this.mashups_button.removeClassName('selected_section');

@@ -833,6 +833,7 @@ var LayoutManagerFactory = function () {
 					this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow();
 				}
 				this.currentMenu = this.menus['addGadgetToAppMenu'];
+				//this.currentMenu.setHandler(handlerYesButton);
 				this.currentMenu.setExtraData(extra_data);
 				break;
 			case 'purchaseAppMenu':
