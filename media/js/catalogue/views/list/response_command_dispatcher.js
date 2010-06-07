@@ -63,6 +63,8 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   var display_options = {'search_options': 'none', 'pagination':'none', 'developer_info': 'none',
 		                 'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none'};
   
+  var services = this.user_command_manager.get_service_facade();
+  
   var command_id = resp_command.get_id();
 
   switch (command_id) {
@@ -91,7 +93,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   case 'PAINT_RESOURCE_DETAILS':
 	display_options['resource_details'] = 'block';
 		
-	this.show_section(display_options);
+	this.show_section(display_options, command_id);
 	
 	break;
   case 'SHOW_DEVELOPER_INFO':
@@ -115,7 +117,11 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	
 	this.show_section(display_options, command_id);
 	
-	this.user_command_manager.search_by_creation_date();
+	services.search_by_creation_date();
+	
+	break;
+  case 'REPEAT_SEARCH':
+	services.repeat_last_search();
 	
 	break;
   default:
@@ -158,6 +164,9 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
 	this.developers_button.addClassName('selected_section');
 	this.gadgets_button.removeClassName('selected_section');
 	this.mashups_button.removeClassName('selected_section');
+	break;
+  case 'PAINT_RESOURCE_DETAILS':
+	//TODO
 	break;
   default:
 	alert ('Error activating tab!');

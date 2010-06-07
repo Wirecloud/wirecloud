@@ -45,6 +45,7 @@ var CatalogueSearcher = function () {
   this.simple_search_template = null;
   this.configured = false;
   this.resp_command_processor = null;
+  this.last_search_options = null;
   
   this.set_scope = function (scope) {
 	this.scope = scope;
@@ -70,6 +71,20 @@ var CatalogueSearcher = function () {
 	this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
 	
 	this.configured = true;
+  }
+  
+  this.save_search_options = function (operation, criteria, starting_page, resources_per_page, order_by, search_boolean, search_scope) {
+    var search_options = new Hash();
+    
+    search_options['operation'] = operation;
+    search_options['criteria'] = criteria;
+    search_options['starting_page'] = starting_page;
+    search_options['resources_per_page'] = resources_per_page;
+    search_options['order_by'] = order_by;
+    search_options['boolean_operator'] = search_boolean;
+    search_options['scope'] = search_scope;
+
+    this.last_search_options = search_options;
   }
   
   this.process_response = function (response, command) {
@@ -101,9 +116,26 @@ var CatalogueSearcher = function () {
 	}
   }
   
+  this.repeat_last_search = function () {
+	var search_options = this.last_search_options;
+	
+	var operation = search_options['operation'];
+	var criteria = search_options['criteria'];
+	var starting_page = search_options['starting_page'];
+	var resources_per_page = search_options['resources_per_page'];
+	var order_by = search_options['order_by'];
+	var boolean_operator = search_options['boolean_operator'];
+	var scope = search_options['scope'];
+	
+	this.search(operation, criteria, starting_page, resources_per_page, order_by, boolean_operator, scope);
+  }
+  
   this.search = function (operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, search_scope) {
 	if (! this.configured)
 	  this.configure();
+	
+	// Saving search options in order to repeat search!
+	this.save_search_options(operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, search_scope);
 	
 	if (search_scope)
 	  this.set_scope(search_scope);
@@ -200,6 +232,43 @@ var CatalogueResourceSubmitter = function () {
 	return resource_obj;
   }
   
+  this.buy_resource_applications = function (resource) {
+	var contratationSuccess = function (transport) {
+	  var responseJSON = transport.responseText;
+	  var response = JSON.parse(responseJSON); 
+		
+	  // processing command
+      this.process();
+	}
+	
+	var contratationError = function () {
+	  alert("Error contracting application");
+	}
+	
+	var url = URIs.CONTRACT_APPLICATIONS_TRANSACTION;
+	var contract_list = []
+	
+	var gadget_apps = resource.getGadgetApps();
+	
+	for (var i=0; i<gadget_apps.length; i++) {
+	  var app = gadget_apps[i];
+		
+	  if (! app['has_contract']) {
+		var contract = {'username': ezweb_user_name, 'free': true, 'app_id': app['app_code']};
+		
+		contract_list.push(contract);
+	  }
+	}
+	
+	// CommandResponse creation
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('REPEAT_SEARCH');
+	
+	var params = {'contract_list': Object.toJSON(contract_list)};
+	
+	this.persistence_engine.send_post(url, params, response_command, contratationSuccess, contratationError);
+  }
+  
   this.add_gadget_to_app = function (gadget, application_id) {
     var addingToAppSuccess = function (response) {
       // processing command
@@ -262,7 +331,8 @@ var CatalogueResourceSubmitter = function () {
     var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
 
     var success_callback = function(response) {
-      //alert(response.responseText);
+      // processing command
+      this.process();
     }
     
     var error_callback = function(transport, e) {
@@ -270,10 +340,16 @@ var CatalogueResourceSubmitter = function () {
   	  var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
   	
   	  logManager.log(msg);
+  	
+  	  // processing command
+  	  this.process();
     }
+    
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('REPEAT_SEARCH');
 
     //Send request to delete de gadget
-    this.persistence_engine.send_delete(url, this, success_callback, error_callback);
+    this.persistence_engine.send_delete(url, response_command, success_callback, error_callback);
   }
 }
 

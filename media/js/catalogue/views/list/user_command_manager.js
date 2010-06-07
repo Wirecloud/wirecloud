@@ -130,23 +130,16 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	}		
   }
   
+  this.get_service_facade = function () {
+    return this.services;
+  }
+  
   this.run_initial_commands = function () {
 	this.services.search('VIEW_ALL', 1, 'AND', '', '');
-  }
-  
-  this.delete_resource = function (resource) {
-	this.services.delete_resource(resource);
-  }
-  
-  this.add_gadget_to_app = function (gadget, app) {
-    this.services.add_gadget_to_app(gadget, app);
   }
   
   this.set_available_apps = function (available_apps) {
 	this.catalogue.set_available_apps(available_apps);
   }
-  
-  this.search_by_creation_date = function () {
-	this.services.search_by_creation_date();
-  }
+ 
 }

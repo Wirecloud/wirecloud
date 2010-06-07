@@ -33,7 +33,10 @@ var UserCommand = function (dom_element, html_event, services, dom_wrapper, data
   this.dom_wrapper = dom_wrapper;
   this.data = data;
 		
-  Event.observe(this.dom_element, this.html_event, this.anonymous_function.bind(this));
+  this.anonymous_function = this.anonymous_function.bind(this);
+  
+  if (this.dom_element)
+    Event.observe(this.dom_element, this.html_event, this.anonymous_function);
   
   this.set_catalogue = function (catalogue) {
 	this.catalogue = catalogue;
@@ -75,9 +78,12 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
 	  
 	//contratable resources
 	if (resource.isContratable() && !resource.hasContract()) {
-	  LayoutManagerFactory.getInstance().showWindowMenu('purchaseAppMenu', CatalogueFactory.getInstance().contractApplication,
-	                                                    LayoutManagerFactory.getInstance().hideCover,
-	                                                    resource);
+	  LayoutManagerFactory.getInstance().showWindowMenu(
+			  'purchaseAppMenu', 
+			  this.services,
+	          function () { LayoutManagerFactory.getInstance().hideCover() },
+	          resource);
+	  
 	  return;
 	}
 	  
@@ -117,6 +123,14 @@ var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade
     response_command.process();
   }
 	
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.submit_gadget_to_catalogue(this.data);
+  }
+  
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
@@ -169,28 +183,7 @@ var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_fac
   }
 }
 
-var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
-  this.anonymous_function = function(event) { 
-	this.services.submit_gadget_to_catalogue(this.data);
-  }
-  
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
-}
 
-var DeleteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
-  this.anonymous_function = function(event) { 
-	this.services.delete_resource(this.data);
-  }
-  
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
-}
 
-var AddGadgetToApplicationCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
-  this.anonymous_function = function(event) { 
-	this.services.add_gadget_to_app(this.data);
-  }
-  
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
-}
 
 

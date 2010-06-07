@@ -212,8 +212,10 @@ ContratationWindow.prototype._acceptListener = function(e) {
 /**
 *
 */
-function AddingGadgetToApplicationWindow() {
+function AddingGadgetToApplicationWindow(service_facade) {
 	WindowMenu.call(this, gettext('Assign Gadget to Application'));
+	
+	this.service_facade = service_facade;
 
 	this.content = document.createElement('div');
 	this.content.setAttribute('id', 'gadgetToAppWindow');
@@ -260,7 +262,7 @@ function AddingGadgetToApplicationWindow() {
 	this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
 	
 	this._acceptListener = function ()  { 
-	  CatalogueFactory.getInstance().add_gadget_to_app(this._gadget, this._appId);
+	  this.service_facade.add_gadget_to_app(this._gadget, this._appId);
 	  LayoutManagerFactory.getInstance().hideCover();
 	}.bind(this);
 	
@@ -270,10 +272,6 @@ function AddingGadgetToApplicationWindow() {
 }
 
 AddingGadgetToApplicationWindow.prototype = new WindowMenu();
-
-AddingGadgetToApplicationWindow.prototype.setCloseListener = function(closeListener) {
-	this._closeListener = closeListener;
-}
 
 AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
 	this.acceptHandler();
@@ -285,6 +283,10 @@ AddingGadgetToApplicationWindow.prototype.setExtraData = function(resource) {
 	this._gadget = resource;
 	
 	this.update_window();
+}
+
+AddingGadgetToApplicationWindow.prototype._closeListener = function(e) {
+	
 }
 
 AddingGadgetToApplicationWindow.prototype.update_window = function() {
@@ -308,8 +310,10 @@ AddingGadgetToApplicationWindow.prototype.update_window = function() {
 /**
 *
 */
-function BuyingApplicationWindow() {
+function BuyingApplicationWindow(service_facade) {
 	WindowMenu.call(this, gettext('Buying composed application'));
+	
+	this.service_facade = service_facade;
 
 	// Text messages for SOLUTIONS
 	this.text_introduction_solution = gettext("Buying this composed solution implies paying for the following applications.");
@@ -343,9 +347,16 @@ function BuyingApplicationWindow() {
 	// Finish button
 	this.acceptButton = document.createElement('button');
 	this.acceptButton.appendChild(document.createTextNode(gettext('Buy')));
+	
 	this.acceptButton.className = 'contratable';
-	this._acceptListener = this._acceptListener.bind(this);
+	
+	this._acceptListener = function ()  { 
+	  this.service_facade.buy_resource_applications(this._resource);
+	  LayoutManagerFactory.getInstance().hideCover();
+	}.bind(this);
+		
 	this.acceptButton.observe("click", this._acceptListener);
+	
 	this.windowBottom.appendChild(this.acceptButton);
 }
 

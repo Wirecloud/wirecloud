@@ -116,6 +116,14 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.resource_submitter.add_gadget_to_app(gadget, app);
   }
   
+  this.buy_resource_applications = function (resource) { 
+    this.resource_submitter.buy_resource_applications(resource);
+  }
+  
+  this.repeat_last_search = function () {
+    this.searcher.repeat_last_search();
+  }
+  
   this.search_by_creation_date = function () {
 	var order_by = this.set_option(this.order_by_combo, '-creation_date'); 
 	  

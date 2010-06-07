@@ -171,18 +171,18 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 		user_command_manager.set_available_apps(available_apps);
 		
 		LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu', 
-				null, 
-				function(){ LayoutManagerFactory.getInstance().hideCover() }, 
+				user_command_manager.get_service_facade(), 
+				function(){  }, 
 				resource);
 	  }
 	  else {
-	    user_command_manager.search_by_creation_date();  
+	    user_command_manager.get_service_facade().search_by_creation_date();  
 	  }
     }.bind(this);
     
     //"No" handler
     var rollback = function(resource)	{
-      user_command_manager.delete_resource(resource);
+      user_command_manager.get_service_facade().delete_resource(resource);
     }.bind(this);
     
     var context = {result: resource, continueAdding: continueAdding, rollback: rollback};

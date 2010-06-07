@@ -830,18 +830,24 @@ var LayoutManagerFactory = function () {
 				break;
 			case 'addGadgetToAppMenu':
 				if (!this.menus['addGadgetToAppMenu']) {
-					this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow();
+					// Tricky solution: the service_facade is passed in the handlerYesButton parameter
+					var service_facade = handlerYesButton;
+					
+					this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow(service_facade);
 				}
 				this.currentMenu = this.menus['addGadgetToAppMenu'];
-				//this.currentMenu.setHandler(handlerYesButton);
+				
 				this.currentMenu.setExtraData(extra_data);
 				break;
 			case 'purchaseAppMenu':
 				if (!this.menus['purchaseAppMenu']) {
-					this.menus['purchaseAppMenu'] = new BuyingApplicationWindow();
+					// Tricky solution: the service_facade is passed in the handlerYesButton parameter
+					var service_facade = handlerYesButton;
+					
+					this.menus['purchaseAppMenu'] = new BuyingApplicationWindow(service_facade);
 				}
 				this.currentMenu = this.menus['purchaseAppMenu'];
-				this.currentMenu.setHandler(handlerYesButton);
+				
 				this.currentMenu.setCloseListener(handlerNoButton);
 				this.currentMenu.setExtraData(extra_data);
 				break;
