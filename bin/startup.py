@@ -21,11 +21,11 @@ def start_server(ezweb_path, server_name='', server_port=8000):
     container = tornado.wsgi.WSGIContainer(application)
     http_server = tornado.httpserver.HTTPServer(container)
 
+    print "Listening at http://%s:%s/" % (server_name, server_port)
+
     http_server.bind(server_port, server_name)
     
     http_server.start()
-    
-    print "Listening at http://%s:%s/" % (server_name, server_port)
     
     tornado.ioloop.IOLoop.instance().start()
 
