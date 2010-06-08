@@ -6,18 +6,28 @@ def usage():
 
 def start_server(ezweb_path, server_name='', server_port=8000):
 
-    #Running WSGI server
-    from wsgiref.simple_server import make_server
+    #Django WSGI handlers (core and Admin)
     from django.core.handlers.wsgi import WSGIHandler
     from django.core.servers.basehttp import AdminMediaHandler
+    
+    #Facebook's Tornado WSGI server
+    import tornado.httpserver
+    import tornado.ioloop
+    import tornado.wsgi
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
+    application = AdminMediaHandler(WSGIHandler(), '')
+    container = tornado.wsgi.WSGIContainer(application)
+    http_server = tornado.httpserver.HTTPServer(container)
 
-    httpd = make_server(server_name, server_port, AdminMediaHandler(WSGIHandler()))
-
+    http_server.bind(server_port, server_name)
+    
+    http_server.start()
+    
     print "Listening at http://%s:%s/" % (server_name, server_port)
-    httpd.serve_forever()
+    
+    tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == '__main__':
     try:
@@ -30,6 +40,7 @@ if __name__ == '__main__':
     script_path = os.path.dirname(os.path.realpath(__file__))
     ezweb_path = os.path.abspath(os.path.join(script_path, '..'))
     activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
+    
     if os.path.isfile(activate_this):
         execfile(activate_this, dict(__file__=activate_this))
 
