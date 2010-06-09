@@ -21,11 +21,9 @@ def start_server(ezweb_path, server_name='', server_port=8000):
     container = tornado.wsgi.WSGIContainer(application)
     http_server = tornado.httpserver.HTTPServer(container)
 
-    print "Listening at http://%s:%s/" % (server_name, server_port)
+    print "EzWeb server listening at http://%s:%s/" % (server_name, server_port)
 
-    http_server.bind(server_port, server_name)
-    
-    http_server.start()
+    http_server.listen(server_port, server_name)
     
     tornado.ioloop.IOLoop.instance().start()
 
@@ -39,8 +37,12 @@ if __name__ == '__main__':
 
     script_path = os.path.dirname(os.path.realpath(__file__))
     ezweb_path = os.path.abspath(os.path.join(script_path, '..'))
-    activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
-    
+
+    if sys.platform == 'win32':
+        activate_this = os.path.join(ezweb_path, 'python-env', 'Scripts', 'activate_this.py')
+    else:
+        activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
+   
     if os.path.isfile(activate_this):
         execfile(activate_this, dict(__file__=activate_this))
 
