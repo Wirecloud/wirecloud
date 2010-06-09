@@ -19,7 +19,7 @@ def update_db(ezweb_path, manage_script):
     os.chdir(ezweb_path)
 
     if sys.platform == 'win32':
-        python_interpreter = os.path.join(ezweb_path, 'python-env', 'bin', 'python.exe')
+        python_interpreter = os.path.join(ezweb_path, 'python-env', 'Scripts', 'python.exe')
     else:
         python_interpreter = os.path.join(ezweb_path, 'python-env', 'bin', 'python')
 
@@ -42,7 +42,11 @@ if __name__ == '__main__':
     script_path = os.path.dirname(os.path.realpath(__file__))
     ezweb_path = os.path.abspath(os.path.join(script_path, '..'))
     manage_script = os.path.join(ezweb_path, 'manage.py')
-    activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
+
+    if sys.platform == 'win32':
+        activate_this = os.path.join(ezweb_path, 'python-env', 'Scripts', 'activate_this.py')
+    else:
+        activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
     
     if os.path.isfile(activate_this):
         execfile(activate_this, dict(__file__=activate_this))
