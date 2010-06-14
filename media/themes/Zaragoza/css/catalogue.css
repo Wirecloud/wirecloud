@@ -1,3 +1,39 @@
+#catalogue .developer_image {
+  width: 200px;
+  height: 120px;
+  padding-left: 20px;
+  padding-top:8px;
+}
+
+#catalogue .developer_title {
+  font-size:18px;
+  font-weight:bold;
+  padding-top:10px;
+}
+
+#catalogue .developer_block {
+  clear:both;
+  float:left;
+  margin-bottom:4px;
+  padding-left:15px;
+  padding-top:10px;
+}
+
+#catalogue .developer_description {
+  padding-left: 15px;
+  padding-top: 8px;
+  max-width: 700px;
+}
+
+#catalogue .developer_block button, #catalogue #template_uri, #catalogue #gadget_uri {
+  margin-left:15px;
+  margin-top:10px;
+}
+
+#catalogue .float_left {
+  float: left;
+}
+
 #catalogue a {
     text-decoration:none;
 	cursor:pointer;
@@ -1023,18 +1059,14 @@ padding-bottom:8px;
  *
  */
 
-#catalogue .button {
-	height:16px;
-	padding:0;
-	width:16px;
-}
+
 
 #catalogue .multiple_size_tag .button {
 	vertical-align: middle;
 	margin: 0;
 }
 
-#catalogue .resource button {
+#catalogue button {
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
