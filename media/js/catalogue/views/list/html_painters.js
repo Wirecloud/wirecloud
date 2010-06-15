@@ -137,23 +137,44 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
 var ListView_DeveloperInfoPainter = function (structure_element) {
   HTML_Painter.call(this);
   
-  this.local_ids = new Hash({'GADGET_SUBMIT_LINK': '#submit_link', 'GADGET_TEMPLATE_INPUT': '#template_uri',
-	                         'SUBMITTED_RESOURCE_DETAILS': '#submitted_resource_details'})
+  this.local_ids = new Hash({'NEW_GADGET_BUTTON':   '#submit_link',     'GADGET_TEMPLATE_INPUT': '#template_uri',
+	                         'NEW_PACKAGE_BUTTON':  '#gadget_link',     'NEW_PACKAGE_INPUT':     '#gadget_uri',
+	                         'NEW_FEED_BUTTON':     '#new_feed_button', 'NEW_WEBSITE_BUTTON':    '#new_website_button'});
   
   this.structure_template_element = structure_element;
   
   this.paint = function (command, user_command_manager) {
 	this.dom_element.update(this.structure_template_element.innerHTML);
 	
-	var submit_link_selector = this.local_ids['GADGET_SUBMIT_LINK'];
-	var submit_link = this.dom_wrapper.get_element_by_selector(submit_link_selector);
+	var new_gadget_button_selector = this.local_ids['NEW_GADGET_BUTTON'];
+	var new_gadget_button = this.dom_wrapper.get_element_by_selector(new_gadget_button_selector);
 	
-	var submit_input_selector = this.local_ids['GADGET_TEMPLATE_INPUT'];
-	var submit_input = this.dom_wrapper.get_element_by_selector(submit_input_selector);
+	var new_gadget_input_selector = this.local_ids['GADGET_TEMPLATE_INPUT'];
+	var new_gadget_input = this.dom_wrapper.get_element_by_selector(new_gadget_input_selector);
 	
-	var data = new Hash({'template_url_element': submit_input}); 
+	var new_package_button_selector = this.local_ids['NEW_PACKAGE_BUTTON'];
+	var new_package_button = this.dom_wrapper.get_element_by_selector(new_package_button_selector);
 	
-	user_command_manager.create_command_from_data('SUBMIT_GADGET', submit_link, data, 'click');
+	var new_package_input_selector = this.local_ids['NEW_PACKAGE_INPUT'];
+	var new_package_button = this.dom_wrapper.get_element_by_selector(new_package_input_selector);
+	
+	var new_feed_button_selector = this.local_ids['NEW_FEED_BUTTON'];
+	var new_feed_button = this.dom_wrapper.get_element_by_selector(new_feed_button_selector);
+	
+	var new_website_button_selector = this.local_ids['NEW_WEBSITE_BUTTON'];
+	var new_website_button = this.dom_wrapper.get_element_by_selector(new_website_button_selector);
+	
+	// New gadget from template
+	var data = new Hash({'template_url_element': new_gadget_input});
+	user_command_manager.create_command_from_data('SUBMIT_GADGET', new_gadget_button, data, 'click');
+	
+	// New gadget from feed
+	var data = {'window': 'addFeed'};
+	user_command_manager.create_command_from_data('SHOW_WINDOW', new_feed_button, data, 'click');
+	
+	// New gadget from website
+	var data = {'window': 'addSite'};
+	user_command_manager.create_command_from_data('SHOW_WINDOW', new_website_button, data, 'click');
   }
   
   this.paint_adding_gadget_results = function (command, user_command_manager) {

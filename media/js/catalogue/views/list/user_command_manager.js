@@ -125,6 +125,9 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'SUBMIT_GADGET':
 	  var command = new SubmitGadgetCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
+	case 'SHOW_WINDOW':
+	  var command = new ShowWindowCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		

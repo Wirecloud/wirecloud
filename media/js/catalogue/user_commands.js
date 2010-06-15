@@ -106,6 +106,16 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var ShowWindowCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+    var window_name = this.data['window'];
+        
+    LayoutManagerFactory.getInstance().showWindowMenu(window_name);
+  }
+	
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var ShowResourceDetailsCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
     var response_command = this.services.create_local_command('PAINT_RESOURCE_DETAILS', data);
