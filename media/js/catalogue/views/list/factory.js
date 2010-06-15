@@ -64,7 +64,7 @@ var ListViewFactory  = function () {
     return this.DOM_ELEMENT_IDS;
   }
   
-  this.create_catalogue = function (catalogue_element, show_catalogue_button, persistence_engine) {
+  this.create_catalogue = function (catalogue_element, persistence_engine) {
 	////////////////////////// 
 	// HTML management
 	//////////////////////////
@@ -119,11 +119,6 @@ var ListViewFactory  = function () {
     // Linking HTML and Services main classes
     /////////////////////////////////////////////
     this.user_command_manager.set_services(this.services);
-    
-    /////////////////////////////////////////////
-    // Binding button to this.catalogue operations
-    /////////////////////////////////////////////
-    Event.observe(show_catalogue_button, 'click', function (event) { this.show() }.bind(this.catalogue))
     
     this.catalogue.render();
     

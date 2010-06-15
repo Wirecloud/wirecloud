@@ -928,11 +928,32 @@ class  WorkSpacePublisherEntry(Resource):
         contratable = mashup.get('contratable')
         if (not contratable):
             contratable = False
+        
+        #branding elements
+        if(mashup.get('noBranding')):
+            #use an empty branding
+            branding, created = Branding.objects.get_or_create(logo=None, viewer_logo=None, powered=False)
+                
+        else:
+            logo = mashup.get('logo')
+            viewer_logo = mashup.get('viewerLogo')
+            link = mashup.get('link')
+            
+            if (logo or viewer_logo):
+                #create a new branding
+                branding = Branding(logo=logo, viewer_logo=viewer_logo, link=link, powered=True)
+                branding.save()
+                                
+            else:
+                #wait for the default branding
+                branding = None
+             
             
         try:
             cloned_workspace.name = name
             cloned_workspace.creator = user
             cloned_workspace.setReadOnlyFields(readOnly)
+            cloned_workspace.branding = branding
             cloned_workspace.save()
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author, 
                                                      mail=email, vendor=vendor, 

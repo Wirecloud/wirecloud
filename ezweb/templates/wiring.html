@@ -1,4 +1,9 @@
 {% load i18n %}
+{% if not only_one_css_file %}
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.wiring }}" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.wiring }}" />
+{% endif %}
+<div id="wiring" class="container">
 	<div id="wiring_wrapper">
 		<div id="wiring_options">
 			<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
@@ -31,3 +36,4 @@
 			<div class="floatclearer"></div>
 		</div>
 	</div>
+</div>

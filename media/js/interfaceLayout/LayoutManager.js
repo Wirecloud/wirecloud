@@ -204,65 +204,6 @@ var LayoutManagerFactory = function () {
 			setTimeout(fadder, 50);
 		}
 
-		LayoutManager.prototype.changeCurrentTheme = function(newTheme) {
-			if (_currentTheme.name == newTheme)
-				return;
-
-			this._startComplexTask(gettext('Changing current theme'));
-
-			// Clear themed resources
-			this.menus.clear();
-
-			// Load the new theme
-			function continueLoading2(theme, imagesNotFound) {
-				var layoutManager = LayoutManagerFactory.getInstance();
-
-				if (imagesNotFound.length > 0) {
-					var msg = gettext("There were errors while loading some of the images for the \"%(theme)s\" theme. Do you really want to use it?.");
-					msg = interpolate(msg, {theme: theme.name}, true);
-					layoutManager.showYesNoDialog(msg,
-						function() {
-							continueLoading2(theme, []);
-						},
-						function() {
-							layoutManager._notifyPlatformReady(false);
-						},
-						Constants.Logging.WARN_MSG);
-					return;
-				}
-
-				_currentTheme.deapplyStyle();
-				_currentTheme.unsetLinks();
-				_currentTheme = theme;
-				_currentTheme.applyStyle();
-				_currentTheme.setLinks();
-				
-//				OpManagerFactory.getInstance()._themeLoaded();
-				//wait for CSS application
-				setTimeout(OpManagerFactory.getInstance()._themeLoaded.bind(OpManagerFactory.getInstance()), 500);
-				layoutManager._notifyPlatformReady(false);
-			}
-
-			function continueLoading(theme, errorMsg) {
-				var layoutManager = LayoutManagerFactory.getInstance();
-
-				if (errorMsg !== null) {
-					var msg = gettext("Error loading \"%(theme)s\" theme. Current theme has not been changed.");
-					msg = interpolate(msg, {theme: theme.name}, true);
-					layoutManager.showMessageMenu(msg, Constants.Logging.WARN_MSG);
-					layoutManager._notifyPlatformReady(false);
-					return;
-				}
-
-				theme.preloadImages(continueLoading2)
-			}
-
-			if (newTheme != 'default')
-				new Theme(newTheme, _defaultTheme, continueLoading);
-			else
-				continueLoading(_defaultTheme, null);
-		}
-
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
 		}
@@ -338,33 +279,26 @@ var LayoutManagerFactory = function () {
 			}
 		}
 
-		LayoutManager.prototype.unMarkGlobalTabs = function () {
-			if (!this.catalogue) {
-				this.catalogueLink = $('catalogue_link');
-				this.logsLink = $('logs_link');
-				this.wiringLink = $('wiring_link');
-				this.dragboardLink = $('dragboard_link');
-			}
-			
-			this.catalogueLink.removeClassName("toolbar_marked");
-			this.catalogueLink.addClassName("toolbar_unmarked");
-			this.wiringLink.removeClassName("toolbar_marked");
-			this.wiringLink.addClassName("toolbar_unmarked");
-			this.dragboardLink.removeClassName("toolbar_marked");
-			this.dragboardLink.addClassName("toolbar_unmarked");
-			/*this.logsLink.removeClassName("toolbar_marked");
-			this.logsLink.addClassName("toolbar_unmarked");*/
-
-/*			this.hideShowCase();
-			this.hideLogs();
-*/
-		}
 
 		/****VIEW OPERATIONS****/
 		//hide an HTML Element
 		LayoutManager.prototype.hideView = function (viewHTML) {
 			viewHTML.setStyle(hideStyle);
 		}
+		
+		//hide the specified banner
+		LayoutManager.prototype.hideBanner = function (bannerHTML) {
+			if (bannerHTML)
+				bannerHTML.hide();
+		}
+
+		//show the specified banner
+		LayoutManager.prototype.showBanner = function (bannerHTML) {
+			if (bannerHTML)
+				bannerHTML.show();
+		}
+
+
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
 			/*this.logsLink.innerHTML = labelContent;
@@ -440,38 +374,26 @@ var LayoutManagerFactory = function () {
 			}
 		}
 
-
-//DEPRECATED???
-/*		LayoutManager.prototype.hideTab = function(tab) {
-			try{ //remove the launcher image for the drop down menu from the former current tab
-				var tabOpsLauncher = $$('#'+tab.getAttribute('id')+' #tabOps_launcher');
-				if (tabOpsLauncher.length > 0) {
-					tabOpsLauncher[0].setStyle({'display':'none'});
-				}
-			} catch (e) {
-				return;
-			}
-			tab.className = "tab";
-			tab.setStyle(hideStyle);
-		}
-*/
-
 		// Dragboard operations (usually called together with Tab operations)
 		LayoutManager.prototype.showDragboard = function(dragboard) {
-			this.unMarkGlobalTabs();
 			if (this.currentView != null) {
 				this.currentView.hide();
+				//if the previous view was different and it had banner, change the banner
+				if (this.currentViewType != 'dragboard' && this.currentView.getBanner){
+					this.hideBanner(this.currentView.getBanner());
+				}
 			}
+			
+			this.showBanner(dragboard.getBanner());
+			
+			$(document.body).removeClassName(this.currentViewType+"_view");
+			
 			this.currentView = dragboard.tab;
 			this.currentViewType = 'dragboard';
+			
+			$(document.body).addClassName(this.currentViewType+"_view");
 
-			this.dragboardLink.removeClassName("toolbar_unmarked");
-			this.dragboardLink.addClassName("toolbar_marked");
 			this.showTabs();
-			this.dragboardLink.blur();
-			$("ws_operations_link").blur();
-			$("ws_operations_link").removeClassName("hidden");
-			$("dragboard_link").title = "";
 
 			this.resizeContainer(dragboard.dragboardElement);
 
@@ -492,22 +414,27 @@ var LayoutManagerFactory = function () {
 
 		// Catalogue operations
 		LayoutManager.prototype.showCatalogue = function() {
-			this.unMarkGlobalTabs();
-			if (this.currentView != null) {
-				this.currentView.hide();
-			}
-
+			
 			this.catalogue = CatalogueFactory.getInstance();
 
+			if (this.currentView != null) {
+				this.currentView.hide();
+				//if the previous view was different and it had banner, change the banner
+				if (this.currentViewType != 'catalogue' && this.currentView.getBanner) {
+					this.hideBanner(this.currentView.getBanner());
+				}
+			}
+
+			this.showBanner(this.catalogue.getBanner());
+			
+			$(document.body).removeClassName(this.currentViewType+"_view");
+			
 			this.currentView = this.catalogue;
 			this.currentViewType = 'catalogue';
 			
-			this.catalogueLink.removeClassName("toolbar_unmarked");
-			this.catalogueLink.addClassName("toolbar_marked");
-			$("ws_operations_link").addClassName("hidden");
-			$("dragboard_link").title = gettext("Show active workspace");
+			$(document.body).addClassName(this.currentViewType+"_view");
+			
 			this.hideTabs();
-			this.catalogueLink.blur();
 			
 			this.resizeContainer(this.catalogue.get_dom_element());
 			this.catalogue.set_style(showStyle);
@@ -524,20 +451,26 @@ var LayoutManagerFactory = function () {
 
 		// Logs operations
 		LayoutManager.prototype.showLogs = function(){
-			this.unMarkGlobalTabs();
+
 			if(this.currentView != null){
 				this.currentView.hide();
+				//if the previous view had banner change the banner
+				if(this.currentView.getBanner) {
+					this.hideBanner(this.currentView.getBanner());
+				}
 			}
+			
+			//the logs view doesn't have any specific banner
+			//so do nothing about it
+			
+			$(document.body).removeClassName(this.currentViewType+"_view");
+			
 			this.currentView = this.logs;
 			this.currentViewType = 'logs';
 			
-			/*this.logsLink.removeClassName("toolbar_unmarked");
-			this.logsLink.addClassName("toolbar_marked");*/
-			$("ws_operations_link").addClassName("hidden");
-			$("dragboard_link").title = gettext("Show active workspace");
-			this.hideTabs();
-			this.logsLink.blur();
+			$(document.body).addClassName(this.currentViewType+"_view");
 			
+			this.hideTabs();
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 			
@@ -546,20 +479,25 @@ var LayoutManagerFactory = function () {
 
 		//Wiring operations
 		LayoutManager.prototype.showWiring = function(wiring){
-			this.unMarkGlobalTabs();
+
 			if(this.currentView != null){
 				this.currentView.hide();
+				//if the previous view was different and it had banner, change the banner
+				if (this.currentViewType != 'wiring' && this.currentView.getBanner) {
+					this.hideBanner(this.currentView.getBanner());
+				}
 			}
+
+			this.showBanner(wiring.getBanner());
+			
+			$(document.body).removeClassName(this.currentViewType+"_view");
+			
 			this.currentView = wiring;
 			this.currentViewType = 'wiring';
 			
-			this.wiringLink.removeClassName("toolbar_unmarked");
-			this.wiringLink.addClassName("toolbar_marked");
-			$("ws_operations_link").addClassName("hidden");
-			$("dragboard_link").title = gettext("Show active workspace");
+			$(document.body).addClassName(this.currentViewType+"_view");
+			
 			this.hideTabs();
-			this.wiringLink.blur();
-
 			this.resizeContainer(this.currentView.wiringContainer);
 
 			wiring.wiringContainer.setStyle(showStyle);

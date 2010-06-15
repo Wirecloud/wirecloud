@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load useful_tags %}
 
-{# load facebook_tags #}
+{% load facebook_tags %}
 
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -247,7 +247,7 @@ h3{
 
 <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 
-{# facebook_js #}
+{% facebook_js %}
 
 <script type="text/javascript">
 
@@ -395,7 +395,7 @@ var installed_apps = {{ installed_apps|safe }};
 			<div id="other-methods">
 				{% if "facebookconnect"|in_list:installed_apps or "twitterauth"|in_list:installed_apps or "openid_auth"|in_list:installed_apps %}
 					<div id="access" class="registration">{% trans 'or access with:' %}</div>
-					{# show_connect_button #}
+					{% show_connect_button %}
 					{% if "twitterauth"|in_list:installed_apps %}
 						<div id="twitter">
 							<a id="twitter_button" href="{% url twitter_signin %}">
@@ -444,7 +444,7 @@ if (is_iphone){
 }
 </script>
 
-{# initialize_facebook_connect #}
+{% initialize_facebook_connect %}
 </body>
 </html>
 

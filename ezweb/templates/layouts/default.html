@@ -1,39 +1,44 @@
 {% load i18n %}
-
-<!-- DRAGBOARD LAYERS -->
-	<!-- Initially empty -->
-<!-- DRAGBOARD LAYERS -->
-
-<!-- WIRING LAYER -->
-<div id="wiring" class="container">
+<div id="wrapper">
+	
+	<!-- DRAGBOARD LAYERS -->
+	{% include "dragboard.html" %}
+	<!-- DRAGBOARD LAYERS -->
+	<!-- WIRING LAYER -->
 	{% include "wiring.html" %}
-</div>
-<!-- WIRING LAYER -->
+	<!-- WIRING LAYER -->
 
-<!-- CATALOGUE LAYER -->
-<div id="catalogue_views">
+			
+	
+	<!-- CATALOGUE LAYER -->
+	<div id="catalogue_views">
 
-  <!-- SPECIFIC LIST_VIEW CATALOGUE SECTIONS -->
+	  <!-- SPECIFIC LIST_VIEW CATALOGUE SECTIONS -->
+	  
+	  <script id="list_view_catalogue_structure" type="html/template">
+	    {% include "catalogue/views/list/list_view_template.html" %}
+	  </script>
+	        
+	  <script id="list_view_resource_structure_template" type="html/template">
+	    {% include "catalogue/views/list/list_view_resource.html" %}
+	   </script>
+	
+	  <script id="list_view_developer_info_structure" type="html/template">
+		{% include "catalogue/views/list/list_view_developers.html" %}
+	  </script>
+	      
+	  <!-- COMMON CATALOGUE SECTIONS -->
+	  
+	  <script id="pagination_structure" type="html/template">
+		{% include "catalogue/pagination_template.html" %}
+	  </script>
   
-  <script id="list_view_catalogue_structure" type="html/template">
-    {% include "catalogue/views/list/list_view_template.html" %}
-  </script>
-        
-  <script id="list_view_resource_structure_template" type="html/template">
-    {% include "catalogue/views/list/list_view_resource.html" %}
-   </script>
+	</div>
 
-  <script id="list_view_developer_info_structure" type="html/template">
-	{% include "catalogue/views/list/list_view_developers.html" %}
-  </script>
-      
-  <!-- COMMON CATALOGUE SECTIONS -->
-  
-  <script id="pagination_structure" type="html/template">
-	{% include "catalogue/pagination_template.html" %}
-  </script>
-  
-</div>
-
-<div id="showcase" class="container no_border">
+	<div id="showcase" class="container no_border">
+	</div>
+	
+	<!-- LOGS LAYER -->
+	{% include "logs.html" %}
+	<!-- LOGS LAYER -->
 </div>

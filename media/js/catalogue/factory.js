@@ -30,7 +30,6 @@ var CatalogueFactory  = function () {
   // *********************************
 	
   var catalogue_dom = $('showcase');
-  var show_catalogue_button = $('catalogue_link');
 	
   var persistence_engine = PersistenceEngineFactory.getInstance();
 	  
@@ -53,7 +52,7 @@ var CatalogueFactory  = function () {
   return new function() {
     this.getInstance = function() {
 	  if (! active_instance) {
-		active_instance = default_view_factory.create_catalogue(catalogue_dom, show_catalogue_button, persistence_engine);
+		active_instance = default_view_factory.create_catalogue(catalogue_dom, persistence_engine);
 		last_used_factory = default_view_factory;
 		  
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
@@ -64,14 +63,14 @@ var CatalogueFactory  = function () {
 	  
 	this.getListView = function() {
 	  if (! active_instance) {
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, show_catalogue_button, persistence_engine);
+		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
 		last_used_factory = list_view_factory;
 		  
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
 	  } else if (last_used_factory != list_view_factory) {
 		active_instance.destroy()
 		 
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, show_catalogue_button, persistence_engine);
+		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
 		last_used_factory = list_view_factory;
 	  }
 		

@@ -136,7 +136,7 @@ class PackageLinker:
                             user_variable_value.shared_var_value = shared_var_value
                             
                     #remove the cloned variable value
-                    creator_variable_value.delete()
+                    #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
                 
             user_variable_value.save()
                 

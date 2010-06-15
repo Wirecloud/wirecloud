@@ -26,6 +26,43 @@
 
 function WorkSpace (workSpaceState) {
 
+
+	//set the proper handlers to the workspace toolbar buttons	
+	WorkSpace.prototype._initToolbar = function(){
+		if (this.getBanner()) {
+			//The catalogue and the wiring are the ones to set the handlers of
+			//their buttons in the workspace toolbar.
+			this.wiring_link = this.bannerHTML.getElementsBySelector('#wiring_link')[0];
+			this.catalogue_link = this.bannerHTML.getElementsBySelector('#catalogue_link')[0];
+			
+			//set the handlers
+			this.wiringInterface.setToolbarButton(this.wiring_link);
+			CatalogueFactory.getInstance().setToolbarButton(this.catalogue_link);
+		}
+	}
+	
+	//unset the handlers of the workspace toolbar buttons
+	WorkSpace.prototype._unloadToolbar = function(){
+		if (this.getBanner()) {
+			this.wiringInterface.unsetToolbarButton(this.wiring_link);
+			CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
+		}		
+	}
+	
+	WorkSpace.prototype._initAllToolbars = function () {
+		this._initToolbar();									//workspace toolbar
+		this.wiringInterface.initToolbar();				//wiring toolbar
+		CatalogueFactory.getInstance().initToolbar();	//catalogue toolbar
+		
+	}
+	
+	WorkSpace.prototype._unloadAllToolbars = function () {
+		this._unloadToolbar();								//workspace toolbar
+		this.wiringInterface.unloadToolbar();			//wiring toolbar
+		CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
+		
+	}
+
 	// ****************
 	// CALLBACK METHODS
 	// ****************
@@ -123,7 +160,7 @@ function WorkSpace (workSpaceState) {
 			this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
 			this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 
-			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"), $("wiring_link"));
+			this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"));
 			
 			this.remoteChannelManager = new RemoteChannelManager(this.wiring);
 
@@ -145,16 +182,25 @@ function WorkSpace (workSpaceState) {
 		}
 
 		this.loaded = true;
+		
+			
+		//all the modules have been downloaded. Init now all the toolbars:
+		//catalogue, wiring and workspace.
+		this._initAllToolbars();
+		
+		var branding = this.workSpaceGlobalInfo['workspace']['branding']
+		this.brandingManager.setBranding(branding);
 
-		var workspaceTheme = this.preferences.get('theme');
-		var scriptTheme = ScriptManagerFactory.getInstance().get_theme();
-
-		if (scriptTheme)
-			workspaceTheme = scriptTheme
-
-		LayoutManagerFactory.getInstance().changeCurrentTheme(workspaceTheme);
+		var workspaceSkin = this.preferences.get('skin');
+		var scriptSkin = ScriptManagerFactory.getInstance().get_theme();
+		
+		if (scriptSkin)
+			workspaceSkin = scriptSkin 
+		
+		this.skinManager.loadSkin(workspaceSkin);
 
 		this._createWorkspaceMenu();
+
 		this._update_creator_options();
 		if (!this.isAllowed('preserve_lock_status'))
 			this._lockFunc(true);
@@ -298,6 +344,29 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.sendBufferedVars = function () {
 		if (this.varManager) this.varManager.sendBufferedVars();
 	}
+	
+	WorkSpace.prototype.getBanner = function(){
+		return this.bannerHTML;
+	}
+	
+	/**
+	 * This function knows which handler matches the workspace link in the toolbar
+	 * @param {HTML element} workspaceLinkElement
+	 */
+	 
+	WorkSpace.prototype.setToolbarButton = function (workspaceLinkElement){
+		workspaceLinkElement.onclick = function(){
+											OpManagerFactory.getInstance().showActiveWorkSpace();
+										};
+	}
+	
+	/**
+	 * This function knows how to stop observing the workspace link event
+	 * @param {HTML element} workspaceLinkElement
+	 */
+	WorkSpace.prototype.unsetToolbarButton = function (workspaceLinkElement){
+		workspaceLinkElement.onclick = null;
+	}
 
 	WorkSpace.prototype.fillWithLabel = function() {
 		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
@@ -433,11 +502,12 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.show = function() {
+	
 		if (!this.loaded)
 			return;
 
-		// global tab section
-		this.fillWithLabel();
+		if (this.getBanner()) //there is a banner
+			this.fillWithLabel();
 
 		var tabList = this.tabInstances.keys();
 
@@ -565,6 +635,10 @@ function WorkSpace (workSpaceState) {
 		var layoutManager = LayoutManagerFactory.getInstance();
 		layoutManager.logSubTask(gettext("Unloading current workspace"));
 
+		//remove the handlers of the catalogue and wiring buttons
+		//and the reference to this workspace from catalogue and wiring toolbars
+		this._unloadAllToolbars();
+
 		// Unload Wiring Interface
 		// TODO Wiring Interface should be shared between Workspaces
 		if (this.wiringInterface !== null) {
@@ -573,7 +647,7 @@ function WorkSpace (workSpaceState) {
 			this.wiringInterface = null;
 		}
 
-		layoutManager.unloadCurrentView();
+		//layoutManager.unloadCurrentView();
 
 		this.sendBufferedVars();
 
@@ -603,8 +677,11 @@ function WorkSpace (workSpaceState) {
 		if (this.FloatingGadgetsMenu)
 			this.FloatingGadgetsMenu.remove();
 		
+		//deapply skin
+		this.skinManager.unloadSkin();
+		
 		Event.stopObserving($("floating_gadgets_launcher"), "click", this.showFloatingGadgetsMenu);
-
+		
 		layoutManager.logStep('');
 	}
 
@@ -894,8 +971,17 @@ function WorkSpace (workSpaceState) {
 	this.unlockEntryPos;
 	this.valid=false;
 
-	var wsOpsLauncher = 'ws_operations_link';
+	//banner
+	this.bannerHTML =$('ws_banner'); 
+	//toolbar links
+	this.wiring_link = null;
+	this.catalogue_link = null;
 
+	var wsOpsLauncher = 'ws_operations_link';
+	
+	this.skinManager = new SkinManager();
+	this.brandingManager = new BrandingManager();
+	
 	//floating gadget menu handler
 	this.showFloatingGadgetsMenu = function(e) {
 		this.FloatingGadgetsMenu.clearOptions();
@@ -987,21 +1073,27 @@ function WorkSpace (workSpaceState) {
 	}.bind(this);
 
 	this._update_creator_options = function() {
-		if (this.isAllowed('add_tab'))
-			$('add_tab_link').show();
-		else
-			$('add_tab_link').hide();
+		if ($('add_tab_link')) {
+			if (this.isAllowed('add_tab')) 
+				$('add_tab_link').show();
+			else 
+				$('add_tab_link').hide();
+		}
 
-		if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups'))
-			$('catalogue_link').show();
-		else
-			$('catalogue_link').hide();
-
-		if (this.isAllowed('connect_igadgets'))
-			$('wiring_link').show();
-		else
-			$('wiring_link').hide();
-
+		if ($('catalogue_link')) {
+			if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')) 
+				$('catalogue_link').show();
+			else 
+				$('catalogue_link').hide();
+		}
+		
+		if ($('wiring_link')){
+			if (this.isAllowed('connect_igadgets') )
+				$('wiring_link').show();
+			else
+				$('wiring_link').hide();
+		}
+		
 		if (this.isShared()) {
 			document.body.addClassName('shared');
 		} else {
@@ -1015,29 +1107,12 @@ WorkSpace.prototype.preferencesChanged = function(modifiedValues) {
 		var newLayout = false;
 
 		switch (preferenceName) {
-		case "theme":
-			var newTheme = modifiedValues[preferenceName];
-			LayoutManagerFactory.getInstance().changeCurrentTheme(newTheme);
-			if (this.workSpaceGlobalInfo.workspace.active)
-				PreferencesManagerFactory.getInstance().getPlatformPreferences().set({'initial-theme': {value: newTheme}});
-			break;
+		case "skin":
+			var newSkin = modifiedValues[preferenceName];
+			this.skinManager.loadSkin(newSkin);
+
 		default:
 			continue;
 		}
-	}
-}
-
-/**
- * @private
- *
- * This method must be called when a new theme is loaded to refresh some icons
- */
-WorkSpace.prototype._themeLoaded = function(modifiedValues) {
-	this._createWorkspaceMenu();
-
-	var tabs = this.tabInstances.keys();
-	for (var i = 0; i < tabs.length; i++) {
-		var tab = tabs[i];
-		var igadget = this.tabInstances[tab]._themeLoaded();
 	}
 }

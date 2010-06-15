@@ -1,8 +1,9 @@
-{% extends "index.html"%}
+{% extends "base_index.html"%}
 {% load i18n %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb_lite.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.lite }}" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.lite }}" />
 	
 	<style>
 	   #toolbar_section, #banner, #add_tab_link {
@@ -10,19 +11,12 @@
 	   }
 	</style>
 {% endblock %}
-
-{% block ezweb_logo %}
-
-	<img style="float: left" id="logo_viewer" src="{{ THEME_URL }}/images/init.dat" alt="EzWeb Logo" />
-
+{%block header%}
+	{% include "header_viewer.html" %}
 {% endblock %}
 
 {% block includes %}
 
-    {% if AUTHENTICATION_SERVER_URL %}
-    <script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
-    {% endif %}
-	
 	<script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 
     <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
@@ -34,5 +28,4 @@
     {% endif %}
 
     <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
-
 {% endblock %}

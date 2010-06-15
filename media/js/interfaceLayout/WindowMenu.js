@@ -796,13 +796,49 @@ TipWindowMenu.prototype = new InfoWindowMenu();
  * Form dialog.
  */
 function FormWindowMenu (fields, title) {
+	
+	this.fields = {};
+	
+	var _insertField = function(fieldId, field, row){
+		// Label Cell
+		var labelCell = row.insertCell(-1);
+		Element.extend(labelCell);
+		labelCell.addClassName('label');
+		
+		var label = document.createElement('label');
+		label.appendChild(document.createTextNode(field.label));
+		labelCell.appendChild(label);
+		
+		if (field.required) {
+			var requiredMark = document.createElement('span');
+			requiredMark.appendChild(document.createTextNode('*'));
+			requiredMark.className = 'required_mark';
+			labelCell.appendChild(requiredMark);
+		}
+		
+		// Input Cell
+		var inputCell = document.createElement('td');
+		// TODO
+		//if the field is radio type the label must go after te input
+		if (field.type == 'radio') 
+			row.insertBefore(inputCell, labelCell);
+		else 
+			row.appendChild(inputCell);
+		
+		var inputInterface = InterfaceFactory.createInterface(fieldId, field);
+		inputInterface._insertInto(inputCell);
+		
+		field.inputInterface = inputInterface;
+		
+		this.fields[fieldId] = field;
+		
+	}
+	
 	// Allow hierarchy
 	if (arguments.length == 0)
 		return;
 
 	WindowMenu.call(this, title);
-
-	this.fields = fields;
 
 	var table_ = document.createElement('table');
 	table_.setAttribute('cellspacing', '0');
@@ -810,8 +846,8 @@ function FormWindowMenu (fields, title) {
 	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
 	table_.appendChild(table);
 
-	for (var fieldId in this.fields) {
-		var field = this.fields[fieldId];
+	for (var fieldId in fields) {
+		var field = fields[fieldId];
 		var row = table.insertRow(-1);
 
 		if (field.type === 'separator') {
@@ -819,40 +855,51 @@ function FormWindowMenu (fields, title) {
 			separator.setAttribute('colSpan', '2');
 			var hr = document.createElement('hr');
 			separator.appendChild(hr);
-			delete this.fields[fieldId];
 			continue;
 		}
-
-		// Label Cell
-		var labelCell = row.insertCell(-1);
-		Element.extend(labelCell);
-		labelCell.addClassName('label');
-
-		var label = document.createElement('label');
-		label.appendChild(document.createTextNode(field.label));
-		labelCell.appendChild(label);
-
-		if (field.required) {
-			var requiredMark = document.createElement('span');
-			requiredMark.appendChild(document.createTextNode('*'));
-			requiredMark.className = 'required_mark';
-			labelCell.appendChild(requiredMark);
+		if (field.type === 'fieldset'){
+			var fieldset = row.insertCell(-1);
+			Element.extend(fieldset);
+			fieldset.addClassName('fieldset');
+			fieldset.setAttribute('colSpan', '2');
+						
+			var label = document.createElement('span')
+			Element.extend(label);
+			label.addClassName('section_name');
+			
+			label.appendChild(document.createTextNode(field.label));
+			fieldset.appendChild(label);
+			
+			var section = document.createElement('table');
+			Element.extend(section);
+			section.addClassName('section');
+			section.setAttribute('cellspacing', '0');
+			section.setAttribute('cellpadding', '0');
+			section.setStyle({'display':'none'});
+			var tbodySection = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+			section.appendChild(tbodySection);
+						
+			fieldset.appendChild(section);
+			
+			for (var elementId in field.elements){
+				var element = field.elements[elementId];
+				var rowSection = tbodySection.insertRow(-1);
+				_insertField.call(this,elementId, element, rowSection);
+			}
+			var context = {"section":section, "object":this}
+			Event.observe(label, 'click', function (){
+							this.section.toggle();
+							this.object.calculatePosition();	
+						}.bind(context));
+					
+			continue;
+		
 		}
 
-		// Input Cell
-		var inputCell = document.createElement('td');
-		// TODO
-		//if the field is radio type the label must go after te input
-		if (field.type == 'radio')
-			row.insertBefore(inputCell, labelCell);
-		else
-			row.appendChild(inputCell);
+		_insertField.call(this,fieldId, field, row);
 
-		var inputInterface = InterfaceFactory.createInterface(fieldId, field);
-		inputInterface._insertInto(inputCell);
-
-		field.inputInterface = inputInterface;
 	}
+	
 	this.windowContent.insertBefore(table_, this.msgElement);
 
 	// Legend
@@ -962,19 +1009,59 @@ function PublishWindowMenu (element) {
 		'name': {label: gettext('Mashup Name'), type:'id', required: true},
 		'vendor': {label: gettext('Vendor'), type:'id',  required: true},
 		'version': {label: gettext('Version'), type:'version',  required: true},
-		'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name},
 		'email': {label: gettext('Email'), type:'email',  required: true},
-		'description': {label: gettext('Description'), type:'longtext'},
-		'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'},
-		'imageURI': {
-			label: gettext('Image URL'),
-			type: 'fileUrl',
-			linkHandler: function(){
-										this.openUploadWindow('imageURI');
-									}.bind(this)
+		'detailedInfo': {
+			label: gettext('Detailed description'),
+			type: 'fieldset',
+			elements: {
+				'description': {label: gettext('Description'), type:'longtext'},
+				'wikiURI': {label: gettext('Wiki URL'), type:'url'},
+				'author': {label: gettext('Author'), type:'text',  defaultValue: ezweb_user_name}
+			}
 		},
-		'wikiURI': {label: gettext('Wiki URL'), type:'url'},
-		'organization'  : {label: gettext('Organization'), type: 'select', options:this.organizations}
+		'personalization': {
+			label: gettext('Personalization'),
+			type: 'fieldset',
+			elements: {
+				'imageURI': {
+					label: gettext('Image for the catalogue (URL)'),
+					type: 'fileUrl',
+					linkHandler: function(){
+						this.openUploadWindow('imageURI');
+					}.bind(this)
+				},
+				'noBranding': {
+					label: gettext('Do not use any branding'),
+					type: 'boolean'
+				},
+				'logo': {
+					label: gettext('Banner logo'),
+					type: 'fileUrl',
+					linkHandler: function(){
+						this.openUploadWindow('logo');
+					}.bind(this)
+				},
+				'viewerLogo': {
+					label: gettext('Banner logo for viewer mode'),
+					type: 'fileUrl',
+					linkHandler: function(){
+						this.openUploadWindow('viewerLogo');
+					}.bind(this)
+				},
+				'link': {
+					label: gettext('Clicking on these logos will open this page'),
+					type: 'url'
+				}
+			}
+		},
+		'advanced': {
+			label: gettext('Advanced options'),
+			type: 'fieldset',
+			elements: {
+				'organization': {label: gettext('Organization'), type: 'select',	options: this.organizations},
+				'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'}
+			}
+		}
 	}
 
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
@@ -985,6 +1072,23 @@ function PublishWindowMenu (element) {
 	warning.addClassName('msg warning');
 	warning.update(gettext("WARNING: configured and stored data in your workspace (properties and preferences except passwords) will be shared!"));
 	this.windowContent.appendChild(warning);
+	
+	//check whether to enable the branding fields or not
+	var _checkIfBranding = function(){
+		if(this.fields['noBranding'].inputInterface.getValue()){
+			this.fields['logo'].inputInterface.setDisabled(true);
+			this.fields['viewerLogo'].inputInterface.setDisabled(true);
+			this.fields['link'].inputInterface.setDisabled(true);
+		}
+		else{
+			this.fields['logo'].inputInterface.setDisabled(false);
+			this.fields['viewerLogo'].inputInterface.setDisabled(false);
+			this.fields['link'].inputInterface.setDisabled(false);
+		}
+	}.bind(this);
+	
+	this.fields['noBranding'].inputInterface.setOnclickHandler(_checkIfBranding);
+	
 	
 	//Window for uploading local files
 	this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));

@@ -41,7 +41,10 @@ from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 from django.utils.translation import get_language
 from django.utils import simplejson
+from django.conf import settings
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
+from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
+from django.contrib.auth.models import Group
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -418,6 +421,9 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     filters = Filter.objects.all()
     filter_data = serializers.serialize('python', filters, ensure_ascii=False)
     data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]
+    
+    #Branding information
+    data_ret["workspace"]["branding"] = get_workspace_branding_data(workSpaceDAO, user)
 
     return data_ret
 
@@ -544,3 +550,63 @@ def get_concept_value(concept_name, values):
         res = get_language()
 
     return res
+
+def get_workspace_branding_data(workspace, user):
+    ws_type = TYPES[1][0]
+    branding = None
+    
+    #Get the Branding object    
+    if workspace:
+        branding = workspace.branding
+    if not branding:
+        #get the organization branding
+        orgs = Group.objects.filter(user=user)
+        for org in orgs:
+            try:
+                branding = BrandingOrganization.objects.filter(type=ws_type, organization=org)[0].branding
+                break
+            except:
+                pass
+    if not branding:
+        #get the default branding
+        current_theme = Layout.objects.get(name=settings.LAYOUT).theme
+        branding = ThemeBranding.objects.get(theme=current_theme, type=ws_type).branding
+    
+    # Format branding response
+    return get_branding_response(branding)
+
+def get_catalogue_branding_data(user):
+    branding = None
+    catalogue_type = TYPES[0][0]
+    
+    # Get the Branding object    
+    #get the organization branding
+    orgs = Group.objects.filter(user=user)
+    for org in orgs:
+        try:
+            branding = BrandingOrganization.objects.filter(type=catalogue_type, organization=org)[0].branding
+            break
+        except:
+            pass
+    if not branding:
+        #get the default branding
+        current_theme = Layout.objects.get(name=settings.LAYOUT).theme
+        branding = ThemeBranding.objects.get(theme=current_theme, type=catalogue_type).branding
+        
+    # Format branding response
+    return get_branding_response(branding)
+
+def get_branding_response(branding):
+    data_ret = {}
+    elements = simplejson.loads(Layout.objects.get(name=settings.LAYOUT).elements)
+    
+    data_ret["logo"] = {}
+    data_ret["logo"]["url"] = branding.logo
+    data_ret["logo"]["class"] = elements["logo"]
+    data_ret["viewer_logo"] = {}    
+    data_ret["viewer_logo"]["url"] = branding.viewer_logo
+    data_ret["viewer_logo"]["class"] = elements["viewer_logo"]
+    data_ret["powered"] = branding.powered
+    if branding.link:
+        data_ret["link"] = branding.link
+    return data_ret

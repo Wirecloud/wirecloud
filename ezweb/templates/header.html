@@ -1,0 +1,77 @@
+{% load i18n %}
+<div id="header">
+	<div id="ws_banner" class="banner">
+		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
+		<div id="toolbar_section" class="toolbar_section">
+			<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="catalogue_link toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
+			<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="wiring_link toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
+			<div id="workspace_link_container">
+				<div id="dragboard_link" class="toolbar_marked">
+					<div id="workspace_name"></div>
+				</div>
+				<div id="workspace_menu_link">
+					<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
+				</div>
+			</div>
+		</div>
+		<div id="greeting">
+			<div class="languages">
+				{% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
+			</div>
+			<!-- LOGS LINK -->
+			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+			<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
+			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
+			<span> | </span>
+			{% if is_anonymous %}
+				<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+				<span> | </span>
+				<span id="user_section">{% trans "anonymous" %}</span>
+			{% else %}
+				<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
+				
+				{%if AUTHENTICATION_SERVER_URL %}
+					<span> | </span>
+					<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>
+				{%endif%}
+				
+				<span> | </span>
+				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
+			{% endif %}
+		</div>
+	</div>
+
+	<div id="wiring_banner" class="banner" style="display:none">
+		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
+		<div class="toolbar_section">
+			<input type="button" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_marked wiring_link" disabled="true" value="{% trans 'Connect Gadgets' %}"/>
+			<input type="button" id="wiring_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
+		</div>
+	</div>
+
+	<div id="catalogue_banner" class="banner" style="display:none">
+		<div style="background: url('{{ branding.catalogue.logo.url }}') no-repeat" 
+			{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" {% else %} class="logo_layout" {% endif %}>
+				<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
+		</div>
+		<div class="toolbar_section">
+			<input type="button" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_marked catalogue_link" disabled="true" value="{% trans 'Add Gadgets' %}"/>
+			<input type="button" id="catalogue_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
+		</div>
+	</div>
+
+	<div id="bar">
+		<div id="tab_section" class="tab_section">
+			<input id="floating_gadgets_launcher" type="button" title="{% trans 'Show floating gadgets' %}" class="tabOps_launcher"/>
+			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
+			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
+			<div id="fixed_bar"><div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div></div>
+			<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
+		</div>
+
+		{% block ezweb_logo %}
+		{% endblock %}
+
+		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
+	</div>
+</div>

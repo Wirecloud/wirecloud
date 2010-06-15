@@ -121,14 +121,8 @@ var PreferencesManagerFactory = function () {
 
 		// Platform Preferences
 		var platformPreferences = {
-		  "initial-theme": {
-		    "hidden":        true,
-		    "label":         '',
-		    "type":          "text",
-		    "description":   ''
-		  },
-		  "theme": {
-		    "label":         gettext("Theme"),
+		  "skin": {
+		    "label":         gettext("Skin"),
 		    "type":          "select",
 		    "options":       []
 		  },
@@ -154,13 +148,13 @@ var PreferencesManagerFactory = function () {
 
 		// Workspace preferences
 		var workspacePreferences = {
-		  "theme": {
+		  "skin": {
 		    "inheritable":   true,
 		    "inheritByDefault": true,
-		    "label":         gettext("Theme"),
+		    "label":         gettext("Skin"),
 		    "type":          "select",
 		    "options":       [],
-		    "description":   gettext("Theme to use as default. (default: inherit)")
+		    "description":   gettext("Skin to use as default. (default: inherit)")
 		  },
 		  "layout": {
 		    "defaultValue":  "Fixed",
@@ -261,17 +255,16 @@ var PreferencesManagerFactory = function () {
 		}
 
 		// Initialize some dynamic preferences (theme...)
-		platformPreferences['initial-theme']['defaultValue'] = _INITIAL_THEME;
-		platformPreferences['theme']['defaultValue'] = _DEFAULT_THEME;
-		var desc = gettext("Theme to use by default. (default: %(defaultValue)s)");
-		platformPreferences['theme']['description'] = interpolate(desc, {defaultValue: _DEFAULT_THEME}, true);
-		workspacePreferences['theme']['defaultValue'] = _DEFAULT_THEME;
-		var themes = _THEMES;
+		platformPreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
+		var desc = gettext("Skin to use by default. (default: %(defaultValue)s)");
+		platformPreferences['skin']['description'] = interpolate(desc, {defaultValue: _DEFAULT_SKIN}, true);
+		workspacePreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
+		var themes = _SKINS;
 
 		for (var i = 0; i < themes.length; i++) {
 			var themeName = themes[i];
-			workspacePreferences['theme']['options'].push({value: themeName, label: themeName});
-			platformPreferences['theme']['options'].push({value: themeName, label: themeName});
+			workspacePreferences['skin']['options'].push({value: themeName, label: themeName});
+			platformPreferences['skin']['options'].push({value: themeName, label: themeName});
 		}
 
 		// Save they into our structures

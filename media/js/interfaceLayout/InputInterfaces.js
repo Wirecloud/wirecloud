@@ -336,10 +336,12 @@ function FileURLInputInterface(fieldId, options) {
 	URLInputInterface.call(this, fieldId, options);
 	
 	this.link = document.createElement('div');
+	this.linkHandler = options.linkHandler;
+	
 	Element.extend(this.link);
 	this.link.addClassName('window_link');
 	this.link.innerHTML = gettext("Choose a local file");
-	Event.observe(this.link, 'click', options.linkHandler)
+	Event.observe(this.link, 'click', this.linkHandler)
 }
 FileURLInputInterface.prototype = new URLInputInterface();
 
@@ -348,7 +350,21 @@ FileURLInputInterface.prototype._insertInto = function(element){
 	element.appendChild(this.link);
 }
 
+FileURLInputInterface.prototype.setDisabled = function(disabled){
 
+	InputInterface.prototype.setDisabled.call(this, disabled);
+	
+	//this input interface has to disable the uploader link too
+	if (disabled) {
+		this.link.removeClassName('window_link');
+		Event.stopObserving(this.link, 'click', this.linkHandler);
+	}
+	else {
+		this.link.addClassName('window_link');
+		Event.observe(this.link, 'click', this.linkHandler);
+	}
+	
+}
 
 /**
  *
@@ -506,6 +522,10 @@ BooleanInputInterface.prototype._checkValue = function(newValue) {
 
 BooleanInputInterface.prototype.parseFromPersistence = function(value) {
 	return typeof value == 'boolean' ? value : value == 'True';
+}
+
+BooleanInputInterface.prototype.setOnclickHandler = function(handler){
+	this.inputElement.onclick = handler;
 }
 
 /**

@@ -87,13 +87,6 @@ def parseInheritableValues(values):
 
     return _values
 
-def get_user_theme(user, fallbackTheme):
-    try:
-      return PlatformPreference.objects.get(user=user, name="initial-theme").value
-    except:
-      return fallbackTheme
-
-
 def get_tab_preference_values(tab, user):
     preferences = parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
 

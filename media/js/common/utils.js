@@ -27,74 +27,31 @@
 /**
  * This class represents a Theme.
  */
-function Theme(name, baseTheme, callback) {
-	this.loaded = false;
+function Theme() {
 
-	this.name = name;
-	this._themeURL = "/ezweb/themes/" + name;
+	this._themeURL = URIs.BASIC_THEME;
 
-	this._callback = callback;
-	if (baseTheme) {
-		this._iconMapping = Object.clone(baseTheme._iconMapping);
-		this._links = Object.clone(baseTheme._imageLinks)
-	}
-	else {
-		this._iconMapping = new Object();
-		this._links = new Object();
-	}
+	this._iconMapping = new Object();
 
 	this._imagesToPreload = [];
 
-	// Internal function for theme loading
-	var _notifyLoaded = function (transport) {
-		var themeDesc = transport.responseText;
-		try {
-			themeDesc = JSON.parse(themeDesc);
-		} catch (e) {
-			var msg = gettext("Theme description \"%(themeName)s\" could not be loaded.");
-			msg = interpolate(msg, {themeName: this.name}, true);
-			if (this._callback) this._callback(this, msg);
-			return;
-		}
+	// Retrieve custom theme icons
 
-		// Retreive custom theme icons
-		if (themeDesc.icons) {
-			var icons = themeDesc.icons;
-		} else {
-			var icons = {};
-		}
-
-		for (var iconId in icons)
-			// Transform to an absolute URL
-			this._iconMapping[iconId] = this.getResource('/images/' + icons[iconId]);
-
-
-		// Retreive the list of extra images to preload
-		if (themeDesc.imagesToPreload) {
-			this._imagesToPreload = themeDesc.imagesToPreload;
-		}
-
-		// Retrieve the list of links related to elements
-		if (themeDesc.links) {
-			this._links = themeDesc.links;
-		}
+	if (theme_images) {
+		var icons = theme_images.icons;
+	} else {
+		var icons = {};
+	}
 	
-		this.loaded = true;
-		if (this._callback) this._callback(this, null);
-	}.bind(this);
+	for (var iconId in icons)
+		// Transform to an absolute URL
+		this._iconMapping[iconId] = this.getResource('/images/' + icons[iconId]);
 
-	var _notifyError = function (response, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError("%(errorMsg)s", response, e);
+	// Retrieve the list of extra images to preload
+	if (theme_images.imagesToPreload) {
+		this._imagesToPreload = theme_images.imagesToPreload;
+	}
 
-		if (this._callback) this._callback(this, msg);
-	}.bind(this);
-
-	new Ajax.Request(this.getResource('/theme.json'), {
-		method: 'get',
-		onSuccess: _notifyLoaded,
-		onFailure: _notifyError
-	});
 }
 
 /**
@@ -135,27 +92,6 @@ Theme.prototype.getIconURL = function(iconId) {
 	return this._iconMapping[iconId];
 }
 
-Theme.prototype._appendStyle = function(url) {
-	// Create the Script Object
-	var style = document.createElement('link');
-	style.setAttribute("rel", "stylesheet");
-	style.setAttribute("type", "text/css");
-	//style.setAttribute("media", "screen,projection");
-	style.setAttribute("href", url);
-
-	// Insert the created object to the html head element
-	var head = document.getElementsByTagName('head').item(0);
-	head.appendChild(style);
-}
-
-Theme.prototype._removeStyle = function(url) {
-	var styleEntry = $$('link[type="text/css"][href="' + url +'"]');
-	if (styleEntry.length !== 1)
-		return;
-
-	styleEntry = styleEntry[0];
-	styleEntry.parentNode.removeChild(styleEntry);
-}
 
 Theme.prototype._countIcons = function() {
 	if (this._iconCount != undefined)
@@ -225,53 +161,132 @@ Theme.prototype.preloadImages = function(onFinishCallback) {
 		img.src = this.getResource('/images/' + this._imagesToPreload[i]);
 	}
 }
-/*set an onclick event to each element of the links' list*/
-Theme.prototype.setLinks = function(){
-	var element;
-	for (var linkId in this._links){
-		element = $(linkId);
-		if (element) {
-			element.onclick = function(){
-				window.open(this._links[linkId]);
-			}.bind(this);
-			element.addClassName('clickable');
-		}
-	}
+
+/**
+ * This class manages a Skin
+ */
+function SkinManager(){
+	
+	this.skinName = null;
+	this._skinURL = null;
+	
 }
 
-Theme.prototype.unsetLinks = function(){
-	var element;
-	for (var linkId in this._links){
-		element = $(linkId);
-		if (element) {
+SkinManager.prototype._setSkin = function (name){
+	this.skinName = name;
+//	this._skinURL = "/css_generator/workspace/" + name;
+	this._skinURL = "/layout/skin/" + name;
+}
+
+SkinManager.prototype._appendStyle = function(url) {
+	// Create the Script Object
+	var style = document.createElement('link');
+	style.setAttribute("rel", "stylesheet");
+	style.setAttribute("type", "text/css");
+	style.setAttribute("href", url);
+
+	// Insert the created object to the html head element
+	//var head = document.getElementsByTagName('head').item(0);
+	document.body.appendChild(style);
+}
+
+SkinManager.prototype._removeStyle = function(url) {
+	var styleEntry = $$('link[type="text/css"][href="' + url +'"]');
+	if (styleEntry.length !== 1)
+		return;
+
+	styleEntry = styleEntry[0];
+	styleEntry.parentNode.removeChild(styleEntry);
+}
+
+
+SkinManager.prototype.loadSkin = function(newSkin) {
+			
+	this._removeStyle(this._skinURL);
+
+	this._setSkin(newSkin);
+
+	this._appendStyle(this._skinURL);
+								
+	//wait for CSS application
+	LayoutManagerFactory.getInstance()._notifyPlatformReady(false);
+			
+}
+
+SkinManager.prototype.unloadSkin = function () {
+	this._removeStyle(this._skinURL);
+}
+
+/**
+ * This class manages the branding shown in a workspace or the catalogue
+ **/
+function BrandingManager(){
+	this.logo_class = null;				//banner logo in normal mode
+	this.viewer_logo_class = null;			//banner logo in viewer mode
+}
+
+/**
+ * set or change the branding
+ * @param {Object} branding
+ */
+
+BrandingManager.prototype.setBranding = function (branding){
+	
+	var elements = null;
+	var element = null;
+	
+	var _setLink = function (element, link_url){
+		
+		if (!link_url) {
+			//there is no branding link. Remove the onclick event
 			element.onclick = null;
 			element.removeClassName('clickable');
 		}
+		else {
+			
+			element.onclick = function(){
+										window.open(link_url);
+										};
+			element.addClassName('clickable');
+		}
+		
 	}
-}
-
-Theme.prototype.applyStyle = function() {
-	if (_ONLY_ONE_CSS_FILE === false) {
-		this._appendStyle(this.getResource('/css/ezweb.css'));
-		this._appendStyle(this.getResource('/css/wiring.css'));
-		this._appendStyle(this.getResource('/css/catalogue.css'));
-		this._appendStyle(this.getResource('/css/dragboard.css'));
-		if (BrowserUtilsFactory.getInstance().isIE())
-			this._appendStyle(this.getResource('/css/ie.css'));
-	} else {
-		this._appendStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
+	
+	if (branding['logo'])
+		this.logo_class = branding['logo']['class'];
+	if (branding['viewer_logo'])
+		this.viewer_logo_class = branding['viewer_logo']['class'];
+	
+	//check if we are in the viewer or the normal view.
+	elements = $$('.' + this.logo_class); 
+	for (var i=0;i<elements.length;i++) {
+		//normal mode
+		//set the normal logo as background for both the wiring and workspace banners
+		element = elements[i];
+		Element.extend(element);
+		element.setStyle({
+			'backgroundImage': 'url(' + branding['logo']['url'] + ')'
+		});
+		
+		//now, set the link to the url of the branding
+		_setLink(element, branding['link']);
+	
 	}
-}
-
-Theme.prototype.deapplyStyle = function() {
-	if (_ONLY_ONE_CSS_FILE === false) {
-		this._removeStyle(this.getResource('/css/ezweb.css'));
-		this._removeStyle(this.getResource('/css/wiring.css'));
-		this._removeStyle(this.getResource('/css/catalogue.css'));
-		this._removeStyle(this.getResource('/css/dragboard.css'));
-		if (BrowserUtilsFactory.getInstance().isIE())
-			this._removeStyle(this.getResource('/css/ie.css'));
-	} else {
-		this._removeStyle(this.getResource('/css/ezweb_theme_' + _EzWeb_RELEASE + '.css'));
+	
+	elements = $$('.' + this.viewer_logo_class);
+	if (elements.length > 0) {
+		//viewer mode
+		
+		//set the viewer logo as background (there is only one logo)
+		element = elements[0];
+		Element.extend(element);
+		element.setStyle({
+			'backgroundImage': 'url(' + branding['viewer_logo']['url'] + ')'
+		});
+		
+		//now, set the link to the url of the branding
+		_setLink(element, branding['link']);
 	}
+	
 }
+	

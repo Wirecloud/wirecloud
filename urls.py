@@ -93,6 +93,9 @@ urlpatterns = patterns('',
     
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),
+    
+    #Layout
+    (r'^layout', include('layout.urls')),
 
     # Proxy
     (r'^proxy', include('proxy.urls')),

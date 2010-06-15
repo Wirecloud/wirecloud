@@ -11,5 +11,6 @@ python ./manage.py dumpdata --settings=settings --format=xml --indent=4 preferen
 python ./manage.py dumpdata --settings=settings --format=xml --indent=4 gadgetGenerator > gadgetGenerator/fixtures/initial_data.xml
 python ./manage.py dumpdata --settings=settings --format=xml --indent=4 remoteChannel > remoteChannel/fixtures/initial_data.xml
 python ./manage.py dumpdata --settings=settings --format=xml --indent=4 resourceSubscription > resourceSubscription/fixtures/initial_data.xml
+python ./manage.py dumpdata --settings=settings --format=xml --indent=4 layout > layout/fixtures/initial_data.xml
 
 

@@ -10,6 +10,15 @@
   position: relative;
   clear:    both;
   z-index:  1;
+  margin-top: 10px;
+}
+
+#wiring #wiring_table .anchor{
+	display: none;
+}
+
+#wiring #wiring_table.selected_channel .anchor{
+	display: block;
 }
 
 #wiring #channels_list {
@@ -26,9 +35,16 @@
   margin-top: 1ex;
 }
 
+#wiring .connectableColumn {
+  width: 25%;
+  vertical-align: top;
+}
+
 #wiring .eventColumn, #wiring .slotColumn {
   width: 20%;
   position: relative;
+  padding: 0 20px;
+  vertical-align: top;
 }
 
 #wiring .inoutColumn {
@@ -36,6 +52,7 @@
   position: relative;
   left: 20%;
   float: left;
+  vertical-align: top;
 }
 
 #wiring .eventColumn {
@@ -60,7 +77,12 @@
 }
 
 #wiring .borderLeftCell {
+  border-collapse: collapse;
   padding: 0 0 0 1ex;
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid;
+  border-right: none;
 }
 
 #wiring .columnCell ul input[type="radio"] {
@@ -75,6 +97,10 @@
   padding: 2px;
 }
 
+.form-row input[type="submit"] {
+  padding-left: 18px;
+}
+
 #wiring #newChannelForm {
     text-align: center;
 }
@@ -83,10 +109,33 @@
   position: relative;
   font-weight: bold;
   padding: 3px 3px 0px;
+  margin:3px 2px;
+}
+
+#wiring .igadget > .content {
+  padding: 0px 0px 1px 0px;
+  font-weight: normal;
+  position: relative;
+  margin: 6px 0px;
 }
 
 #wiring .igadget .content div {
   position: relative;
+}
+
+#wiring .igadget > .content > div {
+  line-height: 24px;
+}
+
+#wiring .eventColumn .igadget > .content > div {
+  padding: 0px 14px 0px 0px;
+  text-align: right;
+  cursor:pointer;
+}
+
+#wiring .slotColumn .igadget > .content > div {
+  padding: 0px 0px 0px 14px;
+  text-align: left;
 }
 
 #wiring .igadget.unfoldable > .header {
@@ -95,6 +144,27 @@
 
 #wiring .igadgetContent.folded {
   display: none;
+}
+
+#wiring .igadget.folded > .content {
+  display: none;
+}
+
+#wiring .igadget > .content > div > .anchor {
+  position: absolute;
+  width: 35px;
+  height: 18px;
+  border: 0px;
+  padding: 0px;
+  top: 3px;
+}
+
+#wiring .eventColumn .igadget .anchor {
+  right: -35px;
+}
+
+#wiring .slotColumn .igadget .anchor {
+  left: -35px;
 }
 
 #wiring .tab {
@@ -135,20 +205,117 @@
 }
 
 #wiring #channels_list .channel {
-  cursor: pointer; cursor: hand;
+  cursor: pointer;
   position: relative;
 }
 
 #wiring #channels_list .channel .inAnchor {
   position: absolute;
+  left: -25px;
 }
 
 #wiring #channels_list .channel .outAnchor {
   position: absolute;
+  right: -25px;
 }
 
 #wiring #channels_list .channel.selected .inAnchor, #wiring #channels_list .channel.selected .outAnchor {
   cursor:default;
+  height:   18px;
+  top:      3px;
+  width:    35px;
+}
+
+#wiring .tab {
+  margin: 5px 0px;
+  position: relative;
+  border: 1px solid;
+}
+
+#wiring .tab > .header {
+  clear: both;
+  z-index: 1;
+}
+
+#wiring .tab.folded > .content, #wiring .tab.empty > .content {
+  height: 0px;
+  overflow: hidden;
+}
+
+#wiring .tab > .content {
+  padding: 2px;
+  clear: both;
+  z-index: 0;
+  position: relative;
+  top: -1px;
+}
+
+#wiring .eventColumn .tab > .header, #wiring .slotColumn .tab > .header {
+  padding: 6px 24px 2px 34px;
+  text-align: right;
+}
+
+#wiring .eventColumn .tab > .header{
+  text-align: right;
+}
+
+#wiring .slotColumn .tab > .header {
+  text-align: left;
+}
+
+#wiring .tab > .header {
+  cursor:      pointer;
+  font-weight: bold;
+  position:    relative;
+}
+
+#wiring .tab.empty > .header {
+  cursor: default;
+}
+
+#wiring .tab > .header > .anchor {
+  position: absolute;
+  left: -28px;
+  top: 5px;
+  width: 35px;
+  height: 18px;
+  border: 0px;
+  padding: 0px;
+}
+
+#wiring .igadget > .header {
+  padding-left: 20px;
+  cursor:pointer;
+}
+
+#wiring #newChannelForm .addSubmit {
+  cursor: pointer;
+  padding: 0px;
+  height: 16px;
+  width: 16px;
+  border: 0px none;
+}
+
+#wiring .newChannel, #wiring #unfold_all_link {
+  cursor: pointer;
+}
+
+#wiring .newChannel {
+  margin: 2ex 1ex;
+  text-align: center;
+}
+
+#wiring #unfold_all_link {
+  display:inline;
+}
+
+#wiring #unfold_chkItem{
+  display: inline;
+  width: 15px;
+  height: 15px;
+  border: 0px;
+  padding: 0 20px 0 0;
+  cursor: pointer;
 }
 
 #wiring img {
@@ -156,18 +323,62 @@
   vertical-align: middle;
 }
 
+#wiring #channels_list .channel {
+  margin: 20px 1ex;
+  padding: 0px;
+}
+
+
+#wiring #channels_list .channel .channelPipe {
+  border: 1px solid;
+  cursor: pointer;
+  height: 25px;
+  padding: 0 8px;
+}
+
 #wiring #channels_list .channel .channelContent {
+  border-width: 0px 1px 1px 1px;
+  margin: 0 8px;
   display: none;
+  overflow-x: auto;
+  padding: 0.5ex 1ex 0.5ex 1ex;
   cursor: default;
 }
 
-#wiring #channels_list .channel.selected .channelContent {
+#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
   display: block;
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher {
+#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
 	margin-left: 5px;
+	border: 0;
 	cursor: pointer;
+	width: 21px;
+	height: 21px;
+	vertical-align: middle;
+}
+
+#wiring #channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {
+	line-height: 1.5;
+	padding: 0 3px 0 0;
+}
+
+#wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
+	text-align: left;
+	margin: 0px;
+}
+
+#wiring #channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
+	white-space: nowrap;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
+	line-height: 1;
+	white-space: nowrap;
+}
+
+#wiring #channels_list .channel.selected .channelContent .paramName label, #wiring .newChannel.selected .channelContent .paramName label{
+	white-space: normal;
 }
 
 #wiring #channels_list .channel.selected .channelContent .column {
@@ -181,29 +392,34 @@
   margin: 0px
 }
 
-
-#wiring #channels_list .channel.selected .channelContent .column .filterValue {
-  margin-top: -1px;
-  white-space: nowrap;
-}
-
 #wiring #channels_list .channel.selected .channelContent .paramValueInput {
-  background: #E0E0E0;
   border:0px none;
-  margin: 0.05ex 0ex 0.05ex 0ex;
+  margin: 0.1ex 0ex;
+  padding: 2px;
   width:100%;
   cursor: text;
 }
 
 #wiring #wiring_messages {
+  border: 1px solid;
+  margin: 1ex 20px;
+  padding: 1ex 2ex;
   display: none;
+}
+
+#wiring #newChannelForm .linkSubmit {
+   cursor: pointer;
+}
+
+#wiring .newChannelInput {
+   border:1px solid;
+   margin:2px 1ex;
 }
 
 #wiring .channelNameInput {
   border:0px;
-  margin:0px 1ex;
+  margin:2px 1ex;
   cursor:pointer;
-  background: #97A0A8;
 }
 
 #wiring .selected .channelNameInput {
@@ -226,8 +442,8 @@
 }
 
 .helpwiringheader {
+  border: 1px solid;
   text-align:left;
-  font-size:80%;
   white-space:pre;
 }
 
@@ -248,6 +464,7 @@
   display: inline;
   padding-right: 5px;
   float: right;
+  cursor:pointer;
 }
 
 #wiring .option_link_separator {
@@ -258,6 +475,10 @@
 
 #wiring .channelContent td {
   vertical-align: top;
+}
+
+#wiring .create_url_link{
+	cursor: pointer;
 }
 
 #wiring .create_url_link, #wiring #remote_operation_tip {

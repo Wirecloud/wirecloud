@@ -1,0 +1,62 @@
+/*
+ * BODY
+ */
+
+/* global background */
+body.catalogue_view {
+	background: {{ body_bg }};
+}
+
+/*
+ * HEADER section
+ */
+
+/* banner */
+#catalogue_banner{
+	background: {{ banner_bg }};
+}
+
+#catalogue_banner, #catalogue_banner a{
+	color:{{ banner_font }};
+}
+
+/* toolbar button unmarked */
+#catalogue_banner .toolbar_marked {
+	color: {{ toolbar_marked_font }};
+	font-weight: bold;
+	background: {{ toolbar_marked_bg }};
+}
+
+/* toolbar button marked */
+#catalogue_banner .toolbar_unmarked {
+	color: {{ toolbar_unmarked_font }};
+	font-weight: normal;
+	background: {{ toolbar_unmarked_bg }};
+}
+
+#catalogue_banner .toolbar_unmarked:hover {
+	color: {{ toolbar_hover_font }};
+	font-weight: normal;
+	background: transparent {{ toolbar_hover_bg }};
+}
+
+/*
+ * WRAPPER section
+ */
+
+/* dragboard */
+#left_bar{
+	background: {{ container_bg }};
+	border-color: {{ container_border }};
+}
+
+/* resources */
+#catalogue_center{
+	background: {{ container_bg }};
+	border-color: {{ container_border }};
+}
+
+#catalogue_content{
+	background: {{ container_bg }};
+	border-color: {{ container_border }};
+}

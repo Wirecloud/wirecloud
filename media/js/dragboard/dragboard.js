@@ -164,14 +164,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.baseLayout = newBaseLayout;
 	}
 
-	Dragboard.prototype._themeLoaded = function() {
-		var igadgetKeys = this.iGadgets.keys();
-		for (var i = 0; i < igadgetKeys.length; i++) {
-			iGadget = this.iGadgets[igadgetKeys[i]];
-			iGadget._createIGadgetMenu();
-		}
-	}
-
 	/**
 	 * @private
 	 *
@@ -195,7 +187,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	// ****************
 	// PUBLIC METHODS
 	// ****************
-
+	
+	
+	/**
+ 	* Gets the banner related to the workspace this dragboard belongs to
+ 	*/
+	Dragboard.prototype.getBanner = function(){
+		return this.tab.getBanner();
+	}
+	
 	/**
 	 * Gets the width of the usable dragboard area.
 	 *

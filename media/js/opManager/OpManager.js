@@ -69,16 +69,19 @@ var OpManagerFactory = function () {
 				activeWorkSpace = this.workSpaceInstances[active_ws_from_script];
 			}
 
-			// set handler for workspace options button
-			Event.observe($('ws_operations_link'), 'click', function(e){
-				if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
-					var target = BrowserUtilsFactory.getInstance().getTarget(e);
-					target.blur();
-					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
-				} else {
-					OpManagerFactory.getInstance().showActiveWorkSpace();
-				}
-			}.bind(this));
+			if ($('ws_operations_link')) { // there is a banner
+				// set handler for workspace options button
+				Event.observe($('ws_operations_link'), 'click', function(e){
+					if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
+						var target = BrowserUtilsFactory.getInstance().getTarget(e);
+						target.blur();
+						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
+					}
+					else {
+						OpManagerFactory.getInstance().showActiveWorkSpace();
+					}
+				}.bind(this));
+			}
 
 			// Total information of the active workspace must be downloaded!
 			if (isDefaultWS == "true") {
@@ -172,16 +175,7 @@ var OpManagerFactory = function () {
 		 *
 		 * This method is called after changing current theme.
 		 */
-		OpManager.prototype._themeLoaded = function() {
-			var layoutManager = LayoutManagerFactory.getInstance();
 
-			this.activeWorkSpace._themeLoaded();
-			this._refreshWorkspaceMenu();
-
-			OpManagerFactory.getInstance().refreshEzWebFly();
-
-			layoutManager.resizeWrapper();
-		}
 
 		// ****************
 		// PUBLIC METHODS 
@@ -388,49 +382,21 @@ var OpManagerFactory = function () {
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!
 			function imagesLoaded(theme, imagesNotLoaded) {
-				_currentTheme.setLinks();
-				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-			}
-
-			function continueLoading(theme, errorMsg) {
-				if (errorMsg !== null) {
-					var msg = gettext("Error loading \"%(theme)s\" theme. Trying with \"default\" theme.");
-					msg = interpolate(msg, {theme: theme.name}, true);
-					LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-
-					var logManager = LogManagerFactory.getInstance();
-					logManager.log(msg);
-					/*
-					 * Initial theme css's are pre applied, but it failed to load so we need to deapply it and
-					 * apply the style of the default theme.
-					 */
-					theme.deapplyStyle();
-					_currentTheme.applyStyle();
-				} else {
-					_currentTheme = theme;
-					// Initial theme css's are pre applied, so we don't need to apply they
-					//_currentTheme.applyStyle();
-				}
-
-				_currentTheme.preloadImages(imagesLoaded);
-			}
-
-			function initTheme(theme, errorMsg) {
-				if (errorMsg !== null) {
-					var msg = gettext("Error loading base theme. Expect problems.");
-					LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-					LogManagerFactory.getInstance().log(msg);
-					OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+				
+				if (imagesNotLoaded.length > 0) {
+					var msg = gettext("There were errors while loading some of the images for the theme. Do you really want to use it?");
+					layoutManager.showYesNoDialog(msg,
+						function() {
+							OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
+						},
+						function() {
+							layoutManager._notifyPlatformReady(false);
+						},
+						Constants.Logging.WARN_MSG);
 					return;
 				}
-
-				_defaultTheme = theme;
-
-				if (window._INITIAL_THEME != undefined && _INITIAL_THEME != 'default') {
-					new Theme(_INITIAL_THEME, _defaultTheme, continueLoading);
-				} else {
-					continueLoading(_defaultTheme, null);
-				}
+				
+				OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
 			}
 
 			// EzWeb fly
@@ -445,14 +411,16 @@ var OpManagerFactory = function () {
 			}
 
 			// Load initial theme
-			_currentTheme = new Theme('default', null, initTheme);
+			_currentTheme = new Theme();
+			_currentTheme.preloadImages(imagesLoaded);
+		
 		}
 
 		/**
 		 * Refresh EzWeb fly using current theme.
 		 */
 		OpManager.prototype.refreshEzWebFly = function() {
-			var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+');' +
+			/*var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+');' +
 			            'background-repeat: no-repeat;' +
 			            'background-attachment:scroll;' +
 			            'background-position: center bottom;';
@@ -468,7 +436,7 @@ var OpManagerFactory = function () {
 
 				this.flyStyleSheet.insertRule('#wrapper {' + rules + '}',
 				                              this.flyStyleSheet.cssRules.length);
-			}
+			}*/
 		}
 
 
@@ -531,7 +499,6 @@ var OpManagerFactory = function () {
 				layoutManager.logSubTask(gettext("Activating current Workspace"));
 
 				if (this.activeWorkSpace.isEmpty() && this.workSpaceInstances.keys().length ==1){
-					this.activeWorkSpace.fillWithLabel();
 					this.showActiveWorkSpace();
 					//TODO: Show list view catalogue
 				}

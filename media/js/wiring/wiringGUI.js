@@ -24,7 +24,7 @@
  */
 
 
-function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
+function WiringInterface(wiring, workspace, wiringContainer) {
 
 	// ***********************************
 	//  PRIVATE METHODS AND ATTRIBUTES
@@ -33,7 +33,9 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	this.workspace = workspace;
 	this.wiring = wiring;
 	this.wiringContainer = wiringContainer;
-	this.wiringLink = wiringLink;
+	//banner
+	this.wsLink = null;
+	this.wiring_banner = null;
 
 	this.opmanager = OpManagerFactory.getInstance();
 	this.currentChannel = null;
@@ -48,8 +50,6 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	this.channelBaseName = gettext("Channel");
 	this.visible = false; // TODO temporal workarround
 	this.unfold_on_entering = false; //Does the user want all tabs to be expanded?
-
-	Event.observe($('wiring_link'), "click", function(){OpManagerFactory.getInstance().activeWorkSpace.showWiring()}, false, "show_wiring");
 
 	this.eventColumn = $('eventColumn');
 	this.slotColumn = $('slotColumn');
@@ -78,7 +78,7 @@ function WiringInterface(wiring, workspace, wiringContainer, wiringLink) {
 	// Slots
 	this.slotTabs = new ConnectableColumnInterface(this.slot_list);
 	titleElement = this.slotColumn.getElementsByClassName("title")[0];
-
+	
 	this._toggleSlotColumnEvent = function (e) {this.toggleSlotColumn()}.bind(this);
 	Event.observe(titleElement, "click", this._toggleSlotColumnEvent);
 
@@ -133,6 +133,68 @@ WiringInterface.prototype.hide = function () {
 
 	LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
 }
+
+/*
+ * banner operations
+ */
+
+var _buttonHandler = function(){
+						OpManagerFactory.getInstance().activeWorkSpace.showWiring();
+					};
+					
+WiringInterface.prototype.getBanner = function(){
+	return this.wiring_banner;
+}
+
+/**
+ *
+ * set the proper handlers to the workspace toolbar buttons
+ */	
+	
+WiringInterface.prototype.initToolbar = function(){
+	this.wiring_banner = $('wiring_banner');
+	if (this.wiring_banner) {
+		this.wsLink = this.wiring_banner.getElementsBySelector('#wiring_dragboard_link')[0];
+		
+		//set the handlers
+		this.workspace.setToolbarButton(this.wsLink);
+	}
+}
+
+/**
+ *
+ * unset the handlers of the workspace toolbar buttons
+ */		
+WiringInterface.prototype.unloadToolbar = function(){
+	if (this.wiring_banner) {
+		this.workspace.unsetToolbarButton(this.wsLink);
+	}	
+}
+
+/**
+ * This function knows which handler matches the wiring link in the toolbar
+ * @param {HTML element} wiringLinkElement
+ */
+WiringInterface.prototype.setToolbarButton = function (wiringLinkElement){
+	Event.observe(wiringLinkElement,
+				"click",
+				_buttonHandler,
+				false,
+				"show_wiring"
+				); 
+}
+
+/**
+ * This function knows how to stop observing the wiring link event
+ * @param {HTML element} wiringLinkElement
+ */
+WiringInterface.prototype.unsetToolbarButton = function (wiringLinkElement){
+	Event.stopObserving(wiringLinkElement,
+						'click',
+						_buttonHandler
+						);
+}
+
 
 WiringInterface.prototype.unload = function () {
 	this._clear();

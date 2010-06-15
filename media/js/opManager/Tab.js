@@ -193,6 +193,13 @@ function Tab (tabInfo, workSpace) {
 	Tab.prototype.getDragboard = function () {
 		return this.dragboard;
 	}
+	
+	/**
+ 	* Gets the banner related to the workspace this dragboard belongs to
+ 	*/
+	Tab.prototype.getBanner = function(){
+		return this.workSpace.getBanner();
+	}
 
 	Tab.prototype.mark_as_painted = function () {
 		this.painted = true;
@@ -728,14 +735,3 @@ Tab.prototype.preferencesChanged = function(modifiedValues) {
 Tab.prototype.setLock = function(locked) {
 	this.preferences.set({'locked': {value: locked}});
 }
-
-/**
- * @private
- *
- * This method must be called when a new theme is loaded to refresh some icons
- */
-Tab.prototype._themeLoaded = function() {
-	this._createTabMenu();
-	this.dragboard._themeLoaded();
-}
-

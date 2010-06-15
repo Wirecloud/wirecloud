@@ -10,3 +10,9 @@
 #tab_section {
 	top:0;
 }
+
+.logo_viewer_layout {
+	height: 27px;
+	width: 150px;
+	background-repeat: no-repeat;
+}

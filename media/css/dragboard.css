@@ -6,6 +6,7 @@ div.dragboard {
 
 div.gadget_window {
   position: absolute;
+  border: 1px solid;
 }
 
 div.fulldragboard {
@@ -23,6 +24,8 @@ div.gadget_menu {
   cursor: move;
   overflow: hidden;
   border: 0px;
+  padding: 1px 3px 1px 7px;
+  height: 16px;
 }
 
 /*div.dragboard.fixed -> LOCK OR SHARED STATUS*/
@@ -79,6 +82,7 @@ div.color_button {
   margin: 3px;
   width: 16px;
   height: 16px;
+  border: 1px solid;
 }
 
 div.gadget_window .button {
@@ -150,14 +154,23 @@ div.fixed .gadget_menu span {
 
 .gadget_menu .igadget_name {
   float:left;
-  background:transparent none repeat scroll 0%;
   display:inline;
+  border: 0px;
 }
 
 div.gadget_window div.statusBar {
   overflow: hidden;
   border: 0px;
+  height: 16px;
+  padding: 0 32px;
 }
+
+div.gadget_window div.statusBar .button {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+
 
 /*****
  * config_interface
@@ -168,6 +181,7 @@ div.gadget_window_locked div.config_interface {
   display: none;
   padding: 1px 1ex;
   margin: 0px;
+  border-bottom: 1px solid;
 }
 
 div.config_interface div.buttons {
@@ -186,6 +200,7 @@ div.config_interface label {
 
 div.config_interface input, div.config_interface select {
   margin: 0px 1ex;
+  border: 1px solid;
 }
 
 div.config_interface table input {
@@ -230,12 +245,33 @@ table.shared_prefs {
 }
 
 table.shared_prefs td{
-	border-bottom:1px solid #CCCCCC;
+	border-bottom:1px solid;
 	padding: 3px 0;
+}
+
+div.config_interface label.invalid input {
+	border: 1px solid;	
 }
 
 .gadget_menu_locked .hide_on_lock, .gadget_menu_fulldragboard .hide_on_fulldragboard, .gadget_menu_minimized .hide_on_minimize {
   display: none;
+}
+
+/********************************************/
+div.fulldragboard div.statusBar {
+  display: none;
+}
+
+div.fulldragboard {
+  border: 0px none;
+}
+
+div.fulldragboard div.gadget_menu input[type="button"].minimizebutton {
+  display: none;
+}
+
+div.fulldragboard div.gadget_menu {
+  cursor: default;
 }
 
 /******************************
@@ -243,10 +279,7 @@ table.shared_prefs td{
  ******************************/
 
 div.gadget_window_locked {
-    -moz-border-radius: 0 !important;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    border: 1px solid transparent !important;
+    border: 1px solid;
 }
 
 div.gadget_window_locked div.gadget_menu, div.gadget_window_locked div.statusBar {
@@ -267,6 +300,7 @@ div.gadget_window_locked div.gadget_menu, div.gadget_window_locked div.statusBar
 #dragboardcursor {
   position: absolute;
   z-index: 1;
+  border: 2px dashed;
 }
 
 .dragboardwikilink {

@@ -13,30 +13,19 @@
 	<script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
 	<![endif]-->
 
-	<!-- Base css -->
+	<!-- Base and Theme css -->
 	{% if only_one_css_file %}
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{CAMBIAR}}/css/ezweb_theme_{{ ezweb_release }}.css"/>
 	{% else %}
-	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
+	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}{{ layout.general }}" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.general }}" />
 	{% endif %}
-
-	{% block extra_stylecss %}
-	<!-- Theme css -->
-	{% if only_one_css_file %}
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb_theme_{{ ezweb_release }}.css"/>
-	{% else %}
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/dragboard.css" />
-	<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/wiring.css" />
-	{% endif %}
+	
 	<!--[if IE]>
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
-		<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}/css/ie.css" /> 
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.ie }}" />
+		<link rel="stylesheet" type="text/css" href="{{ THEME_URL }}{{ theme.ie }}" /> 
 	<![endif]-->
-
-	{% endblock %}
 
 	<!-- CSS for different header -->
 	{% block css %}{% endblock %}
@@ -68,75 +57,11 @@
 
 <!-- HEADER -->
 {% block header %}
-<div id="header">
-	<div id="banner">
-		<div id="logo"><img id="powered" src="{{ MEDIA_URL }}images/powered.png"/></div>
-		<div id="toolbar_section" class="toolbar_section">
-			<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
-			<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
-			<div id="workspace_link_container" >
-				<div id="dragboard_link" class="toolbar_unmarked">
-					<div id="workspace_name"></div>
-				</div>
-				<div id="workspace_menu_link">
-					<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
-				</div>
-			</div>
-		</div>
-		<div id="greeting">
-			<div class="languages">
-				{% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-			</div>
-			<!-- LOGS LINK -->
-			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-			<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
-			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
-			<span> | </span>
-			{% if is_anonymous %}
-				<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
-				<span> | </span>
-				<span id="user_section">{% trans "anonymous" %}</span>
-			{% else %}
-				<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
-				
-				{%if AUTHENTICATION_SERVER_URL %}
-					<span> | </span>
-					<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>
-				{%endif%}
-				
-				<span> | </span>
-				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
-			{% endif %}
-		</div>
-	</div>
-	<div id="bar">
-		<div id="tab_section" class="tab_section">
-			<input id="floating_gadgets_launcher" type="button" title="{% trans 'Show floating gadgets' %}" class="tabOps_launcher"/>
-			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
-			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
-			<div id="fixed_bar"><div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div></div>
-			<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-		</div>
-
-		{% block ezweb_logo %}
-		{% endblock %}
-
-		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
-	</div>
-</div>
+	{% include "header.html" %}
 {% endblock %}
 
-<div id="wrapper">
-	{% include "layouts/default.html" %}
-	
-	<!-- LOGS LAYER -->
-	<div id="logs_container" class="container">
-		<div id="logs_header" style="" title="{% trans 'Clear' %}" class=""><a href="#" onclick="OpManagerFactory.getInstance().clearLogs();">{% trans 'Clear' %}</a></div>
-		<div id="logs_console" class="container_content">
-		 </div>
-	</div>
-	<!-- LOGS LAYER -->
-</div>
+{% include "layouts/default.html" %}
+
 </body>
 
 <!-- JavaScript code -->
@@ -190,6 +115,7 @@ _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalog
 _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
 _URIConstants.prototype.FILE_UPLOADER = '/uploader';
+_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/{{ theme.name }}'
 
 {% if AUTHENTICATION_SERVER_URL %}
 	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
@@ -216,11 +142,12 @@ var public_workspace = '{{ active_workspace }}';
 var last_logged_user = '{{ last_user }}';
 var post_load_script = '{{ post_load_script|safe }}';
 
-var _THEMES = {% autoescape off %} {{ THEMES }} {% endautoescape %};
-/*theme assigned to the user organization or default theme*/
-var _DEFAULT_THEME = '{{ DEFAULT_THEME }}';
-/*Default theme or theme of the active workspace*/
-var _INITIAL_THEME = '{{ INITIAL_THEME }}';
+var theme_images = {{ theme.images|safe }};
+var _SKINS = {% autoescape off %} {{ SKINS }} {% endautoescape %};
+//default skin for workspaces. Users may change the skin of a workspace afterwards
+var _DEFAULT_SKIN = '{{ DEFAULT_SKIN }}';
+
+
 var _ONLY_ONE_CSS_FILE = '{{ only_one_css_file }}' == 'True';
 var _EzWeb_RELEASE = '{{ ezweb_release }}';
 
@@ -233,12 +160,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 
 </script>
 
-{% block includes %}
-
-	{% if AUTHENTICATION_SERVER_URL %}
-    	<script type="text/javascript" src="{{ AUTHENTICATION_SERVER_URL }}/ezweb/js/js_library.js"></script>
-    {% endif %}
-    
+{% block includes %}  
     <script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 
     <script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
@@ -274,5 +196,6 @@ var policy_lists = {{ policies|safe|default:"null" }};
 	opManager.loadEnviroment();
 </script>
 
-
+<!-- Skins CSS area 
+<link rel="stylesheet" type="text/css" href="{{ CATALOGUE_SKIN }}" />-->
 </html>

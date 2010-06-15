@@ -34,8 +34,9 @@ from django.conf import settings
 from django.db.models import Q
 from commons.utils import json_encode
 from catalogue.models import Category, Tag
-from preferences.views import get_user_theme
+#from preferences.views import get_user_theme
 from django.contrib.auth.models import Group
+from layout.models import Skin, SkinOrganization, TYPES
 
 def server_url(request):
     ret = {}
@@ -124,58 +125,47 @@ def policy_lists(request):
     
     return { 'policies': user_policies }  
 
-#private method: return the theme related to the user's organizations
-def get_theme_by_user_orgs_or_default(user):
-    #workarround: this is an ad-hoc function. Remove it after changing the
-    #Organization-Group model (changing it into a hierarchy or so).
-    #at that moment, we will set relationships between organizations and themes, categories, etc.
+    
+# workspace skins
+def skins(request):
+    catalogue_type = TYPES[0][0]
+    ws_type = TYPES[1][0]
+
+    layout_name = settings.LAYOUT
+    skins = Skin.objects.filter(skin_template__type=ws_type, layout__name=layout_name)
+    skins = [skin.name for skin in skins.order_by('name')]
+
+    default_ws_skin = None
+    default_cat_skin = None
     try:
-        
-        user.groups.get(name__icontains="zaragoza")
-        return "Zaragoza"
+        orgs = Group.objects.filter(user=request.user)
+        #search the default skin in the user organizations
+        for org in orgs:
+            #workspace skin
+            try:
+               default_ws_skin  = SkinOrganization.objects.filter(type=ws_type, organization=org, skin__layout__name=layout_name)[0].skin.name
+               break
+            except:
+                pass
+            
+        for org in orgs:
+            #catalogue skin
+            try:
+               default_cat_skin  = SkinOrganization.objects.filter(type=catalogue_type, organization=org, skin__layout__name=layout_name)[0].skin.name
+               break
+            except:
+                pass
+    except Exception, e:
+        pass;
+    #if it is not related to an organization - > return the default skins
+    if (not default_ws_skin):
+        default_ws_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=ws_type, default=True).name
+    if (not default_cat_skin):
+        #default_cat_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=catalogue_type, default=True).name
+        default_cat_skin = "default"
     
-    except:
-        # there are no themes related to the user organizations. Return the default one
-        return settings.DEFAULT_THEME
-         
-    
-    
-# themes url
-def theme_url(request):
+    return {'SKINS': json_encode(skins), 'DEFAULT_SKIN': default_ws_skin, 'CATALOGUE_SKIN': default_cat_skin}
 
-    # Default theme
-    if not hasattr(settings, "DEFAULT_THEME") or settings.DEFAULT_THEME == None:
-        settings.DEFAULT_THEME = "default"
-
-    # Theme cache
-    if not hasattr(settings, "CACHED_THEMES"):
-        themes_dir = os.path.join(settings.BASEDIR, 'media', 'themes')
-
-        themes = []
-        for filename in os.listdir(themes_dir):
-            if filename.startswith('.'):
-                continue
-
-            pathname = os.path.join(themes_dir, filename)
-            mode = os.stat(pathname)[stat.ST_MODE]
-            if stat.S_ISDIR(mode):
-                themes.append(filename)
-
-        themes.sort(key=str.lower)
-
-        settings.CACHED_THEMES = themes
-        settings.CACHED_THEMES_JSON = json_encode(themes)
-
-    # Process current theme
-    user_default_theme = get_theme_by_user_orgs_or_default(request.user)
-    #check if the user has set the theme preference
-    theme = get_user_theme(request.user, user_default_theme)
-    if not (theme in settings.CACHED_THEMES):
-      theme = settings.DEFAULT_THEME
-
-    theme_url = settings.MEDIA_URL + "themes/" + theme
-
-    return {'THEMES': settings.CACHED_THEMES_JSON, 'DEFAULT_THEME': user_default_theme, 'INITIAL_THEME': theme, 'THEME_URL': theme_url}
 
 def installed_apps(request):
     if hasattr(settings, 'INSTALLED_APPS'):

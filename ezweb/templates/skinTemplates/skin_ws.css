@@ -1,0 +1,114 @@
+/*
+ * BODY
+ */
+
+/* global background */
+body.dragboard_view, body.wiring_view{
+	background: {{ body_bg }};
+}
+
+/*
+ * HEADER section
+ */
+
+/* banner */
+#ws_banner, #wiring_banner{
+	background: {{ banner_bg }};
+}
+
+#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a{
+	color:{{ banner_font }};
+}
+
+/* toolbar button unmarked */
+#ws_banner .toolbar_marked, #wiring_banner .toolbar_marked{
+	color: {{ toolbar_marked_font }};
+	font-weight: bold;
+	background: {{ toolbar_marked_bg }};
+}
+
+/* toolbar button marked */
+#ws_banner .toolbar_unmarked, #wiring_banner .toolbar_unmarked{
+	color: {{ toolbar_unmarked_font }};
+	font-weight: normal;
+	background: {{ toolbar_unmarked_bg }};
+}
+
+#ws_banner .toolbar_unmarked:hover, #wiring_banner .toolbar_unmarked:hover{
+	color: {{ toolbar_hover_font }};
+	font-weight: normal;
+	background: transparent {{ toolbar_hover_bg }};
+}
+
+/*
+ * WRAPPER section
+ */
+
+/* dragboard */
+.dragboard{
+	background: {{ container_bg }};
+	border-color: {{ container_border }};
+}
+
+/* wiring */
+#wiring{
+	background: {{ container_bg }};
+	border-color: {{ container_border }};
+}
+
+/*
+ * TAB section
+ */
+
+/* add tab button */
+#add_tab_link {
+ 	color: {{ add_tab_font }};
+	background: {{ add_tab_bg }};
+}
+
+#add_tab_link:hover {
+	color: {{ add_tab_hover_font }};
+	background: {{ add_tab_hover_bg }};
+}
+
+/* not selected tab */
+#tab_section .tab {
+	color: {{ tab_unmarked_font }};
+	background: {{ tab_unmarked_bg }};
+	border-color: {{ tab_border }};
+	font-weight:normal;
+}
+
+#tab_section .tab:hover {
+	color: {{ tab_hover_font }};
+	font-weight:normal;
+	background: {{ tab_hover_bg }};
+}
+
+/* selected tab */
+#tab_section .current {
+ 	color: {{ tab_marked_font }};
+  	background: {{ tab_marked_bg }};
+  	font-weight:bold;
+}
+
+#tab_section .current:hover {
+	color: {{ tab_marked_font }};
+	background: {{ tab_marked_bg }};
+	font-weight:bold;
+}
+
+/*
+ * IGADGET section
+ */
+
+/* igadget box */
+div.gadget_window {
+	border-color: {{ gadget_border }} !important; /* quitar el important cuando se meta el skin al final del body */
+}
+
+/* igadget name */
+.gadget_menu span, .gadget_menu .igadget_name {
+  	color: {{ gadget_title_font }};
+  	font-weight: bold;
+}

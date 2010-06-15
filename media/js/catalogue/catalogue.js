@@ -32,6 +32,10 @@ var Catalogue = function (dom_element, dom_wrapper) {
   this.user_command_manager = null;
   this.resp_command_dispatcher = null;
   
+  //header
+  this.catalogue_banner = null;
+  this.ws_link = null;	//link to active workspace in the toolbar
+  
   this.available_apps = [];
   
   this.set_html_code = function (html_code) {
@@ -108,4 +112,65 @@ var Catalogue = function (dom_element, dom_wrapper) {
   this.set_style = function (style) {
     this.dom_element.setStyle(style);
   }
+  
+  /*
+   * Banner operations
+   */
+  
+  var _buttonHandler = function(){
+							this.show();
+						}.bind(this);
+						
+						
+  this.getBanner = function(){
+  	return this.catalogue_banner;
+  }
+  
+  /**
+  *
+  * set the proper handlers to the workspace toolbar buttons
+  */
+  this.initToolbar = function () {
+  	this.catalogue_banner = $('catalogue_banner');
+	if (this.catalogue_banner) {
+		this.ws_link = this.catalogue_banner.getElementsBySelector('#catalogue_dragboard_link')[0];
+		
+		//set the handlers
+		OpManagerFactory.getInstance().activeWorkSpace.setToolbarButton(this.ws_link);
+	}
+  }
+  
+  /**
+  *
+  * unset the handlers of the workspace toolbar buttons
+  */		
+  this.unloadToolbar = function(){
+  	if (this.catalogue_banner) {
+		OpManagerFactory.getInstance().activeWorkSpace.unsetToolbarButton(this.ws_link);
+	}	
+  }
+  
+  /**
+  * This function knows which handler matches the catalogue link in the toolbar
+  * @param {HTML element} catalogueLinkElement
+  */
+  this.setToolbarButton = function (catalogueLinkElement){
+	Event.observe(catalogueLinkElement,
+				"click",
+				_buttonHandler,
+				false,
+				"show_catalogue"
+				); 
+  }
+
+  /**
+  * This function knows how to stop observing the wiring link event
+  * @param {HTML element} catalogueLinkElement
+  */
+  this.unsetToolbarButton = function (catalogueLinkElement){
+	Event.stopObserving(catalogueLinkElement,
+						'click',
+						_buttonHandler);
+  }
+  
 }

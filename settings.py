@@ -64,15 +64,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 LOGGING_LEVEL = 2
 #################################################################
 
-#################################################################
-# DEFAULT THEME
-#################################################################
-# Uncomment this to override the default Theme.
-#DEFAULT_THEME = "default"
-# Uncomment this to edit allowed templates to overwrite by themes
-#ALLOWED_TEMPLATES_IN_THEMES = ["index.html", "500.html", "400.html",
-#                               "registration/login.html"]
-#################################################################
+LAYOUT = "classic"
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
@@ -119,7 +111,6 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'processors.template_loader.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
 )
 
@@ -161,6 +152,7 @@ INSTALLED_APPS = (
     'user',
     'API',
     'uploader',
+    'layout',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
@@ -185,7 +177,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.only_one_css_file',
     'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
-    'processors.context_processors.theme_url',
+    'processors.context_processors.skins',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',
