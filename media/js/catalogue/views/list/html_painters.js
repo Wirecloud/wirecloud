@@ -249,7 +249,6 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
 	var previous_image = 'go-previous.png';
 	var next_image = 'go-next.png';
 	var last_image = 'go-last.png';
-	var theme =  _currentTheme.name;
 	
 	if (current_page == 1) {
       first_image = 'go-first-disabled.png';
@@ -263,7 +262,7 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
 	
 	var pagination_html = 
     	this.pagination_template.evaluate({'first_image': first_image, 'next_image': next_image, 'previous_image': previous_image, 
-    	                                   'last_image': last_image, 'theme': theme});
+    	                                   'last_image': last_image});
 	
 	this.dom_element.update(pagination_html);
 	

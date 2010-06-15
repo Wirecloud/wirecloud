@@ -1,0 +1,407 @@
+#showcase {
+  overflow:hidden;
+}
+
+#catalogue select {
+  height: 20px;
+  font-size: 8pt;
+}
+
+#catalogue .toolbar_menu {
+  height: 30px;
+}
+
+#catalogue .toolbar_menu div {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  border-left: 1px solid;
+  font-size: 14px;
+}
+
+#catalogue .toolbar {
+  border-bottom: 1px solid;
+}
+
+#catalogue .toolbar_menu .first_toolbar_button {
+	border-left: 0px;
+}
+
+.no_border {
+  border: 0px;
+}
+
+#catalogue .last_toolbar_button {
+  border-right: 1px solid;
+}
+
+#catalogue .developer_image {
+  width: 200px;
+  height: 120px;
+  padding-left: 20px;
+  padding-top:8px;
+}
+
+#catalogue .developer_title {
+  font-size:18px;
+  padding-top:10px;
+}
+
+#catalogue .developer_block {
+  clear:both;
+  float:left;
+  margin-bottom:4px;
+  padding-left:15px;
+  padding-top:10px;
+}
+
+#catalogue .developer_description {
+  padding-left: 15px;
+  padding-top: 8px;
+  max-width: 700px;
+}
+
+#catalogue .developer_block button, #catalogue #template_uri, #catalogue #gadget_uri {
+  margin-left:15px;
+  margin-top:10px;
+}
+
+#catalogue .float_left {
+  float: left;
+}
+
+#catalogue .toolbar_menu div {
+  float: left;
+}
+
+
+#catalogue #left_bar {
+	float:left;
+	display:inline;
+	position:relative;
+	width: 13%;
+	padding: 12px 10px 0 10px;
+	margin: 0;
+	border-right:1px solid;
+	height: 1000px;
+}
+
+#catalogue #left_bar a:hover {
+   text-decoration:none;
+}
+
+#catalogue #left_bar .bar_widget {
+	margin: 0 0 20px 0;
+}
+
+#catalogue #left_bar .widget_title {
+	font-size: 105%;
+	margin: 10px 0;
+}
+
+#catalogue #left_bar .widget_content {
+	overflow-x: auto;
+	margin-top: 10px;
+}
+
+#catalogue #menu_options .simple_search {
+	position: relative;
+}
+
+#catalogue #menu_options .simple_search #simple_search_text {
+	width:95%;
+	margin-bottom: 3px;
+	padding: 2px;
+}
+
+#catalogue #left_bar .link {
+	display: block;
+	padding-bottom: 5px;
+}
+
+#catalogue #catalogue_content {
+	float:left;
+    padding-left:10px;
+    position:relative;
+    width:84%;
+}
+
+#catalogue .center .resources {
+  overflow-y:auto;
+  overflow-x:hidden;
+  float:left;
+  width: 100%;
+}
+
+#catalogue .paginate_show {
+    display: inline;
+    float:right;
+    margin-right: 10px;
+}	
+
+#catalogue .orderby {
+	display:inline;
+	float:right;
+	margin-right: 10px;
+}
+
+#catalogue .paginate {
+	padding-top:2px;
+	padding-bottom:7px;
+	float:right;
+	margin-right: 10px;
+}	
+
+#catalogue .center .resources {
+	position:relative;
+	overflow-y:auto;
+	overflow-x:hidden;
+	float:left;
+}
+
+#catalogue .center .resources .resource {
+  clear:both;
+  margin-right:10px;
+  position:relative;
+}
+
+#catalogue .center .resources .header_resource {
+	border-top: 1px solid;
+}
+
+#catalogue .center .resources .resource .resource_name {
+	padding-bottom: 8px;
+	max-width: 350px;
+}
+
+.purchase_window_table td.app_name {
+	color: darkBlue;
+}
+
+.purchase_window_table tr.total_row td {
+	border-top: 1px solid;
+	border-bottom: 1px solid;
+}
+
+.purchase_window_table tr.total_row {
+	cursor: default;
+}
+
+.tags .tag_links {
+	float: left;
+}
+
+#catalogue #toolbar {
+  width: 100%;
+}
+
+#catalogue .toolbar_option {
+  float: left;
+}
+
+#gadgetToAppWindow .app_image {
+  position:absolute;
+  right:8px;
+  top:30px;
+  width:140px;
+  height: 65px;
+}
+
+#gadgetToAppWindow .app_info {
+  width: 525px;
+}
+
+#gadgetToAppWindow .app_desc, #gadgetToAppWindow .app_gadgets {
+  clear: both;
+}
+
+.show_external_link {
+  padding-bottom: 10px;
+}
+
+#gadgetToAppWindow b {
+  clear: both;
+  float: left;
+  padding-right: 5px;
+}
+
+#catalogue #menu_options .simple_search {
+  position: relative;
+}
+
+#catalogue #menu_options .simple_search input {
+  width: 85%;
+}
+
+#catalogue #menu_options .simple_search #simple_search_text {
+  width:95%;
+  margin-bottom: 3px;
+}
+
+#catalogue .center .resources .resource .resource_name {
+	cursor: pointer;
+	font-size: 20px;
+}
+
+#catalogue .center .resources .resource .image {
+  width: 170px;
+  height: 80px;
+  border: 1px solid;
+  cursor:pointer;
+}
+
+#catalogue .center .resources .resource .popularity {
+  float: left;
+  margin: 5px;
+}
+
+#catalogue .center .resources .resource .desc {
+  clear: both;
+  max-width: 650px;
+}
+
+#catalogue .center .resources .resource .tags {
+  float: left;
+  padding-top: 10px;
+}
+
+#catalogue .center .resources .resource .tags .tags_label {
+  float: left;
+  margin-right:10px;
+}
+
+#catalogue .center .resources .resource .tags .important_tags {
+  float: left;
+  padding-left: 10px;
+}
+
+#catalogue .center .resources .resource .footer_resource {
+  height: 10px;
+  clear: both;
+  bottom: 0px;
+  float: left;
+}
+
+#catalogue .center .resources .resource .left_column_resource {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+#catalogue .center .resources .resource .right_column_resource {
+  float: left;
+  width: 75%;
+}
+
+#catalogue .center .resources .resource .header_resource {
+  height: 10px;
+  clear: both;
+  top: 0px;
+}
+
+#close_info_resource {
+	position:absolute;
+	z-index:2;
+	right:10px;
+	top:10px;
+}
+
+.purchase_window_text {
+	max-width: 500px;
+}
+
+.purchase_window_table {
+	margin-top:10px;
+	width: 100%;
+}
+
+.purchase_window_table th {
+	border-bottom:1px solid;
+	padding-left: 6px;
+	text-align: left;
+}
+
+.purchase_window_table th.app_name {
+	width: 60%;
+}
+
+.purchase_window_table th.app_signup_price,  .purchase_window_table th.app_monthly_price {
+	width: 20%;
+}
+
+.purchase_window_table td {
+	border-left:1px solid;
+	padding-left: 6px;
+	text-align: left;
+	padding: 6px;
+	margin: 0px;
+}
+
+.purchase_window_table tr {
+	cursor: pointer;
+	cursor: hand;
+}
+
+#purchase_window_table .right_border {
+  border-right: 1px solid;
+}
+
+.help_text_enabled {
+	display: block;
+	position: absolute;
+	z-index: 5;
+	max-width: 450px;
+}
+
+.help_text_disabled {
+	display: none;	
+	position: absolute;
+}
+
+#app_image {
+	width: 150px;	
+	height: 70px;
+	border: none;
+	clear: both;
+	float: right;
+}
+
+#app_name {
+	clear: both;
+	font-size: 16px;
+	float: left;	
+	padding-bottom: 10px;
+	min-width: 400px;
+}
+
+#app_desc, #app_gadget_list {
+	clear: both;
+}
+
+#app_vendor, #app_signup_fee, #app_monthly_fee {
+	padding-left: 6px;
+	float: left;
+}
+
+#app_close{
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+
+.floating_left {
+	float: left;
+	font-weight: bold;
+	clear: left;
+}
+
+.clearing_both {
+	clear: both;
+	font-weight: bold;
+}
+
+#colorpicker301{
+	position: fixed;
+}
+
