@@ -50,14 +50,18 @@
 	</div>
 
 	<div id="catalogue_banner" class="banner" style="display:none">
-		<div style="background: url('{{ branding.catalogue.logo.url }}') no-repeat" 
-			{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" {% else %} class="logo_layout" {% endif %}>
-				<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
-		</div>
-		<div class="toolbar_section">
-			<input type="button" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_marked catalogue_link" disabled="true" value="{% trans 'Add Gadgets' %}"/>
-			<input type="button" id="catalogue_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
-		</div>
+	  <div style="background: url('{{ branding.catalogue.logo.url }}') no-repeat" 
+		{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" {% else %} class="logo_layout" {% endif %}>
+			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
+	  </div>
+	  <div class="toolbar_section">
+	    <div class="toolbar_menu">
+	      <div id="gadgets_button" class="first_toolbar_button">Gadgets</div>
+	      <div id="mashups_button">Aplicaciones</div>
+	      <div id="developers_button">Crea tus gadgets</div>
+	      <div id="catalogue_dragboard_link" class="last_toolbar_button">Volver</div>
+	    </div>
+	  </div>
 	</div>
 
 	<div id="bar">

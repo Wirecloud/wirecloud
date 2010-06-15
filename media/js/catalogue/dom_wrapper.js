@@ -25,9 +25,29 @@
 
 var DOM_Wrapper = function (root_element, element_ids) {
   this.root_element = root_element;
+  this.header_element = $('header');
+  
   this.dom_element_ids = element_ids;
   
   this.dom_codes = null;
+}
+
+DOM_Wrapper.prototype.search_by_selector = function (element_selector) {
+  var elements = this.root_element.getElementsBySelector(element_selector);
+
+  if (elements && elements.length == 1)
+    return elements[0];
+  
+  // Missing selector in this.root_element
+  // Looking for it in this.header
+  var elements = this.header_element.getElementsBySelector(element_selector);
+
+  if (elements && elements.length == 1)
+    return elements[0];
+  else {
+    alert("Error in catalogue rendering!")
+    return null;
+  }
 }
 
 DOM_Wrapper.prototype.init = function () {
@@ -39,14 +59,7 @@ DOM_Wrapper.prototype.init = function () {
     var element_code = element_codes[i];
     var element_selector = this.dom_element_ids[element_code];
   
-    var elements = this.root_element.getElementsBySelector(element_selector);
-	  
-    if (! elements || elements.length != 1) {
-      alert("Error in catalogue rendering!")
-	  return;
-    }
-	  
-    var element = elements[0];
+    var element = this.search_by_selector(element_selector);
 	  
     this.dom_codes[element_code] = element;
   }

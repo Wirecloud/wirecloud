@@ -54,14 +54,7 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	  var element_selector = command_keys[i];
 	  var command_code = this.commands_info[element_selector];
 	  
-	  var elements = dom_element.getElementsBySelector(element_selector);
-		  
-	  if (! elements || elements.length != 1) {
-	    alert("Error in catalogue rendering!")
-		return;
-	  }
-		  
-	  var element = elements[0];
+	  var element = this.dom_wrapper.search_by_selector(element_selector);
 		  
 	  this.create_general_command(command_code, element);
 	}
