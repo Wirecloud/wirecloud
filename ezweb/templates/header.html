@@ -3,6 +3,7 @@
 	<div id="ws_banner" class="banner">
 		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div id="toolbar_section" class="toolbar_section">
+		  <div class="area_name">Workspace</div>
 		  <div class="toolbar_menu">
 	        <div id="catalogue_link" class="first_toolbar_button">{% trans 'Add Gadgets' %}</div>
 	        <div id="wiring_link">{% trans 'Connect Gadgets' %}</div>
@@ -46,6 +47,7 @@
 	<div id="wiring_banner" class="banner" style="display:none">
 		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div class="toolbar_section">
+		  <div class="area_name">Wiring</div>
 		  <div class="toolbar_menu">
 	        <div id="wiring_dragboard_link" class="first_toolbar_button last_toolbar_button">Volver</div>
 	      </div>
@@ -58,6 +60,7 @@
 			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
 	  </div>
 	  <div class="toolbar_section">
+	  	<div class="area_name">Catalogue</div>
 	    <div class="toolbar_menu">
 	      <div id="gadgets_button" class="first_toolbar_button">Gadgets</div>
 	      <div id="mashups_button">Aplicaciones</div>

@@ -7,28 +7,9 @@
   font-size: 8pt;
 }
 
-#header .toolbar_menu {
-  height: 26px;
-}
-
-#header .toolbar_menu > div {
-  padding:3px 10px;
-  border-left: 1px solid;
-  font-size: 14px;
-  float: left;
-  cursor: pointer;
-}
-
-#header .toolbar_menu .first_toolbar_button {
-	border-left: 0px;
-}
 
 .no_border {
   border: 0px;
-}
-
-#header .last_toolbar_button {
-  border-right: 1px solid;
 }
 
 #catalogue .developer_image {

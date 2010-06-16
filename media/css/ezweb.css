@@ -128,7 +128,8 @@ td {
 .logo_layout {
     position: relative;
     float: left;
-    margin-top: 5px;
+    margin-top: 2.5px;
+	margin-bottom: 2.5px;
     margin-left: 10px;
     width: 250px;
     height: 45px;
@@ -181,9 +182,10 @@ td {
 
 .toolbar_section {
     position: relative;
-    margin-left: 40px;
     float: left;
-    margin-top: 3px;
+    top: 12px;
+	border-left: 1px solid white; /*CAMBIAAAAAAAAAAAR*/
+	padding-left: 10px;
 }
 
 .toolbar_section input[type = button] {
@@ -191,6 +193,37 @@ td {
     padding-bottom: 3px;
 }
 
+
+#header .toolbar_menu {
+  height: 26px;
+  float: left;
+  margin-left: 40;
+}
+
+#header .toolbar_menu > div {
+  padding:3px 10px;
+  border-left: 1px solid;
+  font-size: 10pt;
+  float: left;
+  cursor: pointer;
+}
+
+#header .toolbar_menu .first_toolbar_button {
+	border-left: 0px;
+}
+
+#header .last_toolbar_button {
+  border-right: 1px solid;
+}
+
+#header .toolbar_section .area_name{
+	float:left;
+	font-size:12pt;
+	margin-right:20px;
+	padding-top: 3px;
+	cursor: default;
+	width: 90px;
+}
 
 #floating_gadgets_launcher {
     float: right;
