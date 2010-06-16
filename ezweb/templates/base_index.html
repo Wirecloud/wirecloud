@@ -16,7 +16,7 @@
 	<!-- Base and Theme css -->
 	{% if only_one_css_file %}
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/css/ezweb_theme_{{ ezweb_release }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/{{theme.name}}/css/ezweb_theme_{{ ezweb_release }}.css"/>
 	{% else %}
 	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}{{ layout.general }}" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.general }}" />

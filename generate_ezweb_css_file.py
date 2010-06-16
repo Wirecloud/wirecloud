@@ -27,42 +27,28 @@
 #
 #...............................licence...........................................#
 
-from processors.context_processors import ezweb_release, theme_url
+from processors.context_processors import ezweb_release
+from layout.models import Layout
+from django.conf import settings
+from django.utils import simplejson
 
-files_css_normal = [
-   'media/css/ezweb.css', 
-   'media/css/catalogue.css',
-   'media/css/dragboard.css', 
-   'media/css/wiring.css',
-]
+base_dir = 'media/' 
+layout = Layout.objects.get(name=settings.LAYOUT)
 
-files_css_theme_default = [
-   'media/themes/default/css/ezweb.css', 
-   'media/themes/default/css/catalogue.css',
-   'media/themes/default/css/dragboard.css', 
-   'media/themes/default/css/wiring.css',
-]
+layout_css = simplejson.loads(layout.layout_css)
+files_css_normal = [base_dir+layout_css["general"],
+                    base_dir+layout_css["dragboard"],
+                    base_dir+layout_css["wiring"],
+                    base_dir+layout_css["catalogue"]
+                    ]
 
-files_css_theme_darkBlue = [
-   'media/themes/darkBlue/css/ezweb.css', 
-   'media/themes/darkBlue/css/catalogue.css',
-   'media/themes/darkBlue/css/dragboard.css', 
-   'media/themes/darkBlue/css/wiring.css',
-]
+theme_css = simplejson.loads(layout.theme.theme_css)
+files_css_theme = [base_dir+theme_css["general"],
+                    base_dir+theme_css["dragboard"],
+                    base_dir+theme_css["wiring"],
+                    base_dir+theme_css["catalogue"]
+                    ]
 
-files_css_theme_Zaragoza = [
-   'media/themes/Zaragoza/css/ezweb.css', 
-   'media/themes/Zaragoza/css/catalogue.css',
-   'media/themes/Zaragoza/css/dragboard.css', 
-   'media/themes/Zaragoza/css/wiring.css',
-]
-
-files_css_theme_ZaragozaDarkBlue = [
-   'media/themes/ZaragozaDarkBlue/css/ezweb.css', 
-   'media/themes/ZaragozaDarkBlue/css/catalogue.css',
-   'media/themes/ZaragozaDarkBlue/css/dragboard.css', 
-   'media/themes/ZaragozaDarkBlue/css/wiring.css',
-]
 
 def write_file(final_file_name, file_list):
     try:
@@ -89,7 +75,4 @@ def write_file(final_file_name, file_list):
 #Main
 
 write_file('media/css/ezweb_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_normal)
-write_file('media/themes/darkBlue/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_darkBlue)
-write_file('media/themes/default/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_default)
-write_file('media/themes/Zaragoza/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_Zaragoza)
-write_file('media/themes/ZaragozaDarkBlue/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme_ZaragozaDarkBlue)
+write_file('media/themes/' + layout.theme.name + '/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme)

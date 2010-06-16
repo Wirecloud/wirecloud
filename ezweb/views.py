@@ -220,9 +220,9 @@ def get_layout_context(layout, user):
     context["layout"] = simplejson.loads(layout.layout_css)
     #theme context
     context["theme"] ={}
-    context["theme"] = simplejson.loads(layout.theme.definition)
+    context["theme"] = simplejson.loads(layout.theme.theme_css)
     context["theme"]["name"] = layout.theme.name
-    context["theme"]["images"] = json_encode(context["theme"]["images"])
+    context["theme"]["images"] = layout.theme.images
     #branding context
     context["branding"] = {}
     context["branding"]["workspace"] = get_workspace_branding_data(None, user) 

@@ -20,7 +20,8 @@
     </object>
     <object pk="1" model="layout.theme">
         <field type="CharField" name="name">default</field>
-        <field type="TextField" name="definition">{"general":"themes/default/css/ezweb.css", "dragboard":"themes/default/css/dragboard.css", "wiring":"themes/default/css/wiring.css",  "catalogue":"themes/default/css/catalogue_list.css", "ie":"themes/default/css/ie.css", "lite":"themes/default/css/ezweb_lite.css", "images":{
+        <field type="TextField" name="theme_css">{"general":"themes/default/css/ezweb.css", "dragboard":"themes/default/css/dragboard.css", "wiring":"themes/default/css/wiring.css",  "catalogue":"themes/default/css/catalogue_list.css", "ie":"themes/default/css/ie.css", "lite":"themes/default/css/ezweb_lite.css"}</field>
+        <field type="TextField" name="images">{
   "icons": {
     "add": "add.png",
     "catalogue": "catalogue.png",
@@ -133,11 +134,12 @@
     "error.png",
     "new.png"
   ]
-}}</field>
+}</field>
     </object>
     <object pk="2" model="layout.theme">
         <field type="CharField" name="name">darkBlue</field>
-        <field type="TextField" name="definition">{"general":"themes/darkBlue/css/ezweb.css", "dragboard":"themes/darkBlue/css/dragboard.css", "catalogue":"themes/darkBlue/css/catalogue_list.css", "wiring":"themes/darkBlue/css/wiring.css", "ie":"themes/darkBlue/css/ie.css", "lite":"themes/darkBlue/css/ezweb_lite.css", "images":{
+        <field type="TextField" name="theme_css">{"general":"themes/darkBlue/css/ezweb.css", "dragboard":"themes/darkBlue/css/dragboard.css", "catalogue":"themes/darkBlue/css/catalogue_list.css", "wiring":"themes/darkBlue/css/wiring.css", "ie":"themes/darkBlue/css/ie.css", "lite":"themes/darkBlue/css/ezweb_lite.css"}</field>
+        <field type="TextField" name="images">{
   "icons": {
     "add": "add.png",
     "catalogue-wiki": "wiki.png",
@@ -244,7 +246,6 @@
     "error.png",
     "new.png"
   ]
-}
 }</field>
     </object>
     <object pk="1" model="layout.layout">
@@ -319,9 +320,7 @@
 "body_bg": "white", "banner_bg":"url(/ezweb/themes/default/images/header_deg.gif) repeat-x top left", "banner_font":"white", "container_bg": "url(/ezweb/themes/default/images/fond.gif) top left", "container_border": "#C2CBD2",
 
 "toolbar_marked_font": "#2D6F9C", "toolbar_marked_bg": "transparent url(/ezweb/themes/default/images/button-selected.png) repeat-x scroll left top", "toolbar_unmarked_font": "#2D6F9C", "toolbar_unmarked_bg": "transparent url(/ezweb/themes/default/images/button.png) repeat-x scroll left top", "toolbar_hover_font": "#2D6F9C", "toolbar_hover_bg": "transparent url(/ezweb/themes/default/images/button.png) repeat-x scroll left top"
-}
-
-</field>
+}</field>
         <field to="layout.skintemplate" name="skin_template" rel="ManyToOneRel">2</field>
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
         <field type="BooleanField" name="default">True</field>

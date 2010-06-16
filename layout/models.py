@@ -51,7 +51,8 @@ class Branding(models.Model):
     
 class Theme(models.Model):
     name = models.CharField(_('Name'), max_length=250, unique = True)
-    definition = models.TextField(_('theme definition'))
+    theme_css = models.TextField(_('Theme css'))
+    images = models.TextField(_('Images definition'))
     default_brandings = models.ManyToManyField(Branding, through="ThemeBranding", blank=True, null=True)
     
     def __unicode__(self):
