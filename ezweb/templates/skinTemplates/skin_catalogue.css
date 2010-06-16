@@ -21,20 +21,27 @@ body.catalogue_view {
 }
 
 /* toolbar button unmarked */
-#catalogue_banner .toolbar_marked {
+#catalogue_banner .toolbar_menu div {
 	color: {{ toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ toolbar_marked_bg }};
 }
 
 /* toolbar button marked */
-#catalogue_banner .toolbar_unmarked {
+#catalogue_banner .toolbar_menu div.selected_section {
 	color: {{ toolbar_unmarked_font }};
 	font-weight: normal;
 	background: {{ toolbar_unmarked_bg }};
 }
 
-#catalogue_banner .toolbar_unmarked:hover {
+#catalogue_banner .toolbar_menu div.selected_section:hover {
+	color: {{ toolbar_unmarked_font }};
+	font-weight: normal;
+	background: {{ toolbar_unmarked_bg }};
+}
+
+/* toolbar button hover */
+#catalogue_banner .toolbar_menu div:hover {
 	color: {{ toolbar_hover_font }};
 	font-weight: normal;
 	background: transparent {{ toolbar_hover_bg }};
@@ -46,17 +53,13 @@ body.catalogue_view {
 
 /* dragboard */
 #left_bar{
-	background: {{ container_bg }};
-	border-color: {{ container_border }};
+	background: {{ catalogue_left_bg }};
+	border-color: {{ container_left_border }};
 }
 
 /* resources */
-#catalogue_center{
-	background: {{ container_bg }};
-	border-color: {{ container_border }};
-}
 
 #catalogue_content{
-	background: {{ container_bg }};
-	border-color: {{ container_border }};
+	background: {{ catalogue_content_bg }};
+	border-color: {{ catalogue_content_border }};
 }

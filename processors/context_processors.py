@@ -161,8 +161,7 @@ def skins(request):
     if (not default_ws_skin):
         default_ws_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=ws_type, default=True).name
     if (not default_cat_skin):
-        #default_cat_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=catalogue_type, default=True).name
-        default_cat_skin = "default"
+        default_cat_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=catalogue_type, default=True).name
     
     return {'SKINS': json_encode(skins), 'DEFAULT_SKIN': default_ws_skin, 'CATALOGUE_SKIN': default_cat_skin}
 

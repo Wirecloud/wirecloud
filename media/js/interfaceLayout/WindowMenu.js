@@ -1024,7 +1024,7 @@ function PublishWindowMenu (element) {
 			type: 'fieldset',
 			elements: {
 				'imageURI': {
-					label: gettext('Image for the catalogue (URL)'),
+					label: gettext('Image for the catalogue (170x80 px)'),
 					type: 'fileUrl',
 					linkHandler: function(){
 						this.openUploadWindow('imageURI');
@@ -1035,14 +1035,14 @@ function PublishWindowMenu (element) {
 					type: 'boolean'
 				},
 				'logo': {
-					label: gettext('Banner logo'),
+					label: gettext('Banner logo (250x45 px)'),
 					type: 'fileUrl',
 					linkHandler: function(){
 						this.openUploadWindow('logo');
 					}.bind(this)
 				},
 				'viewerLogo': {
-					label: gettext('Banner logo for viewer mode'),
+					label: gettext('Banner logo for viewer mode (150x25 px)'),
 					type: 'fileUrl',
 					linkHandler: function(){
 						this.openUploadWindow('viewerLogo');

@@ -16,7 +16,7 @@
 	<!-- Base and Theme css -->
 	{% if only_one_css_file %}
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{CAMBIAR}}/css/ezweb_theme_{{ ezweb_release }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/css/ezweb_theme_{{ ezweb_release }}.css"/>
 	{% else %}
 	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}{{ layout.general }}" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.general }}" />
@@ -116,6 +116,7 @@ _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.userna
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
 _URIConstants.prototype.FILE_UPLOADER = '/uploader';
 _URIConstants.prototype.BASIC_THEME = '/ezweb/themes/{{ theme.name }}'
+_URIConstants.prototype.SKIN = '/layout/skin/'
 
 {% if AUTHENTICATION_SERVER_URL %}
 	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
@@ -128,6 +129,8 @@ _URIConstants.prototype.BASIC_THEME = '/ezweb/themes/{{ theme.name }}'
 {% else %}
     _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = null;
 {% endif%}
+
+
 
 
 var URIs = new _URIConstants();
@@ -174,8 +177,6 @@ var policy_lists = {{ policies|safe|default:"null" }};
 
 {% endblock %}
 
-
-
 <!-- Initialization code -->
 <script type="text/javascript">
 	function setLanguage(language) {
@@ -196,6 +197,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 	opManager.loadEnviroment();
 </script>
 
-<!-- Skins CSS area 
-<link rel="stylesheet" type="text/css" href="{{ CATALOGUE_SKIN }}" />-->
+<!-- Catalogue Skin -->
+<link rel="stylesheet" type="text/css" href="/layout/skin/{{ CATALOGUE_SKIN }}" />
+
 </html>

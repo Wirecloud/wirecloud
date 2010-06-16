@@ -175,7 +175,7 @@ function SkinManager(){
 SkinManager.prototype._setSkin = function (name){
 	this.skinName = name;
 //	this._skinURL = "/css_generator/workspace/" + name;
-	this._skinURL = "/layout/skin/" + name;
+	this._skinURL = URIs.SKIN + name;
 }
 
 SkinManager.prototype._appendStyle = function(url) {
