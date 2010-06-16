@@ -184,8 +184,6 @@ td {
     margin-left: 40px;
     float: left;
     margin-top: 3px;
-    z-index: 3;
-    white-space: nowrap;
 }
 
 .toolbar_section input[type = button] {
@@ -193,26 +191,6 @@ td {
     padding-bottom: 3px;
 }
 
-.toolbar_marked, .toolbar_unmarked {
-    position: relative;
-    float: left;
-    width: auto !important;
-    height: 21px;
-    margin: 0 7px;
-	top: 4px;
-}
-
-.toolbar_section .toolbar_marked {
-	cursor: default;
-}
-
-#dragboard_link{
-	cursor: text;
-}
-
-.toolbar_unmarked {
-	cursor: pointer;
-}
 
 #floating_gadgets_launcher {
     float: right;
@@ -224,19 +202,15 @@ td {
     height: 15px;
 }
 
-#workspace_name {
-    position: relative;
-    display: inline;
-    margin-right: 0px;
-    margin-left: 3px;
+#workspace_menu_link {
+  float:left;
+  left:5px;
+  position:relative;
+  top:5px;
 }
 
-#workspace_menu_link {
-    clear: left;
-    margin: 0 auto;
-    width: 19px;
-    height: 11px;
-    padding-top: 5px;
+#dragboard_link {
+    float: left;
 }
 
 #ws_operations_link {
@@ -276,32 +250,11 @@ body.shared #workspace_link_container span {
     top: 1px;
 	height: 20px;
 	padding-bottom: 1px;
+	width: auto;
 }
 
 #workspace_link_container {
     float: left;
-}
-
-.catalogue_link {
-    padding-bottom: 3px;
-}
-
-.wiring_link {
-    padding-bottom: 3px;
-}
-
-#dragboard_link {
-    padding: 0 7px;
-    top: 4px;
-}
-
-#dragboard_link span {
-    top: 3px;
-}
-
-#dragboard_link span {
-    position: relative;
-    margin-right: 3px;
 }
 
 #logs_link {

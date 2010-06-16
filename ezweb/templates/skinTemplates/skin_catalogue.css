@@ -12,7 +12,7 @@ body.catalogue_view {
  */
 
 /* banner */
-#catalogue_banner{
+#catalogue_banner {
 	background: {{ banner_bg }};
 }
 
@@ -20,28 +20,22 @@ body.catalogue_view {
 	color:{{ banner_font }};
 }
 
-/* toolbar button unmarked */
-#catalogue_banner .toolbar_menu div {
+/* toolbar button marked */
+#catalogue_banner .toolbar_menu > div.selected_section {
 	color: {{ toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ toolbar_marked_bg }};
 }
 
-/* toolbar button marked */
-#catalogue_banner .toolbar_menu div.selected_section {
+/* toolbar button unmarked */
+#catalogue_banner .toolbar_menu > div {
 	color: {{ toolbar_unmarked_font }};
 	font-weight: normal;
 	background: {{ toolbar_unmarked_bg }};
+	height: 18px;
 }
 
-#catalogue_banner .toolbar_menu div.selected_section:hover {
-	color: {{ toolbar_unmarked_font }};
-	font-weight: normal;
-	background: {{ toolbar_unmarked_bg }};
-}
-
-/* toolbar button hover */
-#catalogue_banner .toolbar_menu div:hover {
+#catalogue_banner hover {
 	color: {{ toolbar_hover_font }};
 	font-weight: normal;
 	background: transparent {{ toolbar_hover_bg }};
@@ -51,11 +45,12 @@ body.catalogue_view {
  * WRAPPER section
  */
 
-/* dragboard */
+/* left_bar */
 #left_bar{
 	background: {{ catalogue_left_bg }};
 	border-color: {{ container_left_border }};
 }
+
 
 /* resources */
 

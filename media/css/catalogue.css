@@ -7,25 +7,19 @@
   font-size: 8pt;
 }
 
-#catalogue_banner .toolbar_menu {
-  height: 30px;
+#header .toolbar_menu {
+  height: 26px;
 }
 
-#catalogue_banner .toolbar_menu div {
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 7px;
-  padding-bottom: 7px;
+#header .toolbar_menu > div {
+  padding:3px 10px;
   border-left: 1px solid;
   font-size: 14px;
   float: left;
+  cursor: pointer;
 }
 
-#catalogue .toolbar {
-  border-bottom: 1px solid;
-}
-
-#catalogue_banner .toolbar_menu .first_toolbar_button {
+#header .toolbar_menu .first_toolbar_button {
 	border-left: 0px;
 }
 
@@ -33,7 +27,7 @@
   border: 0px;
 }
 
-#catalogue_banner .last_toolbar_button {
+#header .last_toolbar_button {
   border-right: 1px solid;
 }
 

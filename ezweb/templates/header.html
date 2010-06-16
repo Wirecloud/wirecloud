@@ -3,16 +3,18 @@
 	<div id="ws_banner" class="banner">
 		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div id="toolbar_section" class="toolbar_section">
-			<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="catalogue_link toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
-			<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="wiring_link toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
-			<div id="workspace_link_container">
-				<div id="dragboard_link" class="toolbar_marked">
+		  <div class="toolbar_menu">
+	        <div id="catalogue_link" class="first_toolbar_button">{% trans 'Add Gadgets' %}</div>
+	        <div id="wiring_link">{% trans 'Connect Gadgets' %}</div>
+			<div id="workspace_link_container" class="last_toolbar_button selected_section">
+				<div id="dragboard_link">
 					<div id="workspace_name"></div>
 				</div>
 				<div id="workspace_menu_link">
 					<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
 				</div>
 			</div>
+		  </div>
 		</div>
 		<div id="greeting">
 			<div class="languages">
@@ -44,8 +46,9 @@
 	<div id="wiring_banner" class="banner" style="display:none">
 		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div class="toolbar_section">
-			<input type="button" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_marked wiring_link" disabled="true" value="{% trans 'Connect Gadgets' %}"/>
-			<input type="button" id="wiring_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
+		  <div class="toolbar_menu">
+	        <div id="wiring_dragboard_link" class="first_toolbar_button last_toolbar_button">Volver</div>
+	      </div>
 		</div>
 	</div>
 
