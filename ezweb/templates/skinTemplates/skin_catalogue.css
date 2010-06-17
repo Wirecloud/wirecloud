@@ -20,6 +20,10 @@ body.catalogue_view {
 	color:{{ banner_font }};
 }
 
+#catalogue_banner .toolbar_section {
+	border-color:{{ banner_font }};
+}
+
 /* toolbar button marked */
 #catalogue_banner .toolbar_menu > div.selected_section {
 	color: {{ toolbar_marked_font }};

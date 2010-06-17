@@ -3,7 +3,7 @@
 	<div id="ws_banner" class="banner">
 		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div id="toolbar_section" class="toolbar_section">
-		  <div class="area_name">Workspace</div>
+		  <div class="area_name">{% trans 'Workspace' %}</div>
 		  <div class="toolbar_menu">
 	        <div id="catalogue_link" class="first_toolbar_button">{% trans 'Add Gadgets' %}</div>
 	        <div id="wiring_link">{% trans 'Connect Gadgets' %}</div>
@@ -47,11 +47,12 @@
 	<div id="wiring_banner" class="banner" style="display:none">
 		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div class="toolbar_section">
-		  <div class="area_name">Wiring</div>
+		  <div class="area_name">{% trans 'Wiring' %}</div>
 		  <div class="toolbar_menu">
-	        <div id="wiring_dragboard_link" class="first_toolbar_button last_toolbar_button">Volver</div>
+	        <!--<div id="wiring_dragboard_link" class="first_toolbar_button last_toolbar_button">Volver</div>-->
 	      </div>
 		</div>
+		<a id="wiring_dragboard_link" class="go_back">{% trans 'Go Back' %} »</a>
 	</div>
 
 	<div id="catalogue_banner" class="banner" style="display:none">
@@ -60,14 +61,14 @@
 			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
 	  </div>
 	  <div class="toolbar_section">
-	  	<div class="area_name">Catalogue</div>
+	  	<div class="area_name">{% trans 'Catalogue' %}</div>
 	    <div class="toolbar_menu">
 	      <div id="gadgets_button" class="first_toolbar_button">Gadgets</div>
 	      <div id="mashups_button">Aplicaciones</div>
-	      <div id="developers_button">Crea tus gadgets</div>
-	      <div id="catalogue_dragboard_link" class="last_toolbar_button">Volver</div>
+	      <div id="developers_button" class="last_toolbar_button">Crea tus gadgets</div>
 	    </div>
 	  </div>
+	  <a id="catalogue_dragboard_link" class="go_back">{% trans 'Go Back' %} »</a>
 	</div>
 
 	<div id="bar">

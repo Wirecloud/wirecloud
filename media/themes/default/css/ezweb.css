@@ -44,6 +44,10 @@ a, a:visited{
 	color:white;
 }*/
 
+.go_back{
+	text-decoration: underline;
+}
+
 .form-row input[type="submit"] {
 	background: transparent url(../images/header_deg.gif) repeat;
 	color: white;

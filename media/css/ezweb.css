@@ -184,7 +184,7 @@ td {
     position: relative;
     float: left;
     top: 12px;
-	border-left: 1px solid white; /*CAMBIAAAAAAAAAAAR*/
+	border-left: 1px solid;
 	padding-left: 10px;
 }
 
@@ -220,7 +220,7 @@ td {
 	float:left;
 	font-size:12pt;
 	margin-right:20px;
-	padding-top: 3px;
+	padding-top: 2px;
 	cursor: default;
 	width: 90px;
 }
@@ -304,6 +304,15 @@ body.shared #workspace_link_container span {
   border: none;
   background: transparent url(../images/preferences.png) no-repeat;
   cursor: pointer;
+}
+
+.go_back{
+	font-size:11pt;
+	position:absolute;
+	right:30px;
+	top:14px;
+	text_decoration: underline;
+	cursor: pointer;
 }
 
 .message_section {

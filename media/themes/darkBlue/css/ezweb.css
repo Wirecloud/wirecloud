@@ -53,6 +53,10 @@ input[type="text"], input[type="password"], textarea{
 	height:65px;
 }*/
 
+.go_back{
+	text-decoration: underline;
+}
+
 .form-row input[type="submit"] { /* login form */
 	background: #666666 url(../images/button-selected.png) repeat-x scroll left top;
 	color: #B5D7ED;

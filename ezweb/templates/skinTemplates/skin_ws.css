@@ -20,6 +20,10 @@ body.dragboard_view, body.wiring_view{
 	color:{{ banner_font }};
 }
 
+#ws_banner .toolbar_section, #wiring_banner .toolbar_section{
+	border-color:{{ banner_font }};
+}
+
 /* toolbar button marked */
 #ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section {
 	color: {{ toolbar_marked_font }};
