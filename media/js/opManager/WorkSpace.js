@@ -32,8 +32,8 @@ function WorkSpace (workSpaceState) {
 		if (this.getBanner()) {
 			//The catalogue and the wiring are the ones to set the handlers of
 			//their buttons in the workspace toolbar.
-			this.wiring_link = this.bannerHTML.getElementsBySelector('#wiring_link')[0];
-			this.catalogue_link = this.bannerHTML.getElementsBySelector('#catalogue_link')[0];
+			//this.wiring_link = this.bannerHTML.getElementsBySelector('#wiring_link')[0];
+			//this.catalogue_link = this.bannerHTML.getElementsBySelector('#catalogue_link')[0];
 			
 			//set the handlers
 			this.wiringInterface.setToolbarButton(this.wiring_link);
@@ -183,7 +183,9 @@ function WorkSpace (workSpaceState) {
 
 		this.loaded = true;
 		
-			
+		
+		this._createWorkspaceMenu();
+		
 		//all the modules have been downloaded. Init now all the toolbars:
 		//catalogue, wiring and workspace.
 		this._initAllToolbars();
@@ -199,7 +201,6 @@ function WorkSpace (workSpaceState) {
 		
 		this.skinManager.loadSkin(workspaceSkin);
 
-		this._createWorkspaceMenu();
 
 		this._update_creator_options();
 		if (!this.isAllowed('preserve_lock_status'))
@@ -669,14 +670,8 @@ function WorkSpace (workSpaceState) {
 			this.contextManager.unload();
 			this.contextManager=null;
 
-		if (this.menu)
-			this.menu.remove();
-
-		if (this.mergeMenu)
-			this.mergeMenu.remove();
-		if (this.FloatingGadgetsMenu)
-			this.FloatingGadgetsMenu.remove();
-		
+		this._removeWorkspaceMenu();
+				
 		//deapply skin
 		this.skinManager.unloadSkin();
 		
@@ -813,36 +808,39 @@ function WorkSpace (workSpaceState) {
 			return this._isAllowed(action);
 		}
 	}
-
-	WorkSpace.prototype._createWorkspaceMenu = function() {
-		var idMenu = 'menu_'+this.workSpaceState.id;
-
+	
+	/*
+	 * General function to create the DropDownMenu
+	 */
+	WorkSpace.prototype._initMenu = function(idMenu, idSubMenu){
+		// get the current menu to remove it if it already exists
 		var menuHTML = $(idMenu);
-		if (menuHTML)
+		if (menuHTML) 
 			menuHTML.remove();
-
-		// worksplace menu
-		var optionPosition = 0;
-		menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"><div id="submenu_'+idMenu+'" class="submenu"></div></div>';
+		
+		// add the DOM element and create the menu
+		menuHTML = '<div id="' + idMenu + '" class="drop_down_menu">'
+		if (idSubMenu)
+			menuHTML += '<div id="' + idSubMenu + '" class="submenu"></div>'
+		menuHTML+= '</div>';
 		new Insertion.After($('menu_layer'), menuHTML);
-		this.menu = new DropDownMenu(idMenu);
+		return new DropDownMenu(idMenu);
+	}
+	
+	/*
+	 * Menu with the options to configure the workspace 
+	 */
+	WorkSpace.prototype._createConfigurationMenu = function(){
+		var idMenu = 'config_menu_'+this.workSpaceState.id;
 
-		// mergeWith workspace Menu
-		var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
-		var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
-		new Insertion.After($('menu_layer'), mergeMenuHTML);
-		this.mergeMenu = new DropDownMenu(idMergeMenu, this.menu);
-
-		//Solutions menu, taken from the categoryManager of the current catalogue. If there aren't any category, the menu is null
-/* *******By now we don't use the solutions menu ********
-		this.solutionsMenu = CatalogueFactory.getInstance("LIST_VIEW").categoryManager.getSolutionsMenu();
-		if(this.solutionsMenu)
-			this.solutionsMenu.setParentMenu(this.menu)
-*/
-
-		// adding options to workspace menu
+		this.confMenu = this._initMenu(idMenu);
+		
+		/*** Add to the menu the proper options ***/
+		var optionPosition = 0;
+		
+		// Mark as active option
 		if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
-			this.activeEntryId = this.menu.addOption(_currentTheme.getIconURL('workspace_active'),
+			this.activeEntryId = this.confMenu.addOption(_currentTheme.getIconURL('workspace_active'),
 				gettext("Mark as Active"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -850,9 +848,9 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
-
+		//Rename option
 		if (this.isAllowed('rename')) {
-			this.menu.addOption(_currentTheme.getIconURL('rename'),
+			this.confMenu.addOption(_currentTheme.getIconURL('rename'),
 				gettext("Rename"),
 				function() {
 					OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
@@ -860,19 +858,19 @@ function WorkSpace (workSpaceState) {
 				},
 				optionPosition++);
 		}
-
+		// Workspace preferences option
 		if (this.isAllowed('change_preferences')) {
-			this.menu.addOption(_currentTheme.getIconURL('workspace_preferences'),
+			this.confMenu.addOption(_currentTheme.getIconURL('workspace_preferences'),
 				gettext("Preferences"),
 				function() {
 					LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
 				}.bind(this),
 				optionPosition++);
 		}
-
+		// Lock option (TODO: Add an element in the toolbar and remove this option) 
 		if (this.isAllowed('change_lock_status')) {
 			this.unlockEntryPos = optionPosition;
-			this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
+			this.unlockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('unlock'),
 				gettext("Unlock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -880,7 +878,7 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 
-			this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
+			this.lockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('lock'),
 				gettext("Lock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -890,18 +888,9 @@ function WorkSpace (workSpaceState) {
 			var res = this._checkLock();
 			optionPosition -= res;
 		}
-
-		if (this.isAllowed('share')) {
-			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
-				gettext("Share workspace"),
-				function() {
-					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
-				}.bind(this),
-				optionPosition++, null, "share_workspace");
-		}
-
+		// Delete option
 		if (this.isAllowed('add_remove_workspaces')) {
-			this.menu.addOption(_currentTheme.getIconURL('remove'),
+			this.confMenu.addOption(_currentTheme.getIconURL('remove'),
 				gettext("Remove"),
 				function() {
 					var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
@@ -910,43 +899,185 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
-
-		if (this.isAllowed('publish')) {
-			//TODO:Intermediate window to ask for data (name, description...)
-			this.menu.addOption(_currentTheme.getIconURL('workspace_publish'),
-				gettext("Publish workspace"),
-				function() {
-					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
-				}.bind(this),
-				optionPosition++, null, "publish_workspace");
-		}
-
-		if (this.isAllowed('merge_workspaces') && (OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1)) { //there are several workspaces
-			this.menu.addOption(_currentTheme.getIconURL('workspace_merge'),
+		//Merge workspace option
+		if (this.isAllowed('merge_workspaces') && 
+			(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1)) { //there are several workspaces
+			
+			// mergeWith workspace Menu
+			var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
+			var mergeMenuHTML = '<div id="'+idMergeMenu+'" class="drop_down_menu"></div></div>';
+			new Insertion.After($('menu_layer'), mergeMenuHTML);
+			this.mergeMenu = new DropDownMenu(idMergeMenu, this.confMenu);
+			
+			this.confMenu.addOption(_currentTheme.getIconURL('workspace_merge'),
 				gettext("Merge with workspace..."),
 				function(e) {
 					LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOpsSubMenu', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
 				}.bind(this),
 				optionPosition++);
 		}
+		
+		// add the event listener
+		Event.observe(this.confLauncher, 'click', 
+						function(e){
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							target.blur();
+							LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.confMenu, Event.pointerX(e), Event.pointerY(e));
+						}.bind(this));
+		
+	
+	}
+	
+	
+	/* 
+	 * Menu with the share and publish options 
+	 */
+	WorkSpace.prototype._createSharingMenu = function(){
+		var idMenu = 'sharing_menu_'+this.workSpaceState.id;
 
+		this.sharingMenu = this._initMenu(idMenu);
+		
+		/*** Add to the menu the proper options ***/
+		var optionPosition = 0;		
+		
+		if (this.isAllowed('share')) {
+			this.sharingMenu.addOption(_currentTheme.getIconURL('workspace_publish'),
+				gettext("Share workspace"),
+				function() {
+					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
+				}.bind(this),
+				optionPosition++, null, "share_workspace");
+		}
+		
+		if (this.isAllowed('publish')) {
+			//TODO:Intermediate window to ask for data (name, description...)		
+			this.sharingMenu.addOption(_currentTheme.getIconURL('workspace_publish'),
+				gettext("Publish workspace"),
+				function() {
+					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
+				}.bind(this),
+				optionPosition++, null, "publish_workspace");
+		}
+		
+		// add the event listener
+		Event.observe(this.sharingLauncher, 'click', 
+						function(e){
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							target.blur();
+							LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.sharingMenu, Event.pointerX(e), Event.pointerY(e));
+						}.bind(this));
+	
+	}
+	
+	
+	/* 
+	 *Menu with the "go to" options 
+	 */
+	WorkSpace.prototype._createGoToMenu = function(){
+		var idMenu = 'goto_menu_'+this.workSpaceState.id;
+		var idSubMenu = "submenu_" + idMenu;
+
+		this.goToMenu = this._initMenu(idMenu, idSubMenu);
+		
+		/*** Add to the menu the proper options ***/
+		var optionPosition = 0;
+				
+		// catalogue access option
+		if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')){
+				var catId = this.goToMenu.addOption(null,
+								gettext("Catalogue"),
+								function() {
+									// the action of going to the catalogue is set by the own catalogue module
+									LayoutManagerFactory.getInstance().hideCover();
+								},
+								optionPosition++);
+				this.catalogue_link = $(catId)
+		}
+		
+		//wiring access option
+		if (this.isAllowed('connect_igadgets')){
+			var wiringId = this.goToMenu.addOption(null,
+								gettext("Wiring"),
+								function() {
+									// the action of going to the wiring is set by the own wiring module
+									LayoutManagerFactory.getInstance().hideCover();
+								},
+								optionPosition++);
+			this.wiring_link = $(wiringId)
+		}
+				
+		//new workspace option
 		if (this.isAllowed('add_remove_workspaces') && this.isAllowed('create_custom_workspaces')) {
 			// EzWeb IE6 version does not allow creating new Workspaces
-
-			this.menu.addOption(_currentTheme.getIconURL('add'),
+			 this.goToMenu.addOption(_currentTheme.getIconURL('add'),
 				gettext("New workspace"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
 				},
 				optionPosition++);
+			
 		}
+		
+		
+		// add the event listener
+		Event.observe(this.goToLauncher, 'click', 
+						function(e){
+							var target = BrowserUtilsFactory.getInstance().getTarget(e);
+							target.blur();
+							LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.goToMenu, Event.pointerX(e), Event.pointerY(e));
+						}.bind(this));
+
+	}
+	
+	/* 
+	 *Menu with the floating gadgets list 
+	 */
+	WorkSpace.prototype._createFloatingGadgetsMenu = function(){
+		var idMenu = "floating_gadgets_list";
+
+		this.FloatingGadgetsMenu = this._initMenu(idMenu);
+		
+		//add the event listener
+		Event.observe(this.floatingGadgetsLauncher, "click", this.showFloatingGadgetsMenu);
+	}
+	
+	/*
+	 * Create the necessary menus for the Toolbar 
+	 */
+	WorkSpace.prototype._createWorkspaceMenu = function() {
+		//GoTo menu
+		this._createGoToMenu()
+		
+		//Sharing menu
+		this._createSharingMenu()
+		
+		//Configuration Menu
+		this._createConfigurationMenu()
+		
+		// TODO: Global Preferences Menu 
 
 		//Floating gadgets menu
-		var menuHTML = '<div id="floating_gadgets_list" class="drop_down_menu"></div>';
-		new Insertion.After($('menu_layer'), menuHTML);
-		this.FloatingGadgetsMenu = new DropDownMenu("floating_gadgets_list");
-		Event.observe($("floating_gadgets_launcher"), "click", this.showFloatingGadgetsMenu);
+		this._createFloatingGadgetsMenu()
 	}
+	
+	/*
+	 * Remove the toolbar menus 
+	 */
+	WorkSpace.prototype._removeWorkspaceMenu = function(){
+		if (this.goToMenu)
+			this.goToMenu.remove();
+		if (this.confMenu)
+			this.confMenu.remove();
+		if (this.sharingMenu)
+			this.sharingMenu.remove();
+
+		if (this.mergeMenu)
+			this.mergeMenu.remove();
+		if (this.FloatingGadgetsMenu)
+			this.FloatingGadgetsMenu.remove();
+
+	}
+	
 
 	// *****************
 	//  CONSTRUCTOR
@@ -965,22 +1096,37 @@ function WorkSpace (workSpaceState) {
 	this.wiringLayer = null;
 	this.visibleTab = null;
 	this.workSpaceHTMLElement = $('workspace_name');
-	this.menu = null;
+	
+	this.valid=false;
+	
+	// menu DOM elements and objects
+	this.goToMenu = null;
+	this.confMenu = null;
+	this.sharingMenu = null;	
 	this.mergeMenu = null;
 	this.FloatingGadgetsMenu = null;
+	
+	this.goToLauncher = $('go_to_link');
+	this.confLauncher = $('conf_link');
+	this.sharingLauncher = $('sharing_link');
+	this.floatingGadgetsLauncher = $("floating_gadgets_launcher")
+	
 	this.unlockEntryPos;
-	this.valid=false;
-
-	//banner
-	this.bannerHTML =$('ws_banner'); 
+	 
 	//toolbar links
 	this.wiring_link = null;
 	this.catalogue_link = null;
-
-	var wsOpsLauncher = 'ws_operations_link';
+	
+	//banner
+	this.bannerHTML = $('ws_banner');
 	
 	this.skinManager = new SkinManager();
 	this.brandingManager = new BrandingManager();
+	
+	
+	/*
+	 * OPERATIONS
+	 */
 	
 	//floating gadget menu handler
 	this.showFloatingGadgetsMenu = function(e) {
@@ -1014,18 +1160,18 @@ function WorkSpace (workSpaceState) {
 		
 		if(all){
 			if(locked && this.lockEntryId!=null){
-				this.menu.removeOption(this.lockEntryId);
+				this.confMenu.removeOption(this.lockEntryId);
 				this.lockEntryId = null;
 				numRemoved++;
 			}else if(!locked && this.unlockEntryId!=null){
-				this.menu.removeOption(this.unlockEntryId);
+				this.confMenu.removeOption(this.unlockEntryId);
 				this.unlockEntryId = null;
 				numRemoved++;
 			}
 		}
 		
 		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.menu.addOption(_currentTheme.getIconURL('unlock'),
+			this.unlockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('unlock'),
 				gettext("Unlock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -1036,7 +1182,7 @@ function WorkSpace (workSpaceState) {
 		if((!all || !locked) && this.lockEntryId==null){
 			if(this.unlockEntryId)
 				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
+			this.lockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('lock'),
 				gettext("Lock"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
@@ -1060,7 +1206,7 @@ function WorkSpace (workSpaceState) {
 		this.workSpaceGlobalInfo.workspace.active = true;
 		this.workSpaceState.active = true;
 		if (this.activeEntryId != null) {
-			this.menu.removeOption(this.activeEntryId);
+			this.confMenu.removeOption(this.activeEntryId);
 			this.activeEntryId = null;
 		}
 		PreferencesManagerFactory.getInstance().getPlatformPreferences().set({'initial-theme': {value: this.preferences.get('theme')}});
@@ -1078,20 +1224,6 @@ function WorkSpace (workSpaceState) {
 				$('add_tab_link').show();
 			else 
 				$('add_tab_link').hide();
-		}
-
-		if ($('catalogue_link')) {
-			if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')) 
-				$('catalogue_link').show();
-			else 
-				$('catalogue_link').hide();
-		}
-		
-		if ($('wiring_link')){
-			if (this.isAllowed('connect_igadgets') )
-				$('wiring_link').show();
-			else
-				$('wiring_link').hide();
 		}
 		
 		if (this.isShared()) {

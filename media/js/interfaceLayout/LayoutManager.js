@@ -537,16 +537,16 @@ var LayoutManagerFactory = function () {
 
 		//WorkSpaceMenu is dinamic so the different options must be added.
 		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
-			workSpace.menu.clearSubmenuOptions();
+			workSpace.goToMenu.clearSubmenuOptions();
 
 			if(workspaces.length >= 1) {
-				workSpace.menu.submenu.className = "submenu border_bottom";
+				workSpace.goToMenu.submenu.className = "submenu border_bottom";
 			} else {
-				workSpace.menu.submenu.className = "submenu";
+				workSpace.goToMenu.submenu.className = "submenu";
 			}
 
 			for (var i = 0; i < workspaces.length; i++) {
-				workSpace.menu.addOptionToSubmenu(null,
+				workSpace.goToMenu.addOptionToSubmenu(null,
 					workspaces[i].workSpaceState.name,
 					function () {
 						LayoutManagerFactory.getInstance().hideCover();

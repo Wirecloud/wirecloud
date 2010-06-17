@@ -69,20 +69,6 @@ var OpManagerFactory = function () {
 				activeWorkSpace = this.workSpaceInstances[active_ws_from_script];
 			}
 
-			if ($('ws_operations_link')) { // there is a banner
-				// set handler for workspace options button
-				Event.observe($('ws_operations_link'), 'click', function(e){
-					if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
-						var target = BrowserUtilsFactory.getInstance().getTarget(e);
-						target.blur();
-						LayoutManagerFactory.getInstance().showDropDownMenu('workSpaceOps', this.activeWorkSpace.menu, Event.pointerX(e), Event.pointerY(e));
-					}
-					else {
-						OpManagerFactory.getInstance().showActiveWorkSpace();
-					}
-				}.bind(this));
-			}
-
 			// Total information of the active workspace must be downloaded!
 			if (isDefaultWS == "true") {
 				//the showcase must be reloaded to have all new gadgets
