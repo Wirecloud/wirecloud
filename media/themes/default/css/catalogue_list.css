@@ -63,7 +63,7 @@ button.contratable {
 	-webkit-border-radius: 4px;
 }
 
-#catalogue .center .resources .header_resource {
+#catalogue .center .resources .header_resource, #catalogue .center #resource_details .back_to_resource_list {
 	border-color: #DDDDDD;
 }
 

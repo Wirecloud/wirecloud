@@ -41,7 +41,6 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
   HTML_Painter.call(this);
   
   this.structure_template_element = resource_structure_element;
-  
   this.structure_template = new Template(this.structure_template_element.innerHTML);
   
   this.paint = function (command, user_command_manager) {
@@ -133,6 +132,54 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
     }
   }
 }
+
+var ListView_ResourceDatailsPainter = function (details_structure_element) {
+  HTML_Painter.call(this);
+	  
+  this.details_template_element = details_structure_element;
+  this.details_template = new Template(this.details_template_element.innerHTML);
+  
+  this.paint = function (command, user_command_manager) {
+    var resource = command.get_data();
+    
+    this.dom_element.update('');
+      
+    var name = resource.getName();
+    var image_url = resource.getUriImage();
+    var description = resource.getDescription();
+      
+    var type = '';
+    var button_text = 'Add';
+      
+    if (resource.isContratable() && ! resource.hasContract()) {
+      button_text = 'Buy';
+      type = 'contratable';
+    }
+      
+    var resource_html = 
+      this.details_template.evaluate({'image_url': image_url, 'name': name, 'description': description, 
+    	                               'type': type, 'button_text': button_text})
+      
+    // Inserting resource html to the root_element
+    this.dom_element.update(resource_html);
+      
+    ///////////////////////////////
+    // Binding events to GUI
+    ///////////////////////////////
+
+    // Go back to list of resources
+    var back_link_list = this.dom_element.getElementsBySelector('.back_to_resource_list');
+    
+    if (! back_link_list || back_link_list.length != 1) {
+  	  alert('Problem rendering resource details!');
+    }
+    
+    var back_link = back_link_list[0];
+    
+    user_command_manager.create_command_from_data('SHOW_RESOURCE_LIST', back_link, resource, 'click');
+  }
+}
+
 
 var ListView_DeveloperInfoPainter = function (structure_element) {
   HTML_Painter.call(this);

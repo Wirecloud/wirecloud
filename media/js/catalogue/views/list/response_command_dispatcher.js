@@ -69,31 +69,39 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 
   switch (command_id) {
   case 'PAINT_GADGETS':
+  case 'SHOW_GADGETS':
 	display_options['search_options'] = 'block';
 	display_options['pagination'] = 'block';
 	display_options['gadget_list'] = 'block';
 	
 	this.show_section(display_options, command_id);
-	  
-	this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
-	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	
+	if (command_id == 'PAINT_GADGETS') {
+	  this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
+	  this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	}
 	
 	break;
   case 'PAINT_MASHUPS':
+  case 'SHOW_MASHUPS': 
 	display_options['search_options'] = 'block';
 	display_options['pagination'] = 'block';
 	display_options['mashup_list'] = 'block';
 	
 	this.show_section(display_options, command_id);
 	
-	this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
-	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	if (command_id == 'PAINT_MASHUPS') {
+	  this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
+	  this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+	}
 	
 	break;
   case 'PAINT_RESOURCE_DETAILS':
 	display_options['resource_details'] = 'block';
 		
 	this.show_section(display_options, command_id);
+	
+	this.painters['RESOURCE_DETAILS_PAINTER'].paint(resp_command, this.user_command_manager);
 	
 	break;
   case 'SHOW_DEVELOPER_INFO':
@@ -166,7 +174,9 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
 	this.mashups_button.removeClassName('selected_section');
 	break;
   case 'PAINT_RESOURCE_DETAILS':
-	//TODO
+  case 'SHOW_GADGETS':
+  case 'SHOW_MASHUPS':
+    // No regarding tab! Nothing to do!
 	break;
   default:
 	alert ('Error activating tab!');

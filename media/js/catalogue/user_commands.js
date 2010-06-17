@@ -144,6 +144,24 @@ var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var ShowResourceListCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	var resource = this.data;
+	var type_of_resources = '';
+	
+	if (resource.isMashup())
+	  type_of_resource = 'SHOW_MASHUPS';
+	else
+	  type_of_resource = 'SHOW_GADGETS';
+	
+    var response_command = this.services.create_local_command(type_of_resource, data);
+    
+    response_command.process();
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);

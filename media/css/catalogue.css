@@ -8,15 +8,25 @@
 }
 
 
+#catalogue .back_to_resource_list {
+  border-bottom: 1px solid;
+  height:23px;
+  padding-top:5px;
+}
+
 .no_border {
   border: 0px;
 }
 
-#catalogue #catalogue_resources_header #simple_search span:hover {
+#catalogue .margin_top {
+  margin-top: 10px;
+}
+
+#catalogue #catalogue_resources_header #simple_search span:hover,  #catalogue .back_to_resource_list:hover {
   text-decoration: underline;
 }
 
-#catalogue #catalogue_resources_header #simple_search span {
+#catalogue #catalogue_resources_header #simple_search span, #catalogue .back_to_resource_list {
   cursor: pointer;
   color: darkBlue;
 }

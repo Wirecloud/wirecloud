@@ -40,7 +40,7 @@ var ListViewFactory  = function () {
   this.catalogue_structure_dom = $('list_view_catalogue_structure');
   this.resource_structure_dom = $('list_view_resource_structure_template');
   this.pagination_structure_dom = $('pagination_structure');
-  this.resource_details_structure_dom = $('list_view_resource_structure_template');
+  this.resource_details_structure_dom = $('list_view_resource_details_structure_template');
   this.developer_info_structure_dom = $('list_view_developer_info_structure');
   
   this.catalogue = null;
@@ -76,7 +76,7 @@ var ListViewFactory  = function () {
 	this.gadgets_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
 	this.mashups_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
 	this.pagination_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-	this.resource_details_painter = new ListView_PaginationPainter(this.resource_details_structure_dom);
+	this.resource_details_painter = new ListView_ResourceDatailsPainter(this.resource_details_structure_dom);
 	this.developer_info_painter = new ListView_DeveloperInfoPainter(this.developer_info_structure_dom);
 	
 	this.catalogue = new Catalogue(catalogue_element, this.dom_wrapper);
