@@ -5,14 +5,6 @@
 {% endif %}
 <div id="catalogue" class="container_content">
  <div id="left_bar">
-  <div id="menu_options" class="bar_widget">
-   <div class="widget_content">
-	<div id="simple_search" class="simple_search">
-	 <input id="simple_search_text" type="text"></input>
-	 <span id="view_all" class="link">{% trans  "View All" %}</span>
-	</div>
-   </div>
-  </div>
   <div id="tag_categories" class="bar_widget tag_categories">
    <span class="widget_title">{% trans 'Search by category:' %}</span>
    <div class="widget_content"></div>
@@ -26,6 +18,10 @@
   </div>
   <div id="catalogue_center" class="center">
    <div id="catalogue_resources_header" class="resources_header">
+   <div id="simple_search" class="simple_search">
+	 <input id="simple_search_text" type="text"></input>
+	 <span id="view_all" class="link">{% trans  "View All" %}</span>
+	</div>
     <div id="paginate" class="paginate"></div>
 	<div id="orderby" class="orderby">
 	 <label for="results_order">{% trans 'Order by:' %}</label>

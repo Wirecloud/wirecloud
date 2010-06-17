@@ -12,6 +12,15 @@
   border: 0px;
 }
 
+#catalogue #catalogue_resources_header #simple_search span:hover {
+  text-decoration: underline;
+}
+
+#catalogue #catalogue_resources_header #simple_search span {
+  cursor: pointer;
+  color: darkBlue;
+}
+
 #catalogue .developer_image {
   width: 200px;
   height: 120px;
@@ -21,15 +30,13 @@
 
 #catalogue .developer_title {
   font-size:18px;
-  padding-top:10px;
 }
 
 #catalogue .developer_block {
   clear:both;
   float:left;
-  margin-bottom:4px;
+  margin-bottom:25px;
   padding-left:15px;
-  padding-top:10px;
 }
 
 #catalogue .developer_description {
@@ -52,9 +59,8 @@
 	display:inline;
 	position:relative;
 	width: 13%;
-	padding: 12px 10px 0 10px;
+	padding: 0px 10px 0 10px;
 	margin: 0;
-	border-right:1px solid;
 	height: 1000px;
 }
 
@@ -76,14 +82,23 @@
 	margin-top: 10px;
 }
 
-#catalogue #menu_options .simple_search {
+#catalogue .simple_search {
+	float: left;
 	position: relative;
+	left: 10px;
 }
 
-#catalogue #menu_options .simple_search #simple_search_text {
-	width:95%;
-	margin-bottom: 3px;
-	padding: 2px;
+#catalogue .simple_search #simple_search_text {
+    margin: 0px;
+    padding: 0px;
+    -moz-background-clip:border;
+    -moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	-moz-border-radius-bottomleft:4px;
+	-moz-border-radius-bottomright:4px;
+	-moz-border-radius-topleft:4px;
+	-moz-border-radius-topright:4px;
+	background:#E6F3FF none repeat scroll 0 0;
 }
 
 #catalogue #left_bar .link {
@@ -195,19 +210,6 @@
   clear: both;
   float: left;
   padding-right: 5px;
-}
-
-#catalogue #menu_options .simple_search {
-  position: relative;
-}
-
-#catalogue #menu_options .simple_search input {
-  width: 85%;
-}
-
-#catalogue #menu_options .simple_search #simple_search_text {
-  width:95%;
-  margin-bottom: 3px;
 }
 
 #catalogue .center .resources .resource .resource_name {
