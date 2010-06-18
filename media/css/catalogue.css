@@ -22,11 +22,11 @@
   margin-top: 10px;
 }
 
-#catalogue #catalogue_resources_header #simple_search span:hover,  #catalogue .back_to_resource_list:hover {
+#catalogue .link:hover  {
   text-decoration: underline;
 }
 
-#catalogue #catalogue_resources_header #simple_search span, #catalogue .back_to_resource_list {
+#catalogue .link {
   cursor: pointer;
   color: darkBlue;
 }
@@ -124,6 +124,7 @@
 }
 
 #catalogue .center .resources {
+  position:relative;
   overflow-y:auto;
   overflow-x:hidden;
   float:left;
@@ -149,14 +150,7 @@
 	margin-right: 10px;
 }	
 
-#catalogue .center .resources {
-	position:relative;
-	overflow-y:auto;
-	overflow-x:hidden;
-	float:left;
-}
-
-#catalogue .center .resources .resource {
+#catalogue .center .resources .resource,  #catalogue .center .resources .resource_details {
   clear:both;
   margin-right:10px;
   position:relative;
@@ -166,10 +160,135 @@
 	border-top: 1px solid;
 }
 
-#catalogue .center .resources .resource .resource_name {
-	padding-bottom: 8px;
-	max-width: 350px;
+/* 
+///////////
+Resource 
+/////////// 
+*/
+
+#catalogue .center .resources .resource .resource_name,  #catalogue .center .resources .resource_details .resource_name {
+  padding-bottom: 8px;
+  max-width: 350px;
+  font-size: 20px;
 }
+
+#catalogue .center .resources .resource .resource_name, #catalogue .center .resources .resource .image {
+  cursor: pointer;
+}
+
+#catalogue .center .resources .resource_details .resource_name { 
+  cursor: default;
+  float: left;
+}
+
+#catalogue .center .resources .resource_details .image {
+  cursor: default;
+}
+
+#catalogue .center .resources .resource .image, #catalogue .center .resources .resource_details .image {
+  width: 170px;
+  height: 80px;
+  border: 1px solid;
+}
+
+#catalogue .center .resources .resource_details .popularity {
+  float: left;
+  margin: 5px;
+}
+
+#catalogue .center .resources .resource_details .voting_label {
+  float: left;
+  margin: 5px;
+}
+
+#catalogue .center .resources .resource_details .popularity .off {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  background:transparent url(/ezweb/images/catalogue/ico_vot_no.gif) no-repeat scroll 0 0;
+  float:left;
+  height:15px;
+  width:15px;
+  cursor: default;
+}
+
+#catalogue .center .resources .resource_details .popularity .on {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  float:left;
+  height:15px;
+  width:15px;
+  cursor: default;
+  background:transparent url(/ezweb/images/catalogue/ico_vot_ok.gif) no-repeat scroll 0 0;
+}
+
+#catalogue .center .resources .resource_details .popularity .md {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  float:left;
+  height:15px;
+  width:15px;
+  cursor: default;
+  background:transparent url(/ezweb/images/catalogue/ico_vot_md.gif) no-repeat scroll 0 0;
+}
+
+#catalogue .padding_left {
+  padding-left: 5px; 
+}
+
+#catalogue .padding_right {
+  padding-right: 5px; 
+}
+
+#catalogue .section_title {
+  clear:both;
+  font-size:13pt;
+  padding-bottom:5px;
+  padding-top:10px;
+}
+
+#catalogue .center .resources .resource .desc, #catalogue .center .resources .resource_details .desc {
+  clear: both;
+  max-width: 650px;
+}
+
+#catalogue .center .resources .resource .tags, #catalogue .center .resources .resource_details .tags {
+  float: left;
+  padding-top: 10px;
+}
+
+#catalogue .center .resources .resource .tags .tags_label, #catalogue .center .resources .resource_details .tags {
+  float: left;
+  margin-right:10px;
+}
+
+#catalogue .center .resources .resource .footer_resource {
+  height: 10px;
+  clear: both;
+  bottom: 0px;
+  float: left;
+}
+
+#catalogue .center .resources .resource .left_column_resource, #catalogue .center .resources .resource_details .left_column_resource {
+  float: left;
+  width: 25%;
+  text-align: center;
+}
+
+#catalogue .center .resources .resource .right_column_resource,  #catalogue .center .resources .resource_details .right_column_resource {
+  float: left;
+  width: 75%;
+}
+
+#catalogue .center .resources .resource .header_resource, #catalogue .center .resources .resource_details .header_resource {
+  height: 10px;
+  clear: both;
+  top: 0px;
+}
+
+/* /////////////// */
 
 .purchase_window_table td.app_name {
 	color: darkBlue;
@@ -222,66 +341,7 @@
   padding-right: 5px;
 }
 
-#catalogue .center .resources .resource .resource_name {
-	cursor: pointer;
-	font-size: 20px;
-}
 
-#catalogue .center .resources .resource .image {
-  width: 170px;
-  height: 80px;
-  border: 1px solid;
-  cursor:pointer;
-}
-
-#catalogue .center .resources .resource .popularity {
-  float: left;
-  margin: 5px;
-}
-
-#catalogue .center .resources .resource .desc {
-  clear: both;
-  max-width: 650px;
-}
-
-#catalogue .center .resources .resource .tags {
-  float: left;
-  padding-top: 10px;
-}
-
-#catalogue .center .resources .resource .tags .tags_label {
-  float: left;
-  margin-right:10px;
-}
-
-#catalogue .center .resources .resource .tags .important_tags {
-  float: left;
-  padding-left: 10px;
-}
-
-#catalogue .center .resources .resource .footer_resource {
-  height: 10px;
-  clear: both;
-  bottom: 0px;
-  float: left;
-}
-
-#catalogue .center .resources .resource .left_column_resource {
-  float: left;
-  width: 25%;
-  text-align: center;
-}
-
-#catalogue .center .resources .resource .right_column_resource {
-  float: left;
-  width: 75%;
-}
-
-#catalogue .center .resources .resource .header_resource {
-  height: 10px;
-  clear: both;
-  top: 0px;
-}
 
 #close_info_resource {
 	position:absolute;
@@ -375,7 +435,6 @@
 
 .floating_left {
 	float: left;
-	font-weight: bold;
 	clear: left;
 }
 

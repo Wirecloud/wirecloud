@@ -49,10 +49,15 @@ function ResourceState(resourceJSON_) {
   var userVote = null;
   var capabilities = [];
   var availableApps = [];
+  var creator = [];
 	
   //////////////////////////
   // GETTERS
   /////////////////////////
+  this.getCreator = function() { 
+    return creator;
+  }
+  
   this.getVendor = function() { 
     return vendor;
   }
@@ -237,6 +242,8 @@ function ResourceState(resourceJSON_) {
   ////////////////////////
   // CONSTRUCTOR
   ////////////////////////
+  creator = resourceJSON_.author;
+  
   vendor = resourceJSON_.vendor;
   name = resourceJSON_.name;
   displayName = resourceJSON_.displayName;

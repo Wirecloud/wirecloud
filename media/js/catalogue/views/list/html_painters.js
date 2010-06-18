@@ -101,6 +101,15 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       
       user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', resource_name, resource, 'click');
       
+      var resource_image_list = resource_element.getElementsBySelector('.left_column_resource img')
+      if (! resource_image_list || resource_image_list.length != 1) {
+    	alert('Problem parsing resource template!');
+      }
+      
+      var resource_image = resource_image_list[0];
+      
+      user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', resource_image, resource, 'click');
+      
       // Tags
       var tag_links_list = resource_element.getElementsBySelector('.right_column_resource .tags .tag_links');
       if (! tag_links_list || tag_links_list.length != 1) {
@@ -144,9 +153,14 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     
     this.dom_element.update('');
       
-    var name = resource.getName();
     var image_url = resource.getUriImage();
     var description = resource.getDescription();
+    var vendor = resource.getVendor();
+    var name = resource.getName();
+    var version = resource.getVersion();
+    var creator = resource.getCreator();
+    var versions = resource.getVersion();
+    var wiki = resource.getUriWiki();
       
     var type = '';
     var button_text = 'Add';
@@ -158,7 +172,8 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
       
     var resource_html = 
       this.details_template.evaluate({'image_url': image_url, 'name': name, 'description': description, 
-    	                               'type': type, 'button_text': button_text})
+    	                              'type': type, 'button_text': button_text, 'vendor': vendor, 'version': version,
+    	                              'creator': creator, 'versions': versions, 'wiki': wiki});
       
     // Inserting resource html to the root_element
     this.dom_element.update(resource_html);

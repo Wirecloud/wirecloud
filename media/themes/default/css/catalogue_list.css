@@ -36,19 +36,6 @@ button.contratable {
   color: red;
 }
 
-#catalogue a {
-  text-decoration:none;
-  cursor:pointer;
-}
-
-#catalogue a:active {
-  outline: none;
-}
-
-#catalogue a:focus {
-  outline: none;
-}
-
 #catalogue .paginate img {
   border-style:none;
 }
@@ -82,7 +69,7 @@ button.contratable {
 	-webkit-border-radius: 4px;
 }
 
-#catalogue .center .resources .resource .resource_name {
+#catalogue .center .resources .resource .resource_name,  #catalogue .center .resources .resource_details .resource_name{
 	font-weight: bold;
 }
 
@@ -90,8 +77,16 @@ button.contratable {
   border-color: #BBBBBB;
 }
 
-#catalogue .center .resources .resource .tags .tags_label {
+#catalogue .bold {
   font-weight: bold;
+}
+
+#catalogue .link {
+  
+}
+
+#catalogue .link:hover {
+  text-decoration: underline
 }
 
 .purchase_window_table th {

@@ -1,7 +1,7 @@
 {% load i18n %}
 
-<div class="back_to_resource_list">« {% trans 'Go back to list' %}</div>
-<div class="resource margin_top">
+<div class="back_to_resource_list link">« {% trans 'Go back to list' %}</div>
+<div class="resource_details margin_top">
 <div class="left_column_resource">
  <div><img src="#{image_url}" class="image"></div>
  <button class="#{type}">#{button_text}</button>
@@ -9,13 +9,37 @@
 <div class="right_column_resource">
  <div>
   <div class="resource_name">#{name}</div>
-  <div class="popularity"></div>
+  <div class="popularity"><a class="on"></a><a class="on"></a><a class="on"></a><a class="md"></a><a class="off"></a></div>
  </div>
- <div class="desc">#{description}</div>
+ <div class="desc padding_left">#{description}</div>
  <div class="tags">
-  <div class="tags_label">{% trans 'Tags:' %}</div>
-  <div class="tag_links"></div>
+  <div class="bold floating_left padding_left">{% trans 'Tags:' %}</div>
+  <div class="tag_links padding_left link"></div>
  </div>
- <div class="footer_resource"></div>
+ 
+ <div class="section_title bold">{% trans 'Detailed data of this Gadget' %}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'Vendor:' %}</div>
+ <div>#{vendor}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'Name:' %}</div>
+ <div>#{name}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'Version:' %}</div>
+ <div>#{version}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'Creator:' %}</div>
+ <div>#{creator}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'Available versions:' %}</div>
+ <div>#{versions}</div>
+ <div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
+ <div class="link">#{wiki}</div>
+ 
+ <div class="section_title bold">{% trans 'Advanced operations with this Gadget' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Tag gadget' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Vote gadget' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Change version' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Search compatible gadgets' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'View template' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Delete gadget' %}</div>
+ <div class="link padding_left floating_left padding_right">{% trans 'Update gadget' %}</div>
 </div>
+</div>
+<div class="footer_resource"></div>
 </div>
