@@ -7,15 +7,15 @@
   font-size: 8pt;
 }
 
+.showcase {
+  border-color:#C2CBD2;
+  padding-top: 7px;
+}
 
 #catalogue .back_to_resource_list {
   border-bottom: 1px solid;
   height:23px;
   padding-top:5px;
-}
-
-.no_border {
-  border: 0px;
 }
 
 #catalogue .margin_top {

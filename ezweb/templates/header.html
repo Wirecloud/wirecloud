@@ -3,22 +3,13 @@
 	<div id="ws_banner" class="banner">
 		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div id="toolbar_section" class="toolbar_section">
-		  <div class="area_name">{% trans 'Workspace' %}</div>
-		  <div id="dragboard_link">
-			<div id="workspace_name"></div>
-		</div>
 		  <div class="toolbar_menu">
-		  	<div id="go_to_link" class="first_toolbar_button">{% trans 'Go to' %}</div>
-			<div id="conf_link">{% trans 'Configuration' %}</div>
-			<div id="sharing_link">{% trans 'Share' %}</div>
-			<div id="edit_link" class="last_toolbar_button">&nbsp</div>
-	        <!--
-			<div id="catalogue_link" class="first_toolbar_button">{% trans 'Add Gadgets' %}</div>
-	        <div id="wiring_link">{% trans 'Connect Gadgets' %}</div>
-			-->
+		    <div id="go_to_link" class="first_toolbar_button">{% trans 'Go to' %}</div>
+		    <div id="conf_link">{% trans 'Configuration' %}</div>
+		    <div id="sharing_link">{% trans 'Share' %}</div>
+		    <div id="edit_link" class="last_toolbar_button">&nbsp</div>
 		  </div>
 		</div>
-
 		<div id="greeting">
 			<div class="languages">
 				{% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
@@ -44,17 +35,20 @@
 				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
 			{% endif %}
 		</div>
+		<div class="area_name">{% trans 'Application:' %} </div>
+		<div id="dragboard_link">
+			<div id="workspace_name"></div>
+		  </div>
 	</div>
 
 	<div id="wiring_banner" class="banner" style="display:none">
 		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div class="toolbar_section">
-		  <div class="area_name">{% trans 'Wiring' %}</div>
 		  <div class="toolbar_menu">
-	        <!--<div id="wiring_dragboard_link" class="first_toolbar_button last_toolbar_button">Volver</div>-->
 	      </div>
 		</div>
 		<a id="wiring_dragboard_link" class="go_back">{% trans 'Go Back' %} »</a>
+		<div class="area_name">{% trans 'Wiring' %}</div>
 	</div>
 
 	<div id="catalogue_banner" class="banner" style="display:none">
@@ -63,7 +57,6 @@
 			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
 	  </div>
 	  <div class="toolbar_section">
-	  	<div class="area_name">{% trans 'Gallery' %}</div>
 	    <div class="toolbar_menu">
 	      <div id="gadgets_button" class="first_toolbar_button">Galería de Gadgets</div>
 	      <div id="mashups_button">Galería de Aplicaciones</div>
@@ -71,6 +64,7 @@
 	    </div>
 	  </div>
 	  <a id="catalogue_dragboard_link" class="go_back">{% trans 'Go Back' %} »</a>
+	  <div class="area_name">{% trans 'Gallery' %}</div>
 	</div>
 
 	<div id="bar">

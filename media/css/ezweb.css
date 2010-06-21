@@ -184,8 +184,7 @@ td {
     position: relative;
     float: left;
     top: 12px;
-	border-left: 1px solid;
-	padding-left: 10px;
+	padding-left: 60px;
 }
 
 .toolbar_section input[type = button] {
@@ -216,13 +215,15 @@ td {
   border-right: 1px solid;
 }
 
-#header .toolbar_section .area_name{
-	float:left;
-	font-size:12pt;
-	margin-right:20px;
+#header .area_name {
+	clear: both;
+	font-size:11pt;
 	padding-top: 2px;
 	cursor: default;
-	width: 90px;
+	margin-left:35px;
+	color: #4C5054;
+	float: left;
+	font-weight: bold;
 }
 
 #floating_gadgets_launcher {
@@ -245,9 +246,10 @@ td {
 
 #dragboard_link {
     float: left;
-	margin-right:15px;
+	margin-left: 15px;
 	position:relative;
 	top:4px;
+	color: #4C5054;
 }
 
 #ws_operations_link {
@@ -689,7 +691,6 @@ button {
     right: 0px;
     z-index: 1;
  	min-width: 600px;
- 	margin: 0 4px 4px 4px;
 }
 
 .container {
@@ -703,7 +704,7 @@ button {
     overflow-x: hidden;
     z-index: 1;
     visibility: hidden;
-	border: 1px solid;
+	border-top: 1px solid;
 }
 
 .container_content {
