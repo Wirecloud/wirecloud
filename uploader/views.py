@@ -40,15 +40,10 @@ from django.template.defaultfilters import filesizeformat
 import os
 import time
 
-from commons.resource import Resource
 from django.conf import settings
 
-
-#Checks if the request accepts a mime type for the response
-def accepts(request, mime):
-    acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]
-
-    return mime in acc
+from commons.resource import Resource
+from commons.utils import accepts
 
 
 class FileCollection(Resource):

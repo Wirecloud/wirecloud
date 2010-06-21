@@ -1,0 +1,157 @@
+<head>
+
+	<title>Plataforma EzWeb</title>
+
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<!--[if lt IE 7]>
+	<script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
+	<![endif]-->
+
+	<!-- Base and Theme css -->
+	
+	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}{{ layout.general }}">
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.general }}">
+	
+	
+	<!--[if IE]>
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.ie }}" />
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.ie }}" /> 
+	<![endif]-->
+
+
+	
+	<link rel="shortcut icon" type="image/x-icon" href="/ezweb/css/favicon.ico">
+	
+
+</head><body class="dragboard_view">
+
+<!-- HEADER -->
+	
+<div id="header">
+	<div style="" id="ws_banner" class="banner">
+		<div style="background-image: url(&quot;/ezweb/themes/default/images/Open_Ez_Logo.png&quot;);" id="logo" class="logo_layout logo clickable"><img class="powered" src="/ezweb/images/powered.png" style="display: none;"></div>
+		<div id="toolbar_section" class="toolbar_section">
+		  <div class="area_name">Banner</div>
+		  <div class="toolbar_menu">
+		  	<div id="go_to_link" class="first_toolbar_button">Inactive button</div>
+			<div id="conf_link">Inactive button</div>
+			<div id="sharing_link">Inactive button</div>
+			
+			<div id="workspace_link_container" class="last_toolbar_button selected_section">
+				<div id="dragboard_link">
+					<div id="workspace_name"><span>Active button</span></div>
+				</div>
+
+			</div>
+		  </div>
+		</div>
+		<div id="greeting">
+			<div class="languages">
+				 <a ><img title="Español" alt="Español" src="/ezweb/images/es.png"></a> <a ><img title="Inglés" alt="Inglés" src="/ezweb/images/en.png"></a> <a ><img title="Portugués" alt="Portugués" src="/ezweb/images/pt.png"></a>
+			</div>
+			<!-- LOGS LINK -->
+			<input class="" id="logs_link" title="Mostrar la consola de errores" type="button">
+			<input id="preferences_link" title="Preferencias" type="button">
+			<span id="help_section"><a class="help_button" target="_blank"></a></span>
+			<span> | </span>
+			
+				<a >Salir</a>
+				
+				
+				
+				<span> | </span>
+				<span id="user_section"> Bienvenido, admin</span>
+			
+		</div>
+	</div>
+
+	<div id="bar">
+		<div id="tab_section" class="tab_section">
+			<input id="floating_gadgets_launcher" title="Mostrar los gadgets flotantes" class="tabOps_launcher" type="button">
+			<input id="add_tab_link" title="Añadir más pestañas" class="toolbar_unmarked" value="Add-Tab button" type="button">
+			
+			<div id="fixed_bar" style="width: 262px;">
+				<div id="scroll_bar" style="right: 0px; width: 262px;">
+					<div id="tab_1_2" class="tab" style="display: block;">
+						<div class="tab_dragger" id="tab_1_2_dragger" style="display: none;"></div>
+						<span>Inactive tab</span>
+						<input type="button" class="tabOps_launcher tabOps_launcher_show" title="Opciones" id="tab_1_2_launcher" style="display: none;">
+					</div>
+					<div id="tab_1_1" class="tab current" style="display: block;">
+						<div class="tab_dragger" id="tab_1_1_dragger" style="display: inline;"></div>
+						<span>Active tab</span>
+						<input type="button" class="tabOps_launcher tabOps_launcher_show" title="Opciones" id="tab_1_1_launcher" style="display: inline;">
+					</div>
+				</div>
+			</div>
+		
+		</div>
+	
+		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
+	</div>
+</div>
+
+<div style="height: 1204px;" id="wrapper">
+	<div style="height: 1204px; z-index: 2; display: block; visibility: visible;" id="dragboard_1_1" class="container dragboard">
+		<div style="z-index: 1; left: 127px; top: 1px; visibility: visible; width: 432.2px;" class="gadget_window">
+			<div style="background-color: rgb(255, 255, 255);" class="gadget_menu">
+				<input class="button errorbutton disabled" type="button">
+				<span>Gadget title</span>
+				<input alt="Cerrar" title="Cerrar" class="closebutton" type="button">
+				<input alt="Menú" title="Menú" id="settingsbutton" class="settingsbutton" type="button">
+				<input class="minimizebutton" alt="Minimizar" title="Minimizar" type="button">
+			</div>
+			<div style="height: 321px;" class="gadget_wrapper">
+				<div class="config_interface"></div>
+				<object style="height: 321px;" data="http://ezweb.tid.es/gadgets/Morfeo/Notepad/1.5/xhtml?id=1" standby="Loading..." type="text/html" class="gadget_object"></object>
+			</div>
+			<div class="statusBar">
+				<div title="Este iGadget está alineado a la rejilla." class="button extractButton"></div>
+				<a title="Acceder a la información" target="_blank" class="dragboardwiki button"></a>
+				<div class="leftResizeHandle"></div>
+				<div class="rightResizeHandle"></div>
+			</div>
+		</div>
+		<div style="z-index: 1; left: 0px; top: -1px;" class="floating_gadget_icon">
+			<img src="http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png" class="floating_gadget_img">
+			<a class="floating_gadget_title">Gadget 1</a>
+		</div>
+		
+		<div style="z-index: 2; left: 628px; top: 1px; visibility: visible; width: 369.6px;" class="gadget_window">
+			<div style="background-color: rgb(255, 255, 255);" class="gadget_menu">
+				<input class="button errorbutton disabled" type="button">
+				<span>Gadget title</span>
+				<input alt="Cerrar" title="Cerrar" class="closebutton" type="button">
+				<input alt="Menú" title="Menú" id="settingsbutton" class="settingsbutton" type="button">
+				<input class="minimizebutton" alt="Minimizar" title="Minimizar" type="button">
+			</div>
+			<div style="height: 321px;" class="gadget_wrapper">
+				<div class="config_interface"></div>
+				<object style="height: 321px;" data="http://ezweb.tid.es/gadgets/Morfeo/Map Viewer/1.7/xhtml?id=2" standby="Loading..." type="text/html" class="gadget_object"></object>
+			</div>
+			<div class="statusBar">
+				<div title="Este iGadget está alineado a la rejilla." class="button extractButton"></div>
+				<a title="Acceder a la información" target="_blank" class="dragboardwiki button"></a>
+				<div class="leftResizeHandle"></div>
+				<div class="rightResizeHandle"></div>
+			</div>
+		</div>
+		<div style="z-index: 2; left: 0px; top: -1px;" class="floating_gadget_icon">
+			<img src="http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.png" class="floating_gadget_img">
+			<a class="floating_gadget_title">Gadget 2</a>
+		</div>
+	</div>
+	
+	<!-- DRAGBOARD LAYERS -->
+	
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.dragboard }}">
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.dragboard }}">
+
+</div>
+
+<style>
+	{% include "skinTemplates/skin_ws.css" %}
+</style>
+
+</body>
+</html>

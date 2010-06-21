@@ -30,11 +30,17 @@
 
 #
 from django.conf.urls.defaults import patterns
-from layout.views import SkinEntry
+from layout.views import SkinEntry, SkinGenerator, SkinPreviewer
 
 urlpatterns = patterns('layout.views',
 
-    # IGadgets
-    (r'^/skin/((?P<skin_name>[\s\-\.\w]+)[/]?)?$',
-	    SkinEntry(permitted_methods=('GET',))),
+    (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)/preview[/]?$',
+        SkinPreviewer(permitted_methods=('POST',))),
+    (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)/(?P<skin_name>[\s\-\.\w]+)[/]?$',
+        SkinGenerator(permitted_methods=('GET','POST',))),
+    (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)[/]?$',
+        SkinGenerator(permitted_methods=('GET','POST',))),
+    (r'^/skin/(?P<skin_name>[\s\-\.\w]+)[/]?$',
+        SkinEntry(permitted_methods=('GET',))),               
+        
 )

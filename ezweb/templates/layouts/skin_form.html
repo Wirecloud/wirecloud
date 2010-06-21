@@ -1,0 +1,113 @@
+{% load i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
+<head>
+	<title>{% trans "Skin editor for EzWeb" %}</title>
+	<style>
+		body {
+			font-family: Arial,Helvetica,sans-serif;
+			font-size: 80%;
+		}
+		
+		.title {
+			font-size:150%;
+			margin:10px 0;
+			text-align:center;
+			width:100%;
+		}
+		
+		#form {
+			margin: auto;
+			width: 70%;
+		}
+		.cell {
+			padding: 5px;
+		}
+		
+		.name_label {
+			font-weight: bold;
+		}
+		
+		#name_row .property_value {
+
+		}
+		.element_name {
+			border-bottom: 1px solid #cccccc;
+			padding-bottom: 10px;
+			font-weight: bold;
+		}
+		.property_value{
+		}
+		
+		.property_value input {
+			font-size: 90%;
+		}
+		
+		.form_bottom .cell{
+			text-align: center;
+		}
+		
+		.description {
+			color: dimGray;
+		}
+		
+		.required, .error {
+			color: red;
+		}
+		
+		.legend {
+			
+		}
+		
+	</style>
+	<script>
+		function send (action, target){
+			document.forms[0].action = action;
+			document.forms[0].target = target;
+			document.forms[0].submit();
+		}
+	</script>
+</head>
+<body>
+	<div class="title">{% trans "Skin editor for EzWeb"%}</div>
+	<form method="POST">
+		<table id="form" border="0" cellspacing="0" cellpadding="0">
+			<tr id="name_row">
+				<td class="cell name_label">{% trans "Skin name" %} <span class="required">*</span></td>
+				<td class="cell property_value">
+					<input type="text" name="name" maxlength=250 {% ifnotequal name "" %} disabled="true" {% endifnotequal %} value="{{name}}" />
+					<span class="description">{% trans "Use alphanumeric characters, hyphens, underscores and dots" %} </span>
+				</td>
+			</tr>
+		{% for name, element in properties.items %}
+			<tr class="element">
+				<td class="cell element_name" colspan="2">{{name}}</td>
+			</tr>
+			{% for prop_name, prop_desc in element.items %}
+			<tr class="property">
+			<td class="cell property_name">{{prop_desc.name}}</td>
+			<td class="cell property_value"><input type="text" name="{{prop_name}}" value="{{prop_desc.value}}" size="75"/></td>
+			</tr>
+			{% endfor %}
+		{% endfor %}
+			<tr class="form_bottom">
+				<td class="cell"><input type="button" onclick="send('#', 'result')" value="{% trans 'Save' %}"/></td>
+				<td class="cell"><input type="button" onclick="send('/layout/skin/type/{{mode}}/preview', '_blank')" value="{% trans 'Preview' %}"/></td>
+			</tr>
+			<tr class="legend">
+				<td class = "cell" colspan="2"><span class="required">*</span> {% trans "required field" %} </td>
+			</tr>
+			<tr>
+				<td class="cell" colspan="2">
+					<iframe id="result" name="result" width="100%" frameborder="0">
+				</td>
+			</tr>
+		</table>
+	</form>
+	</iframe>
+
+</body>

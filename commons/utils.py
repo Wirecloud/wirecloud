@@ -208,3 +208,10 @@ def add_user_to_EzSteroids(referer, user):
         params = {'username': user.username.encode('utf-8')}
         headers = {'Referer': referer}
         result = download_http_content(uri=url, params=params, headers=headers)
+
+
+#Checks if the request accepts a mime type for the response
+def accepts(request, mime):
+    acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]
+
+    return mime in acc
