@@ -557,16 +557,18 @@ var LayoutManagerFactory = function () {
 
 		//merge Menu is dinamic so the different options must be added.
 		LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces) {
-			workSpace.mergeMenu.clearOptions();
-
-			for (var i = 0; i < workspaces.length; i++) {
-				var context = {firstWK: workSpace, scndWK: workspaces[i]};
-				workSpace.mergeMenu.addOption(null,
-					workspaces[i].workSpaceState.name,
-					function () {
+			if (workSpace.mergeMenu) {
+				workSpace.mergeMenu.clearOptions();
+				
+				for (var i = 0; i < workspaces.length; i++) {
+					var context = {
+						firstWK: workSpace,
+						scndWK: workspaces[i]
+					};
+					workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function(){
 						this.firstWK.mergeWith(this.scndWK.workSpaceState.id);
-					}.bind(context),
-					i);
+					}.bind(context), i);
+				}
 			}
 		}
 

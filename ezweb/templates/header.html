@@ -4,26 +4,21 @@
 		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
 		<div id="toolbar_section" class="toolbar_section">
 		  <div class="area_name">{% trans 'Workspace' %}</div>
+		  <div id="dragboard_link">
+			<div id="workspace_name"></div>
+		</div>
 		  <div class="toolbar_menu">
 		  	<div id="go_to_link" class="first_toolbar_button">{% trans 'Go to' %}</div>
 			<div id="conf_link">{% trans 'Configuration' %}</div>
-			<div id="settings_link">{% trans 'Settings' %}</div>
 			<div id="sharing_link">{% trans 'Share' %}</div>
-			
+			<div id="edit_link" class="last_toolbar_button">&nbsp</div>
 	        <!--
 			<div id="catalogue_link" class="first_toolbar_button">{% trans 'Add Gadgets' %}</div>
 	        <div id="wiring_link">{% trans 'Connect Gadgets' %}</div>
 			-->
-			<div id="workspace_link_container" class="last_toolbar_button selected_section">
-				<div id="dragboard_link">
-					<div id="workspace_name"></div>
-				</div>
-				<!--<div id="workspace_menu_link">
-					<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
-				</div>-->
-			</div>
 		  </div>
 		</div>
+
 		<div id="greeting">
 			<div class="languages">
 				{% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}

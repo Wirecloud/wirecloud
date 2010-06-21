@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-04-27 11:29+0200\n"
-"PO-Revision-Date: 2010-04-27 11:30+0100\n"
+"PO-Revision-Date: 2010-06-18 12:44+0100\n"
 "Last-Translator: jjmr <jjmr@tid.es>\n"
 "Language-Team: Español/España\n"
 "MIME-Version: 1.0\n"
@@ -2074,7 +2074,7 @@ msgstr "Organización"
 
 #: workspace/models.py:120
 msgid "Workspace"
-msgstr "Entorno de trabajo"
+msgstr "Mi Espacio"
 
 #: workspace/models.py:122
 msgid "Contratable"

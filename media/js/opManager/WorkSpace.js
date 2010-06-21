@@ -29,15 +29,28 @@ function WorkSpace (workSpaceState) {
 
 	//set the proper handlers to the workspace toolbar buttons	
 	WorkSpace.prototype._initToolbar = function(){
-		if (this.getBanner()) {
-			//The catalogue and the wiring are the ones to set the handlers of
-			//their buttons in the workspace toolbar.
-			//this.wiring_link = this.bannerHTML.getElementsBySelector('#wiring_link')[0];
-			//this.catalogue_link = this.bannerHTML.getElementsBySelector('#catalogue_link')[0];
-			
+		if (this.getBanner()) {			
 			//set the handlers
 			this.wiringInterface.setToolbarButton(this.wiring_link);
 			CatalogueFactory.getInstance().setToolbarButton(this.catalogue_link);
+			
+			//manage the Edit option
+			var locked = true;
+			if (this.isAllowed('change_lock_status')) {
+				locked = this._isLocked();
+				if (locked) {
+					this.editElement.update(gettext("Edit"));
+				}else{
+					this.editElement.update(gettext("Lock"));
+				}
+				Event.observe(this.editElement, "click", function(){
+					this._lockFunc(!this._isLocked())
+				}.bind(this));
+			}else{
+				this.editElement.hide();
+			}
+			this._manageAddTabElement(locked);
+			
 		}
 	}
 	
@@ -61,6 +74,22 @@ function WorkSpace (workSpaceState) {
 		this.wiringInterface.unloadToolbar();			//wiring toolbar
 		CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
 		
+	}
+	
+	WorkSpace.prototype._manageAddTabElement = function(locked){
+		if (this.addTabElement){
+			if (this.isAllowed('add_tab')) {
+				if (locked) {
+					this.addTabElement.hide();
+				}
+				else {
+					this.addTabElement.show();
+				}
+			}
+			else {
+				this.addTabElement.hide();
+			}
+		}		
 	}
 
 	// ****************
@@ -186,6 +215,10 @@ function WorkSpace (workSpaceState) {
 		
 		this._createWorkspaceMenu();
 		
+		this._update_creator_options();
+		if (!this.isAllowed('preserve_lock_status'))
+			this._lockFunc(true);
+		
 		//all the modules have been downloaded. Init now all the toolbars:
 		//catalogue, wiring and workspace.
 		this._initAllToolbars();
@@ -200,11 +233,6 @@ function WorkSpace (workSpaceState) {
 			workspaceSkin = scriptSkin 
 		
 		this.skinManager.loadSkin(workspaceSkin);
-
-
-		this._update_creator_options();
-		if (!this.isAllowed('preserve_lock_status'))
-			this._lockFunc(true);
 
 		layoutManager.logStep('');
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
@@ -867,27 +895,6 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
-		// Lock option (TODO: Add an element in the toolbar and remove this option) 
-		if (this.isAllowed('change_lock_status')) {
-			this.unlockEntryPos = optionPosition;
-			this.unlockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('unlock'),
-				gettext("Unlock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(false);
-				}.bind(this),
-				optionPosition++);
-
-			this.lockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('lock'),
-				gettext("Lock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(true);
-				}.bind(this),
-				optionPosition++);
-			var res = this._checkLock();
-			optionPosition -= res;
-		}
 		// Delete option
 		if (this.isAllowed('add_remove_workspaces')) {
 			this.confMenu.addOption(_currentTheme.getIconURL('remove'),
@@ -1095,9 +1102,11 @@ function WorkSpace (workSpaceState) {
 	this.loaded = false;
 	this.wiringLayer = null;
 	this.visibleTab = null;
-	this.workSpaceHTMLElement = $('workspace_name');
-	
 	this.valid=false;
+	
+	this.workSpaceHTMLElement = $('workspace_name');
+	this.editElement = $('edit_link')
+	this.addTabElement = $('add_tab_link');
 	
 	// menu DOM elements and objects
 	this.goToMenu = null;
@@ -1141,7 +1150,26 @@ function WorkSpace (workSpaceState) {
 		for (var i = 0; i < keys.length; i++) {
 			this.tabInstances[keys[i]].setLock(locked);
 		}
+		if (locked) {
+			this.editElement.update(gettext("Edit"));
+		}else{
+			this.editElement.update(gettext("Lock"));
+		}
+		this._manageAddTabElement(locked)
+		
 	}.bind(this);
+	
+	this._isLocked = function(){
+		var keys = this.tabInstances.keys();
+		var all = true;
+		var locked = null;
+		for (var i = 0; i < keys.length; i++) {
+			if (!this.tabInstances[keys[i]].dragboard.isLocked()){
+				all = false;
+			}
+		}
+		return all;
+	}
 
 
 	this._checkLock = function() {
@@ -1218,14 +1246,7 @@ function WorkSpace (workSpaceState) {
 		logManager.log(msg);
 	}.bind(this);
 
-	this._update_creator_options = function() {
-		if ($('add_tab_link')) {
-			if (this.isAllowed('add_tab')) 
-				$('add_tab_link').show();
-			else 
-				$('add_tab_link').hide();
-		}
-		
+	this._update_creator_options = function() {		
 		if (this.isShared()) {
 			document.body.addClassName('shared');
 		} else {

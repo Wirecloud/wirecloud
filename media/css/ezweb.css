@@ -227,6 +227,7 @@ td {
 
 #floating_gadgets_launcher {
     float: right;
+	margin-left: 4px;
 }
 
 .ws_name {
@@ -244,6 +245,9 @@ td {
 
 #dragboard_link {
     float: left;
+	margin-right:15px;
+	position:relative;
+	top:4px;
 }
 
 #ws_operations_link {
@@ -254,10 +258,6 @@ td {
 
 body.shared #workspace_link_container span {
     cursor: default;
-}
-
-#tab_section .toolbar_marked, #tab_section .toolbar_unmarked {
-    margin-right: 4px;
 }
 
 #left_slider {
