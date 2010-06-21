@@ -39,6 +39,7 @@ from igadget.models import Variable, VariableDef, Position, IGadget
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
+from twitterauth.models import TwitterUserProfile
 from django.utils.translation import get_language
 from django.utils import simplejson
 from django.conf import settings
@@ -374,7 +375,7 @@ def get_connectable_data(connectable):
     return res_data
 
 
-def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
+def get_global_workspace_data(data, workSpaceDAO, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
 
@@ -411,7 +412,15 @@ def get_global_workspace_data(data, workSpaceDAO, concept_values, user):
     #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
     data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
-
+    
+    # Gets some concept values 
+    concept_values = {}
+    concept_values['user'] = user
+    try:
+        concept_values['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
+    except Exception, e:
+        concept_values['twitterauth'] = None
+    
     #Context information
     concepts = Concept.objects.all()
     concepts_data = serializers.serialize('python', concepts, ensure_ascii=False)
@@ -548,6 +557,11 @@ def get_concept_value(concept_name, values):
         res = values['user'].username
     elif concept_name == 'language':
         res = get_language()
+    elif concept_name == 'twitterauth' and values['twitterauth']:
+        res = "&".join(['user_screen_name=%s' % values['twitterauth'].screen_name,
+            'oauth_consumer_key=%s' % getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY'),
+            'oauth_consumer_secret=%s' % getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET'),
+            values['twitterauth'].access_token])
 
     return res
 

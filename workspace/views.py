@@ -403,10 +403,7 @@ class WorkSpaceCollection(Resource):
 
             data = serializers.serialize('python', [workspace], ensure_ascii=False)
 
-
-            concept_data = {}
-            concept_data['user'] = user
-            workspace_data = get_global_workspace_data(data[0], workspace, concept_data, user)
+            workspace_data = get_global_workspace_data(data[0], workspace, user)
             
             return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
             
@@ -425,9 +422,7 @@ class WorkSpaceEntry(Resource):
         
         workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
         data = serializers.serialize('python', workspaces, ensure_ascii=False)
-        concept_data = {}
-        concept_data['user'] = user
-        workspace_data = get_global_workspace_data(data[0], workspaces[0], concept_data, user)
+        workspace_data = get_global_workspace_data(data[0], workspaces[0], user)
         
         #Closing session after downloading public user workspace        
         if (user.username == 'public' and last_user and last_user != 'public' and last_user != ''):
@@ -852,9 +847,7 @@ class  WorkSpaceAdderEntry(Resource):
             setActiveWorkspace(user, cloned_workspace);
         
         data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
-        concept_data = {}
-        concept_data['user'] = user
-        workspace_data = get_global_workspace_data(data[0], cloned_workspace, concept_data, user)
+        workspace_data = get_global_workspace_data(data[0], cloned_workspace, user)
         
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 

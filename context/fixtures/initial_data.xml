@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="username" model="context.concept">
+	<object pk="username" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
         <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
@@ -50,7 +50,12 @@
         <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
-    <object pk="1" model="context.conceptname">
+	<object pk="twitterauth" model="context.concept">
+        <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">ECTX</field>
+        <field type="CharField" name="adaptor"><None></None></field>
+    </object>        
+	<object pk="1" model="context.conceptname">
         <field type="CharField" name="name">user_name</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">username</field>
     </object>
@@ -89,6 +94,10 @@
     <object pk="10" model="context.conceptname">
         <field type="CharField" name="name">orientation</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">orientation</field>
+    </object>
+	<object pk="11" model="context.conceptname">
+        <field type="CharField" name="name">twitterauth</field>
+        <field to="context.concept" name="concept" rel="ManyToOneRel">twitterauth</field>
     </object>
 	<object pk="1" model="connectable.filter">
         <field type="CharField" name="name">concat</field>
