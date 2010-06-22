@@ -126,14 +126,17 @@ td {
 }
 
 .logo_layout {
-    position: relative;
-    float: left;
-    margin-top: 2.5px;
-	margin-bottom: 2.5px;
-    margin-left: 10px;
-    width: 250px;
-    height: 45px;
-	background-repeat: no-repeat;
+    max-height:50px;
+    max-width:250px;
+    position:relative;
+}
+
+.logo_placeholder {
+	position:relative;
+	left: 0px;
+	width: 250px;
+	float: left;
+	text-align: center;
 }
 
 #bar {
@@ -183,8 +186,8 @@ td {
 .toolbar_section {
     position: relative;
     float: left;
-    top: 12px;
-	padding-left: 60px;
+    top: 0px;
+	padding-left: 20px;
 }
 
 .toolbar_section input[type = button] {
@@ -194,33 +197,38 @@ td {
 
 
 #header .toolbar_menu {
-  height: 26px;
   float: left;
   margin-left: 40;
 }
 
 #header .toolbar_menu > div {
   padding:3px 10px;
-  border-left: 1px solid;
   font-size: 10pt;
   float: left;
   cursor: pointer;
+  padding-bottom: 5px;
+  padding-top: 5px;
+  border-bottom: 1px solid #C2CBD2;
+  color: #4C5054;
 }
 
 #header .toolbar_menu .first_toolbar_button {
 	border-left: 0px;
+	-moz-border-radius-bottomleft: 5px;
+	border-left: 1px solid #C2CBD2;
 }
 
 #header .last_toolbar_button {
-  border-right: 1px solid;
+	-moz-border-radius-bottomright: 5px;
+	border-right: 1px solid #C2CBD2;
 }
 
 #header .area_name {
 	clear: both;
 	font-size:11pt;
-	padding-top: 2px;
+	margin-top: -3px;
 	cursor: default;
-	margin-left:35px;
+	margin-left:20px;
 	color: #4C5054;
 	float: left;
 	font-weight: bold;
@@ -248,7 +256,6 @@ td {
     float: left;
 	margin-left: 15px;
 	position:relative;
-	top:4px;
 	color: #4C5054;
 }
 

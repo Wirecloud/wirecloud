@@ -34,15 +34,15 @@ body.dragboard_view, body.wiring_view{
 /* toolbar button unmarked */
 #ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div {
 	color: {{ toolbar_unmarked_font }};
-	font-weight: normal;
+	font-weight: bold;
 	background: {{ toolbar_unmarked_bg }};
-	height: 18px;
 }
 
-#ws_banner hover, #wiring_banner hover{
+#ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover {
 	color: {{ toolbar_hover_font }};
-	font-weight: normal;
-	background: transparent {{ toolbar_hover_bg }};
+	font-weight: bold;
+	background: {{ toolbar_hover_bg }};
+	text-decoration: underline;
 }
 
 /*

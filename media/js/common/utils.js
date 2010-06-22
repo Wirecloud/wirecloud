@@ -264,9 +264,7 @@ BrandingManager.prototype.setBranding = function (branding){
 		//set the normal logo as background for both the wiring and workspace banners
 		element = elements[i];
 		Element.extend(element);
-		element.setStyle({
-			'backgroundImage': 'url(' + branding['logo']['url'] + ')'
-		});
+		element.setAttribute('src', branding['logo']['url']);
 		
 		//now, set the link to the url of the branding
 		_setLink(element, branding['link']);

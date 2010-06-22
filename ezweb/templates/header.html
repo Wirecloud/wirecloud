@@ -1,7 +1,10 @@
 {% load i18n %}
 <div id="header">
 	<div id="ws_banner" class="banner">
-		<div id="logo" class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
+	   <div class="logo_placeholder">
+		  <img id="logo" class="logo_layout {{ branding.workspace.logo.class }}" />
+		  <img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} />
+	   </div>
 		<div id="toolbar_section" class="toolbar_section">
 		  <div class="toolbar_menu">
 		    <div id="go_to_link" class="first_toolbar_button">{% trans 'Go to' %}</div>
@@ -35,14 +38,19 @@
 				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
 			{% endif %}
 		</div>
-		<div class="area_name">{% trans 'Application:' %} </div>
+		<div class="area_name">{% trans 'Application' %} </div>
 		<div id="dragboard_link">
 			<div id="workspace_name"></div>
 		  </div>
 	</div>
 
 	<div id="wiring_banner" class="banner" style="display:none">
-		<div class="logo_layout {{ branding.workspace.logo.class }}"><img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} /></div>
+      
+      <div class="logo_placeholder">
+		<img class="logo_layout {{ branding.workspace.logo.class }}" />
+		<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} />
+      </div>
+
 		<div class="toolbar_section">
 		  <div class="toolbar_menu">
 	      </div>
@@ -52,10 +60,13 @@
 	</div>
 
 	<div id="catalogue_banner" class="banner" style="display:none">
-	  <div style="background: url('{{ branding.catalogue.logo.url }}') no-repeat" 
-		{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" {% else %} class="logo_layout" {% endif %}>
-			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
-	  </div>
+	<div class="logo_placeholder">
+	  <img src="{{ branding.catalogue.logo.url }}" 
+		{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" 
+		{% else %} class="logo_layout" {% endif %} 
+	  />
+	  <img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
+	</div>
 	  <div class="toolbar_section">
 	    <div class="toolbar_menu">
 	      <div id="gadgets_button" class="first_toolbar_button">Galería de Gadgets</div>
