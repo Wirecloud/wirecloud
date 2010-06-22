@@ -417,7 +417,10 @@ def get_global_workspace_data(data, workSpaceDAO, user):
     concept_values = {}
     concept_values['user'] = user
     try:
-        concept_values['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
+        if 'twitterauth' in settings.INSTALLED_APPS:
+            concept_values['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
+        else:
+            concept_values['twitterauth'] = None
     except Exception, e:
         concept_values['twitterauth'] = None
     
