@@ -196,7 +196,7 @@ td {
 }
 
 
-#header .toolbar_menu {
+#header .toolbar_menu,  #header .toolbar_menu_small {
   float: left;
   margin-left: 40;
 }
@@ -208,6 +208,17 @@ td {
   cursor: pointer;
   padding-bottom: 5px;
   padding-top: 5px;
+  border-bottom: 1px solid #C2CBD2;
+  color: #4C5054;
+}
+
+#header .toolbar_menu_small > div {
+  padding:3px 10px;
+  font-size: 10pt;
+  float: left;
+  cursor: pointer;
+  padding-bottom: 3px;
+  padding-top: 3px;
   border-bottom: 1px solid #C2CBD2;
   color: #4C5054;
 }

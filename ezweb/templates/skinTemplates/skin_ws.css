@@ -12,36 +12,59 @@ body.dragboard_view, body.wiring_view{
  */
 
 /* banner */
-#ws_banner, #wiring_banner{
+#ws_banner, #wiring_banner {
 	background: {{ banner_bg }};
 }
 
-#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a{
+#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
 	color:{{ banner_font }};
 }
 
-#ws_banner .toolbar_section, #wiring_banner .toolbar_section{
+#ws_banner .toolbar_section, #wiring_banner .toolbar_section {
 	border-color:{{ banner_font }};
 }
 
-/* toolbar button marked */
+/* MAIN toolbar button marked */
 #ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section {
 	color: {{ toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ toolbar_marked_bg }};
 }
 
-/* toolbar button unmarked */
+/* MAIN toolbar button unmarked */
 #ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div {
 	color: {{ toolbar_unmarked_font }};
 	font-weight: bold;
 	background: {{ toolbar_unmarked_bg }};
 }
 
+/* MAIN toolbar button hover */
 #ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover {
 	color: {{ toolbar_hover_font }};
 	font-weight: bold;
 	background: {{ toolbar_hover_bg }};
+	text-decoration: underline;
+}
+
+/* SMALL toolbar button marked */
+#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section {
+	color: '';
+	font-weight: bold;
+	background: '';
+}
+
+/* SMALL toolbar button unmarked */
+#ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div {
+	color: '';
+	font-weight: bold;
+	background: '';
+}
+
+/* SMALL toolbar button hover */
+#ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover {
+	color: '';
+	font-weight: bold;
+	background: '';
 	text-decoration: underline;
 }
 
