@@ -305,7 +305,7 @@ function WorkSpace (workSpaceState) {
 
 		tabInfo.igadgetList = [];
 		tabInfo.preferences = {};
-
+		
 		var newTab = new Tab(tabInfo, this);
 		this.tabInstances[tabInfo.id] = newTab;
 		this._checkLock();
@@ -315,6 +315,7 @@ function WorkSpace (workSpaceState) {
 			this.wiring.processVar(tabInfo.workspaceVariables[i]);
 		}
 
+		this.showTabBar();
 		newTab.getDragboard().paint();
 	}
 
@@ -520,6 +521,11 @@ function WorkSpace (workSpaceState) {
 			else
 				tab.unmark();
 		}
+		if (tabList.length == 1){ //hide the tab if only one exists
+			this.hideTabBar()
+		}else{
+			this.showTabBar()
+		}
 
 		// resize tab bar after displaying tabs
 		LayoutManagerFactory.getInstance().resizeTabBar();
@@ -609,7 +615,10 @@ function WorkSpace (workSpaceState) {
 		}
 
 		this.unloadTab(tab.getId());
-
+		
+		if (this.tabInstances.keys().length == 1) {
+			this.hideTabBar();
+		}
 		//set the first tab as current
 		this.setTab(this.tabInstances.values()[0]);
 
@@ -630,6 +639,14 @@ function WorkSpace (workSpaceState) {
 		tab.destroy();
 
 		this.visibleTab = null;
+	}
+	
+	WorkSpace.prototype.hideTabBar = function(){
+		this.tabBar.setStyle({"visibility": "hidden"});
+	}
+	
+	WorkSpace.prototype.showTabBar = function(){
+		this.tabBar.setStyle({"visibility": "visible"});
 	}
 
 	WorkSpace.prototype.unload = function() {
@@ -1078,6 +1095,7 @@ function WorkSpace (workSpaceState) {
 	this.workSpaceHTMLElement = $('workspace_name');
 	this.editElement = $('edit_link')
 	this.addTabElement = $('add_tab_link');
+	this.tabBar = $('fixed_bar');
 	
 	// menu DOM elements and objects
 	this.goToMenu = null;

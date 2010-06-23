@@ -318,14 +318,6 @@ body.shared #workspace_link_container span {
   cursor: pointer;
 }
 
-#preferences_link {
-  height: 16px;
-  width: 16px;
-  border: none;
-  background: transparent url(../images/preferences.png) no-repeat;
-  cursor: pointer;
-}
-
 .go_back{
 	font-size:11pt;
 	position:absolute;

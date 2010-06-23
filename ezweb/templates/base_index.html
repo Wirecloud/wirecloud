@@ -179,6 +179,10 @@ var policy_lists = {{ policies|safe|default:"null" }};
 
 <!-- Initialization code -->
 <script type="text/javascript">
+	var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
+	var LANGUAGES = [];
+	{% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
+
 	function setLanguage(language) {
 		var onSuccess = function() {
 			window.location.reload();

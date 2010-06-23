@@ -120,10 +120,6 @@ a, a:visited{
   background: transparent url(../images/info.png) no-repeat;
 }
 
-#preferences_link {
-  background: transparent url(../images/preferences.png) no-repeat;
-}
-
 #logs_link.highlighted {
   background: transparent url(../images/info_highlighted.png) no-repeat;
 }

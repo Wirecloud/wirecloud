@@ -1,4 +1,5 @@
 {% load i18n %}
+
 <div id="header">
 	<div id="ws_banner" class="banner">
 	   <div class="logo_placeholder">
@@ -19,28 +20,26 @@
 		  </div>
 		</div>
 		<div id="greeting">
-			<div class="languages">
-				{% for lang in LANGUAGES %} <a href="/" onclick="UIUtils.sendPendingTags();return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-			</div>
 			<!-- LOGS LINK -->
 			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-			<input type="button" id="preferences_link" title="{% trans 'Preferences' %}" onclick="OpManagerFactory.getInstance().showPlatformPreferences();"/>
-			<span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" class="help_button" target="_blank"></a></span>
+			<a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="about EzWeb">{% trans "about EzWeb" %}</a>
+			<span> | </span>
+			<a id="preferences_link" href="javascript:OpManagerFactory.getInstance().showPlatformPreferences();" title="Edit settings">settings</a>
 			<span> | </span>
 			{% if is_anonymous %}
 				<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
 				<span> | </span>
 				<span id="user_section">{% trans "anonymous" %}</span>
 			{% else %}
-				<a href="javascript:OpManagerFactory.getInstance().logout()">{% trans "Exit" %}</a>
+				<a href="javascript:OpManagerFactory.getInstance().logout()" title="Log out">{% trans "exit" %}</a>
 				
 				{%if AUTHENTICATION_SERVER_URL %}
 					<span> | </span>
-					<a href="{{AUTHENTICATION_SERVER_URL}}">{% trans "profile" %}</a>
+					<a href="{{AUTHENTICATION_SERVER_URL}}" title="Profile">{% trans "profile" %}</a>
 				{%endif%}
 				
 				<span> | </span>
-				<span id="user_section"> {% trans "Welcome" %}, {% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
+				<span id="user_section">{% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
 			{% endif %}
 		</div>
 		<div class="area_name">{% trans 'Application' %} </div>
