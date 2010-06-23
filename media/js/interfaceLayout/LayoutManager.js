@@ -700,6 +700,12 @@ var LayoutManagerFactory = function () {
 				}
 				this.currentMenu = this.menus['createWorkSpaceMenu'];
 				break;
+			case 'renameWorkSpace':
+				if (!this.menus['renameWorkSpaceMenu']) {
+					this.menus['renameWorkSpaceMenu'] = new RenameWindowMenu(null);
+				}
+				this.currentMenu = this.menus['renameWorkSpaceMenu'];
+				break;
 			case 'useBrokenTheme':
 				if (!this.menus['alertMenu']) {
 					this.menus['alertMenu'] = new AlertWindowMenu();

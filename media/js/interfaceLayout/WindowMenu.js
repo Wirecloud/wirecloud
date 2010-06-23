@@ -598,6 +598,7 @@ CreateWindowMenu.prototype.show = function () {
 	WindowMenu.prototype.show.call(this);
 }
 
+
 /**
  * Specific class representing alert dialogs
  */
@@ -1377,6 +1378,42 @@ AddSiteMenu.prototype.executeOperation = function(form) {
 	var data = {"template_data": Object.toJSON(form)};
 	PersistenceEngineFactory.getInstance().send_post(URIs.GADGET_TEMPLATE_GENERATOR.evaluate({'gadget_type': 'web_browser'}), data, this, onSuccess, onError);
 }
+
+
+/**
+ *  Specific class to rename the workspace
+ */
+function RenameWindowMenu () {
+	
+	var fields = {
+		'name': {label: gettext('New Name'),type: 'text', required: true}
+	}
+	FormWindowMenu.call(this, fields, gettext('Rename Workspace'));
+}
+
+RenameWindowMenu.prototype = new FormWindowMenu();
+
+RenameWindowMenu.prototype.setFocus = function() {
+	this.fields['name'].inputInterface.focus();
+}
+
+RenameWindowMenu.prototype.executeOperation = function(form) {
+	var name = form["name"]; 
+	OpManagerFactory.getInstance().activeWorkSpace.rename(name);
+}
+
+RenameWindowMenu.prototype.show = function() {
+	FormWindowMenu.prototype.show.call(this);
+	this.fields['name'].inputInterface.inputElement.value = OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name;
+}
+
+RenameWindowMenu.prototype.extraValidation = function(fields) {
+	if (fields["name"].inputInterface.inputElement.value.length > 30) {
+		return gettext("The new name is too long. It must have less than 30 characters.");
+	}
+	return null;
+}
+
 
 /**
  * Specific class for Sharing workspace results window!

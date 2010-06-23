@@ -398,49 +398,21 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.fillWithLabel = function() {
-		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		if (this.workSpaceNameHTMLElement != null) {
-			this.workSpaceNameHTMLElement.remove();
-		}
 		var nameToShow = (this.workSpaceState.name.length>15)?this.workSpaceState.name.substring(0, 15)+"..." : this.workSpaceState.name;
-		var spanHTML = "<span>"+nameToShow+"</span>";
-		new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
-		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
-		Event.observe(this.workSpaceNameHTMLElement, 'click', function(e) {
-			if (LayoutManagerFactory.getInstance().getCurrentViewType() == "dragboard") {
-				this.fillWithInput();
-			} else {
-				OpManagerFactory.getInstance().showActiveWorkSpace();
-			}
-		}.bind(this));
-//		LayoutManagerFactory.getInstance().resizeTabBar();
-	}
-
-	WorkSpace.prototype.fillWithInput = function () {
-		if (!this.isShared()) {
-			this.workSpaceNameHTMLElement.remove();
-			var inputHTML = "<input class='ws_name' value='"+this.workSpaceState.name+"' size='"+this.workSpaceState.name.length+" maxlength=30' />";
-			new Insertion.Top(this.workSpaceHTMLElement, inputHTML);
-			this.workSpaceNameHTMLElement =  this.workSpaceHTMLElement.firstDescendant();
-			this.workSpaceNameHTMLElement.focus();
-			this.workSpaceNameHTMLElement.select();
-			Event.observe(this.workSpaceNameHTMLElement, 'blur', function(e){
-						Event.stop(e);
-						this.fillWithLabel()}.bind(this));
-			Event.observe(this.workSpaceNameHTMLElement, 'keypress', function(e){
-						if(e.keyCode == Event.KEY_RETURN){
-							Event.stop(e);
-							var target = BrowserUtilsFactory.getInstance().getTarget(e);
-							target.blur();
-						}}.bind(this));
-			Event.observe(this.workSpaceNameHTMLElement, 'change', function(e){
-						var target = BrowserUtilsFactory.getInstance().getTarget(e);
-						this.updateInfo(target.value);}.bind(this));
-			Event.observe(this.workSpaceNameHTMLElement, 'keyup', function(e){
-						Event.stop(e);
-						var target = BrowserUtilsFactory.getInstance().getTarget(e);
-						target.size = (target.value.length==0)?1:target.value.length;}.bind(this));
+		
+		this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();		
+		if (this.workSpaceNameHTMLElement != null) {
+			this.workSpaceNameHTMLElement.update(nameToShow);
+		}else {
+			var spanHTML = "<span>" + nameToShow + "</span>";
+			new Insertion.Top(this.workSpaceHTMLElement, spanHTML);
+			this.workSpaceNameHTMLElement = this.workSpaceHTMLElement.firstDescendant();
 		}
+	}
+	
+	WorkSpace.prototype.rename = function(name){
+		this.updateInfo(name);
+		this.fillWithLabel();
 	}
 
 	WorkSpace.prototype.updateInfo = function (workSpaceName) {
@@ -881,8 +853,7 @@ function WorkSpace (workSpaceState) {
 			this.confMenu.addOption(_currentTheme.getIconURL('rename'),
 				gettext("Rename"),
 				function() {
-					OpManagerFactory.getInstance().activeWorkSpace.fillWithInput();
-					LayoutManagerFactory.getInstance().hideCover();
+					LayoutManagerFactory.getInstance().showWindowMenu("renameWorkSpace");
 				},
 				optionPosition++);
 		}
