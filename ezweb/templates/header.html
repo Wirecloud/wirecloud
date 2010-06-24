@@ -8,7 +8,7 @@
 	   </div>
 		<div id="toolbar_section" class="toolbar_section">
 		  <div class="toolbar_menu">
-		    <div id="go_to_link" class="first_toolbar_button">{% trans 'Go to' %}</div>
+		    <div id="go_to_link" class="first_toolbar_button">{% trans 'My applications' %}</div>
 		    <div id="conf_link">{% trans 'Configuration' %}</div>
 		    <div id="sharing_link">{% trans 'Share' %}</div>
 		    <div id="edit_link" class="last_toolbar_button">&nbsp</div>
@@ -73,9 +73,7 @@
 	</div>
 	  <div class="toolbar_section">
 	    <div class="toolbar_menu">
-	      <div class="first_toolbar_button selected_section">Buscar</div>
-	      <div id="gadgets_button" class="first_toolbar_button hidden">Galería de Gadgets</div>
-	      <div id="mashups_button"class="hidden">Galería de Aplicaciones</div>
+	      <div class="first_toolbar_button selected_section">{% trans "Search" %}</div>
 	      <div id="developers_button" class="last_toolbar_button">Crear gadgets</div>
 	    </div>
 	  </div>
@@ -100,8 +98,8 @@
 	
 	<div id="catalogue_nav_bar">
 		<div class="tab_section">
-		  <div id="gadgets_tab" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
-		  <div id="gadgets_tab" class="tab"><span>{% trans 'Applications' %}</span></div>
+		  <div id="gadgets_button" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
+		  <div id="mashups_button" class="tab"><span>{% trans 'Applications' %}</span></div>
 		</div>
 	</div>
 </div>

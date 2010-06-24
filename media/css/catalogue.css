@@ -9,7 +9,6 @@
 
 .showcase {
   border-color:#C2CBD2;
-  padding-top: 7px;
 }
 
 #catalogue .back_to_resource_list {
@@ -69,7 +68,7 @@
 	display:inline;
 	position:relative;
 	width: 13%;
-	padding: 0px 10px 0 10px;
+	padding: 7px 10px 0 10px;
 	margin: 0;
 	height: 1000px;
 }
@@ -121,6 +120,7 @@
     padding-left:10px;
     position:relative;
     width:84%;
+    padding-top: 7px;
 }
 
 #catalogue .center .resources {
