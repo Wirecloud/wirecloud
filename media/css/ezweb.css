@@ -157,7 +157,20 @@ td {
     white-space: nowrap
 }
 
-#tab_section #fixed_bar {
+#catalogue_nav_bar {
+   bottom:-2px;
+   left:0;
+   position:absolute;
+   width:100%;
+   display: none;
+   margin-bottom:1px;
+}
+
+#catalogue_nav_bar .tab_section {
+   padding-right: 10px;
+}
+
+.tab_section #fixed_bar {
     position: relative;
     right: 0pt;
     float: right;
@@ -166,7 +179,7 @@ td {
     display: inline;
 }
 
-#tab_section #scroll_bar {
+.tab_section #scroll_bar {
     position: absolute;
     top: 0;
     right: 0;
@@ -339,7 +352,7 @@ body.shared #workspace_link_container span {
 	border: 1px solid;
 }
 
-#tab_section .tab {
+.tab_section .tab {
     position: relative;
     float: right;
     display: block;
@@ -357,7 +370,7 @@ body.shared #workspace_link_container span {
     display: none !important;
 }
 
-#tab_section .current {
+.tab_section .current, .tab_section .tab:hover {
 	border: 1px solid;
   	border-bottom: 0px none;
 	padding-top: 4px;
@@ -367,7 +380,7 @@ body.shared #workspace_link_container span {
   margin: 2px 5px 0;
 }
 
-.current .tab_name, #tab_section .current span {
+.current .tab_name, .tab_section .current span {
     float: left;
 	margin: 0px 5px 0;
 }

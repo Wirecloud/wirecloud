@@ -35,6 +35,7 @@ var Catalogue = function (dom_element, dom_wrapper) {
   //header
   this.catalogue_banner = null;
   this.ws_link = null;	//link to active workspace in the toolbar
+  this.catalogue_nav_bar = $('catalogue_nav_bar');
   
   this.available_apps = [];
   
@@ -90,14 +91,24 @@ var Catalogue = function (dom_element, dom_wrapper) {
     this.rendered = false;
   }
   
+  this.show_bar = function () {
+	this.catalogue_nav_bar.style.display = 'block';
+  }
+  
+  this.hide_bar = function () {
+	this.catalogue_nav_bar.style.display = 'none';   
+  }
+  
   this.show = function () {
     this.render();
     this.fit_height();
+    this.show_bar();
     
     LayoutManagerFactory.getInstance().showCatalogue();
   }
   
   this.hide = function () {
+	this.hide_bar();
 	LayoutManagerFactory.getInstance().hideView(this.get_dom_element());
   }
   

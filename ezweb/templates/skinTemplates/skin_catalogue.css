@@ -45,6 +45,35 @@ body.catalogue_view {
 	text-decoration: underline;
 }
 
+/* TABS */
+
+/* not selected tab */
+.tab_section .tab {
+	color: {{ tab_unmarked_font }};
+	background: {{ tab_unmarked_bg }};
+	border-color: transparent;
+	font-weight: bold;
+}
+
+.tab_section .tab:hover {
+	color: {{ tab_hover_font }};
+	border-color: {{ tab_border }};
+	background: {{ tab_hover_bg }};
+}
+
+/* selected tab */
+.tab_section .current {
+ 	color: {{ tab_marked_font }};
+  	background: {{ tab_marked_bg }};
+  	border-color: {{ tab_border }};
+}
+
+.tab_section .current:hover {
+	color: {{ tab_marked_font }};
+	background: {{ tab_marked_bg }};
+	font-weight:bold;
+}
+
 /*
  * WRAPPER section
  */

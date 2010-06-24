@@ -73,9 +73,10 @@
 	</div>
 	  <div class="toolbar_section">
 	    <div class="toolbar_menu">
-	      <div id="gadgets_button" class="first_toolbar_button">Galería de Gadgets</div>
-	      <div id="mashups_button">Galería de Aplicaciones</div>
-	      <div id="developers_button" class="last_toolbar_button">Crea tus gadgets</div>
+	      <div class="first_toolbar_button selected_section">Buscar</div>
+	      <div id="gadgets_button" class="first_toolbar_button hidden">Galería de Gadgets</div>
+	      <div id="mashups_button"class="hidden">Galería de Aplicaciones</div>
+	      <div id="developers_button" class="last_toolbar_button">Crear gadgets</div>
 	    </div>
 	  </div>
 	  <a id="catalogue_dragboard_link" class="go_back">{% trans 'Go Back' %} »</a>
@@ -95,5 +96,12 @@
 		{% endblock %}
 
 		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
+	</div>
+	
+	<div id="catalogue_nav_bar">
+		<div class="tab_section">
+		  <div id="gadgets_tab" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
+		  <div id="gadgets_tab" class="tab"><span>{% trans 'Applications' %}</span></div>
+		</div>
 	</div>
 </div>

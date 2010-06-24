@@ -139,12 +139,8 @@ a, a:visited{
 	font-size: 10px;
 }
 
-#tab_section .tab {
+.tab_section .tab {
   font-size: 12px;
-  /*border-color: #C2CBD2;
-  font-weight:normal;
-  color: black;
-  background: #DDDDDD url(../images/degradado.png) no-repeat scroll left top;*/
   -moz-border-radius-topleft:4px;
   -moz-border-radius-topright:4px;
   -webkit-border-top-left-radius: 4px;
@@ -158,14 +154,6 @@ a, a:visited{
 .disabled {
   display: none !important;
 }
-
-/*
-#tab_section .current {
-  color: #4c5054;
-  background: url("../images/fond.gif") repeat scroll left top transparent;
-  border-color: #C2CBD2;
-  font-weight:bold;
-}*/
 
 .tab .tab_name {
   font-size: 8pt;
