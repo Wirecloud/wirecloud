@@ -363,7 +363,11 @@ var OpManagerFactory = function () {
 			              "beforeunload",
 			              this.unloadEnvironment.bind(this),
 			              true);
-
+			
+			Event.observe(window,
+			              "hashchange",
+			              function(){LayoutManagerFactory.getInstance().onHashChange()},
+			              true);
 			// TODO create a Theme Manager Module
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!

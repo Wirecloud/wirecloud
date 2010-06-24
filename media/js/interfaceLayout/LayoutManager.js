@@ -203,6 +203,13 @@ var LayoutManagerFactory = function () {
 			}
 			setTimeout(fadder, 50);
 		}
+		
+		LayoutManager.prototype.updateLocation = function(section){
+			if (!section)
+				section = "";
+			window.location = window.location.protocol+ "//" + window.location.host + window.location.pathname + "#" + section;
+			
+		}
 
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
@@ -373,6 +380,35 @@ var LayoutManagerFactory = function () {
 				Event.observe(tab, 'click', changeHandler);
 			}
 		}
+		
+		/*
+		 * Handler for changes in the hash to navigate to other areas
+		 */
+		LayoutManager.prototype.onHashChange = function(){
+			var hash_parts = window.location.hash.split("#");
+			
+			section = hash_parts[0];
+			if (hash_parts.length > 1){
+				//it is a subsection
+				section = hash_parts[1];
+			} 
+			if (section != this.currentViewType){
+				switch (section){
+					case "wiring":
+						this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
+						break;
+					case "catalogue":
+						this.showCatalogue();
+						break;
+					case "logs":
+						this.showLogs();
+						break;
+					case "dragboard":
+					default:
+						this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
+				}
+			}
+		}
 
 		// Dragboard operations (usually called together with Tab operations)
 		LayoutManager.prototype.showDragboard = function(dragboard) {
@@ -392,6 +428,7 @@ var LayoutManagerFactory = function () {
 			this.currentViewType = 'dragboard';
 			
 			$(document.body).addClassName(this.currentViewType+"_view");
+			this.updateLocation(this.currentViewType);
 
 			this.showTabs();
 
@@ -433,6 +470,7 @@ var LayoutManagerFactory = function () {
 			this.currentViewType = 'catalogue';
 			
 			$(document.body).addClassName(this.currentViewType+"_view");
+			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
 			
@@ -469,6 +507,7 @@ var LayoutManagerFactory = function () {
 			this.currentViewType = 'logs';
 			
 			$(document.body).addClassName(this.currentViewType+"_view");
+			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
 			this.resizeContainer(this.currentView.logContainer);
@@ -496,6 +535,7 @@ var LayoutManagerFactory = function () {
 			this.currentViewType = 'wiring';
 			
 			$(document.body).addClassName(this.currentViewType+"_view");
+			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
 			this.resizeContainer(this.currentView.wiringContainer);
