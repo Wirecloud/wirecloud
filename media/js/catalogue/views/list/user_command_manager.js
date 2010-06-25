@@ -93,6 +93,13 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'SHOW_DEVELOPER_INFO':
 	  var command = new ShowDeveloperInfoCommand(dom_element, html_event, this.services, this.dom_wrapper);
 	  break;
+	case 'SHOW_GADGETS':
+	case 'SHOW_MASHUPS':
+	  var command = new ShowTabCommand(dom_element, html_event, this.services, this.dom_wrapper, command_id);
+	  break;
+	case 'SHOW_MASHUPS':
+	  this.services.create_local_command('SHOW_MASHUPS', null);
+	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		

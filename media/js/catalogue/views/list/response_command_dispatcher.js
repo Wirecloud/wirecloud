@@ -157,21 +157,19 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
   // Updating Navigation Bar
   switch (command_id) {
   case 'PAINT_MASHUPS':
-	this.mashups_button.addClassName('selected_section');
-	this.gadgets_button.removeClassName('selected_section');
+	this.mashups_button.addClassName('current');
+	this.gadgets_button.removeClassName('current');
 	this.developers_button.removeClassName('selected_section');
 	break;
   case 'PAINT_GADGETS':
-	this.gadgets_button.addClassName('selected_section');
-	this.mashups_button.removeClassName('selected_section');
+	this.gadgets_button.addClassName('current');
+	this.mashups_button.removeClassName('current');
 	this.developers_button.removeClassName('selected_section');
 	break;
   case 'SHOW_DEVELOPER_INFO':
   case 'SUBMIT_GADGET':
   case 'ADD_GADGET_TO_APP':
 	this.developers_button.addClassName('selected_section');
-	this.gadgets_button.removeClassName('selected_section');
-	this.mashups_button.removeClassName('selected_section');
 	break;
   case 'PAINT_RESOURCE_DETAILS':
   case 'SHOW_GADGETS':

@@ -136,6 +136,18 @@ var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var ShowTabCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) {
+	var command_id = data;
+	
+	var response_command = this.services.create_local_command(command_id, null);
+	
+	response_command.process();
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
 	this.services.submit_gadget_to_catalogue(this.data);

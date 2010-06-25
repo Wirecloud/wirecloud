@@ -27,15 +27,16 @@ var ListViewFactory  = function () {
 	
   this.COMMANDS_INFO = new Hash({'#view_all': 'VIEW_ALL', '#simple_search input': 'SIMPLE_SEARCH',
 	                             '#results_per_page': 'SIMPLE_SEARCH', '#results_order': 'SIMPLE_SEARCH',
-	                             '#gadgets_button': 'SIMPLE_SEARCH', '#mashups_button': 'SIMPLE_SEARCH',
-	                             '#developers_button': 'SHOW_DEVELOPER_INFO'});
+	                             '#gadgets_button': 'SHOW_GADGETS', '#mashups_button': 'SHOW_MASHUPS',
+	                             '#developers_button_toolbar': 'SHOW_DEVELOPER_INFO'});
   
   this.DOM_ELEMENT_IDS = new Hash({'ORDER_BY_COMBO': '#results_order', 'RESULTS_PER_PAGE_COMBO': '#results_per_page', 
 	                               'PAGINATION_AREA': '#paginate', 'GADGET_LIST': '#gadgets', 
 	                               'SEARCH_INPUT': '#simple_search input', 'RESOURCE_DETAILS_AREA': '#resource_details', 
 	                               'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
 	                               'GADGETS_BUTTON': '#gadgets_button', 'MASHUPS_BUTTON': '#mashups_button',
-	                               'DEVELOPERS_BUTTON': '#developers_button', 'DEVELOPER_INFO_AREA': '#developer_info'});
+	                               'DEVELOPERS_BUTTON': '#developers_button_toolbar', 'DEVELOPER_INFO_AREA': '#developer_info',
+	                               'SEARCH_TOOLBAR_BUTTON': '#search_button_toolbar'});
   
   this.catalogue_structure_dom = $('list_view_catalogue_structure');
   this.resource_structure_dom = $('list_view_resource_structure_template');

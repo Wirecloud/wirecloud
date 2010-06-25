@@ -48,30 +48,24 @@ body.catalogue_view {
 /* TABS */
 
 /* not selected tab */
-.tab_section .tab {
+#catalogue_nav_bar .tab_section .tab {
 	color: {{ tab_unmarked_font }};
 	background: {{ tab_unmarked_bg }};
 	border-color: transparent;
 	font-weight: bold;
 }
 
-.tab_section .tab:hover {
-	color: {{ tab_hover_font }};
-	border-color: {{ tab_border }};
-	background: {{ tab_hover_bg }};
+#catalogue_nav_bar .tab_section .tab:hover {
+	color: #4C5054;
+	border-color: #C2CBD2;;
+	background: ;
 }
 
 /* selected tab */
-.tab_section .current {
- 	color: {{ tab_marked_font }};
-  	background: {{ tab_marked_bg }};
-  	border-color: {{ tab_border }};
-}
-
-.tab_section .current:hover {
-	color: {{ tab_marked_font }};
-	background: {{ tab_marked_bg }};
-	font-weight:bold;
+#catalogue_nav_bar .tab_section .current {
+ 	color: #4C5054;
+  	background: #FFDE6B;
+  	border-color: #C2CBD2;
 }
 
 /*
