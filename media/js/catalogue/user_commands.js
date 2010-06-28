@@ -126,9 +126,12 @@ var ShowResourceDetailsCommand = function (dom_element, html_event, service_faca
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
-var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var ShowToolbarSectionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
-    var response_command = this.services.create_local_command('SHOW_DEVELOPER_INFO', data);
+	var command_id = data;
+	var search_scope = this.services.searcher.get_scope();
+	
+    var response_command = this.services.create_local_command(command_id, search_scope);
     
     response_command.process();
   }
@@ -139,6 +142,16 @@ var ShowDeveloperInfoCommand = function (dom_element, html_event, service_facade
 var ShowTabCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) {
 	var command_id = data;
+	var search_scope = null;
+	
+	if (command_id == 'SHOW_GADGETS')
+	  search_scope = 'gadget';
+		
+	if (command_id == 'SHOW_MASHUPS')
+	  search_scope = 'mashup';
+	
+	if (search_scope)
+	  this.services.searcher.set_scope(search_scope);
 	
 	var response_command = this.services.create_local_command(command_id, null);
 	

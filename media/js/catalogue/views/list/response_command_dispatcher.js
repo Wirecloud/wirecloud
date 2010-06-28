@@ -53,15 +53,20 @@ ListView_ResponseCommandDispatcher.prototype.init = function () {
   var resource_details_div = this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA');
   this.painters['RESOURCE_DETAILS_PAINTER'].set_dom_element(resource_details_div);
   
-  // NAVIGATION BAR BUTTONS
+  // TOOLBAR BUTTONS
+  this.search_button = this.dom_wrapper.get_element_by_code('SEARCH_TOOLBAR_BUTTON');
+  this.developers_button = this.dom_wrapper.get_element_by_code('DEVELOPERS_BUTTON');
+  
+  // TAB BAR AREA
+  this.tab_bar = this.dom_wrapper.get_element_by_code('TAB_BAR');
   this.mashups_button = this.dom_wrapper.get_element_by_code('MASHUPS_BUTTON');
   this.gadgets_button = this.dom_wrapper.get_element_by_code('GADGETS_BUTTON');
-  this.developers_button = this.dom_wrapper.get_element_by_code('DEVELOPERS_BUTTON');
 }
 
 ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
   var display_options = {'search_options': 'none', 'pagination':'none', 'developer_info': 'none',
-		                 'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none'};
+		                 'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none',
+		                 'tab_bar': 'none'};
   
   var services = this.user_command_manager.get_service_facade();
   
@@ -73,6 +78,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	display_options['search_options'] = 'block';
 	display_options['pagination'] = 'block';
 	display_options['gadget_list'] = 'block';
+	display_options['tab_bar'] = 'block';
 	
 	this.show_section(display_options, command_id);
 	
@@ -87,6 +93,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	display_options['search_options'] = 'block';
 	display_options['pagination'] = 'block';
 	display_options['mashup_list'] = 'block';
+	display_options['tab_bar'] = 'block';
 	
 	this.show_section(display_options, command_id);
 	
@@ -110,6 +117,22 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	this.show_section(display_options, command_id);
 	
 	this.painters['DEVELOPERS_PAINTER'].paint(resp_command, this.user_command_manager);
+	
+	break;
+  case 'SHOW_SEARCH_INFO':
+	display_options['search_options'] = 'block';
+	display_options['pagination'] = 'block';
+	display_options['tab_bar'] = 'block';
+	
+	var command_data = resp_command.get_data();
+	
+	if (command_data == 'gadget')
+	  display_options['gadget_list'] = 'block';
+	
+	if (command_data == 'mashup')
+	  display_options['mashup_list'] = 'block';
+	
+	this.show_section(display_options, command_id);
 	
 	break;
   case 'SUBMIT_GADGET':
@@ -145,6 +168,7 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
   var mashup_list = display_options['mashup_list'];
   var resource_details = display_options['resource_details'];
   var developer_info = display_options['developer_info'];
+  var tab_bar = display_options['tab_bar'];
   
   
   this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': search_options});
@@ -153,29 +177,35 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
   this.dom_wrapper.get_element_by_code('MASHUP_LIST').setStyle({'display': mashup_list});
   this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA').setStyle({'display': resource_details});
   this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA').setStyle({'display': developer_info});
+  this.dom_wrapper.get_element_by_code('TAB_BAR').setStyle({'display': tab_bar});
   
   // Updating Navigation Bar
   switch (command_id) {
   case 'PAINT_MASHUPS':
-	this.mashups_button.addClassName('current');
-	this.gadgets_button.removeClassName('current');
-	this.developers_button.removeClassName('selected_section');
-	break;
   case 'PAINT_GADGETS':
-	this.gadgets_button.addClassName('current');
-	this.mashups_button.removeClassName('current');
+	this.search_button.addClassName('selected_section');
 	this.developers_button.removeClassName('selected_section');
 	break;
   case 'SHOW_DEVELOPER_INFO':
   case 'SUBMIT_GADGET':
   case 'ADD_GADGET_TO_APP':
+	this.search_button.removeClassName('selected_section');
 	this.developers_button.addClassName('selected_section');
 	break;
-  case 'PAINT_RESOURCE_DETAILS':
-  case 'SHOW_GADGETS':
-  case 'SHOW_MASHUPS':
-    // No regarding tab! Nothing to do!
+  case 'SHOW_SEARCH_INFO':
+	this.search_button.addClassName('selected_section');
+	this.developers_button.removeClassName('selected_section');
 	break;
+  case 'PAINT_RESOURCE_DETAILS':
+	break;
+  case 'SHOW_GADGETS':
+	this.mashups_button.removeClassName('current');
+	this.gadgets_button.addClassName('current');
+	break;
+  case 'SHOW_MASHUPS':
+	this.mashups_button.addClassName('current');
+	this.gadgets_button.removeClassName('current');
+   	break;
   default:
 	alert ('Error activating tab!');
   }
