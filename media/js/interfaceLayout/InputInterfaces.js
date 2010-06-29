@@ -437,28 +437,13 @@ function ColorInputInterface(fieldId, options) {
 
 	this.inputElement = document.createElement('input');
 	Element.extend(this.inputElement);
-	this.inputElement.setAttribute('maxlength', 7);
+	this.inputElement.setAttribute('maxlength', 11);
 	this.inputElement.setAttribute('type', 'text');
 	this.inputElement.setAttribute('class', 'color_input');
-	var inputId = this.fieldId + '_input';
+	//var inputId = this._fieldId + '_input';
+	var inputId = this._fieldId;
 	this.inputElement.setAttribute('id', inputId);
-
-	this.button = document.createElement('button');
-	Element.extend(this.button);
-	this.button.addClassName('color_button');
-
-	this.sample = document.createElement('input');
-	Element.extend(this.sample);
-	var sampleId = this.fieldId + '_sample';
-	this.sample.setAttribute('id', sampleId);
-	this.sample.setAttribute('size', '1');
-	this.sample.setAttribute('type', 'text');
-	this.sample.setAttribute('disabled', 'disabled');
-
-	this.button.observe('click',
-	    function() {
-	        showColorGrid3(inputId, sampleId);
-	    });
+	
 }
 ColorInputInterface.prototype = new InputInterface();
 
@@ -479,6 +464,10 @@ ColorInputInterface.prototype.getValue = function() {
 
 ColorInputInterface.prototype._insertInto = function(element) {
 	element.appendChild(this.inputElement);
+	if (!this.picker)
+		this.picker = new jscolor.color(this.inputElement, {'hash':'true'});
+
+/*
 	element.appendChild(this.button);
 	element.appendChild(this.sample);
 
@@ -487,6 +476,8 @@ ColorInputInterface.prototype._insertInto = function(element) {
 	colorpicker301.setAttribute('id', 'colorpicker301');
 	colorpicker301.addClassName('colorpicker301');
 	element.appendChild(colorpicker301, element.firstChild);
+*/
+	
 }
 
 /**

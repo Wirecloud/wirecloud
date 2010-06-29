@@ -7,75 +7,268 @@
       lang="{{ LANGUAGE_CODE }}">
 <head>
 	<title>{% trans "Skin editor for EzWeb" %}</title>
-	<style>
-		body {
-			font-family: Arial,Helvetica,sans-serif;
-			font-size: 80%;
-		}
-		
-		.title {
-			font-size:150%;
-			margin:10px 0;
-			text-align:center;
-			width:100%;
-		}
-		
-		#form {
-			margin: auto;
-			width: 70%;
-		}
-		.cell {
-			padding: 5px;
-		}
-		
-		.name_label {
-			font-weight: bold;
-		}
-		
-		#name_row .property_value {
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/css/skin_form.css" />
+	
+	<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+	
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/InputInterfaces.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+	<script type="text/javascript" src="{{ MEDIA_URL }}js/common/jscolor/jscolor.js"></script>
 
-		}
-		.element_name {
-			border-bottom: 1px solid #cccccc;
-			padding-bottom: 10px;
-			font-weight: bold;
-		}
-		.property_value{
+	<script>
+		
+		_URIConstants = function(){}
+		_URIConstants.prototype.FILE_UPLOADER = '/uploader';
+		var URIs = new _URIConstants();
+		
+		var _processRule = function(rule) {
+			if (rule) {				
+				//the rules are of this type: url("../images/remove.png") no-repeat scroll 0 0 transparent
+				//process the background-image url if it is defined
+				regexp = new RegExp("url\\(\"?'?([^\"']*)\"?'?\\)", "i");
+				rule = rule.replace(regexp,function (match, url, offset, str){
+																this.fields['imageURI'].inputInterface._setValue(url);
+																return "";
+															}.bind(this)
+									);
+				//process the background-repeat property
+				rule = rule.replace(/((no-)?repeat(-x|-y)?)/,function(match, repeat, offset, str){
+																				this.fields['repeat'].inputInterface._setValue(repeat);
+																				return "";
+																			}.bind(this),
+																			"i"
+									);
+				//process the background-attachtment property
+				regexp = new RegExp("(scroll|fixed|local)", "i");
+				rule = rule.replace(regexp,"");
+				
+				//process the background-position property
+/*				regexp = new RegExp("(top|left|right|bottom|center)", "gi");
+				rule = rule.replace(regexp,function(match, pos, offset, str){
+																		this.fields[pos].inputInterface._setValue(0);
+																		return "";
+																	}.bind(this)																
+									);
+*/
+				regexp = new RegExp("\\s(\\d+[\\w|%]{0,2}|left|right|center)\\s?(\\d+[\\w|%]{0,2}|top|bottom|center)?");
+				rule= rule.replace(regexp, function (match, x, y, offset, str){
+														if(x){
+															switch(x){
+															case 'left':
+															case 'right':
+															case 'center':
+																this.fields[x].inputInterface._setValue(0);
+																break;
+															default:
+																this.fields['left'].inputInterface._setValue(x);
+																break;
+															}
+														}
+														if(y){
+															switch(y){
+															case 'top':
+															case 'bottom':
+															case 'center':
+																this.fields[y].inputInterface._setValue(0);
+																break;
+															default:
+																this.fields['top'].inputInterface._setValue(y);
+																break;
+															}
+														}
+																		
+														return "";
+																		
+												}.bind(this)
+				);
+				
+				//process the background-color property
+				this.fields['color'].inputInterface._setValue(rule.trim());
+			}
 		}
 		
-		.property_value input {
-			font-size: 90%;
+		function ComposeRuleWindowMenu (element) {
+			this.targetElement = null;
+			this.cover = document.createElement("div");
+			document.body.appendChild(this.cover);
+			Element.extend(this.cover);
+			this.cover.addClassName('layer');
+
+			var fields = {
+				'color': {label: '{% trans "color" %}', type:'color'},
+				'imageURI': {
+							label: '{% trans "Image URL" %}',
+							type: 'fileUrl',
+							linkHandler: function(){
+								this.openUploadWindow('imageURI');
+							}.bind(this)
+				},
+				'repeat': {label: '{% trans "repeat" %}', type:'text'},
+				'left': {label: '{% trans "left" %}', type:'text'},
+				'right': {label: '{% trans "right" %}', type:'text'},
+				'top': {label: '{% trans "top" %}', type:'text'},
+				'bottom': {label: '{% trans "bottom" %}', type:'text'},
+				'center': {label: '{% trans "center" %}', type:'text'},
+					
+			}
+		
+			FormWindowMenu.call(this, fields, '{% trans "Create a CSS rule for a background" %}');
+				
+			//Window for uploading local files
+			this.uploadWindow = new UploadWindowMenu('{% trans "Upload File" %}');
+				
+		}
+		ComposeRuleWindowMenu.prototype = new FormWindowMenu();
+				
+		ComposeRuleWindowMenu.prototype.executeOperation = function() {
+			//Generate the new rule
+			rule = [];
+			if (this.fields['color'].inputInterface.inputElement.value!= "")
+				rule.push(this.fields['color'].inputInterface.inputElement.value);
+			if(this.fields['imageURI'].inputInterface.getValue() != ""){
+				rule.push("url(" + this.fields['imageURI'].inputInterface.getValue() + ")");
+				rule.push(this.fields['repeat'].inputInterface.getValue());
+			
+				var left = this.fields['left'].inputInterface.getValue();
+				var top = this.fields['top'].inputInterface.getValue();
+				var right = this.fields['right'].inputInterface.getValue();
+				var bottom = this.fields['bottom'].inputInterface.getValue();
+				var center = this.fields['center'].inputInterface.getValue();
+				
+				var posx = null;
+				var posy = null;
+				
+				if (left != "")
+					posx = left;
+				else if (right != "")
+					posx = right;
+				else if (center != "")
+					posx = center;
+				else posx = 0;
+				
+				rule.push(posx);
+					
+				if(top != "")
+					posy = top;
+				else if(bottom != "")
+					posy = bottom;
+				else if (center != "")
+					posy = center;
+				else posy = 0;
+				
+				rule.push(posy);
+			}
+			var result =  rule.join(" ");
+			this.targetElement.value = result.trim();
 		}
 		
-		.form_bottom .cell{
-			text-align: center;
-		}
-		
-		.description {
-			color: dimGray;
-		}
-		
-		.required, .error {
-			color: red;
-		}
-		
-		.legend {
+		ComposeRuleWindowMenu.prototype._acceptHandler = function(){
+			this.executeOperation();
+			this.cover.removeClassName('disabled_background');
+			this.hide();
 			
 		}
 		
-	</style>
-	<script>
+		ComposeRuleWindowMenu.prototype.openUploadWindow = function(targetElementName){
+			var targetElement = this.fields[targetElementName].inputInterface.inputElement;
+			this.uploadWindow.show(targetElement);
+		}
+		
+		ComposeRuleWindowMenu.prototype._closeListener = function(){
+
+			this.cover.removeClassName('disabled_background');
+			this.hide();
+	    
+		}
+		
+		ComposeRuleWindowMenu.prototype.show = function(targetElement){
+			var regexp = null;
+			
+			this.targetElement = $(targetElement);
+			
+			for (var fieldId in this.fields) {
+				var field = this.fields[fieldId];
+				field.inputInterface.reset();
+			}
+			
+			var rule = this.targetElement.value; 
+			_processRule.call(this, rule);
+			
+			this.cover.addClassName('disabled_background');
+			WindowMenu.prototype.show.call(this);
+		}
+		
+		ComposeRuleWindowMenu.prototype.hide = function(){
+			this.uploadWindow.hide();
+			
+			WindowMenu.prototype.hide.call(this);
+		}
+		
+		
+//*******************GLOBALS*****************
+
+		ruleForm = null;
+		
+		//Extending the String object
+		String.prototype.trim = function() {
+		   return this.replace(/^\s+|\s+$/g,"");
+		}
+		
+		function initLayout () {
+			//calculate the height of the properties_container
+			var height = BrowserUtilsFactory.getInstance().getHeight() - $('properties_container').offsetTop - $('footer').getHeight();
+			$('properties_container').setStyle({'max-height': height + 'px'}); 
+		}
+		
 		function send (action, target){
 			document.forms[0].action = action;
 			document.forms[0].target = target;
 			document.forms[0].submit();
 		}
+		
+		function paintColorPicker(propName, propValue, parentId){
+			var fieldId=propName + "_picker";
+			var field = {"type": "color"};
+			var inputInterface = InterfaceFactory.createInterface(fieldId, field);
+			inputInterface._insertInto($(parentId));
+			inputInterface.inputElement.name = propName;
+			inputInterface.inputElement.size = "75";
+			inputInterface.picker.fromString(propValue);			
+
+		}
+		
+		function createRuleLink(prop_name){
+			
+			var link = document.createElement('div');			
+			Element.extend(this.link);
+			link.addClassName('window_link');
+			link.innerHTML = "{% trans "Compose a CSS rule" %}";
+			
+			var context = {"elementId": prop_name}
+			Event.observe(link,
+							'click',
+							function(){
+								composeRuleForm(this.elementId)
+							}.bind(context));
+							
+			$(prop_name).parentNode.appendChild(link);
+			
+		}
+		
+		function composeRuleForm (resultElementId){
+			if (!ruleForm){
+				ruleForm = new ComposeRuleWindowMenu(null);
+			}
+			ruleForm.show(resultElementId);
+		}
 	</script>
 </head>
-<body>
+<body onload="initLayout()">
 	<div class="title">{% trans "Skin editor for EzWeb"%}</div>
 	<form method="POST">
-		<table id="form" border="0" cellspacing="0" cellpadding="0">
+		<table id="skin_name" class="form" border="0" cellspacing="0" cellpadding="0">
 			<tr id="name_row">
 				<td class="cell name_label">{% trans "Skin name" %} <span class="required">*</span></td>
 				<td class="cell property_value">
@@ -83,27 +276,42 @@
 					<span class="description">{% trans "Use alphanumeric characters, hyphens, underscores and dots" %} </span>
 				</td>
 			</tr>
+		</table>
+		<div id="properties_container" class="properties_container">
+		<table id="form" class="form" border="0" cellspacing="0" cellpadding="0">
 		{% for name, element in properties.items %}
 			<tr class="element">
 				<td class="cell element_name" colspan="2">{{name}}</td>
 			</tr>
 			{% for prop_name, prop_desc in element.items %}
 			<tr class="property">
-			<td class="cell property_name">{{prop_desc.name}}</td>
-			<td class="cell property_value"><input type="text" name="{{prop_name}}" value="{{prop_desc.value}}" size="75"/></td>
+			<td class="cell property_name">{{prop_desc.name}}
+			</td>
+			<td id="{{prop_name}}_td" class="cell property_value">
+				{% ifequal prop_desc.type "color" %} 				
+					<script> paintColorPicker("{{prop_name}}", "{{prop_desc.value}}", "{{prop_name}}_td" ) </script>
+				{% endifequal %}
+				{% ifequal prop_desc.type "bg" %}
+				<input type="text" name="{{prop_name}}" id="{{prop_name}}" value="{{prop_desc.value}}" size="75"/>
+				<script>createRuleLink("{{prop_name}}")</script>
+				{% endifequal %}
+			</td>
 			</tr>
 			{% endfor %}
 		{% endfor %}
+		</table>
+		</div>
+		<table id="footer" class="form" border="0" cellspacing="0" cellpadding="0">
 			<tr class="form_bottom">
-				<td class="cell"><input type="button" onclick="send('#', 'result')" value="{% trans 'Save' %}"/></td>
+				<td class="cell right"><input type="button" onclick="send('#', 'result')" value="{% trans 'Save' %}"/></td>
 				<td class="cell"><input type="button" onclick="send('/layout/skin/type/{{mode}}/preview', '_blank')" value="{% trans 'Preview' %}"/></td>
 			</tr>
 			<tr class="legend">
 				<td class = "cell" colspan="2"><span class="required">*</span> {% trans "required field" %} </td>
 			</tr>
-			<tr>
+			<tr class="result_iframe">
 				<td class="cell" colspan="2">
-					<iframe id="result" name="result" width="100%" frameborder="0">
+					<iframe id="result" name="result" width="100%" height="40px" frameborder="0">
 				</td>
 			</tr>
 		</table>
@@ -111,3 +319,4 @@
 	</iframe>
 
 </body>
+</html>

@@ -91,7 +91,7 @@ class SkinGenerator(Resource):
                     for property,desc in properties.items():
                         desc['value'] = skin_properties[property]
                     
-            fields = {"properties" : fields, "name":skin_name or "", "mode":skin_type}
+            fields = {"properties" : fields, "name":skin_name or "", "mode":skin_type, "MEDIA_URL": settings.MEDIA_URL}
                 
             return render_to_response(self.FORM_TEMPLATE, fields)
         

@@ -255,130 +255,154 @@
         <field type="TextField" name="layout_css">{"general":"css/ezweb.css", "dragboard":"css/dragboard.css", "wiring":"css/wiring.css", "ie":"css/ie.css", "lite":"css/ezweb_lite.css", "catalogue":"css/catalogue.css"}</field>
         <field to="layout.theme" name="theme" rel="ManyToOneRel">1</field>
     </object>
+    <object pk="2" model="layout.skintemplate">
+        <field type="TextField" name="properties">RELLENAR</field>
+        <field type="CharField" name="type">catalogue</field>
+        <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
+        <field type="CharField" name="template_file">skin_catalogue</field>
+    </object>
     <object pk="1" model="layout.skintemplate">
         <field type="TextField" name="properties">{
 "General background":{
 	"body_bg":{
 		"name":"Body background",
-		"value":"white"
+		"value":"white",
+		"type":"bg"
 	}
 },
 "Banner":{
 	"banner_bg":{
 		"name":"Banner background",
-		"value":"white"
+		"value":"white",
+		"type":"bg"
 
 	},
  	"banner_font":{
 		"name":"Banner font color",
-		"value":"white"
+		"value":"white",
+		"type":"color"
 	}
 },
 "Banner buttons":{
 	"toolbar_marked_font":{
 		"name":"Active button font color",
-		"value":"#2D6F9C"
+		"value":"#2D6F9C",
+		"type":"color"
 	},
 	"toolbar_marked_bg":{
 		"name":"Active button background",
-		"value":"#C3D2DD"
+		"value":"#C3D2DD",
+		"type":"bg"
 	},
 	"toolbar_unmarked_font":{
 		"name":"Inactive button font color",
-		"value":"#2D6F9C"
+		"value":"#2D6F9C",
+		"type":"bg"
 	},
 	"toolbar_unmarked_bg":{
 		"name":"Inactive button background",
-		"value":"#7B99B0"
+		"value":"#7B99B0",
+		"type":"bg"
 	},
 	"toolbar_hover_font":{
 		"name":"Font color on hovering",
-		"value":"#2D6F9C"
+		"value":"#2D6F9C",
+		"type":"color"
 	},
 	"toolbar_hover_bg":{
 		"name":"Background on hovering",
-		"value":"#C3D2DD"
+		"value":"#C3D2DD",
+		"type":"bg"
 	}
 },
 "Tabs":{
 	"tab_border":{
 		"name":"Tab border color",
-		"value":"#C2CBD2"
+		"value":"#C2CBD2",
+		"type":"color"
 	},
 	"tab_marked_font":{
 		"name":"Active tab font color",
-		"value":"#4c5054"
+		"value":"#4c5054",
+		"type":"color"
 	},
 	"tab_marked_bg":{
 		"name":"Active tab background",
-		"value":"#DDDDDD"
+		"value":"#DDDDDD",
+		"type":"bg"
 	},
 	"tab_unmarked_font":{
 		"name":"Inactive tab font color",
-		"value":"#4c5054"
+		"value":"#4c5054",
+		"type":"color"
 	},
 	"tab_unmarked_bg":{
 		"name":"Inactive tab background",
-		"value":"#F0F0F0"
+		"value":"#F0F0F0",
+		"type":"bg"
 	},
 	"tab_hover_font":{
 		"name":"Tab font color on hovering",
-		"value":"#4c5054"
+		"value":"#4c5054",
+		"type":"color"
 	},
 	"tab_hover_bg":{
 		"name":"Tab background on hovering",
-		"value":"#F0F0F0"
+		"value":"#F0F0F0",
+		"type":"bg"
 	}
 
 },
 "Add-Tab button":{
 	"add_tab_font":{
 		"name":"Add-Tab button font color",
-		"value":"#2D6F9C"
+		"value":"#2D6F9C",
+		"type":"color"
 	},
 	"add_tab_bg":{
 		"name":"Add-Tab button background",
-		"value":"transparent"
+		"value":"transparent",
+		"type":"bg"
 	},
  	"add_tab_hover_font":{
 		"name":"Add-Tab button font color on hovering",
-		"value":"#2D6F9C"
+		"value":"#2D6F9C",
+		"type":"color"
 	},
 	"add_tab_hover_bg":{
 		"name":"Add-Tab button background on hovering",
-		"value":"transparent"
+		"value":"transparent",
+		"type":"bg"
 	}
 },
 "Main area":{
 	"container_bg":{
 		"name":"Container background",
-		"value":"white"
+		"value":"white",
+		"type":"bg"
 	},
 	"container_border":{
 		"name":"Container border color",
-		"value":"#C2CBD2"
+		"value":"#C2CBD2",
+		"type":"color"
 	}
 },
 "Gadgets":{
 	"gadget_title_font":{
 		"name":"Gadget title font color",
-		"value":"#4C5054"
+		"value":"#4C5054",
+		"type":"color"
 	},
 	"gadget_border":{
 		"name":"Gadget border color",
-		"value":"#C2CBD2"
+		"value":"#C2CBD2",
+		"type":"color"
 	}
 }
 }</field>
         <field type="CharField" name="type">workspace</field>
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
         <field type="CharField" name="template_file">skin_ws</field>
-    </object>
-    <object pk="2" model="layout.skintemplate">
-        <field type="TextField" name="properties">RELLENAR</field>
-        <field type="CharField" name="type">catalogue</field>
-        <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
-        <field type="CharField" name="template_file">skin_catalogue</field>
     </object>
     <object pk="2" model="layout.skin">
         <field type="CharField" name="name">default</field>

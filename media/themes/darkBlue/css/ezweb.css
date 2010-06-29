@@ -270,6 +270,12 @@ input[type="text"], input[type="password"], textarea{
 	-webkit-border-radius: 6px;	
 }
 
+.color_input{
+	background-image:url("../images/colorpicker.png");
+	background-position:right center;
+	background-repeat:no-repeat;
+}
+
 .required_mark{
 	color: red;
 }
