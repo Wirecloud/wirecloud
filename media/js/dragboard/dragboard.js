@@ -287,7 +287,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgets = new Hash();
 		this.iGadgetsByCode = new Hash();
 
-		if (tab.preferences.get('locked') || this.workSpace.isShared()) {
+		if (this.tab.preferences.get('locked') || this.workSpace.isShared()) {
 			this.fixed = true;
 			this.dragboardElement.addClassName("fixed");
 		}

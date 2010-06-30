@@ -65,6 +65,9 @@ function Tab (tabInfo, workSpace) {
 		this.moveMenu.remove();
 
 		this.dragboard.destroy();
+		
+		if (this.FloatingGadgetsMenu)
+			this.FloatingGadgetsMenu.remove();
 	}
 
 
@@ -235,6 +238,8 @@ function Tab (tabInfo, workSpace) {
 	this.tabHTMLElement;
 	this.tabNameHTMLElement = null;
 	this.tabWidth = 0;
+	
+	this.FloatingGadgetsMenu = null;
 
 	this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('tab', this.tabInfo.preferences, this)
 	this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
@@ -594,9 +599,8 @@ Tab.prototype._createTabMenu = function() {
 
 	//move before... Menu
 	var idMoveMenu = 'moveMenu_'+this.tabName;
-	var moveMenuHTML = '<div id="'+idMoveMenu+'" class="drop_down_menu"></div></div>';
-	new Insertion.After($('menu_layer'), moveMenuHTML);
-	this.moveMenu = new DropDownMenu(idMoveMenu, this.menu);
+	this.moveMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idMoveMenu, this.menu);
+
 	
 	//add an option for each tab
 	this._addMoveOptions = function(){
@@ -653,13 +657,27 @@ Tab.prototype._createTabMenu = function() {
 			LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();})
 		}.bind(this),
 		3);
+	
+	//Floating Gadgets Menu
+	var floatingGadgetsId = 'floatingGadgetsMenu_'+this.tabName;
+	this.FloatingGadgetsMenu = LayoutManagerFactory.getInstance().initDropDownMenu(floatingGadgetsId, this.menu);
+	
+	
+	this.menu.addOption(_currentTheme.getIconURL("show_floating"),
+		gettext("Show Floating Gadget"),
+		function(e) {
+			this.FloatingGadgetsMenu.clearOptions();
+			this.getDragboard().fillFloatingGadgetsMenu(this.FloatingGadgetsMenu);
+			LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingGadgetsMenu, Event.pointerX(e), Event.pointerY(e));
+		}.bind(this),
+		4);
 
 	this.menu.addOption(_currentTheme.getIconURL('tab_preferences'),
 		gettext("Preferences"),
 		function() {
 			LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
 		}.bind(this),
-		3);
+		5);
 }
 
 /**

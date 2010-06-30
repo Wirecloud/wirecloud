@@ -80,9 +80,9 @@ var LayoutManagerFactory = function () {
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
 		if ($('lite_toolbar_section')) {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		} else {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		}
 
 		this.tabMarker = $('tab_marker');		
@@ -102,9 +102,9 @@ var LayoutManagerFactory = function () {
 			this.showTabs();
 
 			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() -  $('floating_gadgets_launcher').offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - $('floating_gadgets_launcher').offsetWidth - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}
 
 			this.changeTabBarSize(0);
@@ -304,8 +304,6 @@ var LayoutManagerFactory = function () {
 			if (bannerHTML)
 				bannerHTML.show();
 		}
-
-
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
 			/*this.logsLink.innerHTML = labelContent;
@@ -577,21 +575,32 @@ var LayoutManagerFactory = function () {
 
 		//WorkSpaceMenu is dinamic so the different options must be added.
 		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
-			workSpace.goToMenu.clearSubmenuOptions();
-
-			if(workspaces.length >= 1) {
-				workSpace.goToMenu.submenu.className = "submenu border_bottom";
-			} else {
-				workSpace.goToMenu.submenu.className = "submenu";
+			//Add to the toolbar the two main options
+			var goToMenu = workSpace.getGoToMenu()
+			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long 
+			
+			for (var i=0;i<options_length && i<workspaces.length; i++){
+				var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
+				goToMenu.addOption(nameToShow,
+							function () {
+								OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+							}.bind(workspaces[i]),
+							i);
 			}
+			
+			
+			//Fill the general list of workspaces
+			var wsListMenu = workSpace.getWsListMenu()
+			wsListMenu.clearOptions();
 
 			for (var i = 0; i < workspaces.length; i++) {
-				workSpace.goToMenu.addOptionToSubmenu(null,
+				wsListMenu.addOption(null,
 					workspaces[i].workSpaceState.name,
 					function () {
 						LayoutManagerFactory.getInstance().hideCover();
 						OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-					}.bind(workspaces[i]));
+					}.bind(workspaces[i]),
+					i);
 			}
 		}
 
@@ -610,6 +619,20 @@ var LayoutManagerFactory = function () {
 					}.bind(context), i);
 				}
 			}
+		}
+		
+		/**
+		 * General function to create the DropDownMenu
+		 */
+		LayoutManager.prototype.initDropDownMenu = function(idMenu,parentMenu){
+			var menuHTML = $(idMenu);
+			if (menuHTML) 
+				menuHTML.remove();
+			
+			// add the DOM element and create the menu
+			menuHTML = '<div id="' + idMenu + '" class="drop_down_menu"></div>'
+			new Insertion.After($('menu_layer'), menuHTML);
+			return new DropDownMenu(idMenu, parentMenu); 
 		}
 
 		/**
@@ -635,7 +658,7 @@ var LayoutManagerFactory = function () {
 				}
 				this.showClickableCover();
 				break;
-			case 'workSpaceOps':
+			case 'wsList':
 				this.currentMenu = menu;
 				this.currentMenu.show('center', posX, posY);
 				this.showClickableCover();
@@ -647,10 +670,6 @@ var LayoutManagerFactory = function () {
 				else
 					this.currentMenu.show('left', posX, posY);
 				this.showClickableCover();
-				break;
-			case 'workSpaceOpsSubMenu':
-				this.currentMenu = menu;
-				this.currentMenu.show('right', posX, posY);
 				break;
 			case 'TabOpsSubMenu':
 				this.currentMenu = menu;
@@ -841,6 +860,58 @@ var LayoutManagerFactory = function () {
 				return;
 			}
 			this.currentMenu.show();
+		}
+		
+		LayoutManager.prototype.createToolbarSection = function(toolbar_section){
+			// Clear old toolbar (if it exists) 
+			toolbar_section.update();
+			
+			var toolbarHtml = '<div id="toolbar_menu" class="toolbar_menu">';
+			toolbarHtml += '<div id="go_to_link" class="first_toolbar_button">'+ gettext("My applications") +'</div>';
+		    toolbarHtml += '<div id="conf_link">'+ gettext("Configuration") +'</div>';
+		    toolbarHtml += '<div id="sharing_link">'+ gettext("Share") +'</div>';
+		    toolbarHtml += '<div id="edit_link" class="last_toolbar_button">'+ gettext("Edit") +'</div>';
+			toolbarHtml += '</div>';
+			
+			new Insertion.Top(toolbar_section, toolbarHtml);
+		}
+		
+		//Shows the asked window menu
+		LayoutManager.prototype.showToolbarMenu = function(menu, launcher, toolbar) {
+			var isOpened = launcher.hasClassName("selected_section");
+			
+			//Close the selected options
+			if (isOpened){
+				this.clearToolbar(toolbar, launcher);
+			}else{
+				var selected_elements = toolbar.getElementsByClassName("selected_section");
+				// close the current option
+				for (var i=0; i< selected_elements.length; i++){
+					selected_elements[i].triggerEvent("click");
+				}
+				// open the selected one
+				launcher.addClassName("selected_section");
+				menu.show();
+			}
+			
+		}
+		
+		//clear the opened toolbars
+		LayoutManager.prototype.clearToolbar = function(toolbar, launcher) {
+			var isOpened = false;
+			var selected_elements = toolbar.getElementsByClassName("selected_section");
+			for (var i=0; i< selected_elements.length; i++){
+				if (selected_elements[i] == launcher){
+					isOpened = true;
+				}
+				selected_elements[i].removeClassName("selected_section");
+			}
+			
+			var visible_submenus = toolbar.getElementsByClassName("visible_submenu");
+			for (var i=0; i< visible_submenus.length; i++){
+				visible_submenus[i].removeClassName("visible_submenu");
+			}
+			return isOpened;		
 		}
 
 		//Shows the background and on click the message on front disappear

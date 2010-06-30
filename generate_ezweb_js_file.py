@@ -97,6 +97,7 @@ inputFiles = {
         'js/catalogue/factory.js',
 
         'js/interfaceLayout/BackgroundFadder.js',
+        'js/interfaceLayout/ToolbarMenu.js',
         'js/interfaceLayout/DropDownMenu.js',
         'js/interfaceLayout/WindowMenu.js',
         'js/interfaceLayout/LayoutManager.js',

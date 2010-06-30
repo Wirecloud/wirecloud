@@ -214,6 +214,10 @@ td {
   margin-left: 40;
 }
 
+#header .toolbar_menu_small {
+	display: none;
+}
+
 #header .toolbar_menu > div {
   padding:3px 10px;
   font-size: 10pt;
@@ -224,6 +228,7 @@ td {
   border-bottom: 1px solid #C2CBD2;
   color: #4C5054;
 }
+
 
 #header .toolbar_menu_small > div {
   padding:3px 10px;
@@ -258,9 +263,8 @@ td {
 	font-weight: bold;
 }
 
-#floating_gadgets_launcher {
-    float: right;
-	margin-left: 4px;
+#header .visible_submenu{
+	display: block;
 }
 
 .ws_name {

@@ -2,7 +2,6 @@
 <div id="header">
 	<div id="bar">
 		<div id="tab_section" class="tab_section">
-			<input id="floating_gadgets_launcher" type="button" title="{% trans 'Show floating gadgets' %}" class="tabOps_launcher"/>
 			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
 			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
 			<div id="fixed_bar"><div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div></div>

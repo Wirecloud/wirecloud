@@ -258,7 +258,7 @@ var OpManagerFactory = function () {
 			LogManagerFactory.getInstance().reset();
 			LayoutManagerFactory.getInstance().clearErrors();
 			LayoutManagerFactory.getInstance().resizeTabBar();
-			this.showActiveWorkSpace();
+			this.showActiveWorkSpace(false);
 		}
 
 		OpManager.prototype.showPlatformPreferences = function () {
@@ -453,10 +453,12 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace.igadgetUnloaded(igadgetId);
 		}
 
-		OpManager.prototype.showActiveWorkSpace = function () {
+		OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
 			this.activeWorkSpace.show();
-
-			this._refreshWorkspaceMenu();
+			
+			if (refreshMenu != false){ //refreshMenu == true or null
+				this._refreshWorkspaceMenu();
+			}
 		}
 
 		OpManager.prototype.continueLoadingGlobalModules = function (module) {
