@@ -35,10 +35,15 @@
  <div class="link padding_left floating_left padding_right">{% trans 'Tag gadget' %}</div>
  <div class="link padding_left floating_left padding_right">{% trans 'Vote gadget' %}</div>
  <div class="link padding_left floating_left padding_right">{% trans 'Change version' %}</div>
- <div class="link padding_left floating_left padding_right">{% trans 'Search compatible gadgets' %}</div>
- <div class="link padding_left floating_left padding_right">{% trans 'View template' %}</div>
- <div class="link padding_left floating_left padding_right">{% trans 'Delete gadget' %}</div>
- <div class="link padding_left floating_left padding_right">{% trans 'Update gadget' %}</div>
+ <div class="link padding_left floating_left padding_right">
+   <a href="#{template_url}" target="_blank">{% trans 'View template' %}</a>
+ </div>
+ 
+ <div class="link padding_left floating_left padding_right delete_resource">{% trans 'Delete gadget' %} </div>
+ <div class="message">#{delete_result}</div>
+ 
+ <div class="link padding_left floating_left padding_right update_resource">{% trans 'Update gadget' %} </div>
+ <div class="message">#{update_result}</div>
 </div>
 </div>
 <div class="footer_resource"></div>

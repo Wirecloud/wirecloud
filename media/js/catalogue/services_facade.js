@@ -112,6 +112,10 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.resource_submitter.delete_resource(resource);
   }
   
+  this.update_resource_html = function (resource) { 
+    this.resource_submitter.update_resource_html(resource);
+  } 
+  
   this.add_gadget_to_app = function (gadget, app) { 
     this.resource_submitter.add_gadget_to_app(gadget, app);
   }

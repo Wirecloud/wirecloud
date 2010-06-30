@@ -149,7 +149,20 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
   this.details_template = new Template(this.details_template_element.innerHTML);
   
   this.paint = function (command, user_command_manager) {
-    var resource = command.get_data();
+    var get_extra_data = function (name, extra_data) {
+      if (! extra_data)
+        return '';
+      
+      if (extra_data[name])
+        return extra_data[name];
+      else
+    	return '';
+    }
+    
+	var resource = command.get_data();
+	var extra_data = resource.getExtraData();
+	
+	resource.setExtraData(null);
     
     this.dom_element.update('');
       
@@ -161,6 +174,9 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var creator = resource.getCreator();
     var versions = resource.getVersion();
     var wiki = resource.getUriWiki();
+    var template_url = resource.getUriTemplate();
+    
+    var update_result = get_extra_data('update_result', extra_data);
       
     var type = '';
     var button_text = 'Add';
@@ -173,7 +189,8 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var resource_html = 
       this.details_template.evaluate({'image_url': image_url, 'name': name, 'description': description, 
     	                              'type': type, 'button_text': button_text, 'vendor': vendor, 'version': version,
-    	                              'creator': creator, 'versions': versions, 'wiki': wiki});
+    	                              'creator': creator, 'versions': versions, 'wiki': wiki, 
+    	                              'template_url': template_url, 'update_result': update_result});
       
     // Inserting resource html to the root_element
     this.dom_element.update(resource_html);
@@ -186,12 +203,45 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var back_link_list = this.dom_element.getElementsBySelector('.back_to_resource_list');
     
     if (! back_link_list || back_link_list.length != 1) {
-  	  alert('Problem rendering resource details!');
+  	  alert('Problem rendering resource details (back_link)!');
     }
     
     var back_link = back_link_list[0];
     
     user_command_manager.create_command_from_data('SHOW_RESOURCE_LIST', back_link, resource, 'click');
+    
+    // "Instantiate" 
+    var button_list = this.dom_element.getElementsBySelector('.left_column_resource button')
+    
+    if (! button_list || button_list.length != 1) {
+  	  alert('Problem parsing resource template!');
+    }
+    
+    var button = button_list[0];
+    
+    user_command_manager.create_command_from_data('INSTANTIATE_RESOURCE', button, resource, 'click');
+    
+    // Delete resource
+    var delete_link_list = this.dom_element.getElementsBySelector('.delete_resource');
+    
+    if (! delete_link_list || delete_link_list.length != 1) {
+  	  alert('Problem rendering resource details (delete_link)!');
+    }
+    
+    var delete_link = delete_link_list[0];
+    
+    user_command_manager.create_command_from_data('DELETE_RESOURCE', delete_link, resource, 'click');
+    
+    // Update resource html
+    var update_link_list = this.dom_element.getElementsBySelector('.update_resource');
+    
+    if (! update_link_list || update_link_list.length != 1) {
+  	  alert('Problem rendering resource details (update_link)!');
+    }
+    
+    var update_link = update_link_list[0];
+    
+    user_command_manager.create_command_from_data('UPDATE_RESOURCE', update_link, resource, 'click');
   }
 }
 

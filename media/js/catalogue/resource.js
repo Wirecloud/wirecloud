@@ -50,6 +50,7 @@ function ResourceState(resourceJSON_) {
   var capabilities = [];
   var availableApps = [];
   var creator = [];
+  var extra_data = null;
 	
   //////////////////////////
   // GETTERS
@@ -146,9 +147,18 @@ function ResourceState(resourceJSON_) {
 	return capabilities; 
   }
   
+  this.getExtraData = function() {
+	return extra_data; 
+  }
+  
   //////////////
   // SETTERS
   //////////////
+  
+  this.setExtraData = function(extra_data_) {
+	extra_data = extra_data_; 
+  } 
+  
   this.setTags = function(tagsJSON_) {
 	tags = tagsJSON_;
   }

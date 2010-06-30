@@ -351,6 +351,45 @@ var CatalogueResourceSubmitter = function () {
     //Send request to delete de gadget
     this.persistence_engine.send_delete(url, response_command, success_callback, error_callback);
   }
+  
+  this.update_resource_html = function (resource) {
+	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion()};
+    
+	var url = URIs.GET_GADGET.evaluate(context);
+    url += '/xhtml';
+
+    var success_callback = function(response) {
+      // processing command
+      var resource = this.get_data();
+      
+      resource.setExtraData({'update_result': gettext('Done!')});
+      
+      this.set_data(resource);
+    	
+      this.process();
+    }
+    
+    var error_callback = function(transport, e) {
+  	  var logManager = LogManagerFactory.getInstance();
+  	  var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+  	
+  	  logManager.log(msg);
+  	  
+  	  resource.setExtraData({'update_result': gettext('Error: the Gadget has not cached its HTML code. Instantiate it previously!')});
+  	
+  	  // processing command
+  	  this.process();
+    }
+    
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('PAINT_RESOURCE_DETAILS');
+    
+    // "this" is binded to a "ResponseCommand" object
+    response_command.set_data(resource);
+	    
+	//Send request to update gadget's code
+	this.persistence_engine.send_update(url, {}, response_command, success_callback, error_callback);
+  }
 }
 
 var CatalogueVoter = function () {

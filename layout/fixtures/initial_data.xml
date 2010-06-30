@@ -255,148 +255,118 @@
         <field type="TextField" name="layout_css">{"general":"css/ezweb.css", "dragboard":"css/dragboard.css", "wiring":"css/wiring.css", "ie":"css/ie.css", "lite":"css/ezweb_lite.css", "catalogue":"css/catalogue.css"}</field>
         <field to="layout.theme" name="theme" rel="ManyToOneRel">1</field>
     </object>
-    <object pk="2" model="layout.skintemplate">
-        <field type="TextField" name="properties">RELLENAR</field>
-        <field type="CharField" name="type">catalogue</field>
-        <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
-        <field type="CharField" name="template_file">skin_catalogue</field>
-    </object>
     <object pk="1" model="layout.skintemplate">
         <field type="TextField" name="properties">{
 "General background":{
 	"body_bg":{
 		"name":"Body background",
-		"value":"white",
-		"type":"bg"
+		"value":"white"
 	}
 },
 "Banner":{
 	"banner_bg":{
 		"name":"Banner background",
-		"value":"white",
-		"type":"bg"
+		"value":"white"
 
 	},
  	"banner_font":{
 		"name":"Banner font color",
-		"value":"white",
-		"type":"color"
+		"value":"white"
 	}
 },
 "Banner buttons":{
 	"toolbar_marked_font":{
 		"name":"Active button font color",
-		"value":"#2D6F9C",
-		"type":"color"
+		"value":"#2D6F9C"
 	},
 	"toolbar_marked_bg":{
 		"name":"Active button background",
-		"value":"#C3D2DD",
-		"type":"bg"
+		"value":"#C3D2DD"
 	},
 	"toolbar_unmarked_font":{
 		"name":"Inactive button font color",
-		"value":"#2D6F9C",
-		"type":"bg"
+		"value":"#2D6F9C"
 	},
 	"toolbar_unmarked_bg":{
 		"name":"Inactive button background",
-		"value":"#7B99B0",
-		"type":"bg"
+		"value":"#7B99B0"
 	},
 	"toolbar_hover_font":{
 		"name":"Font color on hovering",
-		"value":"#2D6F9C",
-		"type":"color"
+		"value":"#2D6F9C"
 	},
 	"toolbar_hover_bg":{
 		"name":"Background on hovering",
-		"value":"#C3D2DD",
-		"type":"bg"
+		"value":"#C3D2DD"
 	}
 },
 "Tabs":{
 	"tab_border":{
 		"name":"Tab border color",
-		"value":"#C2CBD2",
-		"type":"color"
+		"value":"#C2CBD2"
 	},
 	"tab_marked_font":{
 		"name":"Active tab font color",
-		"value":"#4c5054",
-		"type":"color"
+		"value":"#4c5054"
 	},
 	"tab_marked_bg":{
 		"name":"Active tab background",
-		"value":"#DDDDDD",
-		"type":"bg"
+		"value":"#DDDDDD"
 	},
 	"tab_unmarked_font":{
 		"name":"Inactive tab font color",
-		"value":"#4c5054",
-		"type":"color"
+		"value":"#4c5054"
 	},
 	"tab_unmarked_bg":{
 		"name":"Inactive tab background",
-		"value":"#F0F0F0",
-		"type":"bg"
+		"value":"#F0F0F0"
 	},
 	"tab_hover_font":{
 		"name":"Tab font color on hovering",
-		"value":"#4c5054",
-		"type":"color"
+		"value":"#4c5054"
 	},
 	"tab_hover_bg":{
 		"name":"Tab background on hovering",
-		"value":"#F0F0F0",
-		"type":"bg"
+		"value":"#F0F0F0"
 	}
 
 },
 "Add-Tab button":{
 	"add_tab_font":{
 		"name":"Add-Tab button font color",
-		"value":"#2D6F9C",
-		"type":"color"
+		"value":"#2D6F9C"
 	},
 	"add_tab_bg":{
 		"name":"Add-Tab button background",
-		"value":"transparent",
-		"type":"bg"
+		"value":"transparent"
 	},
  	"add_tab_hover_font":{
 		"name":"Add-Tab button font color on hovering",
-		"value":"#2D6F9C",
-		"type":"color"
+		"value":"#2D6F9C"
 	},
 	"add_tab_hover_bg":{
 		"name":"Add-Tab button background on hovering",
-		"value":"transparent",
-		"type":"bg"
+		"value":"transparent"
 	}
 },
 "Main area":{
 	"container_bg":{
 		"name":"Container background",
-		"value":"white",
-		"type":"bg"
+		"value":"white"
 	},
 	"container_border":{
 		"name":"Container border color",
-		"value":"#C2CBD2",
-		"type":"color"
+		"value":"#C2CBD2"
 	}
 },
 "Gadgets":{
 	"gadget_title_font":{
 		"name":"Gadget title font color",
-		"value":"#4C5054",
-		"type":"color"
+		"value":"#4C5054"
 	},
 	"gadget_border":{
 		"name":"Gadget border color",
-		"value":"#C2CBD2",
-		"type":"color"
+		"value":"#C2CBD2"
 	}
 }
 }</field>
@@ -404,13 +374,19 @@
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
         <field type="CharField" name="template_file">skin_ws</field>
     </object>
+    <object pk="2" model="layout.skintemplate">
+        <field type="TextField" name="properties">RELLENAR</field>
+        <field type="CharField" name="type">catalogue</field>
+        <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
+        <field type="CharField" name="template_file">skin_catalogue</field>
+    </object>
     <object pk="2" model="layout.skin">
         <field type="CharField" name="name">default</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
         <field type="TextField" name="properties">{
 "body_bg": "white", "banner_bg": "transparent", "banner_font": "#4C5054",  "container_bg": "transparent", "container_border": "#C2CBD2", 
 
-"toolbar_marked_font": "#000000", "toolbar_marked_bg": "#B3A700", "toolbar_unmarked_font": "#ffffff", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": "", 
+"toolbar_marked_font": "#000000", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "#ffffff", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": "", 
 
 "add_tab_font":"#2D6F9C", "add_tab_bg":"transparent", "add_tab_hover_font":"#2D6F9C", "add_tab_hover_bg":"transparent",
 
@@ -446,7 +422,9 @@
         <field type="TextField" name="properties">{
 "body_bg": "white", "banner_bg":"white", "banner_font":"#4C5054", "container_bg": "white", "container_border": "#C2CBD2",
 
-"toolbar_marked_font": "black", "toolbar_marked_bg": "#B3A700", "toolbar_unmarked_font": "white", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": ""
+"toolbar_marked_font": "#4C5054", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "white", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": "",
+
+"tab_marked_bg": "#FFDE6B"
 }</field>
         <field to="layout.skintemplate" name="skin_template" rel="ManyToOneRel">2</field>
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>

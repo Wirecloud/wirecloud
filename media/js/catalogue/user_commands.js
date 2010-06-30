@@ -169,6 +169,22 @@ var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var DeleteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.delete_resource(this.data);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+var UpdateResourceHTMLCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	this.services.update_resource_html(this.data);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var ShowResourceListCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
 	var resource = this.data;

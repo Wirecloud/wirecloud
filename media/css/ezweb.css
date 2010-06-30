@@ -4,6 +4,21 @@ body {
     /*min-width: 900px;*/ /*TODO: IE6 doesn't deal with min-width! Find a solution*/
 }
 
+a, a:visited {
+  text-decoration:none;
+}
+
+a:hover  {
+  text-decoration:underline;
+}
+#header .toolbar_menu > div.selected_section {
+  padding-bottom: 9px;
+  -moz-border-radius-bottomleft:5px;
+  -moz-border-radius-bottomright:5px;
+  -webkit-border-radius-bottomright:5px;
+  -webkit-border-radius-bottomright:5px;
+}
+
 td {
     padding: 0;
 }

@@ -2,6 +2,14 @@
   overflow:hidden;
 }
 
+#catalogue .resource_details .message {
+  float: left;
+  padding-left: 15px;
+  font-weight: bold;
+  text-decoration: none;
+  color: red;
+}
+
 #catalogue select {
   height: 20px;
   font-size: 8pt;
@@ -15,6 +23,10 @@
   border-bottom: 1px solid;
   height:23px;
   padding-top:5px;
+}
+
+#catalogue .paginate a {
+  cursor: pointer;
 }
 
 #catalogue .margin_top {

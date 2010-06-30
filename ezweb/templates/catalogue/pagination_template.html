@@ -1,16 +1,16 @@
 {% load i18n %}
 
 <span class="beginning">
- <img src="/ezweb/themes/{{theme.name}}/images/#{first_image}">
+  <a title="{% trans 'Go to beggining' %}"><<</a>
 </span>
 <span class="previous">
- <img src="/ezweb/themes/{{theme.name}}/images/#{previous_image}">
+  <a title="{% trans 'Go to previous page' %}"><</a>
 </span>
 <span class="pagination_pages">
 </span>
 <span class="next">
- <img src="/ezweb/themes/{{theme.name}}/images/#{next_image}">
+  <a title="{% trans 'Go to next page' %}">></a>
 </span>
 <span class="last">
- <img src="/ezweb/themes/{{theme.name}}/images/#{last_image}">
+  <a title="{% trans 'Go to last page' %}">>></a>
 </span>

@@ -129,6 +129,12 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'SHOW_RESOURCE_LIST':
 	  var command = new ShowResourceListCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
+	case 'DELETE_RESOURCE':
+	  var command = new DeleteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  break;
+	case 'UPDATE_RESOURCE':
+	  var command = new UpdateResourceHTMLCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		
