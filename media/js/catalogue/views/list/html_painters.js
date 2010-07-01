@@ -148,17 +148,21 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
   this.details_template_element = details_structure_element;
   this.details_template = new Template(this.details_template_element.innerHTML);
   
+  var get_extra_data = function (name, extra_data) {
+	if (! extra_data)
+	  return '';
+	  
+	if (extra_data[name])
+	  return extra_data[name];
+	else
+	  return '';
+  }
+  
+  var get_popularity_html = function (popularity) {
+    return '<a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a>';
+  }
+  
   this.paint = function (command, user_command_manager) {
-    var get_extra_data = function (name, extra_data) {
-      if (! extra_data)
-        return '';
-      
-      if (extra_data[name])
-        return extra_data[name];
-      else
-    	return '';
-    }
-    
 	var resource = command.get_data();
 	var extra_data = resource.getExtraData();
 	
@@ -177,6 +181,8 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var template_url = resource.getUriTemplate();
     
     var update_result = get_extra_data('update_result', extra_data);
+    var voting_result = get_extra_data('voting_result', extra_data);
+    var average_popularity = get_popularity_html(resource.getPopularity());
       
     var type = '';
     var button_text = 'Add';
@@ -190,7 +196,8 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
       this.details_template.evaluate({'image_url': image_url, 'name': name, 'description': description, 
     	                              'type': type, 'button_text': button_text, 'vendor': vendor, 'version': version,
     	                              'creator': creator, 'versions': versions, 'wiki': wiki, 
-    	                              'template_url': template_url, 'update_result': update_result});
+    	                              'template_url': template_url, 'update_result': update_result,
+    	                              'voting_result': voting_result, 'average_popularity': average_popularity });
       
     // Inserting resource html to the root_element
     this.dom_element.update(resource_html);
@@ -242,6 +249,17 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var update_link = update_link_list[0];
     
     user_command_manager.create_command_from_data('UPDATE_RESOURCE', update_link, resource, 'click');
+
+    // Voting a resource
+    var voting_link_list = this.dom_element.getElementsBySelector('.voting_resource');
+    
+    if (! voting_link_list || voting_link_list.length != 1) {
+  	  alert('Problem rendering resource details (voting_link)!');
+    }
+    
+    var voting_link = voting_link_list[0];
+    
+    user_command_manager.create_command_from_data('VOTE_RESOURCE', voting_link, resource, 'click');
   }
 }
 

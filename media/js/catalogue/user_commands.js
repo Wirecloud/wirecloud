@@ -185,6 +185,81 @@ var UpdateResourceHTMLCommand = function (dom_element, html_event, service_facad
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var VoteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+    var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+	var popularity_div = target.nextSiblings()[0];
+	
+	popularity_div.toggleClassName('hidden');
+	
+	if (!popularity_div.binded_events) {
+	  bind_popularity_events(popularity_div, this);
+	
+	  popularity_div.binded_events = true;
+	}
+  }
+	  
+  var bind_popularity_events = function (popularity_div, vote_command) {
+    var vote_stars = popularity_div.childElements();
+    
+    for (var i=0; i<vote_stars.length; i++) {
+      var vote_star = vote_stars[i];
+      
+      Event.observe(vote_star, 'mouseover', mark_previous_stars);
+      Event.observe(vote_star, 'click', commit_voting.bind(vote_command));
+    }
+    
+    Event.observe(popularity_div, 'mouseout', unmark_not_committed_stars);
+  }
+	  
+  var mark_previous_stars = function (event) {
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+	target.addClassName('on');
+	
+	var previous_sibling = target.previousElementSibling;
+	
+	while (previous_sibling) {
+		previous_sibling.addClassName('on');
+		
+		previous_sibling = previous_sibling.previousElementSibling;
+	}
+  }
+  
+  var commit_voting = function (event) {
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+	target.parentNode.committed_voting = target;
+	
+	mark_previous_stars(event);
+	unmark_not_committed_stars(event);
+	
+	this.services.vote(this.data, 3);
+  }
+  
+  var unmark_not_committed_stars = function (event) {
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	var stars_container = target.parentNode;
+	var next_sibling = null;
+	
+	if (stars_container.committed_voting) {
+	  next_sibling = stars_container.committed_voting.nextElementSibling;
+	} else {
+	  next_sibling = target.parentNode.firstElementChild;
+	}
+	  
+	while (next_sibling) {
+	  next_sibling.removeClassName('on');
+			
+	  next_sibling = next_sibling.nextElementSibling;
+	}
+	
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var ShowResourceListCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
 	var resource = this.data;

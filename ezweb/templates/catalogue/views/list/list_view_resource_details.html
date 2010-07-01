@@ -9,7 +9,7 @@
 <div class="right_column_resource">
  <div>
   <div class="resource_name">#{name}</div>
-  <div class="popularity"><a class="on"></a><a class="on"></a><a class="on"></a><a class="md"></a><a class="off"></a></div>
+  <div class="popularity">#{average_popularity}</a></div>
  </div>
  <div class="desc padding_left">#{description}</div>
  <div class="tags">
@@ -29,12 +29,18 @@
  <div class="bold padding_left floating_left padding_right">{% trans 'Available versions:' %}</div>
  <div>#{versions}</div>
  <div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
- <div class="link">#{wiki}</div>
+ <div class="link"><a target="_blank" href="#{wiki}">#{wiki}</a></div>
  
  <div class="section_title bold">{% trans 'Advanced operations with this Gadget' %}</div>
+ 
  <div class="link padding_left floating_left padding_right">{% trans 'Tag gadget' %}</div>
- <div class="link padding_left floating_left padding_right">{% trans 'Vote gadget' %}</div>
+ 
+ <div class="link padding_left floating_left padding_right voting_resource">{% trans 'Vote gadget' %}</div>
+ <div class="popularity no_float hidden"><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a></div>
+ <div class="message">#{voting_result}</div>
+ 
  <div class="link padding_left floating_left padding_right">{% trans 'Change version' %}</div>
+ 
  <div class="link padding_left floating_left padding_right">
    <a href="#{template_url}" target="_blank">{% trans 'View template' %}</a>
  </div>

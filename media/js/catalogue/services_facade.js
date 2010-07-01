@@ -94,8 +94,8 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.searcher.search(operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, scope);
   }
   
-  this.vote = function (data) {
-	this.voter.vote(data);
+  this.vote = function (resource, vote) {
+	this.voter.vote(resource, vote);
   }
   
   this.tag = function (data) {

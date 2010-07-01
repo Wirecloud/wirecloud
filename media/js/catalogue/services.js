@@ -395,8 +395,51 @@ var CatalogueResourceSubmitter = function () {
 var CatalogueVoter = function () {
   CatalogueService.call(this);
 	  
-  this.vote = function (options) {
-	
+  this.vote = function (resource, vote) {   
+	var url = URIs.POST_RESOURCE_VOTES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+
+    var success_callback = function(response) {
+      // processing command
+      var response_text = response.responseText;
+      var response_obj = response_text.evalJSON();
+      
+      var response_data = response_obj['voteData'][0];
+    
+      var average_popularity = response_data['popularity'];
+      
+      var resource = this.get_data();
+      
+      resource.setExtraData({'voting_result': gettext('Done!'), 'average_popularity': average_popularity});
+      
+      this.set_data(resource);
+    	
+      this.process();
+    }
+    
+    var error_callback = function(transport, e) {
+  	  var logManager = LogManagerFactory.getInstance();
+  	  var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+  	
+  	  logManager.log(msg);
+  	  
+  	  resource.setExtraData({'voting_result': gettext('Error during voting!')});
+  	
+  	  // processing command
+  	  this.process();
+    }
+    
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('PAINT_RESOURCE_DETAILS');
+    
+    // "this" is binded to a "ResponseCommand" object
+    response_command.set_data(resource);
+	    
+	//Send request to update gadget's code
+    
+    if (resource.getUserVote() == 0)
+      this.persistence_engine.send_post(url, {'vote': vote }, response_command, success_callback, error_callback);
+    else
+      this.persistence_engine.send_update(url, {'vote': vote }, response_command, success_callback, error_callback);
   }
 }
 

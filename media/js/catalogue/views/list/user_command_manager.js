@@ -135,6 +135,9 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	case 'UPDATE_RESOURCE':
 	  var command = new UpdateResourceHTMLCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
+	case 'VOTE_RESOURCE':
+	  var command = new VoteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  break;
 	default:
 	  return alert('event not identified! ' + command_id);
 	}		

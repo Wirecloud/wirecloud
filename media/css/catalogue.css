@@ -2,6 +2,10 @@
   overflow:hidden;
 }
 
+#catalogue .center .resources .resource_details .popularity.no_float, .no_float {
+  float: none;
+}
+
 #catalogue .resource_details .message {
   float: left;
   padding-left: 15px;
