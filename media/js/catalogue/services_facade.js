@@ -112,6 +112,10 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     this.resource_submitter.delete_resource(resource);
   }
   
+  this.change_preferred_version = function (resource, version) { 
+    this.resource_submitter.change_preferred_version(resource, version);
+  }
+  
   this.update_resource_html = function (resource) { 
     this.resource_submitter.update_resource_html(resource);
   } 

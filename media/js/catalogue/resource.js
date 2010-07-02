@@ -159,6 +159,10 @@ function ResourceState(resourceJSON_) {
 	extra_data = extra_data_; 
   } 
   
+  this.setVersion = function(version_) {
+    version = version_; 
+  } 
+  
   this.setTags = function(tagsJSON_) {
 	tags = tagsJSON_;
   }

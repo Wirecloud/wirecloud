@@ -6,6 +6,30 @@
   float: none;
 }
 
+#catalogue .resource_details .available_version {
+  float: left;
+  margin-right: 15px;
+}
+
+#catalogue .resource_details .operation_area {
+  border: 1px solid #DDDDDD;
+  width:400px;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  float: left;
+  margin-left: 20px;
+  padding-bottom: 3px;
+  margin-bottom: 5px;
+}
+
+#catalogue .resource_details .operation_area>div {
+  margin-left: 10px;
+}
+
+#catalogue .resource_details .operation_area .operation_content {
+  margin-left: 15px;
+}
+
 #catalogue .resource_details .message {
   float: left;
   padding-left: 15px;
@@ -209,7 +233,7 @@ Resource
 
 #catalogue .center .resources .popularity {
   float: left;
-  margin: 5px;
+  margin-left: 15px;
 }
 
 #catalogue .center .resources .resource_details .voting_label {

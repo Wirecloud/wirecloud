@@ -183,6 +183,18 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
 	else
 	  return '';
   }
+
+  var get_all_versions_html = function (versions) {
+	var html = '';
+	
+	for (var i=0; i<versions.length; i++) {
+	  var version_display_name = 'v' + versions[i] + ' '
+	  
+	  html += version_display_name;
+	}
+	
+	return html;
+  } 
   
   this.paint = function (command, user_command_manager) {
 	var resource = command.get_data();
@@ -198,7 +210,7 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var name = resource.getName();
     var version = resource.getVersion();
     var creator = resource.getCreator();
-    var versions = resource.getVersion();
+    var versions = get_all_versions_html(resource.getAllVersions());
     var wiki = resource.getUriWiki();
     var template_url = resource.getUriTemplate();
     var user_vote = resource.getUserVote();
@@ -283,6 +295,17 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var voting_link = voting_link_list[0];
     
     user_command_manager.create_command_from_data('VOTE_RESOURCE', voting_link, resource, 'click');
+    
+    // Changing version
+    var version_link_list = this.dom_element.getElementsBySelector('.change_version_resource');
+    
+    if (! version_link_list || version_link_list.length != 1) {
+  	  alert('Problem rendering resource details (change_version_link)!');
+    }
+    
+    var version_link = version_link_list[0];
+    
+    user_command_manager.create_command_from_data('CHANGE_RESOURCE_VERSION', version_link, resource, 'click');    
   }
 }
 

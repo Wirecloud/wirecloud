@@ -17,7 +17,7 @@
   <div class="tag_links padding_left link"></div>
  </div>
  
- <div class="section_title bold">{% trans 'Detailed data of this Gadget' %}</div>
+ <div class="section_title bold">{% trans 'Detailed data' %}</div>
  <div class="bold padding_left floating_left padding_right">{% trans 'Vendor:' %}</div>
  <div>#{vendor}</div>
  <div class="bold padding_left floating_left padding_right">{% trans 'Name:' %}</div>
@@ -31,15 +31,27 @@
  <div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
  <div class="link"><a target="_blank" href="#{wiki}">#{wiki}</a></div>
  
- <div class="section_title bold">{% trans 'Advanced operations with this Gadget' %}</div>
+ <div class="section_title bold">{% trans 'Advanced operations' %}</div>
  
  <div class="link padding_left floating_left padding_right">{% trans 'Tag gadget' %}</div>
+ <div class="operation_area hidden"></div>
+ <div class="message">#{tagging_result}</div>
  
  <div class="link padding_left floating_left padding_right voting_resource">{% trans 'Vote gadget' %}</div>
- <div class="popularity no_float hidden"><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a></div>
+ <div class="operation_area hidden">
+   <div class="operation_title">{% trans 'Rank the resource using stars:' %}</div>
+   <div class="popularity">
+     <a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a>
+   </div>
+ </div>
  <div class="message">#{voting_result}</div>
  
- <div class="link padding_left floating_left padding_right">{% trans 'Change version' %}</div>
+ <div class="link padding_left floating_left padding_right change_version_resource">{% trans 'Change version' %}</div>
+ <div class="operation_area hidden">
+   <div class="operation_title">{% trans 'Select desired version:' %}</div>
+   <div class="operation_content"></div>
+ </div>
+ <div class="message">#{change_version_result}</div>
  
  <div class="link padding_left floating_left padding_right">
    <a href="#{template_url}" target="_blank">{% trans 'View template' %}</a>

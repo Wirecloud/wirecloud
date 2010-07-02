@@ -189,9 +189,10 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
   this.anonymous_function = function(event) { 
     var target = BrowserUtilsFactory.getInstance().getTarget(event);
 	
-	var popularity_div = target.nextSiblings()[0];
+    var operation_area_div = target.nextSiblings()[0];
+	var popularity_div = operation_area_div.getElementsBySelector('.popularity')[0];
 	
-	popularity_div.toggleClassName('hidden');
+	operation_area_div.toggleClassName('hidden');
 	
 	if (!popularity_div.binded_events) {
 	  bind_popularity_events(popularity_div, this);
@@ -264,6 +265,62 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
 	
   }
   
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+var ChangeResourceVersionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	var operation_area_div = target.nextSiblings()[0];
+	var versions_area_div = operation_area_div.getElementsBySelector('.operation_content')[0];
+	
+	operation_area_div.toggleClassName('hidden');
+	
+	var resource = this.data;
+	
+	var resource_versions = resource.getAllVersions();
+	var html_versions = '';
+	
+	versions_area_div.update('');
+	
+	for (var i=0; i<resource_versions.length; i++) {
+	  var version = resource_versions[i];
+	  
+	  var element_tag = 'a'
+	  
+	  if (version == resource.getVersion()) {
+	    element_tag  = 'div'
+	  }
+	  
+	  var element = document.createElement(element_tag)
+	  element = Element.extend(element);
+	  element.addClassName('available_version');
+	  
+	  element.version_code = version;
+	  
+	  if (version == resource.getVersion())
+		element.addClassName('bold'); 
+	  else {
+		Event.observe(element, 'click', mark_as_preferred_version.bind(this));
+	  }
+	  
+	  element.update('v'+version);
+	  
+	  versions_area_div.appendChild(element);
+		
+	}
+  }
+  
+  var mark_as_preferred_version = function (event) {
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+	var resource = this.data;
+	var preferred_version = target.version_code;
+	
+	this.services.change_preferred_version(resource, preferred_version);
+  }
+  
+	  
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 

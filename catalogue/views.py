@@ -210,8 +210,9 @@ class GadgetsCollection(Resource):
             userRelated.preferred_by = True
             userRelated.save()
             
-            xml_ok = '<ResponseOK>OK</ResponseOK>'
-            return HttpResponse(xml_ok,mimetype='text/xml; charset=UTF-8')
+            resource = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
+            
+            return get_resource_response([resource], 'json', 1, user)
 
 @transaction.commit_on_success
 def deleteOneGadget(resource, user, request):

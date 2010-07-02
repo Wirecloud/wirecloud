@@ -292,6 +292,38 @@ var CatalogueResourceSubmitter = function () {
 	this.persistence_engine.send_post(url, params, response_command, addingToAppSuccess, addingToAppError);
   }
   
+  this.change_preferred_version = function (resource, version) {
+	var url = URIs.GET_POST_RESOURCES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + version;
+    
+	var successCallback = function (response) {
+	  var response_text = response.responseText;
+	  var response_obj = response_text.evalJSON();
+	  
+	  var resource_state = response_obj['resourceList'][0];
+	  
+	  var resource = new ResourceState(resource_state);
+	  
+	  this.set_data(resource);
+	  
+	  this.process();
+	}
+	
+	var errorCallback = function (response) {
+	  alert("error");
+	}
+	
+	// CommandResponse creation
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    
+    response_command.set_id('PAINT_RESOURCE_DETAILS');
+    
+    var params = new Hash();
+    
+    params['preferred'] = true;
+    
+	this.persistence_engine.send_update(url, params, response_command, successCallback, errorCallback);
+  }
+  
   this.add_gadget_from_template = function (template_uri) {
 	
     var error_callback = function (transport, e) {
