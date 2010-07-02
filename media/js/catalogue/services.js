@@ -403,13 +403,11 @@ var CatalogueVoter = function () {
       var response_text = response.responseText;
       var response_obj = response_text.evalJSON();
       
-      var response_data = response_obj['voteData'][0];
-    
-      var average_popularity = response_data['popularity'];
-      
       var resource = this.get_data();
       
-      resource.setExtraData({'voting_result': gettext('Done!'), 'average_popularity': average_popularity});
+      resource.setVotes(response_obj);
+      
+      resource.setExtraData({'voting_result': gettext('Done!')});
       
       this.set_data(resource);
     	

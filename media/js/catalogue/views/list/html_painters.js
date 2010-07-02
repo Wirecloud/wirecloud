@@ -35,6 +35,30 @@ var HTML_Painter = function () {
   }
   
   this.paint = function (command, user_command_manager) { }
+  
+  this.get_popularity_html = function (popularity) {
+	var on_stars = Math.floor(popularity);
+	var md_star = popularity - on_stars;
+	var off_stars = 5 - popularity;
+	
+	var result_html = '';
+	
+	// "On" stars
+	for (var i=0; i<on_stars; i++) {
+	  result_html += '<a class="on"></a>';
+	}
+	
+	if (md_star) {
+	  result_html += '<a class="md"></a>';
+	}
+	
+	// "Off" stars
+	for (var i=0; i<Math.floor(off_stars); i++) {
+	  result_html += '<a class="off"></a>';
+	}
+	
+    return result_html;
+  }
 }
 
 var ListView_ResourcesPainter = function (resource_structure_element) {
@@ -55,6 +79,7 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       var name = resource.getName();
       var image_url = resource.getUriImage();
       var description = resource.getDescription();
+      var average_popularity = this.get_popularity_html(resource.getPopularity());
       
       var type = '';
       var button_text = 'Add';
@@ -70,7 +95,8 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       
       var resource_html = 
     	this.structure_template.evaluate({'image_url': image_url, 'name': name, 'description': description, 
-    	                                  'type': type, 'button_text': button_text})
+    	                                  'type': type, 'button_text': button_text, 
+    	                                  'average_popularity': average_popularity});
       
       resource_element.update(resource_html);
       
@@ -158,10 +184,6 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
 	  return '';
   }
   
-  var get_popularity_html = function (popularity) {
-    return '<a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a><a class="off"></a>';
-  }
-  
   this.paint = function (command, user_command_manager) {
 	var resource = command.get_data();
 	var extra_data = resource.getExtraData();
@@ -179,10 +201,11 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var versions = resource.getVersion();
     var wiki = resource.getUriWiki();
     var template_url = resource.getUriTemplate();
+    var user_vote = resource.getUserVote();
     
     var update_result = get_extra_data('update_result', extra_data);
     var voting_result = get_extra_data('voting_result', extra_data);
-    var average_popularity = get_popularity_html(resource.getPopularity());
+    var average_popularity = this.get_popularity_html(resource.getPopularity());
       
     var type = '';
     var button_text = 'Add';

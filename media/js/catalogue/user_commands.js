@@ -201,10 +201,16 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
   }
 	  
   var bind_popularity_events = function (popularity_div, vote_command) {
+	var user_vote = vote_command.data.getUserVote();
+	
     var vote_stars = popularity_div.childElements();
     
-    for (var i=0; i<vote_stars.length; i++) {
+    for (var i=0.0; i<vote_stars.length; i++) {
       var vote_star = vote_stars[i];
+      
+      if (user_vote>i) {
+        vote_star.addClassName('on');
+      }
       
       Event.observe(vote_star, 'mouseover', mark_previous_stars);
       Event.observe(vote_star, 'click', commit_voting.bind(vote_command));
@@ -229,13 +235,14 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
   
   var commit_voting = function (event) {
 	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	var vote = target.previousSiblings().length + 1;
 	
 	target.parentNode.committed_voting = target;
 	
 	mark_previous_stars(event);
 	unmark_not_committed_stars(event);
 	
-	this.services.vote(this.data, 3);
+	this.services.vote(this.data, vote);
   }
   
   var unmark_not_committed_stars = function (event) {

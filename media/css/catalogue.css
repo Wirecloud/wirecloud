@@ -2,7 +2,7 @@
   overflow:hidden;
 }
 
-#catalogue .center .resources .resource_details .popularity.no_float, .no_float {
+#catalogue .center .resources .popularity.no_float, .no_float {
   float: none;
 }
 
@@ -182,7 +182,7 @@ Resource
 /////////// 
 */
 
-#catalogue .center .resources .resource .resource_name,  #catalogue .center .resources .resource_details .resource_name {
+#catalogue .center .resources .resource_name,  #catalogue .center .resources .resource_name {
   padding-bottom: 8px;
   max-width: 350px;
   font-size: 20px;
@@ -192,7 +192,7 @@ Resource
   cursor: pointer;
 }
 
-#catalogue .center .resources .resource_details .resource_name { 
+#catalogue .center .resources .resource_name { 
   cursor: default;
   float: left;
 }
@@ -207,7 +207,7 @@ Resource
   border: 1px solid;
 }
 
-#catalogue .center .resources .resource_details .popularity {
+#catalogue .center .resources .popularity {
   float: left;
   margin: 5px;
 }
@@ -217,7 +217,7 @@ Resource
   margin: 5px;
 }
 
-#catalogue .center .resources .resource_details .popularity .off {
+#catalogue .center .resources .popularity .off {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -228,7 +228,7 @@ Resource
   cursor: default;
 }
 
-#catalogue .center .resources .resource_details .popularity .on {
+#catalogue .center .resources .popularity .on {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -287,18 +287,18 @@ Resource
   float: left;
 }
 
-#catalogue .center .resources .resource .left_column_resource, #catalogue .center .resources .resource_details .left_column_resource {
+#catalogue .center .resources .left_column_resource, #catalogue .center .resources .left_column_resource {
   float: left;
   width: 25%;
   text-align: center;
 }
 
-#catalogue .center .resources .resource .right_column_resource,  #catalogue .center .resources .resource_details .right_column_resource {
+#catalogue .center .resources .right_column_resource,  #catalogue .center .resources .right_column_resource {
   float: left;
   width: 75%;
 }
 
-#catalogue .center .resources .resource .header_resource, #catalogue .center .resources .resource_details .header_resource {
+#catalogue .center .resources .header_resource, #catalogue .center .resources .header_resource {
   height: 10px;
   clear: both;
   top: 0px;
