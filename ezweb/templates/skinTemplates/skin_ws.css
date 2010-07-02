@@ -78,6 +78,10 @@ body.dragboard_view, body.wiring_view{
 	border-color: {{ container_border }};
 }
 
+.sidebar{
+	border-color: {{ container_border }};
+}
+
 /* wiring */
 #wiring{
 	background: {{ container_bg }};

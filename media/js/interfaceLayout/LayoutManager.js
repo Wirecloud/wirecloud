@@ -62,7 +62,7 @@ var LayoutManagerFactory = function () {
 		this.catalogue = null;
 		this.logs = LogManagerFactory.getInstance();
 		this.logsLink = $('logs_link');
-
+		
 		// Menu Layer
 		this.currentMenu = null;                                                // current menu (either dropdown or window)
 		this.coverLayerElement = $('menu_layer');                               // disabling background layer
@@ -98,17 +98,6 @@ var LayoutManagerFactory = function () {
 		// PUBLIC METHODS 
 		// ****************
 		
-		LayoutManager.prototype.resizeTabBar = function () {
-			this.showTabs();
-
-			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-			}
-
-			this.changeTabBarSize(0);
-		}
 
 		LayoutManager.prototype._updateTaskProgress = function() {
 			var msg, subtaskpercentage, taskpercentage;
@@ -213,6 +202,24 @@ var LayoutManagerFactory = function () {
 
 		LayoutManager.prototype.getCurrentViewType = function () {
 			return this.currentViewType;
+		}
+		
+		LayoutManager.prototype.resizeTabBar = function () {
+			this.showTabs();
+
+			if($('lite_toolbar_section')){
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			}else{
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			}
+
+			this.changeTabBarSize(0);
+		}
+		
+		LayoutManager.prototype.resizeSidebar = function () {
+			var newHeight = BrowserUtilsFactory.getInstance().getHeight();
+			OpManagerFactory.getInstance().getSideBarElement().setStyle({"height" : newHeight + "px"});
+			
 		}
 
 		LayoutManager.prototype.resizeContainer = function (container) {
@@ -429,6 +436,7 @@ var LayoutManagerFactory = function () {
 			this.updateLocation(this.currentViewType);
 
 			this.showTabs();
+			this.showSidebar();
 
 			this.resizeContainer(dragboard.dragboardElement);
 
@@ -471,6 +479,7 @@ var LayoutManagerFactory = function () {
 			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
+			this.hideSidebar();
 			
 			this.resizeContainer(this.catalogue.get_dom_element());
 			this.catalogue.set_style(showStyle);
@@ -508,6 +517,7 @@ var LayoutManagerFactory = function () {
 			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
+			this.hideSidebar();
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 			
@@ -536,6 +546,7 @@ var LayoutManagerFactory = function () {
 			this.updateLocation(this.currentViewType);
 			
 			this.hideTabs();
+			this.hideSidebar();
 			this.resizeContainer(this.currentView.wiringContainer);
 
 			wiring.wiringContainer.setStyle(showStyle);
@@ -553,6 +564,16 @@ var LayoutManagerFactory = function () {
 
 		LayoutManager.prototype.hideTabs = function() {
 			$("tab_section").addClassName("hidden");
+		}
+		
+		
+		LayoutManager.prototype.showSidebar = function() {
+			var sidebar = OpManagerFactory.getInstance().getWsListMenu();
+			if (sidebar.visible)
+				sidebar.show();
+		}
+		LayoutManager.prototype.hideSidebar = function() {
+			OpManagerFactory.getInstance().getWsListMenu().hideTemporarily();
 		}
 
 		LayoutManager.prototype.showTabs = function() {
@@ -577,30 +598,32 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
 			//Add to the toolbar the two main options
 			var goToMenu = workSpace.getGoToMenu()
-			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long 
+			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long
 			
-			for (var i=0;i<options_length && i<workspaces.length; i++){
-				var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
-				goToMenu.addOption(nameToShow,
-							function () {
-								OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-							}.bind(workspaces[i]),
-							i);
-			}
+			var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
+			wsListMenu.clearOptions(); 
 			
-			
-			//Fill the general list of workspaces
-			var wsListMenu = workSpace.getWsListMenu()
-			wsListMenu.clearOptions();
-
-			for (var i = 0; i < workspaces.length; i++) {
-				wsListMenu.addOption(null,
-					workspaces[i].workSpaceState.name,
-					function () {
-						LayoutManagerFactory.getInstance().hideCover();
-						OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-					}.bind(workspaces[i]),
-					i);
+			var in_toolbar = "";
+			for (var i=0;i<workspaces.length; i++){
+				in_toolbar = "";
+				if (i<options_length){
+					//Add to the Toolbar menu
+					var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
+					goToMenu.addOption(nameToShow,
+								function () {
+									OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+								}.bind(workspaces[i]),
+								i);
+					in_toolbar = "shown";
+				}
+				//Add to the Sidebar Menu
+				wsListMenu.addOption(workspaces[i].workSpaceState.name,
+								function () {
+									LayoutManagerFactory.getInstance().hideCover();
+									OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+								}.bind(workspaces[i]),
+								i,
+								in_toolbar);
 			}
 		}
 
@@ -896,6 +919,15 @@ var LayoutManagerFactory = function () {
 			
 		}
 		
+		//Show the Workspace List Menu
+		LayoutManager.prototype.toggleSideBarMenu = function(){
+			var menu = OpManagerFactory.getInstance().getWsListMenu();
+			if (menu.visible)
+				menu.hide();
+			else
+				menu.show();
+		}		
+		
 		//clear the opened toolbars
 		LayoutManager.prototype.clearToolbar = function(toolbar, launcher) {
 			var isOpened = false;
@@ -907,9 +939,9 @@ var LayoutManagerFactory = function () {
 				selected_elements[i].removeClassName("selected_section");
 			}
 			
-			var visible_submenus = toolbar.getElementsByClassName("visible_submenu");
+			var visible_submenus = toolbar.getElementsByClassName("visible");
 			for (var i=0; i< visible_submenus.length; i++){
-				visible_submenus[i].removeClassName("visible_submenu");
+				visible_submenus[i].removeClassName("visible");
 			}
 			return isOpened;		
 		}

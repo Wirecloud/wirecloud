@@ -63,6 +63,24 @@ var OpManagerFactory = function () {
 				}
 			}
 			
+			//Create the workspace list menu
+			this.wsListMenu = new SideBarMenu(this.sideBarElement.id);
+			//close option
+			Event.observe($('close_sidebar'), "click",
+						function(){
+							this.wsListMenu.hide();
+						}.bind(this));
+			//new workspace option
+			if (!EzSteroidsAPI.is_activated() || 
+				(EzSteroidsAPI.evaluePolicy('add_remove_workspaces') && EzSteroidsAPI.evaluePolicy('create_custom_workspaces'))) {
+				// EzWeb IE6 version does not allow creating new Workspaces
+			 	Event.observe($('add_workspace'), "click",
+						function(){
+							LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
+						});
+			}
+			 
+			
 			// When a profile is set to a user, profile options prevail over user options!
 			var active_ws_from_script = ScriptManagerFactory.getInstance().get_ws_id();
 			if (active_ws_from_script && this.workSpaceInstances[active_ws_from_script]) {
@@ -136,6 +154,10 @@ var OpManagerFactory = function () {
 		// Variables for controlling the collection of wiring and dragboard instances of a user
 		this.workSpaceInstances = new Hash();
 		this.activeWorkSpace = null;
+		
+		//Workspace List Menu
+		this.wsListMenu = null;
+		this.sideBarElement = $('workspace_sidebar');
 
 		/**
 		 * @private
@@ -580,6 +602,19 @@ var OpManagerFactory = function () {
 			this.changeActiveWorkSpace(this.workSpaceInstances.values()[0]);
 
 			return true;
+		}
+		
+		
+		OpManager.prototype.getWorkspaceCount = function(){
+			return this.workSpaceInstances.keys().length;
+		}
+		
+		OpManager.prototype.getWsListMenu = function(){
+			return this.wsListMenu;
+		}
+		
+		OpManager.prototype.getSideBarElement = function(){
+			return this.sideBarElement;
 		}
 	}
 

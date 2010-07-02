@@ -27,7 +27,7 @@
 
 //Class for managing a drop down menu whose HTML code is in templates/index.html.
 //The options may be created either by default in the HTML code or dinamically with the addOption function
-function ToolbarMenu(idMenu_) {
+function SideBarMenu(idMenu_) {
 	// Allow calling this constructor without arguments for allowing heritage
 	if (arguments.length == 0)
 		return;
@@ -35,41 +35,28 @@ function ToolbarMenu(idMenu_) {
 	//Constructor
 	this.idMenu = idMenu_;      // menu: menu element in the HTML code (<div>)
 	this.menu = $(this.idMenu);
+	this.container = this.menu.parentNode;
 	this.option_id = 0;         // identifier for options
 	this.margin = 5;
-	
-	this.MAX_OPTIONS = 5;
+	this.visible = false;
 	
 }
 
 // Adds an option to the menu created from the HTML in the specified position (starting on 0).
 // option text -- event:function called on clicking
 // additionalClass: string used to add a specific class to the element
-ToolbarMenu.prototype.addOption = function(option, event, position, additionalClass, policy) {
+SideBarMenu.prototype.addOption = function(option, event, position, additionalClass, policy) {
 	var newClass=additionalClass
 	if (!additionalClass)
 		newClass="";
-	var optionClass = '';
-	var optionList = $$('#'+this.idMenu+'> div');
-	if(position == optionList.length){//new last option
-		optionClass = 'last_toolbar_button';
-		if (position != 0){
-			optionList[optionList.length-1].removeClassName('last_toolbar_button');
-		}
-	}
-	if (position == 0) { //new first option
-		if (optionList.length > 0){ //the toolbar is not empty
-			optionList[0].removeClassName('first_toolbar_button');
-		}
-		optionClass += ' first_toolbar_button';
-	}
 	
-	optionClass = optionClass + " " + newClass;
+	var optionList = $$('#'+this.idMenu+'> div');
+	var optionClass = newClass;
 
 	//create the HTML code for the option and insert it in the menu
 	var opId='op_'+this.idMenu+'_'+this.option_id;
-	var opHtml = '<div id="'+ opId +'" class = "'+optionClass+'">';
-	opHtml += option + '</div>';
+	var opHtml = '<span id="'+ opId +'" class = "'+optionClass+'">';
+	opHtml += option + '</span>';
 	try {
 		if(optionList.length > 0) {
 			if(position == 0) {
@@ -91,41 +78,23 @@ ToolbarMenu.prototype.addOption = function(option, event, position, additionalCl
 }
 
 //removes an option
-ToolbarMenu.prototype.removeOption = function(opId) {
+SideBarMenu.prototype.removeOption = function(opId) {
 	var option = $(opId).remove();
-	if (option.hasClassName('last_toolbar_button')) {
-		var lastOption = $$('#'+this.idMenu+ ' > div:last-child')[0];
-		if (lastOption) {
-			lastOption.addClassName('last_toolbar_button');
-		}
-	}
-	if (option.hasClassName('first_toolbar_button')) {
-		var firstOption = $$('#'+this.idMenu+ ' > div:first-child')[0];
-		if (firstOption) {
-			firstOption.addClassName('first_toolbar_button');
-		}
-	}
 }
 
 //updates an option
-ToolbarMenu.prototype.updateOption = function(opId, option, handler, additionalClass, policy) {
+SideBarMenu.prototype.updateOption = function(opId, option, handler, additionalClass, policy) {
 	var old=$(opId);
 	
 	var newClass=additionalClass
 	if (!additionalClass)
 		newClass="";
 		
-	var opHtml='<div id="'+ opId +'" class = "option '+newClass+'">';
-	opHtml += option + '</div>';
+	var opHtml='<span id="'+ opId +'" class = "'+newClass+'">';
+	opHtml += option + '</span>';
 	new Insertion.Before(old, opHtml);
 	old=old.remove();
 	var newOp = $(opId);
-	if (old.hasClassName('last_toolbar_button')){
-		newOp.addClassName('last_toolbar_button');
-	}
-	if (old.hasClassName('first_toolbar_button')){
-		newOp.addClassName('first_toolbar_button');
-	}
 	
 	var context = {'menu':this, 'handler':handler}
 	Event.observe(newOp, 'click', function(e){this.menu.executeHandler(e,this.handler)}.bind(context), false, policy);
@@ -133,30 +102,37 @@ ToolbarMenu.prototype.updateOption = function(opId, option, handler, additionalC
 
 //make some arrangements before executing the handler of the option
 //for example, hide a submenu if another menu option is clicked 
-ToolbarMenu.prototype.executeHandler = function(e, handler){
+SideBarMenu.prototype.executeHandler = function(e, handler){
 	handler(e);
 
 }
 
-//hides the menu and changes the image of the launcher (in case it has to)
-ToolbarMenu.prototype.hide = function () {	 
-	this.menu.removeClassName("visible");
+//hides the menu
+SideBarMenu.prototype.hide = function () {	 
+	this.container.removeClassName("visible");
+	this.visible = false;
 }
 
-ToolbarMenu.prototype.remove = function () {
-	Element.remove(this.menu);
+//hides the menu and changes the image of the launcher (in case it has to)
+SideBarMenu.prototype.hideTemporarily = function () {	 
+	this.container.removeClassName("visible");
 }
 
 //shows the menu (calling showMenu function)
-ToolbarMenu.prototype.show = function (position, x, y) {
-	this.menu.addClassName("visible");
+SideBarMenu.prototype.show = function (position, x, y) {
+	this.container.addClassName("visible");
+	this.visible = true;
+}
+
+SideBarMenu.prototype.remove = function () {
+	Element.remove(this.menu);
 }
 
 //Clears the menu options
-ToolbarMenu.prototype.clearOptions = function() {
+SideBarMenu.prototype.clearOptions = function() {
 	this.menu.update();
 }
 
-ToolbarMenu.prototype.getOptionsLength = function() {
+SideBarMenu.prototype.getOptionsLength = function() {
 	return this.menu.childNodes.length;
 }

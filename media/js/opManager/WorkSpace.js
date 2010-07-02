@@ -840,7 +840,7 @@ function WorkSpace (workSpaceState) {
 		
 		// Mark as active option
 		if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
-			this.activeEntryId = this.confMenu.addOption(gettext("Mark as Active"),
+			this.activeEntryId = this.confMenu.addOption(gettext("Initial"),
 				function() {
 					LayoutManagerFactory.getInstance().hideCover();
 					this.markAsActive();
@@ -881,7 +881,7 @@ function WorkSpace (workSpaceState) {
 			var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;		
 			this.mergeMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idMergeMenu);
 			
-			this.confMenu.addOption(gettext("Merge with..."),
+			this.confMenu.addOption(gettext("Merge"),
 				function(e) {
 					LayoutManagerFactory.getInstance().showDropDownMenu('wsList', this.mergeMenu, Event.pointerX(e), Event.pointerY(e));
 				}.bind(this),
@@ -994,29 +994,30 @@ function WorkSpace (workSpaceState) {
 
 		this.goToMenu = this._initMenu(idMenu);
 		
-		//Temporal menu with the workspace list
-		var idwsListMenu = 'ws_list_menu_' +this.workSpaceState.id;
-		this.wsListMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idwsListMenu);
-		
 		/*** Add to the menu the proper options ***/
-		var optionPosition = 0; //NOTE: first two positions will be used to access to the two main workspaces (filled by the LayoutManager)
+		var optionPosition = 0; 
+		//NOTE: first positions will be used to access to the main workspaces (filled by the LayoutManager)
 		
-		//Workspace list option
-		this.goToMenu.addOption(gettext("View all"),
-							function(e) {
-								//show the window with all the workspaces
-								LayoutManagerFactory.getInstance().showDropDownMenu("wsList", this.wsListMenu, Event.pointerX(e),Event.pointerY(e))
-							}.bind(this),
+		var ws_count = OpManagerFactory.getInstance().getWorkspaceCount();
+		
+		if (ws_count > this.goToMenu.MAX_OPTIONS - 1){ // let one hole to prevent larger toolbars
+			//Workspace list option
+			this.goToMenu.addOption("<span class='superindex'>»</span>"+ String(ws_count - 1),
+								function(e) {
+									//show the window with all the workspaces
+									LayoutManagerFactory.getInstance().toggleSideBarMenu();
+								},
+								optionPosition++);
+		}else{				
+			//new workspace option
+			if (this.isAllowed('add_remove_workspaces') && this.isAllowed('create_custom_workspaces')) {
+				// EzWeb IE6 version does not allow creating new Workspaces
+				 this.goToMenu.addOption(gettext("New Application"),
+							function() {
+								LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
+							},
 							optionPosition++);
-				
-		//new workspace option
-		if (this.isAllowed('add_remove_workspaces') && this.isAllowed('create_custom_workspaces')) {
-			// EzWeb IE6 version does not allow creating new Workspaces
-			 this.goToMenu.addOption(gettext("New Application"),
-						function() {
-							LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
-						},
-						optionPosition++);
+			}
 			
 		}
 		

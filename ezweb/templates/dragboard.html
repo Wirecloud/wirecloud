@@ -3,4 +3,11 @@
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.dragboard }}" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.dragboard }}" />
 {% endif %}
+<div class="sidebar">
+	<div class="sidebar_top">
+		<a id="close_sidebar" class="closebutton"></a>
+	</div>
+	<div id="workspace_sidebar" class="sidebar_items"></div>
+	<div id="add_workspace" class="add_workspace">{% trans "New Application" %}</div>
+</div>
 <!-- Initially empty (filled by javascript code)-->

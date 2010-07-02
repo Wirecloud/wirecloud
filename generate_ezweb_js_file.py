@@ -98,6 +98,7 @@ inputFiles = {
 
         'js/interfaceLayout/BackgroundFadder.js',
         'js/interfaceLayout/ToolbarMenu.js',
+        'js/interfaceLayout/Sidebar.js',
         'js/interfaceLayout/DropDownMenu.js',
         'js/interfaceLayout/WindowMenu.js',
         'js/interfaceLayout/LayoutManager.js',

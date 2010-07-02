@@ -56,6 +56,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/factory.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/ToolbarMenu.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/Sidebar.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
