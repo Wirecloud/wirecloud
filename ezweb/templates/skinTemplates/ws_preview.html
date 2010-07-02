@@ -26,70 +26,67 @@
 </head><body class="dragboard_view">
 
 <!-- HEADER -->
-	
-<div id="header">
-	<div style="" id="ws_banner" class="banner">
-		<div style="background-image: url(&quot;/ezweb/themes/default/images/Open_Ez_Logo.png&quot;);" id="logo" class="logo_layout logo clickable"><img class="powered" src="/ezweb/images/powered.png" style="display: none;"></div>
-		<div id="toolbar_section" class="toolbar_section">
-		  <div class="area_name">Banner</div>
-		  <div class="toolbar_menu">
-		  	<div id="go_to_link" class="first_toolbar_button">Inactive button</div>
-			<div id="conf_link">Inactive button</div>
-			<div id="sharing_link">Inactive button</div>
-			
-			<div id="workspace_link_container" class="last_toolbar_button selected_section">
-				<div id="dragboard_link">
-					<div id="workspace_name"><span>Active button</span></div>
-				</div>
 
+<div id="ws_header" class="global_header">
+	<div class="banner" id="ws_banner">
+	   <div class="logo_placeholder">
+		  <img class="logo_layout logo clickable" id="logo" src="/ezweb/themes/default/images/Open_Ez_Logo.png">
+	   </div>
+		<div class="toolbar_section" id="toolbar_section">
+			<div class="toolbar_menu" id="toolbar_menu">
+				<div class="first_toolbar_button" id="go_to_link">Inactive Option</div>
+				<div id="conf_link" class="selected_section">Active Option</div>
+				<div id="sharing_link">Inactive Option</div>
+				<div class="last_toolbar_button" id="edit_link">Inactive Option</div>
 			</div>
-		  </div>
+			<div class="toolbar_menu_small visible" id="config_menu_1">
+				<div class="first_toolbar_button" id="op_config_menu_1_0">Suboption</div>
+				<div class="" id="op_config_menu_1_1">Suboption</div>
+				<div class="last_toolbar_button " id="op_config_menu_1_2">Suboption</div>
+			</div>
 		</div>
 		<div id="greeting">
-			<div class="languages">
-				 <a ><img title="Español" alt="Español" src="/ezweb/images/es.png"></a> <a ><img title="Inglés" alt="Inglés" src="/ezweb/images/en.png"></a> <a ><img title="Portugués" alt="Portugués" src="/ezweb/images/pt.png"></a>
-			</div>
 			<!-- LOGS LINK -->
-			<input class="" id="logs_link" title="Mostrar la consola de errores" type="button">
-			<input id="preferences_link" title="Preferencias" type="button">
-			<span id="help_section"><a class="help_button" target="_blank"></a></span>
+			<a title="about EzWeb" target="_blank" href="http://forge.morfeo-project.org/wiki/index.php/FAQ">about EzWeb</a>
 			<span> | </span>
-			
-				<a >Salir</a>
-				
-				
-				
-				<span> | </span>
-				<span id="user_section"> Bienvenido, admin</span>
-			
+			<a title="Edit settings" href="javascript:OpManagerFactory.getInstance().showPlatformPreferences();" id="preferences_link">settings</a>
+			<span> | </span>		
+			<a title="Log out" href="javascript:OpManagerFactory.getInstance().logout()">exit</a>				
+			<span> | </span>
+			<span id="user_section">username</span>	
 		</div>
-	</div>
+	</div>	
 
-	<div id="bar">
-		<div id="tab_section" class="tab_section">
-			<input id="floating_gadgets_launcher" title="Mostrar los gadgets flotantes" class="tabOps_launcher" type="button">
-			<input id="add_tab_link" title="Añadir más pestañas" class="toolbar_unmarked" value="Add-Tab button" type="button">
-			
-			<div id="fixed_bar" style="width: 262px;">
-				<div id="scroll_bar" style="right: 0px; width: 262px;">
+	<div id="bar" class="bar">
+		<div id="ws_section_identifier" class="section_identifier">
+			<div class="area_name">Application </div>
+			<div id="dragboard_link">
+				<div id="workspace_name">"Application Name"</div>
+		 	</div>
+		</div>
+		<div class="tab_section" id="tab_section">
+			<input type="button" value="Add Tab Button" class="toolbar_unmarked" title="Añadir más pestañas" id="add_tab_link">
+			<input type="button"  style="display: none;" title="go left" id="right_slider">
+			<div id="fixed_bar" style="width: 263px; visibility: visible;">
+				<div id="scroll_bar" style="right: 0px; width: 263px;">
 					<div id="tab_1_2" class="tab" style="display: block;">
 						<div class="tab_dragger" id="tab_1_2_dragger" style="display: none;"></div>
-						<span>Inactive tab</span>
+						<span>Inactive Tab</span>
 						<input type="button" class="tabOps_launcher tabOps_launcher_show" title="Opciones" id="tab_1_2_launcher" style="display: none;">
 					</div>
 					<div id="tab_1_1" class="tab current" style="display: block;">
 						<div class="tab_dragger" id="tab_1_1_dragger" style="display: inline;"></div>
-						<span>Active tab</span>
+						<span>Active Tab</span>
 						<input type="button" class="tabOps_launcher tabOps_launcher_show" title="Opciones" id="tab_1_1_launcher" style="display: inline;">
 					</div>
+					<div style="display: none;" id="tab_marker"></div>
 				</div>
 			</div>
-		
+			<input type="button" style="display: none;" title="go right" id="left_slider">
 		</div>
-	
-		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
 	</div>
 </div>
+
 
 <div style="height: 1204px;" id="wrapper">
 	<div style="height: 1204px; z-index: 2; display: block; visibility: visible;" id="dragboard_1_1" class="container dragboard">

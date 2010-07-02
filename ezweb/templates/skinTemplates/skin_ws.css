@@ -5,10 +5,11 @@
 /* global background */
 body.dragboard_view, body.wiring_view{
 	background: {{ body_bg }};
+	color: {{ body_font }}
 }
 
 /*
- * HEADER section
+ * BANNER section
  */
 
 /* banner */
@@ -20,8 +21,16 @@ body.dragboard_view, body.wiring_view{
 	color:{{ banner_font }};
 }
 
-#ws_banner .toolbar_section, #wiring_banner .toolbar_section {
-	border-color:{{ banner_font }};
+/*
+ * TOOLBAR section
+ */
+
+/* MAIN toolbar button unmarked */
+#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div {
+	color: {{ toolbar_unmarked_font }};
+	font-weight: bold;
+	background: {{ toolbar_unmarked_bg }};
+	border-color:{{ toolbar_border }};
 }
 
 /* MAIN toolbar button marked */
@@ -31,13 +40,6 @@ body.dragboard_view, body.wiring_view{
 	background: {{ toolbar_marked_bg }};
 }
 
-/* MAIN toolbar button unmarked */
-#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div {
-	color: {{ toolbar_unmarked_font }};
-	font-weight: bold;
-	background: {{ toolbar_unmarked_bg }};
-}
-
 /* MAIN toolbar button hover */
 #ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover {
 	color: {{ toolbar_hover_font }};
@@ -45,27 +47,42 @@ body.dragboard_view, body.wiring_view{
 	background: {{ toolbar_hover_bg }};
 	text-decoration: underline;
 }
-
-/* SMALL toolbar button marked */
-#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section {
-	color: '';
+#ws_banner .toolbar_menu > div.selected_section:hover, #wiring_banner .toolbar_menu > div.selected_section:hover {
+	color: {{ toolbar_marked_font }};
 	font-weight: bold;
-	background: '';
+	background: {{ toolbar_marked_bg }};
 }
+
+/*
+ * TOOLBAR SMALL section
+ */
 
 /* SMALL toolbar button unmarked */
 #ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div {
-	color: '';
+	color: {{ small_toolbar_unmarked_font }};
 	font-weight: bold;
-	background: '';
+	background: {{ small_toolbar_unmarked_bg }};
+	border-color: {{ toolbar_border }};
+}
+
+/* SMALL toolbar button marked */
+#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section {
+	color: {{ small_toolbar_marked_font }};
+	font-weight: bold;
+	background: {{ small_toolbar_marked_bg }};
 }
 
 /* SMALL toolbar button hover */
 #ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover {
-	color: '';
+	color: {{ small_toolbar_unmarked_hover }};
 	font-weight: bold;
-	background: '';
+	background: {{ small_toolbar_unmarked_hover }};
 	text-decoration: underline;
+}
+#ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover {
+	color: {{ small_toolbar_marked_font }};
+	font-weight: bold;
+	background: {{ small_toolbar_marked_bg }};
 }
 
 /*
@@ -107,13 +124,13 @@ body.dragboard_view, body.wiring_view{
 .tab_section .tab {
 	color: {{ tab_unmarked_font }};
 	background: {{ tab_unmarked_bg }};
-	border-color: transparent;
+	border-color: {{ tab_unmarked_border }};
 	font-weight: bold;
 }
 
 .tab_section .tab:hover {
 	color: {{ tab_hover_font }};
-	border-color: {{ tab_border }};
+	border-color: {{ tab_hover_border }};
 	background: {{ tab_hover_bg }};
 }
 
@@ -121,13 +138,14 @@ body.dragboard_view, body.wiring_view{
 .tab_section .current {
  	color: {{ tab_marked_font }};
   	background: {{ tab_marked_bg }};
-  	border-color: {{ tab_border }};
+  	border-color: {{ tab_marked_border }};
 }
 
 .tab_section .current:hover {
 	color: {{ tab_marked_font }};
 	background: {{ tab_marked_bg }};
 	font-weight:bold;
+	border-color: {{ tab_marked_border }};
 }
 
 /*

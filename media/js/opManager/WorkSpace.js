@@ -29,7 +29,7 @@ function WorkSpace (workSpaceState) {
 
 	//set the proper handlers to the workspace toolbar buttons	
 	WorkSpace.prototype._initToolbar = function(){
-		if (this.getBanner()) {			
+		if (this.getHeader()) {			
 			//set the handlers
 			if (this.wiring_link)
 				this.wiringInterface.setToolbarButton(this.wiring_link);
@@ -41,7 +41,7 @@ function WorkSpace (workSpaceState) {
 	
 	//unset the handlers of the workspace toolbar buttons
 	WorkSpace.prototype._unloadToolbar = function(){
-		if (this.getBanner()) {
+		if (this.getHeader()) {
 			this.wiringInterface.unsetToolbarButton(this.wiring_link);
 			CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
 		}		
@@ -360,8 +360,8 @@ function WorkSpace (workSpaceState) {
 		if (this.varManager) this.varManager.sendBufferedVars();
 	}
 	
-	WorkSpace.prototype.getBanner = function(){
-		return this.bannerHTML;
+	WorkSpace.prototype.getHeader = function(){
+		return this.headerHTML;
 	}
 	
 	/**
@@ -493,7 +493,7 @@ function WorkSpace (workSpaceState) {
 		if (!this.loaded)
 			return;
 
-		if (this.getBanner()) //there is a banner
+		if (this.getHeader()) //there is a banner
 			this.fillWithLabel();
 
 		var tabList = this.tabInstances.keys();
@@ -1143,7 +1143,7 @@ function WorkSpace (workSpaceState) {
 	this.catalogue_link = null;
 	
 	//banner
-	this.bannerHTML = $('ws_banner');
+	this.headerHTML = $('ws_header');
 	
 	this.skinManager = new SkinManager();
 	this.brandingManager = new BrandingManager();

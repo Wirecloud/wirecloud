@@ -80,9 +80,9 @@ var LayoutManagerFactory = function () {
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
 		if ($('lite_toolbar_section')) {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		} else {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		}
 
 		this.tabMarker = $('tab_marker');		
@@ -208,9 +208,9 @@ var LayoutManagerFactory = function () {
 			this.showTabs();
 
 			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth -$('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}
 
 			this.changeTabBarSize(0);
@@ -229,8 +229,9 @@ var LayoutManagerFactory = function () {
 
 			// We have to take into account the header and the wrapper margins and borders.
 			var computedStyle = document.defaultView.getComputedStyle(wrapperElement, null);
+			var header = this.currentView.getHeader? this.currentView.getHeader(): $("ws_header");
 			var wrapperHeight = newHeight -
-			                    $("header").offsetHeight -
+			                    header.offsetHeight -
 			                    computedStyle.getPropertyCSSValue("margin-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX) -
 			                    computedStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX) -
 			                    computedStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -301,15 +302,15 @@ var LayoutManagerFactory = function () {
 		}
 		
 		//hide the specified banner
-		LayoutManager.prototype.hideBanner = function (bannerHTML) {
-			if (bannerHTML)
-				bannerHTML.hide();
+		LayoutManager.prototype.hideHeader = function (headerHTML) {
+			if (headerHTML)
+				headerHTML.hide();
 		}
 
 		//show the specified banner
-		LayoutManager.prototype.showBanner = function (bannerHTML) {
-			if (bannerHTML)
-				bannerHTML.show();
+		LayoutManager.prototype.showHeader = function (headerHTML) {
+			if (headerHTML)
+				headerHTML.show();
 		}
 
 		LayoutManager.prototype.notifyError = function (labelContent) {
@@ -420,12 +421,12 @@ var LayoutManagerFactory = function () {
 			if (this.currentView != null) {
 				this.currentView.hide();
 				//if the previous view was different and it had banner, change the banner
-				if (this.currentViewType != 'dragboard' && this.currentView.getBanner){
-					this.hideBanner(this.currentView.getBanner());
+				if (this.currentViewType != 'dragboard' && this.currentView.getHeader){
+					this.hideHeader(this.currentView.getHeader());
 				}
 			}
 			
-			this.showBanner(dragboard.getBanner());
+			this.showHeader(dragboard.getHeader());
 			
 			$(document.body).removeClassName(this.currentViewType+"_view");
 			
@@ -463,12 +464,12 @@ var LayoutManagerFactory = function () {
 			if (this.currentView != null) {
 				this.currentView.hide();
 				//if the previous view was different and it had banner, change the banner
-				if (this.currentViewType != 'catalogue' && this.currentView.getBanner) {
-					this.hideBanner(this.currentView.getBanner());
+				if (this.currentViewType != 'catalogue' && this.currentView.getHeader) {
+					this.hideHeader(this.currentView.getHeader());
 				}
 			}
 
-			this.showBanner(this.catalogue.getBanner());
+			this.showHeader(this.catalogue.getHeader());
 			
 			$(document.body).removeClassName(this.currentViewType+"_view");
 			
@@ -478,7 +479,6 @@ var LayoutManagerFactory = function () {
 			$(document.body).addClassName(this.currentViewType+"_view");
 			this.updateLocation(this.currentViewType);
 			
-			this.hideTabs();
 			this.hideSidebar();
 			
 			this.resizeContainer(this.catalogue.get_dom_element());
@@ -500,8 +500,8 @@ var LayoutManagerFactory = function () {
 			if(this.currentView != null){
 				this.currentView.hide();
 				//if the previous view had banner change the banner
-				if(this.currentView.getBanner) {
-					this.hideBanner(this.currentView.getBanner());
+				if(this.currentView.getHeader) {
+					this.hideHeader(this.currentView.getHeader());
 				}
 			}
 			
@@ -516,7 +516,6 @@ var LayoutManagerFactory = function () {
 			$(document.body).addClassName(this.currentViewType+"_view");
 			this.updateLocation(this.currentViewType);
 			
-			this.hideTabs();
 			this.hideSidebar();
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
@@ -530,12 +529,12 @@ var LayoutManagerFactory = function () {
 			if(this.currentView != null){
 				this.currentView.hide();
 				//if the previous view was different and it had banner, change the banner
-				if (this.currentViewType != 'wiring' && this.currentView.getBanner) {
-					this.hideBanner(this.currentView.getBanner());
+				if (this.currentViewType != 'wiring' && this.currentView.getHeader) {
+					this.hideHeader(this.currentView.getHeader());
 				}
 			}
 
-			this.showBanner(wiring.getBanner());
+			this.showHeader(wiring.getHeader());
 			
 			$(document.body).removeClassName(this.currentViewType+"_view");
 			
@@ -545,7 +544,6 @@ var LayoutManagerFactory = function () {
 			$(document.body).addClassName(this.currentViewType+"_view");
 			this.updateLocation(this.currentViewType);
 			
-			this.hideTabs();
 			this.hideSidebar();
 			this.resizeContainer(this.currentView.wiringContainer);
 
@@ -560,12 +558,7 @@ var LayoutManagerFactory = function () {
 			           helpLink: videoTutorialMsg},
 			          true);
 			this.showTipMessage(msg, 1);
-		}
-
-		LayoutManager.prototype.hideTabs = function() {
-			$("tab_section").addClassName("hidden");
-		}
-		
+		}	
 		
 		LayoutManager.prototype.showSidebar = function() {
 			var sidebar = OpManagerFactory.getInstance().getWsListMenu();

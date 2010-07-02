@@ -353,7 +353,7 @@ button {
 
 /* logs -------------------------------------------------------------------------------------------- */
 
-#header .tab_section #logs_tab {
+.global_header .tab_section #logs_tab {
   color: #FFCC00;
 }
 

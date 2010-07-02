@@ -49,7 +49,7 @@ function ConnectableGroupInterface (wiringGUI, parentInterface, headerText) {
 	// Header
 	this.headerElement = document.createElement("div");
 	Element.extend(this.headerElement);
-	this.headerElement.addClassName("header");
+	this.headerElement.addClassName("header_section");
 	this.headerElement.appendChild(document.createTextNode(headerText));
 	this.htmlElement.appendChild(this.headerElement);
 

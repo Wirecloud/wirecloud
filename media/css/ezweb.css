@@ -11,7 +11,7 @@ a, a:visited {
 a:hover  {
   text-decoration:underline;
 }
-#header .toolbar_menu > div.selected_section {
+.global_header .toolbar_menu > div.selected_section {
   padding-bottom: 9px;
   -moz-border-radius-bottomleft:5px;
   -moz-border-radius-bottomright:5px;
@@ -67,7 +67,7 @@ td {
 }
 
 /* header ------------------------------------------------------------------------------------------ */
-#header {
+.global_header {
     position: relative;
     width: 100%;
     z-index: 2;
@@ -154,7 +154,7 @@ td {
 	text-align: center;
 }
 
-#bar {
+.bar {
     position: absolute;
     bottom: -2px;
     width: 100%;
@@ -224,66 +224,61 @@ td {
 }
 
 
-#header .toolbar_menu,  #header .toolbar_menu_small {
+.global_header .toolbar_menu,  .global_header .toolbar_menu_small {
   float: left;
-  margin-left: 40;
 }
 
-#header .toolbar_menu_small {
+.global_header .toolbar_menu_small {
 	display: none;
 }
 
-#header .toolbar_menu_small .superindex{
+.global_header .toolbar_menu_small .superindex{
 	position:relative;
 	top:-5px;
 }
 
-#header .toolbar_menu > div {
+.global_header .toolbar_menu > div {
   padding:3px 10px;
   font-size: 10pt;
   float: left;
   cursor: pointer;
   padding-bottom: 5px;
   padding-top: 5px;
-  border-bottom: 1px solid #C2CBD2;
-  color: #4C5054;
+  border-bottom: 1px solid;
 }
 
 
-#header .toolbar_menu_small > div {
+.global_header .toolbar_menu_small > div {
   padding:3px 10px;
   font-size: 10pt;
   float: left;
   cursor: pointer;
   padding-bottom: 3px;
   padding-top: 3px;
-  border-bottom: 1px solid #C2CBD2;
-  color: #4C5054;
+  border-bottom: 1px solid;
 }
 
-#header .toolbar_menu .first_toolbar_button {
+.global_header .toolbar_menu .first_toolbar_button {
 	border-left: 0px;
 	-moz-border-radius-bottomleft: 5px;
-	border-left: 1px solid #C2CBD2;
+	border-left: 1px solid;
 }
 
-#header .last_toolbar_button {
+.global_header .last_toolbar_button {
 	-moz-border-radius-bottomright: 5px;
-	border-right: 1px solid #C2CBD2;
+	border-right: 1px solid;
 }
 
-#header .area_name {
+.global_header .area_name {
 	clear: both;
 	font-size:11pt;
-	margin-top: -3px;
 	cursor: default;
 	margin-left:20px;
-	color: #4C5054;
 	float: left;
 	font-weight: bold;
 }
 
-#header .visible{
+.global_header .visible{
 	display: block;
 }
 
@@ -300,11 +295,17 @@ td {
   top:5px;
 }
 
+.section_identifier{
+	float: left;
+	position:relative;
+	top:-3px;
+}
+
 #dragboard_link {
     float: left;
 	margin-left: 15px;
 	position:relative;
-	color: #4C5054;
+	top:1px;
 }
 
 #ws_operations_link {

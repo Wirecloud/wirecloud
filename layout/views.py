@@ -162,7 +162,7 @@ class SkinGenerator(Resource):
 class SkinPreviewer(Resource):
     template_directory = "skinTemplates/"
     workspace_preview = template_directory + "ws_preview.html"
-    catalogue_preview = template_directory + "catalgoue.preview.html"
+    catalogue_preview = template_directory + "catalogue.preview.html"
     
     def create(self, request, skin_type):
         

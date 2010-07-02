@@ -200,8 +200,8 @@ function Tab (tabInfo, workSpace) {
 	/**
  	* Gets the banner related to the workspace this dragboard belongs to
  	*/
-	Tab.prototype.getBanner = function(){
-		return this.workSpace.getBanner();
+	Tab.prototype.getHeader = function(){
+		return this.workSpace.getHeader();
 	}
 
 	Tab.prototype.mark_as_painted = function () {

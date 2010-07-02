@@ -33,7 +33,7 @@ var Catalogue = function (dom_element, dom_wrapper) {
   this.resp_command_dispatcher = null;
   
   //header
-  this.catalogue_banner = null;
+  this.catalogue_header = null;
   this.ws_link = null;	//link to active workspace in the toolbar
   this.catalogue_nav_bar = $('catalogue_nav_bar');
   
@@ -141,8 +141,8 @@ var Catalogue = function (dom_element, dom_wrapper) {
 						}.bind(this);
 						
 						
-  this.getBanner = function(){
-  	return this.catalogue_banner;
+  this.getHeader = function(){
+  	return this.catalogue_header;
   }
   
   /**
@@ -150,9 +150,9 @@ var Catalogue = function (dom_element, dom_wrapper) {
   * set the proper handlers to the workspace toolbar buttons
   */
   this.initToolbar = function () {
-  	this.catalogue_banner = $('catalogue_banner');
-	if (this.catalogue_banner) {
-		this.ws_link = this.catalogue_banner.getElementsBySelector('#catalogue_dragboard_link')[0];
+  	this.catalogue_header = $('catalogue_header');
+	if (this.catalogue_header) {
+		this.ws_link = this.catalogue_header.getElementsBySelector('#catalogue_dragboard_link')[0];
 		
 		//set the handlers
 		OpManagerFactory.getInstance().activeWorkSpace.setToolbarButton(this.ws_link);
@@ -164,7 +164,7 @@ var Catalogue = function (dom_element, dom_wrapper) {
   * unset the handlers of the workspace toolbar buttons
   */		
   this.unloadToolbar = function(){
-  	if (this.catalogue_banner) {
+  	if (this.catalogue_header) {
 		OpManagerFactory.getInstance().activeWorkSpace.unsetToolbarButton(this.ws_link);
 	}	
   }

@@ -235,7 +235,8 @@
 			inputInterface._insertInto($(parentId));
 			inputInterface.inputElement.name = propName;
 			inputInterface.inputElement.size = "75";
-			inputInterface.picker.fromString(propValue);			
+			if (!inputInterface.picker.fromString(propValue))
+				inputInterface.inputElement.value = propValue;
 
 		}
 		

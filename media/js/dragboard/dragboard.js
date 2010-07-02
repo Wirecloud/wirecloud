@@ -192,8 +192,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
 	/**
  	* Gets the banner related to the workspace this dragboard belongs to
  	*/
-	Dragboard.prototype.getBanner = function(){
-		return this.tab.getBanner();
+	Dragboard.prototype.getHeader = function(){
+		return this.tab.getHeader();
 	}
 	
 	/**

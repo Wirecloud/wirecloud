@@ -35,7 +35,7 @@ function WiringInterface(wiring, workspace, wiringContainer) {
 	this.wiringContainer = wiringContainer;
 	//banner
 	this.wsLink = null;
-	this.wiring_banner = null;
+	this.wiring_header = null;
 
 	this.opmanager = OpManagerFactory.getInstance();
 	this.currentChannel = null;
@@ -142,8 +142,8 @@ var _buttonHandler = function(){
 						OpManagerFactory.getInstance().activeWorkSpace.showWiring();
 					};
 					
-WiringInterface.prototype.getBanner = function(){
-	return this.wiring_banner;
+WiringInterface.prototype.getHeader = function(){
+	return this.wiring_header;
 }
 
 /**
@@ -152,9 +152,9 @@ WiringInterface.prototype.getBanner = function(){
  */	
 	
 WiringInterface.prototype.initToolbar = function(){
-	this.wiring_banner = $('wiring_banner');
-	if (this.wiring_banner) {
-		this.wsLink = this.wiring_banner.getElementsBySelector('#wiring_dragboard_link')[0];
+	this.wiring_header = $('wiring_header');
+	if (this.wiring_header) {
+		this.wsLink = this.wiring_header.getElementsBySelector('#wiring_dragboard_link')[0];
 		
 		//set the handlers
 		this.workspace.setToolbarButton(this.wsLink);
@@ -166,7 +166,7 @@ WiringInterface.prototype.initToolbar = function(){
  * unset the handlers of the workspace toolbar buttons
  */		
 WiringInterface.prototype.unloadToolbar = function(){
-	if (this.wiring_banner) {
+	if (this.wiring_header) {
 		this.workspace.unsetToolbarButton(this.wsLink);
 	}	
 }

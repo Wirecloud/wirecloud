@@ -25,7 +25,7 @@
 
 var DOM_Wrapper = function (root_element, element_ids) {
   this.root_element = root_element;
-  this.header_element = $('header');
+  this.header_element = $('catalogue_header');
   
   this.dom_element_ids = element_ids;
   
