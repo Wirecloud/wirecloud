@@ -267,8 +267,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			iGadget = this.iGadgets[igadgetKeys[i]];
 			iGadget._notifyLockEvent(this.fixed);
 		}
-
-                this._commitChanges();
 	}
 
 	/**
@@ -287,7 +285,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgets = new Hash();
 		this.iGadgetsByCode = new Hash();
 
-		if (this.tab.preferences.get('locked') || this.workSpace.isShared()) {
+		if (this.tab.isLocked() || this.workSpace.isShared()) {
 			this.fixed = true;
 			this.dragboardElement.addClassName("fixed");
 		}

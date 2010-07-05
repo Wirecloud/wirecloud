@@ -247,6 +247,9 @@ function Tab (tabInfo, workSpace) {
 	//Now, a TAB is painted on-demand. Only the active tab is rendered automatically!
 	this.painted = false;
 	
+	//By default, the TAB is locked
+	this.locked = true;
+	
 	//tab event handlers
 	this.renameTabHandler = function(e){
 		this.makeVisibleInTabBar();
@@ -471,26 +474,6 @@ function Tab (tabInfo, workSpace) {
 													LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
 	tabOpsLauncherElement.setStyle({'display':'none'});
 
-	/**
-	 * @private
-	 *
-	 * Callback function for the Lock menu entry.
-	 */
-	this._setLock = function() {
-		LayoutManagerFactory.getInstance().hideCover();
-		this.setLock(true);
-	}.bind(this);
-
-	/**
-	 * @private
-	 *
-	 * Callback function for the Unlock menu entry.
-	 */
-	this._unsetLock = function() {
-		LayoutManagerFactory.getInstance().hideCover();
-		this.setLock(false);
-	}.bind(this);
-
 	this.markAsVisibleSuccess = function() {
 		var tabIds = this.workSpace.tabInstances.keys();
 		for(var i = 0; i < tabIds.length; i++){
@@ -583,18 +566,6 @@ Tab.prototype._createTabMenu = function() {
 	} else {
 		this.firstVisible = true;
 		this.visibleEntryId = null;
-	}
-
-	if (this.preferences.get('locked')) {
-		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL("unlock"),
-			gettext("Unlock"),
-			this._unsetLock,
-			1);
-	} else {
-		this.lockEntryId = this.menu.addOption(_currentTheme.getIconURL('lock'),
-			gettext("Lock"),
-			this._setLock,
-			1);
 	}
 
 	//move before... Menu
@@ -717,24 +688,6 @@ Tab.prototype.preferencesChanged = function(modifiedValues) {
 		case "horizontal-margin":
 			newLayout = true;
 			break;
-		case "locked":
-			var locked = modifiedValues[preferenceName];
-
-			if (modifiedValues[preferenceName]) {
-				this.menu.updateOption(this.lockEntryId,
-				    _currentTheme.getIconURL('unlock'),
-				    gettext("Unlock"),
-				    this._unsetLock);
-			} else {
-				this.menu.updateOption(this.lockEntryId,
-				    _currentTheme.getIconURL('lock'),
-				    gettext("Lock"),
-				    this._setLock);
-			}
-
-			this.dragboard.setLock(locked);
-			this.workSpace._checkLock();
-
 		default:
 			continue;
 		}
@@ -751,5 +704,14 @@ Tab.prototype.preferencesChanged = function(modifiedValues) {
  * Locks/unlocks this tab.
  */
 Tab.prototype.setLock = function(locked) {
-	this.preferences.set({'locked': {value: locked}});
+	this.locked = locked;
+	this.dragboard.setLock(locked);
+	this.workSpace._checkLock(); 	
+}
+
+/**
+ * Checks if the tab is locked
+ */
+Tab.prototype.isLocked = function() {
+	return this.locked;
 }
