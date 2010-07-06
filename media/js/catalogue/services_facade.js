@@ -98,8 +98,13 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	this.voter.vote(resource, vote);
   }
   
-  this.tag = function (data) {
-	this.tagger.tag(data);
+  this.tag = function (resource, tag) {
+	var tags_xml = "<Tags><Tag>" + tag + "</Tag></Tags>";
+	this.tagger.tag(resource, tags_xml);
+  }
+  
+  this.delete_tag = function (resource, tag_id) {
+	this.tagger.delete_tag(resource, tag_id);
   }
   
   this.submit_gadget_to_catalogue = function (data) {

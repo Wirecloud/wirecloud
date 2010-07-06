@@ -158,6 +158,7 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
         
         Element.extend(tag_element);
         tag_element.update(tag.value);
+        tag_element.addClassName('link');
         tag_links.appendChild(tag_element);
         
         search_options['criteria'] = tag.value;
@@ -305,7 +306,78 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     
     var version_link = version_link_list[0];
     
-    user_command_manager.create_command_from_data('CHANGE_RESOURCE_VERSION', version_link, resource, 'click');    
+    user_command_manager.create_command_from_data('CHANGE_RESOURCE_VERSION', version_link, resource, 'click');   
+    
+    // Tagging resource
+    var tag_link_list = this.dom_element.getElementsBySelector('.tagging_resource');
+    
+    if (! tag_link_list || tag_link_list.length != 1) {
+  	  alert('Problem rendering resource details (tag_link)!');
+    }
+    
+    var tag_link = tag_link_list[0];
+    
+    user_command_manager.create_command_from_data('TAG_RESOURCE', tag_link, resource, 'click');  
+    
+    // ALL Tags
+    var tag_links_list = this.dom_element.getElementsBySelector('.right_column_resource .tags .tag_links');
+    if (! tag_links_list || tag_links_list.length != 1) {
+      alert('Problem rendering resource details (tag_list)!');
+    }
+    
+    var tag_links = tag_links_list[0];
+    
+    var search_options = new Hash();
+    
+    search_options['starting_page'] = 1
+    search_options['boolean_operator'] = 'AND';
+    search_options['scope'] = '';
+    
+    var tags = resource.getTags();
+    for (var j=0; j<tags.length; j++) {
+  	var tag = tags[j];
+  	
+      var tag_element = document.createElement('a');
+      
+      Element.extend(tag_element);
+      tag_element.update(tag.value);
+      tag_element.addClassName('link');
+      tag_links.appendChild(tag_element);
+      
+      search_options['criteria'] = tag.value;
+      
+      user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+    }
+    
+    // MY Tags
+    var mytags_area_list = this.dom_element.getElementsBySelector('.right_column_resource .my_tags_area');
+    if (! mytags_area_list || mytags_area_list.length != 1) {
+      alert('Problem rendering resource details (mytags)!');
+    }
+    
+    var my_tags_area = mytags_area_list[0];
+  
+    my_tags_area.update('');
+  
+    var tags = resource.getTags();
+  
+    for (var j=0; j<tags.length; j++) {
+	  var tag = tags[j];
+	  
+	  if (tag['added_by'].toLowerCase() == 'no')
+	    continue;
+	
+      var tag_element = document.createElement('a');
+    
+      Element.extend(tag_element);
+      tag_element.update(tag.value);
+      tag_element.addClassName('link');
+      my_tags_area.appendChild(tag_element);
+      
+      tag_element.tag_id = tag.id;
+    
+      user_command_manager.create_command_from_data('DELETE_TAG', tag_element, resource, 'click');
+    }
   }
 }
 

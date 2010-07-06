@@ -2,8 +2,49 @@
   overflow:hidden;
 }
 
+#showcase #catalogue_content {
+  border-left: 1px solid #DDDDDD;
+}
+
 #catalogue .center .resources .popularity.no_float, .no_float {
   float: none;
+}
+
+#catalogue .tagging_area {
+  float: left;
+}
+
+#catalogue .inline {
+  display: inline;	
+}
+
+#catalogue .submit_tag_link {
+  margin-left: 15px;
+}
+
+#catalogue .tag_links a, #catalogue .my_tags_area a {
+  margin-right: 5px;
+  float: left;
+}
+
+#catalogue .tag_input {
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;
+	-moz-border-radius-bottomleft:5px;
+	-moz-border-radius-bottomright:5px;
+	-moz-border-radius-topleft:5px;
+	-moz-border-radius-topright:5px;
+	background:#EEEEEE none repeat scroll 0 0;
+	border:1px solid #DDDDDD;
+	height:14px;
+	width:120px;
+	margin-left: 5px;
+}
+
+#catalogue .resource_details .tagging_area .operation_area {
+  float: none;
+  overflow: hidden;
 }
 
 #catalogue .resource_details .available_version {
@@ -28,6 +69,8 @@
 
 #catalogue .resource_details .operation_area .operation_content {
   margin-left: 15px;
+  margin-top: 3px;
+  margin-bottom: 3px;
 }
 
 #catalogue .resource_details .message {
@@ -344,7 +387,9 @@ Resource
 }
 
 .tags .tag_links {
-	float: left;
+  float:left;
+  overflow:hidden;
+  width:500px;
 }
 
 #catalogue #toolbar {

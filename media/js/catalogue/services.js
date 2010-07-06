@@ -476,7 +476,92 @@ var CatalogueVoter = function () {
 var CatalogueTagger = function () {
   CatalogueService.call(this);
 		  
-  this.tag = function (options) {
-		
+  this.tag = function (resource, tags_data) {
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+
+    var success_callback = function(response) {
+      // processing command
+      var response_text = response.responseText;
+      var response_obj = response_text.evalJSON();
+      
+      var resource = this.get_data();
+      
+      var new_tags = response_obj['tagList']
+      
+      resource.setTags(new_tags);
+      
+      resource.setExtraData({'tagging_result': gettext('Done!')});
+      
+      this.set_data(resource);
+    	
+      this.process();
+    }
+    
+    var error_callback = function(transport, e) {
+  	  var logManager = LogManagerFactory.getInstance();
+  	  var msg = logManager.formatError(gettext("Error tagging Gadget: %(errorMsg)s."), transport, e);
+  	
+  	  logManager.log(msg);
+  	  
+  	  resource.setExtraData({'tagging_result': gettext('Error during tagging!')});
+  	
+  	  // processing command
+  	  this.process();
+    }
+    
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('PAINT_RESOURCE_DETAILS');
+    
+    // "this" is binded to a "ResponseCommand" object
+    response_command.set_data(resource);
+	    
+	//Send request to update gadget's code
+    var params = new Hash();
+    
+    params['tags_xml'] = tags_data;
+    
+    this.persistence_engine.send_post(url, params, response_command, success_callback, error_callback);	  
+  }
+  
+  this.delete_tag = function (resource, tag_id) {
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion() + '/' + tag_id;
+
+    var success_callback = function(response) {
+      // processing command
+      var response_text = response.responseText;
+      var response_obj = response_text.evalJSON();
+      
+      var resource = this.get_data();
+      
+      var new_tags = response_obj['tagList']
+      
+      resource.setTags(new_tags);
+      
+      resource.setExtraData({'tagging_result': gettext('Done!')});
+      
+      this.set_data(resource);
+    	
+      this.process();
+    }
+    
+    var error_callback = function(transport, e) {
+  	  var logManager = LogManagerFactory.getInstance();
+  	  var msg = logManager.formatError(gettext("Error tagging Gadget: %(errorMsg)s."), transport, e);
+  	
+  	  logManager.log(msg);
+  	  
+  	  resource.setExtraData({'tagging_result': gettext('Error during tagging!')});
+  	
+  	  // processing command
+  	  this.process();
+    }
+    
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('PAINT_RESOURCE_DETAILS');
+    
+    // "this" is binded to a "ResponseCommand" object
+    response_command.set_data(resource);
+    
+    this.persistence_engine.send_delete(url, response_command, success_callback, error_callback);	  
   }
 }

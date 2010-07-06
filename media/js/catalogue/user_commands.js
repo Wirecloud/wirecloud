@@ -185,6 +185,45 @@ var UpdateResourceHTMLCommand = function (dom_element, html_event, service_facad
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
+var TagResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) { 
+    var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+    var tagging_area_div = target.nextSiblings()[0];
+	
+    tagging_area_div.toggleClassName('hidden');
+    
+    this.tag_input = tagging_area_div.getElementsBySelector('.tag_input')[0];
+    var submit_tag_link = tagging_area_div.getElementsBySelector('.submit_tag_link')[0];
+    
+    Event.observe(submit_tag_link, 'click', submit_tag_to_resource.bind(this));
+    Event.observe(this.tag_input, 'keypress', submit_tag_to_resource.bind(this));
+  }
+  
+  var submit_tag_to_resource = function (event) { 
+	if (event instanceof KeyboardEvent && event.keyCode != '13') {
+	  // Do nothing!
+	  return;
+	}
+
+    this.services.tag(this.data, this.tag_input.value)
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
+var RemoveResourceTagCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+  this.anonymous_function = function(event) {	
+	var target = BrowserUtilsFactory.getInstance().getTarget(event);
+	
+	var tag_id = target.tag_id;
+	
+    this.services.delete_tag(this.data, tag_id);
+  }
+  
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+}
+
 var VoteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
     var target = BrowserUtilsFactory.getInstance().getTarget(event);

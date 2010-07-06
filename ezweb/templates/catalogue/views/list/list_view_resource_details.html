@@ -14,7 +14,7 @@
  <div class="desc padding_left">#{description}</div>
  <div class="tags">
   <div class="bold floating_left padding_left">{% trans 'Tags:' %}</div>
-  <div class="tag_links padding_left link"></div>
+  <div class="tag_links padding_left"></div>
  </div>
  
  <div class="section_title bold">{% trans 'Detailed data' %}</div>
@@ -33,8 +33,21 @@
  
  <div class="section_title bold">{% trans 'Advanced operations' %}</div>
  
- <div class="link padding_left floating_left padding_right">{% trans 'Tag gadget' %}</div>
- <div class="operation_area hidden"></div>
+ <div class="link padding_left floating_left padding_right tagging_resource">{% trans 'Add/remove tags' %}</div>
+ <div class="tagging_area hidden">
+ <div class="operation_area tag_resource_area">
+  <div class="operation_title">{% trans 'Add tags:' %}</div>
+  <div class="operation_content">
+   <div class="inline">{% trans 'Type new tag:' %}</div>
+   <input type="text" class="tag_input inline"></input>
+   <div class="submit_tag_link link inline">{% trans 'Tag' %}</div>
+  </div>
+ </div>
+ <div class="operation_area my_tags_resource_area">
+  <div class="operation_title">{% trans 'Delete my tags:' %}</div>
+  <div class="operation_content my_tags_area"></div>
+ </div>
+ </div>
  <div class="message">#{tagging_result}</div>
  
  <div class="link padding_left floating_left padding_right voting_resource">{% trans 'Vote gadget' %}</div>
