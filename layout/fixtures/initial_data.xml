@@ -4,19 +4,16 @@
         <field type="CharField" name="logo">http://ezweb.tid.es/repository/gadget_images/telefonica_logo.gif</field>
         <field type="CharField" name="viewer_logo">http://ezweb.tid.es/repository/gadget_images/telefonica_logo.gif</field>
         <field type="CharField" name="link">http://www.movistar.es/</field>
-        <field type="BooleanField" name="powered">False</field>
     </object>
     <object pk="3" model="layout.branding">
         <field type="CharField" name="logo">http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png</field>
         <field type="CharField" name="viewer_logo">http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png</field>
         <field type="CharField" name="link"></field>
-        <field type="BooleanField" name="powered">False</field>
     </object>
     <object pk="4" model="layout.branding">
         <field type="CharField" name="logo">http://farm1.static.flickr.com/37/117320004_4d15cc0a4f_m.jpg</field>
         <field type="CharField" name="viewer_logo"><None></None></field>
         <field type="CharField" name="link"><None></None></field>
-        <field type="BooleanField" name="powered">True</field>
     </object>
     <object pk="1" model="layout.theme">
         <field type="CharField" name="name">default</field>

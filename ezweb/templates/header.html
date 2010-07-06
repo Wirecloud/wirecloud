@@ -4,7 +4,6 @@
 	<div id="ws_banner" class="banner">
 		<div id="logo_placeholder" class="logo_placeholder">
 		  <img id="logo" class="logo_layout {{ branding.workspace.logo.class }}" />
-		  <img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} />
 	   </div>
 		<div id="toolbar_section" class="toolbar_section"></div>
 		<div id="greeting">
@@ -58,7 +57,6 @@
 	<div id="wiring_banner" class="banner">
       	<div class="logo_placeholder">
 			<img class="logo_layout {{ branding.workspace.logo.class }}" />
-			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} />
       	</div>
 		<div class="toolbar_section">
 			<div id="wiring_dragboard_link" class="back_button">« {% trans 'Back' %}</div>
@@ -85,7 +83,6 @@
 			{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" 
 			{% else %} class="logo_layout" {% endif %} 
 		  />
-		  <img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.catalogue.powered %}style="display:none;"{% endif %} />
 	  </div>
 	  <div class="toolbar_section">
 	  	<div id="catalogue_dragboard_link" class="back_button">« {% trans 'Back' %}</div>

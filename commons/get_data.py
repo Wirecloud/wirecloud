@@ -623,7 +623,6 @@ def get_branding_response(branding):
     data_ret["viewer_logo"] = {}    
     data_ret["viewer_logo"]["url"] = branding.viewer_logo
     data_ret["viewer_logo"]["class"] = elements["viewer_logo"]
-    data_ret["powered"] = branding.powered
     if branding.link:
         data_ret["link"] = branding.link
     return data_ret

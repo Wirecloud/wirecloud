@@ -44,7 +44,6 @@ class Branding(models.Model):
     logo = models.CharField(_('Logo data'), max_length=500, blank=True, null=True)
     viewer_logo = models.CharField(_('Viewer logo data'), max_length=500, blank=True, null=True)
     link = models.URLField(_('Logo Link'), max_length=500, blank=True, null=True)
-    powered = models.BooleanField(_('Is this a third party branding?'), default=False)
     
     def __unicode__(self):
         return unicode(self.id)

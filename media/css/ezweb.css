@@ -99,12 +99,6 @@ td {
 	display: block;
 }
 
-.powered{
-	bottom:0;
-	position:absolute;
-	right:-38px;
-}
-
 #themeSelector {
     cursor: pointer;
 }
