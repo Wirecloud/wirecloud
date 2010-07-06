@@ -37,7 +37,7 @@ var ListViewFactory  = function () {
 	                               'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
 	                               'GADGETS_BUTTON': '#gadgets_button', 'MASHUPS_BUTTON': '#mashups_button',
 	                               'DEVELOPERS_BUTTON': '#developers_button_toolbar', 'DEVELOPER_INFO_AREA': '#developer_info',
-	                               'SEARCH_TOOLBAR_BUTTON': '#search_button_toolbar', 'TAB_BAR': '#catalogue_nav_bar'});
+	                               'SEARCH_TOOLBAR_BUTTON': '#search_button_toolbar', 'TAB_BAR': '#catalogue_nav_bar .tab_section'});
   
   this.catalogue_structure_dom = $('list_view_catalogue_structure');
   this.resource_structure_dom = $('list_view_resource_structure_template');

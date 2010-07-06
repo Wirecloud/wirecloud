@@ -91,9 +91,11 @@
 }
 
 #catalogue .back_to_resource_list {
-  border-bottom: 1px solid;
-  height:23px;
-  padding-top:5px;
+  height:18px;
+}
+
+#catalogue .back_to_resource_list {
+  float: right;
 }
 
 #catalogue .paginate a {

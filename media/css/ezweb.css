@@ -173,7 +173,6 @@ td {
 }
 
 #catalogue_nav_bar {
-   bottom:-2px;
    left:0;
    position:absolute;
    width:100%;
@@ -296,9 +295,9 @@ td {
 }
 
 .section_identifier{
-	float: left;
-	position:relative;
-	top:-3px;
+  bottom:2px;
+  float:left;
+  position:absolute;
 }
 
 #dragboard_link {
