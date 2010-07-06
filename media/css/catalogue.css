@@ -98,8 +98,10 @@
   float: right;
 }
 
-#catalogue .paginate a {
-  cursor: pointer;
+#catalogue .paginate a.text,  #catalogue .paginate a.text:visited {
+  cursor: default;
+  text-decoration: none;
+  color: black;
 }
 
 #catalogue .margin_top {

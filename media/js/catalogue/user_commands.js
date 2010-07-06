@@ -193,11 +193,15 @@ var TagResourceCommand = function (dom_element, html_event, service_facade, dom_
 	
     tagging_area_div.toggleClassName('hidden');
     
-    this.tag_input = tagging_area_div.getElementsBySelector('.tag_input')[0];
-    var submit_tag_link = tagging_area_div.getElementsBySelector('.submit_tag_link')[0];
-    
-    Event.observe(submit_tag_link, 'click', submit_tag_to_resource.bind(this));
-    Event.observe(this.tag_input, 'keypress', submit_tag_to_resource.bind(this));
+    if (!tagging_area_div.binded_events) {
+	  this.tag_input = tagging_area_div.getElementsBySelector('.tag_input')[0];
+	  var submit_tag_link = tagging_area_div.getElementsBySelector('.submit_tag_link')[0];
+	    
+	  Event.observe(submit_tag_link, 'click', submit_tag_to_resource.bind(this));
+	  Event.observe(this.tag_input, 'keypress', submit_tag_to_resource.bind(this));
+	  
+	  tagging_area_div.binded_events = true;
+    }
   }
   
   var submit_tag_to_resource = function (event) { 

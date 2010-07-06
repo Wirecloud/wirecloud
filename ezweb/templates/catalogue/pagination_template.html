@@ -1,16 +1,16 @@
 {% load i18n %}
 
-<span class="beginning">
-  <a title="{% trans 'Go to beggining' %}"><<</a>
+<span>
+  <a class="beginning #{first}" title="{% trans 'Go to beggining' %}"><<</a>
 </span>
-<span class="previous">
-  <a title="{% trans 'Go to previous page' %}"><</a>
+<span>
+  <a class="previous #{previous}" title="{% trans 'Go to previous page' %}"><</a>
 </span>
 <span class="pagination_pages">
 </span>
-<span class="next">
-  <a title="{% trans 'Go to next page' %}">></a>
+<span>
+  <a class="next #{next}" title="{% trans 'Go to next page' %}">></a>
 </span>
-<span class="last">
-  <a title="{% trans 'Go to last page' %}">>></a>
+<span>
+  <a class="last #{last}" title="{% trans 'Go to last page' %}">>></a>
 </span>

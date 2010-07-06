@@ -84,8 +84,9 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	
 	if (command_id == 'PAINT_GADGETS') {
 	  this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
-	  this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	}
+	
+	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	
 	break;
   case 'PAINT_MASHUPS':
@@ -99,8 +100,9 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	
 	if (command_id == 'PAINT_MASHUPS') {
 	  this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
-	  this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	}
+	
+	this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
 	
 	break;
   case 'PAINT_RESOURCE_DETAILS':

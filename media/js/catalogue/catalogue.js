@@ -76,15 +76,21 @@ var Catalogue = function (dom_element, dom_wrapper) {
   
   this.fit_height = function () {
 	var gadgets = this.dom_wrapper.get_element_by_code('GADGET_LIST');
+	var mashups = this.dom_wrapper.get_element_by_code('MASHUP_LIST');
+	var developer_area = this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA');
 	var resource_details = this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA');
 	
 	var screen_height = BrowserUtilsFactory.getInstance().getHeight();
-	var top_offset = Position.cumulativeOffset(gadgets)[1];
+	var tabs_offset = Position.cumulativeOffset(gadgets)[1];
+	var no_search_bar_offset = Position.cumulativeOffset(developer_area)[1];
 	
-	var center_area_height = screen_height - top_offset - 12 + 'px';
+	var search_bar_area_height = screen_height - tabs_offset + 'px';
+	var no_search_bar_area_height = screen_height - no_search_bar_offset + 'px';
 	
-	gadgets.style.height = center_area_height;
-	resource_details.style.height = center_area_height;
+	gadgets.style.height = search_bar_area_height;
+	mashups.style.height = search_bar_area_height;
+	developer_area.style.height = no_search_bar_area_height;
+	resource_details.style.height = no_search_bar_area_height;
   }
   
   this.destroy = function () {

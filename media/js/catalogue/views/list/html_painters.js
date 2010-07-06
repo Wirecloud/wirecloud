@@ -483,34 +483,55 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
   this.pagination_template = new Template(this.pagination_structure_element.innerHTML);
   this.pagination_element = new Template('<a title="#{text} #{page}">#{page}</a>');
   
+  this.gadgets_last_search_options = null;
+  this.mashups_last_search_options = null;
+  
   this.paint = function (command, user_command_manager) {
 	var command_data = command.get_data();
+	var command_id = command.get_id();
+	
+	switch (command_id) {
+	case 'PAINT_GADGETS':
+	  this.gadgets_last_search_options = command_data;
+	  break;
+	case 'PAINT_MASHUPS':
+	  this.mashups_last_search_options = command_data;
+	  break
+	case 'SHOW_MASHUPS':
+	  command_data = this.mashups_last_search_options;
+	  break;
+	case 'SHOW_GADGETS':
+	  command_data = this.gadgets_last_search_options;
+	  break;
+	default:
+	  alert('Error at Pagination painter');
+	}	
+	
+	this.dom_element.update('');
 	
 	var number_of_elements = command_data['query_results_number'];
 	var resources_per_page = command_data['resources_per_page'];
 	var current_page = command_data['current_page'];
 	var number_of_pages = Math.ceil(parseInt(number_of_elements) / parseInt(resources_per_page));
 	
-	this.dom_element.update('');
-	
-	var first_image = 'go-first.png';
-	var previous_image = 'go-previous.png';
-	var next_image = 'go-next.png';
-	var last_image = 'go-last.png';
+	var first = 'link';
+	var last = 'link';
+	var next = 'link';
+	var previous = 'link';
 	
 	if (current_page == 1) {
-      first_image = 'go-first-disabled.png';
-	  previous_image = 'go-previous-disabled.png';
+	  first = 'text';
+	  previous = 'text';
 	}
 	
 	if (current_page == number_of_pages) {
-	  last_image = 'go-last-disabled.png';
-	  next_image = 'go-next-disabled.png';
+	  last = 'text';
+	  next = 'text';
 	}
 	
 	var pagination_html = 
-    	this.pagination_template.evaluate({'first_image': first_image, 'next_image': next_image, 'previous_image': previous_image, 
-    	                                   'last_image': last_image});
+    	this.pagination_template.evaluate({'first': first, 'next': next, 'previous': previous, 
+    	                                   'last': last});
 	
 	this.dom_element.update(pagination_html);
 	
@@ -529,8 +550,12 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
   
   this.bind_button = function (user_command_manager, page, html_event, element_selector, command_id, element) {
 	var data = {'starting_page': page};
+	
 	if (! element)
 	  element = this.dom_element.getElementsBySelector(element_selector)[0];
+	
+	Element.extend(element);
+	element.addClassName('link');
 	
 	user_command_manager.create_command_from_data(command_id, element, data, html_event);
   }
