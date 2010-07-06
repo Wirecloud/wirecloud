@@ -590,15 +590,15 @@ var LayoutManagerFactory = function () {
 		//WorkSpaceMenu is dinamic so the different options must be added.
 		LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
 			//Add to the toolbar the two main options
-			var goToMenu = workSpace.getGoToMenu()
+			/*var goToMenu = workSpace.getGoToMenu()
 			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long
-			
+			*/
 			var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
 			wsListMenu.clearOptions(); 
 			
-			var in_toolbar = "";
+			/*var in_toolbar = "";*/
 			for (var i=0;i<workspaces.length; i++){
-				in_toolbar = "";
+				/*in_toolbar = "";
 				if (i<options_length){
 					//Add to the Toolbar menu
 					var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
@@ -608,15 +608,15 @@ var LayoutManagerFactory = function () {
 								}.bind(workspaces[i]),
 								i);
 					in_toolbar = "shown";
-				}
+				}*/
 				//Add to the Sidebar Menu
 				wsListMenu.addOption(workspaces[i].workSpaceState.name,
 								function () {
 									LayoutManagerFactory.getInstance().hideCover();
 									OpManagerFactory.getInstance().changeActiveWorkSpace(this)
 								}.bind(workspaces[i]),
-								i,
-								in_toolbar);
+								i)/*,
+								in_toolbar);*/
 			}
 		}
 
@@ -883,10 +883,10 @@ var LayoutManagerFactory = function () {
 			toolbar_section.update();
 			
 			var toolbarHtml = '<div id="toolbar_menu" class="toolbar_menu">';
-			toolbarHtml += '<div id="go_to_link" class="first_toolbar_button">'+ gettext("My applications") +'</div>';
-		    toolbarHtml += '<div id="conf_link">'+ gettext("Configuration") +'</div>';
+		    toolbarHtml += '<div id="conf_link" class="first_toolbar_button">'+ gettext("Configuration") +'</div>';
 		    toolbarHtml += '<div id="sharing_link">'+ gettext("Share") +'</div>';
-		    toolbarHtml += '<div id="edit_link" class="last_toolbar_button">'+ gettext("Edit") +'</div>';
+		    toolbarHtml += '<div id="edit_link">'+ gettext("Edit") +'</div>';
+			toolbarHtml += '<div id="go_to_link" class="left_separator last_toolbar_button">'+ gettext("My applications") +'</div>';
 			toolbarHtml += '</div>';
 			
 			new Insertion.Top(toolbar_section, toolbarHtml);
@@ -907,7 +907,8 @@ var LayoutManagerFactory = function () {
 				}
 				// open the selected one
 				launcher.addClassName("selected_section");
-				menu.show();
+				if (menu)
+					menu.show();
 			}
 			
 		}

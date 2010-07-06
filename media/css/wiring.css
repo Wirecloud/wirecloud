@@ -101,10 +101,6 @@
   padding-left: 18px;
 }
 
-#wiring #newChannelForm {
-    text-align: center;
-}
-
 #wiring .igadget {
   position: relative;
   font-weight: bold;
@@ -175,13 +171,8 @@
   display: none;
 }
 
-#wiring .newChannel, #wiring #unfold_all_link, #wiring .option_link {
+#wiring .option_link {
   cursor: pointer;
-}
-
-#wiring .newChannel {
-  margin: 2ex 1ex;
-  text-align: center;
 }
 
 #wiring #wiring_options {
@@ -191,7 +182,7 @@
   margin:   5px;
 }
 
-#wiring #unfold_all_link, #wiring .inline {
+#wiring .inline {
   display: inline;
 }
 
@@ -286,27 +277,6 @@
 #wiring .igadget > .header_section {
   padding-left: 20px;
   cursor:pointer;
-}
-
-#wiring #newChannelForm .addSubmit {
-  cursor: pointer;
-  padding: 0px;
-  height: 16px;
-  width: 16px;
-  border: 0px none;
-}
-
-#wiring .newChannel, #wiring #unfold_all_link {
-  cursor: pointer;
-}
-
-#wiring .newChannel {
-  margin: 2ex 1ex;
-  text-align: center;
-}
-
-#wiring #unfold_all_link {
-  display:inline;
 }
 
 #wiring #unfold_chkItem{
@@ -405,15 +375,6 @@
   margin: 1ex 20px;
   padding: 1ex 2ex;
   display: none;
-}
-
-#wiring #newChannelForm .linkSubmit {
-   cursor: pointer;
-}
-
-#wiring .newChannelInput {
-   border:1px solid;
-   margin:2px 1ex;
 }
 
 #wiring .channelNameInput {

@@ -463,6 +463,8 @@ var OpManagerFactory = function () {
 
 			if (this.activeWorkSpace)
 				this.activeWorkSpace.unload();
+			
+			this.wsListMenu.remove();
 
 			//TODO: unloadCatalogue
 		}

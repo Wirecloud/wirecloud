@@ -6,7 +6,6 @@
 <div id="wiring" class="container">
 	<div id="wiring_wrapper">
 		<div id="wiring_options">
-			<div id="unfold_all_link">{% trans 'Unfold all' %}</div> | 
 			<div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
 		</div>
 		<div id="wiring_table">
@@ -20,9 +19,6 @@
 			<div class="inoutColumn">
 				<div class="title">{% trans "CHANNELS" %}
 					<input name='channels' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this, event);"/>
-				</div>
-				<div class="newChannel" id="newChannel">
-					{% trans "new channel" %}
 				</div>
 				<div id="channels_list"></div>
 			</div>

@@ -11,13 +11,6 @@ a, a:visited {
 a:hover  {
   text-decoration:underline;
 }
-.global_header .toolbar_menu > div.selected_section {
-  padding-bottom: 9px;
-  -moz-border-radius-bottomleft:5px;
-  -moz-border-radius-bottomright:5px;
-  -webkit-border-radius-bottomright:5px;
-  -webkit-border-radius-bottomright:5px;
-}
 
 td {
     padding: 0;
@@ -161,7 +154,7 @@ td {
     left: 0;
 }
 
-#tab_section {
+.tab_section {
     position: absolute;
     bottom: 0;
     height: auto;
@@ -222,6 +215,12 @@ td {
     padding-bottom: 3px;
 }
 
+.toolbar_section .back_button{
+	float: left;
+	padding: 5px 10px 9px 10px;
+	cursor: pointer;
+}
+
 
 .global_header .toolbar_menu,  .global_header .toolbar_menu_small {
   float: left;
@@ -257,24 +256,21 @@ td {
   border-bottom: 1px solid;
 }
 
+.global_header .toolbar_menu > div.selected_section {
+  padding-bottom: 9px;
+}
+
 .global_header .toolbar_menu .first_toolbar_button {
 	border-left: 0px;
-	-moz-border-radius-bottomleft: 5px;
 	border-left: 1px solid;
 }
 
 .global_header .last_toolbar_button {
-	-moz-border-radius-bottomright: 5px;
 	border-right: 1px solid;
 }
 
-.global_header .area_name {
-	clear: both;
-	font-size:11pt;
-	cursor: default;
-	margin-left:20px;
-	float: left;
-	font-weight: bold;
+.global_header .left_separator {
+	border-left: 1px solid;
 }
 
 .global_header .visible{
@@ -288,23 +284,33 @@ td {
 }
 
 #workspace_menu_link {
-  float:left;
   left:5px;
   position:relative;
   top:5px;
 }
 
+.global_header .area_name {
+	font-size:11pt;
+	cursor: default;
+	margin-left:20px;
+	font-weight: bold;
+}
+
 .section_identifier{
-  bottom:2px;
-  float:left;
-  position:absolute;
+	float: left;
+	position:relative;
+	width: 250px;
+	top:-5px;
+}
+
+.section_identifier > div{
+	float: left;	
 }
 
 #dragboard_link {
-    float: left;
 	margin-left: 15px;
 	position:relative;
-	top:1px;
+	top: 2px;
 }
 
 #ws_operations_link {
@@ -355,14 +361,7 @@ body.shared #workspace_link_container span {
   cursor: pointer;
 }
 
-.go_back{
-	font-size:11pt;
-	position:absolute;
-	right:30px;
-	top:14px;
-	text_decoration: underline;
-	cursor: pointer;
-}
+
 
 .message_section {
     position: absolute;

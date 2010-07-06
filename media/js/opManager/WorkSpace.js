@@ -989,12 +989,12 @@ function WorkSpace (workSpaceState) {
 	 *Menu with the "go to" options 
 	 */
 	WorkSpace.prototype._createGoToMenu = function(){
-		var idMenu = 'goto_menu_'+this.workSpaceState.id;
+		/*var idMenu = 'goto_menu_'+this.workSpaceState.id;
 		var idSubMenu = "submenu_" + idMenu;
 
 		this.goToMenu = this._initMenu(idMenu);
 		
-		/*** Add to the menu the proper options ***/
+		// Add to the menu the proper options
 		var optionPosition = 0; 
 		//NOTE: first positions will be used to access to the main workspaces (filled by the LayoutManager)
 		
@@ -1029,6 +1029,14 @@ function WorkSpace (workSpaceState) {
 							target.blur();
 							LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);
 						}.bind(this));
+		*/
+		//Toggle the sidebar
+		Event.observe(this.goToLauncher, 'click', 
+						function(e){
+							//LayoutManagerFactory.getInstance().clearToolbar(this.toolbarSection, this.goToLauncher);
+							LayoutManagerFactory.getInstance().toggleSideBarMenu();
+						}.bind(this));
+		
 
 	}
 	
@@ -1056,19 +1064,10 @@ function WorkSpace (workSpaceState) {
 		this._createEditMenu();
 		
 		//Show the initial menu
-		var locked = true;
-		if (this.isAllowed('change_lock_status')) {
-			locked = this._isLocked();
-		}
-		if (locked){
-			//Show the "My Applications" option unfolded
-			LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);
-		}
-		else{
-			//Show the "Edit" option unfolded -> the user unlocked the workspace previously
-			LayoutManagerFactory.getInstance().showToolbarMenu(this.editMenu, this.editLauncher, this.toolbarSection);
-		}
-		this._manageAddTabElement(locked);
+		// Show the "My Applications" option unfolded
+		/*LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);*/
+		// hide the add_tab element	
+		this._manageAddTabElement(true);
 	}
 	
 	/*
@@ -1241,7 +1240,6 @@ function WorkSpace (workSpaceState) {
 			this.confMenu.removeOption(this.activeEntryId);
 			this.activeEntryId = null;
 		}
-		PreferencesManagerFactory.getInstance().getPlatformPreferences().set({'initial-theme': {value: this.preferences.get('theme')}});
 	}.bind(this);
 
 	this.markAsActiveError = function(transport, e) {
