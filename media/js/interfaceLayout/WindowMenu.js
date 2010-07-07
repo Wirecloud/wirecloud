@@ -801,6 +801,29 @@ function FormWindowMenu (fields, title) {
 	this.fields = {};
 	
 	var _insertField = function(fieldId, field, row){
+		
+		if (field.type === 'separator') {
+			var separator = row.insertCell(-1);
+			separator.setAttribute('colSpan', '2');
+			var hr = document.createElement('hr');
+			separator.appendChild(hr);
+			return;
+		}
+		if (field.type === 'label') {
+			var labelRow = row.insertCell(-1);
+			Element.extend(labelRow);
+			labelRow.addClassName('label');
+			if (field.url){
+				var label = document.createElement('a');			
+				label.setAttribute("href",field.url);
+				label.setAttribute("target","_blank");
+			}else{
+				var label = document.createElement('label');
+			}
+			label.appendChild(document.createTextNode(field.label));
+			labelRow.appendChild(label);
+			return;
+		}
 		// Label Cell
 		var labelCell = row.insertCell(-1);
 		Element.extend(labelCell);
@@ -851,13 +874,6 @@ function FormWindowMenu (fields, title) {
 		var field = fields[fieldId];
 		var row = table.insertRow(-1);
 
-		if (field.type === 'separator') {
-			var separator = row.insertCell(-1);
-			separator.setAttribute('colSpan', '2');
-			var hr = document.createElement('hr');
-			separator.appendChild(hr);
-			continue;
-		}
 		if (field.type === 'fieldset'){
 			var fieldset = row.insertCell(-1);
 			Element.extend(fieldset);
@@ -1024,6 +1040,11 @@ function PublishWindowMenu (element) {
 			label: gettext('Personalization'),
 			type: 'fieldset',
 			elements: {
+				'create_skin': {
+					label:gettext("Create your own skin for your application"),
+					type:"label",
+					url:URIs.WS_SKIN_GENERATOR
+				},
 				'imageURI': {
 					label: gettext('Image for the catalogue (170x80 px)'),
 					type: 'fileUrl',

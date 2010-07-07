@@ -128,7 +128,7 @@ class SkinGenerator(Resource):
                      
                     skin.save()
                     
-                    result = _("The skin %(name)s has been %(msg)s successfully") %{"name":skin_name, "msg":resp}
+                    result = _("<em style='color: green;'>The skin %(name)s has been %(msg)s successfully. It will be available next time you access to EzWeb.</em>") %{"name":skin_name, "msg":resp}
                     
                     if accepts(request, 'application/json'):
                         mimetype = 'application/json; charset=UTF-8'   

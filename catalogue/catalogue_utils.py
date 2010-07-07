@@ -75,12 +75,12 @@ def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):
                 continue
         
         #checking the scope of the query
-        if scope == "mashup" and not gadget.mashup_id:
+        if ((scope == "mashup" or scope == "solution") and not gadget.mashup_id):
             continue
         elif scope == "gadget" and gadget.mashup_id:
             continue
-        elif scope == "solution" and not gadget.solution:
-            continue
+#        elif scope == "solution" and not gadget.solution:
+#            continue
         #else: (scope=="all") -> add to the list
         
         #Checking organizations!
