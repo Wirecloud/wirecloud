@@ -341,6 +341,7 @@ body.shared #workspace_link_container span {
 	height: 20px;
 	padding-bottom: 1px;
 	width: auto;
+	clear: both;
 }
 
 #workspace_link_container {
