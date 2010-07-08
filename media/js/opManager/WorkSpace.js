@@ -962,7 +962,7 @@ function WorkSpace (workSpaceState) {
 		
 		//wiring access option
 		if (this.isAllowed('connect_igadgets')){
-			var wiringId = this.editMenu.addOption(gettext("Connect Gadgets")+" »",
+			var wiringId = this.editMenu.addOption(gettext("Go to Wiring tool")+" »",
 								function() {
 									// the action of going to the wiring is set by the own wiring module
 									LayoutManagerFactory.getInstance().hideCover();
