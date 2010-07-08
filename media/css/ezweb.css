@@ -341,7 +341,6 @@ body.shared #workspace_link_container span {
 	height: 20px;
 	padding-bottom: 1px;
 	width: auto;
-	clear: both;
 }
 
 #workspace_link_container {
@@ -807,6 +806,7 @@ button {
 .sidebar #add_workspace{
 	float: left;
 	cursor: pointer;
+	clear: both;
 }
 
 /* dragboard ---------------------------------------------------------------------------------------- */
