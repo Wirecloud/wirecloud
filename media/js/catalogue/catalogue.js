@@ -57,6 +57,12 @@ var Catalogue = function (dom_element, dom_wrapper) {
 	this.available_apps = available_apps;
   }
   
+  this.add_resource_by_template = function (template_url) {
+	  var services = this.user_command_manager.get_service_facade();
+	  
+	  services.add_resource_by_template(template_url);
+  }
+  
   this.add_gadget_to_app = function (gadget, app) {
     this.user_command_manager.add_gadget_to_app(gadget, app);
   }

@@ -123,7 +123,6 @@ var ShowcaseFactory = function () {
 		// *******************************
 		// PRIVATE METHODS AND VARIABLES
 		// *******************************
-		//Event.observe($('submit_link'), "click", function(){UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', $('template_uri').value);}, false, "add_resource");
 		this.gadgets = new Hash();
 		this.loaded = false;
 		this.opManager = OpManagerFactory.getInstance();

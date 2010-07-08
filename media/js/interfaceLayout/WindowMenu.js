@@ -1309,7 +1309,8 @@ AddFeedMenu.prototype.executeOperation = function(form) {
 	function onSuccess(transport) {
 		var response = transport.responseText;
 		var data = JSON.parse(response);
-		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
+		
+		CatalogueFactory.getInstance().add_resource_by_template(data.URL);
 	}
 
 	var data = {"template_data": Object.toJSON(form)};
@@ -1393,7 +1394,8 @@ AddSiteMenu.prototype.executeOperation = function(form) {
 	function onSuccess(transport) {
 		var response = transport.responseText;
 		var data = JSON.parse(response);
-		UIUtils.addResource(URIs.GET_POST_RESOURCES, 'template_uri', data.URL);
+		
+		CatalogueFactory.getInstance().add_resource_by_template(data.URL);
 	}
 
 	var data = {"template_data": Object.toJSON(form)};
