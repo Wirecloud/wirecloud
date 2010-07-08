@@ -3,7 +3,8 @@
 }
 
 #showcase #catalogue_content {
-  border-left: 1px solid #DDDDDD;
+  border-left-width: 1px;
+  border-left-style: solid;
 }
 
 #catalogue .center .resources .popularity.no_float, .no_float {

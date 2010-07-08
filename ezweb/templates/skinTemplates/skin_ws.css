@@ -121,27 +121,27 @@ body.dragboard_view, body.wiring_view{
 }
 
 /* not selected tab */
-.tab_section .tab {
+#ws_header .tab_section .tab {
 	color: {{ tab_unmarked_font }};
 	background: {{ tab_unmarked_bg }};
 	border-color: {{ tab_unmarked_border }};
 	font-weight: bold;
 }
 
-.tab_section .tab:hover {
+#ws_header .tab_section .tab:hover {
 	color: {{ tab_hover_font }};
 	border-color: {{ tab_hover_border }};
 	background: {{ tab_hover_bg }};
 }
 
 /* selected tab */
-.tab_section .current {
+#ws_header .tab_section .current {
  	color: {{ tab_marked_font }};
   	background: {{ tab_marked_bg }};
   	border-color: {{ tab_marked_border }};
 }
 
-.tab_section .current:hover {
+#ws_header .tab_section .current:hover {
 	color: {{ tab_marked_font }};
 	background: {{ tab_marked_bg }};
 	font-weight:bold;

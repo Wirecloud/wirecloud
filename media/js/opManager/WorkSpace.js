@@ -951,7 +951,7 @@ function WorkSpace (workSpaceState) {
 		
 		// catalogue access option
 		if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')){
-				var catId = this.editMenu.addOption(gettext("Gallery"),
+				var catId = this.editMenu.addOption(gettext("Go to Gallery")+" »",
 								function() {
 									// the action of going to the catalogue is set by the own catalogue module
 									LayoutManagerFactory.getInstance().hideCover();
@@ -962,7 +962,7 @@ function WorkSpace (workSpaceState) {
 		
 		//wiring access option
 		if (this.isAllowed('connect_igadgets')){
-			var wiringId = this.editMenu.addOption(gettext("Wiring"),
+			var wiringId = this.editMenu.addOption(gettext("Connect Gadgets")+" »",
 								function() {
 									// the action of going to the wiring is set by the own wiring module
 									LayoutManagerFactory.getInstance().hideCover();

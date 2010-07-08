@@ -1602,7 +1602,7 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
 		this.manager.save();
 		LayoutManagerFactory.getInstance().hideCover();
 	}
-	if (this.language.value != LANGUAGE_CODE){
+	if (this.language && this.language.value != LANGUAGE_CODE){
 		return setLanguage(this.language.value);
 	}
 }
