@@ -90,6 +90,9 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	  
 	if (operation == 'SIMPLE_SEARCH' && ! search_criteria)
 	  operation = 'VIEW_ALL';
+	
+	if (operation == 'VIEW_ALL')
+	  this.search_input.value = '';
 		
     this.searcher.search(operation, search_criteria, starting_page, resources_per_page, order_by, search_boolean, scope);
   }

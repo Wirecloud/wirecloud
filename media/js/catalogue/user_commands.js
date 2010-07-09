@@ -143,6 +143,7 @@ var ShowTabCommand = function (dom_element, html_event, service_facade, dom_wrap
   this.anonymous_function = function(event) {
 	var command_id = data;
 	var search_scope = null;
+	var initialized_scope = true;
 	
 	if (command_id == 'SHOW_GADGETS')
 	  search_scope = 'gadget';
@@ -151,11 +152,16 @@ var ShowTabCommand = function (dom_element, html_event, service_facade, dom_wrap
 	  search_scope = 'mashup';
 	
 	if (search_scope)
-	  this.services.searcher.set_scope(search_scope);
+	 initialized_scope = this.services.searcher.set_scope(search_scope);
 	
-	var response_command = this.services.create_local_command(command_id, null);
-	
-	response_command.process();
+	if (initialized_scope) {
+	  var response_command = this.services.create_local_command(command_id, null);
+	  
+	  response_command.process();
+	} else {
+	  // Not initialized environment! => Searching for text in search_input!
+	  this.services.search('SIMPLE_SEARCH', 1, 'AND');
+	}
   }
   
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);

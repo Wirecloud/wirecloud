@@ -519,12 +519,12 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
 	var next = 'link';
 	var previous = 'link';
 	
-	if (current_page == 1) {
+	if (current_page == 1 || number_of_pages == 0 ) {
 	  first = 'text';
 	  previous = 'text';
 	}
 	
-	if (current_page == number_of_pages) {
+	if (current_page == number_of_pages || number_of_pages == 0) {
 	  last = 'text';
 	  next = 'text';
 	}

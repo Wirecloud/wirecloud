@@ -46,9 +46,18 @@ var CatalogueSearcher = function () {
   this.configured = false;
   this.resp_command_processor = null;
   this.last_search_options = null;
+  this.initialized_scopes = new Hash();
   
   this.set_scope = function (scope) {
 	this.scope = scope;
+	
+	if (this.initialized_scopes[scope])
+	  return true;
+	
+	this.initialized_scopes[scope] = true;
+	
+	return false;
+	
   }
   
   this.get_scope = function () {

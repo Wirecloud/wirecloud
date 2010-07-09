@@ -91,14 +91,6 @@
   border-color:#C2CBD2;
 }
 
-#catalogue .back_to_resource_list {
-  height:18px;
-}
-
-#catalogue .back_to_resource_list {
-  float: right;
-}
-
 #catalogue .paginate a.text,  #catalogue .paginate a.text:visited {
   cursor: default;
   text-decoration: none;
