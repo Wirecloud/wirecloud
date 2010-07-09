@@ -209,13 +209,6 @@ td {
     padding-bottom: 3px;
 }
 
-.toolbar_section .back_button{
-	float: left;
-	padding: 5px 10px 9px 10px;
-	cursor: pointer;
-}
-
-
 .global_header .toolbar_menu,  .global_header .toolbar_menu_small {
   float: left;
 }
@@ -237,6 +230,7 @@ td {
   padding-bottom: 5px;
   padding-top: 5px;
   border-bottom: 1px solid;
+  height: 16px;
 }
 
 

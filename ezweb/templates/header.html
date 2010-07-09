@@ -59,9 +59,12 @@
 			<img class="logo_layout {{ branding.workspace.logo.class }}" />
       	</div>
 		<div class="toolbar_section">
-			<div id="wiring_dragboard_link" class="back_button">« {% trans 'Back' %}</div>
+			
 	    <div class="toolbar_menu">
-		  <div class="first_toolbar_button last_toolbar_button selected_section">{% trans 'Operate' %}</div>
+	      <div id="wiring_dragboard_link" class="first_toolbar_button">
+	      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+		  </div>
+		  <div class=" last_toolbar_button selected_section">{% trans 'Operate' %}</div>
 	    </div>
 		<div class="toolbar_menu_small visible">
 			<div class="first_toolbar_button" id="newChannel">{% trans 'New channel' %}</div>
@@ -85,9 +88,11 @@
 		  />
 	  </div>
 	  <div class="toolbar_section">
-	  	<div id="catalogue_dragboard_link" class="back_button">« {% trans 'Back' %}</div>
-	    <div class="toolbar_menu">	      
-	      <div id="search_button_toolbar" class="first_toolbar_button selected_section">{% trans "Search" %}</div>
+	    <div class="toolbar_menu">
+	      <div id="catalogue_dragboard_link" class="first_toolbar_button">
+	      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+		  </div>	      
+	      <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
 	      <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
 	    </div>
 	  </div>
