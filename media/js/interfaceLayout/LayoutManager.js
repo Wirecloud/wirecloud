@@ -873,8 +873,7 @@ var LayoutManagerFactory = function () {
 			var toolbarHtml = '<div id="toolbar_menu" class="toolbar_menu">';
 		    toolbarHtml += '<div id="conf_link" class="first_toolbar_button">'+ gettext("Configuration") +'</div>';
 		    toolbarHtml += '<div id="sharing_link">'+ gettext("Share") +'</div>';
-		    toolbarHtml += '<div id="edit_link">'+ gettext("Edit") +'</div>';
-			toolbarHtml += '<div id="go_to_link" class="left_separator last_toolbar_button">'+ gettext("My applications") +'</div>';
+		    toolbarHtml += '<div id="edit_link" class="last_toolbar_button">'+ gettext("Edit") +'</div>';
 			toolbarHtml += '</div>';
 			
 			new Insertion.Top(toolbar_section, toolbarHtml);
