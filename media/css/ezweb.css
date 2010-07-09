@@ -8,6 +8,25 @@ a, a:visited {
   text-decoration:none;
 }
 
+.my_apps_button {
+  margin-left: 10px;
+  color: white;
+  border: 1px solid #C2CBD2;
+  -moz-border-radius: 5px;
+}
+
+.application_selector {
+  background:transparent url(../images/app_selector.png) no-repeat scroll 0 0;
+  moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  border: 0 none;
+  cursor:pointer;
+  height:16px;
+  padding:0;
+  width:16px;
+}
+
 a:hover  {
   text-decoration:underline;
 }
