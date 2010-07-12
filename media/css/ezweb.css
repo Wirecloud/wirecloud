@@ -8,23 +8,13 @@ a, a:visited {
   text-decoration:none;
 }
 
-.my_apps_button {
-  margin-left: 10px;
-  color: white;
-  border: 1px solid #C2CBD2;
-  -moz-border-radius: 5px;
-}
-
 .application_selector {
-  background:transparent url(../images/app_selector.png) no-repeat scroll 0 0;
-  moz-background-clip:border;
-  -moz-background-inline-policy:continuous;
-  -moz-background-origin:padding;
   border: 0 none;
   cursor:pointer;
   height:16px;
-  padding:0;
   width:16px;
+  padding:0;
+  margin-left: 5px;
 }
 
 a:hover  {
@@ -316,9 +306,9 @@ td {
 }
 
 #dragboard_link {
-	margin-left: 15px;
 	position:relative;
-	top: 2px;
+	float: left;
+	cursor: default;
 }
 
 #ws_operations_link {
@@ -793,8 +783,13 @@ button {
 }
 
 .sidebar_top .closebutton {
-    margin: 0 1ex;
+    margin: 0 1ex 0 0;
     float: right;
+}
+
+.sidebar_title{
+	margin-top: 15px;
+	cursor: default;
 }
 
 .sidebar_items {
@@ -805,12 +800,21 @@ button {
 .sidebar_items > span{
 	float: left;
 	clear: both;
-	padding: 5px 0;
+	padding: 5px 0 5px 5px;
 	cursor: pointer;
+}
+
+.sidebar_items > span:before {
+	content:"> ";
 }
 
 .sidebar_items > span.shown{
 	font-weight: bold;
+	cursor: default;
+}
+
+.sidebar_items > span.shown:hover{
+	text-decoration: none;
 }
 
 .sidebar_items > span:hover{

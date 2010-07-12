@@ -33,11 +33,8 @@
 	</div>
 	<div id="bar" class="bar">
 		<div id="ws_section_identifier" class="section_identifier">
-			<div class="area_name">{% trans 'Select application' %} </div>
-			<div id="go_to_link" class="my_apps_button"><input class="application_selector" type="button"></input></div> 
-			<div id="dragboard_link">
-				<div id="workspace_name" class="hidden"></div>
-		 	</div>
+			<div class="area_name">{% trans 'Application' %} </div>
+			<input id="go_to_link" class="application_selector" type="button"></input> 
 		</div>		
 		<div id="tab_section" class="tab_section">
 			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>

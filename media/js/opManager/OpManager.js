@@ -65,6 +65,11 @@ var OpManagerFactory = function () {
 			
 			//Create the workspace list menu
 			this.wsListMenu = new SideBarMenu(this.sideBarElement.id);
+			//event
+			Event.observe(this.goToLauncher, 'click', 
+						function(e){
+							LayoutManagerFactory.getInstance().toggleSideBarMenu();
+						}.bind(this));
 			//close option
 			Event.observe($('close_sidebar'), "click",
 						function(){
@@ -158,6 +163,7 @@ var OpManagerFactory = function () {
 		//Workspace List Menu
 		this.wsListMenu = null;
 		this.sideBarElement = $('workspace_sidebar');
+		this.goToLauncher = $('go_to_link');
 
 		/**
 		 * @private

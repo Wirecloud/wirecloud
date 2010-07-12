@@ -454,6 +454,9 @@ var LayoutManagerFactory = function () {
 				                  true);
 				this.showTipMessage(msg, 2);
 			}
+			
+			//Firefox 3.6 bug
+			document.childNodes[1].scrollTop = 0
 		}
 
 		// Catalogue operations
@@ -492,6 +495,9 @@ var LayoutManagerFactory = function () {
 				           helpLink: videoTutorialMsg},
 				          true);
 			this.showTipMessage(msg, 0);
+			
+			//Firefox 3.6 bug
+			document.childNodes[1].scrollTop = 0
 		}
 
 		// Logs operations
@@ -520,7 +526,8 @@ var LayoutManagerFactory = function () {
 			this.resizeContainer(this.currentView.logContainer);
 			this.logs.logContainer.setStyle(showStyle);
 			
-			//this.showTipMessage(gettext("Logs are shown in this section."), 3);
+			//Firefox 3.6 bug
+			document.childNodes[1].scrollTop = 0
 		}
 
 		//Wiring operations
@@ -558,6 +565,9 @@ var LayoutManagerFactory = function () {
 			           helpLink: videoTutorialMsg},
 			          true);
 			this.showTipMessage(msg, 1);
+			
+			//Firefox 3.6 bug
+			document.childNodes[1].scrollTop = 0
 		}	
 		
 		LayoutManager.prototype.showSidebar = function() {
@@ -594,7 +604,7 @@ var LayoutManagerFactory = function () {
 			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long
 			*/
 			var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
-			wsListMenu.clearOptions(); 
+			wsListMenu.clearOptions();
 			
 			/*var in_toolbar = "";*/
 			for (var i=0;i<workspaces.length; i++){

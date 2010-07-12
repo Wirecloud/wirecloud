@@ -1032,11 +1032,11 @@ function WorkSpace (workSpaceState) {
 						}.bind(this));
 		*/
 		//Toggle the sidebar
-		Event.observe(this.goToLauncher, 'click', 
+		/*Event.observe(this.goToLauncher, 'click', 
 						function(e){
 							//LayoutManagerFactory.getInstance().clearToolbar(this.toolbarSection, this.goToLauncher);
 							LayoutManagerFactory.getInstance().toggleSideBarMenu();
-						}.bind(this));
+						}.bind(this));*/
 		
 
 	}
@@ -1047,13 +1047,13 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype._createWorkspaceMenu = function() {
 		LayoutManagerFactory.getInstance().createToolbarSection(this.toolbarSection);
 		
-		this.goToLauncher = $('go_to_link');
+		//this.goToLauncher = $('go_to_link');
 		this.confLauncher = $('conf_link');
 		this.sharingLauncher = $('sharing_link');
 		this.editLauncher = $('edit_link')
 		
 		//GoTo menu
-		this._createGoToMenu();
+		//this._createGoToMenu();
 		
 		//Configuration Menu
 		this._createConfigurationMenu();
@@ -1131,7 +1131,7 @@ function WorkSpace (workSpaceState) {
 	this.FloatingGadgetsMenu = null;
 	this.wsListMenu = null;
 	
-	this.goToLauncher = null;
+	//this.goToLauncher = null;
 	this.confLauncher = null;
 	this.sharingLauncher = null;
 	this.editLauncher = null;

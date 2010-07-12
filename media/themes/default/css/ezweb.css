@@ -93,6 +93,10 @@ a, a:visited{
 	border-radius: 4px;
 }
 
+.application_selector {
+  background:transparent url(../images/igadget/settings.png) no-repeat scroll 0 0;
+ }
+
 #left_slider{
  background: transparent url(../images/leftSlider.png) no-repeat scroll 0 0;
 }
@@ -164,7 +168,7 @@ a, a:visited{
 
 .sidebar{
   background: #FFFFFF;
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .sidebar #add_workspace{
@@ -172,6 +176,14 @@ a, a:visited{
 	cursor: pointer;
 	background: transparent url(../images/add.png) no-repeat scroll 0 0;
 	padding-left:16px;
+}
+
+.sidebar #workspace_name span{
+	font-weight: bold;
+}
+
+.sidebar_title{
+	font-style:italic;
 }
 
 .drop_down_menu, .window_menu{
