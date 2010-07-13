@@ -15,10 +15,17 @@
 
 #wiring #wiring_table .anchor{
 	display: none;
+	cursor: pointer;
 }
 
 #wiring #wiring_table.selected_channel .anchor{
 	display: block;
+}
+
+#wiring #channels_list .channel .inAnchor, #wiring #channels_list .channel .outAnchor {
+	height:18px;
+	top:3px;
+	width:35px;
 }
 
 #wiring #channels_list {

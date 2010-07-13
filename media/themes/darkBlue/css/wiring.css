@@ -71,40 +71,40 @@
   -moz-border-radius-bottomright: 3px;
 }
 
-#wiring .eventColumn .tab > .header {
+#wiring .eventColumn .tab > .header_section {
   background: transparent url("../images/wiring/tree.gif") no-repeat scroll 2px 5px;
 }
 
-#wiring .slotColumn .tab > .header {
+#wiring .slotColumn .tab > .header_section {
   background: transparent url("../images/wiring/tree.gif") no-repeat scroll 99% 5px;
 }
 
-#wiring .tab > .header {
+#wiring .tab > .header_section {
   color:       white;
   font-weight: bold;
 }
 
-#wiring .tab.empty > .header {
+#wiring .tab.empty > .header_section {
   background: none;
 }
 
-#wiring .tab > .header > .anchor {
+#wiring .tab > .header_section > .anchor {
   background: url("../images/wiring/outAnchor.png");
 }
 
-#wiring .tab > .header > .anchor.checked {
+#wiring .tab > .header_section > .anchor.checked {
   background: url("../images/wiring/outAnchorOutEnabled.png");
 }
 
-#wiring .igadget > .header {
+#wiring .igadget > .header_section {
   background: url("../images/wiring/Lminus.png") no-repeat scroll left top;
 }
 
-#wiring .igadget.folded > .header {
+#wiring .igadget.folded > .header_section {
   background: url("../images/wiring/Lplus.png") no-repeat scroll left top;
 }
 
-#wiring .igadget.unfoldable > .header {
+#wiring .igadget.unfoldable > .header_section {
   background: url("../images/wiring/LminusDisabled.png") no-repeat scroll left top;
 }
 
