@@ -746,7 +746,7 @@ IGadget.prototype.paint = function(onInit) {
 	// Select the correct representation for this iGadget (iconified, minimized or normal)
 	var minimizedStatusBackup = this.minimized;
 	this.minimized = false;
-	this._recomputeSize(true);
+	this._recomputeSize(false);
 
 	this.setMinimizeStatus(minimizedStatusBackup, false, false);
 

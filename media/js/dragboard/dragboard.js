@@ -109,7 +109,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 				iGadgetInfo['left'] = iGadget.position.x;
 				iGadgetInfo['zIndex'] = iGadget.zPos;
 				iGadgetInfo['width'] = iGadget.contentWidth;
-				iGadgetInfo['height'] = iGadget.contentHeight;
+				iGadgetInfo['height'] = iGadget.height;
 				iGadgetInfo['fulldragboard'] = false;
 			} else {
 				iGadgetInfo['fulldragboard'] = true;
