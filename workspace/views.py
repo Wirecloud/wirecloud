@@ -925,7 +925,7 @@ class  WorkSpacePublisherEntry(Resource):
         #branding elements
         if(mashup.get('noBranding')):
             #use an empty branding
-            branding, created = Branding.objects.get_or_create(logo=None, viewer_logo=None, powered=False)
+            branding, created = Branding.objects.get_or_create(logo=None, viewer_logo=None)
                 
         else:
             logo = mashup.get('logo')
@@ -934,7 +934,7 @@ class  WorkSpacePublisherEntry(Resource):
             
             if (logo or viewer_logo):
                 #create a new branding
-                branding = Branding(logo=logo, viewer_logo=viewer_logo, link=link, powered=True)
+                branding = Branding(logo=logo, viewer_logo=viewer_logo, link=link)
                 branding.save()
                                 
             else:
