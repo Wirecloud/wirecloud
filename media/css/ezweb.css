@@ -788,13 +788,14 @@ button {
 }
 
 .sidebar_title{
-	margin-top: 15px;
+	margin: 1px 0 5px;
 	cursor: default;
 }
 
 .sidebar_items {
 	float: left;
 	margin-bottom: 20px;
+	margin-top: 10px;
 }
 
 .sidebar_items > span{
