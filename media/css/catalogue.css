@@ -7,6 +7,17 @@
   border-left-style: solid;
 }
 
+#catalogue #tag_categories ul {
+	list-style-type:none;
+	padding-left: 10px;
+	margin: 0;
+}
+
+#catalogue #tag_categories li {
+	padding: 5px 0;
+	cursor: pointer;	
+}
+
 #catalogue .center .resources .popularity.no_float, .no_float {
   float: none;
 }
