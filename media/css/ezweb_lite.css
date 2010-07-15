@@ -30,3 +30,7 @@
 	width: 150px;
 	background-repeat: no-repeat;
 }
+
+#logs_link{
+	display: none;
+}
