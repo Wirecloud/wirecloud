@@ -80,7 +80,8 @@ var LayoutManagerFactory = function () {
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
 		if ($('lite_toolbar_section')) {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			//$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		} else {
 			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		}
@@ -208,7 +209,8 @@ var LayoutManagerFactory = function () {
 			this.showTabs();
 
 			if($('lite_toolbar_section')){
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('lite_toolbar_section').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+				//$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}else{
 				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}
