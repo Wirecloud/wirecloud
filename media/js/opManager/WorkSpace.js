@@ -1121,7 +1121,8 @@ function WorkSpace (workSpaceState) {
 	this.workSpaceHTMLElement = $('workspace_name');
 	this.addTabElement = $('add_tab_link');
 	this.tabBar = $('fixed_bar');
-	this.toolbarSection = $('toolbar_section');
+	this.toolbarSection = $('toolbar_section')!=null?$('toolbar_section'):$('lite_toolbar_section');
+	
 	
 	// menu DOM elements and objects
 	this.goToMenu = null;

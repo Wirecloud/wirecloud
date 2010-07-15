@@ -1,36 +1,15 @@
 {% load i18n %}
-<div id="header">
-	<div id="bar">
-		<div id="ws_banner" class="lite_banner">
-			<div id="lite_toolbar_section" class="toolbar_section">
-				<input type="button" id="catalogue_link" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_unmarked" value="{% trans 'Add Gadgets' %}"/>
-				<input type="button" id="wiring_link" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_unmarked" value="{% trans 'Connect Gadgets' %}"/>
-				<div id="workspace_link_container" >
-					<div id="dragboard_link" class="toolbar_unmarked">
-						<div id="workspace_name"></div>
-					</div>
-					<div id="workspace_menu_link"> 
-						<input type="button" id="ws_operations_link" title="{% trans 'Workspace operations' %}"/>
-					</div>
-				</div>
-		
+<div id="ws_header" class="global_header">
+	<div id="ws_banner" class="lite_banner">
+			<div id="ws_section_identifier" class="section_identifier">
+				<div id="dragboard_link" class="area_name">
+					<div id="workspace_name"></div>
+			 	</div>
+				<input id="go_to_link" class="application_selector" type="button"></input> 
 			</div>
-		</div>
-		
-		<div id="wiring_banner" class="lite_banner" style="display:none">
-			<div class="toolbar_section">
-				<input type="button" title="{% trans 'Connect gadgets to another gadgets' %}" class="toolbar_marked wiring_link" disabled="true" value="{% trans 'Connect Gadgets' %}"/>
-				<input type="button" id="wiring_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
-			</div>
-		</div>
-	
-		<div id="catalogue_banner" class="lite_banner" style="display:none">
-			<div class="toolbar_section">
-				<input type="button" title="{% trans 'Add gadgets to your workspace' %}" class="toolbar_marked catalogue_link" disabled="true" value="{% trans 'Add Gadgets' %}"/>
-				<input type="button" id="catalogue_dragboard_link" title="{% trans 'Go back to your active workspace' %}" class="toolbar_unmarked" value="{% trans 'Go back' %}"/>
-			</div>
-		</div>
-		
+			<div id="lite_toolbar_section" class="toolbar_section"></div>
+	</div>
+	<div id="bar" class="bar">		
 		<div id="tab_section" class="tab_section">
 			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
 			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
@@ -38,8 +17,51 @@
 			<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
 	
 		</div>
-		<!-- LOGS LINK -->
-		<input id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+
 	</div>
 	<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
+</div>
+
+<div id="wiring_header" class="global_header"  style="display:none">
+	
+	<div id="wiring_banner" class="lite_banner">
+		<div class="section_identifier">
+			<div class="area_name">{% trans 'Wiring' %}</div>
+		</div>
+		<div class="toolbar_section">
+		    <div class="toolbar_menu">
+		      <div id="wiring_dragboard_link" class="first_toolbar_button">
+		      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+			  </div>
+			  <div class=" last_toolbar_button selected_section">{% trans 'Operate' %}</div>
+		    </div>
+			<div class="toolbar_menu_small visible">
+				<div class="first_toolbar_button" id="newChannel">{% trans 'New channel' %}</div>
+				<div class="last_toolbar_button " id="unfold_all_link">{% trans 'Unfold all' %}</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="catalogue_header" class="global_header"  style="display:none">	
+	<div id="catalogue_banner" class="lite_banner">
+		<div class="section_identifier">
+			<div class="area_name">{% trans 'Gallery' %}</div>
+	   </div>
+		<div class="toolbar_section">
+		    <div class="toolbar_menu">
+		      <div id="catalogue_dragboard_link" class="first_toolbar_button">
+		      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+			  </div>	      
+		      <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
+		      <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
+		    </div>
+	 	</div>
+	</div>
+	<div class="bar" id="catalogue_nav_bar">		
+		<div class="tab_section">
+		  <div id="gadgets_button" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
+		  <div id="mashups_button" class="tab"><span>{% trans 'Applications' %}</span></div>
+		</div>
+	</div>
 </div>

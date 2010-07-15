@@ -1,14 +1,28 @@
-#header {
-	background: none;
-	height: 23px;
+.global_header {
+	height: 33px;
+}
+
+.lite_banner{
+	position:relative;
+	z-index:100;
+}
+
+.bar{
+	top: 0;
+}
+
+.section_identifier{
+	width: 160px;
+	top: 6px;
 }
 
 #toolbar_section {
 	margin-top:0;
 }
 
-#tab_section {
-	top:0;
+.tab_section {
+	width: auto;
+	top: 10px;
 }
 
 .logo_viewer_layout {
