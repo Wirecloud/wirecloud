@@ -82,10 +82,10 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
       var average_popularity = this.get_popularity_html(resource.getPopularity());
       
       var type = '';
-      var button_text = 'Add';
+      var button_text = gettext('Add');
       
       if (resource.isContratable() && ! resource.hasContract()) {
-        button_text = 'Buy';
+        button_text = gettext('Buy');
         type = 'contratable';
       }
       
@@ -221,7 +221,7 @@ var ListView_ResourceDatailsPainter = function (details_structure_element) {
     var average_popularity = this.get_popularity_html(resource.getPopularity());
       
     var type = '';
-    var button_text = 'Add';
+    var button_text = gettext('Add');
       
     if (resource.isContratable() && ! resource.hasContract()) {
       button_text = 'Buy';
