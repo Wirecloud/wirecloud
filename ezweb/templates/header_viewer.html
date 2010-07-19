@@ -1,19 +1,8 @@
+{% extends "header_lite.html"%}
 {% load i18n %}
-<div id="header">
-	<div id="bar">
-		<div id="tab_section" class="tab_section">
-			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
-			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft()" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut)"/>
-			<div id="fixed_bar"><div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div></div>
-			<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut)"/>
-		</div>
 
-		{% block ezweb_logo %}
-		<div class="logo_viewer_layout {{ branding.workspace.viewer_logo.class }}" style="float:left">
-			<img class="powered" src="{{ MEDIA_URL }}images/powered.png" {% if not branding.workspace.powered %}style="display:none;"{% endif %} />
-		</div>
-		{% endblock %}
-
-		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
-	</div>
+{% block ezweb_logo %}
+<div id="logo_placeholder" class="logo_placeholder">
+	<img id="logo" class="logo_viewer_layout {{ branding.workspace.viewer_logo.class }}" />
 </div>
+{% endblock %}

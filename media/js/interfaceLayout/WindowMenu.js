@@ -1057,14 +1057,14 @@ function PublishWindowMenu (element) {
 					type: 'boolean'
 				},
 				'logo': {
-					label: gettext('Banner logo (250x45 px)'),
+					label: gettext('Banner logo (250x50 px)'),
 					type: 'fileUrl',
 					linkHandler: function(){
 						this.openUploadWindow('logo');
 					}.bind(this)
 				},
 				'viewerLogo': {
-					label: gettext('Banner logo for viewer mode (150x25 px)'),
+					label: gettext('Banner logo for viewer mode (150x30 px)'),
 					type: 'fileUrl',
 					linkHandler: function(){
 						this.openUploadWindow('viewerLogo');

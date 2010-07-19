@@ -26,9 +26,13 @@
 }
 
 .logo_viewer_layout {
-	height: 27px;
-	width: 150px;
+	max-height: 30px;
+	max-width: 150px;
 	background-repeat: no-repeat;
+}
+
+.logo_placeholder{
+	width: 150px;
 }
 
 #logs_link{

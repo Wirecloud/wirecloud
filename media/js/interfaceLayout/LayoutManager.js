@@ -79,11 +79,12 @@ var LayoutManagerFactory = function () {
 		this.rightTimeOut;
 		//fixed section
 		this.fixedTabBar = $('fixed_bar');
+		var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
 		if ($('lite_toolbar_section')) {
 			//$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		} else {
-			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+			this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 		}
 
 		this.tabMarker = $('tab_marker');		
@@ -207,12 +208,12 @@ var LayoutManagerFactory = function () {
 		
 		LayoutManager.prototype.resizeTabBar = function () {
 			this.showTabs();
-
+			var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
 			if($('lite_toolbar_section')){
 				//$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}else{
-				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - $('ws_section_identifier').offsetWidth - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
+				this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
 			}
 
 			this.changeTabBarSize(0);
@@ -606,29 +607,31 @@ var LayoutManagerFactory = function () {
 			var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long
 			*/
 			var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
-			wsListMenu.clearOptions();
-			
-			/*var in_toolbar = "";*/
-			for (var i=0;i<workspaces.length; i++){
-				/*in_toolbar = "";
-				if (i<options_length){
-					//Add to the Toolbar menu
-					var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
-					goToMenu.addOption(nameToShow,
-								function () {
-									OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-								}.bind(workspaces[i]),
-								i);
-					in_toolbar = "shown";
-				}*/
-				//Add to the Sidebar Menu
-				wsListMenu.addOption(workspaces[i].workSpaceState.name,
-								function () {
-									LayoutManagerFactory.getInstance().hideCover();
-									OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-								}.bind(workspaces[i]),
-								i)/*,
-								in_toolbar);*/
+			if (wsListMenu){
+				wsListMenu.clearOptions();
+				
+				/*var in_toolbar = "";*/
+				for (var i=0;i<workspaces.length; i++){
+					/*in_toolbar = "";
+					if (i<options_length){
+						//Add to the Toolbar menu
+						var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
+						goToMenu.addOption(nameToShow,
+									function () {
+										OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+									}.bind(workspaces[i]),
+									i);
+						in_toolbar = "shown";
+					}*/
+					//Add to the Sidebar Menu
+					wsListMenu.addOption(workspaces[i].workSpaceState.name,
+									function () {
+										LayoutManagerFactory.getInstance().hideCover();
+										OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+									}.bind(workspaces[i]),
+									i)/*,
+									in_toolbar);*/
+				}
 			}
 		}
 

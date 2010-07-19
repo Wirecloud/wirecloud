@@ -278,9 +278,7 @@ BrandingManager.prototype.setBranding = function (branding){
 		//set the viewer logo as background (there is only one logo)
 		element = elements[0];
 		Element.extend(element);
-		element.setStyle({
-			'backgroundImage': 'url(' + branding['viewer_logo']['url'] + ')'
-		});
+		element.setAttribute('src', branding['viewer_logo']['url']);
 		
 		//now, set the link to the url of the branding
 		_setLink(element, branding['link']);
