@@ -905,7 +905,7 @@ var LayoutManagerFactory = function () {
 				var selected_elements = toolbar.getElementsByClassName("selected_section");
 				// close the current option
 				for (var i=0; i< selected_elements.length; i++){
-					selected_elements[i].triggerEvent("click");
+					$(selected_elements[i]).triggerEvent("click");
 				}
 				// open the selected one
 				launcher.addClassName("selected_section");

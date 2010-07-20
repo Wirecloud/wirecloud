@@ -3,55 +3,57 @@
 	<link href="{{ MEDIA_URL }}{{ layout.catalogue }}" type="text/css" rel="stylesheet" />
 	<link href="{{ MEDIA_URL }}{{ theme.catalogue }}" type="text/css" rel="stylesheet" />
 {% endif %}
-<div id="catalogue" class="container_content">
- <div id="left_bar">
-  <div id="tag_categories" class="bar_widget tag_categories">
-   <span class="widget_title">{% trans 'Search by category:' %}</span>
-   <div class="widget_content">
-   	<ul>
-   		<li id="Fotos y vídeos" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","media")'>Photos and videos</span></li>
-		<li id="Información y noticias" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","information")'>Information and news</span></li>
-		<li id="Ocio y diversión" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","entertainment")'>Entertainment</span></li>
-		<li id="Productividad y estilo de vida" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","productivity")'>Productivity and lifestyle</span></li>
-	</ul>
-	
-   </div>
-  </div>
- </div>
- <div id="catalogue_content">
-  <div id="catalogue_head" class="head">
-   <div id="header_always" class="header_always">
-    <div id="header_always_error" class="message_error"></div>
-   </div>
-  </div>
-  <div id="catalogue_center" class="center">
-   <div id="catalogue_resources_header" class="resources_header">
-   <div id="simple_search" class="simple_search">
-	 <input id="simple_search_text" type="text"></input>
-	 <span id="view_all" class="link">{% trans  "View All" %}</span>
+<script id="list_view_catalogue_structure" type="html/template">
+	<div id="catalogue" class="container_content">
+	 <div id="left_bar">
+	  <div id="tag_categories" class="bar_widget tag_categories">
+	   <span class="widget_title">{% trans 'Search by category:' %}</span>
+	   <div class="widget_content">
+	   	<ul>
+	   		<li id="Fotos y vídeos" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","media")'>Photos and videos</span></li>
+			<li id="Información y noticias" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","information")'>Information and news</span></li>
+			<li id="Ocio y diversión" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","entertainment")'>Entertainment</span></li>
+			<li id="Productividad y estilo de vida" class="category_element"><span class="category_name" onclick='CatalogueFactory.getInstance().user_command_manager.services.search("SIMPLE_SEARCH",1, "AND","","productivity")'>Productivity and lifestyle</span></li>
+		</ul>
+		
+	   </div>
+	  </div>
+	 </div>
+	 <div id="catalogue_content">
+	  <div id="catalogue_head" class="head">
+	   <div id="header_always" class="header_always">
+	    <div id="header_always_error" class="message_error"></div>
+	   </div>
+	  </div>
+	  <div id="catalogue_center" class="center">
+	   <div id="catalogue_resources_header" class="resources_header">
+	   <div id="simple_search" class="simple_search">
+		 <input id="simple_search_text" type="text"></input>
+		 <span id="view_all" class="link">{% trans  "View All" %}</span>
+		</div>
+	    <div id="paginate" class="paginate"></div>
+		<div id="orderby" class="orderby">
+		 <label for="results_order">{% trans 'Order by:' %}</label>
+		 <select id="results_order">
+		   {% include "catalogue/order_by_template.html" %}
+		 </select>
+		</div>
+		<div id="number_of_results" class="paginate_show">
+		 <label for="results_per_page">{% trans 'Gadgets per page:' %} </label>
+		 <select id="results_per_page">
+		   {% include "catalogue/results_per_page_template.html" %}
+		 </select>
+		</div>
+	   </div>
+	   <div id="gadgets" class="resources">
+	   </div>
+	   <div id="mashups" class="resources">
+	   </div>
+	   <div id="resource_details" class="resources">
+	   </div>
+	   <div id="developer_info" class="resources">
+	   </div>
+	  </div>
+	 </div>
 	</div>
-    <div id="paginate" class="paginate"></div>
-	<div id="orderby" class="orderby">
-	 <label for="results_order">{% trans 'Order by:' %}</label>
-	 <select id="results_order">
-	   {% include "catalogue/order_by_template.html" %}
-	 </select>
-	</div>
-	<div id="number_of_results" class="paginate_show">
-	 <label for="results_per_page">{% trans 'Gadgets per page:' %} </label>
-	 <select id="results_per_page">
-	   {% include "catalogue/results_per_page_template.html" %}
-	 </select>
-	</div>
-   </div>
-   <div id="gadgets" class="resources">
-   </div>
-   <div id="mashups" class="resources">
-   </div>
-   <div id="resource_details" class="resources">
-   </div>
-   <div id="developer_info" class="resources">
-   </div>
-  </div>
- </div>
-</div>
+</script>

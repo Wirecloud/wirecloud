@@ -1250,7 +1250,8 @@ function WorkSpace (workSpaceState) {
 		logManager.log(msg);
 	}.bind(this);
 
-	this._update_creator_options = function() {		
+	this._update_creator_options = function() {	
+		Element.extend(document.body);	
 		if (this.isShared()) {
 			document.body.addClassName('shared');
 		} else {

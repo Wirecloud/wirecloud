@@ -61,7 +61,7 @@ var ViewAllCommand  = function (dom_element, html_event, service_facade, dom_wra
 
 var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
   this.anonymous_function = function(event) { 
-	if (event instanceof KeyboardEvent && event.keyCode != '13') {
+	if (event.keyCode && event.keyCode != '13') {
 	  // Do nothing!
 	  return;
 	}
@@ -211,7 +211,7 @@ var TagResourceCommand = function (dom_element, html_event, service_facade, dom_
   }
   
   var submit_tag_to_resource = function (event) { 
-	if (event instanceof KeyboardEvent && event.keyCode != '13') {
+	if (event.keyCode && event.keyCode != '13') {
 	  // Do nothing!
 	  return;
 	}

@@ -40,20 +40,21 @@ Object.extend(Event, {
 	}
 });
 
-Element.prototype.triggerEvent = function(eventName)
-{
-    if (document.createEvent)
-    {
-        var evt = document.createEvent('HTMLEvents');
-        evt.initEvent(eventName, true, true);
-
-        return this.dispatchEvent(evt);
-    }
-
-    if (this.fireEvent)
-        return this.fireEvent('on' + eventName);
-}
-
+Element.addMethods({
+		
+		triggerEvent : function(element, eventName){
+		    if (document.createEvent)
+		    {
+		        var evt = document.createEvent('HTMLEvents');
+		        evt.initEvent(eventName, true, true);
+		
+		        return element.dispatchEvent(evt);
+		    }
+		
+		    if (element.fireEvent)
+		        return element.fireEvent('on' + eventName);
+		}
+	});
 
 if ( window.EzSteroidsAPI.is_activated() ) {
 	// Backup prototype observe method

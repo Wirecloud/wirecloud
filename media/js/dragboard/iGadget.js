@@ -1867,7 +1867,7 @@ IGadget.prototype.saveConfig = function() {
 	for (i = 0; i < prefs.length; i++) {
 		curPref = prefs[i];
 		prefName = curPref.getVarName();
-		prefElement = this.prefElements[prefName];
+		prefElement = $(this.prefElements[prefName]);
 		if (!curPref.validate(curPref.getValueFromInterface())) {
 			validData = false;
 			prefElement.addClassName("invalid");

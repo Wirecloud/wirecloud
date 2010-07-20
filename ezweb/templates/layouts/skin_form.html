@@ -243,9 +243,9 @@
 		function createRuleLink(prop_name){
 			
 			var link = document.createElement('div');			
-			Element.extend(this.link);
+			Element.extend(link);
 			link.addClassName('window_link');
-			link.innerHTML = "{% trans "Compose a CSS rule" %}";
+			link.innerHTML = "{% trans 'Compose a CSS rule' %}";
 			
 			var context = {"elementId": prop_name}
 			Event.observe(link,

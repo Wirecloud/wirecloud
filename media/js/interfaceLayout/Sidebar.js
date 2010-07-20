@@ -35,7 +35,7 @@ function SideBarMenu(idMenu_) {
 	//Constructor
 	this.idMenu = idMenu_;      // menu: menu element in the HTML code (<div>)
 	this.menu = $(this.idMenu);
-	this.container = this.menu.parentNode;
+	this.container = Element.extend(this.menu.parentNode);
 	this.option_id = 0;         // identifier for options
 	this.margin = 5;
 	this.visible = false;
