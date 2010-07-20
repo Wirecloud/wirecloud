@@ -303,6 +303,7 @@ function WorkSpace (workSpaceState) {
 
 		this.showTabBar();
 		newTab.getDragboard().paint();
+		newTab.setLock(false);
 	}
 
 	var createTabError = function(transport, e) {
