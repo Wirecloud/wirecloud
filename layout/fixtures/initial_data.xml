@@ -617,7 +617,7 @@
 "body_bg": "white", "banner_bg": "transparent","body_font": "#4C5054", "banner_font": "#4C5054",  "container_bg": "transparent", "container_border": "#C2CBD2", 
 
 "toolbar_border":" #C2CBD2", 
-"toolbar_marked_font": "#000000", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "#ffffff", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": "", 
+"toolbar_marked_font": "#000000", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "#ffffff", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "#ffffff", "toolbar_hover_bg": "#0066B3", 
 
 "small_toolbar_marked_font": "#4C5054", "small_toolbar_marked_bg": "#FFFFFF", "small_toolbar_unmarked_font": "#4C5054", "small_toolbar_unmarked_bg": "#FFFFFF", "small_toolbar_hover_font": "", "small_toolbar_hover_bg": "",
 
@@ -640,7 +640,7 @@
 "body_bg": "white", "banner_bg":"white", "banner_font":"#4C5054",
 
 "toolbar_border":" #C2CBD2", 
-"toolbar_marked_font": "#4C5054", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "white", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "", "toolbar_hover_bg": "",
+"toolbar_marked_font": "#4C5054", "toolbar_marked_bg": "#FFDE6B", "toolbar_unmarked_font": "white", "toolbar_unmarked_bg": "#0066B3", "toolbar_hover_font": "white", "toolbar_hover_bg": "#0066B3",
 
 "tab_marked_font": "#4c5054", "tab_marked_bg": "#FFDE6B", "tab_marked_border":"#C2CBD2", 
 "tab_unmarked_bg": "transparent", "tab_unmarked_border":"transparent", "tab_unmarked_font": "#4c5054",

@@ -234,14 +234,16 @@ var LayoutManagerFactory = function () {
 			var computedStyle = document.defaultView.getComputedStyle(wrapperElement, null);
 			var header = this.currentView.getHeader? this.currentView.getHeader(): $("ws_header");
 			var wrapperHeight = newHeight -
-			                    header.offsetHeight -
-			                    computedStyle.getPropertyCSSValue("margin-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX) -
-			                    computedStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX) -
-			                    computedStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);
-
-
+			                    header.offsetHeight;					
 			wrapperElement.setStyle({"height" : wrapperHeight + "px"});
-			container.setStyle({"height" : wrapperHeight + "px"});
+			
+			computedStyle = document.defaultView.getComputedStyle(container, null);
+			var containerHeight = wrapperHeight -
+								  computedStyle.getPropertyCSSValue("margin-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX) -
+								  computedStyle.getPropertyCSSValue("margin-top").getFloatValue(CSSPrimitiveValue.CSS_PX) -
+			                      computedStyle.getPropertyCSSValue("border-top-width").getFloatValue(CSSPrimitiveValue.CSS_PX) -
+			                      computedStyle.getPropertyCSSValue("border-bottom-width").getFloatValue(CSSPrimitiveValue.CSS_PX);		
+			container.setStyle({"height" : containerHeight + "px"});
 
 			return wrapperHeight;
 		}

@@ -137,6 +137,7 @@
   float:left;
   margin-bottom:25px;
   padding-left:15px;
+  width: 100%;
 }
 
 #catalogue .developer_description {
@@ -212,6 +213,12 @@
     position:relative;
     width:84%;
     padding-top: 7px;
+}
+
+#catalogue #catalogue_resources_header{
+	float: left;
+	clear: both;
+	width: 100%;	
 }
 
 #catalogue .center .resources {
