@@ -118,15 +118,20 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 			options[index].bind(context);
 		}
 	}
-			
+
 	//Add url and processed parameters to adapt them to the proxy required data
-	var newParams = {url:url, method: options["method"]};	
-	if (options["parameters"]){
-		if (typeof(options["parameters"])=="string")
-			var p = parameters;
-		else
-			var p = this.platform.Object.toJSON(options["parameters"]);
-		newParams["params"] = p;
+	var newParams = {url:url, method: options["method"]};
+	if (options['postBody'] != undefined) {
+		newParams['params'] = options['postBody'];
+		delete options['postBody'];
+	} else {
+		if (options["parameters"]) {
+			if (typeof(options["parameters"]) == "string")
+				var p = options["parameters"];
+			else
+				var p = this.platform.Object.toJSON(options["parameters"]);
+			newParams["params"] = p;
+		}
 	}
 	options["parameters"] = newParams;
 	options["method"] = "POST";
