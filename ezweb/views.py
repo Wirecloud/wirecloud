@@ -233,6 +233,7 @@ def render_ezweb(request, user_name=None, template='/', public_workspace='', las
     """ Main view """
         
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
+        request.session['policies'] = "null"
         return render_to_response('iphone.html', {},
                   context_instance=RequestContext(request))
     else:
