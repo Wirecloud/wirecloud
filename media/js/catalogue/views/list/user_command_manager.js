@@ -112,40 +112,40 @@ var ListView_UserCommandManager = function (dom_wrapper) {
 	
 	switch (command_id) {
 	case 'INSTANTIATE_RESOURCE':
-	  var command = new InstantiateCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new InstantiateCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'SIMPLE_SEARCH':
-	  var command = new SimpleSearchCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new SimpleSearchCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'SHOW_RESOURCE_DETAILS':
-	  var command = new ShowResourceDetailsCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new ShowResourceDetailsCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'SUBMIT_GADGET':
-	  var command = new SubmitGadgetCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new SubmitGadgetCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'SHOW_WINDOW':
-	  var command = new ShowWindowCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new ShowWindowCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'SHOW_RESOURCE_LIST':
 	  var command = new ShowResourceListCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
 	  break;
 	case 'DELETE_RESOURCE':
-	  var command = new DeleteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new DeleteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'UPDATE_RESOURCE':
-	  var command = new UpdateResourceHTMLCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new UpdateResourceHTMLCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'VOTE_RESOURCE':
-	  var command = new VoteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new VoteResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'CHANGE_RESOURCE_VERSION':
-	  var command = new ChangeResourceVersionCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new ChangeResourceVersionCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;	
 	case 'TAG_RESOURCE':
-	  var command = new TagResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new TagResourceCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	case 'DELETE_TAG':
-	  var command = new RemoveResourceTagCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data);
+	  var command = new RemoveResourceTagCommand(dom_element, html_event, this.services, this.dom_wrapper, command_data, command_id);
 	  break;
 	default:
 	  return alert('event not identified! ' + command_id);

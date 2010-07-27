@@ -26,7 +26,7 @@
 //////////////////////////
 // PARENT COMMAND CLASS
 //////////////////////////
-var UserCommand = function (dom_element, html_event, services, dom_wrapper, data) {
+var UserCommand = function (dom_element, html_event, services, dom_wrapper, data, policy) {
   this.html_event = html_event;
   this.dom_element = dom_element;
   this.services = services;
@@ -36,7 +36,7 @@ var UserCommand = function (dom_element, html_event, services, dom_wrapper, data
   this.anonymous_function = this.anonymous_function.bind(this);
   
   if (this.dom_element)
-    Event.observe(this.dom_element, this.html_event, this.anonymous_function);
+    Event.observe(this.dom_element, this.html_event, this.anonymous_function, false, policy);
   
   this.set_catalogue = function (catalogue) {
 	this.catalogue = catalogue;
@@ -59,7 +59,7 @@ var ViewAllCommand  = function (dom_element, html_event, service_facade, dom_wra
 // COMMANDS WITH ATTACHED DATA 
 /////////////////////////////////
 
-var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
 	if (event.keyCode && event.keyCode != '13') {
 	  // Do nothing!
@@ -72,7 +72,7 @@ var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
-var InstantiateCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var InstantiateCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) {   
 	var resource = this.data;;
 	  
@@ -103,27 +103,27 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
 			                                resource.getVersion(), resource.getUriTemplate());
   }
 	
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var ShowWindowCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var ShowWindowCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
     var window_name = this.data['window'];
         
     LayoutManagerFactory.getInstance().showWindowMenu(window_name);
   }
 	
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var ShowResourceDetailsCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var ShowResourceDetailsCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
     var response_command = this.services.create_local_command('PAINT_RESOURCE_DETAILS', data);
     
     response_command.process();
   }
 	
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
 var ShowToolbarSectionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
@@ -167,31 +167,31 @@ var ShowTabCommand = function (dom_element, html_event, service_facade, dom_wrap
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
-var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var SubmitGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
 	this.services.submit_gadget_to_catalogue(this.data);
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var DeleteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var DeleteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
 	this.services.delete_resource(this.data);
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var UpdateResourceHTMLCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var UpdateResourceHTMLCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
 	this.services.update_resource_html(this.data);
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var TagResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var TagResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
     var target = BrowserUtilsFactory.getInstance().getTarget(event);
 	
@@ -219,10 +219,10 @@ var TagResourceCommand = function (dom_element, html_event, service_facade, dom_
     this.services.tag(this.data, this.tag_input.value)
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var RemoveResourceTagCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var RemoveResourceTagCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) {	
 	var target = BrowserUtilsFactory.getInstance().getTarget(event);
 	
@@ -231,10 +231,10 @@ var RemoveResourceTagCommand = function (dom_element, html_event, service_facade
     this.services.delete_tag(this.data, tag_id);
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var VoteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var VoteResourceCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
     var target = BrowserUtilsFactory.getInstance().getTarget(event);
 	
@@ -314,10 +314,10 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
 	
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
-var ChangeResourceVersionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var ChangeResourceVersionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
 	var target = BrowserUtilsFactory.getInstance().getTarget(event);
 	var operation_area_div = target.nextSiblings()[0];
@@ -370,7 +370,7 @@ var ChangeResourceVersionCommand = function (dom_element, html_event, service_fa
   }
   
 	  
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
 }
 
 var ShowResourceListCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
@@ -391,7 +391,7 @@ var ShowResourceListCommand = function (dom_element, html_event, service_facade,
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
-var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
+var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
   this.anonymous_function = function(event) { 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
     LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
@@ -405,7 +405,7 @@ var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_fac
     upload.submit();
   }
   
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
   
   ////////////////////////////////////////////////////////////
   // INTERNAL AUX FUNCTIONS FOR THIS COMMAND

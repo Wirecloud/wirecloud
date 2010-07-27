@@ -913,7 +913,7 @@ function WorkSpace (workSpaceState) {
 		/*** Add to the menu the proper options ***/
 		var optionPosition = 0;		
 		
-		if (this.isAllowed('share')) {
+		if (this.isAllowed('share_workspace')) {
 			this.sharingMenu.addOption(gettext("Share"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
@@ -921,7 +921,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++, null, "share_workspace");
 		}
 		
-		if (this.isAllowed('publish')) {
+		if (this.isAllowed('publish_workspace')) {
 			//TODO:Intermediate window to ask for data (name, description...)		
 			this.sharingMenu.addOption(gettext("Publish in gallery"),
 				function() {

@@ -894,6 +894,14 @@ var LayoutManagerFactory = function () {
 			toolbarHtml += '</div>';
 			
 			new Insertion.Top(toolbar_section, toolbarHtml);
+			
+			//hide not allowed options
+			if (EzSteroidsAPI.is_activated() && !EzSteroidsAPI.evaluePolicy('configure_workspace'))
+				$('conf_link').hide();
+			if (EzSteroidsAPI.is_activated() && !EzSteroidsAPI.evaluePolicy('share_workspace'))
+				$('sharing_link').hide();
+			if (EzSteroidsAPI.is_activated() && !EzSteroidsAPI.evaluePolicy('edit_workspace'))
+				$('edit_link').hide();
 		}
 		
 		//Shows the asked window menu
