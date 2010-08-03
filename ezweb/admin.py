@@ -38,6 +38,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.utils.translation import ugettext_lazy as _
 
 class EzWebUserCreationForm(UserCreationForm):
+    
     username = forms.RegexField(
         label=_('Username'), 
         max_length=30, 
