@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -33,7 +33,7 @@ from urllib import pathname2url, url2pathname
 from shutil import rmtree
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseServerError
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+from django.http import HttpResponseForbidden
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.utils.http import urlquote_plus
@@ -67,12 +67,23 @@ class Error(Resource):
 
 		return response
 
+
+class DeploymentException(Exception):
+
+    def __init__(self, message):
+        self.message = message
+
+
 class Resources(Resource):
 
 	def create(self, request):
 		# Deployment Info
 		info = InfoDeployment(request)
-        
+
+		user_action = True
+		if 'user_action' in request.POST:
+			user_action = request.POST['user_action'] == '1'
+
 		try:
 			user = user_authentication(request, request.user.username)
 		except Http403, e:
@@ -129,26 +140,42 @@ class Resources(Resource):
 				
 				# Redirect to EzWeb to add_gadget_script function
 				request.POST.appendlist('template_uri', info.URLTEMPLATE.encode("utf8"))
-				response = add_gadget_script(request, fromWGT=True)
+				response = add_gadget_script(request, fromWGT=True, user_action=user_action)
 				
 				if (response.status_code != 200):
-					# Redirect if the param "add_to_ws" isn't in the request
-					if (not request.POST.has_key('add_to_ws')):
-						raise Exception('Gadget could not be added to the catalogue')
+					if user_action:
+						# Redirect if the param "add_to_ws" isn't in the request
+						if (not request.POST.has_key('add_to_ws')):
+							raise DeploymentException('Gadget could not be added to the catalogue')
 					
-					# Redirect if the value of param "add_to_ws" isn't 'on'
-					if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
-						raise Exception('Gadget could not be added to the catalogue or to the workspace')
-					
+						# Redirect if the value of param "add_to_ws" isn't 'on'
+						if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
+							raise DeploymentException('Gadget could not be added to the catalogue or to the workspace')
+					else:
+						msg = simplejson.loads(response.content)['message']
+						raise DeploymentException(msg)
+
+				if not user_action:
+					# Work arround browsers trying to open json data into an editor
+					response._headers['content-type'] = ('Content-Type', 'text/plain; charset=UTF-8')
+
 			except TracedServerError, e:
 				raise e
-			
-			except Exception, e:
-				msg = _("Error extracting gadget files: %(errorMsg)s")  % {'errorMsg': "[" + str(e.__class__) + "] " + e.message}
+
+			except DeploymentException, e:
+				errorMsg = e.message
+				msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': errorMsg}
 				e = TracedServerError(e, {}, request, msg)
 				log_request(request, None, 'access')
 				log_detailed_exception(request, e)
-				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
+				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(errorMsg)})
+
+			except Exception, e:
+				msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': "[" + str(e.__class__) + "] " + e.message}
+				e = TracedServerError(e, {}, request, msg)
+				log_request(request, None, 'access')
+				log_detailed_exception(request, e)
+				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.message)})
 
 		finally:
 			# Remove temporal files

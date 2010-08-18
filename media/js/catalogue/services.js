@@ -204,8 +204,7 @@ var CatalogueResourceSubmitter = function () {
 	this.configured = true;
   }
   
-  this.process_response = function (response, command) {
-	var response_text = response.responseText;
+  this.process_response = function (response_text, command) {
 	var resource_state = response_text.evalJSON();
 	
 	resource_state['added_by_user'] = 'Yes';
@@ -349,7 +348,7 @@ var CatalogueResourceSubmitter = function () {
 	}
 	
     var success_callback = function (response) { 
-      var processed_response_data = this.caller.process_response(response, this);
+      var processed_response_data = this.caller.process_response(response.responseText, this);
     
       // "this" is binded to a "ResponseCommand" object
       this.set_data(processed_response_data);
@@ -367,7 +366,55 @@ var CatalogueResourceSubmitter = function () {
 	
 	this.persistence_engine.send_post(URIs.GET_POST_RESOURCES, params, response_command, success_callback, error_callback);
   }
-  
+
+  this.add_gadget_from_wgt = function () {
+    var checkFile = function () {
+      var iframe = document.getElementById("upload");
+
+      if (iframe.contentDocument) {
+        var doc = iframe.contentDocument;
+      } else if (iframe.contentWindow) {
+        var doc = iframe.contentWindow.document;
+      } else {
+        var doc = window.frames["upload"].document;
+      }
+
+      var layoutManager = LayoutManagerFactory.getInstance();
+
+      doc.body.getTextContent = Element.prototype.getTextContent;
+      if (doc.location.href.search("error") >= 0) {
+        var logManager = LogManagerFactory.getInstance();
+        var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
+        msg = interpolate(msg, {errorMsg: doc.body.getTextContent()}, true);
+
+        layoutManager._notifyPlatformReady();
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        logManager.log(msg);
+        return;
+      } else {
+        layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
+        layoutManager.logStep('');
+        layoutManager._notifyPlatformReady();
+
+        // "this" is binded to a "ResponseCommand" object
+        var processed_response_data = this.caller.process_response(doc.body.getTextContent(), this);
+        this.set_data(processed_response_data);
+        this.process();
+      }
+    }
+
+    var response_command = new ResponseCommand(this.resp_command_processor, this);
+    response_command.set_id('SUBMIT_PACKAGED_GADGET');
+
+    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
+    var upload = document.getElementById("upload_form");
+    var iframe = document.getElementById("upload");
+
+    iframe.onload = checkFile.bind(response_command);
+
+    upload.submit();
+  }
+
   this.delete_resource = function (resource) {
     var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
 

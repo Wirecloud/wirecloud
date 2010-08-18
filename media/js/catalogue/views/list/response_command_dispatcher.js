@@ -138,13 +138,13 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 	
 	break;
   case 'SUBMIT_GADGET':
+  case 'SUBMIT_PACKAGED_GADGET':
 	display_options['developer_info'] = 'block';
-		
+
 	this.show_section(display_options, command_id);
-	
-    this.painters['DEVELOPERS_PAINTER'].paint_adding_gadget_results(resp_command, this.user_command_manager);
-    
-    break;
+
+	this.painters['DEVELOPERS_PAINTER'].paint_adding_gadget_results(resp_command, this.user_command_manager);
+	break;
   case 'ADD_GADGET_TO_APP':
 	display_options['developer_info'] = 'block';
 	
@@ -197,6 +197,7 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
 	break;
   case 'SHOW_DEVELOPER_INFO':
   case 'SUBMIT_GADGET':
+  case 'SUBMIT_PACKAGED_GADGET':
   case 'ADD_GADGET_TO_APP':
 	this.search_button.removeClassName('selected_section');
 	this.developers_button.addClassName('selected_section');

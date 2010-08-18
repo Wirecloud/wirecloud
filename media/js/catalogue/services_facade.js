@@ -115,7 +115,11 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 	  
     this.resource_submitter.add_gadget_from_template(template_url);
   }
-  
+
+  this.submit_packaged_gadget_to_catalogue = function (data) {
+    this.resource_submitter.add_gadget_from_wgt(data['upload_form']);
+  }
+
   this.add_resource_by_template = function (template_url) {
     this.resource_submitter.add_gadget_from_template(template_url);
   }

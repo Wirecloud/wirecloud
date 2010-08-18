@@ -56,11 +56,12 @@
          </div>
          
          <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/deployment/gadgets/" id="upload_form">				
-			<input type="hidden" value="off" name="add_to_ws">
-			<input type="file" name="file" id="gadget_uri">
-			<button id="gadget_link">Crear</button>
-		  </form>
-	      <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
+           <input type="hidden" value="0" name="user_action">
+           <input type="hidden" value="off" name="add_to_ws">
+           <input type="file" name="file" id="gadget_uri">
+           <button id="gadget_link">Crear</button>
+         </form>
+         <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
       </div>
     </div>
 	

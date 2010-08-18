@@ -393,50 +393,8 @@ var ShowResourceListCommand = function (dom_element, html_event, service_facade,
 
 var SubmitPackagedGadgetCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
 
-  ////////////////////////////////////////////////////////////
-  // INTERNAL AUX FUNCTIONS FOR THIS COMMAND
-  ////////////////////////////////////////////////////////////
-  var checkFile = function () {
-    var i = document.getElementById("upload");
-
-    if (i.contentDocument) {
-      var d = i.contentDocument;
-    } else if (i.contentWindow) {
-      var d = i.contentWindow.document;
-    } else {
-      var d = window.frames["upload"].document;
-    }
-
-    var layoutManager = LayoutManagerFactory.getInstance();
-
-    if (d.location.href.search("error") >= 0) {
-      var logManager = LogManagerFactory.getInstance();
-      var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s");
-      msg = interpolate(msg, {errorMsg: d.body.textContent}, true);
-
-      layoutManager._notifyPlatformReady();
-      layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-      logManager.log(msg);
-      return;
-    } else {
-      layoutManager.logSubTask(gettext('Gadget uploaded successfully'));
-      layoutManager.logStep('');
-      layoutManager._notifyPlatformReady();
-    }
-  }
-
-
   this.anonymous_function = function(event) {
-    UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
-    LayoutManagerFactory.getInstance()._startComplexTask(gettext("Uploading packaged gadget"), 1);
-
-    var upload = document.getElementById("upload_form");
-    var iframe = document.getElementById("upload");
-
-    if (!iframe.onload)
-      iframe.onload = function(){checkFile();};
-
-    upload.submit();
+    this.services.submit_packaged_gadget_to_catalogue(this.data);
   }
 
   UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
