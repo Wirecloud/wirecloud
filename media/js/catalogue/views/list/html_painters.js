@@ -386,7 +386,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
   HTML_Painter.call(this);
   
   this.local_ids = new Hash({'NEW_GADGET_BUTTON':   '#submit_link',     'GADGET_TEMPLATE_INPUT': '#template_uri',
-	                         'NEW_PACKAGE_BUTTON':  '#gadget_link',     'NEW_PACKAGE_INPUT':     '#gadget_uri',
+	                         'NEW_PACKAGE_BUTTON':  '#gadget_link',     'NEW_PACKAGE_FORM':      '#upload_form',
 	                         'NEW_FEED_BUTTON':     '#new_feed_button', 'NEW_WEBSITE_BUTTON':    '#new_website_button'});
   
   this.structure_template_element = structure_element;
@@ -403,8 +403,8 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	var new_package_button_selector = this.local_ids['NEW_PACKAGE_BUTTON'];
 	var new_package_button = this.dom_wrapper.get_element_by_selector(new_package_button_selector);
 	
-	var new_package_input_selector = this.local_ids['NEW_PACKAGE_INPUT'];
-	var new_package_button = this.dom_wrapper.get_element_by_selector(new_package_input_selector);
+	var new_package_form_selector = this.local_ids['NEW_PACKAGE_FORM'];
+	var new_package_form = this.dom_wrapper.get_element_by_selector(new_package_form_selector);
 	
 	var new_feed_button_selector = this.local_ids['NEW_FEED_BUTTON'];
 	var new_feed_button = this.dom_wrapper.get_element_by_selector(new_feed_button_selector);
@@ -415,7 +415,11 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	// New gadget from template
 	var data = new Hash({'template_url_element': new_gadget_input});
 	user_command_manager.create_command_from_data('SUBMIT_GADGET', new_gadget_button, data, 'click');
-	
+
+	// New gadget from package
+	var data = new Hash({'upload_form': new_package_form});
+	user_command_manager.create_command_from_data('SUBMIT_PACKAGED_GADGET', new_package_button, data, 'click');
+
 	// New gadget from feed
 	var data = {'window': 'addFeed'};
 	user_command_manager.create_command_from_data('SHOW_WINDOW', new_feed_button, data, 'click');
@@ -423,7 +427,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
 	// New gadget from website
 	var data = {'window': 'addSite'};
 	user_command_manager.create_command_from_data('SHOW_WINDOW', new_website_button, data, 'click');
-  }
+}
   
   this.paint_adding_gadget_results = function (command, user_command_manager) {
 	  
