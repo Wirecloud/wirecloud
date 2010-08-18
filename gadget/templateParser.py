@@ -771,10 +771,19 @@ class TemplateHandler(handler.ContentHandler):
         
         if (name == "Translation"):
             if self.current_lang==self.default_lang:
+                self.missing_translations = []
+
                 for ind in self.translatable_list:
-                    self.translated_list.remove(ind)
+                    if not ind in self.translated_list:
+                        self.missing_translations.append(ind)
+                    else:
+                        self.translated_list.remove(ind)
+
+                if len(self.missing_translations) > 0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: " + ', '.join(self.missing_translations)))
+
                 if len(self.translated_list)>0:
-                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: "+str(self.translated_list)))
+                    raise TemplateParseException(_("ERROR: the following translation indexes are not used: "+str(self.translated_list)))
             
         if (name == "msg"):
             if not self.current_text in self.translatable_list:

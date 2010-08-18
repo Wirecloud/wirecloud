@@ -425,11 +425,23 @@ class TemplateHandler(handler.ContentHandler):
             trans = Translation(text_id=self.current_text, element_id=self._gadget.id, table=table_, language=self.current_lang, value=self._accumulator[0], default=(self.current_lang==self.default_lang))
             trans.save()
         elif (self._gadget_added and name == "Translation"):
+
             if self.current_lang==self.default_lang:
+                self.missing_translations = []
+
                 for ind in self.translatable_list:
-                    self.translated_list.remove(ind)
-                if len(self.translated_list) > 0:
-                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: %(list)s") % {list: str(self.translated_list)})
+                    if not ind in self.translated_list:
+                        self.missing_translations.append(ind)
+                    else:
+                        self.translated_list.remove(ind)
+
+                if len(self.missing_translations) > 0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes need a default value: " + ', '.join(self.missing_translations)))
+
+                # No triggered as not used indexes are currently filtered
+                if len(self.translated_list)>0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes are not used: "+str(self.translated_list)))
+
         elif self._gadget_added and (name == "Translations"):
             if len(self.lang_list) > 0 and not self.default_lang in self.lang_list:
                 raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self.default_lang})
