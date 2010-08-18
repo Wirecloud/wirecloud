@@ -110,12 +110,14 @@ _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler
 }
 
 _EzWebAPI.prototype.send = function(url, context, options) {
-	//Add the binding to each handler
-	var handlerRegExp = new RegExp(/^onCreate$|^onComplete$|^onException$|^onFailure$|^onInteractive$|^onLoaded$|^onLoading$|^onSuccess$|^onUninitialized$|^on\d{3}$/);
-	for (index in options){
-		if (index.match(handlerRegExp)){
-			options[index].bind = EzWebAPI.platform.Function.prototype.bind;
-			options[index].bind(context);
+	if (context != null) {
+		//Add the binding to each handler
+		var handlerRegExp = new RegExp(/^onCreate$|^onComplete$|^onException$|^onFailure$|^onInteractive$|^onLoaded$|^onLoading$|^onSuccess$|^onUninitialized$|^on\d{3}$/);
+		for (var index in options) {
+			if (index.match(handlerRegExp)) {
+				options[index].bind = EzWebAPI.platform.Function.prototype.bind;
+				options[index] = options[index].bind(context);
+			}
 		}
 	}
 
