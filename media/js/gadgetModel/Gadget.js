@@ -82,6 +82,8 @@ function Gadget(gadget_, url_, options_) {
 			var logManager = LogManagerFactory.getInstance();
 			var msg = logManager.formatError(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), transport, e);
 			logManager.log(msg);
+			var layoutManager = LayoutManagerFactory.getInstance();
+			layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 		}
 		
 		var loadGadget = function(transport) {

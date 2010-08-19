@@ -564,6 +564,8 @@ class TemplateHandler(handler.ContentHandler):
                                    self.fromWGT, _relative_url, cacheable=_cacheable,
                                    user=self.user)
                 self._xhtml = gadgetParser.getXHTML()
+            except TemplateParseException:
+                raise
             except Exception, e:
                 raise TemplateParseException(_("ERROR: XHTML could not be read: %(errorMsg)s") % {'errorMsg': e.message})
         else:
