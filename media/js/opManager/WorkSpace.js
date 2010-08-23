@@ -196,14 +196,13 @@ function WorkSpace (workSpaceState) {
 		}
 
 		this.loaded = true;
-		
-		
+
 		this._createWorkspaceMenu();
-		
+
 		this._update_creator_options();
 		if (!this.isAllowed('preserve_lock_status'))
 			this._lockFunc(true);
-		
+
 		//all the modules have been downloaded. Init now all the toolbars:
 		//catalogue, wiring and workspace.
 		this._initAllToolbars();
@@ -291,10 +290,9 @@ function WorkSpace (workSpaceState) {
 
 		tabInfo.igadgetList = [];
 		tabInfo.preferences = {};
-		
+
 		var newTab = new Tab(tabInfo, this);
 		this.tabInstances[tabInfo.id] = newTab;
-		this._checkLock();
 		this.setTab(this.tabInstances[tabInfo.id]);
 		for(var i=0; i< tabInfo.workspaceVariables.length; i++){
 			this.varManager.parseWorkspaceVariable(tabInfo.workspaceVariables[i]);
@@ -974,7 +972,7 @@ function WorkSpace (workSpaceState) {
 		}
 				
 		// add the event listener
-		Event.observe(this.editLauncher, 'click', 
+		Event.observe(this.editLauncher, 'click',
 						function(e){
 							var target = BrowserUtilsFactory.getInstance().getTarget(e);
 							target.blur();
@@ -1176,56 +1174,6 @@ function WorkSpace (workSpaceState) {
 		}
 		return all;
 	}
-
-
-	this._checkLock = function() {
-		var keys = this.tabInstances.keys();
-		var all = true;
-		var locked = null;
-		var numRemoved = 0;
-		var position = this.unlockEntryPos;
-		for (var i = 0; i < keys.length; i++) {
-			if (i == 0){
-				locked = this.tabInstances[keys[i]].dragboard.isLocked();
-			} else if (locked != this.tabInstances[keys[i]].dragboard.isLocked()){
-				all = false;
-			}
-		}
-		
-		if(all){
-			if(locked && this.lockEntryId!=null){
-				this.confMenu.removeOption(this.lockEntryId);
-				this.lockEntryId = null;
-				numRemoved++;
-			}else if(!locked && this.unlockEntryId!=null){
-				this.confMenu.removeOption(this.unlockEntryId);
-				this.unlockEntryId = null;
-				numRemoved++;
-			}
-		}
-		
-		if((!all || locked) && this.unlockEntryId==null){
-			this.unlockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('unlock'),
-				gettext("Unlock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(false);
-				}.bind(this),
-				this.unlockEntryPos);
-		}
-		if((!all || !locked) && this.lockEntryId==null){
-			if(this.unlockEntryId)
-				position = this.unlockEntryPos + 1;
-			this.lockEntryId = this.confMenu.addOption(_currentTheme.getIconURL('lock'),
-				gettext("Lock"),
-				function() {
-					LayoutManagerFactory.getInstance().hideCover();
-					this._lockFunc(true);
-				}.bind(this),
-				position);
-		}
-		return numRemoved;
-	}.bind(this);
 
 	this.markAsActive = function () {
 		var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});

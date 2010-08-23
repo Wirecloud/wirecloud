@@ -706,7 +706,6 @@ Tab.prototype.preferencesChanged = function(modifiedValues) {
 Tab.prototype.setLock = function(locked) {
 	this.locked = locked;
 	this.dragboard.setLock(locked);
-	this.workSpace._checkLock(); 	
 }
 
 /**
