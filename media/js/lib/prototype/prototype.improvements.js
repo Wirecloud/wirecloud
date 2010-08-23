@@ -257,6 +257,32 @@ Ajax.Request.prototype.request = function(url) {
     }
   }
 
+Ajax.Base.prototype.setOptions = function(options) {
+	this.options = {
+		method:       'post',
+		asynchronous: true,
+		contentType:  'application/x-www-form-urlencoded',
+		encoding:     'UTF-8',
+		parameters:   '',
+		evalJS:       false
+	}
+	Object.extend(this.options, options || {});
+
+	this.options.method = this.options.method.toLowerCase();
+	if (typeof this.options.parameters == 'string')
+		this.options.parameters = this.options.parameters.toQueryParams();
+}
+
+Ajax.Request.prototype.evalResponse = function() {
+	if (this.options.evalJS !== true)
+		return;
+
+	try {
+		return eval((this.transport.responseText || '').unfilterJSON());
+	} catch (e) {
+		this.dispatchException(e);
+	}
+}
 
 /*
  * ARRAY EXTENSIONS
