@@ -49,6 +49,7 @@ from xml.dom.minidom import parse # XML Parser
 from ezweb.views import add_gadget_script
 import codecs
 import re
+import errno
 from django.views.static import serve
 
 class Static(Resource):
@@ -161,6 +162,19 @@ class Resources(Resource):
 
 			except TracedServerError, e:
 				raise e
+
+			except OSError, e:
+				errorMsg = e.strerror
+				if e.errno == errno.EPERM:
+					errorMsg = _('Permission denied')
+
+				msg = _("Error unpacking/deploying files contained in the WGT file: %(errorMsg)s") % {'errorMsg': errorMsg}
+
+				e = TracedServerError(e, {}, request, msg)
+				log_request(request, None, 'access')
+				log_detailed_exception(request, e)
+
+				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
 			except DeploymentException, e:
 				errorMsg = e.message
