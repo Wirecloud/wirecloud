@@ -43,14 +43,13 @@ from proxy.utils import encode_query, is_valid_header, is_localhost
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 
-from django.http import Http404, HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
 from django.conf import settings
 
 from django.utils import simplejson
 
-from django.contrib.auth.decorators import login_required
-
 import string
+
 
 class MethodRequest(urllib2.Request):
   def __init__(self, method, *args, **kwargs):
@@ -78,8 +77,10 @@ class Proxy(Resource):
         except urllib2.HTTPError, e:
             return e
         
-    @login_required
     def create(self, request):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden(_('Your must be logged in to access this service'))
+
         try:
             if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
                 return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
