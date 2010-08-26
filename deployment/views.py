@@ -163,7 +163,7 @@ class Resources(Resource):
 			except TracedServerError, e:
 				raise e
 
-			except OSError, e:
+			except EnvironmentError, er
 				errorMsg = e.strerror
 				if e.errno == errno.EPERM:
 					errorMsg = _('Permission denied')
