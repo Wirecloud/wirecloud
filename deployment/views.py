@@ -161,7 +161,9 @@ class Resources(Resource):
 					response._headers['content-type'] = ('Content-Type', 'text/plain; charset=UTF-8')
 
 			except TracedServerError, e:
-				raise e
+				log_request(request, None, 'access')
+				msg = log_detailed_exception(request, e)
+				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.msg)})
 
 			except EnvironmentError, e:
 				errorMsg = e.strerror
