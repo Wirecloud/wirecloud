@@ -298,15 +298,21 @@ class TemplateHandler(handler.ContentHandler):
             return
         if (name == 'ImageURI'):
             if (self._accumulator == []):
-                self._imageURI = 'no_url'
+                self._imageURI = ''
             else:
                 self._imageURI = self._accumulator[0]
             return
         if (name == 'iPhoneImageURI'):
-            self._iPhoneImageURI = self._accumulator[0]
+            if (self._accumulator == []):
+                self._iPhoneImageURI = ''
+            else:
+                self._iPhoneImageURI = self._accumulator[0]
             return
         if (name == 'WikiURI'):
-            self._wikiURI = self._accumulator[0]
+            if (self._accumulator == []):
+                self._wikiURI = ''
+            else:
+                self._wikiURI = self._accumulator[0]
             return
         if (name == 'IncludedResources'):
             return
