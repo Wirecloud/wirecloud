@@ -163,7 +163,7 @@ class Resources(Resource):
 			except TracedServerError, e:
 				raise e
 
-			except EnvironmentError, er
+			except EnvironmentError, e:
 				errorMsg = e.strerror
 				if e.errno == errno.EPERM:
 					errorMsg = _('Permission denied')
@@ -322,26 +322,29 @@ class InfoDeployment:
 		# ImageURI
 		if xmldoc.getElementsByTagName("ImageURI"):
 			imageURI = xmldoc.getElementsByTagName("ImageURI")[0]
-			imageURL = imageURI.firstChild.nodeValue
-			if not self._is_absolute(imageURL):
-				imageURL = self.BASEURL + '/' + self._normalize(imageURL)
-				imageURI.firstChild.replaceWholeText(imageURL)
+			if imageURI.firstChild != None:
+				imageURL = imageURI.firstChild.nodeValue
+				if not self._is_absolute(imageURL):
+					imageURL = self.BASEURL + '/' + self._normalize(imageURL)
+					imageURI.firstChild.replaceWholeText(imageURL)
 
 		# Wiki URI
 		if xmldoc.getElementsByTagName("WikiURI"):
 			wikiURI = xmldoc.getElementsByTagName("WikiURI")[0]
-			wikiURL = wikiURI.firstChild.nodeValue
-			if not self._is_absolute(wikiURL):
-				wikiURL = self.BASEURL + '/' + self._normalize(wikiURL)
-				wikiURI.firstChild.replaceWholeText(wikiURL)
+			if wikiURI.firstChild != None:
+				wikiURL = wikiURI.firstChild.nodeValue
+				if not self._is_absolute(wikiURL):
+					wikiURL = self.BASEURL + '/' + self._normalize(wikiURL)
+					wikiURI.firstChild.replaceWholeText(wikiURL)
 
 		# iPhoneImageURI
 		if xmldoc.getElementsByTagName("iPhoneImageURI"):
 			iPhoneImageURI = xmldoc.getElementsByTagName("iPhoneImageURI")[0]
-			iPhoneImageURL = iPhoneImageURI.firstChild.nodeValue
-			if not self._is_absolute(iPhoneImageURL):
-				iPhoneImageURL = self.BASEURL + '/' + self._normalize(iPhoneImageURL)
-				iPhoneImageURI.firstChild.replaceWholeText(iPhoneImageURL)
+			if iPhoneImageURI.firstChild != None:
+				iPhoneImageURL = iPhoneImageURI.firstChild.nodeValue
+				if not self._is_absolute(iPhoneImageURL):
+					iPhoneImageURL = self.BASEURL + '/' + self._normalize(iPhoneImageURL)
+					iPhoneImageURI.firstChild.replaceWholeText(iPhoneImageURL)
 
 		return xmldoc
 
