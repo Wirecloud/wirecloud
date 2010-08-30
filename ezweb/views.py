@@ -98,7 +98,7 @@ def redirected_login(request):
             
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
 
-def add_gadget_script(request, fromWGT = False):  
+def add_gadget_script(request, fromWGT = False, user_action = True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if (request.REQUEST.has_key('template_uri')):
@@ -135,6 +135,8 @@ def add_gadget_script(request, fromWGT = False):
                 gc = GadgetsCollection()
                 
                 http_response = gc.create(request, request.user.username, fromWGT=fromWGT)
+                if not user_action:
+                    return http_response
                 
                 catalogue_response = simplejson.loads(http_response.content)
             
