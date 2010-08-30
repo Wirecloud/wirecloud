@@ -38,6 +38,7 @@ from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
+from commons.exceptions import TemplateParseException
 from commons.resource import Resource
 from commons.authentication import user_authentication, Http403
 from commons.logs import log, log_detailed_exception, log_request
@@ -46,11 +47,13 @@ from commons.utils import get_xml_error
 from wgtPackageUtils import WgtPackageUtils
 from settings import BASEDIR as BASEDIR_PLATFORM
 from xml.dom.minidom import parse # XML Parser
+from xml.parsers.expat import ExpatError
 from ezweb.views import add_gadget_script
 import codecs
 import re
 import errno
 from django.views.static import serve
+
 
 class Static(Resource):
 	def read(self, request, path):
@@ -109,89 +112,95 @@ class Resources(Resource):
 		# gadgets folder
 		
 		try:
-			try:
-				file_wgt = request.FILES['file']
-				file_wgt_path = path.join(info.TMPDIR.encode("utf8"), file_wgt.name.encode("utf8"))
-				f = open(file_wgt_path, "wb")
-				f.write(file_wgt.read())
-				f.close()
+			file_wgt = request.FILES['file']
+			file_wgt_path = path.join(info.TMPDIR.encode("utf8"), file_wgt.name.encode("utf8"))
+			f = open(file_wgt_path, "wb")
+			f.write(file_wgt.read())
+			f.close()
+			
+			# Extract file .wgt into temporal folder
+			pkg = WgtPackageUtils()
+			extractiondir = mkdtemp(dir=info.TMPDIR)
+			extractiondir = extractiondir.encode("utf8")
+			pkg.extract(file_wgt_path, extractiondir)
+			
+			# Parser XML config file
+			xmlDoc = parse(path.join(extractiondir, 'config.xml'))
+			info.get_info_config(xmlDoc, request)
+			
+			# Extract .wgt file in user gadget folder
+			final_gadget_dir = path.join(info.USERGADGETSDIR.encode("utf8"), info.VENDOR.encode("utf8"), info.NAME.encode("utf8"), info.VERSION.encode("utf8"))
+			info.create_folder(final_gadget_dir)
+			pkg.extract(file_wgt_path, final_gadget_dir)
+			
+			# Change links XHTML Tag and Image tag in template gadget
+			template_file = path.join(final_gadget_dir, info.ID.encode("utf8"))
+			xmlDoc = info.get_new_template(template_file)
+			f = codecs.open(template_file, 'wb', 'utf-8')
+			f.write(xmlDoc.toxml())
+			f.close()
+			
+			# Redirect to EzWeb to add_gadget_script function
+			request.POST.appendlist('template_uri', info.URLTEMPLATE.encode("utf8"))
+			response = add_gadget_script(request, fromWGT=True, user_action=user_action)
+			
+			if (response.status_code != 200):
+				if user_action:
+					# Redirect if the param "add_to_ws" isn't in the request
+					if (not request.POST.has_key('add_to_ws')):
+						raise DeploymentException('Gadget could not be added to the catalogue')
 				
-				# Extract file .wgt into temporal folder
-				pkg = WgtPackageUtils()
-				extractiondir = mkdtemp(dir=info.TMPDIR)
-				extractiondir = extractiondir.encode("utf8")
-				pkg.extract(file_wgt_path, extractiondir)
-				
-				# Parser XML config file
-				xmlDoc = parse(path.join(extractiondir, 'config.xml'))
-				info.get_info_config(xmlDoc, request)
-				
-				# Extract .wgt file in user gadget folder
-				final_gadget_dir = path.join(info.USERGADGETSDIR.encode("utf8"), info.VENDOR.encode("utf8"), info.NAME.encode("utf8"), info.VERSION.encode("utf8"))
-				info.create_folder(final_gadget_dir)
-				pkg.extract(file_wgt_path, final_gadget_dir)
-				
-				# Change links XHTML Tag and Image tag in template gadget
-				final_dir = path.join(final_gadget_dir, info.ID.encode("utf8"))
-				xmlDoc = parse(final_dir)
-				xmlDoc = info.get_new_template(xmlDoc)
-				f = codecs.open(final_dir, 'w', 'utf-8')
-				f.write(xmlDoc.toxml())
-				f.close()
-				
-				# Redirect to EzWeb to add_gadget_script function
-				request.POST.appendlist('template_uri', info.URLTEMPLATE.encode("utf8"))
-				response = add_gadget_script(request, fromWGT=True, user_action=user_action)
-				
-				if (response.status_code != 200):
-					if user_action:
-						# Redirect if the param "add_to_ws" isn't in the request
-						if (not request.POST.has_key('add_to_ws')):
-							raise DeploymentException('Gadget could not be added to the catalogue')
-					
-						# Redirect if the value of param "add_to_ws" isn't 'on'
-						if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
-							raise DeploymentException('Gadget could not be added to the catalogue or to the workspace')
-					else:
-						msg = simplejson.loads(response.content)['message']
-						raise DeploymentException(msg)
+					# Redirect if the value of param "add_to_ws" isn't 'on'
+					if (request.POST.has_key('add_to_ws') and request.POST['add_to_ws'] == 'on'):
+						raise DeploymentException('Gadget could not be added to the catalogue or to the workspace')
+				else:
+					msg = simplejson.loads(response.content)['message']
+					raise DeploymentException(msg)
 
-				if not user_action:
-					# Work arround browsers trying to open json data into an editor
-					response._headers['content-type'] = ('Content-Type', 'text/plain; charset=UTF-8')
+			if not user_action:
+				# Work arround browsers trying to open json data into an editor
+				response._headers['content-type'] = ('Content-Type', 'text/plain; charset=UTF-8')
 
-			except TracedServerError, e:
-				log_request(request, None, 'access')
-				msg = log_detailed_exception(request, e)
-				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.msg)})
+		except TemplateParseException, e:
+			msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
+			e = TracedServerError(e, {}, request, msg)
+			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
 
-			except EnvironmentError, e:
-				errorMsg = e.strerror
-				if e.errno == errno.EPERM:
-					errorMsg = _('Permission denied')
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
-				msg = _("Error unpacking/deploying files contained in the WGT file: %(errorMsg)s") % {'errorMsg': errorMsg}
+		except TracedServerError, e:
+			log_request(request, None, 'access')
+			msg = log_detailed_exception(request, e)
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.msg)})
 
-				e = TracedServerError(e, {}, request, msg)
-				log_request(request, None, 'access')
-				log_detailed_exception(request, e)
+		except EnvironmentError, e:
+			errorMsg = e.strerror
+			if e.errno == errno.EPERM:
+				errorMsg = _('Permission denied')
 
-				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
+			msg = _("Error unpacking/deploying files contained in the WGT file: %(errorMsg)s") % {'errorMsg': errorMsg}
 
-			except DeploymentException, e:
-				errorMsg = e.message
-				msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': errorMsg}
-				e = TracedServerError(e, {}, request, msg)
-				log_request(request, None, 'access')
-				log_detailed_exception(request, e)
-				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(errorMsg)})
+			e = TracedServerError(e, {}, request, msg)
+			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
 
-			except Exception, e:
-				msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': "[" + str(e.__class__) + "] " + e.message}
-				e = TracedServerError(e, {}, request, msg)
-				log_request(request, None, 'access')
-				log_detailed_exception(request, e)
-				return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.message)})
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
+
+		except DeploymentException, e:
+			errorMsg = e.message
+			msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': errorMsg}
+			e = TracedServerError(e, {}, request, msg)
+			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(errorMsg)})
+
+		except Exception, e:
+			msg = _("Error deploying packaged gadget into catalogue: %(errorMsg)s")  % {'errorMsg': "[" + str(e.__class__) + "] " + e.message}
+			e = TracedServerError(e, {}, request, msg)
+			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.message)})
 
 		finally:
 			# Remove temporal files
@@ -311,8 +320,15 @@ class InfoDeployment:
 	def _is_absolute(self, url):
 		return url.startswith("http")
 
-	# Return a new gadget template with parsed links 
-	def get_new_template(self, xmldoc):
+	# Return a new gadget template with parsed links
+	def get_new_template(self, template_file):
+		try:
+			xmlDoc = parse(template_file)
+		except ExpatError, e:
+			raise TemplateParseException(e.message)
+		except:
+			raise TemplateParseException()
+
 		# Set href in XHML Tag
 		xhtml = xmldoc.getElementsByTagName("XHTML")[0]
 		href = xhtml.getAttribute("href")
