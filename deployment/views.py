@@ -323,7 +323,7 @@ class InfoDeployment:
 	# Return a new gadget template with parsed links
 	def get_new_template(self, template_file):
 		try:
-			xmlDoc = parse(template_file)
+			xmldoc = parse(template_file)
 		except ExpatError, e:
 			raise TemplateParseException(e.message)
 		except:
