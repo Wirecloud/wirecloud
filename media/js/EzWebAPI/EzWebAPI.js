@@ -65,48 +65,32 @@ _EzWebAPI.prototype.createRGadgetVariable = function(name, handler) {
 }
 
 _EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandler, requestHeaders) {
-	var params = {url: url, method: 'GET'};
-	
-
-	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI._old_send('GET', url, parameters, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHandler, requestHeaders) {
-	var params = {url: url, method: 'DELETE'};
-
-	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI._old_send('DELETE', url, parameters, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
-	if (typeof(parameters)=="string")
-		var p = parameters;
-	else
-		var p = this.platform.Object.toJSON(parameters);
-	var params = {url: url, method: 'POST', params: p};
-
-	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI._old_send('POST', url, parameters, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_put = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
-	if (typeof(parameters)=="string")
-		var p = parameters;
-	else
-		var p = this.platform.Object.toJSON(parameters);
-	var params = {url: url, method: 'PUT', params: p};
+	EzWebAPI._old_send('PUT', url, parameters, context, successHandler, errorHandler, requestHeaders);
+}
 
-	successHandler.bind = EzWebAPI.platform.Function.prototype.bind;
-	errorHandler.bind = EzWebAPI.platform.Function.prototype.bind;
+_EzWebAPI.prototype._old_send = function(method, url, parameters, context, successHandler, errorHandler, requestHeaders) {
+	// Mixing onFailure and onException is a very bad idea, but it is the expected behabiour for this old API
+	var options = {
+		method: method,
+		onSuccess: successHandler,
+		onFailure: errorHandler,
+		onException: errorHandler,
+		parameters: parameters
+	};
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send_post(this.platform.URIs.PROXY, params, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI.send(url, context, options);
 }
 
 _EzWebAPI.prototype.send = function(url, context, options) {
@@ -126,14 +110,12 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 	if (options['postBody'] != undefined) {
 		newParams['params'] = options['postBody'];
 		delete options['postBody'];
-	} else {
-		if (options["parameters"]) {
-			if (typeof(options["parameters"]) == "string")
-				var p = options["parameters"];
-			else
-				var p = this.platform.Object.toJSON(options["parameters"]);
-			newParams["params"] = p;
-		}
+	} else if (options["parameters"]) {
+		if (typeof(options["parameters"]) == "string")
+			var p = options["parameters"];
+		else
+			var p = this.platform.Object.toJSON(options["parameters"]);
+		newParams["params"] = p;
 	}
 	options["parameters"] = newParams;
 	options["method"] = "POST";
