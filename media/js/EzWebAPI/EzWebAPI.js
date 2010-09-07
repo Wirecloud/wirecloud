@@ -65,11 +65,11 @@ _EzWebAPI.prototype.createRGadgetVariable = function(name, handler) {
 }
 
 _EzWebAPI.prototype.send_get = function(url, context, successHandler, errorHandler, requestHeaders) {
-	EzWebAPI._old_send('GET', url, parameters, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI._old_send('GET', url, null, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_delete = function(url, context, successHandler, errorHandler, requestHeaders) {
-	EzWebAPI._old_send('DELETE', url, parameters, context, successHandler, errorHandler, requestHeaders);
+	EzWebAPI._old_send('DELETE', url, null, context, successHandler, errorHandler, requestHeaders);
 }
 
 _EzWebAPI.prototype.send_post = function(url, parameters, context, successHandler, errorHandler, requestHeaders) {
