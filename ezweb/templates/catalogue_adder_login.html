@@ -207,25 +207,25 @@ h3{
            alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
 	   return false;
       }      
-
+      cancel = false;
       return true;
 }
 
 /* Initialization code */
-	function setLanguage(language) {
-		
-		document.getElementById("language").value = language;
-		document.getElementById("languages").submit();
-		
-		return false;
-	}
+    var cancel = true;
+    function sendCancel() {
+        if (cancel) {
+            document.getElementById("pingback_cancel").value = 'true';
+            document.getElementById("main_form").submit();
+        }
+    }
 
 </script>
 
 
 </head>
 
-<body>
+<body onbeforeunload="javascript:sendCancel();">
 
 <!-- HEADER -->
 <div id="header">
@@ -233,13 +233,6 @@ h3{
 		<div id="logo"></div>
 		<div id="greeting">
 			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
-			 <div class="languages">
-			 	<form id="languages" action="/i18n/setlang/" method="post">
-					<input name="next" type="hidden" value="/accounts/login/?next=/" />
-					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}">
-				</form>		 
-				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-			 </div>
 		</div>
 	
 	</div>
@@ -306,7 +299,7 @@ h3{
 	<div id="right-section">
 		
 		<div id="login-section">				
-				  <form onSubmit="return check_browser()" action="/interfaces/login/service" method="post" id="form" class="form-row">
+				  <form onsubmit="return check_browser();" action="/interfaces/login/service" method="post" id="form" class="form-row">
 				  	<table>
 				  		<tr><td>
 				    		<label for="id_username">{% trans 'Username' %} </label> 
@@ -340,6 +333,14 @@ h3{
 		</div>
 	</div>
 </div>
+
+<form id="main_form" action="/interfaces/gadget" method="post">
+    {% if pingback %}
+    <input type="hidden" value="{{pingback}}" name="pingback" />
+    {% endif %}
+    <input type="hidden" value="false" name="pingback_cancel" id="pingback_cancel" />
+</form>
+
 <script type="text/javascript">
 var is_iphone = (navigator.userAgent.indexOf('iPhone')!=-1 || navigator.userAgent.indexOf('iPod')!=-1 );
 
@@ -348,6 +349,7 @@ if (is_iphone){
   document.getElementById('tips').style.display="none";
 }
 </script>
+
 </body>
 </html>
 

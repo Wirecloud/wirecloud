@@ -30,6 +30,8 @@
 
 #
 
+import urllib, simplejson, httplib, urlparse
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import load_backend
@@ -99,11 +101,23 @@ def redirected_login(request):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
 
 def add_gadget_script(request, fromWGT = False, user_action = True):
+    if (request.method.lower() == "post"):
+        #Cancel by the user
+        if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
+            if request.REQUEST.has_key('pingback'):
+                #Send pingback CANCEL
+                send_pingback(request, {'result_code': -1, 'result_message': 'Cancel by the user'})
+            #Redirect
+            return HttpResponseRedirect('/')
+    
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if (request.REQUEST.has_key('template_uri')):
             template_uri = request.REQUEST['template_uri']
         else:
+            #Send pingback ERROR
+            send_pingback(request, {'result_code': -2, 'result_message': 'A template URL must be specified!'})
+            
             #template_uri not specified!
             t = loader.get_template('catalogue_adder.html')
             c = Context({'msg': _('A template URL must be specified!')})
@@ -119,17 +133,23 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
             
                 gadget = templateParser.get_gadget()
                 
-                return render_to_response('catalogue_adder.html', {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}, context_instance=RequestContext(request))
+                params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
+                
+                if request.REQUEST.has_key('pingback'):
+                    params['pingback'] = request.REQUEST['pingback']
+                
+                return render_to_response('catalogue_adder.html', params, context_instance=RequestContext(request))
             except Exception, e:
+                #Send pingback ERROR
+                send_pingback(request, {'result_code': -3, 'result_message': 'Invalid template URL! Please, specify a valid one!'})
+                
                 #Error parsing the template
                 t = loader.get_template('catalogue_adder.html')
                 c = Context({'msg': _('Invalid template URL! Please, specify a valid one!')})
                 return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
         
-        
         if (request.method.lower() == "post"):
             #POST Request: Adding gadget to catalogue and to workspace if specified!
-                      
             try:
                 #Adding to catalogue if it doesn't exist!
                 gc = GadgetsCollection()
@@ -139,8 +159,11 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                     return http_response
                 
                 catalogue_response = simplejson.loads(http_response.content)
-            
+                
                 if (catalogue_response['result'].lower() != 'ok'):
+                    #Send pingback ERROR
+                    send_pingback(request, {'result_code': -4, 'result_message': 'Error ocurred processing template!'})
+                    
                     #Error adding in the catalogue!
                     t = loader.get_template('catalogue_adder.html')
                     c = Context({'msg': _('Error ocurred processing template!')})
@@ -150,6 +173,10 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 vendor = catalogue_response['vendor']
                 version = catalogue_response['version']
                 name = catalogue_response['gadgetName']
+                gadgetId = catalogue_response['gadgetId']
+                
+                #Send pingback OK
+                send_pingback(request, {'vendor': vendor, 'name': name, 'version': version, 'id': gadgetId, 'result_code': 0, 'result_message': 'Success'})
                 
                 if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
@@ -165,8 +192,13 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                     c = Context({'msg': _('Gadget added correctly to Catalogue!')})
                     return HttpResponse(t.render(c), mimetype="application/xhtml+xml")
             except TracedServerError, e:
+                #Send pingback ERROR
+                send_pingback(request, {'result_code': -4, 'result_message': 'Error ocurred processing template!'})
                 raise e
             except Exception, e:
+                #Send pingback ERROR
+                send_pingback(request, {'result_code': -4, 'result_message': 'Error ocurred processing template!'})
+                
                 msg = _('Error ocurred processing template: %s!') % e.message
                 raise TracedServerError(e, {}, request, msg)
                 t = loader.get_template('catalogue_adder.html')
@@ -175,7 +207,37 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
         
     else:
         #Not authenticated or anonymous user => redirecting to login!
-        return render_to_response('catalogue_adder_login.html', {'next': request.META['QUERY_STRING'] }, context_instance=RequestContext(request))
+        params = {'next': request.META['QUERY_STRING'] }
+        
+        if request.REQUEST.has_key('pingback'):
+            params['pingback'] = request.REQUEST['pingback']
+        
+        return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
+
+
+#Send HTTP POST to pingback service with indicated params (FAST)
+def send_pingback(request, params):
+    default_params = {'vendor': None, 'name': None, 'version': None, 'result_code': None, 'result_message': None, 'id': None}
+    default_params.update(params)
+    params = default_params
+    
+    if request.REQUEST.has_key('pingback'):
+        try:
+            url = request.REQUEST['pingback']
+            headers = {'Content-type': 'application/json'}
+            proto, host, cgi = urlparse.urlparse(url)[:3]
+            
+            data = {'GadgetUri': {'Owner': params['vendor'], 'GadgetName': params['name'], 'Version': params['version']}, 'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}, 'Identifier' : params['id']}
+            data = simplejson.dumps(data)
+            
+            # HTTP call
+            conn = httplib.HTTPConnection(host)
+            conn.request("POST", cgi, data, headers)
+            res = conn.getresponse()
+            conn.close()
+        except:
+            pass
+
 
 def public_ws_viewer(request, public_ws_id):
     """ EzWeb viewer """

@@ -205,20 +205,19 @@ h3{
 }
 
 /* Initialization code */
-	function setLanguage(language) {
-		
-		document.getElementById("language").value = language;
-		document.getElementById("languages").submit();
-		
-		return false;
-	}
+    function sendCancel() {
+        {% if gadget %}
+        document.getElementById("pingback_cancel").value = 'true';
+        document.getElementById("main_form").submit();
+        {% endif %}
+    }
 
 </script>
 
 
 </head>
 
-<body>
+<body onbeforeunload="javascript:sendCancel();">
 
 <!-- HEADER -->
 <div id="header">
@@ -226,13 +225,6 @@ h3{
 		<div id="logo"></div>
 		<div id="greeting">
 			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
-			 <div class="languages">
-			 	<form id="languages" action="/i18n/setlang/" method="post">
-					<input name="next" type="hidden" value="/accounts/login/?next=/" />
-					<input id="language" name="language" type="hidden" value="{{ LANGUAGE_CODE }}"/>
-				</form>		 
-				  {% for lang in LANGUAGES %} <a href="/" onclick="return setLanguage('{{ lang.0 }}')" ><img title="{{lang.1}}" alt="{{lang.1}}" src="{{ MEDIA_URL }}images/{{ lang.0 }}.png"/></a>{% endfor %}
-			 </div>
 		</div>
 	
 	</div>
@@ -256,10 +248,15 @@ h3{
 		<p><b>Description:</b> {{gadget.description}}</p>
 		<p><b>Wiki:</b> {{wiki_page_uri}}</p>
 	
-		<form action="/interfaces/gadget" method="post">
+		<form id="main_form" action="/interfaces/gadget" method="post">
 		    <input type="hidden" value="{{template_uri}}" name="template_uri" />
+		    {% if pingback %}
+		    <input type="hidden" value="{{pingback}}" name="pingback" />
+		    {% endif %}
+		    <input type="hidden" value="false" name="pingback_cancel" id="pingback_cancel" />
 		    <p><b>Add to Workspace:</b><input type="checkbox" name="add_to_ws" /></p>
-			<input type="submit" value="Add gadget">
+			<input type="submit" value="Add gadget" />
+			<input type="submit" value="Cancel" onclick="javascript:sendCancel();" />
 		</form>
 	{% else %}
 		<a href="/">Go to EzWeb</a>
