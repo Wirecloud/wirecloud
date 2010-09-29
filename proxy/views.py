@@ -59,7 +59,7 @@ class MethodRequest(urllib2.Request):
   def get_method(self):
     return self._method
 
-class Proxy(Resource):
+class Proxy(Resource): 
 
     protocolRE = re.compile('HTTP/(.*)')
     hostRE = re.compile('([^.]+)\.(.*)')
@@ -78,8 +78,6 @@ class Proxy(Resource):
             return e
         
     def create(self, request):
-        import ipdb
-        ipdb.set_trace()
         if not request.user.is_authenticated():
             return HttpResponseForbidden(_('Your must be logged in to access this service'))
 
