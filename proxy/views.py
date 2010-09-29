@@ -78,6 +78,8 @@ class Proxy(Resource):
             return e
         
     def create(self, request):
+        import ipdb
+        ipdb.set_trace()
         if not request.user.is_authenticated():
             return HttpResponseForbidden(_('Your must be logged in to access this service'))
 

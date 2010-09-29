@@ -32,7 +32,7 @@
 
 import urllib, simplejson, httplib, urlparse
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
@@ -47,6 +47,8 @@ from workspace.models import WorkSpace
 from layout.models import Layout
 
 from catalogue.templateParser import TemplateParser
+from gadget.models import *
+from catalogue.models import *
 
 from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.conf import settings
@@ -68,7 +70,6 @@ def index(request, user_name=None, template="/"):
         return render_ezweb(request, user_name, template)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
-
 
 @login_required
 def wiring(request, user_name=None):
@@ -99,6 +100,29 @@ def redirected_login(request):
                 request.session.delete_test_cookie()
             
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
+
+#Send HTTP POST to pingback service with indicated params (FAST)
+def send_pingback(request, params):
+    default_params = {'vendor': None, 'name': None, 'version': None, 'result_code': None, 'result_message': None, 'id': None}
+    default_params.update(params)
+    params = default_params
+    
+    if request.REQUEST.has_key('pingback'):
+        try:
+            url = request.REQUEST['pingback']
+            headers = {'Content-type': 'application/json'}
+            proto, host, cgi = urlparse.urlparse(url)[:3]
+            
+            data = {'GadgetUri': {'Owner': params['vendor'], 'GadgetName': params['name'], 'Version': params['version']}, 'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}, 'Identifier' : params['id']}
+            data = simplejson.dumps(data)
+            
+            # HTTP call
+            conn = httplib.HTTPConnection(host)
+            conn.request("POST", cgi, data, headers)
+            res = conn.getresponse()
+            conn.close()
+        except:
+            pass
 
 def add_gadget_script(request, fromWGT = False, user_action = True):
     if (request.method.lower() == "post"):
@@ -214,30 +238,86 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
         
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
-
-#Send HTTP POST to pingback service with indicated params (FAST)
-def send_pingback(request, params):
-    default_params = {'vendor': None, 'name': None, 'version': None, 'result_code': None, 'result_message': None, 'id': None}
-    default_params.update(params)
-    params = default_params
-    
-    if request.REQUEST.has_key('pingback'):
+def update_gadget_script(request, fromWGT = False, user_action = True):
+    if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
+        if request.REQUEST.has_key('pingback'):
+            #Send pingback CANCEL
+            send_pingback(request, {'result_code': -1, 'result_message': 'Cancel by the user'})
+        #Redirect
+        return HttpResponseRedirect('/')
+        
+    """ Page for adding gadgets to catalogue without loading EzWeb """
+    if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
+        if (request.REQUEST.has_key('gadget_vendor') and request.REQUEST.has_key('gadget_name') and request.REQUEST.has_key('gadget_version')):
+            vendor  = request.REQUEST['gadget_vendor']
+            name    = request.REQUEST['gadget_name']
+            version = request.REQUEST['gadget_version']
+        else:
+            #Send pingback ERROR
+            send_pingback(request, {'result_code': -2, 'result_message': 'Invalid params for gadget update! (gadget_vendor, gadget_name, gadget_version)'})
+            
+            #template_uri not specified!
+            t = loader.get_template('catalogue_adder.html')
+            c = Context({'msg': _('Invalid params for gadget update! (gadget_vendor, gadget_name, gadget_version)')})
+            return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
+            
         try:
-            url = request.REQUEST['pingback']
-            headers = {'Content-type': 'application/json'}
-            proto, host, cgi = urlparse.urlparse(url)[:3]
+            resource = GadgetResource.objects.get(short_name=name, vendor=vendor, version=version)
+        except Exception, e:
+            #Send pingback ERROR
+            send_pingback(request, {'result_code': -3, 'result_message': 'Invalid gadget info! Please, specify a valid one!'})
             
-            data = {'GadgetUri': {'Owner': params['vendor'], 'GadgetName': params['name'], 'Version': params['version']}, 'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}, 'Identifier' : params['id']}
-            data = simplejson.dumps(data)
+            #Error parsing the template
+            t = loader.get_template('catalogue_adder.html')
+            c = Context({'msg': _('Invalid gadget info! Please, specify a valid one!')})
+            return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
             
-            # HTTP call
-            conn = httplib.HTTPConnection(host)
-            conn.request("POST", cgi, data, headers)
-            res = conn.getresponse()
-            conn.close()
-        except:
+        gadget = None
+        try:
+            gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
+        except Exception, e:
             pass
-
+            
+        try:
+            if gadget != None:
+                xhtml = XHTML.objects.get(id=gadget.xhtml.id)
+                xhtml_code = xhtml.code
+                
+                content_type = gadget.xhtml.content_type
+                if not content_type:
+                    content_type = 'text/html'
+                    
+                #if not xhtml.cacheable:
+                if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
+                    xhtml.code = get_xhtml_content(xhtml.url)
+                else:
+                    xhtml.code = download_http_content(xhtml.url, user=request.user)
+                xhtml.save()
+        except Exception, e:
+            #Send pingback ERROR
+            send_pingback(request, {'result_code': -4, 'result_message': 'XHTML code is not accessible!'})
+            
+            #Error parsing the template
+            t = loader.get_template('catalogue_adder.html')
+            c = Context({'msg': _('XHTML code is not accessible!')})
+            return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
+            
+        #Send pingback OK
+        send_pingback(request, {'vendor': vendor, 'name': name, 'version': version, 'id': resource.id, 'result_code': 0, 'result_message': 'Success'})
+        
+        # Gadget updated!
+        t = loader.get_template('catalogue_adder.html')
+        c = Context({'msg': _('Gadget updated correctly!')})
+        return HttpResponse(t.render(c), mimetype="application/xhtml+xml")
+        
+    else:
+        #Not authenticated or anonymous user => redirecting to login!
+        params = {'next': request.META['QUERY_STRING'] }
+        
+        if request.REQUEST.has_key('pingback'):
+            params['pingback'] = request.REQUEST['pingback']
+        
+        return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
 def public_ws_viewer(request, public_ws_id):
     """ EzWeb viewer """

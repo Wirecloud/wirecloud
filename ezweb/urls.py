@@ -42,5 +42,8 @@ urlpatterns = patterns('ezweb.views',
     (r'^interfaces/login/service$', 'redirected_login'),
    
     # HTML interfaces
-    (r'^interfaces/gadget$', 'add_gadget_script')
+    # Create gadget
+    (r'^interfaces/gadget$', 'add_gadget_script'),
+    # Update gadget
+    (r'^interfaces/update_gadget$', 'update_gadget_script')
 )
