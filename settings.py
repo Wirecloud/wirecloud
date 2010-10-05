@@ -206,7 +206,7 @@ AUTHENTICATION_BACKENDS = (
 #'authentication.anonymousaccess.AnonymousBackend',
 #'openid_auth.models.OpenIDBackend',
 #'authentication.ldapaccess.LDAPBackend',
-'authentication.ezsteroidsaccess.EzSteroidsBackend',
+#'authentication.ezsteroidsaccess.EzSteroidsBackend',
 'django.contrib.auth.backends.ModelBackend',
 #'facebookconnect.models.FacebookBackend',
 #'authentication.twitteroauth.TwitterBackend',

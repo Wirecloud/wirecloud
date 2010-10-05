@@ -59,7 +59,7 @@ class MethodRequest(urllib2.Request):
   def get_method(self):
     return self._method
 
-class Proxy(Resource): 
+class Proxy(Resource):
 
     protocolRE = re.compile('HTTP/(.*)')
     hostRE = re.compile('([^.]+)\.(.*)')
