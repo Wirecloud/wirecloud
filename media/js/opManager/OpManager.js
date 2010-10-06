@@ -593,13 +593,15 @@ var OpManagerFactory = function () {
 			//this.workSpaceInstances.remove(workSpaceId);
 		}
 
-		OpManager.prototype.removeWorkSpace = function(workSpaceId){
+		OpManager.prototype.removeWorkSpace = function(workSpaceId) {
 			if (this.workSpaceInstances.keys().length <= 1) {
-				var msg = "there must be one workspace at least";
+				var msg = gettext("there must be one workspace at least");
 				msg = interpolate(gettext("Error removing workspace: %(errorMsg)s."), {errorMsg: msg}, true);
 
 				LogManagerFactory.getInstance().log(msg);
-				LayoutManagerFactory.getInstance().hideCover();
+				var layoutManager = LayoutManagerFactory.getInstance();
+				layoutManager.hideCover();
+				layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 				return false;
 			}
 
