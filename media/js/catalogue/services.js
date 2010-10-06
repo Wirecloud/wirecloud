@@ -422,24 +422,37 @@ var CatalogueResourceSubmitter = function () {
       // processing command
       this.process();
     }
-    
-    var error_callback = function(transport, e) {
-  	  var logManager = LogManagerFactory.getInstance();
-  	  var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
-  	
-  	  logManager.log(msg);
-  	
-  	  // processing command
-  	  this.process();
-    }
-    
-    var response_command = new ResponseCommand(this.resp_command_processor, this);
-    response_command.set_id('REPEAT_SEARCH');
 
-    //Send request to delete de gadget
-    this.persistence_engine.send_delete(url, response_command, success_callback, error_callback);
+    var error_callback = function(transport, e) {
+      var logManager = LogManagerFactory.getInstance();
+      var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
+
+      logManager.log(msg);
+
+      // processing command
+      this.process();
+    }
+
+    var doRequest = function() {
+      var response_command = new ResponseCommand(this.resp_command_processor, this);
+      response_command.set_id('REPEAT_SEARCH');
+
+      //Send request to delete de gadget
+      this.persistence_engine.send_delete(url, response_command, success_callback, error_callback);
+    }
+
+    // First ask the user
+    var msg = gettext('Do you really want to remove the "%(name)s" (vendor: "%(vendor)s", version: "%(version)s") gadget?');
+    var context = {
+      name: resource.getName(),
+      vendor: resource.getVendor(),
+      version: resource.getVersion()
+    };
+
+    msg = interpolate(msg, context, true);
+    LayoutManagerFactory.getInstance().showYesNoDialog(msg, doRequest.bind(this));
   }
-  
+
   this.update_resource_html = function (resource) {
 	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion()};
     
