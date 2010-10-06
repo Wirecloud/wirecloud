@@ -38,15 +38,15 @@ function WorkSpace (workSpaceState) {
 			
 		}
 	}
-	
+
 	//unset the handlers of the workspace toolbar buttons
-	WorkSpace.prototype._unloadToolbar = function(){
+	WorkSpace.prototype._unloadToolbar = function() {
 		if (this.getHeader()) {
 			this.wiringInterface.unsetToolbarButton(this.wiring_link);
 			CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
-		}		
+		}
 	}
-	
+
 	WorkSpace.prototype._initAllToolbars = function () {
 		this._initToolbar();									//workspace toolbar
 		this.wiringInterface.initToolbar();				//wiring toolbar
@@ -55,10 +55,11 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype._unloadAllToolbars = function () {
-		this._unloadToolbar();								//workspace toolbar
-		this.wiringInterface.unloadToolbar();			//wiring toolbar
-		CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
-		
+		if (this.valid) {
+			this._unloadToolbar();								//workspace toolbar
+				this.wiringInterface.unloadToolbar();			//wiring toolbar
+				CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
+		}
 	}
 	
 	WorkSpace.prototype._manageAddTabElement = function(locked){
