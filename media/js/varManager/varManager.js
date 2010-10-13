@@ -90,12 +90,20 @@ function VarManager (_workSpace) {
 			
 			variables['igadgetVars'] = this.igadgetModifiedVars;
 			variables['workspaceVars'] = this.workspaceModifiedVars;
-			
-			var param = {variables: Object.toJSON(variables)};
-			
+
 			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
 
-			PersistenceEngineFactory.getInstance().send_update(uri, param, this, onSuccess, onError);
+			var options = {
+				method: 'PUT',
+				requestHeaders: {
+					'Content-Type': 'application/json'
+				},
+				postBody: Object.toJSON(variables),
+				onSuccess: onSuccess.bind(this),
+				onFailure: onError.bind(this),
+				onException: onError.bind(this)
+			};
+			PersistenceEngineFactory.getInstance().send(uri, options);
 			this.resetModifiedVariables();
 		}
 	}
@@ -177,13 +185,21 @@ function VarManager (_workSpace) {
 		
 		return variable.get();
 	}
-	
+
 	VarManager.prototype.setVariable = function (iGadgetId, variableName, value) {
+		if (typeof(value) !== 'string') {
+			var transObj = {iGadgetId: iGadgetId, varName: variableName};
+			var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
+			OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
+
+			throw new Error();
+		}
+
 		var variable = this.findVariable(iGadgetId, variableName);
-		
+
 		variable.set(value);
 	}
-	
+
 	VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
 		var variables = this.pendingVariables[iGadgetId];
 		if (!variables){

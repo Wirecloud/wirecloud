@@ -619,36 +619,42 @@ class TabEntry(Resource):
 
 
 class WorkSpaceVariableCollection(Resource):
-    
+
     @transaction.commit_on_success
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
-        
-        received_json = PUT_parameter(request, 'variables')
-        
+
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
+
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            received_json = PUT_parameter(request, 'variables')
+
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("variables JSON expected")), mimetype='application/xml; charset=UTF-8')
-        
+
         try:
             variables = simplejson.loads(received_json)
-            
+
             igadgetVariables = variables['igadgetVars']
             workSpaceVariables = variables['workspaceVars']
-            
+
             for wsVar in workSpaceVariables:
                 wsVarDAO = WorkSpaceVariable.objects.get(pk=wsVar['id'])
-                
+
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=wsVarDAO.abstract_variable)
-                   
+
                 variable_value.value=unicode(wsVar['value'])
                 variable_value.save()
 
-            
             variables_to_notify = []
             for igVar in igadgetVariables:
                 igVarDAO = Variable.objects.get(pk=igVar['id'])
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
-    
+
                 if igVar.has_key('shared'):
                     if not igVar['shared']:
                         #do not share the value: remove the relationship
@@ -660,7 +666,7 @@ class WorkSpaceVariableCollection(Resource):
                         #share the specified value
                         variable_value.shared_var_value.value = unicode(igVar['value'])
                         variable_value.shared_var_value.save()
-                        
+
                         #notify the rest of variables that are sharing the value
                         #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
                         variable_values = VariableValue.objects.filter(shared_var_value= variable_value.shared_var_value).exclude(id=variable_value.id)
@@ -680,19 +686,19 @@ class WorkSpaceVariableCollection(Resource):
                             except Variable.DoesNotExist:
                                 #it's not from the same workspace. Do nothing
                                 pass
-                                
-   
+
+
                 variable_value.value=unicode(igVar['value'])
                 variable_value.save()
-                
+
             data = {'igadgetVars':variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
-            
+
         except Exception, e:
             transaction.rollback()
             msg = _("cannot update variables: ") + unicode(e)
-            
-            raise TracedServerError(e, variables, request, msg)
+
+            raise TracedServerError(e, received_json, request, msg)
 
 class WorkSpaceChannelCollection(Resource):
     def read(self, request, workspace_id):
