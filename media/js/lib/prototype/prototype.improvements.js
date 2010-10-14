@@ -243,7 +243,6 @@ Ajax.Request.prototype.request = function(url) {
       this.transport.onreadystatechange = this.onStateChange.bind(this);
       this.setRequestHeaders();
 
-//      this.body = this.method == 'post' ? (this.options.postBody || params) : null;
       this.body = ['put', 'post'].include(this.method) ? (this.options.postBody || params) : null;
       this.transport.send(this.body);
 
@@ -255,7 +254,46 @@ Ajax.Request.prototype.request = function(url) {
     catch (e) {
       this.dispatchException(e);
     }
-  }
+}
+
+Ajax.Request.prototype.setRequestHeaders = function() {
+    var headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-Prototype-Version': Prototype.Version,
+      'Accept': 'text/javascript, text/html, application/xml, text/xml, */*'
+    };
+
+    if (['post', 'put'].include(this.method)) {
+        headers['Content-type'] = this.options.contentType +
+            (this.options.encoding ? '; charset=' + this.options.encoding : '');
+
+        /* Force "Connection: close" for older Mozilla browsers to work
+         * around a bug where XMLHttpRequest sends an incorrect
+         * Content-length header. See Mozilla Bugzilla #246651.
+         */
+        if (this.transport.overrideMimeType &&
+            (navigator.userAgent.match(/Gecko\/(\d{4})/) || [0,2005])[1] < 2005) {
+            headers['Connection'] = 'close';
+        }
+    }
+
+    // user-defined headers
+    if (typeof this.options.requestHeaders == 'object') {
+        var extras = this.options.requestHeaders;
+
+        if (typeof extras.push == 'function') {
+            for (var i = 0, length = extras.length; i < length; i += 2) {
+                headers[extras[i]] = extras[i+1];
+            }
+        } else {
+            $H(extras).each(function(pair) { headers[pair.key] = pair.value });
+        }
+    }
+
+    for (var name in headers) {
+        this.transport.setRequestHeader(name, headers[name]);
+    }
+};
 
 Ajax.Base.prototype.setOptions = function(options) {
 	this.options = {
