@@ -95,9 +95,7 @@ function VarManager (_workSpace) {
 
 			var options = {
 				method: 'PUT',
-				requestHeaders: {
-					'Content-Type': 'application/json'
-				},
+				contentType: 'application/json',
 				postBody: Object.toJSON(variables),
 				onSuccess: onSuccess.bind(this),
 				onFailure: onError.bind(this),
