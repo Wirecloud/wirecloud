@@ -27,38 +27,42 @@
 function WorkSpace (workSpaceState) {
 
 
-	//set the proper handlers to the workspace toolbar buttons	
-	WorkSpace.prototype._initToolbar = function(){
-		if (this.getHeader()) {			
+	//set the proper handlers to the workspace toolbar buttons
+	WorkSpace.prototype._initToolbar = function () {
+		if (this.getHeader()) {
 			//set the handlers
-			if (this.wiring_link)
+			if (this.wiring_link) {
 				this.wiringInterface.setToolbarButton(this.wiring_link);
-			if (this.catalogue_link)
+			}
+			if (this.catalogue_link) {
 				CatalogueFactory.getInstance().setToolbarButton(this.catalogue_link);
-			
+			}
 		}
 	}
 
 	//unset the handlers of the workspace toolbar buttons
 	WorkSpace.prototype._unloadToolbar = function() {
 		if (this.getHeader()) {
-			this.wiringInterface.unsetToolbarButton(this.wiring_link);
-			CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
+			if (this.wiring_link) {
+				this.wiringInterface.unsetToolbarButton(this.wiring_link);
+			}
+			if (this.catalogue_link) {
+				CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
+			}
 		}
 	}
 
 	WorkSpace.prototype._initAllToolbars = function () {
-		this._initToolbar();									//workspace toolbar
+		this._initToolbar();							//workspace toolbar
 		this.wiringInterface.initToolbar();				//wiring toolbar
 		CatalogueFactory.getInstance().initToolbar();	//catalogue toolbar
-		
 	}
-	
+
 	WorkSpace.prototype._unloadAllToolbars = function () {
 		if (this.valid) {
-			this._unloadToolbar();								//workspace toolbar
-				this.wiringInterface.unloadToolbar();			//wiring toolbar
-				CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
+			this._unloadToolbar();							//workspace toolbar
+			this.wiringInterface.unloadToolbar();			//wiring toolbar
+			CatalogueFactory.getInstance().unloadToolbar();	//catalogue toolbar
 		}
 	}
 	
@@ -179,6 +183,7 @@ function WorkSpace (workSpaceState) {
 			
 			this.remoteChannelManager = new RemoteChannelManager(this.wiring);
 
+			this.restricted = this.isShared() || this.forceRestrictedSharing();
 			this.valid = true;
 
 			if (tabs.length > 0) {
@@ -772,7 +777,7 @@ function WorkSpace (workSpaceState) {
 
 	//Check if a workspace is shared with another users
 	WorkSpace.prototype.isShared = function() {
-		return this.workSpaceState['shared'] || this.forceRestrictedSharing();
+		return this.workSpaceState['shared'];
 	}
 
 	//Check if the workspace has to be forced to work as a Shared environment (IE6 only)
@@ -782,7 +787,7 @@ function WorkSpace (workSpaceState) {
 
 
 	/**
-	 * Check when an action, defined by a basic policy, can be performed.
+	 * Checks when an action, defined by a basic policy, can be performed.
 	 */
 	WorkSpace.prototype._isAllowed = function (action) {
 		return EzSteroidsAPI.is_activated() ?
@@ -795,7 +800,7 @@ function WorkSpace (workSpaceState) {
 	 */
 	WorkSpace.prototype.isAllowed = function (action) {
 
-		if (action != "add_remove_workspaces" && (!this.valid || this.shared))
+		if (action != "add_remove_workspaces" && (!this.valid || this.restricted))
 			return false;
 
 		switch (action) {
@@ -803,7 +808,7 @@ function WorkSpace (workSpaceState) {
 			return this._isAllowed('add_remove_igadgets') || this._isAllowed('merge_workspaces');
 		case "catalogue_view_gadgets":
 			return this._isAllowed('add_remove_igadgets');
-		case "catalogue_view_gadgets":
+		case "catalogue_view_mashups":
 			return this.isAllowed('add_remove_workspaces') || this.isAllowed('merge_workspaces');
 		default:
 			return this._isAllowed(action);
@@ -829,16 +834,17 @@ function WorkSpace (workSpaceState) {
 	
 	
 	/*
-	 * Menu with the options to configure the workspace 
+	 * Menu with the options to configure the workspace
 	 */
 	WorkSpace.prototype._createConfigurationMenu = function(){
 		var idMenu = 'config_menu_'+this.workSpaceState.id;
 
 		this.confMenu = this._initMenu(idMenu);
-		
+
 		/*** Add to the menu the proper options ***/
 		var optionPosition = 0;
-		
+		var nworkspaces = OpManagerFactory.getInstance().workSpaceInstances.keys().length;
+
 		// Mark as active option
 		if (this.valid && !this.workSpaceGlobalInfo.workspace.active) {
 			this.activeEntryId = this.confMenu.addOption(gettext("Initial"),
@@ -864,8 +870,9 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
+
 		// Delete option
-		if (this.isAllowed('add_remove_workspaces')) {
+		if ((nworkspaces > 1) && !this.restricted && this.isAllowed('add_remove_workspaces')) {
 			this.confMenu.addOption(gettext("Remove"),
 				function() {
 					var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
@@ -874,12 +881,12 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
+
 		//Merge workspace option
-		if (this.isAllowed('merge_workspaces') && 
-			(OpManagerFactory.getInstance().workSpaceInstances.keys().length > 1)) { //there are several workspaces
-			
+		if ((nworkspaces > 1) && this.isAllowed('merge_workspaces')) {
+
 			// mergeWith workspace Menu
-			var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;		
+			var idMergeMenu = 'mergeMenu_'+this.workSpaceState.id;
 			this.mergeMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idMergeMenu);
 			
 			this.confMenu.addOption(gettext("Merge"),
@@ -1200,9 +1207,9 @@ function WorkSpace (workSpaceState) {
 		logManager.log(msg);
 	}.bind(this);
 
-	this._update_creator_options = function() {	
-		Element.extend(document.body);	
-		if (this.isShared()) {
+	this._update_creator_options = function() {
+		Element.extend(document.body);
+		if (this.restricted) {
 			document.body.addClassName('shared');
 		} else {
 			document.body.removeClassName('shared');

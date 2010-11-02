@@ -175,13 +175,12 @@ WiringInterface.prototype.unloadToolbar = function(){
  * This function knows which handler matches the wiring link in the toolbar
  * @param {HTML element} wiringLinkElement
  */
-WiringInterface.prototype.setToolbarButton = function (wiringLinkElement){
+WiringInterface.prototype.setToolbarButton = function (wiringLinkElement) {
 	Event.observe(wiringLinkElement,
 				"click",
 				_buttonHandler,
-				false,
-				"show_wiring"
-				); 
+				false
+				);
 }
 
 /**
