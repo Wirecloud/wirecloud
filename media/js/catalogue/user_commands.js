@@ -60,20 +60,38 @@ var ViewAllCommand  = function (dom_element, html_event, service_facade, dom_wra
 /////////////////////////////////
 
 var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
-  this.anonymous_function = function(event) { 
-	if (event.keyCode && event.keyCode != '13') {
-	  // Do nothing!
-	  return;
+	this._anonymous_function = function() {
+		this.services.search('SIMPLE_SEARCH', this.data['starting_page'], this.data['boolean_operator'], this.data['scope'], this.data['criteria']);
 	}
 
-    this.services.search('SIMPLE_SEARCH', this.data['starting_page'], this.data['boolean_operator'], this.data['scope'], this.data['criteria']);
-  }
-	
-  UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
+	this.anonymous_function = function(event) {
+
+		switch (event.keyCode) {
+		case 16: // shift
+		case 17: // ctrl
+		case 18: // alt
+			return;
+
+		case 13: // enter
+			// Inmediate search
+
+			this._anonymous_function();
+
+		default:
+			// Cancel current timeout
+			if (this.timeout != null) {
+				clearTimeout(this.timeout);
+			}
+		}
+
+		this.timeout = setTimeout(this._anonymous_function.bind(this), 700);
+	}
+
+	UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data);
 }
 
 var InstantiateCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
-  this.anonymous_function = function(event) {   
+  this.anonymous_function = function(event) {
 	var resource = this.data;;
 	  
 	//contratable resources
