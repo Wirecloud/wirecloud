@@ -98,14 +98,34 @@ class Resources(Resource):
 		try:
 			# Create temporal folder, user temporal folder and gadgets folder
 			info.create_folders()
-		except Exception, e:
-			msg = _("Error creating deployment dirs: %(errorMsg)s")
+
+		except EnvironmentError, e:
+			errorMsg = e.strerror
+			if e.errno == errno.EPERM:
+				errorMsg = _('Permission denied')
+
+			msg = _("Error creating deployment dirs: %(errorMsg)s") % {'errorMsg': errorMsg}
 
 			e = TracedServerError(e, {}, request, msg)
-
 			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
 
-			msg = log_detailed_exception(request, e)
+			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
+
+		except Exception, e:
+			if hasattr(e, 'msg'):
+				errorMsg = e.msg
+			elif hasattr(e, 'message'):
+				errorMsg = e.message
+			else:
+				errorMsg = _('unkwon reason')
+
+			msg = _("Error creating deployment dirs: %(errorMsg)s") % {'errorMsg': errorMsg}
+
+			e = TracedServerError(e, {}, request, msg)
+			log_request(request, None, 'access')
+			log_detailed_exception(request, e)
+
 			return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
 		# Copy .wgt file into user temporal folder and extract file .wgt into 

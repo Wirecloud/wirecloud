@@ -38,15 +38,15 @@ class TracedServerError(Exception):
     
     def get_inner_exception_info(self):
         return self.info
-    
+
     def get_inner_exception_message(self):
         if self.msg:
             return self.msg
-    	elif hasattr(self.exception, 'msg'):
-    	    return self.exception.msg
+        elif hasattr(self.exception, 'msg'):
+            return self.exception.msg
         else:
             return self.inner_exception_description
-        
+
     def print_trace(self):
         buffer = StringIO.StringIO()
         
