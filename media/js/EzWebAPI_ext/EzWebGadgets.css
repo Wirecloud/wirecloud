@@ -1,0 +1,914 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #EDECEB;
+}
+
+div.loading {
+  background: white url(images/loading.gif) no-repeat center center;
+  position:   absolute;
+  top:        0px;
+  left:       0px;
+  right:      0px;
+  bottom:     0px;
+  z-index:    100000;
+}
+
+div {
+  margin: 0;
+  padding: 0;
+}
+
+div.center {
+  margin-left:  auto;
+  margin-right: auto;
+  text-align:   center;
+}
+
+div.buttons {
+  white-space: nowrap;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.disabled {
+    background: #E0E0E0;
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+}
+
+p {
+  margin: 0.5em 3px;
+}
+/*****************************************************************************/
+/*                              StyledElements                               */
+/*****************************************************************************/
+
+/* Styled container */
+
+div.container {
+  background: transparent;
+}
+
+div.container .disable-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  right: 0;
+  background: #E0E0E0;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  z-index: 1111111;
+}
+
+/* Styled Select */
+
+div.styled_select {
+  position: relative;
+  white-space: nowrap;
+  width:    10em;
+}
+
+div.styled_select div.text {
+  height:   20px;
+  margin:   0 22px 1px 4px;
+  overflow: hidden;
+  padding:  1px 0;
+  width:    auto;
+}
+
+div.styled_select div.arrow {
+  background: transparent url(images/styledElements/select_button.png) no-repeat scroll 0 0;
+  height:   20px;
+  position: absolute;
+  right:    0px;
+  top:      0px;
+  width:    20px;
+  z-index:  2;
+}
+
+div.styled_select select {
+  border:   0 none;
+  display:  block;
+  height:   20px;
+  opacity:  0;
+  filter:   alpha(opacity=0);
+  position: absolute;
+  left:     0;
+  top:      0;
+  width:    100%;
+  z-index:  3;
+}
+
+/* Styled List */
+
+div.styled_list {
+  height:   20em;
+  position: relative;
+  margin:   3px;
+  white-space: nowrap;
+  width:    10em;
+  overflow: hidden;
+}
+
+div.styled_list > div {
+  position: absolute;
+  overflow: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+div.styled_list.full {
+  width:  100%;
+  height: 100%;
+  margin: 0px;
+}
+
+div.styled_list.full > div {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 3px;
+  bottom: 3px;
+}
+
+div.styled_list div.row {
+  white-space: nowrap;
+  overflow:    hidden;
+  width:       auto;
+  cursor:      pointer;
+}
+
+div.styled_list div.row.selected {
+  padding:    1px 0;
+  background: #A1BDE1
+}
+
+/* Styled Text Field */
+
+div.styled_text_field {
+  padding: 0;
+  width:   10em;
+  font-size: 13px;
+}
+
+div.styled_text_field div {
+  border:  0px none;
+  margin:  1px 4px 0px 4px;
+  padding: 0px;
+  width:   auto;
+}
+
+div.styled_text_field div input {
+  background: white; /* transparent falla en IE8*/
+  border: 0 none;
+  color: black;
+  display: block;
+  height: 18px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+div.styled_text_field div input:focus {
+  outline: 0 none;
+}
+
+/* Styled Password Field */
+
+div.styled_password_field {
+  padding: 0;
+  width:   10em;
+  font-size: 13px;
+}
+
+div.styled_password_field div {
+  border:  0px none;
+  margin:  1px 4px 0px 4px;
+  padding: 0px;
+  width:   auto;
+}
+
+div.styled_password_field div input {
+  background: white; /* transparent falla en IE8*/
+  border: 0 none;
+  color: black;
+  display: block;
+  height: 18px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* Styled Numeric Field */
+
+div.styled_numeric_field {
+  height:   20px;
+  margin:   3px;
+  padding:  0px;
+  position: relative;
+  width:    7em;
+  font-size: 13px;
+}
+
+div.styled_numeric_field div {
+  border:  0px none;
+  margin:  2px 29px 0px 4px;
+  padding: 0px;
+  width:   auto;
+}
+
+div.styled_numeric_field div input {
+  background: white; /* transparent falla en IE8*/
+  border: 0 none;
+  color: black;
+  display: block;
+  height: 17px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+div.styled_numeric_field div.numeric_top_button {
+  position:absolute;
+  z-index:2;
+  padding: 0;
+  margin: 0;
+}
+
+div.styled_numeric_field div.numeric_bottom_button {
+  position:   absolute;
+  z-index:    2;
+  margin: 0;
+  padding: 0;
+}
+
+/* Styled Button */
+
+.styled_button {
+  display: inline-block;
+  margin: 3px;
+  position: relative;
+}
+
+.styled_button > div {
+  cursor: pointer;
+}
+
+.styled_button.disabled > div {
+  cursor: default;
+}
+
+.styled_button > div > div.icon {
+}
+
+.styled_button span {
+  margin: 3px;
+  font-size: 13px;
+}
+
+/* Styled HPaned */
+
+.hpaned {
+  width: 100%;
+  height: 100%;
+  min-width: 5px;
+  position: relative;
+}
+
+.hpaned .leftpanel {
+  position: absolute;
+  left: 0;
+  height:100%;
+  overflow: auto;
+}
+
+.hpaned .rightpanel {
+  right: 0;
+  position: absolute;
+  height:100%;
+  overflow: auto;
+}
+
+.hpaned .handler {
+  position: absolute;
+  width: 5px;
+  height: 100%;
+  background: transparent url(images/styledElements/vhandler.png) no-repeat scroll 0 center;
+  cursor: col-resize;
+  float:left;
+}
+
+/* Styled Notebook */
+
+.notebook {
+  min-width: 5em;
+  min-height: 5em;
+  position: relative;
+  margin: 3px;
+  padding: 0px;
+  overflow: hidden;
+}
+
+.notebook.full {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.notebook.full > div {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  top: 3px;
+  bottom: 3px;
+}
+
+.notebook .tab_wrapper .move_left {
+  color: #AAA;
+  cursor: default;
+  position: absolute;
+  left: 0px;
+  width: 16px;
+  top: 0px !important;
+}
+
+.notebook .tab_wrapper .move_right {
+  color: #AAA;
+  cursor: default;
+  position: absolute;
+  right: 0px;
+  width: 16px;
+  top: 0px;
+}
+
+.notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
+  color: black;
+  cursor: pointer;
+}
+
+.notebook .tab_wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.notebook .tab_area {
+  position: relative;
+  margin: 0 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  z-index: 2;
+}
+
+.notebook .tab_area .tab {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/*
+.notebook .tab_area .tab.selected {
+}
+*/
+
+.notebook .tab_area .tab.hidden {
+  display: none;
+}
+
+.notebook > div > .wrapper {
+  position: absolute;
+  overflow: hidden;
+  padding: 0;
+  z-index: 1;
+}
+
+.notebook > div > .wrapper > div {
+  background: transparent;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  position: absolute;
+  visibility: visible;
+  z-index: 2;
+}
+
+.hidden .notebook > div > .wrapper > div,
+.notebook > div > .wrapper > div.hidden {
+  z-index: 1;
+  visibility: hidden;
+}
+
+.notebook .disable-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  right: 0;
+  background: #E0E0E0;
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+  z-index: 1111111;
+}
+
+/* Styled Alternatives */
+
+.alternatives {
+  min-width: 5em;
+  min-height: 5em;
+  position: relative;
+  margin: 3px;
+  padding: 0px;
+  overflow: hidden;
+}
+
+.alternatives > .wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  padding: 0;
+  z-index: 1;
+}
+
+.alternatives.full {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.alternatives > .wrapper > div {
+  background: transparent;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  position: absolute;
+  visibility: visible;
+  z-index: 2;
+}
+
+.hidden > .alternatives > .wrapper > div,
+.alternatives > .wrapper > div.hidden {
+  visibility: hidden;
+  z-index: 1;
+}
+
+/* Styled alert */
+
+.styled_alert {
+  position: absolute;
+  top:      0;
+  right:    0;
+  bottom:   0;
+  left:     0;
+  width:    100%;
+  height:   100%;
+  z-index:  9999;
+}
+
+/* Border Layout */
+
+.border_layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.border_layout > .north_container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  left: 0;
+}
+
+.border_layout > .west_container {
+  position: absolute;
+  left: 0;
+  display: inline-block;
+}
+
+.border_layout > .center_container {
+  position: absolute;
+  overflow: auto;
+}
+
+.border_layout > .east_container {
+  position: absolute;
+  display: inline-block;
+}
+
+.border_layout > .south_container {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  right: 0;
+}
+
+/* Popup menu */
+
+.popup_menu {
+  position: absolute;
+  z-index: 111112;
+  margin: 0;
+}
+
+.popup_menu .menu_item {
+  cursor:hand; cursor: pointer;
+}
+
+.disable-layer {
+  position: absolute;
+  z-index: 111111;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/*****************************************************************************
+ *                              Tema por defecto                             *
+ *****************************************************************************/
+
+/* Styled Select */
+
+div.styled_select {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background:  transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
+  border:      1px solid #888888;
+  color:       white;
+  height:      20px;
+  margin:      3px;
+  font-size:   13px;
+}
+
+/* Styled List */
+
+div.styled_list > div {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  border:      1px solid #888888;
+  background: white;
+}
+
+div.styled_list div.row {
+  padding:    1px 0;
+}
+
+div.styled_list div.row.selected {
+  background: #A1BDE1;
+  color:      #FAFAFA;
+}
+
+/* Styled Text Field */
+
+div.styled_text_field {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: white;
+  border:  1px solid #888888;
+  height:  20px;
+  margin:  3px;
+}
+
+/* Styled Password Field */
+
+div.styled_password_field {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: white;
+  border:  1px solid #888888;
+  height:  20px;
+  margin:  3px;
+}
+
+/* Styled Numeric Field */
+
+div.styled_numeric_field {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  border:     1px solid #888888;
+  background: white none repeat scroll 0 0;
+}
+
+div.styled_numeric_field div.numeric_top_button {
+  -moz-border-radius: 0px 4px 0px 0px;
+  -webkit-border-radius: 0px 4px 0px 0px;
+  border-radius: 0px 4px 0px 0px;
+  background:transparent url(images/styledElements/top_button.png) no-repeat scroll 0px -2px;
+  height: 11px;
+  right:-3px;
+  top:-1px;
+  width:25px;
+  border: 1px solid #888888;
+}
+
+div.styled_numeric_field div.numeric_bottom_button {
+  -moz-border-radius: 0px 0px 4px 0px;
+  -webkit-border-radius: 0px 4px 0px 0px;
+  border-radius: 0px 4px 0px 0px;
+  background: transparent url(images/styledElements/bottom_button.png) no-repeat scroll 0px -1px;
+  height:     10px;
+  right:      -3px;
+  top:        9px;
+  width:      25px;
+  border: 1px solid #888888;
+}
+
+/* Styled Button */
+
+.styled_button {
+}
+
+.styled_button > div {
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #888888;
+  background: transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
+}
+
+.styled_button span {
+  color: white;
+}
+
+.styled_button img.icon {
+  margin: 3px;
+  vertical-align: middle;
+}
+
+/* Styled Notebook */
+
+.notebook .tab_wrapper {
+  font-size: 16px;
+}
+
+.notebook .tab_area {
+  margin: 0 16px;
+  height: 22px;
+}
+
+.notebook .tab_area .tab {
+  -moz-border-radius-topleft:3px;
+  -moz-border-radius-topright:9px;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-top-right-radius: 9px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 9px;
+  background: #CFCDCA;
+  min-width: 5em;
+  border-width: 1px 1px 0 1px;
+  border-style: solid;
+  border-color: #888888 #888888 #F2F1F0 #888888;
+  font-size: 12px;
+  padding:3px 19px 0 3px;
+  margin: 0 3px;
+  height: 17px;
+  line-height: 17px;
+}
+
+.notebook .tab_area .tab img {
+  height: 16px;
+  margin: 0 0.5ex 0 0;
+  position: relative;
+  top: 1px;
+  vertical-align: sub;
+}
+
+.notebook .tab_area .tab .close_button {
+  position: absolute;
+  right: 3px;
+  top: 3px;
+  height: 16px;
+  overflow: hidden;
+  margin: 0px;
+}
+
+.notebook .tab_area .tab .close_button span {
+  font-size: 10px;
+  color: black;
+}
+
+.notebook .tab_area .tab .close_button div {
+  border: 0px none;
+  background: transparent;
+}
+
+.notebook .tab_area .tab.selected {
+  height: 18px;
+  border-bottom: 0 none;
+  background: #EDECEB url(images/styledElements/selectedTab.png) repeat-x scroll 0 0;
+}
+
+.notebook > div > .wrapper {
+  -moz-border-radius: 3px;
+  background: white;
+  border: 1px solid #888888;
+  top: 21px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.notebook > div > .wrapper > div {
+  -moz-border-radius: 2px;
+  padding: 3px;
+}
+
+/* Styled alert */
+
+.styled_alert .background{
+	width:100%;
+	height:100%;
+	position:absolute;
+	background-color:white;
+	filter:alpha(opacity=50);
+	-moz-opacity:0.6;
+	-khtml-opacity: 0.6;
+	opacity: 0.6;
+}
+
+.styled_alert .message {
+  -moz-border-radius: 10px;
+  border-style:solid;
+  border-width:2px 4px 4px 2px;
+  background:url(images/degradado.png) no-repeat scroll 0 0;
+  position:absolute;
+  margin:0px;
+  padding:0px;
+}
+
+
+.styled_alert.error .message{
+  border-color:#890000;
+	background-color:#FFACAC;  
+}
+
+.styled_alert.info .message{
+	border-color:#3B7614;
+	background-color:#B6F48E;
+}
+
+.styled_alert.warning .message{
+	border-color:#AB8105;
+	background-color:#FFEFBF;
+}
+
+.styled_alert .message .header > table{
+	margin-top:5px;
+	width:100%;
+}
+
+.styled_alert .message .header{
+	position:relative;
+	top:0px;
+	right:0px;
+	left:0px;
+	padding:5px 0px 5px 5px
+}
+
+.styled_alert .message .header .title{
+  font-family:Sans-serif,Arial,Verdana;
+  font-size:20px;
+  font-style:italic;
+  font-weight:bold;
+  text-align:left;
+  text-shadow:2px 2px 3px #999999;
+}
+
+.styled_alert .message .header .title img{
+  height:24px;
+  width:24px;
+  margin-right:0.5em;
+  vertical-align:-4px;
+}
+
+.styled_alert.warning .message .header .title{
+	color:#AB8105;
+}
+
+.styled_alert.error .message .header .title{
+  color:darkRed;
+}
+
+.styled_alert.info .message .header .title{
+	color:#3B7614;
+}
+
+.styled_alert .message .close_button { 
+  background:transparent url(images/dialog/dialog-cancel-error.png) no-repeat scroll 0 5px;
+	cursor:pointer;
+	width:22px;
+}
+
+.styled_alert.warning .message .close_button { 
+  background:transparent url(images/dialog/dialog-cancel-warning.png) no-repeat scroll 0 5px;
+}
+
+.styled_alert.info .message .close_button { 
+  background:transparent url(images/dialog/dialog-cancel-info.png) no-repeat scroll 0 5px;
+}
+
+.styled_alert .message .content {
+  margin:0px 5px 5px 5px;
+	position:relative;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	overflow:auto;
+}
+
+/* Pagination Interface */
+.pagination .styled_button {
+  vertical-align: middle;
+}
+
+.pagination .styled_button div {
+  -moz-border-radius: 0px;
+  border: none;
+}
+
+.pagination .go-first-button div {
+  width: 16px;
+  height: 16px;
+  background: transparent url("images/styledElements/go-first.png") no-repeat center center;
+}
+
+.pagination .go-prev-button div {
+  width: 16px;
+  height: 16px;
+  background: transparent url("images/styledElements/go-previous.png") no-repeat center center;
+}
+
+.pagination .go-next-button div {
+  width: 16px;
+  height: 16px;
+  background: transparent url("images/styledElements/go-next.png") no-repeat center center;
+}
+
+.pagination .go-last-button div {
+  width: 16px;
+  height: 16px;
+  background: transparent url("images/styledElements/go-last.png") no-repeat center center;
+}
+
+/* Popup menu */
+
+.popup_menu {
+  padding: 0;
+  background: #FFFFFF;
+  border: 1px solid #888888;
+}
+
+.popup_menu .menu_item {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin: 0.4ex;
+  padding: 0.3ex;
+}
+
+.popup_menu .menu_item.hovered {
+  background: #FCD18E;
+}
+
+.popup_menu hr {
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: #888888;
+  margin: 0;
+}
+
+

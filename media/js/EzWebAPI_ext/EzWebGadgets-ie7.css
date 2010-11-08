@@ -1,0 +1,20 @@
+/**
+ * In IE 5.5-7 elements which are block by default does not behave as
+ * display:inline-block if they are no configured as inline before.
+ *
+ * Its important to use two rules (one in EzWebGadgets.css and another here),
+ * because otherwise the css engine would only consider one of the display
+ * declarations.
+ */
+.styled_button {
+    display: inline;
+}
+
+.border_layout > .west_container {
+    display: inline;
+}
+
+.border_layout > .east_container {
+    display: inline;
+}
+
