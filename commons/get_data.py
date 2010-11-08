@@ -239,8 +239,8 @@ def get_workspace_data(data, user, workspace):
     data_fields = data['fields']
     data_ret['id'] = data['pk']
     data_ret['name'] = data_fields['name']
-    # First one in the users relationship is the creator of the workspace
-    data_ret['shared'] = workspace.is_shared(user)
+    data_ret['shared'] = workspace.is_shared()
+    data_ret['owned'] = workspace.get_creator() == user
     data_ret['active'] = user_workspace.active
 
     return data_ret

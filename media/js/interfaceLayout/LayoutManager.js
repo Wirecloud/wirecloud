@@ -338,20 +338,20 @@ var LayoutManagerFactory = function () {
 			var renameEvent = tab_object.renameTabHandler;
 			var changeEvent = tab_object.changeTabHandler;
 			var dragger = tab_object.dragger;
-		
+
 			tab.className = "tab";
 			//hide the launcher image for the drop down menu and the dragger from the former current tab
 			var tabOpsLauncher = $(launcher);
 			tabOpsLauncher.setStyle({'display':'none'});
 			$(dragger).setStyle({'display':'none'});
-			
+
 			//Rename is an operation for ws owners!
-			if (! tab_object.workSpace.isShared()) {
+			if (tab_object.workSpace.isOwned()) {
 				Event.stopObserving(tab, 'click', renameEvent);
 			}
-				
+
 			Event.observe(tab, 'click', changeEvent);
-			
+
 			tab.setStyle({"display": "block"}); // TODO
 		}
 
@@ -361,16 +361,15 @@ var LayoutManagerFactory = function () {
 			var renameHandler = tab_object.renameTabHandler;
 			var changeHandler = tab_object.changeTabHandler;
 			var dragger = tab_object.dragger;
-			
-		
+
 			if (tab.className != "tab current") {
 				tab.className = "tab current";
 				
 				var tabOpsLauncher = $(launcher);
 				
-				if (! tab_object.workSpace.isShared())
+				if (tab_object.workSpace.isOwned()) {
 					tabOpsLauncher.setStyle({'display':'inline'});
-					
+				}
 				$(dragger).setStyle({'display':'inline'});
 				
 				tab.setStyle({"display": "block"}); // TODO
@@ -379,12 +378,12 @@ var LayoutManagerFactory = function () {
 				Event.stopObserving(tab, 'click', changeHandler);
 				
 				//Rename is an operation for ws owners!
-				if (! tab_object.workSpace.isShared()) {
+				if (tab_object.workSpace.isOwned()) {
 					Event.observe(tab, 'click', renameHandler);
 				}
 			} else {
 				//Rename is an operation for ws owners!
-				if (! tab_object.workSpace.isShared()) {
+				if (tab_object.workSpace.isOwned()) {
 					Event.stopObserving(tab, 'click', renameHandler);
 				}
 				

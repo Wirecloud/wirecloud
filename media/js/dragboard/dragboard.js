@@ -101,7 +101,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 			position = iGadget.getPosition();
 			iGadgetInfo['id'] = iGadget.id;
 			iGadgetInfo['tab'] = this.tabId;
-			if (!this.workSpace.isShared()) {
+			if (this.workSpace.isOwned()) {
 				iGadgetInfo['minimized'] = iGadget.isMinimized();
 			}
 			if (!iGadget.isInFullDragboardMode()) {
@@ -285,7 +285,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		this.iGadgets = new Hash();
 		this.iGadgetsByCode = new Hash();
 
-		if (this.tab.isLocked() || this.workSpace.isShared()) {
+		if (this.tab.isLocked() || !this.workSpace.isOwned()) {
 			this.fixed = true;
 			this.dragboardElement.addClassName("fixed");
 		}

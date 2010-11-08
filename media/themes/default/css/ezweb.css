@@ -64,7 +64,7 @@ a, a:visited{
 }
 
 #ws_operations_link {
-  	background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
+  background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 
 .global_header .toolbar_menu > div.selected_section {
@@ -77,14 +77,26 @@ a, a:visited{
 }
 
 .global_header .toolbar_menu .first_toolbar_button {
-	-moz-border-radius-bottomleft: 5px;
-	-webkit-border-bottom-left-radius:5px;
-	border-bottom-left-radius:5px;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius:5px;
+  border-bottom-left-radius:5px;
 }
 
 .global_header .last_toolbar_button {
-	-moz-border-radius-bottomright: 5px;
-	-webkit-border-bottom-right-radius:5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius:5px;
+}
+
+#ws_banner .toolbar_menu > div.disabled_button:hover {
+  text-decoration:none;
+  background:#002440;
+  color:#CCC;
+}
+
+#ws_banner .toolbar_menu > div.disabled_button {
+  cursor:default;
+  background:#002440;
+  color:#CCC;
 }
 
 .toolbar_marked, .toolbar_unmarked {

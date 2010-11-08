@@ -50,31 +50,23 @@ class WorkSpace(models.Model):
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
-    
+
     def get_creator(self):
         if self.creator:
             return self.creator
-    
+
         #No creator specified (previous version of the model didn't have this field)
         #First element in the user relationship returned!
         creator = self.users.all()[0]
-        
+
         self.creator = creator
         self.save()
-        
+
         return self.creator
 
-    def is_shared(self, user):
-        if (len(self.users.all()) < 2):
-            return False
+    def is_shared(self):
+        return len(self.users.all()) > 1
 
-        return self.get_creator() != user
-    
-    def has_several_users(self):
-        if (len(self.users.all()) < 2):
-            return False
-        return True
-    
     def setReadOnlyFields(self, readOnly):
         #Get the igadget identifiers
         tabs = self.tab_set.all()

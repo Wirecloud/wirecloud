@@ -84,16 +84,18 @@ def parseAndCreateGadget(request, user, workspaceId):
         
         
     except TemplateParseException, e:
-        msg = _("Error parsing the template: %(msg)s" % {"msg":e.msg})    
+        msg = _("Error parsing the template: %(msg)s" % {"msg":e.msg})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except IntegrityError, e:
-        msg = _("Gadget already exists")    
+        msg = _("Gadget already exists")
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except IOError, e:
-        msg = _("The url is not accesible")    
+        msg = _("The url is not accesible")
         raise TracedServerError(e, {'url': templateURL}, request, msg)
+    except Http403:
+        raise
     except Exception, e:
-        msg = _("Error creating gadget: %(msg)s" % {"msg":str(e)})    
+        msg = _("Error creating gadget: %(msg)s" % {"msg":str(e)})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
 
     

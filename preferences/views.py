@@ -88,12 +88,7 @@ def parseInheritableValues(values):
     return _values
 
 def get_tab_preference_values(tab, user):
-    preferences = parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
-
-    if tab.workspace.is_shared(user):
-      preferences['locked'] = {'value': True};
-
-    return preferences
+    return parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
 
 def update_tab_preferences(tab, preferences_json):
     _currentPreferences = TabPreference.objects.filter(tab=tab)

@@ -37,7 +37,8 @@ from logs_exception import TracedServerError
 
 from commons.authentication import Http403
 
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, HttpResponseServerError, QueryDict
+from django.http import Http404, HttpResponse, HttpResponseNotAllowed, QueryDict
+from django.http import HttpResponseServerError, HttpResponseForbidden
 from django.utils import datastructures
 
 
@@ -57,26 +58,30 @@ class Resource:
         
         self.mimetype = mimetype
     
-    def __call__(self, request, *args, **kwargs):      
+    def __call__(self, request, *args, **kwargs):
         try:
             response = self.dispatch(request, self, *args, **kwargs)
-            
+
             log_request(request, response, 'access')
-            
+
             return response
-        except (HttpMethodNotAllowed, Http403):
+        except Http403:
             log_request(request, None, 'access')
-            
+
+            return HttpResponseForbidden()
+        except HttpMethodNotAllowed:
+            log_request(request, None, 'access')
+
             response = HttpResponseNotAllowed(self.permitted_methods)
             response.mimetype = self.mimetype
             return response
         except TracedServerError, e:
             log_request(request, None, 'access')
-            
+
             msg = log_detailed_exception(request, e)
         except Exception, e:
             log_request(request, None, 'access')
-            
+
             msg = log_exception(request, e)
 
         return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')

@@ -67,7 +67,7 @@ function WorkSpace (workSpaceState) {
 	}
 	
 	WorkSpace.prototype._manageAddTabElement = function(locked){
-		if (this.addTabElement){
+		if (this.addTabElement) {
 			if (this.isAllowed('add_tab')) {
 				if (locked) {
 					this.addTabElement.hide();
@@ -79,7 +79,7 @@ function WorkSpace (workSpaceState) {
 			else {
 				this.addTabElement.hide();
 			}
-		}		
+		}
 	}
 
 	// ****************
@@ -183,7 +183,7 @@ function WorkSpace (workSpaceState) {
 			
 			this.remoteChannelManager = new RemoteChannelManager(this.wiring);
 
-			this.restricted = this.isShared() || this.forceRestrictedSharing();
+			this.restricted = (!this.isOwned() && this.isShared()) || this.forceRestrictedSharing();
 			this.valid = true;
 
 			if (tabs.length > 0) {
@@ -206,8 +206,7 @@ function WorkSpace (workSpaceState) {
 		this._createWorkspaceMenu();
 
 		this._update_creator_options();
-		if (!this.isAllowed('preserve_lock_status'))
-			this._lockFunc(true);
+		this._lockFunc(true);
 
 		//all the modules have been downloaded. Init now all the toolbars:
 		//catalogue, wiring and workspace.
@@ -218,10 +217,10 @@ function WorkSpace (workSpaceState) {
 
 		var workspaceSkin = this.preferences.get('skin');
 		var scriptSkin = ScriptManagerFactory.getInstance().get_theme();
-		
+
 		if (scriptSkin)
 			workspaceSkin = scriptSkin 
-		
+
 		this.skinManager.loadSkin(workspaceSkin);
 
 		layoutManager.logStep('');
@@ -428,7 +427,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.deleteWorkSpace = function() {
-		if(OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)){
+		if (OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)) {
 			var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
 			PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);
 		}
@@ -679,7 +678,7 @@ function WorkSpace (workSpaceState) {
 			this.contextManager=null;
 
 		this._removeWorkspaceMenu();
-				
+
 		//deapply skin
 		this.skinManager.unloadSkin();
 		
@@ -775,12 +774,17 @@ function WorkSpace (workSpaceState) {
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
 	}
 
-	//Check if a workspace is shared with another users
+	// Checks if this workspace is shared with other users
 	WorkSpace.prototype.isShared = function() {
 		return this.workSpaceState['shared'];
 	}
 
-	//Check if the workspace has to be forced to work as a Shared environment (IE6 only)
+	// Checks if the current user is the creator of this workspace
+	WorkSpace.prototype.isOwned = function() {
+		return this.workSpaceState['owned'];
+	}
+
+	// Check if the workspace has to be forced to work as a Shared environment (IE6 only)
 	WorkSpace.prototype.forceRestrictedSharing = function() {
 		return (BrowserUtilsFactory.getInstance().getBrowser() == "IE6");
 	}
@@ -814,25 +818,24 @@ function WorkSpace (workSpaceState) {
 			return this._isAllowed(action);
 		}
 	}
-	
+
 	/*
 	 * General function to create the ToolbarMenu
 	 */
-	WorkSpace.prototype._initMenu = function(idMenu, idSubMenu){
+	WorkSpace.prototype._initMenu = function(idMenu, idSubMenu) {
 		// get the current menu to remove it if it already exists
 		var menuHTML = $(idMenu);
-		if (menuHTML) 
+		if (menuHTML) {
 			menuHTML.remove();
-		
+		}
+
 		// add the DOM element and create the menu
 		menuHTML = '<div id="' + idMenu + '" class="toolbar_menu_small"></div>';
 		new Insertion.Bottom(this.toolbarSection, menuHTML);
 		return new ToolbarMenu(idMenu);
 	}
-	
-	
-	
-	
+
+
 	/*
 	 * Menu with the options to configure the workspace
 	 */
@@ -855,7 +858,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 		}
 		//Rename option
-		if (this.isAllowed('rename')) {
+		if (this.isAllowed('rename_workspaces')) {
 			this.confMenu.addOption(gettext("Rename"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu("renameWorkSpace");
@@ -863,7 +866,7 @@ function WorkSpace (workSpaceState) {
 				optionPosition++);
 		}
 		// Workspace preferences option
-		if (this.isAllowed('change_preferences')) {
+		if (this.isAllowed('change_workspace_preferences')) {
 			this.confMenu.addOption(gettext("Preferences"),
 				function() {
 					LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences);
@@ -895,68 +898,78 @@ function WorkSpace (workSpaceState) {
 				}.bind(this),
 				optionPosition++);
 		}
-		
+
+		if (optionPosition === 0) {
+			this.confLauncher.addClassName('disabled_button');
+			return;
+		}
+
+		this.confLauncher.removeClassName('disabled_button');
+
 		// add the event listener
-		Event.observe(this.confLauncher, 'click', 
+		Event.observe(this.confLauncher, 'click',
 						function(e){
 							var target = BrowserUtilsFactory.getInstance().getTarget(e);
 							target.blur();
 							LayoutManagerFactory.getInstance().showToolbarMenu(this.confMenu, this.confLauncher, this.toolbarSection);
 						}.bind(this));
-		
-	
 	}
-	
-	
-	/* 
+
+
+	/*
 	 * Menu with the share and publish options 
 	 */
 	WorkSpace.prototype._createSharingMenu = function(){
 		var idMenu = 'sharing_menu_'+this.workSpaceState.id;
 
 		this.sharingMenu = this._initMenu(idMenu);
-		
+
 		/*** Add to the menu the proper options ***/
-		var optionPosition = 0;		
-		
-		if (this.isAllowed('share_workspace')) {
+		var optionPosition = 0;
+
+		if (this.isAllowed('share_workspaces')) {
 			this.sharingMenu.addOption(gettext("Share"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('shareWorkSpace');
 				}.bind(this),
 				optionPosition++, null, "share_workspace");
 		}
-		
-		if (this.isAllowed('publish_workspace')) {
-			//TODO:Intermediate window to ask for data (name, description...)		
+
+		if (this.isAllowed('publish_workspaces')) {
 			this.sharingMenu.addOption(gettext("Publish in gallery"),
 				function() {
 					LayoutManagerFactory.getInstance().showWindowMenu('publishWorkSpace');
 				}.bind(this),
 				optionPosition++, null, "publish_workspace");
 		}
-		
+
+		if (optionPosition === 0) {
+			this.sharingLauncher.addClassName('disabled_button');
+			return;
+		}
+
+		this.sharingLauncher.removeClassName('disabled_button');
+
 		// add the event listener
-		Event.observe(this.sharingLauncher, 'click', 
+		Event.observe(this.sharingLauncher, 'click',
 						function(e){
 							var target = BrowserUtilsFactory.getInstance().getTarget(e);
 							target.blur();
 							LayoutManagerFactory.getInstance().showToolbarMenu(this.sharingMenu, this.sharingLauncher, this.toolbarSection);
 						}.bind(this));
-	
 	}
-	
-	/* 
-	 * Menu with the share and publish options 
+
+	/*
+	 * Menu with the share and publish options
 	 */
-	WorkSpace.prototype._createEditMenu = function(){
+	WorkSpace.prototype._createEditMenu = function () {
 		var idMenu = 'edit_menu_'+this.workSpaceState.id;
 
 		this.editMenu = this._initMenu(idMenu);
-		
+
 		/*** Add to the menu the proper options ***/
 		var optionPosition = 0;
-		
+
 		// catalogue access option
 		if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')){
 				var catId = this.editMenu.addOption(gettext("Go to Gallery")+" »",
@@ -967,9 +980,9 @@ function WorkSpace (workSpaceState) {
 								optionPosition++);
 				this.catalogue_link = $(catId)
 		}
-		
+
 		//wiring access option
-		if (this.isAllowed('connect_igadgets')){
+		if (this.isAllowed('show_wiring')) {
 			var wiringId = this.editMenu.addOption(gettext("Go to Wiring tool")+" »",
 								function() {
 									// the action of going to the wiring is set by the own wiring module
@@ -978,7 +991,14 @@ function WorkSpace (workSpaceState) {
 								optionPosition++);
 			this.wiring_link = $(wiringId)
 		}
-				
+
+		if (optionPosition === 0) {
+			this.editLauncher.addClassName('disabled_button');
+			return;
+		}
+
+		this.editLauncher.removeClassName('disabled_button');
+
 		// add the event listener
 		Event.observe(this.editLauncher, 'click',
 						function(e){
@@ -989,9 +1009,8 @@ function WorkSpace (workSpaceState) {
 							}
 							LayoutManagerFactory.getInstance().showToolbarMenu(this.editMenu, this.editLauncher, this.toolbarSection);
 						}.bind(this));
-	
 	}
-	
+
 	
 	/* 
 	 *Menu with the "go to" options 
@@ -1064,13 +1083,13 @@ function WorkSpace (workSpaceState) {
 		
 		//Configuration Menu
 		this._createConfigurationMenu();
-				
+
 		//Sharing menu
 		this._createSharingMenu();
-		
+
 		//Edit Menu
 		this._createEditMenu();
-		
+
 		//Show the initial menu
 		// Show the "My Applications" option unfolded
 		/*LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);*/

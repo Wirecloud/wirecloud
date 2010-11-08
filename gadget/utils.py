@@ -30,6 +30,7 @@
 
 #
 import re
+from commons.authentication import Http403
 from gadget.templateParser import TemplateParser
 from gadget.models import Gadget
 from workspace.models import WorkSpace, UserWorkSpace
@@ -37,13 +38,18 @@ from gadget.htmlHeadParser import HTMLHeadParser
 from django.utils.http import urlquote
 
 def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = False):
+
+    # Check permissions
+    workspace = WorkSpace.objects.get(id=workspaceId)
+    if workspace.get_creator() != user:
+        raise Http403()
+
+
     ########### Template Parser
-    templateParser = None
+    templateParser = TemplateParser(templateURL, user, fromWGT, request)
 
     # Gadget is created only once
-    templateParser = TemplateParser(templateURL, user, fromWGT, request)
     gadget_uri = templateParser.getGadgetUri()
-
     try:
         gadget = Gadget.objects.get(uri=gadget_uri)
     except Gadget.DoesNotExist:
@@ -51,21 +57,21 @@ def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = Fal
         templateParser.parse()
         gadget = templateParser.getGadget()
 
+
     # A new user has added the gadget in his showcase
     # check if the workspace in which the igadget is being added is shared
     # all the user sharing the workspace should have the gadget in their
     # showcases
-    workspace = WorkSpace.objects.get(id=workspaceId)
-    if workspace.has_several_users():
+    if workspace.is_shared():
         # add the gadget to the showcase of every user sharing the workspace
         # there is no problem is the gadget is already in their showcase
         [gadget.users.add(user_ws.user) for user_ws in UserWorkSpace.objects.filter(workspace=workspace)]
     else:
         # add the gadget to the showcase of the user
         gadget.users.add(user)
-        
+
     return {"gadget":gadget, "templateParser":templateParser}
-    
+
 
 def includeTagBase(document, url, request):
     # Get info url Gadget: host, username, Vendor, NameGadget and Version 
