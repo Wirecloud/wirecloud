@@ -41,7 +41,7 @@ from commons.resource import Resource
 
 from django.db import transaction
 
-from commons.authentication import get_user_authentication
+from commons.authentication import get_user_authentication, Http403
 from commons.get_data import get_igadget_data, get_variable_data
 from commons.logs import log
 from commons.utils import get_xml_error, json_encode
@@ -317,17 +317,21 @@ def UpgradeIGadget(igadget, user, request):
 
 def deleteIGadget(igadget, user):
 
+    workspace = igadget.tab.workspace
+    if workspace.get_creator() != user:
+        raise Http403
+
     # Delete all IGadget's variables
     variables = Variable.objects.filter(igadget=igadget)
     for var in variables:
         if (var.vardef.aspect == "SLOT"):
-            Out.objects.get(abstract_variable=var.abstract_variable).delete()
+            Out.objects.filter(abstract_variable=var.abstract_variable).delete()
 
         if (var.vardef.aspect == "EVEN"):
-            In.objects.get(variable=var).delete()
+            In.objects.filter(variable=var).delete()
 
         #Deleting variable value
-        VariableValue.objects.get(abstract_variable=var.abstract_variable, user=user).delete()
+        VariableValue.objects.filter(abstract_variable=var.abstract_variable).delete()
 
         var.abstract_variable.delete()
         var.delete()
