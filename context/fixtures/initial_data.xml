@@ -50,12 +50,18 @@
         <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
     </object>
-	<object pk="twitterauth" model="context.concept">
+    <object pk="twitterauth" model="context.concept">
         <field type="CharField" name="source">PLAT</field>
         <field type="CharField" name="type">ECTX</field>
         <field type="CharField" name="adaptor"><None></None></field>
-    </object>        
-	<object pk="1" model="context.conceptname">
+    </object>
+    <object pk="theme" model="context.concept">
+        <field type="CharField" name="source">PLAT</field>
+        <field type="CharField" name="type">ECTX</field>
+        <field type="CharField" name="adaptor"><None></None></field>
+    </object>
+
+    <object pk="1" model="context.conceptname">
         <field type="CharField" name="name">user_name</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">username</field>
     </object>
@@ -95,15 +101,19 @@
         <field type="CharField" name="name">orientation</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">orientation</field>
     </object>
-	<object pk="11" model="context.conceptname">
+    <object pk="11" model="context.conceptname">
         <field type="CharField" name="name">twitterauth</field>
         <field to="context.concept" name="concept" rel="ManyToOneRel">twitterauth</field>
     </object>
-	<object pk="1" model="connectable.filter">
+    <object pk="12" model="context.conceptname">
+        <field type="CharField" name="name">theme</field>
+        <field to="context.concept" name="concept" rel="ManyToOneRel">theme</field>
+    </object>
+    <object pk="1" model="connectable.filter">
         <field type="CharField" name="name">concat</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
-        
+
         		var result;
         		if(params["stringBefore"])
 	        		result = params["stringBefore"].concat(channelValue);

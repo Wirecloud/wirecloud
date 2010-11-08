@@ -400,7 +400,6 @@ var OpManagerFactory = function () {
 			// Start loading the default theme
 			// When it finish, it will invoke continueLoadingGlobalModules method!
 			function imagesLoaded(theme, imagesNotLoaded) {
-				
 				if (imagesNotLoaded.length > 0) {
 					var msg = gettext("There were errors while loading some of the images for the theme. Do you really want to use it?");
 					layoutManager.showYesNoDialog(msg,
@@ -431,7 +430,6 @@ var OpManagerFactory = function () {
 			// Load initial theme
 			_currentTheme = new Theme();
 			_currentTheme.preloadImages(imagesLoaded);
-		
 		}
 
 		/**

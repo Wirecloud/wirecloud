@@ -110,6 +110,7 @@ Concept.prototype.YPOSITION = "yPosition";
 Concept.prototype.LOCKSTATUS = "lockStatus";
 Concept.prototype.ORIENTATION = "orientation";
 Concept.prototype.TWITTERAUTH = "twitterauth";
+Concept.prototype.THEME = "theme";
 
 /**
  * @private

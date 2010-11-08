@@ -201,16 +201,17 @@ SkinManager.prototype._removeStyle = function(url) {
 
 
 SkinManager.prototype.loadSkin = function(newSkin) {
-			
 	this._removeStyle(this._skinURL);
 
 	this._setSkin(newSkin);
 
 	this._appendStyle(this._skinURL);
-								
+
 	//wait for CSS application
 	LayoutManagerFactory.getInstance()._notifyPlatformReady(false);
-			
+
+	var contextManager = OpManagerFactory.getInstance().activeWorkSpace.getContextManager();
+	contextManager.notifyModifiedConcept(Concept.prototype.THEME, newSkin);
 }
 
 SkinManager.prototype.unloadSkin = function () {
