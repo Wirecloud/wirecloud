@@ -120,7 +120,7 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 	options["parameters"] = newParams;
 	options["method"] = "POST";
 
-	EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(this.platform.URIs.PROXY, options);
+	return EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(this.platform.URIs.PROXY, options);
 }
 
 _EzWebAPI.prototype.getConnection = function() {

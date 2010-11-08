@@ -9,7 +9,7 @@ var EzWebExt = new Object();
  * Guarda la URL donde se encuentra alojada la librería JavaScript.
  * @type String
  */
-EzWebExt.URL = "http://gadgets.yaco.es/ceic/libs/js/EzWebAPI_ext";
+EzWebExt.URL = "/ezweb/js/EzWebAPI_ext";
 
 /*---------------------------------------------------------------------------*/
 /*                                EzWebExt.Browser                           */
@@ -208,26 +208,14 @@ if ('addEventListener' in document) {
  * @param {String} url
  */
 EzWebExt.importJS = function(url) {
-    var platform = window.parent;
-    var request;
-
-    if (url.indexOf('://') == -1) {
-        request = new platform.Ajax.Request(url, {
-            method: "get",
-            asynchronous: false,
-            evalJS: false,
-            evalJSON: false
-         });
-    } else {
-        var params = {url: url, method: 'GET'};
-        request = new platform.Ajax.Request(platform.URIs.PROXY, {
-            method: "post",
-            parameters:   params,
-            asynchronous: false,
-            evalJS: false,
-            evalJSON: false
-         });
-    }
+    var request, options;
+    options = {
+        method: "get",
+        asynchronous: false,
+        evalJS: false,
+        evalJSON: false
+    };
+    request = EzWebAPI.send(url, null, options);
 
     // Create the Script Object
     var script = document.createElement('script');
@@ -278,7 +266,6 @@ EzWebExt.appendStyle = function(url) {
 /* ---------------------------------------------------------------- */
 
 /* Load JavaScript */
-EzWebExt.importJS("/ezweb/js/EzWebAPI/EzWebAPI.js");
 EzWebExt.importJS(EzWebExt.getResourceURL("/ComputedStyle.js"));
 
 /* Load default style */

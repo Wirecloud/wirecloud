@@ -90,11 +90,11 @@ var PersistenceEngineFactory = function () {
 				requestHeaders: requestHeaders
 			});
 		}
-		
-		PersitenceEngine.prototype.send = function (url, options) {		
-			new Ajax.Request(url, options);
+
+		PersitenceEngine.prototype.send = function (url, options) {
+			return new Ajax.Request(url, options);
 		}
-		
+
 	}
 	
 	// *********************************
