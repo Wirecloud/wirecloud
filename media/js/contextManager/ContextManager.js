@@ -235,18 +235,20 @@ function ContextManager (workspace_, workSpaceInfo_) {
 
 
 	ContextManager.prototype.unload = function () {
+		var i, namekeys, conceptkeys;
+
 		// Delete all concept names
-		var namekeys = this._name2Concept.keys();
-		for (var i=0; i<namekeys.length; i++) {
+		namekeys = this._name2Concept.keys();
+		for (i = 0; i < namekeys.length; i++) {
 			delete this._name2Concept[namekeys[i]];
 		}
 		delete this._name2Concept;
 
 		// Delete all the concepts
-		var conceptkeys = this._concepts.keys();
-		for (var j=0; i<conceptkeys.length; j++) {
-			this._concepts[conceptkeys[j]].unload();
-			delete this._concepts[conceptkeys[j]];
+		conceptkeys = this._concepts.keys();
+		for (i = 0; i < conceptkeys.length; i++) {
+			this._concepts[conceptkeys[i]].unload();
+			delete this._concepts[conceptkeys[i]];
 		}
 		delete this._concepts;
 
