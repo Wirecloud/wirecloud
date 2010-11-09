@@ -372,21 +372,28 @@ var installed_apps = {{ installed_apps|safe }};
 		<div id="login-section">
 			<form onSubmit="return check_browser()" action="{{ app_path }}" method="post" id="form" class="form-row">
 				<table>
-					<tr><td>
-						<label for="id_username">{% trans 'Username' %} </label>
-					</td><td>
-				    		<input type="text" name="username" id="id_username" size="15" autocapitalize="off"/>
-				    	</td></tr>
-				    	<tr><td>
-				    		<label for="id_password">{% trans 'Password' %} </label> 
-				    	</td><td>
-				    		<input type="password" name="password" id="id_password" size="15"/>
-				    	</td></tr>
-				    </table>
-				    <input type="hidden" name="this_is_the_login_form" value="1" />
-				    <input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
-				    <input type="submit" id="submit" value="{% trans 'Log in' %}" />
-				  </form>
+					<tr>
+						<td>
+							<label for="id_username">{% trans 'Username' %} </label>
+						</td>
+						<td>
+							<input type="text" name="username" id="id_username" size="15" autocapitalize="off"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="id_password">{% trans 'Password' %} </label> 
+						</td>
+						<td>
+							<input type="password" name="password" id="id_password" size="15"/>
+						</td>
+					</tr>
+				</table>
+				{% csrf_token %}
+				<input type="hidden" name="this_is_the_login_form" value="1" />
+				<input type="hidden" name="post_data" value="{{ post_data }}" /> {#<span class="help">{% trans 'Have you <a href="/password_reset/">forgotten your password</a>?' %}</span>#}
+				<input type="submit" id="submit" value="{% trans 'Log in' %}" />
+			</form>
 			<div id="registration" class="registration">
 				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}</a>{% endif %}
 			</div>
