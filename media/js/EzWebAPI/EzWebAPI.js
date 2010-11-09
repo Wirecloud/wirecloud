@@ -26,6 +26,8 @@
 
 function _EzWebAPI() {
 	this.platform = window.parent;
+	var ezwebLocation = this.platform.document.location;
+	this.platform_domain = ezwebLocation.protocol + '://' + ezwebLocation.host;
 
 	// Get id from the URL
 	var tmp = document.URL.split("?", 2)[1];
@@ -39,18 +41,7 @@ function _EzWebAPI() {
 			break;
 		}
 	}
-
-    /*if (document.addEventListener) 
-           document.addEventListener("DOMContentLoaded", this.addOnLoadNotifier, false);
-    */
-    // Prototype 1.6
-    //Event.observe(document, "DOMContentLoaded", this.addOnLoadNotifier); //W3C and IE compliant
 }
-
-_EzWebAPI.prototype.addOnLoadNotifier = function() {
-   // window.parent.Event.observe(window, 'load', function () {EzWebAPI.platform.opManager.igadgetLoaded(EzWebAPI.getId())}, true);	
-}
-
 
 _EzWebAPI.prototype.getId = function() {
 	return EzWebAPI.id;
@@ -93,6 +84,27 @@ _EzWebAPI.prototype._old_send = function(method, url, parameters, context, succe
 	EzWebAPI.send(url, context, options);
 }
 
+_EzWebAPI.prototype.buildProxyURL = function(url, options) {
+	var final_url = url;
+
+	var protocolEnd = url.indexOf('://');
+	if (protocolEnd != -1) {
+		var domainStart = protocolEnd + 3;
+		var pathStart = url.indexOf('/', domainStart);
+
+		var protocol = url.substr(0, protocolEnd);
+		var domain = url.substr(domainStart, pathStart - domainStart);
+		var rest = url.substring(pathStart);
+
+		if (domain != EzWebAPI.platform_domain)
+			final_url = this.platform.URIs.PROXY + '/' +
+				encodeURIComponent(protocol) + '/' +
+				encodeURIComponent(domain) + rest;
+	}
+
+	return final_url;
+}
+
 _EzWebAPI.prototype.send = function(url, context, options) {
 	if (context != null) {
 		//Add the binding to each handler
@@ -105,28 +117,8 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 		}
 	}
 
-	//Add url and processed parameters to adapt them to the proxy required data
-	var newParams = {url:url, method: options["method"]};
-	if (options['postBody'] != undefined) {
-		newParams['params'] = options['postBody'];
-		delete options['postBody'];
-	} else if (options["parameters"]) {
-		if (typeof(options["parameters"]) == "string")
-			var p = options["parameters"];
-		else
-			var p = this.platform.Object.toJSON(options["parameters"]);
-		newParams["params"] = p;
-	}
-	options["parameters"] = newParams;
-	options["method"] = "POST";
-
-	return EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(this.platform.URIs.PROXY, options);
-}
-
-_EzWebAPI.prototype.getConnection = function() {
-    return Ajax.getTransport();
+	var final_url = EzWebAPI.buildProxyURL(url, options);
+	return EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(final_url, options);
 }
 
 var EzWebAPI = new _EzWebAPI();
-
-

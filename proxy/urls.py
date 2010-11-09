@@ -30,11 +30,12 @@
 
 #
 from django.conf.urls.defaults import patterns
-from proxy.views import Proxy
+from proxy.views import Proxy, proxy_request
 
 urlpatterns = patterns('proxy.views',
 
     # Proxy
+    (r'^/(?P<protocol>[^/]+)/(?P<domain>[^/]+)(?P<path>|/.*)$', proxy_request),
     (r'^[/]?$', Proxy(permitted_methods=('POST', ))),
 )
 

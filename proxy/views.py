@@ -30,9 +30,8 @@
 
 #
 
+import Cookie
 import urllib2, httplib, urlparse, re, socket, errno
-
-from urllib import urlencode
 
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -40,6 +39,7 @@ from commons.utils import get_xml_error
 
 from proxy.utils import encode_query, is_valid_header, is_localhost
 
+from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 
@@ -61,22 +61,29 @@ class MethodRequest(urllib2.Request):
 
 class Proxy(Resource):
 
+    http_headerRE = re.compile('^http_')
     protocolRE = re.compile('HTTP/(.*)')
     hostRE = re.compile('([^.]+)\.(.*)')
-    
+
+    blacklisted_http_headers = [
+        'http_host',
+        'http_content_length'
+    ]
+
     # set the timeout to 60 seconds
     socket.setdefaulttimeout(60)
 
-    def _do_request(self, opener, method, url, params, headers):
+    def _do_request(self, opener, method, url, data, headers):
         # Build a request object
-        req = MethodRequest(method, url, params, headers)
+        req = MethodRequest(method, url, data, headers)
 
         # Do the request
         try:
             return opener.open(req)
         except urllib2.HTTPError, e:
             return e
-        
+
+
     def create(self, request):
         if not request.user.is_authenticated():
             return HttpResponseForbidden(_('Your must be logged in to access this service'))
@@ -86,7 +93,7 @@ class Proxy(Resource):
                 return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
         except:
             return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
-        
+
         # URI to be called
         if request.POST.has_key('url'):
             url = request.POST['url']
@@ -98,6 +105,24 @@ class Proxy(Resource):
             method = request.POST['method'].upper()
         else:
             method = "GET"
+
+        # Params
+        if method != 'GET' and request.POST.has_key('params'):
+            # if Content-Type is xml or json then skipping encode function.
+            if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", request.META["CONTENT_TYPE"]) != None:
+                params = request.POST['params'].encode('utf-8')
+            else:
+                try:
+                    params = urlencode(simplejson.loads(request.POST['params']))
+                except Exception, e:
+                    params = encode_query(request.POST['params'])
+        else:
+            params = None
+
+        return self.do_request(request, url, method, params);
+
+
+    def do_request(self, request, url, method, data):
 
         # HTTP call
         try:
@@ -118,41 +143,29 @@ class Proxy(Resource):
 
             opener = urllib2.build_opener(proxy)
 
-            # Adds original request Headers to the request (and modifies Content-Type for Servlets)
+            # Adds original request Headers to the request
             headers = {}
             for header in request.META.items():
-                if (header[0].lower() == 'content-type' and header[1]):
-                    headers["Content-Type"] = header[1]
-                # Considering proper header string to forward the right content-type to the remote server
-                elif (header[0].lower() == 'content_type' and header[1]):
-                    headers["Content-Type"] = header[1]
-                elif (header[0].lower() == 'http_content_type' and header[1]): #mod_python
-                    headers["Content-Type"] = header[1]
-                elif (header[0].lower() == 'http_user_agent' and header[1]):
-                    headers["User-Agent"] = header[1]
-                elif (header[0].lower() == 'http_accept_language' and header[1]):
-                    headers["Accept-Language"] = header[1]
-                elif (header[0].lower() == 'http_accept' and header[1]):
-                    headers["Accept"] = header[1]
-                elif (header[0].lower() == 'http_connection' and header[1]):
-                    headers["Connection"] = header[1]
-                elif (header[0].lower() == 'http_accept_charset' and header[1]):
-                    headers["Accept-Charset"] = header[1]
-                elif (header[0].lower() == 'http_accept_encoding' and header[1]):
-                    headers["Accept-Encoding"] = header[1]
-                elif (header[0].find("HTTP_") >= 0
-                      and header[0].lower() != 'http_cache_control' #NOTE:do not copy the CACHE_CONTROL header in order to allow 301 redirection
-                      and header[0].lower() != 'http_content_length'
-                      and header[0].lower() != 'http_x_forwarded_for'
-                      and header[0].lower() != 'http_x_forwarded_proto'
-                      and header[0].lower() != 'http_x_bluecoat_via'
-                      and header[0].lower() != 'http_x_requested_with'
-                      and header[0].lower() != 'http_x_prototype_version'
-                      and header[0].lower() != 'http_host'
-                      and header[0].lower() != 'http_referer'
-                      and header[0].lower() != 'http_keep_alive'
-                      and header[1]):
-                    headers[header[0].replace("HTTP_", "", 1)] = header[1]
+                header_name = header[0].lower()
+                if header_name == 'content_type' and header[1]:
+                    headers["content-type"] = header[1]
+                elif header_name == 'cookie' or header_name == 'http_cookie':
+
+                    cookie_parser = Cookie.SimpleCookie(header[1])
+
+                    # Remove EzWeb cookies
+                    if hasattr(settings, 'SESSION_COOKIE_NAME'):
+                        del cookie_parser[settings.SESSION_COOKIE_NAME]
+
+                    if hasattr(settings, 'CSRF_COOKIE_NAME'):
+                        del cookie_parser[settings.CSRF_COOKIE_NAME]
+
+                    content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
+                    if content != '':
+                        headers['Cookie'] = content
+                elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
+                    fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
+                    headers[fixed_name] = header[1]
 
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
             if protocolVersion != None:
@@ -167,34 +180,10 @@ class Proxy(Resource):
                 hostName = socket.gethostname()
 
             headers["Via"] = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
-            # Add Content-Type (Servlets bug)
-            if (method == 'POST' or method == 'PUT'):
-                if (not headers.has_key("Content-Type") or not headers["Content-Type"]):
-                    headers['Content-Type'] = "application/x-www-form-urlencoded"
-            elif (method == 'GET' and headers.has_key("Content-Type")): # Remove useless Content-Type (method == 'GET')
-                del headers['Content-Type']
 
-            # The same with cookies
-            cookies = ''
-            for cookie in request.COOKIES.items():
-                cookies = cookies + cookie[0] + '=' + cookie[1] + '; '
-            headers['Cookie'] = cookies
-            # Remove headers['COOKIE']
-            if headers.has_key('COOKIE'):
-                del headers['COOKIE']
-
-            # Params
-            if method != 'GET' and request.POST.has_key('params'):
-                # if Content-Type is xml or json then skipping encode function.
-                if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", headers["Content-Type"]) != None:
-                    params = request.POST['params'].encode('utf-8')
-                else:
-                    try:
-                        params = urlencode(simplejson.loads(request.POST['params']))
-                    except Exception, e:
-                        params = encode_query(request.POST['params'])
-            else:
-                params = None
+            if (method == 'POST' or method == 'PUT') and not 'content-type' in headers:
+                # Add Content-Type (Servlets bug)
+                headers['content-type'] = "application/x-www-form-urlencoded"
 
             # Remote user header
             if not request.user.is_anonymous():
@@ -202,12 +191,13 @@ class Proxy(Resource):
 
             # Open the request
             try:
-                res = self._do_request(opener, method, url, params, headers)
+                res = self._do_request(opener, method, url, data, headers)
             except urllib2.URLError, e:
                 if e.reason[0] == errno.ECONNREFUSED:
                     return HttpResponse(status=504)
                 else:
                     return HttpResponseNotFound(e.reason)
+
 
             # Add content-type header to the response
             if (res.info().has_key('Content-Type')):
@@ -218,11 +208,21 @@ class Proxy(Resource):
             # Set status code to the response
             response.status_code = res.code
 
-            # Add all the headers received to the response
+            # Add all the headers received from the response
             headers = res.headers
             for header in headers:
-                if is_valid_header (string.lower(header)):
+                if string.lower(header) == 'set-cookie':
+                    cookie_parser = Cookie.SimpleCookie()
+                    cookies = res.headers.getheaders(header)
+                    for i in range(len(cookies)):
+                        cookie_parser.load(cookies[i])
+
+                    for key in cookie_parser:
+                        response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
+
+                elif is_valid_header (string.lower(header)):
                     response[header] = headers[header]
+
 
             return response
 
@@ -230,3 +230,47 @@ class Proxy(Resource):
             msg = _("Error processing proxy request: %s") % unicode(e)
             raise TracedServerError(e, None, request, msg)
 
+
+EZWEB_PROXY = Proxy()
+
+def proxy_request(request, protocol, domain, path):
+    content_type = request.META.get('CONTENT_TYPE', '')
+    if content_type == None:
+        content_type = ''
+
+    if not content_type.startswith('multipart') and '_method' in request.POST:
+        method = request.POST['_method']
+        del request.POST['_method']
+    else:
+        method = request.method.upper()
+
+    raw_data = request.raw_post_data
+
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden(_('Your must be logged in to access this service'))
+
+    try:
+        if request.get_host() != urlparse.urlparse(request.META["HTTP_REFERER"])[1]:
+            return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+    except:
+        return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
+
+
+    url = protocol + '://' + domain + path
+    if len(request.GET) > 0:
+        url += '?' + request.GET.urlencode()
+
+    response = EZWEB_PROXY.do_request(request, url, method, raw_data)
+
+    # Process cookies
+    for key in response.cookies:
+        cookie = response.cookies[key]
+
+        if 'path' in cookie:
+            cookie['path'] = '/proxy/' + protocol + '/' + urlquote(domain, '') + cookie['path']
+        else:
+            cookie['path'] = '/proxy/' + protocol + '/' + urlquote(domain, '')
+
+        del cookie['domain']
+
+    return response
