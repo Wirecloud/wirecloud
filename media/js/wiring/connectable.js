@@ -48,7 +48,7 @@ function wConnectable (name, type, friendCode, id) {
  * Stablish a new value for this <code>wConnectable</code> but without
  * propagating any event.
  */
-wConnectable.prototype._annotate = function() {
+wConnectable.prototype._annotate = function(value, source, options) {
 	var funcName = '_annotate';
 	var msg = gettext("Unimplemented function: %(funcName)s");
 	msg = interpolate(msg, {funcName: funcName}, yes);
@@ -78,6 +78,10 @@ wConnectable.prototype.getId = function() {
 
 wConnectable.prototype.getFriendCode = function() {
 	return this._friendCode;
+}
+
+wConnectable.prototype.getFinalSlots = function() {
+	return null;
 }
 
 /**
@@ -114,9 +118,13 @@ function wOut(name, type, friendCode, id) {
 
 wOut.prototype = new wConnectable();
 
-wOut.prototype._annotate = function(value, source, initial) {
-	if (!initial)
-		this.variable.annotate(value, this);
+wOut.prototype._annotate = function(value, source, options) {
+	options = Object.extend({
+		initial: false
+	}, options);
+
+	if (!options.initial)
+		this.variable.annotate(value);
 }
 
 /**
@@ -166,15 +174,13 @@ wOut.prototype.refresh = function() {
 function wIn(name, type, friendCode, id) {
 	wConnectable.call(this, name, type, friendCode, id);
 	this.outputs = new Array();
-  this.changed = false;
 }
 wIn.prototype = new wConnectable();
 
 wIn.prototype.connect = function(out) {
 	this.outputs.push(out);
 
-	//if (out instanceof wInOut)
-		out._addInput(this);
+	out._addInput(this);
 }
 
 wIn.prototype.disconnect = function(out) {
@@ -197,12 +203,27 @@ wIn.prototype.fullDisconnect = function() {
  * Sets the value for this <code>wIn</code>. Also, this method propagates this
  * new value to the output connectables.
  */
-wIn.prototype.propagate = function(value) {
-	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i]._annotate(value, this, false);
+wIn.prototype.propagate = function(value, options) {
+	options = Object.extend({
+		initial: false
+	}, options);
 
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i].propagate(value);
+		this.outputs[i]._annotate(value, this, options);
+
+	for (var i = 0; i < this.outputs.length; ++i)
+		this.outputs[i].propagate(value, options);
+}
+
+wIn.prototype.getFinalSlots = function() {
+	var slots = [];
+	for (var i = 0; i < this.outputs.length; ++i) {
+		var currentSlots = this.outputs[i].getFinalSlots();
+		if (currentSlots && currentSlots.length > 0)
+			slots = slots.concat(currentSlots);
+	}
+
+	return slots;
 }
 
 wIn.prototype.refresh = function() {
@@ -259,14 +280,14 @@ wInOut.prototype._checkLoop = function(inout, depth) {
  * Stablish a new value for this <code>wConnectable</code> but without
  * propagating any event.
  */
-wInOut.prototype._annotate = function(value, source, initial) {
+wInOut.prototype._annotate = function(value, source, options) {
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i]._annotate(value, source, initial);
+		this.outputs[i]._annotate(value, this, options);
 }
 
-wInOut.prototype.propagate = function(value) {
+wInOut.prototype.propagate = function(value, options) {
 	for (var i = 0; i < this.outputs.length; ++i)
-		this.outputs[i].propagate(value);
+		this.outputs[i].propagate(value, options);
 }
 
 wInOut.prototype.connect = function(out) {
@@ -358,18 +379,17 @@ function wChannel (variable, name, id, provisional_id, readOnly) {
 wChannel.prototype = new wInOut();
 
 wChannel.prototype.getValue = function(propagating) {
-	if (this.filter == null)
+	if (this.filter == null) {
 		return this.valueWithoutFilter;
-	else{
-		try{
+	} else {
+		try {
 			var value = this.filter.run(this.valueWithoutFilter, this.filterParams, this);
-			if(!propagating && (this.getFilter().getlastExecError() != null)) {
+			if (!propagating && (this.getFilter().getlastExecError() != null)) {
 				LayoutManagerFactory.getInstance().showMessageMenu(this.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
 			}
 			return value;
-			
-		}catch (e){
-			if(e.name == "DONT_PROPAGATE"){
+		} catch (e) {
+			if (e.name == "DONT_PROPAGATE") {
 				if(propagating)
 					throw new DontPropagateException(e)
 				else
@@ -417,19 +437,18 @@ wChannel.prototype.setFilter = function(newFilter) {
 
 /*
  * @param {string} value new value for this <code>wChannel</code>
- * @param {Boolean} initial true for initial propagations
- * @param {wIn} source connectable the new value comes from.
  */
-wChannel.prototype._annotate = function(value, source, initial){
+wChannel.prototype._annotate = function(value, source, options) {
 	//Get the real value (filtered if necessary)
 	var oldValue = this.variable.get();
 	this.valueWithoutFilter = value;
 
 	try {
-		if (!initial)
+		if (!options.initial)
 			this._markInputAsModified(source);
 		else
 			this._markAllInputsAsModified(source);
+
 		//getValue applys filter if needed!
 		var filteredValue = this.getValue(true);
 		this.variable.set(filteredValue);
@@ -450,7 +469,7 @@ wChannel.prototype._annotate = function(value, source, initial){
 		
 	}
 	if (this.annotated) {
-		wInOut.prototype._annotate.call(this, filteredValue, this, initial);
+		wInOut.prototype._annotate.call(this, filteredValue, source, options);
 	}
 }
 
@@ -501,13 +520,13 @@ wChannel.prototype.notifyRemoteChannel = function(value) {
 /**
  * @param newValue new value for this <code>wChannel</code>
  */
-wChannel.prototype.propagate = function(newValue) {
+wChannel.prototype.propagate = function(newValue, options) {
 	//if there was a filter, its value had been extracted in the annotate method
 	value = this.variable.get();
-		
-	if (this.annotated){ //it must be propagated
-		this.notifyRemoteChannel(value);		
-		wInOut.prototype.propagate.call(this, value);
+
+	if (this.annotated) { //it must be propagated
+		this.notifyRemoteChannel(value);
+		wInOut.prototype.propagate.call(this, value, options);
 	}
 	this.annotated = true;
 }
@@ -522,7 +541,7 @@ wChannel.prototype.getQualifiedName = function () {
 wChannel.prototype._markInputAsModified = function (input) {
 	var input_position = this.inputs.indexOf(input);
 
-	this.modified_inputs_state[input_position]=true;
+	this.modified_inputs_state[input_position] = true;
 }
 
 /**
@@ -548,7 +567,7 @@ wChannel.prototype._markAllInputsAsModified = function () {
  */
 wChannel.prototype._allInputsModified = function () {
 
-	if(this.modified_inputs_state.length == 0)
+	if (this.modified_inputs_state.length == 0)
 		return false;
 
 	for (var i = 0; i < this.modified_inputs_state.length; i++) {
@@ -570,7 +589,8 @@ function wTab (variable, name, tab, id) {
 }
 wTab.prototype = new wOut();
 
-wTab.prototype.propagate = function(newValue) {
+wTab.prototype.propagate = function(newValue, options) {
+	if (!options || !options.targetSlots)
 		this.variable.set(newValue);
 }
 
@@ -593,8 +613,48 @@ function wSlot(variable, type, friendCode, id) {
 }
 wSlot.prototype = new wOut();
 
-wSlot.prototype.propagate = function(newValue) {
-	this.variable.set(newValue);
+wSlot.prototype._is_target_slot = function(variable, list) {
+	var i, slot;
+
+	if (list == null) {
+		return true;
+	}
+
+	for (i = 0; i < list.length; i += 1) {
+		slot = list[i];
+		if (slot.iGadget == variable.iGadget && slot.name == variable.name) {
+			return true;
+		}
+	}
+	return false;
+}
+
+wSlot.prototype.getFinalSlots = function() {
+	var iGadgetName, action_label = this.variable.action_label;
+	if (!action_label || action_label === '') {
+		action_label = gettext('Use in %(slotName)s');
+		action_label = interpolate(action_label, {slotName: this.variable.label}, true);
+	}
+	iGadgetName = OpManagerFactory.getInstance().activeWorkSpace.getIgadget(this.variable.iGadget).name;
+
+	return [{
+		action_label: action_label,
+		iGadget: this.variable.iGadget,
+		name: this.variable.name,
+		iGadgetName: iGadgetName
+	}];
+}
+
+wSlot.prototype._annotate = function(value, source, options) {
+	if (!options || this._is_target_slot(this.variable, options.targetSlots)) {
+		wOut.prototype._annotate.call(this, value, source, options);
+	}
+}
+
+wSlot.prototype.propagate = function(newValue, options) {
+	if (!options || this._is_target_slot(this.variable, options.targetSlots)) {
+		this.variable.set(newValue);
+	}
 }
 
 wSlot.prototype.getQualifiedName = function () {

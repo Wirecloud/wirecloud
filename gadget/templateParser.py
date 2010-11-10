@@ -250,9 +250,11 @@ class TemplateHandler(handler.ContentHandler):
             #check if it's shared
             shared_concept = get_shared_var_def(attrs)
             
-            vDef = VariableDef ( name = _name, description =_description,
-                                 type=self.typeText2typeCode(_type), 
-                                 aspect = 'PROP', friend_code = None,
+            vDef = VariableDef ( name = _name,
+                                 description =_description,
+                                 type = self.typeText2typeCode(_type),
+                                 aspect = 'PROP',
+                                 friend_code = None,
                                  default_value = _default_value,
                                  gadget = self._gadget,
                                  shared_var_def = shared_concept )
@@ -274,8 +276,8 @@ class TemplateHandler(handler.ContentHandler):
         _description = ''
         _label = ''
         _default_value = ''
-        
-        
+
+
         if (attrs.has_key('name')):
             _name = attrs.get('name')
 
@@ -292,19 +294,21 @@ class TemplateHandler(handler.ContentHandler):
             _default_value = attrs.get('default')
 
         if (_name != '' and _type != '' and _description != '' and _label != ''):
-            
+
             #check if it's shared
             shared_concept = get_shared_var_def(attrs)
-            
-            vDef = VariableDef( name=_name, description =_description,
-                                type=self.typeText2typeCode(_type), 
-                                aspect='PREF', friend_code=None,
+
+            vDef = VariableDef( name=_name,
+                                description =_description,
+                                type=self.typeText2typeCode(_type),
+                                aspect='PREF',
+                                friend_code=None,
                                 label = _label,
                                 default_value = _default_value,
                                 gadget=self._gadget,
                                 shared_var_def = shared_concept )
     
-            #vDef.save()            
+            #vDef.save()
             relationship_eltos = {}
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
@@ -390,6 +394,7 @@ class TemplateHandler(handler.ContentHandler):
         _description = ''
         _label = ''
         _friendCode = ''
+        _action_label = ''
 
         if (attrs.has_key('name')):
             _name = attrs.get('name')
@@ -403,16 +408,21 @@ class TemplateHandler(handler.ContentHandler):
         if (attrs.has_key('label')):
             _label = attrs.get('label')
 
+        if attrs.has_key('actionlabel'):
+            _action_label = attrs.get('actionlabel')
+
         if (attrs.has_key('friendcode')):
             _friendCode = attrs.get('friendcode')
 
         if (_name != '' and _type != '' and _friendCode != ''):
 
-            vDef = VariableDef( name = _name, description = _description, 
-                                type = self.typeText2typeCode(_type), 
-                                aspect = self._SLOT, 
-                                friend_code = _friendCode, 
+            vDef = VariableDef( name = _name,
+                                description = _description,
+                                type = self.typeText2typeCode(_type),
+                                aspect = self._SLOT,
+                                friend_code = _friendCode,
                                 label = _label,
+                                action_label = _action_label,
                                 gadget = self._gadget )
 
             #vDef.save()
@@ -420,24 +430,29 @@ class TemplateHandler(handler.ContentHandler):
             relationship_eltos['vdef'] = vDef
             relationship_eltos['context'] = None
             relationship_eltos['option'] = []
-            
+
             relationship_eltos['trans'] = []
             index = self.addIndex(_description)
             if index:
                 self.addTranslation(index, vDef)
                 relationship_eltos['trans'].append(index)
-                
+
             index = self.addIndex(_label)
             if index:
                 self.addTranslation(index, vDef)
                 relationship_eltos['trans'].append(index)
-            
+
+            index = self.addIndex(_action_label)
+            if index:
+                self.addTranslation(index, vDef)
+                relationship_eltos['trans'].append(index)
+
             self._relationships.append(relationship_eltos)
         else:
-            raise TemplateParseException(_("ERROR: missing attribute at Slot element"))   
-        
+            raise TemplateParseException(_("ERROR: missing attribute at Slot element"))
 
-    def processCapability(self, attrs):     
+
+    def processCapability(self, attrs):
         name = None
         value = None
 

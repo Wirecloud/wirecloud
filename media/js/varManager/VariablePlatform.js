@@ -31,13 +31,14 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Variable (id, iGadget, name, varManager) {
-    // True when a the value of the variable has changed and the callback has not been invoked! 
-    this.annotated = false;
+	// True when a the value of the variable has changed and the callback has not been invoked!
+	this.annotated = false;
 	this.varManager = null;
 	this.id = null;
 	this.iGadget = null;
 	this.name = null;
 	this.label = null;
+	this.action_label = null;
 	this.aspect = null;
 	this.value = null;
 	this.tab = null;
@@ -47,13 +48,14 @@ function Variable (id, iGadget, name, varManager) {
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
- 
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, tab_, shared_) {
+
+Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, action_label_, tab_, shared_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-    this.name = name_;
-    this.label = label_;
+	this.name = name_;
+	this.label = label_;
+	this.action_label = action_label_;
 	this.aspect = aspect_;
 	this.value = value_;
 	this.tab = tab_;
@@ -77,9 +79,9 @@ Variable.prototype.setSharedState = function (shared_) {
 }
 
 Variable.prototype.annotate = function (value) {
-        this.annotated = true;
-        this.value=value;
-} 
+	this.annotated = true;
+	this.value = value;
+}
 
 Variable.prototype.assignConnectable = function (connectable) {
 	this.connectable = connectable;
@@ -97,10 +99,10 @@ Variable.prototype.getWorkspace = function () {
 // PUBLIC CONSTANTS
 //////////////////////////////////////////////
 
-Variable.prototype.EVENT = "EVEN"  
-Variable.prototype.SLOT = "SLOT"  
-Variable.prototype.USER_PREF = "PREF"  
-Variable.prototype.PROPERTY = "PROP"  
+Variable.prototype.EVENT = "EVEN"
+Variable.prototype.SLOT = "SLOT"
+Variable.prototype.USER_PREF = "PREF"
+Variable.prototype.PROPERTY = "PROP"
 Variable.prototype.EXTERNAL_CONTEXT = "ECTX"
 Variable.prototype.GADGET_CONTEXT = "GCTX"
 Variable.prototype.INOUT = "CHANNEL"
@@ -110,9 +112,9 @@ Variable.prototype.TAB = "TAB"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_);
-  
+function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_);
+
 	this.handler = null;
 }
 
@@ -132,12 +134,12 @@ RVariable.prototype = new Variable;
 // OVERWRITTEN METHODS
 //////////////////////////////////////////////
 
-RVariable.prototype.setHandler = function (handler_) { 
+RVariable.prototype.setHandler = function (handler_) {
 	this.handler = handler_;
-} 
+}
 
 RVariable.prototype.set = function (newValue) {
-    if (this.annotated) {
+	if (this.annotated) {
 		// If annotated, the value must be managed!
 
 		var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
@@ -145,7 +147,7 @@ RVariable.prototype.set = function (newValue) {
 		if (this.shared != null){ //its a possible shared variable
 			varInfo[0]["shared"] = this.shared;
 		}
-		
+
 		switch (this.aspect) {
 			case Variable.prototype.SLOT:
 				
@@ -182,7 +184,7 @@ RVariable.prototype.set = function (newValue) {
 					}
 				} else {
 					var opManager = OpManagerFactory.getInstance();
-				    var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+					var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
 					if (iGadget.loaded) {
 						var transObj = {iGadgetId: this.iGadget, varName: this.name};
 						var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
@@ -199,12 +201,12 @@ RVariable.prototype.set = function (newValue) {
 			default:
 				break;
 		}
-		if (this.shared==true){
+		if (this.shared==true) {
 			this.varManager.forceCommit();
 		}
 		// And it must be changed to NOT annotated!
-		this.annotated = false;	
-    }
+		this.annotated = false;
+	}
 }
 
 RVariable.prototype.refresh = function() {
@@ -241,8 +243,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, tab_, shared_);
+function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_);
 }
 
 //////////////////////////////////////////////
@@ -256,38 +258,51 @@ RWVariable.prototype = new Variable;
 //////////////////////////////////////////////
 
 
-RWVariable.prototype.set = function (value_) {
-	if (this.aspect == Variable.prototype.PROPERTY && this.shared==true){
+RWVariable.prototype.set = function (value_, options_) {
+	if (this.aspect == Variable.prototype.PROPERTY && this.shared==true) {
 		//it is a shared property. Gadgets cannot set its value
 		throw new Error("Shared properties cannot be changed by gadgets");
 	}
-    this.varManager.incNestingLevel();
+	this.varManager.incNestingLevel();
 
-    if (this.value != value_) {
-    	// This variable was modified
-    	this.value = value_;
-	
-        this.varManager.markVariablesAsModified([this]);
-		if (this.shared==true){
+	if (this.value != value_) {
+		// This variable was modified
+		this.value = value_;
+
+		this.varManager.markVariablesAsModified([this]);
+		if (this.shared == true) {
 			this.varManager.forceCommit();
 		}
-    }
+	}
 
-    // Propagate changes to wiring module
-    // Only when variable is an Event, the connectable must start propagating
-    // When variable is INOUT, is the connectable who propagates
-    switch (this.aspect){
-		case Variable.prototype.EVENT:   
+	// Propagate changes to wiring module
+	// Only when variable is an Event, the connectable must start propagating
+	// When variable is INOUT, is the connectable who propagates
+	switch (this.aspect) {
+		case Variable.prototype.EVENT:
 			if (this.connectable != null) {
-				this.connectable.propagate(this.value, false);
+				this.connectable.propagate(this.value, options_);
 				break;
 			}
 		default:
 			break;
-    }
+	}
 
-    // This will save all modified vars if we are the root event
-    this.varManager.decNestingLevel();
+	// This will save all modified vars if we are the root event
+	this.varManager.decNestingLevel();
+}
+
+RWVariable.prototype.getFinalSlots = function () {
+	if (this.connectable == null) {
+		return;
+	}
+
+	switch (this.aspect) {
+		case Variable.prototype.EVENT:
+			return this.connectable.getFinalSlots();
+		default:
+			return [];
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 

@@ -39,25 +39,31 @@ function GadgetVariable (iGadgetId, name) {
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super keyboard emulation)
 //////////////////////////////////////////////
- 
 GadgetVariable.prototype.GadgetVariable = function (iGadget_, name_) {
-    this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();  
-  
-    this.iGadgetId = iGadget_;
-    this.name = name_;
+	this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();  
+
+	this.iGadgetId = iGadget_;
+	this.name = name_;
 }
 
 //////////////////////////////////////////////
 // PUBLIC METHODS TO BE INHERITANCED
 //////////////////////////////////////////////
 
-GadgetVariable.prototype.get = function () { 
+GadgetVariable.prototype.get = function() {
 	return this.varManager.getVariable(this.iGadgetId, this.name);
-}  
+}
 
-GadgetVariable.prototype.set = function (value) { } 
+GadgetVariable.prototype.set = function(value, options) { }
 
-GadgetVariable.prototype.register = function (handler) { } 
+GadgetVariable.prototype.register = function(handler) { }
+
+GadgetVariable.prototype.getFinalSlots = function() {
+	var variable;
+
+	variable = this.varManager.getVariableByName(this.iGadgetId, this.name);
+	return variable.getFinalSlots();
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RGADGETVARIABLE (Derivated class)
@@ -65,7 +71,7 @@ GadgetVariable.prototype.register = function (handler) { }
 
 function RGadgetVariable(iGadget_, name_, handler_) {
 	GadgetVariable.prototype.GadgetVariable.call(this, iGadget_, name_);
-  
+
 	this.handler = handler_;
 
 	this.register(handler_);
@@ -83,7 +89,7 @@ RGadgetVariable.prototype = new GadgetVariable;
 
 RGadgetVariable.prototype.register = function (handler) { 
 	this.varManager.registerVariable(this.iGadgetId, this.name, handler);
-} 
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RWGADGETVARIABLE (Derivated class)
@@ -103,13 +109,15 @@ RWGadgetVariable.prototype = new GadgetVariable;
 // PUBLIC METHODS TO BE INHERITANCED
 //////////////////////////////////////////////
 
- 
+
 
 //////////////////////////////////////////////
 // OVERWRITTEN METHODS
 //////////////////////////////////////////////
 
-RWGadgetVariable.prototype.set = function (value) {  
-	this.varManager.setVariable(this.iGadgetId, this.name, value)
-} 
-
+RWGadgetVariable.prototype.set = function (value, options) {
+	options = Object.extend({
+		initial: false
+	}, options);
+	this.varManager.setVariable(this.iGadgetId, this.name, value, options);
+}

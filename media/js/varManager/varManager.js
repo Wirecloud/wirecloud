@@ -55,22 +55,23 @@ function VarManager (_workSpace) {
 	VarManager.prototype.parseWorkspaceVariables = function (ws_vars) {
 		for (var i = 0; i<ws_vars.length; i++) {
 			this.parseWorkspaceVariable(ws_vars[i]);
-		}		
+		}
 	}
-	
+
 	VarManager.prototype.sendBufferedVars = function () {
-		// Asynchronous handlers 
+		// Asynchronous handlers
 		function onSuccess(transport) {
 			var response = transport.responseText;
 			var modifiedVariables = JSON.parse(response);
 			var igadgetVars = modifiedVariables['igadgetVars']
+
 			this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
-			for (var i=0;i<igadgetVars.length;i++){
+			for (var i = 0; i < igadgetVars.length; i++) {
 				var id = igadgetVars[i].id;
 				var variable = this.getVariableById(id);
 				variable.annotate(igadgetVars[i].value)
 			}
-			for (var i=0;i<igadgetVars.length;i++){
+			for (var i = 0; i < igadgetVars.length; i++) {
 				var id = igadgetVars[i].id;
 				var variable = this.getVariableById(id);
 				variable.set(igadgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
@@ -83,11 +84,11 @@ function VarManager (_workSpace) {
 			var msg = logManager.formatError(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
 			logManager.log(msg);
 		}
-		
+
 		// Max lenght of buffered requests have been reached. Uploading to server!
 		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
 			var variables = {};
-			
+
 			variables['igadgetVars'] = this.igadgetModifiedVars;
 			variables['workspaceVars'] = this.workspaceModifiedVars;
 
@@ -105,7 +106,7 @@ function VarManager (_workSpace) {
 			this.resetModifiedVariables();
 		}
 	}
-	
+
 	VarManager.prototype.parseWorkspaceVariable = function (ws_var) {
 		var id = ws_var.id;
 		var name = ws_var.name;
@@ -126,7 +127,7 @@ function VarManager (_workSpace) {
 		delete this.workspaceVariables[ws_varId];
 		this.workspaceModifiedVars.removeById(ws_varId);
 	}
-	
+
 	VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
 		var igadgetVars = igadget['variables'];
 		var objVars = []
@@ -135,21 +136,22 @@ function VarManager (_workSpace) {
 			var igadgetId = igadgetVars[i].igadgetId;
 			var name = igadgetVars[i].name;
 			var label = igadgetVars[i].label;
+			var action_label = igadgetVars[i].action_label;
 			var aspect = igadgetVars[i].aspect;
 			var value = igadgetVars[i].value;
 			var shared = igadgetVars[i].shared;
-				
+
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, tab, shared);
+					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, tab, shared);
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 			}
@@ -184,7 +186,7 @@ function VarManager (_workSpace) {
 		return variable.get();
 	}
 
-	VarManager.prototype.setVariable = function (iGadgetId, variableName, value) {
+	VarManager.prototype.setVariable = function (iGadgetId, variableName, value, options) {
 		if (typeof(value) !== 'string') {
 			var transObj = {iGadgetId: iGadgetId, varName: variableName};
 			var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
@@ -195,7 +197,7 @@ function VarManager (_workSpace) {
 
 		var variable = this.findVariable(iGadgetId, variableName);
 
-		variable.set(value);
+		variable.set(value, options);
 	}
 
 	VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
@@ -220,17 +222,17 @@ function VarManager (_workSpace) {
 		this.parseIGadgetVariables(igadgetInfo, tab);
 	}
 	
-	VarManager.prototype.removeInstance = function (iGadgetId) {		
+	VarManager.prototype.removeInstance = function (iGadgetId) {
 		delete this.iGadgets[iGadgetId];
 		
 		this.removeIGadgetVariables(iGadgetId);
 	}
 	
 	
-	VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {	
+	VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {
 		var variables_ids = this.variables.keys()
 		
-		for (var i=0; i<variables_ids.length; i++) {			
+		for (var i=0; i<variables_ids.length; i++) {
 			if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
 				this.igadgetModifiedVars.removeById(variables_ids[i]);
 				delete this.variables[variables_ids[i]];
@@ -241,7 +243,7 @@ function VarManager (_workSpace) {
 	VarManager.prototype.unload = function () {
 	}
 
-	VarManager.prototype.commitModifiedVariables = function() {		
+	VarManager.prototype.commitModifiedVariables = function() {
 		//If it have not been buffered all the requests, it's not time to send a PUT request
 		if (!this.force_commit && this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
 			this.buffered_requests++;

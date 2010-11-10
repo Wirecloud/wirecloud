@@ -139,6 +139,7 @@ class VariableDef(TransModel):
     )
     aspect = models.CharField(_('Aspect'), max_length=4, choices=ASPECTS)
     label = models.CharField(_('Label'), max_length=50, null=True)
+    action_label = models.CharField(_('Action label'), max_length=50, null=True)
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
     default_value = models.TextField(_('Default value'), blank=True, null=True)

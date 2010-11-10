@@ -101,25 +101,26 @@ def get_gadget_data(data):
         data_var['name'] = var.name
         data_var['type'] = var.type
         data_var['label'] = var.label
+        data_var['action_label'] = var.action_label
         data_var['description'] = var.description
         data_var['friend_code'] = var.friend_code
         data_var['default_value'] = var.default_value
         data_var['shareable'] = var.shared_var_def != None
-        
+
         if var.aspect == 'PREF' and var.type == 'L':
             options = UserPrefOption.objects.filter(variableDef=var.id)
             value_options = []
             for option in options:
                 value_options.append([option.value, option.name]);
             data_var['value_options'] = value_options;
-        
+
         if var.aspect == 'GCTX' or var.aspect == 'ECTX': 
             data_var['concept'] = var.contextoption_set.all().values('concept')[0]['concept']
-        
+
         data_vars.append(data_var)
-    
+
     data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=data_fields['xhtml'])
- 
+
     data_ret['name'] = data_fields['name']
     if data_fields['display_name'] and data_fields['display_name']!="":
         data_ret['displayName'] = data_fields['display_name']
@@ -513,6 +514,7 @@ def get_variable_data(data, user, workspace):
     data_ret['vardefId'] = var_def.pk
     data_ret['name'] = var_def.name
     data_ret['label'] = var_def.label
+    data_ret['action_label'] = var_def.action_label
     data_ret['friend_code'] = var_def.friend_code
     if var_def.shared_var_def:
         data_ret['shared'] = variable_value.shared_var_value != None
