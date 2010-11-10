@@ -116,8 +116,8 @@ RWGadgetVariable.prototype = new GadgetVariable;
 //////////////////////////////////////////////
 
 RWGadgetVariable.prototype.set = function (value, options) {
-	options = Object.extend({
-		initial: false
-	}, options);
+	options = options ? options : {};
+	options.initial = false; // Gadgets cannot use the "initial" option
+
 	this.varManager.setVariable(this.iGadgetId, this.name, value, options);
 }
