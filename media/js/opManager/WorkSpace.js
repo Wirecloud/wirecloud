@@ -491,6 +491,7 @@ function WorkSpace (workSpaceState) {
 			if (igadget)
 				return igadget;
 		}
+		return null;
 	}
 
 	WorkSpace.prototype.show = function() {
@@ -714,10 +715,14 @@ function WorkSpace (workSpaceState) {
 			this.wiring.removeInstance(iGadgetId);
 			this.contextManager.removeInstance(iGadgetId);
 	}
-	
+
 	WorkSpace.prototype.removeIGadget = function(iGadgetId, orderFromServer) {
-			this.visibleTab.getDragboard().removeInstance(iGadgetId, orderFromServer); // TODO split into hideInstance and removeInstance
+		var igadget = this.getIgadget(iGadgetId);
+		if (igadget) {
+			var dragboard = igadget.layout.dragboard;
+			dragboard.removeInstance(iGadgetId, orderFromServer); // TODO split into hideInstance and removeInstance
 			this.removeIGadgetData(iGadgetId);
+		}
 	}
 
 	WorkSpace.prototype.getIGadgets = function() {
