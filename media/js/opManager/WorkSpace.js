@@ -715,8 +715,8 @@ function WorkSpace (workSpaceState) {
 			this.contextManager.removeInstance(iGadgetId);
 	}
 	
-	WorkSpace.prototype.removeIGadget = function(iGadgetId) {
-			this.visibleTab.getDragboard().removeInstance(iGadgetId); // TODO split into hideInstance and removeInstance
+	WorkSpace.prototype.removeIGadget = function(iGadgetId, orderFromServer) {
+			this.visibleTab.getDragboard().removeInstance(iGadgetId, orderFromServer); // TODO split into hideInstance and removeInstance
 			this.removeIGadgetData(iGadgetId);
 	}
 

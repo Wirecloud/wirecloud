@@ -394,10 +394,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
 		return this.iGadgets.keys().length;
 	}
 
-	Dragboard.prototype.removeInstance = function (iGadgetId) {
+	Dragboard.prototype.removeInstance = function (iGadgetId, orderFromServer) {
 		var igadget = this.iGadgets[iGadgetId];
 
-		igadget.remove();
+		igadget.remove(orderFromServer);
 		igadget.destroy();
 	}
 

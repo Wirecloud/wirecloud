@@ -1164,11 +1164,25 @@ IGadget.prototype.destroy = function() {
 }
 
 /**
- * Removes this igadget form the dragboard. Also this notify EzWeb Platform for
- * remove the igadget form persistence.
+ * Removes this igadget form the dragboard.
+ *
+ * @param {Boolean} orderFromServer true if his gadget is being removed by EzWeb
+ *   server request.
  */
-IGadget.prototype.remove = function() {
-	if (this.layout != null && !this.layout.dragboard.isLocked()) {
+IGadget.prototype.remove = function(orderFromServer) {
+	orderFromServer = orderFromServer != null ? orderFromServer : false;
+
+	if (this.layout == null || (!orderFromServer && this.layout.dragboard.isLocked()))
+		return;
+
+	var dragboard = this.layout.dragboard;
+	if (this.element.parentNode != null) {
+		this.layout.removeIGadget(this, true);
+	}
+
+	this.element = null;
+
+	if (!orderFromServer) {
 		function onSuccess() {}
 		function onError(transport, e) {
 			var logManager = LogManagerFactory.getInstance();
@@ -1176,12 +1190,6 @@ IGadget.prototype.remove = function() {
 			logManager.log(msg);
 		}
 
-		var dragboard = this.layout.dragboard;
-		if (this.element.parentNode != null) {
-			this.layout.removeIGadget(this, true);
-		}
-
-		this.element = null;
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
 		var uri = URIs.GET_IGADGET.evaluate({workspaceId: dragboard.workSpaceId,
 		                                     tabId: dragboard.tabId,

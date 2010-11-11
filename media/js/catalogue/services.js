@@ -420,20 +420,39 @@ var CatalogueResourceSubmitter = function () {
 
     var success_callback = function(response) {
       // processing command
+      var layoutManager = LayoutManagerFactory.getInstance();
+      var result = JSON.parse(response.responseText);
+
+      layoutManager.logSubTask(gettext('Removing affected iGadgets'));
+      var opManager = OpManagerFactory.getInstance();
+      for (var i = 0; i < result.removedIGadgets.length; i += 1) {
+        opManager.removeInstance(result.removedIGadgets[i], true);
+      }
+
+      layoutManager.logSubTask(gettext('Purging gadget info'));
+      var gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion();
+      ShowcaseFactory.getInstance().deleteGadget(gadgetId);
+
+      layoutManager._notifyPlatformReady();
       this.process();
     }
 
     var error_callback = function(transport, e) {
       var logManager = LogManagerFactory.getInstance();
+      var layoutManager = LayoutManagerFactory.getInstance();
+
       var msg = logManager.formatError(gettext("Error deleting the Gadget: %(errorMsg)s."), transport, e);
 
       logManager.log(msg);
-
-      // processing command
-      this.process();
+      layoutManager._notifyPlatformReady();
+      layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     }
 
     var doRequest = function() {
+      var layoutManager = LayoutManagerFactory.getInstance();
+      layoutManager._startComplexTask(gettext("Deleting gadget resource from catalogue"), 3);
+      layoutManager.logSubTask(gettext('Requesting server'));
+
       var response_command = new ResponseCommand(this.resp_command_processor, this);
       response_command.set_id('REPEAT_SEARCH');
 

@@ -61,7 +61,12 @@ from commons.logs_exception import TracedServerError
 from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
 from commons.user_utils import get_verified_certification_group
-    
+
+from gadget.models import Gadget, XHTML
+from igadget.models import IGadget
+from igadget.views import deleteIGadget
+
+
 class GadgetsCollection(Resource):
 
     @transaction.commit_manually
@@ -167,20 +172,22 @@ class GadgetsCollection(Resource):
     def delete(self, request, user_name, vendor, name, version=None):
 
         user = user_authentication(request, user_name)
-        
+
+        response_json = {'result': 'ok', 'removedIGadgets': []}
         if version != None:
             #Delete only the specified version of the gadget 
-            resource=get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
-            deleteOneGadget(resource, user, request)
+            resource = get_object_or_404(GadgetResource, short_name=name,vendor=vendor,version=version)
+            result = deleteOneGadget(resource, user, request)
+            response_json['removedIGadgets'] = result['removedIGadgets']
         else:
             #Delete all versions of the gadget
-            resources=get_list_or_404(GadgetResource, short_name=name,vendor=vendor)
+            resources = get_list_or_404(GadgetResource, short_name=name,vendor=vendor)
             for resource in resources:
-                deleteOneGadget(resource, user, request)
-        
-        json_ok = '{"result":"ok"}'
-        return HttpResponse(json_ok, mimetype='application/json; charset=UTF-8')
-    
+                result = deleteOneGadget(resource, user, request)
+                response_json['removedIGadgets'] += result['removedIGadgets']
+
+        return HttpResponse(simplejson.dumps(response_json), mimetype='application/json; charset=UTF-8')
+
     def update(self, request, user_name, vendor, name, version):
         user = user_authentication(request, user_name)
         
@@ -217,12 +224,32 @@ class GadgetsCollection(Resource):
 @transaction.commit_on_success
 def deleteOneGadget(resource, user, request):
     try:
-        #Delete data from Application model         
+
+        result = {'removedIGadgets': []}
+        # Remove all igadget that matches this Gadget Resource
+        try:
+
+            gadget = Gadget.objects.get(name = resource.short_name, vendor = resource.vendor, version = resource.version)
+            igadgets = IGadget.objects.filter(gadget = gadget)
+            for igadget in igadgets:
+                result['removedIGadgets'].append(igadget.id)
+                deleteIGadget(igadget, user)
+
+            gadget.delete()
+
+            uri = "/gadgets/" + resource.vendor + '/' + resource.short_name + '/' + resource.version + '/xhtml'
+            xhtml = XHTML.objects.get(uri = uri)
+            xhtml.delete()
+
+        except Gadget.DoesNotExist, XHTML.DoesNotExist:
+            pass
+
+        #Delete data from Application model
         apps = Application.objects.filter(resources=resource)
-            
+
         for app in apps:
             app.remove_resource(resource)
-        
+
         # Delete the gadget only if this user is the owner
         userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
         # Delete the related user information to that gadget
@@ -254,7 +281,9 @@ def deleteOneGadget(resource, user, request):
         
         # Delete the object
         resource.delete()
-        
+
+        return result
+
     except UserRelatedToGadgetResource.DoesNotExist, e:
         #the user is not the owner
         msg = _("user %(username)s is not the owner of the resource %(resource_id)s") %{'username':user.username, 'resource_id':resource.id}

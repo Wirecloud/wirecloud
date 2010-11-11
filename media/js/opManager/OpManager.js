@@ -358,11 +358,11 @@ var OpManagerFactory = function () {
 			this.persistenceEngine.send_post("/proxy", params, this, cancelOk, cancelError);
 		}
 
-		OpManager.prototype.removeInstance = function (iGadgetId) {
+		OpManager.prototype.removeInstance = function (iGadgetId, orderFromServer) {
 			if (!this.loadCompleted)
 				return;
-				
-			this.activeWorkSpace.removeIGadget(iGadgetId);
+
+			this.activeWorkSpace.removeIGadget(iGadgetId, orderFromServer);
 		}
 
 		OpManager.prototype.getActiveWorkspaceId = function () {
