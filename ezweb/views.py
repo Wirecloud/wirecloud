@@ -103,7 +103,7 @@ def redirected_login(request):
 
 #Send HTTP POST to pingback service with indicated params (FAST)
 def send_pingback(request, params):
-    default_params = {'vendor': None, 'name': None, 'version': None, 'result_code': None, 'result_message': None, 'id': None}
+    default_params = {'result_code': '0', 'result_message': '0'}
     default_params.update(params)
     params = default_params
     
@@ -113,7 +113,12 @@ def send_pingback(request, params):
             headers = {'Content-type': 'application/json'}
             proto, host, cgi = urlparse.urlparse(url)[:3]
             
-            data = {'GadgetUri': {'Owner': params['vendor'], 'GadgetName': params['name'], 'Version': params['version']}, 'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}, 'Identifier' : params['id']}
+            data = {'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}}
+            if params.has_key("vendor") and params.has_key("name") and params.has_key("version"):
+                data['GadgetUri'] = {'Owner': params['vendor'], 'GadgetName': params['name'], 'Version': params['version']}
+            if params.has_key("id"):
+                data['Identifier'] = params['id']
+            
             data = simplejson.dumps(data)
             
             # HTTP call
@@ -205,10 +210,9 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
                     #Loading ezweb for automating gadget instantiation
-                    post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' \
-                        % (template_uri, vendor, name, version)
+                    post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
                     
-                    return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
+                    return render_ezweb(request, template="/", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
