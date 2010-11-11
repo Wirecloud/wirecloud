@@ -49,8 +49,10 @@ from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 
-from gadget.models import Gadget
+from gadget.models import Gadget, XHTML
 from workspace.views import get_user_gadgets
+from igadget.models import IGadget
+from igadget.views import deleteIGadget
 
 from commons.logs_exception import TracedServerError
 
@@ -98,8 +100,38 @@ def parseAndCreateGadget(request, user, workspaceId):
         msg = _("Error creating gadget: %(msg)s" % {"msg":str(e)})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
 
-    
-    
+
+def deleteGadget(user, short_name, vendor, version):
+
+    result = {'removedIGadgets': []}
+
+    # Remove all igadget that matches this Gadget Resource
+    try:
+
+        gadget = Gadget.objects.get(name = short_name, vendor = vendor, version = version)
+        igadgets = IGadget.objects.filter(gadget = gadget)
+        for igadget in igadgets:
+            result['removedIGadgets'].append(igadget.id)
+            deleteIGadget(igadget, user)
+
+        gadget.delete()
+
+    except Gadget.DoesNotExist:
+        pass
+
+
+    try:
+
+        uri = "/gadgets/" + vendor + '/' + short_name + '/' + version + '/xhtml'
+        xhtml = XHTML.objects.get(uri = uri)
+        xhtml.delete()
+
+    except XHTML.DoesNotExist:
+        pass
+
+    return result
+
+
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)

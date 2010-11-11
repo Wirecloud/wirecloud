@@ -317,9 +317,10 @@ def UpgradeIGadget(igadget, user, request):
 
 def deleteIGadget(igadget, user):
 
-    workspace = igadget.tab.workspace
-    if workspace.get_creator() != user:
-        raise Http403
+    if not user.is_superuser:
+        workspace = igadget.tab.workspace
+        if workspace.get_creator() != user:
+            raise Http403
 
     # Delete all IGadget's variables
     variables = Variable.objects.filter(igadget=igadget)

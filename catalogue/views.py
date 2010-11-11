@@ -62,10 +62,7 @@ from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
 from commons.user_utils import get_verified_certification_group
 
-from gadget.models import Gadget, XHTML
-from igadget.models import IGadget
-from igadget.views import deleteIGadget
-
+from gadget.views import deleteGadget
 
 class GadgetsCollection(Resource):
 
@@ -169,6 +166,7 @@ class GadgetsCollection(Resource):
             
         return get_resource_response(gadgetlist, format, items, user)
 
+    @transaction.commit_on_success
     def delete(self, request, user_name, vendor, name, version=None):
 
         user = user_authentication(request, user_name)
@@ -221,74 +219,60 @@ class GadgetsCollection(Resource):
             
             return get_resource_response([resource], 'json', 1, user)
 
-@transaction.commit_on_success
+
 def deleteOneGadget(resource, user, request):
-    try:
 
-        result = {'removedIGadgets': []}
-        # Remove all igadget that matches this Gadget Resource
+    # Delete the gadget only if this user is the owner
+    if not user.is_superuser:
         try:
+            userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
+        except UserRelatedToGadgetResource.DoesNotExist, e:
+            #the user is not the owner
+            msg = _("user %(username)s is not the owner of the resource %(resource_id)s") %{'username':user.username, 'resource_id':resource.id}
 
-            gadget = Gadget.objects.get(name = resource.short_name, vendor = resource.vendor, version = resource.version)
-            igadgets = IGadget.objects.filter(gadget = gadget)
-            for igadget in igadgets:
-                result['removedIGadgets'].append(igadget.id)
-                deleteIGadget(igadget, user)
+            raise Http403(msg)
 
-            gadget.delete()
+    #Delete data from Application model
+    apps = Application.objects.filter(resources=resource)
 
-            uri = "/gadgets/" + resource.vendor + '/' + resource.short_name + '/' + resource.version + '/xhtml'
-            xhtml = XHTML.objects.get(uri = uri)
-            xhtml.delete()
+    for app in apps:
+        app.remove_resource(resource)
 
-        except Gadget.DoesNotExist, XHTML.DoesNotExist:
-            pass
+    # Delete the related user information to that gadget
+    userRelated = UserRelatedToGadgetResource.objects.filter(gadget=resource)
+    userRelated.delete()
+    # Delete the related wiring information for that gadget
+    GadgetWiring.objects.filter(idResource=resource.id).delete()
 
-        #Delete data from Application model
-        apps = Application.objects.filter(resources=resource)
-
-        for app in apps:
-            app.remove_resource(resource)
-
-        # Delete the gadget only if this user is the owner
-        userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
-        # Delete the related user information to that gadget
-        userRelated.delete()
-        # Delete the related wiring information for that gadget
-        GadgetWiring.objects.filter(idResource=resource.id).delete()
-        
-        # Delete the related tags for that gadget
-        
+    # Delete the related tags for that gadget
+    resourceTags = UserTag.objects.filter(idResource=resource.id)
+    for t in resourceTags:
         #if there is no more gadgets tagged with these tags, delete the Tag
-        resourceTags = UserTag.objects.filter(idResource=resource.id)
-        for t in resourceTags:
-            #if UserTag.objects.filter(tag = t.tag).count() == 1:
-            #    t.tag.delete()
-            t.delete()
-        
-        # Delete the related votes for that gadget
-        UserVote.objects.filter(idResource=resource.id).delete()
-        # Delete the gadget if it is saved in the platform 
-        if resource.fromWGT:
-            # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
-            exp = re.compile('[/]?(?P<path>.+/.+/.+/.+/.+/.+/).*$')
-            if exp.search(resource.template_uri):
-                v = exp.search(resource.template_uri)
-                path = url2pathname(v.group('path'))
-                path = os.path.join(settings.BASEDIR, path).encode("utf8")
-                if os.path.isdir(path):
-                    rmtree(path)
-        
-        # Delete the object
-        resource.delete()
+        #if UserTag.objects.filter(tag = t.tag).count() == 1:
+        #    t.tag.delete()
+        t.delete()
 
-        return result
+    # Delete the related votes for that gadget
+    UserVote.objects.filter(idResource=resource.id).delete()
 
-    except UserRelatedToGadgetResource.DoesNotExist, e:
-        #the user is not the owner
-        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") %{'username':user.username, 'resource_id':resource.id}
+    # Remove the gadget from the showcase
+    result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
 
-        raise TracedServerError(e, {'resource_id': resource.id, 'username': user.username}, request, msg)
+    # Delete the gadget if it is saved in the platform
+    if resource.fromWGT:
+        # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
+        exp = re.compile('[/]?(?P<path>.+/.+/.+/.+/.+/.+/).*$')
+        if exp.search(resource.template_uri):
+            v = exp.search(resource.template_uri)
+            path = url2pathname(v.group('path'))
+            path = os.path.join(settings.BASEDIR, path).encode("utf8")
+            if os.path.isdir(path):
+               rmtree(path)
+
+    # Delete the object
+    resource.delete()
+
+    return result
 
 
 class GadgetsCollectionBySimpleSearch(Resource):
