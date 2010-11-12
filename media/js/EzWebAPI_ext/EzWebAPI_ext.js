@@ -245,6 +245,8 @@ EzWebExt.prependStyle = function(url) {
     // Insert the created object to the html head element
     var head = document.getElementsByTagName('head').item(0);
     head.insertBefore(style, head.firstChild);
+
+    return style;
 }
 
 /**
@@ -261,6 +263,8 @@ EzWebExt.appendStyle = function(url) {
     // Insert the created object to the html head element
     var head = document.getElementsByTagName('head').item(0);
     head.appendChild(style);
+
+    return style;
 }
 
 /* ---------------------------------------------------------------- */
@@ -268,8 +272,17 @@ EzWebExt.appendStyle = function(url) {
 /* Load JavaScript */
 EzWebExt.importJS(EzWebExt.getResourceURL("/ComputedStyle.js"));
 
+/* Theme style */
+try {
+    /* TODO */
+    var contextManager = window.parent.OpManagerFactory.getInstance().activeWorkSpace.getContextManager();
+    var theme = contextManager._concepts['theme'];
+    EzWebExt.prependStyle("/ezweb/themes/" + encodeURIComponent(theme.getValue()) + "/gadgets/gadget.css");
+} catch (e) {}
+
 /* Load default style */
 EzWebExt.prependStyle(EzWebExt.getResourceURL("/EzWebGadgets.css"));
+
 
 if (EzWebExt.Browser.isIE() && EzWebExt.Browser.getShortVersion() < 8) {
     EzWebExt.prependStyle(EzWebExt.getResourceURL("/EzWebGadgets-ie7.css"));
