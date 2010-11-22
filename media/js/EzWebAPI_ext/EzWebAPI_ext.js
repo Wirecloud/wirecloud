@@ -650,6 +650,30 @@ EzWebExt.escapeRegExp = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
 
+/**
+ * Devuelve la posición relativa de un elemento respecto de otro elemento.
+ *
+ * @param {Element} element1 Debe ser un nodo descenciente de element2.
+ * @param {Element} element2 Elemento base.
+ */
+EzWebExt.getRelativePosition = function(element1, element2) {
+    var coordinates = {x: element1.offsetLeft, y: element1.offsetTop};
+
+    var parentNode = element1.offsetParent;
+    while (parentNode != element2) {
+        var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
+        var p = cssStyle.getPropertyValue('position');
+        if (p != 'static') {
+            coordinates.y += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            coordinates.x += parentNode.offsetLeft + cssStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+            coordinates.y -= parentNode.scrollTop;
+            coordinates.x -= parentNode.scrollLeft;
+        }
+        parentNode = parentNode.offsetParent;
+    }
+    return coordinates;
+} 
+
 /*---------------------------------------------------------------------------*/
 /*                          EzWebExt XML utilities                           */
 /*---------------------------------------------------------------------------*/
@@ -4320,7 +4344,7 @@ PaginationInterface.prototype.goToLast = function() {
  *
  */
 StyledElements.MenuItem = function(text, handler) {
-    StyledElements.StyledElement.call(this, ['click']);
+    StyledElements.StyledElement.call(this, ['click', 'mouseover', 'mouseout']);
 
     this.wrapperElement = document.createElement("div");
     EzWebExt.addClassName(this.wrapperElement, "menu_item");
@@ -4335,12 +4359,14 @@ StyledElements.MenuItem = function(text, handler) {
     this._mouseoverEventHandler = EzWebExt.bind(function(event) {
         if (this.enabled) {
             EzWebExt.addClassName(this.wrapperElement, "hovered");
+            this.events['mouseover'].dispatch(this);
         }
     }, this);
     EzWebExt.addEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
     this._mouseoutEventHandler = EzWebExt.bind(function(event) {
         if (this.enabled) {
             EzWebExt.removeClassName(this.wrapperElement, "hovered");
+            this.events['mouseout'].dispatch(this);
         }
     }, this)
     EzWebExt.addEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
@@ -4420,41 +4446,54 @@ StyledElements.SendMenuItems.prototype.build = function() {
     return items;
 }
 
+
 /**
- *
+ * @abstract
  */
-StyledElements.PopupMenu = function() {
+StyledElements.PopupMenuBase = function(options) {
+    if (options && options.extending)
+        return;
+
+    StyledElements.ObjectWithEvents.call(this, ['itemOver']);
+
     this.wrapperElement = document.createElement('div');
     this.wrapperElement.className = 'popup_menu hidden';
     this._items = [];
     this._dynamicItems = [];
+    this._submenus = [];
     this._menuItemCallback = EzWebExt.bind(this._menuItemCallback, this);
-
-    this._disableLayer = document.createElement('div');
-    this._disableLayer.className = 'disable-layer';
-    EzWebExt.addEventListener(this._disableLayer, "click", EzWebExt.bind(function(event) {
-        event.stopPropagation();
-        this.hide();
-    }, this), false);
+    this._menuItemEnterCallback = EzWebExt.bind(this._menuItemEnterCallback, this);
 }
+StyledElements.PopupMenuBase.prototype = new StyledElements.ObjectWithEvents();
 
-StyledElements.PopupMenu.prototype.append = function(child) {
-    /*if (child instanceof StyledElements.DynamicMenuItems) {
-        
-    } else */ if (child instanceof StyledElements.MenuItem) {
+StyledElements.PopupMenuBase.prototype._append = function(child, where) {
+    if (child instanceof StyledElements.MenuItem) {
         child.addEventListener('click', this._menuItemCallback);
+        child.addEventListener('mouseover', this._menuItemEnterCallback);
+    } else if (child instanceof StyledElements.SubMenuItem) {
+        child.addEventListener('click', this._menuItemCallback);
+        child.addEventListener('mouseover', this._menuItemEnterCallback);
+        child._setParentPopupMenu(this);
     }
-    this._items.push(child);
+    where.push(child);
 }
 
-StyledElements.PopupMenu.prototype.appendSeparator = function() {
+StyledElements.PopupMenuBase.prototype.append = function(child) {
+    this._append(child, this._items);
+}
+
+StyledElements.PopupMenuBase.prototype.appendSeparator = function() {
     var separator = document.createElement('hr');
     this.wrapperElement.appendChild(separator);
     this._items.push(separator);
 }
 
-StyledElements.PopupMenu.prototype.show = function(refPosition) {
+StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
     var i, j, item, generatedItems, generatedItem;
+
+    if (this.wrapperElement.parentNode != null) {
+        return; // This Popup Menu is already visible => nothing to do
+    }
 
     for (i = 0; i < this._items.length; i += 1) {
         item = this._items[i];
@@ -4462,19 +4501,26 @@ StyledElements.PopupMenu.prototype.show = function(refPosition) {
             generatedItems = item.build();
             for (j = 0; j < generatedItems.length; j += 1) {
                 generatedItem = generatedItems[j];
-                generatedItem.insertInto(this.wrapperElement);
-                generatedItem.addEventListener('click', this._menuItemCallback);
+
+                this._append(generatedItem, this._dynamicItems);
+
+                if (generatedItem instanceof StyledElements.MenuItem) {
+                    generatedItem.insertInto(this.wrapperElement);
+                } else if (generatedItem instanceof StyledElements.SubMenuItem) {
+                    generatedItem._getMenuItem().insertInto(this.wrapperElement);
+                } 
             }
-            this._dynamicItems = this._dynamicItems.concat(generatedItems);
         } else if (item instanceof StyledElements.MenuItem) {
             item.insertInto(this.wrapperElement);
+        } else if (item instanceof StyledElements.SubMenuItem) {
+            item._getMenuItem().insertInto(this.wrapperElement);
+            this._submenus.push(item);
         } else {
             this.wrapperElement.appendChild(item);
         }
     }
 
     EzWebExt.removeClassName(this.wrapperElement, 'hidden');
-    document.body.appendChild(this._disableLayer);
     document.body.appendChild(this.wrapperElement);
 
     // TODO Hay que ajustar refPosition.y y refPosition.x para que el menú no
@@ -4485,18 +4531,78 @@ StyledElements.PopupMenu.prototype.show = function(refPosition) {
     this.wrapperElement.style.display = 'block';
 }
 
-StyledElements.PopupMenu.prototype.hide = function() {
+StyledElements.PopupMenuBase.prototype.hide = function() {
     var i;
 
-    document.body.removeChild(this._disableLayer);
+    if (this.wrapperElement.parentNode == null) {
+        return; // This Popup Menu is already hidden => nothing to do
+    }
+
     EzWebExt.addClassName(this.wrapperElement, 'hidden');
 
+    for (i = 0; i < this._submenus.length; i += 1) {
+        this._submenus[i].hide();
+    }
+
     for (i = 0; i < this._dynamicItems.length; i += 1) {
-        this._dynamicItems[i].destroy();
+        item = this._dynamicItems[i];
+        if (item instanceof StyledElements.SubMenuItem) {
+            item.hide();
+        }
+        item.destroy();
     }
     this._dynamicItems = [];
+    this._submenus = [];
     this.wrapperElement.innerHTML = '';
-    document.body.removeChild(this.wrapperElement);
+    if (this.wrapperElement.parentNode) {
+        EzWebExt.removeFromParent(this.wrapperElement);
+    }
+}
+
+StyledElements.PopupMenuBase.prototype._menuItemEnterCallback = function(menuItem) {
+    this.events['itemOver'].dispatch(this, menuItem);
+}
+
+StyledElements.PopupMenuBase.prototype.destroy = function() {
+    var i;
+    for (i = 0; i < this._items.length; i += 1) {
+        if (item instanceof StyledElements.MenuItem) {
+            item.destroy();
+        }
+    }
+    this._items = null;
+    this._menuItemCallback = null;
+}
+
+/**
+ *
+ */
+StyledElements.PopupMenu = function() {
+    StyledElements.PopupMenuBase.call(this);
+
+    this._disableCallback = EzWebExt.bind(function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        this.hide();
+    }, this);
+
+    this._disableLayer = document.createElement('div');
+    this._disableLayer.className = 'disable-layer';
+    EzWebExt.addEventListener(this._disableLayer, "click", this._disableCallback, false);
+    EzWebExt.addEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
+}
+StyledElements.PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
+
+StyledElements.PopupMenu.prototype.show = function(refPosition) {
+    document.body.appendChild(this._disableLayer);
+
+    StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
+}
+
+StyledElements.PopupMenu.prototype.hide = function() {
+    StyledElements.PopupMenuBase.prototype.hide.call(this);
+
+    document.body.removeChild(this._disableLayer);
 }
 
 StyledElements.PopupMenu.prototype.setContext = function(context) {
@@ -4509,12 +4615,76 @@ StyledElements.PopupMenu.prototype._menuItemCallback = function(menuItem) {
 }
 
 StyledElements.PopupMenu.prototype.destroy = function() {
-    var i;
-    for (i = 0; this._items.length; i += 1) {
-        if (item instanceof StyledElements.MenuItem) {
-            item.destroy();
-        }
-    }
-    this._items = null;
-    this._menuItemCallback = null;
+    StyledElements.PopupMenuBase.prototype.destroy.call(this);
+
+    EzWebExt.removeEventListener(this._disableLayer, "click", this._disableCallback, false);
+    EzWebExt.removeEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
+    this._disableCallback = null;
 }
+
+/**
+ *
+ */
+StyledElements.SubMenuItem = function(text, handler) {
+    StyledElements.PopupMenuBase.call(this);
+
+    this.menuItem = new StyledElements.MenuItem(text, handler);
+}
+StyledElements.SubMenuItem.prototype = new StyledElements.PopupMenuBase({extending: true});
+
+StyledElements.SubMenuItem.prototype._getContext = function() {
+    if (this.parentMenu instanceof StyledElements.SubMenuItem) {
+        return this.parentMenu._getContext();
+    } else {
+        return this.parentMenu._context;
+    }
+}
+
+StyledElements.SubMenuItem.prototype._menuItemCallback = function(menuItem) {
+    var currentMenu = this;
+    while (currentMenu.parentMenu) {
+        currentMenu = currentMenu.parentMenu;
+    }
+    currentMenu.hide();
+    menuItem.run(currentMenu._context);
+}
+
+StyledElements.SubMenuItem.prototype._setParentPopupMenu = function(popupMenu) {
+    this.parentMenu = popupMenu;
+
+    this.parentMenu.addEventListener('itemOver', EzWebExt.bind(function(popupMenu, item) {
+        var position;
+
+        if (item === this.menuItem) {
+            position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, document.body);
+            position.x += this.menuItem.wrapperElement.offsetWidth;
+            this.show(position);
+        } else {
+            this.hide();
+        }
+    }, this));
+}
+
+StyledElements.SubMenuItem.prototype._getMenuItem = function() {
+    return this.menuItem;
+}
+
+StyledElements.SubMenuItem.prototype.addEventListener = function(eventId, handler) {
+    switch (eventId) {
+    case 'mouseover':
+    case 'click':
+        return this.menuItem.addEventListener(eventId, handler);
+    default:
+        return StyledElements.PopupMenuBase.prototype.addEventListener.call(this, eventId, handler);
+    }
+}
+
+StyledElements.SubMenuItem.prototype.destroy = function() {
+    if (this.menuItem) {
+        this.menuItem.destroy();
+    }
+    this.menuItem = null;
+
+    StyledElements.PopupMenuBase.prototype.destroy.call(this);
+}
+
