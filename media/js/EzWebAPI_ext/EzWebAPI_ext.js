@@ -2029,9 +2029,20 @@ StyledElements.Container.prototype = new StyledElements.StyledElement();
 StyledElements.Container.prototype.appendChild = function(element) {
     if (element instanceof StyledElements.StyledElement) {
         element.insertInto(this);
-        this.childs[this.childs.length] = element;
+        this.childs.push(element);
     } else {
         this.wrapperElement.appendChild(element);
+    }
+}
+
+StyledElements.Container.prototype.removeChild = function(element) {
+    var index;
+    if (element instanceof StyledElements.StyledElement) {
+        index = this.childs.indexOf(element);
+        this.childs.splice(index, 1);
+        this.wrapperElement.removeChild(element.wrapperElement);
+    } else {
+        this.wrapperElement.removeChild(element);
     }
 }
 
