@@ -4053,7 +4053,26 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     return alt;
 }
 
-StyledElements.StyledAlternatives.prototype.showAlternative = function(id) {
+/**
+ * Changes current visible alternative.
+ *
+ * @param {Number|StyledElements.Alternative} Alternative to show. Must belong
+ * to this instance of StyledAlternatives.
+ */
+StyledElements.StyledAlternatives.prototype.showAlternative = function(alternative) {
+    var id;
+
+    if (alternative instanceof StyledElements.Alternative) {
+        id = alternative.getId();
+        if (this.alternatives[id] !== alternative) {
+            throw new Error('Invalid alternative');
+        }
+    } else {
+        id = alternative;
+        if (this.alternatives[id] != null) {
+            throw new Error('Invalid alternative');
+        }
+    }
     this.transitionsQueue.addCommand(id);
 }
 
