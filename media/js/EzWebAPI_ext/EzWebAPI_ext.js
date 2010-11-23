@@ -2392,7 +2392,21 @@ StyledElements.StyledList.prototype.addEntries = function(entries) {
 
         this.entriesByValue[entryValue] = entry;
     }
-    this.entries.concat(entries);
+    this.entries = this.entries.concat(entries);
+}
+
+StyledElements.StyledList.prototype.removeEntryByValue = function(value) {
+    var i, entry, index;
+
+    entry = this.entriesByValue[value];
+    delete this.entriesByValue[value];
+    this.entries.slice(this.entries.indexOf(entry), 1);
+    EzWebExt.removeFromParent(entry.element);
+
+    if (index !== -1) {
+        this.currentSelection.splice(index, 1);
+        this.events['change'].dispatch(this, this.currentSelection, [], [value]);
+    }
 }
 
 /**
@@ -2430,7 +2444,7 @@ StyledElements.StyledList.prototype.cleanSelection = function() {
 /**
  * Cambia la selección actual a la indicada.
  *
- * @param {[]} selection lista de valores a seleccionar.
+ * @param {Array} selection lista de valores a seleccionar.
  */
 StyledElements.StyledList.prototype.select = function(selection) {
     this._cleanSelection();
@@ -2439,49 +2453,61 @@ StyledElements.StyledList.prototype.select = function(selection) {
 }
 
 /**
- * Añade un conjunto de valores a la selección actual. No está contemplado, por
- * ahora, que se pueda pasar elementos ya seleccionados previamente (TODO).
+ * Añade un conjunto de valores a la selección actual.
  */
 StyledElements.StyledList.prototype.addSelection = function(selection) {
+    var i, entry, addedValues = [], removedValues = [];
+
     if (selection.length === 0)
         return;  // Nothing to do
 
     if (!this.multivalued) {
+        if (selection[0] === this.currentSelection[0])
+            return; // Nothing to do
+
+        removedValues = this.currentSelection;
+
         this._cleanSelection();
 
         if (selection.length > 1)
             selection = selection.splice(0, 1);
     }
 
-    for (var i = 0; i < selection.length; i++) {
-        var entry = selection[i];
-        EzWebExt.appendClassName(this.entriesByValue[entry].element, "selected");
-        this.currentSelection.push(entry);
+    for (i = 0; i < selection.length; i++) {
+        entry = selection[i];
+        if (this.currentSelection.indexOf(entry) === -1) {
+            EzWebExt.appendClassName(this.entriesByValue[entry].element, "selected");
+            this.currentSelection.push(entry);
+            addedValues.push(entry);
+        }
     }
 
-    this.events['change'].dispatch(this, this.currentSelection, selection, []);
+    this.events['change'].dispatch(this, this.currentSelection, addedValues, removedValues);
 }
 
 /**
  * Elimina un conjunto de valores de la selección actual.
  */
 StyledElements.StyledList.prototype.removeSelection = function(selection) {
+    var i, entry, index, removedValues = [];
+
     if (selection.length === 0)
         return;  // Nothing to do
 
-    for (var i = 0; i < selection.length; i++) {
-        var entry = selection[i];
+    for (i = 0; i < selection.length; i++) {
+        entry = selection[i];
         EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
-        for (var j = 0; j < this.currentSelection.length; j++) {
-            if (this.currentSelection[j] == entry) {
-                this.currentSelection.splice(j, 1);
-                EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
-                break;
-            }
+        index = this.currentSelection.indexOf(entry);
+        if (index !== -1) {
+            this.currentSelection.splice(index, 1);
+            EzWebExt.removeClassName(this.entriesByValue[entry].element, "selected");
+            removedValues.push(entry);
         }
     }
 
-    this.events['change'].dispatch(this, this.currentSelection, [], selection);
+    if (removedValues.length > 0) {
+        this.events['change'].dispatch(this, this.currentSelection, [], removedValues);
+    }
 }
 
 /**
