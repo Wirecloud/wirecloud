@@ -72,9 +72,11 @@ class GadgetsCollection(Resource):
         if not request.POST.has_key('template_uri'):
             msg = _("template_uri param expected")
             json = {"message": msg, "result": "error"}
-            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')        template_uri = request.REQUEST.__getitem__('template_uri')
+            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
+        template_uri = request.REQUEST.__getitem__('template_uri')
         templateParser = None
 
+        gadget_already_exists = False
         try:
             templateParser = TemplateParser(template_uri, user, fromWGT=fromWGT)
             templateParser.parse()
@@ -82,13 +84,8 @@ class GadgetsCollection(Resource):
 
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
-            transaction.rollback()    
-            
-            msg = _('Gadget already exists!')
-            
-            json_error = {"result": "error", "message": msg}
-            
-            return HttpResponseBadRequest(simplejson.dumps(json_error), mimetype='application/json; charset=UTF-8')
+            gadget_already_exists = True
+            transaction.rollback()
 
         except TemplateParseException, e:
             transaction.rollback()
@@ -120,11 +117,15 @@ class GadgetsCollection(Resource):
         #Inform about the last version of the gadget.
         last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
 
-        json_ok = '{"result": "ok", "contratable": %s, "availableApps": %s, "templateUrl": "%s", "gadgetName": "%s", "gadgetId": %s, "vendor": "%s", "version": "%s", "last_version": "%s", "mashupId": "%s"}' \
-            % (contratable, availableApps, template_uri, gadgetName, gadgetId, vendor, version, last_version, mashupId)
+        json_response = {"result": "ok", "contratable": contratable, "availableApps": availableApps, "templateUrl": template_uri, "gadgetName": gadgetName, "gadgetId": gadgetId, "vendor": vendor, "version": version, "last_version": last_version, "mashupId": mashupId}
         
-        return HttpResponse(json_ok,mimetype='application/json; charset=UTF-8')
-
+        if not gadget_already_exists:
+            json_response["result"] = "ok"
+            return HttpResponse(simplejson.dumps(json_response),mimetype='application/json; charset=UTF-8')
+        else:
+            json_response["result"]  = "error"
+            json_response["message"] = _('Gadget already exists!')
+            return HttpResponseBadRequest(simplejson.dumps(json_response), mimetype='application/json; charset=UTF-8')
 
     def read(self, request, user_name, pag=0, offset=0):
 
