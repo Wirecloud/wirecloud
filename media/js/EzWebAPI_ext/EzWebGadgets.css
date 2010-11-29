@@ -465,7 +465,7 @@ div.styled_numeric_field div.numeric_bottom_button {
   right: 0;
   overflow: auto;
   position: absolute;
-  visibility: visible;
+  visibility: inherit;
   z-index: 2;
 }
 
