@@ -2275,8 +2275,15 @@ StyledElements.StyledSelect.prototype.setValue = function (newValue) {
     EzWebExt.setTextContent(this.textDiv, this.optionsByValue[newValue]);
 }
 
+/**
+ * @param {null|Array} newEntries Entries to add. This method does nothing if 
+ * newEntries is null.
+ */
 StyledElements.StyledSelect.prototype.addEntries = function (newEntries) {
     var oldSelectedIndex = this.inputElement.options.selectedIndex;
+
+    if (newEntries == null || newEntries.length == 0)
+        return;
 
     for (var i = 0; i < newEntries.length; i++) {
         var option = document.createElement("option");
