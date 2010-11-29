@@ -4190,6 +4190,7 @@ function Pagination(initialPageSize) {
 
     this.elements = [];
     this.pageSize = initialPageSize;
+    this.totalPages = 1;
 }
 Pagination.prototype = new StyledElements.ObjectWithEvents();
 
