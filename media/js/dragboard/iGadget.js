@@ -823,7 +823,7 @@ IGadget.prototype._createIGadgetMenu = function() {
 	                    }.bind(this),
 	                    0);
 
-	if (!this.is_shared_workspace()) {
+	if (this.layout.dragboard.getWorkspace().isOwned()) {
 		this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
 		                                       gettext("Menu Bar Color..."),
 		                                       function(e) {
