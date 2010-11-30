@@ -3591,14 +3591,23 @@ StyledElements.StyledNotebook.prototype.removeTab = function(id) {
  * creado con la opción "focusOnSetVisible" activada, además se le pasará el
  * foco a la pestaña asociada.
  *
- * @param id identificador de la pestaña que se quiere eliminar.
+ * @param {Number|Tab} tab instancia o identificador de la pestaña que se quiere eliminar.
  */
-StyledElements.StyledNotebook.prototype.goToTab = function(id) {
-    var newTab = this.tabsById[id];
-    var oldTab = this.visibleTab;
-    if (newTab == null) {
-        throw new Error();
+StyledElements.StyledNotebook.prototype.goToTab = function(tab) {
+    var newTab, oldTab;
+
+    if (tab instanceof StyledElements.Tab) {
+        if (this.tabsById[tab.getId()] !== tab) {
+            throw new Error();
+        }
+        newTab = tab;
+    } else {
+        newTab = this.tabsById[tab];
+        if (newTab == null) {
+            throw new Error();
+        }
     }
+    oldTab = this.visibleTab;
 
     if (this.visibleTab && newTab == this.visibleTab)
         return;
@@ -3612,7 +3621,7 @@ StyledElements.StyledNotebook.prototype.goToTab = function(id) {
     this.visibleTab.setVisible(true);
 
     if (this.focusOnSetVisible)
-        this.focus(id);
+        this.focus(newTab.getId());
 }
 
 /**
