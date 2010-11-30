@@ -58,7 +58,17 @@ function VarManager (_workSpace) {
 		}
 	}
 
-	VarManager.prototype.sendBufferedVars = function () {
+	/**
+	 * Saves all modified variables.
+	 *
+	 * @param {Boolean} async if true, this method will do some asynchronous
+	 * tasks. Sometimes these operations cannot be done asynchronously
+         * because the browser will not wait for these operations. (default:
+         * true)
+	 */
+	VarManager.prototype.sendBufferedVars = function (async) {
+		async = async !== false;
+
 		// Asynchronous handlers
 		function onSuccess(transport) {
 			var response = transport.responseText;
@@ -96,6 +106,7 @@ function VarManager (_workSpace) {
 
 			var options = {
 				method: 'PUT',
+				asynchronous: async,
 				contentType: 'application/json',
 				postBody: Object.toJSON(variables),
 				onSuccess: onSuccess.bind(this),

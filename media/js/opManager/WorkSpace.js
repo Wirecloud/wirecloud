@@ -361,8 +361,8 @@ function WorkSpace (workSpaceState) {
 		igadget._notifyUnloaded();
 	}
 
-	WorkSpace.prototype.sendBufferedVars = function () {
-		if (this.varManager) this.varManager.sendBufferedVars();
+	WorkSpace.prototype.sendBufferedVars = function (async) {
+		if (this.varManager) this.varManager.sendBufferedVars(async);
 	}
 	
 	WorkSpace.prototype.getHeader = function(){
@@ -641,6 +641,7 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.unload = function() {
+
 		var layoutManager = LayoutManagerFactory.getInstance();
 		layoutManager.logSubTask(gettext("Unloading current workspace"));
 
@@ -658,7 +659,7 @@ function WorkSpace (workSpaceState) {
 
 		//layoutManager.unloadCurrentView();
 
-		this.sendBufferedVars();
+		this.sendBufferedVars(false);
 
 		// After that, tab info is managed
 		var tabKeys = this.tabInstances.keys();
@@ -672,17 +673,19 @@ function WorkSpace (workSpaceState) {
 			this.preferences = null;
 		}
 
-		if (this.wiring !== null)
+		if (this.wiring !== null) {
 			this.wiring.unload();
-		if (this.contextManager !== null)
+		}
+		if (this.contextManager !== null) {
 			this.contextManager.unload();
-			this.contextManager=null;
+			this.contextManager = null;
+		}
 
 		this._removeWorkspaceMenu();
 
 		//deapply skin
 		this.skinManager.unloadSkin();
-		
+
 		layoutManager.logStep('');
 	}
 

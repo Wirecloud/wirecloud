@@ -465,8 +465,9 @@ var OpManagerFactory = function () {
 			layoutManager.hideCover();
 			layoutManager._startComplexTask(gettext('Unloading Ezweb Platform'));
 
-			if (this.activeWorkSpace)
+			if (this.activeWorkSpace) {
 				this.activeWorkSpace.unload();
+                        }
 			
 			this.wsListMenu.remove();
 
