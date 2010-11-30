@@ -4703,6 +4703,7 @@ StyledElements.SubMenuItem = function(text, handler) {
     StyledElements.PopupMenuBase.call(this);
 
     this.menuItem = new StyledElements.MenuItem(text, handler);
+    this.menuItem.addClassName('submenu');
 }
 StyledElements.SubMenuItem.prototype = new StyledElements.PopupMenuBase({extending: true});
 

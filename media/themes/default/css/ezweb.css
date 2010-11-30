@@ -380,6 +380,13 @@ button {
   padding: 0.3ex;
 }
 
+.popup_menu .submenu {
+  padding-right: 2.5ex;
+  background-image: url('../../../js/EzWebAPI_ext/images/styledElements/submenu-mark.png');
+  background-position: right center;
+  background-repeat: no-repeat;
+}
+
 .popup_menu .menu_item.hovered {
   background-color: #FCD18E;
 }
