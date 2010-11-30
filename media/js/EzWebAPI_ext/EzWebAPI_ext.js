@@ -658,10 +658,11 @@ EzWebExt.escapeRegExp = function(text) {
  */
 EzWebExt.getRelativePosition = function(element1, element2) {
     var coordinates = {x: element1.offsetLeft, y: element1.offsetTop};
+    var contextDocument = element1.ownerDocument;
 
     var parentNode = element1.offsetParent;
     while (parentNode != element2) {
-        var cssStyle = document.defaultView.getComputedStyle(parentNode, null);
+        var cssStyle = contextDocument.defaultView.getComputedStyle(parentNode, null);
         var p = cssStyle.getPropertyValue('position');
         if (p != 'static') {
             coordinates.y += parentNode.offsetTop + cssStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -4520,7 +4521,7 @@ StyledElements.PopupMenuBase = function(options) {
 
     StyledElements.ObjectWithEvents.call(this, ['itemOver']);
 
-    this.wrapperElement = document.createElement('div');
+    this.wrapperElement = window.parent.document.createElement('div');
     this.wrapperElement.className = 'popup_menu hidden';
     this._items = [];
     this._dynamicItems = [];
@@ -4585,10 +4586,10 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
     }
 
     EzWebExt.removeClassName(this.wrapperElement, 'hidden');
-    document.body.appendChild(this.wrapperElement);
+    window.parent.document.body.appendChild(this.wrapperElement);
 
     // TODO Hay que ajustar refPosition.y y refPosition.x para que el menú no
-    // pueda salirse del área visible del gadget
+    // pueda salirse del área visible
 
     this.wrapperElement.style.top = refPosition.y + "px";
     this.wrapperElement.style.left = refPosition.x + "px";
@@ -4658,7 +4659,14 @@ StyledElements.PopupMenu = function() {
 StyledElements.PopupMenu.prototype = new StyledElements.PopupMenuBase({extending: true});
 
 StyledElements.PopupMenu.prototype.show = function(refPosition) {
-    document.body.appendChild(this._disableLayer);
+    var gadgetObject, opManager, position, platform = window.parent;
+    platform.document.body.appendChild(this._disableLayer);
+
+    opManager = platform.OpManagerFactory.getInstance();
+    gadgetObject = opManager.activeWorkSpace.getIgadget(EzWebAPI.getId()).content;
+    position = EzWebExt.getRelativePosition(gadgetObject, platform.document.body);
+    refPosition.x += position.x;
+    refPosition.y += position.y;
 
     StyledElements.PopupMenuBase.prototype.show.call(this, refPosition);
 }
@@ -4666,7 +4674,9 @@ StyledElements.PopupMenu.prototype.show = function(refPosition) {
 StyledElements.PopupMenu.prototype.hide = function() {
     StyledElements.PopupMenuBase.prototype.hide.call(this);
 
-    document.body.removeChild(this._disableLayer);
+    if (this._disableLayer.parentNode) {
+        EzWebExt.removeFromParent(this._disableLayer);
+    }
 }
 
 StyledElements.PopupMenu.prototype.setContext = function(context) {
@@ -4720,7 +4730,7 @@ StyledElements.SubMenuItem.prototype._setParentPopupMenu = function(popupMenu) {
         var position;
 
         if (item === this.menuItem) {
-            position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, document.body);
+            position = EzWebExt.getRelativePosition(this.menuItem.wrapperElement, this.menuItem.wrapperElement.ownerDocument.body);
             position.x += this.menuItem.wrapperElement.offsetWidth;
             this.show(position);
         } else {

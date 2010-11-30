@@ -898,3 +898,27 @@ button {
 .floatclearer {
     clear: both;
 }
+
+
+/* Popup menu */
+
+.popup_menu {
+  position: absolute;
+  z-index: 111112;
+  margin: 0;
+}
+
+.popup_menu .menu_item {
+  cursor:hand; cursor: pointer;
+}
+
+.disable-layer {
+  position: absolute;
+  z-index: 111111;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}

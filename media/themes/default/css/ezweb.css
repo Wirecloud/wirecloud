@@ -363,3 +363,31 @@ button {
 .color_button {
 	background: transparent url(../images/colorpicker.png) no-repeat scroll 0 0;
 }
+
+/* Popup menu */
+
+.popup_menu {
+  padding: 0;
+  background: #FFFFFF;
+  border: 1px solid #888888;
+}
+
+.popup_menu .menu_item {
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin: 0.4ex;
+  padding: 0.3ex;
+}
+
+.popup_menu .menu_item.hovered {
+  background-color: #FCD18E;
+}
+
+.popup_menu hr {
+  border-width: 1px 0 0 0;
+  border-style: solid;
+  border-color: #888888;
+  margin: 0;
+}
+
