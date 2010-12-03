@@ -9,7 +9,7 @@ var EzWebExt = new Object();
  * Guarda la URL donde se encuentra alojada la librería JavaScript.
  * @type String
  */
-EzWebExt.URL = "/ezweb/js/EzWebAPI_ext";
+EzWebExt.URL = EzWebAPI.platform_domain + "/ezweb/js/EzWebAPI_ext";
 
 /*---------------------------------------------------------------------------*/
 /*                                EzWebExt.Browser                           */
