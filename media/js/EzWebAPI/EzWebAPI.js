@@ -27,7 +27,7 @@
 function _EzWebAPI() {
 	this.platform = window.parent;
 	var ezwebLocation = this.platform.document.location;
-	this.platform_domain = ezwebLocation.protocol + '://' + ezwebLocation.host;
+	this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
 
 	// Get id from the URL
 	var tmp = document.URL.split("?", 2)[1];
