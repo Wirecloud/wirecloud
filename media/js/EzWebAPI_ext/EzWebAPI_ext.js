@@ -3152,7 +3152,7 @@ StyledElements.Tab = function(id, notebook, options) {
 
     /* Process options */
     if (options.closeable) {
-        var closeButton = new StyledElements.StyledButton({text: "X", class: "close_button"});
+        var closeButton = new StyledElements.StyledButton({text: "X", 'class': "close_button"});
         closeButton.insertInto(this.tabElement);
 
         closeButton.addEventListener("click",
