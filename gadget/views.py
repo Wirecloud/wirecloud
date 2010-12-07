@@ -56,7 +56,7 @@ from igadget.views import deleteIGadget
 
 from commons.logs_exception import TracedServerError
 
-from gadget.utils import * 
+from gadget.utils import *
 
 from HTMLParser import HTMLParseError
 
@@ -220,7 +220,9 @@ class GadgetCodeEntry(Resource):
             return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
         else:
             try:
-                return HttpResponse(includeTagBase(xhtml_code, xhtml.url, request), mimetype='%s; charset=UTF-8' % content_type)
+                xhtml_code = includeTagBase(xhtml_code, xhtml.url, request)
+                xhtml_code = fix_ezweb_scripts(xhtml_code, request)
+                return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
             except HTMLParseError, e:
                 msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg' : e.msg}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')

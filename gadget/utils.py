@@ -36,6 +36,9 @@ from gadget.models import Gadget
 from workspace.models import WorkSpace, UserWorkSpace
 from gadget.htmlHeadParser import HTMLHeadParser
 from django.utils.http import urlquote
+from lxml import etree
+from StringIO import StringIO
+
 
 def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = False):
 
@@ -122,3 +125,45 @@ def includeTagBase(document, url, request):
             lines[parser.getPosStartHead()-1] = element1 + head + element2
 
     return "".join("\n").join(lines)
+
+
+def xpath(tree, query, xmlns):
+    if xmlns == None:
+        query = query.replace('xhtml:', '')
+        return tree.xpath(query)
+    else:
+        return tree.xpath(query, namespaces={'xhtml': xmlns})
+
+
+def fix_ezweb_scripts(xhtml_code, request):
+
+    #xhtml_code = re.sub(r'<\?xml\s+version="[\d\.]+"(\s+encoding="[^"]")?\s*\?>', '', xhtml_code)
+
+    if request.META['SERVER_PROTOCOL'].lower().find("https") != -1:
+        rootURL = "https://" + request.META['HTTP_HOST']
+    else:
+        rootURL = "http://" + request.META['HTTP_HOST']
+
+    try:
+        xmltree = etree.fromstring(xhtml_code).getroottree()
+    except:
+        parser = etree.HTMLParser()
+        xmltree = etree.parse(StringIO(xhtml_code), parser)
+
+    prefix = xmltree.getroot().prefix
+    xmlns = None
+    if prefix in xmltree.getroot().nsmap:
+        xmlns = xmltree.getroot().nsmap[prefix]
+
+    scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
+    ezweb_scripts = []
+    for script in scripts:
+        script.text = ''
+        if script.get('src', '').startswith('/ezweb/'):
+            ezweb_scripts.append(script)
+
+    for script in ezweb_scripts:
+        script.set('src', rootURL + script.get('src'))
+
+    # return modified code
+    return etree.tostring(xmltree, pretty_print=False, method='html')
