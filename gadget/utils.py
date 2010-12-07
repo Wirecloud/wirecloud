@@ -158,7 +158,9 @@ def fix_ezweb_scripts(xhtml_code, request):
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     ezweb_scripts = []
     for script in scripts:
-        script.text = ''
+        if 'src' in script.attrib:
+            script.text = ''
+
         if script.get('src', '').startswith('/ezweb/'):
             ezweb_scripts.append(script)
 
