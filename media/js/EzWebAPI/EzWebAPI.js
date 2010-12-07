@@ -99,7 +99,7 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
 		var domain = url.substr(domainStart, pathStart - domainStart);
 		var rest = url.substring(pathStart);
 
-		if (domain != EzWebAPI.platform_domain)
+		if ((protocol + '://' + domain) !== EzWebAPI.platform_domain)
 			final_url = this.platform.URIs.PROXY + '/' +
 				encodeURIComponent(protocol) + '/' +
 				encodeURIComponent(domain) + rest;
