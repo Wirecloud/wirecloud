@@ -2242,12 +2242,18 @@ StyledElements.BorderLayout.prototype.getSouthContainer = function() {
 
 /**
  *
+ * Options:
+ *     * initialEntries:
+ *     * initialValue:
+ *     * idFunc: In case you want to assign object values, you must provide
+ *     a function for converting them into strings.
  */
 StyledElements.StyledSelect = function(options) {
     options = EzWebExt.merge({
         'class': '',
         'initialEntries': [],
-        'initialValue': null
+        'initialValue': null,
+        'idFunc': function (value) { return value; }
     },
     options);
 
@@ -2270,6 +2276,8 @@ StyledElements.StyledSelect = function(options) {
     this.textDiv.className = "text";
 
     this.optionsByValue = {};
+    this.optionValues = {};
+    this.idFunc = options.idFunc;
     this.addEntries(options['initialEntries']);
 
     EzWebExt.addEventListener(this.inputElement, "change",
@@ -2297,6 +2305,10 @@ StyledElements.StyledSelect.prototype.getLabel = function () {
     return EzWebExt.getTextContent(this.textDiv);
 }
 
+StyledElements.StyledSelect.prototype.getValue = function () {
+    return this.optionValues[this.inputElement.value];
+}
+
 StyledElements.StyledSelect.prototype.setValue = function (newValue) {
     if (newValue == null) {
         if (this.defaultValue != null) {
@@ -2304,6 +2316,8 @@ StyledElements.StyledSelect.prototype.setValue = function (newValue) {
         } else {
             newValue = this.inputElement.options[1].value;
         }
+    } else if (typeof newValue === 'object') {
+        newValue = this.idFunc(newValue);
     }
 
     // TODO exception if the newValue is not listened in the option list?
@@ -2332,6 +2346,10 @@ StyledElements.StyledSelect.prototype.addEntries = function (newEntries) {
         }
         optionLabel = optionLabel ? optionLabel : optionValue;
 
+        var realValue = optionValue;
+        if (typeof optionValue === 'object') {
+            optionValue = this.idFunc(optionValue);
+        }
         option.setAttribute("value", optionValue);
         option.appendChild(document.createTextNode(optionLabel));
 
@@ -2340,6 +2358,7 @@ StyledElements.StyledSelect.prototype.addEntries = function (newEntries) {
         }
 
         this.inputElement.appendChild(option);
+        this.optionValues[optionValue] = realValue;
         this.optionsByValue[optionValue] = optionLabel;
     }
 
@@ -2357,6 +2376,7 @@ StyledElements.StyledSelect.prototype.clear = function () {
     EzWebExt.setTextContent(this.inputElement, "");
 
     this.optionsByValue = {};
+    this.optionsValues = {};
 }
 
 /**
