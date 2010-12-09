@@ -677,6 +677,39 @@ EzWebExt.getRelativePosition = function(element1, element2) {
     return coordinates;
 } 
 
+/**
+ * Devuelve la lista de acciones que se pueden realizar al propagar un evento dado.
+ */
+EzWebExt.getEventActions = function(eventVar) {
+    var i, actions, contactSlots, nslotsByLabel, slotInfo, actionLabel;
+
+    contactSlots = eventVar.getFinalSlots();
+    nslotsByLabel = {};
+    actions = [];
+
+    for (i = 0; i < contactSlots.length; i += 1) {
+        slotInfo = contactSlots[i];
+
+        if (nslotsByLabel[slotInfo.action_label] == null) {
+            nslotsByLabel[slotInfo.action_label] = 1;
+        } else {
+            nslotsByLabel[slotInfo.action_label] += 1;
+        }
+    }
+
+    for (i = 0; i < contactSlots.length; i += 1) {
+        slotInfo = contactSlots[i];
+
+        actionLabel = slotInfo.action_label;
+        if (nslotsByLabel[actionLabel] > 1) {
+            actionLabel += ' (' + slotInfo.iGadgetName + ')';
+        }
+        actions.push({value: slotInfo, label: actionLabel});
+    }
+
+    return actions;
+};
+
 /*---------------------------------------------------------------------------*/
 /*                          EzWebExt XML utilities                           */
 /*---------------------------------------------------------------------------*/
@@ -4489,32 +4522,17 @@ StyledElements.SendMenuItems = function(variable, getData) {
 StyledElements.SendMenuItems.prototype = new StyledElements.DynamicMenuItems();
 
 StyledElements.SendMenuItems.prototype.build = function() {
-    var i, contactSlots, nslotsByLabel, slotInfo, actionLabel, items, item;
+    var i, actions, action, items, item;
 
+    actions = EzWebExt.getEventActions(this.variable);
     items = [];
-    contactSlots = this.variable.getFinalSlots();
-    nslotsByLabel = {};
 
-    for (i = 0; i < contactSlots.length; i += 1) {
-        slotInfo = contactSlots[i];
+    for (i = 0; i < actions.length; i += 1) {
+        action = actions[i];
 
-        if (nslotsByLabel[slotInfo.action_label] == null) {
-            nslotsByLabel[slotInfo.action_label] = 1;
-        } else {
-            nslotsByLabel[slotInfo.action_label] += 1;
-        }
-    }
-
-    for (i = 0; i < contactSlots.length; i += 1) {
-        slotInfo = contactSlots[i];
-
-        actionLabel = slotInfo.action_label;
-        if (nslotsByLabel[actionLabel] > 1)
-            actionLabel += ' (' + slotInfo.iGadgetName + ')';
-
-        item = new StyledElements.MenuItem(actionLabel, EzWebExt.bind(function(context) {
+        item = new StyledElements.MenuItem(action.label, EzWebExt.bind(function(context) {
             this.control.variable.set(this.control.getData(context), {targetSlots: this.slots});
-        }, {control: this, slots: [slotInfo]}));
+        }, {control: this, slots: [action.value]}));
 
         items.push(item);
     }
