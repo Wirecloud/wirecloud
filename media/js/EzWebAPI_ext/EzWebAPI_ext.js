@@ -2314,7 +2314,7 @@ StyledElements.StyledSelect.prototype.setValue = function (newValue) {
         if (this.defaultValue != null) {
             newValue = this.defaultValue;
         } else {
-            newValue = this.inputElement.options[1].value;
+            newValue = this.inputElement.options[0].value;
         }
     } else if (typeof newValue === 'object') {
         newValue = this.idFunc(newValue);
