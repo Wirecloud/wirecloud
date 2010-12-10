@@ -99,7 +99,7 @@ class GadgetsCollection(Resource):
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         #Returning info to the catalogue of the created gadget!
-        contratable = str(templateParser.is_contratable()).lower()
+        contratable = templateParser.is_contratable()
         
         gadget = templateParser.get_gadget()
         
@@ -117,7 +117,7 @@ class GadgetsCollection(Resource):
         #Inform about the last version of the gadget.
         last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
 
-        json_response = {"result": "ok", "contratable": contratable, "availableApps": availableApps, "templateUrl": template_uri, "gadgetName": gadgetName, "gadgetId": gadgetId, "vendor": vendor, "version": version, "last_version": last_version, "mashupId": mashupId}
+        json_response = {"contratable": contratable, "availableApps": availableApps, "templateUrl": template_uri, "gadgetName": gadgetName, "gadgetId": gadgetId, "vendor": vendor, "version": version, "last_version": last_version, "mashupId": mashupId}
         
         if not gadget_already_exists:
             json_response["result"] = "ok"
