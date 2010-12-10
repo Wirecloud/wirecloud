@@ -1977,6 +1977,14 @@ StyledElements.StyledElement.prototype.removeClassName = function(className) {
     EzWebExt.removeClassName(this.wrapperElement, className);
 }
 
+StyledElements.StyledElement.prototype.setDisabled = function(disable) {
+    if (disable) {
+        this.disable();
+    } else {
+        this.enable();
+    }
+}
+
 /**
  * Rehabilita el componente quitándole la clase css .disabled
  */
