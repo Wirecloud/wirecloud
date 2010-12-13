@@ -339,7 +339,7 @@ var LayoutManagerFactory = function () {
 			var changeEvent = tab_object.changeTabHandler;
 			var dragger = tab_object.dragger;
 
-			tab.className = "tab";
+			tab.removeClassName('current');
 			//hide the launcher image for the drop down menu and the dragger from the former current tab
 			var tabOpsLauncher = $(launcher);
 			tabOpsLauncher.setStyle({'display':'none'});
@@ -362,8 +362,8 @@ var LayoutManagerFactory = function () {
 			var changeHandler = tab_object.changeTabHandler;
 			var dragger = tab_object.dragger;
 
-			if (tab.className != "tab current") {
-				tab.className = "tab current";
+			if (!tab.hasClassName("current")) {
+				tab.addClassName("current");
 				
 				var tabOpsLauncher = $(launcher);
 				
@@ -1209,11 +1209,25 @@ var LayoutManagerFactory = function () {
 
 	/*Insert tab in the tab bar*/
 	LayoutManager.prototype.addToTabBar = function(tabId) {
-		var tabHTMLElement = document.createElement("div");
+		var tabs, oldLastTab, tabHTMLElement;
+
+		tabHTMLElement = document.createElement("div");
 		Element.extend(tabHTMLElement);
 		tabHTMLElement.setAttribute("id", tabId);
 		tabHTMLElement.addClassName("tab");
+		tabHTMLElement.addClassName('last');
 		tabHTMLElement.setStyle({"display": "none"}); // TODO
+
+		tabs = this.scrollTabBar.getElementsBySelector('.tab');
+		if (tabs.length == 0) {
+			tabHTMLElement.addClassName('first');
+		}
+
+		oldLastTab = tabs[0];
+		if (oldLastTab) {
+			oldLastTab.removeClassName('last');
+		}
+
 		this.scrollTabBar.insertBefore(tabHTMLElement, this.scrollTabBar.firstChild);
 		var computedStyle = document.defaultView.getComputedStyle(tabHTMLElement, null);
 		var tabBorder = computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -1221,25 +1235,36 @@ var LayoutManagerFactory = function () {
 		var tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		this.changeTabBarSize(2*tabBorder + tabMarginRight + tabMarginLeft);
 		this.scrollTabBar.setStyle({right: 0, left:''});
+
 		return tabHTMLElement;
 	}
-	
+
 	/*Move a tab in the tab bar*/
-	LayoutManager.prototype.moveTab = function(tab, targetTab){
-		
+	LayoutManager.prototype.moveTab = function(tab, targetTab) {
+		var tabs;
+
+		if (targetTab === tab) {
+			//do nothing
+			return;
+		}
+
+		tab.tabHTMLElement.removeClassName('last');
+		tab.tabHTMLElement.removeClassName('first');
+
 		//inserting an existing node will move it
 		//tab nodes are displayed in inverted order. The most left side tab is the last node in the DOM
-		if(targetTab){
+		if (targetTab) {
 			//insert before
-			if(targetTab == tab){
-				//do nothing
-				return;
-			}
 			this.scrollTabBar.insertBefore(tab.tabHTMLElement, targetTab.tabHTMLElement.nextSibling);
-		}else{
+		} else {
 			//insert at the end
 			this.scrollTabBar.insertBefore(tab.tabHTMLElement, this.scrollTabBar.firstChild);
 		}
+
+		tabs = this.scrollTabBar.getElementsBySelector('.tab');
+		tabs[tabs.length - 1].addClassName('first');
+		tabs[0].addClassName('last');
+
 		//persistence of tabs' order
 		var ids = [];
 		var tabId;
@@ -1249,7 +1274,7 @@ var LayoutManagerFactory = function () {
 			//get the tab id (tab_workspaceid_tabId)
 			aux = this.scrollTabBar.childNodes[i].id.split("_");
 			tabId = parseInt(aux[aux.length-1]);
-			ids.push(tabId);		
+			ids.push(tabId);
 		}
 		var success = function(transport){
 			//Do nothing
@@ -1258,7 +1283,7 @@ var LayoutManagerFactory = function () {
 		var error = function(transport){
 			var logManager = LogManagerFactory.getInstance();
 			var msg = logManager.formatError(gettext("Error updating order: %(errorMsg)s."), transport, e);
-			logManager.log(msg);		
+			logManager.log(msg);
 		}
 		
 		var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': tab.workSpace.workSpaceState.id});
@@ -1297,11 +1322,17 @@ var LayoutManagerFactory = function () {
 		var tabNameMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
 		
 		var tabWidth = -1 * (tab.tabHTMLElement.getWidth() - (this.getTabImgSize() + tabNameMarginLeft + tabNameMarginRight) + tabMarginRight + tabMarginLeft);
+
+		tabs = this.scrollTabBar.getElementsBySelector('.tab');
+		if (tabs.length > 1 && tabs[0] === tab.tabHTMLElement) {
+			tabs[1].addClassName('last');
+		}
+
 		Element.remove(tab.tabHTMLElement);
 		this.changeTabBarSize(tabWidth);
 		this.scrollTabBar.setStyle({right: (this.fixedTabBar.getWidth() - this.getScrollTabBarWidth()) + 'px', left:''});
 	}
-	
+
 	/*change the width of the tab bar*/
 	LayoutManager.prototype.changeTabBarSize = function(tabSize){
 
