@@ -3196,7 +3196,8 @@ StyledElements.Tab = function(id, notebook, options) {
 
     this.tabElement = document.createElement("div");
     this.tabElement.className = "tab";
-    this.name = document.createTextNode(options.name);
+    this.name = document.createElement('span');
+    EzWebExt.setTextContent(this.name, options.name);
     this.tabElement.appendChild(this.name);
 
     /* call to the parent constructor */
