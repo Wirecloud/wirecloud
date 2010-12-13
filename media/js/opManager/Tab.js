@@ -411,17 +411,16 @@ function Tab (tabInfo, workSpace) {
 		Event.stopObserving (document, "mouseup", this.endDrag);
 		Event.stopObserving (document, "mousemove", this.drag);
 
+		Element.remove(this.tabMarker);
+		$('tab_marker').style.display = 'none';
+
 		//move the tab and restore its properties
 		LayoutManagerFactory.getInstance().moveTab(this, this.referenceTab);
 		this.tabHTMLElement.style.position = "relative";
 		this.tabHTMLElement.style.zIndex = "";
 		this.tabHTMLElement.style.left = "";
 		this.tabHTMLElement.style.top = "";
-		
-		Element.remove(this.tabMarker);
-		
-		$('tab_marker').style.display = 'none';
-		
+
 		Event.observe($(this.dragger), "mousedown", this.startDrag);
 
 		document.onmousedown = null; // reenable context menu
