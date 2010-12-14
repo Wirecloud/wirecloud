@@ -32,11 +32,12 @@
 
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.custom_decorators import basicauth_or_logged_in
 from commons.resource import Resource
-from commons.utils import json_encode
+from commons.utils import get_xml_error, json_encode
 from gadget.views import parseAndCreateGadget
 from gadget.models import Gadget
 from igadget.models import IGadget
@@ -69,6 +70,13 @@ class IGadgetCollection(Resource):
             msg = _("Missing template URL parameter")
             json = json_encode({"message": msg, "result": "error"})
             return HttpResponseBadRequest(json, mimetype='application/json; charset=UTF-8')
+
+        initial_variable_values = None
+        if 'variable_values' in request.POST:
+            try:
+                initial_variable_values = simplejson.loads(request.POST['variable_values'])
+            except:
+                return HttpResponseBadRequest(get_xml_error(_('variables_values must be a valid JSON value')))
 
         #
         #Get or Create the Gadget in the Showcase
@@ -114,7 +122,7 @@ class IGadgetCollection(Resource):
         data = {"left": 0, "top": 0, "icon_left": 0, "icon_top": 0, "zIndex": 0,
                 "width": gadget.width, "height": gadget.height, "name": igadget_name,
                 "menu_color": "FFFFFF", "layout": 0, "gadget": gadget.uri}
-        resp = SaveIGadget(data, user, activeTab, request)
+        resp = SaveIGadget(data, user, activeTab, initial_variable_values)
 
         return HttpResponse(json_encode({"igadget_id": resp["id"], "gadget_id": gadget.id}),
                             mimetype='application/json; charset=UTF-8')

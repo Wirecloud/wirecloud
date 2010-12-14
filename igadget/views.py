@@ -112,7 +112,7 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     createConnectable(var)
 
 
-def SaveIGadget(igadget, user, tab, request):
+def SaveIGadget(igadget, user, tab, initial_variable_values):
     gadget_uri = igadget.get('gadget')
     igadget_name = igadget.get('name')
     width = igadget.get('width')
@@ -145,15 +145,11 @@ def SaveIGadget(igadget, user, tab, request):
         new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
         new_igadget.save()
 
-        initial_variable_values = None
-        if 'variable_values' in request.POST:
-            initial_variable_values = simplejson.loads(request.POST['variable_values'])
-
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
-            try:
+            if initial_variable_values and varDef.name in initial_variable_values:
                 initial_value = initial_variable_values[varDef.name]
-            except:
+            else:
                 initial_value = None
             addIGadgetVariable(new_igadget, user, varDef, initial_value)
 
@@ -163,12 +159,7 @@ def SaveIGadget(igadget, user, tab, request):
 
         return ids
 
-    except Gadget.DoesNotExist, e:
-        msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': gadget_uri}
-
-        raise TracedServerError(e, {'igadget': igadget, 'user': user, 'tab': tab}, request, msg)
-
-    except VariableDef.DoesNotExist, e:
+    except VariableDef.DoesNotExist:
         #iGadget has no variables. It's normal
         pass
 
@@ -352,13 +343,30 @@ class IGadgetCollection(Resource):
         if 'igadget' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
+        # Data checking and parsing
         try:
-            received_json = request.POST['igadget']
-            igadget = simplejson.loads(received_json)
+            igadget = simplejson.loads(request.POST['igadget'])
+        except:
+            return HttpResponseBadRequest(get_xml_error(_('iGadget data is not valid JSON')))
+
+        initial_variable_values = None
+        if 'variable_values' in request.POST:
+            try:
+                initial_variable_values = simplejson.loads(request.POST['variable_values'])
+            except:
+                return HttpResponseBadRequest(get_xml_error(_('variables_values must be a valid JSON value')))
+
+        # iGadget creation
+        try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            ids = SaveIGadget(igadget, user, tab, request)
+            ids = SaveIGadget(igadget, user, tab, initial_variable_values)
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
+        except Gadget.DoesNotExist, e:
+            msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': igadget['gadget']}
+
+            raise TracedServerError(e, {'igadget': igadget, 'user': user, 'tab': tab}, request, msg)
+
         except WorkSpace.DoesNotExist, e:
             msg = _('referred workspace %(workspace_id)s does not exist.') % {'workspace_id': workspace_id}
 
