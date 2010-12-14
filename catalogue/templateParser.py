@@ -51,6 +51,15 @@ from commons.user_utils import get_certification_status
 from deployment.wgtPackageUtils import get_wgt_local_path
 
 
+def checkEmptyFields(fields, obj):
+    missingFields = []
+    for field in fields:
+        if not field in obj or obj.get(field).strip() == '':
+            missingFields.append(field)
+
+    return missingFields
+
+
 class TemplateParser:
 
     def __init__(self, uri, user, save=True, fromWGT=False):
@@ -206,20 +215,18 @@ class TemplateHandler(handler.ContentHandler):
 
     def processVersion(self, version_accumulator):
         if version_accumulator:
-            #format 'XX.XX.XX'
-            if re.match('^(\d+\.)*\d+$', version_accumulator[0]) and \
-                        re.search('^(0\d+\.)|(\.0\d+)', version_accumulator[0]) == None:
+            # format 'XX.XX[.XX]*'
+            if re.match('^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$', version_accumulator[0]):
                 self._version = version_accumulator[0]
             else:
-                raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be "1.0.1"'))
+                raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
         else:
             raise TemplateParseException(_("ERROR: missing Resource version"))
 
     def processMashupResource(self, attrs):
-        if 'vendor' in attrs and 'name' in attrs and 'version' in attrs:
-            pass
-        else:
-            raise TemplateParseException(_("ERROR: missing attribute at Resource"))
+        missingFields = checkEmptyFields(['vendor', 'name', 'version', 'title'], attrs)
+        if missingFields:
+            raise TemplateParseException(_("ERROR: the following attributes are missing in a Resource element: %(fields)") % {'fields': missingFields})
 
     def processTranslations(self, attrs):
         if 'default' in attrs:
@@ -302,12 +309,10 @@ class TemplateHandler(handler.ContentHandler):
             else:
                 self._wikiURI = self._accumulator[0]
             return
-        if name == 'IncludedResources':
+
+        if name in ('Tab', 'Position', 'Rendering', 'Preference', 'Property', 'IncludedResources', 'Resource', 'Capability'):
             return
-        if name == 'Resource':
-            return
-        if name == 'Capability':
-            return
+
         if name == 'Catalog.ResourceDescription':
 
             if self._gadget_added:
@@ -454,12 +459,8 @@ class TemplateHandler(handler.ContentHandler):
             self.resetAccumulator()
             return
 
-        if name == 'Slot':
-            self.processWire(attrs, 'Slot')
-            return
-
-        if name == 'Event':
-            self.processWire(attrs, 'Event')
+        if name in ('Slot', 'Event'):
+            self.processWire(attrs, name)
             return
 
         if name == 'IncludedResources':
