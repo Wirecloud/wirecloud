@@ -4187,7 +4187,7 @@ StyledElements.StyledAlternatives.prototype.showAlternative = function(alternati
         }
     } else {
         id = alternative;
-        if (this.alternatives[id] != null) {
+        if (this.alternatives[id] == null) {
             throw new Error('Invalid alternative');
         }
     }
