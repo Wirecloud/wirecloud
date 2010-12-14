@@ -46,9 +46,10 @@ from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from igadget.models import IGadget, Variable
 from layout.models import Branding
-from mashupTemplateGenerator import TemplateGenerator
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
+from workspace.mashupTemplateGenerator import TemplateGenerator
+from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 from workspace.models import Category
 from workspace.models import VariableValue, SharedVariableValue
 from workspace.models import Tab
@@ -741,25 +742,27 @@ class  PublishedWorkSpaceMergerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class  WorkSpaceAdderEntry(Resource):
+class WorkSpaceAdderEntry(Resource):
 
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        workspace = buildWorkspaceFromTemplate(published_workspace.template, user)
 
-        original_workspace = published_workspace.workspace
+        activate = request.GET.get('active') == "true"
+        if not activate:
+            workspaces = UserWorkSpace.objects.filter(user__id=user.id, active=True)
+            if workspaces.count() == 0:
+                # there aren't any active workspace yet
+                activate = True
 
-        cloned_workspace = cloneWorkspace(workspace_id, user)
+        # Mark the mashup as the active workspace if it's requested. For example, solutions
+        if activate:
+            setActiveWorkspace(user, workspace)
 
-        linkWorkspace(user, cloned_workspace.id, original_workspace.creator)
-
-        #Mark the mashup as the active workspace if it's requested. For example, solutions
-        if request.GET.get('active') == "true":
-            setActiveWorkspace(user, cloned_workspace)
-
-        workspace_data = get_global_workspace_data(cloned_workspace, user)
+        workspace_data = get_global_workspace_data(workspace, user)
 
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
