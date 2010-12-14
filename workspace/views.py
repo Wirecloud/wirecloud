@@ -888,6 +888,9 @@ class WorkSpacePublisherEntry(Resource):
 class  GeneratorURL(Resource):
 
     def read(self, request, workspace_id):
+        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+
         templateGen = TemplateGenerator()
-        template = templateGen.getTemplate(workspace_id)
+        template = templateGen.getTemplate(published_workspace)
+
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')

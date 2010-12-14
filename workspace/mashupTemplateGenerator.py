@@ -30,18 +30,15 @@
 
 #
 
-from django.shortcuts import get_object_or_404
 from lxml import etree
 
 from igadget.models import IGadget
-from workspace.models import PublishedWorkSpace, Tab
+from workspace.models import Tab
 
 
 class TemplateGenerator:
 
-    def getTemplate(self, workspace_id):
-
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+    def getTemplate(self, published_workspace):
 
         workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace)
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
