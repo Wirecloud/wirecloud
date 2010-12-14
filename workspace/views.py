@@ -44,17 +44,16 @@ from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from connectable.models import Out
 from igadget.models import IGadget, Variable
-from igadget.views import deleteIGadget
 from layout.models import Branding
 from mashupTemplateGenerator import TemplateGenerator
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.models import Category
-from workspace.models import AbstractVariable, VariableValue, SharedVariableValue
+from workspace.models import VariableValue, SharedVariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace, WorkSpaceVariable
+from workspace.utils import deleteTab, createTab, setVisibleTab
 
 
 def get_mashup_gadgets(mashup_id):
@@ -93,76 +92,6 @@ def get_igadgets_description(included_igadgets):
         description += igadget.gadget.name + ' , '
 
     return description[:-2]
-
-
-def deleteTab(tab, user):
-    #Deleting igadgets
-    igadgets = IGadget.objects.filter(tab=tab)
-    for igadget in igadgets:
-        deleteIGadget(igadget, user)
-
-    #Deleting OUT connectable (wTab)
-    Out.objects.get(abstract_variable=tab.abstract_variable).delete()
-
-    #Deleting workspace variable
-    WorkSpaceVariable.objects.get(abstract_variable=tab.abstract_variable).delete()
-
-    #Deleting abstract variable
-    VariableValue.objects.get(abstract_variable=tab.abstract_variable, user=user).delete()
-    tab.abstract_variable.delete()
-
-    #Deleting tab
-    tab.delete()
-
-
-def createTab(tab_name, user, workspace):
-    # Creating Entry in AbstractVariable table for polimorphic access from Connectable hierarchy
-    abstractVariable = AbstractVariable(name=tab_name, type='WORKSPACE')
-    abstractVariable.save()
-
-    # Creating Value for Abstract Variable
-    variableValue = VariableValue(user=user, value="", abstract_variable=abstractVariable)
-    variableValue.save()
-
-    # Creating implicit workspace variable
-    wsVariable = WorkSpaceVariable(workspace=workspace, aspect='TAB', abstract_variable=abstractVariable)
-    wsVariable.save()
-
-    #Creating implicit OUT Connectable element
-    connectableName = 'tab_' + tab_name
-    connectable = Out(name=connectableName, abstract_variable=abstractVariable)
-    connectable.save()
-
-    visible = False
-    tabs = Tab.objects.filter(workspace=workspace, visible=True)
-    if tabs.count() == 0:
-        visible = True
-
-    #it's always the last tab
-    position = Tab.objects.filter(workspace=workspace).count()
-
-    # Creating tab
-    tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace, abstract_variable=abstractVariable)
-    tab.save()
-
-    # Returning created Ids
-    ids = {}
-
-    ids['id'] = tab.id
-    ids['name'] = tab.name
-
-    ids['workspaceVariables'] = [get_workspace_variable_data(wsVariable, user, workspace)]
-
-    return ids
-
-
-def setVisibleTab(user, workspace_id, tab):
-    visibleTabs = Tab.objects.filter(workspace__users__id=user.id, workspace__pk=workspace_id, visible=True).exclude(pk=tab.pk)
-    for visibleTab in visibleTabs:
-        visibleTab.visible = False
-        visibleTab.save()
-    tab.visible = True
-    tab.save()
 
 
 def getCategories(user):
@@ -483,7 +412,15 @@ class TabCollection(Resource):
             tab_name = t['name']
             workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
 
-            ids = createTab(tab_name, user, workspace)
+            tab, wsVariable = createTab(tab_name, user, workspace)
+
+            # Returning created Ids
+            ids = {}
+
+            ids['id'] = tab.id
+            ids['name'] = tab.name
+
+            ids['workspaceVariables'] = [get_workspace_variable_data(wsVariable, user, workspace)]
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
 
