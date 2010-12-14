@@ -111,6 +111,7 @@ class PublishedWorkSpace(models.Model):
 
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
 
+    template = models.TextField(_('Template'))
     contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):

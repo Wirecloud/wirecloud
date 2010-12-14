@@ -866,7 +866,10 @@ class WorkSpacePublisherEntry(Resource):
                                                      name=name, version=version, description=description,
                                                      imageURI=imageURI, wikiURI=wikiURI, organization=organization,
                                                      contratable=contratable)
+            published_workspace.save()
 
+            templateGen = TemplateGenerator()
+            published_workspace.template = templateGen.getTemplate(published_workspace)
             published_workspace.save()
         except IntegrityError, e:
             transaction.rollback()
