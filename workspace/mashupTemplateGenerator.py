@@ -34,7 +34,7 @@ from django.shortcuts import get_object_or_404
 from lxml import etree
 
 from igadget.models import IGadget
-from workspace.models import PublishedWorkSpace
+from workspace.models import PublishedWorkSpace, Tab
 
 
 class TemplateGenerator:
@@ -43,6 +43,7 @@ class TemplateGenerator:
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
 
+        workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace)
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
 
         template = etree.Element('Template', schemaLocation="http://morfeo-project.org/2007/Template")
@@ -58,8 +59,11 @@ class TemplateGenerator:
         etree.SubElement(desc, 'WikiURI').text = published_workspace.wikiURI
         etree.SubElement(desc, 'Organization').text = published_workspace.organization
 
-        resources = etree.Element('IncludeResources', mashupId=workspace_id)
-        template.append(resources)
+        resources = etree.SubElement(desc, 'IncludedResources', mashupId=str(published_workspace.id))
+
+        tabs = {}
+        for tab in workspace_tabs:
+            tabs[tab.id] = etree.SubElement(resources, 'Tab', name=tab.name)
 
         wiring = etree.Element('Platform.Wiring')
         contratable = False
@@ -69,7 +73,22 @@ class TemplateGenerator:
 
             contratable = contratable or gadget.is_contratable()
 
-            etree.Element('Resource', vendor=gadget.vendor, name=gadget.name, version=gadget.version)
+            resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
+            position = igadget.position
+            etree.SubElement(resource, 'Position', x=str(position.posX), y=str(position.posY), z=str(position.posZ))
+            etree.SubElement(resource, 'Rendering', height=str(position.height),
+                width=str(position.width), minimized=str(position.minimized),
+                fulldragboard=str(position.fulldragboard), layout=str(igadget.layout))
+
+            gadget_preferences = gadget.get_related_preferences()
+            for pref in gadget_preferences:
+                value = igadget.get_var_value(pref, published_workspace.workspace.creator)
+                resource.append(etree.Element('Preference', name=pref.name, value=value))
+
+            gadget_properties = gadget.get_related_properties()
+            for prop in gadget_properties:
+                value = igadget.get_var_value(prop, published_workspace.workspace.creator)
+                resource.append(etree.Element('Property', name=prop.name, value=value))
 
             events = gadget.get_related_events()
 
@@ -83,11 +102,6 @@ class TemplateGenerator:
 
         if contratable:
             etree.append(etree.Element('Capability', name="contratable", value="true"))
-
-        preferences = etree.Element('Platform.Preferences')
-        template.append(preferences)
-        properties = etree.Element('Platform.StateProperties')
-        template.append(properties)
 
         template.append(wiring)
 

@@ -90,6 +90,12 @@ class Gadget(TransModel):
 
         return url
 
+    def get_related_preferences(self):
+        return VariableDef.objects.filter(gadget=self, aspect='PREF')
+
+    def get_related_properties(self):
+        return VariableDef.objects.filter(gadget=self, aspect='PROP')
+
     def get_related_events(self):
         return VariableDef.objects.filter(gadget=self, aspect='EVEN')
 
