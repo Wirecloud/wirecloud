@@ -70,7 +70,7 @@ class TemplateGenerator:
 
             contratable = contratable or gadget.is_contratable()
 
-            resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
+            resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=str(igadget.id), vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
             position = igadget.position
             etree.SubElement(resource, 'Position', x=str(position.posX), y=str(position.posY), z=str(position.posZ))
             etree.SubElement(resource, 'Rendering', height=str(position.height),
