@@ -3791,16 +3791,16 @@ StyledElements.StyledAlert = function(title, content, options) {
     };
     this.options = EzWebExt.merge(defaultOptions, options);
 
+    StyledElements.StyledElement.call(this, ['close']);
+
     var image = document.createElement("img");
     image.src = EzWebExt.getResourceURL("/images/degradado.png");
-    document.body.appendChild(image);
-    document.body.removeChild(image);
 
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = "styled_alert";
 
-		this.backgroundDiv = document.createElement("div");
-		this.backgroundDiv.className = "background";
+    this.backgroundDiv = document.createElement("div");
+    this.backgroundDiv.className = "background";
 
     this.messageDiv = document.createElement("div");
     this.messageDiv.className = "message";
@@ -3812,50 +3812,58 @@ StyledElements.StyledAlert = function(title, content, options) {
     this.header.className = "header";
 
     var table = document.createElement("table");
-		var tbody = document.createElement("tbody");
-		table.appendChild(tbody);
-		table.setAttribute("width", "100%");
-		this.header.appendChild(table);
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    table.setAttribute("width", "100%");
+    this.header.appendChild(table);
 
-		var tr = tbody.insertRow(-1);
-		var td = tr.insertCell(-1);
-		td.className = "title";
+    var tr = tbody.insertRow(-1);
+    var td = tr.insertCell(-1);
+    td.className = "title";
 
     var types = ["info", "warning", "error"];
     image = document.createElement("img");
     image.src = EzWebExt.getResourceURL("/images/dialog/dialog-" + types[this.options['type']] + '.png');
     td.appendChild(image);
 
-    if (title)
-      td.appendChild(document.createTextNode(title));
+    if (title) {
+        td.appendChild(document.createTextNode(title));
+    }
 
-		var button = tr.insertCell(-1);
-		button.className = "close_button";
+    this._closeButton = tr.insertCell(-1);
+    this._closeButton.className = "close_button";
 
     this.messageDiv.appendChild(this.header);
 
     this.content = document.createElement("div");
     this.content.className = "content";
-    if (content && (typeof(content) == typeof("")))
+    if (content && (typeof(content) == typeof(""))) {
         this.content.innerHTML = content;
-    if (content && (typeof(content) != typeof("")))
+    }
+    if (content && (typeof(content) != typeof(""))) {
         this.content.appendChild(content);
+    }
     this.messageDiv.appendChild(this.content);
-
 
     EzWebExt.prependClassName(this.wrapperElement, types[this.options['type']]);
 
     /* Events code */
-    EzWebExt.addEventListener(button, "click",
-                            EzWebExt.bind(this.close, this),
-                            true);
+    this._closeCallback = EzWebExt.bind(this.close, this);
+    EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
 }
-
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
 
+/**
+ * Closes this alert. After this StyledAlert is closed, it cannot be used anymore.
+ */
 StyledElements.StyledAlert.prototype.close = function() {
-    EzWebExt.removeFromParent(this.wrapperElement);
+    if (this.wrapperElement.parentNode) {
+        EzWebExt.removeFromParent(this.wrapperElement);
+    }
     this.wrapperElement = null;
+    EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
+    this.events['close'].dispatch(this);
+    StyledElements.StyledElement.prototype.destroy.call();
 }
 
 StyledElements.StyledAlert.prototype.insertInto = function(element, refElement){
