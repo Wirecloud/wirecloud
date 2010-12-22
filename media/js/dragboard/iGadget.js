@@ -53,6 +53,7 @@
  *                                          (6 chars with a hexadecimal color)
  */
 function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition, zPos, width, height, fulldragboard, minimized, transparency, menu_color, refusedVersion, freeLayoutAfterLoading, readOnly) {
+	this.logManager = new IGadgetLogManager(this);
 	this.id = iGadgetId;
 	this.code = null;
 	this.name = iGadgetName;
@@ -125,8 +126,6 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 
 	// iGadget drop box menu
 	this.menu = null;
-
-	this.errorCount = 0;
 
 	// Add the iGadget to the layout
 	this.build();
@@ -331,9 +330,9 @@ IGadget.prototype.onFreeLayout = function() {
 IGadget.prototype.toggleTransparency = function() {
 	function onSuccess() {}
 	function onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error renaming igadget from persistence: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+		var msg = gettext("Error saving the new transparency value into persistence: %(errorMsg)s.");
+		msg = this.logManager.formatError(msg, transport, e);
+		this.log(msg, Constants.Logging.ERROR_MSG);
 	}
 
 	this.element.toggleClassName("gadget_window_transparent");
@@ -516,7 +515,9 @@ IGadget.prototype.build = function() {
 	Element.extend(button);
 	button.setAttribute("type", "button");
 	button.addClassName("button errorbutton disabled");
-	Event.observe (button, "click", function() {OpManagerFactory.getInstance().showLogs();}, false);
+	Event.observe (button, "click", function() {
+		OpManagerFactory.getInstance().showLogs(this.logManager); // TODO
+	}.bind(this), false);
 	this.gadgetMenu.appendChild(button);
 	this.errorButtonElement = button;
 
@@ -988,11 +989,17 @@ IGadget.prototype.fillWithInput = function () {
  * @param {String} igadgetName New name for this iGadget.
  */
 IGadget.prototype.setName = function (igadgetName) {
-	function onSuccess() {}
+	var oldName = this.name;
+
+	function onSuccess() {
+		var msg = gettext("Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully");
+		msg = interpolate(msg, {oldName: oldName, newName: igadgetName}, true);
+		this.log(msg, Constants.Logging.INFO_MSG);
+	}
 	function onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error renaming igadget from persistence: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+		var msg = gettext("Error renaming igadget from persistence: %(errorMsg)s.");
+		msg = this.logManager.formatError(msg, transport, e);
+		this.log(msg);
 	}
 
 	if (igadgetName != null && igadgetName.length > 0) {
@@ -1041,9 +1048,9 @@ IGadget.prototype.askForIconVersion = function() {
 IGadget.prototype.setRefusedVersion = function (v) {
 	function onSuccess() {}
 	function onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error setting the refused version of the igadget to persistence: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+		var msg = gettext("Error setting the refused version of the igadget to persistence: %(errorMsg)s.");
+		msg = logManager.formatError(msg, transport, e);
+		this.log(msg);
 	}
 
 	this.refusedVersion = v;
@@ -1118,9 +1125,9 @@ IGadget.prototype.setMenuColor = function (newColor, temporal) {
 
 	function onSuccess() {}
 	function onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error updating igadget's menu color into persistence: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
+		var msg = gettext("Error updating igadget's menu color into persistence: %(errorMsg)s.");
+		msg = logManager.formatError(msg, transport, e);
+		this.log(msg);
 	}
 
 	this.menu_color = newColor;
@@ -1161,6 +1168,8 @@ IGadget.prototype.destroy = function() {
 	this.gadget = null;
 	this.layout = null;
 	this.position = null;
+	this.logManager.close();
+	this.logManager = null;
 }
 
 /**
@@ -1183,9 +1192,10 @@ IGadget.prototype.remove = function(orderFromServer) {
 	this.element = null;
 
 	if (!orderFromServer) {
-		function onSuccess() {}
+		function onSuccess() {
+			this.log(gettext('iGadget deleted'), Constants.Logging.INFO_MSG); 
+                }
 		function onError(transport, e) {
-			var logManager = LogManagerFactory.getInstance();
 			var msg = logManager.formatError(gettext("Error removing igadget from persistence: %(errorMsg)s."), transport, e);
 			logManager.log(msg);
 		}
@@ -1430,25 +1440,29 @@ IGadget.prototype._notifyLockEvent = function(newLockStatus, reserveSpace) {
  * @private
  */
 IGadget.prototype._notifyLoaded = function() {
+	var msg, unloadElement, errorCount;
+
 	// ie6 bugs
 	if (window.IE7) IE7.recalc();
 
-	if (this.loaded)
+	msg = gettext('iGadget loaded')
+	this.log(msg, Constants.Logging.INFO_MSG);
+
+	if (this.loaded) {
 		return;
+	}
 
 	this.loaded = true;
 
-	if (this.errorCount > 0) {
-		var msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
+	errorCount = this.logManager.getErrorCount();
+	if (errorCount > 0) {
+		msg = ngettext("%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was loaded",
 		                   "%(errorCount)s errors for the iGadget \"%(name)s\" were notified before it was loaded",
-		                   this.errorCount);
-		msg = interpolate(msg, {errorCount: this.errorCount, name: this.name}, true);
-		LogManagerFactory.getInstance().log(msg);
-		this.errorButtonElement.removeClassName("disabled");
-		this._updateErrorInfo();
+		                   errorCount);
+		msg = interpolate(msg, {errorCount: errorCount, name: this.name}, true);
+		this.log(msg, Constants.Logging.WARN_MSG);
 	}
 
-	var unloadElement;
 	if (BrowserUtilsFactory.getInstance().isIE()) {
 		unloadElement = this.content;
 	} else {
@@ -1462,10 +1476,10 @@ IGadget.prototype._notifyLoaded = function() {
 	                     true);
 	
 	// Check if the gadget has its correct layout
-	if (this.freeLayoutAfterLoading){
+	if (this.freeLayoutAfterLoading) {
 		//Change the layout to extract the igadget from the grid
 		this.toggleLayout();
-	}                 
+	}
 }
 
 /**
@@ -1474,9 +1488,14 @@ IGadget.prototype._notifyLoaded = function() {
  * @private
  */
 IGadget.prototype._notifyUnloaded = function() {
+	msg = gettext('iGadget unloaded')
+	this.log(msg, Constants.Logging.INFO_MSG);
+	this.logManager.resetCounters();
+
 	if (!this.loaded)
 		return;
 
+	this.errorButtonElement.addClassName("disabled");
 	this.loaded = false;
 }
 
@@ -1779,21 +1798,26 @@ IGadget.prototype.toggleMinimizeStatus = function (persistence) {
  * @private
  */
 IGadget.prototype._updateErrorInfo = function () {
-	label = ngettext("%(errorCount)s error", "%(errorCount)s errors", this.errorCount);
-	label = interpolate(label, {errorCount: this.errorCount}, true);
+	var errorCount = this.logManager.getErrorCount();
+	if (errorCount > 0) {
+		this.errorButtonElement.removeClassName("disabled");
+	} else {
+		this.errorButtonElement.addClassName("disabled");
+	}
+
+	label = ngettext("%(errorCount)s error", "%(errorCount)s errors", errorCount);
+	label = interpolate(label, {errorCount: errorCount}, true);
 	this.errorButtonElement.setAttribute("title", label);
 }
 
 /**
- * Increments the error count for this igadget
+ * Logs a success
  */
-IGadget.prototype.notifyError = function() {
-	this.errorCount++
-	
+IGadget.prototype.log = function(msg, level) {
+	level = level != null ? level : Constants.Logging.ERROR_MSG;
+
+	this.logManager.log(msg, level);
 	if (this.isVisible()) {
-		if (this.errorCount == 1) { // First time
-			this.errorButtonElement.removeClassName("disabled");
-		}
 		this._updateErrorInfo();
 	}
 }

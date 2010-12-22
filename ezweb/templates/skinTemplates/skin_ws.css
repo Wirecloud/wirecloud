@@ -26,7 +26,7 @@ body.dragboard_view, body.wiring_view{
  */
 
 /* MAIN toolbar button unmarked */
-#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div {
+#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div, #logs_header .toolbar_menu > div {
 	color: {{ toolbar_unmarked_font }};
 	font-weight: bold;
 	background: {{ toolbar_unmarked_bg }};
@@ -34,20 +34,20 @@ body.dragboard_view, body.wiring_view{
 }
 
 /* MAIN toolbar button marked */
-#ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section {
+#ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section, #logs_header .toolbar_menu > div.selected_section {
 	color: {{ toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ toolbar_marked_bg }};
 }
 
 /* MAIN toolbar button hover */
-#ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover {
+#ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover, #logs_header .toolbar_menu > div:hover {
 	color: {{ toolbar_hover_font }};
 	font-weight: bold;
 	background: {{ toolbar_hover_bg }};
 	text-decoration: underline;
 }
-#ws_banner .toolbar_menu > div.selected_section:hover, #wiring_banner .toolbar_menu > div.selected_section:hover {
+#ws_banner .toolbar_menu > div.selected_section:hover, #wiring_banner .toolbar_menu > div.selected_section:hover, #logs_header .toolbar_menu > div.selected_section:hover {
 	color: {{ toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ toolbar_marked_bg }};
@@ -58,7 +58,7 @@ body.dragboard_view, body.wiring_view{
  */
 
 /* SMALL toolbar button unmarked */
-#ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div {
+#ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div, #logs_header .toolbar_menu_small > div {
 	color: {{ small_toolbar_unmarked_font }};
 	font-weight: bold;
 	background: {{ small_toolbar_unmarked_bg }};
@@ -66,20 +66,20 @@ body.dragboard_view, body.wiring_view{
 }
 
 /* SMALL toolbar button marked */
-#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section {
+#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section, #logs_header .toolbar_menu_small > div.selected_section {
 	color: {{ small_toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ small_toolbar_marked_bg }};
 }
 
 /* SMALL toolbar button hover */
-#ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover {
+#ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover, #logs_header .toolbar_menu_small > div:hover {
 	color: {{ small_toolbar_unmarked_hover }};
 	font-weight: bold;
 	background: {{ small_toolbar_unmarked_hover }};
 	text-decoration: underline;
 }
-#ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover {
+#ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover, #logs_header .toolbar_menu_small > div.selected_section:hover {
 	color: {{ small_toolbar_marked_font }};
 	font-weight: bold;
 	background: {{ small_toolbar_marked_bg }};

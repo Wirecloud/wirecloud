@@ -127,6 +127,17 @@ a, a:visited{
     opacity: 0.2;
 }
 
+#logs_header {
+  text-align: left;
+}
+
+#logs_header .title {
+  display: inline-block;
+  font-size: 18pt;
+  font-weight: bold;
+  margin: 1ex 3ex;
+}
+
 #logs_link {
   background: transparent url(../images/info.png) no-repeat;
 }

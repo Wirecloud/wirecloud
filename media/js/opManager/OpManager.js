@@ -214,11 +214,14 @@ var OpManagerFactory = function () {
 			this.showCatalogue();
 		}
 
-		OpManager.prototype.showLogs = function () {
-			if(this.activeWorkSpace && this.activeWorkSpace.getVisibleTab())
+		OpManager.prototype.showLogs = function (logManager) {
+			logManager = arguments.length > 0 ? logManager : LogManagerFactory.getInstance();
+
+			if (this.activeWorkSpace && this.activeWorkSpace.getVisibleTab()) {
 				this.activeWorkSpace.getVisibleTab().unmark();
+                        }
 			
-			LogManagerFactory.getInstance().show();
+			LogManagerFactory.getInstance().show(logManager);
 		}
 		
 		OpManager.prototype.mergeMashupResource = function(resource) {
@@ -280,13 +283,6 @@ var OpManagerFactory = function () {
 			var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId, 'active': 'true'});
 			
 			PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
-		}
-
-		OpManager.prototype.clearLogs = function () {
-			LogManagerFactory.getInstance().reset();
-			LayoutManagerFactory.getInstance().clearErrors();
-			LayoutManagerFactory.getInstance().resizeTabBar();
-			this.showActiveWorkSpace(false);
 		}
 
 		OpManager.prototype.showPlatformPreferences = function () {
@@ -558,11 +554,7 @@ var OpManagerFactory = function () {
 				return;
 			}
 
-			var gadgetInfo = iGadget.getGadget().getInfoString();
-			msg = msg + "\n" + gadgetInfo;
-
-			this.logs.log(msg, level);
-			iGadget.notifyError();
+			iGadget.log(msg, level);
 		}
 
 		//Operations on workspaces
