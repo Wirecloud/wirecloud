@@ -1110,6 +1110,7 @@ var EzWebGadget = function(customSettings) {
         return;
 
     this.browser = EzWebExt.Browser;
+    this._alerts = [];
     var gadget = this;
 
     /* Parse settings */
@@ -1305,8 +1306,14 @@ EzWebGadget.prototype._registerIEEvent = function(element) {
  * de necesitar hacer cálculos de tamaños mediante JavaScript.
  *
  * @see EzWebGadget/heightCallback
+ * @see EzWebGadget/widthCallback
  */
 EzWebGadget.prototype.repaint = function() {
+    var i;
+
+    for (i = 0; i < this._alerts.length; i += 1) {
+        this._alerts[i].repaint();
+    }
 }
 
 
@@ -1768,6 +1775,14 @@ EzWebGadget.prototype.sendDelete = function(url, onSuccess, onError, onException
 EzWebGadget.prototype.alert = function(title, content, type) {
     var alert = new StyledElements.StyledAlert(title, content, {type: type});
     alert.insertInto(document.body);
+    this._alerts.push(alert);
+
+    alert.addEventListener('close', EzWebExt.bind(function(alert) {
+        var index;
+
+        index = this._alerts.indexOf(alert);
+        this._alerts.splice(index, 1);
+    }, this));
 
     return alert;
 }
