@@ -507,17 +507,16 @@ var LayoutManagerFactory = function () {
 		// Logs operations
 		LayoutManager.prototype.showLogs = function(){
 
-			if(this.currentView != null){
+			if (this.currentView != null) {
 				this.currentView.hide();
 				//if the previous view had banner change the banner
-				if(this.currentView.getHeader) {
+				if (this.currentViewType != 'logs' && this.currentView.getHeader) {
 					this.hideHeader(this.currentView.getHeader());
 				}
 			}
 			
-			//the logs view doesn't have any specific banner
-			//so do nothing about it
-			
+			this.showHeader(this.logs.getHeader());
+
 			$(document.body).removeClassName(this.currentViewType+"_view");
 			
 			this.currentView = this.logs;

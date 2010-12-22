@@ -264,6 +264,7 @@ var LogManagerFactory = function () {
 		this.logContainer = $('logs_container');
 		this.messageContainer = $('message_section');
 		this.messageBox = $('message_box');
+		this.header = $('logs_header');
 
 		$('logs_all_toolbar').observe('click', function() {
 			this.show();
@@ -327,6 +328,10 @@ var LogManagerFactory = function () {
 			LayoutManagerFactory.getInstance().notifyError(labelContent);
 		}
 
+	}
+
+	GlobalLogManager.prototype.getHeader = function() {
+		return this.header;
 	}
 
         GlobalLogManager.prototype.buildTitle = function() {

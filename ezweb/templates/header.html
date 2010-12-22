@@ -105,3 +105,25 @@
 		</div>
 	</div>
 </div>
+
+<div id="logs_header" class="global_header" style="display:none">
+    <div class="banner">
+        <div class="toolbar_section">
+            <div class="toolbar_menu">
+                <div id="logs_dragboard_link" class="first_toolbar_button">
+                    <img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+                </div>
+                <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
+                <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>
+            </div>
+            <div class="toolbar_menu_small visible">
+                <div class="first_toolbar_button" id="logs_clear_button">{% trans 'Clear' %}</div>
+                <div class="last_toolbar_button" id="logs_save_button">{% trans 'Save' %}</div>
+            </div>
+        </div>
+        <div class="title"></div>
+    </div>
+    <div class="bar">
+        <div class="area_name"><div class="section_identifier"></div></div>
+    </div>
+</div>
