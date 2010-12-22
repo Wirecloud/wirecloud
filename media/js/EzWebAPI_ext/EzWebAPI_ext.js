@@ -1768,6 +1768,8 @@ EzWebGadget.prototype.sendDelete = function(url, onSuccess, onError, onException
 EzWebGadget.prototype.alert = function(title, content, type) {
     var alert = new StyledElements.StyledAlert(title, content, {type: type});
     alert.insertInto(document.body);
+
+    return alert;
 }
 
 
