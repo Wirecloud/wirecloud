@@ -1861,6 +1861,13 @@ StyledElements.ObjectWithEvents.prototype.removeEventListener = function(event, 
     this.events[event].removeEventListener(handler);
 }
 
+/**
+ * Unsets some internal structures to avoid memory leaks caused by circular
+ * references.
+ */
+StyledElements.ObjectWithEvents.prototype.destroy = function() {
+    this.events = null;
+}
 
 /**
  * @abstract
