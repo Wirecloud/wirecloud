@@ -124,4 +124,12 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 	return EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(final_url, options);
 }
 
+_EzWebAPI.prototype.ERROR_MSG = 1;
+_EzWebAPI.prototype.WARN_MSG  = 2;
+_EzWebAPI.prototype.INFO_MSG  = 3;
+
+_EzWebAPI.prototype.log = function(msg, level) {
+	EzWebAPI.platform.OpManagerFactory.getInstance().logIGadgetError(this.getId(), msg, level);
+}
+
 var EzWebAPI = new _EzWebAPI();
