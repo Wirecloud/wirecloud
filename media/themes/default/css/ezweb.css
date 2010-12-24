@@ -146,6 +146,19 @@ a, a:visited{
   background: transparent url(../images/info_highlighted.png) no-repeat;
 }
 
+#logs_console .entry {
+    margin: 0.2ex;
+}
+
+#logs_console .igadget_info {
+    cursor:  pointer;
+    height:  16px;
+    margin:  1.1ex 10px 0;
+    vertical-align:bottom;
+    padding-left: 16px;
+    background: transparent url(../images/igadget/maximize.png) no-repeat scroll 0 0
+}
+
 .message_section{
 	background: lightyellow;
 	border-color: red;

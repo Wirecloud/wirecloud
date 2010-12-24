@@ -38,6 +38,7 @@ LogManager.prototype._printEntry = function(entry) {
 	var dateElement, icon, wrapper, clearer;
 
 	wrapper = document.createElement("div");
+	wrapper.className = "entry";
 
 	icon = document.createElement("img");
 	Element.extend(icon);
@@ -62,8 +63,12 @@ LogManager.prototype._printEntry = function(entry) {
 	}
 	wrapper.appendChild(icon);
 
-	dateElement = document.createElement('h3');
-	dateElement.setTextContent(entry.date);
+	if (entry.logManager !== this) {
+		wrapper.appendChild(entry.logManager.buildExtraInfo());
+	}
+
+	dateElement = document.createElement('b');
+	dateElement.setTextContent(entry.date.strftime('%x %X'));//_('short_date')));
 	wrapper.appendChild(dateElement);
 
 	logentry = document.createElement("p");
@@ -74,14 +79,6 @@ LogManager.prototype._printEntry = function(entry) {
 	Element.extend(clearer);
 	clearer.addClassName('floatclearer');
 	wrapper.appendChild(clearer);
-
-	if (entry.logManager !== this) {
-		Element.extend(wrapper);
-		wrapper.style.cursor = "pointer";
-		wrapper.observe('click', function() {
-			OpManagerFactory.getInstance().showLogs(this);
-		}.bind(entry.logManager));
-	}
 
 	this.wrapperElement.appendChild(wrapper);
 }
@@ -220,6 +217,20 @@ function IGadgetLogManager (iGadget) {
 	this.iGadget = iGadget;
 }
 IGadgetLogManager.prototype = new LogManager();
+
+IGadgetLogManager.prototype.buildExtraInfo = function() {
+	var extraInfo = document.createElement('span');
+	extraInfo.className = "igadget_info";
+	extraInfo.setTextContent(this.iGadget.id);
+	extraInfo.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
+
+	extraInfo.style.cursor = "pointer";
+	extraInfo.observe('click', function() {
+		OpManagerFactory.getInstance().showLogs(this);
+	}.bind(this));
+
+	return extraInfo;
+}
 
 IGadgetLogManager.prototype.buildTitle = function() {
 	var title;

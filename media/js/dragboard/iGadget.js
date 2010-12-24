@@ -1184,6 +1184,8 @@ IGadget.prototype.remove = function(orderFromServer) {
 	if (this.layout == null || (!orderFromServer && this.layout.dragboard.isLocked()))
 		return;
 
+	this.log(gettext('iGadget deleted'), Constants.Logging.INFO_MSG);
+
 	var dragboard = this.layout.dragboard;
 	if (this.element.parentNode != null) {
 		this.layout.removeIGadget(this, true);
@@ -1192,11 +1194,12 @@ IGadget.prototype.remove = function(orderFromServer) {
 	this.element = null;
 
 	if (!orderFromServer) {
-		function onSuccess() {
-			this.log(gettext('iGadget deleted'), Constants.Logging.INFO_MSG); 
-                }
+		function onSuccess() {}
 		function onError(transport, e) {
-			var msg = logManager.formatError(gettext("Error removing igadget from persistence: %(errorMsg)s."), transport, e);
+			var msg, logManager;
+
+			logManager = LogManagerFactory.getInstance();
+			msg = logManager.formatError(gettext("Error removing igadget from persistence: %(errorMsg)s."), transport, e);
 			logManager.log(msg);
 		}
 
