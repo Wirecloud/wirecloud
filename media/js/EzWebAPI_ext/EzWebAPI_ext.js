@@ -3859,15 +3859,13 @@ StyledElements.StyledAlert = function(title, content, options) {
 
     this.messageDiv.appendChild(this.header);
 
-    this.content = document.createElement("div");
-    this.content.className = "content";
-    if (content && (typeof(content) == typeof(""))) {
-        this.content.innerHTML = content;
-    }
-    if (content && (typeof(content) != typeof(""))) {
+    this.content = new StyledElements.Container({'class': 'content'});
+    if (typeof content === 'string') {
+        this.content.wrapperElement.innerHTML = content;
+    } else {
         this.content.appendChild(content);
     }
-    this.messageDiv.appendChild(this.content);
+    this.content.insertInto(this.messageDiv);
 
     EzWebExt.prependClassName(this.wrapperElement, types[this.options['type']]);
 
@@ -3876,6 +3874,10 @@ StyledElements.StyledAlert = function(title, content, options) {
     EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
 }
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
+
+StyledElements.StyledAlert.prototype.appendChild = function(child) {
+    this.content.appendChild(child);
+}
 
 /**
  * Closes this alert. After this StyledAlert is closed, it cannot be used anymore.
@@ -3898,7 +3900,7 @@ StyledElements.StyledAlert.prototype.insertInto = function(element, refElement){
 StyledElements.StyledAlert.prototype.repaint = function(temporal) {
     //temporal = temporal !== undefined ? temporal: false;
 
-    if(this.wrapperElement){
+    if (this.wrapperElement) {
       // Adjust messageDiv height and messageDiv width
       var width = (this.wrapperElement.offsetWidth * 80 / 100);
       var height = (this.wrapperElement.offsetHeight * 80 / 100);
@@ -3920,7 +3922,7 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
       // Adjust Content Height
       var messageDivStyle = document.defaultView.getComputedStyle(this.messageDiv, null);
       var headerStyle = document.defaultView.getComputedStyle(this.header, null);
-      var contentStyle = document.defaultView.getComputedStyle(this.content, null);
+      var contentStyle = document.defaultView.getComputedStyle(this.content.wrapperElement, null);
 
       height = height - this.header.offsetHeight -
 		    messageDivStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
@@ -3930,7 +3932,7 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
 		    contentStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
       if (height < 0)
           height = 0;
-      this.content.style.height =  (height + 'px');
+      this.content.wrapperElement.style.height = height + 'px';
 
       // Addjust Content Width
       width =  width -
@@ -3940,9 +3942,12 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
 		    contentStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
       if (width < 0)
           width = 0;
-      this.content.style.width = (width + 'px');
+      this.content.wrapperElement.style.width = (width + 'px');
+
+      this.content.repaint(temporal);
     }
 }
+
 /**
  * @experimental
  *
