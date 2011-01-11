@@ -111,7 +111,7 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
 _EzWebAPI.prototype.send = function(url, context, options) {
 	if (context != null) {
 		//Add the binding to each handler
-		var handlerRegExp = new RegExp(/^onCreate$|^onComplete$|^onException$|^onFailure$|^onInteractive$|^onLoaded$|^onLoading$|^onSuccess$|^onUninitialized$|^on\d{3}$/);
+		var handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
 		for (var index in options) {
 			if (index.match(handlerRegExp)) {
 				options[index].bind = EzWebAPI.platform.Function.prototype.bind;
