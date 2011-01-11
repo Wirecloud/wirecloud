@@ -28,5 +28,42 @@ var Constants = {
     ERROR_MSG: 1,
     WARN_MSG:  2,
     INFO_MSG:  3
-  }
+  },
+
+  HttpStatusDescription: {
+    "400": gettext("Bad Request"),
+    "401": gettext("Unauthorized"),
+    "402": gettext("Payment Required"),
+    "403": gettext("Forbidden"),
+    "404": gettext("Not Found"),
+    "405": gettext("Method Not Allowed"),
+    "406": gettext("Not Acceptable"),
+    "407": gettext("Proxy Authentication Required"),
+    "408": gettext("Request Timeout"),
+    "409": gettext("Conflict"),
+    "410": gettext("Gone"),
+    "411": gettext("Length Required"),
+    "412": gettext("Precondition Failed"),
+    "413": gettext("Request Entity Too Large"),
+    "414": gettext("Request-URI Too Long"),
+    "415": gettext("Unsupported Media Type"),
+    "416": gettext("Requested Range Not Satisfiable"),
+    "417": gettext("Expectation Failed"),
+    "422": gettext("Unprocessable Entity"),
+    "423": gettext("Locked"),
+    "424": gettext("Failed Dependency"),
+    "426": gettext("Upgrade Required"),
+    "500": gettext("Internal Server Error"),
+    "501": gettext("Not Implemented"),
+    "502": gettext("Bad Gateway"),
+    "503": gettext("Service Unavailable"),
+    "504": gettext("Gateway Timeout"),
+    "505": gettext("HTTP Version Not Supported"),
+    "506": gettext("Variant Also Negotiates"),
+    "507": gettext("Insufficient Storage"),
+    "508": gettext("Loop Detected"),
+    "510": gettext("Not Extended")
+  },
+
+  UnknownStatusCodeDescription: gettext("Unknown status code")
 };

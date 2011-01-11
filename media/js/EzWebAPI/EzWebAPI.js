@@ -132,4 +132,13 @@ _EzWebAPI.prototype.log = function(msg, level) {
 	EzWebAPI.platform.OpManagerFactory.getInstance().logIGadgetError(this.getId(), msg, level);
 }
 
+_EzWebAPI.prototype.getHTTPStatusCodeDescription = function(code) {
+    var desc;
+
+    desc = this.platform.Constants.HttpStatusDescription[code];
+    if (!desc) {
+        desc = this.platform.Constants.UnknownStatusCodeDescription;
+    }
+    return desc;
+}
 var EzWebAPI = new _EzWebAPI();
