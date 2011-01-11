@@ -80,7 +80,7 @@ LogManager.prototype._printEntry = function(entry) {
 	clearer.addClassName('floatclearer');
 	wrapper.appendChild(clearer);
 
-	this.wrapperElement.appendChild(wrapper);
+	this.wrapperElement.insertBefore(wrapper, this.wrapperElement.childNodes[0]);
 }
 
 LogManager.prototype._addEntry = function (entry) {
