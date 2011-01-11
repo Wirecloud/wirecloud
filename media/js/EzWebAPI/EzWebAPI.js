@@ -113,7 +113,7 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 		//Add the binding to each handler
 		var handlerRegExp = new RegExp(/^on(?:Create|Complete|Exception|Failure|Interactive|Loaded|Loading|Success|Uninitialized|\d{3})$/);
 		for (var index in options) {
-			if (index.match(handlerRegExp)) {
+			if (index.match(handlerRegExp) && options[index]) {
 				options[index].bind = EzWebAPI.platform.Function.prototype.bind;
 				options[index] = options[index].bind(context);
 			}
