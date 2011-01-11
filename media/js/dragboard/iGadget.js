@@ -1491,9 +1491,9 @@ IGadget.prototype._notifyLoaded = function() {
  * @private
  */
 IGadget.prototype._notifyUnloaded = function() {
-	msg = gettext('iGadget unloaded')
+	msg = gettext('iGadget unloaded');
 	this.log(msg, Constants.Logging.INFO_MSG);
-	this.logManager.resetCounters();
+	this.logManager.newCycle();
 
 	if (!this.loaded)
 		return;

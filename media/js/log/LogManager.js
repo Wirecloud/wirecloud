@@ -97,6 +97,11 @@ LogManager.prototype._addEntry = function (entry) {
 	}
 };
 
+LogManager.prototype.newCycle = function () {
+	this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.childNodes[0]);
+	this.resetCounters();
+}
+
 LogManager.prototype.log = function (msg, level) {
 	var date, labelContent, index;
 

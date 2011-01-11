@@ -225,6 +225,7 @@ function WorkSpace (workSpaceState) {
 
 		layoutManager.logStep('');
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
+		LogManagerFactory.getInstance().log('workspace loaded', Constants.Logging.INFO_MSG);
 	}
 
 	var onError = function (transport, e) {
@@ -687,6 +688,8 @@ function WorkSpace (workSpaceState) {
 		this.skinManager.unloadSkin();
 
 		layoutManager.logStep('');
+		LogManagerFactory.getInstance().log('workspace unloaded', Constants.Logging.INFO_MSG);
+		LogManagerFactory.getInstance().newCycle();
 	}
 
 	WorkSpace.prototype.goTab = function(tab) {
