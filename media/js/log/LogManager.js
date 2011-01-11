@@ -46,17 +46,17 @@ LogManager.prototype._printEntry = function(entry) {
 
 	switch (entry.level) {
 	case Constants.Logging.ERROR_MSG:
-		if (_currentTheme.iconExists('error'))
+		if (_currentTheme && _currentTheme.iconExists('error'))
 			icon.setAttribute("src", _currentTheme.getIconURL('error'));
 		icon.setAttribute("alt", "[Error] ");
 		break;
 	case Constants.Logging.WARN_MSG:
-		if (_currentTheme.iconExists('warning'))
+		if (_currentTheme && _currentTheme.iconExists('warning'))
 			icon.setAttribute("src", _currentTheme.getIconURL('warning'));
 		icon.setAttribute("alt", "[Warning] ");
 		break;
 	case Constants.Logging.INFO_MSG:
-		if (_currentTheme.iconExists('info'))
+		if (_currentTheme && _currentTheme.iconExists('info'))
 			icon.setAttribute("src", _currentTheme.getIconURL('info'));
 		icon.setAttribute("alt", "[Info] ");
 		break;

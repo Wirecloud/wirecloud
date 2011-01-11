@@ -142,6 +142,10 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.logSubTask = function(msg, totalSteps) {
 			this.subTask = msg ? msg : "";
 
+			if (msg) {
+				LogManagerFactory.getInstance().log(msg, Constants.Logging.INFO_MSG);
+			}
+
 			this.currentSubTask++;
 			if (this.currentSubTask >= this.totalSubTasks)
 				this.totalSubTasks = this.currentSubTask + 1;
