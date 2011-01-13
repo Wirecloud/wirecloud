@@ -31,7 +31,7 @@
 #
 
 from igadget.views import SaveIGadget
-from preferences.views import update_tab_preferences
+from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
 from lxml import etree
@@ -59,6 +59,17 @@ def buildWorkspaceFromTemplate(template, user):
     #Adding user reference to workspace in the many to many relationship
     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
     user_workspace.save()
+
+    preferences = PREFERENCE_XPATH(xml)
+    new_values = {}
+    for preference in preferences:
+        new_values[preference.get('name')] = {
+            'inherit': False,
+            'value': preference.get('value'),
+        }
+
+    if len(new_values) > 0:
+        update_workspace_preferences(workspace, new_values)
 
     tabs = TAB_XPATH(xml)
 
