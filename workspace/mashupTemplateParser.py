@@ -31,16 +31,18 @@
 #
 
 from igadget.views import SaveIGadget
+from preferences.views import update_tab_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
 from lxml import etree
+
 
 NAME_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/Name')
 TAB_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/IncludedResources/Tab')
 RESOURCE_XPATH = etree.ETXPath('Resource')
 POSITION_XPATH = etree.ETXPath('Position')
 RENDERING_XPATH = etree.ETXPath('Rendering')
-PREFERENCES_XPATH = etree.ETXPath('Preference')
+PREFERENCE_XPATH = etree.ETXPath('Preference')
 PROPERTIES_XPATH = etree.ETXPath('Property')
 
 
@@ -63,6 +65,17 @@ def buildWorkspaceFromTemplate(template, user):
     for tabElement in tabs:
         tab, junk = createTab(tabElement.get('name'), user, workspace)
 
+        preferences = PREFERENCE_XPATH(tabElement)
+        new_values = {}
+        for preference in preferences:
+            new_values[preference.get('name')] = {
+                'inherit': False,
+                'value': preference.get('value'),
+            }
+
+        if len(new_values) > 0:
+            update_tab_preferences(tab, new_values)
+
         resources = RESOURCE_XPATH(tabElement)
         for resource in resources:
             igadget_uri = "/workspace/" + str(workspace.id) + "/tab/" + str(tab.id) + "/igadgets"
@@ -76,7 +89,7 @@ def buildWorkspaceFromTemplate(template, user):
             for prop in properties:
                 initial_variable_values[prop.get('name')] = prop.get('value')
 
-            preferences = PREFERENCES_XPATH(resource)
+            preferences = PREFERENCE_XPATH(resource)
             for pref in preferences:
                 initial_variable_values[pref.get('name')] = pref.get('value')
 

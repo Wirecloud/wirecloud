@@ -34,6 +34,7 @@ from lxml import etree
 
 from igadget.models import IGadget
 from workspace.models import Tab
+from preferences.models import TabPreference
 
 
 class TemplateGenerator:
@@ -60,7 +61,12 @@ class TemplateGenerator:
 
         tabs = {}
         for tab in workspace_tabs:
-            tabs[tab.id] = etree.SubElement(resources, 'Tab', name=tab.name)
+            tabElement = etree.SubElement(resources, 'Tab', name=tab.name)
+            tabs[tab.id] = tabElement
+            preferences = TabPreference.objects.filter(tab=tab.pk)
+            for preference in preferences:
+                if not preference.inherit:
+                    etree.SubElement(tabElement, 'Preference', name=preference.name, value=preference.value)
 
         wiring = etree.Element('Platform.Wiring')
         contratable = False
