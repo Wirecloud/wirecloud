@@ -911,4 +911,10 @@ div.styled_numeric_field div.numeric_bottom_button {
   margin: 0;
 }
 
+.error_desc .action_desc {
+  font-weight: bold;
+}
 
+.error_desc .cause_desc {
+  margin-left: 1em;
+}
