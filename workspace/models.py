@@ -45,6 +45,7 @@ class WorkSpace(models.Model):
 
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
+    forcedValues = models.TextField(blank=True)
 
     branding = models.ForeignKey(Branding, verbose_name=_('Branding'), blank=True, null=True)
 

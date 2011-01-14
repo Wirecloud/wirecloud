@@ -45,6 +45,8 @@ from preferences.views import get_workspace_preference_values, get_tab_preferenc
 from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
 
+import re
+
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -362,9 +364,53 @@ def get_connectable_data(connectable):
     return res_data
 
 
+class TemplateValueProcessor:
+
+    def __init__(self, user):
+        self._user = user
+
+    def __repl(self, matching):
+        plen = len(matching.group(1))
+        if (plen % 2) == 0:
+            return '%' * (plen / 2) + '(' + matching.group(1) + ')'
+
+        var_path = matching.group(2).split('.')
+        if var_path[0] == 'user':
+            return getattr(self._user, var_path[1])
+
+        return matching.group(0)
+
+    def process(self, value):
+        return re.sub(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)', self.__repl, value)
+
+
+def process_forced_values(workspace, user):
+    try:
+        forced_values = simplejson.loads(workspace.forcedValues)
+    except:
+        return {
+            'igadget': {},
+        }
+
+    processor = TemplateValueProcessor(user)
+
+    if 'igadget' in forced_values:
+        collection = forced_values['igadget']
+        for key in collection:
+            values = collection[key]
+            for var_name in values:
+                collection[key][var_name] = processor.process(values[var_name])
+    else:
+        forced_values['igadget'] = {}
+
+    return forced_values
+
+
 def get_global_workspace_data(workSpaceDAO, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
+
+    forced_values = process_forced_values(workSpaceDAO, user)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
@@ -389,7 +435,7 @@ def get_global_workspace_data(workSpaceDAO, user):
 
         igadget_data = []
         for igadget in igadgets:
-            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO))
+            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, forced_values))
 
         tab['igadgetList'] = igadget_data
 
@@ -431,7 +477,12 @@ def get_tab_data(tab):
     }
 
 
-def get_igadget_data(igadget, user, workspace):
+def get_igadget_data(igadget, user, workspace, forced_values={}):
+
+    igadget_forced_values = {}
+    key = str(igadget.pk)
+    if key in forced_values['igadget']:
+        igadget_forced_values = forced_values['igadget'][key]
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
@@ -459,12 +510,12 @@ def get_igadget_data(igadget, user, workspace):
         data_ret['icon_left'] = 0
 
     variables = Variable.objects.filter(igadget=igadget)
-    data_ret['variables'] = [get_variable_data(variable, user, workspace) for variable in variables]
+    data_ret['variables'] = [get_variable_data(variable, user, workspace, igadget_forced_values) for variable in variables]
 
     return data_ret
 
 
-def get_variable_data(variable, user, workspace):
+def get_variable_data(variable, user, workspace, forced_values={}):
 
     var_def = variable.vardef
 
@@ -483,12 +534,17 @@ def get_variable_data(variable, user, workspace):
     # Variable info is splited into 2 entities: AbstractVariable and Variable
     abstract_var = variable.abstract_variable
 
-    try:
-        data_ret['value'] = VariableValue.objects.get(abstract_variable=abstract_var, user=user).value
-    except VariableValue.DoesNotExist:
-        from workspace.views import clone_original_variable_value
+    if variable.vardef.name in forced_values:
+        data_ret['value'] = forced_values[variable.vardef.name]
+        data_ret['readOnly'] = True
+    else:
+        data_ret['readOnly'] = False
+        try:
+            data_ret['value'] = VariableValue.objects.get(abstract_variable=abstract_var, user=user).value
+        except VariableValue.DoesNotExist:
+            from workspace.views import clone_original_variable_value
 
-        data_ret['value'] = clone_original_variable_value(abstract_var, workspace.creator, user).value
+            data_ret['value'] = clone_original_variable_value(abstract_var, workspace.creator, user).value
 
     if var_def.shared_var_def:
         data_ret['shared'] = data_ret['value'].shared_var_value != None
