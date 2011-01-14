@@ -37,6 +37,23 @@ from workspace.models import Tab
 from preferences.models import WorkSpacePreference, TabPreference
 
 
+def typeCode2typeText(typeCode):
+    if typeCode == 'S':
+            return 'text'
+    elif typeCode == 'N':
+            return 'number'
+    elif typeCode == 'D':
+            return 'date'
+    elif typeCode == 'B':
+            return 'boolean'
+    elif typeCode == 'L':
+            return 'list'
+    elif typeCode == 'P':
+            return 'password'
+
+    return None
+
+
 class TemplateGenerator:
 
     def getTemplate(self, published_workspace):
@@ -104,12 +121,12 @@ class TemplateGenerator:
             events = gadget.get_related_events()
 
             for event in events:
-                wiring.append(etree.Element('Event', name=event.name, type=event.type, label=event.label, friendcode=event.friend_code))
+                wiring.append(etree.Element('Event', name=event.name, type=typeCode2typeText(event.type), label=event.label, friendcode=event.friend_code))
 
             slots = gadget.get_related_slots()
 
             for slot in slots:
-                wiring.append(etree.Element('Slot', name=slot.name, type=slot.type, label=slot.label, friendcode=slot.friend_code))
+                wiring.append(etree.Element('Slot', name=slot.name, type=typeCode2typeText(slot.type), label=slot.label, friendcode=slot.friend_code))
 
         if contratable:
             etree.append(etree.Element('Capability', name="contratable", value="true"))
