@@ -75,7 +75,7 @@ urlpatterns = patterns('workspace.views',
 
     # Publish workspace photo to PublishedWorkspaces
     (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$',
-        views.WorkSpacePublisherEntry(permitted_methods=('GET', 'POST',))),
+        views.WorkSpacePublisherEntry(permitted_methods=('POST', ))),
 
     # Merge workspaces
     (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$',

@@ -767,11 +767,17 @@ class WorkSpaceAdderEntry(Resource):
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
 
-class WorkSpacePublisherEntry(Resource):
+def check_json_fields(json, fields):
+    missing_fields = []
 
-    @transaction.commit_on_success
-    def read(self, request, workspace_id):
-        return self.create(request, workspace_id)
+    for field in fields:
+        if not field in json:
+            missing_fields.append(field)
+
+    return missing_fields
+
+
+class WorkSpacePublisherEntry(Resource):
 
     @transaction.commit_on_success
     def create(self, request, workspace_id):
@@ -781,12 +787,9 @@ class WorkSpacePublisherEntry(Resource):
         received_json = request.REQUEST['data']
         try:
             mashup = simplejson.loads(received_json)
-            if 'name' not in mashup:
-                raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
-            if 'name' not in mashup:
-                raise Exception(_('Malformed mashup JSON: expecting mashup vendor.'))
-            if 'version' not in mashup:
-                raise Exception(_('Malformed mashup JSON: expecting mashup version.'))
+            missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
+            if len(missing_fields) > 0:
+                raise Exception(_('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
         except Exception, e:
             transaction.rollback()
@@ -794,14 +797,9 @@ class WorkSpacePublisherEntry(Resource):
 
             raise TracedServerError(e, mashup, request, msg)
 
-        workspace = get_object_or_404(WorkSpace, id=workspace_id)
-
         user = get_user_authentication(request)
 
-        #Cloning original workspace!
-        packageCloner = PackageCloner()
-
-        cloned_workspace = packageCloner.clone_tuple(workspace)
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
         #Generating info of new workspace
         vendor = mashup.get('vendor')
@@ -859,12 +857,7 @@ class WorkSpacePublisherEntry(Resource):
                 branding = None
 
         try:
-            cloned_workspace.name = name
-            cloned_workspace.creator = user
-            cloned_workspace.setReadOnlyFields(readOnly)
-            cloned_workspace.branding = branding
-            cloned_workspace.save()
-            published_workspace = PublishedWorkSpace(type='CLONED', workspace=cloned_workspace, author=author,
+            published_workspace = PublishedWorkSpace(type='CLONED', workspace=workspace, author=author,
                                                      mail=email, vendor=vendor,
                                                      name=name, version=version, description=description,
                                                      imageURI=imageURI, wikiURI=wikiURI, organization=organization,
