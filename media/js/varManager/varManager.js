@@ -161,8 +161,12 @@ function VarManager (_workSpace) {
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
-				case Variable.prototype.USER_PREF:
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
+					this.variables[id] = objVars[name];
+					break;
+                                case Variable.prototype.USER_PREF:
+					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
+                                        objVars[name].readOnly = igadgetVars[i].readOnly;
 					this.variables[id] = objVars[name];
 					break;
 			}
