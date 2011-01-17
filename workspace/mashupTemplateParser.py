@@ -30,6 +30,7 @@
 
 #
 
+from django.utils import simplejson
 from igadget.views import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
@@ -73,6 +74,9 @@ def buildWorkspaceFromTemplate(template, user):
 
     tabs = TAB_XPATH(xml)
 
+    forced_values = {
+        'igadget': {},
+    }
     for tabElement in tabs:
         tab, junk = createTab(tabElement.get('name'), user, workspace)
 
@@ -96,13 +100,18 @@ def buildWorkspaceFromTemplate(template, user):
             rendering = RENDERING_XPATH(resource)[0]
 
             initial_variable_values = {}
+            igadget_forced_values = {}
             properties = PROPERTIES_XPATH(resource)
             for prop in properties:
                 initial_variable_values[prop.get('name')] = prop.get('value')
 
             preferences = PREFERENCE_XPATH(resource)
             for pref in preferences:
-                initial_variable_values[pref.get('name')] = pref.get('value')
+                read_only = pref.get('readonly')
+                if read_only and read_only == 'true':
+                    igadget_forced_values[pref.get('name')] = pref.get('value')
+                else:
+                    initial_variable_values[pref.get('name')] = pref.get('value')
 
             igadget_data = {
                 "left": int(position.get('x')),
@@ -117,6 +126,11 @@ def buildWorkspaceFromTemplate(template, user):
                 "layout": int(rendering.get('layout')),
                 "uri": igadget_uri,
                 "gadget": gadget_uri}
-            SaveIGadget(igadget_data, user, tab, initial_variable_values)
+
+            igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
+            forced_values['igadget'][str(igadget['id'])] = igadget_forced_values
+
+    workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
+    workspace.save()
 
     return workspace

@@ -435,7 +435,11 @@ def get_global_workspace_data(workSpaceDAO, user):
 
         igadget_data = []
         for igadget in igadgets:
-            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, forced_values))
+            igadget_forced_values = {}
+            key = str(igadget.id)
+            if 'igadget' in forced_values and key in forced_values['igadget']:
+                igadget_forced_values = forced_values['igadget'][key]
+            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, igadget_forced_values))
 
         tab['igadgetList'] = igadget_data
 
@@ -477,12 +481,7 @@ def get_tab_data(tab):
     }
 
 
-def get_igadget_data(igadget, user, workspace, forced_values={}):
-
-    igadget_forced_values = {}
-    key = str(igadget.pk)
-    if key in forced_values['igadget']:
-        igadget_forced_values = forced_values['igadget'][key]
+def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
