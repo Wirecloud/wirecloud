@@ -60,3 +60,103 @@ HTML_Painter.prototype.get_popularity_html = function (popularity) {
 
     return result_html;
 }
+
+var ResourcesPainter = function (resource_template) {
+    if (arguments.length === 0)
+        return;
+
+    HTML_Painter.call(this);
+
+    this.structure_template = new Template(resource_template);
+};
+ResourcesPainter.prototype = new HTML_Painter();
+
+ResourcesPainter.prototype.paint = function (command, user_command_manager) {
+    var command_data, resources, resource, i, j, context, resource_element;
+
+    command_data = command.get_data();
+    resources = command_data['resources'];
+
+    this.dom_element.update('');
+
+    for (i = 0; i < resources.length; i++) {
+        resource = resources[i];
+
+        context = {
+            'name': resource.getName(),
+            'image_url': resource.getUriImage(),
+            'description': resource.getDescription(),
+            'average_popularity': this.get_popularity_html(resource.getPopularity()),
+        }
+
+        if (resource.isContratable() && ! resource.hasContract()) {
+            context.button_text = gettext('Buy');
+            context.type = 'contratable';
+        } else {
+            context.button_text = gettext('Add');
+            context.type = '';
+        }
+
+        resource_element = document.createElement('div');
+        Element.extend(resource_element);
+        resource_element.className = 'resource';
+
+        resource_element.update(this.structure_template.evaluate(context));
+
+        // Inserting resource html in the DOM
+        this.dom_element.appendChild(resource_element);
+
+        ///////////////////////////////
+        // Binding events to GUI
+        ///////////////////////////////
+
+        // "Instantiate"
+        var button_list = resource_element.getElementsByClassName('instanciate_button')
+        if (!button_list || button_list.length != 1) {
+            alert('Problem parsing resource template!');
+        }
+
+        var button = button_list[0];
+
+        user_command_manager.create_command_from_data('INSTANTIATE_RESOURCE', button, resource, 'click');
+
+        // "Show details"
+        var click_for_details_list = resource_element.getElementsByClassName('click_for_details')
+        if (click_for_details_list.length == 0) {
+            alert('Problem parsing resource template!');
+        }
+        for (j = 0; j < click_for_details_list.length; j += 1) {
+            user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', click_for_details_list[j], resource, 'click');
+        }
+
+        // Tags
+        var tag_links_list = resource_element.getElementsByClassName('tag_links');
+        if (!tag_links_list || tag_links_list.length != 1) {
+            alert('Problem parsing resource template!');
+        }
+
+        var tag_links = tag_links_list[0];
+
+        var search_options = new Hash();
+
+        search_options['starting_page'] = 1
+        search_options['boolean_operator'] = 'AND';
+        search_options['scope'] = '';
+
+        var tags = resource.getTags();
+        for (j = 0; j < tags.length; j++) {
+            var tag = tags[j];
+
+            var tag_element = document.createElement('a');
+
+            Element.extend(tag_element);
+            tag_element.update(tag.value);
+            tag_element.addClassName('link');
+            tag_links.appendChild(tag_element);
+
+            search_options['criteria'] = tag.value;
+
+            user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+        }
+    }
+};
