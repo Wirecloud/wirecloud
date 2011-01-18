@@ -169,7 +169,7 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
     }
 }
 
-var ListView_ResourceDatailsPainter = function (details_structure_element) {
+var ListView_ResourceDetailsPainter = function (details_structure_element) {
     HTML_Painter.call(this);
 
     this.details_template_element = details_structure_element;
