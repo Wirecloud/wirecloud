@@ -203,16 +203,6 @@ var OpManagerFactory = function () {
 			
 			CatalogueFactory.getInstance().render();
 		}
-		
-		OpManager.prototype.showListCatalogue = function () {
-			this.catalogue = CatalogueFactory.getInstance("LIST_VIEW")
-			this.showCatalogue();
-		}
-		
-		OpManager.prototype.showMosaicCatalogue = function () {
-			this.catalogue = CatalogueFactory.getInstance("MOSAIC_VIEW")
-			this.showCatalogue();
-		}
 
 		OpManager.prototype.showLogs = function (logManager) {
 			logManager = arguments.length > 0 ? logManager : LogManagerFactory.getInstance();
