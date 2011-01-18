@@ -230,12 +230,9 @@ var TagResourceCommand = function (dom_element, html_event, service_facade, dom_
     }
 
     var submit_tag_to_resource = function (event) {
-        if (event.keyCode && event.keyCode != '13') {
-            // Do nothing!
-            return;
+        if (event.keyCode == 13) {
+            this.services.tag(this.data, this.tag_input.value);
         }
-
-        this.services.tag(this.data, this.tag_input.value);
     }
 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
