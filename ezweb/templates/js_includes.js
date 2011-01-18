@@ -47,6 +47,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/user_commands.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/response_command.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/resource.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/html_painters.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/html_painters.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/user_command_manager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/response_command_dispatcher.js"></script>

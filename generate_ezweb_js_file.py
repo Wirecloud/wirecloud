@@ -88,6 +88,7 @@ inputFiles = {
         'js/catalogue/user_commands.js',
         'js/catalogue/response_command.js',
         'js/catalogue/resource.js',
+        'js/catalogue/views/html_painters.js',
         'js/catalogue/views/list/html_painters.js',
         'js/catalogue/views/list/user_command_manager.js',
         'js/catalogue/views/list/response_command_dispatcher.js',

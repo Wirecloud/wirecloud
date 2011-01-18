@@ -23,44 +23,6 @@
 *     http://morfeo-project.org
  */
 
-var HTML_Painter = function () {
-    this.dom_element = null;
-
-    this.set_dom_element = function (dom_element) {
-        this.dom_element = dom_element;
-    }
-
-    this.set_dom_wrapper = function (dom_wrapper) {
-        this.dom_wrapper = dom_wrapper;
-    }
-
-    this.paint = function (command, user_command_manager) { }
-
-    this.get_popularity_html = function (popularity) {
-        var on_stars = Math.floor(popularity);
-        var md_star = popularity - on_stars;
-        var off_stars = 5 - popularity;
-
-        var result_html = '';
-
-        // "On" stars
-        for (var i=0; i<on_stars; i++) {
-            result_html += '<a class="on"></a>';
-        }
-
-        if (md_star) {
-            result_html += '<a class="md"></a>';
-        }
-
-        // "Off" stars
-        for (var i=0; i<Math.floor(off_stars); i++) {
-            result_html += '<a class="off"></a>';
-        }
-
-        return result_html;
-    }
-}
-
 var ListView_ResourcesPainter = function (resource_structure_element) {
     HTML_Painter.call(this);
 
@@ -168,6 +130,7 @@ var ListView_ResourcesPainter = function (resource_structure_element) {
         }
     }
 }
+ListView_ResourcesPainter.prototype = new HTML_Painter();
 
 var ListView_ResourceDetailsPainter = function (details_structure_element) {
     HTML_Painter.call(this);
@@ -383,6 +346,7 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
         }
     }
 }
+ListView_ResourceDetailsPainter.prototype = new HTML_Painter();
 
 
 var ListView_DeveloperInfoPainter = function (structure_element) {
@@ -480,6 +444,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
         }
     }
 }
+ListView_DeveloperInfoPainter.prototype = new HTML_Painter();
 
 var ListView_PaginationPainter = function (pagination_structure_element) {
     HTML_Painter.call(this);
@@ -615,3 +580,4 @@ var ListView_PaginationPainter = function (pagination_structure_element) {
         }
     }
 }
+ListView_PaginationPainter.prototype = new HTML_Painter();
