@@ -52,6 +52,7 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/user_command_manager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/response_command_dispatcher.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/factory.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/mosaic/factory.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/services.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/services_facade.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/factory.js"></script>

@@ -93,6 +93,7 @@ inputFiles = {
         'js/catalogue/views/list/user_command_manager.js',
         'js/catalogue/views/list/response_command_dispatcher.js',
         'js/catalogue/views/list/factory.js',
+        'js/catalogue/views/mosaic/factory.js',
         'js/catalogue/services.js',
         'js/catalogue/services_facade.js',
         'js/catalogue/factory.js',
