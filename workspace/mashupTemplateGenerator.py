@@ -56,7 +56,7 @@ def typeCode2typeText(typeCode):
 
 class TemplateGenerator:
 
-    def getTemplate(self, published_workspace):
+    def getTemplate(self, published_workspace, parametrization):
 
         workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace)
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
@@ -98,10 +98,14 @@ class TemplateGenerator:
         # iGadgets
         for igadget in included_igadgets:
             gadget = igadget.gadget
+            igadget_id = str(igadget.id)
+            igadget_params = {}
+            if igadget_id in parametrization:
+                igadget_params = parametrization[igadget_id]
 
             contratable = contratable or gadget.is_contratable()
 
-            resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=str(igadget.id), vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
+            resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=igadget_id, vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
             position = igadget.position
             etree.SubElement(resource, 'Position', x=str(position.posX), y=str(position.posY), z=str(position.posZ))
             etree.SubElement(resource, 'Rendering', height=str(position.height),
@@ -110,13 +114,29 @@ class TemplateGenerator:
 
             gadget_preferences = gadget.get_related_preferences()
             for pref in gadget_preferences:
-                value = igadget.get_var_value(pref, published_workspace.workspace.creator)
-                resource.append(etree.Element('Preference', name=pref.name, value=value))
+                read_only = False
+                if pref.name in igadget_params:
+                    value = igadget_params[pref.name]
+                    read_only = True
+                else:
+                    value = igadget.get_var_value(pref, published_workspace.workspace.creator)
+
+                element = etree.SubElement(resource, 'Preference', name=pref.name, value=value)
+                if read_only:
+                    element.set('readonly', 'true')
 
             gadget_properties = gadget.get_related_properties()
             for prop in gadget_properties:
-                value = igadget.get_var_value(prop, published_workspace.workspace.creator)
-                resource.append(etree.Element('Property', name=prop.name, value=value))
+                read_only = False
+                if prop.name in igadget_params:
+                    value = igadget_params[prop.name]
+                    read_only = True
+                else:
+                    value = igadget.get_var_value(prop, published_workspace.workspace.creator)
+
+                element = etree.SubElement(resource, 'Property', name=prop.name, value=value)
+                if read_only:
+                    element.set('readonly', 'true')
 
             events = gadget.get_related_events()
 

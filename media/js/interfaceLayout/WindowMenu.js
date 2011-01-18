@@ -1062,7 +1062,7 @@ FormWindowMenu.prototype.show = function (parentWindow) {
 /**
  * Specific class for publish windows
  */
-function PublishWindowMenu (element) {
+function PublishWindowMenu (workspace) {
 
 	//ezweb_organizations as options to be used in select inputs
 	var orgs = JSON.parse(ezweb_organizations);
@@ -1133,15 +1133,17 @@ function PublishWindowMenu (element) {
 			label: gettext('Advanced options'),
 			type: 'fieldset',
 			elements: {
-				'organization': {label: gettext('Organization'), type: 'select',	options: this.organizations},
+				'organization': {label: gettext('Organization'), type: 'select', options: this.organizations},
 				'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'}
 			}
 		}
 	}
 
+	this._addVariableParametrization(workspace, fields);
+
 	FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
 
-	//fill a warning message	
+	//fill a warning message
 	var warning = document.createElement('div');
 	Element.extend(warning);
 	warning.addClassName('msg warning');
@@ -1169,6 +1171,66 @@ function PublishWindowMenu (element) {
 	this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
+
+FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
+	var i, j, igadget, igadgets, igadget_params, pref_params, prop_params,
+		variable, variables, varManager, label;
+
+	varManager = workspace.getVarManager();
+	igadgets = workspace.getIGadgets();
+	igadget_params = {};
+
+	for (i = 0; i < igadgets.length; i++) {
+		igadget = igadgets[i];
+		variables = varManager.getIGadgetVariables(igadget.getId());
+		pref_params = {};
+                prop_params = {};
+
+		for (j in variables) {
+			variable = variables[j];
+			if (variable.aspect === Variable.prototype.USER_PREF) {
+				pref_params[j] = {
+					label: variable.label,
+					type: 'text'
+				};
+			} else if (variable.aspect === Variable.prototype.PROPERTY) {
+				if (variable.label && variable.label != '') {
+				    label = variable.label;
+				} else {
+				    label = variable.name;
+				}
+				prop_params[j] = {
+					label: label,
+					type: 'text'
+				};
+			}
+		}
+		igadget_params[igadget.id] = {
+			label: igadget.name,
+			type: 'fieldset',
+			nested: true,
+			elements: {
+				'pref' : {
+					label: gettext('Preferences'),
+					type: 'fieldset',
+					elements: pref_params
+				},
+				'props': {
+					label: gettext('Properties'),
+					type: 'fieldset',
+					elements: prop_params
+				}
+			}
+		};
+	}
+
+	fields['advanced'].elements['parametrization'] = {
+		label: gettext('Parametrization'),
+		type: 'fieldset',
+		nested: true,
+		elements: igadget_params
+	};
+};
 
 PublishWindowMenu.prototype.setFocus = function() {
 	this.fields['name'].inputInterface.focus();

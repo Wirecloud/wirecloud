@@ -810,17 +810,14 @@ var LayoutManagerFactory = function () {
 				this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
 				break;
 			case 'publishWorkSpace':
-				if (!this.menus['publishWorkSpaceMenu']) {
-					this.menus['publishWorkSpaceMenu'] = new PublishWindowMenu(null);
-				}
-				this.currentMenu = this.menus['publishWorkSpaceMenu'];
+				this.currentMenu = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
 				break;
 			case 'shareWorkSpace':
 				if (!this.menus['shareWorkSpaceMenu']) {
 					this.menus['shareWorkSpaceMenu'] = new ShareWindowMenu(null);
 				}
 				this.currentMenu = this.menus['shareWorkSpaceMenu'];
-				break;	
+				break;
 			case 'addFeed':
 				if (!this.menus['addFeedMenu']) {
 					this.menus['addFeedMenu'] = new AddFeedMenu();

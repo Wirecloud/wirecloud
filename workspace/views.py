@@ -856,6 +856,10 @@ class WorkSpacePublisherEntry(Resource):
                 #wait for the default branding
                 branding = None
 
+        parametrization = mashup.get('parametrization')
+        if not parametrization:
+            parametrization = {}
+
         try:
             published_workspace = PublishedWorkSpace(type='CLONED', workspace=workspace, author=author,
                                                      mail=email, vendor=vendor,
@@ -865,7 +869,7 @@ class WorkSpacePublisherEntry(Resource):
             published_workspace.save()
 
             templateGen = TemplateGenerator()
-            published_workspace.template = templateGen.getTemplate(published_workspace)
+            published_workspace.template = templateGen.getTemplate(published_workspace, parametrization)
             published_workspace.save()
         except IntegrityError, e:
             transaction.rollback()
@@ -889,7 +893,4 @@ class  GeneratorURL(Resource):
     def read(self, request, workspace_id):
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
 
-        templateGen = TemplateGenerator()
-        template = templateGen.getTemplate(published_workspace)
-
-        return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
+        return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')

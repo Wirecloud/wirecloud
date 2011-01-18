@@ -33,7 +33,7 @@ function VarManager (_workSpace) {
 	// ****************
 	
 
-	VarManager.prototype.parseVariables = function (workSpaceInfo) {	
+	VarManager.prototype.parseVariables = function (workSpaceInfo) {
 		// Igadget variables!
 		var tabs = workSpaceInfo['workspace']['tabList'];
 		
@@ -50,7 +50,6 @@ function VarManager (_workSpace) {
 				
 		this.parseWorkspaceVariables(ws_vars);
 	}
-	
 
 	VarManager.prototype.parseWorkspaceVariables = function (ws_vars) {
 		for (var i = 0; i<ws_vars.length; i++) {
@@ -141,7 +140,7 @@ function VarManager (_workSpace) {
 
 	VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
 		var igadgetVars = igadget['variables'];
-		var objVars = []
+		var objVars = {};
 		for (var i = 0; i<igadgetVars.length; i++) {
 			var id = igadgetVars[i].id;
 			var igadgetId = igadgetVars[i].igadgetId;
@@ -164,18 +163,17 @@ function VarManager (_workSpace) {
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
-                                case Variable.prototype.USER_PREF:
+				case Variable.prototype.USER_PREF:
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
-                                        objVars[name].readOnly = igadgetVars[i].readOnly;
+					objVars[name].readOnly = igadgetVars[i].readOnly;
 					this.variables[id] = objVars[name];
 					break;
 			}
 		}
 		
 		this.iGadgets[igadget['id']] = objVars;
-		
 	}
-		
+
 	VarManager.prototype.registerVariable = function (iGadgetId, variableName, handler) {
 		var variable = this.findVariable(iGadgetId, variableName);
 
@@ -306,7 +304,7 @@ function VarManager (_workSpace) {
 		
 	    }
 	}
-	
+
 	VarManager.prototype.findVariableInCollection = function(varCollection, id){
 		for (var i = 0; i < varCollection.length; i++){
 			var modVar = varCollection[i];
@@ -383,7 +381,11 @@ function VarManager (_workSpace) {
 			this.force_commit = true;
 		}
 	}
-	
+
+	VarManager.prototype.getIGadgetVariables = function (iGadgetId) {
+		return this.iGadgets[iGadgetId];
+	}
+
 	VarManager.prototype.getVariableById = function (varId) {
 		return this.variables[varId];
 	}
