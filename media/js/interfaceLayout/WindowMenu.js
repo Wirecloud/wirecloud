@@ -827,63 +827,7 @@ function FormWindowMenu (fields, title) {
 	
 	this.fields = {};
 	
-	var _insertField = function(fieldId, field, row){
-		
-		if (field.type === 'separator') {
-			var separator = row.insertCell(-1);
-			separator.setAttribute('colSpan', '2');
-			var hr = document.createElement('hr');
-			separator.appendChild(hr);
-			return;
-		}
-		if (field.type === 'label') {
-			var labelRow = row.insertCell(-1);
-			Element.extend(labelRow);
-			labelRow.addClassName('label');
-			if (field.url){
-				var label = document.createElement('a');			
-				label.setAttribute("href",field.url);
-				label.setAttribute("target","_blank");
-			}else{
-				var label = document.createElement('label');
-			}
-			label.appendChild(document.createTextNode(field.label));
-			labelRow.appendChild(label);
-			return;
-		}
-		// Label Cell
-		var labelCell = row.insertCell(-1);
-		Element.extend(labelCell);
-		labelCell.addClassName('label');
-		
-		var label = document.createElement('label');
-		label.appendChild(document.createTextNode(field.label));
-		labelCell.appendChild(label);
-		
-		if (field.required) {
-			var requiredMark = document.createElement('span');
-			requiredMark.appendChild(document.createTextNode('*'));
-			requiredMark.className = 'required_mark';
-			labelCell.appendChild(requiredMark);
-		}
-		
-		// Input Cell
-		var inputCell = document.createElement('td');
-		// TODO
-		//if the field is radio type the label must go after te input
-		if (field.type == 'radio') 
-			row.insertBefore(inputCell, labelCell);
-		else 
-			row.appendChild(inputCell);
-		
-		var inputInterface = InterfaceFactory.createInterface(fieldId, field);
-		inputInterface._insertInto(inputCell);
-		
-		field.inputInterface = inputInterface;
-		
-		this.fields[fieldId] = field;
-		
-	}
+
 	
 	// Allow hierarchy
 	if (arguments.length == 0)
@@ -891,59 +835,7 @@ function FormWindowMenu (fields, title) {
 
 	WindowMenu.call(this, title);
 
-	var table_ = document.createElement('table');
-	table_.setAttribute('cellspacing', '0');
-	table_.setAttribute('cellpadding', '0');
-	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
-	table_.appendChild(table);
-
-	for (var fieldId in fields) {
-		var field = fields[fieldId];
-		var row = table.insertRow(-1);
-
-		if (field.type === 'fieldset'){
-			var fieldset = row.insertCell(-1);
-			Element.extend(fieldset);
-			fieldset.addClassName('fieldset');
-			fieldset.setAttribute('colSpan', '2');
-						
-			var label = document.createElement('span')
-			Element.extend(label);
-			label.addClassName('section_name');
-			
-			label.appendChild(document.createTextNode(field.label));
-			fieldset.appendChild(label);
-			
-			var section = document.createElement('table');
-			Element.extend(section);
-			section.addClassName('section');
-			section.setAttribute('cellspacing', '0');
-			section.setAttribute('cellpadding', '0');
-			section.setStyle({'display':'none'});
-			var tbodySection = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
-			section.appendChild(tbodySection);
-						
-			fieldset.appendChild(section);
-			
-			for (var elementId in field.elements){
-				var element = field.elements[elementId];
-				var rowSection = tbodySection.insertRow(-1);
-				_insertField.call(this,elementId, element, rowSection);
-			}
-			var context = {"section":section, "object":this}
-			Event.observe(label, 'click', function (){
-							this.section.toggle();
-							this.object.calculatePosition();	
-						}.bind(context));
-					
-			continue;
-		
-		}
-
-		_insertField.call(this,fieldId, field, row);
-
-	}
-	
+	var table_ = this._buildFieldTable(fields, this.fields);
 	this.windowContent.insertBefore(table_, this.msgElement);
 
 	// Legend
@@ -976,6 +868,114 @@ function FormWindowMenu (fields, title) {
 }
 FormWindowMenu.prototype = new WindowMenu();
 
+FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
+	var table_ = document.createElement('table');
+	table_.setAttribute('cellspacing', '0');
+	table_.setAttribute('cellpadding', '0');
+	var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+	table_.appendChild(table);
+
+	for (var fieldId in fields) {
+		var field = fields[fieldId];
+		var row = table.insertRow(-1);
+
+		if (field.type === 'fieldset') {
+			var fieldset = row.insertCell(-1);
+			Element.extend(fieldset);
+			fieldset.addClassName('fieldset');
+			fieldset.setAttribute('colSpan', '2');
+
+			var label = document.createElement('span')
+			Element.extend(label);
+			label.addClassName('section_name');
+
+			label.appendChild(document.createTextNode(field.label));
+			fieldset.appendChild(label);
+
+			var sectionHash = fieldHash;
+			if (field.nested === true) {
+			    sectionHash = {};
+			    fieldHash[fieldId] = sectionHash;
+			}
+
+			var section = this._buildFieldTable(field.elements, sectionHash);
+			Element.extend(section);
+			section.addClassName('section');
+			section.setStyle({'display': 'none'});
+			fieldset.appendChild(section);
+
+			var context = {"section":section, "object":this}
+			Event.observe(label, 'click', function () {
+							this.section.toggle();
+							this.object.calculatePosition();
+						}.bind(context));
+
+			continue;
+		}
+
+		this._insertField(fieldId, field, row, fieldHash);
+	}
+
+	return table_;
+}
+
+FormWindowMenu.prototype._insertField = function(fieldId, field, row, fieldHash) {
+	if (field.type === 'separator') {
+		var separator = row.insertCell(-1);
+		separator.setAttribute('colSpan', '2');
+		var hr = document.createElement('hr');
+		separator.appendChild(hr);
+		return;
+	}
+	if (field.type === 'label') {
+		var labelRow = row.insertCell(-1);
+		Element.extend(labelRow);
+		labelRow.addClassName('label');
+		if (field.url){
+			var label = document.createElement('a');
+			label.setAttribute("href",field.url);
+			label.setAttribute("target","_blank");
+		}else{
+			var label = document.createElement('label');
+		}
+		label.appendChild(document.createTextNode(field.label));
+		labelRow.appendChild(label);
+		return;
+	}
+	// Label Cell
+	var labelCell = row.insertCell(-1);
+	Element.extend(labelCell);
+	labelCell.addClassName('label');
+	
+	var label = document.createElement('label');
+	label.appendChild(document.createTextNode(field.label));
+	labelCell.appendChild(label);
+	
+	if (field.required) {
+		var requiredMark = document.createElement('span');
+		requiredMark.appendChild(document.createTextNode('*'));
+		requiredMark.className = 'required_mark';
+		labelCell.appendChild(requiredMark);
+	}
+	
+	// Input Cell
+	var inputCell = document.createElement('td');
+	// TODO
+	//if the field is radio type the label must go after te input
+	if (field.type == 'radio') {
+		row.insertBefore(inputCell, labelCell);
+	} else {
+		row.appendChild(inputCell);
+	}
+
+	var inputInterface = InterfaceFactory.createInterface(fieldId, field);
+	inputInterface._insertInto(inputCell);
+	
+	field.inputInterface = inputInterface;
+
+	fieldHash[fieldId] = field;
+}
+
 /**
  * Does extra checks for testing field validity. This method must be overwriten
  * by child classes for providing this extra checks.
@@ -987,12 +987,39 @@ FormWindowMenu.prototype.extraValidation = function(fields) {
 	return "";
 }
 
+FormWindowMenu.prototype._validateFields = function (fields, validationManager) {
+	var field, fieldId;
+	for (fieldId in fields) {
+		field = fields[fieldId];
+		if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
+			validationManager.validate(fields[fieldId].inputInterface);
+		} else {
+			this._validateFields(field, validationManager);
+		}
+	}
+};
+
+FormWindowMenu.prototype._parseForm = function (fields) {
+	var value, field, fieldId, form = {};
+	for (fieldId in fields) {
+		field = fields[fieldId];
+		if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
+			value = field.inputInterface.getValue();
+
+			if (field.required || value !== "")
+				form[fieldId] = value;
+		} else {
+			form[fieldId] = this._parseForm(field);
+		}
+	}
+	return form;
+};
+
 FormWindowMenu.prototype._acceptHandler = function(e) {
 
 	// Validate input fields
 	var validationManager = new ValidationErrorManager();
-	for (var fieldId in this.fields)
-		validationManager.validate(this.fields[fieldId].inputInterface);
+	this._validateFields(this.fields, validationManager);
 
 	// Extra validations
 	var extraErrorMsg = this.extraValidation(this.fields);
@@ -1009,27 +1036,26 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 		return;
 	} else {
 		// Otherwise process the data
-		var value;
-		var form = new Object();
-		for (var fieldId in this.fields) {
-			var field = this.fields[fieldId];
-			var value = field.inputInterface.getValue();
-
-			if (field.required || value !== "")
-				form[fieldId] = value;
-		}
-
-		this.executeOperation(form);
+		this.executeOperation(this._parseForm(this.fields));
 		this.hide();
 	}
 }
 
-FormWindowMenu.prototype.show = function (parentWindow) {
-	for (var fieldId in this.fields) {
-		var field = this.fields[fieldId];
-		field.inputInterface.reset();
-	}
+FormWindowMenu.prototype._reset = function (fields) {
+	var fieldId, field;
 
+	for (fieldId in fields) {
+		field = fields[fieldId];
+		if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
+			field.inputInterface.reset();
+		} else {
+			this._reset(field);
+		}
+	}
+}
+
+FormWindowMenu.prototype.show = function (parentWindow) {
+	this._reset(this.fields);
 	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
