@@ -140,5 +140,6 @@ MosaicViewFactory.prototype.RESOURCE_TEMPLATE = '<div class="top"></div>\
 </div>\
 <div class="content">\
     <div class="image click_for_details"><a title="Mostrar detalles del recurso"><img src="#{image_url}"></a></div>\
-    <div class="tags"><div class="tag_links"></div></div>\
+    <div class="tags"><div class="important_tag_links"></div></div>\
+</div>\
 <div class="bottom"></div>';

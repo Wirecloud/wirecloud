@@ -129,34 +129,74 @@ ResourcesPainter.prototype.paint = function (command, user_command_manager) {
             user_command_manager.create_command_from_data('SHOW_RESOURCE_DETAILS', click_for_details_list[j], resource, 'click');
         }
 
-        // Tags
+        // Full tag list
         var tag_links_list = resource_element.getElementsByClassName('tag_links');
-        if (!tag_links_list || tag_links_list.length != 1) {
-            alert('Problem parsing resource template!');
+        if (tag_links_list && tag_links_list.length === 1) {
+            this._renderFullTagList(resource, tag_links_list[0], user_command_manager);
         }
 
-        var tag_links = tag_links_list[0];
-
-        var search_options = new Hash();
-
-        search_options['starting_page'] = 1
-        search_options['boolean_operator'] = 'AND';
-        search_options['scope'] = '';
-
-        var tags = resource.getTags();
-        for (j = 0; j < tags.length; j++) {
-            var tag = tags[j];
-
-            var tag_element = document.createElement('a');
-
-            Element.extend(tag_element);
-            tag_element.update(tag.value);
-            tag_element.addClassName('link');
-            tag_links.appendChild(tag_element);
-
-            search_options['criteria'] = tag.value;
-
-            user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+        // Important tag list
+        var important_tag_links_list = resource_element.getElementsByClassName('important_tag_links');
+        if (important_tag_links_list && important_tag_links_list.length === 1) {
+            this._renderImportantTagList(resource, important_tag_links_list[0], user_command_manager);
         }
+
     }
 };
+
+ResourcesPainter.prototype._renderFullTagList = function (resource, tag_links, user_command_manager) {
+    var i, search_options, tags, tag, tag_element;
+    
+    search_options = new Hash();
+
+    search_options['starting_page'] = 1
+    search_options['boolean_operator'] = 'AND';
+    search_options['scope'] = '';
+
+    tags = resource.getTags();
+    for (i = 0; i < tags.length; i++) {
+        tag = tags[i];
+
+        tag_element = document.createElement('a');
+
+        Element.extend(tag_element);
+        tag_element.update(tag.value);
+        tag_element.addClassName('link');
+        tag_links.appendChild(tag_element);
+
+        search_options['criteria'] = tag.value;
+
+        user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+    }
+};
+
+ResourcesPainter.prototype._renderImportantTagList = function (resource, tag_links, user_command_manager) {
+    var i, search_options, tags, tag, tag_element;
+    
+    search_options = new Hash();
+
+    search_options['starting_page'] = 1
+    search_options['boolean_operator'] = 'AND';
+    search_options['scope'] = '';
+
+    tags = resource.getTags();
+    tags = tags.sort(function (a, b) { return b.apparences - a.apprences });
+
+    len = Math.min(3, tags.length);
+
+    for (i = 0; i < len; i++) {
+        tag = tags[i];
+
+        tag_element = document.createElement('a');
+
+        Element.extend(tag_element);
+        tag_element.update(tag.value);
+        tag_element.addClassName('link');
+        tag_links.appendChild(tag_element);
+
+        search_options['criteria'] = tag.value;
+
+        user_command_manager.create_command_from_data('SIMPLE_SEARCH', tag_element, search_options, 'click');
+    }
+};
+
