@@ -32,9 +32,10 @@
 
 from lxml import etree
 
-from igadget.models import IGadget
-from workspace.models import Tab
+from igadget.models import IGadget, Variable
+from workspace.models import Tab, WorkSpaceVariable
 from preferences.models import WorkSpacePreference, TabPreference
+from connectable.models import InOut, In, Out, RelatedInOut
 
 
 def typeCode2typeText(typeCode):
@@ -150,6 +151,24 @@ class TemplateGenerator:
 
         if contratable:
             etree.append(etree.Element('Capability', name="contratable", value="true"))
+
+        channel_vars = WorkSpaceVariable.objects.filter(workspace=published_workspace.workspace, aspect='CHANNEL')
+        for channel_var in channel_vars:
+            connectable = InOut.objects.get(workspace_variable=channel_var)
+            element = etree.SubElement(wiring, 'Channel', id=str(connectable.id), name=connectable.name)
+
+            ins = In.objects.filter(inouts=connectable)
+            for inp in ins:
+                etree.SubElement(element, 'In', igadget=str(inp.variable.igadget.id), name=inp.name)
+
+            in_inouts = RelatedInOut.objects.filter(in_inout=connectable)
+            for in_inout in in_inouts:
+                etree.SubElement(element, 'Channel', id=str(in_inout.out_inout_id))
+
+            outs = Out.objects.filter(inouts=connectable)
+            for out in outs:
+                variable = Variable.objects.get(abstract_variable=out.abstract_variable)
+                etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
 
         template.append(wiring)
 
