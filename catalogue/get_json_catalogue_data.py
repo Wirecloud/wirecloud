@@ -63,31 +63,28 @@ def get_vote_data(gadget, user):
 
 def get_tag_data(gadget_id, user_id):
     all_tags = []
+    tags_by_name = {}
     # Get the user's tags
-    tags = UserTag.objects.filter(idResource=gadget_id,idUser=user_id)
+    tags = UserTag.objects.filter(idResource=gadget_id)
     for t in tags:
+        if t.tag.name in tags_by_name:
+            if t.idUser.id == user_id:
+                tags_by_name[t.tag.name]['added_by'] = 'Yes'
+
+            continue;
+
         tag_data = {}
         tag_data['id'] = t.id
         tag_data['value'] = t.tag.name
-        #tag_data['appearances'] = tags.filter(tag=t.tag).count()
-        tag_data['appearances'] = 1 #tags cannot be duplicated (same Gadget/User)
-        tag_data['added_by'] = 'Yes'
-        all_tags.append(tag_data)
-    # Get other users' tags
-    tags = UserTag.objects.filter(idResource=gadget_id).exclude(idUser=user_id)
-    for t in tags:
-        is_in_list = False
-        for e in all_tags:
-            if t.tag.name == e['value']:
-                is_in_list = True
-                break
-        if not is_in_list:
-            tag_data = {}
-            tag_data['id'] = t.id
-            tag_data['value'] = t.tag.name
-            tag_data['appearances'] = tags.filter(tag__name=t.tag.name).count()
+        tag_data['appearances'] = tags.filter(tag=t.tag).count()
+
+        if t.idUser.id == user_id:
+            tag_data['added_by'] = 'Yes'
+        else:
             tag_data['added_by'] = 'No'
-            all_tags.append(tag_data)
+
+        all_tags.append(tag_data)
+        tags_by_name[t.tag.name] = tag_data
 
     return all_tags
 
