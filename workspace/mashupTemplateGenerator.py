@@ -59,7 +59,7 @@ class TemplateGenerator:
 
     def getTemplate(self, published_workspace, parametrization):
 
-        workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace)
+        workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace).order_by('position')
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
 
         template = etree.Element('Template', schemaLocation="http://morfeo-project.org/2007/Template")
@@ -86,7 +86,7 @@ class TemplateGenerator:
         # Tabs and their preferences
         tabs = {}
         for tab in workspace_tabs:
-            tabElement = etree.SubElement(resources, 'Tab', name=tab.name)
+            tabElement = etree.SubElement(resources, 'Tab', name=tab.name, id=str(tab.id))
             tabs[tab.id] = tabElement
             preferences = TabPreference.objects.filter(tab=tab.pk)
             for preference in preferences:
@@ -171,7 +171,11 @@ class TemplateGenerator:
 
             outs = Out.objects.filter(inouts=connectable)
             for out in outs:
-                variable = Variable.objects.get(abstract_variable=out.abstract_variable)
-                etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
+                try:
+                    variable = Variable.objects.get(abstract_variable=out.abstract_variable)
+                    etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
+                except Variable.DoesNotExist:
+                    variable = Tab.objects.get(abstract_variable=out.abstract_variable)
+                    etree.SubElement(element, 'Out', tab=str(tab.id))
 
         return etree.tostring(template, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

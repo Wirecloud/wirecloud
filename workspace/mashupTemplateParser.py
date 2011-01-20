@@ -93,12 +93,14 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         update_workspace_preferences(workspace, new_values)
 
     tabs = TAB_XPATH(xml)
+    tab_id_mapping = {}
 
     forced_values = {
         'igadget': {},
     }
     for tabElement in tabs:
         tab, junk = createTab(tabElement.get('name'), user, workspace)
+        tab_id_mapping[tabElement.get('id')] = tab
 
         preferences = PREFERENCE_XPATH(tabElement)
         new_values = {}
@@ -194,12 +196,19 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
 
         outs = OUT_XPATH(channel['element'])
         for out in outs:
-            igadget_id = out.get('igadget')
-            igadget = igadget_id_mapping[igadget_id]
-            name = out.get('name')
+            if 'igadget' in out.attrib:
+                igadget_id = out.get('igadget')
+                igadget = igadget_id_mapping[igadget_id]
+                name = out.get('name')
 
-            variable = Variable.objects.get(igadget=igadget, abstract_variable__name=name)
-            connectable = Out.objects.get(abstract_variable=variable.abstract_variable)
+                variable = Variable.objects.get(igadget=igadget, abstract_variable__name=name)
+                connectable = Out.objects.get(abstract_variable=variable.abstract_variable)
+            else:
+                tab_id = out.get('tab')
+                tab = tab_id_mapping[tab_id]
+
+                connectable = Out.objects.get(abstract_variable=tab.abstract_variable)
+
             connectable.inouts.add(channel['connectable'])
             connectable.save()
 
