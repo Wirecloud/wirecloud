@@ -124,7 +124,7 @@ class IGadgetCollection(Resource):
                 "menu_color": "FFFFFF", "layout": 0, "gadget": gadget.uri}
         resp = SaveIGadget(data, user, activeTab, initial_variable_values)
 
-        return HttpResponse(json_encode({"igadget_id": resp["id"], "gadget_id": gadget.id}),
+        return HttpResponse(json_encode({"igadget_id": resp.id, "gadget_id": gadget.id}),
                             mimetype='application/json; charset=UTF-8')
 
     @basicauth_or_logged_in()

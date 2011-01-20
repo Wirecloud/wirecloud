@@ -155,9 +155,7 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
 
         transaction.commit()
 
-        ids = get_igadget_data(new_igadget, user, tab.workspace)
-
-        return ids
+        return new_igadget
 
     except VariableDef.DoesNotExist:
         #iGadget has no variables. It's normal
@@ -359,9 +357,10 @@ class IGadgetCollection(Resource):
         # iGadget creation
         try:
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-            ids = SaveIGadget(igadget, user, tab, initial_variable_values)
+            igadget = SaveIGadget(igadget, user, tab, initial_variable_values)
+            igadget_data = get_igadget_data(igadget, user, tab.workspace)
 
-            return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
         except Gadget.DoesNotExist, e:
             msg = _('referred gadget %(gadget_uri)s does not exist.') % {'gadget_uri': igadget['gadget']}
 
