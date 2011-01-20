@@ -68,6 +68,18 @@ def buildWorkspaceFromTemplate(template, user):
     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
     user_workspace.save()
 
+    fillWorkspaceUsingTemplate(workspace, template, xml)
+
+    return workspace
+
+
+def fillWorkspaceUsingTemplate(workspace, template, xml=None):
+
+    if xml is None:
+        xml = etree.fromstring(template)
+
+    user = workspace.creator
+
     preferences = PREFERENCE_XPATH(xml)
     new_values = {}
     igadget_id_mapping = {}
@@ -139,6 +151,14 @@ def buildWorkspaceFromTemplate(template, user):
             forced_values['igadget'][str(igadget.id)] = igadget_forced_values
             igadget_id_mapping[resource.get('id')] = igadget
 
+    if workspace.forcedValues != None and workspace.forcedValues != '':
+        old_forced_values = simplejson.loads(workspace.forcedValues)
+    else:
+        old_forced_values = {
+            'igadget': {},
+        }
+
+    forced_values['igadget'].update(old_forced_values['igadget'])
     workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
     workspace.save()
 
@@ -188,5 +208,3 @@ def buildWorkspaceFromTemplate(template, user):
             out_channel = channel_connectables[out_channel_element.get('id')]['connectable']
             relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
             relation.save()
-
-    return workspace

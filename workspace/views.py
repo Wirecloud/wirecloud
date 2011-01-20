@@ -49,7 +49,7 @@ from layout.models import Branding
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import TemplateGenerator
-from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
+from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import Category
 from workspace.models import VariableValue, SharedVariableValue
 from workspace.models import Tab
@@ -730,15 +730,11 @@ class  PublishedWorkSpaceMergerEntry(Resource):
         user = get_user_authentication(request)
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=published_ws_id)
+        to_ws = get_object_or_404(WorkSpace, id=to_ws_id, creator=user)
 
-        from_ws = published_workspace.workspace
-        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        fillWorkspaceUsingTemplate(to_ws, published_workspace.template)
 
-        packageCloner = PackageCloner()
-
-        to_workspace = packageCloner.merge_workspaces(from_ws, to_ws, user)
-
-        result = {'result': 'ok', 'workspace_id': to_workspace.id}
+        result = {'result': 'ok', 'workspace_id': to_ws_id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
