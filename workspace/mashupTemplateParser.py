@@ -31,10 +31,13 @@
 #
 
 from django.utils import simplejson
+from igadget.models import Variable
 from igadget.views import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
+from connectable.models import In, Out, RelatedInOut
+from connectable.views import createChannel
 from lxml import etree
 
 
@@ -45,6 +48,10 @@ POSITION_XPATH = etree.ETXPath('Position')
 RENDERING_XPATH = etree.ETXPath('Rendering')
 PREFERENCE_XPATH = etree.ETXPath('Preference')
 PROPERTIES_XPATH = etree.ETXPath('Property')
+WIRING_XPATH = etree.ETXPath('/Template/Platform.Wiring')
+CHANNEL_XPATH = etree.ETXPath('Channel')
+IN_XPATH = etree.ETXPath('In')
+OUT_XPATH = etree.ETXPath('Out')
 
 
 def buildWorkspaceFromTemplate(template, user):
@@ -63,6 +70,7 @@ def buildWorkspaceFromTemplate(template, user):
 
     preferences = PREFERENCE_XPATH(xml)
     new_values = {}
+    igadget_id_mapping = {}
     for preference in preferences:
         new_values[preference.get('name')] = {
             'inherit': False,
@@ -128,9 +136,49 @@ def buildWorkspaceFromTemplate(template, user):
                 "gadget": gadget_uri}
 
             igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
-            forced_values['igadget'][str(igadget['id'])] = igadget_forced_values
+            forced_values['igadget'][str(igadget.id)] = igadget_forced_values
+            igadget_id_mapping[resource.get('id')] = igadget
 
     workspace.forcedValues = simplejson.dumps(forced_values, ensure_ascii=False)
     workspace.save()
+
+    # wiring
+    wiring = WIRING_XPATH(xml)[0]
+    channels = CHANNEL_XPATH(wiring)
+    channel_connectables = {}
+    for channel in channels:
+        channel_connectables[channel.get('id')] = {
+            'connectable': createChannel(workspace, channel.get('name')),
+            'element': channel,
+        }
+
+    for key in channel_connectables:
+        channel = channel_connectables[key]
+        ins = IN_XPATH(channel['element'])
+        for in_ in ins:
+            igadget_id = in_.get('igadget')
+            igadget = igadget_id_mapping[igadget_id]
+            name = in_.get('name')
+
+            connectable = In.objects.get(variable__abstract_variable__name=name, variable__igadget=igadget)
+            connectable.inouts.add(channel['connectable'])
+            connectable.save()
+
+        outs = OUT_XPATH(channel['element'])
+        for out in outs:
+            igadget_id = out.get('igadget')
+            igadget = igadget_id_mapping[igadget_id]
+            name = out.get('name')
+
+            variable = Variable.objects.get(igadget=igadget, abstract_variable__name=name)
+            connectable = Out.objects.get(abstract_variable=variable.abstract_variable)
+            connectable.inouts.add(channel['connectable'])
+            connectable.save()
+
+        out_channels = CHANNEL_XPATH(channel['element'])
+        for out_channel_element in out_channels:
+            out_channel = channel_connectables[out_channel_element.get('id')]['connectable']
+            relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
+            relation.save()
 
     return workspace
