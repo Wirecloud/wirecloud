@@ -62,8 +62,9 @@ UserPref.prototype.getCurrentValue = function (varManager, iGadgetId) {
 
 //Set value and invoke callback function
 UserPref.prototype.setValue = function (varManager, iGadgetId, newValue) {
-    if (this.validate(newValue)) {
-        var variable = varManager.getVariableByName(iGadgetId, this.varName);
+    var variable = varManager.getVariableByName(iGadgetId, this.varName);
+
+    if (!variable.readOnly && this.validate(newValue)) {
         if (this.sharedElement){
             //set the shared state in the variable
             variable.setSharedState(this.sharedElement.checked);
@@ -88,8 +89,11 @@ UserPref.prototype.getValueFromInterface = function () {
     return this.inputElement.value;
 }
 
-UserPref.prototype.setDefaultValueInInterface = function () {
-    this.inputElement.value = this.defaultValue;
+UserPref.prototype.setDefaultValueInInterface = function (varManager, iGadgetId) {
+    var variable = varManager.getVariableByName(iGadgetId, this.varName);
+    if (!variable.readOnly) {
+        this.inputElement.value = this.defaultValue;
+    }
 }
 
 UserPref.prototype.getLabel = function () {

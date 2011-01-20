@@ -1236,12 +1236,13 @@ IGadget.prototype.remove = function(orderFromServer) {
  * Change the values shown in the configuration form of this igadget to the default ones.
  */
 IGadget.prototype._setDefaultPrefsInInterface = function() {
+    var varManager = this.layout.dragboard.getWorkspace().getVarManager();
     var prefs = this.gadget.getTemplate().getUserPrefs();
     var curPref;
 
     for (var i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
-        curPref.setDefaultValueInInterface();
+        curPref.setDefaultValueInInterface(varManager, this.id);
     }
 }
 
