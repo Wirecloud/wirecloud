@@ -125,7 +125,11 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             igadget_forced_values = {}
             properties = PROPERTIES_XPATH(resource)
             for prop in properties:
-                initial_variable_values[prop.get('name')] = prop.get('value')
+                read_only = prop.get('readonly')
+                if read_only and read_only == 'true':
+                    igadget_forced_values[prop.get('name')] = prop.get('value')
+                else:
+                    initial_variable_values[prop.get('name')] = prop.get('value')
 
             preferences = PREFERENCE_XPATH(resource)
             for pref in preferences:
