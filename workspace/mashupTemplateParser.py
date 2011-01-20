@@ -36,7 +36,7 @@ from igadget.views import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
-from connectable.models import In, Out, RelatedInOut
+from connectable.models import In, Out, RelatedInOut, Filter
 from connectable.views import createChannel
 from lxml import etree
 
@@ -147,8 +147,16 @@ def buildWorkspaceFromTemplate(template, user):
     channels = CHANNEL_XPATH(wiring)
     channel_connectables = {}
     for channel in channels:
+        connectable = createChannel(workspace, channel.get('name'))
+
+        filter_name = channel.get('filter')
+        if filter_name:
+            connectable.filter = Filter.objects.get(name=filter_name)
+            connectable.filter_param_values = channel.get('filter_params')
+            connectable.save()
+
         channel_connectables[channel.get('id')] = {
-            'connectable': createChannel(workspace, channel.get('name')),
+            'connectable': connectable,
             'element': channel,
         }
 

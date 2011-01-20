@@ -93,7 +93,7 @@ class TemplateGenerator:
                 if not preference.inherit:
                     etree.SubElement(tabElement, 'Preference', name=preference.name, value=preference.value)
 
-        wiring = etree.Element('Platform.Wiring')
+        wiring = etree.SubElement(template, 'Platform.Wiring')
         contratable = False
 
         # iGadgets
@@ -152,10 +152,14 @@ class TemplateGenerator:
         if contratable:
             etree.append(etree.Element('Capability', name="contratable", value="true"))
 
+        # wiring channel and connections
         channel_vars = WorkSpaceVariable.objects.filter(workspace=published_workspace.workspace, aspect='CHANNEL')
         for channel_var in channel_vars:
             connectable = InOut.objects.get(workspace_variable=channel_var)
             element = etree.SubElement(wiring, 'Channel', id=str(connectable.id), name=connectable.name)
+            if connectable.filter:
+                element.set('filter', connectable.filter.name)
+                element.set('filter_params', connectable.filter_param_values)
 
             ins = In.objects.filter(inouts=connectable)
             for inp in ins:
@@ -169,7 +173,5 @@ class TemplateGenerator:
             for out in outs:
                 variable = Variable.objects.get(abstract_variable=out.abstract_variable)
                 etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
-
-        template.append(wiring)
 
         return etree.tostring(template, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
