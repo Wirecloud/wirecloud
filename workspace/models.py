@@ -110,13 +110,13 @@ class PublishedWorkSpace(models.Model):
     #For implementing "private mashups" only visible for users that belongs to a concrete group
     organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
 
-    workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
+    workspace = models.ForeignKey(WorkSpace, verbose_name=_('Original Workspace'), null=True, blank=True)
 
     template = models.TextField(_('Template'))
     contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.workspace.name)
+        return unicode(self.pk) + " " + unicode(self.name)
 
 
 #Category for which a workspace is the defalult workspace

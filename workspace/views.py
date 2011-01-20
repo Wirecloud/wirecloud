@@ -384,6 +384,8 @@ class WorkSpaceEntry(Resource):
         # Gets Igadget, if it does not exist, a http 404 error is returned
         workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
 
+        PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
+
         workspace.delete()
         #set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
