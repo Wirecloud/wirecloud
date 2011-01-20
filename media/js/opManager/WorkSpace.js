@@ -785,7 +785,7 @@ function WorkSpace (workSpaceState) {
 	WorkSpace.prototype.publish = function(data) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
-		params = 'data=' + publicationData;
+		params = new Hash({data: publicationData});
 		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
 	}
 
