@@ -87,14 +87,6 @@ class UserWorkSpace(models.Model):
 
 class PublishedWorkSpace(models.Model):
 
-    WORKSPACE_TYPES = (
-        ('CLONED', _('Cloned')),
-        ('SHARED', _('Shared')),
-    )
-    type = models.CharField(_('Type'), max_length=10, choices=WORKSPACE_TYPES)
-
-    credentials = models.CharField(_('Credentials'), max_length=30)
-
     vendor = models.CharField(_('Vendor'), max_length=250)
     name = models.CharField(_('Name'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)

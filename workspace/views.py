@@ -859,7 +859,7 @@ class WorkSpacePublisherEntry(Resource):
             parametrization = {}
 
         try:
-            published_workspace = PublishedWorkSpace(type='CLONED', workspace=workspace, author=author,
+            published_workspace = PublishedWorkSpace(workspace=workspace, author=author,
                                                      mail=email, vendor=vendor,
                                                      name=name, version=version, description=description,
                                                      imageURI=imageURI, wikiURI=wikiURI, organization=organization,
