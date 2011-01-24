@@ -1015,6 +1015,30 @@ FormWindowMenu.prototype._parseForm = function (fields) {
 	return form;
 };
 
+FormWindowMenu.prototype._setForm = function (fields, data) {
+	var field, fieldId;
+	for (fieldId in fields) {
+		field = fields[fieldId];
+		if (field.inputInterface != null && field.inputInterface instanceof InputInterface) {
+			if (data != null) {
+				field.inputInterface.setValue(data[fieldId]);
+			} else {
+				field.inputInterface.setValue(null);
+			}
+		} else {
+			if (data != null) {
+			    this._setForm(field, data[fieldId]);
+			} else {
+			    this._setForm(field, null);
+			}
+		}
+	}
+};
+
+FormWindowMenu.prototype.setValue = function(data) {
+	this._setForm(this.fields, data);
+};
+
 FormWindowMenu.prototype._acceptHandler = function(e) {
 
 	// Validate input fields
