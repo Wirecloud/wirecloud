@@ -37,7 +37,7 @@ from django.utils import simplejson
 from django.utils.translation import get_language
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
-from context.models import Concept, ConceptName
+from context.models import Concept, ConceptName, Constant
 from gadget.models import XHTML, ContextOption, UserPrefOption, Capability
 from igadget.models import Variable, VariableDef, IGadget
 from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
@@ -410,6 +410,23 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
+    # Context information
+    concepts = Concept.objects.all()
+
+    concept_values = get_constant_values()
+    concept_data = {}
+    concept_data['user'] = user
+    try:
+        if 'twitterauth' in settings.INSTALLED_APPS:
+            concept_data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
+        else:
+            concept_data['twitterauth'] = None
+    except Exception:
+        concept_data['twitterauth'] = None
+
+    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values, concept_data) for concept in concepts]
+
+    # Process forced variable values
     forced_values = process_forced_values(workSpaceDAO, user)
 
     # Workspace preferences
@@ -446,21 +463,6 @@ def get_global_workspace_data(workSpaceDAO, user):
     #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
     data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
-
-    # Gets some concept values
-    concept_values = {}
-    concept_values['user'] = user
-    try:
-        if 'twitterauth' in settings.INSTALLED_APPS:
-            concept_values['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
-        else:
-            concept_values['twitterauth'] = None
-    except Exception:
-        concept_values['twitterauth'] = None
-
-    #Context information
-    concepts = Concept.objects.all()
-    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
 
     # Filter information
     filters = Filter.objects.all()
@@ -574,7 +576,17 @@ def get_variable_data(variable, user, workspace, forced_values={}):
     return data_ret
 
 
-def get_concept_data(concept, concept_values):
+def get_constant_values():
+    res = {}
+
+    constants = Constant.objects.all()
+    for constant in constants:
+        res[constant.concept.concept] = constant.value
+
+    return res
+
+
+def get_concept_data(concept, concept_values, data):
 
     cnames = ConceptName.objects.filter(concept=concept).values('name')
 
@@ -585,26 +597,40 @@ def get_concept_data(concept, concept_values):
     }
 
     if concept.source == 'PLAT':
-        data_ret['value'] = get_concept_value(concept.pk, concept_values)
+        data_ret['value'] = get_concept_value(concept, concept_values, data)
     else:
         data_ret['adaptor'] = concept.adaptor
 
     return data_ret
 
 
-# Only for extenal context values (no igadget context values)
-def get_concept_value(concept_name, values):
+# Only for extenal/constant context values (no igadget context values)
+def get_concept_value(concept, values, data):
     res = ''
 
-    if concept_name == 'username':
-        res = values['user'].username
-    elif concept_name == 'language':
+    if concept.concept in values:
+        return values[concept.concept]
+
+    if concept.type == 'CCTX':
+        try:
+            constant = Constant.objects.get(concept=concept)
+            res = constant.value
+        except Constant.DoesNotExist:
+            pass
+
+    elif concept.concept == 'username':
+        res = data['user'].username
+
+    elif concept.concept == 'language':
         res = get_language()
-    elif concept_name == 'twitterauth' and values['twitterauth']:
-        res = "&".join(['user_screen_name=%s' % values['twitterauth'].screen_name,
+
+    elif concept.concept == 'twitterauth' and data['twitterauth']:
+        res = "&".join(['user_screen_name=%s' % data['twitterauth'].screen_name,
             'oauth_consumer_key=%s' % getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY'),
             'oauth_consumer_secret=%s' % getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET'),
-            values['twitterauth'].access_token])
+            data['twitterauth'].access_token])
+
+    values[concept.concept] = res
 
     return res
 

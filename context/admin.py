@@ -32,7 +32,8 @@
 
 from django.contrib import admin
 
-from context.models import Concept, ConceptName
+from context.models import Concept, ConceptName, Constant
 
 admin.site.register(Concept)
 admin.site.register(ConceptName)
+admin.site.register(Constant)

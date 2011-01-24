@@ -43,6 +43,7 @@ class Concept(models.Model):
     )
     source = models.CharField(_('Source'), max_length=4, choices=SOURCE)
     TYPE = (
+        ('CCTX', _('Constant')),
         ('ECTX', _('External')),
         ('GCTX', _('iGadget')),
     )
@@ -60,3 +61,11 @@ class ConceptName(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Constant(models.Model):
+    concept = models.ForeignKey(Concept, verbose_name=_('Concept'), unique=True, null=False)
+    value = models.CharField(_('Value'), max_length=256)
+
+    def __unicode__(self):
+        return self.concept.concept
