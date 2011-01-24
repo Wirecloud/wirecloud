@@ -366,8 +366,8 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
-    def __init__(self, user):
-        self._user = user
+    def __init__(self, context):
+        self._context = context
 
     def __repl(self, matching):
         plen = len(matching.group(1))
@@ -375,16 +375,29 @@ class TemplateValueProcessor:
             return '%' * (plen / 2) + '(' + matching.group(1) + ')'
 
         var_path = matching.group(2).split('.')
-        if var_path[0] == 'user':
-            return getattr(self._user, var_path[1])
+        current_context = self._context
 
-        return matching.group(0)
+        while len(var_path) > 0:
+            current_path = var_path.pop(0)
+
+            if hasattr(current_context, current_path):
+                current_context = getattr(current_context, current_path)
+            elif current_path in current_context:
+                current_context = current_context[current_path]
+            else:
+                current_context = self._context
+                break
+
+        if current_context != self._context:
+            return current_context
+        else:
+            return matching.group(0)
 
     def process(self, value):
         return re.sub(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)', self.__repl, value)
 
 
-def process_forced_values(workspace, user):
+def process_forced_values(workspace, user, concept_values):
     try:
         forced_values = simplejson.loads(workspace.forcedValues)
     except:
@@ -392,7 +405,7 @@ def process_forced_values(workspace, user):
             'igadget': {},
         }
 
-    processor = TemplateValueProcessor(user)
+    processor = TemplateValueProcessor({'user': user, 'context': concept_values})
 
     if 'igadget' in forced_values:
         collection = forced_values['igadget']
@@ -427,7 +440,7 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values, concept_data) for concept in concepts]
 
     # Process forced variable values
-    forced_values = process_forced_values(workSpaceDAO, user)
+    forced_values = process_forced_values(workSpaceDAO, user, concept_values)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
