@@ -117,8 +117,12 @@ class TemplateGenerator:
             for pref in gadget_preferences:
                 read_only = False
                 if pref.name in igadget_params:
-                    value = igadget_params[pref.name]
-                    read_only = True
+                    igadget_param_desc = igadget_params[pref.name]
+                    if igadget_param_desc['source'] == 'default':
+                        # Do not issue a Preference element for this preference
+                        continue
+                    value = igadget_param_desc['value']
+                    read_only = igadget_param_desc['readOnly']
                 else:
                     value = igadget.get_var_value(pref, published_workspace.workspace.creator)
 
@@ -130,8 +134,12 @@ class TemplateGenerator:
             for prop in gadget_properties:
                 read_only = False
                 if prop.name in igadget_params:
-                    value = igadget_params[prop.name]
-                    read_only = True
+                    igadget_param_desc = igadget_params[prop.name]
+                    if igadget_param_desc['source'] == 'default':
+                        # Do not issue a Property element for this property
+                        continue
+                    value = igadget_param_desc['value']
+                    read_only = igadget_param_desc['readOnly']
                 else:
                     value = igadget.get_var_value(prop, published_workspace.workspace.creator)
 

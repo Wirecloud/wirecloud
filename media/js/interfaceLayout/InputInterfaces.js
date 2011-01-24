@@ -625,6 +625,102 @@ MultipleInputInterface.prototype._setValue = function(newValue) {
 /**
  *
  */
+function ParametrizableValueInputInterface(fieldId, options) {
+    InputInterface.call(this, fieldId, options);
+
+    this.parentWindow = options.parentWindow;
+    this.variable = options.variable;
+
+    this.wrapperElement = document.createElement('div');
+
+    this.inputElement = document.createElement('input');
+    Element.extend(this.inputElement);
+    this.inputElement.disabled = true;
+    var inputId = this._fieldId;
+    this.inputElement.setAttribute('id', inputId);
+    this.wrapperElement.appendChild(this.inputElement);
+
+    this.buttonElement = document.createElement('button');
+    Element.extend(this.buttonElement);
+    this.wrapperElement.appendChild(this.buttonElement);
+    this.buttonElement.observe('click', function() {
+        var dialog = new ParametrizeWindowMenu(this);
+        dialog.show(this.parentWindow);
+        dialog.setValue(this.getValue());
+    }.bind(this));
+}
+ParametrizableValueInputInterface.prototype = new InputInterface();
+
+ParametrizableValueInputInterface.prototype._checkValue = function(newValue) {
+    return InputValidationError.NO_ERROR;
+};
+
+ParametrizableValueInputInterface.prototype.getValue = function() {
+    var value = {
+        'source': this.source,
+        'readOnly': this.readOnly
+    };
+
+    if (this.source !== 'default') {
+        value.value = this.inputElement.value;
+    }
+
+    return value;
+};
+
+ParametrizableValueInputInterface.prototype.VALID_SOURCE_VALUES = ['current', 'default', 'custom'];
+
+ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
+    if (newValue == null || this.VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
+        this.source = 'current';
+    } else {
+        this.source = newValue.source;
+    }
+
+    if (newValue == null || typeof newValue.value !== 'string') {
+        this.value = '';
+    } else {
+        this.value = newValue.value;
+    }
+
+    if (newValue == null || typeof newValue.readOnly !== 'boolean') {
+        this.readOnly = false;
+    } else {
+        this.readOnly = newValue.readOnly;
+    }
+
+    this._updateInputElement();
+    this._updateButton();    
+};
+
+ParametrizableValueInputInterface.prototype._insertInto = function(element) {
+    element.appendChild(this.wrapperElement);
+};
+
+ParametrizableValueInputInterface.prototype._updateInputElement = function() {
+    switch (this.source) {
+    case 'default':
+        this.inputElement.value = '';
+        break;
+    case 'current':
+        this.inputElement.value = this.variable.value;
+        break;
+    case 'custom':
+        this.inputElement.value = this.value;
+    }
+};
+
+ParametrizableValueInputInterface.prototype._updateButton = function() {
+    if (this.source === 'default') {
+        this.buttonElement.innerHTML = gettext('Parametrize');
+    } else {
+        this.buttonElement.innerHTML = gettext('Modify');
+    }
+};
+
+/**
+ *
+ */
 var InterfaceFactory = new Object();
 InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 	switch (fieldDesc.type) {
@@ -654,6 +750,8 @@ InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 		return new MultipleInputInterface(fieldId, fieldDesc);
 	case 'radio':
 		return new RadioButtonInputInterface(fieldId, fieldDesc);
+	case 'parametrizableValue':
+		return new ParametrizableValueInputInterface(fieldId, fieldDesc);
 	default:
 		throw new Error(fieldDesc.type);
 	}

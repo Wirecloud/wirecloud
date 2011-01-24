@@ -1215,7 +1215,9 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 			if (variable.aspect === Variable.prototype.USER_PREF) {
 				pref_params[j] = {
 					label: variable.label,
-					type: 'text'
+					type: 'parametrizableValue',
+					variable: variable,
+					parentWindow: this
 				};
 			} else if (variable.aspect === Variable.prototype.PROPERTY) {
 				if (variable.label && variable.label != '') {
@@ -1225,7 +1227,9 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 				}
 				prop_params[j] = {
 					label: label,
-					type: 'text'
+					type: 'parametrizableValue',
+					variable: variable,
+					parentWindow: this
 				};
 			}
 		}
@@ -1799,3 +1803,31 @@ UploadWindowMenu.prototype._closeListener = function(){
 	}
 	
 }
+
+function ParametrizeWindowMenu(inputInterface) {
+    var fields, options;
+
+    options = [
+        {label: gettext('Use current value'), value: 'current'},
+        {label: gettext('Use gadget default value'), value: 'default'},
+        {label: gettext('Use parametrized value'), value: 'custom'}
+    ];
+
+    fields = {
+        'readOnly': {label: gettext('read only'), type: 'boolean'},
+        'source': {label: '', type: 'select', options: options},
+        'value': {label: gettext('Value'), type: 'longtext'}
+    }
+    FormWindowMenu.call(this, fields, gettext('Parametrization'));
+
+    this.inputInterface = inputInterface;
+}
+ParametrizeWindowMenu.prototype = new FormWindowMenu();
+
+ParametrizeWindowMenu.prototype.executeOperation = function(newValue) {
+    this.inputInterface.setValue(newValue);
+};
+
+ParametrizeWindowMenu.prototype._closeListener = function() {
+    this.hide();
+};
