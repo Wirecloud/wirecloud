@@ -105,6 +105,8 @@ class PublishedWorkSpace(models.Model):
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Original Workspace'), null=True, blank=True)
 
     template = models.TextField(_('Template'))
+    params = models.TextField(_('Params used for publishing'))
+
     contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):

@@ -863,7 +863,8 @@ class WorkSpacePublisherEntry(Resource):
                                                      mail=email, vendor=vendor,
                                                      name=name, version=version, description=description,
                                                      imageURI=imageURI, wikiURI=wikiURI, organization=organization,
-                                                     contratable=contratable)
+                                                     contratable=contratable,
+                                                     params=received_json)
             published_workspace.save()
 
             templateGen = TemplateGenerator()
