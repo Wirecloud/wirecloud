@@ -262,6 +262,7 @@ function WorkSpace (workSpaceState) {
 		layoutManager.logSubTask(gettext('Workspace published successfully'));
 		layoutManager.logStep('');
 		layoutManager._notifyPlatformReady();
+                this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
 	}
 
 	var publishError = function(transport, e) {
@@ -793,7 +794,7 @@ function WorkSpace (workSpaceState) {
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
 		params = new Hash({data: publicationData});
-		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
+		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, {workspace: this, params: data}, publishSuccess, publishError);
 	}
 
 	WorkSpace.prototype.mergeWith = function(workspace_id) {

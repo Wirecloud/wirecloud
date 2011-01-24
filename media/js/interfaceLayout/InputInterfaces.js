@@ -181,10 +181,10 @@ InputInterface.prototype.checkValue = function(newValue) {
 	if (newValue === undefined)
 		newValue = this.getValue();
 
-	if (this._required && (newValue == undefined || this.isEmpty()))
+	if (this._required && (newValue == undefined || newValue === ""))
 		return InputValidationError.REQUIRED_ERROR;
 
-	if (!this._required && this.isEmpty())
+	if (!this._required && newValue === "")
 		return InputValidationError.NO_ERROR;
 
 	return this._checkValue(newValue);

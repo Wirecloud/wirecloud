@@ -1200,6 +1200,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 	var i, j, igadget, igadgets, igadget_params, pref_params, prop_params,
 		variable, variables, varManager, label;
 
+	this.workspace = workspace;
 	varManager = workspace.getVarManager();
 	igadgets = workspace.getIGadgets();
 	igadget_params = {};
@@ -1259,6 +1260,11 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 		nested: true,
 		elements: igadget_params
 	};
+};
+
+PublishWindowMenu.prototype.show = function(parentWindow) {
+	FormWindowMenu.prototype.show.call(this, parentWindow);
+	this.setValue(this.workspace.workSpaceGlobalInfo.workspace.params);
 };
 
 PublishWindowMenu.prototype.setFocus = function() {

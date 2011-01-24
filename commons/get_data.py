@@ -43,7 +43,7 @@ from igadget.models import Variable, VariableDef, IGadget
 from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from twitterauth.models import TwitterUserProfile
-from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace
+from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace, PublishedWorkSpace
 
 import re
 
@@ -472,6 +472,11 @@ def get_global_workspace_data(workSpaceDAO, user):
 
     #Branding information
     data_ret["workspace"]["branding"] = get_workspace_branding_data(workSpaceDAO, user)
+
+    # Params
+    last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
+    if len(last_published_workspace) > 0:
+        data_ret["workspace"]["params"] = simplejson.loads(last_published_workspace[0].params)
 
     return data_ret
 
