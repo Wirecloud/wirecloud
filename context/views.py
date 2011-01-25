@@ -32,7 +32,7 @@
 
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
@@ -95,10 +95,10 @@ class ContextEntry(Resource):
 
     def read(self, request, user_name, concept_name):
         user = user_authentication(request, user_name)
-        concepts = get_list_or_404(Concept, concept=concept_name)
+        concept = get_object_or_404(Concept, concept=concept_name)
         concept_values = {}
         concept_values['user'] = user
-        data_list = get_concept_data(concepts, concept_values)
+        data_list = get_concept_data(concept, concept_values)
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
@@ -173,9 +173,9 @@ class ContextValueEntry(Resource):
     def read(self, request, user_name, concept_name):
         user = user_authentication(request, user_name)
 
-        data_res = {}
+        data = {}
+        data['user'] = user
         concept_data = {}
-        concept_data['user'] = user
-        data_res['value'] = get_concept_value(concept_name, concept_data)
+        concept_data['value'] = get_concept_value(concept_name, data)
 
-        return HttpResponse(json_encode(data_res), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(concept_data), mimetype='application/json; charset=UTF-8')

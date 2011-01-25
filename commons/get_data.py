@@ -425,19 +425,8 @@ def get_global_workspace_data(workSpaceDAO, user):
 
     # Context information
     concepts = Concept.objects.all()
-
-    concept_values = get_constant_values()
-    concept_data = {}
-    concept_data['user'] = user
-    try:
-        if 'twitterauth' in settings.INSTALLED_APPS:
-            concept_data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
-        else:
-            concept_data['twitterauth'] = None
-    except Exception:
-        concept_data['twitterauth'] = None
-
-    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values, concept_data) for concept in concepts]
+    concept_values = get_concept_values(user)
+    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
 
     # Process forced variable values
     forced_values = process_forced_values(workSpaceDAO, user, concept_values)
@@ -599,7 +588,28 @@ def get_constant_values():
     return res
 
 
-def get_concept_data(concept, concept_values, data):
+def get_concept_values(user):
+    concepts = Concept.objects.all()
+
+    concept_values = get_constant_values()
+    data = {}
+    data['user'] = user
+    try:
+        if 'twitterauth' in settings.INSTALLED_APPS:
+            data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
+        else:
+            data['twitterauth'] = None
+    except Exception:
+        data['twitterauth'] = None
+
+    for concept in concepts:
+        if concept.source == 'PLAT':
+            concept_values[concept.concept] = get_concept_value(concept, data)
+
+    return concept_values
+
+
+def get_concept_data(concept, concept_values):
 
     cnames = ConceptName.objects.filter(concept=concept).values('name')
 
@@ -610,7 +620,10 @@ def get_concept_data(concept, concept_values, data):
     }
 
     if concept.source == 'PLAT':
-        data_ret['value'] = get_concept_value(concept, concept_values, data)
+        if concept.concept in concept_values:
+            data_ret['value'] = concept_values[concept.concept]
+        else:
+            data_ret['value'] = ''
     else:
         data_ret['adaptor'] = concept.adaptor
 
@@ -618,11 +631,8 @@ def get_concept_data(concept, concept_values, data):
 
 
 # Only for extenal/constant context values (no igadget context values)
-def get_concept_value(concept, values, data):
+def get_concept_value(concept, data):
     res = ''
-
-    if concept.concept in values:
-        return values[concept.concept]
 
     if concept.type == 'CCTX':
         try:
@@ -642,8 +652,6 @@ def get_concept_value(concept, values, data):
             'oauth_consumer_key=%s' % getattr(settings, 'TWITTER_CONSUMER_KEY', 'YOUR_KEY'),
             'oauth_consumer_secret=%s' % getattr(settings, 'TWITTER_CONSUMER_SECRET', 'YOUR_SECRET'),
             data['twitterauth'].access_token])
-
-    values[concept.concept] = res
 
     return res
 

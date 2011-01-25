@@ -30,6 +30,7 @@
 
 #
 
+from commons.get_data import get_concept_values, TemplateValueProcessor
 from django.utils import simplejson
 from igadget.models import Variable
 from igadget.views import SaveIGadget
@@ -79,6 +80,8 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         xml = etree.fromstring(template)
 
     user = workspace.creator
+    concept_values = get_concept_values(user)
+    processor = TemplateValueProcessor({'user': user, 'context': concept_values})
 
     preferences = PREFERENCE_XPATH(xml)
     new_values = {}
@@ -129,7 +132,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 if read_only and read_only == 'true':
                     igadget_forced_values[prop.get('name')] = prop.get('value')
                 else:
-                    initial_variable_values[prop.get('name')] = prop.get('value')
+                    initial_variable_values[prop.get('name')] = processor.process(prop.get('value'))
 
             preferences = PREFERENCE_XPATH(resource)
             for pref in preferences:
@@ -137,7 +140,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 if read_only and read_only == 'true':
                     igadget_forced_values[pref.get('name')] = pref.get('value')
                 else:
-                    initial_variable_values[pref.get('name')] = pref.get('value')
+                    initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
 
             igadget_data = {
                 "left": int(position.get('x')),
