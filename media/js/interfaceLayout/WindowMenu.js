@@ -1816,7 +1816,7 @@ function ParametrizeWindowMenu(inputInterface) {
     fields = {
         'readOnly': {label: gettext('read only'), type: 'boolean'},
         'source': {label: '', type: 'select', options: options},
-        'value': {label: gettext('Value'), type: 'longtext'}
+        'value': {label: gettext('Value'), type: 'parametrizedText'}
     }
     FormWindowMenu.call(this, fields, gettext('Parametrization'));
 

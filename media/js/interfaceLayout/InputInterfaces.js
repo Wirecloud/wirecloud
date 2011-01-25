@@ -721,6 +721,111 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
 /**
  *
  */
+function ParametrizedTextInputInterface(fieldId, options) {
+    var i, param, contextFields, concepts, keys;
+
+    InputInterface.call(this, fieldId, options);
+
+    /* TODO */
+    concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
+    keys = concepts.keys();
+    contextFields = [];
+    for (i = 0; i < keys.length; i += 1) {
+        if (concepts[keys[i]]._type !== 'GCTX') {
+            contextFields.push({label: keys[i], value: keys[i]});
+        }
+    }
+
+    this.parameters = [
+        {
+            label: gettext('User'),
+            value: 'user',
+            fields: [
+                {label: gettext('User Name'), value: 'username'},
+                {label: gettext('First Name'), value: 'first_name'},
+                {label: gettext('Last Name'), value: 'last_name'},
+            ]
+        },
+        {
+            label: gettext('Context'),
+            value: 'context',
+            fields: contextFields
+        }
+    ];
+    /* TODO */
+
+    this.wrapperElement = document.createElement('div');
+
+    this.mainSelect = document.createElement('select');
+    for (i = 0; i < this.parameters.length; i += 1) {
+        param = this.parameters[i];
+        try {
+            this.mainSelect.add(new Option(param.label, param.value), null);
+        } catch (e) {
+            this.mainSelect.add(new Option(param.label, param.value));
+        }
+    }
+    Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
+    this.wrapperElement.appendChild(this.mainSelect);
+
+    this.secondSelect = document.createElement('select');
+    this.wrapperElement.appendChild(this.secondSelect);
+    this._updateSecondSelect();
+
+    this.addButton = document.createElement('button');
+    Element.extend(this.addButton);
+    this.addButton.setTextContent(gettext('Add'));
+    this.wrapperElement.appendChild(this.addButton);
+    this.addButton.observe('click', function() {
+        var prefix, suffix, parameter, start;
+
+        start = this.inputElement.selectionStart;
+        prefix = this.inputElement.value.substr(0, start);
+        suffix = this.inputElement.value.substr(this.inputElement.selectionEnd);
+        parameter = this.mainSelect.value + '.' + this.secondSelect.value;
+
+        this.inputElement.value = prefix + '%(' + parameter + ')' + suffix;
+        this.inputElement.selectionStart = start;
+        this.inputElement.selectionEnd = start + parameter.length + 3;
+    }.bind(this));
+
+    this.inputElement = document.createElement('textarea');
+    this.inputElement.style.display = 'block';
+    Element.extend(this.inputElement);
+    this.inputElement.setAttribute('cols', '50');
+    this.inputElement.setAttribute('rows', '3');
+    this.wrapperElement.appendChild(this.inputElement);
+}
+ParametrizedTextInputInterface.prototype = new InputInterface();
+
+ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
+    var fields, field, i;
+
+    this.secondSelect.innerHTML = '';
+
+    for (i = 0; i < this.parameters.length; i += 1) {
+        if (this.parameters[i].value == this.mainSelect.value) {
+            fields = this.parameters[i].fields;
+        }
+    }
+
+    for (i = 0; i < fields.length; i += 1) {
+        field = fields[i];
+        try {
+            this.secondSelect.add(new Option(field.label, field.value), null);
+        } catch (e) {
+            this.secondSelect.add(new Option(field.label, field.value));
+        }
+    }
+};
+
+ParametrizedTextInputInterface.prototype._insertInto = function(element) {
+    element.appendChild(this.wrapperElement);
+};
+
+/**
+ *
+ */
 var InterfaceFactory = new Object();
 InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 	switch (fieldDesc.type) {
@@ -752,6 +857,8 @@ InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 		return new RadioButtonInputInterface(fieldId, fieldDesc);
 	case 'parametrizableValue':
 		return new ParametrizableValueInputInterface(fieldId, fieldDesc);
+	case 'parametrizedText':
+		return new ParametrizedTextInputInterface(fieldId, fieldDesc);
 	default:
 		throw new Error(fieldDesc.type);
 	}
