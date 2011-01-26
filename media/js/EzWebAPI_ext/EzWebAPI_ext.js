@@ -2646,6 +2646,9 @@ StyledElements.StyledTextField = function(options) {
 
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = "styled_text_field";
+    if (options.class !== "") {
+        this.wrapperElement.className += " " + options.class;
+    };
 
     this.inputElement = document.createElement("input");
     this.inputElement.setAttribute("type", "text");
@@ -2678,6 +2681,9 @@ StyledElements.StyledTextArea = function(options) {
 
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = "styled_text_area";
+    if (options.class !== "") {
+        this.wrapperElement.className += " " + options.class;
+    };
 
     this.inputElement = document.createElement("textarea");
 
