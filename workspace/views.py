@@ -97,16 +97,18 @@ def get_mashup_gadgets(mashup_id):
 def clone_original_variable_value(abstract_variable, creator, new_user):
     try:
         original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
-        
-        #Cloned using new way (even cloning Variablevalues)
-        new_var_value = original_var_value.clone_variable_value(new_user)
+
+        value = original_var_value.get_variable_value()
     except VariableValue.DoesNotExist:
-        #This VariableValue should exist. 
+        #This VariableValue should exist.
         #However, published workspaces cloned in the old-fashioned way don't have the VariableValue of the creator variable!
         #Managing everything with AbstractVariable's default value, VariableValue it's unavailable!
-        new_var_value = abstract_variable.get_default_value() 
-    
-    return new_var_value
+        value = abstract_variable.get_default_value()
+
+    cloned_value = VariableValue(user=new_user, value=value, abstract_variable=abstract_variable)
+    cloned_value.save()
+
+    return cloned_value
 
 def get_workspace_description(workspace):    
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)

@@ -195,13 +195,7 @@ class VariableValue(models.Model):
     value = models.TextField(_('Value'), null=True, blank=True)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
     shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
-    
-    def clone_variable_value(self, user):
-        cloned_value = VariableValue(user=user, value=self.get_variable_value(), abstract_variable=self.abstract_variable)
-        cloned_value.save()
-        
-        return cloned_value
-        
+
     def get_variable_value(self):
         if (self.abstract_variable.has_public_value()):
             return self.value
