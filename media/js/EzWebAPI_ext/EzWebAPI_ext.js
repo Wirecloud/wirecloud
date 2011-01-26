@@ -2513,7 +2513,7 @@ StyledElements.StyledList.prototype.removeEntryByValue = function(value) {
 StyledElements.StyledList.prototype.clear = function () {
     this.cleanSelection();
 
-    this.wrapperElement.innerHTML = '';
+    this.content.innerHTML = '';
     this.entries = [];
     this.entriesByValue = {};
 };
