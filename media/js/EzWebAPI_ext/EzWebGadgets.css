@@ -174,7 +174,7 @@ div.styled_text_field div {
 }
 
 div.styled_text_field div input {
-  background: white; /* transparent falla en IE8*/
+  background: inherit; /* transparent fails in IE8 */
   border: 0 none;
   color: black;
   display: block;
@@ -186,6 +186,23 @@ div.styled_text_field div input {
 
 div.styled_text_field div input:focus {
   outline: 0 none;
+}
+
+/* Styled Text Area */
+
+div.styled_text_area {
+  overflow: hidden;
+  height: 5em;
+}
+
+div.styled_text_area > div {
+  overflow: hidden;
+  height: 100%;
+}
+
+div .styled_text_area > div > textarea {
+  overflow: auto;
+  resize: none;
 }
 
 /* Styled Password Field */
@@ -204,7 +221,7 @@ div.styled_password_field div {
 }
 
 div.styled_password_field div input {
-  background: white; /* transparent falla en IE8*/
+  background: inherit; /* transparent fails in IE8 */
   border: 0 none;
   color: black;
   display: block;
@@ -233,7 +250,7 @@ div.styled_numeric_field div {
 }
 
 div.styled_numeric_field div input {
-  background: white; /* transparent falla en IE8*/
+  background: inherit; /* transparent fails in IE8 */
   border: 0 none;
   color: black;
   display: block;
@@ -279,6 +296,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 .styled_button span {
   margin: 3px;
   font-size: 13px;
+  display: block;
 }
 
 /* Styled HPaned */
