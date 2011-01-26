@@ -2345,8 +2345,11 @@ StyledElements.StyledSelect.prototype.setValue = function (newValue) {
     if (newValue == null) {
         if (this.defaultValue != null) {
             newValue = this.defaultValue;
-        } else {
+        } else if (this.inputElement.options.length > 0) {
             newValue = this.inputElement.options[0].value;
+        } else {
+            StyledElements.StyledInputElement.prototype.setValue.call(this, '');
+            EzWebExt.setTextContent(this.textDiv, '');
         }
     } else if (typeof newValue === 'object') {
         newValue = this.idFunc(newValue);
