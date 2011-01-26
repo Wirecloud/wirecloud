@@ -2505,6 +2505,17 @@ StyledElements.StyledList.prototype.removeEntryByValue = function(value) {
 }
 
 /**
+ * Removes all entries of this StyledList
+ */
+StyledElements.StyledList.prototype.clear = function () {
+    this.cleanSelection();
+
+    this.wrapperElement.innerHTML = '';
+    this.entries = [];
+    this.entriesByValue = {};
+};
+
+/**
  * Devuelve una copia de la selección actual.
  */
 StyledElements.StyledList.prototype.getSelection = function() {
