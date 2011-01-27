@@ -261,8 +261,6 @@ function WorkSpace (workSpaceState) {
 		// JSON-coded new published workspace id and mashup url mapping
 		var response = transport.responseText;
 		var mashupInfo = JSON.parse(response);
-		
-		CatalogueFactory.getInstance().add_resource_by_template(mashupInfo.url);
 	}
 
 	var publishError = function(transport, e) {

@@ -37,6 +37,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
+from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 from commons.http_utils import PUT_parameter, download_http_content
@@ -877,11 +878,13 @@ class WorkSpacePublisherEntry(Resource):
 
         url = baseURL + "/workspace/templateGenerator/" + str(published_workspace.id)
 
+        add_resource_from_template(url, published_workspace.template, user)
+
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
 
 
-class  GeneratorURL(Resource):
+class GeneratorURL(Resource):
 
     def read(self, request, workspace_id):
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
