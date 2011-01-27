@@ -29,7 +29,9 @@
 
 
 #
-from workspace.models import AbstractVariable, VariableValue, WorkSpaceVariable, Tab
+from django.shortcuts import get_object_or_404
+
+from workspace.models import AbstractVariable, VariableValue, WorkSpaceVariable, Tab, PublishedWorkSpace
 from connectable.models import Out
 from igadget.models import IGadget
 from igadget.views import deleteIGadget
@@ -95,3 +97,9 @@ def setVisibleTab(user, workspace_id, tab):
         visibleTab.save()
     tab.visible = True
     tab.save()
+
+
+def get_mashup_gadgets(mashup_id):
+    published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
+
+    return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]

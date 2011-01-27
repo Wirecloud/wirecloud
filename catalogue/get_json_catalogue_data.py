@@ -34,7 +34,7 @@ from django.shortcuts import get_object_or_404
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Capability
 from resourceSubscription.models import Contract, Application
 #if the catalogue and the platform are separated we should make a request instead of using this:
-from workspace.views import get_mashup_gadgets
+from workspace.utils import get_mashup_gadgets
 
 
 def get_vote_data(gadget, user):
