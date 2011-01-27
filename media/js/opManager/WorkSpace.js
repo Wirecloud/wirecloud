@@ -258,16 +258,22 @@ function WorkSpace (workSpaceState) {
 	}
 
 	var publishSuccess = function(transport) {
-		// JSON-coded new published workspace id and mashup url mapping
-		var response = transport.responseText;
-		var mashupInfo = JSON.parse(response);
+		var layoutManager = LayoutManagerFactory.getInstance();
+		layoutManager.logSubTask(gettext('Workspace published successfully'));
+		layoutManager.logStep('');
+		layoutManager._notifyPlatformReady();
 	}
 
 	var publishError = function(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = logManager.formatError(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
+		var logManager, layoutManager, msg;
+
+		logManager = LogManagerFactory.getInstance();
+		layoutManager = LayoutManagerFactory.getInstance();
+
+		msg = logManager.formatError(gettext("Error publishing workspace: %(errorMsg)s."), transport, e);
+		layoutManager._notifyPlatformReady();
 		logManager.log(msg);
-		LayoutManagerFactory.getInstance().hideCover();
+		layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 	}
 	
 	var mergeSuccess = function(transport) {
@@ -781,6 +787,9 @@ function WorkSpace (workSpaceState) {
 	}
 
 	WorkSpace.prototype.publish = function(data) {
+		var layoutManager = LayoutManagerFactory.getInstance();
+		layoutManager._startComplexTask(gettext('Publishing current workspace'), 1);
+
 		var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
 		publicationData = Object.toJSON(data);
 		params = new Hash({data: publicationData});
