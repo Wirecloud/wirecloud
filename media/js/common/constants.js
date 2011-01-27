@@ -31,6 +31,7 @@ var Constants = {
   },
 
   HttpStatusDescription: {
+    "0": gettext("Connection Refused"),
     "400": gettext("Bad Request"),
     "401": gettext("Unauthorized"),
     "402": gettext("Payment Required"),
