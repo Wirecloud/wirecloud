@@ -144,7 +144,7 @@ LogManager.prototype.log = function (msg, level) {
 }
 
 LogManager.prototype.formatError = function(format, transport, e) {
-	var msg;
+	var msg, errorDesc;
 
 	if (e) {
 		var context;
@@ -171,7 +171,17 @@ LogManager.prototype.formatError = function(format, transport, e) {
 			msg = errorInfo.message;
 		} catch (e) {
 			msg = gettext("HTTP Error %(errorCode)s - %(errorDesc)s");
-			msg = interpolate(msg, {errorCode: transport.status, errorDesc: transport.statusText}, true);
+			if (transport.status != 0 && transport.statusText !== '') {
+				errorDesc = gettext(transport.statusText);
+			} else {
+				errorDesc = Constants.HttpStatusDescription[transport.status];
+				if (transport.status === 0) {
+					msg = errorDesc;
+				} else if (!errorDesc) {
+					errorDesc = Constants.UnknownStatusCodeDescription;
+				}
+			}
+			msg = interpolate(msg, {errorCode: transport.status, errorDesc: errorDesc}, true);
 		}
 	}
 	msg = interpolate(format, {errorMsg: msg}, true);
