@@ -323,6 +323,27 @@ Ajax.Request.prototype.evalResponse = function() {
 }
 
 /*
+ * Cherry-picked from prototype 1.7
+ *
+ * Modified to consider status 0 as error
+ */
+Ajax.Request.prototype.success = function() {
+	var status = this.getStatus();
+	return status != null && (status >= 200 && status < 300) || status == 304;
+}
+
+Ajax.Request.prototype.getStatus = function() {
+	try {
+		if (this.transport.status === 1223) {
+			return 204;
+		}
+		return this.transport.status || 0;
+	} catch (e) {
+		return 0;
+	}
+};
+
+/*
  * ARRAY EXTENSIONS
  */
 
