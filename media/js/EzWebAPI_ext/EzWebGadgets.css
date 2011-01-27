@@ -570,6 +570,13 @@ div.styled_numeric_field div.numeric_bottom_button {
   padding: 0;
 }
 
+.model_table .headrow .cell, .model_table .tbody .cell {
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
 /*****************************************************************************
  *                              Tema por defecto                             *
  *****************************************************************************/
@@ -752,6 +759,8 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .notebook > div > .wrapper {
   -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   background: white;
   border: 1px solid #888888;
   top: 21px;
@@ -762,6 +771,8 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .notebook > div > .wrapper > div {
   -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   padding: 3px;
 }
 
@@ -779,7 +790,9 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_alert .message {
-  -moz-border-radius: 10px;
+  /*-moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;*/
   border-style:solid;
   border-width:2px 4px 4px 2px;
   background:url(images/degradado.png) no-repeat scroll 0 0;
@@ -875,6 +888,8 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .pagination .styled_button div {
   -moz-border-radius: 0px;
+  -webkit-border-radius: 0px;
+  border-radius: 0px;
   border: none;
 }
 
