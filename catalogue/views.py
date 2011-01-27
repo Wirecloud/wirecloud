@@ -48,7 +48,6 @@ from django.utils.translation import ugettext as _
 
 from catalogue.models import Application, GadgetResource, GadgetWiring
 from catalogue.models import UserRelatedToGadgetResource, Tag, UserTag, UserVote
-from catalogue.templateParser import TemplateParser
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_last_gadget_version, get_resources_that_must_be_shown
 from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_organization
@@ -57,6 +56,7 @@ from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_pagina
 from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
 from catalogue.catalogue_utils import get_vote_response
 from catalogue.get_json_catalogue_data import get_available_apps_info
+from catalogue.utils import add_resource_from_template_uri
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
@@ -82,8 +82,7 @@ class GadgetsCollection(Resource):
 
         gadget_already_exists = False
         try:
-            templateParser = TemplateParser(template_uri, user, fromWGT=fromWGT)
-            templateParser.parse()
+            templateParser, gadget = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
             transaction.commit()
 
         except IntegrityError, e:
@@ -104,8 +103,6 @@ class GadgetsCollection(Resource):
 
         #Returning info to the catalogue of the created gadget!
         contratable = templateParser.is_contratable()
-
-        gadget = templateParser.get_gadget()
 
         gadgetName = gadget.short_name
         version = gadget.version

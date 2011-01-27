@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.utils import translation
 
-from catalogue.templateParser import TemplateParser
+from catalogue.utils import add_resource_from_template_uri
 from catalogue.get_json_catalogue_data import get_gadgetresource_data
 
 
@@ -39,9 +39,7 @@ class TranslationTestCase(LocalizedTestCase):
         self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
 
     def testTranslations(self):
-        templateParser = TemplateParser(self.template_uri, self.user)
-        templateParser.parse()
-        gadget = templateParser.get_gadget()
+        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
         data = get_gadgetresource_data(gadget, self.user)
 
         self.assertEqual(data['displayName'], 'Test Gadget')

@@ -34,8 +34,6 @@ import re
 import string
 
 from datetime import datetime
-from os import path
-from urllib2 import URLError, HTTPError
 from xml.sax import parseString, handler
 
 from django.contrib.auth.models import Group
@@ -45,10 +43,8 @@ from django.utils.translation import ugettext as _
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability, Translation
 from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
 from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
-from deployment.wgtPackageUtils import get_wgt_local_path
 
 
 def checkEmptyFields(fields, obj):
@@ -62,26 +58,9 @@ def checkEmptyFields(fields, obj):
 
 class TemplateParser:
 
-    def __init__(self, uri, user, save=True, fromWGT=False):
+    def __init__(self, uri, xml, user, save=True, fromWGT=False):
 
-        if fromWGT:
-            localPath = get_wgt_local_path(uri)
-            if not path.isfile(localPath):
-                raise Exception(_("'%(file)s' is not a file") % {'file': localPath})
-
-            f = open(localPath, 'r')
-            self.xml = f.read()
-            f.close()
-        else:
-            try:
-                self.xml = download_http_content(uri, user=user)
-            except HTTPError, e:
-                msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {'errorCode': e.code, 'errorMsg': e.msg}
-                raise TemplateParseException(msg)
-            except URLError, e:
-                msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
-                raise TemplateParseException(msg)
-
+        self.xml = xml
         self.uri = uri
         self.handler = TemplateHandler(user, uri, save, fromWGT)
 
