@@ -412,7 +412,7 @@ def process_forced_values(workspace, user, concept_values):
         for key in collection:
             values = collection[key]
             for var_name in values:
-                collection[key][var_name] = processor.process(values[var_name])
+                collection[key][var_name]['value'] = processor.process(values[var_name]['value'])
     else:
         forced_values['igadget'] = {}
 
@@ -538,10 +538,12 @@ def get_variable_data(variable, user, workspace, forced_values={}):
     abstract_var = variable.abstract_variable
 
     if variable.vardef.name in forced_values:
-        data_ret['value'] = forced_values[variable.vardef.name]
+        data_ret['value'] = forced_values[variable.vardef.name]['value']
         data_ret['readOnly'] = True
+        if var_def.aspect == 'PREF':
+            data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
     else:
-        data_ret['readOnly'] = False
+        data_ret[''] = 'normal'
         try:
             data_ret['value'] = VariableValue.objects.get(abstract_variable=abstract_var, user=user).value
         except VariableValue.DoesNotExist:
@@ -552,7 +554,7 @@ def get_variable_data(variable, user, workspace, forced_values={}):
     if var_def.shared_var_def:
         data_ret['shared'] = data_ret['value'].shared_var_value != None
 
-    #Context management
+    # Context management
     if var_def.aspect == 'GCTX' or var_def.aspect == 'ECTX':
         context = ContextOption.objects.get(varDef=variable.vardef)
         data_ret['concept'] = context.concept

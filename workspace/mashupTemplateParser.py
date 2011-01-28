@@ -130,7 +130,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             for prop in properties:
                 read_only = prop.get('readonly')
                 if read_only and read_only == 'true':
-                    igadget_forced_values[prop.get('name')] = prop.get('value')
+                    igadget_forced_values[prop.get('name')] = {'value': prop.get('value')}
                 else:
                     initial_variable_values[prop.get('name')] = processor.process(prop.get('value'))
 
@@ -138,7 +138,8 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             for pref in preferences:
                 read_only = pref.get('readonly')
                 if read_only and read_only == 'true':
-                    igadget_forced_values[pref.get('name')] = pref.get('value')
+                    hidden = pref.get('hidden') == 'true'
+                    igadget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': hidden}
                 else:
                     initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
 

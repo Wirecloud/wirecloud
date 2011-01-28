@@ -1262,16 +1262,23 @@ IGadget.prototype.setDefaultPrefs = function() {
 }
 
 /**
+ * @private
+ *
  *  Auxiliar function to create a table interface with a set of preferences
+ *
  */
-IGadget.prototype._createPrefsInterface = function(prefs){
+IGadget.prototype._createPrefsInterface = function(prefs) {
+    var varManager, row, cell, label, table, i, count = 0;
 
-    var varManager = this.layout.dragboard.getWorkspace().getVarManager();
+        varManager = this.layout.dragboard.getWorkspace().getVarManager();
+        table = document.createElement("table");
 
-    var row, cell, label, table = document.createElement("table");
     tbody = document.createElement("tbody");
     table.appendChild(tbody);
-    for (var i = 0; i < prefs.length; i++) {
+    for (i = 0; i < prefs.length; i++) {
+        if (prefs[i].isHidden(varManager, this.id)) {
+            continue;
+        }
         row = document.createElement("tr");
 
         // Settings label
@@ -1291,46 +1298,53 @@ IGadget.prototype._createPrefsInterface = function(prefs){
         row.appendChild(cell);
 
         tbody.appendChild(row);
+                count += 1;
     }
 
-    return table;
+    return [table, count];
 }
 
 /**
  * This function builds the igadget configuration form.
  */
 IGadget.prototype._makeConfigureInterface = function() {
-    var gadgetPrefs = this.gadget.getTemplate().getGadgetPrefs();
-    var sharedPrefs = this.gadget.getTemplate().getSharedPrefs();
+    var gadgetPrefs, sharedPrefs, interfaceDiv, table, separator, shared_title, result, pref_counter;
 
-    var interfaceDiv = document.createElement("div");
-    if (gadgetPrefs.length == 0 && sharedPrefs.length == 0) {
-        interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
-        return interfaceDiv;
-    }
+    gadgetPrefs = this.gadget.getTemplate().getGadgetPrefs();
+    sharedPrefs = this.gadget.getTemplate().getSharedPrefs();
+
+    interfaceDiv = document.createElement("div");
 
     this.prefElements = new Array();
 
-    //Add the gadget-only variables
-    var table = this._createPrefsInterface(gadgetPrefs);
+    // Add the gadget-only variables
+    result = this._createPrefsInterface(gadgetPrefs);
+    table = result[0];
+        pref_counter = result[1];
     interfaceDiv.appendChild(table);
 
-    //add the shareable variables
+    // Add the shareable variables
     if (sharedPrefs.length > 0) {
-        //add a separator
-        var separator = document.createElement("hr");
+        // Add a separator
+        separator = document.createElement("hr");
         interfaceDiv.appendChild(separator);
-        var shared_title = document.createElement("h4");
+        shared_title = document.createElement("h4");
         Element.extend(shared_title);
         shared_title.appendChild(document.createTextNode(gettext("Shared Values")));
         interfaceDiv.appendChild(shared_title);
 
-        //create the shared prefs interface
-        var table = this._createPrefsInterface(sharedPrefs);
+        // Create the shared prefs interface
+        result = this._createPrefsInterface(sharedPrefs);
+        table = result[0];
+        pref_counter += result[1];
         table.className = "shared_prefs"
         interfaceDiv.appendChild(table);
     }
 
+    if (pref_counter == 0) {
+        interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
+        return interfaceDiv;
+    }
 
     var buttons = document.createElement("div");
     Element.extend(buttons);

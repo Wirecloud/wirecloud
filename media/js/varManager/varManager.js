@@ -166,6 +166,7 @@ function VarManager (_workSpace) {
 				case Variable.prototype.USER_PREF:
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
 					objVars[name].readOnly = igadgetVars[i].readOnly;
+					objVars[name].hidden = igadgetVars[i].hidden;
 					this.variables[id] = objVars[name];
 					break;
 			}

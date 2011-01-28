@@ -1208,7 +1208,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 		igadget = igadgets[i];
 		variables = varManager.getIGadgetVariables(igadget.getId());
 		pref_params = {};
-                prop_params = {};
+		prop_params = {};
 
 		for (j in variables) {
 			variable = variables[j];
@@ -1217,13 +1217,14 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 					label: variable.label,
 					type: 'parametrizableValue',
 					variable: variable,
+					canBeHidden: true,
 					parentWindow: this
 				};
 			} else if (variable.aspect === Variable.prototype.PROPERTY) {
 				if (variable.label && variable.label != '') {
-				    label = variable.label;
+					label = variable.label;
 				} else {
-				    label = variable.name;
+					label = variable.name;
 				}
 				prop_params[j] = {
 					label: label,
@@ -1805,17 +1806,26 @@ UploadWindowMenu.prototype._closeListener = function(){
 }
 
 function ParametrizeWindowMenu(inputInterface) {
-    var fields, options;
+    var fields, sourceOptions, statusOptions;
 
-    options = [
+    statusOptions = [
+        {label: gettext('Normal'), value: 'normal'},
+        {label: gettext('Read Only'), value: 'readonly'}
+    ];
+
+    if (inputInterface.canBeHidden) {
+        statusOptions.push({label: gettext('Hidden'), value: 'hidden'});
+    }
+
+    sourceOptions = [
         {label: gettext('Use current value'), value: 'current'},
         {label: gettext('Use gadget default value'), value: 'default'},
         {label: gettext('Use parametrized value'), value: 'custom'}
     ];
 
     fields = {
-        'readOnly': {label: gettext('read only'), type: 'boolean'},
-        'source': {label: '', type: 'select', options: options},
+        'status': {label: gettext('Status'), type: 'select', options: statusOptions},
+        'source': {label: '', type: 'select', options: sourceOptions},
         'value': {label: gettext('Value'), type: 'parametrizedText'}
     }
     FormWindowMenu.call(this, fields, gettext('Parametrization'));

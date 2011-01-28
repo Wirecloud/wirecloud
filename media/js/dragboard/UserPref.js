@@ -60,6 +60,17 @@ UserPref.prototype.getCurrentValue = function (varManager, iGadgetId) {
     return variable.get();
 }
 
+/**
+ * Checks whether this preference is hidden for the given iGadget
+ *
+ * @param {VariableManager} varManager
+ * @param {Number} iGadgetId id of the iGadget to check
+ */
+UserPref.prototype.isHidden = function (varManager, iGadgetId) {
+	var variable = varManager.getVariableByName(iGadgetId, this.varName);
+	return variable.hidden;
+};
+
 //Set value and invoke callback function
 UserPref.prototype.setValue = function (varManager, iGadgetId, newValue) {
     var variable = varManager.getVariableByName(iGadgetId, this.varName);

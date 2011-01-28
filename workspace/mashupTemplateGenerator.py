@@ -115,36 +115,38 @@ class TemplateGenerator:
 
             gadget_preferences = gadget.get_related_preferences()
             for pref in gadget_preferences:
-                read_only = False
+                status = 'normal'
                 if pref.name in igadget_params:
                     igadget_param_desc = igadget_params[pref.name]
                     if igadget_param_desc['source'] == 'default':
                         # Do not issue a Preference element for this preference
                         continue
                     value = igadget_param_desc['value']
-                    read_only = igadget_param_desc['readOnly']
+                    status = igadget_param_desc['status']
                 else:
                     value = igadget.get_var_value(pref, published_workspace.workspace.creator)
 
                 element = etree.SubElement(resource, 'Preference', name=pref.name, value=value)
-                if read_only:
+                if status != 'normal':
                     element.set('readonly', 'true')
+                    if status != 'readonly':
+                        element.set('hidden', 'true')
 
             gadget_properties = gadget.get_related_properties()
             for prop in gadget_properties:
-                read_only = False
+                status = 'normal'
                 if prop.name in igadget_params:
                     igadget_param_desc = igadget_params[prop.name]
                     if igadget_param_desc['source'] == 'default':
                         # Do not issue a Property element for this property
                         continue
                     value = igadget_param_desc['value']
-                    read_only = igadget_param_desc['readOnly']
+                    status = igadget_param_desc['status']
                 else:
                     value = igadget.get_var_value(prop, published_workspace.workspace.creator)
 
                 element = etree.SubElement(resource, 'Property', name=prop.name, value=value)
-                if read_only:
+                if status != 'normal':
                     element.set('readonly', 'true')
 
             events = gadget.get_related_events()

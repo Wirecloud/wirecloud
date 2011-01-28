@@ -630,6 +630,7 @@ function ParametrizableValueInputInterface(fieldId, options) {
 
     this.parentWindow = options.parentWindow;
     this.variable = options.variable;
+    this.canBeHidden = options.canBeHidden;
 
     this.wrapperElement = document.createElement('div');
 
@@ -658,7 +659,7 @@ ParametrizableValueInputInterface.prototype._checkValue = function(newValue) {
 ParametrizableValueInputInterface.prototype.getValue = function() {
     var value = {
         'source': this.source,
-        'readOnly': this.readOnly
+        'status': this['status']
     };
 
     if (this.source !== 'default') {
@@ -669,6 +670,7 @@ ParametrizableValueInputInterface.prototype.getValue = function() {
 };
 
 ParametrizableValueInputInterface.prototype.VALID_SOURCE_VALUES = ['current', 'default', 'custom'];
+ParametrizableValueInputInterface.prototype.VALID_STATUS_VALUES = ['normal', 'hidden', 'readonly'];
 
 ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
     if (newValue == null || this.VALID_SOURCE_VALUES.indexOf(newValue.source) === -1) {
@@ -683,10 +685,12 @@ ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
         this.value = newValue.value;
     }
 
-    if (newValue == null || typeof newValue.readOnly !== 'boolean') {
-        this.readOnly = false;
+    if (newValue == null || this.VALID_STATUS_VALUES.indexOf(newValue['status']) === -1) {
+        this['status'] = this.canBeHidden ? 'hidden' : 'normal';
+    } else if (!this.canBeHidden && newValue['status'] === 'hidden') {
+        this['status'] = 'readOnly';
     } else {
-        this.readOnly = newValue.readOnly;
+        this['status'] = newValue['status'];
     }
 
     this._updateInputElement();
