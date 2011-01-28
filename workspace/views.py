@@ -32,7 +32,7 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
@@ -859,7 +859,7 @@ class WorkSpacePublisherEntry(Resource):
                                                      name=name, version=version, description=description,
                                                      imageURI=imageURI, wikiURI=wikiURI, organization=organization,
                                                      contratable=contratable,
-                                                     params=received_json)
+                                                     params=received_json, creator=user)
             published_workspace.save()
 
             templateGen = TemplateGenerator()
@@ -887,6 +887,10 @@ class WorkSpacePublisherEntry(Resource):
 class GeneratorURL(Resource):
 
     def read(self, request, workspace_id):
+        user = get_user_authentication(request)
+
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
+        if not user.is_staff and published_workspace.creator != user:
+            return HttpResponseForbidden()
 
         return HttpResponse(published_workspace.template, mimetype='application/xml; charset=UTF-8')

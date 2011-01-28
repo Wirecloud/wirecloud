@@ -97,6 +97,7 @@ class PublishedWorkSpace(models.Model):
     description = models.TextField(_('Description'))
 
     author = models.CharField(_('Author'), max_length=250)
+    creator = models.ForeignKey(User)
     mail = models.CharField(_('Mail'), max_length=100)
 
     #For implementing "private mashups" only visible for users that belongs to a concrete group
