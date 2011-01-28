@@ -55,8 +55,7 @@ from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list, i
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
 from catalogue.catalogue_utils import get_vote_response
-from catalogue.get_json_catalogue_data import get_available_apps_info
-from catalogue.utils import add_resource_from_template_uri
+from catalogue.utils import add_resource_from_template_uri, get_catalogue_resource_info
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
@@ -82,7 +81,7 @@ class GadgetsCollection(Resource):
 
         gadget_already_exists = False
         try:
-            templateParser, gadget = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
+            templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
             transaction.commit()
 
         except IntegrityError, e:
@@ -101,24 +100,7 @@ class GadgetsCollection(Resource):
             msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
-        #Returning info to the catalogue of the created gadget!
-        contratable = templateParser.is_contratable()
-
-        gadgetName = gadget.short_name
-        version = gadget.version
-        vendor = gadget.vendor
-        gadgetId = gadget.id
-        mashupId = ""
-        if gadget.mashup_id:
-            mashupId = gadget.mashup_id
-
-        #Managing available Applications
-        availableApps = simplejson.dumps(get_available_apps_info())
-
-        #Inform about the last version of the gadget.
-        last_version = get_last_gadget_version(gadget.short_name, gadget.vendor)
-
-        json_response = {"contratable": contratable, "availableApps": availableApps, "templateUrl": template_uri, "gadgetName": gadgetName, "gadgetId": gadgetId, "vendor": vendor, "version": version, "last_version": last_version, "mashupId": mashupId}
+        json_response = get_catalogue_resource_info(resource, templateParser)
 
         if not gadget_already_exists:
             json_response["result"] = "ok"

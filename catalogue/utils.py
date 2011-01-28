@@ -33,8 +33,11 @@
 from os import path
 from urllib2 import URLError, HTTPError
 
+from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
+from catalogue.catalogue_utils import get_last_gadget_version
+from catalogue.get_json_catalogue_data import get_available_apps_info
 from catalogue.templateParser import TemplateParser
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
@@ -82,3 +85,19 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False):
     templateParser.parse()
 
     return templateParser, templateParser.get_gadget()
+
+
+def get_catalogue_resource_info(resource, templateParser):
+    info = {
+        'contratable': templateParser.is_contratable(),
+        'gadgetName': resource.short_name,
+        'version': resource.version,
+        'vendor': resource.vendor,
+        'gadgetId': resource.id,
+        'mashupId': resource.mashup_id,
+        'availableApps': simplejson.dumps(get_available_apps_info()),
+        'last_version': get_last_gadget_version(resource.short_name, resource.vendor),
+        'templateUrl': templateParser.uri
+    }
+
+    return info

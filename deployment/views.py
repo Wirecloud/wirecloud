@@ -37,6 +37,7 @@ from xml.dom.minidom import parse
 from xml.parsers.expat import ExpatError
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseForbidden
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
@@ -50,7 +51,7 @@ from commons.logs import log, log_detailed_exception, log_request
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from ezweb.views import add_gadget_script
+from catalogue.utils import add_resource_from_template, get_catalogue_resource_info
 from settings import BASEDIR as BASEDIR_PLATFORM
 from wgtPackageUtils import WgtPackageUtils
 
@@ -88,7 +89,7 @@ class Resources(Resource):
             user_action = request.POST['user_action'] == '1'
 
         try:
-            user_authentication(request, request.user.username)
+            user = user_authentication(request, request.user.username)
         except Http403, e:
             msg = _("This gadget cannot be created") + unicode(e)
             log(msg, request)
@@ -156,28 +157,22 @@ class Resources(Resource):
             template_file = path.join(final_gadget_dir, info.ID.encode("utf8"))
             xmlDoc = info.get_new_template(template_file)
             f = codecs.open(template_file, 'wb', 'utf-8')
-            f.write(xmlDoc.toxml())
+            template = xmlDoc.toxml()
+            f.write(template)
             f.close()
 
-            # Redirect to EzWeb to add_gadget_script function
-            request.POST.appendlist('template_uri', info.URLTEMPLATE.encode("utf8"))
-            response = add_gadget_script(request, fromWGT=True, user_action=user_action)
+            # Add the gadget to the catalogue
+            try:
+                templateParser, resource = add_resource_from_template(info.URLTEMPLATE.encode("utf8"), template.encode('utf-8'), user, fromWGT=True)
+            except IntegrityError, e:
+                raise DeploymentException(_('Gadget already exists!'))
 
-            if (response.status_code != 200):
-                if user_action:
-                    # Redirect if the param "add_to_ws" isn't in the request
-                    if 'add_to_ws' not in request.POST:
-                        raise DeploymentException('Gadget could not be added to the catalogue')
-
-                    # Redirect if the value of param "add_to_ws" isn't 'on'
-                    if request.POST['add_to_ws'] != 'on':
-                        raise DeploymentException('Gadget could not be added to the catalogue or to the workspace')
-                else:
-                    msg = simplejson.loads(response.content)['message']
-                    raise DeploymentException(msg)
+            data = get_catalogue_resource_info(resource, templateParser)
+            data["result"] = "ok"
+            response = HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
             if not user_action:
-                # Work arround browsers trying to open json data into an editor
+                # Work around browsers trying to open json data into an editor
                 response._headers['content-type'] = ('Content-Type', 'text/plain; charset=UTF-8')
 
         except TemplateParseException, e:
@@ -219,7 +214,7 @@ class Resources(Resource):
             e = TracedServerError(e, {}, request, msg)
             log_request(request, None, 'access')
             log_detailed_exception(request, e)
-            return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(e.message)})
+            return HttpResponseRedirect('error?msg=%(errorMsg)s#error' % {'errorMsg': urlquote_plus(msg)})
 
         finally:
             # Remove temporal files
