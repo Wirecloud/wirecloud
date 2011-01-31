@@ -4320,54 +4320,123 @@ function Pagination(initialPageSize) {
     StyledElements.ObjectWithEvents.call(this, ['paginationChanged']);
 
     this.elements = [];
-    this.pageSize = initialPageSize;
+    this.pOptions = {
+        'pageSize': initialPageSize
+    };
     this.totalPages = 1;
 }
 Pagination.prototype = new StyledElements.ObjectWithEvents();
 
 Pagination.prototype.init = function(elements, pageSize) {
     this.elements = elements;
-    this.pageSize = pageSize;
+    this.pOptions.pageSize = pageSize;
 
     this._calculatePages();
-    this.events['paginationChanged'].dispatch(this.pageSize);
-}
+    this.events['paginationChanged'].dispatch(this.pOptions.pageSize, true);
+};
 
 Pagination.prototype.changeElements = function(elements) {
     this.elements = elements;
 
     this._calculatePages();
-    this.events['paginationChanged'].dispatch(this.pageSize);
-}
+    this.events['paginationChanged'].dispatch(this.pOptions.pageSize, true);
+};
 
 Pagination.prototype.changePageSize = function(pageSize) {
-    this.pageSize = pageSize;
+    this.pOptions.pageSize = pageSize;
     this._calculatePages();
-    this.events['paginationChanged'].dispatch(this.pageSize);
-}
+    this.events['paginationChanged'].dispatch(this.pOptions.pageSize, false);
+};
 
 Pagination.prototype._calculatePages = function() {
-    this.totalPages = Math.ceil(this.elements.length / this.pageSize);
+    this.totalPages = Math.ceil(this.elements.length / this.pOptions.pageSize);
     if (this.totalPages <= 0)
         this.totalPages = 1;
-}
+};
 
 Pagination.prototype.getTotalPages = function() {
     return this.totalPages;
-}
+};
+
+Pagination.prototype.getPageSize = function() {
+    return this.pOptions.pageSize;
+};
 
 Pagination.prototype.getPage = function(idx) {
     if (idx < 0 || idx >= this.totalPages)
         return [];
 
-    var start = this.pageSize * idx;
-    var end = start + this.pageSize;
+    var start = this.pOptions.pageSize * idx;
+    var end = start + this.pOptions.pageSize;
     return this.elements.slice(start, end);
-}
+};
 
 Pagination.prototype.getInterface = function(options) {
     return new PaginationInterface(this, options);
+};
+
+/**
+ *
+ */
+function AjaxPagination(options) {
+    var defaultOptions = {
+        'pageSize': 25,
+        'requestFunc': EzWebExt.send
+    };
+    Pagination.call(this, this.pOptions.pageSize);
+
+    this.pOptions = EzWebExt.merge(defaultOptions, options);
+    this.pCachedTotalCount = 0;
 }
+AjaxPagination.prototype = new Pagination();
+
+AjaxPagination.prototype.pPageLoaded = function (total_count, elements) {
+    if (this.callback) {
+        this.callback(elements);
+    }
+
+    if (this.pagination.pCachedTotalCount != total_count) {
+        this.pagination.pCachedTotalCount = total_count;
+        this.pagination._calculatePages();
+        this.pagination.events['paginationChanged'].dispatch(this.pagination.pOptions.pageSize, false);
+    }
+};
+
+AjaxPagination.prototype.changeOptions = function(options) {
+    var changed = false;
+
+    if (typeof options !== 'object') {
+        return;
+    }
+
+    if (options.pageSize != null && options.pageSize != this.pOptions.pageSize) {
+        changed = true;
+        this.pOptions.pageSize = pageSize;
+    }
+
+    if (changed) {
+        this._calculatePages();
+        this.events['paginationChanged'].dispatch(this.pOptions.pageSize, false);
+    }
+};
+
+AjaxPagination.prototype._calculatePages = function() {
+    this.totalPages = Math.ceil(this.pCachedTotalCount / this.pOptions.pageSize);
+    if (this.totalPages <= 0)
+        this.totalPages = 1;
+};
+
+AjaxPagination.prototype.getPage = function(idx, sorting, callback) {
+    var wrappedCallback, offset;
+
+    if (idx < 0 || idx >= this.totalPages)
+        idx = this.totalPages - 1;
+
+    wrappedCallback = EzWebExt.bind(this.pPageLoaded, {pagination: this, callback: callback});
+    offset = idx * this.pOptions.pageSize;
+
+    this.pOptions.requestFunc(offset, this.pOptions.pageSize, sorting, wrappedCallback);
+};
 
 /**
  * Eventos que soporta este componente:
@@ -4415,13 +4484,14 @@ var PaginationInterface = function(pagination, options) {
 
     this.currentPage = 0;
     this.totalPages = this.pagination.getTotalPages();
+    this.pageSize = this.pagination.getPageSize();
 
     EzWebExt.setTextContent(this.currentPageLabel, this.currentPage + 1);
     EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
 
     this._updateButtons();
 
-    this.pagination.addEventListener('paginationChanged', EzWebExt.bind(this.PaginationChanged, this));
+    this.pagination.addEventListener('paginationChanged', EzWebExt.bind(this.pPaginationChanged, this));
 }
 PaginationInterface.prototype = new StyledElements.StyledElement();
 
@@ -4484,8 +4554,9 @@ PaginationInterface.prototype._pageChange = function() {
     this.events['pageChange'].dispatch(this.currentPage);
 }
 
-PaginationInterface.prototype.PaginationChanged = function() {
-    this.currentPage = 0;
+PaginationInterface.prototype.pPaginationChanged = function(newPageSize, forceReload) {
+    var old_offset;
+
     this.totalPages = this.pagination.getTotalPages();
 
     EzWebExt.setTextContent(this.totalPagesLabel, this.totalPages);
@@ -4496,7 +4567,20 @@ PaginationInterface.prototype.PaginationChanged = function() {
         this.wrapperElement.style.display = '';
     }
 
-    this._pageChange();
+    if (this.pageSize !== newPageSize) {
+        old_offset = this.currentPage * this.pageSize;
+        this.pageSize = newPageSize;
+
+        this.currentPage = old_offset / newPageSize;
+        this._pageChange();
+    } else if (this.currentPage >= this.totalPages) {
+        this.currentPage = this.totalPages - 1;
+        this._pageChange();
+    } else if (forceReload) {
+        this.events['pageChange'].dispatch(this.currentPage);
+    } else {
+        this._updateButtons();
+    }
 }
 
 PaginationInterface.prototype.getCurrentPage = function() {
