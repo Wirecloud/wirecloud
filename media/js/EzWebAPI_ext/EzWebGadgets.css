@@ -577,6 +577,14 @@ div.styled_numeric_field div.numeric_bottom_button {
     vertical-align: middle;
 }
 
+.model_table > .center_container {
+    overflow: hidden;
+}
+
+.model_table > .center_container > .tbody {
+    overflow: auto;
+}
+
 /*****************************************************************************
  *                              Tema por defecto                             *
  *****************************************************************************/
