@@ -184,8 +184,15 @@ var CatalogueSearcher = function () {
       this.process();
 	}
 		
-	var error_callback = function (response) {
-	  alert(response.responseText);
+	var error_callback = function (transport, e) {
+            var logManager, layoutManager, msg;
+
+            logManager = LogManagerFactory.getInstance();
+            layoutManager = LayoutManagerFactory.getInstance();
+
+            msg = logManager.formatError(gettext("Error searching the catalogue: %(errorMsg)s."), transport, e);
+            logManager.log(msg);
+            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 	}
 	
 	this.persistence_engine.send_get(url, response_command, success_callback, error_callback, params);
@@ -317,7 +324,14 @@ var CatalogueResourceSubmitter = function () {
 	}
 	
 	var errorCallback = function (response) {
-	  alert("error");
+            var logManager, layoutManager, msg;
+
+            logManager = LogManagerFactory.getInstance();
+            layoutManager = LayoutManagerFactory.getInstance();
+
+            msg = logManager.formatError(gettext("Error changing the preferred version of this resource: %(errorMsg)s."), transport, e);
+            logManager.log(msg);
+            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 	}
 	
 	// CommandResponse creation
