@@ -296,7 +296,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 .styled_button span {
   margin: 3px;
   font-size: 13px;
-  display: block;
+  display: inline-block;
 }
 
 /* Styled HPaned */
