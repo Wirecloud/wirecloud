@@ -1771,9 +1771,22 @@ EzWebGadget.prototype.sendDelete = function(url, onSuccess, onError, onException
 }
 
 
+/**
+ *
+ *
+ * @param title
+ * @param content
+ * @param {Number|Hash} options a hash with the options to use for creating the
+ *     alert. 
+ */
+EzWebGadget.prototype.alert = function(title, content, options) {
+    var options, alert;
 
-EzWebGadget.prototype.alert = function(title, content, type) {
-    var alert = new StyledElements.StyledAlert(title, content, {type: type});
+    if (typeof options === 'number') {
+        options = {type: options};
+    }
+
+    alert = new StyledElements.StyledAlert(title, content, options);
     alert.insertInto(document.body);
     this._alerts.push(alert);
 
@@ -3827,6 +3840,7 @@ StyledElements.StyledNotebook.prototype.disable = function() {
  */
 StyledElements.StyledAlert = function(title, content, options) {
     var defaultOptions = {
+        'closable': true,
         'minWidth': 200,
         'maxWidth': 400,
         'minHeight': 100,
@@ -3874,8 +3888,11 @@ StyledElements.StyledAlert = function(title, content, options) {
         td.appendChild(document.createTextNode(title));
     }
 
-    this._closeButton = tr.insertCell(-1);
-    this._closeButton.className = "close_button";
+    this._closeButton = null;
+    if (this.options.closable !== false) {
+        this._closeButton = tr.insertCell(-1);
+        this._closeButton.className = "close_button";
+    }
 
     this.messageDiv.appendChild(this.header);
 
@@ -3890,8 +3907,10 @@ StyledElements.StyledAlert = function(title, content, options) {
     EzWebExt.prependClassName(this.wrapperElement, types[this.options['type']]);
 
     /* Events code */
-    this._closeCallback = EzWebExt.bind(this.close, this);
-    EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
+    if (this._closeButton !== null) {
+        this._closeCallback = EzWebExt.bind(this.close, this);
+        EzWebExt.addEventListener(this._closeButton, "click", this._closeCallback, true);
+    }
 }
 StyledElements.StyledAlert.prototype = new StyledElements.StyledElement();
 
@@ -3905,12 +3924,20 @@ StyledElements.StyledAlert.prototype.appendChild = function(child) {
 StyledElements.StyledAlert.prototype.close = function() {
     if (this.wrapperElement.parentNode) {
         EzWebExt.removeFromParent(this.wrapperElement);
+        this.events['close'].dispatch(this);
     }
+
     this.wrapperElement = null;
-    EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
-    this.events['close'].dispatch(this);
+
+    if (this._closeButton != null) {
+        EzWebExt.removeEventListener(this._closeButton, "click", this._closeCallback, true);
+    }
     StyledElements.StyledElement.prototype.destroy.call();
-}
+};
+
+StyledElements.StyledAlert.prototype.destroy = function() {
+    this.close();
+};
 
 StyledElements.StyledAlert.prototype.insertInto = function(element, refElement){
     StyledElements.StyledElement.prototype.insertInto.call(this, element, refElement);
