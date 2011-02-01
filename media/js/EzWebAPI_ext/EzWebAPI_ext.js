@@ -3241,11 +3241,15 @@ StyledElements.Tab = function(id, notebook, options) {
         throw new Error("Invalid notebook argument");
 
     var defaultOptions = {
-        'closeable': true,
+        'closable': true,
         'containerOptions': {},
         'name': ''
     };
     options = EzWebExt.merge(defaultOptions, options);
+    // Work around common typo
+    if (options.closeable) {
+        options.closable = options.closeable;
+    }
     options['useFullHeight'] = true;
 
     this.tabId = id;
@@ -3270,7 +3274,7 @@ StyledElements.Tab = function(id, notebook, options) {
 
 
     /* Process options */
-    if (options.closeable) {
+    if (options.closable) {
         var closeButton = new StyledElements.StyledButton({text: "X", 'class': "close_button"});
         closeButton.insertInto(this.tabElement);
 
@@ -3587,9 +3591,9 @@ StyledElements.StyledNotebook.prototype.insertInto = function (element, refEleme
  *                  contenedor que se creará para el contenido del Tab. Para
  *                  ver las opciones disponibles ver el constructor de
  *                  <code>Container</code>. Valor por defecto: {}.
- *                - closeable: indica si se le permitirá al usuario cerrar
+ *                - closable: indica si se le permitirá al usuario cerrar
  *                  la pestaña mediante el botón cerrar (botón que sólo aparece
- *                  si la pestaña es "closeable"). Valor por defecto: true.
+ *                  si la pestaña es "closable"). Valor por defecto: true.
  *                - name: indica el texto inicial que se mostrará dentro de la
  *                  pestaña. Valor por defecto: "".
  *                - title: indica el "title" inicial que tendrá el Tab (ver el
