@@ -551,8 +551,7 @@ class TabEntry(Resource):
         user = get_user_authentication(request)
         
         tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-        data = serializers.serialize('python', [tab], ensure_ascii=False)[0]
-        tab_data = get_tab_data(data)
+        tab_data = get_tab_data(tab)
         
         return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
 

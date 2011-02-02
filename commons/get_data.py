@@ -394,13 +394,7 @@ def get_global_workspace_data(data, workSpaceDAO, user):
             tabs[i].position = i
             tabs[i].save()
 
-    data = serializers.serialize('python', tabs, ensure_ascii=False)
-
-    tabs_data = []
-
-    for i in range(len(tabs)):
-        tabs_data.append(get_tab_data(data[i], tabs[i], user))
-
+    tabs_data = [get_tab_data(tab) for tab in tabs]
     data_ret['workspace']['tabList'] = tabs_data
 
     for tab in tabs_data:
@@ -440,16 +434,13 @@ def get_global_workspace_data(data, workSpaceDAO, user):
 
     return data_ret
 
-def get_tab_data(data, tab, user):
-    data_ret = {}
-    data_fields = data['fields']
-    data_ret['id'] = data['pk']
-    data_ret['name'] = data_fields['name']
-    data_ret['visible'] = data_fields['visible']
-
-    data_ret['preferences'] = get_tab_preference_values(tab, user)
-
-    return data_ret
+def get_tab_data(tab):
+    return {
+        'id': tab.id,
+        'name': tab.name,
+        'visible': tab.visible,
+        'preferences': get_tab_preference_values(tab)
+    }
 
 def get_igadget_data(data, user, workspace):
     data_ret = {}

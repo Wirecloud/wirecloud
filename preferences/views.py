@@ -87,7 +87,7 @@ def parseInheritableValues(values):
 
     return _values
 
-def get_tab_preference_values(tab, user):
+def get_tab_preference_values(tab):
     return parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
 
 def update_tab_preferences(tab, preferences_json):
@@ -205,7 +205,7 @@ class TabPreferencesCollection(Resource):
         # Check Tab existance and owned by this user
         tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
 
-        result = get_tab_preference_values(tab, user)
+        result = get_tab_preference_values(tab)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 

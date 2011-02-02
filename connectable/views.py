@@ -61,8 +61,7 @@ class ConnectableEntry(Resource):
             wiring['iGadgetList'] = igadget_data_list
 
             tabs = Tab.objects.filter(workspace__pk=workspace_id)
-            tab_data = serializers.serialize('python', tabs, ensure_ascii=False)
-            wiring['tabList'] = [get_tab_data(d) for d in tab_data]
+            wiring['tabList'] = [get_tab_data(tab) for tab in tabs]
 
         except WorkSpace.DoesNotExist:
             wiring['iGadgetList'] = []
