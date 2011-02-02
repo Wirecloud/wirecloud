@@ -50,7 +50,8 @@ from commons.authentication import login_public_user, login_with_third_party_coo
 from commons.get_data import get_catalogue_branding_data, get_workspace_branding_data
 from commons.http_utils import download_http_content
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
-from gadget.models import Gadget, GadgetResource, XHTML
+from catalogue.models import GadgetResource
+from gadget.models import Gadget, XHTML
 from layout.models import Layout
 from workspace.models import WorkSpace
 
