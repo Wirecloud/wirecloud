@@ -702,15 +702,6 @@ class WorkSpaceVariableCollection(Resource):
 
             raise TracedServerError(e, received_json, request, msg)
 
-class WorkSpaceChannelCollection(Resource):
-    def read(self, request, workspace_id):
-        user = get_user_authentication(request)
-        
-        workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
-        data = serializers.serialize('python', workspaces, ensure_ascii=False)
-        variable_data = get_workspace_channels_data(workspaces[0])
-        
-        return HttpResponse(json_encode(variable_data), mimetype='application/json; charset=UTF-8')
 
 class  WorkSpaceMergerEntry(Resource):
     @transaction.commit_on_success

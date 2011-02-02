@@ -50,10 +50,6 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
         WorkSpaceVariableCollection(permitted_methods=('PUT','POST', ))),
     
-    # channels of the whole workspace
-    (r'^/((?P<workspace_id>\d+)/channel(s)?[/]?)?$',
-        WorkSpaceChannelCollection(permitted_methods=('GET', ))),
-        
     # Wiring info for the whole workspace
     (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
         ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
