@@ -70,12 +70,12 @@ def wiring(request, user_name=None):
 def index_lite(request, user_name=None):
     if (not request.user.is_authenticated()):
       (response, user) = login_with_third_party_cookie(request)
-    
+
       if (response):
         return response
-    
+
     """ EzWeb with no header"""
-    if request.user.username != "public": 
+    if request.user.username != "public":
         return render_ezweb(request, template="/lite")
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
@@ -85,25 +85,25 @@ def redirected_login(request):
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             from django.contrib.auth import login
-            
+
             login(request, form.get_user())
             if request.session.test_cookie_worked():
                 request.session.delete_test_cookie()
-            
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))       
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 #Send HTTP POST to pingback service with indicated params (for FAST Project)
 def send_pingback(request, params):
     default_params = {'result_code': 0, 'result_message': ''}
     default_params.update(params)
     params = default_params
-    
+
     if request.REQUEST.has_key('pingback'):
         try:
             url = request.REQUEST['pingback']
             headers = {'Content-type': 'application/json'}
             proto, host, cgi = urlparse.urlparse(url)[:3]
-            
+
             data = {'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}}
             if params.has_key('vendor') and params.has_key('gadgetName') and params.has_key('version'):
                 data['GadgetOwner']   = params['vendor']
@@ -112,7 +112,7 @@ def send_pingback(request, params):
             if params.has_key("gadgetId"):
                 data['Identifier']    = str(params['gadgetId'])
             data = simplejson.dumps(data)
-            
+
             # HTTP call
             conn = httplib.HTTPConnection(host)
             conn.request("POST", cgi, data, headers)
@@ -129,49 +129,49 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
         else:
             #Send pingback ERROR
             send_pingback(request, {'result_code': -3, 'result_message': _('A template URL must be specified!')})
-            
+
             #template_uri not specified!
             t = loader.get_template('catalogue_adder.html')
             c = Context({'msg': _('A template URL must be specified!')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-        
+
         if (request.method.lower() == "get"):
             #GET Request: Render HTML interface!
             try:
                 #Parsing gadget info from the template!
                 templateParser = TemplateParser(template_uri, request.user, save=False)
                 templateParser.parse()
-                
+
                 gadget = templateParser.get_gadget()
-                
+
                 params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
-                
+
                 if request.REQUEST.has_key('pingback'):
                     params['pingback'] = request.REQUEST['pingback']
-                
+
                 return render_to_response('catalogue_adder.html', params, context_instance=RequestContext(request))
             except Exception, e:
                 #Send pingback ERROR
                 send_pingback(request, {'result_code': -3, 'result_message': _('Invalid template URL! Please, specify a valid one!')})
-                
+
                 #Error parsing the template
                 t = loader.get_template('catalogue_adder.html')
                 c = Context({'msg': _('Invalid template URL! Please, specify a valid one!')})
                 return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-        
+
         if (request.method.lower() == "post"):
             #POST Request: Adding gadget to catalogue and to workspace if specified!
             catalogue_response = {}
             try:
                 #Adding to catalogue if it doesn't exist!
                 gc = GadgetsCollection()
-                
+
                 http_response = gc.create(request, request.user.username, fromWGT=fromWGT)
                 if not user_action:
                     return http_response
-                
+
                 catalogue_response = simplejson.loads(http_response.content)
-                
+
                 #Cancel by the user
                 if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
                     if request.REQUEST.has_key('pingback'):
@@ -181,7 +181,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                         send_pingback(request, catalogue_response)
                     #Redirect
                     return HttpResponseRedirect('/')
-                
+
                 if (catalogue_response['result'].lower() != 'ok'):
                     #Send pingback ERROR
                     if catalogue_response.has_key('gadgetName'):
@@ -191,17 +191,17 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                         catalogue_response['result_code'] = -1
                         catalogue_response['result_message'] = _('Error ocurred processing template!')
                     send_pingback(request, catalogue_response)
-                    
+
                     #Error adding in the catalogue!
                     t = loader.get_template('catalogue_adder.html')
                     c = Context({'msg': catalogue_response['result_message']})
                     return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-                
+
                 #Send pingback OK
                 catalogue_response['result_code'] = 0
                 catalogue_response['result_message'] = _('Success')
                 send_pingback(request, catalogue_response)
-                
+
                 if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
                     #Loading ezweb for automating gadget instantiation
@@ -209,7 +209,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                     version = catalogue_response['version']
                     name = catalogue_response['gadgetName']
                     post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
-                    
+
                     return render_ezweb(request, template="/", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
@@ -222,18 +222,18 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 catalogue_response['result_code'] = -1
                 catalogue_response['result_message'] = _('Error ocurred processing template!')
                 send_pingback(request, catalogue_response)
-                
+
                 t = loader.get_template('catalogue_adder.html')
                 c = Context({'msg': _('Error ocurred processing template: %s!') % e.message})
                 return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-        
+
     else:
         #Not authenticated or anonymous user => redirecting to login!
         params = {'next': request.META['QUERY_STRING'] }
-        
+
         if request.REQUEST.has_key('pingback'):
             params['pingback'] = request.REQUEST['pingback']
-        
+
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
 def update_gadget_script(request, fromWGT = False, user_action = True):
@@ -246,14 +246,14 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
         else:
             #Send pingback ERROR
             send_pingback(request, {'result_code': -3, 'result_message': _('Invalid params for gadget update! (gadget_vendor, gadget_name, gadget_version)')})
-            
+
             #template_uri not specified!
             t = loader.get_template('catalogue_adder.html')
             c = Context({'msg': _('Invalid params for gadget update! (gadget_vendor, gadget_name, gadget_version)')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-        
+
         gadget_info = {'vendor': vendor, 'gadgetName': name, 'version': version} # For ping_back
-        
+
         #Cancel by the user
         if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
             if request.REQUEST.has_key('pingback'):
@@ -263,7 +263,7 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
                 send_pingback(request, gadget_info)
             #Redirect
             return HttpResponseRedirect('/')
-        
+
         try:
             resource = GadgetResource.objects.get(short_name=name, vendor=vendor, version=version)
             gadget_info['gadgetId'] = resource.id
@@ -272,26 +272,26 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
             gadget_info['result_code'] = -3
             gadget_info['result_message'] = _('Invalid gadget info! Please, specify a valid one!')
             send_pingback(request, gadget_info)
-            
+
             #Error parsing the template
             t = loader.get_template('catalogue_adder.html')
             c = Context({'msg': _('Invalid gadget info! Please, specify a valid one!')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-        
+
         gadget = None
         try:
             gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
         except Exception:
             pass
-            
+
         try:
             if gadget != None:
                 xhtml = XHTML.objects.get(id=gadget.xhtml.id)
-                
+
                 content_type = gadget.xhtml.content_type
                 if not content_type:
                     content_type = 'text/html'
-                    
+
                 #if not xhtml.cacheable:
                 if (not xhtml.url.startswith('http') and not xhtml.url.startswith('https')):
                     xhtml.code = get_xhtml_content(xhtml.url)
@@ -303,29 +303,29 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
             gadget_info['result_code'] = -3
             gadget_info['result_message'] = _('XHTML code is not accessible!')
             send_pingback(request, gadget_info)
-            
+
             #Error parsing the template
             t = loader.get_template('catalogue_adder.html')
             c = Context({'msg': _('XHTML code is not accessible!')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
-            
+
         #Send pingback OK
         gadget_info['result_code'] = 0
         gadget_info['result_message'] = _('Success')
         send_pingback(request, gadget_info)
-        
+
         # Gadget updated!
         t = loader.get_template('catalogue_adder.html')
         c = Context({'msg': _('Gadget updated correctly!')})
         return HttpResponse(t.render(c), mimetype="application/xhtml+xml")
-        
+
     else:
         #Not authenticated or anonymous user => redirecting to login!
         params = {'next': request.META['QUERY_STRING'] }
-        
+
         if request.REQUEST.has_key('pingback'):
             params['pingback'] = request.REQUEST['pingback']
-        
+
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
 def public_ws_viewer(request, public_ws_id):
@@ -334,18 +334,18 @@ def public_ws_viewer(request, public_ws_id):
         workspace = WorkSpace.objects.get(id=public_ws_id)
     except WorkSpace.DoesNotExist:
          return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
-    
+
     last_user = ''
     if (request.user and request.user.username != 'public' and request.user.username != ''):
         last_user = request.user
-    
+
     public_user=login_public_user(request)
-    
+
     request.user=public_user
-    
+
     if (len(workspace.users.filter(username=public_user.username)) == 1):
         return render_ezweb(request, template="/viewer", public_workspace=public_ws_id, last_user=last_user)
-    
+
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
 
@@ -353,13 +353,13 @@ def get_user_screen_name(request):
     #the backend is the one who knows where to look for the screen name of the user
     backend_path = request.session._session['_auth_user_backend']
     user_backend = load_backend(backend_path)
-    
+
     try:
         return user_backend.get_screen_name(request)
     except:
         return None
-        
-        
+
+
 def manage_groups(user, groups):
     user.groups.clear()
     for group in groups:
@@ -378,13 +378,13 @@ def get_layout_context(layout, user):
     context["theme"]["images"] = layout.theme.images
     #branding context
     context["branding"] = {}
-    context["branding"]["workspace"] = get_workspace_branding_data(None, user) 
+    context["branding"]["workspace"] = get_workspace_branding_data(None, user)
     context["branding"]["catalogue"] = get_catalogue_branding_data(user)
     return context
 
 def render_ezweb(request, user_name=None, template='/', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """
-        
+
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
         request.session['policies'] = "null"
         return render_to_response('iphone.html', {},
@@ -394,39 +394,39 @@ def render_ezweb(request, user_name=None, template='/', public_workspace='', las
         try:
             user_profile = request.user.get_profile()
             user_profile.execute_server_script(request)
-            
+
             script = user_profile.merge_client_scripts(post_load_script)
         except Exception:
             script = post_load_script
-        
+
         if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
             url = settings.AUTHENTICATION_SERVER_URL
-            
+
             if (not url.endswith('/')):
                 url += '/'
-            
+
             url = "%sapi/user/%s/data.json" % (url, request.user.username)
-            
+
             try:
                 user_data = simplejson.loads(download_http_content(url))
-            
+
                 manage_groups(request.user, user_data['groups'])
                 request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
             except:
                 request.session['policies'] = "null"
         else:
             request.session['policies'] = "null"
-            
+
         screen_name = get_user_screen_name(request)
-        
+
         current_layout = Layout.objects.get(name=settings.LAYOUT)
         template_file = simplejson.loads(current_layout.templates)[template]
-        
-        context = {'screen_name': screen_name, 
-                   'current_tab': 'dragboard', 
-                   'active_workspace': public_workspace, 
-                   'last_user': last_user, 
+
+        context = {'screen_name': screen_name,
+                   'current_tab': 'dragboard',
+                   'active_workspace': public_workspace,
+                   'last_user': last_user,
                    'post_load_script': script}
         context.update(get_layout_context(current_layout, request.user))
-        
+
         return render_to_response(template_file, context, context_instance=RequestContext(request))
