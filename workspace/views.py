@@ -29,7 +29,7 @@
 
 
 #
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core import serializers
 
@@ -421,10 +421,10 @@ class WorkSpaceEntry(Resource):
     def read(self, request, workspace_id, last_user=''):
         #last_user : last_user_after_public autologin
         user = get_user_authentication(request)
-        
-        workspaces = get_list_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
-        data = serializers.serialize('python', workspaces, ensure_ascii=False)
-        workspace_data = get_global_workspace_data(data[0], workspaces[0], user)
+
+        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+        data = serializers.serialize('python', [workspace], ensure_ascii=False)[0]
+        workspace_data = get_global_workspace_data(data, workspace, user)
         
         #Closing session after downloading public user workspace        
         if (user.username == 'public' and last_user and last_user != 'public' and last_user != ''):
@@ -550,9 +550,9 @@ class TabEntry(Resource):
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
         
-        tab = get_list_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
-        data = serializers.serialize('python', tab, ensure_ascii=False)
-        tab_data = get_tab_data(data[0])
+        tab = get_object_or_404(Tab, workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        data = serializers.serialize('python', [tab], ensure_ascii=False)[0]
+        tab_data = get_tab_data(data)
         
         return HttpResponse(json_encode(tab_data), mimetype='application/json; charset=UTF-8')
 
