@@ -248,17 +248,17 @@ def createEmptyWorkSpace (workSpaceName, user):
     if workspaces.count()==0:
         # there isn't yet an active workspace
         active = True
-        
+
     #Workspace creation
     workspace = WorkSpace(name=workSpaceName, creator=user)
     workspace.save()
-    
+
     #Adding user reference to workspace in the many to many relationship
     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=active)
     user_workspace.save()
-   
+
     #Tab creation
-    createTab ('MyTab', user, workspace)
+    createTab('MyTab', user, workspace)
 
     return workspace
 
@@ -859,7 +859,7 @@ class  WorkSpaceAdderEntry(Resource):
         
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
-class  WorkSpacePublisherEntry(Resource):
+class WorkSpacePublisherEntry(Resource):
     @transaction.commit_on_success
     def read(self, request, workspace_id):
         return self.create(request, workspace_id)
@@ -888,12 +888,12 @@ class  WorkSpacePublisherEntry(Resource):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
         
         user = get_user_authentication(request)
-        
+               
         #Cloning original workspace!
         packageCloner = PackageCloner()
-        
+
         cloned_workspace = packageCloner.clone_tuple(workspace)
-        
+
         #Generating info of new workspace
         vendor = mashup.get('vendor')
         name = mashup.get('name')
@@ -931,7 +931,7 @@ class  WorkSpacePublisherEntry(Resource):
             contratable = False
         
         #branding elements
-        if(mashup.get('noBranding')):
+        if mashup.get('noBranding'):
             #use an empty branding
             branding, created = Branding.objects.get_or_create(logo=None, viewer_logo=None)
                 
@@ -966,14 +966,14 @@ class  WorkSpacePublisherEntry(Resource):
         except IntegrityError, e:
             transaction.rollback()
             msg = _("mashup cannot be published: duplicated mashup")
-            
+
             raise TracedServerError(e, workspace_id, request, msg)
-        
+
         #ask the template Generator for the template of the new mashup
         baseURL = "http://" + request.get_host()
         if hasattr(settings,'TEMPLATE_GENERATOR_URL'):
             baseURL = settings.TEMPLATE_GENERATOR_URL
-        
+
         url= baseURL+"/workspace/templateGenerator/" + str(published_workspace.id)
 
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
