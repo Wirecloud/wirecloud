@@ -30,17 +30,16 @@
 
 #
 
-import urllib, httplib, urlparse
+import httplib, urlparse
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 
-from commons.authentication import login_public_user, logout_request, login_with_third_party_cookie
+from commons.authentication import login_public_user, login_with_third_party_cookie
 from commons.utils import get_xml_error, json_encode
 from commons.get_data import get_catalogue_branding_data, get_workspace_branding_data
-from commons.logs_exception import TracedServerError
 from commons.http_utils import download_http_content
 
 from workspace.models import WorkSpace
@@ -50,7 +49,7 @@ from catalogue.templateParser import TemplateParser
 from gadget.models import *
 from catalogue.models import *
 
-from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
@@ -62,7 +61,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
 from django.template import Context, loader
 
-from layout.models import Layout
 
 @login_required
 def index(request, user_name=None, template="/"):
