@@ -153,8 +153,6 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
                 initial_value = None
             addIGadgetVariable(new_igadget, user, varDef, initial_value)
 
-        transaction.commit()
-
         return new_igadget
 
     except VariableDef.DoesNotExist:

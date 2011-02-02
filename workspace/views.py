@@ -48,7 +48,7 @@ from commons.utils import get_xml_error, json_encode
 from igadget.models import Variable
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
-from workspace.mashupTemplateGenerator import TemplateGenerator
+from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import Category
 from workspace.models import VariableValue, SharedVariableValue
@@ -75,7 +75,7 @@ def clone_original_variable_value(abstract_variable, creator, new_user):
 
 
 def getCategories(user):
-    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+    if 'AUTHENTICATION_SERVER_URL' in settings:
         # Use EzSteroids
         url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
         received_json = download_http_content(url, user=user)
@@ -97,26 +97,24 @@ def createWorkSpace(workspaceName, user):
     #try to assign a new workspace according to user category
     try:
         categories = getCategories(user)
-        if len(categories) > 0:
-            #take the first one which has a new workspace
-            for category in categories:
-                try:
-                    new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
-                    #duplicate the workspace for the user
-                    cloned_workspace = cloneWorkspace(new_workspace.id, user)
-                    linkWorkspace(user, cloned_workspace.id, new_workspace.workspace.creator)
+        # take the first one which has a new workspace
+        for category in categories:
+            try:
+                new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
+                if new_workspace != None:
+                    cloned_workspace = buildWorkspaceFromTemplate(new_workspace.template, user)
 
                     cloned_workspace.name = workspaceName
                     cloned_workspace.save()
 
                     setActiveWorkspace(user, cloned_workspace)
                     break
-                except Category.DoesNotExist:
-                    #the user category doesn't have a new workspace
-                    #try with other categories
-                    continue
+            except Category.DoesNotExist:
+                #the user category doesn't have a new workspace
+                #try with other categories
+                continue
 
-    except Exception:
+    except:
         pass
 
     if not cloned_workspace:
@@ -195,14 +193,12 @@ class WorkSpaceCollection(Resource):
     def read(self, request):
         user = get_user_authentication(request)
 
-        data_list = {}
-        #boolean for js
-        data_list['isDefault'] = "false"
+        data_list = {'isDefault': False}
         try:
             # user workspaces
-            workspaces = WorkSpace.objects.filter(users__id=user.id)
+            workspaces = WorkSpace.objects.filter(users=user)
 
-            #workspaces assigned to the user's organizations
+            # workspaces assigned to the user's organizations
             organizations = user.groups.all()
             wsGivenByUserOrgs = []
             for org in organizations:
@@ -216,15 +212,16 @@ class WorkSpaceCollection(Resource):
                     #duplicate the workspace for the user
                     linkWorkspace(user, ws.id, ws.creator)
 
-                    #set that the showcase will have to be reloaded
-                    #because this workspace is new for the user
+                    # set that the showcase will have to be reloaded
+                    # because this workspace is new for the user
                     data_list['isDefault'] = "true"
 
-            if data_list['isDefault'] == "false" and workspaces.count() == 0:  # There is no workspace for the user
+            if data_list['isDefault'] and workspaces.count() == 0:
+                # There is no workspace for the user
                 cloned_workspace = None
 
-                #it's the first time the user has logged in.
-                #try to assign a default workspace according to user category
+                # it's the first time the user has logged in.
+                # try to assign a default workspace according to user category
                 try:
                     categories = getCategories(user)
                     if len(categories) > 0:
@@ -232,29 +229,29 @@ class WorkSpaceCollection(Resource):
                         for category in categories:
                             try:
                                 default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
-                                #duplicate the workspace for the user
+                                # duplicate the workspace for the user
                                 cloned_workspace = cloneWorkspace(default_workspace.id, user)
                                 linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
                                 setActiveWorkspace(user, cloned_workspace)
-                                data_list['isDefault'] = "true"
+                                data_list['isDefault'] = True
                                 break
                             except Category.DoesNotExist:
-                                #the user category doesn't have a default workspace
-                                #try with other categories
+                                # the user category doesn't have a default workspace
+                                # try with other categories
                                 continue
 
                 except Exception, e:
                     pass
 
                 if not cloned_workspace:
-                    #create an empty workspace
+                    # create an empty workspace
                     createEmptyWorkSpace('MyWorkSpace', user)
 
-            #Now we can fetch all the workspaces of an user
+            # Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
 
             if UserWorkSpace.objects.filter(user__id=user.id, active=True).count() == 0:  # if there is no active workspace
-                #set the first workspace as active
+                # set the first workspace as active
                 setActiveWorkspace(user, workspaces.all()[0])
 
         except Exception, e:
@@ -769,18 +766,13 @@ class WorkSpacePublisherEntry(Resource):
                 raise Exception(_('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
 
         except Exception, e:
-            transaction.rollback()
             msg = _("mashup cannot be published: ") + unicode(e)
-
-            raise TracedServerError(e, mashup, request, msg)
+            return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
         user = get_user_authentication(request)
-
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-        #Generating info of new workspace
-        templateGen = TemplateGenerator()
-        template = templateGen.getTemplate(mashup, workspace, user)
+        template = build_template_from_workspace(mashup, workspace, user)
         try:
             _junk, resource = add_resource_from_template('', template, user)
         except IntegrityError, e:

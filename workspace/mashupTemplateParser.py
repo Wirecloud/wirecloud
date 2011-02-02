@@ -43,7 +43,8 @@ from lxml import etree
 
 
 NAME_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/Name')
-TAB_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/IncludedResources/Tab')
+INCLUDED_RESOURCES_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/IncludedResources')
+TAB_XPATH = etree.ETXPath('Tab')
 RESOURCE_XPATH = etree.ETXPath('Resource')
 POSITION_XPATH = etree.ETXPath('Position')
 RENDERING_XPATH = etree.ETXPath('Rendering')
@@ -64,11 +65,11 @@ def buildWorkspaceFromTemplate(template, user):
 
     name = NAME_XPATH(xml)[0].text
 
-    #Workspace creation
+    # Workspace creation
     workspace = WorkSpace(name=name, creator=user)
     workspace.save()
 
-    #Adding user reference to workspace in the many to many relationship
+    # Adding user reference to workspace in the many to many relationship
     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
     user_workspace.save()
 
@@ -86,7 +87,10 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     concept_values = get_concept_values(user)
     processor = TemplateValueProcessor({'user': user, 'context': concept_values})
 
-    preferences = PREFERENCE_XPATH(xml)
+    workspace_structure = INCLUDED_RESOURCES_XPATH(xml)[0]
+    read_only_workspace = workspace_structure.get('readonly') == 'true'
+
+    preferences = PREFERENCE_XPATH(workspace_structure)
     new_values = {}
     igadget_id_mapping = {}
     for preference in preferences:
@@ -98,14 +102,14 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     if len(new_values) > 0:
         update_workspace_preferences(workspace, new_values)
 
-    tabs = TAB_XPATH(xml)
+    tabs = TAB_XPATH(workspace_structure)
     tab_id_mapping = {}
 
     forced_values = {
         'igadget': {},
     }
     for tabElement in tabs:
-        tab, junk = createTab(tabElement.get('name'), user, workspace)
+        tab, _junk = createTab(tabElement.get('name'), user, workspace)
         tab_id_mapping[tabElement.get('id')] = tab
 
         preferences = PREFERENCE_XPATH(tabElement)
@@ -161,6 +165,10 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 "gadget": gadget_uri}
 
             igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
+            if read_only_workspace:
+                igadget.readOnly = True
+                igadget.save()
+
             forced_values['igadget'][str(igadget.id)] = igadget_forced_values
             igadget_id_mapping[resource.get('id')] = igadget
 
@@ -182,10 +190,18 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     for channel in channels:
         connectable = createChannel(workspace, channel.get('name'))
 
+        save = False
+        if read_only_workspace:
+            connectable.readOnly = True
+            save = True
+
         filter_name = channel.get('filter')
         if filter_name:
+            save = True
             connectable.filter = Filter.objects.get(name=filter_name)
             connectable.filter_param_values = channel.get('filter_params')
+
+        if save:
             connectable.save()
 
         channel_connectables[channel.get('id')] = {
