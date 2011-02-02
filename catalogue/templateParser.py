@@ -45,6 +45,7 @@ from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_pop
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
+from workspace.utils import create_published_workspace_from_template
 
 
 def checkEmptyFields(fields, obj):
@@ -62,7 +63,7 @@ class TemplateParser:
 
         self.xml = xml
         self.uri = uri
-        self.handler = TemplateHandler(user, uri, save, fromWGT)
+        self.handler = TemplateHandler(xml, user, uri, save, fromWGT)
 
     def parse(self):
         # Parse the input
@@ -77,8 +78,9 @@ class TemplateParser:
 
 class TemplateHandler(handler.ContentHandler):
 
-    def __init__(self, user, uri, save, fromWGT):
+    def __init__(self, xml, user, uri, save, fromWGT):
         self.save = save
+        self._xml = xml
         self._accumulator = []
         self._name = ""
         self._displayName = ""
@@ -90,7 +92,7 @@ class TemplateHandler(handler.ContentHandler):
         self._imageURI = ""
         self._iPhoneImageURI = ""
         self._wikiURI = ""
-        self._mashupId = None
+        self._is_mashup = False
         self._includedResources = []
         self._gadget_added = False
         self._user = user
@@ -334,7 +336,6 @@ class TemplateHandler(handler.ContentHandler):
             gadget.iphone_image_uri = self._iPhoneImageURI
             gadget.wiki_page_uri = self._wikiURI
             gadget.template_uri = self._uri
-            gadget.mashup_id = self._mashupId
             gadget.creation_date = datetime.today()
             gadget.popularity = '0.0'
             gadget.fromWGT = self.fromWGT
@@ -345,6 +346,10 @@ class TemplateHandler(handler.ContentHandler):
             gadget.creator = self._user
 
             self._gadget = gadget
+
+            if self.save and self._is_mashup:
+                published_mashup = create_published_workspace_from_template(self._xml, gadget, self._contratable, self._user)
+                gadget.mashup_id = published_mashup.id
 
             if self.save:
                 gadget.save()
@@ -363,7 +368,7 @@ class TemplateHandler(handler.ContentHandler):
 
                 # TODO: process the resources
                 # workaround to add default tags
-                if self._mashupId != None:
+                if self._is_mashup:
                     tag, created = Tag.objects.get_or_create(name="mashup")
                     userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
                     userTag.save()
@@ -443,8 +448,7 @@ class TemplateHandler(handler.ContentHandler):
             return
 
         if name == 'IncludedResources':
-            if 'mashupId' in attrs:
-                self._mashupId = attrs['mashupId']
+            self._is_mashup = True
             return
 
         if name == 'Resource':

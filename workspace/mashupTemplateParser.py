@@ -57,6 +57,9 @@ OUT_XPATH = etree.ETXPath('Out')
 
 def buildWorkspaceFromTemplate(template, user):
 
+    if isinstance(template, unicode):
+        template = template.encode('utf-8')
+
     xml = etree.fromstring(template)
 
     name = NAME_XPATH(xml)[0].text

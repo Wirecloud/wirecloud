@@ -45,8 +45,7 @@ from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from igadget.models import IGadget, Variable
-from layout.models import Branding
+from igadget.models import Variable
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import TemplateGenerator
@@ -73,21 +72,6 @@ def clone_original_variable_value(abstract_variable, creator, new_user):
     cloned_value.save()
 
     return cloned_value
-
-
-def get_workspace_description(workspace):
-    included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
-
-    return get_igadgets_description(included_igadgets)
-
-
-def get_igadgets_description(included_igadgets):
-    description = "EzWeb Mashup composed of: "
-
-    for igadget in included_igadgets:
-        description += igadget.gadget.name + ' , '
-
-    return description[:-2]
 
 
 def getCategories(user):
@@ -795,81 +779,20 @@ class WorkSpacePublisherEntry(Resource):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
         #Generating info of new workspace
-        vendor = mashup.get('vendor')
-        name = mashup.get('name')
-        version = mashup.get('version')
-        email = mashup.get('email')
-
-        description = mashup.get('description')
-        if (description):
-            description = description + " \n " + get_workspace_description(workspace)
-        else:
-            description = get_workspace_description(workspace)
-
-        author = mashup.get('author')
-        if (not author):
-            author = user.username
-
-        imageURI = mashup.get('imageURI')
-        if (not imageURI):
-            imageURI = settings.MEDIA_URL + 'images/headshot_mashup.jpg'
-
-        wikiURI = mashup.get('wikiURI')
-        if (not wikiURI):
-            wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Mashup'
-
-        organization = mashup.get('organization')
-        if (not organization):
-            organization = ''
-
-        readOnly = mashup.get('readOnly')
-        if (not readOnly):
-            readOnly = False
-
-        contratable = mashup.get('contratable')
-        if (not contratable):
-            contratable = False
-
-        #branding elements
-        if mashup.get('noBranding'):
-            #use an empty branding
-            branding, created = Branding.objects.get_or_create(logo=None, viewer_logo=None)
-
-        else:
-            logo = mashup.get('logo')
-            viewer_logo = mashup.get('viewerLogo')
-            link = mashup.get('link')
-
-            if (logo or viewer_logo):
-                #create a new branding
-                branding = Branding(logo=logo, viewer_logo=viewer_logo, link=link)
-                branding.save()
-
-            else:
-                #wait for the default branding
-                branding = None
-
-        parametrization = mashup.get('parametrization')
-        if not parametrization:
-            parametrization = {}
-
+        templateGen = TemplateGenerator()
+        template = templateGen.getTemplate(mashup, workspace, user)
         try:
-            published_workspace = PublishedWorkSpace(workspace=workspace, author=author,
-                                                     mail=email, vendor=vendor,
-                                                     name=name, version=version, description=description,
-                                                     imageURI=imageURI, wikiURI=wikiURI, organization=organization,
-                                                     contratable=contratable,
-                                                     params=received_json, creator=user)
-            published_workspace.save()
-
-            templateGen = TemplateGenerator()
-            published_workspace.template = templateGen.getTemplate(published_workspace, parametrization)
-            published_workspace.save()
+            _junk, resource = add_resource_from_template('', template, user)
         except IntegrityError, e:
             transaction.rollback()
             msg = _("mashup cannot be published: duplicated mashup")
 
             raise TracedServerError(e, workspace_id, request, msg)
+
+        published_workspace = PublishedWorkSpace.objects.get(id=resource.mashup_id)
+        published_workspace.workspace = workspace
+        published_workspace.params = received_json
+        published_workspace.save()
 
         #ask the template Generator for the template of the new mashup
         baseURL = "http://" + request.get_host()
@@ -877,8 +800,8 @@ class WorkSpacePublisherEntry(Resource):
             baseURL = settings.TEMPLATE_GENERATOR_URL
 
         url = baseURL + "/workspace/templateGenerator/" + str(published_workspace.id)
-
-        add_resource_from_template(url, published_workspace.template, user)
+        resource.templare_uri = url
+        resource.save()
 
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')

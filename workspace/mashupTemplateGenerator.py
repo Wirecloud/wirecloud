@@ -30,6 +30,7 @@
 
 #
 
+from django.conf import settings
 from lxml import etree
 
 from igadget.models import IGadget, Variable
@@ -55,30 +56,86 @@ def typeCode2typeText(typeCode):
     return None
 
 
+def get_igadgets_description(included_igadgets):
+    description = "EzWeb Mashup composed of: "
+
+    for igadget in included_igadgets:
+        description += igadget.gadget.name + ', '
+
+    return description[:-2]
+
+
+def get_workspace_description(workspace):
+    included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+
+    return get_igadgets_description(included_igadgets)
+
+
 class TemplateGenerator:
 
-    def getTemplate(self, published_workspace, parametrization):
+    def getTemplate(self, options, workspace, user):
 
-        workspace_tabs = Tab.objects.filter(workspace=published_workspace.workspace).order_by('position')
-        included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
+        # process
+        vendor = options.get('vendor')
+        name = options.get('name')
+        version = options.get('version')
+        email = options.get('email')
+
+        description = options.get('description')
+        if description:
+            description = description + " \n " + get_workspace_description(workspace)
+        else:
+            description = get_workspace_description(workspace)
+
+        author = options.get('author')
+        if not author:
+            author = user.username
+
+        imageURI = options.get('imageURI')
+        if not imageURI:
+            imageURI = settings.MEDIA_URL + 'images/headshot_mashup.jpg'
+
+        wikiURI = options.get('wikiURI')
+        if not wikiURI:
+            wikiURI = 'http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options'
+
+        organization = options.get('organization')
+        if not organization:
+            organization = ''
+
+        readOnly = options.get('readOnly')
+        if not readOnly:
+            readOnly = False
+
+        contratable = options.get('contratable')
+        if not contratable:
+            contratable = False
+
+        parametrization = options.get('parametrization')
+        if not parametrization:
+            parametrization = {}
+
+        # Build the template
+        workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
+        included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
         template = etree.Element('Template', schemaLocation="http://morfeo-project.org/2007/Template")
         desc = etree.Element('Catalog.ResourceDescription')
         template.append(desc)
-        etree.SubElement(desc, 'Vendor').text = published_workspace.vendor
-        etree.SubElement(desc, 'Name').text = published_workspace.name
-        etree.SubElement(desc, 'Version').text = published_workspace.version
-        etree.SubElement(desc, 'Author').text = published_workspace.author
-        etree.SubElement(desc, 'Mail').text = published_workspace.mail
-        etree.SubElement(desc, 'Description').text = published_workspace.description
-        etree.SubElement(desc, 'ImageURI').text = published_workspace.imageURI
-        etree.SubElement(desc, 'WikiURI').text = published_workspace.wikiURI
-        etree.SubElement(desc, 'Organization').text = published_workspace.organization
+        etree.SubElement(desc, 'Vendor').text = vendor
+        etree.SubElement(desc, 'Name').text = name
+        etree.SubElement(desc, 'Version').text = version
+        etree.SubElement(desc, 'Author').text = author
+        etree.SubElement(desc, 'Mail').text = email
+        etree.SubElement(desc, 'Description').text = description
+        etree.SubElement(desc, 'ImageURI').text = imageURI
+        etree.SubElement(desc, 'WikiURI').text = wikiURI
+        etree.SubElement(desc, 'Organization').text = organization
 
-        resources = etree.SubElement(desc, 'IncludedResources', mashupId=str(published_workspace.id))
+        resources = etree.SubElement(desc, 'IncludedResources')
 
         # Workspace preferences
-        preferences = WorkSpacePreference.objects.filter(workspace=published_workspace.workspace)
+        preferences = WorkSpacePreference.objects.filter(workspace=workspace)
         for preference in preferences:
             if not preference.inherit:
                 etree.SubElement(resources, 'Preference', name=preference.name, value=preference.value)
@@ -124,7 +181,7 @@ class TemplateGenerator:
                     value = igadget_param_desc['value']
                     status = igadget_param_desc['status']
                 else:
-                    value = igadget.get_var_value(pref, published_workspace.workspace.creator)
+                    value = igadget.get_var_value(pref, workspace.creator)
 
                 element = etree.SubElement(resource, 'Preference', name=pref.name, value=value)
                 if status != 'normal':
@@ -143,7 +200,7 @@ class TemplateGenerator:
                     value = igadget_param_desc['value']
                     status = igadget_param_desc['status']
                 else:
-                    value = igadget.get_var_value(prop, published_workspace.workspace.creator)
+                    value = igadget.get_var_value(prop, workspace.creator)
 
                 element = etree.SubElement(resource, 'Property', name=prop.name, value=value)
                 if status != 'normal':
@@ -163,7 +220,7 @@ class TemplateGenerator:
             etree.append(etree.Element('Capability', name="contratable", value="true"))
 
         # wiring channel and connections
-        channel_vars = WorkSpaceVariable.objects.filter(workspace=published_workspace.workspace, aspect='CHANNEL')
+        channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
         for channel_var in channel_vars:
             connectable = InOut.objects.get(workspace_variable=channel_var)
             element = etree.SubElement(wiring, 'Channel', id=str(connectable.id), name=connectable.name)
