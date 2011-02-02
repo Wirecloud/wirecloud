@@ -123,7 +123,7 @@ def send_pingback(request, params):
             # HTTP call
             conn = httplib.HTTPConnection(host)
             conn.request("POST", cgi, data, headers)
-            res = conn.getresponse()
+            conn.getresponse()
             conn.close()
         except:
             pass
@@ -230,7 +230,6 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 catalogue_response['result_message'] = _('Error ocurred processing template!')
                 send_pingback(request, catalogue_response)
                 
-                msg = _('Error ocurred processing template: %s!') % e.message
                 t = loader.get_template('catalogue_adder.html')
                 c = Context({'msg': _('Error ocurred processing template: %s!') % e.message})
                 return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
@@ -275,7 +274,7 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
         try:
             resource = GadgetResource.objects.get(short_name=name, vendor=vendor, version=version)
             gadget_info['gadgetId'] = resource.id
-        except Exception, e:
+        except Exception:
             #Send pingback ERROR
             gadget_info['result_code'] = -3
             gadget_info['result_message'] = _('Invalid gadget info! Please, specify a valid one!')
@@ -289,13 +288,12 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
         gadget = None
         try:
             gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
-        except Exception, e:
+        except Exception:
             pass
             
         try:
             if gadget != None:
                 xhtml = XHTML.objects.get(id=gadget.xhtml.id)
-                xhtml_code = xhtml.code
                 
                 content_type = gadget.xhtml.content_type
                 if not content_type:
@@ -307,7 +305,7 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
                 else:
                     xhtml.code = download_http_content(xhtml.url, user=request.user)
                 xhtml.save()
-        except Exception, e:
+        except Exception:
             #Send pingback ERROR
             gadget_info['result_code'] = -3
             gadget_info['result_message'] = _('XHTML code is not accessible!')
