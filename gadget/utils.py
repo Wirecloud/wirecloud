@@ -35,12 +35,27 @@ from StringIO import StringIO
 
 from django.utils.http import urlquote
 
-from commons.authentication import Http403
 from catalogue.models import GadgetResource
+from commons.authentication import Http403
 from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import Gadget
 from gadget.templateParser import TemplateParser
 from workspace.models import WorkSpace, UserWorkSpace
+
+
+def get_or_add_gadget_from_catalogue(vendor, name, version, user, request):
+    try:
+        gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
+    except:
+        resource = GadgetResource.objects.get(vendor=vendor, short_name=name, version=version)
+        templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
+        templateParser.parse()
+        gadget = templateParser.getGadget()
+
+    gadget.users.add(user)
+    gadget.save()
+
+    return gadget
 
 
 def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False):

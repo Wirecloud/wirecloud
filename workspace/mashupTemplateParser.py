@@ -32,6 +32,7 @@
 
 from commons.get_data import get_concept_values, TemplateValueProcessor
 from django.utils import simplejson
+from gadget.utils import get_or_add_gadget_from_catalogue
 from igadget.models import Variable
 from igadget.views import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
@@ -126,7 +127,6 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         resources = RESOURCE_XPATH(tabElement)
         for resource in resources:
             igadget_uri = "/workspace/" + str(workspace.id) + "/tab/" + str(tab.id) + "/igadgets"
-            gadget_uri = "/user/" + user.username + "/gadgets/" + '/'.join([resource.get('vendor'), resource.get('name'), resource.get('version')])
 
             position = POSITION_XPATH(resource)[0]
             rendering = RENDERING_XPATH(resource)[0]
@@ -150,6 +150,8 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 else:
                     initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
 
+            gadget = get_or_add_gadget_from_catalogue(resource.get('vendor'), resource.get('name'), resource.get('version'), user, None)
+
             igadget_data = {
                 "left": int(position.get('x')),
                 "top": int(position.get('y')),
@@ -162,7 +164,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 "menu_color": "FFFFFF",
                 "layout": int(rendering.get('layout')),
                 "uri": igadget_uri,
-                "gadget": gadget_uri}
+                "gadget": gadget.uri}
 
             igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
             if read_only_workspace:
