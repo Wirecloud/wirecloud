@@ -193,7 +193,7 @@ class WorkSpaceCollection(Resource):
     def read(self, request):
         user = get_user_authentication(request)
 
-        data_list = {'isDefault': False}
+        data_list = {'reloadShowcase': False}
         try:
             # user workspaces
             workspaces = WorkSpace.objects.filter(users=user)
@@ -214,10 +214,11 @@ class WorkSpaceCollection(Resource):
 
                     # set that the showcase will have to be reloaded
                     # because this workspace is new for the user
-                    data_list['isDefault'] = "true"
+                    data_list['reloadShowcase'] = True
 
-            if data_list['isDefault'] and workspaces.count() == 0:
+            if not data_list['reloadShowcase'] and workspaces.count() == 0:
                 # There is no workspace for the user
+
                 cloned_workspace = None
 
                 # it's the first time the user has logged in.
@@ -233,7 +234,7 @@ class WorkSpaceCollection(Resource):
                                 cloned_workspace = cloneWorkspace(default_workspace.id, user)
                                 linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
                                 setActiveWorkspace(user, cloned_workspace)
-                                data_list['isDefault'] = True
+                                data_list['reloadShowcase'] = True
                                 break
                             except Category.DoesNotExist:
                                 # the user category doesn't have a default workspace
@@ -250,7 +251,8 @@ class WorkSpaceCollection(Resource):
             # Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
 
-            if UserWorkSpace.objects.filter(user__id=user.id, active=True).count() == 0:  # if there is no active workspace
+            # if there is no active workspace
+            if UserWorkSpace.objects.filter(user=user, active=True).count() == 0:
                 # set the first workspace as active
                 setActiveWorkspace(user, workspaces.all()[0])
 

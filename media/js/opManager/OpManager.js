@@ -42,7 +42,7 @@ var OpManagerFactory = function () {
 			var response = transport.responseText;
 			var workSpacesStructure = JSON.parse(response);
 
-			var isDefaultWS = workSpacesStructure.isDefault;
+			var reloadShowcase = workSpacesStructure.reloadShowcase;
 			var workSpaces = workSpacesStructure.workspaces;
 			var activeWorkSpace = null;
 
@@ -93,7 +93,7 @@ var OpManagerFactory = function () {
 			}
 
 			// Total information of the active workspace must be downloaded!
-			if (isDefaultWS == "true") {
+			if (reloadShowcase) {
 				//the showcase must be reloaded to have all new gadgets
 				//it itself changes to the active workspace
 				ShowcaseFactory.getInstance().reload(workSpace.id);
