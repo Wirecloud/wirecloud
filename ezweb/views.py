@@ -70,10 +70,10 @@ def wiring(request, user_name=None):
 
 def index_lite(request, user_name=None):
     if (not request.user.is_authenticated()):
-      (response, user) = login_with_third_party_cookie(request)
+        (response, user) = login_with_third_party_cookie(request)
 
-      if (response):
-        return response
+        if (response):
+            return response
 
     """ EzWeb with no header"""
     if request.user.username != "public":
@@ -334,7 +334,7 @@ def public_ws_viewer(request, public_ws_id):
     try:
         workspace = WorkSpace.objects.get(id=public_ws_id)
     except WorkSpace.DoesNotExist:
-         return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
+        return HttpResponseServerError(get_xml_error(_('the workspace does not exist')), mimetype='application/xml; charset=UTF-8')
 
     last_user = ''
     if (request.user and request.user.username != 'public' and request.user.username != ''):
