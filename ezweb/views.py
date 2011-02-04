@@ -63,10 +63,12 @@ def index(request, user_name=None, template="/"):
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
+
 @login_required
 def wiring(request, user_name=None):
     """ Wiring view """
     return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
+
 
 def index_lite(request, user_name=None):
     if (not request.user.is_authenticated()):
@@ -81,6 +83,7 @@ def index_lite(request, user_name=None):
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
+
 def redirected_login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
@@ -92,6 +95,7 @@ def redirected_login(request):
                 request.session.delete_test_cookie()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 #Send HTTP POST to pingback service with indicated params (for FAST Project)
 def send_pingback(request, params):
@@ -121,6 +125,7 @@ def send_pingback(request, params):
             conn.close()
         except:
             pass
+
 
 def add_gadget_script(request, fromWGT=False, user_action=True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
@@ -237,6 +242,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
+
 def update_gadget_script(request, fromWGT=False, user_action=True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
@@ -253,7 +259,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
             c = Context({'msg': _('Invalid params for gadget update! (gadget_vendor, gadget_name, gadget_version)')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
 
-        gadget_info = {'vendor': vendor, 'gadgetName': name, 'version': version} # For ping_back
+        gadget_info = {'vendor': vendor, 'gadgetName': name, 'version': version}  # For ping_back
 
         #Cancel by the user
         if 'pingback_cancel' in request.REQUEST and (request.REQUEST['pingback_cancel'] == 'true'):
@@ -329,6 +335,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
 
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
+
 def public_ws_viewer(request, public_ws_id):
     """ EzWeb viewer """
     try:
@@ -368,6 +375,7 @@ def manage_groups(user, groups):
         user.groups.add(group)
     user.save()
 
+
 def get_layout_context(layout, user):
     context = {}
     #layout context
@@ -382,6 +390,7 @@ def get_layout_context(layout, user):
     context["branding"]["workspace"] = get_workspace_branding_data(None, user)
     context["branding"]["catalogue"] = get_catalogue_branding_data(user)
     return context
+
 
 def render_ezweb(request, user_name=None, template='/', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """
