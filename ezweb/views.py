@@ -71,13 +71,13 @@ def wiring(request, user_name=None):
 
 
 def index_lite(request, user_name=None):
+    """ EzWeb with no header"""
     if (not request.user.is_authenticated()):
         (response, user) = login_with_third_party_cookie(request)
 
         if (response):
             return response
 
-    """ EzWeb with no header"""
     if request.user.username != "public":
         return render_ezweb(request, template="/lite")
     else:
@@ -97,8 +97,8 @@ def redirected_login(request):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-#Send HTTP POST to pingback service with indicated params (for FAST Project)
 def send_pingback(request, params):
+    """ Send HTTP POST to pingback service with indicated params (for FAST Project) """
     default_params = {'result_code': 0, 'result_message': ''}
     default_params.update(params)
     params = default_params
