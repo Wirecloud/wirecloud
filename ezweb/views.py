@@ -107,11 +107,11 @@ def send_pingback(request, params):
 
             data = {'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}}
             if 'vendor' in params and 'gadgetName' in params and 'version' in params:
-                data['GadgetOwner']   = params['vendor']
-                data['GadgetName']    = params['gadgetName']
+                data['GadgetOwner'] = params['vendor']
+                data['GadgetName'] = params['gadgetName']
                 data['GadgetVersion'] = params['version']
             if 'gadgetId' in params:
-                data['Identifier']    = str(params['gadgetId'])
+                data['Identifier'] = str(params['gadgetId'])
             data = simplejson.dumps(data)
 
             # HTTP call
@@ -122,7 +122,7 @@ def send_pingback(request, params):
         except:
             pass
 
-def add_gadget_script(request, fromWGT = False, user_action = True):
+def add_gadget_script(request, fromWGT=False, user_action=True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('template_uri' in request.REQUEST):
@@ -230,19 +230,19 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
 
     else:
         #Not authenticated or anonymous user => redirecting to login!
-        params = {'next': request.META['QUERY_STRING'] }
+        params = {'next': request.META['QUERY_STRING']}
 
         if 'pingback' in request.REQUEST:
             params['pingback'] = request.REQUEST['pingback']
 
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
 
-def update_gadget_script(request, fromWGT = False, user_action = True):
+def update_gadget_script(request, fromWGT=False, user_action=True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('gadget_vendor' in request.REQUEST and 'gadget_name' in request.REQUEST and 'gadget_version' in  request.REQUEST):
-            vendor  = request.REQUEST['gadget_vendor']
-            name    = request.REQUEST['gadget_name']
+            vendor = request.REQUEST['gadget_vendor']
+            name = request.REQUEST['gadget_name']
             version = request.REQUEST['gadget_version']
         else:
             #Send pingback ERROR
@@ -322,7 +322,7 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
 
     else:
         #Not authenticated or anonymous user => redirecting to login!
-        params = {'next': request.META['QUERY_STRING'] }
+        params = {'next': request.META['QUERY_STRING']}
 
         if 'pingback' in request.REQUEST:
             params['pingback'] = request.REQUEST['pingback']
@@ -340,9 +340,9 @@ def public_ws_viewer(request, public_ws_id):
     if (request.user and request.user.username != 'public' and request.user.username != ''):
         last_user = request.user
 
-    public_user=login_public_user(request)
+    public_user = login_public_user(request)
 
-    request.user=public_user
+    request.user = public_user
 
     if (len(workspace.users.filter(username=public_user.username)) == 1):
         return render_ezweb(request, template="/viewer", public_workspace=public_ws_id, last_user=last_user)
@@ -373,7 +373,7 @@ def get_layout_context(layout, user):
     #layout context
     context["layout"] = simplejson.loads(layout.layout_css)
     #theme context
-    context["theme"] ={}
+    context["theme"] = {}
     context["theme"] = simplejson.loads(layout.theme.theme_css)
     context["theme"]["name"] = layout.theme.name
     context["theme"]["images"] = layout.theme.images
@@ -412,7 +412,7 @@ def render_ezweb(request, user_name=None, template='/', public_workspace='', las
                 user_data = simplejson.loads(download_http_content(url))
 
                 manage_groups(request.user, user_data['groups'])
-                request.session['policies'] = json_encode({"user_policies":user_data['user_policies'], "all_policies":user_data['all_policies']})
+                request.session['policies'] = json_encode({"user_policies": user_data['user_policies'], "all_policies": user_data['all_policies']})
             except:
                 request.session['policies'] = "null"
         else:
