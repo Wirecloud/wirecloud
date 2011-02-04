@@ -99,18 +99,18 @@ def send_pingback(request, params):
     default_params.update(params)
     params = default_params
 
-    if request.REQUEST.has_key('pingback'):
+    if 'pingback' in request.REQUEST:
         try:
             url = request.REQUEST['pingback']
             headers = {'Content-type': 'application/json'}
             proto, host, cgi = urlparse.urlparse(url)[:3]
 
             data = {'PlatformName': 'EzWeb', 'Result': {'Code': params['result_code'], 'Message': params['result_message']}}
-            if params.has_key('vendor') and params.has_key('gadgetName') and params.has_key('version'):
+            if 'vendor' in params and 'gadgetName' in params and 'version' in params:
                 data['GadgetOwner']   = params['vendor']
                 data['GadgetName']    = params['gadgetName']
                 data['GadgetVersion'] = params['version']
-            if params.has_key("gadgetId"):
+            if 'gadgetId' in params:
                 data['Identifier']    = str(params['gadgetId'])
             data = simplejson.dumps(data)
 
@@ -125,7 +125,7 @@ def send_pingback(request, params):
 def add_gadget_script(request, fromWGT = False, user_action = True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
-        if (request.REQUEST.has_key('template_uri')):
+        if ('template_uri' in request.REQUEST):
             template_uri = request.REQUEST['template_uri']
         else:
             #Send pingback ERROR
@@ -147,7 +147,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
 
                 params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
 
-                if request.REQUEST.has_key('pingback'):
+                if 'pingback' in request.REQUEST:
                     params['pingback'] = request.REQUEST['pingback']
 
                 return render_to_response('catalogue_adder.html', params, context_instance=RequestContext(request))
@@ -174,8 +174,8 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 catalogue_response = simplejson.loads(http_response.content)
 
                 #Cancel by the user
-                if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
-                    if request.REQUEST.has_key('pingback'):
+                if 'pingback_cancel' in request.REQUEST and (request.REQUEST['pingback_cancel'] == 'true'):
+                    if 'pingback' in request.REQUEST:
                         #Send pingback CANCEL
                         catalogue_response['result_code'] = 1
                         catalogue_response['result_message'] = _('Cancel by the user')
@@ -185,7 +185,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
 
                 if (catalogue_response['result'].lower() != 'ok'):
                     #Send pingback ERROR
-                    if catalogue_response.has_key('gadgetName'):
+                    if 'gadgetName' in catalogue_response:
                         catalogue_response['result_code'] = -2
                         catalogue_response['result_message'] = _('Gadget already exists!')
                     else:
@@ -203,7 +203,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
                 catalogue_response['result_message'] = _('Success')
                 send_pingback(request, catalogue_response)
 
-                if (request.REQUEST.has_key('add_to_ws') and request.REQUEST['add_to_ws'] == 'on'):
+                if ('add_to_ws' in request.REQUEST and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
                     #Loading ezweb for automating gadget instantiation
                     vendor = catalogue_response['vendor']
@@ -232,7 +232,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
         #Not authenticated or anonymous user => redirecting to login!
         params = {'next': request.META['QUERY_STRING'] }
 
-        if request.REQUEST.has_key('pingback'):
+        if 'pingback' in request.REQUEST:
             params['pingback'] = request.REQUEST['pingback']
 
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
@@ -240,7 +240,7 @@ def add_gadget_script(request, fromWGT = False, user_action = True):
 def update_gadget_script(request, fromWGT = False, user_action = True):
     """ Page for adding gadgets to catalogue without loading EzWeb """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
-        if (request.REQUEST.has_key('gadget_vendor') and request.REQUEST.has_key('gadget_name') and request.REQUEST.has_key('gadget_version')):
+        if ('gadget_vendor' in request.REQUEST and 'gadget_name' in request.REQUEST and 'gadget_version' in  request.REQUEST):
             vendor  = request.REQUEST['gadget_vendor']
             name    = request.REQUEST['gadget_name']
             version = request.REQUEST['gadget_version']
@@ -256,8 +256,8 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
         gadget_info = {'vendor': vendor, 'gadgetName': name, 'version': version} # For ping_back
 
         #Cancel by the user
-        if request.REQUEST.has_key('pingback_cancel') and (request.REQUEST['pingback_cancel'] == 'true'):
-            if request.REQUEST.has_key('pingback'):
+        if 'pingback_cancel' in request.REQUEST and (request.REQUEST['pingback_cancel'] == 'true'):
+            if 'pingback' in request.REQUEST:
                 #Send pingback CANCEL
                 gadget_info['result_code'] = 1
                 gadget_info['result_message'] = _('Cancel by the user')
@@ -324,7 +324,7 @@ def update_gadget_script(request, fromWGT = False, user_action = True):
         #Not authenticated or anonymous user => redirecting to login!
         params = {'next': request.META['QUERY_STRING'] }
 
-        if request.REQUEST.has_key('pingback'):
+        if 'pingback' in request.REQUEST:
             params['pingback'] = request.REQUEST['pingback']
 
         return render_to_response('catalogue_adder_login.html', params, context_instance=RequestContext(request))
