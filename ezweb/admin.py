@@ -37,24 +37,29 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.utils.translation import ugettext_lazy as _
 
+
 class EzWebUserCreationForm(UserCreationForm):
-    
+
     username = forms.RegexField(
-        label=_('Username'), 
-        max_length=30, 
+        label=_('Username'),
+        max_length=30,
         regex=r"^[\w'\.\-]+\s?[\w'\.\-]+$",
-        help_text = 'Required. 30 characters or fewer. Use alphanumeric characters, hyphens, underscores and dots.',
-        error_message = 'This value must contain only letters, numbers, hyphens underscores and dots.')
+        help_text='Required. 30 characters or fewer. Use alphanumeric characters, hyphens, underscores and dots.',
+        error_message='This value must contain only letters, numbers, hyphens underscores and dots.')
+
 
 class EzWebUserChangeForm(UserChangeForm):
+
     username = forms.RegexField(
-        label=_('Username'), 
-        max_length=30, 
+        label=_('Username'),
+        max_length=30,
         regex=r"^[\w'\.\-]+\s?[\w'\.\-]+$",
-        help_text = 'Required. 30 characters or fewer. Use alphanumeric characters, hyphens, underscores and dots.' ,
-        error_message = 'This value must contain only letters, numbers, hyphens underscores and dots.')
+        help_text='Required. 30 characters or fewer. Use alphanumeric characters, hyphens, underscores and dots.',
+        error_message='This value must contain only letters, numbers, hyphens underscores and dots.')
+
 
 class EzWebUserAdmin(UserAdmin):
+
     form = EzWebUserChangeForm
     add_form = EzWebUserCreationForm
 
