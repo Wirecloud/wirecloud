@@ -37,10 +37,10 @@ urlpatterns = patterns('ezweb.views',
     (r'^wiring$', 'wiring'),
     (r'^lite$', 'index_lite'),
     (r'^viewer/workspace/(?P<public_ws_id>[\d]+)$', 'public_ws_viewer'),
-    
+
     # Login service
     (r'^interfaces/login/service$', 'redirected_login'),
-   
+
     # HTML interfaces
     # Create gadget
     (r'^interfaces/gadget$', 'add_gadget_script'),
