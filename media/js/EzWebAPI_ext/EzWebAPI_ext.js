@@ -4608,6 +4608,7 @@ PaginationInterface.prototype.pPaginationChanged = function(newPageSize, forceRe
         this.currentPage = this.totalPages - 1;
         this._pageChange();
     } else if (forceReload) {
+        this._updateButtons();
         this.events['pageChange'].dispatch(this.currentPage);
     } else {
         this._updateButtons();
