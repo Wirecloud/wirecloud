@@ -65,6 +65,8 @@ class Resource:
             log_request(request, response, 'access')
 
             return response
+        except Http404:
+            raise
         except Http403:
             log_request(request, None, 'access')
 
