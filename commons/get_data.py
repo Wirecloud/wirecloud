@@ -400,8 +400,11 @@ def get_global_workspace_data(data, workSpaceDAO, user):
     for tab in tabs_data:
         tab_pk = tab['id']
         igadgets = IGadget.objects.filter(tab__id = tab_pk).order_by('id')
-        igadget_data = serializers.serialize('python', igadgets, ensure_ascii=False)
-        igadget_data = [get_igadget_data(d, user, workSpaceDAO) for d in igadget_data]
+
+        igadget_data = []
+        for igadget in igadgets:
+            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO))
+
         tab['igadgetList'] = igadget_data
 
     #WorkSpace variables processing
@@ -442,41 +445,39 @@ def get_tab_data(tab):
         'preferences': get_tab_preference_values(tab)
     }
 
-def get_igadget_data(data, user, workspace):
-    data_ret = {}
-    data_fields = data['fields']
 
-    gadget = Gadget.objects.get(pk=data_fields['gadget'])
-    position = Position.objects.get(pk=data_fields['position'])
+def get_igadget_data(igadget, user, workspace):
 
-    data_ret['id'] = data['pk']
-    data_ret['name'] = data_fields['name']
-    data_ret['tab'] = data_fields['tab']
-    data_ret['layout'] = data_fields['layout']
-    data_ret['menu_color'] = data_fields['menu_color']
-    data_ret['refused_version'] = data_fields['refused_version']
-    data_ret['gadget'] = gadget.uri
-    data_ret['top'] = position.posY
-    data_ret['left'] = position.posX
-    if data_fields['icon_position']:
-        icon_position = Position.objects.get(pk=data_fields['icon_position'])
-        data_ret['icon_top'] = icon_position.posY
-        data_ret['icon_left'] = icon_position.posX
+    data_ret = {'id': igadget.id,
+        'name': igadget.name,
+        'tab': igadget.tab.id,
+        'layout': igadget.layout,
+        'menu_color': igadget.menu_color,
+        'refused_version': igadget.refused_version,
+        'gadget': igadget.gadget.uri,
+        'top': igadget.position.posY,
+        'left': igadget.position.posX,
+        'zIndex': igadget.position.posZ,
+        'width': igadget.position.width,
+        'height': igadget.position.height,
+        'fulldragboard': igadget.position.fulldragboard,
+        'minimized': igadget.position.minimized,
+        'transparency': igadget.transparency,
+        'readOnly': igadget.readOnly}
+
+    if igadget.icon_position:
+        data_ret['icon_top'] = igadget.icon_position.posY
+        data_ret['icon_left'] = igadget.icon_position.posX
     else:
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
-    data_ret['zIndex'] = position.posZ
-    data_ret['width'] = position.width
-    data_ret['height'] = position.height
-    data_ret['fulldragboard'] = position.fulldragboard
-    data_ret['minimized'] = position.minimized
-    data_ret['transparency'] = data_fields['transparency']
-    variables = Variable.objects.filter (igadget__pk=data['pk'])
+
+    variables = Variable.objects.filter(igadget=igadget)
     data = serializers.serialize('python', variables, ensure_ascii=False)
     data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
-    data_ret['readOnly'] = data_fields["readOnly"]
 
     return data_ret
+
 
 def get_variable_data(data, user, workspace):
     data_ret = {}

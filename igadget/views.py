@@ -30,7 +30,7 @@
 
 #
 
-from django.shortcuts import get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.core import serializers
 
@@ -165,9 +165,7 @@ def SaveIGadget(igadget, user, tab, request):
         
         transaction.commit()
 
-        igadget_data =  serializers.serialize('python', [new_igadget], ensure_ascii=False)
-
-        ids = get_igadget_data(igadget_data[0], user, tab.workspace)
+        ids = get_igadget_data(new_igadget, user, tab.workspace)
 
         return ids
 
@@ -351,9 +349,8 @@ class IGadgetCollection(Resource):
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
         data_list = {}
-        igadget = IGadget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data = serializers.serialize('python', igadget, ensure_ascii=False)
-        data_list['iGadgets'] = [get_igadget_data(d, user, workspace) for d in  data]
+        igadgets = IGadget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
+        data_list['iGadgets'] = [get_igadget_data(igadget, user, workspace) for igadget in igadgets]
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
@@ -417,9 +414,8 @@ class IGadgetEntry(Resource):
 
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-        igadget = get_list_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id, pk=igadget_id)
-        data = serializers.serialize('python', igadget, ensure_ascii=False)
-        igadget_data = get_igadget_data(data[0], user, workspace)
+        igadget = get_object_or_404(IGadget, tab__workspace__users__id=user.id, tab__workspace=workspace, tab__pk=tab_id, pk=igadget_id)
+        igadget_data = get_igadget_data(igadget, user, workspace)
 
         return HttpResponse(json_encode(igadget_data), mimetype='application/json; charset=UTF-8')
 
