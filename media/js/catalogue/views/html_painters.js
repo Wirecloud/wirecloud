@@ -86,7 +86,7 @@ ResourcesPainter.prototype.paint = function (command, user_command_manager) {
             'name': resource.getName(),
             'image_url': resource.getUriImage(),
             'description': resource.getDescription(),
-            'average_popularity': this.get_popularity_html(resource.getPopularity()),
+            'average_popularity': this.get_popularity_html(resource.getPopularity())
         }
 
         if (resource.isContratable() && ! resource.hasContract()) {
