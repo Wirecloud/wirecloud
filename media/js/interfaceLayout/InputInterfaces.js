@@ -707,7 +707,7 @@ ParametrizableValueInputInterface.prototype._updateInputElement = function() {
         this.inputElement.value = '';
         break;
     case 'current':
-        this.inputElement.value = this.variable.value;
+        this.inputElement.value = ParametrizedTextInputInterface.prototype.escapeValue(this.variable.value);
         break;
     case 'custom':
         this.inputElement.value = this.value;
@@ -729,6 +729,8 @@ function ParametrizedTextInputInterface(fieldId, options) {
     var i, param, contextFields, concepts, keys;
 
     InputInterface.call(this, fieldId, options);
+
+    this.variable = options.variable;
 
     /* TODO */
     concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
@@ -760,6 +762,16 @@ function ParametrizedTextInputInterface(fieldId, options) {
 
     this.wrapperElement = document.createElement('div');
 
+    this.resetButton = document.createElement('button');
+    Element.extend(this.resetButton);
+    this.resetButton.setTextContent(gettext('Use current value'));
+    this.wrapperElement.appendChild(this.resetButton);
+    this.resetButton.observe('click', function() {
+        if (!this.inputElement.disabled) {
+            this.inputElement.value = this.escapeValue(this.variable.value);
+        }
+    }.bind(this));
+
     this.mainSelect = document.createElement('select');
     for (i = 0; i < this.parameters.length; i += 1) {
         param = this.parameters[i];
@@ -783,6 +795,10 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.addButton.observe('click', function() {
         var prefix, suffix, parameter, start;
 
+        if (this.inputElement.disabled) {
+            return;
+        }
+
         start = this.inputElement.selectionStart;
         prefix = this.inputElement.value.substr(0, start);
         suffix = this.inputElement.value.substr(this.inputElement.selectionEnd);
@@ -801,6 +817,24 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.wrapperElement.appendChild(this.inputElement);
 }
 ParametrizedTextInputInterface.prototype = new InputInterface();
+
+ParametrizedTextInputInterface.prototype._ESCAPE_RE = new RegExp("(%+)(\\([a-zA-Z]\\w*(?:\\.[a-zA-Z]\\w*)*\\))");
+ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
+    var str, i;
+
+    i = arguments[1].length * 2;
+    str = '';
+    while ((i -= 1) >= 0) {
+        str += '%';
+    }
+
+    return str + arguments[2];
+};
+
+ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
+    return value.replace(ParametrizedTextInputInterface.prototype._ESCAPE_RE,
+        ParametrizedTextInputInterface.prototype._ESCAPE_FUNC);
+};
 
 ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
     var fields, field, i;
@@ -822,6 +856,23 @@ ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
         }
     }
 };
+
+ParametrizedTextInputInterface.prototype._setValue = function(newValue) {
+    this.inputElement.value = newValue;
+    if (this.update) {
+        this.update();
+    }
+};
+
+ParametrizedTextInputInterface.prototype.setDisabled = function(disabled) {
+
+    InputInterface.prototype.setDisabled.call(this, disabled);
+
+    this.mainSelect.disabled = !!disabled;
+    this.secondSelect.disabled = !!disabled;
+    this.addButton.disabled = !!disabled;
+    this.resetButton.disabled = !!disabled;
+}
 
 ParametrizedTextInputInterface.prototype._insertInto = function(element) {
     element.appendChild(this.wrapperElement);

@@ -1843,11 +1843,22 @@ function ParametrizeWindowMenu(inputInterface) {
     fields = {
         'status': {label: gettext('Status'), type: 'select', options: statusOptions},
         'source': {label: '', type: 'select', options: sourceOptions},
-        'value': {label: gettext('Value'), type: 'parametrizedText'}
+        'separator': {type: 'separator'},
+        'value': {label: gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
     }
     FormWindowMenu.call(this, fields, gettext('Parametrization'));
 
     this.inputInterface = inputInterface;
+
+    // TODO
+    var valueInput = this.fields['value'].inputInterface;
+    var sourceInput = this.fields['source'].inputInterface.inputElement;
+    var updateFunc = function() { 
+        this.valueInput.setDisabled(this.sourceInput.value !== 'custom');
+    }.bind({valueInput: valueInput, sourceInput: sourceInput});
+
+    this.fields['value'].inputInterface.update = updateFunc;
+    Event.observe(sourceInput, 'change', updateFunc);
 }
 ParametrizeWindowMenu.prototype = new FormWindowMenu();
 
