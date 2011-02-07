@@ -1190,11 +1190,22 @@ function PublishWindowMenu (workspace) {
 	
 	this.fields['noBranding'].inputInterface.setOnclickHandler(_checkIfBranding);
 	
-	
 	//Window for uploading local files
 	this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));
+
+        // Add a clear button
+	this._clearListener = this._clearListener.bind(this);
+	var clearButton = document.createElement('button');
+	Element.extend(clearButton);
+	clearButton.appendChild(document.createTextNode(gettext('Clear')));
+	clearButton.observe("click", this._clearListener);
+	this.windowBottom.appendChild(clearButton);
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
+
+FormWindowMenu.prototype._clearListener = function() {
+	this._reset(this.fields);
+};
 
 FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
 	var i, j, igadget, igadgets, igadget_params, pref_params, prop_params,
