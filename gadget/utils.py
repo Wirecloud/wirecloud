@@ -40,13 +40,12 @@ from lxml import etree
 from StringIO import StringIO
 
 
-def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = False):
+def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False):
 
     # Check permissions
     workspace = WorkSpace.objects.get(id=workspaceId)
     if workspace.get_creator() != user:
         raise Http403()
-
 
     ########### Template Parser
     templateParser = TemplateParser(templateURL, user, fromWGT, request)
@@ -60,7 +59,6 @@ def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = Fal
         templateParser.parse()
         gadget = templateParser.getGadget()
 
-
     # A new user has added the gadget in his showcase
     # check if the workspace in which the igadget is being added is shared
     # all the user sharing the workspace should have the gadget in their
@@ -73,15 +71,15 @@ def get_or_create_gadget (templateURL, user, workspaceId, request, fromWGT = Fal
         # add the gadget to the showcase of the user
         gadget.users.add(user)
 
-    return {"gadget":gadget, "templateParser":templateParser}
+    return {"gadget": gadget, "templateParser": templateParser}
 
 
 def includeTagBase(document, url, request):
-    # Get info url Gadget: host, username, Vendor, NameGadget and Version 
+    # Get info url Gadget: host, username, Vendor, NameGadget and Version
 
     exp = re.compile(r'.*/deployment/gadgets/')
-    expScript = re.compile(r'<script.*</script>', re.I|re.S)
-    expLink = re.compile(r'<style.*</style>', re.I|re.S)
+    expScript = re.compile(r'<script.*</script>', re.I | re.S)
+    expLink = re.compile(r'<style.*</style>', re.I | re.S)
 
     # Is the gadget in the platform?
     if not exp.search(url):
@@ -91,38 +89,38 @@ def includeTagBase(document, url, request):
     elements = exp.sub("", url).split("/")
 
     if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
-        host = "https://"+request.META['HTTP_HOST']
+        host = "https://" + request.META['HTTP_HOST']
     else:
-        host = "http://"+request.META['HTTP_HOST']
+        host = "http://" + request.META['HTTP_HOST']
 
     href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
     # HTML Parser
-    subDocument = expScript.sub("",document)
-    subDocument = expLink.sub("",subDocument)
+    subDocument = expScript.sub("", document)
+    subDocument = expLink.sub("", subDocument)
     parser = HTMLHeadParser(subDocument)
     # Split document by lines
     lines = document.split("\n")
 
     # HTML document has not head tag
     if not parser.getPosStartHead() and parser.getPosStartHtml():
-        htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)',re.I)
-        if(htmlExp.search(lines[parser.getPosStartHtml()-1])):
-            v = htmlExp.search(lines[parser.getPosStartHtml()-1])
+        htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)', re.I)
+        if(htmlExp.search(lines[parser.getPosStartHtml() - 1])):
+            v = htmlExp.search(lines[parser.getPosStartHtml() - 1])
             element1 = v.group("element1")
             element2 = v.group("element2")
-            html = "<html><head><base href='"+href+"'/></head>"
-            lines[parser.getPosStartHtml()-1] = element1 + html + element2
+            html = "<html><head><base href='" + href + "'/></head>"
+            lines[parser.getPosStartHtml() - 1] = element1 + html + element2
 
     # HTML document has head tag but has not base tag
     if parser.getPosStartHead() and not parser.getHrefBase():
-        headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)',re.I)
-        if(headExp.search(lines[parser.getPosStartHead()-1])):
-            v = headExp.search(lines[parser.getPosStartHead()-1])
+        headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)', re.I)
+        if(headExp.search(lines[parser.getPosStartHead() - 1])):
+            v = headExp.search(lines[parser.getPosStartHead() - 1])
             element1 = v.group("element1")
             element2 = v.group("element2")
-            head = "<head><base href='"+ href + "'/>"
-            lines[parser.getPosStartHead()-1] = element1 + head + element2
+            head = "<head><base href='" + href + "'/>"
+            lines[parser.getPosStartHead() - 1] = element1 + head + element2
 
     return "".join("\n").join(lines)
 

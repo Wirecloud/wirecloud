@@ -42,12 +42,14 @@ from gadget.models import XHTML
 from urllib import url2pathname
 from os import path
 
+
 class GadgetCodeParser:
+
     xHTML = None
 
     def parse(self, codeURI, gadgetURI, content_type, fromWGT, relative_url, cacheable=True, user=None):
         xhtml = ""
-        
+
         if fromWGT:
             localPath = codeURI
             if localPath[0] == '/':
@@ -65,24 +67,24 @@ class GadgetCodeParser:
         else:
             # TODO Fixme!! This works for now, but we have to check if a part of a url is empty
             address = codeURI.split('://')
-            query = address[1].split('/',1)
+            query = address[1].split('/', 1)
             codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
 
             try:
                 xhtml = download_http_content(codeURI, user=user)
-            except Exception, e:
+            except Exception:
                 raise TemplateParseException(_("XHTML code is not accessible"))
-            
+
         if (relative_url):
             codeURI = relative_url
 
         uri = gadgetURI + "/xhtml"
-        
+
         self.xHTML = XHTML(uri=uri, code=xhtml, url=codeURI,
                            content_type=content_type, cacheable=bool(cacheable))
         self.xHTML.save()
-                
+
         return
 
-    def getXHTML (self):
+    def getXHTML(self):
         return self.xHTML

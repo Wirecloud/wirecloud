@@ -33,9 +33,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 
-from translator.models import TransModel 
+from translator.models import TransModel
+
 
 class XHTML(models.Model):
+
     uri = models.CharField(_('URI'), max_length=255, unique=True)
     code = models.TextField(_('Code'))
     url = models.CharField(_('URL'), max_length=500)
@@ -47,18 +49,18 @@ class XHTML(models.Model):
 
 
 class Gadget(TransModel):
+
     uri = models.CharField(_('URI'), max_length=500)
-    
     vendor = models.CharField(_('Vendor'), max_length=250)
     name = models.CharField(_('Name'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
     display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
-    
+
     xhtml = models.ForeignKey(XHTML)
-    
+
     author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=100)
-   
+
     wikiURI = models.URLField(_('wikiURI'))
     imageURI = models.URLField(_('imageURI'))
     iPhoneImageURI = models.URLField(_('iPhoneImageURI'))
@@ -66,9 +68,9 @@ class Gadget(TransModel):
     width = models.IntegerField(_('Width'), default=1)
     height = models.IntegerField(_('Height'), default=1)
     description = models.TextField(_('Description'))
-    
+
     menuColor = models.CharField(max_length=6, default="FFFFFF")
-    
+
     shared = models.NullBooleanField(_('Shared'), default=False, null=True)
     users = models.ManyToManyField(User, verbose_name=_('Users'))
     last_update = models.DateTimeField(_('Last update'), null=True)
@@ -78,20 +80,20 @@ class Gadget(TransModel):
 
     def __unicode__(self):
         return self.uri
-    
+
     def get_related_events(self):
         return VariableDef.objects.filter(gadget=self, aspect='EVEN')
 
     def get_related_slots(self):
         return VariableDef.objects.filter(gadget=self, aspect='SLOT')
-    
+
     def is_contratable(self):
         try:
             Capability.objects.get(gadget=self, name="contratable", value="true")
             return True
         except Capability.DoesNotExist:
             return False
-    
+
 #===============================================================================
 #    def get_translate_fields(self):
 #        translate_fields = TransModel.get_translate_fields(self)
@@ -100,12 +102,14 @@ class Gadget(TransModel):
 #            translate_fields.append(v.get_translate_fields())
 #        return translate_fields
 #===============================================================================
-    
+
+
 class Capability(models.Model):
+
     name = models.CharField(_('Name'), max_length=50)
     value = models.CharField(_('Value'), max_length=50)
     gadget = models.ForeignKey(Gadget)
-    
+
     class Meta:
         unique_together = ('name', 'value', 'gadget')
 
@@ -113,12 +117,15 @@ class Capability(models.Model):
 #Sharing variables. Different variables can be related to the same
 #concept (SharedVariableDef)and so, share the same value.
 class  SharedVariableDef (models.Model):
+
     name = models.CharField(_('Name'), max_length=30)
-    
+
     def __unicode__(self):
-        return self.name    
-    
+        return self.name
+
+
 class VariableDef(TransModel):
+
     name = models.CharField(_('Name'), max_length=30)
     TYPES = (
         ('N', _('Number')),
@@ -143,37 +150,42 @@ class VariableDef(TransModel):
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
-    shared_var_def = models.ForeignKey(SharedVariableDef,null=True, blank=True) 
+    shared_var_def = models.ForeignKey(SharedVariableDef, null=True, blank=True)
     gadget = models.ForeignKey(Gadget)
 
     def __unicode__(self):
         return self.gadget.uri + " " + self.aspect
 
     #Values that cannot be public: passwords, produced events and consumed events
-    def has_public_value(self):   
-        return self.type!='P' and self.aspect!='SLOT' and self.aspect!='EVENT'
-   
+    def has_public_value(self):
+        return self.type != 'P' and self.aspect != 'SLOT' and self.aspect != 'EVENT'
+
     def get_default_value(self):
         return self.default_value
 
+
 class UserPrefOption(TransModel):
+
     value = models.CharField(_('Value'), max_length=50)
     name = models.CharField(_('Name'), max_length=50)
     variableDef = models.ForeignKey(VariableDef)
-        
+
     def __unicode__(self):
         return self.variableDef.gadget.uri + " " + self.name
 
 
 class VariableDefAttr(models.Model):
+
     value = models.CharField(_('Value'), max_length=30)
     name = models.CharField(_('Name'), max_length=30)
     variableDef = models.ForeignKey(VariableDef)
-    
+
     def __unicode__(self):
         return self.variableDef + self.name
 
+
 class ContextOption(models.Model):
+
     concept = models.CharField(_('Concept'), max_length=256)
     varDef = models.ForeignKey(VariableDef, verbose_name=_('Variable'))
 

@@ -29,6 +29,7 @@
 #
 from HTMLParser import HTMLParser
 
+
 # HTML Parser for EzWeb
 class HTMLHeadParser(HTMLParser):
 	def __init__(self, document):
@@ -38,40 +39,39 @@ class HTMLHeadParser(HTMLParser):
 		self.starthtml = None
 		self.baseHref = None
 		self.feed(document)
-		
+
 	def handle_starttag(self, tag, attrs):
 		# Check if base tag has href attribute
 		if tag == "base":
 			for name, value in attrs:
-				if ((name == "href") and (value != None) and 
+				if ((name == "href") and (value != None) and
 						(value != '')):
 						self.baseHref = value
-						return		
-					
+						return
+
 		if tag == "html":
 			line, colum = self.getpos()
-			self.starthtml = line			
+			self.starthtml = line
 
 		if tag == "head":
 			line, colum = self.getpos()
 			self.starthead = line
-		
-			
-	def handle_endtag(self, tag):	
-		# Get no line end head tag			
+
+	def handle_endtag(self, tag):
+		# Get no line end head tag
 		if tag == "base":
 			line, colum = self.getpos()
 			self.endbase = line
-			
+
 	def handle_startendtag(self, tag, attrs):
 		# Check if base tag has href attribute
 		if tag == "base":
 			for name, value in attrs:
-				if ((name == "href") and (value != None) and 
+				if ((name == "href") and (value != None) and
 						(value != '')):
 						self.baseHref = value
 						return
-	
+
 	# Return line number of </head>
 	def getPosStartHead(self):
 		return self.starthead
@@ -79,12 +79,11 @@ class HTMLHeadParser(HTMLParser):
 	# Return line number of </base>
 	def getPosEndBase(self):
 		return self.endbase
-		
+
 	# Return href attribute of base tag
 	def getHrefBase(self):
 		return self.baseHref
-	
+
 	# Return line number of <html>
 	def getPosStartHtml(self):
 		return self.starthtml
-

@@ -33,6 +33,7 @@ from django.conf.urls.defaults import patterns
 
 from gadget.views import GadgetCollection, GadgetEntry, GadgetCodeEntry
 
+
 urlpatterns = patterns('gadget.views',
 
     # Gadgets
@@ -40,7 +41,5 @@ urlpatterns = patterns('gadget.views',
     (r'^/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[\._-ÑñáéíóúÁÉÍÓÚ\w]+)$',
         GadgetEntry(permitted_methods=('GET', 'DELETE', 'PUT'))),
     (r'^/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[\._-ÑñáéíóúÁÉÍÓÚ\w]+)/xhtml$',
-        GadgetCodeEntry(permitted_methods=('GET', 'PUT'))),   
+        GadgetCodeEntry(permitted_methods=('GET', 'PUT'))),
 )
-
-

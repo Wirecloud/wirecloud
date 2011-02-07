@@ -60,33 +60,32 @@ from gadget.utils import *
 
 from HTMLParser import HTMLParseError
 
-    
+
 def parseAndCreateGadget(request, user, workspaceId):
     try:
 
         templateURL = None
-        
+
         if request.POST.has_key('url'):
             templateURL = request.POST['url']
         elif request.POST.has_key('template_uri'):
             templateURL = request.POST['template_uri']
         else:
-            msg = _("Missing template URL parameter")    
+            msg = _("Missing template URL parameter")
             raise Exception(msg)
-        
+
         if not workspaceId:
-            msg = _("Missing workspaceId parameter")    
+            msg = _("Missing workspaceId parameter")
             raise Exception(msg)
-            
+
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
         result = get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
-        
+
         return result
-        
-        
+
     except TemplateParseException, e:
-        msg = _("Error parsing the template: %(msg)s" % {"msg":e.msg})
+        msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
     except IntegrityError, e:
         msg = _("Gadget already exists")
@@ -97,7 +96,7 @@ def parseAndCreateGadget(request, user, workspaceId):
     except Http403:
         raise
     except Exception, e:
-        msg = _("Error creating gadget: %(msg)s" % {"msg":str(e)})
+        msg = _("Error creating gadget: %(msg)s" % {"msg": str(e)})
         raise TracedServerError(e, {'url': templateURL}, request, msg)
 
 
@@ -108,8 +107,8 @@ def deleteGadget(user, short_name, vendor, version):
     # Remove all igadget that matches this Gadget Resource
     try:
 
-        gadget = Gadget.objects.get(name = short_name, vendor = vendor, version = version)
-        igadgets = IGadget.objects.filter(gadget = gadget)
+        gadget = Gadget.objects.get(name=short_name, vendor=vendor, version=version)
+        igadgets = IGadget.objects.filter(gadget=gadget)
         for igadget in igadgets:
             result['removedIGadgets'].append(igadget.id)
             deleteIGadget(igadget, user)
@@ -119,13 +118,10 @@ def deleteGadget(user, short_name, vendor, version):
     except Gadget.DoesNotExist:
         pass
 
-
     try:
-
         uri = "/gadgets/" + vendor + '/' + short_name + '/' + version + '/xhtml'
-        xhtml = XHTML.objects.get(uri = uri)
+        xhtml = XHTML.objects.get(uri=uri)
         xhtml.delete()
-
     except XHTML.DoesNotExist:
         pass
 
@@ -135,12 +131,12 @@ def deleteGadget(user, short_name, vendor, version):
 class GadgetCollection(Resource):
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
-        
+
         #Getting all gadgets of the user
         #Done it against workspaces, not directly against gadgets!
         #Done like this, it's not necessary to keep updated relationships between gadgets and users
         gadgets = get_user_gadgets(user)
-        
+
         data = serializers.serialize('python', gadgets, ensure_ascii=False)
 
         data_list = []
@@ -151,18 +147,18 @@ class GadgetCollection(Resource):
 
     @transaction.commit_on_success
     def create(self, request, user_name=None):
-        
+
         if not request.POST.has_key('workspaceId'):
-            msg = _("Missing workspaceId parameter")    
-            json = json_encode({"message":msg, "result":"error"})
+            msg = _("Missing workspaceId parameter")
+            json = json_encode({"message": msg, "result": "error"})
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
-        
+
         user = user_authentication(request, user_name)
-        
+
         #create the gadget
         result = parseAndCreateGadget(request, user, request.POST['workspaceId'])
         templateParser = result["templateParser"]
-        
+
         #return the data
         gadgetName = templateParser.getGadgetName()
         gadgetVendor = templateParser.getGadgetVendor()
@@ -171,8 +167,10 @@ class GadgetCollection(Resource):
         gadget_entry = GadgetEntry()
         # POST and GET behavior is alike, both must return a Gadget JSON representation
         return gadget_entry.read(request, gadgetVendor, gadgetName, gadgetVersion, user_name)
-        
+
+
 class GadgetEntry(Resource):
+
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadgets = get_list_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
@@ -192,7 +190,9 @@ class GadgetEntry(Resource):
         gadget.delete()
         return HttpResponse('ok')
 
+
 class GadgetCodeEntry(Resource):
+
     def read(self, request, vendor, name, version, user_name=None):
         #user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version)
@@ -224,13 +224,13 @@ class GadgetCodeEntry(Resource):
                 xhtml_code = fix_ezweb_scripts(xhtml_code, request)
                 return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
             except HTMLParseError, e:
-                msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg' : e.msg}
+                msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg': e.msg}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
-        xhtml = gadget.xhtml;
+        xhtml = gadget.xhtml
 
         try:
             url = xhtml.url
@@ -246,11 +246,11 @@ class GadgetCodeEntry(Resource):
                     #Gadget with relative url and it's not a GWT package
                     url = get_absolute_url(request, url)
                     xhtml.code = download_http_content(url, user=user)
-                    
+
             xhtml.save()
         except Exception, e:
             msg = _("XHTML code is not accessible")
 
             raise TracedServerError(e, {'vendor': vendor, 'name': name, 'version': version}, request, msg)
-        
+
         return HttpResponse('ok')
