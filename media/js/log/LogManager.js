@@ -68,6 +68,7 @@ LogManager.prototype._printEntry = function(entry) {
 	}
 
 	dateElement = document.createElement('b');
+	Element.extend(dateElement);
 	dateElement.setTextContent(entry.date.strftime('%x %X'));//_('short_date')));
 	wrapper.appendChild(dateElement);
 
@@ -80,7 +81,7 @@ LogManager.prototype._printEntry = function(entry) {
 	clearer.addClassName('floatclearer');
 	wrapper.appendChild(clearer);
 
-	this.wrapperElement.insertBefore(wrapper, this.wrapperElement.childNodes[0]);
+	this.wrapperElement.insertBefore(wrapper, this.wrapperElement.firstChild);
 }
 
 LogManager.prototype._addEntry = function (entry) {
@@ -98,7 +99,7 @@ LogManager.prototype._addEntry = function (entry) {
 };
 
 LogManager.prototype.newCycle = function () {
-	this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.childNodes[0]);
+	this.wrapperElement.insertBefore(document.createElement('hr'), this.wrapperElement.firstChild);
 	this.resetCounters();
 }
 
