@@ -52,12 +52,14 @@ import string
 
 
 class MethodRequest(urllib2.Request):
-  def __init__(self, method, *args, **kwargs):
-    self._method = method
-    urllib2.Request.__init__(self, *args, **kwargs)
 
-  def get_method(self):
-    return self._method
+    def __init__(self, method, *args, **kwargs):
+        self._method = method
+        urllib2.Request.__init__(self, *args, **kwargs)
+
+    def get_method(self):
+        return self._method
+
 
 class Proxy(Resource):
 
@@ -82,7 +84,6 @@ class Proxy(Resource):
             return opener.open(req)
         except urllib2.HTTPError, e:
             return e
-
 
     def create(self, request):
         if not request.user.is_authenticated():
@@ -121,7 +122,6 @@ class Proxy(Resource):
 
         return self.do_request(request, url, method, params);
 
-
     def do_request(self, request, url, method, data):
 
         # HTTP call
@@ -134,12 +134,12 @@ class Proxy(Resource):
             proxy = None
             for proxy_name in settings.NOT_PROXY_FOR:
                 if host.startswith(proxy_name):
-                    proxy = urllib2.ProxyHandler({})#no proxy
+                    proxy = urllib2.ProxyHandler({})  # no proxy
                     break
 
             if not proxy:
                 #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
-                proxy = urllib2.ProxyHandler()#proxies from environment
+                proxy = urllib2.ProxyHandler()  # proxies from environment
 
             opener = urllib2.build_opener(proxy)
 
@@ -198,12 +198,11 @@ class Proxy(Resource):
                 else:
                     return HttpResponseNotFound(e.reason)
 
-
             # Add content-type header to the response
             if (res.info().has_key('Content-Type')):
-                response = HttpResponse (res.read(), mimetype=res.info()['Content-Type'])
+                response = HttpResponse(res.read(), mimetype=res.info()['Content-Type'])
             else:
-                response = HttpResponse (res.read())
+                response = HttpResponse(res.read())
 
             # Set status code to the response
             response.status_code = res.code
@@ -220,9 +219,8 @@ class Proxy(Resource):
                     for key in cookie_parser:
                         response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
 
-                elif is_valid_header (string.lower(header)):
+                elif is_valid_header(string.lower(header)):
                     response[header] = headers[header]
-
 
             return response
 
@@ -232,6 +230,7 @@ class Proxy(Resource):
 
 
 EZWEB_PROXY = Proxy()
+
 
 def proxy_request(request, protocol, domain, path):
     content_type = request.META.get('CONTENT_TYPE', '')
@@ -254,7 +253,6 @@ def proxy_request(request, protocol, domain, path):
             return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
     except:
         return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
-
 
     url = protocol + '://' + domain + path
     if len(request.GET) > 0:
