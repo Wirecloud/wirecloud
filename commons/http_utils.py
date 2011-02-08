@@ -99,10 +99,4 @@ def PUT_parameter (request, parameter_name):
     # Checking GET and POST space!
     return request.POST[parameter_name]
 
-def get_absolute_url(request, url):    
-    if hasattr(settings, 'DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS'):
-        url = settings.DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS + url
-    else:
-        url = request.build_absolute_uri(url)
 
-    return url

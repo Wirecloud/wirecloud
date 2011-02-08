@@ -39,7 +39,7 @@ from django.template import Context, Template
 from django.utils.translation import ugettext as _
 
 from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content, get_absolute_url
+from commons.http_utils import download_http_content
 
 from gadgetCodeParser import GadgetCodeParser
 from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability, SharedVariableDef
@@ -48,6 +48,7 @@ from commons.translation_utils import get_trans_index
 from translator.models import Translation
 
 from urllib import url2pathname
+from urllib2 import urlparse
 
 
 class TemplateParser:
@@ -76,7 +77,7 @@ class TemplateParser:
 
     def parse(self):
         # Parse the input
-        self.handler = TemplateHandler(self.fromWGT, self.request, user=self.user)
+        self.handler = TemplateHandler(self.fromWGT, self.request, self.uri, user=self.user)
         parseString(self.xml, self.handler)
 
     def getGadget(self):
@@ -180,7 +181,7 @@ class TemplateHandler(handler.ContentHandler):
     _SLOT = "SLOT"
     _EVENT = "EVEN"
 
-    def __init__(self, fromWGT, request, user=None):
+    def __init__(self, fromWGT, request, uri, user=None):
         self._relationships = []
         self._accumulator = []
         self._link = []
@@ -213,6 +214,7 @@ class TemplateHandler(handler.ContentHandler):
         self.fromWGT = fromWGT
         self.user = user
         self.request = request
+        self.uri = uri
 
     def typeText2typeCode(self, typeText):
         if typeText == 'text':
@@ -542,7 +544,6 @@ class TemplateHandler(handler.ContentHandler):
         _href = ""
 
         if (attrs.has_key('href')):
-            #_href = url2pathname(attrs.get('href').encode("utf8"))
             _href = attrs.get('href').encode("utf8")
 
         _cacheable = True
@@ -555,18 +556,18 @@ class TemplateHandler(handler.ContentHandler):
 
         if (_href != ""):
             try:
-                #Checking if _href is a relative URL
+                # Checking if _href is a relative URL
                 _relative_url = ''
 
-                if (not self.fromWGT and not _href.lower().startswith('http')):
-                    #Relative URL. Appending request.get_host()
+                if not self.fromWGT:
+                    result = urlparse.urlparse(_href)
 
-                    if _href[0] != '/':
-                        _href = '/' + _href
+                    if result.scheme == 'file':
+                        raise TemplateParseException(_('Invalid URL scheme: file'))
 
-                    _relative_url = _href
-
-                    _href = get_absolute_url(self.request, _relative_url)
+                    if result.scheme == '':
+                        _relative_url = _href
+                        _href = urlparse.urljoin(self.uri, _href)
 
                 # Gadget Code Parsing
                 gadgetParser = GadgetCodeParser()

@@ -32,6 +32,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
+from django.conf import settings
 
 from translator.models import TransModel
 
@@ -80,6 +81,14 @@ class Gadget(TransModel):
 
     def __unicode__(self):
         return self.uri
+
+    def get_resource_url(self, url, request):
+        if hasattr(settings, 'DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS'):
+            url = settings.DOMAIN_FOR_GADGETS_LINKED_WITH_RELATIVE_URLS + url
+        else:
+            url = request.build_absolute_uri(url)
+
+        return url
 
     def get_related_events(self):
         return VariableDef.objects.filter(gadget=self, aspect='EVEN')

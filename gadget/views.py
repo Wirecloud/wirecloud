@@ -204,11 +204,10 @@ class GadgetCodeEntry(Resource):
 
         if not xhtml.cacheable:
             try:
-                if (not xhtml.url.startswith('http')
-                    and not xhtml.url.startswith('https')):
+                if xhtml.url.startswith('/deployment/gadgets/'):
                     xhtml.code = get_xhtml_content(xhtml.url)
                 else:
-                    xhtml.code = download_http_content(xhtml.url,
+                    xhtml.code = download_http_content(gadget.get_resource_url(xhtml.url, request),
                                                        user=request.user)
                 xhtml.save()
             except Exception, e:
