@@ -41,13 +41,12 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
 
-from proxy.utils import encode_query, is_valid_header, is_localhost
+from proxy.utils import encode_query, is_valid_header
 
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
-from django.utils.translation import string_concat
 
-from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.conf import settings
 
 from django.utils import simplejson
