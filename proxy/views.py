@@ -38,19 +38,16 @@ import socket
 import urllib2
 import urlparse
 
-from commons.logs_exception import TracedServerError
-from commons.resource import Resource
-from commons.utils import get_xml_error
-
-from proxy.utils import encode_query, is_valid_header
-
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
+from django.utils import simplejson
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
-from django.conf import settings
-
-from django.utils import simplejson
+from commons.logs_exception import TracedServerError
+from commons.resource import Resource
+from commons.utils import get_xml_error
+from proxy.utils import encode_query, is_valid_header
 
 
 class MethodRequest(urllib2.Request):

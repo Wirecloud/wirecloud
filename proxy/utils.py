@@ -30,10 +30,10 @@
 
 #
 
-from urllib import unquote
-from django.utils.http import urlencode
-
 import re
+from urllib import unquote
+
+from django.utils.http import urlencode
 
 
 def is_localhost(host):
