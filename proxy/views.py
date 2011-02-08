@@ -116,7 +116,7 @@ class Proxy(Resource):
             else:
                 try:
                     params = urlencode(simplejson.loads(request.POST['params']))
-                except Exception, e:
+                except Exception:
                     params = encode_query(request.POST['params'])
         else:
             params = None
