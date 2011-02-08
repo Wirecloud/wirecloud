@@ -36,6 +36,7 @@ import httplib
 import re
 import socket
 import urllib2
+import urlparse
 
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
