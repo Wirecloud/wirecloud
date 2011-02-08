@@ -197,7 +197,6 @@ class GadgetCodeEntry(Resource):
         #user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version)
         xhtml = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
-        xhtml_code = xhtml.code
 
         content_type = gadget.xhtml.content_type
         if not content_type:
@@ -216,6 +215,7 @@ class GadgetCodeEntry(Resource):
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible")
 
+        xhtml_code = xhtml.code
         if (content_type != 'text/html') and (content_type != 'application/xml+html'):
             return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
         else:
