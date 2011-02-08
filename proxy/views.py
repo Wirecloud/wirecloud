@@ -31,7 +31,11 @@
 #
 
 import Cookie
-import urllib2, httplib, urlparse, re, socket, errno
+import errno
+import httplib
+import re
+import socket
+import urllib2
 
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
