@@ -44,17 +44,15 @@ def is_localhost(host):
 
 
 def is_valid_header(header):
-    if (header == 'connection') or (header == 'keep-alive') or (header == 'proxy-authenticate') or (header == 'proxy-authorization') or (header == 'te') or (header == 'trailers') or (header == 'transfer-encoding') or (header == 'upgrade'):
-        return False
-    else:
-        return True
+    return header in ('connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailers', 'transfer-encoding', 'upgrade')
 
 
 def encode_query(query):
     params = query.split("&")
     query_params = {}
-    for i in range(len(params)):
-        elements = params[i].split("=")
+    for param in params:
+        elements = param.split("=")
         if len(elements) > 1:
-            query_params[unquote(elements[0].encode('utf8')).decode('utf8')] = unquote(elements[1].encode('utf8')).decode('utf8')
+            key, value = elements
+            query_params[unquote(key.encode('utf8')).decode('utf8')] = unquote(value.encode('utf8')).decode('utf8')
     return urlencode(query_params)
