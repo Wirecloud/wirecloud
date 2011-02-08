@@ -100,19 +100,16 @@ class Proxy(Resource):
             return HttpResponseServerError(get_xml_error(_(u"Invalid request Referer")), mimetype='application/xml; charset=UTF-8')
 
         # URI to be called
-        if request.POST.has_key('url'):
+        if 'url' in request.POST:
             url = request.POST['url']
         else:
             return HttpResponseNotFound(get_xml_error(_(u"Url not specified")), mimetype='application/xml; charset=UTF-8')
 
         # HTTP method, by default is GET
-        if request.POST.has_key('method'):
-            method = request.POST['method'].upper()
-        else:
-            method = "GET"
+        method = request.POST.get('method', 'GET').upper()
 
         # Params
-        if method != 'GET' and request.POST.has_key('params'):
+        if method != 'GET' and 'params' in request.POST:
             # if Content-Type is xml or json then skipping encode function.
             if re.search("application/(json|xml|[a-zA-Z-]+\+xml)|text/xml", request.META["CONTENT_TYPE"]) != None:
                 params = request.POST['params'].encode('utf-8')
@@ -124,7 +121,7 @@ class Proxy(Resource):
         else:
             params = None
 
-        return self.do_request(request, url, method, params);
+        return self.do_request(request, url, method, params)
 
     def do_request(self, request, url, method, data):
 
@@ -203,8 +200,9 @@ class Proxy(Resource):
                     return HttpResponseNotFound(e.reason)
 
             # Add content-type header to the response
-            if (res.info().has_key('Content-Type')):
-                response = HttpResponse(res.read(), mimetype=res.info()['Content-Type'])
+            res_info = res.info()
+            if ('Content-Type' in res_info):
+                response = HttpResponse(res.read(), mimetype=res_info['Content-Type'])
             else:
                 response = HttpResponse(res.read())
 
