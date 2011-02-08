@@ -52,8 +52,6 @@ from django.conf import settings
 
 from django.utils import simplejson
 
-import string
-
 
 class MethodRequest(urllib2.Request):
 
@@ -212,7 +210,8 @@ class Proxy(Resource):
             # Add all the headers received from the response
             headers = res.headers
             for header in headers:
-                if string.lower(header) == 'set-cookie':
+                header_lower = header.lower()
+                if header_lower == 'set-cookie':
                     cookie_parser = Cookie.SimpleCookie()
                     cookies = res.headers.getheaders(header)
                     for i in range(len(cookies)):
@@ -221,7 +220,7 @@ class Proxy(Resource):
                     for key in cookie_parser:
                         response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
 
-                elif is_valid_header(string.lower(header)):
+                elif is_valid_header(header_lower):
                     response[header] = headers[header]
 
             return response
