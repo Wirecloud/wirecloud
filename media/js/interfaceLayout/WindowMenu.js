@@ -1208,8 +1208,9 @@ FormWindowMenu.prototype._clearListener = function() {
 };
 
 FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
-	var i, j, igadget, igadgets, igadget_params, pref_params, prop_params,
-		variable, variables, varManager, label;
+	var i, name, igadget, igadgets, igadget_params, pref_params,
+		prop_params, variable, variables, varManager, label, empty_prefs,
+		empty_props, var_elements;
 
 	this.workspace = workspace;
 	varManager = workspace.getVarManager();
@@ -1220,49 +1221,61 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 		igadget = igadgets[i];
 		variables = varManager.getIGadgetVariables(igadget.getId());
 		pref_params = {};
+		empty_prefs = true;
 		prop_params = {};
+		empty_props = true;
 
-		for (j in variables) {
-			variable = variables[j];
+		for (name in variables) {
+			variable = variables[name];
 			if (variable.aspect === Variable.prototype.USER_PREF) {
-				pref_params[j] = {
+				pref_params[name] = {
 					label: variable.label,
 					type: 'parametrizableValue',
 					variable: variable,
 					canBeHidden: true,
 					parentWindow: this
 				};
+				empty_prefs = false;
 			} else if (variable.aspect === Variable.prototype.PROPERTY) {
 				if (variable.label && variable.label != '') {
 					label = variable.label;
 				} else {
 					label = variable.name;
 				}
-				prop_params[j] = {
+				prop_params[name] = {
 					label: label,
 					type: 'parametrizableValue',
 					variable: variable,
 					parentWindow: this
 				};
+				empty_props = false;
 			}
 		}
-		igadget_params[igadget.id] = {
-			label: igadget.name,
-			type: 'fieldset',
-			nested: true,
-			elements: {
-				'pref' : {
-					label: gettext('Preferences'),
-					type: 'fieldset',
-					elements: pref_params
-				},
-				'props': {
-					label: gettext('Properties'),
-					type: 'fieldset',
-					elements: prop_params
-				}
+
+		var_elements = {};
+		if (!empty_prefs) {
+			var_elements['pref'] = {
+				label: gettext('Preferences'),
+				type: 'fieldset',
+				elements: pref_params
 			}
-		};
+		}
+		if (!empty_props) {
+			var_elements['props'] = {
+				label: gettext('Properties'),
+				type: 'fieldset',
+				elements: prop_params
+			}
+		}
+
+		if (!empty_prefs || !empty_props) {
+			igadget_params[igadget.id] = {
+				label: igadget.name,
+				type: 'fieldset',
+				nested: true,
+				elements: var_elements
+			};
+		}
 	}
 
 	fields['advanced'].elements['parametrization'] = {
