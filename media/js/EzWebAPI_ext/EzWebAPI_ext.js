@@ -2746,6 +2746,38 @@ StyledElements.StyledPasswordField = function(options) {
 }
 StyledElements.StyledPasswordField.prototype = new StyledElements.StyledInputElement();
 
+
+/**
+ *
+ */
+StyledElements.StyledHiddenField = function(options) {
+    var defaultOptions = {
+        'initialValue': '',
+        'class': ''
+    };
+    options = EzWebExt.merge(defaultOptions, options);
+
+    StyledElements.StyledInputElement.call(this, options.initialValue, []);
+
+    this.wrapperElement = document.createElement("div");
+    
+    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'hidden');
+
+    this.inputElement = document.createElement("input");
+    this.inputElement.setAttribute("type", "hidden");
+
+    if (options['name'] !== undefined)
+        this.inputElement.setAttribute("name", options['name']);
+
+    if (options['id'] != undefined)
+        this.wrapperElement.setAttribute("id", options['id']);
+
+    this.inputElement.setAttribute("value", options['initialValue']);
+
+    this.wrapperElement.appendChild(this.inputElement);
+}
+StyledElements.StyledHiddenField.prototype = new StyledElements.StyledInputElement();
+
 /**
  * @param options Una tabla hash con opciones. Los posibles valores son los
  * siguientes:
