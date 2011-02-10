@@ -231,6 +231,36 @@ div.styled_password_field div input {
   margin: 0;
 }
 
+/* Styled Date Field */
+
+div.styled_date_field {
+  padding: 0;
+  width:   10em;
+  font-size: 13px;
+}
+
+div.styled_date_field div {
+  border:  0px none;
+  margin:  1px 4px 0px 4px;
+  padding: 0px;
+  width:   auto;
+}
+
+div.styled_date_field div input {
+  background: inherit; /* transparent fails in IE8 */
+  border: 0 none;
+  color: black;
+  display: block;
+  height: 18px;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+div.styled_date_field div input:focus {
+  outline: 0 none;
+}
+
 /* Styled Numeric Field */
 
 div.styled_numeric_field {
@@ -622,21 +652,12 @@ div.styled_list div.row.selected {
   color:      #FAFAFA;
 }
 
-/* Styled Text Field */
+/* Styled Text Field, Styled Password Field and Styled Date Field */
 
-div.styled_text_field {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  background: white;
-  border:  1px solid #888888;
-  height:  20px;
-  margin:  3px;
-}
-
-/* Styled Password Field */
-
-div.styled_password_field {
+div.styled_text_field,
+div.styled_password_field,
+div.styled_date_field
+{
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;

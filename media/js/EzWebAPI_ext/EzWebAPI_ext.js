@@ -2778,6 +2778,46 @@ StyledElements.StyledHiddenField = function(options) {
 }
 StyledElements.StyledHiddenField.prototype = new StyledElements.StyledInputElement();
 
+
+/**
+ *
+ */
+StyledElements.StyledDateField = function(options) {
+    var defaultOptions = {
+        'initialValue': '',
+        'class': ''
+    };
+    options = EzWebExt.merge(defaultOptions, options);
+
+    StyledElements.StyledInputElement.call(this, options.initialValue, ['change']);
+
+    this.wrapperElement = document.createElement("div");
+    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_date_field');
+
+    this.inputElement = document.createElement("input");
+    this.inputElement.setAttribute("type", "text");
+
+    if (options['name'] != undefined) {
+        this.inputElement.setAttribute("name", options['name']);
+    }
+
+    if (options['id'] != undefined) {
+        this.inputElement.setAttribute("id", options['id']);
+    }
+
+    if (options['placeholder'] != undefined) {
+        this.inputElement.setAttribute("placeholder", options['placeholder']);
+    }
+
+    this.inputElement.setAttribute("value", options['initialValue']);
+
+    var div = document.createElement("div");
+    div.appendChild(this.inputElement);
+    this.wrapperElement.appendChild(div);
+}
+StyledElements.StyledDateField.prototype = new StyledElements.StyledInputElement();
+
+
 /**
  * @param options Una tabla hash con opciones. Los posibles valores son los
  * siguientes:
