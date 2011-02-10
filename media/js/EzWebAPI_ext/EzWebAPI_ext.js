@@ -2816,10 +2816,12 @@ StyledElements.StyledNumericField = function(options) {
 
     if (options.minValue != null) {
         options.minValue = Number(options.minValue);
+        this.inputElement.setAttribute("min", options.minValue);
     }
 
     if (options.maxValue != null) {
         options.maxValue = Number(options.maxValue);
+        this.inputElement.setAttribute("max", options.maxValue);
     }
     options.inc = Number(options.inc);
 
