@@ -260,10 +260,17 @@ var OpManagerFactory = function () {
 			}
 
 			var cloneError = function(transport, e) {
-				var logManager = LogManagerFactory.getInstance();
-				var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+				var logManager, layoutManager, msg;
+
+				logManager = LogManagerFactory.getInstance();
+                                layoutManager = LayoutManagerFactory.getInstance();
+
+				msg = logManager.formatError(gettext("Error adding the workspace: %(errorMsg)s."), transport, e);
 				logManager.log(msg);
-				LayoutManagerFactory.getInstance().logStep('');
+				layoutManager.logStep('');
+				layoutManager._notifyPlatformReady();
+
+				layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
 			}
 			
 			LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);

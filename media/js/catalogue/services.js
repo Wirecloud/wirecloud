@@ -349,28 +349,38 @@ var CatalogueResourceSubmitter = function () {
   this.add_gadget_from_template = function (template_uri) {
 	
     var error_callback = function (transport, e) {
-	  var response = transport.responseText;
-	  var response_message = JSON.parse(response)['message'];
-	
-	  var logManager = LogManagerFactory.getInstance();
-	  var msg = gettext("The resource could not be added to the catalogue: %(errorMsg)s.");
-	
-	  msg = interpolate(msg, {errorMsg: response_message}, true);
-	  LayoutManagerFactory.getInstance().hideCover(); //TODO: is it necessary?
-	  LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-	  logManager.log(msg);
-	}
-	
+        var logManager, layoutManager, msg;
+
+        logManager = LogManagerFactory.getInstance();
+        layoutManager = LayoutManagerFactory.getInstance();
+
+        msg = logManager.formatError(gettext("The resource could not be added to the catalogue: %(errorMsg)s."), transport, e);
+
+        logManager.log(msg);
+        layoutManager._notifyPlatformReady();
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+    }
+
     var success_callback = function (response) { 
-      var processed_response_data = this.caller.process_response(response.responseText, this);
+        var layoutManager, processed_response_data;
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager.logSubTask(gettext('Processing catalogue response'));
+
+        processed_response_data = this.caller.process_response(response.responseText, this);
     
-      // "this" is binded to a "ResponseCommand" object
-      this.set_data(processed_response_data);
-  
-      // processing command
-      this.process();
- 	}
+        // "this" is binded to a "ResponseCommand" object
+        this.set_data(processed_response_data);
+
+        layoutManager._notifyPlatformReady();
+
+        // processing command
+        this.process();
+    }
     
+    var layoutManager = LayoutManagerFactory.getInstance();
+    layoutManager._startComplexTask(gettext("Adding the resource to the catalogue"), 2);
+    layoutManager.logSubTask(gettext('Sending resource template to the catalogue'));
+
     var response_command = new ResponseCommand(this.resp_command_processor, this);
     response_command.set_id('SUBMIT_GADGET');
     
@@ -378,7 +388,7 @@ var CatalogueResourceSubmitter = function () {
     
     params['template_uri'] = template_uri;
 	
-	this.persistence_engine.send_post(URIs.GET_POST_RESOURCES, params, response_command, success_callback, error_callback);
+    this.persistence_engine.send_post(URIs.GET_POST_RESOURCES, params, response_command, success_callback, error_callback);
   }
 
   this.add_gadget_from_wgt = function () {
