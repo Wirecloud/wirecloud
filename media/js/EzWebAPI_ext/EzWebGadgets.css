@@ -386,6 +386,14 @@ div.styled_numeric_field div.numeric_bottom_button {
   bottom: 3px;
 }
 
+.notebook .tab_wrapper > .tab_area_msg {
+  z-index: 3;
+  left: auto;
+  position: absolute;
+  top: 1px;
+  display: none;
+}
+
 .notebook .tab_wrapper .move_left {
   color: #AAA;
   cursor: default;
@@ -747,7 +755,7 @@ div.styled_numeric_field div.numeric_bottom_button {
   border-style: solid;
   border-color: #888888 #888888 #F2F1F0 #888888;
   font-size: 12px;
-  padding:3px 19px 0 3px;
+  padding: 3px 19px 0 3px;
   margin: 0 3px;
   height: 17px;
   line-height: 17px;
@@ -784,6 +792,16 @@ div.styled_numeric_field div.numeric_bottom_button {
   height: 18px;
   border-bottom: 0 none;
   background: #EDECEB url(images/styledElements/selectedTab.png) repeat-x scroll 0 0;
+}
+
+.notebook div.tab_wrapper > .tab_area_msg {
+  right: 80px;
+  border: 1px solid #3B7614;
+  background-color: #B6F48E;
+  background: #a5f2c9 url(images/icon_success.gif) no-repeat right;
+  padding: 2px 5px;
+  font-size: 90%;
+  min-width: 250px;
 }
 
 .notebook > div > .wrapper {

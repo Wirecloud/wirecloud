@@ -3471,6 +3471,10 @@ StyledElements.StyledNotebook = function(options) {
     this.tabArea.className = "tab_area";
     tabWrapper.appendChild(this.tabArea);
 
+    this.tabAreaMsg = document.createElement("div");
+    this.tabAreaMsg.className = "tab_area_msg";
+    tabWrapper.appendChild(this.tabAreaMsg);
+
     this.moveLeftButton = document.createElement("div");
     this.moveLeftButton.className = "move_left";
     this.moveLeftButton.appendChild(document.createTextNode("<"));
