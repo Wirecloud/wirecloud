@@ -169,7 +169,7 @@ class UriGadgetHandler(handler.ContentHandler):
 
 def get_shared_var_def(attrs):
 
-    if (attrs.has_key('shared_concept')):
+    if 'shared_concept' in attrs:
             name = attrs.get('shared_concept')
             shared_var_def, create = SharedVariableDef.objects.get_or_create(name=name)
             return shared_var_def
@@ -233,22 +233,10 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
 
     def processProperty(self, attrs):
-        _name = ''
-        _type = ''
-        _description = ''
-        _default_value = None
-
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
-
-        if (attrs.has_key('default')):
-            _default_value = attrs.get('default')
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _description = attrs.get('description', '')
+        _default_value = attrs.get('default', None)
 
         if (_name != '' and _type != ''):
             #check if it's shared
@@ -275,29 +263,13 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_(u"ERROR: missing attribute at Property element"))
 
     def processPreference(self, attrs):
-        _name = ''
-        _type = ''
-        _description = ''
-        _label = ''
-        _default_value = ''
-
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
-
-        if (attrs.has_key('label')):
-            _label = attrs.get('label')
-
-        if (attrs.has_key('default')):
-            _default_value = attrs.get('default')
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _description = attrs.get('description', '')
+        _label = attrs.get('label', '')
+        _default_value = attrs.get('default', '')
 
         if (_name != '' and _type != '' and _description != '' and _label != ''):
-
             #check if it's shared
             shared_concept = get_shared_var_def(attrs)
 
@@ -336,28 +308,17 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at UserPreference element"))
 
     def processEvent(self, attrs):
-        _name = ''
-        _type = ''
-        _description = ''
-        _label = ''
-        _friendCode = ''
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _description = attrs.get('description', '')
+        _label = attrs.get('label', '')
+        _friendCode = attrs.get('friendcode', '')
 
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
+        if _description:
             index = self.addIndex(_description)
 
-        if (attrs.has_key('label')):
-            _label = attrs.get('label')
+        if _label:
             index = self.addIndex(_label)
-
-        if (attrs.has_key('friendcode')):
-            _friendCode = attrs.get('friendcode')
 
         if (_name != '' and _type != '' and _friendCode != ''):
 
@@ -389,30 +350,12 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at Event element"))
 
     def processSlot(self, attrs):
-        _name = ''
-        _type = ''
-        _description = ''
-        _label = ''
-        _friendCode = ''
-        _action_label = ''
-
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
-
-        if (attrs.has_key('label')):
-            _label = attrs.get('label')
-
-        if attrs.has_key('actionlabel'):
-            _action_label = attrs.get('actionlabel')
-
-        if (attrs.has_key('friendcode')):
-            _friendCode = attrs.get('friendcode')
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _description = attrs.get('description', '')
+        _label = attrs.get('label', '')
+        _friendCode = attrs.get('friendcode', '')
+        _action_label = attrs.get('actionlabel', '')
 
         if (_name != '' and _type != '' and _friendCode != ''):
 
@@ -452,14 +395,8 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at Slot element"))
 
     def processCapability(self, attrs):
-        name = None
-        value = None
-
-        if (attrs.has_key('name')):
-            name = attrs.get('name')
-
-        if (attrs.has_key('value')):
-            value = attrs.get('value')
+        name = attrs.get('name', None)
+        value = attrs.get('value', None)
 
         if (not name or not value):
             raise TemplateParseException(_("ERROR: missing attribute at Capability element"))
@@ -470,22 +407,10 @@ class TemplateHandler(handler.ContentHandler):
         self._capabilities.append(Capability(name=name.lower(), value=value.lower(), gadget=self._gadget))
 
     def processGadgetContext(self, attrs):
-        _name = ''
-        _type = ''
-        _concept = ''
-        _description = ''
-
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('concept')):
-            _concept = attrs.get('concept')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _concept = attrs.get('concept', '')
+        _description = attrs.get('description', '')
 
         if (_name != '' and _type != '' and _concept != ''):
             vDef = VariableDef(name=_name, description=_description,
@@ -505,29 +430,17 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at Gadget Context element"))
 
     def processExternalContext(self, attrs):
-        _name = ''
-        _type = ''
-        _concept = ''
-        _description = ''
-
-        if (attrs.has_key('name')):
-            _name = attrs.get('name')
-
-        if (attrs.has_key('type')):
-            _type = attrs.get('type')
-
-        if (attrs.has_key('concept')):
-            _concept = attrs.get('concept')
-
-        if (attrs.has_key('description')):
-            _description = attrs.get('description')
+        _name = attrs.get('name', '')
+        _type = attrs.get('type', '')
+        _concept = attrs.get('concept', '')
+        _description = attrs.get('description', '')
 
         if (_name != '' and _type != '' and _concept != ''):
             vDef = VariableDef(name=_name, description=_description,
                                type=self.typeText2typeCode(_type),
                                aspect='ECTX', friend_code=None,
                                gadget=self._gadget)
-                        #vDef.save()
+            #vDef.save()
             context = ContextOption(concept=_concept, varDef=vDef)
             #context.save()
 
@@ -541,20 +454,11 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at External Context element"))
 
     def processXHTML(self, attrs):
-        _href = ""
+        _href = attrs.get('href', '').encode('utf8')
+        _cacheable = attrs.get('cacheable', 'true').encode('utf8').lower() == 'true'
+        _content_type = attrs.get('content-type', None)
 
-        if (attrs.has_key('href')):
-            _href = attrs.get('href').encode("utf8")
-
-        _cacheable = True
-        if attrs.has_key('cacheable'):
-            _cacheable = attrs.get('cacheable').encode("utf8").lower() == "true"
-
-        _content_type = None
-        if (attrs.has_key('content-type')):
-            _content_type = attrs.get('content-type')
-
-        if (_href != ""):
+        if _href != "":
             try:
                 # Checking if _href is a relative URL
                 _relative_url = ''
@@ -583,17 +487,15 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at XHTML element"))
 
     def processOption(self, attrs):
-        _value = ""
-        _name = ""
-
-        if (attrs.has_key('name')):
+        if 'name' in attrs:
             # backward compatibility
-            _name = attrs.get('name')
-        elif (attrs.has_key('label')):
-            _name = attrs.get('label')
+            _name = attrs['name']
+        elif 'label' in attrs:
+            _name = attrs['label']
+        else:
+            _name = ''
 
-        if (attrs.has_key('value')):
-            _value = attrs.get('value')
+        _value = attrs.get('value', '')
 
         if (_value != "") and (_name != "") and (self._lastPreference['vdef'].type == self.typeText2typeCode("list")):
             option = UserPrefOption(value=_value, name=_name, variableDef=self._lastPreference['vdef'])
@@ -605,14 +507,8 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at Option element"))
 
     def processRendering(self, attrs):
-        _width = ""
-        _height = ""
-
-        if (attrs.has_key('width')):
-            _width = attrs.get('width')
-
-        if (attrs.has_key('height')):
-            _height = attrs.get('height')
+        _width = attrs.get('width', '')
+        _height = attrs.get('height', '')
 
         if (_width != "" and _height != ""):
             self._gadgetWidth = _width
@@ -621,22 +517,22 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing attribute at Rendering element"))
 
     def processTranslations(self, attrs):
-        if (attrs.has_key('default')):
-            self.default_lang = attrs.get('default')
-        else:
+        try:
+            self.default_lang = attrs['default']
+        except KeyError:
             raise TemplateParseException(_("ERROR: missing the 'default' attribute at Translations element"))
 
     def processTranslation(self, attrs):
-        if (attrs.has_key('lang')):
-            self.current_lang = attrs.get('lang')
+        try:
+            self.current_lang = attrs['lang']
             self.lang_list.append(self.current_lang)
-        else:
+        except KeyError:
             raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
 
     def processMsg(self, attrs):
-        if (attrs.has_key('name')):
-            self.current_text = attrs.get('name')
-        else:
+        try:
+            self.current_text = attrs['name']
+        except KeyError:
             raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
 
     def addIndex(self, index):
@@ -648,16 +544,15 @@ class TemplateHandler(handler.ContentHandler):
 
     def addTranslation(self, index, object):
         table_ = object.__class__.__module__ + "." + object.__class__.__name__
-        if self.translations.has_key(index):
+        if index in self.translations:
             #increment the number of times this index has been used (it will been used when the Translation is saved)
             times = 1
-            if self.translations[index].has_key("times"):
+            if 'times' in self.translations[index]:
                 times = self.translations[index]["times"]
             self.translations[index]["times"] = times + 1
         else:
             self.translations[index] = {}
             self.translations[index]["trans"] = table_
-        return
 
 ###############
 
@@ -906,11 +801,11 @@ class TemplateHandler(handler.ContentHandler):
 
             #save translations
             for ind in rel['trans']:
-                if self.translations.has_key(ind):
+                if ind in self.translations:
                     for trans in self.translations[ind]["trans"]:
                         self.createTranslation(trans, rel['vdef'].id)
                     times = 1
-                    if self.translations[ind].has_key("times"):
+                    if 'times' in self.translations[ind]:
                         times = self.translations[ind]["times"]
                     if times == 1:
                         del self.translations[ind]
@@ -924,11 +819,11 @@ class TemplateHandler(handler.ContentHandler):
             for opt in rel['option']:
                 opt["option"].variableDef = rel['vdef']
                 opt["option"].save()
-                if opt["index"] and self.translations.has_key(opt["index"]):
+                if opt["index"] and opt['index'] in self.translations:
                     for trans in self.translations[opt["index"]]["trans"]:
                         self.createTranslation(trans, opt["option"].id)
                     times = 1
-                    if self.translations[opt["index"]].has_key("times"):
+                    if 'times' in self.translations[opt["index"]]:
                         times = self.translations[opt["index"]]["times"]
                     if times == 1:
                         del self.translations[opt["index"]]

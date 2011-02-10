@@ -64,9 +64,9 @@ def parseAndCreateGadget(request, user, workspaceId):
 
         templateURL = None
 
-        if request.POST.has_key('url'):
+        if 'url' in request.POST:
             templateURL = request.POST['url']
-        elif request.POST.has_key('template_uri'):
+        elif 'template_uri' in request.POST:
             templateURL = request.POST['template_uri']
         else:
             msg = _("Missing template URL parameter")
@@ -141,7 +141,7 @@ class GadgetCollection(Resource):
     @transaction.commit_on_success
     def create(self, request, user_name=None):
 
-        if not request.POST.has_key('workspaceId'):
+        if 'workspaceId' not in request.POST:
             msg = _("Missing workspaceId parameter")
             json = json_encode({"message": msg, "result": "error"})
             return HttpResponseServerError(json, mimetype='application/json; charset=UTF-8')
