@@ -31,7 +31,6 @@
 #
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.core import serializers
 
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
@@ -178,8 +177,7 @@ def createTab (tab_name, user,  workspace):
     ids['id'] = tab.id
     ids['name'] = tab.name
 
-    data = serializers.serialize('python', [wsVariable], ensure_ascii=False)
-    ids['workspaceVariables'] = [get_workspace_variable_data(d, user, workspace) for d in data]
+    ids['workspaceVariables'] = [get_workspace_variable_data(wsVariable, user, workspace)]
     
     return ids
 
@@ -372,13 +370,8 @@ class WorkSpaceCollection(Resource):
             msg = _("error reading workspace: ") + unicode(e)
             
             raise TracedServerError(e, "bad creation of default workspaces", request, msg)
-        
-        data = serializers.serialize('python', workspaces, ensure_ascii=False)
-        workspace_list = []
-        
-        for i in range(len(workspaces)):
-            workspace_list.append(get_workspace_data(data[i], user, workspaces[i]))
-            
+
+        workspace_list = [get_workspace_data(workspace, user) for workspace in workspaces]
         data_list['workspaces'] = workspace_list
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
@@ -402,13 +395,10 @@ class WorkSpaceCollection(Resource):
             workspace_name = ts.get('name')
 
             workspace = createWorkSpace (workspace_name, user)
+            workspace_data = get_global_workspace_data(workspace, user)
 
-            data = serializers.serialize('python', [workspace], ensure_ascii=False)
-
-            workspace_data = get_global_workspace_data(data[0], workspace, user)
-            
             return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
-            
+
         except Exception, e:
             transaction.rollback()
             msg = _("workspace cannot be created: ") + unicode(e)
@@ -423,8 +413,7 @@ class WorkSpaceEntry(Resource):
         user = get_user_authentication(request)
 
         workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
-        data = serializers.serialize('python', [workspace], ensure_ascii=False)[0]
-        workspace_data = get_global_workspace_data(data, workspace, user)
+        workspace_data = get_global_workspace_data(workspace, user)
         
         #Closing session after downloading public user workspace        
         if (user.username == 'public' and last_user and last_user != 'public' and last_user != ''):
@@ -841,12 +830,11 @@ class  WorkSpaceAdderEntry(Resource):
         linkWorkspace(user, cloned_workspace.id, original_workspace.get_creator())
         
         #Mark the mashup as the active workspace if it's requested. For example, solutions
-        if request.GET.has_key('active') and request.GET['active']=="true":
-            setActiveWorkspace(user, cloned_workspace);
-        
-        data = serializers.serialize('python', [cloned_workspace], ensure_ascii=False)
-        workspace_data = get_global_workspace_data(data[0], cloned_workspace, user)
-        
+        if request.GET.get('active') == "true":
+            setActiveWorkspace(user, workspace);
+
+        workspace_data = get_global_workspace_data(workspace, user)
+
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
 class WorkSpacePublisherEntry(Resource):

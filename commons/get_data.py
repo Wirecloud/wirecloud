@@ -32,8 +32,6 @@
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 
-from django.core import serializers
-
 from gadget.models import Gadget, XHTML, ContextOption, UserPrefOption, Capability
 from igadget.models import Variable, VariableDef, Position, IGadget
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
@@ -46,6 +44,7 @@ from django.conf import settings
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from django.contrib.auth.models import Group
+
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -90,10 +89,9 @@ def get_wiring_data(igadgets):
     return res_data
 
 
-def get_gadget_data(data):
+def get_gadget_data(gadget):
     data_ret = {}
-    data_fields = data['fields']
-    data_variabledef = VariableDef.objects.filter(gadget=data['pk'])
+    data_variabledef = VariableDef.objects.filter(gadget=gadget)
     data_vars = []
     for var in data_variabledef:
         data_var = {}
@@ -119,31 +117,31 @@ def get_gadget_data(data):
 
         data_vars.append(data_var)
 
-    data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=data_fields['xhtml'])
+    data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=gadget.xhtml.id)
 
-    data_ret['name'] = data_fields['name']
-    if data_fields['display_name'] and data_fields['display_name']!="":
-        data_ret['displayName'] = data_fields['display_name']
+    data_ret['name'] = gadget.name
+    if gadget.display_name and gadget.display_name!="":
+        data_ret['displayName'] = gadget.display_name
     else:
-        data_ret['displayName'] = data_fields['name']
-    data_ret['vendor'] = data_fields['vendor']
-    data_ret['description'] = data_fields['description']
-    data_ret['uri'] = data_fields['uri']
-    data_ret['wikiURI'] = data_fields['wikiURI']
-    data_ret['imageURI'] = data_fields['imageURI']
-    data_ret['iPhoneImageURI'] = data_fields['iPhoneImageURI']
-    data_ret['menuColor'] = data_fields['menuColor']
-    data_ret['version'] = data_fields['version']
-    data_ret['mail'] = data_fields['mail']
-    data_ret['shared'] = data_fields['shared']
-    data_ret['last_update'] = data_fields['last_update']
+        data_ret['displayName'] = gadget.name
+    data_ret['vendor'] = gadget.vendor
+    data_ret['description'] = gadget.description
+    data_ret['uri'] = gadget.uri
+    data_ret['wikiURI'] = gadget.wikiURI
+    data_ret['imageURI'] = gadget.imageURI
+    data_ret['iPhoneImageURI'] = gadget.iPhoneImageURI
+    data_ret['menuColor'] = gadget.menuColor
+    data_ret['version'] = gadget.version
+    data_ret['mail'] = gadget.mail
+    data_ret['shared'] = gadget.shared
+    data_ret['last_update'] = gadget.last_update
     data_ret['size'] = {}
-    data_ret['size']['width'] = data_fields['width']
-    data_ret['size']['height'] = data_fields['height']
+    data_ret['size']['width'] = gadget.width
+    data_ret['size']['height'] = gadget.height
     data_ret['variables'] = data_vars
     data_ret['xhtml'] = data_code
-    
-    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=data['pk'])
+
+    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=gadget.id)
 
     return data_ret
 
@@ -193,85 +191,70 @@ def get_output_data (inout):
     return all_outputs    
     
 
-def get_inout_data(data):
+def get_inout_data(inout):
     """
         deprecated!!!!
     """
-    data_ret = {}
-    
-    data_fields = data['fields']
-    data_ret['id'] = data['pk']
-    data_ret['aspect'] = 'INOUT'
-    data_ret['friend_code'] = data_fields['friend_code']
-    data_ret['name'] = data_fields['name']
-    
-    workSpaceVariableDAO = WorkSpaceVariable.objects.get(id=data_fields['workspace_variable'])
-    
-    data_ret['value'] = workSpaceVariableDAO.value
-    data_ret['variableId'] = workSpaceVariableDAO.id
-    
-    data_ins = get_input_data(inout=data['pk'])
-    data_ret['inputs'] = [d for d in data_ins]
-    
-    data_outs = get_output_data(inout=data['pk'])
-    data_ret['outputs'] = [d for d in data_outs]
-        
-    return data_ret
+    workSpaceVariableDAO = inout.workspace_variable
+    data_ins = get_input_data(inout=inout)
+    data_outs = get_output_data(inout=inout)
 
-def get_filter_data(data):
-    data_ret = {}
-    
-    data_fields = data['fields']
-    data_ret['id'] = data['pk']
-    data_ret['name'] = data_fields['name']
-    data_ret['nature'] = data_fields['nature']
-    data_ret['label'] = data_fields['label']
-    data_ret['category'] = data_fields['category']
-    data_ret['help_text'] = data_fields['help_text']
-    data_ret['code'] = data_fields['code']
-    data_ret['params'] = data_fields['params']
-    
-    return data_ret
+    return {
+        'id': inout.pk,
+        'aspect': 'INOUT',
+        'friend_code': inout.friend_code,
+        'name': inout.name,
+        'value': workSpaceVariableDAO.value,
+        'variableId': workSpaceVariableDAO.id,
+        'inputs': [d for d in data_ins],
+        'outputs': [d for d in data_outs]
+    }
 
-def get_workspace_data(data, user, workspace):
+def get_filter_data(filter_):
+    return {
+        'id': filter_.pk,
+        'name': filter_.name,
+        'nature': filter_.nature,
+        'label': filter_.label,
+        'category': filter_.category,
+        'help_text': filter_.help_text,
+        'code': filter_.code,
+        'params': filter_.params
+    }
+
+def get_workspace_data(workspace, user):
     user_workspace = UserWorkSpace.objects.get(user=user, workspace=workspace)
 
-    data_ret = {}
-    data_fields = data['fields']
-    data_ret['id'] = data['pk']
-    data_ret['name'] = data_fields['name']
-    data_ret['shared'] = workspace.is_shared()
-    data_ret['owned'] = workspace.get_creator() == user
-    data_ret['active'] = user_workspace.active
-
-    return data_ret
+    return {
+        'id': workspace.id,
+        'name': workspace.name,
+        'shared': workspace.is_shared(),
+        'owned': workspace.get_creator() == user,
+        'active': user_workspace.active
+    }
 
 def get_workspace_variables_data(workSpaceDAO, user):
     tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')
-    tabs_data = serializers.serialize('python', tab_variables, ensure_ascii=False)
-    ws_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in tabs_data]
+    ws_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in tab_variables]
     
     inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')
-    inouts_data = serializers.serialize('python', inout_variables, ensure_ascii=False)
-    ws_inout_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in inouts_data]
+    ws_inout_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in inout_variables]
     
     for inout in ws_inout_variables_data:
         ws_variables_data.append(inout)
 
     return ws_variables_data
 
-def get_workspace_variable_data(data, user, workspace):
-    data_ret = {}
-    data_fields = data['fields']
+def get_workspace_variable_data(wvariable, user, workspace):
+    abstract_var = wvariable.abstract_variable 
 
-    abstract_var_id = data['fields']['abstract_variable']
-
-    abstract_var = get_abstract_variable(abstract_var_id)
-
-    data_ret['id'] = data['pk']
-    data_ret['abstract_var_id'] = abstract_var_id
-
-    data_ret['aspect'] = data_fields['aspect']
+    data_ret = {
+        'id': wvariable.id,
+        'name': abstract_var.name,
+        'abstract_var_id': wvariable.abstract_variable.id,
+        'aspect': wvariable.aspect,
+        'type': wvariable.type
+    }
 
     try:
         variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
@@ -281,19 +264,14 @@ def get_workspace_variable_data(data, user, workspace):
         variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
 
     data_ret['value'] = variable_value.value
-    data_ret['name'] = abstract_var.name
-    data_ret['type'] = data_fields['type']
 
-    if (data_ret['aspect'] == 'TAB'):
-        connectable = Out.objects.get(abstract_variable__id = abstract_var_id)
+    if wvariable.aspect == 'TAB':
+        connectable = Out.objects.get(abstract_variable = abstract_var)
         data_ret['tab_id'] = Tab.objects.filter(abstract_variable = abstract_var)[0].id
-    if (data_ret['aspect'] == 'CHANNEL'):
-        workspace_variable = WorkSpaceVariable.objects.get(abstract_variable__id = abstract_var_id)
-        connectable = InOut.objects.get(workspace_variable = workspace_variable)
+    elif wvariable.aspect == 'CHANNEL':
+        connectable = InOut.objects.get(workspace_variable = wvariable)
 
-    connectable_data = get_connectable_data(connectable)
-
-    data_ret['connectable'] = connectable_data
+    data_ret['connectable'] = get_connectable_data(connectable)
 
     return data_ret
 
@@ -376,12 +354,12 @@ def get_connectable_data(connectable):
     return res_data
 
 
-def get_global_workspace_data(data, workSpaceDAO, user):
+def get_global_workspace_data(workSpaceDAO, user):
     data_ret = {}
-    data_ret['workspace'] = get_workspace_data(data, user, workSpaceDAO)
+    data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
     # Workspace preferences
-    data_ret['workspace']['preferences'] = get_workspace_preference_values(data['pk'])
+    data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
 
     # Tabs processing
     # Check if the workspace's tabs have order
@@ -424,13 +402,11 @@ def get_global_workspace_data(data, workSpaceDAO, user):
     
     #Context information
     concepts = Concept.objects.all()
-    concepts_data = serializers.serialize('python', concepts, ensure_ascii=False)
-    data_ret['workspace']['concepts'] = [get_concept_data(d, concept_values) for d in concepts_data]
+    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
 
     # Filter information
     filters = Filter.objects.all()
-    filter_data = serializers.serialize('python', filters, ensure_ascii=False)
-    data_ret['workspace']['filters'] = [get_filter_data(d) for d in filter_data]
+    data_ret['workspace']['filters'] = [get_filter_data(f) for f in filters]
     
     #Branding information
     data_ret["workspace"]["branding"] = get_workspace_branding_data(workSpaceDAO, user)
@@ -444,7 +420,6 @@ def get_tab_data(tab):
         'visible': tab.visible,
         'preferences': get_tab_preference_values(tab)
     }
-
 
 def get_igadget_data(igadget, user, workspace):
 
@@ -472,48 +447,43 @@ def get_igadget_data(igadget, user, workspace):
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
 
-    variables = Variable.objects.filter(igadget=igadget)
-    data = serializers.serialize('python', variables, ensure_ascii=False)
-    data_ret['variables'] = [get_variable_data(d, user, workspace) for d in data]
+    variables = Variable.objects.filter (igadget=igadget)
+    data_ret['variables'] = [get_variable_data(variable, user, workspace) for variable in variables]
 
     return data_ret
 
+def get_variable_data(variable, user, workspace):
 
-def get_variable_data(data, user, workspace):
-    data_ret = {}
-    data_fields = data['fields']
+    var_def = variable.vardef
 
-    var_def = VariableDef.objects.get(id=data_fields['vardef'])
+    data_ret = {
+        'id': variable.id,
+        'aspect': var_def.aspect,
+        'type': var_def.type,
+        'igadgetId': variable.igadget.id,
+        'vardefId': var_def.pk,
+        'name': var_def.name,
+        'label': var_def.label,
+        'action_label': var_def.action_label,
+        'friend_code': var_def.friend_code
+    }
 
-    #Variable info is splited into 2 entities: AbstractVariable y Variable   
-    abstract_var_id = data['fields']['abstract_variable']
-
-    abstract_var = get_abstract_variable(abstract_var_id) 
+    # Variable info is splited into 2 entities: AbstractVariable and Variable   
+    abstract_var = variable.abstract_variable
 
     try:
-        variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
+        data_ret['value'] = VariableValue.objects.get(abstract_variable=abstract_var, user=user).value
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
 
-        variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
+        data_ret['value'] = clone_original_variable_value(abstract_var, workspace.get_creator(), user).value
 
-    data_ret['id'] = data['pk']
-
-    data_ret['aspect'] = var_def.aspect
-    data_ret['value'] = variable_value.value
-    data_ret['type'] = var_def.type
-    data_ret['igadgetId'] = data_fields['igadget']
-    data_ret['vardefId'] = var_def.pk
-    data_ret['name'] = var_def.name
-    data_ret['label'] = var_def.label
-    data_ret['action_label'] = var_def.action_label
-    data_ret['friend_code'] = var_def.friend_code
     if var_def.shared_var_def:
         data_ret['shared'] = variable_value.shared_var_value != None
 
     #Context management
     if var_def.aspect == 'GCTX' or var_def.aspect == 'ECTX': 
-        context = ContextOption.objects.get(varDef=data_fields['vardef'])
+        context = ContextOption.objects.get(varDef=variable.vardef)
         data_ret['concept'] = context.concept
 
     #Connectable management
@@ -530,19 +500,20 @@ def get_variable_data(data, user, workspace):
 
     return data_ret
 
-def get_concept_data(data, concept_values):
-    data_ret = {}
-    data_fields = data['fields']
+def get_concept_data(concept, concept_values):
 
-    cnames = ConceptName.objects.filter(concept=data['pk']).values('name')
+    cnames = ConceptName.objects.filter(concept=concept).values('name')
 
-    data_ret['concept'] = data['pk']
-    data_ret['type'] = data_fields['type']
-    if data_fields['source'] == 'PLAT':
-        data_ret['value'] = get_concept_value(data['pk'], concept_values)
+    data_ret = {
+        'concept': concept.pk,
+        'type': concept.type,
+        'names': [cname['name'] for cname in cnames]
+    }
+
+    if concept.source == 'PLAT':
+        data_ret['value'] = get_concept_value(concept.pk, concept_values)
     else:
-        data_ret['adaptor'] = data_fields['adaptor']
-    data_ret['names'] = [cname['name'] for cname in cnames] 
+        data_ret['adaptor'] = concept.adaptor
 
     return data_ret
 

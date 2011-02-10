@@ -40,7 +40,6 @@
 
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.core import serializers
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson

@@ -32,7 +32,6 @@
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-from django.core import serializers
 
 from django.utils.translation import ugettext as _
 from django.utils import simplejson
@@ -486,8 +485,7 @@ class IGadgetVariableCollection(Resource):
 
         tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
         variables = Variable.objects.filter(igadget__tab=tab, igadget__id=igadget_id)
-        data = serializers.serialize('python', variables, ensure_ascii=False)
-        vars_data = [get_variable_data(d) for d in data]
+        vars_data = [get_variable_data(variable) for variable in variables]
 
         return HttpResponse(json_encode(vars_data), mimetype='application/json; charset=UTF-8')
 
@@ -531,10 +529,9 @@ class IGadgetVariable(Resource):
     def read(self, request, workspace_id, tab_id, igadget_id, var_id):
         user = get_user_authentication(request)
 
-        tab = Tab.objects.get(workspace__user__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
-        variable = get_list_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
-        data = serializers.serialize('python', variable, ensure_ascii=False)
-        var_data = get_variable_data(data[0])
+        tab = Tab.objects.get(workspace__user__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        variable = get_object_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
+        var_data = get_variable_data(variable)
 
         return HttpResponse(json_encode(var_data), mimetype='application/json; charset=UTF-8')
 

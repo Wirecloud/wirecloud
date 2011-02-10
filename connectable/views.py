@@ -31,7 +31,6 @@
 #
 
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.core import serializers
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
@@ -69,13 +68,11 @@ class ConnectableEntry(Resource):
 
         # InOut list
         inouts = InOut.objects.filter(workspace__pk=workspace_id)
-        inout_data = serializers.serialize('python', inouts, ensure_ascii=False)
-        wiring['inOutList'] = [get_inout_data(d) for d in inout_data]
+        wiring['inOutList'] = [get_inout_data(inout) for inout in inouts]
 
         # Filter list
         filters = Filter.objects.all()
-        filter_data = serializers.serialize('python', filters, ensure_ascii=False)
-        wiring['filterList'] = [get_filter_data(d) for d in filter_data]
+        wiring['filterList'] = [get_filter_data(f) for f in filters]
 
         return HttpResponse(json_encode(wiring), mimetype='application/json; charset=UTF-8')
 

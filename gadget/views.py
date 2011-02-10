@@ -34,8 +34,6 @@ from django.db import IntegrityError
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
-from django.core import serializers
-
 from commons.resource import Resource
 
 from commons.authentication import get_user_authentication, user_authentication
@@ -137,12 +135,7 @@ class GadgetCollection(Resource):
         #Done like this, it's not necessary to keep updated relationships between gadgets and users
         gadgets = get_user_gadgets(user)
 
-        data = serializers.serialize('python', gadgets, ensure_ascii=False)
-
-        data_list = []
-        for d in data:
-            data_fields = get_gadget_data(d)
-            data_list.append(data_fields)
+        data_list = [get_gadget_data(gadget) for gadget in gadgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
     @transaction.commit_on_success
@@ -173,9 +166,8 @@ class GadgetEntry(Resource):
 
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
-        gadgets = get_list_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
-        data = serializers.serialize('python', gadgets, ensure_ascii=False)
-        data_fields = get_gadget_data(data[0])
+        gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
+        data_fields = get_gadget_data(gadget)
         return HttpResponse(json_encode(data_fields), mimetype='application/json; charset=UTF-8')
 
     def update(self, request, vendor, name, version, user_name=None):
