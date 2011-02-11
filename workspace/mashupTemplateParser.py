@@ -49,6 +49,7 @@ TAB_XPATH = etree.ETXPath('Tab')
 RESOURCE_XPATH = etree.ETXPath('Resource')
 POSITION_XPATH = etree.ETXPath('Position')
 RENDERING_XPATH = etree.ETXPath('Rendering')
+PARAM_XPATH = etree.ETXPath('Param')
 PREFERENCE_XPATH = etree.ETXPath('Preference')
 PROPERTIES_XPATH = etree.ETXPath('Property')
 WIRING_XPATH = etree.ETXPath('/Template/Platform.Wiring')
@@ -103,12 +104,21 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     if len(new_values) > 0:
         update_workspace_preferences(workspace, new_values)
 
+    forced_values = {
+        'extra_prefs': {},
+        'igadget': {},
+    }
+    params = PARAM_XPATH(workspace_structure)
+    for param in params:
+        forced_values['extra_prefs'][param.get('name')] = {
+            'inheritable': False,
+            'label': param.get('label'),
+            'type': param.get('type')
+        }
+
     tabs = TAB_XPATH(workspace_structure)
     tab_id_mapping = {}
 
-    forced_values = {
-        'igadget': {},
-    }
     for tabElement in tabs:
         tab, _junk = createTab(tabElement.get('name'), user, workspace)
         tab_id_mapping[tabElement.get('id')] = tab
@@ -178,6 +188,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         old_forced_values = simplejson.loads(workspace.forcedValues)
     else:
         old_forced_values = {
+            'extra_preferences': {},
             'igadget': {},
         }
 

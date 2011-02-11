@@ -143,20 +143,41 @@ function WorkSpace (workSpaceState) {
 
 	// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
 	var loadWorkSpace = function (transport) {
-		var layoutManager = LayoutManagerFactory.getInstance();
+		var layoutManager, params, param, preferenceValues;
+
+		layoutManager = LayoutManagerFactory.getInstance();
 		layoutManager.logStep('');
 		layoutManager.logSubTask(gettext('Processing workspace data'));
 
 		try {
 			// JSON-coded iGadget-variable mapping
-			var response = transport.responseText;
-			this.workSpaceGlobalInfo = JSON.parse(response);
+			this.workSpaceGlobalInfo = JSON.parse(transport.responseText);
 
 			// Load workspace preferences
-			var preferenceValues = this.workSpaceGlobalInfo['workspace']['preferences'];
-			this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this)
+			params = this.workSpaceGlobalInfo.workspace.empty_params;
+			preferenceValues = this.workSpaceGlobalInfo['workspace']['preferences'];
+			this.preferences = PreferencesManagerFactory.getInstance().buildPreferences('workspace', preferenceValues, this, params);
+
+			// Check if the workspace needs to ask some values before loading this workspace
+			if (this.workSpaceGlobalInfo.workspace.empty_params.length > 0) {
+				preferenceValues = {};
+				for (i = 0; i < params.length; i += 1) {
+					param = params[i];
+					if (this.workSpaceGlobalInfo.workspace.preferences[param] != null) {
+					    preferenceValues[param] = this.workSpaceGlobalInfo.workspace.preferences[param];
+					}
+				}
+
+				this.preferences.addCommitHandler(function() {
+					setTimeout(function() {
+						OpManagerFactory.getInstance().changeActiveWorkSpace(this);
+					}.bind(this), 0);
+				}.bind(this));
+				LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences); 
+				return;
+			}
 			this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
-			
+
 			// Load workspace tabs
 			var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
 			var visibleTabId = null;

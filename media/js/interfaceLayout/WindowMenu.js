@@ -1680,14 +1680,15 @@ SharedWorkSpaceMenu.prototype.hide = function(url) {
 /**
  * Specific class for platform preferences windows.
  *
- * @param scope
+ * @param manager
  *
  * @author jmostazo-upm
  */
-function PreferencesWindowMenu(scope) {
+function PreferencesWindowMenu(scope, manager) {
 	WindowMenu.call(this, '');
-	
-	var table = PreferencesManagerFactory.getInstance().getPreferencesDef(scope).getInterface();
+
+	this.manager = manager;
+	var table = manager.getPreferencesDef().getInterface();
 	
 	// Extra Elements
 	if (scope=="platform"){
@@ -1738,10 +1739,6 @@ function PreferencesWindowMenu(scope) {
 	this.windowBottom.appendChild(this.cancelButton);
 }
 PreferencesWindowMenu.prototype = new WindowMenu();
-
-PreferencesWindowMenu.prototype.setManager = function(manager) {
-	this.manager = manager;
-}
 
 PreferencesWindowMenu.prototype._executeOperation = function() {
 	// Validate input fields

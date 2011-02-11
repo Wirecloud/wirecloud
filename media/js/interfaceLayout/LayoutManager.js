@@ -1072,12 +1072,17 @@ var LayoutManagerFactory = function () {
 			}
 			this.showUnclickableCover();
 
-			var menuId = 'preferences/' + scope;
-			if (!(menuId in this.menus)) {
-				this.menus[menuId] = new PreferencesWindowMenu(scope);
+			var dialog, menuId = 'preferences/' + scope;
+			
+
+			if (scope == 'workspace') {
+				dialog = new PreferencesWindowMenu(scope, manager);
+			} else if (!(menuId in this.menus)) {
+				this.menus[menuId] = new PreferencesWindowMenu(scope, manager);
+				dialog = this.menus[menuId];
+			} else {
+				dialog = this.menus[menuId];
 			}
-			var dialog = this.menus[menuId];
-			dialog.setManager(manager);
 			this.currentMenu = dialog;
 			this.currentMenu.show();
 		}

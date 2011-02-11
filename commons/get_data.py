@@ -397,24 +397,41 @@ class TemplateValueProcessor:
         return re.sub(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)', self.__repl, value)
 
 
-def process_forced_values(workspace, user, concept_values):
+def process_forced_values(workspace, user, concept_values, workspace_data):
     try:
         forced_values = simplejson.loads(workspace.forcedValues)
     except:
-        return {
+        forced_values = {
             'igadget': {},
         }
 
-    processor = TemplateValueProcessor({'user': user, 'context': concept_values})
+    if not 'extra_prefs' in forced_values:
+        forced_values['extra_prefs'] = {}
 
-    if 'igadget' in forced_values:
-        collection = forced_values['igadget']
-        for key in collection:
-            values = collection[key]
-            for var_name in values:
-                collection[key][var_name]['value'] = processor.process(values[var_name]['value'])
-    else:
+    if not 'igadget' in forced_values:
         forced_values['igadget'] = {}
+
+    if len(forced_values['igadget']) == 0:
+        forced_values['empty_params'] = []
+        return forced_values
+
+    param_values = {}
+    empty_params = []
+    for param in forced_values['extra_prefs']:
+        if param in workspace_data['preferences']:
+            param_values[param] = workspace_data['preferences'][param]['value']
+        else:
+            empty_params.append(param)
+            param_values[param] = ''
+    forced_values['empty_params'] = empty_params
+
+    processor = TemplateValueProcessor({'user': user, 'context': concept_values, 'params': param_values})
+
+    collection = forced_values['igadget']
+    for key in collection:
+        values = collection[key]
+        for var_name in values:
+            collection[key][var_name]['value'] = processor.process(values[var_name]['value'])
 
     return forced_values
 
@@ -428,11 +445,15 @@ def get_global_workspace_data(workSpaceDAO, user):
     concept_values = get_concept_values(user)
     data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
 
-    # Process forced variable values
-    forced_values = process_forced_values(workSpaceDAO, user, concept_values)
-
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
+
+    # Process forced variable values
+    forced_values = process_forced_values(workSpaceDAO, user, concept_values, data_ret['workspace'])
+    data_ret['workspace']['empty_params'] = forced_values['empty_params']
+    data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
+    if len(forced_values['empty_params']) > 0:
+        return data_ret
 
     # Tabs processing
     # Check if the workspace's tabs have order

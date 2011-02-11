@@ -36,6 +36,7 @@ var PreferencesManagerFactory = function () {
 	function PreferencesManager () {
 		/**** PRIVATE VARIABLES ****/
 		this.preferencesDef = new Hash();
+                this.preferenceManagers = new Hash();
 		this.preferences = null;
 		this.languageModified = false; // Language preference has a special behavior
 
@@ -82,15 +83,6 @@ var PreferencesManagerFactory = function () {
 		}
 
 		/**
-		 * Returns the preferences definitions for the given scope.
-		 *
-		 * @return {PreferencesDef}
-		 */
-		PreferencesManager.prototype.getPreferencesDef = function(scope) {
-			return this.preferencesDef[scope];
-		}
-
-		/**
 		 * Returns the platform preferences.
 		 *
 		 * return {PlatformPreferences}
@@ -109,7 +101,13 @@ var PreferencesManagerFactory = function () {
 		PreferencesManager.prototype.buildPreferences = function(scope, values) {
 			var args = Array.prototype.slice.call(arguments, 1); // Remove scope argument
 
-			var manager = this.preferencesDef[scope];
+			var defs = this.preferencesDef[scope];
+			if (defs instanceof PreferencesDef) {
+				manager = defs;
+			} else {
+				manager = new this.preferenceManagers[scope](defs, args)
+			}
+
 			return manager.buildPreferences.apply(manager, args);
 		}
 
@@ -265,8 +263,8 @@ var PreferencesManagerFactory = function () {
 		definitions = this._processDefinitions(platformPreferences);
 		this.preferencesDef['platform'] = new PlatformPreferencesDef(definitions);
 
-		definitions = this._processDefinitions(workspacePreferences);
-		this.preferencesDef['workspace'] = new WorkSpacePreferencesDef(definitions);
+		this.preferencesDef['workspace'] = this._processDefinitions(workspacePreferences);
+		this.preferenceManagers['workspace'] = WorkSpacePreferencesDef;
 
 		definitions = this._processDefinitions(tabPreferences);
 		this.preferencesDef['tab'] = new TabPreferencesDef(definitions);

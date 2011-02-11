@@ -250,19 +250,35 @@ function PlatformPreferencesDef(definitions) {
 PlatformPreferencesDef.prototype = new PreferencesDef();
 
 PlatformPreferencesDef.prototype.buildPreferences = function(values) {
-	return new PlatformPreferences(this._preferences, values);
+	return new PlatformPreferences(this, values);
 }
 
 /**
  *
  */
-function WorkSpacePreferencesDef(definitions) {
+function WorkSpacePreferencesDef(definitions, args) {
+	var extra_prefs, prefManager, empty_params, param, workspace = args[1];
+
+	if (args[2] instanceof Array && args[2].length > 0) {
+		prefManager = PreferencesManagerFactory.getInstance();
+		extra_prefs = prefManager._processDefinitions(workspace.workSpaceGlobalInfo.workspace.extra_prefs);
+		empty_params = args[2];
+		definitions = {};
+		for (i = 0; i < empty_params.length; i += 1) {
+			param = empty_params[i];
+			definitions[param] = extra_prefs[param];
+		}
+	} else if (workspace.workSpaceGlobalInfo != null) {
+		prefManager = PreferencesManagerFactory.getInstance();
+		extra_prefs = prefManager._processDefinitions(workspace.workSpaceGlobalInfo.workspace.extra_prefs);
+		definitions = Object.extend(definitions, extra_prefs);
+	}
 	PreferencesDef.call(this, definitions);
 }
 WorkSpacePreferencesDef.prototype = new PreferencesDef();
 
 WorkSpacePreferencesDef.prototype.buildPreferences = function(values, workspace) {
-	return new WorkSpacePreferences(this._preferences, workspace, values);
+	return new WorkSpacePreferences(this, workspace, values);
 }
 
 /**
@@ -274,15 +290,18 @@ function TabPreferencesDef(definitions) {
 TabPreferencesDef.prototype = new PreferencesDef();
 
 TabPreferencesDef.prototype.buildPreferences = function(values, tab) {
-	return new TabPreferences(this._preferences, tab, values);
+	return new TabPreferences(this, tab, values);
 }
 
 /**
  * @abstract
  */
-function Preferences(definitions, values) {
+function Preferences(preferencesDef, values) {
 	if (arguments.length == 0)
 		return;
+
+	var definitions = preferencesDef._preferences;
+	this._preferencesDef = preferencesDef;
 
 	this._preferences = new Object();
 
@@ -327,6 +346,15 @@ Preferences.prototype.removeCommitHandler = function(handler) {
 
 Preferences.prototype.get = function(name) {
 	return this._preferences[name].getEffectiveValue();
+}
+
+/**
+ * Returns the preferences definitions for the given scope.
+ *
+ * @return {PreferencesDef}
+ */
+Preferences.prototype.getPreferencesDef = function() {
+	return this._preferencesDef;
 }
 
 /**

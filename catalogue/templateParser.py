@@ -291,7 +291,7 @@ class TemplateHandler(handler.ContentHandler):
                 self._wikiURI = self._accumulator[0]
             return
 
-        if name in ('Tab', 'Position', 'Rendering', 'Preference', 'Property', 'IncludedResources', 'Resource', 'Capability'):
+        if name in ('Tab', 'Position', 'Rendering', 'Preference', 'Property', 'IncludedResources', 'Resource', 'Capability', 'Param'):
             return
 
         if name == 'Catalog.ResourceDescription':
