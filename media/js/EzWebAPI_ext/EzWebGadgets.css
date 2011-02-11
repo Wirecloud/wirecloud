@@ -231,6 +231,12 @@ div.styled_password_field div input {
   margin: 0;
 }
 
+/* Styled Hidden Field */
+div.styled_hidden_field {
+  display: none;
+  visibility: hidden;
+}
+
 /* Styled Date Field */
 
 div.styled_date_field {

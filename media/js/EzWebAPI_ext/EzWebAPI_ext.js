@@ -2761,7 +2761,7 @@ StyledElements.StyledHiddenField = function(options) {
 
     this.wrapperElement = document.createElement("div");
     
-    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'hidden');
+    this.wrapperElement.className = EzWebExt.prependWord(options['class'], 'styled_hidden_field');
 
     this.inputElement = document.createElement("input");
     this.inputElement.setAttribute("type", "hidden");
