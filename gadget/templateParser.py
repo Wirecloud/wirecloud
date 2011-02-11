@@ -170,9 +170,9 @@ class UriGadgetHandler(handler.ContentHandler):
 def get_shared_var_def(attrs):
 
     if 'shared_concept' in attrs:
-            name = attrs.get('shared_concept')
-            shared_var_def, create = SharedVariableDef.objects.get_or_create(name=name)
-            return shared_var_def
+        name = attrs.get('shared_concept')
+        shared_var_def, create = SharedVariableDef.objects.get_or_create(name=name)
+        return shared_var_def
     return None
 
 
