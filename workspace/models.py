@@ -74,7 +74,7 @@ class WorkSpace(models.Model):
             for ig in reduce(lambda x, y: x + y, [list(t.igadget_set.all()) for t in tabs]):
                 ig.readOnly = readOnly
                 ig.save()
-        except Exception, e:
+        except Exception:
             pass
 
         #Get the channel identifiers
@@ -83,7 +83,7 @@ class WorkSpace(models.Model):
             for c in [wsvar.inout_set.all()[0] for wsvar in wsvars]:
                 c.readOnly = readOnly
                 c.save()
-        except WorkSpaceVariable.DoesNotExist, e:
+        except WorkSpaceVariable.DoesNotExist:
             pass
 
 

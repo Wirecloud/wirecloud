@@ -29,7 +29,7 @@ def get_tuple(table_name, tuple_id):
 
 
 def get_related_tuples(table_name, field_name, tuple_id):
-    model = eval(table_name)
+    eval(table_name)
 
     stm = "tuple_list = model.objects.filter(%s=tuple_id)" % (field_name)
 
@@ -143,7 +143,7 @@ class Many2ManyCollection:
             from_tuple = from_model.objects.get(id=m2m_info['new_from_id'])
 
             to_model = eval(m2m_info['to_table'])
-            to_tuple = to_model.objects.get(id=m2m_info['new_to_id'])
+            to_model.objects.get(id=m2m_info['new_to_id'])
 
             stm = "from_tuple.%s.add(to_tuple)" % (m2m_info['from_field'])
 
@@ -276,7 +276,6 @@ class PackageCloner:
             m2m_related_fields = meta._related_many_to_many_cache
 
             for m2m_field in m2m_related_fields:
-                to_table = table_name
                 reverse_rel_name = '%s_set' % m2m_field.var_name
 
                 from_field = m2m_field.field.name
@@ -302,7 +301,7 @@ class PackageCloner:
 
                     #check if the foreign key is empty
                     if related_tuple:
-                        cloned_related_tuple = self.clone_tuple(related_tuple)
+                        self.clone_tuple(related_tuple)
 
                         stm = "%s.%s = cloned_related_tuple" % ('cloned_tuple', field.name)
 
