@@ -35,7 +35,9 @@ from optparse import make_option
 import os
 import sys
 
+
 class Command(BaseCommand):
+
     option_list = BaseCommand.option_list + (
         make_option('--noreload', action='store_false', dest='use_reloader', default=True,
             help='Tells Django to NOT use the auto-reloader.'),

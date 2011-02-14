@@ -35,13 +35,15 @@ from django.shortcuts import get_object_or_404
 from workspace.models import PublishedWorkSpace
 from igadget.models import IGadget
 
+
 class TemplateGenerator:
-    def getTemplate(self, workspace_id):  
-        
+
+    def getTemplate(self, workspace_id):
+
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        
+
         included_igadgets = IGadget.objects.filter(tab__workspace=published_workspace.workspace)
-          
+
         xml = '<?xml version="1.0" encoding="utf-8"?>'
         xml += '<Template schemaLocation="http://morfeo-project.org/2007/Template">'
         xml += '<!-- Meta tags define gadgets properties -->'
@@ -56,45 +58,45 @@ class TemplateGenerator:
         xml += '<WikiURI>%s</WikiURI>' % published_workspace.wikiURI
         xml += '<Organization>%s</Organization>' % published_workspace.organization
         xml += '<IncludedResources mashupId="%s">' % workspace_id
-        
+
         wiring = ''
         contratable = False
-        
-        for igadget in included_igadgets:    
+
+        for igadget in included_igadgets:
             gadget = igadget.gadget
-            
+
             if (not contratable):
                 contratable = gadget.is_contratable()
-            
+
             xml += '<Resource vendor="%s" name="%s" version="%s" />' % (gadget.vendor, gadget.name, gadget.version)
-            
+
             events = gadget.get_related_events()
-            
-            for event in events:          
+
+            for event in events:
                 wiring += '<Event name="%s" type="%s" label="%s" friendcode="%s" />' % (event.name, event.type, event.label, event.friend_code)
-            
+
             slots = gadget.get_related_slots()
-            
-            for slot in slots:          
+
+            for slot in slots:
                 wiring += '<Slot name="%s" type="%s" label="%s" friendcode="%s" />' % (slot.name, slot.type, slot.label, slot.friend_code)
-        
+
         xml += '</IncludedResources>'
         xml += '</Catalog.ResourceDescription>'
-        
+
         if contratable:
             xml += '<Capability name="contratable" value="true"/>'
-            
+
         xml += '<Platform.Preferences></Platform.Preferences>'
         xml += '<Platform.StateProperties></Platform.StateProperties>'
-        
+
         xml += '<Platform.Wiring>%s</Platform.Wiring>' % (wiring)
-        
+
         xml += '<Platform.Link>'
         xml += '<XHTML href=""/>'
         xml += '</Platform.Link>'
-        
+
         xml += '<Platform.Rendering width="0" height="0"/>'
-        
+
         xml += '</Template>'
-        
+
         return xml

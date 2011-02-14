@@ -35,56 +35,57 @@ from django.conf.urls.defaults import patterns
 from connectable.views import ConnectableEntry
 from workspace.views import *
 
+
 urlpatterns = patterns('workspace.views',
     # WorkSpace
-    (r'^[/]?$', WorkSpaceCollection(permitted_methods=('GET','POST', ))),
+    (r'^[/]?$', WorkSpaceCollection(permitted_methods=('GET', 'POST', ))),
     (r'^/((?P<workspace_id>\d+)/last_user/(?P<last_user>[\s\-\.\w]*)[/]?)?$',
-	    WorkSpaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
+     WorkSpaceEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE',))),
     # Tab
     (r'^/((?P<workspace_id>\d+)/tab(s)?[/]?)?$',
         TabCollection(permitted_methods=('GET', 'POST', 'PUT',))),
     (r'^/((?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\w+)[/]?)?$',
         TabEntry(permitted_methods=('GET', 'PUT', 'POST', 'DELETE',))),
-        
+
     # Variables of the whole workspace
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
-        WorkSpaceVariableCollection(permitted_methods=('PUT','POST', ))),
-    
+        WorkSpaceVariableCollection(permitted_methods=('PUT', 'POST', ))),
+
     # Wiring info for the whole workspace
     (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
         ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
-        
+
     # Sharing workspace
-    (r'^/(?P<workspace_id>\d+)/share/groups[/]?$', 
-        WorkSpaceSharerEntry(permitted_methods=('GET', ))), 
-    (r'^/((?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)[/]?)?$', 
+    (r'^/(?P<workspace_id>\d+)/share/groups[/]?$',
+        WorkSpaceSharerEntry(permitted_methods=('GET', ))),
+    (r'^/((?P<workspace_id>\d+)/share/(?P<share_boolean>\w+)[/]?)?$',
         WorkSpaceSharerEntry(permitted_methods=('PUT', ))),
-                            
+
     # Coping workspace structure when adding package
-    (r'^/((?P<workspace_id>\d+)/copy?[/]?)?$', 
+    (r'^/((?P<workspace_id>\d+)/copy?[/]?)?$',
         WorkSpaceClonerEntry(permitted_methods=('GET', ))),
-        
-     # Linking workspace structure when adding package   
-    (r'^/((?P<workspace_id>\d+)/link?[/]?)?$', 
+
+     # Linking workspace structure when adding package
+    (r'^/((?P<workspace_id>\d+)/link?[/]?)?$',
         WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
-    
-    # Merge a published workspace to a normal one  
-    (r'^/published_workspace/(?P<published_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?$', 
+
+    # Merge a published workspace to a normal one
+    (r'^/published_workspace/(?P<published_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?$',
         PublishedWorkSpaceMergerEntry(permitted_methods=('GET', ))),
-    
-    # Publish workspace photo to PublishedWorkspaces  
-    (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$', 
+
+    # Publish workspace photo to PublishedWorkspaces
+    (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$',
         WorkSpacePublisherEntry(permitted_methods=('GET', 'POST',))),
-    
-    # Merge workspaces   
-    (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$', 
+
+    # Merge workspaces
+    (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$',
         WorkSpaceMergerEntry(permitted_methods=('GET', ))),
-    
-    # Add workspaces   
-    (r'^/((?P<workspace_id>\d+)/add?[/]?)?$', 
+
+    # Add workspaces
+    (r'^/((?P<workspace_id>\d+)/add?[/]?)?$',
         WorkSpaceAdderEntry(permitted_methods=('GET', ))),
-    
-    # Create template for mashup   
-    (r'^/templateGenerator/((?P<workspace_id>\d+)[/]?)?$', 
+
+    # Create template for mashup
+    (r'^/templateGenerator/((?P<workspace_id>\d+)[/]?)?$',
         GeneratorURL(permitted_methods=('GET', ))),
 )

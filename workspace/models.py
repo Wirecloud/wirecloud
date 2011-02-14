@@ -38,11 +38,12 @@ from django.utils import simplejson
 from gadget.models import SharedVariableDef
 from layout.models import Branding
 
+
 class WorkSpace(models.Model):
-    
+
     name = models.CharField(_('Name'), max_length=30)
     creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=True, null=True)
-    
+
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
 
@@ -71,31 +72,34 @@ class WorkSpace(models.Model):
         #Get the igadget identifiers
         tabs = self.tab_set.all()
         try:
-            for ig in reduce(lambda x,y: x+y, [list(t.igadget_set.all()) for t in tabs]):
+            for ig in reduce(lambda x, y: x + y, [list(t.igadget_set.all()) for t in tabs]):
                 ig.readOnly = readOnly
                 ig.save()
         except Exception, e:
             pass
-            
+
         #Get the channel identifiers
         try:
-            wsvars = self.workspacevariable_set.filter(workspace=self,aspect="CHANNEL") #there must be at most one  
+            wsvars = self.workspacevariable_set.filter(workspace=self, aspect="CHANNEL")  # there must be at most one
             for c in [wsvar.inout_set.all()[0] for wsvar in wsvars]:
                 c.readOnly = readOnly
                 c.save()
         except WorkSpaceVariable.DoesNotExist, e:
             pass
-            
+
 
 class UserWorkSpace(models.Model):
+
     workspace = models.ForeignKey(WorkSpace)
     user = models.ForeignKey(User)
     active = models.BooleanField(_('Active'), default=False)
-    
+
     def __unicode__(self):
         return unicode(self.workspace) + " - " + unicode(self.user)
-    
+
+
 class PublishedWorkSpace(models.Model):
+
     WORKSPACE_TYPES = (
         ('CLONED', _('Cloned')),
         ('SHARED', _('Shared')),
@@ -120,14 +124,16 @@ class PublishedWorkSpace(models.Model):
     organization = models.CharField(_('Organization'), max_length=80, null=True, blank=True)
 
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('Workspace'))
-    
+
     contratable = models.BooleanField(_('Contratable'), default=False)
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.workspace.name)
 
+
 #Category for which a workspace is the defalult workspace
 class Category(models.Model):
+
     category_id = models.IntegerField()
     default_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('Default Workspace'), null=True, blank=True)
     new_workspace = models.ForeignKey(PublishedWorkSpace, verbose_name=_('New Workspace'), related_name="new_workspace_", null=True, blank=True)
@@ -135,8 +141,9 @@ class Category(models.Model):
     def __unicode__(self):
         return unicode(self.category_id)
 
+
 class AbstractVariable(models.Model):
-    
+
     VAR_TYPES = (
         ('IGADGET', _('IGadget')),
         ('WORKSPACE', _('WorkSpace')),
@@ -148,49 +155,50 @@ class AbstractVariable(models.Model):
         return unicode(self.pk) + " " + unicode(self.name)
 
     def has_public_value(self):
-       #In workspace variables, channel values are not public
-       if self.type=='WORKSPACE':
-           ws_var = WorkSpaceVariable.objects.get(abstract_variable=self)   
-           return ws_var.has_public_value()
-       
-       #Cycling import 
-       from igadget.models import Variable
-       
-       #Igadget variable
-       igadget_var = Variable.objects.get(abstract_variable=self)
-       
-       return igadget_var.has_public_value()
-   
-    def get_default_value(self):
-       #If it's a workspace variable, and there is not creator value!
-       #Returning ""
-       if self.type=='WORKSPACE':
-           return ""
-       
-       #Cycling import 
-       from igadget.models import Variable
-       
-       #Igadget variable
-       igadget_var = Variable.objects.get(abstract_variable=self)
-       
-       return igadget_var.get_default_value()
-       
-        
+        # In workspace variables, channel values are not public
+        if self.type == 'WORKSPACE':
+            ws_var = WorkSpaceVariable.objects.get(abstract_variable=self)
+            return ws_var.has_public_value()
 
-#sharing variables. Each user can have a value for a specified concept (SharedVariableDef)    
+        # Cycling import
+        from igadget.models import Variable
+
+        # Igadget variable
+        igadget_var = Variable.objects.get(abstract_variable=self)
+
+        return igadget_var.has_public_value()
+
+    def get_default_value(self):
+        # If it's a workspace variable, and there is not creator value!
+        # Returning ""
+        if self.type == 'WORKSPACE':
+            return ""
+
+        # Cycling import
+        from igadget.models import Variable
+
+        # Igadget variable
+        igadget_var = Variable.objects.get(abstract_variable=self)
+
+        return igadget_var.get_default_value()
+
+
+#sharing variables. Each user can have a value for a specified concept (SharedVariableDef)
 class SharedVariableValue(models.Model):
+
     shared_var_def = models.ForeignKey(SharedVariableDef)
     user = models.ForeignKey(User)
     value = models.TextField(_('Value'), null=True, blank=True)
-    
+
     class Meta:
-        unique_together = ('shared_var_def', 'user')    
-        
+        unique_together = ('shared_var_def', 'user')
+
     def __unicode__(self):
-        return unicode(self.shared_var_def.name) + " - " +unicode(self.user)    
+        return unicode(self.shared_var_def.name) + " - " + unicode(self.user)
+
 
 class VariableValue(models.Model):
-    
+
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'), null=True, blank=True)
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
@@ -199,25 +207,25 @@ class VariableValue(models.Model):
     def get_variable_value(self):
         if (self.abstract_variable.has_public_value()):
             return self.value
-        
+
         return self.abstract_variable.get_default_value()
 
     def __unicode__(self):
-        return unicode(self.abstract_variable.name) + " - " +unicode(self.user)
-    
+        return unicode(self.abstract_variable.name) + " - " + unicode(self.user)
+
     def __getattribute__(self, name):
         #return the shared value if it's shared
-        if name=='value' and object.__getattribute__(self, 'shared_var_value'):
-            return object.__getattribute__(self,'shared_var_value').value
-        
+        if name == 'value' and object.__getattribute__(self, 'shared_var_value'):
+            return object.__getattribute__(self, 'shared_var_value').value
+
         return object.__getattribute__(self, name)
 
-    
+
 class WorkSpaceVariable(models.Model):
-    
+
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
     abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-    
+
     TYPES = (
         ('N', _('Number')),
         ('S', _('String')),
@@ -225,7 +233,7 @@ class WorkSpaceVariable(models.Model):
         ('B', _('Boolean')),
     )
     type = models.CharField(_('Type'), max_length=1, choices=TYPES)
-    
+
     ASPECTS = (
         ('CHANNEL', _('Channel')),
         ('TAB', _('Tab')),
@@ -233,10 +241,11 @@ class WorkSpaceVariable(models.Model):
     aspect = models.CharField(_('Aspect'), max_length=12, choices=ASPECTS)
 
     def has_public_value(self):
-        return self.aspect!="CHANNEL"
+        return self.aspect != "CHANNEL"
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.aspect)
+
 
 class Tab(models.Model):
 
