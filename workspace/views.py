@@ -192,7 +192,6 @@ def getCategories(user):
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
         # Use EzSteroids
         url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
-        params = None
         received_json = download_http_content(url, user=user)
         return simplejson.loads(received_json)['category_list']
     else:
@@ -231,7 +230,7 @@ def createWorkSpace(workspaceName, user):
                     #try with other categories
                     continue
 
-    except Exception, e:
+    except Exception:
         pass
 
     if not cloned_workspace:
@@ -473,7 +472,7 @@ class WorkSpaceEntry(Resource):
         if workspaces.count() == 0:
             msg = _("workspace cannot be deleted")
 
-            raise TracedServerError(e, {'workspace': workspace_id}, request, msg)
+            raise TracedServerError(None, {'workspace': workspace_id}, request, msg)
 
         # Gets Igadget, if it does not exist, a http 404 error is returned
         workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
@@ -519,7 +518,7 @@ class TabCollection(Resource):
 
     @transaction.commit_on_success
     def update(self, request, workspace_id):
-        user = get_user_authentication(request)
+        get_user_authentication(request)
 
         received_json = PUT_parameter(request, 'order')
         try:
@@ -537,7 +536,7 @@ class TabCollection(Resource):
             transaction.rollback()
             msg = _("tab order cannot be updated: ") + unicode(e)
 
-            raise TracedServerError(e, t, request, msg)
+            raise TracedServerError(e, received_json, request, msg)
 
 
 class TabEntry(Resource):
@@ -581,7 +580,7 @@ class TabEntry(Resource):
             transaction.rollback()
             msg = _("tab cannot be updated: ") + unicode(e)
 
-            raise TracedServerError(e, t, request, msg)
+            raise TracedServerError(e, received_json, request, msg)
 
     @transaction.commit_on_success
     def delete(self, request, workspace_id, tab_id):
@@ -767,7 +766,7 @@ class  WorkSpaceSharerEntry(Resource):
             return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
+        get_user_authentication(request)
 
         groups = []
         #read the groups that can be related to a workspace
@@ -844,9 +843,9 @@ class  WorkSpaceAdderEntry(Resource):
 
         #Mark the mashup as the active workspace if it's requested. For example, solutions
         if request.GET.get('active') == "true":
-            setActiveWorkspace(user, workspace)
+            setActiveWorkspace(user, cloned_workspace)
 
-        workspace_data = get_global_workspace_data(workspace, user)
+        workspace_data = get_global_workspace_data(cloned_workspace, user)
 
         return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
 
