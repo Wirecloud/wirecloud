@@ -32,14 +32,14 @@
 
 from django.contrib import admin
 
-from models import *
+from workspace import models
 
-admin.site.register(WorkSpace)
-admin.site.register(UserWorkSpace)
-admin.site.register(PublishedWorkSpace)
-admin.site.register(AbstractVariable)
-admin.site.register(VariableValue)
-admin.site.register(WorkSpaceVariable)
-admin.site.register(Tab)
-admin.site.register(Category)
-admin.site.register(SharedVariableValue)
+admin.site.register(models.WorkSpace)
+admin.site.register(models.UserWorkSpace)
+admin.site.register(models.PublishedWorkSpace)
+admin.site.register(models.AbstractVariable)
+admin.site.register(models.VariableValue)
+admin.site.register(models.WorkSpaceVariable)
+admin.site.register(models.Tab)
+admin.site.register(models.Category)
+admin.site.register(models.SharedVariableValue)
