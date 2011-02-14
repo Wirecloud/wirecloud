@@ -51,16 +51,13 @@ from igadget.models import Variable
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
 
 from workspace.models import *
-from gadget.models import Gadget, VariableDef
-from igadget.models import IGadget, Position
+from igadget.models import IGadget
 
 from igadget.views import deleteIGadget
 
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from mashupTemplateGenerator import TemplateGenerator
-
-from os import path
 
 from django.conf import settings
 

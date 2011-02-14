@@ -33,7 +33,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext as  _
-from django.utils import simplejson
 
 from gadget.models import SharedVariableDef
 from layout.models import Branding

@@ -30,10 +30,8 @@
 
 #
 
-from workspace.models import WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace, SharedVariableValue
+from workspace.models import WorkSpaceVariable, VariableValue, UserWorkSpace, SharedVariableValue
 from igadget.models import Variable, IGadget
-
-from django.db import models, IntegrityError
 
 
 class PackageLinker:
