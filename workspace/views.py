@@ -393,7 +393,7 @@ class WorkSpaceCollection(Resource):
     def create(self, request):
         user = get_user_authentication(request)
 
-        if not request.POST.has_key('workspace'):
+        if 'workspace' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("workspace JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         #TODO we can make this with deserializers (simplejson)
@@ -402,10 +402,10 @@ class WorkSpaceCollection(Resource):
         try:
             ts = simplejson.loads(received_json)
 
-            if not ts.has_key('name'):
+            if 'name' not in ts:
                 raise Exception(_('Malformed workspace JSON: expecting workspace uri.'))
 
-            workspace_name = ts.get('name')
+            workspace_name = ts['name']
 
             workspace = createWorkSpace(workspace_name, user)
             workspace_data = get_global_workspace_data(workspace, user)
@@ -449,8 +449,8 @@ class WorkSpaceEntry(Resource):
             ts = simplejson.loads(received_json)
             workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
 
-            if ts.has_key('active'):
-                active = ts.get('active')
+            if 'active' in ts:
+                active = ts['active']
                 if (active == 'true'):
                     #Only one active workspace
                     setActiveWorkspace(user, workspace)
@@ -459,8 +459,8 @@ class WorkSpaceEntry(Resource):
                     currentUserWorkspace.active = True
                     currentUserWorkspace.save()
 
-            if ts.has_key('name'):
-                workspace.name = ts.get('name')
+            if 'name' in ts:
+                workspace.name = ts['name']
 
             workspace.save()
 
@@ -499,7 +499,7 @@ class TabCollection(Resource):
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
-        if not request.POST.has_key('tab'):
+        if 'tab' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         #TODO we can make this with deserializers (simplejson)
@@ -508,10 +508,10 @@ class TabCollection(Resource):
         try:
             t = simplejson.loads(received_json)
 
-            if not t.has_key('name'):
+            if 'name' not in t:
                 raise Exception(_('Malformed tab JSON: expecting tab name.'))
 
-            tab_name = t.get('name')
+            tab_name = t['name']
             workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
 
             ids = createTab(tab_name, user, workspace)
@@ -570,16 +570,16 @@ class TabEntry(Resource):
             t = simplejson.loads(received_json)
             tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
 
-            if t.has_key('visible'):
-                visible = t.get('visible')
+            if 'visible' in t:
+                visible = t['visible']
                 if (visible == 'true'):
                     #Only one visible tab
                     setVisibleTab(user, workspace_id, tab)
                 else:
                     tab.visible = False
 
-            if t.has_key('name'):
-                tab.name = t.get('name')
+            if 'name' in t:
+                tab.name = t['name']
 
             tab.save()
 
@@ -658,7 +658,7 @@ class WorkSpaceVariableCollection(Resource):
                 igVarDAO = Variable.objects.get(pk=igVar['id'])
                 variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
 
-                if igVar.has_key('shared'):
+                if 'shared' in igVar:
                     if not igVar['shared']:
                         #do not share the value: remove the relationship
                         variable_value.shared_var_value = None
@@ -741,7 +741,7 @@ class  WorkSpaceSharerEntry(Resource):
             return HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
-        if not request.REQUEST.has_key('groups'):
+        if 'groups' not in request.REQUEST:
             #Share with everybody
             #Linking with public user!
             public_user = get_public_user(request)
@@ -866,17 +866,17 @@ class WorkSpacePublisherEntry(Resource):
 
     @transaction.commit_on_success
     def create(self, request, workspace_id):
-        if not request.REQUEST.has_key('data'):
+        if 'data' not in request.REQUEST:
             return HttpResponseBadRequest(get_xml_error(_("mashup data expected")), mimetype='application/xml; charset=UTF-8')
 
         received_json = request.REQUEST['data']
         try:
             mashup = simplejson.loads(received_json)
-            if not mashup.has_key('name'):
+            if 'name' not in mashup:
                 raise Exception(_('Malformed mashup JSON: expecting mashup name.'))
-            if not mashup.has_key('vendor'):
+            if 'name' not in mashup:
                 raise Exception(_('Malformed mashup JSON: expecting mashup vendor.'))
-            if not mashup.has_key('version'):
+            if 'version' not in mashup:
                 raise Exception(_('Malformed mashup JSON: expecting mashup version.'))
 
         except Exception, e:
