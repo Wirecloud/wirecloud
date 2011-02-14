@@ -1,9 +1,5 @@
-from workspace.models import *
-from igadget.models import *
-from connectable.models import *
-from preferences.models import *
-
 from django.db import models
+from django.db.models import get_model
 
 from workspace.packageLinker import PackageLinker
 
@@ -12,30 +8,21 @@ from workspace.packageLinker import PackageLinker
 # Auxiliar functions
 #########################################
 
-def get_fk_tuple(tuple, fk_field):
-    stm = "fk_id = tuple.%s" % fk_field
 
-    exec(stm)
-
-    return fk_id
+def get_fk_tuple(obj, fk_field):
+    return getattr(obj, fk_field)
 
 
-def get_tuple(table_name, tuple_id):
-    model = eval(table_name)
-
-    tuple = model.objects.get(id=tuple_id)
-
-    return tuple
+def get_tuple(app_label, module_name, tuple_id):
+    model = get_model(app_label, module_name)
+    return model.objects.get(id=tuple_id)
 
 
-def get_related_tuples(table_name, field_name, tuple_id):
-    eval(table_name)
-
-    stm = "tuple_list = model.objects.filter(%s=tuple_id)" % (field_name)
-
-    exec(stm)
-
-    return tuple_list
+def get_related_tuples(app_label, module_name, field_name, tuple_id):
+    model = get_model(app_label, module_name)
+    kwargs = {}
+    kwargs[field_name] = tuple_id
+    return model.objects.filter(**kwargs)
 
 #################################################
 ## Logic classes
@@ -212,7 +199,7 @@ class PackageCloner:
         new_id = self.mapping.get_mapping(table_name, tuple.id)
 
         if (new_id):
-            return get_tuple(table_name, new_id)
+            return get_tuple(meta.app_label, meta.module_name, new_id)
         else:
 
             model = eval(table_name)
@@ -240,12 +227,9 @@ class PackageCloner:
                     referenced_table = field.rel.to._meta.object_name
 
                     #get the id of the foreignKey. It may be optional (Null)
-                    stm = "fkValue = %s.%s" % ('tuple', field.name)
-                    exec(stm)
+                    fkValue = getattr(tuple, field.name)
                     if fkValue:
-                        stm = "referenced_tuple = %s.%s.id" % ('tuple', field.name)
-
-                        exec(stm)
+                        referenced_tuple = fkValue.id
 
                         linker_table = table_name
                         linker_field = field.name
@@ -262,9 +246,7 @@ class PackageCloner:
 
             for m2m_field in m2m_fields:
                 field_name = m2m_field.attname
-
-                stm = "m2m_objects = tuple.%s.all()" % (field_name)
-                exec(stm)
+                m2m_objects = getattr(tuple, field_name).all()
                 for m2m_object in m2m_objects:
                     referenced_model = m2m_object._meta.object_name
                     referenced_tuple_id = m2m_object.id
@@ -318,9 +300,11 @@ class PackageCloner:
                 related_model = related_table.model
 
                 related_meta = related_model._meta
-                related_table_name = related_meta.object_name
 
-                related_tuples = get_related_tuples(related_table_name, related_table.field.name, tuple.id)
+                related_tuples = get_related_tuples(related_meta.app_label,
+                                                    related_meta.module_name,
+                                                    related_table.field.name,
+                                                    tuple.id)
                 for related_tuple in related_tuples:
                     self.clone_tuple(related_tuple)
 
