@@ -32,8 +32,8 @@
 
 from django.shortcuts import get_object_or_404
 
-from workspace.models import PublishedWorkSpace
 from igadget.models import IGadget
+from workspace.models import PublishedWorkSpace
 
 
 class TemplateGenerator:

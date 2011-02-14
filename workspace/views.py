@@ -29,42 +29,32 @@
 
 
 #
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-
-from django.utils.translation import ugettext as _
-from django.utils import simplejson
-
-from commons.resource import Resource
-
-from django.db import transaction, IntegrityError
-
+from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.db import transaction, IntegrityError
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.shortcuts import get_object_or_404
+from django.utils import simplejson
+from django.utils.translation import ugettext as _
+
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
-from commons.logs import log
-from commons.utils import get_xml_error, json_encode
-from commons.http_utils import PUT_parameter, download_http_content
-from connectable.models import Out
-from igadget.models import Variable
-
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
-
+from commons.http_utils import PUT_parameter, download_http_content
+from commons.logs import log
+from commons.logs_exception import TracedServerError
+from commons.resource import Resource
+from commons.utils import get_xml_error, json_encode
+from connectable.models import Out
+from igadget.models import IGadget, Variable
+from igadget.views import deleteIGadget
 from layout.models import Branding
+from mashupTemplateGenerator import TemplateGenerator
+from packageCloner import PackageCloner
+from packageLinker import PackageLinker
 from workspace.models import Category
 from workspace.models import AbstractVariable, VariableValue, SharedVariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace, WorkSpaceVariable
-from igadget.models import IGadget
-
-from igadget.views import deleteIGadget
-
-from packageCloner import PackageCloner
-from packageLinker import PackageLinker
-from mashupTemplateGenerator import TemplateGenerator
-
-from django.conf import settings
-
-from commons.logs_exception import TracedServerError
 
 
 def get_user_gadgets(user):
