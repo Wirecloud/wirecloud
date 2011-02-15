@@ -173,7 +173,7 @@ function WorkSpace (workSpaceState) {
 						OpManagerFactory.getInstance().changeActiveWorkSpace(this);
 					}.bind(this), 0);
 				}.bind(this));
-				LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences); 
+				LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences, false); 
 				return;
 			}
 			this.preferences.addCommitHandler(this.preferencesChanged.bind(this));

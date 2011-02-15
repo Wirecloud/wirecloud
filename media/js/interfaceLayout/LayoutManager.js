@@ -1065,7 +1065,7 @@ var LayoutManagerFactory = function () {
 		 * @param scope
 		 * @param manager
 		 */
-		LayoutManager.prototype.showPreferencesWindow = function(scope, manager) {
+		LayoutManager.prototype.showPreferencesWindow = function(scope, manager, cancelable) {
 			// the disabling layer is displayed as long as a menu is shown. If there isn't a menu, there isn't a layer.
 			if (this.currentMenu != null) {//only if the layer is displayed.
 				this.hideCover();
@@ -1083,6 +1083,7 @@ var LayoutManagerFactory = function () {
 			} else {
 				dialog = this.menus[menuId];
 			}
+			dialog.setCancelable(cancelable != null ? cancelable : true);
 			this.currentMenu = dialog;
 			this.currentMenu.show();
 		}

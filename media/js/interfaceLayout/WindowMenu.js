@@ -1086,7 +1086,7 @@ FormWindowMenu.prototype.show = function (parentWindow) {
 /**
  * Specific class for publish windows
  */
-function PublishWindowMenu (workspace) {
+function PublishWindowMenu(workspace) {
 
 	//ezweb_organizations as options to be used in select inputs
 	var orgs = JSON.parse(ezweb_organizations);
@@ -1739,6 +1739,16 @@ function PreferencesWindowMenu(scope, manager) {
 	this.windowBottom.appendChild(this.cancelButton);
 }
 PreferencesWindowMenu.prototype = new WindowMenu();
+
+PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
+	if (cancelable === true) {
+		this.closeButton.style.display = '';
+		this.cancelButton.style.display = '';
+	} else {
+		this.closeButton.style.display = 'none';
+		this.cancelButton.style.display = 'none';
+	}
+};
 
 PreferencesWindowMenu.prototype._executeOperation = function() {
 	// Validate input fields
