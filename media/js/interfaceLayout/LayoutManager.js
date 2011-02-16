@@ -171,17 +171,9 @@ var LayoutManagerFactory = function () {
 			this._updateTaskProgress();
 		}
 
-		LayoutManager.prototype._notifyPlatformReady = function (firstTime) {
+		LayoutManager.prototype._notifyPlatformReady = function () {
 			var loadingElement = $("loading-window");
 			loadingElement.addClassName("fadding");
-
-			if (firstTime) {
-
-				// Listen to resize events
-				Event.observe(window,
-				              "resize",
-				              this.resizeWrapper.bind(this));
-			}
 
 			var loadingMessage = $("loading-message");
 			var step = 0;
@@ -289,10 +281,11 @@ var LayoutManagerFactory = function () {
 					this.resizeTabBar();
 					break;
 				}
+			}
 
-				// Recalculate menu positions
-				if (this.currentMenu)
-					this.currentMenu.calculatePosition();
+			// Recalculate menu positions
+			if (this.currentMenu) {
+				this.currentMenu.calculatePosition();
 			}
 		}
 
@@ -760,7 +753,7 @@ var LayoutManagerFactory = function () {
 		 * @param {String} msg message to show to the user
 		 * @param {function} yesHandler
 		 * @param {function}
-		 * @param {Constants.Logging} type (default: Constants.logging.INFO_MSG}
+		 * @param {Constants.Logging} type (default: Constants.logging.INFO_MSG)
 		 */
 		LayoutManager.prototype.showYesNoDialog = function(msg, yesHandler, noHandler, type) {
 			if (this.currentMenu != null) {
@@ -1128,6 +1121,9 @@ var LayoutManagerFactory = function () {
 			var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
 			fadder.fade();
 		}
+
+		// Listen to resize events
+		Event.observe(window, "resize", this.resizeWrapper.bind(this));
 	}
 
 	/*-----------------------------*

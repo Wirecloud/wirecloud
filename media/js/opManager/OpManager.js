@@ -400,7 +400,7 @@ var OpManagerFactory = function () {
 							OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
 						},
 						function() {
-							layoutManager._notifyPlatformReady(false);
+							layoutManager._notifyPlatformReady();
 						},
 						Constants.Logging.WARN_MSG);
 					return;
@@ -527,7 +527,7 @@ var OpManagerFactory = function () {
 				}
 
 				layoutManager.logStep('');
-				layoutManager._notifyPlatformReady(!this.loadComplete);
+				layoutManager._notifyPlatformReady();
 				this.loadCompleted = true;
 
 				//Additional information that a workspace must do after loading! 
