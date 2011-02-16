@@ -32,6 +32,7 @@ function WindowMenu(title) {
 	if (arguments.length == 0)
 		return;
 
+	this.childWindow = null;
 	this.htmlElement = document.createElement('div');  // create the root HTML element
 	Element.extend(this.htmlElement);
 	this.htmlElement.className = "window_menu";
@@ -78,7 +79,6 @@ function WindowMenu(title) {
 
 	// Initial title
 	this.titleElement.update(title);
-	
 }
 
 /**
@@ -87,7 +87,7 @@ function WindowMenu(title) {
  * Click Listener for the close button.
  */
 WindowMenu.prototype._closeListener = function(e) {
-	LayoutManagerFactory.getInstance().hideCover();
+	this.hide();
 }
 
 /**
@@ -138,6 +138,10 @@ WindowMenu.prototype.calculatePosition = function() {
 		this.htmlElement.style.top = coordenates[1]+"px";
 	}
 	this.htmlElement.style.left = coordenates[0]+"px";
+
+	if (this.childWindow != null) {
+	    this.childWindow.calculatePosition();
+	}
 }
 
 /**
@@ -148,24 +152,55 @@ WindowMenu.prototype.setHandler = function (handler) {
 }
 
 /**
- * Displays the window in the correct position.
+ * Makes this WindowMenu visible.
+ *
+ * @param parentWindow
  */
-WindowMenu.prototype.show = function () {
+WindowMenu.prototype.show = function (parentWindow) {
+	this._parentWindowMenu = parentWindow;
+
+	if (this._parentWindowMenu != null) {
+		this._parentWindowMenu._addChildWindow(this);
+	}
+
 	document.body.insertBefore(this.htmlElement, $("header"));
 	this.calculatePosition();
 	this.htmlElement.style.display = "block";
 	this.setFocus();
 }
 
+/**
+ * Makes this WindowMenu hidden.
+ */
 WindowMenu.prototype.hide = function () {
-	try{
-		document.body.removeChild(this.htmlElement);
-		this.msgElement.update();
+	if (this.htmlElement.parentNode == null) {
+		// This windowmenu is currently hidden => Nothing to do
+		return;
 	}
-	catch (err){
-		//do nothing
+
+	this.htmlElement.parentNode.removeChild(this.htmlElement);
+	this.msgElement.update();
+	if (this.childWindow != null) {
+	    this.childWindow.hide();
+	}
+	
+	if (this._parentWindowMenu != null) {
+		this._parentWindowMenu._removeChildWindow(this);
+		this._parentWindowMenu = null;
+	} else {
+		LayoutManagerFactory.getInstance().hideCover();
 	}
 }
+
+WindowMenu.prototype._addChildWindow = function (windowMenu) {
+	this.childWindow = windowMenu;
+};
+
+WindowMenu.prototype._removeChildWindow = function (windowMenu) {
+	if (this.childWindow === windowMenu) {
+		this.childWindow = null;
+	}
+};
 
 WindowMenu.prototype.setFocus = function () {
 }
@@ -206,7 +241,7 @@ ContratationWindow.prototype.setHandler = function(acceptHandler) {
 
 ContratationWindow.prototype._acceptListener = function(e) {
 	this.acceptHandler();
-	LayoutManagerFactory.getInstance().hideCover();
+	this.hide();
 }
 
 /**
@@ -261,11 +296,7 @@ function AddingGadgetToApplicationWindow(service_facade) {
 	this.acceptButton = document.createElement('button');
 	this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
 	
-	this._acceptListener = function ()  { 
-	  this.service_facade.add_gadget_to_app(this._gadget, this._appId);
-	  LayoutManagerFactory.getInstance().hideCover();
-	}.bind(this);
-	
+	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
 	
 	this.windowBottom.appendChild(this.acceptButton);
@@ -274,8 +305,8 @@ function AddingGadgetToApplicationWindow(service_facade) {
 AddingGadgetToApplicationWindow.prototype = new WindowMenu();
 
 AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
-	this.acceptHandler();
-	LayoutManagerFactory.getInstance().hideCover();
+	this.service_facade.add_gadget_to_app(this._gadget, this._appId);
+	this.hide();
 }
 
 AddingGadgetToApplicationWindow.prototype.setExtraData = function(resource) {
@@ -350,11 +381,7 @@ function BuyingApplicationWindow(service_facade) {
 	
 	this.acceptButton.className = 'contratable';
 	
-	this._acceptListener = function ()  { 
-	  this.service_facade.buy_resource_applications(this._resource);
-	  LayoutManagerFactory.getInstance().hideCover();
-	}.bind(this);
-		
+	this._acceptListener = this._acceptListener.bind(this);
 	this.acceptButton.observe("click", this._acceptListener);
 	
 	this.windowBottom.appendChild(this.acceptButton);
@@ -371,13 +398,13 @@ BuyingApplicationWindow.prototype.setHandler = function(acceptHandler) {
 }
 
 BuyingApplicationWindow.prototype._acceptListener = function(e) {
-	this.acceptHandler();
-	LayoutManagerFactory.getInstance().hideCover();
+	this.service_facade.buy_resource_applications(this._resource);
+	this.hide();
 }
 
 BuyingApplicationWindow.prototype._closeListener = function(e) {
 	this.hideApplicationPopUp(this.help_menu);
-	LayoutManagerFactory.getInstance().hideCover();
+	this.hide();
 }
 
 BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
@@ -592,10 +619,10 @@ CreateWindowMenu.prototype.executeOperation = function() {
 	}
 }
 
-CreateWindowMenu.prototype.show = function () {
+CreateWindowMenu.prototype.show = function (parentWindow) {
 	this.nameInput.value = '';
 
-	WindowMenu.prototype.show.call(this);
+	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
 
@@ -634,8 +661,8 @@ function AlertWindowMenu () {
 AlertWindowMenu.prototype = new WindowMenu();
 
 AlertWindowMenu.prototype._acceptListener = function(e) {
-	LayoutManagerFactory.getInstance().hideCover();
-	this.acceptHandler();	
+	this.acceptHandler();
+	this.hide();
 }
 
 AlertWindowMenu.prototype._closeListener = function(e) {
@@ -685,12 +712,12 @@ AddMashupWindowMenu.prototype = new WindowMenu();
 
 AddMashupWindowMenu.prototype._newWorkspaceListener = function(e) {
 	this.acceptHandler();
-	LayoutManagerFactory.getInstance().hideCover();
+	this.hide();
 }
 
 AddMashupWindowMenu.prototype._currentWorkspaceListener = function(e) {
 	this.cancelHandler();
-	LayoutManagerFactory.getInstance().hideCover();
+	this.hide();
 }
 
 AddMashupWindowMenu.prototype.setHandler = function(acceptHandler, cancelHandler) {
@@ -772,17 +799,17 @@ InfoWindowMenu.prototype._dontShowAnymore = function(e) {
 	changes['tip-' + this.type] = {value: false};
 	PreferencesManagerFactory.getInstance().getPlatformPreferences().set(changes);
 
-	layoutManager.hideCover();
+	this.hide();
 }
 
 /**
  *
  */
-InfoWindowMenu.prototype.show = function (type) {
+InfoWindowMenu.prototype.show = function (type, parentWindow) {
 	this.type = type;
 	this.checkbox.checked = false;
 
-	WindowMenu.prototype.show.call(this);
+	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
 /**
@@ -993,17 +1020,17 @@ FormWindowMenu.prototype._acceptHandler = function(e) {
 		}
 
 		this.executeOperation(form);
-		LayoutManagerFactory.getInstance().hideCover();
+		this.hide();
 	}
 }
 
-FormWindowMenu.prototype.show = function () {
+FormWindowMenu.prototype.show = function (parentWindow) {
 	for (var fieldId in this.fields) {
 		var field = this.fields[fieldId];
 		field.inputInterface.reset();
 	}
 
-	WindowMenu.prototype.show.call(this);
+	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
 /**
@@ -1114,7 +1141,6 @@ function PublishWindowMenu (element) {
 	
 	//Window for uploading local files
 	this.uploadWindow = new UploadWindowMenu(gettext('Upload File'));
-		
 }
 PublishWindowMenu.prototype = new FormWindowMenu();
 
@@ -1128,13 +1154,7 @@ PublishWindowMenu.prototype.executeOperation = function(form) {
 
 PublishWindowMenu.prototype.openUploadWindow = function(targetElementName){
 	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
-	this.uploadWindow.show(targetElement);
-}
-
-PublishWindowMenu.prototype.hide = function(){
-	this.uploadWindow.hide();
-	
-	WindowMenu.prototype.hide.call(this);
+	this.uploadWindow.show(this, targetElement);
 }
 
 /**
@@ -1226,8 +1246,8 @@ ShareWindowMenu.prototype.executeOperation = function(form) {
 	OpManagerFactory.getInstance().activeWorkSpace.shareWorkspace(true, groups);
 }
 
-ShareWindowMenu.prototype.show = function() {
-	FormWindowMenu.prototype.show.call(this);
+ShareWindowMenu.prototype.show = function(parentWindow) {
+	FormWindowMenu.prototype.show.call(this, parentWindow);
 	// TODO remove this workaround
 	this.hideGroups();
 }
@@ -1287,14 +1307,8 @@ AddFeedMenu.prototype = new FormWindowMenu();
 
 AddFeedMenu.prototype.openUploadWindow = function(targetElementName){
 	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
-	this.uploadWindow.show(targetElement);
+	this.uploadWindow.show(this, targetElement);
 }	
-
-AddFeedMenu.prototype.hide = function(){
-	this.uploadWindow.hide();
-	
-	WindowMenu.prototype.hide.call(this);
-}
 
 AddFeedMenu.prototype.setFocus = function() {
 	this.fields['name'].inputInterface.focus();
@@ -1372,14 +1386,8 @@ AddSiteMenu.prototype = new FormWindowMenu();
 
 AddSiteMenu.prototype.openUploadWindow = function(targetElementName){
 	var targetElement = this.fields[targetElementName].inputInterface.inputElement;
-	this.uploadWindow.show(targetElement);
+	this.uploadWindow.show(this, targetElement);
 }	
-
-AddSiteMenu.prototype.hide = function(){
-	this.uploadWindow.hide();
-	
-	WindowMenu.prototype.hide.call(this);
-}
 
 AddSiteMenu.prototype.setFocus = function() {
 	this.fields['name'].inputInterface.focus();
@@ -1425,8 +1433,8 @@ RenameWindowMenu.prototype.executeOperation = function(form) {
 	OpManagerFactory.getInstance().activeWorkSpace.rename(name);
 }
 
-RenameWindowMenu.prototype.show = function() {
-	FormWindowMenu.prototype.show.call(this);
+RenameWindowMenu.prototype.show = function(parentWindow) {
+	FormWindowMenu.prototype.show.call(this, parentWindow);
 	this.fields['name'].inputInterface.inputElement.value = OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name;
 }
 
@@ -1602,17 +1610,17 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
 		this.setMsg(errorMsg);
 	} else {
 		this.manager.save();
-		LayoutManagerFactory.getInstance().hideCover();
+		this.hide();
 	}
 	if (this.language && this.language.value != LANGUAGE_CODE){
 		return setLanguage(this.language.value);
 	}
 }
 
-PreferencesWindowMenu.prototype.show = function () {
+PreferencesWindowMenu.prototype.show = function (parentWindow) {
 	this.titleElement.setTextContent(this.manager.buildTitle());
 	this.manager.resetInterface('platform');
-	WindowMenu.prototype.show.call(this);
+	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
 /**
@@ -1647,12 +1655,12 @@ function UploadWindowMenu (title, targetElement) {
 
 UploadWindowMenu.prototype = new WindowMenu();
 
-UploadWindowMenu.prototype.show = function(targetElement){
+UploadWindowMenu.prototype.show = function(parentWindow, targetElement) {
 	//reload the iframe for IE
 	this.iframe.setAttribute('src', URIs.FILE_UPLOADER);
 	this.targetElement = targetElement;
 	
-	WindowMenu.prototype.show.call(this);
+	WindowMenu.prototype.show.call(this, parentWindow);
 }
 
 UploadWindowMenu.prototype._closeListener = function(){
