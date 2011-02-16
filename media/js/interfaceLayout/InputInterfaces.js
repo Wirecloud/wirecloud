@@ -275,6 +275,21 @@ TextInputInterface.prototype = new InputInterface();
 /**
  *
  */
+function PasswordInputInterface(fieldId, options) {
+	if (arguments.length == 0)
+		return;
+
+	InputInterface.call(this, fieldId, options);
+
+	this.inputElement = document.createElement('input');
+	Element.extend(this.inputElement);
+	this.inputElement.setAttribute('type', 'password');
+}
+PasswordInputInterface.prototype = new InputInterface();
+
+/**
+ *
+ */
 function IntegerInputInterface(fieldId, options) {
 	if (arguments.length == 0)
 		return;
@@ -890,6 +905,8 @@ InterfaceFactory.createInterface = function(fieldId, fieldDesc) {
 		return new IdInputInterface(fieldId, fieldDesc);
 	case 'text':
 		return new TextInputInterface(fieldId, fieldDesc);
+	case 'password':
+		return new PasswordInputInterface(fieldId, fieldDesc);
 	case 'integer':
 		return new IntegerInputInterface(fieldId, fieldDesc);
 	case 'longtext':
