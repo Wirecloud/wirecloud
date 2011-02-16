@@ -49,7 +49,7 @@ urlpatterns = patterns('workspace.views',
 
     # Variables of the whole workspace
     (r'^/((?P<workspace_id>\d+)/variable(s)?[/]?)?$',
-        views.WorkSpaceVariableCollection(permitted_methods=('PUT', 'POST', ))),
+        views.WorkSpaceVariableCollection(permitted_methods=('PUT', ))),
 
     # Wiring info for the whole workspace
     (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
