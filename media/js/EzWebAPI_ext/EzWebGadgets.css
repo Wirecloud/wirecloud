@@ -330,7 +330,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_button span {
-  margin: 3px;
+  margin: 0px 3px 1px 3px;
   font-size: 13px;
   display: inline-block;
 }
@@ -776,22 +776,31 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .notebook .tab_area .tab .close_button {
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   position: absolute;
-  right: 3px;
-  top: 3px;
-  height: 16px;
+  right: 2px;
+  top: 5px;
   overflow: hidden;
   margin: 0px;
+  border: 1px solid transparent;
 }
 
-.notebook .tab_area .tab .close_button span {
-  font-size: 10px;
-  color: black;
+.notebook .tab_area .tab .close_button:hover {
+  border-color: #F0F0F0 #727579 #727579 #F0F0F0;
+  background: #E9E9E9;
+}
+
+.notebook .tab_area .tab .close_button div > span {
+  display: none;
 }
 
 .notebook .tab_area .tab .close_button div {
   border: 0px none;
-  background: transparent;
+  background: transparent url(images/styledElements/close.png) no-repeat scroll 0 0;
+  height: 12px;
+  width: 12px;
 }
 
 .notebook .tab_area .tab.selected {
