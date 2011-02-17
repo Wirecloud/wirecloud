@@ -225,7 +225,7 @@ function WorkSpace (workSpaceState) {
 
 		layoutManager.logStep('');
 		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
-		LogManagerFactory.getInstance().log('workspace loaded', Constants.Logging.INFO_MSG);
+		LogManagerFactory.getInstance().log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
 	}
 
 	var onError = function (transport, e) {
@@ -688,7 +688,7 @@ function WorkSpace (workSpaceState) {
 		this.skinManager.unloadSkin();
 
 		layoutManager.logStep('');
-		LogManagerFactory.getInstance().log('workspace unloaded', Constants.Logging.INFO_MSG);
+		LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
 		LogManagerFactory.getInstance().newCycle();
 	}
 
@@ -780,35 +780,37 @@ function WorkSpace (workSpaceState) {
 		PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, this, publishSuccess, publishError);
 	}
 
-	WorkSpace.prototype.mergeWith = function(workspace_id){
+	WorkSpace.prototype.mergeWith = function(workspace_id) {
 		var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
 		PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
-	}
+	};
 
 	// Checks if this workspace is shared with other users
 	WorkSpace.prototype.isShared = function() {
 		return this.workSpaceState['shared'];
-	}
+	};
 
 	// Checks if the current user is the creator of this workspace
 	WorkSpace.prototype.isOwned = function() {
 		return this.workSpaceState['owned'];
-	}
+	};
 
 	// Check if the workspace has to be forced to work as a Shared environment (IE6 only)
 	WorkSpace.prototype.forceRestrictedSharing = function() {
 		return (BrowserUtilsFactory.getInstance().getBrowser() == "IE6");
-	}
+	};
 
 
 	/**
 	 * Checks when an action, defined by a basic policy, can be performed.
 	 */
 	WorkSpace.prototype._isAllowed = function (action) {
-		return EzSteroidsAPI.is_activated() ?
-			EzSteroidsAPI.evaluePolicy(action) :
-			true;
-	}
+		if (EzSteroidsAPI.is_activated()) {
+			return EzSteroidsAPI.evaluePolicy(action);
+		} else {
+			return true;
+		}
+	};
 
 	/**
 	 * Checks if an action can be performed in this workspace by current user.

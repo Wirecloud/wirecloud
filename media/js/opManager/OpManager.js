@@ -374,7 +374,7 @@ var OpManagerFactory = function () {
 			var layoutManager = LayoutManagerFactory.getInstance();
 			layoutManager.resizeWrapper();
 			layoutManager._startComplexTask(gettext('Loading EzWeb Platform'), 3);
-			layoutManager.logSubTask(gettext('Retreiving EzWeb code'));
+			layoutManager.logSubTask(gettext('Retrieving EzWeb code'));
 			layoutManager.logStep('');
 
 			// Init log manager

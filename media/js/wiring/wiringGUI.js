@@ -994,7 +994,7 @@ Coordinates.prototype.getAngle = function(angle) {
 }
 
 /**
- * Retreives the coordinates of this anchor relative to another HTML Element.
+ * Retrieves the coordinates of this anchor relative to another HTML Element.
  *
  * @param {HTMLElement} baseElement element of reference.
  */

@@ -2,37 +2,41 @@
 # Copyright (C) 2008 Telefónica I+D
 # This file is distributed under the same license as the EzWeb-Platform package.
 # manuel <miglesia@pegaso.ls.fi.upm.es>, 2008.
+# jjmr <jjmr@tid.es>, 2011.
+# Álvaro Arranz García <aarranz@yaco.es>, 2011.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-19 10:04+0200\n"
-"PO-Revision-Date: 2010-07-19 09:59+0100\n"
-"Last-Translator: jjmr <jjmr@tid.es>\n"
-"Language-Team: Spanish/Spain <es@li.org>\n"
+"POT-Creation-Date: 2011-02-17 13:17+0100\n"
+"PO-Revision-Date: 2011-02-17 12:52+0100\n"
+"Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
+"Language-Team: Español/España <>\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: media/clms/js/change_field.js:33 media/clms/js/change_field.js.py:133
+#: media/clms/js/change_field.js:34 media/clms/js/change_field.js.py:134
 msgid "File"
 msgstr "Fichero"
 
-#: media/clms/js/change_field.js:101
+#: media/clms/js/change_field.js:102
 msgid "Wizard"
 msgstr "Asistente"
 
 #: media/iphone/dragboard/iGadget.js:145 media/iphone/gadgetModel/Gadget.js:60
-#: media/iphone/opManager/WorkSpace.js:69 media/js/log/LogManager.js:127
+#: media/iphone/opManager/WorkSpace.js:69 media/js/log/LogManager.js:164
 msgid ""
-"JavaScript exception on file %(errorFile)s (line: %(errorLine)s): %"
-"(errorDesc)s"
+"JavaScript exception on file %(errorFile)s (line: %(errorLine)s): "
+"%(errorDesc)s"
 msgstr ""
-"Excepción de Javascript en el fichero %(errorFile)s (line: %(errorLine)s): %"
-"(errorDesc)s"
+"Excepción de Javascript en el fichero %(errorFile)s (line: %(errorLine)s): "
+"%(errorDesc)s"
 
-#: media/iphone/dragboard/iGadget.js:154
+#: media/iphone/dragboard/iGadget.js:154 media/js/dragboard/iGadget.js:1895
 msgid "Error adding igadget to persistence: %(errorMsg)s."
 msgstr "Error al añadir el igadget en la persistencia: %(errorMsg)s."
 
@@ -48,96 +52,256 @@ msgstr ""
 msgid "The gadget could not be added to the showcase: %(errorMsg)s."
 msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
 
-#: media/iphone/gadgetModel/Gadget.js:140 media/js/gadgetModel/Gadget.js:161
+#: media/iphone/gadgetModel/Gadget.js:140 media/js/gadgetModel/Gadget.js:163
 msgid ""
 "[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]"
 msgstr ""
-"[Distribuidor del gadget: %(vendor)s, nombre del gadget: %(name)s, versión: %"
-"(version)s]"
+"[Distribuidor del gadget: %(vendor)s, nombre del gadget: %(name)s, versión: "
+"%(version)s]"
 
-#: media/js/catalogue/services.js:335
+#: media/js/catalogue/services.js:190
+msgid "Error searching the catalogue: %(errorMsg)s."
+msgstr "Error al buscar en el catálogo: %(errorMsg)s"
+
+#: media/js/catalogue/services.js:325
+msgid "Error changing the preferred version of this resource: %(errorMsg)s."
+msgstr "Error al actualizar la versión favorita del recurso: %(errorMsg)s."
+
+#: media/js/catalogue/services.js:349
 msgid "The resource could not be added to the catalogue: %(errorMsg)s."
 msgstr "No se pudo añadir el recurso al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/services.js:371 media/js/catalogue/services.js.py:403
+#: media/js/catalogue/services.js:359
+msgid "Processing catalogue response"
+msgstr "Procesando la respuesta del catálogo"
+
+#: media/js/catalogue/services.js:371
+msgid "Adding the resource to the catalogue"
+msgstr "Añadiendo el recurso al catálogo"
+
+#: media/js/catalogue/services.js:372
+msgid "Sending resource template to the catalogue"
+msgstr "Enviando la plantilla del recurso al catálogo"
+
+#: media/js/catalogue/services.js:401
+msgid "The resource could not be added to the catalogue: %(errorMsg)s"
+msgstr "El recurso no pudo ser añadido al catálogo: %(errorMsg)s."
+
+#: media/js/catalogue/services.js:409
+msgid "Gadget uploaded successfully"
+msgstr "Gadget subido correctamente"
+
+#: media/js/catalogue/services.js:422
+msgid "Uploading packaged gadget"
+msgstr "Subiendo gadget empaquetado"
+
+#: media/js/catalogue/services.js:439
+msgid "Removing affected iGadgets"
+msgstr "Eliminando los iGadgets afectados"
+
 #: media/js/catalogue/services.js:445
+msgid "Purging gadget info"
+msgstr "Eliminando la información del gadget"
+
+#: media/js/catalogue/services.js:457 media/js/catalogue/services.js.py:505
+#: media/js/catalogue/services.js:547
 msgid "Error deleting the Gadget: %(errorMsg)s."
 msgstr "Error al eliminar el gadget: %(errorMsg)s"
 
-#: media/js/catalogue/services.js:394 media/js/catalogue/services.js.py:436
-#: media/js/catalogue/services.js:484 media/js/catalogue/services.js.py:528
+#: media/js/catalogue/services.js:466
+msgid "Deleting gadget resource from catalogue"
+msgstr "Eliminando el gadget del catálogo"
+
+#: media/js/catalogue/services.js:467
+msgid "Requesting server"
+msgstr "Enviando petición al servidor"
+
+#: media/js/catalogue/services.js:475
+msgid ""
+"Do you really want to remove the \"%(name)s\" (vendor: \"%(vendor)s\", "
+"version: \"%(version)s\") gadget?"
+msgstr ""
+"¿Realmente quieres eliminar el gadget \"%(name)s\" (vendedor: \"%(vendor)s"
+"\", versión: \"%(version)s\")?"
+
+#: media/js/catalogue/services.js:496 media/js/catalogue/services.js.py:538
+#: media/js/catalogue/services.js:586 media/js/catalogue/services.js.py:630
 msgid "Done!"
 msgstr "¡Hecho!"
 
-#: media/js/catalogue/services.js:407
+#: media/js/catalogue/services.js:509
 msgid ""
 "Error: the Gadget has not cached its HTML code. Instantiate it previously!"
 msgstr ""
 "Error: la plataforma no tiene almacenado el código HTML del gadget. Es "
 "necesario instanciarlo antes de realizar esta operación."
 
-#: media/js/catalogue/services.js:449
+#: media/js/catalogue/services.js:551
 msgid "Error during voting!"
 msgstr "Error durante el proceso de votado"
 
-#: media/js/catalogue/services.js:493 media/js/catalogue/services.js.py:537
+#: media/js/catalogue/services.js:595 media/js/catalogue/services.js.py:639
 msgid "Error tagging Gadget: %(errorMsg)s."
 msgstr "Error al etiquetar el gadget: %(errorMsg)s."
 
-#: media/js/catalogue/services.js:497 media/js/catalogue/services.js.py:541
+#: media/js/catalogue/services.js:599 media/js/catalogue/services.js.py:643
 msgid "Error during tagging!"
 msgstr "Error durante el proceso de etiquetado"
 
-#: media/js/catalogue/user_commands.js:391
-msgid "Uploading packaged gadget"
-msgstr "Subiendo gadget empaquetado"
-
-#: media/js/catalogue/user_commands.js:421
-msgid "The resource could not be added to the catalogue: %(errorMsg)s"
-msgstr "El recurso no pudo ser añadido al catálogo: %(errorMsg)s."
-
-#: media/js/catalogue/user_commands.js:429
-msgid "Gadget uploaded successfully"
-msgstr "Gadget subido correctamente"
-
-#: media/js/catalogue/views/list/html_painters.js:83
-#: media/js/catalogue/views/list/html_painters.js:217
-#: media/js/cmsutils/widgets/SelectFilter2.js:48
-msgid "Add"
-msgstr "Añadir"
-
-#: media/js/catalogue/views/list/html_painters.js:86
-#: media/js/interfaceLayout/WindowMenu.js:340
+#: media/js/catalogue/views/html_painters.js:91
+#: media/js/interfaceLayout/WindowMenu.js:371
 msgid "Buy"
 msgstr "Comprar"
 
-#: media/js/catalogue/views/list/html_painters.js:438
+#: media/js/catalogue/views/html_painters.js:94
+#: media/js/catalogue/views/list/html_painters.js:85
+msgid "Add"
+msgstr "Añadir"
+
+#: media/js/catalogue/views/list/html_painters.js:310
 msgid ""
 "The resource you are adding to the catalogue is not the latest version. "
 msgstr "El recurso que estás añadiendo al catálogo no es la última versión."
 
-#: media/js/cmsutils/widgets/SelectFilter2.js:43
-msgid "Choose all"
-msgstr "Elegir todo"
-
-#: media/js/cmsutils/widgets/SelectFilter2.js:50 media/js/opManager/Tab.js:598
-#: media/js/opManager/WorkSpace.js:837
-#: media/js/wiring/connectableInterface.js:445
-msgid "Remove"
-msgstr "Eliminar"
-
-#: media/js/cmsutils/widgets/SelectFilter2.js:55
-#, perl-format
-msgid "Chosen %s"
-msgstr "Elegido %s"
-
-#: media/js/cmsutils/widgets/SelectFilter2.js:56
-msgid "Select your choice(s) and click "
-msgstr "Elige tus opciones y haz click "
-
-#: media/js/cmsutils/widgets/SelectFilter2.js:61
+#: media/js/cmsutils/widgets/SelectFilter2.js:62
 msgid "Clear all"
 msgstr "Eliminar todas"
+
+#: media/js/common/constants.js:34
+msgid "Connection Refused"
+msgstr "Conexión rechazada"
+
+#: media/js/common/constants.js:35
+msgid "Bad Request"
+msgstr "Petición incorrecta"
+
+#: media/js/common/constants.js:36
+msgid "Unauthorized"
+msgstr "No autorizado"
+
+#: media/js/common/constants.js:37
+msgid "Payment Required"
+msgstr "Se requiere pago"
+
+#: media/js/common/constants.js:38
+msgid "Forbidden"
+msgstr "Prohibido"
+
+#: media/js/common/constants.js:39
+msgid "Not Found"
+msgstr "No encontrado"
+
+#: media/js/common/constants.js:40
+msgid "Method Not Allowed"
+msgstr "Método no permitido"
+
+#: media/js/common/constants.js:41
+msgid "Not Acceptable"
+msgstr "No aceptable"
+
+#: media/js/common/constants.js:42
+msgid "Proxy Authentication Required"
+msgstr "Se requiere autenticación en el proxy"
+
+#: media/js/common/constants.js:43
+msgid "Request Timeout"
+msgstr "Tiempo de espera agotado"
+
+#: media/js/common/constants.js:44
+msgid "Conflict"
+msgstr "Conflicto"
+
+#: media/js/common/constants.js:45
+msgid "Gone"
+msgstr "Ya no disponible"
+
+#: media/js/common/constants.js:46
+msgid "Length Required"
+msgstr "Requiere longitud"
+
+#: media/js/common/constants.js:47
+msgid "Precondition Failed"
+msgstr "Falló precondición"
+
+#: media/js/common/constants.js:48
+msgid "Request Entity Too Large"
+msgstr "Solicitud demasiado larga"
+
+#: media/js/common/constants.js:49
+msgid "Request-URI Too Long"
+msgstr "URI demasiado larga"
+
+#: media/js/common/constants.js:50
+msgid "Unsupported Media Type"
+msgstr "Tipo de medio no soportado"
+
+#: media/js/common/constants.js:51
+msgid "Requested Range Not Satisfiable"
+msgstr "Rango solicitado no disponible"
+
+#: media/js/common/constants.js:52
+msgid "Expectation Failed"
+msgstr "Falló expectativa"
+
+#: media/js/common/constants.js:53
+msgid "Unprocessable Entity"
+msgstr "Entidad no procesable"
+
+#: media/js/common/constants.js:54
+msgid "Locked"
+msgstr "Bloqueado"
+
+#: media/js/common/constants.js:55
+msgid "Failed Dependency"
+msgstr "Falló dependencia"
+
+#: media/js/common/constants.js:56
+msgid "Upgrade Required"
+msgstr "Actualización requerida"
+
+#: media/js/common/constants.js:57
+msgid "Internal Server Error"
+msgstr "Error interno del servidor"
+
+#: media/js/common/constants.js:58
+msgid "Not Implemented"
+msgstr "No implementado"
+
+#: media/js/common/constants.js:59
+msgid "Bad Gateway"
+msgstr "Pasarela incorrecta"
+
+#: media/js/common/constants.js:60
+msgid "Service Unavailable"
+msgstr "Servicio no disponible"
+
+#: media/js/common/constants.js:61
+msgid "Gateway Timeout"
+msgstr "Tiempo de espera de la pasarela agotado"
+
+#: media/js/common/constants.js:62
+msgid "HTTP Version Not Supported"
+msgstr "Versión de HTTP no soportada"
+
+#: media/js/common/constants.js:63
+msgid "Variant Also Negotiates"
+msgstr "Variante también negocia"
+
+#: media/js/common/constants.js:64
+msgid "Insufficient Storage"
+msgstr "Almacenamiento insuficiente"
+
+#: media/js/common/constants.js:65
+msgid "Loop Detected"
+msgstr "Detectado bucle"
+
+#: media/js/common/constants.js:66
+msgid "Not Extended"
+msgstr "No extendido"
+
+#: media/js/common/constants.js:69
+msgid "Unknown status code"
+msgstr "Código de estado desconocido"
 
 #: media/js/common/utils.js:85
 msgid "There is not any icon identified by \"%(iconId)s\"."
@@ -175,21 +339,21 @@ msgid ""
 "WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New "
 "related concept is '%(newConcept)s'."
 msgstr ""
-"WARNING: el nombre del concepto '%(cname)s' ya está relacionado con '%"
-"(concept)s'. El nuevo concepto relacionado es '%(newConcept)s'."
+"WARNING: el nombre del concepto '%(cname)s' ya está relacionado con "
+"'%(concept)s'. El nuevo concepto relacionado es '%(newConcept)s'."
 
-#: media/js/contextManager/ContextPlatform.js:136
-#: media/js/contextManager/ContextPlatform.js:142
+#: media/js/contextManager/ContextPlatform.js:137
+#: media/js/contextManager/ContextPlatform.js:143
 msgid "Concept does not have value, this is a Gadget Concept."
 msgstr "El concepto no tiene valor, este es un Concepto de Gadget"
 
-#: media/js/contextManager/ContextPlatform.js:197
+#: media/js/contextManager/ContextPlatform.js:198
 msgid "Unexpected igadget variables. Concept does not have type yet."
 msgstr ""
 "Variables de igadget no esperadas. El concepto no tiene tipo asociado "
 "todavía."
 
-#: media/js/contextManager/ContextPlatform.js:221
+#: media/js/contextManager/ContextPlatform.js:222
 msgid "Concept does not have type yet."
 msgstr "El concepto no tiene tipo aún."
 
@@ -218,162 +382,86 @@ msgstr "¿está compartido?"
 msgid "edit shared value"
 msgstr "editar valor compartido"
 
-#: media/js/dragboard/dragboard.js:87 media/js/wiring/connectable.js:445
+#: media/js/dragboard/dragboard.js:87 media/js/wiring/connectable.js:464
 msgid "Error committing dragboard changes to persistence: %(errorMsg)s."
 msgstr "Error al almacenar los cambios en el servidor: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:329 media/js/dragboard/iGadget.js.py:949
-msgid "Error renaming igadget from persistence: %(errorMsg)s."
-msgstr "Error al renombrar el igadget de la persistencia: %(errorMsg)s."
-
-#: media/js/dragboard/iGadget.js:359
-msgid "Snap to grid"
-msgstr "Ajustar a la rejilla"
-
-#: media/js/dragboard/iGadget.js:367
-msgid "This iGadget is outside the grid."
-msgstr "Este iGadget está fuera de la rejilla."
-
-#: media/js/dragboard/iGadget.js:371
-msgid "Extract from grid"
-msgstr "Extraer de la rejilla"
-
-#: media/js/dragboard/iGadget.js:379
-msgid "This iGadget is aligned to the grid."
-msgstr "Este iGadget está alineado a la rejilla."
-
-#: media/js/dragboard/iGadget.js:395
-msgid "Exit Full Dragboard"
-msgstr "Salir de Pantalla Completa"
-
-#: media/js/dragboard/iGadget.js:404
-msgid "Full Dragboard"
-msgstr "Pantalla Completa"
-
-#: media/js/dragboard/iGadget.js:462 media/js/dragboard/iGadget.js.py:463
-msgid "Close"
-msgstr "Cerrar"
-
-#: media/js/dragboard/iGadget.js:481 media/js/dragboard/iGadget.js.py:482
-msgid "Menu"
-msgstr "Menú"
-
-#: media/js/dragboard/iGadget.js:490 media/js/dragboard/iGadget.js.py:491
-#: media/js/dragboard/iGadget.js:1632 media/js/dragboard/iGadget.js.py:1633
-msgid "Maximize"
-msgstr "Maximizar"
-
-#: media/js/dragboard/iGadget.js:494 media/js/dragboard/iGadget.js.py:495
-#: media/js/dragboard/iGadget.js:1641 media/js/dragboard/iGadget.js.py:1642
-msgid "Minimize"
-msgstr "Minimizar"
-
-#: media/js/dragboard/iGadget.js:512
-msgid ""
-"There is a new version of this gadget available. Current version: %"
-"(currentVersion)s - Last version: %(lastVersion)s"
-msgstr ""
-"Hay una nueva versión de este gadget. Versión actual: %(currentVersion)s - "
-"Última versión: %(lastVersion)s"
-
-#: media/js/dragboard/iGadget.js:518
-msgid ""
-"<p><b>Do you really want to update \"%(igadgetName)s\" to its latest version?"
-"</b><br />The gadget state and connections will be kept, if possible."
-"<p>Note: It will reload your workspace</p>"
-msgstr ""
-"<p><b>¿Realmente quiere actualizar \"%(igadgetName)s\" a su última versión?</"
-"b><br />Siempre que sea posible, se conservará el estado y las conexiones "
-"del gadget.<p>Aviso: Esta operación recargará el entorno de trabajo</p>"
-
-#: media/js/dragboard/iGadget.js:606
+#: media/js/dragboard/iGadget.js:605
 msgid "Access to Information"
 msgstr "Acceder a la información"
 
-#: media/js/dragboard/iGadget.js:777 media/js/opManager/Tab.js:620
-#: media/js/opManager/WorkSpace.js:829
+#: media/js/dragboard/iGadget.js:776 media/js/opManager/Tab.js:619
+#: media/js/opManager/WorkSpace.js:850
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: media/js/dragboard/iGadget.js:786
+#: media/js/dragboard/iGadget.js:785
 msgid "Menu Bar Color..."
 msgstr "Color de la barra..."
 
-#: media/js/dragboard/iGadget.js:803
+#: media/js/dragboard/iGadget.js:802
 msgid "Transparency"
 msgstr "Transparencia"
 
-#: media/js/dragboard/iGadget.js:816
+#: media/js/dragboard/iGadget.js:815
 msgid "Lower"
 msgstr "Bajar"
 
-#: media/js/dragboard/iGadget.js:823
+#: media/js/dragboard/iGadget.js:822
 msgid "Raise"
 msgstr "Elevar"
 
-#: media/js/dragboard/iGadget.js:830
+#: media/js/dragboard/iGadget.js:829
 msgid "Lower To Bottom"
 msgstr "Enviar al fondo"
 
-#: media/js/dragboard/iGadget.js:838
+#: media/js/dragboard/iGadget.js:837
 msgid "Raise To Top"
 msgstr "Traer al frente"
 
-#: media/js/dragboard/iGadget.js:990
-msgid "Do you want to remove the notice of the new version available?"
-msgstr "¿Desea eliminar el aviso de nueva versión?"
-
-#: media/js/dragboard/iGadget.js:999
-msgid ""
-"Error setting the refused version of the igadget to persistence: %(errorMsg)"
-"s."
-msgstr ""
-"Error al hacer persistente la versión rechazada en la actualización del "
-"igadget: %(errorMsg)s."
-
-#: media/js/dragboard/iGadget.js:1035
-msgid ""
-"<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
-"updated</b> because its version is not compatible "
-msgstr ""
-"<p>Lo sentimos, pero el gadget \"%(igadgetName)s\" <b>NO</b> pudo ser "
-"actualizado automaticamente porque las versiones no son compatibles "
-
-#: media/js/dragboard/iGadget.js:1076
+#: media/js/dragboard/iGadget.js:1080
 msgid "Error updating igadget's menu color into persistence: %(errorMsg)s."
 msgstr ""
 "Error al actualizar el color de la barra de menú del igadget en la "
 "persistencia: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:1129
+#: media/js/dragboard/iGadget.js:1139
+msgid "iGadget deleted"
+msgstr "el iGadget fue eliminado"
+
+#: media/js/dragboard/iGadget.js:1154
 msgid "Error removing igadget from persistence: %(errorMsg)s."
 msgstr "Error al eliminar el igadget de la persistencia: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:1217
+#: media/js/dragboard/iGadget.js:1236
 msgid "This IGadget does not have any user prefs"
 msgstr "Este IGadget no tiene preferencias de usuario"
 
-#: media/js/dragboard/iGadget.js:1232
+#: media/js/dragboard/iGadget.js:1251
 msgid "Shared Values"
 msgstr "Valores compartidos"
 
-#: media/js/dragboard/iGadget.js:1249
+#: media/js/dragboard/iGadget.js:1268
 msgid "Set Defaults"
 msgstr "Predeterminados"
 
-#: media/js/dragboard/iGadget.js:1256
-#: media/js/interfaceLayout/WindowMenu.js:1510
+#: media/js/dragboard/iGadget.js:1275
+#: media/js/interfaceLayout/WindowMenu.js:1518
 msgid "Save"
 msgstr "Guardar"
 
-#: media/js/dragboard/iGadget.js:1263
-#: media/js/interfaceLayout/WindowMenu.js:531
-#: media/js/interfaceLayout/WindowMenu.js:914
-#: media/js/interfaceLayout/WindowMenu.js:1518
+#: media/js/dragboard/iGadget.js:1282
+#: media/js/interfaceLayout/WindowMenu.js:558
+#: media/js/interfaceLayout/WindowMenu.js:941
+#: media/js/interfaceLayout/WindowMenu.js:1526
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: media/js/dragboard/iGadget.js:1375
+#: media/js/dragboard/iGadget.js:1389
+msgid "iGadget loaded"
+msgstr "iGadget cargado"
+
+#: media/js/dragboard/iGadget.js:1400
 msgid ""
 "%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was "
 "loaded"
@@ -387,13 +475,11 @@ msgstr[1] ""
 "Se notificaron %(errorCount)s errores para el iGadget \"%(name)s\" antes de "
 "que se cargara"
 
-#: media/js/dragboard/iGadget.js:1706 media/js/log/LogManager.js:48
-msgid "%(errorCount)s error"
-msgid_plural "%(errorCount)s errors"
-msgstr[0] "%(errorCount)s error"
-msgstr[1] "%(errorCount)s errores"
+#: media/js/dragboard/iGadget.js:1431
+msgid "iGadget unloaded"
+msgstr "iGadget descargado"
 
-#: media/js/dragboard/iGadget.js:1999
+#: media/js/dragboard/iGadget.js:2031
 msgid "Error saving changes to persistence: %(errorMsg)s."
 msgstr "Error al guardar los cambios en el servidor: %(errorMsg)s."
 
@@ -423,8 +509,8 @@ msgstr "Los siguientes campos contienen caracteres inválidos: %(fields)s."
 #: media/js/interfaceLayout/InputInterfaces.js:79
 msgid "The following fields do not contain a valid color value: %(fields)s."
 msgstr ""
-"Los siguientes campos no contienen un valor válido para describir un color: %"
-"(fields)s."
+"Los siguientes campos no contienen un valor válido para describir un color: "
+"%(fields)s."
 
 #: media/js/interfaceLayout/InputInterfaces.js:343
 msgid "Choose a local file"
@@ -453,13 +539,13 @@ msgstr "%(task)s %(percentage)s%"
 msgid "%(subTask)s: %(percentage)s%"
 msgstr "%(subTask)s: %(percentage)s%"
 
-#: media/js/interfaceLayout/LayoutManager.js:430
-#: media/js/interfaceLayout/LayoutManager.js:471
-#: media/js/interfaceLayout/LayoutManager.js:537
+#: media/js/interfaceLayout/LayoutManager.js:429
+#: media/js/interfaceLayout/LayoutManager.js:470
+#: media/js/interfaceLayout/LayoutManager.js:536
 msgid "Video Tutorials"
 msgstr "Video Tutoriales"
 
-#: media/js/interfaceLayout/LayoutManager.js:431
+#: media/js/interfaceLayout/LayoutManager.js:430
 msgid ""
 "In the Dragborad you can move and resize all your gadgets in order to "
 "perform and use your own application. Check the gadget preferences for "
@@ -474,11 +560,11 @@ msgstr ""
 "para establecer conexiones entre ellos %(wiringIcon)s. Si necesitas más "
 "ayuda visita los %(helpLink)s."
 
-#: media/js/interfaceLayout/LayoutManager.js:472
+#: media/js/interfaceLayout/LayoutManager.js:471
 msgid ""
 "Discover new gadgets, look for descriptions, tag them, make your rating, "
-"select the ones that best suit your needs and add them to the Dragboard %"
-"(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
+"select the ones that best suit your needs and add them to the Dragboard "
+"%(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
 "Wiring interface %(wiringIcon)s in order to improve your experience. If you "
 "need more help visit the %(helpLink)s."
 msgstr ""
@@ -488,30 +574,30 @@ msgstr ""
 "interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si necesitas "
 "más ayuda visita los %(helpLink)s."
 
-#: media/js/interfaceLayout/LayoutManager.js:538
+#: media/js/interfaceLayout/LayoutManager.js:537
 msgid ""
 "In the Wiring interface you can connect your gadgets among them. Create or "
 "select channels and link (by clicking) Events with Slots. Pay attention to "
 "the colours trying to help you, you can create some great wires following "
-"it. You can see the results of your wires at the Dragboard interface %"
-"(dragboardIcon)s. If you need more help visit the %(helpLink)s."
+"it. You can see the results of your wires at the Dragboard interface "
+"%(dragboardIcon)s. If you need more help visit the %(helpLink)s."
 msgstr ""
 "En la interfaz de Wiring puedes conectar tus gadgets entre sí. Crear o "
 "seleccionar canales y enlazar (haciendo click) Eventos y Ranuras. Presta "
 "atención a los colores, ya que pueden ayudarte, podrás crear conexiones "
 "acertadas siguiéndolos. Puedes probar el resultado de las conexiones en la "
-"interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita los %"
-"(helpLink)s."
+"interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita los "
+"%(helpLink)s."
 
-#: media/js/interfaceLayout/LayoutManager.js:771
+#: media/js/interfaceLayout/LayoutManager.js:770
 msgid "Do you really want to remove this tab?"
 msgstr "¿Realmente desea eliminar esta pestaña?"
 
-#: media/js/interfaceLayout/LayoutManager.js:779
+#: media/js/interfaceLayout/LayoutManager.js:778
 msgid "Do you want to cancel the subscription to the service?"
 msgstr "¿Realmente desea cancelar la subscripción a este servicio?"
 
-#: media/js/interfaceLayout/LayoutManager.js:811
+#: media/js/interfaceLayout/LayoutManager.js:810
 msgid ""
 "You are going to add a Mashup that could be composed by more than one "
 "gadget. Do you want to add it to a new Workspace or to the current one?"
@@ -520,256 +606,256 @@ msgstr ""
 "gadget. ¿Desea añadirlo a un nuevo entorno de trabajo o al entorno de "
 "trabajo actual?"
 
-#: media/js/interfaceLayout/LayoutManager.js:856
+#: media/js/interfaceLayout/LayoutManager.js:855
 msgid "Configuration"
 msgstr "Configuración"
 
-#: media/js/interfaceLayout/LayoutManager.js:857
-#: media/js/opManager/WorkSpace.js:882
+#: media/js/interfaceLayout/LayoutManager.js:856
+#: media/js/opManager/WorkSpace.js:907
 msgid "Share"
 msgstr "Compartir"
 
-#: media/js/interfaceLayout/LayoutManager.js:858
+#: media/js/interfaceLayout/LayoutManager.js:857
 msgid "Edit"
 msgstr "Editar"
 
-#: media/js/interfaceLayout/LayoutManager.js:1202
+#: media/js/interfaceLayout/LayoutManager.js:1233
 msgid "Error updating order: %(errorMsg)s."
 msgstr "Error al actualizar el orden: %(errorMsg)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:173
+#: media/js/interfaceLayout/WindowMenu.js:208
 msgid "Contratation Information"
 msgstr "Información de contratación"
 
-#: media/js/interfaceLayout/WindowMenu.js:182
+#: media/js/interfaceLayout/WindowMenu.js:217
 msgid "Finish"
 msgstr "Terminar"
 
-#: media/js/interfaceLayout/WindowMenu.js:211
+#: media/js/interfaceLayout/WindowMenu.js:246
 msgid "Assign Gadget to Application"
 msgstr "Asignar un Gadget a una Aplicación"
 
-#: media/js/interfaceLayout/WindowMenu.js:256
+#: media/js/interfaceLayout/WindowMenu.js:291
 msgid "Assign"
 msgstr "Asignar"
 
-#: media/js/interfaceLayout/WindowMenu.js:308
-#: media/js/interfaceLayout/WindowMenu.js:379
+#: media/js/interfaceLayout/WindowMenu.js:339
+#: media/js/interfaceLayout/WindowMenu.js:406
 msgid "Buying composed application"
 msgstr "Comprar una aplicación compuesta"
 
-#: media/js/interfaceLayout/WindowMenu.js:312
+#: media/js/interfaceLayout/WindowMenu.js:343
 msgid ""
 "Buying this composed solution implies paying for the following applications."
 msgstr ""
 "La compra de esta solución compuesta implica el pago de las siguientes "
 "aplicaciones."
 
-#: media/js/interfaceLayout/WindowMenu.js:313
+#: media/js/interfaceLayout/WindowMenu.js:344
 msgid ""
 "Click on any of them to see a detailed description, including princing info."
 msgstr ""
 "Haga click en alguno de los siguientes elementos para ver una descripción "
 "detallada, incluyendo la información de las tarifas."
 
-#: media/js/interfaceLayout/WindowMenu.js:315
+#: media/js/interfaceLayout/WindowMenu.js:346
 msgid "Buying this gadget implies paying for the following application."
 msgstr "Comprar este gadget implica el pago de las siguientes aplicaciones."
 
-#: media/js/interfaceLayout/WindowMenu.js:316
+#: media/js/interfaceLayout/WindowMenu.js:347
 msgid "Click on it to see a detailed description, including princing info."
 msgstr ""
 "Haga click en él para ver una descripción detallada, incluyendo información "
 "de las tarifas."
 
-#: media/js/interfaceLayout/WindowMenu.js:337
-#: media/js/interfaceLayout/WindowMenu.js:1209
-#: media/js/interfaceLayout/WindowMenu.js:1291
+#: media/js/interfaceLayout/WindowMenu.js:368
+#: media/js/interfaceLayout/WindowMenu.js:1229
+#: media/js/interfaceLayout/WindowMenu.js:1305
 msgid "Name"
 msgstr "Nombre"
 
-#: media/js/interfaceLayout/WindowMenu.js:337
+#: media/js/interfaceLayout/WindowMenu.js:368
 msgid "Sign-up fee"
 msgstr "Tarifa de alta"
 
-#: media/js/interfaceLayout/WindowMenu.js:337
+#: media/js/interfaceLayout/WindowMenu.js:368
 msgid "Monthly fee"
 msgstr "Tarifa mensual"
 
-#: media/js/interfaceLayout/WindowMenu.js:382
+#: media/js/interfaceLayout/WindowMenu.js:409
 msgid "Buying gadget"
 msgstr "Compra de un gadget"
 
-#: media/js/interfaceLayout/WindowMenu.js:408
+#: media/js/interfaceLayout/WindowMenu.js:435
 msgid "already paid"
 msgstr "ya pagado"
 
-#: media/js/interfaceLayout/WindowMenu.js:417
+#: media/js/interfaceLayout/WindowMenu.js:444
 msgid "TOTAL"
 msgstr "TOTAL"
 
-#: media/js/interfaceLayout/WindowMenu.js:518
+#: media/js/interfaceLayout/WindowMenu.js:545
 msgid "Create workSpace"
 msgstr "Crear entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:526
+#: media/js/interfaceLayout/WindowMenu.js:553
 msgid "Create"
 msgstr "Crear"
 
-#: media/js/interfaceLayout/WindowMenu.js:536
+#: media/js/interfaceLayout/WindowMenu.js:563
 msgid "Nombre: "
 msgstr "Nombre: "
 
-#: media/js/interfaceLayout/WindowMenu.js:570
+#: media/js/interfaceLayout/WindowMenu.js:597
 msgid "Invalid name: the name \\\"%(newName)s\\\" is already in use"
 msgstr "Nombre inválido: el nombre \\\"%(newName)s\\\" ya se está usando."
 
-#: media/js/interfaceLayout/WindowMenu.js:592
-#: media/js/interfaceLayout/WindowMenu.js:707 media/js/wiring/wiringGUI.js:440
+#: media/js/interfaceLayout/WindowMenu.js:619
+#: media/js/interfaceLayout/WindowMenu.js:734
 msgid "Warning"
 msgstr "Aviso"
 
-#: media/js/interfaceLayout/WindowMenu.js:597
-#: media/js/interfaceLayout/WindowMenu.js:646
-#: media/js/interfaceLayout/WindowMenu.js:709
-#: media/js/interfaceLayout/WindowMenu.js:728
-#: media/js/interfaceLayout/WindowMenu.js:1403
+#: media/js/interfaceLayout/WindowMenu.js:624
+#: media/js/interfaceLayout/WindowMenu.js:673
+#: media/js/interfaceLayout/WindowMenu.js:736
+#: media/js/interfaceLayout/WindowMenu.js:755
+#: media/js/interfaceLayout/WindowMenu.js:1411
 msgid "Info:"
 msgstr "Info:"
 
-#: media/js/interfaceLayout/WindowMenu.js:603
+#: media/js/interfaceLayout/WindowMenu.js:630
 msgid "Yes"
 msgstr "Sí"
 
-#: media/js/interfaceLayout/WindowMenu.js:610
+#: media/js/interfaceLayout/WindowMenu.js:637
 msgid "No"
 msgstr "No"
 
-#: media/js/interfaceLayout/WindowMenu.js:642
+#: media/js/interfaceLayout/WindowMenu.js:669
 msgid "Add Mashup"
 msgstr "Añadir Mashup"
 
-#: media/js/interfaceLayout/WindowMenu.js:651
+#: media/js/interfaceLayout/WindowMenu.js:678
 msgid "New Workspace"
 msgstr "Nuevo entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:657
+#: media/js/interfaceLayout/WindowMenu.js:684
 msgid "Current Workspace"
 msgstr "Entorno de trabajo actual"
 
-#: media/js/interfaceLayout/WindowMenu.js:696
-#: media/js/interfaceLayout/WindowMenu.js:907
+#: media/js/interfaceLayout/WindowMenu.js:723
+#: media/js/interfaceLayout/WindowMenu.js:934
 msgid "Accept"
 msgstr "Aceptar"
 
-#: media/js/interfaceLayout/WindowMenu.js:707
+#: media/js/interfaceLayout/WindowMenu.js:734
 msgid "Error"
 msgstr "Error"
 
-#: media/js/interfaceLayout/WindowMenu.js:707
+#: media/js/interfaceLayout/WindowMenu.js:734
 msgid "Info"
 msgstr "Info"
 
-#: media/js/interfaceLayout/WindowMenu.js:709
+#: media/js/interfaceLayout/WindowMenu.js:736
 msgid "Error:"
 msgstr "Error:"
 
-#: media/js/interfaceLayout/WindowMenu.js:709
+#: media/js/interfaceLayout/WindowMenu.js:736
 msgid "Warning:"
 msgstr "Aviso:"
 
-#: media/js/interfaceLayout/WindowMenu.js:735
+#: media/js/interfaceLayout/WindowMenu.js:762
 msgid "Don't show me anymore"
 msgstr "No volver a mostrar"
 
-#: media/js/interfaceLayout/WindowMenu.js:766
+#: media/js/interfaceLayout/WindowMenu.js:793
 msgid "Do you know what ... ?"
 msgstr "¿Sabías que ... ?"
 
-#: media/js/interfaceLayout/WindowMenu.js:900
+#: media/js/interfaceLayout/WindowMenu.js:927
 msgid "required field"
 msgstr "campo obligatorio"
 
-#: media/js/interfaceLayout/WindowMenu.js:989
+#: media/js/interfaceLayout/WindowMenu.js:1016
 msgid "Mashup Name"
 msgstr "Nombre del Mashup"
 
-#: media/js/interfaceLayout/WindowMenu.js:990
+#: media/js/interfaceLayout/WindowMenu.js:1017
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: media/js/interfaceLayout/WindowMenu.js:991
+#: media/js/interfaceLayout/WindowMenu.js:1018
 msgid "Version"
 msgstr "Versión"
 
-#: media/js/interfaceLayout/WindowMenu.js:992
+#: media/js/interfaceLayout/WindowMenu.js:1019
 msgid "Email"
 msgstr "E-Mail"
 
-#: media/js/interfaceLayout/WindowMenu.js:994
+#: media/js/interfaceLayout/WindowMenu.js:1021
 msgid "Detailed description"
 msgstr "Descripción detallada"
 
-#: media/js/interfaceLayout/WindowMenu.js:997
+#: media/js/interfaceLayout/WindowMenu.js:1024
 msgid "Description"
 msgstr "Descripción"
 
-#: media/js/interfaceLayout/WindowMenu.js:998
+#: media/js/interfaceLayout/WindowMenu.js:1025
 msgid "Wiki URL"
 msgstr "Wiki (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:999
+#: media/js/interfaceLayout/WindowMenu.js:1026
 msgid "Author"
 msgstr "Autor"
 
-#: media/js/interfaceLayout/WindowMenu.js:1003
+#: media/js/interfaceLayout/WindowMenu.js:1030
 msgid "Personalization"
 msgstr "Personalización"
 
-#: media/js/interfaceLayout/WindowMenu.js:1007
+#: media/js/interfaceLayout/WindowMenu.js:1034
 msgid "Create your own skin for your application"
 msgstr "Crea tu propia apariencia (skin) para tu aplicación"
 
-#: media/js/interfaceLayout/WindowMenu.js:1012
+#: media/js/interfaceLayout/WindowMenu.js:1039
 msgid "Image for the catalogue (170x80 px)"
 msgstr "Imagen para el catálogo (170x80 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1019
+#: media/js/interfaceLayout/WindowMenu.js:1046
 msgid "Do not use any branding"
 msgstr "No utilizar imagen de marca"
 
-#: media/js/interfaceLayout/WindowMenu.js:1023
+#: media/js/interfaceLayout/WindowMenu.js:1050
 msgid "Banner logo (250x50 px)"
 msgstr "Logo para la cabecera (250x50 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1030
+#: media/js/interfaceLayout/WindowMenu.js:1057
 msgid "Banner logo for viewer mode (150x30 px)"
 msgstr "Logo para la cabecera en modo visor (150x30 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1037
+#: media/js/interfaceLayout/WindowMenu.js:1064
 msgid "Clicking on these logos will open this page"
 msgstr "Hacer click en estos logos abrirá la página"
 
-#: media/js/interfaceLayout/WindowMenu.js:1043
+#: media/js/interfaceLayout/WindowMenu.js:1070
 msgid "Advanced options"
 msgstr "Opciones avanzadas"
 
-#: media/js/interfaceLayout/WindowMenu.js:1046
-#: media/js/interfaceLayout/WindowMenu.js:1234
-#: media/js/interfaceLayout/WindowMenu.js:1314
+#: media/js/interfaceLayout/WindowMenu.js:1073
+#: media/js/interfaceLayout/WindowMenu.js:1254
+#: media/js/interfaceLayout/WindowMenu.js:1328
 msgid "Organization"
 msgstr "Organización"
 
-#: media/js/interfaceLayout/WindowMenu.js:1047
+#: media/js/interfaceLayout/WindowMenu.js:1074
 msgid "Block gadgets and connections"
 msgstr "Bloquear los gadgets y sus conexiones"
 
-#: media/js/interfaceLayout/WindowMenu.js:1052
+#: media/js/interfaceLayout/WindowMenu.js:1079
 msgid "Publish Workspace"
 msgstr "Publicar el entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1057
-#: media/js/interfaceLayout/WindowMenu.js:1123
+#: media/js/interfaceLayout/WindowMenu.js:1084
+#: media/js/interfaceLayout/WindowMenu.js:1143
 msgid ""
 "WARNING: configured and stored data in your workspace (properties and "
 "preferences except passwords) will be shared!"
@@ -777,11 +863,11 @@ msgstr ""
 "¡ATENCIÓN: los datos almacenados y la configuración de tu espacio de trabajo "
 "(propiedades y preferencias salvo contraseñas) se compartirán!"
 
-#: media/js/interfaceLayout/WindowMenu.js:1075
+#: media/js/interfaceLayout/WindowMenu.js:1102
 msgid "Upload File"
 msgstr "Subir fichero"
 
-#: media/js/interfaceLayout/WindowMenu.js:1105
+#: media/js/interfaceLayout/WindowMenu.js:1125
 msgid ""
 "Share \"%(workspace)s\" workspace with everybody through either a public URL "
 "or an embed object"
@@ -789,137 +875,137 @@ msgstr ""
 "Compartir el workspace \"%(workspace)s\" públicamente por medio de una URL o "
 "de un objeto embebible en otro sitio web"
 
-#: media/js/interfaceLayout/WindowMenu.js:1106
+#: media/js/interfaceLayout/WindowMenu.js:1126
 msgid "Share \"%(workspace)s\" workspace only with the following groups"
 msgstr ""
 "Compartir el espacio de trabajo \"%(workspace)s\" con uno de los siguientes "
 "grupos "
 
-#: media/js/interfaceLayout/WindowMenu.js:1114
+#: media/js/interfaceLayout/WindowMenu.js:1134
 msgid "Share Workspace"
 msgstr "Compartir el entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1130
+#: media/js/interfaceLayout/WindowMenu.js:1150
 msgid "The available groups cannot be displayed"
 msgstr "No se pueden mostrar los grupos disponibles"
 
-#: media/js/interfaceLayout/WindowMenu.js:1176
+#: media/js/interfaceLayout/WindowMenu.js:1196
 msgid "You must select a group"
 msgstr "Debes seleccionar un grupo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1210
-#: media/js/interfaceLayout/WindowMenu.js:1292
+#: media/js/interfaceLayout/WindowMenu.js:1230
+#: media/js/interfaceLayout/WindowMenu.js:1306
 #: media/js/wiring/connectableInterface.js:717
 msgid "URL"
 msgstr "URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:1212
-#: media/js/interfaceLayout/WindowMenu.js:1301
+#: media/js/interfaceLayout/WindowMenu.js:1232
+#: media/js/interfaceLayout/WindowMenu.js:1315
 msgid "Image URL"
 msgstr "Imagen (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1218
-#: media/js/interfaceLayout/WindowMenu.js:1307
+#: media/js/interfaceLayout/WindowMenu.js:1238
+#: media/js/interfaceLayout/WindowMenu.js:1321
 msgid "iPhone Image URL"
 msgstr "Imagen para el iPhone (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1224
+#: media/js/interfaceLayout/WindowMenu.js:1244
 msgid "Template color"
 msgstr "Color de la plantilla"
 
-#: media/js/interfaceLayout/WindowMenu.js:1227
+#: media/js/interfaceLayout/WindowMenu.js:1247
 msgid "blue"
 msgstr "azul"
 
-#: media/js/interfaceLayout/WindowMenu.js:1228
+#: media/js/interfaceLayout/WindowMenu.js:1248
 msgid "orange"
 msgstr "naranja"
 
-#: media/js/interfaceLayout/WindowMenu.js:1229
+#: media/js/interfaceLayout/WindowMenu.js:1249
 msgid "red"
 msgstr "rojo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1230
+#: media/js/interfaceLayout/WindowMenu.js:1250
 msgid "green"
 msgstr "verde"
 
-#: media/js/interfaceLayout/WindowMenu.js:1233
+#: media/js/interfaceLayout/WindowMenu.js:1253
 msgid "Menu Color"
 msgstr "Color del menú"
 
-#: media/js/interfaceLayout/WindowMenu.js:1237
+#: media/js/interfaceLayout/WindowMenu.js:1257
 msgid "Add new feed"
 msgstr "Añadir un feed nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1293
+#: media/js/interfaceLayout/WindowMenu.js:1307
 msgid "Method"
 msgstr "Método"
 
-#: media/js/interfaceLayout/WindowMenu.js:1295
+#: media/js/interfaceLayout/WindowMenu.js:1309
 msgid "Parse URL Parameters"
 msgstr "Interpretar los parámetros de la URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:1296
+#: media/js/interfaceLayout/WindowMenu.js:1310
 msgid "Fixed Params"
 msgstr "Parámetros fijos"
 
-#: media/js/interfaceLayout/WindowMenu.js:1297
+#: media/js/interfaceLayout/WindowMenu.js:1311
 msgid "Default Param Values"
 msgstr "Valores por defecto de los parámetros"
 
-#: media/js/interfaceLayout/WindowMenu.js:1298
+#: media/js/interfaceLayout/WindowMenu.js:1312
 msgid "Events"
 msgstr "Eventos"
 
-#: media/js/interfaceLayout/WindowMenu.js:1300
+#: media/js/interfaceLayout/WindowMenu.js:1314
 msgid "Home URL"
 msgstr "URL inicial"
 
-#: media/js/interfaceLayout/WindowMenu.js:1313
+#: media/js/interfaceLayout/WindowMenu.js:1327
 msgid "Menu Color (Hex.)"
 msgstr "Color del menú (Hex.)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1315
+#: media/js/interfaceLayout/WindowMenu.js:1329
 msgid "Source"
 msgstr "Fuente"
 
-#: media/js/interfaceLayout/WindowMenu.js:1316
+#: media/js/interfaceLayout/WindowMenu.js:1330
 msgid "Source URL"
 msgstr "Fuente (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1319
+#: media/js/interfaceLayout/WindowMenu.js:1333
 msgid "Add new site"
 msgstr "Añadir un sitio nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1365
+#: media/js/interfaceLayout/WindowMenu.js:1373
 msgid "New Name"
 msgstr "Nuevo Nombre"
 
-#: media/js/interfaceLayout/WindowMenu.js:1367
+#: media/js/interfaceLayout/WindowMenu.js:1375
 msgid "Rename Workspace"
 msgstr "Renombrar el espacio de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1388
+#: media/js/interfaceLayout/WindowMenu.js:1396
 msgid "The new name is too long. It must have less than 30 characters."
 msgstr "El nuevo nombre es demasiado largo. Debe tener menos de 30 caracteres."
 
-#: media/js/interfaceLayout/WindowMenu.js:1399
+#: media/js/interfaceLayout/WindowMenu.js:1407
 msgid "Shared WorkSpace Info"
 msgstr "Información del WorkSpace"
 
-#: media/js/interfaceLayout/WindowMenu.js:1417
+#: media/js/interfaceLayout/WindowMenu.js:1425
 msgid "URL:"
 msgstr "URL:"
 
-#: media/js/interfaceLayout/WindowMenu.js:1429
+#: media/js/interfaceLayout/WindowMenu.js:1437
 msgid "HTML code:"
 msgstr "Código HTML:"
 
-#: media/js/interfaceLayout/WindowMenu.js:1484
+#: media/js/interfaceLayout/WindowMenu.js:1492
 msgid "Language"
 msgstr "Lenguaje"
 
-#: media/js/interfaceLayout/WindowMenu.js:1579
+#: media/js/interfaceLayout/WindowMenu.js:1587
 msgid ""
 "WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not "
 "responsible for the content of the uploaded files."
@@ -927,17 +1013,17 @@ msgstr ""
 "AVISO: Su fichero se subirá a un espacio compartido. <br/> EzWeb no se hace "
 "responsable del contenido de los ficheros subidos."
 
-#: media/js/lib/prototype/prototype.improvements.js:73
-msgid "You are not allowed to perform this operation"
-msgstr "No estás autorizado a realizar esta operación"
-
-#: media/js/log/LogManager.js:123
+#: media/js/log/LogManager.js:160
 msgid "unknown"
 msgstr "desconocido"
 
-#: media/js/log/LogManager.js:137
+#: media/js/log/LogManager.js:174
 msgid "HTTP Error %(errorCode)s - %(errorDesc)s"
 msgstr "Error HTTP %(errorCode)s - %(errorDesc)s"
+
+#: media/js/log/LogManager.js:255
+msgid "iGadget #%(iGadgetId)s Logs"
+msgstr "Registros del iGadget #%(iGadgetId)s"
 
 #: media/js/opManager/OpManager.js:108
 msgid "Error loading EzWeb Platform: %(errorMsg)s."
@@ -951,39 +1037,39 @@ msgstr "Error al cargar la Plataforma Ezweb"
 msgid "Error creating a workspace: %(errorMsg)s."
 msgstr "Error al crear un entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:223
+#: media/js/opManager/OpManager.js:216
 msgid "Error cloning workspace: %(errorMsg)s."
 msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:228 media/js/opManager/OpManager.js:261
+#: media/js/opManager/OpManager.js:221 media/js/opManager/OpManager.js:261
 msgid "Adding the mashup"
 msgstr "Añadiendo el mashup"
 
-#: media/js/opManager/OpManager.js:229
+#: media/js/opManager/OpManager.js:222
 msgid "Merging with current workspace"
 msgstr "Mezclando con el entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:256 media/js/opManager/WorkSpace.js:269
-msgid "Error merging workspace: %(errorMsg)s."
-msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
+#: media/js/opManager/OpManager.js:253
+msgid "Error adding the workspace: %(errorMsg)s."
+msgstr "Error al añadir el entorno de trabajo: %(errorMsg)s."
 
 #: media/js/opManager/OpManager.js:262
 msgid "Creating a new workspace"
 msgstr "Creando un nuevo entorno de trabajo"
 
-#: media/js/opManager/OpManager.js:284
+#: media/js/opManager/OpManager.js:277
 msgid "Changing current workspace"
 msgstr "Cambiando el entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:368
+#: media/js/opManager/OpManager.js:361
 msgid "Loading EzWeb Platform"
 msgstr "Cargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:369
-msgid "Retreiving EzWeb code"
+#: media/js/opManager/OpManager.js:362
+msgid "Retrieving EzWeb code"
 msgstr "Descargando el código de la Plataforma EzWeb"
 
-#: media/js/opManager/OpManager.js:389
+#: media/js/opManager/OpManager.js:381
 msgid ""
 "There were errors while loading some of the images for the theme. Do you "
 "really want to use it?"
@@ -991,27 +1077,31 @@ msgstr ""
 "Han sucedido errores durante la carga de las imágenes del tema. ¿Quieres "
 "utilizarlo?"
 
-#: media/js/opManager/OpManager.js:450
+#: media/js/opManager/OpManager.js:441
 msgid "Unloading Ezweb Platform"
 msgstr "Descargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:502
+#: media/js/opManager/OpManager.js:494
 msgid "Activating current Workspace"
 msgstr "Entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:535
+#: media/js/opManager/OpManager.js:527
 msgid ""
 "Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when "
 "it did not exist or it was not loaded yet. This is an error in EzWeb "
 "Platform, please notify it.\n"
 "Error Message: %(errorMsg)s"
 msgstr ""
-"Un fragmento del código ha intentado informar de un error en el iGadget %"
-"(iGadgetId)s cuando éste no existía o no estaba cargado aún. Ésto es un "
+"Un fragmento del código ha intentado informar de un error en el iGadget "
+"%(iGadgetId)s cuando éste no existía o no estaba cargado aún. Ésto es un "
 "error de la Plataforma EzWeb, por favor informe de ello.\n"
 "Mensaje de error: %(errorMsg)s"
 
-#: media/js/opManager/OpManager.js:576
+#: media/js/opManager/OpManager.js:563
+msgid "there must be one workspace at least"
+msgstr "debe haber al menos un entorno de trabajo"
+
+#: media/js/opManager/OpManager.js:564
 msgid "Error removing workspace: %(errorMsg)s."
 msgstr "Error al eliminar entorno de trabajo: %(errorMsg)s."
 
@@ -1030,173 +1120,178 @@ msgstr "Al actualizar una pestaña: nombre no válido"
 
 #: media/js/opManager/Tab.js:86
 msgid ""
-"Error updating a tab: the name %(tabName)s is already in use in workspace %"
-"(wsName)s."
+"Error updating a tab: the name %(tabName)s is already in use in workspace "
+"%(wsName)s."
 msgstr ""
 "Error al actualizar una pestaña: el nombre %(tabName)s ya está en uso en el "
 "entorno de trabajo %(wsName)s."
 
-#: media/js/opManager/Tab.js:447
+#: media/js/opManager/Tab.js:446
 msgid "Options"
 msgstr "Opciones"
 
-#: media/js/opManager/Tab.js:463
+#: media/js/opManager/Tab.js:462
 msgid "First Visible"
 msgstr "Primera visible"
 
-#: media/js/opManager/Tab.js:504
+#: media/js/opManager/Tab.js:503
 msgid ""
 "Error marking as first visible tab, changes will not be saved: %(errorMsg)s."
 msgstr ""
-"Error al marcar como primera visible, los cambios no se guardarán: %"
-"(errorMsg)s."
+"Error al marcar como primera visible, los cambios no se guardarán: "
+"%(errorMsg)s."
 
-#: media/js/opManager/Tab.js:511
+#: media/js/opManager/Tab.js:510
 msgid "Mark as Visible"
 msgstr "Marcar como visible"
 
-#: media/js/opManager/Tab.js:534 media/js/opManager/WorkSpace.js:821
+#: media/js/opManager/Tab.js:533 media/js/opManager/WorkSpace.js:842
 msgid "Rename"
 msgstr "Renombrar"
 
-#: media/js/opManager/Tab.js:556
+#: media/js/opManager/Tab.js:555
 msgid "no more tabs"
 msgstr "no hay más pestañas"
 
-#: media/js/opManager/Tab.js:579
+#: media/js/opManager/Tab.js:578
 msgid "move to end"
 msgstr "mover al final"
 
-#: media/js/opManager/Tab.js:589
+#: media/js/opManager/Tab.js:588
 msgid "Move before..."
 msgstr "Mover antes de..."
 
-#: media/js/opManager/Tab.js:600
+#: media/js/opManager/Tab.js:597 media/js/opManager/WorkSpace.js:858
+#: media/js/wiring/connectableInterface.js:445
+msgid "Remove"
+msgstr "Eliminar"
+
+#: media/js/opManager/Tab.js:599
 msgid "Do you really want to remove the \"%(tabName)s\" tab?"
 msgstr "¿Realmente desea eliminar la pestaña \"%(tabName)s\"?"
 
-#: media/js/opManager/Tab.js:611
+#: media/js/opManager/Tab.js:610
 msgid "Show Floating Gadget"
 msgstr "Mostrar Gadgets flotantes"
 
-#: media/js/opManager/WorkSpace.js:87
+#: media/js/opManager/WorkSpace.js:92
 msgid "Error loading workspace: %(errorMsg)s"
 msgstr "Error al cargar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:91
+#: media/js/opManager/WorkSpace.js:96
 msgid ""
 "Error loading workspace. Please, change active workspace or create a new one."
 msgstr ""
 "Error al cargar el entorno de trabajo. Por favor, cambia el entorno de "
 "trabajo o crea uno nuevo."
 
-#: media/js/opManager/WorkSpace.js:106
+#: media/js/opManager/WorkSpace.js:111
 msgid "Unusable Tab"
 msgstr "Tab no usable"
 
-#: media/js/opManager/WorkSpace.js:134
+#: media/js/opManager/WorkSpace.js:139
 msgid "Processing workspace data"
 msgstr "Procesando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:221
+#: media/js/opManager/WorkSpace.js:215
+msgid "workspace loaded"
+msgstr "El entorno de trabajo fue cargado"
+
+#: media/js/opManager/WorkSpace.js:226
 msgid "Error renaming workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
-"Error al renombrar el entorno de trabajo, los cambios no se guardarán: %"
-"(errorMsg)s."
+"Error al renombrar el entorno de trabajo, los cambios no se guardarán: "
+"%(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:237
+#: media/js/opManager/WorkSpace.js:242
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
-"Error al eliminar el entorno de trabajo, los cambios no se guardarán: %"
-"(errorMsg)s."
+"Error al eliminar el entorno de trabajo, los cambios no se guardarán: "
+"%(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:252
+#: media/js/opManager/WorkSpace.js:257
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr "Error al publicar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:296
+#: media/js/opManager/WorkSpace.js:274
+msgid "Error merging workspace: %(errorMsg)s."
+msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
+
+#: media/js/opManager/WorkSpace.js:301
 msgid "Error creating a tab: %(errorMsg)s."
 msgstr "Error al crear una pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:388
+#: media/js/opManager/WorkSpace.js:393
 msgid "Error updating a workspace: invalid name"
 msgstr "Error al actualizar el entorno de trabajo: nombre no válido"
 
-#: media/js/opManager/WorkSpace.js:400
+#: media/js/opManager/WorkSpace.js:405
 msgid ""
 "Error updating a workspace: the name %(workSpaceName)s is already in use."
 msgstr ""
 "Error al actualizar un entorno de trabajo: el nombre %(workSpaceName)s ya se "
 "está usando."
 
-#: media/js/opManager/WorkSpace.js:445
+#: media/js/opManager/WorkSpace.js:450
 msgid "Downloading workspace data"
 msgstr "Descargando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:563
+#: media/js/opManager/WorkSpace.js:569
 msgid "there must be one tab at least"
 msgstr "debe haber al menos una pestaña"
 
-#: media/js/opManager/WorkSpace.js:564 media/js/opManager/WorkSpace.js:569
+#: media/js/opManager/WorkSpace.js:570 media/js/opManager/WorkSpace.js:575
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error al eliminar la pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:568
+#: media/js/opManager/WorkSpace.js:574
 msgid "it contains some gadgets that cannot be removed"
 msgstr "contiene algunos gadgets que no pueden ser eliminados"
 
-#: media/js/opManager/WorkSpace.js:618
+#: media/js/opManager/WorkSpace.js:625
 msgid "Unloading current workspace"
 msgstr "Cerrando el entorno de trabajo actual"
 
-#: media/js/opManager/WorkSpace.js:714 media/js/opManager/WorkSpace.js:723
+#: media/js/opManager/WorkSpace.js:664
+msgid "workspace unloaded"
+msgstr "Se cerró el entorno de trabajo"
+
+#: media/js/opManager/WorkSpace.js:729 media/js/opManager/WorkSpace.js:738
 msgid "The Workspace has NOT been successfully shared."
 msgstr "El entorno de trabajo no ha podido ser compartido."
 
-#: media/js/opManager/WorkSpace.js:716
+#: media/js/opManager/WorkSpace.js:731
 msgid "The Workspace has been successfully shared."
 msgstr "El entorno de trabajo ha sido compartido correctamente."
 
-#: media/js/opManager/WorkSpace.js:812
+#: media/js/opManager/WorkSpace.js:833
 msgid "Initial"
 msgstr "Inicial"
 
-#: media/js/opManager/WorkSpace.js:839
+#: media/js/opManager/WorkSpace.js:860
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr "¿Realmente desea eliminar el entorno de trabajo \"%(workspaceName)s\"?"
 
-#: media/js/opManager/WorkSpace.js:852
+#: media/js/opManager/WorkSpace.js:872
 msgid "Merge"
 msgstr "Mezclar"
 
-#: media/js/opManager/WorkSpace.js:891
+#: media/js/opManager/WorkSpace.js:915
 msgid "Publish in gallery"
 msgstr "Publicar en galería"
 
-#: media/js/opManager/WorkSpace.js:919
+#: media/js/opManager/WorkSpace.js:949
 msgid "Go to Gallery"
 msgstr "Ir a Galería"
 
-#: media/js/opManager/WorkSpace.js:929
+#: media/js/opManager/WorkSpace.js:959
 msgid "Go to Wiring tool"
 msgstr "Ir a Wiring"
 
-#: media/js/opManager/WorkSpace.js:977
-msgid "New Application"
-msgstr "Nueva Aplicación"
-
-#: media/js/opManager/WorkSpace.js:1154
-msgid "Unlock"
-msgstr "Desbloquear"
-
-#: media/js/opManager/WorkSpace.js:1165
-msgid "Lock"
-msgstr "Bloquear"
-
-#: media/js/opManager/WorkSpace.js:1195
+#: media/js/opManager/WorkSpace.js:1133
 msgid ""
-"Error marking as first active workspace, changes will not be saved: %"
-"(errorMsg)s."
+"Error marking as first active workspace, changes will not be saved: "
+"%(errorMsg)s."
 msgstr ""
 "Error al marcar como primer espacio de trabajo visible, los cambios no se "
 "guardarán: %(errorMsg)s."
@@ -1337,11 +1432,11 @@ msgstr "la variabo \"%(variable)s\" no es una Preferencia de Usuario"
 msgid "\"%(variable)s\" variable doesn't exists"
 msgstr "la variable \"%(variable)s\" no existe"
 
-#: media/js/varManager/varManager.js:81
+#: media/js/varManager/varManager.js:91
 msgid "Error saving variables to persistence: %(errorMsg)s."
 msgstr "Error al guardar las variables en el servidor: %(errorMsg)s."
 
-#: media/js/varManager/varManager.js:160
+#: media/js/varManager/varManager.js:178
 msgid ""
 "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\n"
 "If you need it, please insert it into the gadget's template."
@@ -1350,10 +1445,22 @@ msgstr ""
 "\".\n"
 "Si la necesita, añádala al template del gadget."
 
+#: media/js/varManager/varManager.js:198
+msgid ""
+"IGadget %(iGadgetId)s attempted to establish a non-string value for the "
+"variable \"%(varName)s\"."
+msgstr ""
+"El iGadget %(iGadgetId)s ha intentado establecer un valor cuyo tipo no es "
+"string para la variable \"%(varName)s\"."
+
 #: media/js/wiring/connectable.js:53 media/js/wiring/connectable.js.py:65
-#: media/js/wiring/connectable.js:89
+#: media/js/wiring/connectable.js:93
 msgid "Unimplemented function: %(funcName)s"
 msgstr "Función sin implemencación: %(funcName)s"
+
+#: media/js/wiring/connectable.js:633
+msgid "Use in %(slotName)s"
+msgstr "Usar en %(slotName)s"
 
 #: media/js/wiring/connectableInterface.js:468
 msgid "Channel name cannot be empty."
@@ -1400,7 +1507,7 @@ msgid "Enter URL to write to or "
 msgstr "Introduzca la URL en donde se escribirá o "
 
 #: media/js/wiring/connectableInterface.js:952
-#: media/js/wiring/wiringGUI.js:1187
+#: media/js/wiring/wiringGUI.js:1186
 msgid "None"
 msgstr "Ninguno"
 
@@ -1435,8 +1542,8 @@ msgid ""
 "Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)"
 "s."
 msgstr ""
-"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s': %"
-"(error)"
+"Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s': "
+"%(error)"
 
 #: media/js/wiring/filter.js:295
 msgid "Error executing code of the filter '%(filterName)s'."
@@ -1465,13 +1572,13 @@ msgstr ""
 #: media/js/wiring/wiring.js:148
 msgid ""
 "Wiring: Loop detected while recovering wiring status from persistence.\n"
-"Output connection to channel \"%(targetChannel)s\" from channel \"%"
-"(sourceChannel)s\" will be ignored."
+"Output connection to channel \"%(targetChannel)s\" from channel "
+"\"%(sourceChannel)s\" will be ignored."
 msgstr ""
 "Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
 "persistencia.\n"
-" La conexión de salida al canal \"%(targetChannel)s\" desde el canal \"%"
-"(sourceChannel)s\" será ignorada."
+" La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
+"\"%(sourceChannel)s\" será ignorada."
 
 #: media/js/wiring/wiring.js:242
 msgid ""
@@ -1487,7 +1594,7 @@ msgstr "Error de wiring: se intentó eliminar un igadget inexistente."
 
 #: media/js/wiring/wiring.js:309
 msgid ""
-"Wiring error: Trying to retreive the connectables of an inexistent igadget."
+"Wiring error: Trying to retrieve the connectables of an inexistent igadget."
 msgstr ""
 "Error de wiring: se intentó obtener los conectables de un igadget "
 "inexistente."
@@ -1504,38 +1611,23 @@ msgstr "Error al guardar el estado del wiring: %(errorMsg)s"
 msgid "Channel"
 msgstr "Canal"
 
-#: media/js/wiring/wiringGUI.js:455
-msgid "Please, create a new channel before creating connections."
-msgstr "Por favor, crea un nuevo canal antes de crear nuevas conexiones."
-
-#: media/js/wiring/wiringGUI.js:457
-msgid "Please, select a channel before creating connections."
-msgstr "Por favor, seleciona un canal antes de crear conexiones."
-
-#: media/js/wiring/wiringGUI.js:499
-msgid ""
-"You can not make that connection because if you do it, a loop will be "
-"created."
-msgstr ""
-"No se puede realizar esta conexión dado que en tal caso se crearía un bucle."
-
-#: media/js/wiring/wiringGUI.js:1188
+#: media/js/wiring/wiringGUI.js:1187
 msgid "Returns the value of the channel unfiltered."
 msgstr "Devuelve el valor de un canal sin filtrar."
 
-#: media/js/wiring/wiringGUI.js:1213
+#: media/js/wiring/wiringGUI.js:1212
 msgid "Disabled"
 msgstr "Desactivado"
 
-#: media/js/wiring/wiringGUI.js:1214
+#: media/js/wiring/wiringGUI.js:1213
 msgid "Read"
 msgstr "Lectura"
 
-#: media/js/wiring/wiringGUI.js:1215
+#: media/js/wiring/wiringGUI.js:1214
 msgid "Write"
 msgstr "Escritura"
 
-#: media/js/wiring/wiringGUI.js:1287
+#: media/js/wiring/wiringGUI.js:1286
 msgid ""
 "Lists of gadgets with events.\n"
 "This events produces a value\n"
@@ -1547,7 +1639,7 @@ msgstr ""
 "que será recibido en alguna\n"
 "ranura de otro gadget."
 
-#: media/js/wiring/wiringGUI.js:1291
+#: media/js/wiring/wiringGUI.js:1290
 msgid ""
 "Channels allows you to manage\n"
 "the connections between different\n"
@@ -1557,7 +1649,7 @@ msgstr ""
 "las conexiones entre diferentes\n"
 "instancias de gadgets."
 
-#: media/js/wiring/wiringGUI.js:1294
+#: media/js/wiring/wiringGUI.js:1293
 msgid ""
 "Lists of gadgets with slots.\n"
 "This slots receives values\n"
@@ -1569,14 +1661,117 @@ msgstr ""
 "producidos por los eventos de\n"
 "otros gadgets."
 
+#~ msgid "Choose all"
+#~ msgstr "Elegir todo"
+
+#~ msgid "Chosen %s"
+#~ msgstr "Elegido %s"
+
+#~ msgid "Select your choice(s) and click "
+#~ msgstr "Elige tus opciones y haz click "
+
+#~ msgid "Error renaming igadget from persistence: %(errorMsg)s."
+#~ msgstr "Error al renombrar el igadget de la persistencia: %(errorMsg)s."
+
+#~ msgid "Snap to grid"
+#~ msgstr "Ajustar a la rejilla"
+
+#~ msgid "This iGadget is outside the grid."
+#~ msgstr "Este iGadget está fuera de la rejilla."
+
+#~ msgid "Extract from grid"
+#~ msgstr "Extraer de la rejilla"
+
+#~ msgid "This iGadget is aligned to the grid."
+#~ msgstr "Este iGadget está alineado a la rejilla."
+
+#~ msgid "Exit Full Dragboard"
+#~ msgstr "Salir de Pantalla Completa"
+
+#~ msgid "Full Dragboard"
+#~ msgstr "Pantalla Completa"
+
+#~ msgid "Close"
+#~ msgstr "Cerrar"
+
+#~ msgid "Menu"
+#~ msgstr "Menú"
+
+#~ msgid "Maximize"
+#~ msgstr "Maximizar"
+
+#~ msgid "Minimize"
+#~ msgstr "Minimizar"
+
+#~ msgid ""
+#~ "There is a new version of this gadget available. Current version: "
+#~ "%(currentVersion)s - Last version: %(lastVersion)s"
+#~ msgstr ""
+#~ "Hay una nueva versión de este gadget. Versión actual: %(currentVersion)s "
+#~ "- Última versión: %(lastVersion)s"
+
+#~ msgid ""
+#~ "<p><b>Do you really want to update \"%(igadgetName)s\" to its latest "
+#~ "version?</b><br />The gadget state and connections will be kept, if "
+#~ "possible.<p>Note: It will reload your workspace</p>"
+#~ msgstr ""
+#~ "<p><b>¿Realmente quiere actualizar \"%(igadgetName)s\" a su última "
+#~ "versión?</b><br />Siempre que sea posible, se conservará el estado y las "
+#~ "conexiones del gadget.<p>Aviso: Esta operación recargará el entorno de "
+#~ "trabajo</p>"
+
+#~ msgid "Do you want to remove the notice of the new version available?"
+#~ msgstr "¿Desea eliminar el aviso de nueva versión?"
+
+#~ msgid ""
+#~ "Error setting the refused version of the igadget to persistence: "
+#~ "%(errorMsg)s."
+#~ msgstr ""
+#~ "Error al hacer persistente la versión rechazada en la actualización del "
+#~ "igadget: %(errorMsg)s."
+
+#~ msgid ""
+#~ "<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
+#~ "updated</b> because its version is not compatible "
+#~ msgstr ""
+#~ "<p>Lo sentimos, pero el gadget \"%(igadgetName)s\" <b>NO</b> pudo ser "
+#~ "actualizado automaticamente porque las versiones no son compatibles "
+
+#~ msgid "%(errorCount)s error"
+#~ msgid_plural "%(errorCount)s errors"
+#~ msgstr[0] "%(errorCount)s error"
+#~ msgstr[1] "%(errorCount)s errores"
+
+#~ msgid "You are not allowed to perform this operation"
+#~ msgstr "No estás autorizado a realizar esta operación"
+
+#~ msgid "New Application"
+#~ msgstr "Nueva Aplicación"
+
+#~ msgid "Unlock"
+#~ msgstr "Desbloquear"
+
+#~ msgid "Lock"
+#~ msgstr "Bloquear"
+
+#~ msgid "Please, create a new channel before creating connections."
+#~ msgstr "Por favor, crea un nuevo canal antes de crear nuevas conexiones."
+
+#~ msgid "Please, select a channel before creating connections."
+#~ msgstr "Por favor, seleciona un canal antes de crear conexiones."
+
+#~ msgid ""
+#~ "You can not make that connection because if you do it, a loop will be "
+#~ "created."
+#~ msgstr ""
+#~ "No se puede realizar esta conexión dado que en tal caso se crearía un "
+#~ "bucle."
+
 #~ msgid "Theme description \"%(themeName)s\" could not be loaded."
 #~ msgstr "La descipción del tema \"%(themeName)s\" no pudo cargarse"
 
 #~ msgid "Theme"
 #~ msgstr "Tema"
-
-#~ msgid "Locked"
-#~ msgstr "Bloqueado"
 
 #~ msgid ""
 #~ "If the Tab is locked, you will not be able to move, resize and do other "
@@ -1592,35 +1787,22 @@ msgstr ""
 #~ msgid "Share workspace"
 #~ msgstr "Compartir el entorno de trabajo"
 
-#~ msgid "No WorkSpaces availables"
-#~ msgstr "No hay entornos de trabajo disponibles"
-
-#~ msgid "New workspace"
-#~ msgstr "Nuevo entorno de trabajo"
-
 #~ msgid "Error loading base theme. Expect problems."
 #~ msgstr "Error cargando el tema base."
 
 #~ msgid ""
-#~ "Error in the handler of the \"%(varName)s\" RVariable in iGadget %"
-#~ "(iGadgetId)s: %(exceptionMsg)s."
+#~ "Error in the handler of the \"%(varName)s\" RVariable in iGadget "
+#~ "%(iGadgetId)s: %(exceptionMsg)s."
 #~ msgstr ""
-#~ "Error en el manejador de \"%(varName)s\" RVariable en el iGadget %"
-#~ "(iGadgetId)s: %(exceptionMsg)s."
-
-#~ msgid ""
-#~ "IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" "
-#~ "RVariable."
-#~ msgstr ""
-#~ "El iGadget %(iGadgetId)s no proporciona un manejador para la RVariable \"%"
-#~ "(varName)s\"."
+#~ "Error en el manejador de \"%(varName)s\" RVariable en el iGadget "
+#~ "%(iGadgetId)s: %(exceptionMsg)s."
 
 #~ msgid ""
 #~ "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\"."
 #~ "\\nIf you need it, please insert it into the gadget's template."
 #~ msgstr ""
-#~ "El IGadget %(iGadgetId)s no dispone de ninguna variable llamada \"%"
-#~ "(varName)s\".\n"
+#~ "El IGadget %(iGadgetId)s no dispone de ninguna variable llamada "
+#~ "\"%(varName)s\".\n"
 #~ "Si la necesita, añádala al template del gadget."
 
 #~ msgid ""
@@ -1636,9 +1818,6 @@ msgstr ""
 #~ "reemplazarlo <b>de forma manual</b> por el gadget disponible en el "
 #~ "catálogo.</p><b>¿Desea eliminar el aviso de la disponibilidad de una "
 #~ "nueva versión?</b>"
-
-#~ msgid "Error retrieving catalogue data: %(errorMsg)s."
-#~ msgstr "Error al recibir los datos del catálogo: %(errorMsg)s"
 
 #~ msgid "Search"
 #~ msgstr "Buscar"
@@ -1706,11 +1885,11 @@ msgstr ""
 #~ "s"
 
 #~ msgid ""
-#~ "Search by Event and Slot connectivity for %(resourceName)s %"
-#~ "(resourceVersion)s"
+#~ "Search by Event and Slot connectivity for %(resourceName)s "
+#~ "%(resourceVersion)s"
 #~ msgstr ""
-#~ "Buscar por conectividad de ranura y evento para %(resourceName)s %"
-#~ "(resourceVersion)s"
+#~ "Buscar por conectividad de ranura y evento para %(resourceName)s "
+#~ "%(resourceVersion)s"
 
 #~ msgid "Global Search"
 #~ msgstr "Búqueda global"
@@ -1742,9 +1921,6 @@ msgstr ""
 #~ msgid "Show resource details"
 #~ msgstr "Mostrar detalles del recurso"
 
-#~ msgid "Gadget details"
-#~ msgstr "Detalles del gadget"
-
 #~ msgid "Mashup details"
 #~ msgstr "Detalles del mashup"
 
@@ -1759,9 +1935,6 @@ msgstr ""
 
 #~ msgid "Ehh..."
 #~ msgstr "Ehh..."
-
-#~ msgid "Not Bad"
-#~ msgstr "No está mal"
 
 #~ msgid "Pretty Good"
 #~ msgstr "Bueno"
@@ -1867,9 +2040,6 @@ msgstr ""
 #~ msgid "Delete"
 #~ msgstr "Eliminar"
 
-#~ msgid "Search by %(slotName)s"
-#~ msgstr "Buscar por %(slotName)s"
-
 #~ msgid "Delete tag"
 #~ msgstr "Eliminar etiqueta"
 
@@ -1908,9 +2078,6 @@ msgstr ""
 #~ msgid "Error POST"
 #~ msgstr "Error de POST"
 
-#~ msgid "Error updating the preferred version: %(errorMsg)s."
-#~ msgstr "Error al actualizar la versión favorita: %(errorMsg)s."
-
 #~ msgid "Changing current theme"
 #~ msgstr "Cambiando el tema actual"
 
@@ -1921,9 +2088,6 @@ msgstr ""
 
 #~ msgid "Show active workspace"
 #~ msgstr "Mostrar el entorno de trabajo activo"
-
-#~ msgid "Do you really want to remove this version of the gadget?"
-#~ msgstr "Eliminar esta versión del gadget"
 
 #~ msgid ""
 #~ "WARNING! All versions of this gadget will be removed too! Do you really "
@@ -1947,13 +2111,13 @@ msgstr ""
 
 #~ msgid ""
 #~ "Wiring: Loop detected while recovering wiring status from persistence."
-#~ "\\nOutput connection to channel \"%(targetChannel)s\" from channel \"%"
-#~ "(sourceChannel)s\" will be ignored."
+#~ "\\nOutput connection to channel \"%(targetChannel)s\" from channel "
+#~ "\"%(sourceChannel)s\" will be ignored."
 #~ msgstr ""
 #~ "Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
 #~ "persistencia.\n"
-#~ " La conexión de salida al canal \"%(targetChannel)s\" desde el canal \"%"
-#~ "(sourceChannel)s\" será ignorada."
+#~ " La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
+#~ "\"%(sourceChannel)s\" será ignorada."
 
 #~ msgid "Smart grid"
 #~ msgstr "Rejilla inteligente"

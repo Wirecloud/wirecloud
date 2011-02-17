@@ -318,7 +318,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var iGadgetEntry = this.iGadgets[iGadget.id];
 
 		if (iGadgetEntry == null) {
-			var msg = gettext("Wiring error: Trying to retreive the connectables of an inexistent igadget.");
+			var msg = gettext("Wiring error: Trying to retrieve the connectables of an inexistent igadget.");
 			LogManagerFactory.getInstance().log(msg);
 			return;
 		}
