@@ -61,7 +61,7 @@ div.gadget_window div.gadget_menu input[type="button"] {
 }
 
 div.gadget_window div.gadget_wrapper {
-  width: 100%;
+  width: auto;
 }
 
 div.gadget_window_locked div.gadget_wrapper {
