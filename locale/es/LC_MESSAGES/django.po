@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 09:24+0100\n"
-"PO-Revision-Date: 2011-02-17 12:23+0100\n"
+"POT-Creation-Date: 2011-02-17 16:27+0100\n"
+"PO-Revision-Date: 2011-02-17 16:42+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
 "Language-Team: Español/España <>\n"
 "Language: es\n"
@@ -1187,7 +1187,7 @@ msgid "Loading EzWeb Platform"
 msgstr "Cargando la Plataforma Ezweb"
 
 #: ezweb/templates/base_index.html:53
-msgid "Retreiving EzWeb code"
+msgid "Retrieving EzWeb code"
 msgstr "Descargando el código de la Plataforma EzWeb"
 
 #: ezweb/templates/catalogue_adder_login.html:248
@@ -1484,6 +1484,10 @@ msgstr "Ir a la última página"
 #: ezweb/templates/catalogue/views/list/list_view_resource_details.html:16
 msgid "Tags:"
 msgstr "Etiquetas:"
+
+#: ezweb/templates/catalogue/views/list/list_view_resource_details.html:3
+msgid "Close resource details"
+msgstr "Ocultar los detalles del recurso"
 
 #: ezweb/templates/catalogue/views/list/list_view_resource_details.html:20
 msgid "Detailed data"
@@ -2504,9 +2508,6 @@ msgstr "No se pudo publicar el mashup: está duplicado"
 
 #~ msgid "Cancel"
 #~ msgstr "Cancelar"
-
-#~ msgid "Hide resource details"
-#~ msgstr "Ocultar información del recurso"
 
 #~ msgid "Create an account"
 #~ msgstr "Crear una cuenta"
