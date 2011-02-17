@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 16:27+0100\n"
-"PO-Revision-Date: 2011-02-17 16:42+0100\n"
+"POT-Creation-Date: 2011-02-17 17:53+0100\n"
+"PO-Revision-Date: 2011-02-17 17:53+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
 "Language-Team: Español/España <>\n"
 "Language: es\n"
@@ -638,6 +638,7 @@ msgid "Exit"
 msgstr "Salir"
 
 #: clms/templates/base_clms.html:73 clms/templates/base_clms.html.py:79
+#: ezweb/templates/header.html:25
 msgid "Profile"
 msgstr ""
 
@@ -1375,8 +1376,16 @@ msgid "Show errors console"
 msgstr "Mostrar la consola de errores"
 
 #: ezweb/templates/header.html:12
-msgid "about EzWeb"
-msgstr "acerca de EzWeb"
+msgid "About EzWeb"
+msgstr "Acerca de EzWeb"
+
+#: ezweb/templates/header.html:14
+msgid "Edit Settings"
+msgstr "Editar la configuración"
+
+#: ezweb/templates/header.html:14
+msgid "Settings"
+msgstr "Configuración"
 
 #: ezweb/templates/header.html:17
 msgid "Sign in"
@@ -1387,12 +1396,8 @@ msgid "anonymous"
 msgstr "Anónimo"
 
 #: ezweb/templates/header.html:21
-msgid "exit"
-msgstr "salir"
-
-#: ezweb/templates/header.html:25
-msgid "profile"
-msgstr "perfil"
+msgid "Sign out"
+msgstr "Salir"
 
 #: ezweb/templates/header.html:42 ezweb/templates/header_lite.html:15
 msgid "Add more tabs"

@@ -9,20 +9,20 @@
 		<div id="greeting">
 			<!-- LOGS LINK -->
 			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-			<a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="about EzWeb">{% trans "about EzWeb" %}</a>
+			<a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="{% trans 'About EzWeb' %}">{% trans "About EzWeb" %}</a>
 			<span> | </span>
-			<a id="preferences_link" href="javascript:OpManagerFactory.getInstance().showPlatformPreferences();" title="Edit settings">settings</a>
+			<a id="preferences_link" href="javascript:OpManagerFactory.getInstance().showPlatformPreferences();" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
 			<span> | </span>
 			{% if is_anonymous %}
-				<a href="/accounts/login/?next=/">{% trans "Sign in" %}</a>
+				<a href="/accounts/login/?next=/" title="{% trans 'Sign in' %}">{% trans "Sign in" %}</a>
 				<span> | </span>
 				<span id="user_section">{% trans "anonymous" %}</span>
 			{% else %}
-				<a href="javascript:OpManagerFactory.getInstance().logout()" title="Log out">{% trans "exit" %}</a>
+				<a href="javascript:OpManagerFactory.getInstance().logout()" title="{% trans 'Sign out' %}">{% trans "Sign out" %}</a>
 				
 				{%if AUTHENTICATION_SERVER_URL %}
 					<span> | </span>
-					<a href="{{AUTHENTICATION_SERVER_URL}}" title="Profile">{% trans "profile" %}</a>
+					<a href="{{AUTHENTICATION_SERVER_URL}}" title="{% trans 'Profile' %}">{% trans "Profile" %}</a>
 				{%endif%}
 				
 				<span> | </span>
