@@ -189,7 +189,7 @@ Filter.prototype.processParams = function(params_) {
   this._params = new Array();
   if (params_ != null && params_ != ''){
   	var fParam, paramObject;
-  	var jsonParams = params_.evalJSON();  
+  	var jsonParams = JSON.parse(params_);
   	for (var i = 0; i < jsonParams.length; i++) {
 		fParam = jsonParams[i];
 		if (fParam.type == 'jpath'){

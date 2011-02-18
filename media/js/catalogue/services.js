@@ -98,7 +98,7 @@ var CatalogueSearcher = function () {
   
   this.process_response = function (response, command) {
 	var response_text = response.responseText;
-	var response_json = response_text.evalJSON();
+	var response_json = JSON.parse(response_text);
 	
 	var query_results_number = response.getResponseHeader('items'); 
 	
@@ -212,7 +212,7 @@ var CatalogueResourceSubmitter = function () {
   }
   
   this.process_response = function (response_text, command) {
-	var resource_state = response_text.evalJSON();
+	var resource_state = JSON.parse(response_text);
 	
 	resource_state['added_by_user'] = 'Yes';
 	resource_state['uriTemplate'] = resource_state['templateUrl'];
@@ -312,7 +312,7 @@ var CatalogueResourceSubmitter = function () {
     
 	var successCallback = function (response) {
 	  var response_text = response.responseText;
-	  var response_obj = response_text.evalJSON();
+	  var response_obj = JSON.parse(response_text);
 	  
 	  var resource_state = response_obj['resourceList'][0];
 	  
@@ -544,8 +544,7 @@ var CatalogueVoter = function () {
 
     var success_callback = function(response) {
       // processing command
-      var response_text = response.responseText;
-      var response_obj = response_text.evalJSON();
+      var response_obj = JSON.parse(response.responseText);
       
       var resource = this.get_data();
       
@@ -593,8 +592,7 @@ var CatalogueTagger = function () {
 
     var success_callback = function(response) {
       // processing command
-      var response_text = response.responseText;
-      var response_obj = response_text.evalJSON();
+      var response_obj = JSON.parse(response.responseText);
       
       var resource = this.get_data();
       
@@ -640,8 +638,7 @@ var CatalogueTagger = function () {
 
     var success_callback = function(response) {
       // processing command
-      var response_text = response.responseText;
-      var response_obj = response_text.evalJSON();
+      var response_obj = JSON.parse(response.responseText);
       
       var resource = this.get_data();
       
