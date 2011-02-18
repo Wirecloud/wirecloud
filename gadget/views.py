@@ -175,8 +175,9 @@ class GadgetEntry(Resource):
 class GadgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version, user_name=None):
-        #user = user_authentication(request, user_name)
-        gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version)
+        user = user_authentication(request, user_name)
+
+        gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users__id=user.id)
         xhtml = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
 
         content_type = gadget.xhtml.content_type
