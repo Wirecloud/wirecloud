@@ -236,6 +236,7 @@ IGadgetLogManager.prototype = new LogManager();
 
 IGadgetLogManager.prototype.buildExtraInfo = function() {
 	var extraInfo = document.createElement('span');
+	Element.extend(extraInfo);
 	extraInfo.className = "igadget_info";
 	extraInfo.setTextContent(this.iGadget.id);
 	extraInfo.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
