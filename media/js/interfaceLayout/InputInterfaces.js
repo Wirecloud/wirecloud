@@ -649,6 +649,19 @@ function ParametrizableValueInputInterface(fieldId, options) {
 
     this.wrapperElement = document.createElement('div');
 
+    this.readOnlyIcon = document.createElement('div');
+    Element.extend(this.readOnlyIcon);
+    this.readOnlyIcon.addClassName('readOnlyIcon');
+    this.wrapperElement.appendChild(this.readOnlyIcon);
+
+    this.visibilityIcon = document.createElement('div');
+    Element.extend(this.visibilityIcon);
+    this.visibilityIcon.addClassName('visibilityIcon');
+    this.wrapperElement.appendChild(this.visibilityIcon);
+    if (!this.canBeHidden) {
+        this.visibilityIcon.style.visibility = 'hidden';
+    }
+
     this.inputElement = document.createElement('input');
     Element.extend(this.inputElement);
     this.inputElement.disabled = true;
@@ -734,6 +747,22 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
         this.buttonElement.innerHTML = gettext('Parametrize');
     } else {
         this.buttonElement.innerHTML = gettext('Modify');
+    }
+
+    if (this['status'] !== 'normal') {
+        this.readOnlyIcon.addClassName('readOnly');
+        this.readOnlyIcon.title = gettext("This value won't be editable by the user");
+    } else {
+        this.readOnlyIcon.removeClassName('readOnly');
+        this.readOnlyIcon.title = gettext("This value will be editable by the user");
+    }
+
+    if (this['status'] !== 'hidden') {
+        this.visibilityIcon.addClassName('visible');
+        this.visibilityIcon.title = gettext("This value will be visible to the user");
+    } else {
+        this.visibilityIcon.removeClassName('visible'); 
+        this.visibilityIcon.title = gettext("This value won't be visible to the user");
     }
 };
 

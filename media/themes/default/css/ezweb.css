@@ -313,6 +313,33 @@ button {
   color: white;
 }
 
+.readOnlyIcon, .visibilityIcon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: bottom;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+
+.readOnlyIcon {
+    background-image: url("../images/unlock.png");
+}
+
+.readOnlyIcon.readOnly {
+    background-image: url("../images/lock.png");
+}
+
+.visibilityIcon {
+    background-image: none;
+}
+
+.visibilityIcon.visible {
+    background-image: url("../images/visible.png");
+}
+
 
 /* gadgets ------------------------------------------------------------------------------------------ */
 
