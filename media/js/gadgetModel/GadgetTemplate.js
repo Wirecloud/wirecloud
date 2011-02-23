@@ -31,22 +31,22 @@
 
 function GadgetTemplate(variables_, size_) {
 
-	// *******************
-	//  PRIVATE VARIABLES
-	// *******************
+    // *******************
+    //  PRIVATE VARIABLES
+    // *******************
 
-   var variableList = variables_;
-   var width = size_.width;
-   var height = size_.height;
-   
-   //preferences section
-   var prefs =  null;
-   var sharedPrefs = null;
-   var gadgetPrefs = null;
+    var variableList = variables_;
+    var width = size_.width;
+    var height = size_.height;
 
-	// ******************
-	//  PUBLIC FUNCTIONS
-	// ******************
+    //preferences section
+    var prefs =  null;
+    var sharedPrefs = null;
+    var gadgetPrefs = null;
+
+    // ******************
+    //  PUBLIC FUNCTIONS
+    // ******************
 
     this.getWidth = function () {
         return width;
@@ -57,238 +57,234 @@ function GadgetTemplate(variables_, size_) {
     }
 
     this.getVariables = function (iGadget) {
-        
-		// JSON-coded Template-Variables mapping
-		// Constructing the structure
-		var iGadgetId = iGadget.getId();
-		var varManager = iGadget.dragboard.workSpace.getVarManager();
 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			switch (rawVar.aspect) {
-				case Variable.prototype.PROPERTY:
-				case Variable.prototype.EVENT:
-					objVars[rawVar.name] = new RWVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
-					break;
-				case Variable.prototype.EXTERNAL_CONTEXT:
-				case Variable.prototype.GADGET_CONTEXT:
-				case Variable.prototype.SLOT:
-					objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
-					break;
-				case Variable.prototype.USER_PREF:
-					objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, rawVar.default_value);
-					break;
-			}
-		}
+        // JSON-coded Template-Variables mapping
+        // Constructing the structure
+        var iGadgetId = iGadget.getId();
+        var varManager = iGadget.dragboard.workSpace.getVarManager();
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            switch (rawVar.aspect) {
+            case Variable.prototype.PROPERTY:
+            case Variable.prototype.EVENT:
+                objVars[rawVar.name] = new RWVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
+                break;
+            case Variable.prototype.EXTERNAL_CONTEXT:
+            case Variable.prototype.GADGET_CONTEXT:
+            case Variable.prototype.SLOT:
+                objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
+                break;
+            case Variable.prototype.USER_PREF:
+                objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, rawVar.default_value);
+                break;
+            }
+        }
         return objVars;
     }
-	
-	this._newUserPref = function(rawVar){
-		
-		switch (rawVar.type) {
-			case UserPref.prototype.TEXT:  
-				return new TextUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-			case UserPref.prototype.INTEGER:  
-				return new IntUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-			case UserPref.prototype.BOOLEAN:
-				return new BoolUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-			case UserPref.prototype.DATE:
-				return new DateUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-			case UserPref.prototype.PASSWORD:
-				return new PasswordUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
-			case UserPref.prototype.LIST:
-				return new ListUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value, rawVar.value_options);
-		}
-	}
-	
-	this._generateUserPrefs = function () {
 
-		prefs =  new Array();
-		sharedPrefs = new Array();
-		gadgetPrefs = new Array();
-		
-		var rawVar = null;
-		var pref = null;
-		for (var i = 0; i < variableList.length; i++) {
-			rawVar = variableList[i];
-			if (rawVar.aspect == Variable.prototype.USER_PREF) {
-				pref = this._newUserPref(rawVar);
-				//add to the global list
-				prefs.push(pref);
-				if (!rawVar.shareable){
-					//add it to the user-only prefs
-					gadgetPrefs.push(pref);
-				}else{
-					//add it to the shared prefs
-					sharedPrefs.push(pref);
-				}
-			}
-		}
-		return prefs;
-	}
-	
-	this.getUserPrefs = function () {
-		if (!prefs)
-			this._generateUserPrefs();
-		return prefs;
-	}
-	
-	this.getSharedPrefs = function () {
-		if (!sharedPrefs)
-			this._generateUserPrefs();
-		return sharedPrefs;
-	}
-	
-	this.getGadgetPrefs = function () {
-		if (!gadgetPrefs)
-			this._generateUserPrefs();
-		return gadgetPrefs;
-	}
-	
-	this.getExternalContextVars = function (igadget_) {
-		
-		// JSON-coded Template-Variables mapping	
-		// Constructing the structure 
+    this._newUserPref = function(rawVar){
 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		var currentContextVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			switch (rawVar.aspect) {
-				case Variable.prototype.EXTERNAL_CONTEXT:
-					currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept) 
-					objVars.push(currentContextVar); 
-					break;
-				default:
-					break;
-			}
-		}
-		return objVars;
-	}
-	
-	this.getGadgetContextVars = function (igadget_) {
+        switch (rawVar.type) {
+            case UserPref.prototype.TEXT:
+                return new TextUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+            case UserPref.prototype.INTEGER:
+                return new IntUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+            case UserPref.prototype.BOOLEAN:
+                return new BoolUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+            case UserPref.prototype.DATE:
+                return new DateUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+            case UserPref.prototype.PASSWORD:
+                return new PasswordUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value);
+            case UserPref.prototype.LIST:
+                return new ListUserPref(rawVar.name, rawVar.label, rawVar.description, rawVar.default_value, rawVar.value_options);
+        }
+    }
 
-		// JSON-coded Template-Variables mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		var currentContextVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			switch (rawVar.aspect) {
-				case Variable.prototype.GADGET_CONTEXT:
-					currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept) 
-					objVars.push(currentContextVar); 
-					break;
-				default:
-					break;
-			}
-		}
-		return objVars;
-	}
+    this._generateUserPrefs = function () {
 
-	
-	this.getUserPrefsId = function () {
-        
-		// JSON-coded Template-UserPrefs mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			if (rawVar.aspect == Variable.prototype.USER_PREF)
-			{
-					objVars.push(rawVar.name);
-			}
-		}
+        prefs =  new Array();
+        sharedPrefs = new Array();
+        gadgetPrefs = new Array();
+
+        var rawVar = null;
+        var pref = null;
+        for (var i = 0; i < variableList.length; i++) {
+            rawVar = variableList[i];
+            if (rawVar.aspect == Variable.prototype.USER_PREF) {
+                pref = this._newUserPref(rawVar);
+                //add to the global list
+                prefs.push(pref);
+                if (!rawVar.shareable){
+                    //add it to the user-only prefs
+                    gadgetPrefs.push(pref);
+                }else{
+                    //add it to the shared prefs
+                    sharedPrefs.push(pref);
+                }
+            }
+        }
+        return prefs;
+    }
+
+    this.getUserPrefs = function () {
+        if (!prefs)
+            this._generateUserPrefs();
+        return prefs;
+    }
+
+    this.getSharedPrefs = function () {
+        if (!sharedPrefs)
+            this._generateUserPrefs();
+        return sharedPrefs;
+    }
+
+    this.getGadgetPrefs = function () {
+        if (!gadgetPrefs)
+            this._generateUserPrefs();
+        return gadgetPrefs;
+    }
+
+    this.getExternalContextVars = function (igadget_) {
+
+        // JSON-coded Template-Variables mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        var currentContextVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            switch (rawVar.aspect) {
+                case Variable.prototype.EXTERNAL_CONTEXT:
+                    currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept)
+                    objVars.push(currentContextVar);
+                    break;
+                default:
+                    break;
+            }
+        }
         return objVars;
     }
-	
-	this.getEventsId = function () {
-        
-		// JSON-coded Template-UserPrefs mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			if (rawVar.aspect == Variable.prototype.EVENT)
-			{
-					objVars.push(rawVar.name);
-			}
-		}
+
+    this.getGadgetContextVars = function (igadget_) {
+
+        // JSON-coded Template-Variables mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        var currentContextVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            switch (rawVar.aspect) {
+                case Variable.prototype.GADGET_CONTEXT:
+                    currentContextVar = new ContextVar(igadget_, rawVar.name, rawVar.concept);
+                    objVars.push(currentContextVar);
+                    break;
+                default:
+                    break;
+            }
+        }
         return objVars;
     }
-	
+
+    this.getUserPrefsId = function () {
+
+        // JSON-coded Template-UserPrefs mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            if (rawVar.aspect == Variable.prototype.USER_PREF)
+            {
+                    objVars.push(rawVar.name);
+            }
+        }
+        return objVars;
+    }
+
+    this.getEventsId = function () {
+
+        // JSON-coded Template-UserPrefs mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            if (rawVar.aspect == Variable.prototype.EVENT) {
+                    objVars.push(rawVar.name);
+            }
+        }
+        return objVars;
+    }
+
    this.getSlots = function () {
-        
-		// JSON-coded Template-UserPrefs mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			if (rawVar.aspect == Variable.prototype.SLOT)
-			{
-					objVars.push(rawVar);
-			}
-		}
+
+        // JSON-coded Template-UserPrefs mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            if (rawVar.aspect == Variable.prototype.SLOT)
+            {
+                    objVars.push(rawVar);
+            }
+        }
         return objVars;
     }
 
    this.getEvents = function () {
-        
-		// JSON-coded Template-UserPrefs mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			if (rawVar.aspect == Variable.prototype.EVENT)
-			{
-					objVars.push(rawVar);
-			}
-		}
+
+        // JSON-coded Template-UserPrefs mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            if (rawVar.aspect == Variable.prototype.EVENT)
+            {
+                    objVars.push(rawVar);
+            }
+        }
         return objVars;
     }
 
-	
-	this.getPropertiesId = function () {
-        
-		// JSON-coded Template-UserPrefs mapping	
-		// Constructing the structure 
-		 
-		var objVars = [];
-		var rawVars = variableList;
-		var rawVar = null;
-		for (var i = 0; i<rawVars.length; i++) {
-			rawVar = rawVars[i];
-			if (rawVar.aspect == Variable.prototype.PROPERTY)
-			{
-					objVars.push(rawVar.name);
-			}
-		}
+    this.getPropertiesId = function () {
+
+        // JSON-coded Template-UserPrefs mapping
+        // Constructing the structure
+
+        var objVars = [];
+        var rawVars = variableList;
+        var rawVar = null;
+        for (var i = 0; i<rawVars.length; i++) {
+            rawVar = rawVars[i];
+            if (rawVar.aspect == Variable.prototype.PROPERTY)
+            {
+                    objVars.push(rawVar.name);
+            }
+        }
         return objVars;
     }
-	
-	/*
-	 * CONSTRUCTOR
-	 */
-	//this._generateUserPrefs();
-	
+
+    /*
+     * CONSTRUCTOR
+     */
+    //this._generateUserPrefs();
 }

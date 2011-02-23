@@ -30,94 +30,89 @@
 //////////////////////////////////////////////
 
 function Gadget(gadget_, url_, options_) {
-	
-	// ******************
-	//  PUBLIC FUNCTIONS
-	// ******************
-	var _this = this;
-	
-	this.getVendor = function() { return state.getVendor(); }
-	this.getName = function() { return state.getName(); }
-	this.getDisplayName = function() { return state.getDisplayName(); }
-	this.getVersion = function() { return state.getVersion(); }
-	this.getTemplate = function() { return state.getTemplate(); }
-	this.getXHtml = function() { return state.getXHtml(); }
-	this.getInfoString = function() { return state.getInfoString(); }
-	this.getUriWiki = function() { return state.getUriWiki();}
-	this.getImage = function() { return state.getImage(); }
-	this.setImage = function(image_) { state.setImage(image_); }
-	this.getIcon = function() { return state.getIcon(); } 
-	this.getMenuColor = function() { return state.getMenuColor(); }
-	this.isUpToDate = function() { return state.isUpToDate(); }
-	this.setUpdatedState = function(lastVersion, URL) { return state.setUpdatedState(lastVersion, URL); }
-	this.getLastVersion = function(){return state.getLastVersion();}
-	this.getLastVersionURL = function() {return state.getLastVersionURL();}
-	
-	this.isContratable = function() { 
-		var capabilities = state.getCapabilities();
-		
-		for (var i=0; i<capabilities.length; i++) {
-			var capability = capabilities[i];
-			if (capability.name == 'Contratable')
-				return capability.value.toLowerCase() == "true";
-			else
-				return false
-		}	
-	}
 
-	
-	// *******************
-	//  PRIVATE FUNCTIONS
-	// *******************
-	
-	var _solicitarGadget = function(url_) {
-		
-		// ******************
-		//  CALLBACK METHODS 
-		// ******************
-	
-		// Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
-		
-		var onError = function(transport, e) {
-			var logManager = LogManagerFactory.getInstance();
-			var msg = logManager.formatError(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), transport, e);
-			logManager.log(msg);
-			var layoutManager = LayoutManagerFactory.getInstance();
-			layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-		}
-		
-		var loadGadget = function(transport) {
-			var response = transport.responseText;
-			var objRes = JSON.parse(response);
-			state = new GadgetState(objRes);
-			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this, options_);
-		}
-		
-		var persistenceEngine = PersistenceEngineFactory.getInstance();
-		var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
-		// Post Gadget to PersistenceEngine. Asyncrhonous call!
-		// params: url of the template, id of the current workspace to check if it is shared
-		// and with who it is shared.  
-		var params = {url: url_, workspaceId: workspaceId_};
-		persistenceEngine.send_post(URIs.GET_GADGETS, params, this, loadGadget, onError);
-	}
-	
-	this.getId = function() {
-		return this.getVendor() + '_'+ this.getName() + '_' + this.getVersion();
-	}
-	
-	// *******************
-	//  PRIVATE VARIABLES
-	// *******************
+    // ******************
+    //  PUBLIC FUNCTIONS
+    // ******************
+    var _this = this;
 
-	var state = null;
-	
-	if (url_ != null) {
-		_solicitarGadget(url_);
-	}
-	else {
-		state = new GadgetState(gadget_);
-	}
+    this.getVendor = function() { return state.getVendor(); }
+    this.getName = function() { return state.getName(); }
+    this.getDisplayName = function() { return state.getDisplayName(); }
+    this.getVersion = function() { return state.getVersion(); }
+    this.getTemplate = function() { return state.getTemplate(); }
+    this.getXHtml = function() { return state.getXHtml(); }
+    this.getInfoString = function() { return state.getInfoString(); }
+    this.getUriWiki = function() { return state.getUriWiki();}
+    this.getImage = function() { return state.getImage(); }
+    this.setImage = function(image_) { state.setImage(image_); }
+    this.getIcon = function() { return state.getIcon(); }
+    this.getMenuColor = function() { return state.getMenuColor(); }
+    this.isUpToDate = function() { return state.isUpToDate(); }
+    this.setUpdatedState = function(lastVersion, URL) { return state.setUpdatedState(lastVersion, URL); }
+    this.getLastVersion = function(){return state.getLastVersion();}
+    this.getLastVersionURL = function() {return state.getLastVersionURL();}
+
+    this.isContratable = function() {
+        var capabilities = state.getCapabilities();
+
+        for (var i=0; i<capabilities.length; i++) {
+            var capability = capabilities[i];
+            if (capability.name == 'Contratable')
+                return capability.value.toLowerCase() == "true";
+            else
+                return false
+        }
+    }
+
+    // *******************
+    //  PRIVATE FUNCTIONS
+    // *******************
+    var _solicitarGadget = function(url_) {
+
+        // ******************
+        //  CALLBACK METHODS
+        // ******************
+
+        var onError = function(transport, e) {
+            var logManager = LogManagerFactory.getInstance();
+            var msg = logManager.formatError(gettext("The gadget could not be added to the showcase: %(errorMsg)s."), transport, e);
+            logManager.log(msg);
+            var layoutManager = LayoutManagerFactory.getInstance();
+            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
+        }
+
+        var loadGadget = function(transport) {
+            var response = transport.responseText;
+            var objRes = JSON.parse(response);
+            state = new GadgetState(objRes);
+            ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this, options_);
+        }
+
+        var persistenceEngine = PersistenceEngineFactory.getInstance();
+        var workspaceId_ = OpManagerFactory.getInstance().getActiveWorkspaceId();
+        // Post Gadget to PersistenceEngine. Asyncrhonous call!
+        // params: url of the template, id of the current workspace to check if it is shared
+        // and with who it is shared.
+        var params = {url: url_, workspaceId: workspaceId_};
+        persistenceEngine.send_post(URIs.GET_GADGETS, params, this, loadGadget, onError);
+    }
+
+    this.getId = function() {
+        return this.getVendor() + '_'+ this.getName() + '_' + this.getVersion();
+    }
+
+    // *******************
+    //  PRIVATE VARIABLES
+    // *******************
+
+    var state = null;
+
+    if (url_ != null) {
+        _solicitarGadget(url_);
+    } else {
+        state = new GadgetState(gadget_);
+    }
 }
 
 //////////////////////////////////////////////
@@ -126,67 +121,67 @@ function Gadget(gadget_, url_, options_) {
 
 function GadgetState(gadget_) {
 
-	// *******************
-	//  PRIVATE VARIABLES
-	// *******************
-	
-	var vendor = null;
-	var name = null;
-	var version = null;
-	var displayName = null;
-	var template = null;
-	var xhtml = null;
-	var image = null;
-	var capabilities = []; 
-	var uriwiki = null;
-	var menuColor= null;
-	var icon = null;
-	var upToDate = true; 
-	var lastVersion = null; 
-	var lastVersionURL = null;
-		
-	// JSON-coded Gadget mapping
-	// Constructing the structure
-	vendor = gadget_.vendor;
-	name = gadget_.name;
-	version = gadget_.version;
-	displayName = gadget_.displayName
-	template = new GadgetTemplate(gadget_.variables, gadget_.size);
-	xhtml = new XHtml(gadget_.xhtml);
-	image = gadget_.imageURI;
-	icon = gadget_.iPhoneImageURI;
-	capabilities = gadget_.capabilities;
-	uriwiki = gadget_.wikiURI;
-	menuColor = gadget_.menuColor;
-	lastVersion = version;
-	
-	// ******************
-	//  PUBLIC FUNCTIONS
-	// ******************
-	
-        this.getCapabilities = function() { return capabilities; } 
-	this.getVendor = function() { return vendor; }
-	this.getName = function() { return name; }
-	this.getDisplayName = function() { return displayName; }
-	this.getVersion = function() { return version; }
-	this.getTemplate = function() { return template; }
-	this.getXHtml = function() { return xhtml; }
-	this.getInfoString = function() {
-		var transObj = { vendor: vendor, name: name, version: version};
-		var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
-		return interpolate(msg, transObj, true);
-	}
-	this.getUriWiki = function () {return uriwiki;}
-	this.getImage = function() { return image; }
-	this.setImage = function(image_) { image = image_; }
-	this.getIcon = function() { return (icon!="") ? icon :  image;  }
-	this.getMenuColor = function () {return menuColor;}
-	this.isUpToDate = function() { return upToDate; }
-	this.getLastVersion = function() {return lastVersion;}
-	this.getLastVersionURL = function() {return lastVersionURL;}
-	this.setUpdatedState = function(v, URL) { 
-		upToDate = (version >= v); 
-		lastVersion = v;
-		lastVersionURL = URL; 
-	}
+    // *******************
+    //  PRIVATE VARIABLES
+    // *******************
+
+    var vendor = null;
+    var name = null;
+    var version = null;
+    var displayName = null;
+    var template = null;
+    var xhtml = null;
+    var image = null;
+    var capabilities = [];
+    var uriwiki = null;
+    var menuColor= null;
+    var icon = null;
+    var upToDate = true;
+    var lastVersion = null;
+    var lastVersionURL = null;
+
+    // JSON-coded Gadget mapping
+    // Constructing the structure
+    vendor = gadget_.vendor;
+    name = gadget_.name;
+    version = gadget_.version;
+    displayName = gadget_.displayName
+    template = new GadgetTemplate(gadget_.variables, gadget_.size);
+    xhtml = new XHtml(gadget_.xhtml);
+    image = gadget_.imageURI;
+    icon = gadget_.iPhoneImageURI;
+    capabilities = gadget_.capabilities;
+    uriwiki = gadget_.wikiURI;
+    menuColor = gadget_.menuColor;
+    lastVersion = version;
+
+    // ******************
+    //  PUBLIC FUNCTIONS
+    // ******************
+
+    this.getCapabilities = function() { return capabilities; }
+    this.getVendor = function() { return vendor; }
+    this.getName = function() { return name; }
+    this.getDisplayName = function() { return displayName; }
+    this.getVersion = function() { return version; }
+    this.getTemplate = function() { return template; }
+    this.getXHtml = function() { return xhtml; }
+    this.getInfoString = function() {
+        var transObj = {vendor: vendor, name: name, version: version};
+        var msg = gettext("[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]");
+        return interpolate(msg, transObj, true);
+    }
+    this.getUriWiki = function () {return uriwiki;}
+    this.getImage = function() { return image; }
+    this.setImage = function(image_) { image = image_; }
+    this.getIcon = function() { return (icon!="") ? icon :  image;  }
+    this.getMenuColor = function () {return menuColor;}
+    this.isUpToDate = function() { return upToDate; }
+    this.getLastVersion = function() {return lastVersion;}
+    this.getLastVersionURL = function() {return lastVersionURL;}
+    this.setUpdatedState = function(v, URL) {
+        upToDate = (version >= v);
+        lastVersion = v;
+        lastVersionURL = URL;
+    }
 }
