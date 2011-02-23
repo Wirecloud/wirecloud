@@ -59,7 +59,6 @@ inputFiles = {
         'js/varManager/varManager.js',
 
         'js/showcase/showcase.js',
-        'js/showcase/util.js',
 
         'js/contextManager/ContextManager.js',
         'js/contextManager/ContextPlatform.js',
