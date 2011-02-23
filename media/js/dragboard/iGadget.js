@@ -88,7 +88,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
         this.height = layout.getMenubarSize().inLU;
     }
 
-    this.refusedVersion = refusedVersion;
+    this.refusedVersion = refusedVersion != null ? new GadgetVersion(refusedVersion) : null;
     this.freeLayoutAfterLoading = freeLayoutAfterLoading; //only used the first time the gadget is used to change its layout after loading to FreeLayout
 
     this.readOnly = readOnly;
@@ -527,15 +527,21 @@ IGadget.prototype.build = function() {
         Element.extend(button);
         button.setAttribute("type", "button");
         var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
-        msg = interpolate(msg, {currentVersion: this.gadget.getVersion(), lastVersion: this.gadget.getLastVersion()}, true);
+        msg = interpolate(msg, {
+                currentVersion: this.gadget.getVersion().text,
+                lastVersion: this.gadget.getLastVersion().text
+            }, true);
+
         button.setAttribute("title", msg);
         button.setAttribute("id", "version_button_"+this.id);
         button.addClassName("button versionbutton");
-        Event.observe (button, "click", function() {
-                                            var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
-                                            msg = interpolate(msg, {igadgetName: this.name}, true);
-                                            LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
-                                        }.bind(this), false);
+        Event.observe (button, "click",
+            function() {
+                var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
+                msg = interpolate(msg, {igadgetName: this.name}, true);
+                LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
+            }.bind(this),
+            false);
         this.gadgetMenu.appendChild(button);
     }
 
@@ -1055,7 +1061,7 @@ IGadget.prototype.setRefusedVersion = function (v) {
     $("version_button_"+this.id).hide();
 
     var o = new Object;
-    o.refused_version = this.refusedVersion;
+    o.refused_version = this.refusedVersion.text;
     o.id = this.id;
     var igadgetData = Object.toJSON(o);
     var params = {'igadget': igadgetData};
@@ -1071,7 +1077,7 @@ IGadget.prototype.setRefusedVersion = function (v) {
  * @returns {Boolean}
  */
 IGadget.prototype.isRefusedUpgrade = function() {
-    return this.refusedVersion && this.refusedVersion == this.gadget.getLastVersion();
+    return this.refusedVersion && this.refusedVersion.compareTo(this.gadget.getLastVersion()) === 0;
 }
 
 /**
@@ -1090,16 +1096,24 @@ IGadget.prototype.upgradeIGadget = function() {
         LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){this.setRefusedVersion(this.gadget.getLastVersion());}.bind(this));
     }
 
-    var o = new Object;
-    o.id = this.id;
-    o.newResourceURL = this.gadget.getLastVersionURL();
-    var igadgetData = Object.toJSON(o);
-    var params = {'igadget': igadgetData};
+    var data = {
+        id: this.id,
+        newVersion: this.gadget.getLastVersion().text,
+        source: 'showcase'
+    };
     var igadgetUrl = URIs.PUT_IGADGET_VERSION.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
                                                 tabId: this.layout.dragboard.tabId,
                                                 iGadgetId: this.id});
 
-    PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onUpgradeOk, onUpgradeError);
+    var options = {
+        method: 'PUT',
+        onSuccess: onUpgradeOk.bind(this),
+        onFailure: onUpgradeError.bind(this),
+        onException: onUpgradeError.bind(this),
+        postBody: Object.toJSON(data),
+        contentType: 'application/json; UTF-8'
+    };
+    PersistenceEngineFactory.getInstance().send(igadgetUrl, options);
 }
 
 
@@ -1997,7 +2011,7 @@ IGadget.prototype.save = function(options) {
     data['uri'] = uri;
     data['gadget'] = URIs.GET_GADGET.evaluate({vendor: this.gadget.getVendor(),
                                                name: this.gadget.getName(),
-                                               version: this.gadget.getVersion()});
+                                               version: this.gadget.getVersion().text});
     data = {igadget: data.toJSON()};
     persistenceEngine.send_post(uri , data, this, onSuccess, onError);
 }

@@ -74,6 +74,15 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
     return {"gadget": gadget, "templateParser": templateParser}
 
 
+def get_and_add_gadget(vendor, name, version, users):
+
+    gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
+    for user in users:
+        gadget.users.add(user)
+
+    return gadget
+
+
 def includeTagBase(document, url, request):
     # Get info url Gadget: host, username, Vendor, NameGadget and Version
 

@@ -51,7 +51,7 @@ from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable, Sh
 from connectable.models import In, Out
 from igadget.models import Position, IGadget, Variable
 
-from gadget.utils import get_or_create_gadget
+from gadget.utils import get_or_create_gadget, get_and_add_gadget
 
 from commons.logs_exception import TracedServerError
 
@@ -273,23 +273,15 @@ def UpdateIGadget(igadget, user, tab):
     # save the changes
     position.save()
 
-def UpgradeIGadget(igadget, user, request):
-    igadget_pk = igadget.get('id')
-    url = igadget.get('newResourceURL')
-
-    # get the iGadget object
-    ig = get_object_or_404(IGadget, pk=igadget_pk)
-    currentGadget = ig.gadget
+def UpgradeIGadget(igadget, user, new_gadget):
+    currentGadget = igadget.gadget
 
     # get the workspace in which the igadget is being added in order to
     # check if it is shared
-    workspaceId = ig.tab.workspace.id
-    
-    result = get_or_create_gadget(url, user, workspaceId, request)
-    lastGadget = result["gadget"]
+    workspaceId = igadget.tab.workspace.id
 
     #check equivalency and add the variables needed
-    newVariableDefs = VariableDef.objects.filter(gadget=lastGadget)
+    newVariableDefs = VariableDef.objects.filter(gadget=new_gadget)
     equivalentVarDefs = []
     for varDef in newVariableDefs:
         # search for an equivalent variableDef
@@ -297,20 +289,20 @@ def UpgradeIGadget(igadget, user, request):
         if equivalentVarDef:
             equivalentVarDefs.append(varDef)
             #reassign the variableDef of the Variable
-            var = Variable.objects.get(igadget=ig, vardef=equivalentVarDef[0])
+            var = Variable.objects.get(igadget=igadget, vardef=equivalentVarDef[0])
             var.vardef = varDef
             var.save()
         else:
-            addIGadgetVariable(ig, user, varDef)
+            addIGadgetVariable(igadget, user, varDef)
 
     # check if the last version gadget hasn't a super-set of the current version gadget variableDefs
     currentGadgetVarDefs = VariableDef.objects.filter(gadget=currentGadget)
     if len(currentGadgetVarDefs) > len(equivalentVarDefs):
         #some of the current version gadget variableDefs aren't in the last version gadget
-        raise Exception("The gadget cannot be automatically updated because it is incompatible with the last version.")     
+        raise Exception(_("The gadget cannot be automatically updated because it is incompatible with the last version."))
 
-    ig.gadget = lastGadget
-    ig.save()
+    igadget.gadget = new_gadget
+    igadget.save()
 
 def deleteIGadget(igadget, user):
 
@@ -461,14 +453,45 @@ class IGadgetVersion(Resource):
     def update(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
-        received_json = PUT_parameter(request, 'igadget')
+        workspace = WorkSpace.objects.get(id=workspace_id)
+        if workspace.get_creator() != user:
+            raise Http403()
+
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
+
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            received_json = PUT_parameter(request, 'igadget')
 
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            igadget = simplejson.loads(received_json) 
-            UpgradeIGadget(igadget, user, request)
+            data = simplejson.loads(received_json)
+            igadget_pk = data.get('id')
+
+            # get the iGadget object
+            igadget = get_object_or_404(IGadget, pk=igadget_pk)
+
+            if not 'source' in data or data.get('source') == 'catalogue':
+                url = data.get('newResourceURL')
+
+                result = get_or_create_gadget(url, user, workspace_id, request)
+                gadget = result["gadget"]
+
+            elif data.get('source') == 'showcase':
+                new_version = data.get('newVersion')
+                if workspace.is_shared():
+                    users = UserWorkSpace.objects.filter(workspace=workspace).values_list('user', flat=True)
+                else:
+                    users = [user]
+
+                gadget = get_and_add_gadget(igadget.gadget.vendor, igadget.gadget.name, new_version, users)
+
+            UpgradeIGadget(igadget, user, gadget)
 
             return HttpResponse('ok')
         except Exception, e:

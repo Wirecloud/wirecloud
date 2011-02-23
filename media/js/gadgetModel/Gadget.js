@@ -29,6 +29,37 @@
 //                  GADGET                  //
 //////////////////////////////////////////////
 
+
+function GadgetVersion(version) {
+    if (typeof version == 'string') {
+        this.text = version;
+        this.array = version.split('.').map(function(x) { return parseInt(x); });
+    } else if (version instanceof Array) {
+        this.array = version;
+        this.text = version.join('.');
+    } else {
+        throw new TypeError();
+    }
+};
+
+GadgetVersion.prototype.compareTo = function(version) {
+    var len, value1, value2;
+
+    len = Math.max(this.array.length, version.array.length);
+
+    for (i = 0; i < len; i += 1) {
+        value1 = this.array[i] != undefined ? this.array[i] : 0;
+        value2 = version.array[i] != undefined ? version.array[i] : 0;
+
+        if (value1 !== value2) {
+            return value1 - value2;
+        }
+    }
+
+    return 0;
+};
+
+
 function Gadget(gadget_, url_, options_) {
 
     // ******************
@@ -49,9 +80,8 @@ function Gadget(gadget_, url_, options_) {
     this.getIcon = function() { return state.getIcon(); }
     this.getMenuColor = function() { return state.getMenuColor(); }
     this.isUpToDate = function() { return state.isUpToDate(); }
-    this.setUpdatedState = function(lastVersion, URL) { return state.setUpdatedState(lastVersion, URL); }
+    this.setLastVersion = function(lastVersion) { return state.setLastVersion(lastVersion); }
     this.getLastVersion = function(){return state.getLastVersion();}
-    this.getLastVersionURL = function() {return state.getLastVersionURL();}
 
     this.isContratable = function() {
         var capabilities = state.getCapabilities();
@@ -138,13 +168,12 @@ function GadgetState(gadget_) {
     var icon = null;
     var upToDate = true;
     var lastVersion = null;
-    var lastVersionURL = null;
 
     // JSON-coded Gadget mapping
     // Constructing the structure
     vendor = gadget_.vendor;
     name = gadget_.name;
-    version = gadget_.version;
+    version = new GadgetVersion(gadget_.version);
     displayName = gadget_.displayName
     template = new GadgetTemplate(gadget_.variables, gadget_.size);
     xhtml = new XHtml(gadget_.xhtml);
@@ -178,10 +207,8 @@ function GadgetState(gadget_) {
     this.getMenuColor = function () {return menuColor;}
     this.isUpToDate = function() { return upToDate; }
     this.getLastVersion = function() {return lastVersion;}
-    this.getLastVersionURL = function() {return lastVersionURL;}
-    this.setUpdatedState = function(v, URL) {
-        upToDate = (version >= v);
+    this.setLastVersion = function(v) {
+        upToDate = version.compareTo(v) === 0;
         lastVersion = v;
-        lastVersionURL = URL;
     }
 }

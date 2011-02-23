@@ -52,25 +52,40 @@ var ShowcaseFactory = function () {
         // ****************
 
         this.parseGadgets = function (receivedData_) {
-            var response = receivedData_.responseText;
-            var jsonGadgetList = JSON.parse(response);
+            var i, jsonGadgetList, jsonGadget, gadget, gadgetId, gadgetFullId,
+                currentGadgetVersions, sortedGadgets;
 
-            var oldGadgets = this.gadgets;
-            this.gadgets = new Hash()
+            jsonGadgetList = JSON.parse(receivedData_.responseText);
+            this.gadgets = new Hash();
+            gadgetVersions = {};
 
             // Load all gadgets from persitence system
-            for (var i = 0; i<jsonGadgetList.length; i++) {
-                var jsonGadget = jsonGadgetList[i];
-                var gadget = new Gadget (jsonGadget, null);
-                var gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
+            for (i = 0; i < jsonGadgetList.length; i += 1) {
+                jsonGadget = jsonGadgetList[i];
 
-                //check the if this gadget exists to set its updated state
-                if (oldGadgets && oldGadgets[gadgetId]) {
-                    gadget.setUpdatedState(oldGadgets[gadgetId].getLastVersion(), oldGadgets[gadgetId].getLastVersionURL());
+                gadget = new Gadget(jsonGadget, null);
+                gadgetId = gadget.getVendor() + '_' + gadget.getName()
+                gadgetFullId = gadgetId + '_' + gadget.getVersion().text;
+
+                if (gadgetVersions[gadgetId] === undefined) {
+                    gadgetVersions[gadgetId] = [];
                 }
+                gadgetVersions[gadgetId].push(gadget);
 
                 // Insert gadget object in showcase object model
-                this.gadgets[gadgetId] = gadget;
+                this.gadgets[gadgetFullId] = gadget;
+            }
+
+            for (key in gadgetVersions) {
+                currentGadgetVersions = gadgetVersions[key];
+                sortedGadgets = currentGadgetVersions.sort(function(gadget1, gadget2) {
+                    return -gadget1.getVersion().compareTo(gadget2.getVersion());
+                });
+
+                for (i = 0; i < currentGadgetVersions.length; i += 1) {
+                    gadget = currentGadgetVersions[i];
+                    gadget.setLastVersion(sortedGadgets[0].getVersion(), 'showcase');
+                }
             }
         }
 
@@ -211,7 +226,7 @@ var ShowcaseFactory = function () {
             var keys = this.gadgets.keys();
             for (var i=0;i<keys.length;i++){
                 var g = this.gadgets[keys[i]];
-                data.push({"name":g.getName(), "vendor":g.getVendor(), "version":g.getVersion()});
+                data.push({"name":g.getName(), "vendor":g.getVendor(), "version":g.getVersion().text});
             }
             return data;
         }
