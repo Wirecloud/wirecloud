@@ -41,7 +41,7 @@ from commons.utils import get_xml_error, json_encode
 from gadget.views import parseAndCreateGadget
 from gadget.models import Gadget
 from igadget.models import IGadget
-from igadget.views import SaveIGadget, deleteIGadget
+from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.models import UserWorkSpace, Tab
 
 

@@ -34,7 +34,7 @@ from django.shortcuts import get_object_or_404
 from workspace.models import AbstractVariable, VariableValue, WorkSpaceVariable, Tab, PublishedWorkSpace
 from connectable.models import Out
 from igadget.models import IGadget
-from igadget.views import deleteIGadget
+from igadget.utils import deleteIGadget
 
 
 def deleteTab(tab, user):

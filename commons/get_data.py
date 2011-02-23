@@ -44,6 +44,7 @@ from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace, PublishedWorkSpace
+from workspace.utils import createTab
 
 import re
 
@@ -458,13 +459,17 @@ def get_global_workspace_data(workSpaceDAO, user):
     # Tabs processing
     # Check if the workspace's tabs have order
     tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id')
-    if tabs[0].position != None:
-        tabs = tabs.order_by('position')
+    if tabs.count() > 0:
+        if tabs[0].position != None:
+            tabs = tabs.order_by('position')
+        else:
+            #set default order
+            for i in range(len(tabs)):
+                tabs[i].position = i
+                tabs[i].save()
     else:
-        #set default order
-        for i in range(len(tabs)):
-            tabs[i].position = i
-            tabs[i].save()
+        tab, _junk = createTab('MyTab', user, workSpaceDAO)
+        tabs = [tab]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
     data_ret['workspace']['tabList'] = tabs_data

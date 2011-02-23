@@ -48,7 +48,7 @@ from commons.resource import Resource
 from gadget.models import Gadget, XHTML
 from gadget.utils import get_or_create_gadget, includeTagBase, fix_ezweb_scripts
 from igadget.models import IGadget
-from igadget.views import deleteIGadget
+from igadget.utils import deleteIGadget
 
 
 def parseAndCreateGadget(request, user, workspaceId):

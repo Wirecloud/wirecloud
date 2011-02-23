@@ -34,7 +34,7 @@ from commons.get_data import get_concept_values, TemplateValueProcessor
 from django.utils import simplejson
 from gadget.utils import get_or_add_gadget_from_catalogue
 from igadget.models import Variable
-from igadget.views import SaveIGadget
+from igadget.utils import SaveIGadget
 from preferences.views import update_tab_preferences, update_workspace_preferences
 from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
