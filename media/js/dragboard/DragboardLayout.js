@@ -41,24 +41,24 @@
  * @param {Dragboard} dragboard      associated dragboard
  */
 function DragboardLayout(dragboard) {
-	if (arguments.length == 0)
-		return; // Allow empty constructor (allowing hierarchy)
+    if (arguments.length == 0)
+        return; // Allow empty constructor (allowing hierarchy)
 
-	this.dragboard = dragboard;
-	this.iGadgets = new Hash();
+    this.dragboard = dragboard;
+    this.iGadgets = new Hash();
 }
 
 /**
  *
  */
 DragboardLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
-	// Notify each igadget
-	var iGadget;
-	var igadgetKeys = this.iGadgets.keys();
-	for (var i = 0; i < igadgetKeys.length; i++) {
-		iGadget = this.iGadgets[igadgetKeys[i]];
-		iGadget._notifyWindowResizeEvent();
-	}
+    // Notify each igadget
+    var iGadget;
+    var igadgetKeys = this.iGadgets.keys();
+    for (var i = 0; i < igadgetKeys.length; i++) {
+        iGadget = this.iGadgets[igadgetKeys[i]];
+        iGadget._notifyWindowResizeEvent();
+    }
 }
 
 /**
@@ -79,9 +79,9 @@ DragboardLayout.prototype._notifyDragboardVisibilityChange = function(visibility
  * @returns {MultiValuedSize} the size of the menu bar
  */
 DragboardLayout.prototype.getMenubarSize = function() {
-	var sizeInPixels = 18; // TODO calculate this
-	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-	return new MultiValuedSize(sizeInPixels, sizeInLU);
+    var sizeInPixels = 18; // TODO calculate this
+    var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+    return new MultiValuedSize(sizeInPixels, sizeInLU);
 }
 
 /**
@@ -90,9 +90,9 @@ DragboardLayout.prototype.getMenubarSize = function() {
  * @returns {MultiValuedSize} the size of the menu bar
  */
 DragboardLayout.prototype.getStatusbarSize = function() {
-	var sizeInPixels = 16; // TODO calculate this
-	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-	return new MultiValuedSize(sizeInPixels, sizeInLU);
+    var sizeInPixels = 16; // TODO calculate this
+    var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+    return new MultiValuedSize(sizeInPixels, sizeInLU);
 }
 
 /**
@@ -102,10 +102,10 @@ DragboardLayout.prototype.getStatusbarSize = function() {
  * @returns {MultiValuedSize} vertical extra size
  */
 DragboardLayout.prototype.getExtraSize = function() {
-	var sizeInPixels = this.getMenubarSize().inPixels +
-	                   this.getStatusbarSize().inPixels;
-	var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
-	return new MultiValuedSize(sizeInPixels, sizeInLU);
+    var sizeInPixels = this.getMenubarSize().inPixels +
+                       this.getStatusbarSize().inPixels;
+    var sizeInLU = Math.ceil(this.fromPixelsToVCells(sizeInPixels));
+    return new MultiValuedSize(sizeInPixels, sizeInLU);
 }
 
 /////////////////////////////////////
@@ -116,27 +116,27 @@ DragboardLayout.prototype.getExtraSize = function() {
  * Converts
  */
 DragboardLayout.prototype.adaptColumnOffset = function(pixels) {
-	var msg = gettext("method \"%(method)s\" must be implemented.");
-	msg = interpolate(msg, {method: "adaptColumnOffset"}, true);
-	throw new Exception(msg);
+    var msg = gettext("method \"%(method)s\" must be implemented.");
+    msg = interpolate(msg, {method: "adaptColumnOffset"}, true);
+    throw new Exception(msg);
 }
 
 DragboardLayout.prototype.adaptRowOffset = function(pixels) {
-	var msg = gettext("method \"%(method)s\" must be implemented.");
-	msg = interpolate(msg, {method: "adaptRowOffset"}, true);
-	throw new Exception(msg);
+    var msg = gettext("method \"%(method)s\" must be implemented.");
+    msg = interpolate(msg, {method: "adaptRowOffset"}, true);
+    throw new Exception(msg);
 }
 
 DragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
-	var msg = gettext("method \"%(method)s\" must be implemented.");
-	msg = interpolate(msg, {method: "adaptHeight"}, true);
-	throw new Exception(msg);
+    var msg = gettext("method \"%(method)s\" must be implemented.");
+    msg = interpolate(msg, {method: "adaptHeight"}, true);
+    throw new Exception(msg);
 }
 
 DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
-	var msg = gettext("method \"%(method)s\" must be implemented.");
-	msg = interpolate(msg, {method: "adaptWidth"}, true);
-	throw new Exception(msg);
+    var msg = gettext("method \"%(method)s\" must be implemented.");
+    msg = interpolate(msg, {method: "adaptWidth"}, true);
+    throw new Exception(msg);
 }
 
 /**
@@ -148,7 +148,7 @@ DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
  * @returns true if the point is inside
  */
 DragboardLayout.prototype.isInside = function (x, y) {
-	return (x >= 0) && (x < this.getWidth()) && (y >= 0);
+    return (x >= 0) && (x < this.getWidth()) && (y >= 0);
 }
 
 /**
@@ -157,7 +157,7 @@ DragboardLayout.prototype.isInside = function (x, y) {
  * @returns The width of the usable dragboard area
  */
 DragboardLayout.prototype.getWidth = function() {
-	return this.dragboard.getWidth();
+    return this.dragboard.getWidth();
 }
 
 /**
@@ -166,7 +166,7 @@ DragboardLayout.prototype.getWidth = function() {
  * @returns The height of the usable dragboard area
  */
 DragboardLayout.prototype.getHeight = function() {
-	return this.dragboard.getHeight();
+    return this.dragboard.getHeight();
 }
 
 /**
@@ -176,26 +176,26 @@ DragboardLayout.prototype.getHeight = function() {
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
 DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
-	if (iGadget.layout != null) {
-		var msg = gettext("the iGadget could not be associated with this layout as it already has an associated layout.");
-		throw new Error(msg);
-	}
-	iGadget.layout = this;
+    if (iGadget.layout != null) {
+        var msg = gettext("the iGadget could not be associated with this layout as it already has an associated layout.");
+        throw new Error(msg);
+    }
+    iGadget.layout = this;
 
-	if (affectsDragboard) {
-		this.dragboard._registerIGadget(iGadget);
+    if (affectsDragboard) {
+        this.dragboard._registerIGadget(iGadget);
 
-		if (iGadget.isVisible()){ // TODO
-			this.dragboard.dragboardElement.appendChild(iGadget.element);
-			this.dragboard.dragboardElement.appendChild(iGadget.iconElement);
-		}
-	}
+        if (iGadget.isVisible()){ // TODO
+            this.dragboard.dragboardElement.appendChild(iGadget.element);
+            this.dragboard.dragboardElement.appendChild(iGadget.iconElement);
+        }
+    }
 
-	this.iGadgets[iGadget.code] = iGadget;
+    this.iGadgets[iGadget.code] = iGadget;
 
-	if (iGadget.isVisible()) {
-		iGadget._recomputeSize();
-	}
+    if (iGadget.isVisible()) {
+        iGadget._recomputeSize();
+    }
 }
 
 /**
@@ -204,9 +204,9 @@ DragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
  * This function should be called at the end of the implementation of addIGadget.
  */
 DragboardLayout.prototype._adaptIGadget = function(iGadget) {
-	if (iGadget.element != null) {
-		this._ensureMinimalSize(iGadget, false);
-	}
+    if (iGadget.element != null) {
+        this._ensureMinimalSize(iGadget, false);
+    }
 }
 
 /**
@@ -216,26 +216,26 @@ DragboardLayout.prototype._adaptIGadget = function(iGadget) {
  * iGadget content size.
  */
 DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
-	var minWidth = Math.ceil(this.fromPixelsToHCells(80));
-	var minHeight = Math.ceil(this.fromPixelsToVCells(24));
+    var minWidth = Math.ceil(this.fromPixelsToHCells(80));
+    var minHeight = Math.ceil(this.fromPixelsToVCells(24));
 
-	var sizeChange = false;
-	var newWidth = iGadget.getContentWidth();
-	var newHeight = iGadget.getContentHeight();
+    var sizeChange = false;
+    var newWidth = iGadget.getContentWidth();
+    var newHeight = iGadget.getContentHeight();
 
-	if (newWidth < minWidth) {
-		sizeChange = true;
-		newWidth = minWidth;
-	}
+    if (newWidth < minWidth) {
+        sizeChange = true;
+        newWidth = minWidth;
+    }
 
-	if (newHeight < minHeight) {
-		sizeChange = true;
-		newHeight = minHeight;
-	}
+    if (newHeight < minHeight) {
+        sizeChange = true;
+        newHeight = minHeight;
+    }
 
-	if (sizeChange) {
-		iGadget.setContentSize(newWidth, newHeight, false, persist);
-	}
+    if (sizeChange) {
+        iGadget.setContentSize(newWidth, newHeight, false, persist);
+    }
 }
 
 /**
@@ -245,18 +245,18 @@ DragboardLayout.prototype._ensureMinimalSize = function (iGadget, persist) {
  * @param {Boolean} affectsDragboard true if the associated dragboard must be notified
  */
 DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
-	delete this.iGadgets[iGadget.code];
+    delete this.iGadgets[iGadget.code];
 
-	if (affectsDragboard) {
-		this.dragboard._deregisterIGadget(iGadget);
+    if (affectsDragboard) {
+        this.dragboard._deregisterIGadget(iGadget);
 
-		if (iGadget.element != null) // TODO
-			this.dragboard.dragboardElement.removeChild(iGadget.element);
-		if (iGadget.iconElement != null)
-			this.dragboard.dragboardElement.removeChild(iGadget.iconElement);
-	}
+        if (iGadget.element != null) // TODO
+            this.dragboard.dragboardElement.removeChild(iGadget.element);
+        if (iGadget.iconElement != null)
+            this.dragboard.dragboardElement.removeChild(iGadget.iconElement);
+    }
 
-	iGadget.layout = null;
+    iGadget.layout = null;
 }
 
 /**
@@ -266,11 +266,11 @@ DragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
  *        moved.
  */
 DragboardLayout.prototype.moveTo = function(destLayout) {
-	var igadgetKeys = this.iGadgets.keys();
-	for (var i = 0; i < igadgetKeys.length; i++) {
-		iGadget = this.iGadgets[igadgetKeys[i]];
-		iGadget.moveToLayout(destLayout);
-	}
+    var igadgetKeys = this.iGadgets.keys();
+    for (var i = 0; i < igadgetKeys.length; i++) {
+        iGadget = this.iGadgets[igadgetKeys[i]];
+        iGadget.moveToLayout(destLayout);
+    }
 }
 
 /**
@@ -278,12 +278,12 @@ DragboardLayout.prototype.moveTo = function(destLayout) {
  * references.
  */
 DragboardLayout.prototype.destroy = function() {
-	var keys = this.iGadgets.keys();
-	for (var i = 0; i < keys.length; i++) {
-		this.iGadgets[keys[i]].destroy();
-	}
-	this.iGadgets = null;
-	this.dragboard = null;
+    var keys = this.iGadgets.keys();
+    for (var i = 0; i < keys.length; i++) {
+        this.iGadgets[keys[i]].destroy();
+    }
+    this.iGadgets = null;
+    this.dragboard = null;
 }
 
 /////////////////////////////////////
@@ -363,19 +363,19 @@ DragboardLayout.prototype.disableCursor = function() {
  * @see CSSPrimitiveValue
  */
 DragboardLayout.prototype.measure = function(testElement, units) {
-	testElement.style.visibility = "hidden";
-	this.dragboard.dragboardElement.appendChild(testElement);
+    testElement.style.visibility = "hidden";
+    this.dragboard.dragboardElement.appendChild(testElement);
 
-	// Retrieve target measurements
-	var res = new Array();
-	var cssStyle = document.defaultView.getComputedStyle(testElement, null);
-	res[0] = cssStyle.getPropertyCSSValue("width").getFloatValue(units);
-	res[1] = cssStyle.getPropertyCSSValue("height").getFloatValue(units);
+    // Retrieve target measurements
+    var res = new Array();
+    var cssStyle = document.defaultView.getComputedStyle(testElement, null);
+    res[0] = cssStyle.getPropertyCSSValue("width").getFloatValue(units);
+    res[1] = cssStyle.getPropertyCSSValue("height").getFloatValue(units);
 
-	// Remove the test element
-	testElement.parentNode.removeChild(testElement);
+    // Remove the test element
+    testElement.parentNode.removeChild(testElement);
 
-	return res;
+    return res;
 }
 
 /**
@@ -393,12 +393,12 @@ DragboardLayout.prototype.measure = function(testElement, units) {
  * layout.unitConvert("1cm", CSSPrimitiveValue.CSS_PX);
  */
 DragboardLayout.prototype.unitConvert = function(value, newUnits) {
-	// Create a square div using the given value
-	var testDiv = document.createElement("div");
-	testDiv.style.height = value;
-	testDiv.style.width = value;
+    // Create a square div using the given value
+    var testDiv = document.createElement("div");
+    testDiv.style.height = value;
+    testDiv.style.width = value;
 
-	return this.measure(testDiv, newUnits);
+    return this.measure(testDiv, newUnits);
 }
 
 /////////////////////////////////////
@@ -409,6 +409,6 @@ DragboardLayout.prototype.unitConvert = function(value, newUnits) {
  * @class Represents a size in several units.
  */
 function MultiValuedSize (inPixels, inLU) {
-	this.inPixels = inPixels;
-	this.inLU = inLU;
+    this.inPixels = inPixels;
+    this.inLU = inLU;
 }
