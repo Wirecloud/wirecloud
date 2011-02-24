@@ -19,7 +19,6 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/VariablePlatform.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/varManager/varManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}iphone/showcase/showcase.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/showcase/util.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/ContextManager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/ContextPlatform.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/contextManager/Adaptors.js"></script>
