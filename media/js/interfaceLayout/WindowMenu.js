@@ -1158,7 +1158,8 @@ function PublishWindowMenu(workspace) {
 			type: 'fieldset',
 			elements: {
 				'organization': {label: gettext('Organization'), type: 'select', options: this.organizations},
-				'readOnly': {label: gettext('Block gadgets and connections'), type: 'boolean'}
+				'readOnlyGadgets': {label: gettext('Block gadgets'), type: 'boolean'},
+				'readOnlyConnectables': {label: gettext('Block connections'), type: 'boolean'}
 			}
 		}
 	}

@@ -101,9 +101,8 @@ def build_template_from_workspace(options, workspace, user):
     if not organization:
         organization = ''
 
-    readOnly = options.get('readOnly')
-    if not readOnly:
-        readOnly = False
+    readOnlyGadgets = options.get('readOnlyGadgets', False)
+    readOnlyConnectables = options.get('readOnlyConnectables', False)
 
     contratable = options.get('contratable')
     if not contratable:
@@ -162,6 +161,9 @@ def build_template_from_workspace(options, workspace, user):
         contratable = contratable or gadget.is_contratable()
 
         resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=igadget_id, vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
+        if readOnlyGadgets:
+            resource.set('readonly', 'true')
+
         position = igadget.position
         etree.SubElement(resource, 'Position', x=str(position.posX), y=str(position.posY), z=str(position.posZ))
         etree.SubElement(resource, 'Rendering', height=str(position.height),
@@ -225,6 +227,9 @@ def build_template_from_workspace(options, workspace, user):
         if connectable.filter:
             element.set('filter', connectable.filter.name)
             element.set('filter_params', connectable.filter_param_values)
+
+        if readOnlyConnectables:
+            element.set('readonly', 'true')
 
         ins = In.objects.filter(inouts=connectable)
         for inp in ins:

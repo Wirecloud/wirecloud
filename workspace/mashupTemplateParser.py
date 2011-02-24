@@ -177,7 +177,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 "gadget": gadget.uri}
 
             igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
-            if read_only_workspace:
+            if read_only_workspace or resource.get('readonly') == 'true':
                 igadget.readOnly = True
                 igadget.save()
 
@@ -204,7 +204,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         connectable = createChannel(workspace, channel.get('name'))
 
         save = False
-        if read_only_workspace:
+        if read_only_workspace or channel.get('readonly') == 'true':
             connectable.readOnly = True
             save = True
 
