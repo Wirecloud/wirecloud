@@ -57,29 +57,6 @@ from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace, WorkSpaceVariable
 
 
-def get_user_gadgets(user):
-    workspaces = WorkSpace.objects.filter(users=user)
-
-    gadgets = []
-    for workspace in workspaces:
-        ws_gadgets = get_workspace_gadgets(workspace)
-
-        for gadget in ws_gadgets:
-            gadgets.append(gadget)
-
-    return gadgets
-
-
-def get_workspace_gadgets(workspace):
-    ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
-
-    ws_gadgets = []
-    for igadget in ws_igadgets:
-        ws_gadgets.append(igadget.gadget)
-
-    return ws_gadgets
-
-
 def get_mashup_gadgets(mashup_id):
     published_workspace = get_object_or_404(PublishedWorkSpace, id=mashup_id)
 

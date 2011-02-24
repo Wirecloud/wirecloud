@@ -48,7 +48,6 @@ from commons.exceptions import TemplateParseException
 from commons.http_utils import *
 
 from gadget.models import Gadget, XHTML
-from workspace.views import get_user_gadgets
 from igadget.models import IGadget
 from igadget.views import deleteIGadget
 
@@ -130,10 +129,7 @@ class GadgetCollection(Resource):
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
 
-        #Getting all gadgets of the user
-        #Done it against workspaces, not directly against gadgets!
-        #Done like this, it's not necessary to keep updated relationships between gadgets and users
-        gadgets = get_user_gadgets(user)
+        gadgets = Gadget.objects.filter(users=user) 
 
         data_list = [get_gadget_data(gadget) for gadget in gadgets]
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
