@@ -31,81 +31,80 @@
 #
 
 from django.contrib.auth.models import User, Group
-from user.models import UserProfile
-
-from commons.http_utils import download_http_content
 from django.utils import simplejson
 
+from commons.http_utils import download_http_content
+from user.models import UserProfile
+
+
 class TCloudBackend:
-    
+
     TCLOUD_AUTH_URL = "http://192.168.8.46:8080/tcloud/resources/org/%s/users/validate?username=%s"
     TCLOUD_ORGANIZATION = "org__tcloud"
 
-    def authenticate(self,username=None,password=None,request=None):
-        (valid, tcloud_profile) = self.is_valid(username,password, request)
-        
+    def authenticate(self, username=None, password=None, request=None):
+        (valid, tcloud_profile) = self.is_valid(username, password, request)
+
         if not valid:
             return None
-        
+
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             user = User(username=username)
             user.save()
-        
+
         profile, created = UserProfile.objects.get_or_create(user=user)
-        
+
         tcloud_org, created = Group.objects.get_or_create(name=self.TCLOUD_ORGANIZATION)
-        
+
         user.groups.add(tcloud_org)
-        
+
         profile.create_load_script(tcloud_profile)
         profile.save()
-        
+
         user.set_password(password)
         user.save()
 
         return user
 
-    def get_user(self,user_id):
+    def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
 
-    def is_valid (self,username=None,password=None, request=None):
+    def is_valid(self, username=None, password=None, request=None):
         if not username or not request:
             return (False, None)
-        
+
         #ask TCLOUD about the authentication
-        if hasattr(self,'TCLOUD_AUTH_URL'):
-            urlBase=self.TCLOUD_AUTH_URL;
-            
+        if hasattr(self, 'TCLOUD_AUTH_URL'):
             org = None
             cookie = None
-            
+
             # Getting user's organization
-            if (request.REQUEST.has_key('org')):
-              org = request.REQUEST.get('org')
-            
-            if (request.COOKIES.has_key('JSESSIONID')):
-              cookie = 'JSESSIONID=' + request.COOKIES['JSESSIONID']
-            
+            if 'org' in request.REQUEST:
+                org = request.REQUEST['org']
+
+            if 'JSESSIONID' in request.COOKIES:
+                cookie = 'JSESSIONID=' + request.COOKIES['JSESSIONID']
+
             if not org or not cookie:
-              return (False, None)
-            
+                return (False, None)
+
             url = self.TCLOUD_AUTH_URL % (org, username)
-            
+
             params = {}
-            
+
             headers = {}
             headers['Cookie'] = cookie
             headers['Accept'] = 'application/json'
-        
+
             try:
-                result_json = download_http_content(url,params, None, headers)
+                result_json = download_http_content(url, params, None, headers)
                 result = simplejson.loads(result_json)
-                
+
                 return (result['validateSession'], result_json)
-            except Exception , e:
+            except Exception:
                 return (False, None)

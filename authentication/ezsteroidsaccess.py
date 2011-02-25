@@ -30,10 +30,11 @@
 
 #
 
-from django.contrib.auth.models import User, Group
 from django.conf import settings
-from commons.http_utils import download_http_content
+from django.contrib.auth.models import User
 from django.utils import simplejson
+
+from commons.http_utils import download_http_content
 
 
 class EzSteroidsBackend:
@@ -70,4 +71,3 @@ class EzSteroidsBackend:
                 return result['isValid']
             except Exception:
                 return (False, None)
-

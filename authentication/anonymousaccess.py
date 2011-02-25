@@ -32,9 +32,10 @@
 
 from django.contrib.auth.models import User
 
+
 class AnonymousBackend:
 
-    def authenticate(self,username=None,password=None,isAnonymous=None):
+    def authenticate(self, username=None, password=None, isAnonymous=None):
         if isAnonymous:
             try:
                 user = User.objects.get(username=username)
@@ -45,7 +46,7 @@ class AnonymousBackend:
 
         return None
 
-    def get_user(self,user_id):
+    def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:

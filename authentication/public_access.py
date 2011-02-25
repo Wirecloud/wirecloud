@@ -32,9 +32,10 @@
 
 from django.contrib.auth.models import User
 
+
 class PublicBackend:
 
-    def authenticate(self,username=None,password=None,isPublic=None):
+    def authenticate(self, username=None, password=None, isPublic=None):
         if isPublic:
             try:
                 user = User.objects.get(username=username)
@@ -45,7 +46,7 @@ class PublicBackend:
 
         return None
 
-    def get_user(self,user_id):
+    def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:

@@ -13,6 +13,8 @@ The profile models should have following fields:
         profile_image_url
 """
 
+import time
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -40,13 +42,12 @@ class TwitterBackend:
             return None
 
         screen_name = userinfo.screen_name
-        
+
         try:
             userprofile = TwitterUserProfile.objects.get(screen_name=screen_name)
             user = userprofile.user
-        
-        except Exception, e:
-            import time
+
+        except Exception:
             user = User(username=screen_name + unicode(int(time.time())))
             # create and set a random password so user cannot login using django built-in authentication
             user.set_unusable_password()
@@ -56,9 +57,9 @@ class TwitterBackend:
 
             # Get the user profile
             userprofile = TwitterUserProfile()
-    
-            userprofile.user = user 
-        
+
+            userprofile.user = user
+
         userprofile.access_token = access_token.to_string()
         userprofile.screen_name = screen_name
         userprofile.url = userinfo.url
@@ -67,13 +68,12 @@ class TwitterBackend:
         userprofile.profile_image_url = userinfo.profile_image_url
         userprofile.save()
         return user
-        
-    
+
     def get_user(self, id):
         try:
             return User.objects.get(pk=id)
         except:
             return None
-        
+
     def get_screen_name(self, request):
         return TwitterUserProfile.objects.get(user=request.user).screen_name
