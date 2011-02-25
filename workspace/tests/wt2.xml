@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Template schemaLocation="http://morfeo-project.org/2007/Template">
+  <Catalog.ResourceDescription>
+    <Vendor>EzWeb Test Suite</Vendor>
+    <Name>Test Workspace</Name>
+    <Version>1</Version>
+    <Author>admin</Author>
+    <Mail>a@b.com</Mail>
+    <Description>This template defines an empty workspace</Description>
+    <ImageURI>/ezweb/images/headshot_mashup.jpg</ImageURI>
+    <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
+    <Organization></Organization>
+    <IncludedResources>
+    </IncludedResources>
+  </Catalog.ResourceDescription>
+  <Platform.Wiring>
+    <Channel id="1" name="blocked channel" readonly="true">
+    </Channel>
+  </Platform.Wiring>
+</Template>
+
