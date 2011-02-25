@@ -359,7 +359,10 @@ class TemplateHandler(handler.ContentHandler):
             gadget.mashup_id = self._mashupId
             gadget.creation_date = datetime.today()
             gadget.popularity = '0.0'
-            gadget.fromWGT = get_certification_status(self._user)
+            gadget.fromWGT = self.fromWGT
+
+            # Checking certification status
+            gadget.certification = get_certification_status(self._user)
 
             gadget.creator = self._user
 
