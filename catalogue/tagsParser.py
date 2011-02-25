@@ -31,10 +31,9 @@
 #
 
 from xml.sax import saxutils
-from xml.sax import make_parser
 
 
-class TagsXMLHandler(saxutils.handler.ContentHandler): 
+class TagsXMLHandler(saxutils.handler.ContentHandler):
 
     def __init__(self):
         self._tags = []
@@ -47,11 +46,11 @@ class TagsXMLHandler(saxutils.handler.ContentHandler):
         self._accumulator += text
 
     def startElement(self, name, attrs):
-        if (name == 'Tag'):
+        if name == 'Tag':
             self.resetAccumulator()
             return
 
     def endElement(self, name):
-        if (name == 'Tag'):
+        if name == 'Tag':
             self._tags.append(self._accumulator)
             return

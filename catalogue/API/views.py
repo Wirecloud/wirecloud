@@ -30,15 +30,17 @@
 
 #
 from django.shortcuts import get_object_or_404
+
+from catalogue.models import GadgetResource
 from commons.resource import Resource
 from commons.custom_decorators import basicauth_or_logged_in
-from catalogue.models import GadgetResource
 
-class GadgetsCollection (Resource):
+
+class GadgetsCollection(Resource):
 
     #check if the request is authenticated and create a new resource
     @basicauth_or_logged_in()
-    def create(self, request, fromWGT = False):
+    def create(self, request, fromWGT=False):
 
         from catalogue.views import GadgetsCollection
         gadgetsCol = GadgetsCollection()
@@ -46,11 +48,11 @@ class GadgetsCollection (Resource):
         return gadgetsCol.create(request, request.user.username, fromWGT)
 
     #check if the request is authenticated and delete the resource
-    @basicauth_or_logged_in()    
-    def delete (self, request, gadget_id):
-    
-        resource = get_object_or_404(GadgetResource,id=gadget_id)
-        
+    @basicauth_or_logged_in()
+    def delete(self, request, gadget_id):
+
+        resource = get_object_or_404(GadgetResource, id=gadget_id)
+
         from catalogue.views import GadgetsCollection
         gadgetsCol = GadgetsCollection()
 

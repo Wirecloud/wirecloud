@@ -30,7 +30,8 @@
 
 #
 from django.conf.urls.defaults import patterns
-from catalogue.API.views import *
+
+from catalogue.API.views import GadgetsCollection
 
 urlpatterns = patterns('catalogue.API.views',
 
@@ -45,9 +46,9 @@ urlpatterns = patterns('catalogue.API.views',
         #version
     #else, error code 500 + message
     (r'^resource$',
-        GadgetsCollection(permitted_methods=('POST',))),
-        
+        GadgetsCollection(permitted_methods=('POST', ))),
+
     # returns OK or error code 500 + message
     (r'^resource/(?P<gadget_id>\d+)$',
-        GadgetsCollection(permitted_methods=('DELETE',))),        
+        GadgetsCollection(permitted_methods=('DELETE', ))),
 )

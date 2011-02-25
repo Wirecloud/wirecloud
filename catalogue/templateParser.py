@@ -30,35 +30,31 @@
 
 #
 
-import string
 import re
+import string
 
 from datetime import datetime
-
-from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
+from os import path
+from urllib import url2pathname
+from urllib2 import URLError, HTTPError
+from xml.sax import parseString, handler
 
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from xml.sax import parseString, handler
-
 from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability, Translation
 from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
-
+from commons.exceptions import TemplateParseException
+from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
 
-from urllib import url2pathname
-from urllib2 import URLError, HTTPError
-from os import path
-
-
 
 class TemplateParser:
-    def __init__(self, uri, user, save=True, fromWGT = False):
+
+    def __init__(self, uri, user, save=True, fromWGT=False):
 
         if fromWGT:
             if uri[0] == '/':
@@ -77,12 +73,11 @@ class TemplateParser:
             try:
                 self.xml = download_http_content(uri, user=user)
             except HTTPError, e:
-                msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {'errorCode': e.code, 'errorMsg':e.msg}
+                msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {'errorCode': e.code, 'errorMsg': e.msg}
                 raise TemplateParseException(msg)
             except URLError, e:
                 msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
                 raise TemplateParseException(msg)
-
 
         self.uri = uri
         self.handler = TemplateHandler(user, uri, save, fromWGT)
@@ -90,17 +85,18 @@ class TemplateParser:
     def parse(self):
         # Parse the input
         parseString(self.xml, self.handler)
-    
+
     def is_contratable(self):
         return self.handler._contratable
-    
+
     def get_gadget(self):
         return self.handler.get_gadget()
 
 
-class TemplateHandler(handler.ContentHandler): 
+class TemplateHandler(handler.ContentHandler):
+
     def __init__(self, user, uri, save, fromWGT):
-        self.save=save
+        self.save = save
         self._accumulator = []
         self._name = ""
         self._displayName = ""
@@ -120,10 +116,10 @@ class TemplateHandler(handler.ContentHandler):
         self._gadget = None
         self._contratable = False
         self._id = -1
-        
+
         #Organizations
         self._organization_list = []
-        
+
         #translation attributes
         self.translatable_list = []
         self.translated_list = []
@@ -134,20 +130,19 @@ class TemplateHandler(handler.ContentHandler):
 
         self.fromWGT = fromWGT
 
-        
     def get_gadget(self):
-        if (not self.save):
+        if not self.save:
             self._gadget.id = -1
-            
+
             return self._gadget
-        
-        if (self._gadget.id):
+
+        if self._gadget.id:
             return self._gadget
-        
+
         gadget = self._gadget
-        
+
         valid_gadget = GadgetResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
-        
+
         return valid_gadget
 
     def resetAccumulator(self):
@@ -156,64 +151,65 @@ class TemplateHandler(handler.ContentHandler):
     def processWire(self, attrs, wire):
         _friendCode = ''
         _wiring = ''
-        if (attrs.has_key('friendcode')==True):
-            _friendCode = attrs.get('friendcode')
+        if 'friendcode' in attrs:
+            _friendCode = attrs['friendcode']
 
-        if (attrs.has_key('type')==False or attrs.has_key('name')==False):
+        if 'type' not in attrs or 'name' not in attrs:
             raise TemplateParseException(_("ERROR: missing attribute at Event or Slot element"))
 
-        if (wire == 'Slot'):
+        if wire == 'Slot':
             _wiring = 'in'
 
-        if (wire == 'Event'):
+        if wire == 'Event':
             _wiring = 'out'
 
-        if (_friendCode != '' and wire != ''):
+        if _friendCode != '' and wire != '':
             if self.save:
-                wiring = GadgetWiring( friendcode = _friendCode, wiring = _wiring,
-                    idResource_id = get_object_or_404(GadgetResource, 
-                    short_name=self._name,vendor=self._vendor,version=self._version).id)
-    
+                wiring = GadgetWiring(friendcode=_friendCode, wiring=_wiring,
+                                      idResource_id=get_object_or_404(GadgetResource,
+                                                                      short_name=self._name,
+                                                                      vendor=self._vendor,
+                                                                      version=self._version).id)
+
                 wiring.save()
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Event or Slot element"))
-        
 
-    def processCapability(self, attrs):   
+    def processCapability(self, attrs):
         name = None
         value = None
 
-        if (attrs.has_key('name')):
-            name = attrs.get('name')
-            
-        if (attrs.has_key('value')):
-            value = attrs.get('value')
+        if 'name' in attrs:
+            name = attrs['name']
 
-        if (not name or not value):
+        if 'value' in attrs:
+            value = attrs['value']
+
+        if not name or not value:
             raise TemplateParseException(_("ERROR: missing attribute at Capability element"))
-        
-        if (not self._gadget):
+
+        if not self._gadget:
             raise TemplateParseException(_("ERROR: capabilities must be placed AFTER Resource definition!"))
-        
-        if (self.save):
+
+        if self.save:
             capability = Capability(name=name.lower(), value=value.lower(), resource=self._gadget)
-    
+
             capability.save()
 
-        if (capability.name.lower() == 'contratable'):
-            self._contratable=True 
-            
-    def processOrganization(self, organization_accumulator):         
-        if (not organization_accumulator):
+        if capability.name.lower() == 'contratable':
+            self._contratable = True
+
+    def processOrganization(self, organization_accumulator):
+        if not organization_accumulator:
             #Not specifying organization is valid!
             return
-        
-        organization_name=organization_accumulator[0]
-        
+
+        organization_name = organization_accumulator[0]
+
         organization, created = Group.objects.get_or_create(name__iexact=organization_name)
-            
+
         self._organization_list.append(organization)
-        
+
     def processVersion(self, version_accumulator):
         if version_accumulator:
             #format 'XX.XX.XX'
@@ -226,101 +222,99 @@ class TemplateHandler(handler.ContentHandler):
             raise TemplateParseException(_("ERROR: missing Resource version"))
 
     def processMashupResource(self, attrs):
-        if (attrs.has_key('vendor') and attrs.has_key('name') and attrs.has_key('version')):
+        if 'vendor' in attrs and 'name' in attrs and 'version' in attrs:
             pass
         else:
             raise TemplateParseException(_("ERROR: missing attribute at Resource"))
-        
+
     def processTranslations(self, attrs):
-        if (attrs.has_key('default')):
+        if 'default' in attrs:
             self.default_lang = attrs.get('default')
         else:
             raise TemplateParseException(_("ERROR: missing the 'default' attribute at Translations element"))
-        
+
     def processTranslation(self, attrs):
-        if (attrs.has_key('lang')):
+        if 'lang' in attrs:
             self.current_lang = attrs.get('lang')
             self.lang_list.append(self.current_lang)
         else:
             raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
-        
+
     def processMsg(self, attrs):
-        if (attrs.has_key('name')):
-            self.current_text = attrs.get('name')
+        if 'name' in attrs:
+            self.current_text = attrs['name']
         else:
             raise TemplateParseException(_("ERROR: missing the language attribute at Translation element"))
-        
+
     def addIndex(self, index):
         #add index to the translation list
-        
-        if (len(index)):    
+
+        if len(index):
             value = get_trans_index(index[0])
             if value and not value in self.translatable_list:
                 self.translatable_list.append(value)
             return value
-        
-        return None
 
     def endElement(self, name):
         if not self._gadget_added:
             #add index to the translation list
             value = self.addIndex(self._accumulator)
 
-        if (name == 'Name'):
+        if name == 'Name':
             if value:
                 raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
             self._name = self._accumulator[0]
             return
-        if (name == 'DisplayName'):
+        if name == 'DisplayName':
             self._displayName = self._accumulator[0]
             return
-        if (name == 'Organization'):
+        if name == 'Organization':
             self.processOrganization(self._accumulator)
             return
-        if (name == 'Vendor'):
+        if name == 'Vendor':
             if value:
                 raise TemplateParseException(_("ERROR: The element Vendor cannot be translated"))
             self._vendor = self._accumulator[0]
             return
-        if (name == 'Version'):
+        if name == 'Version':
             if value:
                 raise TemplateParseException(_("ERROR: The element Version cannot be translated"))
             self.processVersion(self._accumulator)
             return
-        if (name == 'Author'):
+        if name == 'Author':
             self._author = self._accumulator[0]
             return
-        if (name == 'Description'):
-            self._description = string.join(self._accumulator,"")
+        if name == 'Description':
+            self._description = string.join(self._accumulator, "")
             return
-        if (name == 'Mail'):
+        if name == 'Mail':
             self._mail = self._accumulator[0]
             return
-        if (name == 'ImageURI'):
-            if (self._accumulator == []):
+        if name == 'ImageURI':
+            if self._accumulator == []:
                 self._imageURI = ''
             else:
                 self._imageURI = self._accumulator[0]
             return
-        if (name == 'iPhoneImageURI'):
-            if (self._accumulator == []):
+        if name == 'iPhoneImageURI':
+            if self._accumulator == []:
                 self._iPhoneImageURI = ''
             else:
                 self._iPhoneImageURI = self._accumulator[0]
             return
-        if (name == 'WikiURI'):
-            if (self._accumulator == []):
+        if name == 'WikiURI':
+            if self._accumulator == []:
                 self._wikiURI = ''
             else:
                 self._wikiURI = self._accumulator[0]
             return
-        if (name == 'IncludedResources'):
+        if name == 'IncludedResources':
             return
-        if (name == 'Resource'):
+        if name == 'Resource':
             return
-        if (name == 'Capability'):
+        if name == 'Capability':
             return
-        if (name == 'Catalog.ResourceDescription'):
+        if name == 'Catalog.ResourceDescription':
 
             if self._gadget_added:
                 return
@@ -350,41 +344,38 @@ class TemplateHandler(handler.ContentHandler):
             currentVersions = get_all_gadget_versions(self._vendor, self._name)
 
             gadget = GadgetResource()
-            
-            gadget.short_name       = self._name
-            gadget.display_name     = self._displayName
-            gadget.vendor           = self._vendor
-            gadget.version          = self._version
-            gadget.author           = self._author
-            gadget.description      = self._description
-            gadget.mail             = self._mail
-            gadget.image_uri        = self._imageURI
-            gadget.iphone_image_uri = self._iPhoneImageURI
-            gadget.wiki_page_uri    = self._wikiURI
-            gadget.template_uri     = self._uri
-            gadget.mashup_id        = self._mashupId
-            gadget.creation_date    = datetime.today()
-            gadget.popularity       = '0.0'
-            gadget.fromWGT          = self.fromWGT
 
-            # Checking certification status
-            gadget.certification = get_certification_status(self._user)
+            gadget.short_name = self._name
+            gadget.display_name = self._displayName
+            gadget.vendor = self._vendor
+            gadget.version = self._version
+            gadget.author = self._author
+            gadget.description = self._description
+            gadget.mail = self._mail
+            gadget.image_uri = self._imageURI
+            gadget.iphone_image_uri = self._iPhoneImageURI
+            gadget.wiki_page_uri = self._wikiURI
+            gadget.template_uri = self._uri
+            gadget.mashup_id = self._mashupId
+            gadget.creation_date = datetime.today()
+            gadget.popularity = '0.0'
+            gadget.fromWGT = get_certification_status(self._user)
 
             gadget.creator = self._user
 
             self._gadget = gadget
 
-            if (self.save):
+            if self.save:
                 gadget.save()
 
-            if (self.save):
+            if self.save:
                 userRelated = UserRelatedToGadgetResource()
-                userRelated.gadget = gadget;
+                userRelated.gadget = gadget
                 userRelated.user = self._user
                 userRelated.added_by = True
 
                 userRelated.save()
-               
+
                 #A gadget belongs to many organizations
                 for organization in self._organization_list:
                     gadget.organization.add(organization)
@@ -392,47 +383,47 @@ class TemplateHandler(handler.ContentHandler):
                 # TODO: process the resources
                 # workaround to add default tags
                 if self._mashupId != None:
-                    tag, created = Tag.objects.get_or_create(name = "mashup")
-                    userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                    tag, created = Tag.objects.get_or_create(name="mashup")
+                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
                     userTag.save()
 
                 if self._contratable:
-                    tag, created = Tag.objects.get_or_create(name = "contratable")
-                    userTag = UserTag(tag = tag, idUser = self._user, idResource = gadget)
+                    tag, created = Tag.objects.get_or_create(name="contratable")
+                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
                     userTag.save()
 
                 # Copy all UserTag and UserVote entry from previous version
                 if len(currentVersions) > 0:
-                    previousVersion = GadgetResource.objects.get(vendor = self._vendor, short_name = self._name, version = max(currentVersions))
+                    previousVersion = GadgetResource.objects.get(vendor=self._vendor, short_name=self._name, version=max(currentVersions))
 
-                    previousUserTags = UserTag.objects.filter(idResource = previousVersion)
+                    previousUserTags = UserTag.objects.filter(idResource=previousVersion)
 
                     for previousUserTag in previousUserTags:
-                        newUserTag, created = UserTag.objects.get_or_create(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = gadget)
- 
-                    previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
+                        newUserTag, created = UserTag.objects.get_or_create(tag=previousUserTag.tag, idUser=previousUserTag.idUser, idResource=gadget)
+
+                    previousUserVotes = UserVote.objects.filter(idResource=previousVersion)
 
                     for previousUserVote in previousUserVotes:
-                        newUserVote = UserVote(idUser = previousUserVote.idUser, vote = previousUserVote.vote, idResource = gadget)
+                        newUserVote = UserVote(idUser=previousUserVote.idUser, vote=previousUserVote.vote, idResource=gadget)
                         newUserVote.save()
 
                     update_gadget_popularity(gadget)
 
             self._gadget_added = True
 
-        elif (self._gadget_added and name == "msg"):
+        elif self._gadget_added and name == "msg":
             if not self.current_text in self.translatable_list:
                 #message not used in the catalogue
-                return;
-            if self.current_lang==self.default_lang:
+                return
+            if self.current_lang == self.default_lang:
                 self.translated_list.append(self.current_text)
 
-            table_ = self._gadget.__class__.__module__+"."+self._gadget.__class__.__name__
-            trans = Translation(text_id=self.current_text, element_id=self._gadget.id, table=table_, language=self.current_lang, value=self._accumulator[0], default=(self.current_lang==self.default_lang))
+            table_ = self._gadget.__class__.__module__ + "." + self._gadget.__class__.__name__
+            trans = Translation(text_id=self.current_text, element_id=self._gadget.id, table=table_, language=self.current_lang, value=self._accumulator[0], default=(self.current_lang == self.default_lang))
             trans.save()
-        elif (self._gadget_added and name == "Translation"):
+        elif self._gadget_added and name == "Translation":
 
-            if self.current_lang==self.default_lang:
+            if self.current_lang == self.default_lang:
                 self.missing_translations = []
 
                 for ind in self.translatable_list:
@@ -445,13 +436,13 @@ class TemplateHandler(handler.ContentHandler):
                     raise TemplateParseException(_("ERROR: the following translation indexes need a default value: " + ', '.join(self.missing_translations)))
 
                 # No triggered as not used indexes are currently filtered
-                if len(self.translated_list)>0:
-                    raise TemplateParseException(_("ERROR: the following translation indexes are not used: "+str(self.translated_list)))
+                if len(self.translated_list) > 0:
+                    raise TemplateParseException(_("ERROR: the following translation indexes are not used: " + str(self.translated_list)))
 
         elif self._gadget_added and (name == "Translations"):
             if len(self.lang_list) > 0 and not self.default_lang in self.lang_list:
                 raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self.default_lang})
-        elif (self._gadget_added):
+        elif self._gadget_added:
             return
         else:
             raise TemplateParseException(_("ERROR: missing Resource description field at Resource element! Check schema!"))
@@ -460,40 +451,41 @@ class TemplateHandler(handler.ContentHandler):
         self._accumulator.append(text)
 
     def startElement(self, name, attrs):
-        if ((name == 'Name') or (name=='Version') or (name=='Vendor') or (name=='DisplayName') or (name=='Author') or (name=='Description') or (name=='Mail') \
-            or (name=='ImageURI') or (name=='iPhoneImageURI') or (name=='WikiURI') or (name=='DisplayName') or (name=='Organization')):
+        if name in ('Name', 'Version', 'Vendor', 'DisplayName', 'Author',
+                    'Description', 'Mail', 'ImageURI', 'iPhoneImageURI',
+                    'WikiURI', 'DisplayName', 'Organization'):
             self.resetAccumulator()
             return
 
-        if (name == 'Slot'):
-            self.processWire(attrs,'Slot')
+        if name == 'Slot':
+            self.processWire(attrs, 'Slot')
             return
 
-        if (name == 'Event'):
-            self.processWire(attrs,'Event')
+        if name == 'Event':
+            self.processWire(attrs, 'Event')
             return
-        
-        if (name == 'IncludedResources'):
-            if (attrs.has_key('mashupId')==True):
-                self._mashupId = attrs.get('mashupId')
+
+        if name == 'IncludedResources':
+            if 'mashupId' in attrs:
+                self._mashupId = attrs['mashupId']
             return
-        
-        if (name == 'Resource'):
+
+        if name == 'Resource':
             self.processMashupResource(attrs)
             return
-        
-        if (name == 'Capability'):
+
+        if name == 'Capability':
             self.processCapability(attrs)
             return
-        
+
         #Translation elements
-        if (name == 'Translations'):
+        if name == 'Translations':
             self.processTranslations(attrs)
             return
-        if (name == 'Translation'):
+        if name == 'Translation':
             self.processTranslation(attrs)
             return
-        if (name == 'msg'):
+        if name == 'msg':
             self.resetAccumulator()
             self.processMsg(attrs)
             return

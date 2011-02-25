@@ -32,11 +32,14 @@
 
 from django.conf.urls.defaults import patterns
 
-from catalogue.views import *
+from catalogue.views import GadgetsCollection, GadgetsCollectionByGlobalSearch
+from catalogue.views import GadgetsCollectionBySimpleSearch, GadgetTagsCollection
+from catalogue.views import GadgetVotesCollection, GadgetVersionsCollection
+from catalogue.views import ApplicationManager
 
 urlpatterns = patterns('catalogue.views',
     # Gadgets
-    (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', GadgetsCollection(permitted_methods=('DELETE','PUT'))),
+    (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', GadgetsCollection(permitted_methods=('DELETE', 'PUT'))),
     (r'^resource/(?P<pag>\d+)/(?P<offset>\d+)$', GadgetsCollection(permitted_methods=('GET',))),
     (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', GadgetsCollection(permitted_methods=('DELETE',))),
     (r'^resource$', GadgetsCollection(permitted_methods=('GET', 'POST',))),
@@ -49,15 +52,15 @@ urlpatterns = patterns('catalogue.views',
     (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<tag>\d+)$',
         GadgetTagsCollection(permitted_methods=('DELETE',))),
     (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
-        GadgetTagsCollection(permitted_methods=('GET','POST',))),
+        GadgetTagsCollection(permitted_methods=('GET', 'POST',))),
 
     # Vote Gadgets
     (r'^voting/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
-        GadgetVotesCollection(permitted_methods=('GET','POST','PUT',))),
-    
+        GadgetVotesCollection(permitted_methods=('GET', 'POST', 'PUT',))),
+
     #version check
     (r'^versions', GadgetVersionsCollection(permitted_methods=('POST',))),
-    
+
     #Applications!
     (r'^application/(?P<application_id>\d+)/resource/(?P<resource_id>\d+)/link', ApplicationManager(permitted_methods=('POST', 'GET',))),
  )
