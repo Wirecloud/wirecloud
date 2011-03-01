@@ -1,15 +1,18 @@
-import os, sys
+import os
+import sys
 from getopt import getopt, GetoptError
+
 
 def usage():
     pass
+
 
 def start_server(ezweb_path, server_name='', server_port=8000):
 
     #Django WSGI handlers (core and Admin)
     from django.core.handlers.wsgi import WSGIHandler
     from django.core.servers.basehttp import AdminMediaHandler
-    
+
     #Facebook's Tornado WSGI server
     import tornado.httpserver
     import tornado.ioloop
@@ -24,7 +27,7 @@ def start_server(ezweb_path, server_name='', server_port=8000):
     print "EzWeb server listening at http://%s:%s/" % (server_name, server_port)
 
     http_server.listen(server_port, server_name)
-    
+
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == '__main__':
@@ -42,7 +45,7 @@ if __name__ == '__main__':
         activate_this = os.path.join(ezweb_path, 'python-env', 'Scripts', 'activate_this.py')
     else:
         activate_this = os.path.join(ezweb_path, 'python-env', 'bin', 'activate_this.py')
-   
+
     if os.path.isfile(activate_this):
         execfile(activate_this, dict(__file__=activate_this))
 
@@ -52,7 +55,7 @@ if __name__ == '__main__':
     # Read config from config.py
     try:
         import config
-    except:
+    except ImportError:
         config = {}
 
     if hasattr(config, 'SERVER_NAME'):
