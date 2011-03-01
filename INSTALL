@@ -10,6 +10,7 @@
     * A Database Manager (MySQL, PostgreSQL, Sqlite3...)
     * Python 2.4 o higher
     * Django 1.0
+    * South
 
   Installing the EzWeb Platform:
     * Create the user and the database on you Database Server.

@@ -216,3 +216,21 @@ def accepts(request, mime):
     acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]
 
     return mime in acc
+
+
+def db_table_exists(table, cursor=None):
+    """Test if a table exists. Used in south initial steps
+
+        Example: db_table_exists('catalogue_translation')
+    """
+    try:
+        if not cursor:
+            from django.db import connection
+            cursor = connection.cursor()
+        if not cursor:
+            raise Exception
+        table_names = connection.introspection.get_table_list(cursor)
+    except:
+        raise Exception("unable to determine if the table '%s' exists" % table)
+    else:
+        return table in table_names

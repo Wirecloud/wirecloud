@@ -79,6 +79,14 @@ class BigIntegerField(models.IntegerField):
         else:
             return "bigint"
 
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules([], ["^facebookconnect.models.BigIntegerField"])
+except ImportError:
+    pass
+
+
 class FacebookTemplate(models.Model):
     name = models.SlugField(unique=True)
     template_bundle_id = BigIntegerField()
