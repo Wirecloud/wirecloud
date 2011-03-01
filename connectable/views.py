@@ -30,28 +30,26 @@
 
 #
 
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons.resource import Resource
-
-from django.db import transaction
-
 from commons.authentication import get_user_authentication
-from commons.get_data import get_inout_data, get_wiring_data, get_tab_data
-from commons.utils import json_encode
-
-from igadget.models import IGadget
-from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
-from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubscription
-from remoteChannel.models import RemoteChannel
-
+from commons.get_data import get_inout_data, get_wiring_data, get_tab_data, get_filter_data
 from commons.logs_exception import TracedServerError
+from commons.resource import Resource
+from commons.utils import json_encode
+from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubscription
+from igadget.models import IGadget
+from remoteChannel.models import RemoteChannel
+from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
+
 
 class ConnectableEntry(Resource):
+
     def read(self, request, workspace_id):
-        user = get_user_authentication(request)
+        get_user_authentication(request)
         wiring = {}
 
         try:
@@ -81,17 +79,17 @@ class ConnectableEntry(Resource):
         user = get_user_authentication(request)
 
         # Gets all needed parameters from request
-        if request.POST.has_key('json'):
+        if 'json' in request.POST:
             json = simplejson.loads(request.POST['json'])
         else:
-            return HttpResponseBadRequest (_(u'JSON parameter expected'))
+            return HttpResponseBadRequest(_(u'JSON parameter expected'))
 
         try:
             workspace = WorkSpace.objects.get(id=workspace_id)
 
             # Mapping between provisional ids and database-generated ids!!!
             id_mapping = {}
-            
+
             #Hash for mapping External Channels URLs and IDs
             rchannels_urls_to_ids = []
 
@@ -100,19 +98,19 @@ class ConnectableEntry(Resource):
             for deleted_channel_id in channelsDeletedByUser:
                 #Removing workspace_variable and abstract_variable of channels deleted explicitly by user
                 deleted_channel = InOut.objects.get(id=deleted_channel_id)
-                
+
                 #Remove the related In and Out values
                 related_ins = deleted_channel.in_set.all()
                 for rel_in in related_ins:
                     varValue = VariableValue.objects.get(user=user, abstract_variable=rel_in.variable.abstract_variable)
                     varValue.value = None
                     varValue.save()
-                    
+
                 related_outs = deleted_channel.out_set.all()
                 for rel_out in related_outs:
                     varValue = VariableValue.objects.get(user=user, abstract_variable=rel_out.abstract_variable)
                     varValue.value = None
-                    varValue.save()   
+                    varValue.save()
 
                 abstract_variable = deleted_channel.workspace_variable.abstract_variable
 
@@ -120,7 +118,7 @@ class ConnectableEntry(Resource):
 
                 abstract_variable.delete()
                 deleted_channel.workspace_variable.delete()
-                
+
                 if deleted_channel.remote_subscription:
                     deleted_channel.remote_subscription.delete()
 
@@ -138,10 +136,10 @@ class ConnectableEntry(Resource):
                 rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
                 for channel_delete in rel_old_channels:
                     channel_delete.delete()
-                    
+
                 if old_channel.remote_subscription:
                     old_channel.remote_subscription.delete()
-                
+
                 #adding its info to the list of old channels
                 channel_info = {}
                 old_ins_aux = old_channel.in_set.all()
@@ -149,11 +147,11 @@ class ConnectableEntry(Resource):
                 for in_aux in old_ins_aux:
                     channel_info["ins"].append(in_aux.id)
                 old_outs_aux = old_channel.out_set.all()
-                
+
                 channel_info["outs"] = []
                 for out_aux in old_outs_aux:
                     channel_info["outs"].append(out_aux.id)
-                
+
                 old_channels_info[old_channel.id] = channel_info
 
                 # Now delete the current channel
@@ -163,25 +161,25 @@ class ConnectableEntry(Resource):
             new_channels = json['inOutList']
             for new_channel_data in new_channels:
                 channel_info = None
-                
+
                 # Remote subscriptions!
                 remote_subscription = None
                 if new_channel_data['remote_subscription']:
                     op_code = unicode(new_channel_data['remote_subscription']['op_code'])
                     url = new_channel_data['remote_subscription']['url']
-                    
+
                     if op_code != '0':
                         remote_channel, created = RemoteChannel.objects.get_or_create(url=url)
-                        
+
                         data = dict()
                         data['url'] = url
                         data['id'] = remote_channel.id
-                        
+
                         rchannels_urls_to_ids.append(data)
-                        
+
                         remote_subscription = RemoteSubscription(operation_code=op_code, remote_channel=remote_channel)
                         remote_subscription.save()
-                
+
                 if (new_channel_data['provisional_id']):
                     #It's necessary to create all objects!
 
@@ -210,7 +208,7 @@ class ConnectableEntry(Resource):
 
                     # A channel has been generated. It's necessary to correlate provisional and definitive ids!
                     id_mapping[new_channel_data['id']] = {'new_id': channel.id, 'new_wv_id': new_ws_variable.id}
-                    
+
                     channel_info = None
 
                 else:
@@ -227,15 +225,14 @@ class ConnectableEntry(Resource):
                         filter = None
                         fparam_values = None
 
-                    channel = InOut(id=new_channel_data['id'], remote_subscription=remote_subscription, \
-                                    name=new_channel_data['name'], workspace_variable=workspace_variable, \
-                                    filter=filter, filter_param_values=fparam_values, \
-                                    friend_code="", readOnly= new_channel_data['readOnly'])
+                    channel = InOut(id=new_channel_data['id'], remote_subscription=remote_subscription,
+                                    name=new_channel_data['name'], workspace_variable=workspace_variable,
+                                    filter=filter, filter_param_values=fparam_values,
+                                    friend_code="", readOnly=new_channel_data['readOnly'])
                     channel.save()
-                    
+
                     channel_info = old_channels_info[new_channel_data['id']]
 
-                
                 # In connections
                 # InOut out connections will be created later
                 old_ins = None
@@ -244,7 +241,7 @@ class ConnectableEntry(Resource):
                 ins = new_channel_data['ins']
                 for inputId in ins:
                     connectable = In.objects.get(id=inputId)
-                    connectable.inouts.add(channel);
+                    connectable.inouts.add(channel)
                     connectable.save()
                     if old_ins:
                         #clean the old_ins list
@@ -259,17 +256,16 @@ class ConnectableEntry(Resource):
                         varValue = VariableValue.objects.get(user=user, abstract_variable=real_old_in.variable.abstract_variable)
                         varValue.value = None
                         varValue.save()
-                        
 
                 # Out connections
                 # InOut out connections will be created later
                 old_outs = None
                 if channel_info:
-                        old_outs = channel_info["outs"]
+                    old_outs = channel_info["outs"]
                 outs = new_channel_data['outs']
                 for outputId in outs:
                     connectable = Out.objects.get(id=outputId)
-                    connectable.inouts.add(channel);
+                    connectable.inouts.add(channel)
                     connectable.save()
                     if old_outs:
                         #clean the old_ins list
@@ -289,7 +285,7 @@ class ConnectableEntry(Resource):
             for new_channel_data in new_channels:
                 inout_id = new_channel_data['id']
                 if new_channel_data['provisional_id']:
-                    inout_id =  id_mapping[inout_id]['new_id']
+                    inout_id = id_mapping[inout_id]['new_id']
                 channel = InOut(id=inout_id)
                 inouts = new_channel_data['inouts']
                 for inout_to_add in inouts:
@@ -304,7 +300,7 @@ class ConnectableEntry(Resource):
 
             json_result = {'ids': id_mapping, 'urls': rchannels_urls_to_ids}
 
-            return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
+            return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
         except WorkSpace.DoesNotExist, e:
             msg = _('referred workspace (id: %(workspace_id)s) does not exist.') % {'workspace_id': workspace_id}
             raise TracedServerError(e, json, request, msg)
@@ -320,24 +316,24 @@ class ConnectableEntry(Resource):
         user = get_user_authentication(request)
 
         # Gets all needed parameters from request
-        if request.POST.has_key('json'):
+        if 'json' in request.POST:
             json = simplejson.loads(request.POST['json'])
         else:
-            return HttpResponseBadRequest (_(u'JSON parameter expected'))
+            return HttpResponseBadRequest(_(u'JSON parameter expected'))
 
         try:
             workspace = WorkSpace.objects.get(id=workspace_id)
-        except WorkSpace.DoesNotExist:
-            msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace_name}
+        except WorkSpace.DoesNotExist, e:
+            msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace.name}
             raise TracedServerError(e, json, request, msg)
 
         id_mapping = {}
 
-        # Pashe 1: Additions
+        # Phase 1: Additions
         channels_to_add = json['channelsToAdd']
         for new_channel in channels_to_add:
             # Creating the abstract variable for this channel
-            new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'])
+            new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel['name'])
             new_abstract_variable.save()
 
             # Creating the variable value entry for this channel
@@ -353,7 +349,7 @@ class ConnectableEntry(Resource):
 
             id_mapping[new_channel['id']] = {'cid': channel.id, 'wvid': new_ws_variable.id}
 
-        # Pashe 2: Updates
+        # Phase 2: Updates
         channels_to_update = json['channelsToUpdate']
         for current_channel_data in channels_to_update:
             current_channel_id = current_channel_data['id']
@@ -366,22 +362,22 @@ class ConnectableEntry(Resource):
 
             for input_to_add in current_channel_data['inputsToRemove']:
                 connectable = In.objects.get(id=input_to_add['id'])
-                connectable.inouts.add(current_channel);
+                connectable.inouts.add(current_channel)
                 connectable.save()
 
             for input_to_remove in current_channel_data['inputsToRemove']:
                 connectable = In.objects.get(id=input_to_add['id'])
-                connectable.inouts.remove(current_channel);
+                connectable.inouts.remove(current_channel)
                 connectable.save()
 
             for output_to_add in current_channel_data['outputsToRemove']:
                 connectable = Out.objects.get(id=output_to_add['id'])
-                connectable.inouts.add(current_channel);
+                connectable.inouts.add(current_channel)
                 connectable.save()
 
             for output_to_remove in current_channel_data['outputsToRemove']:
                 connectable = Out.objects.get(id=output_to_add['id'])
-                connectable.inouts.remove(current_channel);
+                connectable.inouts.remove(current_channel)
                 connectable.save()
 
             for inout_to_add in current_channel_data['inoutsToRemove']:
@@ -404,7 +400,7 @@ class ConnectableEntry(Resource):
                 relationship = RelatedInOut.objects.get(in_inout=current_channel, out_inout=inout_id)
                 relationship.delete()
 
-        # Pashe 3: Deletions
+        # Phase 3: Deletions
         channels_to_remove = json['channelsToRemove']
         for current_channel_data in channels_to_remove:
             channel = InOut.objects.get(id=current_channel_data['id'])
@@ -417,6 +413,5 @@ class ConnectableEntry(Resource):
             channel.workspace_variable.delete()
             channel.delete()
 
-
         json_result = {'id_mapping': id_mapping}
-        return HttpResponse (json_encode(json_result), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')

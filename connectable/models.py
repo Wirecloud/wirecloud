@@ -34,14 +34,15 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from igadget.models import Variable
-from workspace.models import WorkSpaceVariable, AbstractVariable
 from remoteChannel.models import RemoteChannel
+from workspace.models import WorkSpaceVariable, AbstractVariable
+
 
 class Filter(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
     code = models.TextField(_('Code'), blank=True, null=True)
-    label = models.CharField(_('Label'), max_length=50, null=True) 
+    label = models.CharField(_('Label'), max_length=50, null=True)
     NATURE = (
         ('NATIVE', _('Object Native')),
         ('JSLIB', _('JavaScript Lib')),
@@ -56,21 +57,22 @@ class Filter(models.Model):
     )
     category = models.CharField(_('Category'), max_length=6, choices=CATEGORY, null=True)
     help_text = models.TextField(_('Help text'), blank=True, null=True)
-    params = models.TextField(_('Parameters'), blank=True, null=True) 
+    params = models.TextField(_('Parameters'), blank=True, null=True)
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
 
+
 class RemoteSubscription(models.Model):
     remote_channel = models.ForeignKey(RemoteChannel, verbose_name=_('Remote Channel'))
-    
+
     REMOTE_OPERATION = (
         ('0', 'DISABLED'),
         ('1', 'READ'),
         ('2', 'WRITE'),
     )
     operation_code = models.CharField(_('Operation'), max_length=1, choices=REMOTE_OPERATION)
-    
+
     def __unicode__(self):
         return self.url
 
@@ -92,7 +94,7 @@ class InOut(models.Model):
 class In(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    variable = models.ForeignKey(Variable, verbose_name=_('Variable'))  
+    variable = models.ForeignKey(Variable, verbose_name=_('Variable'))
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
 
     def __unicode__(self):
@@ -107,6 +109,7 @@ class Out(models.Model):
 
     def __unicode__(self):
         return str(self.pk) + " " + self.name
+
 
 class RelatedInOut(models.Model):
 
