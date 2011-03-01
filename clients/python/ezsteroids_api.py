@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 # See license file (LICENSE.txt) for info about license terms.
 
-import httplib
 import base64
+import httplib
 import urllib
-import datetime
-import time
-import re
-#import simplejson
-from django.utils import simplejson
-from django.forms import fields
-from django.conf import settings
 
+from django.conf import settings
+from django.utils import simplejson
 
 
 try:
-    server = settings.AUTHENTICATION_SERVER_URL.replace("//","")
+    server = settings.AUTHENTICATION_SERVER_URL.replace("//", "")
     server = server.split(":")
     PROTOCOL = server[0]
     HOST = server[1]
@@ -30,9 +25,9 @@ PREFIX = '/api'
 API_URL = '%s://%s:%s%s' % (PROTOCOL, HOST, PORT, PREFIX)
 
 
-
 class StatusException(Exception):
     """Create an Error Response. """
+
     def __init__(self, value, result=None):
         self.value = value
         self.responses = {
@@ -98,6 +93,7 @@ class StatusException(Exception):
         }
         if result:
             self.result = "\n%s" % result
+
     def __str__(self):
         return "Error [%s]: %s. %s.%s" % (self.value,
             self.responses[self.value][0], self.responses[self.value][1],
@@ -216,7 +212,7 @@ class API(object):
         else:
             raise StatusException(response.status, "Unable get user policies.")
 
-    def evalue_policy(self, username , policy_codename):
+    def evalue_policy(self, username, policy_codename):
         url = '/user/%s/policies/%s.json' % (username, policy_codename)
         response = self.request.get(url)
         if response.status == 200:
@@ -224,7 +220,7 @@ class API(object):
             if response_json['policy'] in [None, "None"]:
                 return False
             else:
-                return True;
+                return True
         else:
             raise StatusException(response.status, "Unable check user policy.")
 
@@ -262,7 +258,7 @@ class API(object):
         response = self.request.get(url)
         if response.status == 200:
             response_json = simplejson.loads(response.body)
-            if response_json['category'] in ["None", None] :
+            if response_json['category'] in ("None", None):
                 return False
             else:
                 return True
@@ -275,7 +271,7 @@ class Abstract(object):
         for key, value in response_json.items():
             if hasattr(self, 'remote_attrs') and key in self.remote_attrs.keys():
                 json_key, Cls = self.remote_attrs[key]
-                url = value.replace(API_URL,'')[:-1]+'.json'
+                url = value.replace(API_URL, '')[:-1] + '.json'
                 response = request.get(url)
                 if response.status == 200:
                     response_json = simplejson.loads(response.body)
@@ -297,7 +293,6 @@ class Policy(Abstract):
 
 class Category(Abstract):
     remote_attrs = {'policies': ('policy_list', Policy)}
-
 
 
 __all__ = ('API', 'Request')
