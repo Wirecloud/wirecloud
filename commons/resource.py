@@ -30,34 +30,34 @@
 
 #
 
-from commons.logs import log_exception, log_detailed_exception, log_request
-from commons.utils import get_xml_error, get_json_error_response
-
-from logs_exception import TracedServerError
-
-from commons.authentication import Http403
-
-from django.http import Http404, HttpResponse, HttpResponseNotAllowed, QueryDict
+from django.http import Http404, HttpResponseNotAllowed, QueryDict
 from django.http import HttpResponseServerError, HttpResponseForbidden
 from django.utils import datastructures
+
+from commons.authentication import Http403
+from commons.logs import log_exception, log_detailed_exception, log_request
+from commons.utils import get_json_error_response
+from logs_exception import TracedServerError
 
 
 class HttpMethodNotAllowed(Exception):
     """
     Signals that request.method was not part of
     the list of permitted methods.
-    """    
+    """
+
 
 class Resource:
+
     def __init__(self, authentication=None, permitted_methods=None, mimetype=None):
-        
+
         if not permitted_methods:
             permitted_methods = ["GET"]
-        
+
         self.permitted_methods = [m.upper() for m in permitted_methods]
-        
+
         self.mimetype = mimetype
-    
+
     def __call__(self, request, *args, **kwargs):
         try:
             response = self.dispatch(request, self, *args, **kwargs)
@@ -87,23 +87,23 @@ class Resource:
             msg = log_exception(request, e)
 
         return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')
-    
+
     def adaptRequest(self, request):
         request._post, request._files = QueryDict(request.raw_post_data, encoding=request._encoding), datastructures.MultiValueDict()
-        
+
         return request
-    
+
     def dispatch(self, request, target, *args, **kwargs):
         request_method = request.method.upper()
         if request_method not in self.permitted_methods:
             raise HttpMethodNotAllowed
-        
+
         if request_method == 'GET':
             return target.read(request, *args, **kwargs)
         elif request_method == 'POST':
             #PUT and DELETE request are wrapped in a POST request
             #Asking about request type it's needed here!
-            if request.POST.has_key('_method'):
+            if 'method' in request.POST:
                 _method = request.POST['_method'].upper()
                 if _method == 'DELETE':
                     request = self.adaptRequest(request)
@@ -111,7 +111,7 @@ class Resource:
                 elif _method == 'PUT':
                     request = self.adaptRequest(request)
                     return target.update(request, *args, **kwargs)
-            
+
             #It's a real POST request!
             return target.create(request, *args, **kwargs)
         elif request_method == 'PUT':
@@ -122,4 +122,3 @@ class Resource:
             return target.delete(request, *args, **kwargs)
         else:
             raise Http404
-    

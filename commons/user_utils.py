@@ -38,24 +38,24 @@ ORGANIZATION_PREFIX = 'org__'
 CERTIFICATION_DEFAULT = CERTIFICATION_PREFIX + 'not_verified'
 CERTIFICATION_VERIFIED = CERTIFICATION_PREFIX + 'verified'
 
+
 def get_certification_status(user):
-    certification_groups = user.groups.filter(name__contains = CERTIFICATION_PREFIX)
-    
+    certification_groups = user.groups.filter(name__contains=CERTIFICATION_PREFIX)
+
     if (len(certification_groups) == 0):
         default = get_default_certification_group()
-        verified = get_verified_certification_group()
-        
         return default
-    
+
     return certification_groups[0]
+
 
 def get_default_certification_group():
     default, created = Group.objects.get_or_create(name=CERTIFICATION_DEFAULT)
-    
+
     return default
+
 
 def get_verified_certification_group():
     verified, created = Group.objects.get_or_create(name=CERTIFICATION_VERIFIED)
-    
+
     return verified
-    

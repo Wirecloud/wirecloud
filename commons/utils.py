@@ -44,24 +44,23 @@ from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.contrib.auth.models import User
+from django.utils import simplejson, translation
 
-from commons.http_utils import download_http_content
 from catalogue.models import GadgetResource
-
+from commons.http_utils import download_http_content
 from gadget.models import XHTML
 
-from django.utils import simplejson
-from django.utils import translation
 
 def change_language(request, language):
     request.session['django_language'] = language
     request.LANGUAGE_CODE = language
     translation.activate(language)
 
+
 def json_encode(data, ensure_ascii=False):
     """
     The main issues with django's default json serializer is that properties that
-    had been added to a object dynamically are being ignored (and it also has 
+    had been added to a object dynamically are being ignored (and it also has
     problems with some models).
     """
 
@@ -82,7 +81,7 @@ def json_encode(data, ensure_ascii=False):
         else:
             ret = data
         return ret
-    
+
     def _model(data):
         ret = {}
         # If we only have a model, we only want to encode the fields.
@@ -94,21 +93,21 @@ def json_encode(data, ensure_ascii=False):
         for k in add_ons:
             ret[k] = _any(getattr(data, k))
         return ret
-    
+
     def _list(data):
         ret = []
         for v in data:
             ret.append(_any(v))
         return ret
-    
+
     def _dict(data):
         ret = {}
-        for k,v in data.items():
+        for k, v in data.items():
             ret[k] = _any(v)
         return ret
-    
+
     ret = _any(data)
-    
+
     return simplejson.dumps(ret, cls=DateTimeAwareJSONEncoder, ensure_ascii=ensure_ascii)
 
 
@@ -124,15 +123,17 @@ def get_xml_error(value):
 
     return errormsg
 
+
 def get_json_error_response(value):
     response = {}
-    
+
     response['result'] = "error"
     response["message"] = value
-    
+
     response = simplejson.dumps(response)
 
     return response
+
 
 def get_gadgets_files():
     gadgets_files = []
@@ -183,7 +184,7 @@ def load_gadgets():
                 print "Unable get contents of %s (%s)." % (code_file, e)
 
     print "%s errors found" % errors
-    
+
 
 def get_xhtml_content(path):
     if path.startswith("/") or path.startswith("\\"):
@@ -194,24 +195,24 @@ def get_xhtml_content(path):
     content = f.read()
     f.close()
     return content
-    
+
 
 def add_user_to_EzSteroids(referer, user):
-            
+
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
         urlBase = settings.AUTHENTICATION_SERVER_URL
-        
+
         if (not urlBase.endswith('/')):
             urlBase += '/'
-        
+
         url = urlBase + "api/register"
         params = {'username': user.username.encode('utf-8')}
         headers = {'Referer': referer}
-        result = download_http_content(uri=url, params=params, headers=headers)
+        download_http_content(uri=url, params=params, headers=headers)
 
 
-#Checks if the request accepts a mime type for the response
 def accepts(request, mime):
+    """Checks if the request accepts a mime type for the response"""
     acc = [a.split(';')[0] for a in request.META['HTTP_ACCEPT'].split(',')]
 
     return mime in acc

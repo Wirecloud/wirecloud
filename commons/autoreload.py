@@ -60,7 +60,9 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os, sys, time
+import os
+import sys
+import time
 
 try:
     import thread
@@ -79,6 +81,7 @@ from commons.utils import get_gadgets_files
 
 RUN_RELOADER = True
 
+
 def reloader_thread():
     mtimes = {}
     win = (sys.platform == "win32")
@@ -90,7 +93,7 @@ def reloader_thread():
             if filename.endswith(".pyc") or filename.endswith("*.pyo"):
                 filename = filename[:-1]
             if not os.path.exists(filename):
-                continue # File might be in an egg, so it can't be reloaded.
+                continue  # File might be in an egg, so it can't be reloaded.
             stat = os.stat(filename)
             mtime = stat.st_mtime
             if win:
@@ -99,8 +102,9 @@ def reloader_thread():
                 mtimes[filename] = mtime
                 continue
             if mtime != mtimes[filename]:
-                sys.exit(3) # force reload
+                sys.exit(3)  # force reload
         time.sleep(1)
+
 
 def restart_with_reloader():
     while True:
@@ -112,6 +116,7 @@ def restart_with_reloader():
         exit_code = os.spawnve(os.P_WAIT, sys.executable, args, new_environ)
         if exit_code != 3:
             return exit_code
+
 
 def main(main_func, args=None, kwargs=None):
     if os.environ.get("RUN_MAIN_DEV") == "true":

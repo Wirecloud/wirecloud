@@ -32,18 +32,17 @@
 import base64
 
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 
-#############################################################################
-#
-def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
+
+def view_or_basicauth(view, request, test_func, realm="", *args, **kwargs):
     """
     This is a helper function used by both 'basicauth_or_logged_in' and
     'has_perm_or_basicauth' that does the nitty of determining if they
     are already logged in or if they have provided proper http-authorization
     and returning the view if all goes well, otherwise responding with a 401.
     """
- 
+
     # See if they provided login credentials
     #
     if 'HTTP_AUTHORIZATION' in request.META:
@@ -59,7 +58,7 @@ def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
                         request.user = user
                         return view(*args, **kwargs)
 
-    #They don't provide login credentials. Check if they are logged in                
+    #They don't provide login credentials. Check if they are logged in
     if test_func(request.user):
         #Already logged in, just return the view.
         return view(*args, **kwargs)
@@ -72,10 +71,9 @@ def view_or_basicauth(view, request, test_func, realm = "", *args, **kwargs):
     response.status_code = 401
     response['WWW-Authenticate'] = 'Basic realm="%s"' % realm
     return response
-    
-#############################################################################
-#
-def basicauth_or_logged_in(realm = ""):
+
+
+def basicauth_or_logged_in(realm=""):
     """
     A simple decorator that requires a user to be logged in. If they are not
     logged in the request is examined for a 'authorization' header.
@@ -96,14 +94,13 @@ def basicauth_or_logged_in(realm = ""):
     """
     def view_decorator(func):
         def wrapper(*args, **kwargs):
-            if getattr(args[0],  '__class__', None):
+            if getattr(args[0], '__class__', None):
                 request = args[1]
             else:
                 request = args[0]
-            
+
             return view_or_basicauth(func, request,
                                      lambda u: u.is_authenticated(),
-                                     realm, *args, **kwargs)                                     
+                                     realm, *args, **kwargs)
         return wrapper
     return view_decorator
-

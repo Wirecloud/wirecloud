@@ -35,9 +35,9 @@ from urllib import urlcleanup, urlencode
 from urlparse import urlparse
 
 from django.conf import settings
-from django.utils import simplejson
 
-def download_http_content (uri, params=None, user=None, headers={}):
+
+def download_http_content(uri, params=None, user=None, headers={}):
     urlcleanup()
 
     #proxy = settings.PROXY_SERVER
@@ -49,19 +49,19 @@ def download_http_content (uri, params=None, user=None, headers={}):
     proxy = None
     for proxy_name in settings.NOT_PROXY_FOR:
         if host.startswith(proxy_name):
-            proxy = urllib2.ProxyHandler({})#no proxy
+            proxy = urllib2.ProxyHandler({})  # no proxy
             break
 
     if not proxy:
         #Host is not included in the NOT_PROXY_FOR list => proxy is needed!
-        proxy = urllib2.ProxyHandler()#proxies from environment
+        proxy = urllib2.ProxyHandler()  # proxies from environment
 
     opener = urllib2.build_opener(proxy)
     referer = getattr(settings, 'HTTP_REFERER', None)
     params = params or {}
-    
+
     has_cookie = 'cookie' in params
-    
+
     if referer or user or has_cookie:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 5.0; en-GB) Gecko/20080201 Firefox/2.0.0.12 Python-urllib2/%s' % getattr(urllib2, '__version__', '1.0'),
@@ -95,8 +95,7 @@ def download_http_content (uri, params=None, user=None, headers={}):
         request = urllib2.Request(url=uri, headers=headers)
         return urllib2.urlopen(request).read()
 
-def PUT_parameter (request, parameter_name):
+
+def PUT_parameter(request, parameter_name):
     # Checking GET and POST space!
     return request.POST[parameter_name]
-
-
