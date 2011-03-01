@@ -22,6 +22,6 @@ def messagebox(context):
                     send_error(request, form.non_field_errors())
                 send_error(request, _('Form filled has errors. Please correct'))
                 portal_messages = get_and_delete_messages(request)
-    return { 'portal_messages':  portal_messages }
+    return {'portal_messages': portal_messages}
 messagebox = register.inclusion_tag('messagebox.html',
-                                   takes_context=True)(messagebox)
+                                    takes_context=True)(messagebox)

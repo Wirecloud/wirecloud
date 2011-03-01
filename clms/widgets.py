@@ -1,18 +1,16 @@
 # See license file (LICENSE.txt) for info about license terms.
 
 import os
+
 from django import forms
+from django.conf import settings
 from django.forms import widgets
 from django.forms.util import flatatt
-from django.utils.encoding import StrAndUnicode, force_unicode
-from django.utils.safestring import mark_safe
-from django.utils.html import escape, conditional_escape
-from django.utils.translation import gettext as _
-from django.template.loader import render_to_string
-from django.contrib.auth.models import User
 from django.utils.encoding import smart_unicode
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.utils.simplejson import JSONEncoder
-from django.conf import settings
+
 
 def load_javascript(src, script_id=None):
     """
@@ -41,6 +39,7 @@ def load_javascript(src, script_id=None):
     }</script>
     """ % locals()
     return js
+
 
 def load_stylesheet(src, css_id=None):
     """
@@ -71,8 +70,10 @@ def load_stylesheet(src, css_id=None):
     """ % locals()
     return js
 
+
 class PanelWidget(widgets.Widget):
-    def __init__(self,  attrs=None):
+
+    def __init__(self, attrs=None):
         # The 'rows' and 'cols' attributes are required for HTML correctness.
         self.attrs = {'cols': '100%', 'rows': '10'}
 
@@ -80,10 +81,11 @@ class PanelWidget(widgets.Widget):
             self.attrs.update(attrs)
 
     def render(self, name, value, attrs=None):
-        return mark_safe(u'<a name="select_content"> <script src="/ezweb/clms/js/popup_list.js"></script>  <link href="/ezweb/clms/css/panel.css" type="text/css" rel="stylesheet"> <input type="hidden" name="%s" id="id_%s" value="%s"/> ''%s'''%(name, name, escape(value), value))
+        return mark_safe(u'<a name="select_content"> <script src="/ezweb/clms/js/popup_list.js"></script>  <link href="/ezweb/clms/css/panel.css" type="text/css" rel="stylesheet"> <input type="hidden" name="%s" id="id_%s" value="%s"/> ''%s''' % (name, name, escape(value), value))
 
 
 TINYMCE_JS = settings.MEDIA_URL + "js/cmsutils/widgets/tiny_mce/tiny_mce.js"
+
 
 class TinyMCE(widgets.Textarea):
     """
@@ -93,30 +95,30 @@ class TinyMCE(widgets.Textarea):
     or add extra options using update_settings
     """
     mce_settings = dict(
-        mode = "exact",
-        theme = "advanced",
-        width = "100%",
-        height = 400,
-        button_tile_map = True,
-        plugins = "preview,paste",
-        theme_advanced_disable = "",
-        theme_advanced_buttons1 = "undo,redo,separator,cut,copy,paste,pastetext,pasteword,separator,preview,separator,bold,italic,underline,justifyleft,justifycenter,justifyright,bullist,numlist,outdent,indent",
-        theme_advanced_buttons2 = "fontselect,fontsizeselect,link,image,code",
-        theme_advanced_buttons3 = "",
-        theme_advanced_buttons4 = "",
-        theme_advanced_toolbar_location = "top",
-        theme_advanced_toolbar_align = "left",
-        extended_valid_elements = "hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]",
-        file_browser_callback = "mcFileManager.filebrowserCallBack",
-        theme_advanced_resize_horizontal = False,
-        theme_advanced_resizing = False,
-        apply_source_formatting = False,
-        spellchecker_languages = "+Spanish=es",
-        editor_deselector  = "mceNoEditor"
+        mode="exact",
+        theme="advanced",
+        width="100%",
+        height=400,
+        button_tile_map=True,
+        plugins="preview,paste",
+        theme_advanced_disable="",
+        theme_advanced_buttons1="undo,redo,separator,cut,copy,paste,pastetext,pasteword,separator,preview,separator,bold,italic,underline,justifyleft,justifycenter,justifyright,bullist,numlist,outdent,indent",
+        theme_advanced_buttons2="fontselect,fontsizeselect,link,image,code",
+        theme_advanced_buttons3="",
+        theme_advanced_buttons4="",
+        theme_advanced_toolbar_location="top",
+        theme_advanced_toolbar_align="left",
+        extended_valid_elements="hr[class|width|size|noshade],font[face|size|color|style],span[class|align|style]",
+        file_browser_callback="mcFileManager.filebrowserCallBack",
+        theme_advanced_resize_horizontal=False,
+        theme_advanced_resizing=False,
+        apply_source_formatting=False,
+        spellchecker_languages="+Spanish=es",
+        editor_deselector="mceNoEditor",
     )
 
-    class Media: # this is for django admin interface
-        js = (TINYMCE_JS,)
+    class Media:  # this is for django admin interface
+        js = (TINYMCE_JS, )
 
     def __init__(self, extra_mce_settings={}, print_head=False, *args, **kwargs):
         super(TinyMCE, self).__init__(*args, **kwargs)
@@ -135,7 +137,8 @@ class TinyMCE(widgets.Textarea):
         self.print_head = on
 
     def render(self, name, value, attrs=None):
-        if value is None: value = ''
+        if value is None:
+            value = ''
         value = smart_unicode(value)
         final_attrs = self.build_attrs(attrs, name=name)
 
@@ -151,7 +154,6 @@ class TinyMCE(widgets.Textarea):
         return mark_safe(u'''<textarea%s>%s</textarea>
                 %s
                 <script type="text/javascript">tinyMCE.init(%s)</script>''' % (flatatt(final_attrs), escape(value), head, mce_json))
-
 
 
 class FilteredSelectMultipleWidget(forms.SelectMultiple):
@@ -173,7 +175,6 @@ class FilteredSelectMultipleWidget(forms.SelectMultiple):
         self.print_head = print_head
         super(FilteredSelectMultipleWidget, self).__init__(attrs, choices)
 
-
     def render(self, name, value, attrs=None, choices=()):
         if self.print_head:
             head = u''.join([
@@ -186,6 +187,6 @@ class FilteredSelectMultipleWidget(forms.SelectMultiple):
         html = super(FilteredSelectMultipleWidget, self).render(name, value, attrs, choices)
         js = u"""<script type="text/javascript">addEvent(window, "load", function(e) {
             SelectFilter.init("id_%s", "%s", %s, "%s") });</script>
-            """ %(name, self.verbose_name.replace('"', '\\"'), int(self.is_stacked), settings.ADMIN_MEDIA_PREFIX)
+            """ % (name, self.verbose_name.replace('"', '\\"'), int(self.is_stacked), settings.ADMIN_MEDIA_PREFIX)
 
         return mark_safe(u''.join([head, html, js]))

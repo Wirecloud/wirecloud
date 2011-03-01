@@ -9,6 +9,7 @@ from django.utils.translation import ugettext as _
 IN_LOOKUP = '__in'
 PAGE_VAR = 'p'
 
+
 class QueryStringManager(object):
     """
     QueryStringManager can be used to automatically set filters on listing.
@@ -53,7 +54,7 @@ class QueryStringManager(object):
         self.filters = MultiValueDict()
         self.excluders = MultiValueDict()
         self.search_fields = MultiValueDict()
-        self.page=None
+        self.page = None
         for key, l in request.GET.lists():
             if key == page_var:
                 self.page = l
@@ -84,12 +85,14 @@ class QueryStringManager(object):
                 yield k, v
 
     def get_query_string(self, new_params=None, remove=None):
-        if new_params is None: new_params = MultiValueDict()
-        if remove is None: remove = []
+        if new_params is None:
+            new_params = MultiValueDict()
+        if remove is None:
+            remove = []
         p = self.params.copy()
         for r in remove:
             for k in p.keys():
-                if (k.startswith(r) and r.endswith('__')) or k==r:
+                if (k.startswith(r) and r.endswith('__')) or k == r:
                     del p[k]
         if isinstance(new_params, MultiValueDict):
             new_params_items = new_params.lists()
@@ -138,7 +141,9 @@ class QueryStringManager(object):
     def get_page(self):
         return self.page
 
+
 class FieldAvailabilityValueFilterSpec(FilterSpec):
+
     def __init__(self, f, request, params, model, model_admin):
         super(FieldAvailabilityValueFilterSpec, self).__init__(f, request, params, model, model_admin)
         self.lookup_kwarg = '%s__isnull' % f.name
@@ -179,11 +184,11 @@ class MultipleRelatedFilterSpec(RelatedFilterSpec):
         for val in self.lookup_choices:
             pk_val = getattr(val, self.field.rel.to._meta.pk.attname)
             params = cl.get_params().copy()
-            if not params.has_key(self.lookup_kwarg):
-                params.setlist(self.lookup_kwarg, [pk_val])
-            else:
+            if self.lookup_kwarg in params:
                 lookup_values = params.getlist(self.lookup_kwarg) + list([unicode(pk_val)])
                 params.setlist(self.lookup_kwarg, lookup_values)
+            else:
+                params.setlist(self.lookup_kwarg, [pk_val])
             query_string = cl.get_query_string(params)
             yield {'selected': smart_unicode(pk_val) in self.lookup_val,
                    'query_string': query_string,
@@ -198,16 +203,16 @@ class QuerySetWrapper(object):
         self.data = data
         if self.data:
             self.model = self.data[0].__class__
-        
+
     def _clone(self):
         return QuerySetWrapper(self.data)
-    
+
     def __len__(self):
         return len(self.data)
 
     def count(self):
         return len(self.data)
-    
+
     def __getslice__(self, i, j):
         return self.data[i:j]
 

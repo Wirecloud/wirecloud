@@ -3,10 +3,8 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-
-
-from clms.models import LayoutTemplate, Content
 from clms import widgets
+from clms.models import Content
 
 
 class ContentForm(forms.Form):

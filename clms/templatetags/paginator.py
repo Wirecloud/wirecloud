@@ -4,6 +4,7 @@ from django import template
 
 register = template.Library()
 
+
 def paginator(context, total_pages=10):
     """
     To be used in conjunction with the object_list generic view.
@@ -12,28 +13,28 @@ def paginator(context, total_pages=10):
     last page links in addition to those created by the object_list generic
     view.
     """
-    if (context["page"] <= total_pages/2):
+    if (context["page"] <= total_pages / 2):
         initpage = 1
-    elif (context["page"] > context["pages"]-total_pages/2):
-        initpage=context["pages"]-total_pages+1
+    elif (context["page"] > context["pages"] - total_pages / 2):
+        initpage = context["pages"] - total_pages + 1
     else:
-        initpage = context["page"]-(total_pages/2)+1
+        initpage = context["page"] - (total_pages / 2) + 1
 
     if initpage < 1:
         initpage = 1
 
     if (initpage + total_pages) > context['pages']:
-        page_numbers = range(initpage, context['pages']+1)
+        page_numbers = range(initpage, context['pages'] + 1)
     else:
-        page_numbers = range(initpage, initpage+total_pages)
+        page_numbers = range(initpage, initpage + total_pages)
 
-    first_item = (context["page"]-1) * context["results_per_page"] + 1
-    last_item = (context["page"]-1) * context["results_per_page"] + context["results_per_page"]
+    first_item = (context["page"] - 1) * context["results_per_page"] + 1
+    last_item = (context["page"] - 1) * context["results_per_page"] + context["results_per_page"]
 
     if last_item > context["hits"]:
         last_item = context["hits"]
 
-    if context.get('query_string',None):
+    if context.get('query_string', None):
         query_string = '?' + context['query_string'] + '&'
     else:
         query_string = '?'

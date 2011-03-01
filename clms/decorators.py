@@ -3,6 +3,7 @@
 from urllib import quote
 from django.http import HttpResponseRedirect
 
+
 def is_staff_user(view_func):
     def _decorator(request, *args, **kwargs):
         if not request.user.is_authenticated() or not request.user.is_staff:
