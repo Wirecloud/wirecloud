@@ -33,9 +33,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
 
 class Concept(models.Model):
+
     concept = models.CharField(_('Concept'), max_length=255, primary_key=True)
     SOURCE = (
         ('PLAT', _('Platform')),
@@ -50,12 +50,13 @@ class Concept(models.Model):
     adaptor = models.CharField(_('Adaptor'), max_length=256, null=True)
 
     def __unicode__(self):
-        return unicode(self.concept) + ' ' + unicode(self.adaptor) 
+        return unicode(self.concept) + ' ' + unicode(self.adaptor)
+
 
 class ConceptName(models.Model):
+
     name = models.CharField(_('Name'), max_length=256)
     concept = models.ForeignKey(Concept, verbose_name=_('Concept'))
 
     def __unicode__(self):
         return self.name
-

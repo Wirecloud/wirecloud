@@ -31,6 +31,7 @@
 #
 
 from django.contrib import admin
+
 from context.models import Concept, ConceptName
 
 admin.site.register(Concept)

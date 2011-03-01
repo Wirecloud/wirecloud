@@ -36,7 +36,7 @@ from context.views import ContextCollection, ContextEntry, ContextValueEntry
 urlpatterns = patterns('context.views',
 
     # Context
-    (r'^[/]?$', 
+    (r'^[/]?$',
          ContextCollection(permitted_methods=('GET', 'POST'))),
     (r'^/((?P<concept_name>[-ÑñáéíóúÁÉÍÓÚ\w]+)[/]?)?$',
          ContextEntry(permitted_methods=('GET', 'POST', 'PUT', 'DELETE'))),
