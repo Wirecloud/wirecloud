@@ -7,6 +7,10 @@ from commons.utils import db_table_exists
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ("remoteChannel", "0001_initial"),
+    )
+
     def forwards(self, orm):
 
         if db_table_exists('connectable_filter'):

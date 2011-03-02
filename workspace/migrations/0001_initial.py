@@ -6,6 +6,9 @@ from django.db import models
 
 
 class Migration(SchemaMigration):
+    depends_on = (
+        ("layout", "0001_initial"),
+    )
 
     def forwards(self, orm):
 
