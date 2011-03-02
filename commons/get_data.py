@@ -233,7 +233,7 @@ def get_workspace_data(workspace, user):
         'id': workspace.id,
         'name': workspace.name,
         'shared': workspace.is_shared(),
-        'owned': workspace.get_creator() == user,
+        'owned': workspace.creator == user,
         'active': user_workspace.active
     }
 
@@ -267,7 +267,7 @@ def get_workspace_variable_data(wvariable, user, workspace):
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
 
-        variable_value = clone_original_variable_value(abstract_var, workspace.get_creator(), user)
+        variable_value = clone_original_variable_value(abstract_var, workspace.creator, user)
 
     data_ret['value'] = variable_value.value
 
@@ -487,7 +487,7 @@ def get_variable_data(variable, user, workspace):
     except VariableValue.DoesNotExist:
         from workspace.views import clone_original_variable_value
 
-        data_ret['value'] = clone_original_variable_value(abstract_var, workspace.get_creator(), user).value
+        data_ret['value'] = clone_original_variable_value(abstract_var, workspace.creator, user).value
 
     if var_def.shared_var_def:
         data_ret['shared'] = data_ret['value'].shared_var_value != None

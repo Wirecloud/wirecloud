@@ -44,7 +44,7 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
 
     # Check permissions
     workspace = WorkSpace.objects.get(id=workspaceId)
-    if workspace.get_creator() != user:
+    if workspace.creator != user:
         raise Http403()
 
     ########### Template Parser

@@ -195,7 +195,7 @@ def createWorkSpace(workspaceName, user):
                     new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
                     #duplicate the workspace for the user
                     cloned_workspace = cloneWorkspace(new_workspace.id, user)
-                    linkWorkspace(user, cloned_workspace.id, new_workspace.workspace.get_creator())
+                    linkWorkspace(user, cloned_workspace.id, new_workspace.workspace.creator)
 
                     cloned_workspace.name = workspaceName
                     cloned_workspace.save()
@@ -305,7 +305,7 @@ class WorkSpaceCollection(Resource):
                 except WorkSpace.DoesNotExist:
                     #the user doesn't have this workspace (which is assigned to his organizations)
                     #duplicate the workspace for the user
-                    linkWorkspace(user, ws.id, ws.get_creator())
+                    linkWorkspace(user, ws.id, ws.creator)
 
                     #set that the showcase will have to be reloaded
                     #because this workspace is new for the user
@@ -325,7 +325,7 @@ class WorkSpaceCollection(Resource):
                                 default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
                                 #duplicate the workspace for the user
                                 cloned_workspace = cloneWorkspace(default_workspace.id, user)
-                                linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.get_creator())
+                                linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
                                 setActiveWorkspace(user, cloned_workspace)
                                 data_list['isDefault'] = "true"
                                 break
@@ -702,7 +702,7 @@ class  WorkSpaceSharerEntry(Resource):
             result = {'result': 'error', 'description': msg}
             HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
 
-        owner = workspace.get_creator()
+        owner = workspace.creator
 
         if (owner != user):
             msg = 'You are not the owner of the workspace, so you can not share it!'
@@ -816,7 +816,7 @@ class  WorkSpaceAdderEntry(Resource):
 
         cloned_workspace = cloneWorkspace(workspace_id, user)
 
-        linkWorkspace(user, cloned_workspace.id, original_workspace.get_creator())
+        linkWorkspace(user, cloned_workspace.id, original_workspace.creator)
 
         #Mark the mashup as the active workspace if it's requested. For example, solutions
         if request.GET.get('active') == "true":

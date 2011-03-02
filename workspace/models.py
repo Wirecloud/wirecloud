@@ -41,7 +41,7 @@ from layout.models import Branding
 class WorkSpace(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=True, null=True)
+    creator = models.ForeignKey(User, related_name='creator', verbose_name=_('Creator'), blank=False, null=False)
 
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
@@ -50,19 +50,6 @@ class WorkSpace(models.Model):
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
-
-    def get_creator(self):
-        if self.creator:
-            return self.creator
-
-        #No creator specified (previous version of the model didn't have this field)
-        #First element in the user relationship returned!
-        creator = self.users.all()[0]
-
-        self.creator = creator
-        self.save()
-
-        return self.creator
 
     def is_shared(self):
         return len(self.users.all()) > 1

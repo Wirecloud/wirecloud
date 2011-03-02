@@ -308,7 +308,7 @@ def deleteIGadget(igadget, user):
 
     if not user.is_superuser:
         workspace = igadget.tab.workspace
-        if workspace.get_creator() != user:
+        if workspace.creator != user:
             raise Http403
 
     # Delete all IGadget's variables
@@ -454,7 +454,7 @@ class IGadgetVersion(Resource):
         user = get_user_authentication(request)
 
         workspace = WorkSpace.objects.get(id=workspace_id)
-        if workspace.get_creator() != user:
+        if workspace.creator != user:
             raise Http403()
 
         content_type = request.META.get('CONTENT_TYPE', '')
