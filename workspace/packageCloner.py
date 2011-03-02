@@ -44,25 +44,23 @@ class FKCollection:
         table_name = cloned_tuple._meta.object_name
         pending_fks = self.get_fks(table_name, old_pk)
 
-        for (linker_table, linker_field, linker_tuple_id) in pending_fks:
-            model = eval(linker_table)
+        for (linker_app, linker_table, linker_field, linker_tuple_id) in pending_fks:
+            model = get_model(linker_app, linker_table)
 
             linker_tuple = model.objects.get(id=linker_tuple_id)
 
-            stm = "linker_tuple.%s=cloned_tuple" % (linker_field)
-
-            exec(stm)
+            setattr(linker_tuple, linker_field, cloned_tuple)
 
             linker_tuple.save()
 
-    def add_fk(self, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
+    def add_fk(self, linker_app, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple):
         if not (referenced_table, referenced_tuple) in self.table_tuple:
             self.table_tuple[(referenced_table, referenced_tuple)] = []
 
         fks = self.table_tuple[(referenced_table, referenced_tuple)]
 
         if not (linker_table, linker_field, linker_tuple_id) in fks:
-            fks.append((linker_table, linker_field, linker_tuple_id))
+            fks.append((linker_app, linker_table, linker_field, linker_tuple_id))
 
 
 class Many2ManyCollection:
@@ -130,11 +128,9 @@ class Many2ManyCollection:
             from_tuple = from_model.objects.get(id=m2m_info['new_from_id'])
 
             to_model = eval(m2m_info['to_table'])
-            to_model.objects.get(id=m2m_info['new_to_id'])
+            to_tuple = to_model.objects.get(id=m2m_info['new_to_id'])
 
-            stm = "from_tuple.%s.add(to_tuple)" % (m2m_info['from_field'])
-
-            exec(stm)
+            getattr(from_tuple, m2m_info['from_field']).add(to_tuple)
 
             from_tuple.save()
 
@@ -202,7 +198,7 @@ class PackageCloner:
             return get_tuple(meta.app_label, meta.module_name, new_id)
         else:
 
-            model = eval(table_name)
+            model = get_model(meta.app_label, table_name)
 
             cloned_tuple = model()
 
@@ -211,9 +207,7 @@ class PackageCloner:
             #Cloning all object data!
             for field in fields:
                 if (field != meta.auto_field):
-                    stm = "%s.%s = %s.%s" % ('cloned_tuple', field.name, 'tuple', field.name)
-
-                    exec(stm)
+                    setattr(cloned_tuple, field.name, getattr(tuple, field.name))
 
             #Getting an id!
             cloned_tuple.save()
@@ -231,11 +225,12 @@ class PackageCloner:
                     if fkValue:
                         referenced_tuple = fkValue.id
 
+                        linker_app = meta.app_label
                         linker_table = table_name
                         linker_field = field.name
                         linker_tuple_id = cloned_tuple.id
 
-                        self.fks.add_fk(linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+                        self.fks.add_fk(linker_app, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
 
             ##########################################################################################################
             #Marking many_to_many relationships to be updated when involved tuples are both cloned!
@@ -263,8 +258,7 @@ class PackageCloner:
                 from_field = m2m_field.field.name
                 from_table_name = m2m_field.model._meta.object_name
 
-                stm = "m2m_objects = tuple.%s.all()" % (reverse_rel_name)
-                exec(stm)
+                m2m_objects = getattr(tuple, reverse_rel_name).all()
 
                 for m2m_object in m2m_objects:
                     old_from_id = m2m_object.id
@@ -283,11 +277,9 @@ class PackageCloner:
 
                     #check if the foreign key is empty
                     if related_tuple:
-                        self.clone_tuple(related_tuple)
+                        cloned_related_tuple = self.clone_tuple(related_tuple)
+                        setattr(cloned_tuple, field.name, cloned_related_tuple)
 
-                        stm = "%s.%s = cloned_related_tuple" % ('cloned_tuple', field.name)
-
-                        exec(stm)
                     continue
 
             #Saving already cloned fks!
