@@ -30,14 +30,16 @@
 
 #
 import re
-from commons.authentication import Http403
-from gadget.templateParser import TemplateParser
-from gadget.models import Gadget
-from workspace.models import WorkSpace, UserWorkSpace
-from gadget.htmlHeadParser import HTMLHeadParser
-from django.utils.http import urlquote
 from lxml import etree
 from StringIO import StringIO
+
+from django.utils.http import urlquote
+
+from commons.authentication import Http403
+from gadget.htmlHeadParser import HTMLHeadParser
+from gadget.models import Gadget
+from gadget.templateParser import TemplateParser
+from workspace.models import WorkSpace, UserWorkSpace
 
 
 def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False):

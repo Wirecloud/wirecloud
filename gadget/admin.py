@@ -31,13 +31,14 @@
 #
 
 from django.contrib import admin
-from gadget.models import *
 
-admin.site.register(Gadget)
-admin.site.register(XHTML)
-admin.site.register(VariableDef)
-admin.site.register(UserPrefOption)
-admin.site.register(VariableDefAttr)
-admin.site.register(ContextOption)
-admin.site.register(Capability)
-admin.site.register(SharedVariableDef)
+from gadget import models
+
+admin.site.register(models.Gadget)
+admin.site.register(models.XHTML)
+admin.site.register(models.VariableDef)
+admin.site.register(models.UserPrefOption)
+admin.site.register(models.VariableDefAttr)
+admin.site.register(models.ContextOption)
+admin.site.register(models.Capability)
+admin.site.register(models.SharedVariableDef)

@@ -1,8 +1,7 @@
-from optparse import make_option
 import urllib
 
 from django.contrib.auth.models import User
-from django.core.management.base import LabelCommand, CommandError
+from django.core.management.base import LabelCommand
 
 
 class DummyRequest(object):

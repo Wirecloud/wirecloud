@@ -30,32 +30,25 @@
 
 #
 
-from django.db import IntegrityError
+from HTMLParser import HTMLParseError
 
-from django.shortcuts import get_object_or_404, get_list_or_404
-from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
-from commons.resource import Resource
-
-from commons.authentication import get_user_authentication, user_authentication
-from commons.get_data import get_gadget_data
-
-from django.db import transaction
-
+from django.db import transaction, IntegrityError
+from django.http import HttpResponse, HttpResponseServerError
+from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
+from commons.authentication import user_authentication, Http403
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
-from commons.http_utils import *
+from commons.get_data import get_gadget_data
+from commons.http_utils import get_absolute_url, download_http_content
+from commons.logs_exception import TracedServerError
+from commons.resource import Resource
 
 from gadget.models import Gadget, XHTML
+from gadget.utils import get_or_create_gadget, includeTagBase, fix_ezweb_scripts
 from igadget.models import IGadget
 from igadget.views import deleteIGadget
-
-from commons.logs_exception import TracedServerError
-
-from gadget.utils import *
-
-from HTMLParser import HTMLParseError
 
 
 def parseAndCreateGadget(request, user, workspaceId):

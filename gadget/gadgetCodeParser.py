@@ -30,17 +30,17 @@
 
 #
 
+from urllib import url2pathname
+from os import path
+
 from django.conf import settings
 from django.utils.http import urlquote
 
-from commons.http_utils import download_http_content
-from commons.exceptions import TemplateParseException
-
 from django.utils.translation import ugettext as _
 
+from commons.http_utils import download_http_content
+from commons.exceptions import TemplateParseException
 from gadget.models import XHTML
-from urllib import url2pathname
-from os import path
 
 
 class GadgetCodeParser:

@@ -30,25 +30,21 @@
 
 #
 
-from os import path, environ
+from os import path
+from urllib import url2pathname
+from urllib2 import urlparse
 from xml.sax import parseString, handler
 
 from django.conf import settings
 from django.db import transaction
-from django.template import Context, Template
 from django.utils.translation import ugettext as _
 
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
-
-from gadgetCodeParser import GadgetCodeParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, XHTML, Capability, SharedVariableDef
-
 from commons.translation_utils import get_trans_index
+from gadgetCodeParser import GadgetCodeParser
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability, SharedVariableDef
 from translator.models import Translation
-
-from urllib import url2pathname
-from urllib2 import urlparse
 
 
 class TemplateParser:
@@ -561,59 +557,37 @@ class TemplateHandler(handler.ContentHandler):
         if name in ('Name', 'Version', 'Vendor', 'ImageURI', 'iPhoneImageURI',
                     'WikiURI', 'Mail', 'Description', 'Author', 'DisplayName', 'MenuColor'):
             self.reset_Accumulator()
-            return
 
         # Plataform
-        if (name == 'Preference'):
+        elif name == 'Preference':
             self.processPreference(attrs)
-            return
-
-        if (name == 'Property'):
+        elif name == 'Property':
             self.processProperty(attrs)
-            return
-
-        if (name == 'Slot'):
+        elif name == 'Slot':
             self.processSlot(attrs)
-            return
-
-        if (name == 'Event'):
+        elif name == 'Event':
             self.processEvent(attrs)
-            return
-
-        if (name == 'Capability'):
+        elif name == 'Capability':
             self.processCapability(attrs)
-            return
-
-        if (name == 'GadgetContext'):
+        elif name == 'GadgetContext':
             self.processGadgetContext(attrs)
-            return
-
-        if (name == 'Context'):
+        elif name == 'Context':
             self.processExternalContext(attrs)
-            return
-
-        if (name == 'XHTML'):
+        if name == 'XHTML':
             self.processXHTML(attrs)
-            return
-
-        if (name == 'Option'):
+        if name == 'Option':
             self.processOption(attrs)
-            return
-
-        if (name == 'Platform.Rendering'):
+        elif name == 'Platform.Rendering':
             self.processRendering(attrs)
-            return
+
         #Translation elements
-        if (name == 'Translations'):
+        elif name == 'Translations':
             self.processTranslations(attrs)
-            return
-        if (name == 'Translation'):
+        elif name == 'Translation':
             self.processTranslation(attrs)
-            return
-        if (name == 'msg'):
+        elif name == 'msg':
             self.reset_Accumulator()
             self.processMsg(attrs)
-            return
 
     def endElement(self, name):
         #add index to the translation list
@@ -621,61 +595,49 @@ class TemplateHandler(handler.ContentHandler):
         if index:
             self.addTranslation(index, self._gadget)
 
-        if (name == 'Catalog.ResourceDescription'):
-
+        if name == 'Catalog.ResourceDescription':
             self._gadgetURI = "/gadgets/" + self._gadgetVendor + "/" + self._gadgetName + "/" + self._gadgetVersion
 
-            return
-
-        if (name == 'Name'):
+        elif name == 'Name':
             if index:
                 raise TemplateParseException(_("ERROR: The element Name cannot be translated"))
             self._gadgetName = self._accumulator
-            return
 
-        if (name == 'Version'):
+        elif name == 'Version':
             if index:
                 raise TemplateParseException(_("ERROR: The element Version cannot be translated"))
             self._gadgetVersion = self._accumulator
-            return
 
-        if (name == 'Vendor'):
+        elif name == 'Vendor':
             if index:
                 raise TemplateParseException(_("ERROR: The element Vendor cannot be translated"))
             self._gadgetVendor = self._accumulator
-            return
-        if (name == 'DisplayName'):
+
+        elif name == 'DisplayName':
             self._gadgetDisplayName = self._accumulator
-            return
 
-        if (name == 'Author'):
+        elif name == 'Author':
             self._gadgetAuthor = self._accumulator
-            return
 
-        if (name == 'ImageURI'):
+        elif name == 'ImageURI':
             self._gadgetImage = self._accumulator
-            return
 
-        if (name == 'iPhoneImageURI'):
+        elif name == 'iPhoneImageURI':
             self._gadgetIPhoneImage = self._accumulator
-            return
 
-        if (name == 'WikiURI'):
+        elif name == 'WikiURI':
             self._gadgetWiki = self._accumulator
-            return
 
-        if (name == 'Mail'):
+        elif (name == 'Mail'):
             self._gadgetMail = self._accumulator
 
-        if (name == 'Description'):
+        elif (name == 'Description'):
             self._gadgetDesc = self._accumulator
-            return
 
-        if (name == 'MenuColor'):
+        elif name == 'MenuColor':
             self._gadgetMenuColor = self._accumulator
-            return
 
-        if (name == "Translation"):
+        elif name == "Translation":
             if self.current_lang == self.default_lang:
                 self.missing_translations = []
 
@@ -691,7 +653,7 @@ class TemplateHandler(handler.ContentHandler):
                 if len(self.translated_list) > 0:
                     raise TemplateParseException(_("ERROR: the following translation indexes are not used: " + str(self.translated_list)))
 
-        if (name == "msg"):
+        elif name == "msg":
             if not self.current_text in self.translatable_list:
                 #message not used in the platform
                 return
@@ -769,8 +731,7 @@ class TemplateHandler(handler.ContentHandler):
             emptyRequiredFields.append("xhtml")
 
         if len(emptyRequiredFields) > 0:
-            print emptyRequiredFields
-            raise TemplateParseException(_("Missing required field(s): %(fields)s") % {fields: unicode(emptyRequiredFields)})
+            raise TemplateParseException(_("Missing required field(s): %(fields)s") % {'fields': unicode(emptyRequiredFields)})
 
         # Check the default translation
         if len(self.lang_list) > 0 and not self.default_lang in self.lang_list:
