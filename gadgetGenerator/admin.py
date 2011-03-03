@@ -31,7 +31,8 @@
 #
 
 from django.contrib import admin
-from gadgetGenerator.models import *
+from gadgetGenerator.models import Template, TemplateInstance
+
 
 admin.site.register(Template)
 admin.site.register(TemplateInstance)

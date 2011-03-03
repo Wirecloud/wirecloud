@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -30,7 +30,7 @@
 
 #
 from django.conf.urls.defaults import patterns
-from gadgetGenerator.views import *
+from gadgetGenerator.views import templateGenerator, xhtmlGenerator
 
 urlpatterns = patterns('gadgetGenerator.views',
 
