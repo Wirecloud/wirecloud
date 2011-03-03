@@ -41,7 +41,7 @@ from commons.authentication import user_authentication, Http403
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
-from commons.http_utils import get_absolute_url, download_http_content
+from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
@@ -224,7 +224,7 @@ class GadgetCodeEntry(Resource):
                     xhtml.code = get_xhtml_content(url)
                 else:
                     #Gadget with relative url and it's not a GWT package
-                    url = get_absolute_url(request, url)
+                    url = gadget.get_resource_url(url, request)
                     xhtml.code = download_http_content(url, user=user)
 
             xhtml.save()
