@@ -30,30 +30,25 @@
 
 #
 
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
-
-from django.utils.translation import ugettext as _
-from django.utils import simplejson
-
-from commons.resource import Resource
-
 from django.db import transaction
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.utils import simplejson
+from django.utils.translation import ugettext as _
+from django.shortcuts import get_object_or_404
 
+from connectable.models import In, Out
 from commons.authentication import get_user_authentication, Http403
 from commons.get_data import get_igadget_data, get_variable_data
-from commons.logs import log
-from commons.utils import get_xml_error, json_encode
 from commons.http_utils import PUT_parameter
-
-from gadget.models import Gadget, VariableDef
-from workspace.models import Tab, WorkSpace, VariableValue, AbstractVariable, SharedVariableValue
-from connectable.models import In, Out
-from igadget.models import Position, IGadget, Variable
-
-from gadget.utils import get_or_create_gadget, get_and_add_gadget
-
 from commons.logs_exception import TracedServerError
+from commons.resource import Resource
+from commons.utils import get_xml_error, json_encode
+from gadget.models import Gadget, VariableDef
+from gadget.utils import get_or_create_gadget, get_and_add_gadget
+from igadget.models import Position, IGadget, Variable
+from workspace.models import Tab, UserWorkSpace, WorkSpace, VariableValue
+from workspace.models import  AbstractVariable, SharedVariableValue
+
 
 def createConnectable(var):
     #If var is and SLOT or and EVENT, a proper connectable object must be created!
@@ -79,10 +74,11 @@ def createConnectable(var):
 
     return connectableId
 
+
 def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     # Sets the default value of variable
     if initial_value:
-        var_value = initial_value 
+        var_value = initial_value
     elif varDef.default_value:
         var_value = varDef.default_value
     else:
@@ -95,7 +91,7 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     #check if there is a shared value or set a new one
     shared_value = None
     if varDef.shared_var_def:
-        shared_value,created= SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
+        shared_value, created = SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
         if created:
             #init the value to share
             shared_value.value = var_value
@@ -103,18 +99,17 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
         else:
             #this VariableValue will take the previously shared value
             var_value = shared_value.value
-        
 
     # Creating Value for Abstract Variable
-    variableValue =  VariableValue (user=user, value=var_value,
-                                    abstract_variable=abstractVar, shared_var_value= shared_value)
+    variableValue = VariableValue(user=user, value=var_value,
+                                  abstract_variable=abstractVar, shared_var_value=shared_value)
     variableValue.save()
 
     var = Variable(vardef=varDef, igadget=igadget, abstract_variable=abstractVar)
     var.save()
 
     #Wiring related vars (SLOT&EVENTS) have implicit connectables!
-    connectableId = createConnectable(var)
+    createConnectable(var)
 
 
 def SaveIGadget(igadget, user, tab, request):
@@ -149,11 +144,11 @@ def SaveIGadget(igadget, user, tab, request):
 
         new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
         new_igadget.save()
-        
+
         initial_variable_values = None
-        if request.POST.has_key('variable_values'):
+        if 'variable_values' in request.POST:
             initial_variable_values = simplejson.loads(request.POST['variable_values'])
-            
+
         variableDefs = VariableDef.objects.filter(gadget=gadget)
         for varDef in variableDefs:
             try:
@@ -161,7 +156,7 @@ def SaveIGadget(igadget, user, tab, request):
             except:
                 initial_value = None
             addIGadgetVariable(new_igadget, user, varDef, initial_value)
-        
+
         transaction.commit()
 
         ids = get_igadget_data(new_igadget, user, tab.workspace)
@@ -177,6 +172,7 @@ def SaveIGadget(igadget, user, tab, request):
         #iGadget has no variables. It's normal
         pass
 
+
 def UpdateIGadget(igadget, user, tab):
 
     igadget_pk = igadget.get('id')
@@ -184,12 +180,12 @@ def UpdateIGadget(igadget, user, tab):
     # Checks
     ig = get_object_or_404(IGadget, tab=tab, pk=igadget_pk)
 
-    if igadget.has_key('name'):
-        name = igadget.get('name')
+    if 'name' in igadget:
+        name = igadget['name']
         ig.name = name
 
-    if igadget.has_key('tab'):
-        newtab_id = igadget.get('tab');
+    if 'tab' in igadget:
+        newtab_id = igadget['tab']
         if newtab_id < 0:
             raise Exception(_('Malformed iGadget JSON'))
 
@@ -197,29 +193,29 @@ def UpdateIGadget(igadget, user, tab):
             newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
             ig.tab = newtab
 
-    if igadget.has_key('menu_color'):
-        menu_color = igadget.get('menu_color')
+    if 'menu_color' in igadget:
+        menu_color = igadget['menu_color']
         ig.menu_color = menu_color
 
-    if igadget.has_key('layout'):
-        layout = igadget.get('layout')
+    if 'layout' in igadget:
+        layout = igadget['layout']
         ig.layout = layout
 
-    if igadget.has_key('transparency'):
-        ig.transparency = igadget.get('transparency')
+    if 'transparency' in igadget:
+        ig.transparency = igadget['transparency']
 
-    if igadget.has_key("icon_top") and igadget.has_key("icon_left"):
+    if 'icon_top' in igadget and 'icon_left' in igadget:
         icon_position = ig.icon_position
         if icon_position:
-            icon_position.posX = igadget.get("icon_left")
-            icon_position.posY = igadget.get("icon_top")
-        else: #backward compatibility (old gadgets without icon position)
-            icon_position = Position(posX=igadget.get("icon_left"), posY=igadget.get("icon_top"))
+            icon_position.posX = igadget["icon_left"]
+            icon_position.posY = igadget["icon_top"]
+        else:  # backward compatibility (old gadgets without icon position)
+            icon_position = Position(posX=igadget["icon_left"], posY=igadget["icon_top"])
         icon_position.save()
         ig.icon_position = icon_position
 
-    if igadget.has_key('refused_version'):
-        refused_version = igadget.get('refused_version')
+    if 'refused_version' in igadget:
+        refused_version = igadget['refused_version']
         ig.refused_version = refused_version
 
     ig.save()
@@ -228,44 +224,44 @@ def UpdateIGadget(igadget, user, tab):
     position = ig.position
 
     # update the requested attributes
-    if igadget.has_key('width'):
-        width = igadget.get('width')
+    if 'width' in igadget:
+        width = igadget['width']
         if width <= 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.width = width
 
-    if igadget.has_key('height'):
-        height = igadget.get('height')
+    if 'height' in igadget:
+        height = igadget['height']
         if height <= 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.height = height
 
-    if igadget.has_key('top'):
-        top = igadget.get('top')
+    if 'top' in igadget:
+        top = igadget['top']
         if top < 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.posY = top
 
-    if igadget.has_key('left'):
-        left = igadget.get('left')
+    if 'left' in igadget:
+        left = igadget['left']
         if left < 0:
             raise Exception(_('Malformed iGadget JSON'))
         position.posX = left
 
-    if igadget.has_key('zIndex'):
-        zIndex = igadget.get('zIndex')
+    if 'zIndex' in igadget:
+        zIndex = igadget['zIndex']
         if not isinstance(zIndex, int):
             raise Exception(_('Malformed iGadget JSON'))
         position.posZ = zIndex
 
-    if igadget.has_key('minimized'):
-        minimized = igadget.get('minimized')
+    if 'minimized' in igadget:
+        minimized = igadget['minimized']
         if not isinstance(minimized, bool) and not isinstance(minimized, int):
             raise Exception(_('Malformed iGadget JSON'))
         position.minimized = minimized
 
-    if igadget.has_key('fulldragboard'):
-        fulldragboard = igadget.get('fulldragboard')
+    if 'fulldragboard' in igadget:
+        fulldragboard = igadget['fulldragboard']
         if not isinstance(fulldragboard, bool) and not isinstance(fulldragboard, int):
             raise Exception(_('Malformed iGadget JSON'))
         position.fulldragboard = fulldragboard
@@ -273,12 +269,13 @@ def UpdateIGadget(igadget, user, tab):
     # save the changes
     position.save()
 
+
 def UpgradeIGadget(igadget, user, new_gadget):
     currentGadget = igadget.gadget
 
     # get the workspace in which the igadget is being added in order to
     # check if it is shared
-    workspaceId = igadget.tab.workspace.id
+    # workspaceId = igadget.tab.workspace.id
 
     #check equivalency and add the variables needed
     newVariableDefs = VariableDef.objects.filter(gadget=new_gadget)
@@ -303,6 +300,7 @@ def UpgradeIGadget(igadget, user, new_gadget):
 
     igadget.gadget = new_gadget
     igadget.save()
+
 
 def deleteIGadget(igadget, user):
 
@@ -333,7 +331,9 @@ def deleteIGadget(igadget, user):
     icon_position.delete()
     igadget.delete()
 
+
 class IGadgetCollection(Resource):
+
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -349,13 +349,13 @@ class IGadgetCollection(Resource):
     def create(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
-        if not request.POST.has_key('igadget'):
+        if 'igadget' not in request.POST:
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
             received_json = request.POST['igadget']
             igadget = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
             ids = SaveIGadget(igadget, user, tab, request)
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
@@ -369,7 +369,6 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
-
     @transaction.commit_manually
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
@@ -380,7 +379,7 @@ class IGadgetCollection(Resource):
             return HttpResponseBadRequest(get_xml_error(_("iGadget JSON expected")), mimetype='application/xml; charset=UTF-8')
 
         try:
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
             received_data = simplejson.loads(received_json)
             igadgets = received_data.get('iGadgets')
             for igadget in igadgets:
@@ -399,7 +398,9 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
+
 class IGadgetEntry(Resource):
+
     def read(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -421,7 +422,7 @@ class IGadgetEntry(Resource):
 
         try:
             igadget = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
             UpdateIGadget(igadget, user, tab)
 
             return HttpResponse('ok')
@@ -435,7 +436,6 @@ class IGadgetEntry(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
-
     @transaction.commit_on_success
     def delete(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
@@ -446,6 +446,7 @@ class IGadgetEntry(Resource):
         deleteIGadget(igadget, user)
 
         return HttpResponse('ok')
+
 
 class IGadgetVersion(Resource):
 
@@ -502,11 +503,13 @@ class IGadgetVersion(Resource):
 
         return
 
+
 class IGadgetVariableCollection(Resource):
+
     def read(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
-        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
         variables = Variable.objects.filter(igadget__tab=tab, igadget__id=igadget_id)
         vars_data = [get_variable_data(variable) for variable in variables]
 
@@ -525,7 +528,7 @@ class IGadgetVariableCollection(Resource):
         try:
             received_variables = simplejson.loads(received_json)
 
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
             server_variables = Variable.objects.filter(igadget__tab=tab)
 
             # Gadget variables collection update
@@ -548,7 +551,9 @@ class IGadgetVariableCollection(Resource):
 
         return HttpResponse("<ok>", mimetype='text/xml; charset=UTF-8')
 
+
 class IGadgetVariable(Resource):
+
     def read(self, request, workspace_id, tab_id, igadget_id, var_id):
         user = get_user_authentication(request)
 
@@ -572,7 +577,7 @@ class IGadgetVariable(Resource):
 
         new_value = received_json
 
-        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id) 
+        tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
         variable = get_object_or_404(Variable, igadget__tab=tab, igadget__pk=igadget_id, vardef__pk=var_id)
         try:
             variable.value = new_value

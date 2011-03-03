@@ -31,11 +31,11 @@
 #
 
 from django.db import models
-
 from django.utils.translation import ugettext as  _
 
 from gadget.models import Gadget, VariableDef
 from workspace.models import Tab, AbstractVariable
+
 
 class Position(models.Model):
 
@@ -49,6 +49,7 @@ class Position(models.Model):
 
     def __unicode__(self):
         return str(self.pk)
+
 
 class IGadget(models.Model):
 
@@ -66,6 +67,7 @@ class IGadget(models.Model):
     def __unicode__(self):
         return str(self.pk)
 
+
 class Variable(models.Model):
 
     vardef = models.ForeignKey(VariableDef, verbose_name=_('Variable definition'))
@@ -75,8 +77,8 @@ class Variable(models.Model):
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name
 
-    def has_public_value(self):   
+    def has_public_value(self):
         return self.vardef.has_public_value()
-   
+
     def get_default_value(self):
         return self.vardef.default_value
