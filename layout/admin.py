@@ -31,8 +31,9 @@
 #
 
 from django.contrib import admin
-from layout.models import *
-
+from layout.models import Layout, Theme, SkinTemplate, Skin
+from layout.models import Branding, ThemeBranding
+from layout.models import BrandingOrganization, SkinOrganization
 
 admin.site.register(Layout)
 admin.site.register(Theme)

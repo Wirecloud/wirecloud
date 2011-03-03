@@ -37,10 +37,9 @@ urlpatterns = patterns('layout.views',
     (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)/preview[/]?$',
         SkinPreviewer(permitted_methods=('POST',))),
     (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)/(?P<skin_name>[\s\-\.\w]+)[/]?$',
-        SkinGenerator(permitted_methods=('GET','POST',))),
+        SkinGenerator(permitted_methods=('GET', 'POST',))),
     (r'^/skin/type/(?P<skin_type>[\s\-\.\w]+)[/]?$',
-        SkinGenerator(permitted_methods=('GET','POST',))),
+        SkinGenerator(permitted_methods=('GET', 'POST',))),
     (r'^/skin/(?P<skin_name>[\s\-\.\w]+)[/]?$',
-        SkinEntry(permitted_methods=('GET',))),               
-        
+        SkinEntry(permitted_methods=('GET',))),
 )
