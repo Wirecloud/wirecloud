@@ -31,30 +31,31 @@
 #
 
 import time
+from urllib import quote, unquote
 
 from django.conf import settings
 from django.utils.cache import patch_vary_headers
 from django.utils.http import cookie_date
-from urllib import quote, unquote
+
 
 class SessionMiddleware(object):
-    
+
     def process_request(self, request):
         engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
         user_info = request.COOKIES.get(settings.SESSION_COOKIE_NAME, None)
-        
+
         session_key = None
         request.anonymous_id = None
-        
+
         if user_info:
             try:
-            	user_info = unquote(user_info)
+                user_info = unquote(user_info)
                 user_info = eval(user_info)
                 request.anonymous_id = user_info['anonymous_id']
                 session_key = user_info['session_id']
             except Exception:
                 pass
-        
+
         request.session = engine.SessionStore(session_key)
 
     def process_response(self, request, response):
@@ -64,7 +65,6 @@ class SessionMiddleware(object):
         """
         try:
             accessed = request.session.accessed
-            modified = request.session.modified
         except AttributeError:
             pass
         else:
@@ -80,16 +80,16 @@ class SessionMiddleware(object):
                     expires = cookie_date(expires_time)
                 # Save the session data and refresh the client cookie.
                 request.session.save()
-                
+
                 #saving the user id in the cookie
                 #user_info = "{'session_id':" + request.session.session_key +"/"+"anonymous_id:" + request.anonymous_id
                 user_info = unicode({'session_id': request.session.session_key, 'anonymous_id': request.anonymous_id})
-                
+
                 user_info = quote(user_info)
-                
+
                 response.set_cookie(settings.SESSION_COOKIE_NAME,
                         user_info, max_age=max_age,
                         expires=expires, domain=settings.SESSION_COOKIE_DOMAIN,
                         path=settings.SESSION_COOKIE_PATH,
                         secure=settings.SESSION_COOKIE_SECURE or None)
-        return response   
+        return response

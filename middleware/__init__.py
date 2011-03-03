@@ -31,7 +31,7 @@
 #
 import time
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, load_backend
 
 SESSION_KEY = '_auth_user_id'
@@ -44,20 +44,22 @@ ANONYMOUS_SESSION_COOKIE = 'anonymousid'
 PUBLIC_PWD = 'public'
 PUBLIC_NAME = 'public'
 
+
 def generate_anonymous_user(request):
     user_name = ANONYMOUS_NAME + unicode(time.time())
-    user_name = user_name.replace(".","1")
+    user_name = user_name.replace(".", "1")
     user = User(username=user_name)
     user.set_password(ANONYMOUS_PWD)
     user.save()
     #user.groups.add(Group.objects.get(name=ANONYMOUS_GROUP))
     request.anonymous_id = user.username
-    
+
     return user
+
 
 def get_anonymous_user(request):
     anonymous_id = request.anonymous_id
-    
+
     if anonymous_id:
         try:
             user = User.objects.get(username=anonymous_id)
@@ -67,10 +69,10 @@ def get_anonymous_user(request):
         #import pydevd
         #pydevd.settrace()
         user = generate_anonymous_user(request)
-    
-    user = authenticate(username=user.username, password=ANONYMOUS_PWD,isAnonymous=request.anonymous_id)
+
+    user = authenticate(username=user.username, password=ANONYMOUS_PWD, isAnonymous=request.anonymous_id)
     login(request, user)
-    
+
     return user
 
 
@@ -80,7 +82,7 @@ def get_user(request):
         backend_path = request.session[BACKEND_SESSION_KEY]
         backend = load_backend(backend_path)
         user = backend.get_user(user_id) or get_anonymous_user(request)
-    except KeyError, e:
+    except KeyError:
         user = get_anonymous_user(request)
 
     return user
