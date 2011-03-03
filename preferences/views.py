@@ -1,54 +1,55 @@
 # -*- coding: utf-8 -*-
 
-# MORFEO Project 
-# http://morfeo-project.org 
-# 
+# MORFEO Project
+# http://morfeo-project.org
+#
 # Component: EzWeb
-# 
-# (C) Copyright 2008 Telef�nica Investigaci�n y Desarrollo 
-#     S.A.Unipersonal (Telef�nica I+D) 
-# 
-# Info about members and contributors of the MORFEO project 
-# is available at: 
-# 
+#
+# (C) Copyright 2008 Telefónica Investigación y Desarrollo
+#     S.A.Unipersonal (Telefónica I+D)
+#
+# Info about members and contributors of the MORFEO project
+# is available at:
+#
 #   http://morfeo-project.org/
-# 
-# This program is free software; you can redistribute it and/or modify 
-# it under the terms of the GNU General Public License as published by 
-# the Free Software Foundation; either version 2 of the License, or 
-# (at your option) any later version. 
-# 
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
-# GNU General Public License for more details. 
-# 
-# You should have received a copy of the GNU General Public License 
-# along with this program; if not, write to the Free Software 
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA. 
-# 
-# If you want to use this software an plan to distribute a 
-# proprietary application in any way, and you are not licensing and 
-# distributing your source code under GPL, you probably need to 
-# purchase a commercial license of the product.  More info about 
-# licensing options is available at: 
-# 
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# If you want to use this software an plan to distribute a
+# proprietary application in any way, and you are not licensing and
+# distributing your source code under GPL, you probably need to
+# purchase a commercial license of the product.  More info about
+# licensing options is available at:
+#
 #   http://morfeo-project.org/
 #
 
 # @author jmostazo-upm
 
-from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.db import transaction
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
-from commons.resource import Resource
+
 from commons.authentication import get_user_authentication
-from commons.utils import get_xml_error, json_encode
-from commons.logs_exception import TracedServerError
-from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
 from commons.http_utils import PUT_parameter
+from commons.logs_exception import TracedServerError
+from commons.resource import Resource
+from commons.utils import get_xml_error, json_encode
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
 from workspace.models import WorkSpace, Tab
 
 
@@ -78,6 +79,7 @@ def parseValues(values):
 
     return _values
 
+
 def parseInheritableValues(values):
     _values = {}
 
@@ -86,8 +88,10 @@ def parseInheritableValues(values):
 
     return _values
 
+
 def get_tab_preference_values(tab):
     return parseInheritableValues(TabPreference.objects.filter(tab=tab.pk))
+
 
 def update_tab_preferences(tab, preferences_json):
     _currentPreferences = TabPreference.objects.filter(tab=tab)
@@ -103,16 +107,18 @@ def update_tab_preferences(tab, preferences_json):
         else:
             preference = TabPreference(tab=tab, name=name)
 
-        if preference_data.has_key('value'):
+        if 'value' in preference_data:
             preference.value = unicode(preference_data['value'])
 
-        if preference_data.has_key('inherit'):
+        if 'inherit' in preference_data:
             preference.inherit = preference_data['inherit']
 
         preference.save()
 
+
 def get_workspace_preference_values(workspace_id):
     return parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+
 
 def update_workspace_preferences(workspace, preferences_json):
     _currentPreferences = WorkSpacePreference.objects.filter(workspace=workspace)
@@ -128,17 +134,17 @@ def update_workspace_preferences(workspace, preferences_json):
         else:
             preference = WorkSpacePreference(workspace=workspace, name=name)
 
-        if preference_data.has_key('value'):
+        if 'value' in preference_data:
             preference.value = unicode(preference_data['value'])
 
-        if preference_data.has_key('inherit'):
+        if 'inherit' in preference_data:
             preference.inherit = preference_data['inherit']
 
         preference.save()
 
 
-
 class PlatformPreferencesCollection(Resource):
+
     def read(self, request, user_name):
         user = get_user_authentication(request)
 
@@ -164,14 +170,16 @@ class PlatformPreferencesCollection(Resource):
 
             raise TracedServerError(e, {}, request, msg)
 
+
 class WorkSpacePreferencesCollection(Resource):
+
     def read(self, request, user_name, workspace_id):
         user = get_user_authentication(request)
 
         # Check WorkSpace existance and owned by this user
-        get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
+        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
 
-        result = get_tab_preference_values(tab_id)
+        result = get_workspace_preference_values(workspace.id)
 
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
@@ -197,7 +205,9 @@ class WorkSpacePreferencesCollection(Resource):
 
             raise TracedServerError(e, {}, request, msg)
 
+
 class TabPreferencesCollection(Resource):
+
     def read(self, request, user_name, workspace_id, tab_id):
         user = get_user_authentication(request)
 
