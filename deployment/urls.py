@@ -26,25 +26,25 @@
 #     http://morfeo-project.org
 #
 #...............................licence...........................................#
+
 from django.conf.urls.defaults import patterns
-from deployment.views import *
-from os import path
-#import settings
+
+from deployment.views import Error, Resources, Static
 
 deployment = "deployment/gadgets"
+
 urlpatterns = patterns('',
+        # Error view
+        (r'^gadgets/error$', Error(permitted_methods=('GET',))),
 
-		# Error view
-		(r'^gadgets/error$', Error(permitted_methods=('GET',))),
+        # Gadgets .wgt
+        (r'^gadgets/(?P<username>[\.\-\w]+)/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[^/\t\n\r\f\v]+)/$', Resources(permitted_methods=('GET',))),
 
-		# Gadgets .wgt
-		(r'^gadgets/(?P<username>[\.\-\w]+)/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[^/\t\n\r\f\v]+)/$', Resources(permitted_methods=('GET',))),
+        # Upload Gadget
+        (r'^gadgets/$', Resources(permitted_methods=('POST', 'UPDATE'))),
 
-		# Upload Gadget
-		(r'^gadgets/$', Resources(permitted_methods=('POST','UPDATE'))),
+        # Static content
+        #(r'^gadgets/(.*)$', 'django.views.static.serve', {'document_root': settings.GADGETS_ROOT}),
+        (r'^gadgets/(?P<path>.+)$', Static(permitted_methods=('GET',))),
 
-		# Static content
-		#(r'^gadgets/(.*)$', 'django.views.static.serve', {'document_root': settings.GADGETS_ROOT}),
-		(r'^gadgets/(?P<path>.+)$', Static(permitted_methods=('GET',))),
-
-	)
+    )
