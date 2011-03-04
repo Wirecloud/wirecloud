@@ -44,7 +44,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from gadget.models import Gadget, VariableDef
-from gadget.utils import get_or_create_gadget, get_and_add_gadget
+from gadget.utils import get_or_create_gadget_from_catalogue, get_and_add_gadget
 from igadget.models import Position, IGadget, Variable
 from workspace.models import Tab, UserWorkSpace, WorkSpace, VariableValue
 from workspace.models import  AbstractVariable, SharedVariableValue
@@ -477,19 +477,15 @@ class IGadgetVersion(Resource):
             # get the iGadget object
             igadget = get_object_or_404(IGadget, pk=igadget_pk)
 
+            new_version = data.get('newVersion')
+            if workspace.is_shared():
+                users = UserWorkSpace.objects.filter(workspace=workspace).values_list('user', flat=True)
+            else:
+                users = [user]
+
             if not 'source' in data or data.get('source') == 'catalogue':
-                url = data.get('newResourceURL')
-
-                result = get_or_create_gadget(url, user, workspace_id, request)
-                gadget = result["gadget"]
-
+                gadget = get_or_create_gadget_from_catalogue(igadget.gadget.vendor, igadget.gadget.name, new_version, user, users, request)
             elif data.get('source') == 'showcase':
-                new_version = data.get('newVersion')
-                if workspace.is_shared():
-                    users = UserWorkSpace.objects.filter(workspace=workspace).values_list('user', flat=True)
-                else:
-                    users = [user]
-
                 gadget = get_and_add_gadget(igadget.gadget.vendor, igadget.gadget.name, new_version, users)
 
             UpgradeIGadget(igadget, user, gadget)

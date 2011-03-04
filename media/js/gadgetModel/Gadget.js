@@ -30,7 +30,7 @@
 //////////////////////////////////////////////
 
 
-function GadgetVersion(version) {
+function GadgetVersion(version, source) {
     if (typeof version == 'string') {
         this.text = version;
         this.array = version.split('.').map(function(x) { return parseInt(x); });
@@ -40,6 +40,7 @@ function GadgetVersion(version) {
     } else {
         throw new TypeError();
     }
+    this.source = source;
 };
 
 GadgetVersion.prototype.compareTo = function(version) {
@@ -155,34 +156,21 @@ function GadgetState(gadget_) {
     //  PRIVATE VARIABLES
     // *******************
 
-    var vendor = null;
-    var name = null;
-    var version = null;
-    var displayName = null;
-    var template = null;
-    var xhtml = null;
-    var image = null;
-    var capabilities = [];
-    var uriwiki = null;
-    var menuColor= null;
-    var icon = null;
-    var upToDate = true;
-    var lastVersion = null;
-
     // JSON-coded Gadget mapping
     // Constructing the structure
-    vendor = gadget_.vendor;
-    name = gadget_.name;
-    version = new GadgetVersion(gadget_.version);
-    displayName = gadget_.displayName
-    template = new GadgetTemplate(gadget_.variables, gadget_.size);
-    xhtml = new XHtml(gadget_.xhtml);
-    image = gadget_.imageURI;
-    icon = gadget_.iPhoneImageURI;
-    capabilities = gadget_.capabilities;
-    uriwiki = gadget_.wikiURI;
-    menuColor = gadget_.menuColor;
-    lastVersion = version;
+    var vendor = gadget_.vendor;
+    var name = gadget_.name;
+    var version = new GadgetVersion(gadget_.version, 'showcase');
+    var displayName = gadget_.displayName
+    var template = new GadgetTemplate(gadget_.variables, gadget_.size);
+    var xhtml = new XHtml(gadget_.xhtml);
+    var image = gadget_.imageURI;
+    var icon = gadget_.iPhoneImageURI;
+    var capabilities = gadget_.capabilities;
+    var uriwiki = gadget_.wikiURI;
+    var menuColor = gadget_.menuColor;
+    var showcaseLastVersion = version;
+    var catalogueLastVersion = null;
 
     // ******************
     //  PUBLIC FUNCTIONS
@@ -206,9 +194,19 @@ function GadgetState(gadget_) {
     this.getIcon = function() { return (icon!="") ? icon :  image;  }
     this.getMenuColor = function () {return menuColor;}
     this.isUpToDate = function() { return upToDate; }
-    this.getLastVersion = function() {return lastVersion;}
+    this.getLastVersion = function() {
+        if (catalogueLastVersion == null || showcaseLastVersion.compareTo(catalogueLastVersion) >= 0) {
+            return showcaseLastVersion;
+        } else {
+            return catalogueLastVersion;
+        }
+    };
     this.setLastVersion = function(v) {
-        upToDate = version.compareTo(v) === 0;
-        lastVersion = v;
-    }
+        if (v.source === 'showcase') {
+            showcaseLastVersion = v;
+        } else {
+            catalogueLastVersion = v;
+        }
+        upToDate = version.compareTo(this.getLastVersion()) === 0;
+    };
 }

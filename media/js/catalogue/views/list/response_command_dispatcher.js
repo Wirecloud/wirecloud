@@ -84,6 +84,7 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 
         if (command_id == 'PAINT_GADGETS') {
             this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
+            ShowcaseFactory.getInstance().setGadgetsState(resp_command.data.resources);
         }
 
         this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);

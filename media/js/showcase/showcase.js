@@ -53,11 +53,11 @@ var ShowcaseFactory = function () {
 
         this.parseGadgets = function (receivedData_) {
             var i, jsonGadgetList, jsonGadget, gadget, gadgetId, gadgetFullId,
-                currentGadgetVersions, sortedGadgets;
+                currentGadgetVersions, sortedGadgets, key;
 
             jsonGadgetList = JSON.parse(receivedData_.responseText);
             this.gadgets = new Hash();
-            gadgetVersions = {};
+            this.gadgetVersions = {};
 
             // Load all gadgets from persitence system
             for (i = 0; i < jsonGadgetList.length; i += 1) {
@@ -67,24 +67,24 @@ var ShowcaseFactory = function () {
                 gadgetId = gadget.getVendor() + '_' + gadget.getName()
                 gadgetFullId = gadgetId + '_' + gadget.getVersion().text;
 
-                if (gadgetVersions[gadgetId] === undefined) {
-                    gadgetVersions[gadgetId] = [];
+                if (this.gadgetVersions[gadgetId] === undefined) {
+                    this.gadgetVersions[gadgetId] = [];
                 }
-                gadgetVersions[gadgetId].push(gadget);
+                this.gadgetVersions[gadgetId].push(gadget);
 
                 // Insert gadget object in showcase object model
                 this.gadgets[gadgetFullId] = gadget;
             }
 
-            for (key in gadgetVersions) {
-                currentGadgetVersions = gadgetVersions[key];
+            for (key in this.gadgetVersions) {
+                currentGadgetVersions = this.gadgetVersions[key];
                 sortedGadgets = currentGadgetVersions.sort(function(gadget1, gadget2) {
                     return -gadget1.getVersion().compareTo(gadget2.getVersion());
                 });
 
                 for (i = 0; i < currentGadgetVersions.length; i += 1) {
                     gadget = currentGadgetVersions[i];
-                    gadget.setLastVersion(sortedGadgets[0].getVersion(), 'showcase');
+                    gadget.setLastVersion(sortedGadgets[0].getVersion());
                 }
             }
         }
@@ -233,9 +233,21 @@ var ShowcaseFactory = function () {
 
         //Get all the gadgets name and vendor
         Showcase.prototype.setGadgetsState = function (data) {
-            for (var i = 0; i< data.length; i++){
-                var gadgetId = data[i]["vendor"] + '_' + data[i]["name"] + '_' + data[i]["version"];
-                this.gadgets[gadgetId].setUpdatedState(data[i]["lastVersion"], data[i]["lastVersionURL"]);
+            var i, j, key, resource, versions, sortedVersions, currentGadgets;
+            for (i = 0; i < data.length; i += 1) {
+                resource = data[i];
+                key = resource.getVendor() + '_' + resource.getName();
+                if (key in this.gadgetVersions) {
+                    versions = resource.getAllVersions().map(function(version) {return new GadgetVersion(version, 'catalogue');});
+                    sortedVersions = versions.sort(function(version1, version2) {
+                        return -version1.compareTo(version2);
+                    });
+
+                    currentGadgets = this.gadgetVersions[key];
+                    for (j = 0; j < currentGadgets.length; j += 1) {
+                        currentGadgets[j].setLastVersion(sortedVersions[0]);
+                    }
+                }
             }
         }
 

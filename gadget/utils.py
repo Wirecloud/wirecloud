@@ -36,6 +36,7 @@ from StringIO import StringIO
 from django.utils.http import urlquote
 
 from commons.authentication import Http403
+from catalogue.models import GadgetResource
 from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import Gadget
 from gadget.templateParser import TemplateParser
@@ -76,12 +77,31 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
     return {"gadget": gadget, "templateParser": templateParser}
 
 
+def get_or_create_gadget_from_catalogue(vendor, name, version, user, users, request):
+
+    try:
+        gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
+    except Gadget.DoesNotExist:
+        resource = GadgetResource.objects.get(vendor=vendor, short_name=name, version=version)
+
+        templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
+        templateParser.parse()
+        gadget = templateParser.getGadget()
+
+    for user in users:
+        gadget.users.add(user)
+
+    gadget.save()
+    return gadget
+
+
 def get_and_add_gadget(vendor, name, version, users):
 
     gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
     for user in users:
         gadget.users.add(user)
 
+    gadget.save()
     return gadget
 
 

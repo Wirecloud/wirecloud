@@ -1099,7 +1099,7 @@ IGadget.prototype.upgradeIGadget = function() {
     var data = {
         id: this.id,
         newVersion: this.gadget.getLastVersion().text,
-        source: 'showcase'
+        source: this.gadget.getLastVersion().source
     };
     var igadgetUrl = URIs.PUT_IGADGET_VERSION.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
                                                 tabId: this.layout.dragboard.tabId,
