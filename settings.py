@@ -158,7 +158,7 @@ INSTALLED_APPS = (
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
-    # sign in with twitter app 
+    # sign in with twitter app
 #    'twitterauth',
     ### facebook applications ###
 #    'facebook',
@@ -186,7 +186,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.policy_lists',
 )
 
-SESSION_COOKIE_AGE = 5184000    #2 months
+SESSION_COOKIE_AGE = 5184000  # 2 months
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
@@ -201,17 +201,17 @@ LOGIN_REDIRECT_URL = '/'
 #LOG_PATH='/var/log/ezweb'
 
 #Authentication
-AUTHENTICATION_BACKENDS = (  
-#'authentication.tcloud_access.TCloudBackend',
-'authentication.public_access.PublicBackend',
-#'authentication.anonymousaccess.AnonymousBackend',
-#'openid_auth.models.OpenIDBackend',
-#'authentication.ldapaccess.LDAPBackend',
-#'authentication.ezsteroidsaccess.EzSteroidsBackend',
-'django.contrib.auth.backends.ModelBackend',
-#'facebookconnect.models.FacebookBackend',
-#'authentication.twitteroauth.TwitterBackend',
-)
+AUTHENTICATION_BACKENDS = (
+    #'authentication.tcloud_access.TCloudBackend',
+    'authentication.public_access.PublicBackend',
+    #'authentication.anonymousaccess.AnonymousBackend',
+    #'openid_auth.models.OpenIDBackend',
+    #'authentication.ldapaccess.LDAPBackend',
+    #'authentication.ezsteroidsaccess.EzSteroidsBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    #'facebookconnect.models.FacebookBackend',
+    #'authentication.twitteroauth.TwitterBackend',
+    )
 
 #LDAP Backend
 #AD_LDAP_URL = 'ldap://host:port'
@@ -246,7 +246,7 @@ CERTIFICATION_ENABLED = False
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #GADGET_GENERATOR_URL = 'http://localhost:9001'
 
-FORCE_SCRIPT_NAME=""
+FORCE_SCRIPT_NAME = ""
 
 # Compact ezweb javascript and/or css files into one single file. If set to True,
 # you must set the EZWEB_RELEASE property to generate a versioned .js file

@@ -30,11 +30,12 @@
 
 #
 
-from os import path 
-from django.conf.urls.defaults import patterns, include
-from django.conf import settings
+from os import path
 
+from django.conf import settings
+from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
+
 admin.autodiscover()
 
 from catalogue.views import ResourceEnabler
@@ -56,22 +57,22 @@ urlpatterns = patterns('',
     # EzWeb
     (r'^', include('ezweb.urls')),
     (r'^user/(?P<user_name>[\.\-\w]+)/$', include('ezweb.urls')),
-    
+
     # Gadgets
     (r'^user/(?P<user_name>[\.\-\w]+)/gadget(s)?', include('gadget.urls')),
     (r'^gadget(s)?', include('gadget.urls')),
 
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
-    
+
     # Contract Manager
     (r'^contract(s)?', include('resourceSubscription.urls')),
 
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
 
-	# Deployment Tool
-	(r'^deployment/', include('deployment.urls')),
+    # Deployment Tool
+    (r'^deployment/', include('deployment.urls')),
 
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
@@ -87,13 +88,13 @@ urlpatterns = patterns('',
 
     # Catalogue Resource
     (r'^user/(?P<user_name>[\.\-\w]+)/catalogue/', include('catalogue.urls')),
-    
+
     # Catalogue: Changing certification status
     (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
-    
+
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),
-    
+
     #Layout
     (r'^layout', include('layout.urls')),
 
@@ -106,34 +107,32 @@ urlpatterns = patterns('',
     # Django contrib
     #(r'^registration/login_form/$', 'registration.views.login_form'),
 
- #   (r'^logout$', 'django.contrib.auth.views.logout'),    
+    #(r'^logout$', 'django.contrib.auth.views.logout'),
     # custom logouts (to enable anonymous access)
     (r'^logout$', 'authentication.logout'),
     (r'^admin/logout/$', 'authentication.logout'),
-    
+
     #Admin CLMS interface
     #(r'^admin/clms/(?P<layout_id>\d+)/content/popup/', clms_admin_view.panel_list_popup),
     #(r'^admin/clms/content/popup/', clms_admin_view.panel_list_popup),
     #(r'^admin/clms/content/filter/', clms_admin_view.contents_filter),
     #(r'^admin/clms/(?P<url>.*)', clms_site.root),
-    
+
     #Admin interface
     (r'^admin/(.*)', admin.site.root),
-    
+
     # Django "set language" (internacionalitation)
     (r'^i18n/', include('django.conf.urls.i18n')),
-    
+
     # Django JavaScript Internacionalitation
     (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
-    
+
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
 
     #Catalogue API
     (r'^catalogue/API/', include('catalogue.API.urls')),
-
-
 )
 
 ### OpenId URLs
@@ -155,7 +154,7 @@ if 'facebookconnect' in settings.INSTALLED_APPS:
     urlpatterns += patterns('',
                              (r'^facebook/', include('facebookconnect.urls')),
                     )
-    
+
 ##Sign in with Twitter
 if 'twitterauth' in settings.INSTALLED_APPS:
     #add twitter urls

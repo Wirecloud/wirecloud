@@ -27,46 +27,47 @@
 #
 #...............................licence...........................................#
 
-from processors.context_processors import ezweb_release
-from layout.models import Layout
 from django.conf import settings
 from django.utils import simplejson
 
-base_dir = 'media/' 
+from layout.models import Layout
+from processors.context_processors import ezweb_release
+
+base_dir = 'media/'
 layout = Layout.objects.get(name=settings.LAYOUT)
 
 layout_css = simplejson.loads(layout.layout_css)
-files_css_normal = [base_dir+layout_css["general"],
-                    base_dir+layout_css["dragboard"],
-                    base_dir+layout_css["wiring"],
-                    base_dir+layout_css["catalogue"]
+files_css_normal = [base_dir + layout_css["general"],
+                    base_dir + layout_css["dragboard"],
+                    base_dir + layout_css["wiring"],
+                    base_dir + layout_css["catalogue"]
                     ]
 
 theme_css = simplejson.loads(layout.theme.theme_css)
-files_css_theme = [base_dir+theme_css["general"],
-                    base_dir+theme_css["dragboard"],
-                    base_dir+theme_css["wiring"],
-                    base_dir+theme_css["catalogue"]
-                    ]
+files_css_theme = [base_dir + theme_css["general"],
+                   base_dir + theme_css["dragboard"],
+                   base_dir + theme_css["wiring"],
+                   base_dir + theme_css["catalogue"]
+                   ]
 
 
 def write_file(final_file_name, file_list):
     try:
         res = open(final_file_name, 'w')
-        
+
         header = open('morfeo_header.txt', 'r')
-        
+
         res.write(header.read())
-        
+
         header.close()
-        
+
         for file_name in file_list:
-           file = open(file_name,'r')
-        
-           #copying real js code to the resulting unique source file!
-           res.write(file.read())
-        
-           file.close()
+            file = open(file_name, 'r')
+
+            #copying real js code to the resulting unique source file!
+            res.write(file.read())
+
+            file.close()
 
         res.close()
     except Exception, e:

@@ -27,10 +27,11 @@
 #
 #...............................licence...........................................#
 
-import sys, os
+import os
+import sys
 
 inputFiles = {
-    'normal':  [
+    'normal': [
         'js/common/constants.js',
         'js/common/utils.js',
         'js/interfaceLayout/BrowserUtils.js',
@@ -162,7 +163,7 @@ inputFiles = {
         'js/opManager/InitialScriptExecuter.js',
         'js/opManager/RemoteChannelManager.js',
         'js/opManager/OpManager.js',
-        
+
         'js/varManager/VariableGadget.js',
         'js/varManager/VariablePlatform.js',
         'js/varManager/varManager.js',
@@ -212,16 +213,17 @@ inputFiles = {
 }
 
 outputFileNames = {
-    'normal' : 'media/js/ezweb_%s.js',
-    'iphone' : 'media/iphone/ezweb_iphone_%s.js',
-    'viewer' : 'media/js/ezweb_viewer_%s.js'
+    'normal': 'media/js/ezweb_%s.js',
+    'iphone': 'media/iphone/ezweb_iphone_%s.js',
+    'viewer': 'media/js/ezweb_viewer_%s.js'
 }
 
 listFileNames = {
-    'normal' : 'ezweb/templates/js_includes.js',
-    'iphone' : 'ezweb/templates/js_iphone_includes.js',
-    'viewer' : 'ezweb/templates/js_viewer_includes.js'
+    'normal': 'ezweb/templates/js_includes.js',
+    'iphone': 'ezweb/templates/js_iphone_includes.js',
+    'viewer': 'ezweb/templates/js_viewer_includes.js'
 }
+
 
 def which(program):
     def is_exe(fpath):
@@ -239,11 +241,12 @@ def which(program):
 
     return None
 
+
 def write_file(flavour, release):
     final_file_name = outputFileNames[flavour] % release
     file_list = inputFiles[flavour]
 
-    sys.stdout.write ("Creating %s..." % final_file_name)
+    sys.stdout.write("Creating %s..." % final_file_name)
     sys.stdout.flush()
 
     try:
@@ -256,48 +259,48 @@ def write_file(flavour, release):
         header.close()
 
         for file_name in file_list:
-           file = open(os.path.join("media", file_name),'r')
+            file = open(os.path.join("media", file_name), 'r')
 
-           #Deleting license header
-           found = False
-           while (True):
-              line = file.readline()
+            # Deleting license header
+            found = False
+            while (True):
+                line = file.readline()
 
-              if not line:
-                  break
+                if not line:
+                    break
 
-              if (line.find('*     http://morfeo-project.org') >= 0):
-                 found = True
-                 break
-                 
+                if line.find('*     http://morfeo-project.org') >= 0:
+                    found = True
+                    break
 
-           if (not found):
-               print "Error en la cabecera del fichero %s" %file_name
-               print "ABORTANDO"
-               return
-           
-           #skiping useless lines after MORFEO URL!
-           file.readline()
+            if not found:
+                print "Error en la cabecera del fichero %s" % file_name
+                print "ABORTANDO"
+                return
 
-           #copying real js code to the resulting unique source file!
-           res.write(file.read())
+            # skiping useless lines after MORFEO URL!
+            file.readline()
 
-           file.close()
+            # copying real js code to the resulting unique source file!
+            res.write(file.read())
+
+            file.close()
 
         res.close()
     except Exception, e:
         print e
 
     if java_available:
-      os.system("java -jar media/js/compressor.jar " + final_file_name + " -o " + final_file_name)
+        os.system("java -jar media/js/compressor.jar " + final_file_name + " -o " + final_file_name)
 
     sys.stdout.write(" Done\n")
+
 
 def build_js_list(flavour):
     final_file_name = listFileNames[flavour]
     file_list = inputFiles[flavour]
 
-    sys.stdout.write ("Creating %s..." % final_file_name)
+    sys.stdout.write("Creating %s..." % final_file_name)
     sys.stdout.flush()
 
     try:
@@ -308,7 +311,7 @@ def build_js_list(flavour):
                   '     for updating this list. -->\n')
 
         for file_name in file_list:
-           res.write('<script type="text/javascript" src="{{ MEDIA_URL }}%s"></script>\n' % file_name)
+            res.write('<script type="text/javascript" src="{{ MEDIA_URL }}%s"></script>\n' % file_name)
 
         res.close()
     except Exception, e:
@@ -336,15 +339,12 @@ if not java_available:
 
 sys.stdout.write('\n')
 
-
-
 for flavour in inputFiles:
-  build_js_list(flavour)
+    build_js_list(flavour)
 
 sys.stdout.write("\n")
 
 for flavour in inputFiles:
-  write_file(flavour, ezweb_rel)
+    write_file(flavour, ezweb_rel)
 
 sys.stdout.write("\n")
-
