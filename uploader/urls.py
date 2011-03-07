@@ -33,9 +33,5 @@ from django.conf.urls.defaults import patterns
 from uploader.views import FileCollection
 
 urlpatterns = patterns('uploader.views',
-
-    (r'^', FileCollection(permitted_methods=('GET','POST',))),
-       
+    (r'^', FileCollection(permitted_methods=('GET', 'POST',))),
 )
-
-

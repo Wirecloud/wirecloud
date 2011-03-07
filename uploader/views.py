@@ -29,50 +29,47 @@
 
 
 #
-
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import render_to_response
-from django.contrib.auth.decorators import login_required
-
-from django.utils.translation import ugettext as _
-from django.template.defaultfilters import filesizeformat
-
 import os
 import time
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.shortcuts import render_to_response
+from django.template.defaultfilters import filesizeformat
+from django.utils.translation import ugettext as _
+
 
 from commons.resource import Resource
-from commons.utils import accepts
+from commons.utils import accepts, json_encode
 
 
 class FileCollection(Resource):
-    
+
     dir_name = 'uploads'
     dir_path = os.path.join(settings.GADGETS_ROOT, dir_name)
-    MAX_UPLOAD_SIZE = 2621440 #2'5MB
+    MAX_UPLOAD_SIZE = 2621440  # 2'5MB
     CONTENT_TYPES = ['image']
-    
-    #check the file content-type and the size
-    def check_file (self, file):
-            
+
+    def check_file(self, file):
+        """check the file content-type and the size"""
+
         content_type = file.content_type.split('/')[0]
-        
+
         if content_type in self.CONTENT_TYPES:
             if file.size < self.MAX_UPLOAD_SIZE:
                 return None
             else:
                 return _('Please keep the file size under %(format)s. The current file size is %(size)s') % \
-                        {"format":filesizeformat(self.MAX_UPLOAD_SIZE), "size":filesizeformat(file.size)}
-        return _('The %s file type is not supported') %(content_type)
-     
-    
+                        {"format": filesizeformat(self.MAX_UPLOAD_SIZE), "size": filesizeformat(file.size)}
+        return _('The %s file type is not supported') % content_type
+
     def store_file(self, file, directory, newname=None):
-    
+
         if not os.path.isdir(directory):
             os.makedirs(directory)
 
-        try:       
+        try:
             if newname is None:
                 dest_path = os.path.join(directory.encode("utf8"), file.name.encode("utf8"))
             else:
@@ -83,9 +80,9 @@ class FileCollection(Resource):
                 destination.write(chunk)
             destination.close()
             return None
-        
+
         except Exception, e:
-            return _("Problem storing the file: %(errorMsg)s") %{'errorMsg':str(e)}
+            return _("Problem storing the file: %(errorMsg)s") % {'errorMsg': str(e)}
 
     @login_required
     def read(self, request):
@@ -93,62 +90,59 @@ class FileCollection(Resource):
         sizeMB = filesizeformat(self.MAX_UPLOAD_SIZE)
         context = {'content_types': self.CONTENT_TYPES, 'max_size': sizeMB}
         return render_to_response(template, context)
-    
+
     @login_required
     def create(self, request):
-        
+
         #check params
-        if not request.FILES.has_key('file'):
+        if 'file' not in request.FILES:
             msg = _("Missing file parameter")
         else:
             file = request.FILES['file']
-            #check content-type and size
-            msg = self.check_file(file)
-        
+            msg = self.check_file(file)  # check content-type and size
+
         # param errors
         if msg:
             if accepts(request, 'application/json'):
                 mimetype = 'application/json; charset=UTF-8'
-                msg = json_encode({"message":msg, "result":"error"})
+                msg = json_encode({"message": msg, "result": "error"})
             else:
-                mimetype ='text/html; charset=UTF-8'
-            return HttpResponseBadRequest(msg, mimetype= mimetype)       
-      
+                mimetype = 'text/html; charset=UTF-8'
+            return HttpResponseBadRequest(msg, mimetype=mimetype)
+
         #store files ordering by user
         user_path = os.path.join(self.dir_path, request.user.username)
         #avoid rewriting files: change the filename
         basename, ext = os.path.splitext(file.name)
         filename = basename + '_' + unicode(int(time.time())) + ext
-         
+
         msg = self.store_file(request.FILES['file'], user_path, filename)
-        
+
         #errors
-        if msg:         
+        if msg:
             if accepts(request, 'application/json'):
-                mimetype = 'application/json; charset=UTF-8'    
-                msg = json_encode({"message":msg, "result":"error"})
-                return HttpResponseServerError (msg, mimetype)
+                mimetype = 'application/json; charset=UTF-8'
+                msg = json_encode({"message": msg, "result": "error"})
+                return HttpResponseServerError(msg, mimetype)
             else:
-                mimetype ='text/html; charset=UTF-8'
+                mimetype = 'text/html; charset=UTF-8'
                 return HttpResponse(msg, mimetype)
-        
+
         #generate the url
         from deployment.urls import deployment as basePath
         if (request.META['SERVER_PROTOCOL'].lower().find('https') >= 0):
             protocol = "https://"
         else:
             protocol = "http://"
-            
+
         url = os.path.join(protocol, request.get_host(), basePath, self.dir_name, request.user.username, filename)
-         
+
         if accepts(request, 'application/json'):
-            mimetype = 'application/json; charset=UTF-8'   
+            mimetype = 'application/json; charset=UTF-8'
             msg = json_encode({"message": url, 'result': 'error'})
             return HttpResponse(msg, mimetype=mimetype)
         else:
-            mimetype ='text/html; charset=UTF-8'
+            mimetype = 'text/html; charset=UTF-8'
             template = 'upload_success.html'
-            context = {'url':url}
+            context = {'url': url}
             return render_to_response(template, context)
-
- 
