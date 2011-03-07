@@ -31,53 +31,50 @@
 #
 
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext as  _
 
 from catalogue.models import Application
-from django.contrib.auth.models import User
 
-from django.utils import simplejson
-    
+
 class Contract(models.Model):
+
     free = models.BooleanField(_('Free'))
     #start_date = models.DateTimeField(_('Start Date'))
     #end_date = models.DateTimeField(_('End Date'), null=True, blank=True)
-    
+
     times_used = models.IntegerField(_('Used times'), default=0)
-    
+
     application = models.ForeignKey(Application, verbose_name=_('Application'))
     user = models.ForeignKey(User, verbose_name=_('User'))
-    
+
     def get_info(self):
-        result = {}
-        
-        result["free"] = self.free
-        result["times_used"] = self.times_used
-        result["app_tag"] = self.application.tag
-        result["app_code"] = self.application.app_code
-        result["id"] = self.id
-        
-        return result
-    
+        return {
+            "free": self.free,
+            "times_used": self.times_used,
+            "app_tag": self.application.tag,
+            "app_code": self.application.app_code,
+            "id": self.id,
+            }
+
     def update_info(self, contract_info):
         if (not contract_info):
             return None
-        
+
         if (contract_info['free']):
             self.free = contract_info['free']
-        
+
         times_used = 0
         try:
             times_used = contract_info['times_used']
-        except KeyError:    
+        except KeyError:
             pass
-        
+
         self.times_used = times_used
-        
+
         self.save()
-        
+
         return self
 
     def __unicode__(self):
-        return unicode(self.application) + " - " + unicode(self.user)
+        return unicode(self.application) + u" - " + unicode(self.user)

@@ -29,53 +29,51 @@
 
 
 #
-
-from commons.resource import Resource
-from commons.utils import json_encode
-
-from django.http import HttpResponse, HttpResponseServerError
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-
-from resourceSubscription.models import Contract
-from catalogue.models import Application
-
-from django.utils import simplejson
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
-
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseServerError
+from django.shortcuts import get_object_or_404
+from django.utils import simplejson
+
+from catalogue.models import Application
+from commons.resource import Resource
+from resourceSubscription.models import Contract
+
 
 def check_arguments(request):
-    if (not request.REQUEST.__contains__('contract_list')):
-        return HttpResponseServerError('{"error": "Missing contract_info parameter"}', mimetype='application/json; charset=UTF-8'), None
-    
-    contract_list = request.REQUEST['contract_list']
-    
+    try:
+        contract_list = request.REQUEST['contract_list']
+    except KeyError:
+        return (HttpResponseServerError('{"error": "Missing contract_info parameter"}',
+                                        mimetype='application/json; charset=UTF-8'), None)
+
     try:
         contract_list = simplejson.loads(contract_list)
-    except Exception, e:
-        return HttpResponseServerError('{"error": "Badformed JSON argument"}', mimetype='application/json; charset=UTF-8'), None
-    
-    return None, contract_list 
-    
+    except Exception:
+        return (HttpResponseServerError('{"error": "Badformed JSON argument"}',
+                                        mimetype='application/json; charset=UTF-8'), None)
+
+    return None, contract_list
+
+
 class ApplicationsSubscriber(Resource):
-    @login_required  
-    @transaction.commit_on_success 
+
+    @login_required
+    @transaction.commit_on_success
     def create(self, request):
         error, contract_list = check_arguments(request)
-        
-        if (error):
+
+        if error:
             return error
-        
+
         user = request.user
-        
+
         for contract_info in contract_list:
             app_id = contract_info['app_id']
             application = get_object_or_404(Application, app_code=app_id)
-        
+
             contract, created = Contract.objects.get_or_create(user=user, application=application)
-            
+
             contract.update_info(contract_info)
-        
+
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')

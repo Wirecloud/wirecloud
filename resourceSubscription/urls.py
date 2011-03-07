@@ -32,7 +32,6 @@
 from django.conf.urls.defaults import patterns
 from resourceSubscription.views import  ApplicationsSubscriber
 
-urlpatterns = patterns('resourceSubscription.views',              
-    (r'^/subscribe/applications?$', ApplicationsSubscriber(permitted_methods=('GET', 'POST', ))),
+urlpatterns = patterns('resourceSubscription.views',
+    (r'^/subscribe/applications?$', ApplicationsSubscriber(permitted_methods=('GET', 'POST',))),
 )
-
