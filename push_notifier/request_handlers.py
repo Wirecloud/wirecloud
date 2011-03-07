@@ -34,7 +34,9 @@ import tornado.web
 from push_notifier.channel_manager import ChannelManager
 from push_notifier.user_manager import UserManager
 
+
 class NotifyUsersRequestHandler(tornado.web.RequestHandler):
+
     def get(self):
         channel_values_json = self.get_argument('channels', None)
 
@@ -44,7 +46,7 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
             return
 
         channel_values = simplejson.loads(channel_values_json)
-        
+
         #print channel_values
 
         users_to_notify = dict()
@@ -56,7 +58,7 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
             channel = ChannelManager.get_channel(channel_id)
 
             channel_users = channel.get_users()
-            
+
             #Deleting users assotiated with channel!
             channel.reset()
 
@@ -66,48 +68,50 @@ class NotifyUsersRequestHandler(tornado.web.RequestHandler):
 
                 #Storing users to be notified!
                 users_to_notify[user.username] = user
-                    
+
         user_keys = users_to_notify.keys()
 
         for user_key in user_keys:
             user = users_to_notify[user_key]
-        
+
             #Deleting user subscriptions from all channels!
             user.delete_channels()
-        
+
             user.notify()
 
+
 class UserSubscriptionRequestHandler(tornado.web.RequestHandler):
+
     @tornado.web.asynchronous
     def get(self):
         channel_json = self.get_argument('channels', None)
-        
+
         if (not channel_json):
             self.write("Missing channels! Error!")
             self.finish()
             return
-        
+
         channel_ids = simplejson.loads(channel_json)
-        
+
         username = self.get_argument('user', None)
 
         if (not username):
             self.write("Missing username! Error!")
             self.finish()
             return
-        
+
         user = UserManager.get_user(username)
-        
+
         if (len(channel_ids) == 0):
             #Disconnecting user
             user.unsubscribe()
             self.on_subscription_change("[]")
         else:
             user.set_callback(self.async_callback(self.on_subscription_change))
-            
+
             for channel_id in channel_ids:
                 channel = ChannelManager.get_channel(channel_id)
-    
+
                 channel.subscribe_user(user)
 
         #ChannelManager.print_channels_status()

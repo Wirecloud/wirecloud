@@ -29,72 +29,75 @@
 
 from push_notifier.channel_manager import ChannelManager
 
+
 class UserManager:
     users = dict()
-    
+
     def get_user(self, username):
         try:
             return UserManager.users[username]
         except KeyError:
             UserManager.users[username] = User(username)
-            
+
             return UserManager.users[username]
-    get_user = classmethod(get_user) 
-    
+    get_user = classmethod(get_user)
+
+
 class User:
+
     def __init__(self, username):
         self.username = username
         self.callback = None
         self.channels = dict()
         self.response = ''
-    
+
     def reset(self):
         if (self.callback):
             #Finishing connection with no changes on channels!
             self.callback("[]")
-            
+
         self.callback = None
         self.channels = dict()
-        self.response = ''   
-        
+        self.response = ''
+
     def subscribe(self, channel_ids):
         for channel_id in channel_ids:
             channel = ChannelManager.get_channel(id)
-            
+
             self.channels.append(channel)
             channel.subscribe(self)
-        
-    def delete_channels(self):    
+
+    def delete_channels(self):
         channel_keys = self.channels.keys()
-        
+
         for channel_key in channel_keys:
             channel = self.channels[channel_key]
-            
+
             channel.unsubscribe_user(self)
-        
+
         self.channels.clear()
-            
+
     def unsubscribe(self):
         self.reset()
-        
+
         self.delete_channels()
-    
+
     def set_callback(self, callback):
         self.reset()
         self.callback = callback
-    
+
     def notify(self):
         self.callback(self.get_response_json())
-        
+
         self.callback = None
-        
+
     def merge_response(self, id, value):
         #Dealing with last comma problem!
         if (self.response):
             self.response = self.response + ', '
 
         self.response = self.response + '{"id": %s, "value": "%s"}' % (id, value)
-            
+
     def get_response_json(self):
         return '[' + self.response + ']'
 

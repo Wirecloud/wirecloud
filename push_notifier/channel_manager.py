@@ -29,13 +29,15 @@
 
 import logging
 
+
 class ChannelManager:
+
     channels = dict()
-    
+
     def print_channels_status(self):
         channel_ids = ChannelManager.channels.keys()
 
-        for channel_id in channel_ids: 
+        for channel_id in channel_ids:
             channel = ChannelManager.get_channel(channel_id)
 
             channel.print_status()
@@ -48,9 +50,11 @@ class ChannelManager:
             ChannelManager.channels[id] = Channel(id)
 
             return ChannelManager.channels[id]
-    get_channel = classmethod(get_channel) 
+    get_channel = classmethod(get_channel)
+
 
 class Channel:
+
     def __init__(self, id):
         self.users = []
         self.id = id

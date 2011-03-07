@@ -29,25 +29,26 @@
 
 #!/usr/bin/env python
 
-import logging
+
 import tornado.escape
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-import os.path
+from tornado.options import define, options
 
 from push_notifier.request_handlers import UserSubscriptionRequestHandler, NotifyUsersRequestHandler
 
-from tornado.options import define, options
 
 define("port", default=8888, help="run on the given port", type=int)
 
-########################################################################
-# Push_Notifier Application class!
-# URLs mapping
-########################################################################
+
 class Push_Notifier(tornado.web.Application):
+    """Push_Notifier Application class!
+
+    URLs mapping
+    """
+
     def __init__(self):
         handlers = [
             (r'/notifier/channels/notify', NotifyUsersRequestHandler),
@@ -56,10 +57,9 @@ class Push_Notifier(tornado.web.Application):
 
         tornado.web.Application.__init__(self, handlers, None)
 
-########################################################################
-# Main function
-########################################################################
+
 def main():
+    """Main function"""
     #Parsing command-line options!
     tornado.options.parse_command_line()
 
