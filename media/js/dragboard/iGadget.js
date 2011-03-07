@@ -522,28 +522,18 @@ IGadget.prototype.build = function() {
     this.errorButtonElement = button;
 
     // New Version button
-    if (!this.gadget.isUpToDate() && !this.isRefusedUpgrade()) {
-        button = document.createElement("input");
-        Element.extend(button);
-        button.setAttribute("type", "button");
-        var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
-        msg = interpolate(msg, {
-                currentVersion: this.gadget.getVersion().text,
-                lastVersion: this.gadget.getLastVersion().text
-            }, true);
-
-        button.setAttribute("title", msg);
-        button.setAttribute("id", "version_button_"+this.id);
-        button.addClassName("button versionbutton");
-        Event.observe (button, "click",
-            function() {
-                var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
-                msg = interpolate(msg, {igadgetName: this.name}, true);
-                LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
-            }.bind(this),
-            false);
-        this.gadgetMenu.appendChild(button);
-    }
+    this.upgradeButton = document.createElement("input");
+    Element.extend(this.upgradeButton);
+    this.upgradeButton.setAttribute("type", "button");
+    this.upgradeButton.addClassName("button versionbutton disabled");
+    Event.observe (this.upgradeButton, "click",
+        function() {
+            var msg = gettext('<p><b>Do you really want to update "%(igadgetName)s" to its latest version?</b><br />The gadget state and connections will be kept, if possible.<p>Note: It will reload your workspace</p>');
+            msg = interpolate(msg, {igadgetName: this.name}, true);
+            LayoutManagerFactory.getInstance().showYesNoDialog(msg, this.upgradeIGadget.bind(this), this.askForIconVersion.bind(this));
+        }.bind(this),
+        false);
+    this.gadgetMenu.appendChild(this.upgradeButton);
 
     this.fillWithLabel();
 
@@ -787,6 +777,7 @@ IGadget.prototype.paint = function(onInit) {
 
     this.setMenuColor(undefined, true);
     this._updateButtons();
+    this._updateVersionButton();
 
     // Icon
     this.layout.dragboard.dragboardElement.appendChild(this.iconElement);
@@ -1042,6 +1033,24 @@ IGadget.prototype.notifyEvent = function() {
 IGadget.prototype.isIconified = function() {
     return (this.layout instanceof FreeLayout && this.minimized);
 }
+
+/**
+ * @private
+ */
+IGadget.prototype._updateVersionButton = function() {
+    if (this.gadget.isUpToDate() || this.isRefusedUpgrade()) {
+        this.upgradeButton.addClassName('disabled');
+    } else {
+        var msg = gettext("There is a new version of this gadget available. Current version: %(currentVersion)s - Last version: %(lastVersion)s");
+        msg = interpolate(msg, {
+                currentVersion: this.gadget.getVersion().text,
+                lastVersion: this.gadget.getLastVersion().text
+            }, true);
+
+        this.upgradeButton.setAttribute("title", msg);
+        this.upgradeButton.removeClassName('disabled');
+    }
+};
 
 IGadget.prototype.askForIconVersion = function() {
     var msg = gettext('Do you want to remove the notice of the new version available?');

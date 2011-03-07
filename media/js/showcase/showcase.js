@@ -233,7 +233,8 @@ var ShowcaseFactory = function () {
 
         //Get all the gadgets name and vendor
         Showcase.prototype.setGadgetsState = function (data) {
-            var i, j, key, resource, versions, sortedVersions, currentGadgets;
+            var i, j, key, resource, versions, sortedVersions, currentGadgets, updated = false;
+
             for (i = 0; i < data.length; i += 1) {
                 resource = data[i];
                 key = resource.getVendor() + '_' + resource.getName();
@@ -245,9 +246,13 @@ var ShowcaseFactory = function () {
 
                     currentGadgets = this.gadgetVersions[key];
                     for (j = 0; j < currentGadgets.length; j += 1) {
-                        currentGadgets[j].setLastVersion(sortedVersions[0]);
+                        updated = currentGadgets[j].setLastVersion(sortedVersions[0]) || updated;
                     }
                 }
+            }
+
+            if (updated) {
+                this.opManager.checkForGadgetUpdates();
             }
         }
 

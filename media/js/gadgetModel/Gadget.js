@@ -169,8 +169,10 @@ function GadgetState(gadget_) {
     var capabilities = gadget_.capabilities;
     var uriwiki = gadget_.wikiURI;
     var menuColor = gadget_.menuColor;
+    var lastVersion = version;
     var showcaseLastVersion = version;
     var catalogueLastVersion = null;
+    var upToDate = true;
 
     // ******************
     //  PUBLIC FUNCTIONS
@@ -195,18 +197,28 @@ function GadgetState(gadget_) {
     this.getMenuColor = function () {return menuColor;}
     this.isUpToDate = function() { return upToDate; }
     this.getLastVersion = function() {
-        if (catalogueLastVersion == null || showcaseLastVersion.compareTo(catalogueLastVersion) >= 0) {
-            return showcaseLastVersion;
-        } else {
-            return catalogueLastVersion;
+        if (lastVersion == null) {
+            if (catalogueLastVersion == null || showcaseLastVersion.compareTo(catalogueLastVersion) >= 0) {
+                lastVersion = showcaseLastVersion;
+            } else {
+                lastVersion = catalogueLastVersion;
+            }
         }
+        return lastVersion;
     };
     this.setLastVersion = function(v) {
+        var oldVersion = this.getLastVersion();
+
         if (v.source === 'showcase') {
             showcaseLastVersion = v;
         } else {
             catalogueLastVersion = v;
         }
-        upToDate = version.compareTo(this.getLastVersion()) === 0;
+        lastVersion = null;
+
+        newVersion = this.getLastVersion();
+        upToDate = version.compareTo(newVersion) === 0;
+
+        return oldVersion.compareTo(newVersion) !== 0;
     };
 }

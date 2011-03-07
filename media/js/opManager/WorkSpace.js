@@ -338,7 +338,16 @@ function WorkSpace (workSpaceState) {
 		this.varManager.dispatchPendingVariables(igadgetId);
 		
 	}
-	
+
+	WorkSpace.prototype.checkForGadgetUpdates = function() {
+		var i, igadgets;
+
+		igadgets = this.getIGadgets();
+		for (i = 0; i < igadgets.length; i += 1) {
+			igadgets[i]._updateVersionButton();
+		}
+	};
+
 	WorkSpace.prototype.getTabInstance = function(tabId) {
 		return this.tabInstances[tabId];
 	}

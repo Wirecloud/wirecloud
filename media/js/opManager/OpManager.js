@@ -475,6 +475,10 @@ var OpManagerFactory = function () {
 			this.activeWorkSpace.igadgetUnloaded(igadgetId);
 		}
 
+		OpManager.prototype.checkForGadgetUpdates = function () {
+			this.activeWorkSpace.checkForGadgetUpdates();
+		}
+
 		OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
 			this.activeWorkSpace.show();
 			
