@@ -27,8 +27,8 @@
 #
 #...............................licence...........................................#
 
-from workspace.models import Tab
 from preferences.models import TabPreference
+from workspace.models import Tab
 
 mapping_file = open('mapping.txt', 'r')
 
@@ -39,8 +39,7 @@ mapping_file.close()
 tabsLocked = eval(mapping_text)
 
 for tabId in tabsLocked:
+    tab = Tab.objects.get(id=tabId)
 
-     tab = Tab.objects.get(id=tabId)
-
-     tabPreference = TabPreference(tab=tab, name="locked", value="1")
-     tabPreference.save()
+    tabPreference = TabPreference(tab=tab, name="locked", value="1")
+    tabPreference.save()

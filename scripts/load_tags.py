@@ -39,13 +39,11 @@ mapping_file.close()
 tag_mapping = eval(mapping_text)
 
 for (tag_text, user_id, resource_id) in tag_mapping:
-     
-     tag, created = Tag.objects.get_or_create(name=tag_text)
-     
-     user = User.objects.get(id=user_id)
-     resource = GadgetResource.objects.get(id=resource_id)
+    tag, created = Tag.objects.get_or_create(name=tag_text)
 
-     user_tag = UserTag(tag=tag, idUser=user, idResource=resource)
-     
-     user_tag.save()
-     
+    user = User.objects.get(id=user_id)
+    resource = GadgetResource.objects.get(id=resource_id)
+
+    user_tag = UserTag(tag=tag, idUser=user, idResource=resource)
+
+    user_tag.save()

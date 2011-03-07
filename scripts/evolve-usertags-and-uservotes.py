@@ -32,34 +32,34 @@ from catalogue.models import GadgetResource, UserTag, UserVote
 
 gadgets = GadgetResource.objects.values('vendor', 'short_name').distinct()
 for gadget in gadgets:
-   gadgetVersions = get_all_gadget_versions(gadget['vendor'], gadget['short_name'])
+    gadgetVersions = get_all_gadget_versions(gadget['vendor'], gadget['short_name'])
 
-   gadgetVersions.sort();
-   previousVersion = GadgetResource.objects.get(vendor= gadget['vendor'], short_name = gadget['short_name'], version = gadgetVersions[0])
-   for i in range(1, len(gadgetVersions)):
-      currentVersion = GadgetResource.objects.get(vendor= gadget['vendor'], short_name = gadget['short_name'], version = gadgetVersions[i])
+    gadgetVersions.sort()
+    previousVersion = GadgetResource.objects.get(vendor=gadget['vendor'], short_name=gadget['short_name'], version=gadgetVersions[0])
+    for i in range(1, len(gadgetVersions)):
+        currentVersion = GadgetResource.objects.get(vendor=gadget['vendor'], short_name=gadget['short_name'], version=gadgetVersions[i])
 
-      # Update UserTags
-      previousUserTags = UserTag.objects.filter(idResource = previousVersion)
+        # Update UserTags
+        previousUserTags = UserTag.objects.filter(idResource=previousVersion)
 
-      for previousUserTag in previousUserTags:
-         try:
-           UserTag.objects.get(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = currentVersion)
-         except:
-           newUserTag = UserTag(tag = previousUserTag.tag, idUser = previousUserTag.idUser, idResource = currentVersion)
-           newUserTag.save()
+        for previousUserTag in previousUserTags:
+            try:
+                UserTag.objects.get(tag=previousUserTag.tag, idUser=previousUserTag.idUser, idResource=currentVersion)
+            except:
+                newUserTag = UserTag(tag=previousUserTag.tag, idUser=previousUserTag.idUser, idResource=currentVersion)
+                newUserTag.save()
 
-      # Update UserVotes
-      previousUserVotes = UserVote.objects.filter(idResource = previousVersion)
+        # Update UserVotes
+        previousUserVotes = UserVote.objects.filter(idResource=previousVersion)
 
-      for previousUserVote in previousUserVotes:
-         try:
-           UserVote.objects.get(idUser = previousUserVote.idUser, idResource = currentVersion)
-         except:
-           newUserVote = UserVote(idUser = previousUserVote.idUser, vote = previousUserVote.vote, idResource = currentVersion)
-           newUserVote.save()
+        for previousUserVote in previousUserVotes:
+            try:
+                UserVote.objects.get(idUser=previousUserVote.idUser, idResource=currentVersion)
+            except:
+                newUserVote = UserVote(idUser=previousUserVote.idUser, vote=previousUserVote.vote, idResource=currentVersion)
+                newUserVote.save()
 
-      # Update popularity
-      update_gadget_popularity(currentVersion)
+        # Update popularity
+        update_gadget_popularity(currentVersion)
 
-      previousVersion = currentVersion
+        previousVersion = currentVersion
