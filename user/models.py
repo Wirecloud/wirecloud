@@ -32,72 +32,73 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
-from django.utils.translation import get_language, ugettext as _
 from commons import utils
-from django.utils import simplejson 
 
 
 class UserProfile(models.Model):
+
     user = models.ForeignKey(User, unique=True)
-    
+
     load_script = models.TextField(_('load_script'), blank=True, null=True)
-    
+
     def adapt_language_code(self, language):
         ezweb_language = None
-        
-        if (language.lower().startswith('es')):
+
+        if language.lower().startswith('es'):
             ezweb_language = 'es'
-        elif (language.lower().startswith('en')):
+        elif language.lower().startswith('en'):
             ezweb_language = 'en'
         else:
             ezweb_language = 'en'
-        
+
         return ezweb_language
-    
+
     def execute_server_script(self, request):
         script = simplejson.loads(self.load_script)
-        
-        for command in script: 
-            if (not command.has_key('command')):
+
+        for command in script:
+            if 'command' not in command:
                 # Bad-formed command!
                 continue
-            
-            if (command['command'] == 'change_language'):
+
+            if command['command'] == 'change_language':
                 utils.change_language(request, command['language'])
                 continue
-    
+
     def merge_client_scripts(self, script):
         extra_script = simplejson.loads(script)
-        
-        if (len(extra_script) == 0):
+
+        if len(extra_script) == 0:
             return  self.load_script
-        
+
         stored_script = simplejson.loads(self.load_script)
         for command in extra_script:
             stored_script.append(command)
-            
+
         #It's not saved! "script" variable is passed when needed and not should be saved in the UserProfile
-        
+
         return simplejson.dumps(stored_script)
-    
+
     def create_load_script(self, profile):
         profile = simplejson.loads(profile)
         script = []
-        
-        if (profile.has_key('theme')):
+
+        if 'theme' in profile:
             command = {}
-            command["command"]="change_theme"
-            command["theme"]=profile["theme"]
-            
+            command["command"] = "change_theme"
+            command["theme"] = profile["theme"]
+
             script.append(command)
-        
-        if (profile.has_key('localeLanguage')):
+
+        if 'localeLanguage' in profile:
             command = {}
-            command["command"]="change_language"
-            command["language"]=self.adapt_language_code(profile["localeLanguage"])
-            
+            command["command"] = "change_language"
+            command["language"] = self.adapt_language_code(profile["localeLanguage"])
+
             script.append(command)
-            
+
         self.load_script = simplejson.dumps(script)
         self.save()
