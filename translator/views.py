@@ -29,15 +29,20 @@
 
 
 #
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+
 from commons.resource import Resource
-from django.shortcuts import render_to_response,get_object_or_404
-from gadget.models import Gadget
+
 
 class TranslationCollection(Resource):
+
     def write(self, request):
         pass
 
+
 class GadgetTranslator(Resource):
+
     def read(self, request, identifier):
         gadget = get_object_or_404(id=identifier)
         translate_fields = gadget.get_translate_fields()
@@ -48,7 +53,9 @@ class GadgetTranslator(Resource):
             for lang, fields in e.iteritems():
                 #for each language
                 for field in fields:
-                    #add the value 
-                    index = field["id"]+"_"+field["table"]+"_"+field["attribute"]
+                    #add the value
+                    index = field["id"] + "_" + field["table"] + "_" + field["attribute"]
                     result[lang][index] = field["widget"].render(index, field["value"])
-        return render_to_response("translation.html", {'translate_fields': result}, context_instance=RequestContext(request))
+        return render_to_response("translation.html",
+                                  {'translate_fields': result},
+                                  context_instance=RequestContext(request))

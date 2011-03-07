@@ -32,20 +32,20 @@
 
 from django.conf.urls.defaults import patterns
 
-from translator.views import *
+from translator.views import GadgetTranslator, TranslationCollection
+
 
 urlpatterns = patterns('translator.views',
-                       
+
     # Add new Translations
-    (r'^[/]?$', 
-        TranslationCollection(permitted_methods=('POST', ))),
-        
-    # Get Translation gadget view 
-    (r'^/gadget/((?P<identifier>\d+)[/]?)?$', 
+    (r'^[/]?$',
+        TranslationCollection(permitted_methods=('POST',))),
+
+    # Get Translation gadget view
+    (r'^/gadget/((?P<identifier>\d+)[/]?)?$',
         GadgetTranslator(permitted_methods=('GET', ))),
-    
+
     # Get Translation Workspace view
-    #(r'^/workspace/((?P<workspace_id>\d+)[/]?)?$', 
+    #(r'^/workspace/((?P<workspace_id>\d+)[/]?)?$',
     #    WorkspaceTranslator(permitted_methods=('GET', ))),
-    
 )
