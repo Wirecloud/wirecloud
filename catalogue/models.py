@@ -50,7 +50,7 @@ class TransModel(models.Model):
             # retrieve the translation
             try:
                 id_ = object.__getattribute__(self, "id")
-                table_ = object.__getattribute__(self, "__class__").__module__ + ". " + object.__getattribute__(self, "__class__").__name__
+                table_ = object.__getattribute__(self, "__class__").__module__ + "." + object.__getattribute__(self, "__class__").__name__
                 attr_trans = Translation.objects.filter(text_id=index, element_id=id_, table=table_, language=language_)
                 if (attr_trans.count() > 0):
                     return attr_trans[0].value
