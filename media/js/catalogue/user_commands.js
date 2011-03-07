@@ -74,9 +74,17 @@ var SimpleSearchCommand = function (dom_element, html_event, service_facade, dom
             return;
 
         case 13: // enter
-            // Inmediate search
 
+            // Cancel current timeout
+            if (this.timeout != null) {
+                clearTimeout(this.timeout);
+            }
+
+            // Inmediate search
             this._anonymous_function();
+
+            // Don't set a new timeout
+            return;
 
         default:
             // Cancel current timeout
