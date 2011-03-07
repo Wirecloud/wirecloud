@@ -37,6 +37,7 @@ from django.utils.http import urlencode
 
 LOCALHOST_RE = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))(:\d*)?$')
 
+
 def is_localhost(host):
     if LOCALHOST_RE.match(host) == None:
         return False
