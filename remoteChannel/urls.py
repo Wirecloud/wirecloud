@@ -34,9 +34,6 @@ from django.conf.urls.defaults import patterns
 from remoteChannel.views import RemoteChannelCollection
 
 urlpatterns = patterns('remoteChannel.views',
-
     # ExternalChannels
-    (r'^$', RemoteChannelCollection(permitted_methods=('POST', ))), 
+    (r'^$', RemoteChannelCollection(permitted_methods=('POST',))),
 )
-
-

@@ -29,22 +29,22 @@
 
 
 #
-from commons.resource import Resource
+import urllib2
 
-from django.http import HttpResponse, HttpResponseServerError
+from django.conf import settings
 from django.db import transaction
+from django.utils import simplejson
+from django.http import HttpResponse, HttpResponseServerError
 
 from commons.authentication import get_user_authentication, user_authentication
-
+from commons.resource import Resource
 from remoteChannel.models import RemoteChannel
 
-from django.utils import simplejson
-from django.conf import settings
 
 class RemoteChannelCollection(Resource):
     @transaction.commit_on_success
     def create(self, request):
-        user = get_user_authentication(request)
+        get_user_authentication(request)
 
         # Getting id
         external_channel = RemoteChannel()
@@ -56,53 +56,58 @@ class RemoteChannelCollection(Resource):
         external_channel.save()
 
         response = dict()
-        response['url'] = external_channel.url;
-        response['id'] = int(external_channel.id);
-        
+        response['url'] = external_channel.url
+        response['id'] = int(external_channel.id)
+
         return HttpResponse(simplejson.dumps(response), mimetype='application/json; charset=UTF-8')
-    
+
     @transaction.commit_on_success
     def update(self, request):
-        user = get_user_authentication(request)
-        
+        get_user_authentication(request)
+
         channel_json = None
-        if (request.POST.has_key('channels')):
-            channel_json = request.POST['channels']
-        else:
-            return HttpResponseServerError('{"error": "Missing channel list!"}',  mimetype='application/json; charset=UTF-8')
-        
         try:
-            channel_list = simplejson.loads(request_json)
+            channel_json = request.POST['channels']
+        except KeyError:
+            return HttpResponseServerError('{"error": "Missing channel list!"}',
+                                           mimetype='application/json; charset=UTF-8')
+
+        try:
+            channel_list = simplejson.loads(channel_json)
         except:
-            return HttpResponseServerError('{"error": "Not valid JSON argument!"}',  mimetype='application/json; charset=UTF-8')
-        
+            return HttpResponseServerError('{"error": "Not valid JSON argument!"}',
+                                           mimetype='application/json; charset=UTF-8')
+
         for channel_data in channel_list:
-            channel = ExternalChannel.objects.get(id=channel_data['id'])
-            
+            channel = RemoteChannel.objects.get(id=channel_data['id'])
+
             channel.value = channel_data['value']
-            channel.save()           
-        
-        if hasattr(settings,'REMOTE_CHANNEL_NOTIFIER_URL'):
-            url = settings.REMOTE_CHANNEL_NOTIFIER_URL + '?channels=%s'%(channel_json)
-            
+            channel.save()
+
+        if hasattr(settings, 'REMOTE_CHANNEL_NOTIFIER_URL'):
+            url = settings.REMOTE_CHANNEL_NOTIFIER_URL + '?channels=%s' % channel_json
+
             request = urllib2.Request(url)
-            
+
             return urllib2.urlopen(url)
-        
+
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
 
+
 class remoteChannelEntry(Resource):
+
     def read(self, request, user_name=None):
-        user = user_authentication(request, user_name)
-        if request.POST.has_key('url'):
-            templateURL = request.POST['url']
-        else:
-            return HttpResponseServerError('<error>Url not specified</error>', mimetype='application/xml; charset=UTF-8')
-    
+        user_authentication(request, user_name)
+        try:
+            request.POST['url']
+        except KeyError:
+            return HttpResponseServerError('<error>Url not specified</error>',
+                                           mimetype='application/xml; charset=UTF-8')
+
     def delete(self, request, user_name=None):
-        user = user_authentication(request, user_name)
-        if request.POST.has_key('url'):
-            templateURL = request.POST['url']
-        else:
-            return HttpResponseServerError('<error>Url not specified</error>', mimetype='application/xml; charset=UTF-8')
-    
+        user_authentication(request, user_name)
+        try:
+            request.POST['url']
+        except KeyError:
+            return HttpResponseServerError('<error>Url not specified</error>',
+                                           mimetype='application/xml; charset=UTF-8')

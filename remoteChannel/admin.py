@@ -31,8 +31,7 @@
 #
 
 from django.contrib import admin
+
 from remoteChannel.models import RemoteChannel
 
 admin.site.register(RemoteChannel)
-
-
