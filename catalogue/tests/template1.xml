@@ -1,0 +1,39 @@
+<?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
+  <!-- Gadget Meta-Info -->
+  <Catalog.ResourceDescription>
+    <Vendor>Morfeo</Vendor>
+    <Name>Test</Name>
+    <DisplayName>__MSG_displayName__</DisplayName>
+    <Version>0.1</Version>
+    <Author>admin</Author>
+    <Mail>test@example.com</Mail>
+    <Description>__MSG_description__</Description>
+    <ImageURI>/ezweb/gadgets_src/mapea/images/catalogue.png</ImageURI>
+    <iPhoneImageURI>/ezweb/gadgets_src/mapea/images/catalogue_iphone.png</iPhoneImageURI>
+    <WikiURI>http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</WikiURI>
+  </Catalog.ResourceDescription>
+
+  <Platform.Preferences>
+  </Platform.Preferences>
+
+  <Platform.StateProperties>
+  </Platform.StateProperties>
+
+  <Platform.Wiring>
+  </Platform.Wiring>
+
+  <Platform.Link>
+    <XHTML href="test.html"/>
+  </Platform.Link>
+
+  <Platform.Rendering height="24" width="10"/>
+  <Platform.Context>
+  </Platform.Context>
+
+  <Translations default="en">
+    <Translation lang="en">
+      <msg name="displayName">Test Gadget</msg>
+      <msg name="description">Test Gadget description</msg>
+    </Translation>
+  </Translations>
+</Template>
