@@ -27,8 +27,6 @@
 #
 #...............................licence...........................................#
 
-
-
 from django.conf import settings
 from django.template import TemplateDoesNotExist
 from django.utils._os import safe_join
@@ -57,5 +55,5 @@ def load_template_source(template_name, template_dirs=None):
         tried.append(filepath)
 
     error_msg = "Tried %s" % tried
-    raise TemplateDoesNotExist, error_msg
+    raise TemplateDoesNotExist(error_msg)
 load_template_source.is_usable = True
