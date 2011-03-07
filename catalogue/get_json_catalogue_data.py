@@ -115,12 +115,12 @@ def get_slot_data(gadget_id):
     return all_slots
 
 
-def get_related_user_data(gadget_id, user_id):
+def get_related_user_data(resource, user_id):
     """Gets data associated with the relationship between user and gadget."""
     data_ret = {}
 
     try:
-        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)
+        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget=resource, user__id=user_id)
 
         if len(user_related_data_list) == 0:
             data_ret['added_by_user'] = 'No'
@@ -291,44 +291,38 @@ def get_gadget_capabilities(gadget_id, user):
     return data_ret
 
 
-def get_gadgetresource_data(data, user):
+def get_gadgetresource_data(resource, user):
     """Gets all the information related to the given gadget."""
-    data_ret = {}
-    data_fields = data['fields']
-    data_ret['vendor'] = data_fields['vendor']
-    data_ret['id'] = data['pk']
-    data_ret['name'] = data_fields['short_name']
-    if data_fields['display_name'] and data_fields['display_name'] != "":
-        data_ret['displayName'] = data_fields['display_name']
+    if resource.display_name and resource.display_name != "":
+        displayName = resource.display_name
     else:
-        data_ret['displayName'] = data_ret['name']
-    data_ret['version'] = data_fields['version']
-    data_ret['author'] = data_fields['author']
-    data_ret['mail'] = data_fields['mail']
-    data_ret['description'] = data_fields['description']
-    data_ret['uriImage'] = data_fields['image_uri']
-    data_ret['uriWiki'] = data_fields['wiki_page_uri']
-    data_ret['mashupId'] = data_fields['mashup_id']
-    data_ret['uriTemplate'] = data_fields['template_uri']
+        displayName = resource.short_name
 
-    data_ret['capabilities'] = get_gadget_capabilities(gadget_id=data['pk'], user=user)
+    user_related_data = get_related_user_data(resource, user_id=user.id)
 
-    user_related_data = get_related_user_data(gadget_id=data['pk'], user_id=user.id)
-    data_ret['added_by_user'] = user_related_data['added_by_user']
+    versions = GadgetResource.objects.filter(vendor=resource.vendor, short_name=resource.short_name).values_list('version', flat=True)
+    data_tags = get_tag_data(gadget_id=resource.pk, user_id=user.id)
+    data_events = get_event_data(gadget_id=resource.pk)
+    data_slots = get_slot_data(gadget_id=resource.pk)
 
-    versions_data = GadgetResource.objects.filter(vendor=data_fields['vendor'], short_name=data_fields['short_name']).values('version')
-    data_ret['versions'] = ["%s" % (v['version']) for v in versions_data]
-
-    data_tags = get_tag_data(gadget_id=data['pk'], user_id=user.id)
-    data_ret['tags'] = [d for d in data_tags]
-
-    data_events = get_event_data(gadget_id=data['pk'])
-    data_ret['events'] = [d for d in data_events]
-
-    data_slots = get_slot_data(gadget_id=data['pk'])
-    data_ret['slots'] = [d for d in data_slots]
-
-    resource = get_object_or_404(GadgetResource, id=data['pk'])
-    data_ret['votes'] = get_vote_data(gadget=resource, user=user)
-
-    return data_ret
+    return {
+        'vendor': resource.vendor,
+        'id': resource.pk,
+        'name': resource.short_name,
+        'displayName': displayName,
+        'version': resource.version,
+        'author': resource.author,
+        'mail': resource.mail,
+        'description': resource.description,
+        'uriImage': resource.image_uri,
+        'uriWiki': resource.wiki_page_uri,
+        'mashupId': resource.mashup_id,
+        'uriTemplate': resource.template_uri,
+        'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
+        'added_by_user': user_related_data['added_by_user'],
+        'versions': versions,
+        'tags': [d for d in data_tags],
+        'events': [d for d in data_events],
+        'slots': [d for d in data_slots],
+        'votes': get_vote_data(gadget=resource, user=user),
+    }

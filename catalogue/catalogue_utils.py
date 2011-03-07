@@ -30,7 +30,6 @@
 
 #
 
-from django.core import serializers
 from django.http import HttpResponse, HttpResponseServerError
 from django.db.models import Q
 from django.conf import settings
@@ -203,10 +202,7 @@ def get_resource_response(gadgetlist, format, items, user):
     """Obtains all the information related to a gadget encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
-        gadgetresource = {}
-        resource_data = serializers.serialize('python', gadgetlist, ensure_ascii=False)
-        resource_data_list = [get_gadgetresource_data(d, user) for d in resource_data]
-        gadgetresource['resourceList'] = resource_data_list
+        gadgetresource = {'resourceList': [get_gadgetresource_data(resource, user) for resource in gadgetlist]}
         response = HttpResponse(json_encode(gadgetresource), mimetype='application/json; charset=UTF-8')
         response.__setitem__('items', items)
         return response
