@@ -32,7 +32,6 @@
 
 from os import path
 from urllib import url2pathname
-from urllib2 import urlparse
 from xml.sax import parseString, handler
 
 from django.conf import settings
@@ -42,7 +41,7 @@ from django.utils.translation import ugettext as _
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
-from gadgetCodeParser import GadgetCodeParser
+from gadgetCodeParser import parse_gadget_code
 from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability, SharedVariableDef
 from translator.models import Translation
 
@@ -456,25 +455,8 @@ class TemplateHandler(handler.ContentHandler):
 
         if _href != "":
             try:
-                # Checking if _href is a relative URL
-                _relative_url = ''
-
-                if not self.fromWGT:
-                    result = urlparse.urlparse(_href)
-
-                    if result.scheme == 'file':
-                        raise TemplateParseException(_('Invalid URL scheme: file'))
-
-                    if result.scheme == '':
-                        _relative_url = _href
-                        _href = urlparse.urljoin(self.uri, _href)
-
-                # Gadget Code Parsing
-                gadgetParser = GadgetCodeParser()
-                gadgetParser.parse(_href, self._gadgetURI, _content_type,
-                                   self.fromWGT, _relative_url, cacheable=_cacheable,
-                                   user=self.user)
-                self._xhtml = gadgetParser.getXHTML()
+                self._xhtml = parse_gadget_code(self.uri, _href, self._gadgetURI, _content_type,
+                                                self.fromWGT, cacheable=_cacheable, user=self.user)
             except TemplateParseException:
                 raise
             except Exception, e:

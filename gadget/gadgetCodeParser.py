@@ -30,61 +30,60 @@
 
 #
 
+import os.path
+import urlparse
 from urllib import url2pathname
-from os import path
+from urllib2 import URLError, HTTPError
 
 from django.conf import settings
-from django.utils.http import urlquote
-
 from django.utils.translation import ugettext as _
 
-from commons.http_utils import download_http_content
+from commons import http_utils
 from commons.exceptions import TemplateParseException
 from gadget.models import XHTML
 
 
-class GadgetCodeParser:
+def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
+                      cacheable=True, user=None):
+    code = ""
 
-    xHTML = None
+    url = urlparse.urlparse(code_uri)
 
-    def parse(self, codeURI, gadgetURI, content_type, fromWGT, relative_url, cacheable=True, user=None):
-        xhtml = ""
+    if url.scheme == 'file':
+        raise TemplateParseException(_('Invalid URL scheme: file'))
 
-        if fromWGT:
-            localPath = codeURI
-            if localPath[0] == '/':
-                localPath = localPath[1:]
+    if from_wgt:
+        local_path = code_uri
+        if local_path.startswith('/'):
+            local_path = local_path.lstrip('/')
 
-            localPath = url2pathname(localPath)
-            localPath = path.join(settings.BASEDIR, localPath)
-            if not path.isfile(localPath):
-                raise TemplateParseException(_("'%(file)s' is not a file") % {'file': localPath})
+        local_path = url2pathname(local_path)
+        local_path = os.path.join(settings.BASEDIR, local_path)
+        if not os.path.isfile(local_path):
+            raise TemplateParseException(_("'%(file)s' is not a file") %
+                                         {'file': local_path})
 
-            f = open(localPath, 'r')
-            xhtml = f.read()
-            f.close()
+        f = open(local_path, 'r')
+        code = f.read()
+        f.close()
 
+    else:
+        if url.scheme == '':
+            fetch_uri = urlparse.urljoin(main_uri, code_uri)
         else:
-            # TODO Fixme!! This works for now, but we have to check if a part of a url is empty
-            address = codeURI.split('://')
-            query = address[1].split('/', 1)
-            codeURI = address[0] + "://" + query[0] + "/" + urlquote(query[1])
+            fetch_uri = code_uri
 
-            try:
-                xhtml = download_http_content(codeURI, user=user)
-            except Exception:
-                raise TemplateParseException(_("XHTML code is not accessible"))
+        try:
+            code = http_utils.download_http_content(fetch_uri, user=user)
+        except HTTPError, e:
+            msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {
+                'errorCode': e.code, 'errorMsg': e.msg,
+                }
+            raise TemplateParseException(msg)
+        except URLError, e:
+            msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
+            raise TemplateParseException(msg)
 
-        if (relative_url):
-            codeURI = relative_url
-
-        uri = gadgetURI + "/xhtml"
-
-        self.xHTML = XHTML(uri=uri, code=xhtml, url=codeURI,
-                           content_type=content_type, cacheable=bool(cacheable))
-        self.xHTML.save()
-
-        return
-
-    def getXHTML(self):
-        return self.xHTML
+    return XHTML.objects.create(uri=gadget_uri + "/xhtml", code=code,
+                                url=code_uri, content_type=content_type,
+                                cacheable=cacheable)
