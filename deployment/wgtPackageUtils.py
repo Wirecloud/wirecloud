@@ -1,5 +1,24 @@
 import os
+import re
+import urllib
 import zipfile
+
+from django.conf import settings
+from django.utils.translation import ugettext as _
+
+
+WGT_URI_PATTERN_RE = re.compile(r'^[/]?deployment/gadgets/')
+
+def get_wgt_local_path(uri):
+
+    path = re.sub(WGT_URI_PATTERN_RE, '', uri)
+    if path == uri:
+        # uri does not starts with r"[/]?deployment/gadgets/"
+        raise Exception(_('Invalid path'))
+
+    path = urllib.url2pathname(path.encode("utf8"))
+
+    return os.path.join(settings.GADGETS_DEPLOYMENT_DIR, path)
 
 
 class WgtPackageUtils:

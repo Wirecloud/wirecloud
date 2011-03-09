@@ -1,4 +1,6 @@
 import os.path
+from shutil import rmtree
+from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 
 from django.conf import settings
@@ -97,44 +99,54 @@ class GCPLocalCodeTests(TestCase):
 
     def setUp(self):
         super(GCPLocalCodeTests, self).setUp()
-        self._resources = []
+
+        self.old_GADGETS_DEPLOYMENT_DIR = settings.GADGETS_DEPLOYMENT_DIR
+        self.old_GADGETS_DEPLOYMENT_TMPDIR = settings.GADGETS_DEPLOYMENT_TMPDIR
+        settings.GADGETS_DEPLOYMENT_DIR = mkdtemp()
+        settings.GADGETS_DEPLOYMENT_TMPDIR = mkdtemp()
 
     def tearDown(self):
         super(GCPLocalCodeTests, self).tearDown()
-        for resource in self._resources:
-            os.unlink(os.path.join(settings.BASEDIR, resource))
+
+        rmtree(settings.GADGETS_DEPLOYMENT_DIR, ignore_errors=True)
+        rmtree(settings.GADGETS_DEPLOYMENT_TMPDIR)
+        settings.GADGETS_DEPLOYMENT_DIR = self.old_GADGETS_DEPLOYMENT_DIR
+        settings.GADGETS_DEPLOYMENT_TMPDIR = self.old_GADGETS_DEPLOYMENT_TMPDIR
 
     def _create_gadget_code(self, filename, code):
-        fd = open(os.path.join(settings.BASEDIR, filename), 'w')
+        path = os.path.join(settings.GADGETS_DEPLOYMENT_DIR, os.path.dirname(filename))
+        if not os.path.isdir(path):
+            os.makedirs(path)
+
+        fd = open(os.path.join(settings.GADGETS_DEPLOYMENT_DIR, filename), 'w')
         fd.write(code)
         fd.close()
-        self._resources.append(filename)
 
     def test_parse_gadget_code_from_wgt(self):
-        self._create_gadget_code('gcp_test1.html', 'gadget code')
+        self._create_gadget_code('test/Morfeo/Test_Gadget1/0.1/gcp_test.html', 'gadget code')
         xhtml = parse_gadget_code('http://example.com',
-                                  'gcp_test1.html',
+                                  'deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html',
                                   'http://example.com/gadget1',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget1/xhtml')
         self.assertEquals(xhtml.code, 'gadget code')
-        self.assertEquals(xhtml.url, 'gcp_test1.html')
+        self.assertEquals(xhtml.url, 'deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html')
         self.assertEquals(xhtml.content_type, 'text/html')
 
         # now with an absolute path
-        self._create_gadget_code('gcp_test2.html', 'gadget code')
+        self._create_gadget_code('test/Morfeo/Test_Gadget2/0.1/gcp_test.html', 'gadget code')
         xhtml = parse_gadget_code('http://example.com',
-                                  '/gcp_test2.html',  # absolute path
+                                  '/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html',  # absolute path
                                   'http://example.com/gadget2',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget2/xhtml')
         self.assertEquals(xhtml.code, 'gadget code')
-        self.assertEquals(xhtml.url, '/gcp_test2.html')
+        self.assertEquals(xhtml.url, '/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html')
         self.assertEquals(xhtml.content_type, 'text/html')
 
         # now with a non existing file
         self.assertRaises(TemplateParseException, parse_gadget_code,
                           'http://example.com',
-                          'non_existing_file.html',
+                          '/deployment/gadgets/non_existing_file.html',
                           'http://example.com/gadget2',
                           'text/html', True)

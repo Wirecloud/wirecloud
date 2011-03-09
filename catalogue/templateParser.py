@@ -35,11 +35,9 @@ import string
 
 from datetime import datetime
 from os import path
-from urllib import url2pathname
 from urllib2 import URLError, HTTPError
 from xml.sax import parseString, handler
 
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
@@ -50,6 +48,7 @@ from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
+from deployment.wgtPackageUtils import get_wgt_local_path
 
 
 class TemplateParser:
@@ -57,12 +56,7 @@ class TemplateParser:
     def __init__(self, uri, user, save=True, fromWGT=False):
 
         if fromWGT:
-            if uri[0] == '/':
-                uri = uri[1:]
-
-            localPath = url2pathname(uri.encode("utf8"))
-
-            localPath = path.join(settings.BASEDIR, localPath)
+            localPath = get_wgt_local_path(uri)
             if not path.isfile(localPath):
                 raise Exception(_("'%(file)s' is not a file") % {'file': localPath})
 

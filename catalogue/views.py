@@ -262,11 +262,11 @@ def deleteOneGadget(resource, user, request):
     # Delete the gadget if it is saved in the platform
     if resource.fromWGT:
         # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
-        exp = re.compile('[/]?(?P<path>.+/.+/.+/.+/.+/.+/).*$')
+        exp = re.compile('/deployment/gadgets/(?P<path>.+/.+/.+/.+/).*$')
         if exp.search(resource.template_uri):
             v = exp.search(resource.template_uri)
             path = url2pathname(v.group('path'))
-            path = os.path.join(settings.BASEDIR, path).encode("utf8")
+            path = os.path.join(settings.GADGETS_DEPLOYMENT_DIR, path).encode("utf8")
             if os.path.isdir(path):
                 rmtree(path)
 

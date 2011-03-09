@@ -58,7 +58,7 @@ from wgtPackageUtils import WgtPackageUtils
 class Static(Resource):
 
     def read(self, request, path):
-        return serve(request, path.encode("utf8"), settings.GADGETS_ROOT, False)
+        return serve(request, path.encode("utf8"), settings.GADGETS_DEPLOYMENT_DIR, False)
 
 
 class Error(Resource):
@@ -247,7 +247,7 @@ class Resources(Resource):
                 info.create_folders()
 
                 # Parser XML config file
-                gadget_path = path.join(settings.GADGETS_ROOT, username, vendor, name, version)
+                gadget_path = path.join(settings.GADGETS_DEPLOYMENT_DIR, username, vendor, name, version)
                 xmlDoc = parse(path.join(gadget_path, 'config.xml'))
                 info.get_info_config(xmlDoc, request)
 
@@ -284,12 +284,12 @@ class InfoDeployment:
     def __init__(self, request):
         # Info folders
         self.userName = request.user.username
-        self.USERGADGETSDIR = path.join(settings.GADGETS_ROOT, self.userName)
+        self.USERGADGETSDIR = path.join(settings.GADGETS_DEPLOYMENT_DIR, self.userName)
         self._abs_re = re.compile('/*(.*)')
 
     def create_folders(self):
         self.create_folder(settings.GADGETS_DEPLOYMENT_TMPDIR)
-        self.create_folder(settings.GADGETS_ROOT)
+        self.create_folder(settings.GADGETS_DEPLOYMENT_DIR)
 
         self.TMPDIR = mkdtemp(prefix=self.userName, dir=settings.GADGETS_DEPLOYMENT_TMPDIR)
 

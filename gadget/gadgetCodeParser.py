@@ -32,14 +32,13 @@
 
 import os.path
 import urlparse
-from urllib import url2pathname
 from urllib2 import URLError, HTTPError
 
-from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from commons import http_utils
 from commons.exceptions import TemplateParseException
+from deployment.wgtPackageUtils import get_wgt_local_path
 from gadget.models import XHTML
 
 
@@ -53,12 +52,7 @@ def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
         raise TemplateParseException(_('Invalid URL scheme: file'))
 
     if from_wgt:
-        local_path = code_uri
-        if local_path.startswith('/'):
-            local_path = local_path.lstrip('/')
-
-        local_path = url2pathname(local_path)
-        local_path = os.path.join(settings.BASEDIR, local_path)
+        local_path = get_wgt_local_path(code_uri)
         if not os.path.isfile(local_path):
             raise TemplateParseException(_("'%(file)s' is not a file") %
                                          {'file': local_path})

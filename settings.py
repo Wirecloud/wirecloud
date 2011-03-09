@@ -223,7 +223,10 @@ AUTHENTICATION_BACKENDS = (
 
 
 # Absolute path to the directory that holds in development gadgets.
-GADGETS_ROOT = path.join(BASEDIR, 'deployment', 'gadgets')
+GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
+
+# WGT deployment dirs
+GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
 # URL prefix in order to complete gadget relative URL

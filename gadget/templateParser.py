@@ -30,17 +30,15 @@
 
 #
 
-from os import path
-from urllib import url2pathname
 from xml.sax import parseString, handler
 
-from django.conf import settings
 from django.db import transaction
 from django.utils.translation import ugettext as _
 
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
+from deployment.wgtPackageUtils import get_wgt_local_path
 from gadgetCodeParser import parse_gadget_code
 from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability, SharedVariableDef
 from translator.models import Translation
@@ -58,9 +56,7 @@ class TemplateParser:
             self.xml = download_http_content(uri, user=user)
         else:
             # In this case 'uri' is a filesystem URL
-            if uri[0] == '/':  # TODO Revisar
-                uri = uri[1:]
-            localpath = path.join(settings.BASEDIR, url2pathname(uri.encode("utf8")))
+            localpath = get_wgt_local_path(uri)
             f = open(localpath, 'r')
             self.xml = f.read()
             f.close()
