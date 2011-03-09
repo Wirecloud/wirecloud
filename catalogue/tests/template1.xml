@@ -35,5 +35,9 @@
       <msg name="displayName">Test Gadget</msg>
       <msg name="description">Test Gadget description</msg>
     </Translation>
+    <Translation lang="es">
+      <msg name="displayName">Gadget de pruebas</msg>
+      <msg name="description">Descripción del Gadget de pruebas</msg>
+    </Translation>
   </Translations>
 </Template>

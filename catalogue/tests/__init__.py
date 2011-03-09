@@ -1,1 +1,1 @@
-from catalogue.tests.tests import TranslationTestCase
+from catalogue.tests.tests import TranslationTestCase, WGTDeploymentTestCase
