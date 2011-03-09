@@ -2290,7 +2290,7 @@ StyledElements.BorderLayout.prototype.getSouthContainer = function() {
  * Options:
  *     * initialEntries:
  *     * initialValue:
- *     * idFunc: In case you want to assign object values, you must provide
+ *     * idFunc: In case you want to assign non-string values, you must provide
  *     a function for converting them into strings.
  */
 StyledElements.StyledSelect = function(options) {
@@ -2355,7 +2355,16 @@ StyledElements.StyledSelect.prototype.getValue = function () {
 }
 
 StyledElements.StyledSelect.prototype.setValue = function (newValue) {
-    if (newValue == null) {
+    if (typeof newValue !== 'string') {
+        try {
+            newValue = this.idFunc(newValue);
+        } catch (e) {
+            newValue = null;
+        }
+    }
+
+    // TODO exception if the newValue is not listened in the option list?
+    if (newValue === null || !(newValue in this.optionValues)) {
         if (this.defaultValue != null) {
             newValue = this.defaultValue;
         } else if (this.inputElement.options.length > 0) {
@@ -2363,12 +2372,10 @@ StyledElements.StyledSelect.prototype.setValue = function (newValue) {
         } else {
             StyledElements.StyledInputElement.prototype.setValue.call(this, '');
             EzWebExt.setTextContent(this.textDiv, '');
+            return;
         }
-    } else if (typeof newValue === 'object') {
-        newValue = this.idFunc(newValue);
     }
 
-    // TODO exception if the newValue is not listened in the option list?
     StyledElements.StyledInputElement.prototype.setValue.call(this, newValue);
     EzWebExt.setTextContent(this.textDiv, this.optionsByValue[newValue]);
 }
@@ -2395,7 +2402,7 @@ StyledElements.StyledSelect.prototype.addEntries = function (newEntries) {
         optionLabel = optionLabel ? optionLabel : optionValue;
 
         var realValue = optionValue;
-        if (typeof optionValue === 'object') {
+        if (typeof optionValue !== 'string') {
             optionValue = this.idFunc(optionValue);
         }
         option.setAttribute("value", optionValue);
