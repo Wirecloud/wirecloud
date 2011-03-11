@@ -2298,7 +2298,17 @@ StyledElements.StyledSelect = function(options) {
         'class': '',
         'initialEntries': [],
         'initialValue': null,
-        'idFunc': function (value) { return value; }
+        'idFunc': function (value) {
+            if (typeof value === 'string') {
+                return value;
+            } else if (value === null || value === undefined) {
+                return '';
+            } else if (typeof value === 'number') {
+                return '' + value;
+            } else {
+                throw new TypeError();
+            }
+        }
     },
     options);
 
