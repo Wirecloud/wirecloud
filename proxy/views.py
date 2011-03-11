@@ -122,7 +122,6 @@ class Proxy(Resource):
 
         # HTTP call
         try:
-            httplib.HTTPConnection.debuglevel = 1
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
 
