@@ -153,7 +153,7 @@ class Proxy(Resource):
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
                         del cookie_parser[settings.SESSION_COOKIE_NAME]
 
-                    if hasattr(settings, 'CSRF_COOKIE_NAME'):
+                    if hasattr(settings, 'CSRF_COOKIE_NAME') and settings.CSRF_COOKIE_NAME in cookie_parser:
                         del cookie_parser[settings.CSRF_COOKIE_NAME]
 
                     content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
