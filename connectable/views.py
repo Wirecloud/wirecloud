@@ -41,6 +41,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import json_encode
 from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubscription
+from connectable.utils import createChannel
 from igadget.models import IGadget
 from remoteChannel.models import RemoteChannel
 from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
@@ -181,33 +182,17 @@ class ConnectableEntry(Resource):
                         remote_subscription.save()
 
                 if (new_channel_data['provisional_id']):
-                    #It's necessary to create all objects!
-
-                    #Creating abstract variable
-                    new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel_data['name'])
-                    new_abstract_variable.save()
-
-                    #Creating variable value
-                    new_variable_value = VariableValue(user=user, value="", abstract_variable=new_abstract_variable)
-                    new_variable_value.save()
-
-                    new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
-                    new_ws_variable.save()
+                    # It's necessary to create a new channel from scratch
 
                     filter = None
-                    fparam_values = None
-                    if new_channel_data['filter']:
-                        try:
-                            filter = Filter.objects.get(id=new_channel_data['filter'])
-                            fparam_values = json_encode(new_channel_data['filter_params'])
-                        except Filter.DoesNotExist:
-                            pass
-
-                    channel = InOut(name=new_channel_data['name'], remote_subscription=remote_subscription, workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
-                    channel.save()
+                    filter_params = None
+                    if 'filter_id' in new_channel_data:
+                        filter = Filter.objects.get(id=new_channel_data['filter_id'])
+                        filter_params = new_channel_data['filter_params']
+                    channel = createChannel(workspace, new_channel_data['id'], filter, filter_params, remote_subscription)
 
                     # A channel has been generated. It's necessary to correlate provisional and definitive ids!
-                    id_mapping[new_channel_data['id']] = {'new_id': channel.id, 'new_wv_id': new_ws_variable.id}
+                    id_mapping[new_channel_data['id']] = {'new_id': channel.id, 'new_wv_id': channel.workspace_variable.id}
 
                     channel_info = None
 
