@@ -497,13 +497,19 @@ def get_variable_data(variable, user, workspace):
         context = ContextOption.objects.get(varDef=variable.vardef)
         data_ret['concept'] = context.concept
 
-    #Connectable management
-    #Only SLOTs and EVENTs
+    # Connectable management
+    # Only SLOTs and EVENTs
     connectable = False
     if var_def.aspect == 'SLOT':
-        connectable = Out.objects.get(abstract_variable=abstract_var)
+        try:
+            connectable = Out.objects.get(abstract_variable=abstract_var)
+        except Out.DoesNotExist:
+            connectable = Out.objects.create(abstract_variable=abstract_var, name=var_def.name)
     if var_def.aspect == 'EVEN':
-        connectable = In.objects.get(variable__id=data_ret['id'])
+        try:
+            connectable = In.objects.get(variable=variable)
+        except In.DoesNotExist:
+            connectable = In.objects.create(variable=variable, name=var_def.name)
 
     if connectable:
         connectable_data = get_connectable_data(connectable)
