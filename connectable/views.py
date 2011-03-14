@@ -31,7 +31,8 @@
 #
 
 from django.db import transaction
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
@@ -79,6 +80,10 @@ class ConnectableEntry(Resource):
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        if not user.is_staff and workspace.creator != user:
+            return HttpResponseForbidden()
+
         # Gets all needed parameters from request
         if 'json' in request.POST:
             json = simplejson.loads(request.POST['json'])
@@ -86,12 +91,11 @@ class ConnectableEntry(Resource):
             return HttpResponseBadRequest(_(u'JSON parameter expected'))
 
         try:
-            workspace = WorkSpace.objects.get(id=workspace_id)
 
             # Mapping between provisional ids and database-generated ids!!!
             id_mapping = {}
 
-            #Hash for mapping External Channels URLs and IDs
+            # Hash for mapping External Channels URLs and IDs
             rchannels_urls_to_ids = []
 
             # Erasing variables associated with channels deleted explicitly by the user
@@ -286,10 +290,6 @@ class ConnectableEntry(Resource):
             json_result = {'ids': id_mapping, 'urls': rchannels_urls_to_ids}
 
             return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
-        except WorkSpace.DoesNotExist, e:
-            msg = _('referred workspace (id: %(workspace_id)s) does not exist.') % {'workspace_id': workspace_id}
-            raise TracedServerError(e, json, request, msg)
-
         except Exception, e:
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
             raise TracedServerError(e, json, request, msg)
@@ -306,11 +306,9 @@ class ConnectableEntry(Resource):
         else:
             return HttpResponseBadRequest(_(u'JSON parameter expected'))
 
-        try:
-            workspace = WorkSpace.objects.get(id=workspace_id)
-        except WorkSpace.DoesNotExist, e:
-            msg = _('referred workspace %(workspace_name)s does not exist.') % {'workspace_name': workspace.name}
-            raise TracedServerError(e, json, request, msg)
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+        if not user.is_staff and workspace.creator != user:
+            return HttpResponseForbidden()
 
         id_mapping = {}
 

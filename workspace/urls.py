@@ -52,7 +52,7 @@ urlpatterns = patterns('workspace.views',
         views.WorkSpaceVariableCollection(permitted_methods=('PUT', ))),
 
     # Wiring info for the whole workspace
-    (r'^/((?P<workspace_id>\d+)/wiring?[/]?)?$',
+    (r'^/((?P<workspace_id>\d+)/wiring[/]?)?$',
         ConnectableEntry(permitted_methods=('PUT', 'POST', ))),
 
     # Sharing workspace

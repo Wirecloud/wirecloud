@@ -83,7 +83,7 @@ class InOut(models.Model):
     workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'))
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
-    filter_param_values = models.TextField(_('Filter parameter values'), blank=True, null=True)
+    filter_param_values = models.TextField(_('Filter parameter values'), blank=True)
     remote_subscription = models.ForeignKey(RemoteSubscription, verbose_name=_('Subscription'), null=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
 
