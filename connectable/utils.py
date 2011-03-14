@@ -55,3 +55,17 @@ def createChannel(workspace, name, filter=None, filter_params={}, remote_subscri
     channel.save()
 
     return channel
+
+
+def deleteChannel(channel):
+    abstract_variable = channel.workspace_variable.abstract_variable
+    variable_values = VariableValue.objects.filter(abstract_variable=abstract_variable)
+
+    variable_values.delete()
+    abstract_variable.delete()
+    channel.workspace_variable.delete()
+
+    if channel.remote_subscription:
+        channel.remote_subscription.delete()
+
+    channel.delete()

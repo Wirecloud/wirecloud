@@ -202,7 +202,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 * Generates and returns a new provisional channel id.
 	 */
 	Wiring.prototype._newProvisionalChannelId = function () {
-		return this.currentProvisionalId++;
+		return -this.currentProvisionalId++;
 	}
 
 
@@ -478,7 +478,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 */
 	Wiring.prototype.serialize = function () {
 		var gadgetKeys = this.iGadgets.keys();
-		var serialized_channels = [];
+		var serialized_channels = {};
 
 		// Channels
 		for (var i = 0; i < this.channels.length; i++) {
@@ -538,12 +538,11 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 				                                   provisional_id: inout.provisional_id});
 			}
 
-			serialized_channels.push(serialized_channel);
+			serialized_channels[channel.id] = serialized_channel;
 		}
 
 		// Send data to persistence engine
-		var json = {'inOutList': serialized_channels,
-		            'channelsForRemoving': this.channelsForRemoving};
+		var json = {'inOutList': serialized_channels};
 		var param = {'json': Object.toJSON(json)};
 
 		var url = URIs.GET_POST_WIRING.evaluate({'id': this.workspace.workSpaceState.id});
