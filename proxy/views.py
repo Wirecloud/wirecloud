@@ -174,7 +174,8 @@ class Proxy(Resource):
             else:
                 hostName = socket.gethostname()
 
-            headers["Via"] = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
+            via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
+            headers["Via"] = via_header
 
             if (method == 'POST' or method == 'PUT') and not 'content-type' in headers:
                 # Add Content-Type (Servlets bug)
@@ -206,8 +207,10 @@ class Proxy(Resource):
             # Add all the headers received from the response
             headers = res.headers
             for header in headers:
+
                 header_lower = header.lower()
                 if header_lower == 'set-cookie':
+
                     cookie_parser = Cookie.SimpleCookie()
                     cookies = res.headers.getheaders(header)
                     for i in range(len(cookies)):
@@ -215,9 +218,14 @@ class Proxy(Resource):
 
                     for key in cookie_parser:
                         response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
+                elif header_lower == 'via':
+
+                    via_header = via_header + ', ' + headers[header]
 
                 elif is_valid_header(header_lower):
                     response[header] = headers[header]
+
+            response['Via'] = via_header
 
             return response
 
