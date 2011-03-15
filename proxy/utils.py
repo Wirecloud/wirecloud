@@ -45,8 +45,7 @@ def is_localhost(host):
 
 
 def is_valid_header(header):
-    return header in ('connection', 'keep-alive', 'proxy-authenticate', 'proxy-authorization', 'te', 'trailers', 'transfer-encoding', 'upgrade')
-
+    return not header in ('content-length')
 
 def encode_query(query):
     params = query.split("&")
