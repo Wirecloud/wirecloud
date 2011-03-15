@@ -864,7 +864,7 @@ if (document.implementation && document.implementation.createDocument) {
     EzWebExt.XML.createDocument = function (namespaceURL, rootTagName, doctype) {
         var doc = new ActiveXObject("MSXML2.DOMDocument");
         // TODO take into account doctype
-        doc.appendChild(EzWebExt.XML.createElementNS(doc, rootTagName, namespaceURL));
+        doc.appendChild(EzWebExt.XML.createElementNS(doc, namespaceURL, rootTagName));
         return doc;
     }
 
