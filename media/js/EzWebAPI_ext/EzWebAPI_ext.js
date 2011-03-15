@@ -603,19 +603,25 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
+        var defaultNS, arrElems, allElems, i, elem;
+
         // for IE ns is stored in tagUrn property
 
         // ugh!! ugly hack for IE which does not understand default namespace
-        var defaultNS = domElem.ownerDocument.documentElement.getAttribute('xmlns');
+        if (domElem.documentElement) {
+            domElem.documentElement.getAttribute('xmlns');
+        } else {
+            domElem.ownerDocument.documentElement.getAttribute('xmlns');
+        }
 
         if (strNsURI == defaultNS) {
             strNsURI = "";
         }
 
-        var arrElems = domElem.getElementsByTagName(lName);
-        var allElems = new Array();
-        for (var i = 0, len = arrElems.length; i < len; i++) {
-            var elem = arrElems[i];
+        arrElems = domElem.getElementsByTagName(lName);
+        allElems = new Array();
+        for (i = 0, len = arrElems.length; i < len; i++) {
+            elem = arrElems[i];
             if (elem.namespaceURI == strNsURI) {
                 allElems.push(elem);
             }
