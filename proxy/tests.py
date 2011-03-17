@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import errno
 from httplib import HTTPMessage
 from StringIO import StringIO
@@ -99,6 +101,22 @@ class ProxyTests(TestCase):
         response = client.get('/proxy/http/example.com/path', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEquals(response.status_code, 504)
         self.assertEquals(response.content, '')
+
+    def test_encoded_urls(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_response('http://example.com/ca%C3%B1on', 'data')
+
+        response = client.get('/proxy/http/example.com/ca%C3%B1on', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'data')
+
+        response = client.get('/proxy/http/example.com/cañon', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'data')
 
     def test_cookies(self):
 
