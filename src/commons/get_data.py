@@ -578,12 +578,21 @@ def get_variable_data(variable, user, workspace, forced_values={}):
 
     # Variable info is splited into 2 entities: VariableDef and VariableValue
     if variable.vardef.name in forced_values:
-        data_ret['value'] = forced_values[variable.vardef.name]['value']
+        if variable.vardef.secure:
+            data_ret['value'] = ''
+            data_ret['secure'] = True
+        else:
+            data_ret['value'] = forced_values[variable.vardef.name]['value']
+
         data_ret['readOnly'] = True
         if var_def.aspect == 'PREF':
             data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
     else:
-        data_ret['value'] = get_variable_value_from_var(user, variable)
+        if variable.vardef.secure:
+            data_ret['value'] = ''
+            data_ret['secure'] = True
+        else:
+            data_ret['value'] = get_variable_value_from_var(user, variable)
 
     if var_def.shared_var_def:
         data_ret['shared'] = variable.shared_value != None

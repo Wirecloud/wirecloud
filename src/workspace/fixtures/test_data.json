@@ -121,7 +121,8 @@
             "name": "username",
             "type": "S",
             "aspect": "PREF",
-            "gadget": "1"
+            "gadget": "1",
+            "secure": true
         }
     },
     {
