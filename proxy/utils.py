@@ -54,6 +54,7 @@ def is_localhost(host):
 def is_valid_header(header):
     return not header in BLACKLISTED_HEADERS
 
+
 def encode_query(query):
     params = query.split("&")
     query_params = {}

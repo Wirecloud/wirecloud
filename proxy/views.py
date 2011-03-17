@@ -32,7 +32,6 @@
 
 import Cookie
 import errno
-import httplib
 import re
 import socket
 import urllib2
