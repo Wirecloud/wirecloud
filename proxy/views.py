@@ -41,6 +41,7 @@ import urlparse
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseServerError
 from django.utils import simplejson
+from django.utils.encoding import iri_to_uri
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 
@@ -122,6 +123,8 @@ class Proxy(Resource):
 
         # HTTP call
         try:
+            url = iri_to_uri(url)
+
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
 
