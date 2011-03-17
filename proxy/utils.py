@@ -37,6 +37,13 @@ from django.utils.http import urlencode
 
 LOCALHOST_RE = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))(:\d*)?$')
 
+# content_length + hop-by-hop headers(http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html#sec13.5.1)
+BLACKLISTED_HEADERS = {
+    'connection': 1, 'content-length': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
+    'proxy-authorization': 1, 'te': 1, 'trailers': 1, 'transfer-encoding': 1,
+    'upgrade': 1
+}
+
 
 def is_localhost(host):
     if LOCALHOST_RE.match(host) == None:
@@ -45,7 +52,7 @@ def is_localhost(host):
 
 
 def is_valid_header(header):
-    return not header in ('content-length')
+    return not header in BLACKLISTED_HEADERS
 
 def encode_query(query):
     params = query.split("&")
