@@ -527,11 +527,12 @@ EzWebExt.toggleClassName = function(element, className) {
 EzWebExt.setTextContent = function(element, text) {
     if ("textContent" in element) {
         element.textContent = text;
-    }
-    else if ("innerText" in element) {
+    } else if ("innerText" in element) {
         element.innerText = text;
-    }
-    else if ("nodeValue" in element) {
+    } else if ("text" in element) {
+        // IE XML Elements
+        element.text = text;
+    } else if ("nodeValue" in element) {
         element.nodeValue = text;
     }
 }
