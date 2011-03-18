@@ -726,21 +726,11 @@ EzWebExt.XML = {}
 
 /* EzWebExt.XML.isElement */
 
-if (window.Element) {
-
-    /**
-     * Comprueba si un objeto es una instancia de DOMElement.
-     */
-    EzWebExt.XML.isElement = function (element) {
-        return element instanceof Element;
-    }
-
-} else {
-
-    EzWebExt.XML.isElement = function (element) {
-        return element && ('nodeType' in element) && (element.nodeType === 1);
-    }
-
+/**
+ * Comprueba si un objeto es una instancia de DOMElement.
+ */
+EzWebExt.XML.isElement = function (element) {
+    return element && ('nodeType' in element) && (element.nodeType === 1);
 }
 
 /* EzWebExt.XML.isAttribute */
