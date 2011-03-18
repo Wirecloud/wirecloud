@@ -835,16 +835,16 @@ if (document.documentElement.setAttributeNS != undefined) {
     EzWebExt.XML.setAttributeNS = function(element, namespace, name, value) {
         element.setAttributeNS(namespace, name, value);
     }
-} else if (document.createNode) {
-    EzWebExt.XML.setAttributeNS = function(element, namespace, name, value) {
-        var document = element.ownerDocument;
-        var attr = document.createNode(2, name, namespace);
-        attr.nodeValue = value;
-        element.setAttributeNode(attr);
-    }
 } else {
     EzWebExt.XML.setAttributeNS = function(element, namespace, name, value) {
-        alert('setAttributeNS is not supported in this browser');
+        var attr;
+
+        if (!'createNode' in element.ownerDocument) {
+            alert('setAttributeNS is not supported in this browser');
+        }
+        attr = element.ownerDocument.createNode(2, name, namespace);
+        attr.nodeValue = value;
+        element.setAttributeNode(attr);
     }
 }
 
