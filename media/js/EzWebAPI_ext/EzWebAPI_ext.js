@@ -808,7 +808,23 @@ if (document.documentElement.getAttributeNS != undefined) {
 
 }
 
-/* EzWebExt.XML.getAttributeNS */
+/* EzWebExt.XML.hasAttribute */
+
+if (document.documentElement.hasAttribute != undefined && !EzWebExt.Browser.isIE()) {
+
+    EzWebExt.XML.hasAttribute = function(element, name) {
+        return element.hasAttribute(name);
+    }
+
+} else {
+
+    EzWebExt.XML.hasAttribute = function(element, name) {
+        return element.getAttribute(name) !== null;
+    }
+
+}
+
+/* EzWebExt.XML.hasAttributeNS */
 
 if (document.documentElement.hasAttributeNS != undefined) {
 
