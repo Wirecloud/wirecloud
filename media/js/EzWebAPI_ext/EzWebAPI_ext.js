@@ -610,20 +610,20 @@ if (document.getElementsByTagNameNS) {
 
         // ugh!! ugly hack for IE which does not understand default namespace
         if (domElem.documentElement) {
-            domElem.documentElement.getAttribute('xmlns');
+            defaultNS = domElem.documentElement.getAttribute('xmlns');
         } else {
-            domElem.ownerDocument.documentElement.getAttribute('xmlns');
+            defaultNS = domElem.ownerDocument.documentElement.getAttribute('xmlns');
         }
 
-        if (strNsURI == defaultNS) {
+        if (strNsURI === defaultNS) {
             strNsURI = "";
         }
 
         arrElems = domElem.getElementsByTagName(lName);
         allElems = new Array();
-        for (i = 0, len = arrElems.length; i < len; i++) {
+        for (i = 0, len = arrElems.length; i < len; i += 1) {
             elem = arrElems[i];
-            if (elem.namespaceURI == strNsURI) {
+            if (elem.namespaceURI === strNsURI) {
                 allElems.push(elem);
             }
         }
