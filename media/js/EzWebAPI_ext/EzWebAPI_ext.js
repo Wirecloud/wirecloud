@@ -604,7 +604,7 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
-        var defaultNS, arrElems, allElems, i, elem;
+        var defaultNS, arrElems, allElems, i, elem, oldLanguage;
 
         // for IE ns is stored in tagUrn property
 
@@ -619,7 +619,17 @@ if (document.getElementsByTagNameNS) {
             strNsURI = "";
         }
 
-        arrElems = domElem.getElementsByTagName(lName);
+        if ('selectNodes' in domElem) {
+            oldLanguage = domElem.ownerDocument.getProperty("SelectionLanguage");
+            domElem.ownerDocument.setProperty("SelectionLanguage", 'XPath');
+
+            arrElems = domElem.ownerDocument.selectNodes("//*[local-name()='" + lName + "']")
+
+            domElem.ownerDocument.setProperty("SelectionLanguage", oldLanguage);
+        } else {
+            arrElems = domElem.getElementsByTagName(lName);
+        }
+
         allElems = new Array();
         for (i = 0, len = arrElems.length; i < len; i += 1) {
             elem = arrElems[i];
