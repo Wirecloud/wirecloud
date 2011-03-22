@@ -1,3 +1,43 @@
+if (!Array.prototype.map) {
+    Array.prototype.map = function(fun) {
+        var res, thisp, i, len = this.length >>> 0;
+        if (typeof fun != "function") {
+            throw new TypeError();
+        }
+
+        res = new Array(len);
+        thisp = arguments[1];
+        for (i = 0; i < len; i += 1) {
+            if (i in this) {
+                res[i] = fun.call(thisp, this[i], i, this);
+            }
+        }
+
+        return res;
+    };
+}
+
+if (!Array.prototype.indexOf) {
+    Array.prototype.indexOf = function(element) {
+        var i;
+
+        for (i = 0; i < this.length; i += 1) {
+            if (this[i] === element) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+}
+
+if (!Array.prototype.include) {
+    Array.prototype.include = function(element) {
+        return this.indexOf(element) > -1;
+    };
+}
+
+
 /**
  * @class
  * Esta clase proporciona algunos métodos útiles para el desarrollador de
