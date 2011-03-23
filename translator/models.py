@@ -93,9 +93,9 @@ class Translation(models.Model):
     text_id = models.CharField(_('Text Identifier'), max_length=250)
     element_id = models.IntegerField(_('Object Identifier'))
     table = models.CharField(_('Model'), max_length=250)
-    language = models.CharField(_('Language'), choices=settings.LANGUAGES, max_length=2)
+    language = models.CharField(_('Language'), choices=settings.LANGUAGES, max_length=2, blank=False)
     default = models.BooleanField(_('Default Value'), default=False)
-    value = models.TextField(_('Value'), null=True)
+    value = models.TextField(_('Value'), blank=True)
 
     def __unicode__(self):
         return u"%s - %s.%d -> %s" % (self.text_id, self.table, self.element_id, self.language)

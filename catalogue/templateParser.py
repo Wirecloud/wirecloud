@@ -40,11 +40,12 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability, Translation
+from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability
 from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
+from translator.models import Translation
 from workspace.utils import create_published_workspace_from_template
 
 
