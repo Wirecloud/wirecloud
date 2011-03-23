@@ -11,6 +11,7 @@ from django.utils import translation
 
 from catalogue.utils import add_resource_from_template_uri
 from catalogue.get_json_catalogue_data import get_gadgetresource_data
+from catalogue.models import GadgetWiring
 
 
 class LocalizedTestCase(TestCase):
@@ -30,6 +31,22 @@ class LocalizedTestCase(TestCase):
         settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
 
 
+class AddGadgetTestCase(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
+
+    def test_add_resource_from_template_uri(self):
+        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
+
+        events = GadgetWiring.objects.filter(idResource=gadget, wiring='out')
+        self.assertTrue(events.count() == 1 and events[0].friendcode == 'test_friend_code')
+
+        slots = GadgetWiring.objects.filter(idResource=gadget, wiring='in')
+        self.assertTrue(slots.count() == 1 and slots[0].friendcode == 'test_friend_code')
+
+
 class TranslationTestCase(LocalizedTestCase):
 
     def setUp(self):
@@ -40,15 +57,17 @@ class TranslationTestCase(LocalizedTestCase):
 
     def testTranslations(self):
         _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
+        self.changeLanguage('en')
         data = get_gadgetresource_data(gadget, self.user)
 
         self.assertEqual(data['displayName'], 'Test Gadget')
         self.assertEqual(data['description'], 'Test Gadget description')
 
         self.changeLanguage('es')
+        data = get_gadgetresource_data(gadget, self.user)
 
-        self.assertEqual(gadget.display_name, u'Gadget de pruebas')
-        self.assertEqual(gadget.description, u'Descripción del Gadget de pruebas')
+        self.assertEqual(data['displayName'], u'Gadget de pruebas')
+        self.assertEqual(data['description'], u'Descripción del Gadget de pruebas')
 
 
 class WGTDeploymentTestCase(TestCase):
