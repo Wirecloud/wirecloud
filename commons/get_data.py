@@ -209,7 +209,7 @@ def get_inout_data(inout):
         'value': workSpaceVariableDAO.value,
         'variableId': workSpaceVariableDAO.id,
         'inputs': [d for d in data_ins],
-        'outputs': [d for d in data_outs]
+        'outputs': [d for d in data_outs],
     }
 
 
@@ -222,7 +222,7 @@ def get_filter_data(filter_):
         'category': filter_.category,
         'help_text': filter_.help_text,
         'code': filter_.code,
-        'params': filter_.params
+        'params': filter_.params,
     }
 
 
@@ -234,7 +234,7 @@ def get_workspace_data(workspace, user):
         'name': workspace.name,
         'shared': workspace.is_shared(),
         'owned': workspace.creator == user,
-        'active': user_workspace.active
+        'active': user_workspace.active,
     }
 
 
@@ -259,7 +259,7 @@ def get_workspace_variable_data(wvariable, user, workspace):
         'name': abstract_var.name,
         'abstract_var_id': wvariable.abstract_variable.id,
         'aspect': wvariable.aspect,
-        'type': wvariable.type
+        'type': wvariable.type,
     }
 
     try:
@@ -427,7 +427,7 @@ def get_tab_data(tab):
         'id': tab.id,
         'name': tab.name,
         'visible': tab.visible,
-        'preferences': get_tab_preference_values(tab)
+        'preferences': get_tab_preference_values(tab),
     }
 
 
@@ -448,7 +448,8 @@ def get_igadget_data(igadget, user, workspace):
         'fulldragboard': igadget.position.fulldragboard,
         'minimized': igadget.position.minimized,
         'transparency': igadget.transparency,
-        'readOnly': igadget.readOnly}
+        'readOnly': igadget.readOnly,
+    }
 
     if igadget.icon_position:
         data_ret['icon_top'] = igadget.icon_position.posY
@@ -476,7 +477,7 @@ def get_variable_data(variable, user, workspace):
         'name': var_def.name,
         'label': var_def.label,
         'action_label': var_def.action_label,
-        'friend_code': var_def.friend_code
+        'friend_code': var_def.friend_code,
     }
 
     # Variable info is splited into 2 entities: AbstractVariable and Variable
@@ -525,7 +526,7 @@ def get_concept_data(concept, concept_values):
     data_ret = {
         'concept': concept.pk,
         'type': concept.type,
-        'names': [cname['name'] for cname in cnames]
+        'names': [cname['name'] for cname in cnames],
     }
 
     if concept.source == 'PLAT':
