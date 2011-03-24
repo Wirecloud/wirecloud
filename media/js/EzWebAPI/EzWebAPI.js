@@ -142,4 +142,9 @@ _EzWebAPI.prototype.getHTTPStatusCodeDescription = function(code) {
     }
     return desc;
 }
+
+_EzWebAPI.prototype.drawAttention = function() {
+    this.platform.OpManagerFactory.getInstance().drawAttention(this.getId());
+};
+
 var EzWebAPI = new _EzWebAPI();

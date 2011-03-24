@@ -346,6 +346,7 @@ function WorkSpace (workSpaceState) {
 	// PUBLIC METHODS
 	// ****************
 
+
 	WorkSpace.prototype.subscribe_to_channels = function() {
 		this.remoteChannelManager.subscribe_to_channels();
 	}
@@ -1287,6 +1288,15 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 }
+
+WorkSpace.prototype.drawAttention = function(iGadgetId) {
+    var iGadget = this.getIgadget(iGadgetId);
+    if (iGadget !== null) {
+        this.highlightTab(iGadget.layout.dragboard.tab);
+        iGadget.layout.dragboard.raiseToTop(iGadget);
+        iGadget.highlight();
+    }
+};
 
 WorkSpace.prototype.highlightTab = function(tab) {
     var tabElement;

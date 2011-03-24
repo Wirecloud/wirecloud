@@ -558,6 +558,10 @@ var OpManagerFactory = function () {
 			iGadget.log(msg, level);
 		}
 
+		OpManager.prototype.drawAttention = function(iGadgetId) {
+			this.activeWorkSpace.drawAttention(iGadgetId);
+		};
+
 		//Operations on workspaces
 		
 		OpManager.prototype.workSpaceExists = function (newName){
