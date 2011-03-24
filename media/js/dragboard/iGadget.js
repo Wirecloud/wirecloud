@@ -68,6 +68,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.visible = false;
     this.minimized = minimized;
     this.configurationVisible = false;
+    this.highlightTimeout = null;
 
 
     if (fulldragboard) {
@@ -1860,6 +1861,22 @@ IGadget.prototype.log = function(msg, level) {
         this._updateErrorInfo();
     }
 }
+
+IGadget.prototype.highlight = function () {
+    if (this.isVisible()) {
+        this.element.addClassName('highlighted');
+
+        if (this.highlightTimeout !== null) {
+            clearTimeout(this.highlightTimeout);
+        }
+
+        this.highlightTimeout = setTimeout(function () {
+                this.element.removeClassName('highlighted');
+                this.highlightTimeout = null;
+            }.bind(this),
+            15000);
+    }
+};
 
 /**
  * Increments the error count for this igadget
