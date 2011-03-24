@@ -1186,6 +1186,7 @@ function WorkSpace (workSpaceState) {
 	this.wiringInterface = null;
 	this.varManager = null;
 	this.tabInstances = new Hash();
+        this.highlightTimeouts = {};
 	this.wiring = null;
 	this.varManager = null;
 	this.remoteChannelManager = null;
@@ -1286,6 +1287,28 @@ function WorkSpace (workSpaceState) {
 		}
 	}
 }
+
+WorkSpace.prototype.highlightTab = function(tab) {
+    var tabElement;
+
+    if (typeof tab === 'number') {
+        tab = this.tabInstances[tab];
+    }
+
+    if (!(tab instanceof Tab)) {
+        throw new TypeError();
+    }
+
+    tabElement = tab.tabHTMLElement;
+    tabElement.addClassName("selected");
+    if (tab.tabInfo.id in this.highlightTimeouts) {
+        clearTimeout(this.highlightTimeouts[tab.tabInfo.id]);
+    }
+    this.highlightTimeouts[tab.tabInfo.id] = setTimeout(function() {
+        tabElement.removeClassName("selected");
+        delete this.highlightTimeouts[tab.tabInfo.id];
+    }.bind(this), 10000);
+};
 
 WorkSpace.prototype.preferencesChanged = function(modifiedValues) {
 	for (preferenceName in modifiedValues) {

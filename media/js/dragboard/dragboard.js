@@ -1025,27 +1025,28 @@ IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, 
 }
 
 IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
+    var tab, destDragboard, workspace, destLayout
     if (context.selectedTab != null) {
         context.layout.cancelMove();
-        var tab = context.dragboard.workSpace.getTab(context.selectedTab)
+
+        workspace = context.dragboard.workSpace;
+        tab = workspace.getTab(context.selectedTab);
+
         // On-demand loading of tabs!
         if (!tab.is_painted()) {
             tab.paint();
         }
-        var dragboard = tab.getDragboard();
+        destDragboard = tab.getDragboard();
 
-        var destLayout;
-        if (context.iGadget.onFreeLayout())
-            destLayout = dragboard.freeLayout;
-        else
-            destLayout = dragboard.baseLayout;
+        if (context.iGadget.onFreeLayout()) {
+            destLayout = destDragboard.freeLayout;
+        } else {
+            destLayout = destDragboard.baseLayout;
+        }
 
         context.iGadget.moveToLayout(destLayout);
 
-        var tabElement = context.selectedTabElement;
-        setTimeout(function() {
-            tabElement.removeClassName("selected");
-        }, 500);
+        workspace.highlightTab(parseInt(context.selectedTab, 10));
 
         context.selectedTab = null;
         context.selectedTabElement = null;
