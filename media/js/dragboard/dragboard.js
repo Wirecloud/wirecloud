@@ -981,12 +981,10 @@ IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, 
     var element = null;
 
     // Check if the mouse is over a tab
-    if (y < 0) {
-        element = document.elementFromPoint(event.clientX, event.clientY);
-        if (element != null) {
-            // elementFromPoint may return inner tab elements
-            element = draggable._findTabElement(element, 4);
-        }
+    element = document.elementFromPoint(event.clientX, event.clientY);
+    if (element != null) {
+        // elementFromPoint may return inner tab elements
+        element = draggable._findTabElement(element, 4);
     }
 
     var id = null;
