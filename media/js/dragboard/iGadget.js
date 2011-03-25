@@ -2076,7 +2076,7 @@ IGadget.prototype.moveToLayout = function(newLayout) {
         this.toggleMinimizeStatus();
     }
 
-    // ##### TODO Revise this
+    // ##### TODO Review this
     var contentWidth = this.element.offsetWidth;
     var fullWidth = contentWidth;
     contentWidth -= this._computeExtraWidthPixels();
@@ -2111,24 +2111,24 @@ IGadget.prototype.moveToLayout = function(newLayout) {
         this.position.y = newLayout.adaptRowOffset(this.position.y).inLU;
     }
 
-    // ##### TODO Revise this
+    // ##### TODO Review this
     if (oldLayout instanceof FullDragboardLayout) {
         this.contentWidth = this.previousContentWidth;
         this.height = this.previousHeight;
     } else {
         //console.debug("prev width: " + this.contentWidth);
-        var newWidth = newLayout.adaptWidth(contentWidth, fullWidth)
+        var newWidth = newLayout.adaptWidth(contentWidth, fullWidth, oldLayout)
         this.contentWidth = newWidth.inLU;
         //console.debug("new width: " + this.contentWidth);
 
         //console.debug("prev height: " + this.height);
-        var newHeight = newLayout.adaptHeight(contentHeight, fullHeight)
+        var newHeight = newLayout.adaptHeight(contentHeight, fullHeight, oldLayout)
         this.height = newHeight.inLU;
         //console.debug("new height: " + this.height);
     }
     // ##### END TODO
 
-     affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
+    affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
     this._updateExtractOption();
     if (oldLayout instanceof FullDragboardLayout || newLayout instanceof FullDragboardLayout)
         this._updateFulldragboardOption();

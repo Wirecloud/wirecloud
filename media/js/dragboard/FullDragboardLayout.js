@@ -88,7 +88,7 @@ FullDragboardLayout.prototype.adaptRowOffset = function(pixels) {
     return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
 }
 
-FullDragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
+FullDragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
     var diff = fullSize - contentHeight;
     return new MultiValuedSize(contentHeight - diff, 1);
 }

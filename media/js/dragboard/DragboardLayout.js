@@ -127,17 +127,25 @@ DragboardLayout.prototype.adaptRowOffset = function(pixels) {
     throw new Exception(msg);
 }
 
-DragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
+DragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
     var msg = gettext("method \"%(method)s\" must be implemented.");
     msg = interpolate(msg, {method: "adaptHeight"}, true);
     throw new Exception(msg);
 }
 
-DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
+DragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize, oldLayout) {
     var msg = gettext("method \"%(method)s\" must be implemented.");
     msg = interpolate(msg, {method: "adaptWidth"}, true);
     throw new Exception(msg);
 }
+
+DragboardLayout.prototype.padWidth = function (width) {
+    return width;
+};
+
+DragboardLayout.prototype.padHeight = function (height) {
+    return height;
+};
 
 /**
  * Checks if the point is inside the dragboard.

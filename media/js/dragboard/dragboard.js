@@ -155,7 +155,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
     Dragboard.prototype._updateBaseLayout = function () {
         // Create the new Layout
         var newBaseLayout = this._buildLayoutFromPreferences();
-        newBaseLayout._notifyWindowResizeEvent(true, true);
         newBaseLayout.initialize();
 
         // Change our base layout

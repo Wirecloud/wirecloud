@@ -82,6 +82,17 @@ ColumnLayout.prototype.getColumns = function() {
     return this.columns;
 }
 
+/**
+ * Returns the number of rows currently present in this layout.
+ */
+ColumnLayout.prototype.getRows = function () {
+    var x, rows = 0;
+    for (x = 0; x < this.columns; x += 1) {
+        rows = Math.max(rows, this.matrix[x].length);
+    }
+    return rows;
+};
+
 ColumnLayout.prototype.getCellHeight = function() {
     return this.cellHeight;
 }
@@ -134,21 +145,33 @@ ColumnLayout.prototype.adaptRowOffset = function(pixels) {
     return new MultiValuedSize(offsetInPixels, offsetInLU);
 }
 
-ColumnLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
-    fullSize += this.topMargin + this.bottomMargin;
+ColumnLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
+    oldLayout = oldLayout ? oldLayout : this;
+    fullSize = oldLayout.padHeight(fullSize);
+
     var paddedFullSizeInCells = Math.ceil(this.fromPixelsToVCells(fullSize));
     var paddedFullSize = this.fromVCellsToPixels(paddedFullSizeInCells);
 
     return new MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
 }
 
-ColumnLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
-    fullSize += this.leftMargin + this.rightMargin;
+ColumnLayout.prototype.adaptWidth = function(contentWidth, fullSize, oldLayout) {
+    oldLayout = oldLayout ? oldLayout : this;
+    fullSize = oldLayout.padWidth(fullSize);
+
     var paddedFullSizeInCells = Math.ceil(this.fromPixelsToHCells(fullSize));
     var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
 
     return new MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
 }
+
+ColumnLayout.prototype.padWidth = function (width) {
+    return width + this.leftMargin + this.rightMargin;
+};
+
+ColumnLayout.prototype.padHeight = function (height) {
+    return height + this.topMargin + this.bottomMargin;
+};
 
 ColumnLayout.prototype.getColumnOffset = function(column) {
     var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
@@ -566,6 +589,38 @@ ColumnLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
     DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
     return affectedGadgets;
 }
+
+ColumnLayout.prototype.moveTo = function (destLayout) {
+    var movedGadgets, orderedGadgets, x, y, i, columns, rows, iGadget;
+
+    /*
+     * Always use ColumnLayout._removeFromMatrix for removing gadgets
+     * when moving gadgets to another layout.
+     */
+    this._removeFromMatrix = ColumnLayout.prototype._removeFromMatrix;
+
+    movedGadgets = {};
+    orderedGadgets = new Array();
+    columns = this.getColumns();
+    rows = this.getRows();
+    for (y = 0; y < rows; y += 1) {
+        for (x = 0; x < columns; x += 1) {
+            var igadget = this.matrix[x][y];
+            if (igadget != null && !(igadget.id in movedGadgets)) {
+                orderedGadgets.push(igadget);
+                movedGadgets[igadget.id] = true;
+            }
+        }
+    }
+
+    for (i = 0; i < orderedGadgets.length; i += 1) {
+        iGadget = orderedGadgets[i];
+        iGadget.moveToLayout(destLayout);
+    }
+
+    /* Restore _removeFromMatrix */
+    delete this._removeFromMatrix;
+};
 
 ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
     draggable = draggable || null; // default value of draggable argument

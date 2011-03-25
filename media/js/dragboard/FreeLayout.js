@@ -91,7 +91,7 @@ FreeLayout.prototype.adaptRowOffset = function(pixels) {
     return new MultiValuedSize(pixels, pixels);
 }
 
-FreeLayout.prototype.adaptHeight = function(contentHeight, fullSize) {
+FreeLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
     return new MultiValuedSize(contentHeight, fullSize);
 }
 
