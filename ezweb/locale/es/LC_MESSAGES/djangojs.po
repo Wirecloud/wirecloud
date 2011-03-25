@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-17 13:17+0100\n"
-"PO-Revision-Date: 2011-02-17 12:52+0100\n"
+"PO-Revision-Date: 2011-03-25 09:27+0100\n"
 "Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
 "Language-Team: Español/España <>\n"
 "Language: es\n"
@@ -33,7 +33,7 @@ msgid ""
 "JavaScript exception on file %(errorFile)s (line: %(errorLine)s): "
 "%(errorDesc)s"
 msgstr ""
-"Excepción de Javascript en el fichero %(errorFile)s (line: %(errorLine)s): "
+"Excepción de JavaScript en el fichero %(errorFile)s (línea: %(errorLine)s): "
 "%(errorDesc)s"
 
 #: media/iphone/dragboard/iGadget.js:154 media/js/dragboard/iGadget.js:1895
@@ -332,15 +332,15 @@ msgid ""
 "value of the iGadget variable \"%(varName)s\" will be empty."
 msgstr ""
 "No existe ningún concepto del tipo \"%(type)s\" llamada \"%(concept)s\", el "
-"valor de la variable \"%(varName)s\" iGadget estará vacia."
+"valor de la variable \"%(varName)s\" iGadget estará vacía."
 
 #: media/js/contextManager/ContextManager.js:75
 msgid ""
 "WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New "
 "related concept is '%(newConcept)s'."
 msgstr ""
-"WARNING: el nombre del concepto '%(cname)s' ya está relacionado con "
-"'%(concept)s'. El nuevo concepto relacionado es '%(newConcept)s'."
+"AVISO: el nombre del concepto '%(cname)s' ya está relacionado con '%(concept)"
+"s'. El nuevo concepto relacionado es '%(newConcept)s'."
 
 #: media/js/contextManager/ContextPlatform.js:137
 #: media/js/contextManager/ContextPlatform.js:143
@@ -485,7 +485,7 @@ msgstr "Error al guardar los cambios en el servidor: %(errorMsg)s."
 
 #: media/js/interfaceLayout/InputInterfaces.js:64
 msgid "The following required fields are empty: %(fields)s."
-msgstr "Los siguientes campos obligatorios están vacios: %(fields)s."
+msgstr "Los siguientes campos obligatorios están vacíos: %(fields)s."
 
 #: media/js/interfaceLayout/InputInterfaces.js:67
 msgid "The following fields do not contain a valid URL: %(fields)s."
@@ -543,7 +543,7 @@ msgstr "%(subTask)s: %(percentage)s%"
 #: media/js/interfaceLayout/LayoutManager.js:470
 #: media/js/interfaceLayout/LayoutManager.js:536
 msgid "Video Tutorials"
-msgstr "Video Tutoriales"
+msgstr "Vídeo Tutoriales"
 
 #: media/js/interfaceLayout/LayoutManager.js:430
 msgid ""
@@ -568,8 +568,8 @@ msgid ""
 "Wiring interface %(wiringIcon)s in order to improve your experience. If you "
 "need more help visit the %(helpLink)s."
 msgstr ""
-"Descubre nuevos gadgets, consulta sus descripciones, etiquetalos, dales tu "
-"puntuación, elige los que mejor cubran tus necesidades y añadelos al "
+"Descubre nuevos gadgets, consulta sus descripciones, etiquétalos, dales tu "
+"puntuación, elige los que mejor cubran tus necesidades y añádelos al "
 "Dragboard %(dragboardIcon)s. No olvides conectarlos con otros gadgets en la "
 "interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si necesitas "
 "más ayuda visita los %(helpLink)s."
@@ -1093,7 +1093,7 @@ msgid ""
 "Error Message: %(errorMsg)s"
 msgstr ""
 "Un fragmento del código ha intentado informar de un error en el iGadget "
-"%(iGadgetId)s cuando éste no existía o no estaba cargado aún. Ésto es un "
+"%(iGadgetId)s cuando éste no existía o no estaba cargado aún. Esto es un "
 "error de la Plataforma EzWeb, por favor informe de ello.\n"
 "Mensaje de error: %(errorMsg)s"
 
@@ -1361,7 +1361,7 @@ msgstr "Distribución por defecto para los nuevos gadgets."
 #: media/js/preferencesManager/PreferencesManager.js:162
 #: media/js/preferencesManager/PreferencesManager.js:206
 msgid "Smart grid for gadgets fixed to the grid"
-msgstr "Rejilla intelijente para los gadgets ajustados a la rejilla"
+msgstr "Rejilla inteligente para los gadgets ajustados a la rejilla"
 
 #: media/js/preferencesManager/PreferencesManager.js:164
 #: media/js/preferencesManager/PreferencesManager.js:208
@@ -1417,7 +1417,7 @@ msgid ""
 "Vertical Margin between iGadgets. Must be specified in pixel units. "
 "(default: 3)"
 msgstr ""
-"Vertical Margin entre iGadgets. Debe especificarse en pixels. (por defecto: "
+"Margen vertical entre iGadgets. Debe especificarse en pixels. (por defecto: "
 "3)"
 
 #: media/js/preferencesManager/PreferencesManager.js:245
@@ -1426,7 +1426,7 @@ msgstr "Apariencia (skin) por defecto. (defecto: heredado)"
 
 #: media/js/showcase/showcase.js:150
 msgid "\"%(variable)s\" variable is not an User Preference"
-msgstr "la variabo \"%(variable)s\" no es una Preferencia de Usuario"
+msgstr "la variable \"%(variable)s\" no es una Preferencia de Usuario"
 
 #: media/js/showcase/showcase.js:154
 msgid "\"%(variable)s\" variable doesn't exists"
@@ -1456,7 +1456,7 @@ msgstr ""
 #: media/js/wiring/connectable.js:53 media/js/wiring/connectable.js.py:65
 #: media/js/wiring/connectable.js:93
 msgid "Unimplemented function: %(funcName)s"
-msgstr "Función sin implemencación: %(funcName)s"
+msgstr "Función sin implementación: %(funcName)s"
 
 #: media/js/wiring/connectable.js:633
 msgid "Use in %(slotName)s"
@@ -1559,14 +1559,14 @@ msgstr ""
 #: media/js/wiring/wiring.js:101
 msgid "Error in processVar: Channel input connectables can only be events."
 msgstr ""
-"Error in processVar: El atributo input de los conectables sólo puede "
+"Error en processVar: El atributo input de los conectables sólo puede "
 "contener eventos."
 
 #: media/js/wiring/wiring.js:123
 msgid ""
 "Error in processVar: Channel output connectables can only be slots or tabs."
 msgstr ""
-"Error in processVar: El atributo output de los conectables sólo puede "
+"Error en processVar: El atributo output de los conectables sólo puede "
 "contener slots o tabs."
 
 #: media/js/wiring/wiring.js:148
