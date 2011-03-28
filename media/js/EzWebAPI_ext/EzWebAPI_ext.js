@@ -218,23 +218,26 @@ if ('addEventListener' in document) {
         if (!capture) {
             element.detachEvent('on' + eventName, callback);
         } else {
-            var curWrapper = element['on' + eventName];
+            var curWrapper = element['on' + eventName],
+                prevWrapper;
 
-            if (curWrapper.callback == callback) {
-                element['on' + eventName] = curWrapper.nextFunc;
-            } else {
-                var prevWrapper;
+            if (curWrapper) {
+                if (curWrapper.callback == callback) {
+                    element['on' + eventName] = curWrapper.nextFunc;
+                } else {
+                    if (!curWrapper.nextFunc) {
+                        element['on' + eventName] = null;
+                    }
 
-                if (!curWrapper.nextFunc)
-                    element['on' + eventName] = null;
+                    while (curWrapper != null && curWrapper.callback != callback) {
+                        prevWrapper = curWrapper;
+                        curWrapper = curWrapper.nextWrapper;
+                    }
 
-                while (curWrapper != null && curWrapper.callback != callback) {
-                    prevWrapper = curWrapper;
-                    curWrapper = curWrapper.nextWrapper;
+                    if (curWrapper) {
+                        prevWrapper.nextFunc = curWrapper.nextFunc;
+                    }
                 }
-
-                if (curWrapper != null)
-                    prevWrapper.nextFunc = curWrapper.nextFunc;
             }
         }
     }

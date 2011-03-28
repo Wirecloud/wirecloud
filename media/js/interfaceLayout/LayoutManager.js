@@ -120,7 +120,7 @@ var LayoutManagerFactory = function () {
 
 			msg = gettext("%(task)s %(percentage)s%");
 			msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
-			$("loading-task-title").setTextContent(msg);
+			$("loading-task-title").textContent = msg;
 
 			if (this.subTask != "")
 				msg = gettext("%(subTask)s: %(percentage)s%");
