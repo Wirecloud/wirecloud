@@ -1,0 +1,274 @@
+[
+    {
+        "model": "auth.User",
+        "pk": "2",
+        "fields": {
+            "username": "test",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17 17:21:19",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
+            "email": "",
+            "date_joined": "2011-03-17 17:21:19"
+        }
+    },
+    {
+        "model": "gadget.XHTML",
+        "pk": "1",
+        "fields": {
+            "uri": "1",
+            "code": "gadget code",
+            "url": "http://example.com/gadget_code",
+            "content_type": "",
+            "cacheable": true
+        }
+    },
+    {
+        "model": "workspace.WorkSpace",
+        "pk": "1",
+        "fields": {
+            "name": "workspace",
+            "creator": "2"
+        }
+    },
+    {
+        "model": "workspace.UserWorkSpace",
+        "pk": "1",
+        "fields": {
+            "user": "1",
+            "workspace": "1",
+            "active": false
+        }
+    },
+    {
+        "model": "workspace.UserWorkSpace",
+        "pk": "1",
+        "fields": {
+            "user": "1",
+            "workspace": "1",
+            "active": false
+        }
+    },
+    {
+        "model": "workspace.AbstractVariable",
+        "pk": "3",
+        "fields": {
+            "type": "WORKSPACE",
+            "name": "tab"
+        }
+    },
+    {
+        "model": "workspace.Tab",
+        "pk": "1",
+        "fields": {
+            "workspace": "1",
+            "name": "tab",
+            "abstract_variable": "3"
+        }
+    },
+    {
+        "model": "igadget.Position",
+        "pk": "1",
+        "fields": {
+            "posX": "0",
+            "posY": "0",
+            "posZ": "0"
+        }
+    },
+    {
+        "model": "igadget.IGadget",
+        "pk": "1",
+        "fields": {
+            "gadget": "1",
+            "name": "Test Gadget",
+            "position": "1",
+            "tab": "1"
+        }
+    },
+    {
+        "model": "gadget.Gadget",
+        "pk": "1",
+        "fields": {
+            "uri": "",
+            "vendor": "Test",
+            "name": "Test Gadget",
+            "version": "1.0.0",
+            "display_name": "__MSG_displayName__",
+            "xhtml": "1"
+        }
+    },
+    {
+        "model": "gadget.VariableDef",
+        "pk": "1",
+        "fields": {
+            "name": "password",
+            "type": "P",
+            "aspect": "PREF",
+            "gadget": "1",
+            "label": "__MSG_password_pref_label__"
+        }
+    },
+    {
+        "model": "gadget.VariableDef",
+        "pk": "2",
+        "fields": {
+            "name": "username",
+            "type": "S",
+            "aspect": "PREF",
+            "gadget": "1"
+        }
+    },
+    {
+        "model": "workspace.AbstractVariable",
+        "pk": "1",
+        "fields": {
+            "type": "IGADGET",
+            "name": "password"
+        }
+    },
+    {
+        "model": "workspace.AbstractVariable",
+        "pk": "2",
+        "fields": {
+            "type": "IGADGET",
+            "name": "username"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "1",
+        "fields": {
+            "vardef": "1",
+            "igadget": "1",
+            "abstract_variable": "1"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "2",
+        "fields": {
+            "vardef": "2",
+            "igadget": "1",
+            "abstract_variable": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "1",
+        "fields": {
+            "abstract_variable": "1",
+            "value": "test_password",
+            "user": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "2",
+        "fields": {
+            "abstract_variable": "2",
+            "value": "test_username",
+            "user": "2"
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "1",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "1",
+            "text_id": "password_pref_label",
+            "value": "Password Pref",
+            "language": "en",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "2",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "1",
+            "text_id": "password_pref_label",
+            "value": "Contraseña",
+            "language": "es",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "3",
+        "fields": {
+            "table": "gadget.models.Gadget",
+            "element_id": "1",
+            "text_id": "displayName",
+            "value": "Test Gadget",
+            "language": "en",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "4",
+        "fields": {
+            "table": "gadget.models.Gadget",
+            "element_id": "1",
+            "text_id": "displayName",
+            "value": "Gadget de prueba",
+            "language": "es",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "1",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "1",
+            "text_id": "password_pref_label",
+            "value": "Password Pref",
+            "language": "en",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "2",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "1",
+            "text_id": "password_pref_label",
+            "value": "Contraseña",
+            "language": "es",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "3",
+        "fields": {
+            "table": "gadget.models.Gadget",
+            "element_id": "1",
+            "text_id": "displayName",
+            "value": "Test Gadget",
+            "language": "en",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "4",
+        "fields": {
+            "table": "gadget.models.Gadget",
+            "element_id": "1",
+            "text_id": "displayName",
+            "value": "Gadget de prueba",
+            "language": "es",
+            "default": false
+        }
+    }
+]

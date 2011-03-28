@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os.path
 from shutil import rmtree
 from tempfile import mkdtemp
@@ -8,7 +10,10 @@ from django.test import TestCase
 
 from commons import http_utils
 from commons.exceptions import TemplateParseException
+from commons.get_data import get_gadget_data
+from commons.test import LocalizedTestCase
 from gadget.gadgetCodeParser import parse_gadget_code
+from gadget.models import Gadget
 
 
 class FakeDownloader(object):
@@ -150,3 +155,22 @@ class GCPLocalCodeTests(TestCase):
                           '/deployment/gadgets/non_existing_file.html',
                           'http://example.com/gadget2',
                           'text/html', True)
+
+
+class ShowcaseTestCase(LocalizedTestCase):
+
+    fixtures = ['test_data']
+
+    def setUp(self):
+        super(ShowcaseTestCase, self).setUp()
+
+    def testTranslations(self):
+        gadget = Gadget.objects.get(pk=1)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['displayName'], 'Test Gadget')
+
+        self.changeLanguage('es')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['displayName'], 'Gadget de prueba')

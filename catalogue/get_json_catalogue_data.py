@@ -291,8 +291,10 @@ def get_gadget_capabilities(gadget_id, user):
     return data_ret
 
 
-def get_gadgetresource_data(resource, user):
+def get_gadgetresource_data(untranslated_resource, user):
     """Gets all the information related to the given gadget."""
+    resource = untranslated_resource.get_translated_model()
+
     if resource.display_name and resource.display_name != "":
         displayName = resource.display_name
     else:

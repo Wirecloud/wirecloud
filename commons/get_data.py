@@ -93,26 +93,29 @@ def get_wiring_data(igadgets):
 
 
 def get_gadget_data(gadget):
+    tgadget = gadget.get_translated_model()
     data_ret = {}
     data_variabledef = VariableDef.objects.filter(gadget=gadget)
     data_vars = []
     for var in data_variabledef:
+        tvar = var.get_translated_model()
         data_var = {}
         data_var['aspect'] = var.aspect
         data_var['name'] = var.name
         data_var['type'] = var.type
-        data_var['label'] = var.label
-        data_var['action_label'] = var.action_label
-        data_var['description'] = var.description
+        data_var['label'] = tvar.label
+        data_var['action_label'] = tvar.action_label
+        data_var['description'] = tvar.description
         data_var['friend_code'] = var.friend_code
-        data_var['default_value'] = var.default_value
+        data_var['default_value'] = tvar.default_value
         data_var['shareable'] = var.shared_var_def != None
 
         if var.aspect == 'PREF' and var.type == 'L':
-            options = UserPrefOption.objects.filter(variableDef=var.id)
+            options = UserPrefOption.objects.filter(variableDef=var)
             value_options = []
             for option in options:
-                value_options.append([option.value, option.name])
+                toption = option.get_translated_model()
+                value_options.append([toption.value, toption.name])
             data_var['value_options'] = value_options
 
         if var.aspect == 'GCTX' or var.aspect == 'ECTX':
@@ -123,16 +126,16 @@ def get_gadget_data(gadget):
     data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=gadget.xhtml.id)
 
     data_ret['name'] = gadget.name
-    if gadget.display_name and gadget.display_name != "":
-        data_ret['displayName'] = gadget.display_name
+    if tgadget.display_name and tgadget.display_name != "":
+        data_ret['displayName'] = tgadget.display_name
     else:
         data_ret['displayName'] = gadget.name
     data_ret['vendor'] = gadget.vendor
-    data_ret['description'] = gadget.description
+    data_ret['description'] = tgadget.description
     data_ret['uri'] = gadget.uri
-    data_ret['wikiURI'] = gadget.wikiURI
-    data_ret['imageURI'] = gadget.imageURI
-    data_ret['iPhoneImageURI'] = gadget.iPhoneImageURI
+    data_ret['wikiURI'] = tgadget.wikiURI
+    data_ret['imageURI'] = tgadget.imageURI
+    data_ret['iPhoneImageURI'] = tgadget.iPhoneImageURI
     data_ret['menuColor'] = gadget.menuColor
     data_ret['version'] = gadget.version
     data_ret['mail'] = gadget.mail
@@ -552,6 +555,7 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
 def get_variable_data(variable, user, workspace, forced_values={}):
 
     var_def = variable.vardef
+    trans_var_def = var_def.get_translated_model()
 
     data_ret = {
         'id': variable.id,
@@ -560,8 +564,8 @@ def get_variable_data(variable, user, workspace, forced_values={}):
         'igadgetId': variable.igadget.id,
         'vardefId': var_def.pk,
         'name': var_def.name,
-        'label': var_def.label,
-        'action_label': var_def.action_label,
+        'label': trans_var_def.label,
+        'action_label': trans_var_def.action_label,
         'friend_code': var_def.friend_code,
     }
 

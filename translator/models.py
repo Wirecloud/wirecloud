@@ -38,51 +38,52 @@ from django.utils.translation import get_language, ugettext as  _
 from commons.translation_utils import get_trans_index
 
 
+class TranslatedModel(object):
+
+    __instance = None
+
+    def __init__(self, instance, data):
+        self.__instance = instance
+        for attr in data:
+            setattr(self, attr, data[attr])
+
+    def __getattr__(self, attr):
+        return getattr(self.__instance, attr)
+
+    def __setattribute(self, attr):
+        raise AttributeError('TranslatedModel object is read-only')
+
+
 class TransModel(models.Model):
 
-    def __getattribute__(self, attr):
-        language_ = get_language()[:2]
-        value = object.__getattribute__(self, attr)
-        index = get_trans_index(value)
-        if index:
-            # retrieve the translation
-            try:
-                id_ = object.__getattribute__(self, "id")
-                table_ = object.__getattribute__(self, "__class__").__module__ + "." + object.__getattribute__(self, "__class__").__name__
-                attr_trans = Translation.objects.filter(text_id=index, element_id=id_, table=table_, language=language_)
-                if (attr_trans.count() > 0):
-                    return attr_trans[0].value
-                else:
-                    #get the default value
-                    attr_trans = Translation.objects.filter(text_id=index, element_id=id_, table=table_, default=True)
-                    if (attr_trans.count() > 0):
-                        return attr_trans[0].value
-                    # there isn't a default value -> it musn't be possible because it is ensured during the template parser
-                    return value
-            except ObjectDoesNotExist:
-                # this attribute doesn't exist
-                raise AttributeError
-        else:
-            # the element don't need to be translated
-            return value
+    def get_translated_model(self):
+        language = get_language()[:2]
+        pk = self.pk
+        table = self.__class__.__module__ + "." + self.__class__.__name__
 
-#===============================================================================
-#    def get_translate_fields(self):
-#        id_ = object.__getattribute__(self, "id")
-#        table_ = object.__getattribute__(self, "__class__").__module__+"."+object.__getattribute__(self, "__class__").__name_
-#        attr_trans = Translation.objects.filter(element_id=id_,table=table_)
-#
-#        #retrieve the values
-#        fields_per_lang = {}
-#        for element in attr_trans:
-#            fields_per_lang[element.language].append({"id":id_, "table":table_, "attribute":element.attribute, "value":element.value})
-#
-#        #add default values
-#        translate_attr = object.__getattribute__(self, "_meta").translate
-#        for attr in translate_attr:
-#            fields_per_lang["default"].append({"id":id_, "table":table_, "attribute":attr, "value":object.__getattribute__(self, attr), "widget":object.__getattribute__("_meta").get_field(attr).formfield().widget})
-#        return fields_per_lang
-#===============================================================================
+        index_mapping = {}
+        for field in iter(self._meta.fields):
+            index = get_trans_index(getattr(self, field.attname))
+            if index:
+                index_mapping[index] = field.attname
+
+        data = {}
+
+        # add default values
+        attr_trans = Translation.objects.filter(element_id=pk, table=table, default=True)
+        for element in attr_trans:
+            if element.text_id in index_mapping:
+                attname = index_mapping[element.text_id]
+                data[attname] = element.value
+
+        # add specific values
+        attr_trans = Translation.objects.filter(element_id=pk, table=table, language=language)
+        for element in attr_trans:
+            if element.text_id in index_mapping:
+                attname = index_mapping[element.text_id]
+                data[attname] = element.value
+
+        return TranslatedModel(self, data)
 
     class Meta:
         abstract = True

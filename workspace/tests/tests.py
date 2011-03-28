@@ -1,38 +1,77 @@
+# -*- coding: utf-8 -*-
+
 import codecs
 import os
 
 from lxml import etree
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import TransactionTestCase, TestCase
 
 from commons.get_data import get_global_workspace_data
+from commons.test import LocalizedTestCase
 from connectable.models import InOut
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import UserWorkSpace, Tab, WorkSpaceVariable
+from workspace.models import WorkSpace, UserWorkSpace, Tab, WorkSpaceVariable
 from workspace.views import createEmptyWorkSpace
 
 
-class WorkspaceTestCase(TestCase):
+class WorkspaceTestCase(LocalizedTestCase):
+    fixtures = ['test_data']
 
     def setUp(self):
+        super(WorkspaceTestCase, self).setUp()
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.workspace = createEmptyWorkSpace('Testing', self.user)
-
-    def testCreateEmptyWorkspace(self):
-
-        user_workspace = UserWorkSpace.objects.filter(user=self.user, workspace=self.workspace)
-        self.assertEqual(user_workspace.count(), 1)
-        self.assertEqual(user_workspace[0].active, True)
-
-        workspace_tabs = Tab.objects.filter(workspace=self.workspace)
-        self.assertEqual(workspace_tabs.count(), 1)
+        self.user = User.objects.get(id=1)
 
     def testGetGlobalWorkspaceData(self):
 
-        data = get_global_workspace_data(self.workspace, self.user)
+        workspace = WorkSpace.objects.get(pk=1)
+        data = get_global_workspace_data(workspace, self.user)
         self.assertEqual('workspace' in data, True)
+        self.assertEqual(len(data['workspace']['tabList']), 1)
+
+    def testCreateEmptyWorkspace(self):
+
+        workspace = createEmptyWorkSpace('Testing', self.user)
+
+        user_workspace = UserWorkSpace.objects.filter(user=self.user, workspace=workspace)
+        self.assertEqual(user_workspace.count(), 1)
+        self.assertEqual(user_workspace[0].active, True)
+
+        workspace_tabs = Tab.objects.filter(workspace=workspace)
+        self.assertEqual(workspace_tabs.count(), 1)
+
+        data = get_global_workspace_data(workspace, self.user)
+        self.assertEqual('workspace' in data, True)
+
+    def vars_by_name(self, igadget_data):
+        variables = {}
+
+        for var in igadget_data['variables']:
+            variables[var['name']] = var
+
+        return variables
+
+    def testTranslations(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        self.changeLanguage('en')
+        data = get_global_workspace_data(workspace, self.user)
+
+        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
+        igadget_vars = self.vars_by_name(igadget_data)
+        self.assertEqual(igadget_vars['password']['label'], 'Password Pref')
+        #self.assertEqual(igadget_vars['slot']['action_label'], 'Slot Action Label')
+
+        self.changeLanguage('es')
+        data = get_global_workspace_data(workspace, self.user)
+
+        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
+        igadget_vars = self.vars_by_name(igadget_data)
+        self.assertEqual(igadget_vars['password']['label'], u'Contraseña')
+        #self.assertEqual(igadget_vars['slot']['action_label'], 'Etiqueta de acción del slot')
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):

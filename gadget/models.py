@@ -109,15 +109,6 @@ class Gadget(TransModel):
         except Capability.DoesNotExist:
             return False
 
-#===============================================================================
-#    def get_translate_fields(self):
-#        translate_fields = TransModel.get_translate_fields(self)
-#        variables = VariableDef.objects.filter(gadget=self)
-#        for v in variables:
-#            translate_fields.append(v.get_translate_fields())
-#        return translate_fields
-#===============================================================================
-
 
 class Capability(models.Model):
 
