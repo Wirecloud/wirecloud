@@ -7,28 +7,11 @@ from tempfile import mkdtemp
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
-from django.utils import translation
 
 from catalogue.utils import add_resource_from_template_uri
 from catalogue.get_json_catalogue_data import get_gadgetresource_data
 from catalogue.models import GadgetWiring
-
-
-class LocalizedTestCase(TestCase):
-
-    def setUp(self):
-        self.old_LANGUAGES = settings.LANGUAGES
-        self.old_LANGUAGE_CODE = settings.LANGUAGE_CODE
-        settings.LANGUAGES = (('en', 'English'), ('es', 'Spanish'))
-        self.changeLanguage('en')
-
-    def changeLanguage(self, new_language):
-        settings.LANGUAGE_CODE = new_language
-        translation.activate(new_language)
-
-    def tearDown(self):
-        settings.LANGUAGES = self.old_LANGUAGES
-        settings.LANGUAGE_CODE = self.old_LANGUAGE_CODE
+from commons.test import LocalizedTestCase
 
 
 class AddGadgetTestCase(TestCase):
