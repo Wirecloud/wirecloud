@@ -141,7 +141,13 @@ var PreferencesManagerFactory = function () {
 		    "label":        gettext("Show dragboard help dialog"),
 		    "type":         "boolean",
 		    "description":  ''
-		  }
+		  },
+                  "wiring-unfold-by-default": {
+                    "defaultValue": false,
+                    "label":        gettext("Unfold events and slots in the wiring editor by default"),
+                    "type":         "boolean",
+                    "description":  ''
+                  }
 		};
 
 		// Workspace preferences

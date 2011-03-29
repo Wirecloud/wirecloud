@@ -49,7 +49,6 @@ function WiringInterface(wiring, workspace, wiringContainer) {
 	this.friend_codes_counter = 0;
 	this.channelBaseName = gettext("Channel");
 	this.visible = false; // TODO temporal workarround
-	this.unfold_on_entering = false; //Does the user want all tabs to be expanded?
 
 	this.eventColumn = $('eventColumn');
 	this.slotColumn = $('slotColumn');
@@ -88,12 +87,28 @@ function WiringInterface(wiring, workspace, wiringContainer) {
 	              this.toggleSlotColumn(true);
 	          }.bind(this));
 
+
+        var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
+        var unfold_chkItem = $('unfold_chkItem');
+        var unfold_chkItem_listener = function (modifiedValues) {
+            if (!('wiring-unfold-by-default' in modifiedValues)) {
+                return;
+            }
+
+            if (modifiedValues['wiring-unfold-by-default']) {
+                unfold_chkItem.addClassName('chkItem');
+            } else {
+                unfold_chkItem.removeClassName('chkItem');
+            }
+        };
+        platformPreferences.addCommitHandler(unfold_chkItem_listener);
+        unfold_chkItem_listener({'wiring-unfold-by-default': platformPreferences.get('wiring-unfold-by-default')});
+
 	Event.observe($('unfold_chkItem'), "click",
 	            function(e) {
-	              //the user wants all unfolded
-	              var target = Element.extend(BrowserUtilsFactory.getInstance().getTarget(e));
-	              target.toggleClassName('chkItem');
-	              this.unfold_on_entering = target.hasClassName('chkItem');
+	              platformPreferences.set({
+                        'wiring-unfold-by-default': {value: !unfold_chkItem.hasClassName('chkItem')}
+                      });
 	            }.bind(this));
 
 	this._eventCreateChannel = function (e) {
@@ -265,19 +280,22 @@ WiringInterface.prototype.saveWiring = function () {
  * @param {Tab} tab
  */
 WiringInterface.prototype._addTab = function (tab) {
-	var tabEvents = new EventTabInterface(tab, this);
+	var tabEvents, tabSlots, igadgets, i;
+
+        tabEvents = new EventTabInterface(tab, this);
 	this.eventTabs.add(tabEvents);
 
-	var tabSlots = new SlotTabInterface(tab, this);
+	tabSlots = new SlotTabInterface(tab, this);
 	this.slotTabs.add(tabSlots);
 
 	// Igadgets
-	var igadgets = tab.dragboard.getIGadgets();
-	for (var i = 0; i < igadgets.length; i++) {
+	igadgets = tab.dragboard.getIGadgets();
+	for (i = 0; i < igadgets.length; i++) {
 		this._addIGadget(igadgets[i], tabEvents, tabSlots);
 	}
 
-	if (!this.unfold_on_entering) {
+ 	platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
+ 	if (!platformPreferences.get('wiring-unfold-by-default')) {
 		tabEvents.toggle(false);
 		tabSlots.toggle(false);
 	}
