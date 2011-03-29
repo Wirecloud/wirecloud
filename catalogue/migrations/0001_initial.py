@@ -7,8 +7,6 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
-    depends_on = [('ezweb', '0001_initial')]
-
     def forwards(self, orm):
 
         if db_table_exists('catalogue_translation'):
