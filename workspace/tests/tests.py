@@ -5,7 +5,7 @@ import os
 
 from lxml import etree
 from django.contrib.auth.models import User
-from django.test import TransactionTestCase, TestCase
+from django.test import TestCase
 
 from commons.get_data import get_global_workspace_data
 from commons.test import LocalizedTestCase
@@ -22,7 +22,7 @@ class WorkspaceTestCase(LocalizedTestCase):
     def setUp(self):
         super(WorkspaceTestCase, self).setUp()
 
-        self.user = User.objects.get(id=1)
+        self.user = User.objects.get(username='test')
 
     def testGetGlobalWorkspaceData(self):
 

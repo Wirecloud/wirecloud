@@ -40,16 +40,7 @@
         "model": "workspace.UserWorkSpace",
         "pk": "1",
         "fields": {
-            "user": "1",
-            "workspace": "1",
-            "active": false
-        }
-    },
-    {
-        "model": "workspace.UserWorkSpace",
-        "pk": "1",
-        "fields": {
-            "user": "1",
+            "user": "2",
             "workspace": "1",
             "active": false
         }
