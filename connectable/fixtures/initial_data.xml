@@ -241,7 +241,7 @@ Returns: 'EZWEB'</field>
 
 Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales" target="_blank">this page</a> for further information. 
 ]]></field>
-		<field type="TextField" name="params">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>    
+		<field type="TextField" name="params">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>
 	</object>
    <object pk="19" model="connectable.filter">
         <field type="CharField" name="name">Demultiplex</field>
