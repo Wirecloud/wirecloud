@@ -110,7 +110,8 @@
             "type": "P",
             "aspect": "PREF",
             "gadget": "1",
-            "label": "__MSG_password_pref_label__"
+            "label": "__MSG_password_pref_label__",
+            "description": "__MSG_password_pref_label__"
         }
     },
     {

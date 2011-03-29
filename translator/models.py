@@ -31,7 +31,6 @@
 #
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.utils.translation import get_language, ugettext as  _
 
@@ -65,7 +64,11 @@ class TransModel(models.Model):
         for field in iter(self._meta.fields):
             index = get_trans_index(getattr(self, field.attname))
             if index:
-                index_mapping[index] = field.attname
+
+                if not index in index_mapping:
+                    index_mapping[index] = []
+
+                index_mapping[index].append(field.attname)
 
         data = {}
 
@@ -73,15 +76,17 @@ class TransModel(models.Model):
         attr_trans = Translation.objects.filter(element_id=pk, table=table, default=True)
         for element in attr_trans:
             if element.text_id in index_mapping:
-                attname = index_mapping[element.text_id]
-                data[attname] = element.value
+                attnames = index_mapping[element.text_id]
+                for attname in attnames:
+                    data[attname] = element.value
 
         # add specific values
         attr_trans = Translation.objects.filter(element_id=pk, table=table, language=language)
         for element in attr_trans:
             if element.text_id in index_mapping:
-                attname = index_mapping[element.text_id]
-                data[attname] = element.value
+                attnames = index_mapping[element.text_id]
+                for attname in attnames:
+                    data[attname] = element.value
 
         return TranslatedModel(self, data)
 
