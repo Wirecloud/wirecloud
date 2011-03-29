@@ -196,6 +196,10 @@ AUTH_PROFILE_MODULE = 'user.UserProfile'
 LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
+FIXTURE_DIRS = (
+    path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
+    )
+
 # Set the log path
 # When empty, defaults to MEDIA_ROOT/logs
 #LOG_PATH='/var/log/ezweb'
