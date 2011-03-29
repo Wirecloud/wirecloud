@@ -594,7 +594,7 @@
     </object>
     <object pk="3" model="layout.skin">
         <field type="CharField" name="name">darkBlue</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="properties">{
 "body_bg":"url(/ezweb/themes/darkBlue/images/fondo.jpg) top left;", "banner_bg":"url(/ezweb/themes/darkBlue/images/header.png) repeat-x top left", "banner_font":"white",  "container_bg": "transparent url(/ezweb/themes/darkBlue/images/layer.png) repeat scroll 0 0", "container_border": "transparent", 
 
@@ -612,7 +612,7 @@
     </object>
     <object pk="2" model="layout.skin">
         <field type="CharField" name="name">default</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="properties">{
 "body_bg": "white", "banner_bg": "transparent","body_font": "#4C5054", "banner_font": "#4C5054",  "container_bg": "transparent", "container_border": "#C2CBD2", 
 
@@ -635,7 +635,7 @@
     </object>
     <object pk="4" model="layout.skin">
         <field type="CharField" name="name">default_catalogue</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="properties">{
 "body_bg": "white", "banner_bg":"white", "banner_font":"#4C5054",
 
