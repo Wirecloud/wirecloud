@@ -98,7 +98,7 @@ ColumnLayout.prototype.getCellHeight = function() {
 }
 
 ColumnLayout.prototype.fromPixelsToVCells = function(pixels) {
-    return (pixels / this.cellHeight);
+    return pixels > 0 ? (pixels / this.cellHeight) : 0;
 }
 
 ColumnLayout.prototype.fromVCellsToPixels = function(cells) {
@@ -443,7 +443,7 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
 }
 
 ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
-    var newPosition = new DragboardPosition(x, y);
+    var newPosition = new DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
     // Move other instances
     var affectedgadget, offset, affectedY;
@@ -574,7 +574,7 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
         position = this._searchFreeSpace(iGadget.getWidth(), iGadget.getHeight());
         iGadget.setPosition(position);
 
-        // Pre-reserve the cells for the gadget instance
+        // Reserve the cells for the gadget instance
         this._reserveSpace(this.matrix, iGadget);
     }
 
