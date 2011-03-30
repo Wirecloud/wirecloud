@@ -32,7 +32,8 @@
 
 from django.db import models
 from django.contrib.auth.models import User, Group
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
 
 from translator.models import TransModel
 
@@ -111,7 +112,18 @@ class UserRelatedToGadgetResource(models.Model):
         unique_together = ("gadget", "user")
 
     def __unicode__(self):
-        return str(self.added_by) + " " + str(self.preferred_by)
+        args = {'user': self.user, 'gadget': self.gadget}
+        if self.added_by:
+            if self.preferred_by:
+                return ugettext(u"%(user)s added %(gadget)s to the catalogue "
+                                u"and recommends it") % args
+            else:
+                return ugettext(u"%(user)s added %(gadget)s to the catalogue") % args
+        elif self.preferred_by:
+            return ugettext(u"%(user)s recommends %(gadget)s") % args
+        else:
+            return ugettext(u"%(user)s neither added %(gadget)s "
+                            u"to the catalogue neither recommends it ¿?") % args
 
 
 class GadgetWiring(models.Model):
