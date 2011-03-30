@@ -509,33 +509,28 @@ function ChannelInterface(channel, wiringGUI) {
 	channelContent.appendChild(table);
 
 	// Creates the row for the channel information
-	var contentRow = document.createElement("tr");
+	var contentRow = contentTable.insertRow(-1);
 	Element.extend(contentRow);
-	contentTable.appendChild(contentRow);
 	
 	//Channel value
 	//label
-	labelCol = document.createElement("td");
+	labelCol = contentRow.insertCell(-1);
 	labelCol.setAttribute ("width", '20%');
-	contentRow.appendChild(labelCol);
 	
 	labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("Value") + ":";
 	labelCol.appendChild(labelContent);
 	
 	//value
-	valueCol = document.createElement("td");
-	contentRow.appendChild(valueCol);
+	valueCol = contentRow.insertCell(-1);
 	this.valueElement = document.createElement("div");
 	Element.extend(this.valueElement);
 
 	valueCol.appendChild(this.valueElement);
 	
-	var contentRow = document.createElement("tr");
+	var contentRow = contentTable.insertRow(-1);
 	Element.extend(contentRow);
-	contentTable.appendChild(contentRow);
-	var labelCol = document.createElement("td");
-	contentRow.appendChild(labelCol);
+	var labelCol = contentRow.insertCell(-1);
               
     ////////////////////////////////////////////////
     // OPTIONAL AREAS!! Hidden by default!
@@ -603,20 +598,17 @@ function ChannelInterface(channel, wiringGUI) {
 
 	// Filter name row
 	//label
-	var contentRow = document.createElement("tr");
+	var contentRow = contentTable.insertRow(-1);
 	Element.extend(contentRow);
 	
-	contentTable.appendChild(contentRow);
-	var labelCol = document.createElement("td");
-	contentRow.appendChild(labelCol);
+	var labelCol = contentRow.insertCell(-1);
 
 	var labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("Filter") + ":";
 	labelCol.appendChild(labelContent);
 
 	//value
-	var valueCol = document.createElement("td");
-	contentRow.appendChild(valueCol);
+	var valueCol = contentRow.insertCell(-1);
 
 	this.filterLabelDiv = document.createElement("div");
 	Element.extend(this.filterLabelDiv);
@@ -650,17 +642,14 @@ function ChannelInterface(channel, wiringGUI) {
 	
 	//Params row
 	//label
-	contentRow = document.createElement("tr");
-	contentTable.appendChild(contentRow);
-	labelCol = document.createElement("td");
-	contentRow.appendChild(labelCol);
+	contentRow = contentTable.insertRow(-1);
+	labelCol = contentRow.insertCell(-1);
 	this.paramLabelLayer = document.createElement("div");
 	Element.extend(this.paramLabelLayer);
 	labelCol.appendChild(this.paramLabelLayer);
 	
 	//value
-	valueCol = document.createElement("td");
-	contentRow.appendChild(valueCol);
+	valueCol = contentRow.insertCell(-1);
 	this.paramValueLayer = document.createElement("div");
 	Element.extend(this.paramValueLayer);
 	valueCol.appendChild(this.paramValueLayer);
@@ -669,35 +658,32 @@ function ChannelInterface(channel, wiringGUI) {
 	// REMOTE CHANNEL's TABLE
     ////////////////////////////////////////////////
 	
-	var contentTable = document.createElement("table");
-	Element.extend(contentTable);
-	contentTable.addClassName("contentTable");
-	channelContent.appendChild(contentTable);
-	contentTable.addClassName('fold_table');
+	var table = document.createElement("table");
+        var contentTable = document.createElement('tbody');
+        table.appendChild(contentTable);
+	Element.extend(table);
+	table.addClassName("contentTable");
+	table.addClassName('fold_table');
+	channelContent.appendChild(table);
 	
-	this.remote_channel_table = contentTable;
+	this.remote_channel_table = table;
 	
 	// OPERATION ROW!
 	
-	var contentRow = document.createElement("tr");
+	var contentRow = contentTable.insertRow(-1);
 	Element.extend(contentRow);
-	contentTable.appendChild(contentRow);
 	
 	// OPERATION LABEL COLUMN
 	
-	var labelCol = document.createElement("td");
+	var labelCol = contentRow.insertCell(-1);
 	labelCol.setAttribute ("width", '20%');
-	contentRow.appendChild(labelCol);
 
 	var labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("Operation") + ":";
 	labelCol.appendChild(labelContent);
 	
-	contentTable.appendChild(contentRow);
-	
 	//OPERATION CONTENT COLUMN
-	var contentCol = document.createElement("td");
-	contentRow.appendChild(contentCol);
+	var contentCol = contentRow.insertCell(-1);
 	
 	var operations_layer = document.createElement("div");
 	Element.extend(operations_layer);
@@ -734,15 +720,13 @@ function ChannelInterface(channel, wiringGUI) {
 	
 	// READ/WRITE URL ROW!
 	
-	this.remote_url_row = document.createElement("tr");
+	this.remote_url_row = contentTable.insertRow(-1);
 	Element.extend(this.remote_url_row);
-	contentTable.appendChild(this.remote_url_row);
 	
 	// READ/WRITE URL LABEL TD
 	
-	var labelCol = document.createElement("td");
+	var labelCol = this.remote_url_row.insertCell(-1);
 	labelCol.setAttribute ("width", '20%');
-	this.remote_url_row.appendChild(labelCol);
 
 	var labelContent = document.createElement("label");
 	labelContent.innerHTML = gettext("URL") + ":";
@@ -750,8 +734,7 @@ function ChannelInterface(channel, wiringGUI) {
 	
 	// READ/WRITE URL CONTENT TD
 	
-	var contentCol = document.createElement("td");
-	this.remote_url_row.appendChild(contentCol);
+	var contentCol = this.remote_url_row.insertCell(-1);
 
 	this.remote_url_input = document.createElement("input");
 	Element.extend(this.remote_url_input);
