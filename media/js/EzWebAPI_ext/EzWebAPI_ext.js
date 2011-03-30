@@ -647,19 +647,13 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
-        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc;
-
-        // for IE ns is stored in tagUrn property
+        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc, checkNamespace;
 
         // ugh!! ugly hack for IE which does not understand default namespace
         if (domElem.documentElement) {
             defaultNS = domElem.documentElement.getAttribute('xmlns');
         } else {
             defaultNS = domElem.ownerDocument.documentElement.getAttribute('xmlns');
-        }
-
-        if (strNsURI === defaultNS) {
-            strNsURI = "";
         }
 
         if ('selectNodes' in domElem) {
@@ -671,7 +665,7 @@ if (document.getElementsByTagNameNS) {
             oldLanguage = doc.getProperty("SelectionLanguage");
             doc.setProperty("SelectionLanguage", 'XPath');
 
-            arrElems = doc.selectNodes("//*[local-name()='" + lName + "']")
+            arrElems = domElem.selectNodes("//*[local-name()='" + lName + "']")
 
             doc.setProperty("SelectionLanguage", oldLanguage);
         } else {
@@ -681,12 +675,25 @@ if (document.getElementsByTagNameNS) {
         allElems = new Array();
         for (i = 0, len = arrElems.length; i < len; i += 1) {
             elem = arrElems[i];
-            if (elem.namespaceURI === strNsURI) {
+            if (EzWebExt.getElementsByTagNameNS.checkNamespace(elem, strNsURI, defaultNS)) {
                 allElems.push(elem);
             }
         }
         return allElems;
-    }
+    };
+
+    EzWebExt.getElementsByTagNameNS.checkNamespace = function (element, namespace, defaultNS) {
+        // IE uses namespaceURI and tagUrn depending on the DomDocument instance
+        if ('tagUrn' in element) {
+            if (namespace === defaultNS) {
+                return element.tagUrn === '';
+            } else {
+                return element.tagUrn === namespace;
+            }
+        } else {
+            return element.namespaceURI === namespace;
+        }
+    };
 }
 
 /**
