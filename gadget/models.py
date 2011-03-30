@@ -78,6 +78,7 @@ class Gadget(TransModel):
 
     class Meta:
         unique_together = ('vendor', 'name', 'version')
+        ordering = ('uri', )
 
     def __unicode__(self):
         return self.uri
