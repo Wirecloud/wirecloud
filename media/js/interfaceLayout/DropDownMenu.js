@@ -237,7 +237,9 @@ DropDownMenu.prototype.hide = function (hideParents) {
 }
 
 DropDownMenu.prototype.remove = function () {
-		Element.remove(this.menu);
+    if (this.menu.parentNode) {
+        Element.remove(this.menu);
+    }
 }
 
 //shows the menu (calling showMenu function)
