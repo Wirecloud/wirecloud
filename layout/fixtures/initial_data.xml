@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="2" model="layout.branding">
-        <field type="CharField" name="logo">http://ezweb.tid.es/repository/gadget_images/telefonica_logo.gif</field>
-        <field type="CharField" name="viewer_logo">http://ezweb.tid.es/repository/gadget_images/telefonica_logo.gif</field>
-        <field type="CharField" name="link">http://www.movistar.es/</field>
-    </object>
-    <object pk="3" model="layout.branding">
+    <object pk="1" model="layout.branding">
         <field type="CharField" name="logo">http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png</field>
         <field type="CharField" name="viewer_logo">http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png</field>
         <field type="CharField" name="link"></field>
-    </object>
-    <object pk="4" model="layout.branding">
-        <field type="CharField" name="logo">http://farm1.static.flickr.com/37/117320004_4d15cc0a4f_m.jpg</field>
-        <field type="CharField" name="viewer_logo"><None></None></field>
-        <field type="CharField" name="link"><None></None></field>
     </object>
     <object pk="1" model="layout.theme">
         <field type="CharField" name="name">default</field>
@@ -107,119 +97,6 @@
     "catalogue/resource-left-fill-tagmode.png",
     "catalogue/resource-left-header.png",
     "catalogue/resource-left-top.png",
-
-    "wiring/add.png",
-    "wiring/checked.png",
-    "wiring/inAnchorChannel.png",
-    "wiring/inAnchorOutEnabled.png",
-    "wiring/LminusDisabled.png",
-    "wiring/Lplus.png",
-    "wiring/outAnchorInEnabled.png",
-    "wiring/outAnchor.png",
-    "wiring/tree.gif",
-    "wiring/unchecked.png",
-    "wiring/checked14px.png",
-    "wiring/checkedtab.png",
-    "wiring/inAnchorInEnabled.png",
-    "wiring/inAnchor.png",
-    "wiring/Lminus.png",
-    "wiring/outAnchorChannel.png",
-    "wiring/outAnchorOutEnabled.png",
-    "wiring/pipe.png",
-    "wiring/unchecked14px.png",
-    "wiring/wiringArrow.png",
-    
-    "error.png",
-    "new.png"
-  ]
-}</field>
-    </object>
-    <object pk="2" model="layout.theme">
-        <field type="CharField" name="name">darkBlue</field>
-        <field type="TextField" name="theme_css">{"general":"themes/darkBlue/css/ezweb.css", "dragboard":"themes/darkBlue/css/dragboard.css", "catalogue":"themes/darkBlue/css/catalogue_list.css", "wiring":"themes/darkBlue/css/wiring.css", "ie":"themes/darkBlue/css/ie.css", "lite":"themes/darkBlue/css/ezweb_lite.css"}</field>
-        <field type="TextField" name="images">{
-  "icons": {
-    "add": "add.png",
-    "catalogue-wiki": "wiki.png",
-    "close": "remove.png",
-    "delete": "delete.png",
-    "delete_highlighted": "delete-highlighted.png",
-    "error": "error.png",
-    "filter": "filter.png",
-    "go-first": "catalogue/go-first.png",
-    "go-first-disabled": "catalogue/go-first.png",
-    "go-last": "catalogue/go-last.png",
-    "go-last-disabled": "catalogue/go-last.png",
-    "go-next": "catalogue/go-next.png",
-    "go-next-disabled": "catalogue/go-next.png",
-    "go-previous": "catalogue/go-previous.png",
-    "go-previous-disabled": "catalogue/go-previous.png",
-    "igadget-extract": "igadget/extract.png",
-    "igadget-lower": "igadget/lower.png",
-    "igadget-lower_to_bottom": "igadget/lowerToBottom.png",
-    "igadget-menu_colors": "igadget/menu_colors.png",
-    "igadget-raise": "igadget/raise.png",
-    "igadget-raise_to_top": "igadget/raiseToTop.png",
-    "igadget-settings": "settings.png",
-    "igadget-snap": "igadget/snap.png",
-    "igadget-transparency": "igadget/transparency.png",
-    "info": "info.png",
-    "lock": "lock.png",
-    "mark_tab_visible": "visible.png",
-    "rename": "rename.png",
-    "remove": "menu_remove.png",
-    "move": "menu_move.png",
-    "unlock": "unlock.png",
-    "warning": "warning.png",
-    "wiring-filter_param": "filter-param.png",
-    "workspace_preferences": "preferences.png",
-    "channel-remove": "remove.png",
-    "showcase-delete": "delete.png",
-    "showcase-delete_highlighted": "delete-highlighted.png",
-    "showcase-wiki": "wiki.png",
-    "showcase-wiki_highlighted": "wiki-highlighted.png",
-    "showcase-resource_image_not_available": "image_not_available.jpg",
-    "show_floating":"show_floating.png",
-	"solution": "solution.png",
-    "workspace_merge": "merge.png",
-    "workspace_active": "visible.png",
-    "workspace_publish": "publish.png",
-    "init-dat": "init.dat"
-  },
-
-  "imagesToPreload": [
-    "igadget/close-highlighted.png",
-    "igadget/lower.png",
-    "igadget/maximize.png",
-    "igadget/minimize.png",
-    "igadget/resize-handle-bottom-left.png",
-    "igadget/settings2.png",
-    "igadget/snap.png",
-    "igadget/close.png",
-    "igadget/lowerToBottom.png",
-    "igadget/menu_colors.png",
-    "igadget/raise.png",
-    "igadget/resize-handle-bottom-right.png",
-    "igadget/settings-highlighted.png",
-    "igadget/transparency.png",
-    "igadget/extract.png",
-    "igadget/maximize-highlighted.png",
-    "igadget/minimize-highlighted.png",
-    "igadget/raiseToTop.png",
-    "igadget/settings2-highlighted.png",
-    "igadget/settings.png",
-
-    "catalogue/resource-bottom.png",
-    "catalogue/resource-bottom-select.png",
-    "catalogue/resource-bottom-tagmode.png",
-    "catalogue/resource-fill.png",
-    "catalogue/resource-fill-select.png",
-    "catalogue/resource-fill-tagmode.png",
-    "catalogue/resource-header.png",
-    "catalogue/resource-header-select.png",
-    "catalogue/resource-top.png",
-    "catalogue/resource-top-select.png",
-    "catalogue/resource-top-tagmode.png",
 
     "wiring/add.png",
     "wiring/checked.png",
@@ -592,25 +469,7 @@
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
         <field type="CharField" name="template_file">skin_catalogue</field>
     </object>
-    <object pk="3" model="layout.skin">
-        <field type="CharField" name="name">darkBlue</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="properties">{
-"body_bg":"url(/ezweb/themes/darkBlue/images/fondo.jpg) top left;", "banner_bg":"url(/ezweb/themes/darkBlue/images/header.png) repeat-x top left", "banner_font":"white",  "container_bg": "transparent url(/ezweb/themes/darkBlue/images/layer.png) repeat scroll 0 0", "container_border": "transparent", 
-
-"toolbar_marked_font": "white", "toolbar_marked_bg": "transparent url(/ezweb/themes/darkBlue/images/button-selected.png) repeat-x scroll left top", "toolbar_unmarked_font": "#b5d7ed", "toolbar_unmarked_bg": "transparent url(/ezweb/themes/darkBlue/images/button.png) repeat-x scroll left top", "toolbar_hover_font": "white", "toolbar_hover_bg": "transparent url(/ezweb/themes/darkBlue/images/button.png) repeat-x scroll left top", 
-
-"add_tab_font":"#B5D7ED", "add_tab_bg":"#01bbef url(/ezweb/themes/darkBlue/images/button.png) repeat-x scroll left top", "add_tab_hover_font":"white", "add_tab_hover_bg":"#01bbef url(/ezweb/themes/darkBlue/images/button.png) repeat-x scroll left top",
-
-"tab_marked_font": "white", "tab_marked_bg": "transparent url(/ezweb/themes/darkBlue/images/tab-selected.png) repeat-x scroll left top", "tab_unmarked_font": "#b5d7ed", "tab_unmarked_bg": "transparent url(/ezweb/themes/darkBlue/images/tab.png) repeat-x scroll left top", "tab_hover_font": "white", "tab_hover_bg":"transparent url(/ezweb/themes/darkBlue/images/tab.png) repeat-x scroll left top", "tab_border":"transparent",
-
-"gadget_border":"#4c5054", "gadget_title_font":"#4C5054"
-}</field>
-        <field to="layout.skintemplate" name="skin_template" rel="ManyToOneRel">1</field>
-        <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="default">False</field>
-    </object>
-    <object pk="2" model="layout.skin">
+    <object pk="1" model="layout.skin">
         <field type="CharField" name="name">default</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="properties">{
@@ -631,9 +490,9 @@
 }</field>
         <field to="layout.skintemplate" name="skin_template" rel="ManyToOneRel">1</field>
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="default">True</field>
+        <field type="BooleanField" name="default">1</field>
     </object>
-    <object pk="4" model="layout.skin">
+    <object pk="2" model="layout.skin">
         <field type="CharField" name="name">default_catalogue</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="properties">{
@@ -652,26 +511,16 @@
 }</field>
         <field to="layout.skintemplate" name="skin_template" rel="ManyToOneRel">2</field>
         <field to="layout.layout" name="layout" rel="ManyToOneRel">1</field>
-        <field type="BooleanField" name="default">True</field>
+        <field type="BooleanField" name="default">1</field>
     </object>
     <object pk="1" model="layout.themebranding">
         <field to="layout.theme" name="theme" rel="ManyToOneRel">1</field>
-        <field to="layout.branding" name="branding" rel="ManyToOneRel">2</field>
+        <field to="layout.branding" name="branding" rel="ManyToOneRel">1</field>
         <field type="CharField" name="type">catalogue</field>
     </object>
     <object pk="2" model="layout.themebranding">
         <field to="layout.theme" name="theme" rel="ManyToOneRel">1</field>
-        <field to="layout.branding" name="branding" rel="ManyToOneRel">2</field>
-        <field type="CharField" name="type">workspace</field>
-    </object>
-    <object pk="3" model="layout.themebranding">
-        <field to="layout.theme" name="theme" rel="ManyToOneRel">2</field>
-        <field to="layout.branding" name="branding" rel="ManyToOneRel">3</field>
-        <field type="CharField" name="type">catalogue</field>
-    </object>
-    <object pk="4" model="layout.themebranding">
-        <field to="layout.theme" name="theme" rel="ManyToOneRel">2</field>
-        <field to="layout.branding" name="branding" rel="ManyToOneRel">3</field>
+        <field to="layout.branding" name="branding" rel="ManyToOneRel">1</field>
         <field type="CharField" name="type">workspace</field>
     </object>
 </django-objects>
