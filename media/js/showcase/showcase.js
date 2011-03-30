@@ -102,8 +102,11 @@ var ShowcaseFactory = function () {
                 opManager.changeActiveWorkSpace(opManager.workSpaceInstances[id]);
             }
 
-            var onError = function (receivedData_) {
-                alert("error en showcase")
+            var onError = function (transport, e) {
+                var msg, logManager = LogManagerFactory.getInstance();
+                msg = logManager.formatError(gettext("Error retrieving showcase data: %(errorMsg)s."), transport, e);
+                logManager.log(msg);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
             }
 
             // Initial load from persitence system
@@ -118,15 +121,16 @@ var ShowcaseFactory = function () {
                 this.parseGadgets(receivedData_);
 
                 // Showcase loaded
-                this.loaded = true;
                 this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
 
             }
 
             // Error callback (empty gadget list)
             var onError = function (receivedData_) {
-                this.loaded = true;
-                this.opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+                var msg, logManager = LogManagerFactory.getInstance();
+                msg = logManager.formatError(gettext("Error retrieving showcase data: %(errorMsg)s."), transport, e);
+                logManager.log(msg);
+                LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
             }
 
             // Initial load from persitence system
@@ -138,7 +142,6 @@ var ShowcaseFactory = function () {
         // PRIVATE METHODS AND VARIABLES
         // *******************************
         this.gadgets = new Hash();
-        this.loaded = false;
         this.opManager = OpManagerFactory.getInstance();
         this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
