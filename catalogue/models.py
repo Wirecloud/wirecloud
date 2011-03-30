@@ -116,14 +116,14 @@ class UserRelatedToGadgetResource(models.Model):
         if self.added_by:
             if self.preferred_by:
                 return ugettext(u"%(user)s added %(gadget)s to the catalogue "
-                                u"and recommends it") % args
+                                u"and prefers it") % args
             else:
                 return ugettext(u"%(user)s added %(gadget)s to the catalogue") % args
         elif self.preferred_by:
-            return ugettext(u"%(user)s recommends %(gadget)s") % args
+            return ugettext(u"%(user)s prefers %(gadget)s") % args
         else:
             return ugettext(u"%(user)s neither added %(gadget)s "
-                            u"to the catalogue neither recommends it ¿?") % args
+                            u"to the catalogue neither prefers it ¿?") % args
 
 
 class GadgetWiring(models.Model):
