@@ -732,7 +732,7 @@ DragboardCursor.prototype.paint = function(dragboard) {
  * references.
  */
 DragboardCursor.prototype.destroy = function() {
-    if (this.element != null) {
+    if (isElement(this.element)) {
         this.element.parentNode.removeChild(this.element);
         this.element = null;
     }
@@ -759,7 +759,7 @@ DragboardCursor.prototype.setPosition = function (position) {
 var EzWebEffectBase = new Object();
 EzWebEffectBase.findDragboardElement = function(element) {
     var tmp = element.parentNode;
-    while (tmp) {
+    while (isElement(tmp)) {
         //var position = tmp.getStyle("position");
         var position = document.defaultView.getComputedStyle(tmp, null).getPropertyValue("position");
         switch (position) {
@@ -969,7 +969,7 @@ IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
         return curNode;
     } else {
         var parentNode = curNode.parentNode;
-        if (parentNode != null)
+        if (isElement(parentNode))
             return this._findTabElement(parentNode, maxRecursion - 1);
         else
             return null;

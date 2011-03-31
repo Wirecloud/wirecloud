@@ -96,8 +96,9 @@ WindowMenu.prototype._closeListener = function(e) {
 WindowMenu.prototype.setMsg = function (msg) {
 	this.msgElement.update(msg);
 
-	if (this.htmlElement.parentNode !== null)
+	if (isElement(this.htmlElement.parentNode)) {
 		this.calculatePosition();
+	}
 }
 
 /**
@@ -173,7 +174,7 @@ WindowMenu.prototype.show = function (parentWindow) {
  * Makes this WindowMenu hidden.
  */
 WindowMenu.prototype.hide = function () {
-	if (this.htmlElement.parentNode == null) {
+	if (!isElement(this.htmlElement.parentNode)) {
 		// This windowmenu is currently hidden => Nothing to do
 		return;
 	}

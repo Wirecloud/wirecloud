@@ -672,17 +672,21 @@ IGadget.prototype.isAllowed = function(action) {
 }
 
 IGadget.prototype._updateButtons = function() {
-    if (this.closeButtonElement.parentNode)
+    if (isElement(this.closeButtonElement.parentNode)) {
         this.closeButtonElement.remove();
-    if (this.settingsButtonElement.parentNode)
+    }
+    if (isElement(this.settingsButtonElement.parentNode)) {
         this.settingsButtonElement.remove();
-    if (this.closeButtonElement.parentNode)
+    }
+    if (isElement(this.closeButtonElement.parentNode)) {
         this.closeButtonElement.remove();
-    if (this.leftResizeHandleElement.parentNode)
+    }
+    if (isElement(this.leftResizeHandleElement.parentNode)) {
         this.leftResizeHandleElement.remove();
-    if (this.rightResizeHandleElement.parentNode)
+    }
+    if (isElement(this.rightResizeHandleElement.parentNode)) {
         this.rightResizeHandleElement.remove();
-
+    }
 
 
     if (this.isAllowed('close')) {
@@ -1209,7 +1213,7 @@ IGadget.prototype.remove = function(orderFromServer) {
     this.log(gettext('iGadget deleted'), Constants.Logging.INFO_MSG);
 
     var dragboard = this.layout.dragboard;
-    if (this.element.parentNode != null) {
+    if (isElement(this.element.parentNode)) {
         this.layout.removeIGadget(this, true);
     }
 

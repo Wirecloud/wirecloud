@@ -284,7 +284,7 @@ function Tab (tabInfo, workSpace) {
 			return curNode;
 		} else {
 			var parentNode = curNode.parentNode;
-			if (parentNode != null)
+			if (isElement(parentNode))
 				return this._findTabElement(parentNode, maxRecursion - 1);
 			else
 				return null;

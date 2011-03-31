@@ -2016,7 +2016,7 @@ StyledElements.StyledElement.prototype.insertInto = function (element, refElemen
  */
 StyledElements.StyledElement.prototype._getUsableHeight = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!parentElement)
+    if (!EzWebExt.XML.isElement(parentElement))
         return null;
 
     var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
@@ -2040,7 +2040,7 @@ StyledElements.StyledElement.prototype._getUsableHeight = function() {
  */
 StyledElements.StyledElement.prototype._getUsableWidth = function() {
     var parentElement = this.wrapperElement.parentNode;
-    if (!parentElement)
+    if (!EzWebExt.XML.isElement(parentElement))
         return null;
 
     var parentStyle = document.defaultView.getComputedStyle(parentElement, null);
@@ -4099,7 +4099,7 @@ StyledElements.StyledAlert.prototype.appendChild = function(child) {
  * Closes this alert. After this StyledAlert is closed, it cannot be used anymore.
  */
 StyledElements.StyledAlert.prototype.close = function() {
-    if (this.wrapperElement.parentNode) {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         EzWebExt.removeFromParent(this.wrapperElement);
         this.events['close'].dispatch(this);
     }
@@ -4866,7 +4866,7 @@ StyledElements.MenuItem = function(text, handler) {
 StyledElements.MenuItem.prototype = new StyledElements.StyledElement();
 
 StyledElements.MenuItem.prototype.destroy = function() {
-    if (this.wrapperElement.parentNode) {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         EzWebExt.removeFromParent(this.wrapperElement);
     }
     EzWebExt.removeEventListener(this.wrapperElement, "mouseover", this._mouseoverEventHandler, false);
@@ -4960,7 +4960,7 @@ StyledElements.PopupMenuBase.prototype.appendSeparator = function() {
 StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
     var i, j, item, generatedItems, generatedItem;
 
-    if (this.wrapperElement.parentNode != null) {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         return; // This Popup Menu is already visible => nothing to do
     }
 
@@ -5003,7 +5003,7 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
 StyledElements.PopupMenuBase.prototype.hide = function() {
     var i;
 
-    if (this.wrapperElement.parentNode == null) {
+    if (!EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         return; // This Popup Menu is already hidden => nothing to do
     }
 
@@ -5023,7 +5023,7 @@ StyledElements.PopupMenuBase.prototype.hide = function() {
     this._dynamicItems = [];
     this._submenus = [];
     this.wrapperElement.innerHTML = '';
-    if (this.wrapperElement.parentNode) {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         EzWebExt.removeFromParent(this.wrapperElement);
     }
 }
@@ -5078,7 +5078,7 @@ StyledElements.PopupMenu.prototype.show = function(refPosition) {
 StyledElements.PopupMenu.prototype.hide = function() {
     StyledElements.PopupMenuBase.prototype.hide.call(this);
 
-    if (this._disableLayer.parentNode) {
+    if (EzWebExt.XML.isElement(this._disableLayer.parentNode)) {
         EzWebExt.removeFromParent(this._disableLayer);
     }
 }
