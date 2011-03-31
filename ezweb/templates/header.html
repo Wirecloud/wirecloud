@@ -11,14 +11,14 @@
 			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
 			<a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="{% trans 'About EzWeb' %}">{% trans "About EzWeb" %}</a>
 			<span> | </span>
-			<a id="preferences_link" href="javascript:OpManagerFactory.getInstance().showPlatformPreferences();" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
+			<a id="preferences_link" href="#" onclick="javascript:OpManagerFactory.getInstance().showPlatformPreferences(); return false;" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
 			<span> | </span>
 			{% if is_anonymous %}
 				<a href="/accounts/login/?next=/" title="{% trans 'Sign in' %}">{% trans "Sign in" %}</a>
 				<span> | </span>
 				<span id="user_section">{% trans "anonymous" %}</span>
 			{% else %}
-				<a href="javascript:OpManagerFactory.getInstance().logout()" title="{% trans 'Sign out' %}">{% trans "Sign out" %}</a>
+				<a href="#" onclick="javascript:OpManagerFactory.getInstance().logout()" title="{% trans 'Sign out' %}">{% trans "Sign out" %}</a>
 				
 				{%if AUTHENTICATION_SERVER_URL %}
 					<span> | </span>
