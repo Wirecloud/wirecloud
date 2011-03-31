@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2009 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -25,7 +25,7 @@
 
 
 /**
- * 
+ *
  */
 var InputValidationError = new Object();
 InputValidationError.NO_ERROR       = 0;
@@ -71,7 +71,7 @@ ValidationErrorManager.prototype._buildErrorMsg = function(errorCode) {
 		break;
 	case InputValidationError.VERSION_ERROR:
 		msg = gettext("The following field do not contain a valid version number: %(fields)s.");
-		break;	
+		break;
 	case InputValidationError.ID_ERROR:
 		msg = gettext("The following fields contain invalid characters: %(fields)s.");
 		break;
@@ -333,7 +333,7 @@ LongTextInputInterface.prototype = new InputInterface();
 function URLInputInterface(fieldId, options) {
 	if (arguments.length == 0)
 		return;
-	
+
 	TextInputInterface.call(this, fieldId, options);
 }
 URLInputInterface.prototype = new TextInputInterface();
@@ -349,10 +349,10 @@ URLInputInterface.prototype._checkValue = function(newValue) {
  */
 function FileURLInputInterface(fieldId, options) {
 	URLInputInterface.call(this, fieldId, options);
-	
+
 	this.link = document.createElement('div');
 	this.linkHandler = options.linkHandler;
-	
+
 	Element.extend(this.link);
 	this.link.addClassName('window_link');
 	this.link.innerHTML = gettext("Choose a local file");
@@ -368,7 +368,7 @@ FileURLInputInterface.prototype._insertInto = function(element){
 FileURLInputInterface.prototype.setDisabled = function(disabled){
 
 	InputInterface.prototype.setDisabled.call(this, disabled);
-	
+
 	//this input interface has to disable the uploader link too
 	if (disabled) {
 		this.link.removeClassName('window_link');
@@ -378,7 +378,7 @@ FileURLInputInterface.prototype.setDisabled = function(disabled){
 		this.link.addClassName('window_link');
 		Event.observe(this.link, 'click', this.linkHandler);
 	}
-	
+
 }
 
 /**
@@ -400,13 +400,13 @@ EMailInputInterface.prototype._checkValue = function(newValue) {
  */
 function VersionInputInterface(fieldId, options) {
 	TextInputInterface.call(this, fieldId, options);
-	
+
 	this.sample = document.createElement('div');
 	Element.extend(this.sample);
 	this.sample.addClassName('explanation');
 	this.sample.innerHTML = gettext('Format: X.X.X, where X is an integer.') + "<br/>" +
 	gettext('Ex. "0.1", "1.11". NOTE: 1.01 should be 1.0.1');
-	
+
 }
 VersionInputInterface.prototype = new TextInputInterface();
 
@@ -458,7 +458,7 @@ function ColorInputInterface(fieldId, options) {
 	//var inputId = this._fieldId + '_input';
 	var inputId = this._fieldId;
 	this.inputElement.setAttribute('id', inputId);
-	
+
 }
 ColorInputInterface.prototype = new InputInterface();
 
@@ -492,7 +492,7 @@ ColorInputInterface.prototype._insertInto = function(element) {
 	colorpicker301.addClassName('colorpicker301');
 	element.appendChild(colorpicker301, element.firstChild);
 */
-	
+
 }
 
 /**
@@ -722,7 +722,7 @@ ParametrizableValueInputInterface.prototype._setValue = function(newValue) {
     }
 
     this._updateInputElement();
-    this._updateButton();    
+    this._updateButton();
 };
 
 ParametrizableValueInputInterface.prototype._insertInto = function(element) {
@@ -761,7 +761,7 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
         this.visibilityIcon.addClassName('visible');
         this.visibilityIcon.title = gettext("This value will be visible to the user");
     } else {
-        this.visibilityIcon.removeClassName('visible'); 
+        this.visibilityIcon.removeClassName('visible');
         this.visibilityIcon.title = gettext("This value won't be visible to the user");
     }
 };
