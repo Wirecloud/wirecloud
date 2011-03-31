@@ -1015,7 +1015,7 @@ function WorkSpace (workSpaceState) {
      * Menu with the share and publish options
      */
     WorkSpace.prototype._createEditMenu = function () {
-        var idMenu = 'edit_menu_'+this.workSpaceState.id;
+        var idMenu = 'edit_menu_' + this.workSpaceState.id;
 
         this.editMenu = this._initMenu(idMenu);
 
@@ -1023,23 +1023,19 @@ function WorkSpace (workSpaceState) {
         var optionPosition = 0;
 
         // catalogue access option
-        if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')){
-                var catId = this.editMenu.addOption(gettext("Go to Gallery")+" »",
-                                function() {
-                                    // the action of going to the catalogue is set by the own catalogue module
-                                    LayoutManagerFactory.getInstance().hideCover();
-                                },
+        if (this.isAllowed('catalogue_view_gadgets') || this.isAllowed('catalogue_view_mashups')) {
+            // the action of going to the catalogue is set by the catalogue module
+            var catId = this.editMenu.addOption(gettext("Go to Gallery") + " »",
+                                function() {},
                                 optionPosition++);
-                this.catalogue_link = $(catId)
+            this.catalogue_link = $(catId)
         }
 
-        //wiring access option
+        // wiring access option
         if (this.isAllowed('show_wiring')) {
-            var wiringId = this.editMenu.addOption(gettext("Go to Wiring tool")+" »",
-                                function() {
-                                    // the action of going to the wiring is set by the own wiring module
-                                    LayoutManagerFactory.getInstance().hideCover();
-                                },
+            // the action of going to the wiring is set by the wiring module
+            var wiringId = this.editMenu.addOption(gettext("Go to Wiring tool") + " »",
+                                function() {},
                                 optionPosition++);
             this.wiring_link = $(wiringId)
         }
