@@ -394,12 +394,12 @@ var LayoutManagerFactory = function () {
 		LayoutManager.prototype.onHashChange = function(){
 			var hash_parts = window.location.hash.split("#");
 			
-			section = hash_parts[0];
-			if (hash_parts.length > 1){
+			var section = hash_parts[0];
+			if (hash_parts.length > 1) {
 				//it is a subsection
 				section = hash_parts[1];
-			} 
-			if (section != this.currentViewType){
+			}
+			if (section != this.currentViewType) {
 				switch (section){
 					case "wiring":
 						this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
@@ -415,7 +415,7 @@ var LayoutManagerFactory = function () {
 						this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
 				}
 			}
-		}
+		};
 
 		// Dragboard operations (usually called together with Tab operations)
 		LayoutManager.prototype.showDragboard = function(dragboard) {

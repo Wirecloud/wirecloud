@@ -30,13 +30,15 @@
  * Various additions to the prototype.js
  */
 
+Prototype.BrowserFeatures.OnHashChangeEvent = 'onhashchange' in window;
+
 Object.extend(Event, {
 	KEY_SHIFT:    16,
 	KEY_CONTROL:  17,
 	KEY_CAPSLOCK: 20,
 	KEY_SPACE: 32,
 	keyPressed: function(event) {
-		return Browser.isMSIE() ? window.event.keyCode : event.which;
+		return Prototype.Browser.IE ? window.event.keyCode : event.which;
 	}
 });
 
@@ -80,43 +82,6 @@ if ( window.EzSteroidsAPI.is_activated() ) {
 	});
 }
 
-
-
-var Browser = {
-	
-	/**
-	 * Returns the user agent
-	 * @param {bool} useAlert
-	 */
-	inspect: function(useAlert)
-	{
-		if(useAlert)
-			alert(navigator.userAgent);
-		else
-			return navigator.userAgent;
-	},
-	/**
-	 * Returns true if browser is MS Internet Explorer
-	 */
-	isMSIE: function()
-	{
-		return (navigator.userAgent.toLowerCase().indexOf("msie") > -1) && !this.isOpera();
-	},
-	/**
-	 * Returns true if browser is Opera
-	 */
-	isOpera: function()
-	{
-		return navigator.userAgent.toLowerCase().indexOf("opera") > -1;
-	},
-	/**
-	 * Returns true if browzer is Mozilla
-	 */
-	isMozilla: function()
-	{
-		return (navigator.userAgent.toLowerCase().indexOf("mozilla") > -1) && !this.isOpera() && !this.isMSIE();
-	}
-}
 
 
 Object.genGUID = function()
