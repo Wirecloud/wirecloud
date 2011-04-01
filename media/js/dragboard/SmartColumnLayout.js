@@ -23,6 +23,9 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IGadget, LogManagerFactory, MultiValuedSize, Hash*/
+
 /////////////////////////////////////
 // ColumnLayout
 /////////////////////////////////////
@@ -38,8 +41,9 @@
  * @param scrollbarSpace   space reserved for the right scroll bar in pixels
  */
 function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontalMargin, scrollbarSpace) {
-    if (arguments.length == 0)
+    if (arguments.length === 0) {
         return; // Allow empty constructor (allowing hierarchy)
+    }
 
     this.initialized = false;
     this.shadowMatrix = null;    // Temporal matrix of igadgets used for D&D
@@ -47,7 +51,7 @@ function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontal
     this.columns = columns;
     this.cellHeight = cellHeight;
 
-    if ((verticalMargin % 2) == 0) {
+    if ((verticalMargin % 2) === 0) {
         this.topMargin = verticalMargin / 2;
         this.bottomMargin = verticalMargin / 2;
     } else {
@@ -55,7 +59,7 @@ function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontal
         this.bottomMargin = Math.floor(verticalMargin / 2) + 1;
     }
 
-    if ((horizontalMargin % 2) == 0) {
+    if ((horizontalMargin % 2) === 0) {
         this.leftMargin = horizontalMargin / 2;
         this.rightMargin = horizontalMargin / 2;
     } else {
@@ -65,7 +69,7 @@ function ColumnLayout(dragboard, columns, cellHeight, verticalMargin, horizontal
 
     this._clearMatrix();         // Matrix of igadgets
     this.dragboardCursor = null;
-    this.gadgetToMove = null;
+    this.igadgetToMove = null;
 
     DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
@@ -78,9 +82,9 @@ ColumnLayout.prototype = new DragboardLayout();
 /**
  * Returns the numbers of columns of this layout.
  */
-ColumnLayout.prototype.getColumns = function() {
+ColumnLayout.prototype.getColumns = function () {
     return this.columns;
-}
+};
 
 /**
  * Returns the number of rows currently present in this layout.
@@ -93,59 +97,60 @@ ColumnLayout.prototype.getRows = function () {
     return rows;
 };
 
-ColumnLayout.prototype.getCellHeight = function() {
+ColumnLayout.prototype.getCellHeight = function () {
     return this.cellHeight;
-}
+};
 
-ColumnLayout.prototype.fromPixelsToVCells = function(pixels) {
+ColumnLayout.prototype.fromPixelsToVCells = function (pixels) {
     return pixels > 0 ? (pixels / this.cellHeight) : 0;
-}
+};
 
-ColumnLayout.prototype.fromVCellsToPixels = function(cells) {
+ColumnLayout.prototype.fromVCellsToPixels = function (cells) {
     return (cells * this.cellHeight);
-}
+};
 
 ColumnLayout.prototype.getWidthInPixels = function (cells) {
     return this.fromHCellsToPixels(cells) - this.leftMargin - this.rightMargin;
-}
+};
 
 ColumnLayout.prototype.getHeightInPixels = function (cells) {
     return this.fromVCellsToPixels(cells) - this.topMargin - this.bottomMargin;
-}
+};
 
-ColumnLayout.prototype.fromPixelsToHCells = function(pixels) {
+ColumnLayout.prototype.fromPixelsToHCells = function (pixels) {
     var cells = pixels / this.fromHCellsToPixels(1);
     var truncatedCells = Math.floor(cells);
 
-    if (Math.ceil(this.fromHCellsToPixels(truncatedCells)) == pixels)
+    if (Math.ceil(this.fromHCellsToPixels(truncatedCells)) === pixels) {
         return truncatedCells;
-    else
+    } else {
         return cells;
-}
+    }
+};
 
-ColumnLayout.prototype.fromHCellsToPixels = function(cells) {
+ColumnLayout.prototype.fromHCellsToPixels = function (cells) {
     return (this.getWidth() * this.fromHCellsToPercentage(cells)) / 100;
-}
+};
 
-ColumnLayout.prototype.fromHCellsToPercentage = function(cells) {
+ColumnLayout.prototype.fromHCellsToPercentage = function (cells) {
     return cells * (100 / this.columns);
-}
+};
 
-ColumnLayout.prototype.adaptColumnOffset = function(pixels) {
+ColumnLayout.prototype.adaptColumnOffset = function (pixels) {
     var halfColumnWidth = Math.floor(this.fromHCellsToPixels(1) / 2);
     var offsetInLU = Math.floor(this.fromPixelsToHCells(pixels - this.leftMargin + halfColumnWidth));
     var offsetInPixels = this.fromHCellsToPixels(offsetInLU) + this.leftMargin;
     return new MultiValuedSize(offsetInPixels, offsetInLU);
-}
+};
 
-ColumnLayout.prototype.adaptRowOffset = function(pixels) {
+ColumnLayout.prototype.adaptRowOffset = function (pixels) {
     var halfRowHeight = Math.floor(this.fromVCellsToPixels(1) / 2);
     var offsetInLU = Math.floor(this.fromPixelsToVCells(pixels - this.topMargin + halfRowHeight));
     var offsetInPixels = this.fromVCellsToPixels(offsetInLU) + this.topMargin;
     return new MultiValuedSize(offsetInPixels, offsetInLU);
-}
+};
 
-ColumnLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
+ColumnLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
     oldLayout = oldLayout ? oldLayout : this;
     fullSize = oldLayout.padHeight(fullSize);
 
@@ -153,9 +158,9 @@ ColumnLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout
     var paddedFullSize = this.fromVCellsToPixels(paddedFullSizeInCells);
 
     return new MultiValuedSize(contentHeight + (paddedFullSize - fullSize), paddedFullSizeInCells);
-}
+};
 
-ColumnLayout.prototype.adaptWidth = function(contentWidth, fullSize, oldLayout) {
+ColumnLayout.prototype.adaptWidth = function (contentWidth, fullSize, oldLayout) {
     oldLayout = oldLayout ? oldLayout : this;
     fullSize = oldLayout.padWidth(fullSize);
 
@@ -163,7 +168,7 @@ ColumnLayout.prototype.adaptWidth = function(contentWidth, fullSize, oldLayout) 
     var paddedFullSize = this.fromHCellsToPixels(paddedFullSizeInCells);
 
     return new MultiValuedSize(contentWidth + (paddedFullSize - fullSize), paddedFullSizeInCells);
-}
+};
 
 ColumnLayout.prototype.padWidth = function (width) {
     return width + this.leftMargin + this.rightMargin;
@@ -173,87 +178,97 @@ ColumnLayout.prototype.padHeight = function (height) {
     return height + this.topMargin + this.bottomMargin;
 };
 
-ColumnLayout.prototype.getColumnOffset = function(column) {
+ColumnLayout.prototype.getColumnOffset = function (column) {
     var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
     tmp += this.leftMargin;
     return tmp;
-}
+};
 
-ColumnLayout.prototype.getRowOffset = function(row) {
+ColumnLayout.prototype.getRowOffset = function (row) {
     return this.fromVCellsToPixels(row) + this.topMargin;
-}
+};
 
-
-ColumnLayout.prototype._getPositionOn = function(_matrix, gadget) {
-    if (_matrix == this.matrix)
+ColumnLayout.prototype._getPositionOn = function (_matrix, gadget) {
+    if (_matrix === this.matrix) {
         return gadget.getPosition();
-    else
+    } else {
         return this.shadowPositions[gadget.code];
-}
+    }
+};
 
-ColumnLayout.prototype._setPositionOn = function(_matrix, gadget, position) {
-    if (_matrix == this.matrix)
+ColumnLayout.prototype._setPositionOn = function (_matrix, gadget, position) {
+    if (_matrix === this.matrix) {
         gadget.setPosition(position);
-    else
+    } else {
         this.shadowPositions[gadget.code] = position;
-}
+    }
+};
 
-ColumnLayout.prototype._clearMatrix = function() {
-    this.matrix = new Array();
+ColumnLayout.prototype._clearMatrix = function () {
+    this.matrix = [];
 
-    for (var x = 0; x < this.getColumns(); x++)
-        this.matrix[x] = new Array();
-}
+    for (var x = 0; x < this.getColumns(); x++) {
+        this.matrix[x] = [];
+    }
+};
 
-ColumnLayout.prototype._hasSpaceFor = function(_matrix, positionX, positionY, width, height) {
+ColumnLayout.prototype._hasSpaceFor = function (_matrix, positionX, positionY, width, height) {
     var x, y;
 
-    for (x = 0; x < width; x++)
-        for (y = 0; y < height; y++)
-            if (_matrix[positionX + x][positionY + y] != null)
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
+            if (_matrix[positionX + x][positionY + y] != null) {
                 return false;
+            }
+        }
+    }
 
     return true;
-}
+};
 
-ColumnLayout.prototype._reserveSpace = function(_matrix, iGadget) {
+ColumnLayout.prototype._reserveSpace = function (_matrix, iGadget) {
     var x, y;
     var position = this._getPositionOn(_matrix, iGadget);
     var width = iGadget.getWidth();
     var height = iGadget.getHeight();
 
-    for (x = 0; x < width; x++)
-        for (y = 0; y < height; y++)
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
             _matrix[position.x + x][position.y + y] = iGadget;
-}
+        }
+    }
+};
 
-ColumnLayout.prototype._clearSpace = function(_matrix, iGadget) {
+ColumnLayout.prototype._clearSpace = function (_matrix, iGadget) {
     var x, y;
     var position = this._getPositionOn(_matrix, iGadget);
     var width = iGadget.getWidth();
     var height = iGadget.getHeight();
 
-    for (x = 0; x < width; x++)
-        for (y = 0; y < height; y++)
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
             delete _matrix[position.x + x][position.y + y];
-}
+        }
+    }
+};
 
-ColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, height) {
+ColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, height) {
     return y;
-}
+};
 
-ColumnLayout.prototype._moveSpaceDown = function(_matrix, iGadget, offsetY) {
-    var affectedIGadgets = new Hash();
-    var position = this._getPositionOn(_matrix, iGadget);
-    var finalPosition = position.clone();
+ColumnLayout.prototype._moveSpaceDown = function (_matrix, iGadget, offsetY) {
+    var affectedIGadgets, position, finalPosition, edgeY, igadget, x, y, i, keys, key;
+
+    affectedIGadgets = new Hash();
+    position = this._getPositionOn(_matrix, iGadget);
+    finalPosition = position.clone();
     finalPosition.y += offsetY;
 
-    var edgeY = position.y + iGadget.getHeight();
+    edgeY = position.y + iGadget.getHeight();
 
     // Search affected gadgets
     // TODO move gadgets according to the biggest offset for optimizing
-    var igadget, x, y;
-    for (x = 0; x < iGadget.getWidth(); x++)
+    for (x = 0; x < iGadget.getWidth(); x++) {
         for (y = 0; y < offsetY; y++) {
             igadget = _matrix[position.x + x][edgeY + y];
             if (igadget != null) {
@@ -261,10 +276,10 @@ ColumnLayout.prototype._moveSpaceDown = function(_matrix, iGadget, offsetY) {
                 break; // continue whit the next column
             }
         }
+    }
 
     // Move affected gadgets instances
-    var keys = affectedIGadgets.keys();
-    var igadget, i, key;
+    keys = affectedIGadgets.keys();
     for (i = 0; i < keys.length; i++) {
         key = keys[i];
         igadget = this.iGadgets[key];
@@ -275,17 +290,17 @@ ColumnLayout.prototype._moveSpaceDown = function(_matrix, iGadget, offsetY) {
     this._clearSpace(_matrix, iGadget);
     this._setPositionOn(_matrix, iGadget, finalPosition);
     this._reserveSpace(_matrix, iGadget);
-}
+};
 
-ColumnLayout.prototype._moveSpaceUp = function(_matrix, iGadget) {
+ColumnLayout.prototype._moveSpaceUp = function (_matrix, iGadget) {
     var position = this._getPositionOn(_matrix, iGadget);
     var edgeY = position.y + iGadget.getHeight();
 
-    var offsetY;
-    for (offsetY = 1;
-         ((position.y - offsetY) >= 0) && this._hasSpaceFor(_matrix, position.x, position.y - offsetY, iGadget.getWidth(), 1);
-         offsetY++);
-    --offsetY;
+    var offsetY = 1;
+    while (((position.y - offsetY) >= 0) && this._hasSpaceFor(_matrix, position.x, position.y - offsetY, iGadget.getWidth(), 1)) {
+        offsetY += 1;
+    }
+    offsetY -= 1;
 
     if (offsetY > 0) {
         var affectedIGadgets = new Hash();
@@ -314,41 +329,46 @@ ColumnLayout.prototype._moveSpaceUp = function(_matrix, iGadget) {
         // Move affected gadgets instances
         var keys = affectedIGadgets.keys();
         var i;
-        for (i = 0; i < keys.length; i++)
+        for (i = 0; i < keys.length; i++) {
             this._moveSpaceUp(_matrix, affectedIGadgets[keys[i]]);
+        }
 
         //return true if the igadget position has been modified
         return true;
     }
     return false;
-}
+};
 
-ColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
+ColumnLayout.prototype._removeFromMatrix = function (_matrix, iGadget) {
     this._clearSpace(_matrix, iGadget);
     return false;
-}
+};
 
-ColumnLayout.prototype._reserveSpace2 = function(_matrix, iGadget, positionX, positionY, width, height) {
+ColumnLayout.prototype._reserveSpace2 = function (_matrix, iGadget, positionX, positionY, width, height) {
     var x, y;
 
-    for (x = 0; x < width; x++)
-        for (y = 0; y < height; y++)
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
             _matrix[positionX + x][positionY + y] = iGadget;
-}
+        }
+    }
+};
 
-ColumnLayout.prototype._clearSpace2 = function(_matrix, positionX, positionY, width, height) {
+ColumnLayout.prototype._clearSpace2 = function (_matrix, positionX, positionY, width, height) {
     var x, y;
 
-    for (x = 0; x < width; x++)
-        for (y = 0; y < height; y++)
+    for (x = 0; x < width; x++) {
+        for (y = 0; y < height; y++) {
             delete _matrix[positionX + x][positionY + y];
-}
+        }
+    }
+};
 
-ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+ColumnLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
     var x, y;
     var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
     var position = iGadget.getPosition();
-    var step2X;
+    var step2X, iGadgetToMove, finalYPos, widthDiff;
     step2X = position.x;
 
     // First Step
@@ -356,14 +376,14 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
         // Calculate the width for the next step
         step2Width = oldWidth;
 
-        var finalYPos = position.y + newHeight;
+        finalYPos = position.y + newHeight;
 
         if (resizeLeftSide) {
             // Move affected igadgets
-            var widthDiff = newWidth - oldWidth;
+            widthDiff = newWidth - oldWidth;
             for (x = position.x - widthDiff; x < position.x; ++x) {
                 for (y = 0; y < newHeight; ++y) {
-                    var iGadgetToMove = this.matrix[x][position.y + y];
+                    iGadgetToMove = this.matrix[x][position.y + y];
                     if (iGadgetToMove != null) {
                         this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
                         break; // Continue with the next column
@@ -373,8 +393,9 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
 
             // Move the gadget
             position.x -= widthDiff;
-            if (persist)
+            if (persist) {
                 iGadget.setPosition(position);
+            }
 
             // Reserve the new space
             this._reserveSpace2(this.matrix, iGadget,
@@ -383,13 +404,13 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
         } else {
             // Move affected igadgets
             for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
-              for (y = 0; y < newHeight; ++y) {
-                var iGadgetToMove = this.matrix[x][position.y + y];
-                if (iGadgetToMove != null) {
-                  this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
-                  break; // Continue with the next column
+                for (y = 0; y < newHeight; ++y) {
+                    iGadgetToMove = this.matrix[x][position.y + y];
+                    if (iGadgetToMove != null) {
+                        this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
+                        break; // Continue with the next column
+                    }
                 }
-              }
             }
 
             // Reserve this space
@@ -402,7 +423,7 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
         // Calculate the width for the next step
         step2Width = newWidth;
 
-        var widthDiff = oldWidth - newWidth;
+        widthDiff = oldWidth - newWidth;
         if (resizeLeftSide) {
 
             // Clear space
@@ -410,8 +431,9 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
 
             // Move the gadget
             position.x += widthDiff;
-            if (persist)
+            if (persist) {
                 iGadget.setPosition(position);
+            }
 
             step2X = position.x;
         } else {
@@ -425,10 +447,13 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
     if (newHeight > oldHeight) {
         var limitY = position.y + newHeight;
         var limitX = step2X + step2Width;
-        for (y = position.y + oldHeight; y < limitY; y++)
-            for (x = step2X; x < limitX; x++)
-                if (this.matrix[x][y] != null)
+        for (y = position.y + oldHeight; y < limitY; y++) {
+            for (x = step2X; x < limitX; x++) {
+                if (this.matrix[x][y] != null) {
                     this._moveSpaceDown(this.matrix, this.matrix[x][y], limitY - y);
+                }
+            }
+        }
 
         // Reserve Space
         this._reserveSpace2(this.matrix, iGadget, step2X, position.y + oldHeight, step2Width, newHeight - oldHeight);
@@ -438,11 +463,12 @@ ColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeigh
     }
 
     this._notifyWindowResizeEvent(true, true); // TODO
-    if (persist)
+    if (persist) {
         this.dragboard._commitChanges(); // FIXME
-}
+    }
+};
 
-ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
+ColumnLayout.prototype._insertAt = function (iGadget, x, y) {
     var newPosition = new DragboardPosition(x > 0 ? x : 0, y > 0 ? y : 0);
 
     // Move other instances
@@ -451,7 +477,7 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
     var lastX = newPosition.x + iGadget.getWidth();
     var lastY = newPosition.y + iGadget.getHeight();
 
-    for (x = newPosition.x; x < lastX; x++)
+    for (x = newPosition.x; x < lastX; x++) {
         for (y = newPosition.y; y < lastY; y++) {
             affectedgadget = this.matrix[x][y];
             if (affectedgadget != null) {
@@ -465,6 +491,7 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
                 break;
             }
         }
+    }
 
     // Change Gadget instance position (insert it)
     iGadget.setPosition(newPosition);
@@ -473,21 +500,23 @@ ColumnLayout.prototype._insertAt = function(iGadget, x, y) {
 
     //returns if any gadget's position has been modified
     return affectedGadgets;
-}
+};
 
-ColumnLayout.prototype._searchFreeSpace = function(width, height) {
+ColumnLayout.prototype._searchFreeSpace = function (width, height) {
     var positionX = 0, positionY = 0;
     var columns = this.getColumns() - width + 1;
 
-    for (positionY = 0; true ; positionY++)
-        for (positionX = 0; positionX < columns; positionX++)
+    for (positionY = 0; true ; positionY++) {
+        for (positionX = 0; positionX < columns; positionX++) {
             if (this._hasSpaceFor(this.matrix, positionX, positionY, width, height)) {
                 return new DragboardPosition(positionX, positionY);
             }
-}
+        }
+    }
+};
 
 ColumnLayout.prototype.initialize = function () {
-    var iGadget, i, key, position, iGadgetsToReinsert = new Array();
+    var iGadget, i, key, position, iGadgetsToReinsert = [];
 
     this._clearMatrix();
 
@@ -503,8 +532,9 @@ ColumnLayout.prototype.initialize = function () {
         iGadget.paint(true);
         this._ensureMinimalSize(iGadget);
 
-        if (iGadget.getWidth() > this.getColumns())
+        if (iGadget.getWidth() > this.getColumns()) {
             iGadget.contentWidth = this.getColumns();
+        }
 
         if (iGadget.getWidth() + position.x > this.getColumns()) {
             iGadgetsToReinsert.push(iGadget);
@@ -516,7 +546,7 @@ ColumnLayout.prototype.initialize = function () {
     }
 
     var modified = false;
-    if (iGadgetsToReinsert.length > 0){
+    if (iGadgetsToReinsert.length > 0) {
         // Reinsert the igadgets that didn't fit in their positions
         for (i = 0; i < iGadgetsToReinsert.length; i++) {
             position = this._searchFreeSpace(iGadgetsToReinsert[i].getWidth(),
@@ -529,7 +559,7 @@ ColumnLayout.prototype.initialize = function () {
 
     this.initialized = true;
     return modified;
-}
+};
 
 /**
  * Calculate what cell is at a given position in pixels
@@ -539,7 +569,7 @@ ColumnLayout.prototype.getCellAt = function (x, y) {
 
     return new DragboardPosition(Math.floor(x / columnWidth),
                                  Math.floor(y / this.getCellHeight()));
-}
+};
 
 /**
  * Inserts the given iGadget into this layout.
@@ -548,13 +578,14 @@ ColumnLayout.prototype.getCellAt = function (x, y) {
  * @param affectsDragboard if true, the dragboard associated to this layout will be notified
  * @return whether any gadget's position has been modified
  */
-ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+ColumnLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
     var affectedGadgets = false;
 
     DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 
-    if (!this.initialized)
+    if (!this.initialized) {
         return;
+    }
 
     if (iGadget.getWidth() > this.getColumns()) {
         iGadget.contentWidth = this.getColumns();
@@ -564,8 +595,9 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
     var position = iGadget.getPosition();
     if (position) {
         var diff = iGadget.getWidth() + position.x - this.getColumns();
-        if (diff > 0)
-            position.x -= diff
+        if (diff > 0) {
+            position.x -= diff;
+        }
 
         // Insert it. Returns if there are any affected gadget
         affectedGadgets = this._insertAt(iGadget, position.x, position.y);
@@ -580,15 +612,16 @@ ColumnLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
 
     this._adaptIGadget(iGadget);
     return affectedGadgets;
-}
+};
 
 //Returns if any gadget's position has been modified
-ColumnLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
+ColumnLayout.prototype.removeIGadget = function (iGadget, affectsDragboard) {
     var affectedGadgets;
+
     affectedGadgets = this._removeFromMatrix(this.matrix, iGadget);
     DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
     return affectedGadgets;
-}
+};
 
 ColumnLayout.prototype.moveTo = function (destLayout) {
     var movedGadgets, orderedGadgets, x, y, i, columns, rows, iGadget;
@@ -600,7 +633,7 @@ ColumnLayout.prototype.moveTo = function (destLayout) {
     this._removeFromMatrix = ColumnLayout.prototype._removeFromMatrix;
 
     movedGadgets = {};
-    orderedGadgets = new Array();
+    orderedGadgets = [];
     columns = this.getColumns();
     rows = this.getRows();
     for (y = 0; y < rows; y += 1) {
@@ -622,12 +655,14 @@ ColumnLayout.prototype.moveTo = function (destLayout) {
     delete this._removeFromMatrix;
 };
 
-ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
+ColumnLayout.prototype.initializeMove = function (igadget, draggable) {
+    var msg, keys, i, lastGadget, lastY, tmp;
+
     draggable = draggable || null; // default value of draggable argument
 
     // Check for pendings moves
-    if (this.igadgetToMove != null) {
-        var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.")
+    if (this.igadgetToMove !== null) {
+        msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
@@ -635,20 +670,20 @@ ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
     this.igadgetToMove = igadget;
 
     // Make a copy of the positions of the gadgets
-    this.shadowPositions = new Array();
+    this.shadowPositions = [];
 
-    var keys = this.iGadgets.keys();
-    for (var i = 0; i < keys.length; i++) {
+    keys = this.iGadgets.keys();
+    for (i = 0; i < keys.length; i++) {
         this.shadowPositions[keys[i]] = this.iGadgets[keys[i]].getPosition().clone();
     }
 
     // Shadow matrix = current matrix without the gadget to move
     // Initialize shadow matrix and searchInsertPointCache
-    var i, lastGadget, lastY = 0;
-    this.shadowMatrix = new Array();
-    this.searchInsertPointCache = new Array();
+    lastY = 0;
+    this.shadowMatrix = [];
+    this.searchInsertPointCache = [];
     for (i = 0; i < this.columns; i++) {
-        this.searchInsertPointCache[i] = new Array();
+        this.searchInsertPointCache[i] = [];
         this.shadowMatrix[i] = this.matrix[i].clone();
     }
     this._removeFromMatrix(this.shadowMatrix, igadget);
@@ -657,12 +692,14 @@ ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
     for (i = 0; i < this.columns; i++) {
         lastGadget = this.matrix[i].compact().last();
 
-        if (!lastGadget)
+        if (!lastGadget) {
             continue;
+        }
 
         tmp = lastGadget.getPosition().y + lastGadget.getHeight();
-        if (tmp > lastY)
+        if (tmp > lastY) {
             lastY = tmp;
+        }
     }
     this.searchInsertPointYLimit = lastY + 1;
 
@@ -675,52 +712,55 @@ ColumnLayout.prototype.initializeMove = function(igadget, draggable) {
         draggable.setXOffset(this.fromHCellsToPixels(1) / 2);
         draggable.setYOffset(this.getCellHeight());
     }
-}
+};
 
-ColumnLayout.prototype._destroyCursor = function(clearSpace) {
-    if (this.dragboardCursor != null) {
-        if (clearSpace)
-            this._removeFromMatrix(this.matrix, this.dragboardCursor); // FIXME
+ColumnLayout.prototype._destroyCursor = function (clearSpace) {
+    if (this.dragboardCursor !== null) {
+        if (clearSpace) {
+            this._removeFromMatrix(this.matrix, this.dragboardCursor);
+        }
         this.dragboardCursor.destroy();
         this.dragboardCursor = null;
     }
-}
+};
 
-ColumnLayout.prototype.disableCursor = function() {
+ColumnLayout.prototype.disableCursor = function () {
     this._destroyCursor(true);
-}
+};
 
 /**
  * @private
  */
-ColumnLayout.prototype._restorePositions = function() {
+ColumnLayout.prototype._restorePositions = function () {
     this._clearMatrix();
 
     var keys = this.iGadgets.keys();
     for (var i = 0; i < keys.length; i++) {
         var curIGadget = this.iGadgets[keys[i]];
-        if (curIGadget != this.igadgetToMove) {
+        if (curIGadget !== this.igadgetToMove) {
             curIGadget.setPosition(this._getPositionOn(this._matrix, curIGadget));
 
             this._reserveSpace(this.matrix, curIGadget);
         }
     }
-}
+};
 
-ColumnLayout.prototype.moveTemporally = function(x, y) {
-    if (this.igadgetToMove == null) {
+ColumnLayout.prototype.moveTemporally = function (x, y) {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
     var maxX = this.getColumns() - this.igadgetToMove.getWidth();
-    if (x > maxX) x = maxX;
+    if (x > maxX) {
+        x = maxX;
+    }
 
-    if (this.dragboardCursor != null) {
+    if (this.dragboardCursor !== null) {
         var cursorpos = this.dragboardCursor.getPosition();
 
-        if ((cursorpos.y != y) || (cursorpos.x != x)) {
+        if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
             this._restorePositions();
 
             // Change cursor position
@@ -732,10 +772,10 @@ ColumnLayout.prototype.moveTemporally = function(x, y) {
         this.dragboardCursor.paint(this.dragboard.dragboardElement);
         this._insertAt(this.dragboardCursor, x, y);
     }
-}
+};
 
-ColumnLayout.prototype.cancelMove = function() {
-    if (this.igadgetToMove == null) {
+ColumnLayout.prototype.cancelMove = function () {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Trying to cancel an inexistant temporal move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -747,10 +787,10 @@ ColumnLayout.prototype.cancelMove = function() {
     this.shadowMatrix = null;
     this.igadgetToMove = null;
     this.dragboardCursor = null;
-}
+};
 
-ColumnLayout.prototype.acceptMove = function() {
-    if (this.igadgetToMove == null) {
+ColumnLayout.prototype.acceptMove = function () {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Function acceptMove called when there is not an started igadget move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -767,7 +807,7 @@ ColumnLayout.prototype.acceptMove = function() {
     this._reserveSpace(this.matrix, this.igadgetToMove);
 
     // Update igadgets positions in persistence
-    if (oldposition.y != newposition.y || oldposition.x != newposition.x) {
+    if (oldposition.y !== newposition.y || oldposition.x !== newposition.x) {
         this.dragboard._commitChanges();
     }
 
@@ -777,7 +817,7 @@ ColumnLayout.prototype.acceptMove = function() {
     this.shadowMatrix = null;
     this.igadgetToMove = null;
     this.dragboardCursor = null;
-}
+};
 
 /////////////////////////////////////
 // SmartColumnLayout
@@ -792,11 +832,10 @@ function SmartColumnLayout(dragboard, columns, cellHeight, verticalMargin, horiz
                       horizontalMargin,
                       scrollbarSpace);
 }
-
 SmartColumnLayout.prototype = new ColumnLayout();
 
-SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, width, height) {
-    var lastY;
+SmartColumnLayout.prototype._realSearchInsertPoint = function (_matrix, x, y, width, height) {
+    var widthDiff, lastY, offsetX;
 
     /* Check for special cases
        y == 0                             => we are on the topmost position
@@ -808,12 +847,12 @@ SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, wid
                                           search an insert point ignoring
                                           it.
     */
-    if (y == 0) {
+    if (y === 0) {
         return 0;
     } else if ((_matrix[x][y - 1] != null) && (_matrix[x][y - 1] != _matrix[x][y])) {
         return y;
     } else if (_matrix[x][y]) {
-        var widthDiff = _matrix[x][y].getWidth() - width;
+        widthDiff = _matrix[x][y].getWidth() - width;
         widthDiff -= x - this._getPositionOn(_matrix, _matrix[x][y]).x;
         if (widthDiff > 0) {
             // The gadget at (x,y) has the same or a bigger width
@@ -824,9 +863,7 @@ SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, wid
                 y--;
             }
             return ++y;
-        } if (widthDiff != 0) {
-            var offsetX;
-
+        } else if (widthDiff !== 0) {
             for (;y > 1; y--) {
                 for (offsetX = 0; offsetX < width; offsetX++) {
                     if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
@@ -841,7 +878,7 @@ SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, wid
             // edges not found
             return 0;
         } else {
-            return this._getPositionOn(_matrix, _matrix[x][y]).y
+            return this._getPositionOn(_matrix, _matrix[x][y]).y;
         }
     }
 
@@ -852,8 +889,6 @@ SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, wid
     if (y != lastY) {
         y++;
     } else {
-        var offsetX;
-
         for (;y > 1; y--) {
             for (offsetX = 0; offsetX < width; offsetX++) {
                 if (_matrix[x + offsetX][y] != _matrix[x + offsetX][y - 1]) {
@@ -868,21 +903,23 @@ SmartColumnLayout.prototype._realSearchInsertPoint = function(_matrix, x, y, wid
         return 0;
     }
     return y;
-}
+};
 
-SmartColumnLayout.prototype._searchInsertPoint = function(_matrix, x, y, width, height) {
+SmartColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, height) {
     // Search the topmost position for the gadget
 
-    if (y > this.searchInsertPointYLimit)
+    if (y > this.searchInsertPointYLimit) {
         y = this.searchInsertPointYLimit;
+    }
 
-    if (!this.searchInsertPointCache[x][y])
+    if (!this.searchInsertPointCache[x][y]) {
         this.searchInsertPointCache[x][y] = this._realSearchInsertPoint(_matrix, x, y, width, height);
+    }
 
     return this.searchInsertPointCache[x][y];
-}
+};
 
-SmartColumnLayout.prototype.moveTemporally = function(x, y) {
+SmartColumnLayout.prototype.moveTemporally = function (x, y) {
     if (this.igadgetToMove == null) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
@@ -890,15 +927,17 @@ SmartColumnLayout.prototype.moveTemporally = function(x, y) {
     }
 
     var maxX = this.getColumns() - this.igadgetToMove.getWidth();
-    if (x > maxX) x = maxX;
+    if (x > maxX) {
+        x = maxX;
+    }
 
     // Check if we have to change the position of the cursor
     y = this._searchInsertPoint(this.shadowMatrix, x, y, this.igadgetToMove.getWidth(), this.igadgetToMove.getHeight());
 
-    if (this.dragboardCursor != null) {
+    if (this.dragboardCursor !== null) {
         var cursorpos = this.dragboardCursor.getPosition();
 
-        if ((cursorpos.y != y) || (cursorpos.x != x)) {
+        if ((cursorpos.y !== y) || (cursorpos.x !== x)) {
             // Change cursor position
             this._removeFromMatrix(this.matrix, this.dragboardCursor);
             this._insertAt(this.dragboardCursor, x, y);
@@ -908,9 +947,9 @@ SmartColumnLayout.prototype.moveTemporally = function(x, y) {
         this.dragboardCursor.paint(this.dragboard.dragboardElement);
         this._insertAt(this.dragboardCursor, x, y);
     }
-}
+};
 
-SmartColumnLayout.prototype.initialize = function() {
+SmartColumnLayout.prototype.initialize = function () {
     var modified = ColumnLayout.prototype.initialize.call(this);
 
     // remove holes moving igadgets to the topmost positions
@@ -920,22 +959,23 @@ SmartColumnLayout.prototype.initialize = function() {
         iGadget = this.iGadgets[keys[i]];
         modified = modified || this._moveSpaceUp(this.matrix, iGadget);
     }
-    if (modified){
+    if (modified) {
         //save these changes in the server side
         this.dragboard._commitChanges(keys);
     }
-}
+};
 
-SmartColumnLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
-    if (widthChanged)
+SmartColumnLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
+    if (widthChanged) {
         DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
-}
+    }
+};
 
-SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+SmartColumnLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
     var x, y;
     var step2Width = oldWidth; // default value, used when the igdaget's width doesn't change
     var position = iGadget.getPosition();
-    var step2X;
+    var step2X, finalYPos, widthDiff, iGadgetToMove, limitX, limitY;
     step2X = position.x;
 
     // First Step
@@ -943,14 +983,14 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
         // Calculate the width for the next step
         step2Width = oldWidth;
 
-        var finalYPos = position.y + newHeight;
+        finalYPos = position.y + newHeight;
 
         if (resizeLeftSide) {
             // Move affected igadgets
-            var widthDiff = newWidth - oldWidth;
+            widthDiff = newWidth - oldWidth;
             for (x = position.x - widthDiff; x < position.x; ++x) {
                 for (y = 0; y < newHeight; ++y) {
-                    var iGadgetToMove = this.matrix[x][position.y + y];
+                    iGadgetToMove = this.matrix[x][position.y + y];
                     if (iGadgetToMove != null) {
                         this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
                         break; // Continue with the next column
@@ -960,8 +1000,9 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
 
             // Move the gadget
             position.x -= widthDiff;
-            if (persist)
+            if (persist) {
                 iGadget.setPosition(position);
+            }
 
             // Reserve the new space
             this._reserveSpace2(this.matrix, iGadget,
@@ -971,7 +1012,7 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
             // Move affected igadgets
             for (x = position.x + oldWidth; x < position.x + newWidth; ++x) {
                 for (y = 0; y < newHeight; ++y) {
-                    var iGadgetToMove = this.matrix[x][position.y + y];
+                    iGadgetToMove = this.matrix[x][position.y + y];
                     if (iGadgetToMove != null) {
                         this._moveSpaceDown(this.matrix, iGadgetToMove, finalYPos - iGadgetToMove.position.y);
                         break; // Continue with the next column
@@ -989,7 +1030,7 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
         // Calculate the width for the next step
         step2Width = newWidth;
 
-        var widthDiff = oldWidth - newWidth;
+        widthDiff = oldWidth - newWidth;
         if (resizeLeftSide) {
 
             // Clear space
@@ -997,15 +1038,18 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
 
             // Move affected igadgets
             y = position.y + oldHeight;
-            var limitX = position.x + widthDiff;
-            for (x = position.x; x < limitX; ++x)
-                if (this.matrix[x][y] != null)
+            limitX = position.x + widthDiff;
+            for (x = position.x; x < limitX; ++x) {
+                if (this.matrix[x][y] != null) {
                     this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+                }
+            }
 
             // Move the gadget
             position.x += widthDiff;
-            if (persist)
+            if (persist) {
                 iGadget.setPosition(position);
+            }
 
             step2X = position.x;
         } else {
@@ -1014,21 +1058,26 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
 
             // Move affected igadgets
             y = position.y + oldHeight;
-            var limitX = position.x + oldWidth;
-            for (x = position.x + newWidth; x < limitX; ++x)
-                if (this.matrix[x][y] != null)
+            limitX = position.x + oldWidth;
+            for (x = position.x + newWidth; x < limitX; ++x) {
+                if (this.matrix[x][y] != null) {
                     this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+                }
+            }
         }
     }
 
     // Second Step
     if (newHeight > oldHeight) {
-        var limitY = position.y + newHeight;
-        var limitX = step2X + step2Width;
-        for (y = position.y + oldHeight; y < limitY; y++)
-            for (x = step2X; x < limitX; x++)
-                if (this.matrix[x][y] != null)
+        limitY = position.y + newHeight;
+        limitX = step2X + step2Width;
+        for (y = position.y + oldHeight; y < limitY; y++) {
+            for (x = step2X; x < limitX; x++) {
+                if (this.matrix[x][y] != null) {
                     this._moveSpaceDown(this.matrix, this.matrix[x][y], limitY - y);
+                }
+            }
+        }
 
         // Reserve Space
         this._reserveSpace2(this.matrix, iGadget, step2X, position.y + oldHeight, step2Width, newHeight - oldHeight);
@@ -1037,10 +1086,12 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
         this._clearSpace2(this.matrix, step2X, position.y + newHeight, step2Width, oldHeight - newHeight);
 
         y = position.y + oldHeight;
-        var limitX = step2X + step2Width;
-        for (x = step2X; x < limitX; x++)
-            if (this.matrix[x][y] != null)
+        limitX = step2X + step2Width;
+        for (x = step2X; x < limitX; x++) {
+            if (this.matrix[x][y] != null) {
                 this._moveSpaceUp(this.matrix, this.matrix[x][y]);
+            }
+        }
     }
 
     this._notifyWindowResizeEvent(true, true); // TODO
@@ -1049,19 +1100,20 @@ SmartColumnLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, old
         // Save new positions into persistence
         this.dragboard._commitChanges(); // FIXME
     }
-}
+};
+
 //Returns if any gadget's position has been modified
-SmartColumnLayout.prototype._insertAt = function(iGadget, x, y) {
+SmartColumnLayout.prototype._insertAt = function (iGadget, x, y) {
 
     var affectedGadgets = ColumnLayout.prototype._insertAt.call(this, iGadget, x, y);
 
     this._moveSpaceUp(this.matrix, iGadget);
 
     return affectedGadgets;
-}
+};
 
 //Returns if any gadget's position has been modified
-SmartColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
+SmartColumnLayout.prototype._removeFromMatrix = function (_matrix, iGadget) {
     this._clearSpace(_matrix, iGadget);
 
     var affectedIGadgets = new Hash();
@@ -1082,4 +1134,4 @@ SmartColumnLayout.prototype._removeFromMatrix = function(_matrix, iGadget) {
         }
     }
     return affectedIGadgets.keys().length > 0;
-}
+};

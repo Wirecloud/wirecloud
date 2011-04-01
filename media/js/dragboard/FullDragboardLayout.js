@@ -23,6 +23,9 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, IGadget, LogManagerFactory, MultiValuedSize*/
+
 /////////////////////////////////////
 // FullDragboard
 /////////////////////////////////////
@@ -35,8 +38,9 @@
  * @extends DragboardLayout
  */
 function FullDragboardLayout(dragboard, scrollbarSpace) {
-    if (arguments.length == 0)
+    if (arguments.length === 0) {
         return; // Allow empty constructor (allowing hierarchy)
+    }
 
     this.initialized = false;
     DragboardLayout.call(this, dragboard, scrollbarSpace);
@@ -44,58 +48,58 @@ function FullDragboardLayout(dragboard, scrollbarSpace) {
 
 FullDragboardLayout.prototype = new DragboardLayout();
 
-FullDragboardLayout.prototype.fromPixelsToVCells = function(pixels) {
+FullDragboardLayout.prototype.fromPixelsToVCells = function (pixels) {
     return 1;
-}
+};
 
-FullDragboardLayout.prototype.fromVCellsToPixels = function(cells) {
+FullDragboardLayout.prototype.fromVCellsToPixels = function (cells) {
     return this.getHeight();
-}
+};
 
 FullDragboardLayout.prototype.getWidthInPixels = function (cells) {
     return this.getWidth();
-}
+};
 
 FullDragboardLayout.prototype.getHeightInPixels = function (cells) {
     return this.getHeight();
-}
+};
 
-FullDragboardLayout.prototype.fromPixelsToHCells = function(pixels) {
+FullDragboardLayout.prototype.fromPixelsToHCells = function (pixels) {
     return 1;
-}
+};
 
-FullDragboardLayout.prototype.fromHCellsToPixels = function(cells) {
+FullDragboardLayout.prototype.fromHCellsToPixels = function (cells) {
     return this.getWidth();
-}
+};
 
-FullDragboardLayout.prototype.fromHCellsToPercentage = function(cells) {
+FullDragboardLayout.prototype.fromHCellsToPercentage = function (cells) {
     return this.getHeight();
-}
+};
 
-FullDragboardLayout.prototype.getColumnOffset = function(column) {
+FullDragboardLayout.prototype.getColumnOffset = function (column) {
     return this.dragboard.dragboardElement.getBoundingClientRect().left;
-}
+};
 
-FullDragboardLayout.prototype.getRowOffset = function(row) {
+FullDragboardLayout.prototype.getRowOffset = function (row) {
     return this.dragboard.dragboardElement.getBoundingClientRect().top;
-}
+};
 
-FullDragboardLayout.prototype.adaptColumnOffset = function(pixels) {
+FullDragboardLayout.prototype.adaptColumnOffset = function (pixels) {
     return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().left, 0);
-}
+};
 
-FullDragboardLayout.prototype.adaptRowOffset = function(pixels) {
+FullDragboardLayout.prototype.adaptRowOffset = function (pixels) {
     return new MultiValuedSize(this.dragboard.dragboardElement.getBoundingClientRect().top, 0);
-}
+};
 
-FullDragboardLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
+FullDragboardLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
     var diff = fullSize - contentHeight;
     return new MultiValuedSize(contentHeight - diff, 1);
-}
+};
 
-FullDragboardLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
+FullDragboardLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
     return new MultiValuedSize(this.getWidth(), 1);
-}
+};
 
 FullDragboardLayout.prototype.initialize = function () {
     var iGadget, i, key;
@@ -109,64 +113,65 @@ FullDragboardLayout.prototype.initialize = function () {
     }
 
     this.initialized = true;
-}
+};
 
 /**
  * Calculate what cell is at a given position in pixels
  */
 FullDragboardLayout.prototype.getCellAt = function (x, y) {
     return new DragboardPosition(0, 0);
-}
+};
 
-FullDragboardLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+FullDragboardLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
     iGadget.element.addClassName('fulldragboard');
 
     DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 
-    if (!this.initialized)
+    if (!this.initialized) {
         return;
+    }
 
     iGadget.setPosition(new DragboardPosition(0, 0));
-}
+};
 
-FullDragboardLayout.prototype.removeIGadget = function(iGadget, affectsDragboard) {
+FullDragboardLayout.prototype.removeIGadget = function (iGadget, affectsDragboard) {
     iGadget.element.removeClassName('fulldragboard');
 
     DragboardLayout.prototype.removeIGadget.call(this, iGadget, affectsDragboard);
-}
+};
 
 
-FullDragboardLayout.prototype.initializeMove = function(igadget, draggable) {
+FullDragboardLayout.prototype.initializeMove = function (igadget, draggable) {
     // Check for pendings moves
-    if (this.igadgetToMove != null) {
-        var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.")
+    if (this.igadgetToMove !== null) {
+        var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
 
     this.igadgetToMove = igadget;
-}
+};
 
-FullDragboardLayout.prototype.moveTemporally = function(x, y) {
-    if (this.igadgetToMove == null) {
+FullDragboardLayout.prototype.moveTemporally = function (x, y) {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
-}
+};
 
-FullDragboardLayout.prototype.acceptMove = function() {
-    if (this.igadgetToMove == null) {
+FullDragboardLayout.prototype.acceptMove = function () {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Function acceptMove called when there is not an started igadget move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
     this.igadgetToMove = null;
-}
+};
 
-FullDragboardLayout.prototype.cancelMove = function() {
-    if (this.igadgetToMove == null) {
+FullDragboardLayout.prototype.cancelMove = function () {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Trying to cancel an inexistant temporal move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -175,21 +180,21 @@ FullDragboardLayout.prototype.cancelMove = function() {
     this.igadgetToMove._notifyWindowResizeEvent();
     this.igadgetToMove = null;
     this.newPosition = null;
-}
+};
 
-FullDragboardLayout.prototype._notifyDragboardVisibilityChange = function(visibility) {
+FullDragboardLayout.prototype._notifyDragboardVisibilityChange = function (visibility) {
     // Notify each igadget
-    var iGadget;
-    var igadgetKeys = this.iGadgets.keys();
+    var igadgetKeys, iGadget, i;
+    igadgetKeys = this.iGadgets.keys();
     if (visibility) {
-        for (var i = 0; i < igadgetKeys.length; i++) {
+        for (i = 0; i < igadgetKeys.length; i++) {
             iGadget = this.iGadgets[igadgetKeys[i]];
             iGadget.element.style.position = '';
         }
     } else {
-        for (var i = 0; i < igadgetKeys.length; i++) {
+        for (i = 0; i < igadgetKeys.length; i++) {
             iGadget = this.iGadgets[igadgetKeys[i]];
             iGadget.element.style.position = 'absolute';
         }
     }
-}
+};

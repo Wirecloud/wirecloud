@@ -23,6 +23,9 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, IGadget, LayoutManagerFactory, LogManagerFactory, MultiValuedSize*/
+
 /////////////////////////////////////
 // FreeLayout
 /////////////////////////////////////
@@ -35,94 +38,97 @@
  * @extends DragboardLayout
  */
 function FreeLayout(dragboard, scrollbarSpace) {
-    if (arguments.length == 0)
+    if (arguments.length === 0) {
         return; // Allow empty constructor (allowing hierarchy)
+    }
 
     this.initialized = false;
+    this.igadgetToMove = null;
     DragboardLayout.call(this, dragboard, scrollbarSpace);
 }
-
 FreeLayout.prototype = new DragboardLayout();
 
 FreeLayout.prototype.MAX_HLU = 1000000;
 
-FreeLayout.prototype.fromPixelsToVCells = function(pixels) {
+FreeLayout.prototype.fromPixelsToVCells = function (pixels) {
     return pixels;
-}
+};
 
-FreeLayout.prototype.fromVCellsToPixels = function(cells) {
+FreeLayout.prototype.fromVCellsToPixels = function (cells) {
     return cells;
-}
+};
 
 FreeLayout.prototype.getWidthInPixels = function (cells) {
     return this.fromHCellsToPixels(cells);
-}
+};
 
 FreeLayout.prototype.getHeightInPixels = function (cells) {
     return this.fromVCellsToPixels(cells);
-}
+};
 
-FreeLayout.prototype.fromPixelsToHCells = function(pixels) {
-    return (pixels  * this.MAX_HLU/ this.getWidth());
-}
+FreeLayout.prototype.fromPixelsToHCells = function (pixels) {
+    return (pixels * this.MAX_HLU / this.getWidth());
+};
 
-FreeLayout.prototype.fromHCellsToPixels = function(cells) {
+FreeLayout.prototype.fromHCellsToPixels = function (cells) {
     return Math.ceil((this.getWidth() * cells) / this.MAX_HLU);
-}
+};
 
-FreeLayout.prototype.fromHCellsToPercentage = function(cells) {
+FreeLayout.prototype.fromHCellsToPercentage = function (cells) {
     return cells / (this.MAX_HLU / 100);
-}
+};
 
-FreeLayout.prototype.getColumnOffset = function(column) {
+FreeLayout.prototype.getColumnOffset = function (column) {
     return Math.ceil((this.getWidth() * column) / this.MAX_HLU);
-}
+};
 
-FreeLayout.prototype.getRowOffset = function(row) {
+FreeLayout.prototype.getRowOffset = function (row) {
     return row;
-}
+};
 
-FreeLayout.prototype.adaptColumnOffset = function(pixels) {
+FreeLayout.prototype.adaptColumnOffset = function (pixels) {
     var offsetInLU = Math.ceil(this.fromPixelsToHCells(pixels));
     return new MultiValuedSize(this.fromHCellsToPixels(offsetInLU), offsetInLU);
-}
+};
 
-FreeLayout.prototype.adaptRowOffset = function(pixels) {
+FreeLayout.prototype.adaptRowOffset = function (pixels) {
     return new MultiValuedSize(pixels, pixels);
-}
+};
 
-FreeLayout.prototype.adaptHeight = function(contentHeight, fullSize, oldLayout) {
+FreeLayout.prototype.adaptHeight = function (contentHeight, fullSize, oldLayout) {
     return new MultiValuedSize(contentHeight, fullSize);
-}
+};
 
-FreeLayout.prototype.adaptWidth = function(contentWidth, fullSize) {
+FreeLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
     var widthInLU = Math.floor(this.fromPixelsToHCells(fullSize));
     return new MultiValuedSize(this.fromHCellsToPixels(widthInLU), widthInLU);
-}
+};
 
-FreeLayout.prototype._notifyWindowResizeEvent = function(widthChanged, heightChanged) {
-    if (widthChanged)
+FreeLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
+    if (widthChanged) {
         DragboardLayout.prototype._notifyWindowResizeEvent.call(this, widthChanged, heightChanged);
-}
+    }
+};
 
 
-FreeLayout.prototype._notifyResizeEvent = function(iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
+FreeLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
     if (resizeLeftSide) {
         var widthDiff = newWidth - oldWidth;
         var position = iGadget.getPosition();
         position.x -= widthDiff;
 
-        if (persist)
+        if (persist) {
             iGadget.setPosition(position);
-        else
+        } else {
             iGadget._notifyWindowResizeEvent();
+        }
     }
 
     if (persist) {
         // Save new position into persistence
         this.dragboard._commitChanges([iGadget.code]);
     }
-}
+};
 
 FreeLayout.prototype.initialize = function () {
     var iGadget, i, key;
@@ -136,37 +142,40 @@ FreeLayout.prototype.initialize = function () {
     }
 
     this.initialized = true;
-}
+};
 
 /**
  * Calculate what cell is at a given position in pixels
  */
 FreeLayout.prototype.getCellAt = function (x, y) {
-    return new DragboardPosition((x * this.MAX_HLU) / this.getWidth(),
-                                 y);
-}
+    return new DragboardPosition((x * this.MAX_HLU) / this.getWidth(), y);
+};
 
-FreeLayout.prototype.addIGadget = function(iGadget, affectsDragboard) {
+FreeLayout.prototype.addIGadget = function (iGadget, affectsDragboard) {
     DragboardLayout.prototype.addIGadget.call(this, iGadget, affectsDragboard);
 
-    if (!this.initialized)
+    if (!this.initialized) {
         return;
+    }
 
     var position = iGadget.getPosition();
-    if (position == null)
-        position = new DragboardPosition(0, 0)
+    if (!(position instanceof DragboardPosition)) {
+        position = new DragboardPosition(0, 0);
+    }
 
     iGadget.setPosition(position);
 
     this._adaptIGadget(iGadget);
-}
+};
 
-FreeLayout.prototype.initializeMove = function(igadget, draggable) {
+FreeLayout.prototype.initializeMove = function (igadget, draggable) {
+    var msg;
+
     draggable = draggable || null; // default value for the draggable parameter
 
     // Check for pendings moves
-    if (this.igadgetToMove != null) {
-        var msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.")
+    if (this.igadgetToMove !== null) {
+        msg = gettext("There was a pending move that was cancelled because initializedMove function was called before it was finished.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         this.cancelMove();
     }
@@ -178,10 +187,10 @@ FreeLayout.prototype.initializeMove = function(igadget, draggable) {
         draggable.setXOffset(0);
         draggable.setYOffset(0);
     }
-}
+};
 
-FreeLayout.prototype.moveTemporally = function(x, y) {
-    if (this.igadgetToMove == null) {
+FreeLayout.prototype.moveTemporally = function (x, y) {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Dragboard: You must call initializeMove function before calling to this function (moveTemporally).");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
@@ -189,19 +198,21 @@ FreeLayout.prototype.moveTemporally = function(x, y) {
 
     this.newPosition.x = x;
     this.newPosition.y = y;
-}
+};
 
-FreeLayout.prototype.acceptMove = function() {
-    if (this.igadgetToMove == null) {
+FreeLayout.prototype.acceptMove = function () {
+    if (!(this.igadgetToMove instanceof IGadget)) {
         var msg = gettext("Function acceptMove called when there is not an started igadget move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
 
-    if (this.newPosition.x > (this.MAX_HLU - 1))
+    if (this.newPosition.x > (this.MAX_HLU - 1)) {
         this.newPosition.x = (this.MAX_HLU - 1);
-    if (this.newPosition.y < 0)
+    }
+    if (this.newPosition.y < 0) {
         this.newPosition.y = 0;
+    }
 
     this.igadgetToMove.setPosition(this.newPosition);
     // This is needed to check if the scrollbar status has changed (visible/hidden)
@@ -212,11 +223,13 @@ FreeLayout.prototype.acceptMove = function() {
 
     this.igadgetToMove = null;
     this.newPosition = null;
-}
+};
 
-FreeLayout.prototype.cancelMove = function() {
-    if (this.igadgetToMove == null) {
-        var msg = gettext("Trying to cancel an inexistant temporal move.");
+FreeLayout.prototype.cancelMove = function () {
+    var msg;
+
+    if (!(this.igadgetToMove instanceof IGadget)) {
+        msg = gettext("Trying to cancel an inexistant temporal move.");
         LogManagerFactory.getInstance().log(msg, Constants.WARN_MSG);
         return;
     }
@@ -224,23 +237,26 @@ FreeLayout.prototype.cancelMove = function() {
     this.igadgetToMove._notifyWindowResizeEvent();
     this.igadgetToMove = null;
     this.newPosition = null;
-}
+};
 
-FreeLayout.prototype.fillFloatingGadgetsMenu = function(menu) {
-    var igadgetKeys = this.iGadgets.keys();
+FreeLayout.prototype._raiseIGadgetCallback = function () {
+    this.igadget.setMinimizeStatus(false);
+    this.igadget.layout.dragboard.raiseToTop(this.igadget);
+    LayoutManagerFactory.getInstance().hideCover();
+};
+
+FreeLayout.prototype.fillFloatingGadgetsMenu = function (menu) {
+    var i, igadgetKeys, curIGadget, key;
+
+    igadgetKeys = this.iGadgets.keys();
     if (igadgetKeys.length > 0) {
         for (i = 0; i < igadgetKeys.length; i++) {
             key = igadgetKeys[i];
             curIGadget = this.iGadgets[key];
 
-            var context = {"igadget": curIGadget};
-            menu.addOption(null, curIGadget.name, function() {
-                    this.igadget.setMinimizeStatus(false);
-                    this.igadget.layout.dragboard.raiseToTop(this.igadget);
-                    LayoutManagerFactory.getInstance().hideCover();
-                }.bind(context), i)
+            menu.addOption(null, curIGadget.name, this._raiseIGadgetCallback.bind({"igadget": curIGadget}), i);
         }
     } else {
-        menu.addOption(null, gettext("No Floating Gadgets"), function(){}, 0)
+        menu.addOption(null, gettext("No Floating Gadgets"), function () {}, 0);
     }
-}
+};
