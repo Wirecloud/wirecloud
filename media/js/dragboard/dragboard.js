@@ -23,6 +23,10 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
+/*global document, window, Error, gettext, interpolate, $, Hash, IE7, Element, Event, isElement*/
+/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory, SmartColumnLayout, URIs*/
+
 /**
  * @author aarranz
  */
@@ -34,7 +38,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.currentCode = 1;
     this.scrollbarSpace = 17; // TODO make this configurable?
     // TODO or initialized with the scroll bar's real with?
-    this.dragboardElement;
+    this.dragboardElement = null;
     this.dragboardWidth = 800;
     this.dragboardHeight = 600;
     this.baseLayout = null;
@@ -52,9 +56,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
     // PRIVATE FUNCTIONS
     // ***********************
     Dragboard.prototype.paint = function () {
+        var oldLength, i;
+
         this.dragboardElement.innerHTML = "";
 
-        if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
+        if (window.IE7) {
             IE7.recalc();
         }
 
@@ -65,35 +71,35 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.fulldragboardLayout.initialize();
 
         // Check if we have to readjust the z positions
-        var oldLength = this.orderList.length;
+        oldLength = this.orderList.length;
         this.orderList = this.orderList.compact();
-        if (oldLength != this.orderList.length) {
-            for (i = 0; i < this.orderList.length; i++) {
+        if (oldLength !== this.orderList.length) {
+            for (i = 0; i < this.orderList.length; i += 1) {
                 this.orderList[i].setZPosition(i);
             }
         }
 
         this.tab.mark_as_painted();
-    }
+    };
 
     /**
      * Update igadget status in persistence
      */
-    this._commitChanges = function(keys) {
+    this._commitChanges = function (keys) {
         keys = keys || this.iGadgetsByCode.keys();
 
-        var onSuccess = function(transport) { }
+        var onSuccess = function (transport) { };
 
-        var onError = function(transport, e) {
+        var onError = function (transport, e) {
             var logManager = LogManagerFactory.getInstance();
             var msg = logManager.formatError(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), transport, e);
             logManager.log(msg);
-        }
+        };
 
         // TODO only send real changes
         var iGadget, iGadgetInfo, uri, position;
         var data = new Hash();
-        data['iGadgets'] = new Array();
+        data['iGadgets'] = [];
 
         for (var i = 0; i < keys.length; i++) {
             iGadget = this.iGadgetsByCode[keys[i]];
@@ -115,10 +121,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
                 iGadgetInfo['fulldragboard'] = true;
             }
 
-             if (iGadget.onFreeLayout())
-                iGadgetInfo['layout'] = 1;
-            else
-                iGadgetInfo['layout'] = 0;
+            iGadgetInfo['layout'] = iGadget.onFreeLayout() ? 1 : 0;
 
             var icon_position = iGadget.getIconPosition();
             iGadgetInfo['icon_top'] = icon_position.y;
@@ -131,7 +134,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var persistenceEngine = PersistenceEngineFactory.getInstance();
         uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
         persistenceEngine.send_update(uri, data, this, onSuccess, onError);
-    }
+    };
 
     /**
      *
@@ -147,7 +150,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         } else {
             return new ColumnLayout(this, columns, cell_height, vertical_margin, horizontal_margin);
         }
-    }
+    };
 
     /**
      *
@@ -161,7 +164,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.baseLayout.moveTo(newBaseLayout);
         this.baseLayout.destroy();
         this.baseLayout = newBaseLayout;
-    }
+    };
 
     /**
      * @private
@@ -169,19 +172,22 @@ function Dragboard(tab, workSpace, dragboardElement) {
      * This method must only be used by <code>Tab</code>.
      */
     Dragboard.prototype._notifyVisibilityChange = function (visibility) {
-        if (this.baseLayout)
+        if (this.baseLayout) {
             this.baseLayout._notifyDragboardVisibilityChange(visibility);
-        if (this.freeLayout)
+        }
+        if (this.freeLayout) {
             this.freeLayout._notifyDragboardVisibilityChange(visibility);
-        if (this.fulldragboardLayout)
+        }
+        if (this.fulldragboardLayout) {
             this.fulldragboardLayout._notifyDragboardVisibilityChange(visibility);
+        }
 
         if (!visibility) {
             LayoutManagerFactory.getInstance().hideView(this.dragboardElement);
         } else {
             this._notifyWindowResizeEvent();
         }
-    }
+    };
 
     // ****************
     // PUBLIC METHODS
@@ -191,27 +197,27 @@ function Dragboard(tab, workSpace, dragboardElement) {
     /**
     * Gets the banner related to the workspace this dragboard belongs to
     */
-    Dragboard.prototype.getHeader = function(){
+    Dragboard.prototype.getHeader = function () {
         return this.tab.getHeader();
-    }
+    };
 
     /**
      * Gets the width of the usable dragboard area.
      *
      * @returns The width of the usable dragboard area
      */
-    Dragboard.prototype.getWidth = function() {
+    Dragboard.prototype.getWidth = function () {
         return this.dragboardWidth;
-    }
+    };
 
     /**
      * Gets the height of the usable dragboard area.
      *
      * @returns The height of the usable dragboard area
      */
-    Dragboard.prototype.getHeight = function() {
+    Dragboard.prototype.getHeight = function () {
         return this.dragboardHeight;
-    }
+    };
 
     /**
      * This method must be called to avoid memory leaks caused by circular references.
@@ -224,21 +230,22 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         var keys = this.iGadgets.keys();
         //disconect and delete the connectables and variables of all tab iGadgets
-        for (var i = 0; i < keys.length; i++)
+        for (var i = 0; i < keys.length; i++) {
             this.workSpace.removeIGadgetData(keys[i]);
+        }
 
         this.iGadgets = null;
         this.iGadgetsByCode = null;
 
         Element.remove(this.dragboardElement);
-    }
+    };
 
     /**
      * Returns true if the dragboard is locked.
      */
     Dragboard.prototype.isLocked = function () {
         return this.fixed;
-    }
+    };
 
     /**
      * Locks and unlocks the dragboard according to the newLockStatus
@@ -249,14 +256,16 @@ function Dragboard(tab, workSpace, dragboardElement) {
      *                      move, resize, etc the gadget instances).
      */
     Dragboard.prototype.setLock = function (newLockStatus) {
-        if (this.fixed == newLockStatus)
+        if (this.fixed === newLockStatus) {
             return; // No change in status => nothing to do
+        }
 
         this.fixed = newLockStatus;
-        if (this.fixed)
+        if (this.fixed) {
             this.dragboardElement.addClassName("fixed");
-        else
+        } else {
             this.dragboardElement.removeClassName("fixed");
+        }
 
         var iGadget;
 
@@ -266,19 +275,21 @@ function Dragboard(tab, workSpace, dragboardElement) {
             iGadget = this.iGadgets[igadgetKeys[i]];
             iGadget._notifyLockEvent(this.fixed);
         }
-    }
+    };
 
     /**
      * Toggles the current lock status of the dragboard.
      */
-    Dragboard.prototype.toggleLock = function() {
+    Dragboard.prototype.toggleLock = function () {
         this.setFixed(!this.fixed);
-    }
+    };
 
-    Dragboard.prototype.parseTab = function(tabInfo) {
-        var curIGadget, position, icon_position, zPos, width, height, igadget, gadget, gadgetid, minimized, layout, menu_color, refusedVersion;
+    Dragboard.prototype.parseTab = function (tabInfo) {
+        var curIGadget, position, icon_position, zPos, width, height, igadget,
+            gadget, gadgetid, minimized, layout, menu_color, refusedVersion,
+            opManager, i, readOnly;
 
-        var opManager = OpManagerFactory.getInstance();
+        opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
         this.iGadgets = new Hash();
@@ -290,7 +301,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         // For controlling when the igadgets are totally loaded!
-        for (var i = 0; i < tabInfo.igadgetList.length; i++) {
+        for (i = 0; i < tabInfo.igadgetList.length; i++) {
             curIGadget = tabInfo.igadgetList[i];
 
             // Parse gadget id
@@ -300,15 +311,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
             gadget = ShowcaseFactory.getInstance().getGadget(gadgetid);
 
             // Parse width, height and the position of the igadget
-            width = parseInt(curIGadget.width);
-            height = parseInt(curIGadget.height);
-            position = new DragboardPosition(parseInt(curIGadget.left), parseInt(curIGadget.top));
-            icon_position = new DragboardPosition(parseInt(curIGadget.icon_left), parseInt(curIGadget.icon_top));
-            zPos = parseInt(curIGadget.zIndex);
-            readOnly = curIGadget.readOnly
+            width = parseInt(curIGadget.width, 10);
+            height = parseInt(curIGadget.height, 10);
+            position = new DragboardPosition(parseInt(curIGadget.left, 10), parseInt(curIGadget.top, 10));
+            icon_position = new DragboardPosition(parseInt(curIGadget.icon_left, 10), parseInt(curIGadget.icon_top, 10));
+            zPos = parseInt(curIGadget.zIndex, 10);
+            readOnly = curIGadget.readOnly;
 
             // Parse layout field
-            if (curIGadget.layout == 0) {
+            if (curIGadget.layout === 0) {
                 layout = this.baseLayout;
             } else {
                 layout = this.freeLayout;
@@ -334,7 +345,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         this.loaded = true;
-    }
+    };
 
     /**
      * Creates a new instance of the given gadget and inserts it into this
@@ -345,13 +356,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
     Dragboard.prototype.addInstance = function (gadget, options_) {
         var options = {
             "igadgetName": gadget.getDisplayName() + ' (' + this.currentCode + ')',
-            "setDefaultValues" : function(){}
-        }
+            "setDefaultValues" : function () {}
+        };
 
         Object.extend(options, options_);
 
-        if ((gadget == null) || !(gadget instanceof Gadget))
-            return; // TODO exception
+        if (!(gadget instanceof Gadget)) {
+            throw new TypeError();
+        }
 
         if (this.isLocked()) {
             var msg = gettext("The destination tab (%(tabName)s) is locked. Try to unlock it or select an unlocked tab.");
@@ -369,7 +381,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var freeLayoutAfterLoading = false;
         var layout = this.baseLayout;
 
-        if (this.tab.preferences.get('layout') == "Free") {
+        if (this.tab.preferences.get('layout') === "Free") {
             minimized = false; //NOTE: this variable is useless, it could be used in the future to add gadgets as icons directly
             freeLayoutAfterLoading = true; //To change the layout to FreeLayout after loading the gadget
         }
@@ -387,18 +399,18 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var iGadget = new IGadget(gadget, null, options.igadgetName, layout, null, null, null, width, height, false, minimized, false, gadget.getMenuColor(), null, freeLayoutAfterLoading, false);
 
         iGadget.save(options);
-    }
+    };
 
     Dragboard.prototype.getNumberOfIGadgets = function () {
         return this.iGadgets.keys().length;
-    }
+    };
 
     Dragboard.prototype.removeInstance = function (iGadgetId, orderFromServer) {
         var igadget = this.iGadgets[iGadgetId];
 
         igadget.remove(orderFromServer);
         igadget.destroy();
-    }
+    };
 
     Dragboard.prototype.saveConfig = function (iGadgetId) {
         var igadget = this.iGadgets[iGadgetId];
@@ -408,41 +420,39 @@ function Dragboard(tab, workSpace, dragboardElement) {
             igadget.setConfigurationVisible(false);
         } catch (e) {
         }
-    }
+    };
 
     Dragboard.prototype.setDefaultPrefs = function (iGadgetId) {
         var igadget = this.iGadgets[iGadgetId];
         igadget.setDefaultPrefs();
-    }
+    };
 
     Dragboard.prototype.notifyErrorOnIGadget = function (iGadgetId) {
         var igadget = this.iGadgets[iGadgetId];
         igadget.notifyError();
-    }
+    };
 
-    Dragboard.prototype.getIGadgets = function() {
+    Dragboard.prototype.getIGadgets = function () {
         return this.iGadgets.values();
-    }
+    };
 
     Dragboard.prototype.getIGadget = function (iGadgetId) {
-        if (this.iGadgets[iGadgetId])
-            return this.iGadgets[iGadgetId];
-        else
-            return null;
-    }
+        return this.iGadgets[iGadgetId];
+    };
 
-    Dragboard.prototype.hasReadOnlyIGadgets = function(){
+    Dragboard.prototype.hasReadOnlyIGadgets = function () {
         var igadgetKeys = this.iGadgets.keys();
         for (var i = 0; i < igadgetKeys.length; i++) {
-            if (this.iGadgets[igadgetKeys[i]].readOnly)
+            if (this.iGadgets[igadgetKeys[i]].readOnly) {
                 return true;
+            }
         }
         return false;
-    }
+    };
 
     Dragboard.prototype.getWorkspace = function () {
         return this.workSpace;
-    }
+    };
 
     /**
      * Registers an iGadget into this dragboard.
@@ -451,21 +461,23 @@ function Dragboard(tab, workSpace, dragboardElement) {
      * @param iGadget the iGadget to register
      */
     Dragboard.prototype._registerIGadget = function (iGadget) {
-        if (iGadget.id)
+        if (iGadget.id) {
             this.iGadgets[iGadget.id] = iGadget;
+        }
 
-        iGadget.code = this.currentCode++
+        iGadget.code = this.currentCode++;
 
         this.iGadgetsByCode[iGadget.code] = iGadget;
         var zpos = iGadget.getZPosition();
-        if (zpos != null) {
-            if (this.orderList[zpos] != undefined) {
+        if (zpos !== null) {
+            if (this.orderList[zpos] !== undefined) {
                 this.orderList.splice(zpos, 1, this.orderList[zpos], iGadget);
 
                 // Update following iGadgets
                 for (var i = zpos + 1; i < this.orderList.length; i++) {
-                    if (this.orderList[i] != undefined)
+                    if (this.orderList[i] !== undefined) {
                         this.orderList[i].setZPosition(i);
+                    }
                 }
             } else {
                 this.orderList[zpos] = iGadget;
@@ -475,7 +487,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
             iGadget.setZPosition(zpos);
             this.orderList[zpos] = iGadget;
         }
-    }
+    };
 
     /**
      * Deregisters an iGadget from this dragboard.
@@ -497,11 +509,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         iGadget.code = null;
-    }
+    };
 
     Dragboard.prototype.addIGadget = function (iGadget, igadgetInfo, options) {
-        if (!this.iGadgetsByCode[iGadget.code])
-            throw new Exception();
+        if (!this.iGadgetsByCode[iGadget.code]) {
+            throw new Error();
+        }
 
         this.iGadgets[iGadget.id] = iGadget;
 
@@ -512,13 +525,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         // Notify resize event
         iGadget.layout._notifyResizeEvent(iGadget, oldWidth, oldHeight, iGadget.getWidth(), iGadget.getHeight(), false, true);
-    }
+    };
 
-    Dragboard.prototype.fillFloatingGadgetsMenu = function(menu) {
+    Dragboard.prototype.fillFloatingGadgetsMenu = function (menu) {
         this.freeLayout.fillFloatingGadgetsMenu(menu);
-    }
+    };
 
-    Dragboard.prototype.lowerToBottom = function(iGadget) {
+    Dragboard.prototype.lowerToBottom = function (iGadget) {
         var zPos = iGadget.getZPosition();
         delete this.orderList[zPos];
         this.orderList = [iGadget].concat(this.orderList).compact();
@@ -528,11 +541,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         this._commitChanges();
-    }
+    };
 
-    Dragboard.prototype.lower = function(iGadget) {
+    Dragboard.prototype.lower = function (iGadget) {
         var zPos = iGadget.getZPosition();
-        if (zPos == 0) {
+        if (zPos === 0) {
             // Nothing to do if we are already in the bottom
             return;
         }
@@ -541,18 +554,19 @@ function Dragboard(tab, workSpace, dragboardElement) {
         this.orderList[zPos - 1] = iGadget;
         this.orderList[zPos] = prevIGadget;
 
-        iGadget.setZPosition(zPos -1);
+        iGadget.setZPosition(zPos - 1);
         prevIGadget.setZPosition(zPos);
 
         this._commitChanges([iGadget.code, prevIGadget.code]);
-    }
+    };
 
-    Dragboard.prototype.raiseToTop = function(iGadget) {
+    Dragboard.prototype.raiseToTop = function (iGadget) {
         var oldZPos = iGadget.getZPosition();
         var newZPos = this.orderList.length - 1;
 
-        if (oldZPos == newZPos)
+        if (oldZPos === newZPos) {
             return; // Nothing to do
+        }
 
         delete this.orderList[oldZPos];
         this.orderList.push(iGadget);
@@ -564,11 +578,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         this._commitChanges();
-    }
+    };
 
-    Dragboard.prototype.raise = function(iGadget) {
+    Dragboard.prototype.raise = function (iGadget) {
         var zPos = iGadget.getZPosition();
-        if (zPos == (this.orderList.length - 1)) {
+        if (zPos === (this.orderList.length - 1)) {
             // Nothing to do if we are already in the top
             return;
         }
@@ -581,16 +595,16 @@ function Dragboard(tab, workSpace, dragboardElement) {
         nextIGadget.setZPosition(zPos);
 
         this._commitChanges([iGadget.code, nextIGadget.code]);
-    }
+    };
 
     // *******************
     // INITIALIZING CODE
     // *******************
     this.dragboardElement = dragboardElement;
-    this.orderList = new Array();
+    this.orderList = [];
 
     // Window Resize event dispacher function
-    this._notifyWindowResizeEvent = function() {
+    this._notifyWindowResizeEvent = function () {
         var oldWidth = this.dragboardWidth;
         var oldHeight = this.dragboardHeight;
         this._recomputeSize();
@@ -599,8 +613,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         var widthChanged = oldWidth !== newWidth;
         var heightChanged = oldHeight !== newHeight;
-        if (widthChanged || heightChanged)
+        if (widthChanged || heightChanged) {
             this._updateIGadgetSizes(widthChanged, heightChanged);
+        }
     }.bind(this);
 
     this.baseLayout = this._buildLayoutFromPreferences();
@@ -617,15 +632,16 @@ function Dragboard(tab, workSpace, dragboardElement) {
  *
  * Updates the width and height info for this dragboard.
  */
-Dragboard.prototype._recomputeSize = function() {
+Dragboard.prototype._recomputeSize = function () {
     var cssStyle = document.defaultView.getComputedStyle(this.dragboardElement, null);
-    if (cssStyle.getPropertyValue("display") == "none")
+    if (cssStyle.getPropertyValue("display") === "none") {
         return; // Do nothing
+    }
 
-    if(BrowserUtilsFactory.getInstance().isIE()){
-        this.dragboardWidth = parseInt(this.dragboardElement.offsetWidth);
-    }else{
-        this.dragboardWidth = parseInt(this.dragboardElement.clientWidth);
+    if (BrowserUtilsFactory.getInstance().isIE()) {
+        this.dragboardWidth = parseInt(this.dragboardElement.offsetWidth, 10);
+    } else {
+        this.dragboardWidth = parseInt(this.dragboardElement.clientWidth, 10);
     }
 
     /*
@@ -643,8 +659,8 @@ Dragboard.prototype._recomputeSize = function() {
     else
         this.dragboardWidth-= this.scrollbarSpace;*/
 
-    this.dragboardHeight = parseInt($("wrapper").clientHeight);
-}
+    this.dragboardHeight = parseInt($("wrapper").clientHeight, 10);
+};
 
 /**
  * @private
@@ -654,11 +670,11 @@ Dragboard.prototype._recomputeSize = function() {
  * @param {boolean} widthChanged
  * @param {boolean} heightChanged
  */
-Dragboard.prototype._updateIGadgetSizes = function(widthChanged, heightChanged) {
+Dragboard.prototype._updateIGadgetSizes = function (widthChanged, heightChanged) {
     this.baseLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
     this.freeLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
     this.fulldragboardLayout._notifyWindowResizeEvent(widthChanged, heightChanged);
-}
+};
 
 
 /////////////////////////////////////
@@ -669,9 +685,9 @@ function DragboardPosition(x, y) {
     this.y = y;
 }
 
-DragboardPosition.prototype.clone = function() {
+DragboardPosition.prototype.clone = function () {
     return new DragboardPosition(this.x, this.y);
-}
+};
 
 /////////////////////////////////////
 // DragboardCursor
@@ -700,15 +716,15 @@ function DragboardCursor(iGadget) {
     this.widthInPixels = iGadget.element.offsetWidth;
 }
 
-DragboardCursor.prototype.getWidth = function() {
+DragboardCursor.prototype.getWidth = function () {
     return this.width;
-}
+};
 
-DragboardCursor.prototype.getHeight = function() {
+DragboardCursor.prototype.getHeight = function () {
     return this.height;
-}
+};
 
-DragboardCursor.prototype.paint = function(dragboard) {
+DragboardCursor.prototype.paint = function (dragboard) {
     var dragboardCursor = document.createElement("div");
     dragboardCursor.setAttribute("id", "dragboardcursor");
 
@@ -725,39 +741,39 @@ DragboardCursor.prototype.paint = function(dragboard) {
     // assign the created element
     dragboard.insertBefore(dragboardCursor, this.refIGadget.element);
     this.element = dragboardCursor;
-}
+};
 
 /**
  * This method must be called to avoid memory leaks caused by circular
  * references.
  */
-DragboardCursor.prototype.destroy = function() {
+DragboardCursor.prototype.destroy = function () {
     if (isElement(this.element)) {
         this.element.parentNode.removeChild(this.element);
         this.element = null;
     }
-}
+};
 
-DragboardCursor.prototype.getWidth = function() {
+DragboardCursor.prototype.getWidth = function () {
     return this.width;
-}
+};
 
 DragboardCursor.prototype.getPosition = IGadget.prototype.getPosition;
 
 DragboardCursor.prototype.setPosition = function (position) {
     this.position = position;
 
-    if (this.element != null) { // if visible
+    if (this.element !== null) { // if visible
         this.element.style.left = (this.layout.getColumnOffset(position.x) - 2) + "px"; // TODO -2 px for borders
         this.element.style.top = (this.layout.getRowOffset(position.y) - 2) + "px"; // TODO -2 px for borders
     }
-}
+};
 
 /////////////////////////////////////
 // Drag and drop support
 /////////////////////////////////////
-var EzWebEffectBase = new Object();
-EzWebEffectBase.findDragboardElement = function(element) {
+var EzWebEffectBase = {};
+EzWebEffectBase.findDragboardElement = function (element) {
     var tmp = element.parentNode;
     while (isElement(tmp)) {
         //var position = tmp.getStyle("position");
@@ -772,7 +788,7 @@ EzWebEffectBase.findDragboardElement = function(element) {
         tmp = tmp.parentNode;
     }
     return null; // Not found
-}
+};
 
 function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, canBeDragged) {
     var xDelta = 0, yDelta = 0;
@@ -782,18 +798,20 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     var x, y;
     var dragboardCover;
     var draggable = this;
-    canBeDragged = canBeDragged ? canBeDragged : function() {return true;};
+    var enddrag, drag, startdrag, scroll;
+    canBeDragged = canBeDragged ? canBeDragged : Draggable._canBeDragged;
 
     // remove the events
-    function enddrag(e) {
+    enddrag = function (e) {
         e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
+        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
             return;
+        }
 
-        Event.stopObserving (document, "mouseup", enddrag);
-        Event.stopObserving (document, "mousemove", drag);
+        Event.stopObserving(document, "mouseup", enddrag);
+        Event.stopObserving(document, "mousemove", drag);
 
         dragboardCover.parentNode.stopObserving("scroll", scroll);
         dragboardCover.parentNode.removeChild(dragboardCover);
@@ -801,19 +819,19 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
 
         onFinish(draggable, data);
 
-        Event.observe (handler, "mousedown", startdrag);
+        Event.observe(handler, "mousedown", startdrag);
 
         document.onmousedown = null; // reenable context menu
         document.onselectstart = null; // reenable text selection in IE
         document.oncontextmenu = null; // reenable text selection
-    }
+    };
 
     // fire each time it's dragged
-    function drag(e) {
+    drag = function (e) {
         e = e || window.event; // needed for IE
 
-        var screenX = parseInt(e.screenX);
-        var screenY = parseInt(e.screenY);
+        var screenX = parseInt(e.screenX, 10);
+        var screenY = parseInt(e.screenY, 10);
         xDelta = xStart - screenX;
         yDelta = yStart - screenY;
         xStart = screenX;
@@ -824,36 +842,39 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         draggableElement.style.left = x + 'px';
 
         onDrag(e, draggable, data, x + xOffset, y + yOffset);
-    }
+    };
 
     // initiate the drag
-    function startdrag(e) {
+    startdrag = function (e) {
         e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
+        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
             return false;
+        }
 
-        if (!canBeDragged(draggable, data))
+        if (!canBeDragged(draggable, data)) {
             return false;
+        }
 
         var target = BrowserUtilsFactory.getInstance().getTarget(e);
-        if (target != handler)
+        if (target !== handler) {
             return false;
+        }
 
-        document.oncontextmenu = function() { return false; }; // disable context menu
-        document.onmousedown = function() { return false; }; // disable text selection in Firefox
-        document.onselectstart = function () { return false; }; // disable text selection in IE
-        Event.stopObserving (handler, "mousedown", startdrag);
+        document.oncontextmenu = Draggable._cancel; // disable context menu
+        document.onmousedown = Draggable._cancel; // disable text selection in Firefox
+        document.onselectstart = Draggable._cancel; // disable text selection in IE
+        Event.stopObserving(handler, "mousedown", startdrag);
 
-        xStart = parseInt(e.screenX);
-        yStart = parseInt(e.screenY);
+        xStart = parseInt(e.screenX, 10);
+        yStart = parseInt(e.screenY, 10);
         y = draggableElement.offsetTop;
         x = draggableElement.offsetLeft;
         draggableElement.style.top = y + 'px';
         draggableElement.style.left = x + 'px';
-        Event.observe (document, "mouseup", enddrag);
-        Event.observe (document, "mousemove", drag);
+        Event.observe(document, "mouseup", enddrag);
+        Event.observe(document, "mousemove", drag);
 
         onStart(draggable, data);
 
@@ -861,7 +882,7 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         dragboardCover = document.createElement("div");
         Element.extend(dragboardCover);
         dragboardCover.addClassName("cover");
-        dragboardCover.observe("mouseup" , enddrag, true);
+        dragboardCover.observe("mouseup", enddrag, true);
         dragboardCover.observe("mousemove", drag, true);
 
         dragboardCover.style.zIndex = "1000000";
@@ -871,22 +892,22 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         dragboardCover.style.width = "100%";
         dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-        yScroll = parseInt(dragboard.scrollTop);
+        yScroll = parseInt(dragboard.scrollTop, 15);
 
         dragboard.observe("scroll", scroll);
 
         dragboard.insertBefore(dragboardCover, dragboard.firstChild);
 
         return false;
-    }
+    };
 
     // fire each time the dragboard is scrolled while dragging
-    function scroll(e) {
+    scroll = function (e) {
         e = e || window.event; // needed for IE
 
         var dragboard = dragboardCover.parentNode;
         dragboardCover.style.height = dragboard.scrollHeight + "px";
-        var scrollTop = parseInt(dragboard.scrollTop);
+        var scrollTop = parseInt(dragboard.scrollTop, 10);
         var scrollDelta = yScroll - scrollTop;
         y -= scrollDelta;
         yScroll = scrollTop;
@@ -895,51 +916,56 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
         draggableElement.style.left = x + 'px';
 
         onDrag(e, draggable, data, x + xOffset, y + yOffset);
-    }
-
-    // cancels the call to startdrag function
-    function cancelbubbling(e) {
-        e = e || window.event; // needed for IE
-        Event.stop(e);
-    }
+    };
 
     // add mousedown event listener
-    Event.observe (handler, "mousedown", startdrag);
+    Event.observe(handler, "mousedown", startdrag);
     var children = handler.childElements();
-    for (var i = 0; i < children.length; i++)
-        Event.observe (children[i], "mousedown", cancelbubbling);
+    for (var i = 0; i < children.length; i++) {
+        Event.observe(children[i], "mousedown", Draggable._cancelbubbling);
+    }
 
     /**********
      * Public methods
      **********/
 
-    this.setXOffset = function(offset) {
+    this.setXOffset = function (offset) {
         xOffset = offset;
-    }
+    };
 
-    this.setYOffset = function(offset) {
+    this.setYOffset = function (offset) {
         yOffset = offset;
-    }
+    };
 
-    this.destroy = function() {
-        Event.stopObserving (handler, "mousedown", startdrag);
+    this.destroy = function () {
+        Event.stopObserving(handler, "mousedown", startdrag);
         startdrag = null;
         enddrag = null;
         drag = null;
         scroll = null;
-        cancelbubbling = null;
         draggable = null;
         data = null;
         handler = null;
-    }
+    };
 }
+
+Draggable._canBeDragged = function () {
+    return true;
+};
+
+Draggable._cancel = function () {
+    return false;
+};
+
+
 
 /////////////////////////////////////
 // IGadget drag & drop support
 /////////////////////////////////////
-function IGadgetDraggable (iGadget) {
-    var context = new Object();
-    context.iGadget = iGadget;
+function IGadgetDraggable(iGadget) {
+    var context = {
+        iGadget: iGadget
+    };
     Draggable.call(this, iGadget.element, iGadget.gadgetMenu, context,
                          IGadgetDraggable.prototype.startFunc,
                          IGadgetDraggable.prototype.updateFunc,
@@ -949,55 +975,60 @@ function IGadgetDraggable (iGadget) {
 
 IGadgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
     return context.iGadget.isAllowed('move') && !(context.iGadget.layout instanceof FullDragboardLayout);
-}
+};
 
 
 IGadgetDraggable.prototype.startFunc = function (draggable, context) {
+    context.selectedTabElement = null;
     context.layout = context.iGadget.layout;
     context.dragboard = context.layout.dragboard;
     context.currentTab = context.dragboard.tabId;
     context.dragboard.raiseToTop(context.iGadget);
     context.layout.initializeMove(context.iGadget, draggable);
-}
+};
 
 IGadgetDraggable.prototype._findTabElement = function (curNode, maxRecursion) {
-    if (maxRecursion == 0)
+    if (maxRecursion === 0) {
         return null;
+    }
 
     // Only check elements, skip other dom nodes.
     if (isElement(curNode) && Element.extend(curNode).hasClassName('tab')) {
         return curNode;
     } else {
         var parentNode = curNode.parentNode;
-        if (isElement(parentNode))
+        if (isElement(parentNode)) {
             return this._findTabElement(parentNode, maxRecursion - 1);
-        else
+        } else {
             return null;
+        }
     }
-}
+};
 
 IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
     var element = null;
 
     // Check if the mouse is over a tab
     element = document.elementFromPoint(event.clientX, event.clientY);
-    if (element != null) {
+    if (element !== null) {
         // elementFromPoint may return inner tab elements
         element = draggable._findTabElement(element, 4);
     }
 
     var id = null;
-    if (element != null) {
+    if (element !== null) {
         id = element.getAttribute("id");
 
-        if (id != null) {
+        if (id !== null) {
             var result = id.match(/tab_(\d+)_(\d+)/);
-            if (result != null && result[2] != context.currentTab) {
-                if (context.selectedTab == result[2])
+            if (result !== null && result[2] !== context.currentTab) {
+                if (context.selectedTab === result[2]) {
                     return;
+                }
 
-                if (context.selectedTabElement != null)
+                if (context.selectedTabElement !== null) {
                     context.selectedTabElement.removeClassName("selected");
+                }
 
                 context.selectedTab = result[2];
                 context.selectedTabElement = element;
@@ -1011,21 +1042,24 @@ IGadgetDraggable.prototype.updateFunc = function (event, draggable, context, x, 
     // The mouse is not over a tab
     // The cursor must allways be inside the dragboard
     var position = context.layout.getCellAt(x, y);
-    if (position.y < 0)
+    if (position.y < 0) {
         position.y = 0;
-    if (position.x < 0)
+    }
+    if (position.x < 0) {
         position.x = 0;
-    if (context.selectedTabElement != null)
+    }
+    if (context.selectedTabElement !== null) {
         context.selectedTabElement.removeClassName("selected");
+    }
     context.selectedTab = null;
     context.selectedTabElement = null;
     context.layout.moveTemporally(position.x, position.y);
     return;
-}
+};
 
 IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
-    var tab, destDragboard, workspace, destLayout
-    if (context.selectedTab != null) {
+    var tab, destDragboard, workspace, destLayout;
+    if (context.selectedTab !== null) {
         context.layout.cancelMove();
 
         workspace = context.dragboard.workSpace;
@@ -1054,17 +1088,18 @@ IGadgetDraggable.prototype.finishFunc = function (draggable, context) {
     }
 
     context.dragboard = null;
-}
+};
 
 
 /////////////////////////////////////
 // IGadget Icon drag & drop support
 /////////////////////////////////////
-function IGadgetIconDraggable (iGadget) {
-    var context = new Object();
-    context.iGadget = iGadget;
-    context.x = null;
-    context.y = null;
+function IGadgetIconDraggable(iGadget) {
+    var context = {
+        iGadget: iGadget,
+        x: null,
+        y: null
+    };
     Draggable.call(this, iGadget.iconElement, iGadget.iconImg, context,
                          IGadgetIconDraggable.prototype.startFunc,
                          IGadgetIconDraggable.prototype.updateFunc,
@@ -1074,7 +1109,7 @@ function IGadgetIconDraggable (iGadget) {
 
 IGadgetIconDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
     return !context.iGadget.layout.dragboard.isLocked();
-}
+};
 
 
 IGadgetIconDraggable.prototype.startFunc = function (draggable, context) {
@@ -1083,30 +1118,30 @@ IGadgetIconDraggable.prototype.startFunc = function (draggable, context) {
     context.oldZIndex = context.iGadget.getZPosition();
     context.iGadget.setZPosition("999999");
     context.dragboard = context.iGadget.layout.dragboard;
-}
+};
 
 
 IGadgetIconDraggable.prototype.updateFunc = function (event, draggable, context, x, y) {
     context.x = x;
     context.y = y;
     return;
-}
+};
 
 IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
     context.iGadget.setZPosition(context.oldZIndex);
-    //alert(context.x);
     if (context.x) {
         var position = context.iGadget.layout.getCellAt(context.x, context.y);
 
-        if (position.y < 0)
+        if (position.y < 0) {
             position.y = 0;
-        if (position.x < 0)
+        }
+        if (position.x < 0) {
             position.x = 0;
+        }
 
         context.iGadget.setIconPosition(position);
         context.iGadget.layout.dragboard._commitChanges([context.iGadget.code]);
     } else {
-        //alert(context.x);
         // It is here instead of in a click event due to the behaviour of the IE
         context.iGadget.setMinimizeStatus(false);
         context.iGadget.layout.dragboard.raiseToTop(context.iGadget);
@@ -1114,7 +1149,7 @@ IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 
     // This is needed to check if the scrollbar status has changed (visible/hidden)
     context.dragboard._notifyWindowResizeEvent();
-}
+};
 
 
 
@@ -1125,18 +1160,21 @@ IGadgetIconDraggable.prototype.finishFunc = function (draggable, context) {
 function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, onFinish, canBeResized) {
     var xDelta = 0, yDelta = 0;
     var xStart = 0, yStart = 0;
+    var yScroll = 0;
     var dragboardCover;
     var x, y;
-    canBeResized = canBeResized ? canBeResized : function() {return true;};
+    var endresize, resize, startresize, scroll;
+    canBeResized = canBeResized ? canBeResized : ResizeHandle._canBeResized;
 
 
     // remove the events
-    function endresize(e) {
+    endresize = function (e) {
         e = e || window.event; // needed for IE
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
+        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
             return false;
+        }
 
         Event.stopObserving(document, "mouseup", endresize);
         Event.stopObserving(document, "mousemove", resize);
@@ -1158,62 +1196,64 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
         document.oncontextmenu = null; // reenable text selection
 
         return false;
-    }
+    };
 
     // fire each time the mouse is moved while resizing
-    function resize(e) {
+    resize = function (e) {
         e = e || window.event; // needed for IE
 
-        xDelta = xStart - parseInt(e.screenX);
-        yDelta = yStart - parseInt(e.screenY);
-        xStart = parseInt(e.screenX);
-        yStart = parseInt(e.screenY);
+        xDelta = xStart - parseInt(e.screenX, 10);
+        yDelta = yStart - parseInt(e.screenY, 10);
+        xStart = parseInt(e.screenX, 10);
+        yStart = parseInt(e.screenY, 10);
         y = y - yDelta;
         x = x - xDelta;
 
         onResize(resizableElement, handleElement, data, x, y);
-    }
+    };
 
     // fire each time the dragboard is scrolled while dragging
-    function scroll() {
+    scroll = function () {
         var dragboard = dragboardCover.parentNode;
         dragboardCover.style.height = dragboard.scrollHeight + "px";
-        var scrollTop = parseInt(dragboard.scrollTop);
+        var scrollTop = parseInt(dragboard.scrollTop, 10);
         var scrollDelta = yScroll - scrollTop;
         y -= scrollDelta;
         yScroll = scrollTop;
 
         onResize(resizableElement, handleElement, data, x, y);
-    }
+    };
 
     // initiate the resizing
-    function startresize(e) {
+    startresize = function (e) {
         e = e || window.event; // needed for IE
 
-        if (!canBeResized(resizableElement, data))
+        if (!canBeResized(resizableElement, data)) {
             return false;
+        }
 
         // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
+        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button)) {
             return false;
+        }
 
-        document.oncontextmenu = function() { return false; }; // disable context menu
-        document.onmousedown = function() { return false; }; // disable text selection
-        document.onselectstart = function () { return false; }; // disable text selection in IE
+        document.oncontextmenu = ResizeHandle._cancel; // disable context menu
+        document.onmousedown = ResizeHandle._cancel; // disable text selection
+        document.onselectstart = ResizeHandle._cancel; // disable text selection in IE
         handleElement.stopObserving("mousedown", startresize);
 
-        xStart = parseInt(e.screenX);
-        yStart = parseInt(e.screenY);
+        xStart = parseInt(e.screenX, 10);
+        yStart = parseInt(e.screenY, 10);
         x = resizableElement.offsetLeft + handleElement.offsetLeft + (handleElement.offsetWidth / 2);
         y = resizableElement.offsetTop + handleElement.offsetTop + (handleElement.offsetHeight / 2);
-        Event.observe (document, "mouseup", endresize);
-        Event.observe (document, "mousemove", resize);
+        Event.observe(document, "mouseup", endresize);
+        Event.observe(document, "mousemove", resize);
 
         var dragboard = EzWebEffectBase.findDragboardElement(resizableElement);
         dragboardCover = document.createElement("div");
         Element.extend(dragboardCover);
         dragboardCover.addClassName("cover");
-        dragboardCover.observe("mouseup" , endresize, true);
+        dragboardCover.observe("mouseup", endresize, true);
         dragboardCover.observe("mousemove", resize, true);
 
         dragboardCover.style.zIndex = "1000000";
@@ -1223,7 +1263,7 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
         dragboardCover.style.width = "100%";
         dragboardCover.style.height = dragboard.scrollHeight + "px";
 
-        yScroll = parseInt(dragboard.scrollTop);
+        yScroll = parseInt(dragboard.scrollTop, 10);
 
         dragboard.observe("scroll", scroll);
 
@@ -1235,21 +1275,25 @@ function ResizeHandle(resizableElement, handleElement, data, onStart, onResize, 
         onStart(resizableElement, handleElement, data);
 
         return false;
-    }
+    };
 
     // Add event listener
-    Event.observe (handleElement, "mousedown", startresize);
+    Event.observe(handleElement, "mousedown", startresize);
 
-    this.destroy = function() {
-        Event.stopObserving (handleElement, "mousedown", startresize);
+    this.destroy = function () {
+        Event.stopObserving(handleElement, "mousedown", startresize);
         startresize = null;
         resize = null;
         scroll = null;
         endresize = null;
         data = null;
         handleElement = null;
-    }
+    };
 }
+
+ResizeHandle._canBeResized = function () {
+    return true;
+};
 
 /////////////////////////////////////
 // IGadget resize support
@@ -1265,7 +1309,7 @@ function IGadgetResizeHandle(handleElement, iGadget, resizeLeftSide) {
 
 IGadgetResizeHandle.prototype.canBeResizedFunc = function (resizableElement, data) {
     return data.iGadget.isAllowed('resize');
-}
+};
 
 IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElement, data) {
     handleElement.addClassName("inUse");
@@ -1278,7 +1322,7 @@ IGadgetResizeHandle.prototype.startFunc = function (resizableElement, handleElem
     data.oldZIndex = data.iGadget.getZPosition();
     data.iGadget.setZPosition("999999");
     data.dragboard = data.iGadget.layout.dragboard;
-}
+};
 
 IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleElement, data, x, y) {
     var iGadget = data.iGadget;
@@ -1297,25 +1341,29 @@ IGadgetResizeHandle.prototype.updateFunc = function (resizableElement, handleEle
         var height = position.y - currentPosition.y + 1;
 
         // Minimum width
-        if (width < data.minWidth)
+        if (width < data.minWidth) {
             width = data.minWidth;
+        }
 
         // Minimum height
-        if (height < data.minHeight)
+        if (height < data.minHeight) {
             height = data.minHeight;
+        }
 
-        if (width != iGadget.getWidth() || height != iGadget.getHeight())
+        if (width !== iGadget.getWidth() || height !== iGadget.getHeight()) {
             iGadget.setSize(width, height, data.resizeLeftSide, false);
+        }
     }
-}
+};
 
 IGadgetResizeHandle.prototype.finishFunc = function (resizableElement, handleElement, data) {
     var iGadget = data.iGadget;
     data.iGadget.setZPosition(data.oldZIndex);
-    if (data.innitialWidth != data.iGadget.getWidth() || data.innitialHeight != data.iGadget.getHeight())
+    if (data.innitialWidth !== data.iGadget.getWidth() || data.innitialHeight !== data.iGadget.getHeight()) {
         iGadget.setSize(iGadget.getWidth(), iGadget.getHeight(), data.resizeLeftSide, true);
+    }
     handleElement.removeClassName("inUse");
 
     // This is needed to check if the scrollbar status has changed (visible/hidden)
     data.dragboard._notifyWindowResizeEvent();
-}
+};
