@@ -37,6 +37,10 @@ from django.utils.translation import get_language, ugettext as  _
 from commons.translation_utils import get_trans_index
 
 
+# translated models cache
+_translated_models_cache = {}
+
+
 class TranslatedModel(object):
 
     __instance = None
@@ -72,21 +76,44 @@ class TransModel(models.Model):
 
         data = {}
 
+        if table not in _translated_models_cache:
+            _translated_models_cache[table] = {
+                'default': {},
+            }
+            for attr_trans in Translation.objects.filter(table=table, default=True):
+                try:
+                    _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
+                except KeyError:
+                    _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
+            for lang_code, lang_name in settings.LANGUAGES:
+                _translated_models_cache[table][lang_code] = {}
+                for attr_trans in Translation.objects.filter(table=table, language=lang_code):
+                    try:
+                        _translated_models_cache[table][lang_code][attr_trans.element_id].append(attr_trans)
+                    except KeyError:
+                        _translated_models_cache[table][lang_code][attr_trans.element_id] = [attr_trans]
+
         # add default values
-        attr_trans = Translation.objects.filter(element_id=pk, table=table, default=True)
-        for element in attr_trans:
-            if element.text_id in index_mapping:
-                attnames = index_mapping[element.text_id]
-                for attname in attnames:
-                    data[attname] = element.value
+        try:
+            attr_trans = _translated_models_cache[table]['default'][pk]
+            for element in attr_trans:
+                if element.text_id in index_mapping:
+                    attnames = index_mapping[element.text_id]
+                    for attname in attnames:
+                        data[attname] = element.value
+        except KeyError:
+            pass  # no data in default language
 
         # add specific values
-        attr_trans = Translation.objects.filter(element_id=pk, table=table, language=language)
-        for element in attr_trans:
-            if element.text_id in index_mapping:
-                attnames = index_mapping[element.text_id]
-                for attname in attnames:
-                    data[attname] = element.value
+        try:
+            attr_trans = _translated_models_cache[table][language][pk]
+            for element in attr_trans:
+                if element.text_id in index_mapping:
+                    attnames = index_mapping[element.text_id]
+                    for attname in attnames:
+                        data[attname] = element.value
+        except KeyError:
+            pass  # no data in language
 
         return TranslatedModel(self, data)
 
