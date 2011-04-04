@@ -48,6 +48,28 @@ from workspace.utils import createTab
 
 import re
 
+# cached variables
+_variables_values_cache = {}
+_variables_cache = None
+
+
+def _populate_variables_cache():
+    """ populates cached Variable with all variables defined in all gadgets """
+    global _variables_cache
+    _variables_cache = {}
+    for variable in Variable.objects.all().select_related('igadget', 'vardef', 'abstract_variable'):
+        if variable.igadget.id not in _variables_cache:
+            _variables_cache[variable.igadget.id] = [variable]
+        else:
+            _variables_cache[variable.igadget.id].append(variable)
+
+
+def _populate_variables_values_cache(user):
+    """ populates VariableValue cached values for that user """
+    _variables_values_cache[user.id] = {}
+    for var_value in VariableValue.objects.filter(user__id=user.id):
+        _variables_values_cache[user.id][var_value.abstract_variable_id] = var_value.value
+
 
 def get_abstract_variable(id):
     return AbstractVariable.objects.get(id=id)
@@ -441,16 +463,22 @@ def process_forced_values(workspace, user, concept_values, workspace_data):
 
 
 def get_global_workspace_data(workSpaceDAO, user):
+    import time
+    tstart = time.time()
     data_ret = {}
+    tstart = time.time()
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
+    tnow = time.time(); print '\n\nTime get_workspace_data: %s\n' % (tnow - tstart); tstart = time.time()  # pyflakes:ignore
 
     # Context information
     concepts = Concept.objects.all()
     concept_values = get_concept_values(user)
     data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
+    tnow = time.time(); print '\n\nTime get_concept_data: %s\n' % (tnow - tstart); tstart = time.time()
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
+    tnow = time.time(); print '\n\nTime get_workspace_preference_values: %s\n' % (tnow - tstart); tstart = time.time()  # pyflakes:ignore
 
     # Process forced variable values
     forced_values = process_forced_values(workSpaceDAO, user, concept_values, data_ret['workspace'])
@@ -458,6 +486,7 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
     if len(forced_values['empty_params']) > 0:
         return data_ret
+    tnow = time.time(); print '\n\nTime process_forced_values: %s\n' % (tnow - tstart); tstart = time.time()  # pyflakes:ignore
 
     # Tabs processing
     # Check if the workspace's tabs have order
@@ -475,6 +504,8 @@ def get_global_workspace_data(workSpaceDAO, user):
         tabs = [tab]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
+    tnow = time.time(); print '\n\nTime get_tab_data: %s\n' % (tnow - tstart); tstart = time.time()  # pyflakes:ignore
+
     data_ret['workspace']['tabList'] = tabs_data
 
     for tab in tabs_data:
@@ -490,6 +521,7 @@ def get_global_workspace_data(workSpaceDAO, user):
             igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, igadget_forced_values))
 
         tab['igadgetList'] = igadget_data
+    tnow = time.time(); print '\n\nTime get_igadget_data: %s\n' % (tnow - tstart); tstart = time.time()  # pyflakes:ignore
 
     #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
@@ -507,6 +539,8 @@ def get_global_workspace_data(workSpaceDAO, user):
     if len(last_published_workspace) > 0:
         data_ret["workspace"]["params"] = simplejson.loads(last_published_workspace[0].params)
 
+    tend = time.time()
+    print '\n\nTime: %s\n' % (tend - tstart)
     return data_ret
 
 
@@ -520,6 +554,7 @@ def get_tab_data(tab):
 
 
 def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
+    global _variables_cache
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
@@ -546,13 +581,16 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
 
-    variables = Variable.objects.filter(igadget=igadget)
+    if _variables_cache is None:
+        _populate_variables_cache()
+    variables = _variables_cache[igadget.id]
     data_ret['variables'] = [get_variable_data(variable, user, workspace, igadget_forced_values) for variable in variables]
 
     return data_ret
 
 
 def get_variable_data(variable, user, workspace, forced_values={}):
+    global _variables_values_cache
 
     var_def = variable.vardef
     trans_var_def = var_def.get_translated_model()
@@ -579,11 +617,12 @@ def get_variable_data(variable, user, workspace, forced_values={}):
             data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
     else:
         data_ret[''] = 'normal'
+        if user.id not in _variables_values_cache:
+            _populate_variables_values_cache(user)
         try:
-            data_ret['value'] = VariableValue.objects.get(abstract_variable=abstract_var, user=user).value
-        except VariableValue.DoesNotExist:
+            data_ret['value'] = _variables_values_cache[user.id][abstract_var.id]
+        except KeyError:
             from workspace.views import clone_original_variable_value
-
             data_ret['value'] = clone_original_variable_value(abstract_var, workspace.creator, user).value
 
     if var_def.shared_var_def:
