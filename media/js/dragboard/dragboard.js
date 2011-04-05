@@ -949,6 +949,11 @@ function Draggable(draggableElement, handler, data, onStart, onDrag, onFinish, c
     };
 }
 
+Draggable._cancelbubbling = function (e) {
+   e = e || window.event; // needed for IE
+   Event.stop(e);
+};
+
 Draggable._canBeDragged = function () {
     return true;
 };
