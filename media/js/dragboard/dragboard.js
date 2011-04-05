@@ -1295,6 +1295,10 @@ ResizeHandle._canBeResized = function () {
     return true;
 };
 
+ResizeHandle._cancel = function () {
+    return false;
+};
+
 /////////////////////////////////////
 // IGadget resize support
 /////////////////////////////////////
