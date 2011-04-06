@@ -64,12 +64,6 @@ def index(request, user_name=None, template="/"):
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
 
-@login_required
-def wiring(request, user_name=None):
-    """ Wiring view """
-    return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
-
-
 def redirected_login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
