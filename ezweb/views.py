@@ -46,7 +46,7 @@ from django.template import Context, loader, RequestContext
 
 from catalogue.templateParser import TemplateParser
 from catalogue.views import GadgetsCollection
-from commons.authentication import login_public_user, login_with_third_party_cookie
+from commons.authentication import login_public_user
 from commons.get_data import get_catalogue_branding_data, get_workspace_branding_data
 from commons.http_utils import download_http_content
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
@@ -68,20 +68,6 @@ def index(request, user_name=None, template="/"):
 def wiring(request, user_name=None):
     """ Wiring view """
     return render_to_response('wiring.html', {}, context_instance=RequestContext(request))
-
-
-def index_lite(request, user_name=None):
-    """ EzWeb with no header"""
-    if (not request.user.is_authenticated()):
-        (response, user) = login_with_third_party_cookie(request)
-
-        if (response):
-            return response
-
-    if request.user.username != "public":
-        return render_ezweb(request, template="/lite")
-    else:
-        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
 
 def redirected_login(request):
