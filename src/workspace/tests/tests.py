@@ -5,7 +5,7 @@ import os
 
 from lxml import etree
 from django.contrib.auth.models import User
-from django.test import TestCase
+from django.test import Client, TestCase
 
 from commons.get_data import get_global_workspace_data
 from commons.test import LocalizedTestCase
@@ -72,6 +72,25 @@ class WorkspaceTestCase(LocalizedTestCase):
         igadget_vars = self.vars_by_name(igadget_data)
         self.assertEqual(igadget_vars['password']['label'], u'Contraseña')
         #self.assertEqual(igadget_vars['slot']['action_label'], 'Etiqueta de acción del slot')
+
+    def testVariableValuesCacheInvalidation(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+        # Fill cache
+        data = get_global_workspace_data(workspace, self.user)
+
+        c = Client()
+        put_data = {
+            'igadgetVars': {'id': 1, 'value': 'new_value'},
+        }
+        c.put('workspace/1/variables', put_data, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+
+        data = get_global_workspace_data(workspace, self.user)
+        variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
+        for variable in variables:
+            if variable['id'] == 1:
+                self.assertEqual(variable['value'], 'new_value')
+                break
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
