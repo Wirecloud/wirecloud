@@ -69,7 +69,7 @@ def _get_cached_variables(igadget):
         else:
             _variables_cache[variable.igadget.id].append(variable)
 
-    return _variables_cache[igadget.id]
+    return _variables_cache.get(igadget.id, [])
 
 
 def _invalidate_cached_variables(igadget):
