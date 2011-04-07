@@ -28,14 +28,14 @@
 #...............................licence...........................................#
 
 
+import os
+
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Group
 
 from catalogue.models import Category
 from commons.utils import json_encode
-#from preferences.views import get_user_theme
-from layout.models import Skin, SkinOrganization, TYPES
 
 
 def server_url(request):
@@ -133,44 +133,37 @@ def policy_lists(request):
     return {'policies': user_policies}
 
 
-# workspace skins
-def skins(request):
-    catalogue_type = TYPES[0][0]
-    ws_type = TYPES[1][0]
+CACHED_THEMES = None
+CACHED_THEMES_JSON = None
 
-    layout_name = settings.LAYOUT
-    skins = Skin.objects.filter(skin_template__type=ws_type, layout__name=layout_name)
-    skins = [skin.name for skin in skins.order_by('name')]
 
-    default_ws_skin = None
-    default_cat_skin = None
-    try:
-        orgs = Group.objects.filter(user=request.user)
-        #search the default skin in the user organizations
-        for org in orgs:
-            #workspace skin
-            try:
-                default_ws_skin = SkinOrganization.objects.filter(type=ws_type, organization=org, skin__layout__name=layout_name)[0].skin.name
-                break
-            except:
-                pass
+def themes(request):
+    global CACHED_THEMES, CACHED_THEMES_JSON
 
-        for org in orgs:
-            #catalogue skin
-            try:
-                default_cat_skin = SkinOrganization.objects.filter(type=catalogue_type, organization=org, skin__layout__name=layout_name)[0].skin.name
-                break
-            except:
-                pass
-    except Exception:
-        pass
-    #if it is not related to an organization - > return the default skins
-    if (not default_ws_skin):
-        default_ws_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=ws_type, default=True).name
-    if (not default_cat_skin):
-        default_cat_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=catalogue_type, default=True).name
+    # Default theme
+    if not hasattr(settings, "DEFAULT_THEME") or settings.DEFAULT_THEME == None:
+        settings.DEFAULT_THEME = "default"
 
-    return {'SKINS': json_encode(skins), 'DEFAULT_SKIN': default_ws_skin, 'CATALOGUE_SKIN': default_cat_skin}
+    # Theme cache
+    if CACHED_THEMES == None:
+
+        themes = []
+        for filename in os.listdir(settings.THEME_PATH):
+            if filename.startswith('.'):
+                continue
+
+            pathname = os.path.join(settings.THEME_PATH, filename)
+            if os.path.isdir(pathname):
+                themes.append(filename)
+
+        themes.sort(key=str.lower)
+
+        CACHED_THEMES = themes
+        CACHED_THEMES_JSON = json_encode(themes)
+
+    default_theme = settings.DEFAULT_THEME
+
+    return {'EZWEB_THEMES': CACHED_THEMES_JSON, 'EZWEB_DEFAULT_THEME': default_theme}
 
 
 def installed_apps(request):

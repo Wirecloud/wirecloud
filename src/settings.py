@@ -65,7 +65,8 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 LOGGING_LEVEL = 2
 #################################################################
 
-LAYOUT = "classic"
+THEME_PATH = path.join(BASEDIR, 'media/themes')
+THEME = "default"
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
@@ -145,6 +146,7 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
+    'layout',
     'preferences',
     'translator',
     'gadgetGenerator',
@@ -153,7 +155,6 @@ INSTALLED_APPS = (
     'user',
     'API',
     'uploader',
-    'layout',
     'south',
     ### openid authentication ###
 #    'openid_auth',
@@ -179,7 +180,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.only_one_css_file',
     'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
-    'processors.context_processors.skins',
+    'processors.context_processors.themes',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',
