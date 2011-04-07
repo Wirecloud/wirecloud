@@ -6,6 +6,7 @@ import os
 from lxml import etree
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
+from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
 from commons.test import LocalizedTestCase
@@ -79,11 +80,14 @@ class WorkspaceTestCase(LocalizedTestCase):
         # Fill cache
         data = get_global_workspace_data(workspace, self.user)
 
-        c = Client()
+        client = Client()
         put_data = {
-            'igadgetVars': {'id': 1, 'value': 'new_value'},
+            'igadgetVars': [{'id': 1, 'value': 'new_value'}],
+            'workspaceVars': [],
         }
-        c.put('workspace/1/variables', put_data, HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        put_data = simplejson.dumps(put_data, ensure_ascii=False)
+        client.login(username='test', password='test')
+        client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']

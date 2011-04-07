@@ -53,15 +53,27 @@ _variables_values_cache = {}
 _variables_cache = None
 
 
-def _populate_variables_cache():
+def _get_cached_variables(igadget):
     """ populates cached Variable with all variables defined in all gadgets """
     global _variables_cache
-    _variables_cache = {}
-    for variable in Variable.objects.all().select_related('igadget', 'vardef', 'abstract_variable'):
+
+    if _variables_cache == None:
+        _variables_cache = {}
+        variables = Variable.objects.all()
+    else:
+        variables = Variable.objects.filter(igadget__id=igadget.id)
+
+    for variable in variables.select_related('igadget', 'vardef', 'abstract_variable'):
         if variable.igadget.id not in _variables_cache:
             _variables_cache[variable.igadget.id] = [variable]
         else:
             _variables_cache[variable.igadget.id].append(variable)
+
+    return _variables_cache[igadget.id]
+
+
+def _invalidate_cached_variables(igadget):
+    del _variables_cache[igadget.id]
 
 
 def _populate_variables_values_cache(user):
@@ -69,6 +81,10 @@ def _populate_variables_values_cache(user):
     _variables_values_cache[user.id] = {}
     for var_value in VariableValue.objects.filter(user__id=user.id):
         _variables_values_cache[user.id][var_value.abstract_variable_id] = var_value.value
+
+
+def _invalidate_cached_variable_values(user):
+    del _variables_values_cache[user.id]
 
 
 def get_abstract_variable(id):
@@ -570,9 +586,7 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
 
-    if _variables_cache is None:
-        _populate_variables_cache()
-    variables = _variables_cache[igadget.id]
+    variables = _get_cached_variables(igadget)
     data_ret['variables'] = [get_variable_data(variable, user, workspace, igadget_forced_values) for variable in variables]
 
     return data_ret

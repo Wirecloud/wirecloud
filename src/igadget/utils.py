@@ -306,3 +306,5 @@ def deleteIGadget(igadget, user):
     icon_position = igadget.icon_position
     icon_position.delete()
     igadget.delete()
+    from commons.get_data import _invalidate_cached_variables
+    _invalidate_cached_variables(igadget)
