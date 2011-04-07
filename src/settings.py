@@ -180,7 +180,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.only_one_css_file',
     'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
-    'processors.context_processors.themes',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',

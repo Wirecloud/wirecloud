@@ -28,8 +28,6 @@
 #...............................licence...........................................#
 
 
-import os
-
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -131,39 +129,6 @@ def policy_lists(request):
     user_policies = request.session.get("policies")
 
     return {'policies': user_policies}
-
-
-CACHED_THEMES = None
-CACHED_THEMES_JSON = None
-
-
-def themes(request):
-    global CACHED_THEMES, CACHED_THEMES_JSON
-
-    # Default theme
-    if not hasattr(settings, "DEFAULT_THEME") or settings.DEFAULT_THEME == None:
-        settings.DEFAULT_THEME = "default"
-
-    # Theme cache
-    if CACHED_THEMES == None:
-
-        themes = []
-        for filename in os.listdir(settings.THEME_PATH):
-            if filename.startswith('.'):
-                continue
-
-            pathname = os.path.join(settings.THEME_PATH, filename)
-            if os.path.isdir(pathname):
-                themes.append(filename)
-
-        themes.sort(key=str.lower)
-
-        CACHED_THEMES = themes
-        CACHED_THEMES_JSON = json_encode(themes)
-
-    default_theme = settings.DEFAULT_THEME
-
-    return {'EZWEB_THEMES': CACHED_THEMES_JSON, 'EZWEB_DEFAULT_THEME': default_theme}
 
 
 def installed_apps(request):
