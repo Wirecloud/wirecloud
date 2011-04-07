@@ -17,15 +17,15 @@
 	<!-- Base and Theme css -->
 	{% if only_one_css_file %}
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/{{theme.name}}/css/ezweb_theme_{{ ezweb_release }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_theme_{{ ezweb_release }}.css"/>
 	{% else %}
-	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}{{ layout.general }}" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.general }}" />
+	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
 	{% endif %}
-	
+
 	<!--[if IE]>
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.ie }}" />
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.ie }}" /> 
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" />
 	<![endif]-->
 
 	<!-- CSS for different header -->
@@ -117,7 +117,7 @@ _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalog
 _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
 _URIConstants.prototype.FILE_UPLOADER = '/uploader';
-_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/{{ theme.name }}'
+_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/default'
 _URIConstants.prototype.SKIN = '/layout/skin/'
 _URIConstants.prototype.WS_SKIN_GENERATOR = '/layout/skin/type/workspace'
 
@@ -148,8 +148,8 @@ var public_workspace = '{{ active_workspace }}';
 var last_logged_user = '{{ last_user }}';
 var post_load_script = '{{ post_load_script|safe }}';
 
-var theme_images = {{ theme.images|safe }};
-var _SKINS = {% autoescape off %} {{ SKINS }} {% endautoescape %};
+var theme_images = {};
+var _SKINS = null;
 //default skin for workspaces. Users may change the skin of a workspace afterwards
 var _DEFAULT_SKIN = '{{ DEFAULT_SKIN }}';
 
