@@ -3,7 +3,7 @@
 <div id="ws_header" class="global_header">
 	<div id="ws_banner" class="banner">
 		<div id="logo_placeholder" class="logo_placeholder">
-		  <img id="logo" class="logo_layout {{ branding.workspace.logo.class }}" />
+		  <img id="logo" class="logo_layout" />
 	   </div>
 		<div id="toolbar_section" class="toolbar_section"></div>
 		<div id="greeting">
@@ -53,13 +53,13 @@
 
 	<div id="wiring_banner" class="banner">
       	<div class="logo_placeholder">
-			<img class="logo_layout {{ branding.workspace.logo.class }}" />
+			<img class="logo_layout" />
       	</div>
 		<div class="toolbar_section">
 			
 		    <div class="toolbar_menu">
 		      <div id="wiring_dragboard_link" class="first_toolbar_button">
-		      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+		      	<img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
 			  </div>
 				<div id="wiring_operate_link" class="last_toolbar_button selected_section">{% trans 'Operate' %}</div>
 		    </div>
@@ -80,14 +80,14 @@
 	<div id="catalogue_banner" class="banner">
 	  <div class="logo_placeholder">
 		  <img src="{{ branding.catalogue.logo.url }}" 
-			{% if branding.catalogue.link %} class="logo_layout clickable" onclick="window.open('{{ branding.catalogue.link }}')" 
+			{% if branding.catalogue.link %} class="logo_layout clickable"
 			{% else %} class="logo_layout" {% endif %} 
 		  />
 	  </div>
 	  <div class="toolbar_section">
 	    <div class="toolbar_menu">
 	      <div id="catalogue_dragboard_link" class="first_toolbar_button">
-	      	<img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+	      	<img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
 		  </div>	      
 	      <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
 	      <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
@@ -111,7 +111,7 @@
         <div class="toolbar_section">
             <div class="toolbar_menu">
                 <div id="logs_dragboard_link" class="first_toolbar_button">
-                    <img src="{{ MEDIA_URL }}themes/{{theme.name}}/images/back.png" title="{% trans 'Back to my application' %}"/>
+                    <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
                 </div>
                 <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
                 <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>

@@ -16,16 +16,21 @@
 
 	<!-- Base and Theme css -->
 	{% if only_one_css_file %}
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb_{{ ezweb_release }}.css"/>
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_theme_{{ ezweb_release }}.css"/>
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
 	{% else %}
-	<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/dragboard.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/wiring.css" />
 	{% endif %}
-
+	
 	<!--[if IE]>
 		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" />
+		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" /> 
 	<![endif]-->
 
 	<!-- CSS for different header -->
@@ -117,9 +122,7 @@ _URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalog
 _URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
 _URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
 _URIConstants.prototype.FILE_UPLOADER = '/uploader';
-_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/default'
-_URIConstants.prototype.SKIN = '/layout/skin/'
-_URIConstants.prototype.WS_SKIN_GENERATOR = '/layout/skin/type/workspace'
+_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/{{ theme.name }}'
 
 {% if AUTHENTICATION_SERVER_URL %}
 	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
@@ -163,7 +166,6 @@ var remote_channels_enabled = '{{ remote_channels_enabled }}' == 'True';
 
 var policy_lists = {{ policies|safe|default:"null" }};
 
-
 </script>
 
 
@@ -202,8 +204,4 @@ var policy_lists = {{ policies|safe|default:"null" }};
 	var opManager = OpManagerFactory.getInstance();
 	opManager.loadEnviroment();
 </script>
-
-<!-- Catalogue Skin -->
-<link rel="stylesheet" type="text/css" href="/layout/skin/{{ CATALOGUE_SKIN }}" />
-
 </html>
