@@ -66,7 +66,23 @@
 	{% include "header.html" %}
 {% endblock %}
 
-{% include "layouts/default.html" %}
+<div id="wrapper">
+    <!-- DRAGBOARD LAYERS -->
+    {% include "dragboard.html" %}
+    <!-- DRAGBOARD LAYERS -->
+
+    <!-- WIRING LAYER -->
+    {% include "wiring.html" %}
+    <!-- WIRING LAYER -->
+
+    <!-- WIRING LAYER -->
+    {% include "catalogue.html" %}
+    <!-- WIRING LAYER -->
+
+    <!-- LOGS LAYER -->
+    {% include "logs.html" %}
+    <!-- LOGS LAYER -->
+</div>
 
 </body>
 
