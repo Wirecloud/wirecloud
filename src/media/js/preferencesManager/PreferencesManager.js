@@ -257,7 +257,7 @@ var PreferencesManagerFactory = function () {
 		var desc = gettext("Skin to use by default. (default: %(defaultValue)s)");
 		platformPreferences['skin']['description'] = interpolate(desc, {defaultValue: _DEFAULT_SKIN}, true);
 		workspacePreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
-		var themes = _THEMES;
+		var themes = _SKINS;
 
 		for (var i = 0; i < themes.length; i++) {
 			var themeName = themes[i];
