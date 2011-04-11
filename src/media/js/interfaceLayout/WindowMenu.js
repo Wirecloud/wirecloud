@@ -1118,11 +1118,6 @@ function PublishWindowMenu(workspace) {
             label: gettext('Personalization'),
             type: 'fieldset',
             elements: {
-                'create_skin': {
-                    label:gettext("Create your own skin for your application"),
-                    type:"label",
-                    url:URIs.WS_SKIN_GENERATOR
-                },
                 'imageURI': {
                     label: gettext('Image for the catalogue (170x80 px)'),
                     type: 'fileUrl',
