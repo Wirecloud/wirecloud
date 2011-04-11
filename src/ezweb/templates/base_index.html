@@ -18,14 +18,20 @@
 	{% if only_one_css_file %}
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
 	{% else %}
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css" />
+	<link media="screen,projection" rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css"  />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue.css" />
+
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css"  />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/dragboard.css" />
+
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css"  />
 	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/wiring.css" />
+
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css"  />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue_list.css" />
+
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default_catalogue.css" />
+	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default.css" />
 	{% endif %}
 
 	<!--[if IE]>
