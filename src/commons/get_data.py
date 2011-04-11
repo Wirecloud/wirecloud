@@ -73,7 +73,8 @@ def _get_cached_variables(igadget):
 
 
 def _invalidate_cached_variables(igadget):
-    del _variables_cache[igadget.id]
+    if _variables_cache != None and igadget.id in _variables_cache:
+        del _variables_cache[igadget.id]
 
 
 def _populate_variables_values_cache(user):
@@ -84,7 +85,8 @@ def _populate_variables_values_cache(user):
 
 
 def _invalidate_cached_variable_values(user):
-    del _variables_values_cache[user.id]
+    if user.id in _variables_values_cache:
+        del _variables_values_cache[user.id]
 
 
 def get_abstract_variable(id):
