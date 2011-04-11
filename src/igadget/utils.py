@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _
 from commons.authentication import Http403
 from gadget.models import Gadget, VariableDef
 from igadget.models import Position, IGadget, Variable
-from workspace.models import Tab, VariableValue, AbstractVariable, SharedVariableValue
+from workspace.models import Tab, VariableValue, SharedVariableValue
 from connectable.models import In, Out
 
 
@@ -46,22 +46,15 @@ def createConnectable(var):
 
     connectable = None
 
-    if (aspect == 'SLOT'):
-        connectable = Out(name=name, abstract_variable=var.abstract_variable)
-    if (aspect == 'EVEN'):
-        connectable = In(name=name, variable=var)
+    if aspect == 'SLOT':
+        connectable = Out.create(name=name, variable=var)
+    if aspect == 'EVEN':
+        connectable = In.create(name=name, variable=var)
 
-    if (connectable == None):
-        return {}
+    if connectable == None:
+        return None
 
-    connectable.save()
-
-    connectableId = {}
-
-    connectableId['id'] = connectable.id
-    connectableId['name'] = name
-
-    return connectableId
+    return connectable
 
 
 def addIGadgetVariable(igadget, user, varDef, initial_value=None):
@@ -73,29 +66,26 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     else:
         var_value = ''
 
-     # Creating the Abstract Variable
-    abstractVar = AbstractVariable(type="IGADGET", name=varDef.name)
-    abstractVar.save()
+    if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
+        #check if there is a shared value or set a new one
+        shared_value = None
+        if varDef.shared_var_def:
+            shared_value, created = SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
+            if created:
+                #init the value to share
+                shared_value.value = var_value
+                shared_value.save()
+            else:
+                #this VariableValue will take the previously shared value
+                var_value = shared_value.value
 
-    #check if there is a shared value or set a new one
-    shared_value = None
-    if varDef.shared_var_def:
-        shared_value, created = SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
-        if created:
-            #init the value to share
-            shared_value.value = var_value
-            shared_value.save()
-        else:
-            #this VariableValue will take the previously shared value
-            var_value = shared_value.value
+        # Create Variable
+        variable = Variable.create(igadget=igadget, vardef=varDef)
 
-    # Creating Value for Abstract Variable
-    variableValue = VariableValue(user=user, value=var_value,
-                                  abstract_variable=abstractVar, shared_var_value=shared_value)
-    variableValue.save()
-
-    var = Variable(vardef=varDef, igadget=igadget, abstract_variable=abstractVar)
-    var.save()
+        # Creating Value for Abstract Variable
+        variableValue = VariableValue(user=user, variable=variable, value=var_value,
+                                      shared_var_value=shared_value)
+        variableValue.save()
 
     #Wiring related vars (SLOT&EVENTS) have implicit connectables!
     createConnectable(var)
@@ -288,16 +278,15 @@ def deleteIGadget(igadget, user):
     # Delete all IGadget's variables
     variables = Variable.objects.filter(igadget=igadget)
     for var in variables:
-        if (var.vardef.aspect == "SLOT"):
-            Out.objects.filter(abstract_variable=var.abstract_variable).delete()
+        if var.vardef.aspect == "SLOT":
+            Out.objects.filter(variable=var).delete()
 
-        if (var.vardef.aspect == "EVEN"):
+        if var.vardef.aspect == "EVEN":
             In.objects.filter(variable=var).delete()
 
-        #Deleting variable value
-        VariableValue.objects.filter(abstract_variable=var.abstract_variable).delete()
+        # Deleting variable value
+        VariableValue.objects.filter(variable=var).delete()
 
-        var.abstract_variable.delete()
         var.delete()
 
     # Delete IGadget and its position

@@ -170,7 +170,12 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
         self.assertEqual(data['displayName'], 'Test Gadget')
+        self.assertEqual(data['variables']['password']['label'], 'Password Pref')
+        self.assertEqual(data['variables']['slot']['action_label'], 'Slot Action Label')
 
         self.changeLanguage('es')
         data = get_gadget_data(gadget)
         self.assertEqual(data['displayName'], 'Gadget de prueba')
+        self.assertEqual(data['variables']['password']['label'], u'Contraseña')
+        self.assertEqual(data['variables']['slot']['action_label'], u'Etiqueta de acción del slot')
+

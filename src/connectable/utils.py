@@ -29,41 +29,28 @@
 
 
 #
-from workspace.models import AbstractVariable, WorkSpaceVariable, VariableValue
 from connectable.models import InOut, Filter
 from commons.utils import json_encode
 
 
 def createChannel(workspace, name, filter=None, filter_params={}, remote_subscription=None):
 
-    # Creating abstract variable
-    new_abstract_variable = AbstractVariable(type="WORKSPACE", name=name)
-    new_abstract_variable.save()
-
-    # Creating variable value
-    new_variable_value = VariableValue(user=workspace.creator, value="", abstract_variable=new_abstract_variable)
-    new_variable_value.save()
-
-    new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
-    new_ws_variable.save()
-
     fparam_values = ''
     if filter is not None:
         fparam_values = json_encode(filter_params)
 
-    channel = InOut(name=name, remote_subscription=remote_subscription, workspace_variable=new_ws_variable, filter=filter, filter_param_values=fparam_values, friend_code="")
+    channel = InOut(workspace=workspace,
+         name=name,
+         remote_subscription=remote_subscription,
+         filter=filter,
+         filter_param_values=fparam_values,
+         friend_code="")
     channel.save()
 
     return channel
 
 
 def deleteChannel(channel):
-    abstract_variable = channel.workspace_variable.abstract_variable
-    variable_values = VariableValue.objects.filter(abstract_variable=abstract_variable)
-
-    variable_values.delete()
-    abstract_variable.delete()
-    channel.workspace_variable.delete()
 
     if channel.remote_subscription:
         channel.remote_subscription.delete()

@@ -31,7 +31,7 @@
 #
 
 from igadget.models import Variable, IGadget
-from workspace.models import WorkSpaceVariable, VariableValue, UserWorkSpace, SharedVariableValue
+from workspace.models import VariableValue, UserWorkSpace, SharedVariableValue
 
 
 class PackageLinker:

@@ -230,7 +230,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             igadget = igadget_id_mapping[igadget_id]
             name = in_.get('name')
 
-            connectable = In.objects.get(variable__abstract_variable__name=name, variable__igadget=igadget)
+            connectable = In.objects.get(variable__vardef__name=name, variable__igadget=igadget)
             connectable.inouts.add(channel['connectable'])
             connectable.save()
 
@@ -241,13 +241,10 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 igadget = igadget_id_mapping[igadget_id]
                 name = out.get('name')
 
-                variable = Variable.objects.get(igadget=igadget, abstract_variable__name=name)
-                connectable = Out.objects.get(abstract_variable=variable.abstract_variable)
+                variable = Variable.objects.get(igadget=igadget, vardef__name=name)
+                connectable = Out.objects.get(variable=variable)
             else:
-                tab_id = out.get('tab')
-                tab = tab_id_mapping[tab_id]
-
-                connectable = Out.objects.get(abstract_variable=tab.abstract_variable)
+                pass
 
             connectable.inouts.add(channel['connectable'])
             connectable.save()

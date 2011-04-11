@@ -45,7 +45,7 @@ from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubsc
 from connectable.utils import createChannel, deleteChannel
 from igadget.models import IGadget
 from remoteChannel.models import RemoteChannel
-from workspace.models import WorkSpace, Tab, AbstractVariable, WorkSpaceVariable, VariableValue
+from workspace.models import WorkSpace, Tab
 
 
 class ConnectableEntry(Resource):
@@ -92,7 +92,7 @@ class ConnectableEntry(Resource):
 
         try:
             new_channels = json['inOutList']
-            old_channels = InOut.objects.filter(workspace_variable__workspace=workspace)
+            old_channels = InOut.objects.filter(workspace=workspace)
 
             # Mapping between provisional ids and database-generated ids!!!
             id_mapping = {}
@@ -155,14 +155,10 @@ class ConnectableEntry(Resource):
                     channel = createChannel(workspace, new_channel_data['name'], filter, filter_params, remote_subscription)
 
                     # A channel has been generated. It's necessary to correlate provisional and final ids!
-                    id_mapping[new_channel_data['id']] = {'new_id': channel.id, 'new_wv_id': channel.workspace_variable.id}
+                    id_mapping[new_channel_data['id']] = channel.id
 
                 else:
                     channel = InOut.objects.get(id=channel_id)
-
-                    workspace_variable = channel.workspace_variable
-                    workspace_variable.abstract_variable.name = new_channel_data['name']
-                    workspace_variable.abstract_variable.save()
 
                     filter = None
                     filter_params = ''
@@ -198,21 +194,19 @@ class ConnectableEntry(Resource):
                 new_channel_data = new_channels[channel_id]
                 inout_id = new_channel_data['id']
                 if new_channel_data['provisional_id']:
-                    inout_id = id_mapping[inout_id]['new_id']
+                    inout_id = id_mapping[inout_id]
                 channel = InOut.objects.get(id=inout_id)
                 for inout_to_add in new_channel_data.get('inouts', []):
                     inout_id = inout_to_add['id']
 
                     # search final id if needed
                     if inout_to_add['provisional_id']:
-                        inout_id = id_mapping[inout_id]['new_id']
+                        inout_id = id_mapping[inout_id]
 
                     relationship = RelatedInOut(in_inout=channel, out_inout=InOut.objects.get(id=inout_id))
                     relationship.save()
 
-            # Erasing variables associated with channels deleted explicitly by the user
             for deleted_channel_id in channelsDeletedByUser:
-                # Removing workspace_variable and abstract_variable of channels deleted explicitly by user
                 deleteChannel(deleted_channel_id)
 
             json_result = {'ids': id_mapping, 'urls': rchannels_urls_to_ids}
@@ -243,22 +237,9 @@ class ConnectableEntry(Resource):
         # Phase 1: Additions
         channels_to_add = json['channelsToAdd']
         for new_channel in channels_to_add:
-            # Creating the abstract variable for this channel
-            new_abstract_variable = AbstractVariable(type="WORKSPACE", name=new_channel['name'])
-            new_abstract_variable.save()
+            channel = createChannel(workspace, new_channel['name'], filter=None, filter_params=None, friend_code="")
 
-            # Creating the variable value entry for this channel
-            new_variable_value = VariableValue(user=user, value="", abstract_variable=new_abstract_variable)
-            new_variable_value.save()
-
-            # And the workspace variable
-            new_ws_variable = WorkSpaceVariable(workspace=workspace, abstract_variable=new_abstract_variable, aspect="CHANNEL")
-            new_ws_variable.save()
-
-            channel = InOut(name="", workspace_variable=new_ws_variable, filter=None, filter_param_values=None, friend_code="")
-            channel.save()
-
-            id_mapping[new_channel['id']] = {'cid': channel.id, 'wvid': new_ws_variable.id}
+            id_mapping[new_channel['id']] = channel.id
 
         # Phase 2: Updates
         channels_to_update = json['channelsToUpdate']
@@ -296,7 +277,7 @@ class ConnectableEntry(Resource):
 
                 # search final id if needed
                 if inout_to_add['provisional_id']:
-                    inout_id = id_mapping[inout_id]['cid']
+                    inout_id = id_mapping[inout_id]
 
                 relationship = RelatedInOut(in_inout=current_channel, out_inout=InOut.objects.get(id=inout_id))
                 relationship.save()
@@ -306,7 +287,7 @@ class ConnectableEntry(Resource):
 
                 # search final id if needed
                 if inout_to_add['provisional_id']:
-                    inout_id = id_mapping[inout_id]['cid']
+                    inout_id = id_mapping[inout_id]
 
                 relationship = RelatedInOut.objects.get(in_inout=current_channel, out_inout=inout_id)
                 relationship.delete()

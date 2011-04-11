@@ -39,7 +39,7 @@ from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
-from commons.get_data import _invalidate_cached_variable_values, get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
+from commons.get_data import _invalidate_cached_variable_values, get_workspace_data, get_global_workspace_data, get_tab_data
 from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
@@ -53,25 +53,16 @@ from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorks
 from workspace.models import Category
 from workspace.models import VariableValue, SharedVariableValue
 from workspace.models import Tab
-from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace, WorkSpaceVariable
+from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
 from workspace.utils import deleteTab, createTab, setVisibleTab
 
 
-def clone_original_variable_value(abstract_variable, creator, new_user):
-    try:
-        original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
+def clone_original_variable_value(workspace, creator, new_user):
+    original_var_value = VariableValue.objects.get(workspace, user=creator)
 
-        value = original_var_value.get_variable_value()
-    except VariableValue.DoesNotExist:
-        #This VariableValue should exist.
-        #However, published workspaces cloned in the old-fashioned way don't have the VariableValue of the creator variable!
-        #Managing everything with AbstractVariable's default value, VariableValue it's unavailable!
-        value = abstract_variable.get_default_value()
+    value = original_var_value.get_variable_value()
 
-    cloned_value = VariableValue(user=new_user, value=value, abstract_variable=abstract_variable)
-    cloned_value.save()
-
-    return cloned_value
+    return VariableValue.create(user=new_user, workspace=workspace, value=value)
 
 
 def getCategories(user):
@@ -401,8 +392,6 @@ class TabCollection(Resource):
             ids['id'] = tab.id
             ids['name'] = tab.name
 
-            ids['workspaceVariables'] = [get_workspace_variable_data(wsVariable, user, workspace)]
-
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
 
         except Exception, e:
@@ -532,25 +521,16 @@ class WorkSpaceVariableCollection(Resource):
             igadgetVariables = variables['igadgetVars']
             workSpaceVariables = variables['workspaceVars']
 
-            for wsVar in workSpaceVariables:
-                wsVarDAO = WorkSpaceVariable.objects.get(pk=wsVar['id'])
-
-                variable_value = VariableValue.objects.get(user=user, abstract_variable=wsVarDAO.abstract_variable)
-
-                variable_value.value = unicode(wsVar['value'])
-                variable_value.save()
-
             variables_to_notify = []
             for igVar in igadgetVariables:
-                igVarDAO = Variable.objects.get(pk=igVar['id'])
-                variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
+                variable_value = VariableValue.objects.filter(user=user, variable__id = igVar['id']).select_related('variable__vardef')[0]
 
                 if 'shared' in igVar:
                     if not igVar['shared']:
                         #do not share the value: remove the relationship
                         variable_value.shared_var_value = None
                     else:
-                        shared_variable_def = igVarDAO.vardef.shared_var_def
+                        shared_variable_def = variable_value.variable.vardef.shared_var_def
                         variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
                                                                                           shared_var_def=shared_variable_def)
                         #share the specified value

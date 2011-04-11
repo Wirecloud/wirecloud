@@ -9,15 +9,14 @@ from django.test import Client, TestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from commons.test import LocalizedTestCase
 from connectable.models import InOut
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import WorkSpace, UserWorkSpace, Tab, WorkSpaceVariable
+from workspace.models import WorkSpace, UserWorkSpace, Tab
 from workspace.views import createEmptyWorkSpace
 
 
-class WorkspaceTestCase(LocalizedTestCase):
+class WorkspaceTestCase(TestCase):
     fixtures = ['test_data']
 
     def setUp(self):
@@ -53,26 +52,6 @@ class WorkspaceTestCase(LocalizedTestCase):
             variables[var['name']] = var
 
         return variables
-
-    def testTranslations(self):
-
-        workspace = WorkSpace.objects.get(pk=1)
-
-        self.changeLanguage('en')
-        data = get_global_workspace_data(workspace, self.user)
-
-        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
-        igadget_vars = self.vars_by_name(igadget_data)
-        self.assertEqual(igadget_vars['password']['label'], 'Password Pref')
-        #self.assertEqual(igadget_vars['slot']['action_label'], 'Slot Action Label')
-
-        self.changeLanguage('es')
-        data = get_global_workspace_data(workspace, self.user)
-
-        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
-        igadget_vars = self.vars_by_name(igadget_data)
-        self.assertEqual(igadget_vars['password']['label'], u'Contraseña')
-        #self.assertEqual(igadget_vars['slot']['action_label'], 'Etiqueta de acción del slot')
 
     def testVariableValuesCacheInvalidation(self):
 
@@ -143,17 +122,13 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         workspace = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
-        channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
-        self.assertEqual(channel_vars.count(), 1)
-
-        connectable = InOut.objects.get(workspace_variable=channel_vars[0])
-        self.assertEqual(connectable.readOnly, False)
+        channels = InOut.objects.filter(workspace=workspace)
+        self.assertEqual(channels.count(), 1)
+        self.assertEqual(channels[0].readOnly, False)
 
     def testBlockedChannels(self):
         workspace = buildWorkspaceFromTemplate(self.template2, self.user)
 
-        channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
-        self.assertEqual(channel_vars.count(), 1)
-
-        connectable = InOut.objects.get(workspace_variable=channel_vars[0])
-        self.assertEqual(connectable.readOnly, True)
+        connectables = InOut.objects.filter(workspace=workspace)
+        self.assertEqual(connectables.count(), 1)
+        self.assertEqual(connectables[0].readOnly, True)
