@@ -236,14 +236,6 @@ function WorkSpace (workSpaceState) {
         var branding = this.workSpaceGlobalInfo['workspace']['branding']
         this.brandingManager.setBranding(branding);
 
-        var workspaceSkin = this.preferences.get('skin');
-        var scriptSkin = ScriptManagerFactory.getInstance().get_theme();
-
-        if (scriptSkin)
-            workspaceSkin = scriptSkin
-
-        this.skinManager.loadSkin(workspaceSkin);
-
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
         LogManagerFactory.getInstance().log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
