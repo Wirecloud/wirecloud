@@ -389,25 +389,6 @@ var OpManagerFactory = function () {
                           "hashchange",
                           function(){LayoutManagerFactory.getInstance().onHashChange()},
                           true);
-            // TODO create a Theme Manager Module
-            // Start loading the default theme
-            // When it finish, it will invoke continueLoadingGlobalModules method!
-            function imagesLoaded(theme, imagesNotLoaded) {
-                if (imagesNotLoaded.length > 0) {
-                    var msg = gettext("There were errors while loading some of the images for the theme. Do you really want to use it?");
-                    layoutManager.showYesNoDialog(msg,
-                        function() {
-                            OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-                        },
-                        function() {
-                            layoutManager._notifyPlatformReady();
-                        },
-                        Constants.Logging.WARN_MSG);
-                    return;
-                }
-
-                OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
-            }
 
             // EzWeb fly
             if (BrowserUtilsFactory.getInstance().isIE()) {
@@ -421,8 +402,7 @@ var OpManagerFactory = function () {
             }
 
             // Load initial theme
-            _currentTheme = new Theme();
-            _currentTheme.preloadImages(imagesLoaded);
+            OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.THEME_MANAGER);
         }
 
         /**

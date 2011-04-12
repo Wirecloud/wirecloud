@@ -25,7 +25,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, Hash, window, IE7*/
-/*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory, _currentTheme*/
+/*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory*/
 /*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
 /*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
