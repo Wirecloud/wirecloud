@@ -14,34 +14,36 @@
       <script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
   <![endif]-->
 
-  <!-- Base and Theme css -->
+  <!-- Base css -->
   {% if only_one_css_file %}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
   {% else %}
-    <link media="screen,projection" rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css"  />
+    <link media="screen,projection" rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring.css"  />
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css"  />
+  {% endif %}
+
+  <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie.css" />
+  <![endif]-->
+
+  <!-- Theme css -->
+  {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css"  />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/dragboard.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css"  />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/wiring.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css"  />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue_list.css" />
 
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default_catalogue.css" />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default.css" />
     <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/icons.css" />
-  {% endif %}
 
-  <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
+    <!--[if IE]>
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" />
-  <![endif]-->
-
-  <!-- CSS for different header -->
-  {% block css %}{% endblock %}
+    <![endif]-->
+  {% endblock %}
 
   {% block meta %}
   <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
@@ -156,11 +158,11 @@
 
 <!-- JavaScript code -->
 
-<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/json2.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/strftime.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/strftime-locales.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/common/jscolor/jscolor.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/json2.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/common/jscolor/jscolor.js"></script>
 
 <script type="text/javascript">
 var URIs = {
@@ -245,9 +247,9 @@ var policy_lists = {{ policies|safe|default:"null" }};
 </script>
 
 
-<script type="text/javascript" src="{{ MEDIA_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 
-<script type="text/javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.improvements.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 
 {% if only_one_js_file %}

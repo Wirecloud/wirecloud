@@ -35,6 +35,7 @@ from os import path
 from django.conf import settings
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 admin.autodiscover()
 
@@ -131,6 +132,8 @@ urlpatterns = patterns('',
     #Catalogue API
     (r'^catalogue/API/', include('catalogue.API.urls')),
 )
+
+urlpatterns += staticfiles_urlpatterns()
 
 ### OpenId URLs
 if 'openid_auth' in settings.INSTALLED_APPS:

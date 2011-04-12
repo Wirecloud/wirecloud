@@ -103,6 +103,8 @@ MEDIA_ROOT = path.join(BASEDIR, 'media')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/ezweb/'
 
+STATIC_URL = '/static/'
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
@@ -139,6 +141,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'ezweb',
     'gadget',
     'workspace',
@@ -173,6 +176,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'django.core.context_processors.static',
     'processors.context_processors.home_gateway_url',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
