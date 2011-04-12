@@ -28,10 +28,10 @@
  * This class manages a Skin
  */
 function SkinManager(){
-	
+
 	this.skinName = null;
 	this._skinURL = null;
-	
+
 }
 
 SkinManager.prototype._setSkin = function (name){
@@ -94,58 +94,55 @@ function BrandingManager(){
  */
 
 BrandingManager.prototype.setBranding = function (branding){
-	
 	var elements = null;
 	var element = null;
-	
 	var _setLink = function (element, link_url){
-		
+
 		if (!link_url) {
 			//there is no branding link. Remove the onclick event
 			element.onclick = null;
 			element.removeClassName('clickable');
 		}
 		else {
-			
+
 			element.onclick = function(){
 										window.open(link_url);
 										};
 			element.addClassName('clickable');
 		}
-		
+
 	}
-	
+
 	if (branding['logo'])
 		this.logo_class = branding['logo']['class'];
 	if (branding['viewer_logo'])
 		this.viewer_logo_class = branding['viewer_logo']['class'];
-	
+
 	//check if we are in the viewer or the normal view.
-	elements = $$('.' + this.logo_class); 
+	elements = $$('.' + this.logo_class);
 	for (var i=0;i<elements.length;i++) {
 		//normal mode
 		//set the normal logo as background for both the wiring and workspace banners
 		element = elements[i];
 		Element.extend(element);
 		element.setAttribute('src', branding['logo']['url']);
-		
+
 		//now, set the link to the url of the branding
 		_setLink(element, branding['link']);
-	
+
 	}
-	
+
 	elements = $$('.' + this.viewer_logo_class);
 	if (elements.length > 0) {
 		//viewer mode
-		
+
 		//set the viewer logo as background (there is only one logo)
 		element = elements[0];
 		Element.extend(element);
 		element.setAttribute('src', branding['viewer_logo']['url']);
-		
+
 		//now, set the link to the url of the branding
 		_setLink(element, branding['link']);
 	}
-	
+
 }
-	
