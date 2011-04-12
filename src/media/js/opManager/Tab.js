@@ -479,7 +479,7 @@ function Tab (tabInfo, workSpace) {
             var tab = this.workSpace.tabInstances[tabIds[i]];
             if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
                 tab.firstVisible = false;
-                tab.visibleEntryId = tab.menu.addOption(_currentTheme.getIconURL('mark_tab_visible'),
+                tab.visibleEntryId = tab.menu.addOption('icon-mark-tab-visible',
                     gettext("First Visible"),
                     function() {
                         LayoutManagerFactory.getInstance().hideCover();
@@ -527,7 +527,7 @@ function Tab (tabInfo, workSpace) {
 
     this.addMarkAsVisible = function () {
         this.firstVisible = false;
-        this.visibleEntryId = this.menu.addOption(_currentTheme.getIconURL("mark_tab_visible"),
+        this.visibleEntryId = this.menu.addOption('icon-mark-tab-visible',
             gettext("Mark as Visible"),
             function() {
                 LayoutManagerFactory.getInstance().hideCover();
@@ -552,7 +552,7 @@ Tab.prototype._createTabMenu = function() {
     this.menu = new DropDownMenu(idMenu);
 
     //options for Tab Menu
-    this.menu.addOption(_currentTheme.getIconURL("rename"),
+    this.menu.addOption('icon-rename',
         gettext("Rename"),
         function() {
             OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
@@ -610,7 +610,7 @@ Tab.prototype._createTabMenu = function() {
         }
     }
 
-    this.menu.addOption(_currentTheme.getIconURL("move"),
+    this.menu.addOption('icon-move',
             gettext("Move before..."),
             function(e) {
                 this.moveMenu.clearOptions();
@@ -619,7 +619,7 @@ Tab.prototype._createTabMenu = function() {
             }.bind(this),
             2);
 
-    this.menu.addOption(_currentTheme.getIconURL("remove"),
+    this.menu.addOption('icon-remove',
         gettext("Remove"),
         function() {
             var msg = gettext('Do you really want to remove the "%(tabName)s" tab?');
@@ -633,7 +633,7 @@ Tab.prototype._createTabMenu = function() {
     this.FloatingGadgetsMenu = LayoutManagerFactory.getInstance().initDropDownMenu(floatingGadgetsId, this.menu);
 
 
-    this.menu.addOption(_currentTheme.getIconURL("show_floating"),
+    this.menu.addOption('icon-show-floating',
         gettext("Show Floating Gadget"),
         function(e) {
             this.FloatingGadgetsMenu.clearOptions();
@@ -642,7 +642,7 @@ Tab.prototype._createTabMenu = function() {
         }.bind(this),
         4);
 
-    this.menu.addOption(_currentTheme.getIconURL('tab_preferences'),
+    this.menu.addOption('icon-tab-preferences',
         gettext("Preferences"),
         function() {
             LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);

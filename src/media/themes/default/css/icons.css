@@ -1,0 +1,29 @@
+.icon {
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px !important;
+}
+
+.icon-mark-tab-visible {
+    background-image: url(../images/visible.png);
+}
+
+.icon-move {
+    background-image: url(../images/menu_move.png);
+}
+
+.icon-remove {
+    background-image: url(../images/remove.png);
+}
+
+.icon-rename {
+    background-image: url(../images/rename.gif);
+}
+
+.icon-show-floating {
+    background-image: url(../images/show_floating.png);
+}
+
+.icon-tab-preferences {
+    background-image: url(../images/preferences.png);
+}

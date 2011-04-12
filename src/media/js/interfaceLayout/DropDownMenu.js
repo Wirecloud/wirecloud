@@ -98,44 +98,47 @@ DropDownMenu.prototype.calculatePosition = function() {
     this.menu.setStyle({"top":this.y +'px', "left":this.x +'px'});
     }
 
-//Adds an option to the menu created from the HTML in the specified position (starting on 0).
-//imgPath to be shown beside the option (may be null)-- option text -- event:function called on clicking
+// Adds an option to the menu created from the HTML in the specified position (starting on 0).
+// icon to be shown beside the option (may be null)-- option text -- event:function called on clicking
 // additionalClass: string used to add a specific class to the element
-DropDownMenu.prototype.addOption = function(imgPath, option, event, position, additionalClass, policy) {
-    var newClass=additionalClass
-    if (!additionalClass)
-        newClass="";
-    var optionClass = 'option underlined';
-    var optionList = $$('#'+this.idMenu+'>.option');
-    if(position == optionList.length && position != 0){//new last option
-        optionList[optionList.length-1].className='option underlined';
+DropDownMenu.prototype.addOption = function(icon, option, event, position, additionalClass, policy) {
+    var optionClass = '';
+    var optionList = $$('#' + this.idMenu + '>.option');
+    if(position == optionList.length && position != 0) { //new last option
+        optionList[optionList.length - 1].className += ' underlined';
         optionClass = 'option';
     } else if (position == optionList.length && position == 0) {
         optionClass = 'option';
+    } else {
+        optionClass = 'option underlined';
     }
 
-    optionClass = optionClass + " " + newClass;
+    if (additionalClass) {
+        optionClass += " " + additionalClass;
+    }
+    if (icon) {
+        optionClass += " icon " + icon;
+    }
 
     //create the HTML code for the option and insert it in the menu
-    var opId='op_'+this.idMenu+'_'+this.option_id;
-    var opHtml = '<div id="'+ opId +'" class = "'+optionClass+'">';
-    if (imgPath) {
-        opHtml += '<img src="'+imgPath+'"/>';
-    }
+    var opId = 'op_' + this.idMenu + '_' + this.option_id;
+    var opHtml = '<div id="' + opId + '" class = "' + optionClass + '">';
     opHtml += '<span>' + option + '</span></div>';
     try {
         if(optionList.length > 0) {
             if(position == 0) {
                 new Insertion.Before(optionList[position], opHtml);
             } else {
-                new Insertion.After(optionList[position-1], opHtml);
+                new Insertion.After(optionList[position - 1], opHtml);
             }
         } else {
             new Insertion.Bottom(this.menu, opHtml);
         }
         var newOption = $(opId);
-        var context = {'menu':this, 'handler':event}
-        Event.observe(newOption, 'click', function(e){this.menu.executeHandler(e,this.handler)}.bind(context), false, policy);
+        var context = {'menu': this, 'handler': event}
+        Event.observe(newOption, 'click', function (e) {
+            this.menu.executeHandler(e,this.handler);
+        }.bind(context), false, policy);
         this.option_id++;
     } catch(e) {
         return null;
@@ -155,43 +158,52 @@ DropDownMenu.prototype.removeOption = function(opId) {
 }
 
 //updates an option
-DropDownMenu.prototype.updateOption = function(opId, imgPath, option, handler, additionalClass, policy) {
-    var old=$(opId);
+DropDownMenu.prototype.updateOption = function(opId, icon, option, handler, additionalClass, policy) {
+    var old = $(opId);
 
-    var newClass=additionalClass
-    if (!additionalClass)
-        newClass="";
+    var optionClass = "option"
 
-    var opHtml='<div id="'+ opId +'" class = "option '+newClass+'">';
-    if (imgPath) {
-        opHtml += '<img src="'+imgPath+'"/>';
+    if (additionalClass) {
+        optionClass += " " + additionalClass;
     }
+
+    if (icon) {
+        optionClass += " icon " + icon;
+    }
+
+    var opHtml = '<div id="'+ opId +'" class="' + optionClass + '">';
     opHtml += '<span>' + option + '</span>';
     new Insertion.Before(old, opHtml);
-    old=old.remove();
+    old = old.remove();
     var newOp = $(opId);
-    if(old.hasClassName('underlined')){
+    if (old.hasClassName('underlined')){
         newOp.toggleClassName('underlined');
     }
 
     var context = {'menu':this, 'handler':handler}
-    Event.observe(newOp, 'click', function(e){this.menu.executeHandler(e,this.handler)}.bind(context), false, policy);
+    Event.observe(newOp, 'click', function(e) {
+        this.menu.executeHandler(e,this.handler);
+    }.bind(context), false, policy);
 }
 
 //submenu operations
-DropDownMenu.prototype.addOptionToSubmenu = function(imgPath, option, event) {
-    var lastOption = $$('#'+this.idMenu+ ' .submenu div:last-child')[0];
+DropDownMenu.prototype.addOptionToSubmenu = function(icon, option, event) {
+    var lastOption = $$('#' + this.idMenu + ' .submenu div:last-child')[0];
 
-    if (lastOption) {//last option doesn't have a underline
+    if (lastOption) { //last option doesn't have a underline
         lastOption.toggleClassName('underlined');
     }
-    //create the HTML code for the option and insert it in the menu
-    var opId='secondary_op_'+this.idMenu+'_'+this.option_id;
-    var opHtml = '<div id="'+ opId +'" class = "option">';
-    if (imgPath) {
-        opHtml += '<img src="'+imgPath+'"/>';
+
+    var optionClass = "option"
+
+    if (icon) {
+        optionClass += " icon " + icon;
     }
-    opHtml += '<span>'+option+'</span></div>';
+
+    //create the HTML code for the option and insert it in the menu
+    var opId = 'secondary_op_' + this.idMenu + '_' + this.option_id;
+    var opHtml = '<div id="' + opId + '" class="' + optionClass + '">';
+    opHtml += '<span>' + option + '</span></div>';
     new Insertion.Bottom(this.submenu, opHtml);
     lastOption = $(opId);
     Event.observe(lastOption, 'click', event);
@@ -274,23 +286,27 @@ FilterDropDownMenu.prototype = new DropDownMenu();
 
 
 // Adds a option (like DropDownMenu method) with a help buttom
-FilterDropDownMenu.prototype.addOptionWithHelp = function(imgPath, option, helpText, event, position) {
-    var optionClass = 'option underlined';
-    var optionList = $$('#'+this.idMenu+'>.option');
-    if (position == optionList.length && position != 0) {//new last option
-        optionList[optionList.length-1].className='option underlined';
+FilterDropDownMenu.prototype.addOptionWithHelp = function(icon, option, helpText, event, position) {
+    var optionClass = '';
+    var optionList = $$('#' + this.idMenu + '>.option');
+    if (position == optionList.length && position != 0) { //new last option
+        optionList[optionList.length-1].className += ' underlined';
         optionClass = 'option';
-    } else if (position == optionList.length && position == 0)
+    } else if (position == optionList.length && position == 0) {
         optionClass = 'option';
+    } else {
+        optionClass = 'option underlined';
+    }
+
+    if (icon) {
+        optionClass += " icon " + icon;
+    }
 
     //create the HTML code for the option and insert it in the menu
-    var opId='op_'+this.idMenu+'_'+this.option_id;
-    var opHtml = '<div id="'+ opId +'" class = "'+optionClass+'">';
+    var opId = 'op_' + this.idMenu + '_' + this.option_id;
+    var opHtml = '<div id="' + opId + '" class = "' + optionClass + '">';
 
     //creates the elements for the left side
-    if (imgPath) {
-        opHtml += '<img src="'+imgPath+'"/>';
-    }
     opHtml += '<span>' + option + '</span>';
 
     //creates the element for the rigth side (help buttom)
