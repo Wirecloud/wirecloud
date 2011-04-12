@@ -33,7 +33,6 @@ import sys
 inputFiles = {
     'normal': [
         'js/common/constants.js',
-        'js/common/utils.js',
         'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
@@ -142,7 +141,6 @@ inputFiles = {
 
     'viewer': [
         'js/common/constants.js',
-        'js/common/utils.js',
         'js/interfaceLayout/BrowserUtils.js',
 
         'js/common/modules.js',
