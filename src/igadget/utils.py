@@ -180,6 +180,9 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
         #iGadget has no variables. It's normal
         pass
 
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(user)
+
 
 def UpdateIGadget(igadget, user, tab):
 

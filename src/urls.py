@@ -116,7 +116,7 @@ urlpatterns = patterns('',
     #(r'^admin/clms/(?P<url>.*)', clms_site.root),
 
     #Admin interface
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 
     # Django "set language" (internacionalitation)
     (r'^i18n/', include('django.conf.urls.i18n')),
