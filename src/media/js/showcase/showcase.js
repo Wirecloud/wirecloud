@@ -126,7 +126,7 @@ var ShowcaseFactory = function () {
             }
 
             // Error callback (empty gadget list)
-            var onError = function (receivedData_) {
+            var onError = function (transport, e) {
                 var msg, logManager = LogManagerFactory.getInstance();
                 msg = logManager.formatError(gettext("Error retrieving showcase data: %(errorMsg)s."), transport, e);
                 logManager.log(msg);
