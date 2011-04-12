@@ -1187,23 +1187,25 @@ var LayoutManagerFactory = function () {
 
         this.scrollTabBarWidth = 0;
         for (var i=0; i<nodes.length;i++){
-            //add the node width. If it is a tab, border width are includes
-            this.scrollTabBarWidth += nodes[i].getWidth();
+            if (nodes[i].nodeType === nodes[i].ELEMENT_NODE) {
+                //add the node width. If it is a tab, border width are includes
+                this.scrollTabBarWidth += nodes[i].getWidth();
 
-            // current name margins are taken into account in this.extraGap
-            if (nodes[i].hasClassName('current')){
-                nameNode = nodes[i].getElementsByTagName('span')[0];
-                computedStyle = document.defaultView.getComputedStyle(nameNode, null);
-                nameMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                nameMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-                this.scrollTabBarWidth -= nameMarginRight + nameMarginLeft;
+                // current name margins are taken into account in this.extraGap
+                if (nodes[i].hasClassName('current')){
+                    nameNode = nodes[i].getElementsByTagName('span')[0];
+                    computedStyle = document.defaultView.getComputedStyle(nameNode, null);
+                    nameMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                    nameMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                    this.scrollTabBarWidth -= nameMarginRight + nameMarginLeft;
+                }
+
+                //add the node margins.
+                computedStyle = document.defaultView.getComputedStyle(nodes[i], null);
+                tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+                this.scrollTabBarWidth += tabMarginRight + tabMarginLeft;
             }
-
-            //add the node margins.
-            computedStyle = document.defaultView.getComputedStyle(nodes[i], null);
-            tabMarginRight = computedStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            tabMarginLeft = computedStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-            this.scrollTabBarWidth += tabMarginRight + tabMarginLeft;
         }
         this.scrollTabBarWidth += this.extraGap;
         return this.scrollTabBarWidht;
