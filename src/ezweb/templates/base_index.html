@@ -6,52 +6,51 @@
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
 <head>
-	<title>{% block title %}{% trans "EzWeb Platform" %}{% endblock %}</title>
+  <title>{% block title %}{% trans "EzWeb Platform" %}{% endblock %}</title>
 
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE-edge"/>
-	<!--[if lt IE 7]>
-	<script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
-	<![endif]-->
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE-edge"/>
+  <!--[if lt IE 7]>
+      <script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
+  <![endif]-->
 
-	<!-- Base and Theme css -->
-	{% if only_one_css_file %}
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
-	{% else %}
-	<link media="screen,projection" rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css"  />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
+  <!-- Base and Theme css -->
+  {% if only_one_css_file %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
+  {% else %}
+    <link media="screen,projection" rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ezweb.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb.css" />
 
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css"  />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/dragboard.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/dragboard.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/dragboard.css" />
 
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css"  />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/wiring.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/wiring.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/wiring.css" />
 
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css"  />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue_list.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/catalogue.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/catalogue_list.css" />
 
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default_catalogue.css" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default.css" />
-	{% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default_catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/default.css" />
+  {% endif %}
 
-	<!--[if IE]>
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
-		<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" />
-	<![endif]-->
+  <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}css/ie.css" />
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ie.css" />
+  <![endif]-->
 
-	<!-- CSS for different header -->
-	{% block css %}{% endblock %}
+  <!-- CSS for different header -->
+  {% block css %}{% endblock %}
 
-	{% block meta %}
-	<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
-	{% endblock %}
-
+  {% block meta %}
+  <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+  {% endblock %}
 </head>
+
 <body>
 
 <!-- Menu layer -->
-<div id="menu_layer" style="display:none">
-</div>
+<div id="menu_layer" style="display:none"></div>
 
 <!-- Loading indicator -->
 <div id="loading-window">
@@ -69,30 +68,90 @@
 
 <!-- HEADER -->
 {% block header %}
-	{% include "header.html" %}
+  {% include "header.html" %}
 {% endblock %}
 
 <div id="wrapper">
-    <!-- DRAGBOARD LAYERS -->
-    {% include "dragboard.html" %}
-    <!-- DRAGBOARD LAYERS -->
 
-    <!-- WIRING LAYER -->
-    {% include "wiring.html" %}
-    <!-- WIRING LAYER -->
+  <!-- DRAGBOARD LAYERS -->
+  <div class="sidebar">
+    <div class="sidebar_top">
+      <a id="close_sidebar" class="closebutton"></a>
+      <div class="sidebar_title">{% trans "Select Application" %}</div>
+    </div>
+    <div id="workspace_sidebar" class="sidebar_items"></div>
+    <div id="add_workspace" class="add_workspace">{% trans "New Application" %}</div>
+  </div>
+  <!-- Initially empty (filled by javascript code)-->
+  <!-- DRAGBOARD LAYERS -->
 
-    <!-- CATALOGUE LAYER -->
-    {% include "catalogue.html" %}
-    <!-- CATALOGUE LAYER -->
+  <!-- WIRING LAYER -->
+  <div id="wiring" class="container">
+    <div id="wiring_wrapper">
+      <div id="wiring_options">
+        <div id="unfold_chkItem"><label>{% trans 'Unfold on starting' %}</label></div>
+      </div>
+      <div id="wiring_table">
+        <div id="eventColumn" class="eventColumn">
+          <div class="title folded">{% trans "EVENTS" %}
+            <input name='event' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
+          </div>
+          <div id="events_list"></div>
+        </div>
 
-    <!-- SHOWCASE LAYER -->
-    <div id="showcase" class="container showcase"></div>
-    <!-- SHOWCASE LAYER -->
+        <div class="inoutColumn">
+          <div class="title">{% trans "CHANNELS" %}
+            <input name='channels' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this, event);"/>
+          </div>
+          <div id="channels_list"></div>
+        </div>
 
-    <!-- LOGS LAYER -->
-    {% include "logs.html" %}
-    <!-- LOGS LAYER -->
-</div>
+        <div id="slotColumn" class="slotColumn">
+          <div class="title folded">{% trans "SLOTS" %}
+            <input name='slot' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
+          </div>
+          <div id="slots_list"></div>
+        </div>
+        <div class="floatclearer"></div>
+      </div>
+    </div>
+  </div>
+  <!-- WIRING LAYER -->
+
+  <!-- CATALOGUE LAYER -->
+  <div id="catalogue_views">
+
+    <!-- JavaScript Templates -->
+    <script id="list_view_resource_structure_template" type="html/template">
+      {% include "catalogue/resource.html" %}
+    </script>
+
+    <script id="list_view_resource_details_structure_template" type="html/template">
+      {% include "catalogue/resource_details.html" %}
+    </script>
+
+    <script id="list_view_developer_info_structure" type="html/template">
+      {% include "catalogue/developers.html" %}
+    </script>
+
+    <script id="pagination_structure" type="html/template">
+      {% include "catalogue/pagination_template.html" %}
+    </script>
+
+    {% include "catalogue/template.html" %}
+  </div>
+  <!-- CATALOGUE LAYER -->
+
+  <!-- SHOWCASE LAYER -->
+  <div id="showcase" class="container showcase"></div>
+  <!-- SHOWCASE LAYER -->
+
+  <!-- LOGS LAYER -->
+  <div id="logs_container" class="container">
+    <div id="logs_console" class="container_content"></div>
+  </div>
+  <!-- LOGS LAYER -->
+</div> <!-- end of #wrapper -->
 
 </body>
 
@@ -151,7 +210,7 @@ _URIConstants.prototype.FILE_UPLOADER = '/uploader';
 _URIConstants.prototype.BASIC_THEME = '/ezweb/themes/default'
 
 {% if AUTHENTICATION_SERVER_URL %}
-	_URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
+    _URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
 {% endif %}
 
 {% if home_gateway_dispatcher_url %}
@@ -228,7 +287,7 @@ var theme_images = {
     "showcase-wiki_highlighted": "wiki-highlighted.png",
     "showcase-resource_image_not_available": "image_not_available.jpg",
     "show_floating":"show_floating.png",
-	"solution": "solution.png",
+    "solution": "solution.png",
     "wiring": "wiring.png",
     "workspace_merge": "workspace/merge.png",
     "workspace_active": "workspace/active.png",
@@ -324,25 +383,25 @@ var policy_lists = {{ policies|safe|default:"null" }};
 
 <!-- Initialization code -->
 <script type="text/javascript">
-	var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
-	var LANGUAGES = [];
-	{% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
+    var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
+    var LANGUAGES = [];
+    {% for lang in LANGUAGES %} LANGUAGES.push(["{{lang.0}}","{{lang.1}}"]);{% endfor %}
 
-	function setLanguage(language) {
-		var onSuccess = function() {
-			window.location.reload();
-		}
-		
-		var onError = function() {}
-		
-		var persistenceEngine = PersistenceEngineFactory.getInstance();
-		var params = {language: language};
-		persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
-		
-		return false;
-	}
+    function setLanguage(language) {
+        var onSuccess = function() {
+            window.location.reload();
+        }
+        
+        var onError = function() {}
+        
+        var persistenceEngine = PersistenceEngineFactory.getInstance();
+        var params = {language: language};
+        persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
+        
+        return false;
+    }
 
-	var opManager = OpManagerFactory.getInstance();
-	opManager.loadEnviroment();
+    var opManager = OpManagerFactory.getInstance();
+    opManager.loadEnviroment();
 </script>
 </html>
