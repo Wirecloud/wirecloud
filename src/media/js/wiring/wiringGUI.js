@@ -1238,7 +1238,7 @@ WiringInterface.prototype._createFilterMenu = function () {
 	};
 
 	filterMenu.addOptionWithHelp (
-		_currentTheme.getIconURL('filter'),
+		'icon-filter',
 		gettext('None'),
 		gettext("Returns the value of the channel unfiltered."),
 		callback.bind({wiringGUI:this, filter: null}),
@@ -1247,7 +1247,7 @@ WiringInterface.prototype._createFilterMenu = function () {
 	for (var i = 0; i < filters.length; i++) {
 		var context = {wiringGUI:this, filter:filters[i]};
 		filterMenu.addOptionWithHelp (
-			_currentTheme.getIconURL('filter'),
+			'icon-filter',
 			filters[i].getLabel(),
 			filters[i].getHelpText(),
 			callback.bind(context),

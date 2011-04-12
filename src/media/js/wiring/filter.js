@@ -25,59 +25,56 @@
 
 // This class represents the parameter that a filter can have
 function Param (name_, label_, type_, index_, required_, defaultValue_){
-  this._name = name_;
-  this._label = label_;
-  this._type = type_;
-  this._index = index_;
-  this._required = required_;
-  this._defaultValue = defaultValue_;
+    this._name = name_;
+    this._label = label_;
+    this._type = type_;
+    this._index = index_;
+    this._required = required_;
+    this._defaultValue = defaultValue_;
 }
 
 Param.prototype.Param = function (name_, label_, type_, index_, required_, defaultValue_){
-  this._name = name_;
-  this._label = label_;
-  this._type = type_;
-  this._index = index_;
-  this._required = required_;
-  this._defaultValue = defaultValue_;
+    this._name = name_;
+    this._label = label_;
+    this._type = type_;
+    this._index = index_;
+    this._required = required_;
+    this._defaultValue = defaultValue_;
 }
 
 Param.prototype.getName = function() {
-  return this._name;
+    return this._name;
 }
 
 Param.prototype.getType = function() {
-  return this._type;
+    return this._type;
 }
 
 Param.prototype.getLabel = function() {
-  return this._label;
+    return this._label;
 }
 
 Param.prototype.getIndex = function() {
-  return this._index;
+    return this._index;
 }
 
 Param.prototype.getRequired = function() {
-  return this._required;
+    return this._required;
 }
 
 Param.prototype.getDefaultValue = function() {
-  return this._defaultValue;
+    return this._defaultValue;
 }
 
 Param.prototype.createHtmlLabel = function() {
-  var labelLayer = document.createElement("div");
-  Element.extend(labelLayer);
-  labelLayer.addClassName('paramName');
-  var img = document.createElement("img");
-  img.setAttribute("src", _currentTheme.getIconURL('wiring-filter_param'));
-  labelLayer.appendChild(img);
-  var labelElement = document.createElement("label");
-  labelElement.innerHTML = this._label + ':';
-  labelLayer.appendChild(labelElement);
-  
-  return labelLayer;
+    var labelLayer = document.createElement("div");
+    Element.extend(labelLayer);
+    labelLayer.addClassName('paramName');
+    var labelElement = document.createElement("label");
+    labelElement.innerHTML = this._label + ':';
+    labelElement.className = 'icon icon-wiring-filter-param';
+    labelLayer.appendChild(labelElement);
+    return labelLayer;
 }
 
 

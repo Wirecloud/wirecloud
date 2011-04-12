@@ -11,6 +11,7 @@ span.icon {
 .icon-catalogue { background-image: url(../images/catalogue.png); }
 .icon-dragboard { background-image: url(../images/dragboard.png); }
 .icon-error { background-image: url(../images/error.png); }
+.icon-filter { background-image: url(../images/filter.gif); }
 .icon-igadget-settings { background-image: url(../images/settings.png); }
 .icon-info { background-image: url(../images/info.png); }
 .icon-mark-tab-visible { background-image: url(../images/visible.png); }
@@ -21,3 +22,4 @@ span.icon {
 .icon-tab-preferences { background-image: url(../images/preferences.png); }
 .icon-warning { background-image: url(../images/warning.png); }
 .icon-wiring { background-image: url(../images/wiring.png); }
+.icon-wiring-filter-param { background-image: url(../images/filter-param.png); }
