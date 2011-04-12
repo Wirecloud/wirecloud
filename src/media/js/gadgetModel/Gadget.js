@@ -130,7 +130,7 @@ function Gadget(gadget_, url_, options_) {
     }
 
     this.getId = function() {
-        return this.getVendor() + '_'+ this.getName() + '_' + this.getVersion();
+        return this.getVendor() + '_'+ this.getName() + '_' + this.getVersion().text;
     }
 
     // *******************
