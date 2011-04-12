@@ -120,7 +120,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     tab_id_mapping = {}
 
     for tabElement in tabs:
-        tab, _junk = createTab(tabElement.get('name'), user, workspace)
+        tab = createTab(tabElement.get('name'), user, workspace)
         tab_id_mapping[tabElement.get('id')] = tab
 
         preferences = PREFERENCE_XPATH(tabElement)

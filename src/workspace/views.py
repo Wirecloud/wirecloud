@@ -384,13 +384,10 @@ class TabCollection(Resource):
             tab_name = t['name']
             workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
 
-            tab, wsVariable = createTab(tab_name, user, workspace)
+            tab = createTab(tab_name, user, workspace)
 
             # Returning created Ids
-            ids = {}
-
-            ids['id'] = tab.id
-            ids['name'] = tab.name
+            ids = {'id': tab.id, 'name': tab.name}
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
 

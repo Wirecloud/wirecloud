@@ -451,8 +451,7 @@ def get_global_workspace_data(workSpaceDAO, user):
                 tabs[i].position = i
                 tabs[i].save()
     else:
-        tab, _junk = createTab('MyTab', user, workSpaceDAO)
-        tabs = [tab]
+        tabs = [createTab('MyTab', user, workSpaceDAO)]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
