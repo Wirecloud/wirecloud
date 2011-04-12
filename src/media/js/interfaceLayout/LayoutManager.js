@@ -447,12 +447,12 @@ var LayoutManagerFactory = function () {
             if (dragboard.getNumberOfIGadgets() == 0) {
                 var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
                 var msg = gettext("In the Dragborad you can move and resize all your gadgets in order to perform and use your own application. Check the gadget preferences for further personalization %(settingsIcon)s. Go to the Catalogue to add more gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections among them %(wiringIcon)s. If you need more help visit the %(helpLink)s.");
-                msg = interpolate(msg,
-                                  {settingsIcon: "<img src='" + _currentTheme.getIconURL('igadget-settings') + "'/>",
-                                   catalogueIcon: "<img src='" + _currentTheme.getIconURL('catalogue') + "'/>",
-                                   wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
-                                   helpLink: videoTutorialMsg},
-                                  true);
+                msg = interpolate(msg, {
+                    settingsIcon: "<span class='icon icon-igadget-settings'></span>",
+                    catalogueIcon: "<span class='icon icon-catalogue'></span>",
+                    wiringIcon: "<span class='icon icon-wiring'></span>",
+                    helpLink: videoTutorialMsg
+                }, true);
                 this.showTipMessage(msg, 2);
             }
 
@@ -490,11 +490,11 @@ var LayoutManagerFactory = function () {
 
             var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
             var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
-            msg = interpolate(msg,
-                          {dragboardIcon: "<img src='" + _currentTheme.getIconURL('dragboard') + "'/>",
-                           wiringIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
-                           helpLink: videoTutorialMsg},
-                          true);
+            msg = interpolate(msg, {
+                dragboardIcon: "<span class='icon icon-dragboard'></span>",
+                wiringIcon: "<span class='icon icon-wiring'></span>",
+                helpLink: videoTutorialMsg,
+            }, true);
             this.showTipMessage(msg, 0);
 
             //Firefox 3.6 bug
@@ -560,10 +560,10 @@ var LayoutManagerFactory = function () {
 
             var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
             var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
-            msg = interpolate(msg,
-                      {dragboardIcon: "<img src='" + _currentTheme.getIconURL('wiring') + "'/>",
-                       helpLink: videoTutorialMsg},
-                      true);
+            msg = interpolate(msg, {
+                dragboardIcon: "<span class='icon icon-wiring'></span>",
+                helpLink: videoTutorialMsg,
+            }, true);
             this.showTipMessage(msg, 1);
 
             //Firefox 3.6 bug
