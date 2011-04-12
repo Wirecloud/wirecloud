@@ -25,62 +25,6 @@
 
 
 /**
- * This class manages a Skin
- */
-function SkinManager(){
-
-	this.skinName = null;
-	this._skinURL = null;
-
-}
-
-SkinManager.prototype._setSkin = function (name){
-	this.skinName = name;
-//	this._skinURL = "/css_generator/workspace/" + name;
-	this._skinURL = URIs.SKIN + name;
-}
-
-SkinManager.prototype._appendStyle = function(url) {
-	// Create the Script Object
-	var style = document.createElement('link');
-	style.setAttribute("rel", "stylesheet");
-	style.setAttribute("type", "text/css");
-	style.setAttribute("href", url);
-
-	// Insert the created object to the html head element
-	//var head = document.getElementsByTagName('head').item(0);
-	document.body.appendChild(style);
-}
-
-SkinManager.prototype._removeStyle = function(url) {
-	var styleEntry = $$('link[type="text/css"][href="' + url +'"]');
-	if (styleEntry.length !== 1)
-		return;
-
-	styleEntry = styleEntry[0];
-	styleEntry.parentNode.removeChild(styleEntry);
-}
-
-
-SkinManager.prototype.loadSkin = function(newSkin) {
-	this._removeStyle(this._skinURL);
-
-	this._setSkin(newSkin);
-
-	this._appendStyle(this._skinURL);
-
-	//wait for CSS application
-	LayoutManagerFactory.getInstance()._notifyPlatformReady();
-
-	var contextManager = OpManagerFactory.getInstance().activeWorkSpace.getContextManager();
-	contextManager.notifyModifiedConcept(Concept.prototype.THEME, newSkin);
-}
-
-SkinManager.prototype.unloadSkin = function () {
-	this._removeStyle(this._skinURL);
-}
-
-/**
  * This class manages the branding shown in a workspace or the catalogue
  **/
 function BrandingManager(){

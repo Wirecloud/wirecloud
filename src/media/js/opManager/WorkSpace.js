@@ -176,7 +176,6 @@ function WorkSpace (workSpaceState) {
                 LayoutManagerFactory.getInstance().showPreferencesWindow('workspace', this.preferences, false);
                 return;
             }
-            this.preferences.addCommitHandler(this.preferencesChanged.bind(this));
 
             // Load workspace tabs
             var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
@@ -712,9 +711,6 @@ function WorkSpace (workSpaceState) {
 
         this._removeWorkspaceMenu();
 
-        //deapply skin
-        this.skinManager.unloadSkin();
-
         layoutManager.logStep('');
         LogManagerFactory.getInstance().log(gettext('workspace unloaded'), Constants.Logging.INFO_MSG);
         LogManagerFactory.getInstance().newCycle();
@@ -1213,7 +1209,6 @@ function WorkSpace (workSpaceState) {
     //banner
     this.headerHTML = $('ws_header');
 
-    this.skinManager = new SkinManager();
     this.brandingManager = new BrandingManager();
 
 
@@ -1307,18 +1302,3 @@ WorkSpace.prototype.highlightTab = function(tab) {
         delete this.highlightTimeouts[tab.tabInfo.id];
     }.bind(this), 10000);
 };
-
-WorkSpace.prototype.preferencesChanged = function(modifiedValues) {
-    for (preferenceName in modifiedValues) {
-        var newLayout = false;
-
-        switch (preferenceName) {
-        case "skin":
-            var newSkin = modifiedValues[preferenceName];
-            this.skinManager.loadSkin(newSkin);
-
-        default:
-            continue;
-        }
-    }
-}
