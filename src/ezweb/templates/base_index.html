@@ -162,67 +162,60 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/jscolor/jscolor.js"></script>
 
 <script type="text/javascript">
-_URIConstants = function(){}
-
-_URIConstants.prototype.USER = '/user/{{ user.username }}';
-_URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
-_URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
-_URIConstants.prototype.PUT_IGADGET_VERSION = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}/version');
-_URIConstants.prototype.GET_GADGET = new Template ('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}');
-_URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
-_URIConstants.prototype.GET_CONTEXT = '/user/{{ user.username }}/context';
-_URIConstants.prototype.GET_CONTEXT_VALUE = new Template ('/user/{{ user.username }}/context/#{concept}/value');
-_URIConstants.prototype.PLATFORM_PREFERENCES = '/user/{{ user.username }}/preferences/platform';
-_URIConstants.prototype.WORKSPACE_PREFERENCES = new Template ('/user/{{ user.username }}/preferences/workspace/#{workspace_id}');
-_URIConstants.prototype.TAB_PREFERENCES = new Template ('/user/{{ user.username }}/preferences/tab/#{workspace_id}/#{tab_id}');
-_URIConstants.prototype.GET_POST_RESOURCES = '/user/{{ user.username }}/catalogue/resource';
-_URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
-_URIConstants.prototype.GET_RESOURCES_GLOBAL_SEARCH = '/user/{{ user.username }}/catalogue/globalsearch';
-_URIConstants.prototype.DELETE_TAG = '/user/{{ user.username }}/catalogue/tag';
-_URIConstants.prototype.POST_RESOURCE_TAGS = '/user/{{ user.username }}/catalogue/tag';
-_URIConstants.prototype.POST_RESOURCE_VOTES = '/user/{{ user.username }}/catalogue/voting';
-_URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets');
-_URIConstants.prototype.PROXY = '/proxy';
-_URIConstants.prototype.GET_IGADGET_VARIABLES = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables');
-_URIConstants.prototype.GET_POST_GADGET_VARIABLE = new Template ('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}');
-_URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
-_URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
-_URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
-_URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}/last_user/#{last_user}');
-_URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
-_URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
-_URIConstants.prototype.POST_PUBLISH_WORKSPACE = new Template('/workspace/#{workspace_id}/publish');
-_URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add?active=#{active}');
-_URIConstants.prototype.GET_MERGE_WORKSPACE = new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}');
-_URIConstants.prototype.PUT_SHARE_WORKSPACE = new Template('/workspace/#{workspace_id}/share/#{share_boolean}');
-_URIConstants.prototype.GET_SHARE_GROUPS = new Template('/workspace/#{workspace_id}/share/groups');
-_URIConstants.prototype.GADGET_TEMPLATE_GENERATOR = new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}');
-_URIConstants.prototype.GET_MERGE_PUBLISHED_WORKSPACE = new Template('/workspace/published_workspace/#{published_ws}/merge/#{to_ws}');
-_URIConstants.prototype.POST_CREATE_EXTERNAL_CHANNEL = '/channel/external';
-_URIConstants.prototype.GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS = new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}');
-_URIConstants.prototype.POST_PUBLISH_REMOTE_CHANNELS = new Template('/notifier/channels/notify?channels=#{channels}');
-_URIConstants.prototype.POST_CHECK_VERSIONS = '/user/{{ user.username }}/catalogue/versions';
-_URIConstants.prototype.ADD_RESOURCE_TO_APP = new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link');
-_URIConstants.prototype.CONTRACT_APPLICATIONS_TRANSACTION = '/contract/subscribe/applications';
-_URIConstants.prototype.FILE_UPLOADER = '/uploader';
-_URIConstants.prototype.BASIC_THEME = '/ezweb/themes/default'
-
+var URIs = {
+  USER: '/user/{{ user.username }}',
+  GET_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}'),
+  GET_IGADGETS: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/'),
+  PUT_IGADGET_VERSION: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}/version'),
+  GET_GADGET: new Template('/user/{{ user.username }}/gadgets/#{vendor}/#{name}/#{version}'),
+  GET_GADGETS: '/user/{{ user.username }}/gadgets',
+  GET_CONTEXT: '/user/{{ user.username }}/context',
+  GET_CONTEXT_VALUE: new Template('/user/{{ user.username }}/context/#{concept}/value'),
+  PLATFORM_PREFERENCES: '/user/{{ user.username }}/preferences/platform',
+  WORKSPACE_PREFERENCES: new Template('/user/{{ user.username }}/preferences/workspace/#{workspace_id}'),
+  TAB_PREFERENCES: new Template('/user/{{ user.username }}/preferences/tab/#{workspace_id}/#{tab_id}'),
+  GET_POST_RESOURCES: '/user/{{ user.username }}/catalogue/resource',
+  GET_RESOURCES_SIMPLE_SEARCH: '/user/{{ user.username }}/catalogue/search',
+  GET_RESOURCES_GLOBAL_SEARCH: '/user/{{ user.username }}/catalogue/globalsearch',
+  DELETE_TAG: '/user/{{ user.username }}/catalogue/tag',
+  POST_RESOURCE_TAGS: '/user/{{ user.username }}/catalogue/tag',
+  POST_RESOURCE_VOTES: '/user/{{ user.username }}/catalogue/voting',
+  POST_IGADGET: new Template('/workspace/#{workspaceId}/tab/#{tabId}/igadgets'),
+  PROXY: '/proxy',
+  GET_IGADGET_VARIABLES: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables'),
+  GET_POST_GADGET_VARIABLE: new Template('/user/{{ user.username }}/igadgets/#{iGadgetId}/variables/#{varName}'),
+  PUT_VARIABLES: new Template('/workspace/#{workspaceId}/variables'),
+  GET_POST_WORKSPACES: '/workspaces',
+  GET_POST_WIRING: new Template('/workspaces/#{id}/wiring'),
+  GET_POST_WORKSPACE: new Template('/workspaces/#{id}/last_user/#{last_user}'),
+  GET_POST_TABS: new Template('/workspace/#{workspace_id}/tabs'),
+  TAB: new Template('/workspace/#{workspace_id}/tab/#{tab_id}'),
+  POST_PUBLISH_WORKSPACE: new Template('/workspace/#{workspace_id}/publish'),
+  GET_ADD_WORKSPACE: new Template('/workspace/#{workspace_id}/add?active=#{active}'),
+  GET_MERGE_WORKSPACE: new Template('/workspace/#{from_ws_id}/merge/#{to_ws_id}'),
+  PUT_SHARE_WORKSPACE: new Template('/workspace/#{workspace_id}/share/#{share_boolean}'),
+  GET_SHARE_GROUPS: new Template('/workspace/#{workspace_id}/share/groups'),
+  GADGET_TEMPLATE_GENERATOR: new Template('{{GADGET_GENERATOR_URL}}/gadgetGenerator/template/#{gadget_type}'),
+  GET_MERGE_PUBLISHED_WORKSPACE: new Template('/workspace/published_workspace/#{published_ws}/merge/#{to_ws}'),
+  POST_CREATE_EXTERNAL_CHANNEL: '/channel/external',
+  GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS: new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}'),
+  POST_PUBLISH_REMOTE_CHANNELS: new Template('/notifier/channels/notify?channels=#{channels}'),
+  POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
+  ADD_RESOURCE_TO_APP: new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link'),
+  CONTRACT_APPLICATIONS_TRANSACTION: '/contract/subscribe/applications',
+  FILE_UPLOADER: '/uploader',
+  BASIC_THEME: '/ezweb/themes/default',
 {% if AUTHENTICATION_SERVER_URL %}
-    _URIConstants.prototype.EZSTEROIDS_API = '{{ AUTHENTICATION_SERVER_URL }}/api';
+  EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api',
 {% endif %}
-
 {% if home_gateway_dispatcher_url %}
-    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}';
-    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_UNSUBSCRIBE_URL = '{{ home_gateway_dispatcher_url }}unsubscribeServices';
-    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_CANCEL_URL = '{{ home_gateway_dispatcher_url }}cancelServices';
+  HOME_GATEWAY_DISPATCHER_URL: '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}',
+  HOME_GATEWAY_DISPATCHER_UNSUBSCRIBE_URL: '{{ home_gateway_dispatcher_url }}unsubscribeServices',
+  HOME_GATEWAY_DISPATCHER_CANCEL_URL: '{{ home_gateway_dispatcher_url }}cancelServices'
 {% else %}
-    _URIConstants.prototype.HOME_GATEWAY_DISPATCHER_URL = null;
+  HOME_GATEWAY_DISPATCHER_URL: null
 {% endif%}
-
-
-
-
-var URIs = new _URIConstants();
+};
 
 var ezweb_user_name = '{{ user.username }}';
 var ezweb_user_screen_name = '{{ screen_name }}';
