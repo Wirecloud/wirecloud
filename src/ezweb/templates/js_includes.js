@@ -2,7 +2,6 @@
      edit the generate_ezweb_js_file.py script and rerun it
      for updating this list. -->
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/constants.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/common/utils.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/InputInterfaces.js"></script>
