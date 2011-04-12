@@ -634,11 +634,7 @@ function AlertWindowMenu () {
     WindowMenu.call(this, gettext('Warning'));
 
     // Warning icon
-    var icon = document.createElement('img');
-    Element.extend(icon);
-    icon.setAttribute('src', _currentTheme.getIconURL('warning'));
-    icon.setAttribute('alt', gettext('Info:'));
-    this.windowContent.insertBefore(icon, this.msgElement);
+    this.msgElement.className += ' icon icon-warning';
 
     // Accept button
     this.acceptButton = document.createElement('button');
@@ -687,10 +683,7 @@ function AddMashupWindowMenu (actions) {
     WindowMenu.call(this, gettext('Add Mashup'));
 
     // Warning icon
-    var icon = document.createElement('img');
-    icon.setAttribute('src', _currentTheme.getIconURL('warning'));
-    icon.setAttribute('alt', gettext('Info:'));
-    this.windowContent.insertBefore(icon, this.msgElement);
+    this.msgElement.className += ' icon icon-warning';
 
     // New Workspace button
     this.acceptButton = document.createElement('button');
@@ -737,8 +730,7 @@ function MessageWindowMenu (element) {
     WindowMenu.call(this, '');
 
     // Warning icon
-    this.icon = document.createElement('img');
-    this.windowContent.insertBefore(this.icon, this.msgElement);
+    this.msgElement.className += ' icon ';
 
     // Accept button
     this.button = document.createElement('button');
@@ -755,15 +747,13 @@ MessageWindowMenu.prototype.setFocus = function() {
 
 MessageWindowMenu.prototype.setType = function(type) {
     var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
-    var icons = ['', 'error', 'warning', 'info'];
-    var iconDesc = ['', gettext('Error:'), gettext('Warning:'), gettext('Info:')];
+    var icons = ['', 'icon-error', 'icon-warning', 'icon-info'];
 
     // Update title
     this.titleElement.update(titles[type]);
 
     // Update icon
-    this.icon.setAttribute('src', _currentTheme.getIconURL(icons[type]));
-    this.icon.setAttribute('alt', gettext(iconDesc[type]));
+    this.msgElement.className += ' ' + icons[type];
 }
 
 /**
@@ -776,10 +766,7 @@ function InfoWindowMenu(title) {
     WindowMenu.call(this, title);
 
     // Extra HTML Elements
-    var icon = document.createElement('img');
-    icon.setAttribute('src', _currentTheme.getIconURL('info'));
-    icon.setAttribute('alt', gettext('Info:'));
-    this.windowContent.insertBefore(icon, this.msgElement);
+    this.msgElement.className += ' icon icon-info';
 
     this.checkbox = document.createElement('input');
     Element.extend(this.checkbox);
@@ -1598,10 +1585,7 @@ function SharedWorkSpaceMenu() {
     WindowMenu.call(this, gettext('Shared WorkSpace Info'));
 
     // Extra HTML Elements
-    var icon = document.createElement('img');
-    icon.setAttribute('src', _currentTheme.getIconURL('info'));
-    icon.setAttribute('alt', gettext('Info:'));
-    this.windowContent.insertBefore(icon, this.msgElement);
+    this.msgElement.className += ' icon icon-info';
 
     // Extra HTML Elements (url and html_code)
     // Table

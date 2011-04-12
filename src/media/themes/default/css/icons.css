@@ -10,11 +10,14 @@ span.icon {
 
 .icon-catalogue { background-image: url(../images/catalogue.png); }
 .icon-dragboard { background-image: url(../images/dragboard.png); }
+.icon-error { background-image: url(../images/error.png); }
 .icon-igadget-settings { background-image: url(../images/settings.png); }
+.icon-info { background-image: url(../images/info.png); }
 .icon-mark-tab-visible { background-image: url(../images/visible.png); }
 .icon-move { background-image: url(../images/menu_move.png); }
 .icon-remove { background-image: url(../images/remove.png); }
 .icon-rename { background-image: url(../images/rename.gif); }
 .icon-show-floating { background-image: url(../images/show_floating.png); }
 .icon-tab-preferences { background-image: url(../images/preferences.png); }
+.icon-warning { background-image: url(../images/warning.png); }
 .icon-wiring { background-image: url(../images/wiring.png); }
