@@ -45,9 +45,7 @@
       <input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
       <input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut);"/>
       <div id="fixed_bar">
-        <div id="scroll_bar">
-          <div id="tab_marker" style="display:none"></div>
-        </div>
+        <div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div>
       </div>
       <input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut);"/>
     </div>
@@ -63,7 +61,7 @@
 
   <div id="wiring_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" />
+      <img class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
@@ -88,10 +86,7 @@
 <div id="catalogue_header" class="global_header" style="display:none">
   <div id="catalogue_banner" class="banner">
     <div class="logo_placeholder">
-      <img src="{{ branding.catalogue.logo.url }}" class="logo_layout">
-            {% if branding.catalogue.link %} class="logo_layout clickable"
-            {% else %} class="logo_layout" {% endif %}
-          />
+      <img class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
