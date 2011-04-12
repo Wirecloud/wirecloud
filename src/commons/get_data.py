@@ -38,7 +38,7 @@ from django.utils.translation import get_language
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
-from gadget.models import XHTML, ContextOption, UserPrefOption, Capability, VariableDef
+from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
 from igadget.models import Variable, IGadget
 from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
@@ -80,8 +80,8 @@ def _invalidate_cached_variables(igadget):
 def _populate_variables_values_cache(user):
     """ populates VariableValue cached values for that user """
     _variables_values_cache[user.id] = {}
-    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable', 'vardef'):
-        _variables_values_cache[user.id][var_value.variable.vardef.id] = var_value.value
+    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef'):
+        _variables_values_cache[user.id][var_value.variable.id] = var_value.value
 
 
 def _invalidate_cached_variable_values(user):
@@ -528,21 +528,24 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
         data_ret['icon_left'] = 0
 
     variables = _get_cached_variables(igadget)
-    data_ret['variables'] = [get_variable_data(variable, user, workspace, igadget_forced_values) for variable in variables]
+    data_ret['variables'] = {}
+    for variable in variables:
+        var_data = get_variable_data(variable, user, workspace, igadget_forced_values)
+        data_ret['variables'][variable.vardef.name] = var_data
 
     return data_ret
 
 
 def get_variable_data(variable, user, workspace, forced_values={}):
     var_def = variable.vardef
-    trans_var_def = var_def.get_translated_model()
 
     data_ret = {
         'id': variable.id,
         'name': variable.vardef.name,
-        'igadgetId': variable.igadget.id,
-        'vardefId': var_def.pk,
     }
+
+    if variable.vardef.aspect != 'PREF' and variable.vardef.aspect != 'PROP':
+        return data_ret
 
     # Variable info is splited into 2 entities: VariableDef and VariableValue
     if variable.vardef.name in forced_values:
@@ -554,7 +557,7 @@ def get_variable_data(variable, user, workspace, forced_values={}):
         if user.id not in _variables_values_cache:
             _populate_variables_values_cache(user)
 
-        data_ret['value'] = _variables_values_cache[user.id][variable.vardef.id]
+        data_ret['value'] = _variables_values_cache[user.id][variable.id]
 
     if var_def.shared_var_def:
         data_ret['shared'] = variable.shared_value != None

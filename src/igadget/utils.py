@@ -47,9 +47,9 @@ def createConnectable(var):
     connectable = None
 
     if aspect == 'SLOT':
-        connectable = Out.create(name=name, variable=var)
+        connectable = Out.objects.create(name=name, variable=var)
     if aspect == 'EVEN':
-        connectable = In.create(name=name, variable=var)
+        connectable = In.objects.create(name=name, variable=var)
 
     if connectable == None:
         return None
@@ -66,6 +66,9 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     else:
         var_value = ''
 
+    # Create Variable
+    variable = Variable.objects.create(igadget=igadget, vardef=varDef)
+
     if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
         #check if there is a shared value or set a new one
         shared_value = None
@@ -79,16 +82,13 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
                 #this VariableValue will take the previously shared value
                 var_value = shared_value.value
 
-        # Create Variable
-        variable = Variable.create(igadget=igadget, vardef=varDef)
-
-        # Creating Value for Abstract Variable
-        variableValue = VariableValue(user=user, variable=variable, value=var_value,
+        # Creating a Variable Value for this variable
+        VariableValue.objects.create(user=user, variable=variable, value=var_value,
                                       shared_var_value=shared_value)
-        variableValue.save()
 
-    #Wiring related vars (SLOT&EVENTS) have implicit connectables!
-    createConnectable(var)
+    elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVENT':
+        # Wiring related vars (SLOT&EVENTS) have implicit connectables!
+        createConnectable(variable)
 
 
 def UpgradeIGadget(igadget, user, new_gadget):
@@ -169,6 +169,9 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
     except VariableDef.DoesNotExist:
         #iGadget has no variables. It's normal
         pass
+
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(user)
 
 
 def UpdateIGadget(igadget, user, tab):

@@ -138,18 +138,25 @@ function VarManager (_workSpace) {
 		this.workspaceModifiedVars.removeById(ws_varId);
 	}
 
-	VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
-		var igadgetVars = igadget['variables'];
-		var objVars = {};
-		for (var i = 0; i<igadgetVars.length; i++) {
-			var id = igadgetVars[i].id;
-			var igadgetId = igadgetVars[i].igadgetId;
-			var name = igadgetVars[i].name;
-			var label = igadgetVars[i].label;
-			var action_label = igadgetVars[i].action_label;
-			var aspect = igadgetVars[i].aspect;
-			var value = igadgetVars[i].value;
-			var shared = igadgetVars[i].shared;
+    VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
+        var name, id, variables, variable, gadget, gadgetId, igadgetId,
+            varInfo, objVars = {};
+
+        igadgetId = igadget['id'];
+        gadgetId = igadget.gadget.substr(9).split('/').join('_');
+        gadget = ShowcaseFactory.getInstance().getGadget(gadgetId);
+        variables = gadget.getTemplate().getVariables();
+
+        for (name in variables) {
+            variable = variables[name];
+            varInfo = name in igadget.variables ? igadget.variables[name] : {};
+
+            id = varInfo.id;
+            var label = variable.label;
+			var action_label = variable.action_label;
+			var aspect = variable.aspect;
+			var value = 'value' in varInfo ? varInfo.value : '';
+			var shared = 'shared' in varInfo ? varInfo.shared : null;
 
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
@@ -165,8 +172,8 @@ function VarManager (_workSpace) {
 					break;
 				case Variable.prototype.USER_PREF:
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
-					objVars[name].readOnly = igadgetVars[i].readOnly;
-					objVars[name].hidden = igadgetVars[i].hidden;
+					objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
+					objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
 					this.variables[id] = objVars[name];
 					break;
 			}

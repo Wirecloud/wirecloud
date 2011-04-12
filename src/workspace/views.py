@@ -57,12 +57,12 @@ from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
 from workspace.utils import deleteTab, createTab, setVisibleTab
 
 
-def clone_original_variable_value(workspace, creator, new_user):
-    original_var_value = VariableValue.objects.get(workspace, user=creator)
+def clone_original_variable_value(variable, creator, new_user):
+    original_var_value = VariableValue.objects.get(variable=variable, user=creator)
 
     value = original_var_value.get_variable_value()
 
-    return VariableValue.create(user=new_user, workspace=workspace, value=value)
+    return VariableValue.objects.create(variable=variable, user=new_user, value=value)
 
 
 def getCategories(user):
@@ -519,11 +519,10 @@ class WorkSpaceVariableCollection(Resource):
             variables = simplejson.loads(received_json)
 
             igadgetVariables = variables['igadgetVars']
-            workSpaceVariables = variables['workspaceVars']
 
             variables_to_notify = []
             for igVar in igadgetVariables:
-                variable_value = VariableValue.objects.filter(user=user, variable__id = igVar['id']).select_related('variable__vardef')[0]
+                variable_value = VariableValue.objects.filter(user=user, variable__id=igVar['id']).select_related('variable__vardef')[0]
 
                 if 'shared' in igVar:
                     if not igVar['shared']:

@@ -70,10 +70,7 @@ class WorkspaceTestCase(TestCase):
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
-        for variable in variables:
-            if variable['id'] == 1:
-                self.assertEqual(variable['value'], 'new_value')
-                break
+        self.assertEqual(variables['password']['value'], 'new_value')
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
