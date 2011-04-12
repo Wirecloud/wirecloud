@@ -372,7 +372,7 @@ IGadget.prototype._updateExtractOption = function () {
 
     if (this.onFreeLayout()) {
         this.menu.updateOption(this.extractOptionId,
-            _currentTheme.getIconURL('igadget-snap'),
+            'icon-igadget-snap',
             gettext("Snap to grid"),
             function () {
                 this.toggleLayout();
@@ -384,7 +384,7 @@ IGadget.prototype._updateExtractOption = function () {
         this.extractButton.setAttribute("title", gettext("This iGadget is outside the grid."));
     } else {
         this.menu.updateOption(this.extractOptionId,
-            _currentTheme.getIconURL('igadget-extract'),
+            'icon-igadget-extract',
             gettext("Extract from grid"),
             function () {
                 this.toggleLayout();
@@ -409,7 +409,7 @@ IGadget.prototype._updateFulldragboardOption = function () {
 
     if (this.isInFullDragboardMode()) {
         this.menu.updateOption(this.fulldragboardOpId,
-            _currentTheme.getIconURL('igadget-exit_fulldragboard'),
+            'icon-igadget-exit-fulldragboard',
             gettext("Exit Full Dragboard"),
             function () {
                 LayoutManagerFactory.getInstance().hideCover();
@@ -418,7 +418,7 @@ IGadget.prototype._updateFulldragboardOption = function () {
             "hide_on_lock hide_on_minimize");
     } else {
         this.menu.updateOption(this.fulldragboardOpId,
-            _currentTheme.getIconURL('igadget-fulldragboard'),
+            'icon-igadget-fulldragboard',
             gettext("Full Dragboard"),
             function () {
                 LayoutManagerFactory.getInstance().hideCover();
@@ -849,7 +849,7 @@ IGadget.prototype._createIGadgetMenu = function () {
     this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
 
     // Settings
-    this.menu.addOption(_currentTheme.getIconURL('igadget-settings'),
+    this.menu.addOption('icon-igadget-settings',
                         gettext("Preferences"),
                         function () {
                             this.toggleConfigurationVisible();
@@ -858,7 +858,7 @@ IGadget.prototype._createIGadgetMenu = function () {
                         0);
 
     if (this.layout.dragboard.getWorkspace().isOwned()) {
-        this.menuColorEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-menu_colors'),
+        this.menuColorEntryId = this.menu.addOption('icon-igadget-menu-colors',
             gettext("Menu Bar Color..."),
             function (e) {
                 var y, menuEntry;
@@ -877,7 +877,7 @@ IGadget.prototype._createIGadgetMenu = function () {
             }.bind(this),
             1);
 
-        this.transparencyEntryId = this.menu.addOption(_currentTheme.getIconURL('igadget-transparency'),
+        this.transparencyEntryId = this.menu.addOption('icon-igadget-transparency',
             gettext("Transparency"),
             function () {
                 this.toggleTransparency();
@@ -896,21 +896,21 @@ IGadget.prototype._createIGadgetMenu = function () {
         // Initialize snap/extract options
         this._updateExtractOption();
 
-        this.lowerOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower'),
+        this.lowerOpId = this.menu.addOption('icon-igadget-lower',
             gettext("Lower"),
             function () {
                 this.layout.dragboard.lower(this);
                 LayoutManagerFactory.getInstance().hideCover();
             }.bind(this),
             this.extractOptionOrder + 1, "hide_on_lock");
-        this.raiseOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise'),
+        this.raiseOpId = this.menu.addOption('icon-igadget-raise',
             gettext("Raise"),
             function () {
                 this.layout.dragboard.raise(this);
                 LayoutManagerFactory.getInstance().hideCover();
             }.bind(this),
             this.extractOptionOrder + 2, "hide_on_lock");
-        this.lowerToBottomOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-lower_to_bottom'),
+        this.lowerToBottomOpId = this.menu.addOption('icon-igadget-lower-to-bottom',
             gettext("Lower To Bottom"),
             function () {
                 this.layout.dragboard.lowerToBottom(this);
@@ -918,7 +918,7 @@ IGadget.prototype._createIGadgetMenu = function () {
             }.bind(this),
             this.extractOptionOrder + 3, "hide_on_lock");
 
-        this.raiseToTopOpId = this.menu.addOption(_currentTheme.getIconURL('igadget-raise_to_top'),
+        this.raiseToTopOpId = this.menu.addOption('icon-igadget-raise-to-top',
             gettext("Raise To Top"),
             function () {
                 this.layout.dragboard.raiseToTop(this);
