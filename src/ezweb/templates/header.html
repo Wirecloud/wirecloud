@@ -1,129 +1,138 @@
 {% load i18n %}
 
 <div id="ws_header" class="global_header">
-	<div id="ws_banner" class="banner">
-		<div id="logo_placeholder" class="logo_placeholder">
-		  <img id="logo" class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
-	   </div>
-		<div id="toolbar_section" class="toolbar_section"></div>
-		<div id="greeting">
-			<!-- LOGS LINK -->
-			<input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-			<a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="{% trans 'About EzWeb' %}">{% trans "About EzWeb" %}</a>
-			<span> | </span>
-			<a id="preferences_link" href="#" onclick="javascript:OpManagerFactory.getInstance().showPlatformPreferences(); return false;" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
-			<span> | </span>
-			{% if is_anonymous %}
-				<a href="/accounts/login/?next=/" title="{% trans 'Sign in' %}">{% trans "Sign in" %}</a>
-				<span> | </span>
-				<span id="user_section">{% trans "anonymous" %}</span>
-			{% else %}
-				<a href="#" onclick="javascript:OpManagerFactory.getInstance().logout()" title="{% trans 'Sign out' %}">{% trans "Sign out" %}</a>
-				
-				{%if AUTHENTICATION_SERVER_URL %}
-					<span> | </span>
-					<a href="{{AUTHENTICATION_SERVER_URL}}" title="{% trans 'Profile' %}">{% trans "Profile" %}</a>
-				{%endif%}
-				
-				<span> | </span>
-				<span id="user_section">{% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
-			{% endif %}
-		</div>
-		
-	</div>
-	<div id="bar" class="bar">
-		<div id="ws_section_identifier" class="section_identifier">
-			<div id="dragboard_link" class="area_name">
-				<div id="workspace_name"></div>
-		 	</div>
-			<input id="go_to_link" class="application_selector" type="button" />
-		</div>		
-		<div id="tab_section" class="tab_section">
-			<input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
-			<input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut);"/>
-			<div id="fixed_bar"><div id="scroll_bar"><div id="tab_marker" style="display:none"></div></div></div>
-			<input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut);"/>
-		</div>
 
-		<div id="message_section" class="message_section"><span id="message_box" class="message_box"></span></div>
-	</div>
-</div>
+  <div id="ws_banner" class="banner">
+
+    <div id="logo_placeholder" class="logo_placeholder">
+      <img id="logo" class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+    </div>
+
+    <div id="toolbar_section" class="toolbar_section"></div>
+
+    <div id="greeting">
+      <!-- LOGS LINK -->
+      <input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
+      <a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="{% trans 'About EzWeb' %}">{% trans "About EzWeb" %}</a>
+      <span> | </span>
+      <a id="preferences_link" href="#" onclick="javascript:OpManagerFactory.getInstance().showPlatformPreferences(); return false;" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
+      <span> | </span>
+      {% if is_anonymous %}
+        <a href="/accounts/login/?next=/" title="{% trans 'Sign in' %}">{% trans "Sign in" %}</a>
+        <span> | </span>
+        <span id="user_section">{% trans "anonymous" %}</span>
+      {% else %}
+        <a href="#" onclick="javascript:OpManagerFactory.getInstance().logout()" title="{% trans 'Sign out' %}">{% trans "Sign out" %}</a>
+        {%if AUTHENTICATION_SERVER_URL %}
+          <span> | </span>
+          <a href="{{AUTHENTICATION_SERVER_URL}}" title="{% trans 'Profile' %}">{% trans "Profile" %}</a>
+        {%endif%}
+        <span> | </span>
+        <span id="user_section">{% if screen_name %}{{screen_name}}{% else %}{{user.username}}{% endif %}</span>
+      {% endif %}
+    </div> <!-- end of #greeting -->
+  </div> <!-- end of #ws_banner -->
+
+  <div id="bar" class="bar">
+    <div id="ws_section_identifier" class="section_identifier">
+      <div id="dragboard_link" class="area_name">
+        <div id="workspace_name"></div>
+      </div>
+      <input id="go_to_link" class="application_selector" type="button" />
+    </div>
+
+    <div id="tab_section" class="tab_section">
+      <input type="button" id="add_tab_link" title="{% trans 'Add more tabs' %}" class="toolbar_unmarked" onclick="$('add_tab_link').blur();OpManagerFactory.getInstance().activeWorkSpace.addTab();" value="{% trans 'Add Tab' %}"/>
+      <input type="button" id="right_slider" title="go left" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goLeft();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().leftTimeOut);"/>
+      <div id="fixed_bar">
+        <div id="scroll_bar">
+          <div id="tab_marker" style="display:none"></div>
+        </div>
+      </div>
+      <input type="button" id="left_slider" title="go right" style="display:none" onmouseover="LayoutManagerFactory.getInstance().goRight();" onmouseout="clearTimeout(LayoutManagerFactory.getInstance().rightTimeOut);"/>
+    </div>
+
+    <div id="message_section" class="message_section">
+      <span id="message_box" class="message_box"></span>
+    </div>
+  </div> <!-- end of #bar -->
+
+</div> <!-- end of #ws_header -->
 
 <div id="wiring_header" class="global_header" style="display:none">
 
-	<div id="wiring_banner" class="banner">
-      	<div class="logo_placeholder">
-			<img class="logo_layout" />
-      	</div>
-		<div class="toolbar_section">
-			
-		    <div class="toolbar_menu">
-		      <div id="wiring_dragboard_link" class="first_toolbar_button">
-		      	<img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
-			  </div>
-				<div id="wiring_operate_link" class="last_toolbar_button selected_section">{% trans 'Operate' %}</div>
-		    </div>
-			<div class="toolbar_menu_small visible">
-				<div class="first_toolbar_button" id="newChannel">{% trans 'New channel' %}</div>
-				<div class="last_toolbar_button " id="unfold_all_link">{% trans 'Unfold all' %}</div>
-			</div>
-		  </div>
-	</div>
-	<div class="bar">
-		<div class="section_identifier">
-			<div class="area_name">{% trans 'Wiring' %}</div>
-		</div>
-	</div>
-</div>
+  <div id="wiring_banner" class="banner">
+    <div class="logo_placeholder">
+      <img class="logo_layout" />
+    </div>
+    <div class="toolbar_section">
+      <div class="toolbar_menu">
+        <div id="wiring_dragboard_link" class="first_toolbar_button">
+          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
+        </div>
+        <div id="wiring_operate_link" class="last_toolbar_button selected_section">{% trans 'Operate' %}</div>
+      </div>
+      <div class="toolbar_menu_small visible">
+        <div class="first_toolbar_button" id="newChannel">{% trans 'New channel' %}</div>
+        <div class="last_toolbar_button " id="unfold_all_link">{% trans 'Unfold all' %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="bar">
+    <div class="section_identifier">
+      <div class="area_name">{% trans 'Wiring' %}</div>
+    </div>
+  </div> <!-- end of #wiring_banner -->
+</div> <!-- end of #wiring_header -->
 
 <div id="catalogue_header" class="global_header" style="display:none">
-	<div id="catalogue_banner" class="banner">
-	  <div class="logo_placeholder">
-		  <img src="{{ branding.catalogue.logo.url }}" 
-			{% if branding.catalogue.link %} class="logo_layout clickable"
-			{% else %} class="logo_layout" {% endif %} 
-		  />
-	  </div>
-	  <div class="toolbar_section">
-	    <div class="toolbar_menu">
-	      <div id="catalogue_dragboard_link" class="first_toolbar_button">
-	      	<img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
-		  </div>	      
-	      <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
-	      <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
-	    </div>
-	  </div>
-	</div>
-	<div class="bar" id="catalogue_nav_bar">
-	   <div class="section_identifier">
-			<div class="area_name">{% trans 'Gallery' %}</div>
-	   </div>
-		
-		<div class="tab_section">
-		  <div id="gadgets_button" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
-		  <div id="mashups_button" class="tab"><span>{% trans 'Applications' %}</span></div>
-		</div>
-	</div>
-</div>
+  <div id="catalogue_banner" class="banner">
+    <div class="logo_placeholder">
+      <img src="{{ branding.catalogue.logo.url }}" class="logo_layout">
+            {% if branding.catalogue.link %} class="logo_layout clickable"
+            {% else %} class="logo_layout" {% endif %}
+          />
+    </div>
+    <div class="toolbar_section">
+      <div class="toolbar_menu">
+        <div id="catalogue_dragboard_link" class="first_toolbar_button">
+          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
+        </div>
+        <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
+        <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
+      </div>
+    </div>
+  </div>
+  <div class="bar" id="catalogue_nav_bar">
+    <div class="section_identifier">
+      <div class="area_name">{% trans 'Gallery' %}</div>
+    </div>
+
+    <div class="tab_section">
+      <div id="gadgets_button" class="tab current"><span>{% trans 'Gadgets' %}</span></div>
+      <div id="mashups_button" class="tab"><span>{% trans 'Applications' %}</span></div>
+    </div>
+  </div> <!-- end of #catalogue_banner -->
+</div> <!-- end of #catalogue_header -->
 
 <div id="logs_header" class="global_header" style="display:none">
-    <div class="banner">
-        <div class="toolbar_section">
-            <div class="toolbar_menu">
-                <div id="logs_dragboard_link" class="first_toolbar_button">
-                    <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
-                </div>
-                <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
-                <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>
-            </div>
-            <div class="toolbar_menu_small visible">
-                <div class="first_toolbar_button" id="logs_clear_button">{% trans 'Clear' %}</div>
-                <div class="last_toolbar_button" id="logs_save_button">{% trans 'Save' %}</div>
-            </div>
+  <div class="banner">
+    <div class="toolbar_section">
+      <div class="toolbar_menu">
+        <div id="logs_dragboard_link" class="first_toolbar_button">
+          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
-        <div class="title"></div>
+        <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
+        <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>
+      </div>
+      <div class="toolbar_menu_small visible">
+        <div class="first_toolbar_button" id="logs_clear_button">{% trans 'Clear' %}</div>
+        <div class="last_toolbar_button" id="logs_save_button">{% trans 'Save' %}</div>
+      </div>
     </div>
-    <div class="bar">
-        <div class="area_name"><div class="section_identifier"></div></div>
-    </div>
-</div>
+    <div class="title"></div>
+  </div>
+  <div class="bar">
+    <div class="area_name"><div class="section_identifier"></div></div>
+  </div>
+</div> <!-- end of #logs_header -->
