@@ -232,9 +232,6 @@ function WorkSpace (workSpaceState) {
         //catalogue, wiring and workspace.
         this._initAllToolbars();
 
-        var branding = this.workSpaceGlobalInfo['workspace']['branding']
-        this.brandingManager.setBranding(branding);
-
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
         LogManagerFactory.getInstance().log(gettext('workspace loaded'), Constants.Logging.INFO_MSG);
@@ -1208,9 +1205,6 @@ function WorkSpace (workSpaceState) {
 
     //banner
     this.headerHTML = $('ws_header');
-
-    this.brandingManager = new BrandingManager();
-
 
     /*
      * OPERATIONS

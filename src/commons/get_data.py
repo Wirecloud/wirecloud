@@ -538,18 +538,6 @@ def get_global_workspace_data(workSpaceDAO, user):
     filters = Filter.objects.all()
     data_ret['workspace']['filters'] = [get_filter_data(f) for f in filters]
 
-    # Branding information
-    data_ret["workspace"]["branding"] = {
-        'logo': {
-            'url': u'http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png',
-            'class': u'logo',
-            },
-        'viewer_logo': {
-            'url': u'http://ezweb.tid.es/ezweb/themes/darkBlue/images/Open_Ez_Logo.png',
-            'class': u'viewer_logo',
-            }
-        }
-
     # Params
     last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
     if len(last_published_workspace) > 0:
