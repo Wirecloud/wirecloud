@@ -154,31 +154,28 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
     icon_position = Position(posX=icon_left, posY=icon_top)
     icon_position.save()
 
-    # Creates the new IGadget
-    try:
-        # Gadget uri does not contain the prefix "/user" yet
-        if gadget_uri.startswith("/user") or gadget_uri.startswith("user"):
-            gadget_uri_parts = gadget_uri.split("/")
-            gadget_uri = "/" + "/".join(gadget_uri_parts[gadget_uri_parts.index("gadgets"):])
+    # Gadget uri does not contain the prefix "/user" yet
+    if gadget_uri.startswith("/user") or gadget_uri.startswith("user"):
+        gadget_uri_parts = gadget_uri.split("/")
+        gadget_uri = "/" + "/".join(gadget_uri_parts[gadget_uri_parts.index("gadgets"):])
 
-        gadget = Gadget.objects.get(uri=gadget_uri, users=user)
+    gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-        new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
-        new_igadget.save()
+    new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
+    new_igadget.save()
 
-        variableDefs = VariableDef.objects.filter(gadget=gadget)
-        for varDef in variableDefs:
-            if initial_variable_values and varDef.name in initial_variable_values:
-                initial_value = initial_variable_values[varDef.name]
-            else:
-                initial_value = None
-            addIGadgetVariable(new_igadget, user, varDef, initial_value)
+    variableDefs = VariableDef.objects.filter(gadget=gadget)
+    for varDef in variableDefs:
+        if initial_variable_values and varDef.name in initial_variable_values:
+            initial_value = initial_variable_values[varDef.name]
+        else:
+            initial_value = None
+        addIGadgetVariable(new_igadget, user, varDef, initial_value)
 
-        return new_igadget
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(user)
 
-    except VariableDef.DoesNotExist:
-        #iGadget has no variables. It's normal
-        pass
+    return new_igadget
 
     from commons.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(user)
