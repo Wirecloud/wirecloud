@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="" />
+<title>añadirGadgetGaleriaWgt</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">añadirGadgetGaleriaWgt</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/accounts/login/?next=/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[2]/div[4]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>The resource could not be added to the catalogue: Error deploying packaged gadget into catalogue: [] Key 'file' not found in </td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Morfeo_Calendar_Viewer.wgt</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Calendar Viewer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Morfeo_Cliente_Correo.wgt</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Cliente Correo</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Morfeo_FeedList.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>FeedList</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Morfeo_FeedReader.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>FeedReader</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Alfresco_Espacios.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Alfresco Espacios</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Alfresco_Tareas.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Alfresco Tareas</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Availability_Viewer.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Availability Viewer</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Callejero.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Callejero</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Editor_de_Documentos.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Editor de Documentos</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Gestor_de_Contactos.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Gestor de Contactos</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Mapea.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Mapea</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Visor_de_Documentos.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>Visor de Documentos</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/admin/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Gadget resources</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>action-toggle</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>action</td>
+	<td>label=Delete selected gadget resources</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>index</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>//input[@value=&quot;Yes, I'm sure&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Log out</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
