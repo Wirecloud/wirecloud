@@ -54,6 +54,10 @@ class PackageLinker:
             # Linking each new VariableValue to the user argument
             self.update_user_variable_values(abstract_var_list, user, creator)
 
+    def unlink_workspace(self, workspace, user):
+        user_workspace = UserWorkSpace.objects.filter(workspace=workspace, user=user)
+        user_workspace.delete()
+
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
         ws_igadget_vars = Variable.objects.filter(igadget__tab__workspace=workspace)
