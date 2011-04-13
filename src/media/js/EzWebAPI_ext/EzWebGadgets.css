@@ -431,10 +431,11 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .notebook .tab_area {
   position: relative;
-  margin: 0 16px;
+  margin: 0 35px 0 0;
   overflow: hidden;
   white-space: nowrap;
   z-index: 2;
+  height: 22px;
 }
 
 .notebook .tab_area .tab {
@@ -741,11 +742,6 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .notebook .tab_wrapper {
   font-size: 16px;
-}
-
-.notebook .tab_area {
-  margin: 0 16px;
-  height: 22px;
 }
 
 .notebook .tab_area .tab {
