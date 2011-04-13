@@ -30,14 +30,22 @@ from django.utils._os import safe_join
 DEFAULT_THEME = 'defaulttheme'
 
 
-def get_active_theme_dir(dir_type):
+def get_active_theme_name():
     try:
-        active_theme = settings.THEME_ACTIVE
+        return settings.THEME_ACTIVE
     except AttributeError:
-        active_theme = DEFAULT_THEME
+        return DEFAULT_THEME
+
+
+def active_theme_context_processor(request):
+    return {'THEME_ACTIVE': get_active_theme_name()}
+
+
+def get_active_theme_dir(dir_type):
+    active_theme_name = get_active_theme_name()
 
     try:
-        active_theme_module = __import__(active_theme)
+        active_theme_module = __import__(active_theme_name)
     except ImportError:
         return
 
