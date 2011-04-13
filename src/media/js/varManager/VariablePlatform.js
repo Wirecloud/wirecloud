@@ -105,8 +105,6 @@ Variable.prototype.USER_PREF = "PREF"
 Variable.prototype.PROPERTY = "PROP"
 Variable.prototype.EXTERNAL_CONTEXT = "ECTX"
 Variable.prototype.GADGET_CONTEXT = "GCTX"
-Variable.prototype.INOUT = "CHANNEL"
-Variable.prototype.TAB = "TAB"
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RVARIABLE (Derivated class) <<PLATFORM>>

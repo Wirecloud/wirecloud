@@ -333,11 +333,10 @@ wInOut.prototype.fullDisconnect = function() {
  * @param variable
  * @param type
  * @param friendCode
- * @param id
  */
-function wEvent(variable, type, friendCode, id) {
+function wEvent(variable, type, friendCode) {
 	this.variable = variable;
-	wIn.call(this, this.variable.name, type, friendCode, id);
+	wIn.call(this, this.variable.name, type, friendCode, this.variable.id);
 	this.variable.assignConnectable(this);
 }
 
@@ -364,17 +363,16 @@ wEvent.prototype.getValue = function() {
  * @param id
  * @param provisional_id
  */
-function wChannel (variable, name, id, provisional_id, readOnly) {
-	this.variable = variable;
+function wChannel(name, id, provisional_id, readOnly) {
 	this.provisional_id=provisional_id;
 	wInOut.call(this, name, null, null, id);
-	this.variable.assignConnectable(this);
 	this.filter = null;
 	this.filterParams = new Array();
 	this.remoteSubscription = null;
 	this.readOnly = readOnly;
 	this.annotated = true;
-	this.valueWithoutFilter = null;
+	this.value = '';
+	this.valueWithoutFilter = '';
 }
 wChannel.prototype = new wInOut();
 
@@ -439,26 +437,23 @@ wChannel.prototype.setFilter = function(newFilter) {
  * @param {string} value new value for this <code>wChannel</code>
  */
 wChannel.prototype._annotate = function(value, source, options) {
-	//Get the real value (filtered if necessary)
-	var oldValue = this.variable.get();
+	var oldValue = this.valueWithoutFilter;
 	this.valueWithoutFilter = value;
 
 	try {
-		if (!options.initial)
+		if (!options.initial) {
 			this._markInputAsModified(source);
-		else
+		} else {
 			this._markAllInputsAsModified(source);
+		}
 
 		//getValue applys filter if needed!
-		var filteredValue = this.getValue(true);
-		this.variable.set(filteredValue);
+		this.value = this.getValue(true);
 		this.annotated = true;
-	}
-	catch (err) {
+	} catch (err) {
 		if (err.name == "DONT_PROPAGATE") {
-			//Exception getting value from channel => there is a filter which cannot continue
-			//When a filter throws an Exception, the old value is restored and it is marked as not annotated
-			this.variable.set(oldValue);
+			// Exception getting value from channel => there is a filter which cannot continue
+			this.valueWithoutFilter = oldValue;
 			this.annotated = false;
 			return;
 		}
@@ -466,10 +461,10 @@ wChannel.prototype._annotate = function(value, source, options) {
 		var msg = interpolate(gettext("Error committing dragboard changes to persistence: %(errorMsg)s."), {errorMsg: err.msg}, true);
 		LogManagerFactory.getInstance().log(msg);
 		return;
-		
 	}
+
 	if (this.annotated) {
-		wInOut.prototype._annotate.call(this, filteredValue, source, options);
+		wInOut.prototype._annotate.call(this, this.value, source, options);
 	}
 }
 
@@ -511,9 +506,9 @@ wChannel.prototype.notifyRemoteChannel = function(value) {
 		return;
 	}
 
-	var workspace = this.variable.getWorkspace();
+	var workspace = OpManagerFactory.getInstance().activeWorkSpace;
 	var remote_channel_id = this.remoteSubscription.getID();
-	
+
 	workspace.remoteChannelManager.publish_channel_value(remote_channel_id, value);
 }
 
@@ -521,12 +516,10 @@ wChannel.prototype.notifyRemoteChannel = function(value) {
  * @param newValue new value for this <code>wChannel</code>
  */
 wChannel.prototype.propagate = function(newValue, options) {
-	//if there was a filter, its value had been extracted in the annotate method
-	value = this.variable.get();
-
-	if (this.annotated) { //it must be propagated
-		this.notifyRemoteChannel(value);
-		wInOut.prototype.propagate.call(this, value, options);
+	if (this.annotated) {
+		//it must be propagated
+		this.notifyRemoteChannel(this.value);
+		wInOut.prototype.propagate.call(this, this.value, options);
 	}
 	this.annotated = true;
 }
@@ -604,12 +597,11 @@ wTab.prototype.getQualifiedName = function () {
  * @param variable
  * @param type
  * @param friendCode
- * @param id
  */
-function wSlot(variable, type, friendCode, id) {
+function wSlot(variable, type, friendCode) {
 	this.variable = variable;
 	this.variable.assignConnectable(this);
-	wOut.call(this, this.variable.name, type, friendCode, id);
+	wOut.call(this, this.variable.name, type, friendCode, this.variable.id);
 }
 wSlot.prototype = new wOut();
 

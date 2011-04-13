@@ -44,17 +44,6 @@ function VarManager (_workSpace) {
 				this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
 			}
 		}
-		
-		// Workspace variables (Connectables and future variables!)
-		var ws_vars = workSpaceInfo['workspace']['workSpaceVariableList'];
-				
-		this.parseWorkspaceVariables(ws_vars);
-	}
-
-	VarManager.prototype.parseWorkspaceVariables = function (ws_vars) {
-		for (var i = 0; i<ws_vars.length; i++) {
-			this.parseWorkspaceVariable(ws_vars[i]);
-		}
 	}
 
 	/**
@@ -115,27 +104,6 @@ function VarManager (_workSpace) {
 			PersistenceEngineFactory.getInstance().send(uri, options);
 			this.resetModifiedVariables();
 		}
-	}
-
-	VarManager.prototype.parseWorkspaceVariable = function (ws_var) {
-		var id = ws_var.id;
-		var name = ws_var.name;
-		var aspect = ws_var.aspect;
-		var value = ws_var.value;
-			
-		switch (aspect) {
-			case Variable.prototype.INOUT:
-				this.workspaceVariables[id] = new RWVariable(id, null, name, aspect, this, value);
-				break;
-			case Variable.prototype.TAB:
-				this.workspaceVariables[id] = new RVariable(id, null, name, aspect, this, value);
-				break;
-		}	
-	}
-	
-	VarManager.prototype.removeWorkspaceVariable = function (ws_varId) {
-		delete this.workspaceVariables[ws_varId];
-		this.workspaceModifiedVars.removeById(ws_varId);
 	}
 
     VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {

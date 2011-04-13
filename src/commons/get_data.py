@@ -299,11 +299,10 @@ def get_remote_subscription_data(connectable):
 def get_connectable_data(connectable):
     res_data = {}
 
-    res_data['id'] = connectable.id
-    res_data['name'] = connectable.name
-
     if isinstance(connectable, InOut):
         connectable_type = "inout"
+        res_data['id'] = connectable.id
+        res_data['name'] = connectable.name
 
         # Locating IN connectables linked to this connectable
         res_data['ins'] = []
@@ -325,23 +324,23 @@ def get_connectable_data(connectable):
         for related_inout in related_inouts:
             res_data['out_inouts'].append(related_inout.out_inout_id)
 
-        #Locating the filter linked to this conectable!
+        # Locating the filter linked to this conectable!
         res_data['filter'] = connectable.filter_id
         res_data['filter_params'] = connectable.filter_param_values
 
-        #RemoteChannel data
+        # RemoteChannel data
         res_data['remote_subscription'] = get_remote_subscription_data(connectable)
 
-        #ReadOnly data
+        # ReadOnly data
         res_data['readOnly'] = connectable.readOnly
 
     elif isinstance(connectable, Out):
         connectable_type = "out"
-        res_data['vardef'] = connectable.vardef
+        res_data['var_id'] = connectable.variable.id
 
     elif isinstance(connectable, In):
         connectable_type = "in"
-        res_data['vardef'] = connectable.vardef
+        res_data['var_id'] = connectable.variable.id
 
     res_data['connectable_type'] = connectable_type
 
@@ -472,7 +471,7 @@ def get_global_workspace_data(workSpaceDAO, user):
         tab['igadgetList'] = igadget_data
 
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
-    data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
+    data_ret['workspace']['channels'] = workspace_variables_data
 
     # Filter information
     filters = Filter.objects.all()

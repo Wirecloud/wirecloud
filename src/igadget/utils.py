@@ -51,9 +51,6 @@ def createConnectable(var):
     if aspect == 'EVEN':
         connectable = In.objects.create(name=name, variable=var)
 
-    if connectable == None:
-        return None
-
     return connectable
 
 

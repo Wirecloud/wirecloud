@@ -282,7 +282,7 @@ WiringInterface.prototype.saveWiring = function () {
 WiringInterface.prototype._addTab = function (tab) {
 	var tabEvents, tabSlots, igadgets, i;
 
-        tabEvents = new EventTabInterface(tab, this);
+    tabEvents = new EventTabInterface(tab, this);
 	this.eventTabs.add(tabEvents);
 
 	tabSlots = new SlotTabInterface(tab, this);

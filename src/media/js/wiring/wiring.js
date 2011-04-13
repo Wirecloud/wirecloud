@@ -56,86 +56,56 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 * @param {JSON} varData json from persistence representing a variable.
 	 */
 	Wiring.prototype.processVar = function (varData) {
-		var varManager = this.workspace.getVarManager();
-		var variable = varManager.getWorkspaceVariableById(varData.id);
+        var varManager, readOnly, channel, remote_subscription, fParams;
 
-		if (varData.aspect == "TAB" && varData.connectable) {
-			var connectableId = varData.connectable.id;
-			var tab_id = varData.tab_id;
+        varManager = this.workspace.getVarManager();
+        readOnly = varData.readOnly;
+        channel = new wChannel(varData.name, varData.id, false, readOnly);
 
-			var tab = this.workspace.getTab(tab_id);
+        // Setting channel filter
+        channel.setFilter(this.filters[varData.filter]);
+        
+        // Setting channel remote operation data
+        remote_subscription = new RemoteSubscription(varData.remote_subscription);
+        channel.setRemoteSubscription(remote_subscription);
 
-			var connectable = new wTab(variable, varData.name, tab, connectableId);
+        if (varData.filter_params) {
+            fParams = JSON.parse(varData.filter_params);
+        } else {
+            fParams = []
+        }
 
-			tab.connectable = connectable;
-		}
+        channel.setFilterParams(fParams);
 
-		if (varData.aspect == "CHANNEL" && varData.connectable) {
-			var connectableId = varData.connectable.id;
-			var readOnly = varData.connectable.readOnly;
-			var channel = new wChannel(variable, varData.name, connectableId, false, readOnly);
+        // Connecting channel input
+        var connectable_ins = varData.ins;
+        for (var j = 0; j < connectable_ins.length; j++) {
+            // Input can be: {wEvent}
+            var current_input = connectable_ins[j];
 
-			// Setting channel filter
-			channel.setFilter(this.filters[varData.connectable.filter]);
-			
-			// Setting channel remote operation data
-			var remote_subscription = new RemoteSubscription(varData.connectable.remote_subscription);
-			channel.setRemoteSubscription(remote_subscription);
+            var in_connectable = null;
+            var var_id = current_input.var_id;
+            in_connectable = varManager.getVariableById(var_id).getConnectable();
 
-			var fParams = varData.connectable.filter_params;
+            in_connectable.connect(channel);
+        }
 
-			if (fParams)
-				fParams = JSON.parse(fParams);
-			else
-				fParams = []
+        // Connecting channel output (except connections to wChannels)
+        var connectable_outs = varData.outs;
+        for (var j = 0; j < connectable_outs.length; j++) {
+            // Outputs can be: {wSlot}
+            var current_output = connectable_outs[j];
 
-			channel.setFilterParams(fParams);
+            var out_connectable = null;
+            var var_id = current_output.var_id;
+            out_connectable = varManager.getVariableById(var_id).getConnectable();
 
-			// Connecting channel input
-			var connectable_ins = varData.connectable.ins;
-			for (var j = 0; j < connectable_ins.length; j++) {
-				// Input can be: {wEvent}
-				var current_input = connectable_ins[j];
+            channel.connect(out_connectable);
+        }
 
-				var in_connectable = null;
-				if (current_input.connectable_type == "in") {
-					var var_id = current_input.ig_var_id;
-					in_connectable = varManager.getVariableById(var_id).getConnectable();
-				} else {
-					var msg = gettext("Error in processVar: Channel input connectables can only be events.");
-					LogManagerFactory.getInstance().log(msg);
-				}
-
-				in_connectable.connect(channel);
-			}
-
-			// Connecting channel output (except connections to wChannels)
-			var connectable_outs = varData.connectable.outs;
-			for (var j = 0; j < connectable_outs.length; j++) {
-				// Outputs can be: {wSlot, wTab}
-				var current_output = connectable_outs[j];
-
-				var out_connectable = null;
-				if (current_output.connectable_type == "out") {
-					if (current_output.ig_var_id) {
-						var var_id = current_output.ig_var_id;
-						out_connectable = varManager.getVariableById(var_id).getConnectable();
-					} else {
-						var var_id = current_output.ws_var_id;
-						out_connectable = varManager.getWorkspaceVariableById(var_id).getConnectable();
-					}
-				} else {
-					var msg = gettext("Error in processVar: Channel output connectables can only be slots or tabs.");
-					LogManagerFactory.getInstance().log(msg);
-				}
-
-				channel.connect(out_connectable);
-			}
-
-			// Save it on the channel list
-			this.channels.push(channel);
-			this.channelsById[channel.getId()] = channel;
-		}
+        // Save it on the channel list
+        this.channels.push(channel);
+        this.channelsById[channel.getId()] = channel;
 	}
 
 	/**
@@ -144,23 +114,22 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 * Connects channels with other channels.
 	 */
 	Wiring.prototype._connectInouts = function (varData) {
-		var channel = this.channelsById[varData.connectable.id];
-		var varManager = this.workspace.getVarManager();
-		var connectable_inouts = varData.connectable.out_inouts;
+		var channel = this.channelsById[varData.id];
+		var connectable_inouts = varData.out_inouts;
 
 		for (var j = 0; j < connectable_inouts.length; j++) {
-			var out_inout = this.channelsById[connectable_inouts[j]];
-				if (!channel.isConnectable(out_inout)) {
-					var msg = gettext("Wiring: Loop detected while recovering wiring status from persistence.\nOutput connection to channel \"%(targetChannel)s\" from channel \"%(sourceChannel)s\" will be ignored.");
-					msg = interpolate(msg,
-					                  {sourceChannel: channel.getName(),
-					                   targetChannel: out_inout.getName()},
-					                  true);
+            var out_inout = this.channelsById[connectable_inouts[j]];
+            if (!channel.isConnectable(out_inout)) {
+                var msg = gettext("Wiring: Loop detected while recovering wiring status from persistence.\nOutput connection to channel \"%(targetChannel)s\" from channel \"%(sourceChannel)s\" will be ignored.");
+                msg = interpolate(msg,
+                                  {sourceChannel: channel.getName(),
+                                   targetChannel: out_inout.getName()},
+                                  true);
 
-					LogManagerFactory.getInstance().log(msg, Constants.Logging.WARN_MSG);
-					continue;
-				}
-				channel.connect(out_inout);
+                LogManagerFactory.getInstance().log(msg, Constants.Logging.WARN_MSG);
+                continue;
+            }
+            channel.connect(out_inout);
 		}
 	}
 
@@ -172,26 +141,30 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 */
 	Wiring.prototype._loadWiring = function (workSpaceData) {
 		var workSpace = workSpaceData['workspace'];
-		var ws_vars_info = workSpace['workSpaceVariableList']; 
+		var ws_vars_info = workSpace['channels'];
 		var tabs = workSpace['tabList'];
 		var filters = workSpace['filters'];
+		var i;
 
-		for (var i = 0; i < tabs.length; i++)
+		for (i = 0; i < tabs.length; i++) {
 			this.processTab(tabs[i]);
+		}
 
 		// Load all platform filters.
 		// WARNING: Filters must be loaded before workspace variables
-		for (var i = 0; i < filters.length; i++)
+		for (i = 0; i < filters.length; i++) {
 			this.processFilter(filters[i]);
+		}
 
 		// Load WorkSpace variables
-		for (var i = 0; i < ws_vars_info.length; i++)
+		for (i = 0; i < ws_vars_info.length; i++) {
 			this.processVar(ws_vars_info[i]);
+		}
 
 		// Load inter-channel connections
-		for (var i = 0; i < ws_vars_info.length; i++)
-			if (ws_vars_info[i].aspect == "CHANNEL")
-				this._connectInouts(ws_vars_info[i]);
+		for (i = 0; i < ws_vars_info.length; i++) {
+			this._connectInouts(ws_vars_info[i]);
+		}
 
 		this.loaded = true;
 	}
@@ -244,41 +217,46 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			entry.slots[i].variable.setHandler(null);
 	}
 
-	Wiring.prototype.addInstance = function (igadget, variables) {
-		var varManager = this.workspace.getVarManager();
-		var gadgetEntry = new Object();
-		var iGadgetId = igadget.getId();
+	Wiring.prototype.addInstance = function (igadget) {
+		var varManager, iGadgetId, gadgetEntry, var_name, variableDef,
+		    variables, variable, connectable;
+
 
 		if (this.iGadgets[iGadgetId]) {
 			var msg = gettext("Error adding iGadget into the wiring module of the workspace: Gadget instance already exists.");
 			LogManagerFactory.getInstance().log(msg);
 		}
 
-		gadgetEntry.events = new Array();
-		gadgetEntry.slots = new Array();
-		gadgetEntry.connectables = new Array();
+		varManager = this.workspace.getVarManager();
+		iGadgetId = igadget.getId();
+		variables  = igadget.getGadget().getTemplate().getVariables();
+
+		gadgetEntry = {
+		    events: [],
+		    slots: [],
+		    connectables: []
+		};
 
 		// IGadget variables
-		for (var i = 0; i < variables.length; i++) {
-			var variableData = variables[i];
-			var variable = varManager.getVariableByName(variableData.igadgetId, variableData.name);
+		for (var_name in variables) {
+			variableDef = variables[var_name];
+			variable = varManager.getVariableByName(iGadgetId, variableDef.name);
 
-			if (variable.aspect == "EVEN" && variableData.connectable) {
-				var connectableId = variableData.connectable.id;
-				var connectable = new wEvent(variable, variableData.type, variableData.friend_code, connectableId);
+			switch (variable.aspect) {
+			case "EVEN":
+				connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
 
 				gadgetEntry.events.push(connectable);
-				gadgetEntry.connectables.push(connectable);
-			}
-
-			if (variable.aspect == "SLOT" && variableData.connectable) {
-				var connectableId = variableData.connectable.id;
-				var connectable = new wSlot(variable, variableData.type, variableData.friend_code, connectableId);
+				break;
+			case "SLOT":
+				connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
 
 				gadgetEntry.slots.push(connectable);
-				gadgetEntry.connectables.push(connectable);
+				break;
+			default:
+				continue;
 			}
-
+			gadgetEntry.connectables.push(connectable);
 		}
 
 		this.iGadgets[iGadgetId] = gadgetEntry;
@@ -370,11 +348,10 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			return;
 		}
 
-		var channelVar = this.workspace.getVarManager().createWorkspaceVariable(channelName);
 		var channelId = this._newProvisionalChannelId();
 
 		//create a channel. Params: variable, name, id, provisional id, readOnly
-		var channel = new wChannel(channelVar, channelName, channelId, true, false);
+		var channel = new wChannel(channelName, channelId, true, false);
 		this.channels.push(channel);
 
 		// Save it on the provisional channel list
@@ -390,9 +367,6 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 *        this wiring instance.
 	 */
 	Wiring.prototype.removeChannel = function (channel) {
-		// Delete the workspace variable
-		this.workspace.getVarManager().removeWorkspaceVariable(channel.variable.id);
-
 		// Mark it to remove from persistence
 		this.channelsForRemoving.push(channel.getId());
 
@@ -408,13 +382,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 	 * use any more.
 	 */
 	Wiring.prototype.unload = function () {
-		var varManager = this.workspace.getVarManager();
-
 		for (var i = 0; i < this.channels.length; i++) {
 			var channel = this.channels[i];
-
-			varManager.removeWorkspaceVariable(channel.variable.id);
-
 			channel.destroy();
 		}
 
@@ -429,17 +398,15 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 		var response = transport.responseText;
 		var json = JSON.parse(response);
 
-		var mappings = json['ids'];
+		var provisional_id, new_id, mappings = json['ids'];
 		for (var provisional_id in mappings) {
-			var mapping = mappings[provisional_id];
+			var new_id = mappings[provisional_id];
 
 			var curChannel = this.provisionalChannels[provisional_id];
 			delete this.provisionalChannels[provisional_id];
 
-			curChannel.id = mapping.new_id;
+			curChannel.id = new_id;
 			curChannel.provisional_id = false;
-			curChannel.variable.id = mapping.new_wv_id;
-			this.workspace.getVarManager().addWorkspaceVariable(mapping.new_wv_id, curChannel.variable);
 		}
 
 		var mappings = json['urls'];
@@ -490,7 +457,6 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			serialized_channel['name'] = channel._name;
 			serialized_channel['type'] = channel._type;
 			serialized_channel['friend_code'] = channel._friendCode;
-			serialized_channel['var_id'] = channel.variable.id;
 			serialized_channel['provisional_id'] = channel.provisional_id;
 			serialized_channel['readOnly'] = channel.readOnly;
 			if (channel.getFilter() == null)

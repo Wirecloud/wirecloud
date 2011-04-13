@@ -178,14 +178,14 @@ class ConnectableEntry(Resource):
                 # In connections
                 # InOut out connections will be created later
                 for inputId in new_channel_data.get('ins', []):
-                    connectable = In.objects.get(id=inputId)
+                    connectable = In.objects.get(variable__id=inputId)
                     connectable.inouts.add(channel)
                     connectable.save()
 
                 # Out connections
                 # InOut out connections will be created later
                 for outputId in new_channel_data.get('outs', []):
-                    connectable = Out.objects.get(id=outputId)
+                    connectable = Out.objects.get(variable__id=outputId)
                     connectable.inouts.add(channel)
                     connectable.save()
 
