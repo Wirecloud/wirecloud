@@ -169,13 +169,13 @@ def cloneWorkspace(workspace_id, user):
 def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
     packageLinker = PackageLinker()
 
-    packageLinker.link_workspace(workspace, user, creator, link_variable_values)
+    return packageLinker.link_workspace(workspace, user, creator, link_variable_values)
 
 
 def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
     workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-    linkWorkspaceObject(user, workspace, creator, link_variable_values)
+    return linkWorkspaceObject(user, workspace, creator, link_variable_values)
 
 
 class WorkSpaceCollection(Resource):
