@@ -2,8 +2,8 @@
 {% load i18n %}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.lite }}" />
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.lite }}" />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb_lite.css"  />
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/ezweb_lite.css" />
 {% endblock %}
 
 {% block workspace_header %}
@@ -101,5 +101,4 @@
     <div class="area_name"><div class="section_identifier"></div></div>
   </div>
 </div>
-{% endblock %}
 {% endblock %}
