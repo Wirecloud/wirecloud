@@ -12,8 +12,8 @@ from commons.get_data import get_global_workspace_data
 from connectable.models import InOut
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import WorkSpace, UserWorkSpace, Tab
-from workspace.views import createEmptyWorkSpace
+from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
+from workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
 class WorkspaceTestCase(TestCase):
@@ -63,6 +63,22 @@ class WorkspaceTestCase(TestCase):
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], 'new_value')
+
+    def testLinkWorkspace(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        alternative_user = User.objects.get(username='test2')
+        new_workspace = linkWorkspace(alternative_user, workspace.id, self.user)
+
+        all_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=workspace)
+        initial_vars = all_variables.filter(user=self.user)
+        cloned_vars = all_variables.filter(user=alternative_user)
+
+        self.assertEqual(new_workspace.user, alternative_user)
+        self.assertEqual(workspace.creator, self.user)
+        self.assertEqual(new_workspace.workspace, workspace)
+        self.assertEqual(initial_vars.count(), cloned_vars.count())
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
