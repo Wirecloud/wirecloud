@@ -38,7 +38,19 @@ class Migration(SchemaMigration):
         # Changing field 'VariableValue.value'
         db.alter_column('workspace_variablevalue', 'value', self.gf('django.db.models.fields.TextField')(default=''))
 
+        # Adding unique constraint on 'VariableValue', fields ['variable', 'user']
+        db.create_unique('workspace_variablevalue', ['variable_id', 'user_id'])
+
+        # Adding unique constraint on 'Tab', fields ['name', 'workspace']
+        db.create_unique('workspace_tab', ['name', 'workspace_id'])
+
     def backwards(self, orm):
+
+        # Removing unique constraint on 'Tab', fields ['name', 'workspace']
+        db.delete_unique('workspace_tab', ['name', 'workspace_id'])
+
+        # Removing unique constraint on 'VariableValue', fields ['variable', 'user']
+        db.delete_unique('workspace_variablevalue', ['variable_id', 'user_id'])
 
         # Adding model 'WorkSpaceVariable'
         db.create_table('workspace_workspacevariable', (

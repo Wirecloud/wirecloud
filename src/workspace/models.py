@@ -144,6 +144,9 @@ class VariableValue(models.Model):
     value = models.TextField(_('Value'), blank=True)
     shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
 
+    class Meta:
+        unique_together = ('variable', 'user')
+
     def get_variable_value(self):
         if self.shared_var_value != None:
             return self.shared_var_value.value
@@ -163,6 +166,9 @@ class Tab(models.Model):
 
     class Admin:
         pass
+
+    class Meta:
+        unique_together = ('name', 'workspace')
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
