@@ -65,7 +65,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 LOGGING_LEVEL = 2
 #################################################################
 
-THEME_ACTIVE = "defaultheme"
+THEME_ACTIVE = "defaulttheme"
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
@@ -160,7 +160,6 @@ INSTALLED_APPS = (
     'API',
     'uploader',
     'south',
-    'defaulttheme',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
@@ -190,6 +189,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',
     'processors.context_processors.policy_lists',
+)
+
+STATICFILES_FINDERS = (
+    'ezweb.themes.ActiveThemeFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
 SESSION_COOKIE_AGE = 5184000  # 2 months

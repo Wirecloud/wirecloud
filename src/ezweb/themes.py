@@ -21,16 +21,16 @@
 import os
 
 from django.conf import settings
+from django.contrib.staticfiles.finders import BaseFinder
+from django.contrib.staticfiles import utils
+from django.core.files.storage import FileSystemStorage
 from django.template import TemplateDoesNotExist
 from django.utils._os import safe_join
 
 DEFAULT_THEME = 'defaulttheme'
 
 
-def get_template_sources(template_name, template_dirs=None):
-    """
-    Look for template into active theme directory
-    """
+def get_active_theme_dir(dir_type):
     try:
         active_theme = settings.THEME_ACTIVE
     except AttributeError:
@@ -43,9 +43,16 @@ def get_template_sources(template_name, template_dirs=None):
 
     active_theme_file = active_theme_module.__file__
     active_theme_dir = os.path.dirname(os.path.abspath(active_theme_file))
-    active_theme_templates_dir = safe_join(active_theme_dir, 'templates')
+    return safe_join(active_theme_dir, dir_type)
 
-    if os.path.isdir(active_theme_templates_dir):
+
+def get_template_sources(template_name, template_dirs=None):
+    """
+    Look for template into active theme directory
+    """
+    active_theme_templates_dir = get_active_theme_dir('templates')
+
+    if active_theme_templates_dir and os.path.isdir(active_theme_templates_dir):
         try:
             yield safe_join(active_theme_templates_dir, template_name)
         except UnicodeDecodeError:
@@ -67,3 +74,19 @@ def load_template_source(template_name, template_dirs=None):
         error_msg = "Your TEMPLATE_DIRS setting is empty. Change it to point to at least one template directory."
     raise TemplateDoesNotExist(error_msg)
 load_template_source.is_usable = True
+
+
+class ActiveThemeFinder(BaseFinder):
+
+    def __init__(self, apps=None, *args, **kwargs):
+        self.location = get_active_theme_dir('static')
+
+    def find(self, path, all=False):
+        filename = safe_join(self.location, path)
+        if os.path.exists(filename):
+            return filename
+
+    def list(self, ignore_patterns=[]):
+        storage = FileSystemStorage(location=self.location)
+        for path in utils.get_files(storage, ignore_patterns):
+            yield path, storage
