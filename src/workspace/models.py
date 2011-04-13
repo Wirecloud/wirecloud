@@ -145,20 +145,13 @@ class VariableValue(models.Model):
     shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
 
     def get_variable_value(self):
-        if self.variable.has_public_value():
+        if self.shared_var_value != None:
+            return self.shared_var_value.value
+        else:
             return self.value
-
-        return self.variable.get_default_value()
 
     def __unicode__(self):
         return unicode(self.variable.vardef.name) + " - " + unicode(self.user)
-
-    def __getattribute__(self, name):
-        #return the shared value if it's shared
-        if name == 'value' and object.__getattribute__(self, 'shared_var_value'):
-            return object.__getattribute__(self, 'shared_var_value').value
-
-        return object.__getattribute__(self, name)
 
 
 class Tab(models.Model):
