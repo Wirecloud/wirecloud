@@ -65,8 +65,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 LOGGING_LEVEL = 2
 #################################################################
 
-THEME_PATH = path.join(BASEDIR, 'media/themes')
-THEME = "default"
+THEME_ACTIVE = "defaultheme"
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
@@ -115,6 +114,8 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    'ezweb.template_loaders.load_template_source',
+    'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
 )
 
