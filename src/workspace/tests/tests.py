@@ -45,14 +45,6 @@ class WorkspaceTestCase(TestCase):
         data = get_global_workspace_data(workspace, self.user)
         self.assertEqual('workspace' in data, True)
 
-    def vars_by_name(self, igadget_data):
-        variables = {}
-
-        for var in igadget_data['variables']:
-            variables[var['name']] = var
-
-        return variables
-
     def testVariableValuesCacheInvalidation(self):
 
         workspace = WorkSpace.objects.get(pk=1)
