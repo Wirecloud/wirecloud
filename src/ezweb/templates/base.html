@@ -78,7 +78,7 @@
   <div id="ws_banner" class="banner">
 
     <div id="logo_placeholder" class="logo_placeholder">
-      <img id="logo" class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img id="logo" class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
 
     <div id="toolbar_section" class="toolbar_section"></div>
@@ -138,12 +138,12 @@
 
   <div id="wiring_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="wiring_dragboard_link" class="first_toolbar_button">
-          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="wiring_operate_link" class="last_toolbar_button selected_section">{% trans 'Operate' %}</div>
       </div>
@@ -165,12 +165,12 @@
 <div id="catalogue_header" class="global_header" style="display:none">
   <div id="catalogue_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ MEDIA_URL }}themes/default/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="catalogue_dragboard_link" class="first_toolbar_button">
-          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
         <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
@@ -196,7 +196,7 @@
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="logs_dragboard_link" class="first_toolbar_button">
-          <img src="{{ MEDIA_URL }}themes/default/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
         <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>
