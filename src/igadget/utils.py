@@ -40,7 +40,7 @@ from connectable.models import In, Out
 
 
 def createConnectable(var):
-    #If var is and SLOT or and EVENT, a proper connectable object must be created!
+    # If var is and SLOT or and EVENT, a proper connectable object must be created!
     aspect = var.vardef.aspect
     name = var.vardef.name
 
@@ -63,10 +63,10 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
     else:
         var_value = ''
 
-    # Create Variable
-    variable = Variable.objects.create(igadget=igadget, vardef=varDef)
-
     if varDef.aspect == 'PREF' or varDef.aspect == 'PROP':
+        # Create Variable
+        variable = Variable.objects.create(igadget=igadget, vardef=varDef)
+
         #check if there is a shared value or set a new one
         shared_value = None
         if varDef.shared_var_def:
@@ -83,8 +83,10 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
         VariableValue.objects.create(user=user, variable=variable, value=var_value,
                                       shared_var_value=shared_value)
 
-    elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVENT':
-        # Wiring related vars (SLOT&EVENTS) have implicit connectables!
+    elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
+        # Create Variable
+        variable = Variable.objects.create(igadget=igadget, vardef=varDef)
+
         createConnectable(variable)
 
 
