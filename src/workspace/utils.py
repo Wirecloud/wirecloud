@@ -30,9 +30,10 @@
 
 #
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import Group
 
-from workspace.models import VariableValue, Tab, PublishedWorkSpace
-from connectable.models import Out
+from workspace.models import Tab, PublishedWorkSpace, WorkSpace
+from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 
@@ -90,3 +91,41 @@ def create_published_workspace_from_template(template, resource, contratable, us
     published_workspace.save()
 
     return published_workspace
+
+
+def sync_group_workspaces(user):
+    from workspace.views import linkWorkspace
+    # user workspaces
+    workspaces = WorkSpace.objects.filter(users=user)
+
+    # all group workspaces
+    # the compression list outside the inside compression list is for flatten
+    # the inside list
+    group_workspaces = [workspace for sublist in
+                        [WorkSpace.objects.filter(targetOrganizations=org)
+                         for org in Group.objects.all()]
+                        for workspace in sublist]
+
+    # workspaces assigned to the user's groups
+    # the compression list outside the inside compression list is for flatten
+    # the inside list
+    workspaces_by_group = [workspace for sublist in
+                           [WorkSpace.objects.filter(targetOrganizations=org)
+                            for org in user.groups.all()]
+                           for workspace in sublist]
+
+    reload_showcase = False
+    packageLinker = PackageLinker()
+
+    for ws in group_workspaces:
+        if ws in workspaces:
+            if not ws in workspaces_by_group:
+                # the user already has this workspace, but he shouldn't
+                packageLinker.unlink_workspace(ws, user)
+        elif ws in workspaces_by_group:
+            # the user doesn't have this workspace yet, but he should
+            linkWorkspace(user, ws.id, ws.creator)
+            reload_showcase = True  # because this workspace is new for the user
+        # else: the user doesn't have this workspace yet, and he shouldn't
+
+    return reload_showcase

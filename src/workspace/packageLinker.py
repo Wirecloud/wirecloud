@@ -46,13 +46,17 @@ class PackageLinker:
         user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
 
         if (update_variable_values):
-            ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
+            ws_vars = Variable.objects.filter(workspace=workspace)
 
             abstract_var_list = self.get_abstract_var_list(ws_igadget_vars, ws_vars)
 
             # Creating new VariableValue to each AbstractVariable
             # Linking each new VariableValue to the user argument
             self.update_user_variable_values(abstract_var_list, user, creator)
+
+    def unlink_workspace(self, workspace, user):
+        user_workspace = UserWorkSpace.objects.filter(workspace=workspace, user=user)
+        user_workspace.delete()
 
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace

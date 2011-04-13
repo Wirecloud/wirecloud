@@ -54,7 +54,7 @@ from workspace.models import Category
 from workspace.models import VariableValue, SharedVariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab
+from workspace.utils import deleteTab, createTab, setVisibleTab, sync_group_workspaces
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -186,26 +186,9 @@ class WorkSpaceCollection(Resource):
 
         data_list = {'reloadShowcase': False}
         try:
-            # user workspaces
+            data_list['reloadShowcase'] = sync_group_workspaces(user)
+            # updated user workspaces
             workspaces = WorkSpace.objects.filter(users=user)
-
-            # workspaces assigned to the user's organizations
-            organizations = user.groups.all()
-            wsGivenByUserOrgs = []
-            for org in organizations:
-                wsGivenByUserOrgs += list(WorkSpace.objects.filter(targetOrganizations=org))
-
-            for ws in wsGivenByUserOrgs:
-                try:
-                    workspaces.get(id=ws.id)
-                except WorkSpace.DoesNotExist:
-                    #the user doesn't have this workspace (which is assigned to his organizations)
-                    #duplicate the workspace for the user
-                    linkWorkspace(user, ws.id, ws.creator)
-
-                    # set that the showcase will have to be reloaded
-                    # because this workspace is new for the user
-                    data_list['reloadShowcase'] = True
 
             if not data_list['reloadShowcase'] and workspaces.count() == 0:
                 # There is no workspace for the user

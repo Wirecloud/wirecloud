@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
         db.delete_column('workspace_tab', 'abstract_variable_id')
 
         # Adding field 'VariableValue.variable'
-        db.add_column('workspace_variablevalue', 'variable', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['igadget.Variable']))
+        db.add_column('workspace_variablevalue', 'variable', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['igadget.Variable']))
 
         #for value in orm.VariableValue.objects.all():
         #    try:

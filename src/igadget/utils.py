@@ -164,9 +164,6 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
 
     return new_igadget
 
-    from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(user)
-
 
 def UpdateIGadget(igadget, user, tab):
 
