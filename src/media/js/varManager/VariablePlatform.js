@@ -193,11 +193,6 @@ RVariable.prototype.set = function (newValue) {
 				}
 				
 				break;
-			case Variable.prototype.TAB:
-				this.varManager.markVariablesAsModified(varInfo);
-				
-				OpManagerFactory.getInstance().activeWorkSpace.goTab(this.connectable.tab);
-				break;
 			default:
 				break;
 		}
@@ -233,7 +228,6 @@ RVariable.prototype.refresh = function() {
 				}
 			}
 			break;
-		case Variable.prototype.TAB:
 		default:
 			break;
 	}

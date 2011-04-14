@@ -84,11 +84,10 @@ function VarManager (_workSpace) {
 		}
 
 		// Max lenght of buffered requests have been reached. Uploading to server!
-		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
+		if (this.igadgetModifiedVars.length > 0) {
 			var variables = {};
 
 			variables['igadgetVars'] = this.igadgetModifiedVars;
-			variables['workspaceVars'] = this.workspaceModifiedVars;
 
 			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
 
@@ -295,21 +294,11 @@ function VarManager (_workSpace) {
 
 	VarManager.prototype.markVariablesAsModified = function (variables) {
 		if (this.modificationsEnabled) {
-			var varCollection;
 			
 			for (var j = 0; j < variables.length; j++) {
 				var variable = variables[j];
 				
-				// Is it a igadgetVar or a workspaceVar?
-				if (variable.aspect == Variable.prototype.INOUT ||
-				variable.aspect == Variable.prototype.TAB) {
-					varCollection = this.workspaceModifiedVars;
-				}
-				else {
-					varCollection = this.igadgetModifiedVars;
-				}
-				
-				var modVar = this.findVariableInCollection(varCollection, variable.id)
+				var modVar = this.findVariableInCollection(this.igadgetModifiedVars, variable.id)
 				if (modVar) {
 					modVar.value = variable.value;
 					return;
@@ -317,15 +306,16 @@ function VarManager (_workSpace) {
 				
 				//It's doesn't exist in the list
 				//It's time to create it!
-				var varInfo = {}
+                var varInfo = {
+   				    'id': variable.id,
+				    'value': variable.value
+                }
 				
-				varInfo['id'] = variable.id
-				varInfo['value'] = variable.value
 				if (variable.shared != null) { //it is a possible shared variable 
 					varInfo['shared'] = variable.shared
 				}
 				
-				varCollection.push(varInfo);
+				this.igadgetModifiedVars.push(varInfo);
 			}
 		}
 	
@@ -348,7 +338,6 @@ function VarManager (_workSpace) {
 	    this.nestingLevel = 0;
 	    this.buffered_requests = 0;
 	    this.igadgetModifiedVars = [];
-	    this.workspaceModifiedVars = [];
 		this.force_commit = false;
 	}
 	
@@ -393,14 +382,7 @@ function VarManager (_workSpace) {
 	// different identifier space and can collide with the idenfiers of normal variables
 	this.workspaceVariables = new Hash();
 	
-	this.igadgetModifiedVars = []
-	this.workspaceModifiedVars = []
-	
-	this.nestingLevel = 0;
-	
-	this.buffered_requests = 0;
-	
-	this.force_commit = false;
+	this.resetModifiedVariables();
 	
 	this.modificationsEnabled = true;
 	
