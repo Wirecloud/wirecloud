@@ -41,11 +41,9 @@ def active_theme_context_processor(request):
     return {'THEME_ACTIVE': get_active_theme_name()}
 
 
-def get_active_theme_dir(dir_type):
-    active_theme_name = get_active_theme_name()
-
+def get_theme_dir(theme_name, dir_type):
     try:
-        active_theme_module = __import__(active_theme_name)
+        active_theme_module = __import__(theme_name)
     except ImportError:
         return
 
@@ -58,15 +56,18 @@ def get_template_sources(template_name, template_dirs=None):
     """
     Look for template into active theme directory
     """
-    active_theme_templates_dir = get_active_theme_dir('templates')
 
-    if active_theme_templates_dir and os.path.isdir(active_theme_templates_dir):
-        try:
-            yield safe_join(active_theme_templates_dir, template_name)
-        except UnicodeDecodeError:
-            raise
-        except ValueError:
-            pass
+    def try_template(templates_dir):
+        if templates_dir and os.path.isdir(templates_dir):
+            try:
+                yield safe_join(templates_dir, template_name)
+            except UnicodeDecodeError:
+                raise
+            except ValueError:
+                pass
+
+    yield try_template(get_theme_dir(get_active_theme_name(), 'templates'))
+    yield try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
 
 
 def load_template_source(template_name, template_dirs=None):
@@ -87,7 +88,7 @@ load_template_source.is_usable = True
 class ActiveThemeFinder(BaseFinder):
 
     def __init__(self, apps=None, *args, **kwargs):
-        self.location = get_active_theme_dir('static')
+        self.location = get_theme_dir(get_active_theme_name(), 'static')
 
     def find(self, path, all=False):
         filename = safe_join(self.location, path)
