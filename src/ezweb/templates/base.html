@@ -399,6 +399,8 @@ var policy_lists = {{ policies|safe|default:"null" }};
    {% include "js_includes.js" %}
 {% endif %}
 
+{% block extra_scripts %}{% endblock %}
+
 <!-- Initialization code -->
 <script type="text/javascript">
     var LANGUAGE_CODE = "{{LANGUAGE_CODE}}";
