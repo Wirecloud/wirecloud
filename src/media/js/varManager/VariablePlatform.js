@@ -167,8 +167,10 @@ RVariable.prototype.set = function (newValue) {
 			case Variable.prototype.USER_PREF:
 			case Variable.prototype.EXTERNAL_CONTEXT:
 			case Variable.prototype.GADGET_CONTEXT:
-				
-				this.varManager.markVariablesAsModified(varInfo);
+                if (this.aspect === this.USER_PREF) {
+                    // Only gadget preferences are persisted
+                    this.varManager.markVariablesAsModified(varInfo);
+                }
 				
 				this.value = newValue;
 				
@@ -263,11 +265,11 @@ RWVariable.prototype.set = function (value_, options_) {
 	}
 	this.varManager.incNestingLevel();
 
-	if (this.value != value_) {
-		// This variable was modified
-		this.value = value_;
+	this.value = value_;
 
+	if (this.aspect === this.PROPERTY && this.value != value_) {
 		this.varManager.markVariablesAsModified([this]);
+
 		if (this.shared == true) {
 			this.varManager.forceCommit();
 		}
