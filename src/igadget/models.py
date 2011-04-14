@@ -34,7 +34,7 @@ from django.db import models
 from django.utils.translation import ugettext as  _
 
 from gadget.models import Gadget, VariableDef
-from workspace.models import Tab, AbstractVariable, VariableValue
+from workspace.models import Tab, VariableValue
 
 
 class Position(models.Model):
@@ -65,8 +65,7 @@ class IGadget(models.Model):
     readOnly = models.BooleanField(_('Read Only'), default=False)
 
     def get_var_value(self, vardef, user):
-        abstract_var = Variable.objects.get(vardef=vardef, igadget=self).abstract_variable
-        return VariableValue.objects.get(user=user, abstract_variable=abstract_var).value
+        return VariableValue.objects.get(user=user, variable__igadget=self, variable__vardef=vardef).value
 
     def __unicode__(self):
         return str(self.pk)
@@ -76,7 +75,6 @@ class Variable(models.Model):
 
     vardef = models.ForeignKey(VariableDef, verbose_name=_('Variable definition'))
     igadget = models.ForeignKey(IGadget, verbose_name=_('IGadget'))
-    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
 
     def __unicode__(self):
         return str(self.pk) + " " + self.vardef.name
@@ -86,3 +84,4 @@ class Variable(models.Model):
 
     def get_default_value(self):
         return self.vardef.default_value
+

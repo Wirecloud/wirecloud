@@ -660,10 +660,6 @@ function WorkSpace (workSpaceState) {
         var tab = this.tabInstances[tabId];
 
         this.tabInstances.remove(tabId);
-
-        this.varManager.removeWorkspaceVariable(tab.connectable.variable.id);
-
-        tab.connectable.destroy();
         tab.destroy();
 
         this.visibleTab = null;

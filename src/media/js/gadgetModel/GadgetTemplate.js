@@ -57,33 +57,7 @@ function GadgetTemplate(variables_, size_) {
     }
 
     this.getVariables = function (iGadget) {
-
-        // JSON-coded Template-Variables mapping
-        // Constructing the structure
-        var iGadgetId = iGadget.getId();
-        var varManager = iGadget.dragboard.workSpace.getVarManager();
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
-            rawVar = rawVars[i];
-            switch (rawVar.aspect) {
-            case Variable.prototype.PROPERTY:
-            case Variable.prototype.EVENT:
-                objVars[rawVar.name] = new RWVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
-                break;
-            case Variable.prototype.EXTERNAL_CONTEXT:
-            case Variable.prototype.GADGET_CONTEXT:
-            case Variable.prototype.SLOT:
-                objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, null);
-                break;
-            case Variable.prototype.USER_PREF:
-                objVars[rawVar.name] = new RVariable(null, iGadgetId, rawVar.name, rawVar.aspect, varManager, rawVar.default_value);
-                break;
-            }
-        }
-        return objVars;
+        return variableList;
     }
 
     this._newUserPref = function(rawVar){
@@ -112,7 +86,7 @@ function GadgetTemplate(variables_, size_) {
 
         var rawVar = null;
         var pref = null;
-        for (var i = 0; i < variableList.length; i++) {
+        for (var i in variableList) {
             rawVar = variableList[i];
             if (rawVar.aspect == Variable.prototype.USER_PREF) {
                 pref = this._newUserPref(rawVar);
@@ -157,7 +131,7 @@ function GadgetTemplate(variables_, size_) {
         var rawVars = variableList;
         var rawVar = null;
         var currentContextVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             switch (rawVar.aspect) {
                 case Variable.prototype.EXTERNAL_CONTEXT:
@@ -180,7 +154,7 @@ function GadgetTemplate(variables_, size_) {
         var rawVars = variableList;
         var rawVar = null;
         var currentContextVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             switch (rawVar.aspect) {
                 case Variable.prototype.GADGET_CONTEXT:
@@ -202,7 +176,7 @@ function GadgetTemplate(variables_, size_) {
         var objVars = [];
         var rawVars = variableList;
         var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             if (rawVar.aspect == Variable.prototype.USER_PREF)
             {
@@ -220,7 +194,7 @@ function GadgetTemplate(variables_, size_) {
         var objVars = [];
         var rawVars = variableList;
         var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars.length) {
             rawVar = rawVars[i];
             if (rawVar.aspect == Variable.prototype.EVENT) {
                     objVars.push(rawVar.name);
@@ -237,7 +211,7 @@ function GadgetTemplate(variables_, size_) {
         var objVars = [];
         var rawVars = variableList;
         var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             if (rawVar.aspect == Variable.prototype.SLOT)
             {
@@ -255,7 +229,7 @@ function GadgetTemplate(variables_, size_) {
         var objVars = [];
         var rawVars = variableList;
         var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             if (rawVar.aspect == Variable.prototype.EVENT)
             {
@@ -273,7 +247,7 @@ function GadgetTemplate(variables_, size_) {
         var objVars = [];
         var rawVars = variableList;
         var rawVar = null;
-        for (var i = 0; i<rawVars.length; i++) {
+        for (var i in rawVars) {
             rawVar = rawVars[i];
             if (rawVar.aspect == Variable.prototype.PROPERTY)
             {

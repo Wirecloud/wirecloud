@@ -32,9 +32,8 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
 
-from workspace.models import AbstractVariable, VariableValue, WorkSpaceVariable, Tab, PublishedWorkSpace, WorkSpace
+from workspace.models import Tab, PublishedWorkSpace, WorkSpace
 from workspace.packageLinker import PackageLinker
-from connectable.models import Out
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 
@@ -45,37 +44,11 @@ def deleteTab(tab, user):
     for igadget in igadgets:
         deleteIGadget(igadget, user)
 
-    # Deleting OUT connectable (wTab)
-    Out.objects.get(abstract_variable=tab.abstract_variable).delete()
-
-    # Deleting workspace variable
-    WorkSpaceVariable.objects.get(abstract_variable=tab.abstract_variable).delete()
-
-    # Deleting abstract variable
-    VariableValue.objects.get(abstract_variable=tab.abstract_variable, user=user).delete()
-    tab.abstract_variable.delete()
-
     # Deleting tab
     tab.delete()
 
 
 def createTab(tab_name, user, workspace):
-    # Creating Entry in AbstractVariable table for polimorphic access from Connectable hierarchy
-    abstractVariable = AbstractVariable(name=tab_name, type='WORKSPACE')
-    abstractVariable.save()
-
-    # Creating Value for Abstract Variable
-    variableValue = VariableValue(user=user, value="", abstract_variable=abstractVariable)
-    variableValue.save()
-
-    # Creating implicit workspace variable
-    wsVariable = WorkSpaceVariable(workspace=workspace, aspect='TAB', abstract_variable=abstractVariable)
-    wsVariable.save()
-
-    # Creating implicit OUT Connectable element
-    connectableName = 'tab_' + tab_name
-    connectable = Out(name=connectableName, abstract_variable=abstractVariable)
-    connectable.save()
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
@@ -86,10 +59,10 @@ def createTab(tab_name, user, workspace):
     position = Tab.objects.filter(workspace=workspace).count()
 
     # Creating tab
-    tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace, abstract_variable=abstractVariable)
+    tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
     tab.save()
 
-    return (tab, wsVariable)
+    return tab
 
 
 def setVisibleTab(user, workspace_id, tab):

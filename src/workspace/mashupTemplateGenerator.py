@@ -34,7 +34,7 @@ from django.conf import settings
 from lxml import etree
 
 from igadget.models import IGadget, Variable
-from workspace.models import Tab, WorkSpaceVariable
+from workspace.models import Tab
 from preferences.models import WorkSpacePreference, TabPreference
 from connectable.models import InOut, In, Out, RelatedInOut
 
@@ -220,9 +220,8 @@ def build_template_from_workspace(options, workspace, user):
         etree.append(etree.Element('Capability', name="contratable", value="true"))
 
     # wiring channel and connections
-    channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
-    for channel_var in channel_vars:
-        connectable = InOut.objects.get(workspace_variable=channel_var)
+    channel_vars = InOut.objects.filter(workspace=workspace)
+    for connectable in channel_vars:
         element = etree.SubElement(wiring, 'Channel', id=str(connectable.id), name=connectable.name)
         if connectable.filter:
             element.set('filter', connectable.filter.name)
@@ -241,11 +240,7 @@ def build_template_from_workspace(options, workspace, user):
 
         outs = Out.objects.filter(inouts=connectable)
         for out in outs:
-            try:
-                variable = Variable.objects.get(abstract_variable=out.abstract_variable)
-                etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
-            except Variable.DoesNotExist:
-                variable = Tab.objects.get(abstract_variable=out.abstract_variable)
-                etree.SubElement(element, 'Out', tab=str(tab.id))
+            variable = out.variable
+            etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
 
     return etree.tostring(template, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)

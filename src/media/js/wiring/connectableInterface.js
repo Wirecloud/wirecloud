@@ -290,45 +290,8 @@ ConnectableTabInterface.prototype = new ConnectableGroupInterface();
  */
 function SlotTabInterface (tab, wiringGUI) {
 	ConnectableTabInterface.call(this, wiringGUI, tab.tabInfo.name);
-
-	this.tabConnectable = tab.connectable;
-	wiringGUI._registerConnectable(this);
-
-	// create an anchor for the tab
-	this.tabAnchor = new TabConnectionAnchor(this);
-	var chkItem = this.tabAnchor.getHTMLElement();
-	this.headerElement.appendChild(chkItem);
-
-	Event.observe(chkItem, "click",
-		function (e) {
-			this.wiringGUI._changeConnectionStatus(this.tabAnchor);
-			Event.stop(e); // Stop event propagation
-		}.bind(this), false);
-	this.wiringGUI.outputs.push(this);
 }
 SlotTabInterface.prototype = new ConnectableTabInterface();
-
-/**
- * As this <code>SlotTabInterface</code> acts as the interface for the tab.
- * This method returns the <code>wConnectable</code> associated to the
- * connectable of this tab.
- */
-SlotTabInterface.prototype.getConnectable = function() {
-	return this.tabConnectable;
-}
-
-/**
- * As this <code>SlotTabInterface</code> acts as the interface for the tab,
- * this method returns the <code>TabConnectionAnchor</code> associated to the
- * connectable of this tab.
- */
-SlotTabInterface.prototype.getAnchor = function() {
-	return this.tabAnchor;
-}
-
-SlotTabInterface.prototype.getFriendCode = function() {
-	return "go_tab_event";
-}
 
 SlotTabInterface.prototype.repaintSiblings = function () {
 	if (this.wiringGUI.currentChannel == null)
