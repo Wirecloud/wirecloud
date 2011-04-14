@@ -30,8 +30,8 @@
 
 #
 
-from django.db import models
 from django.contrib.auth.models import User, Group
+from django.db import models
 from django.utils.translation import ugettext as  _
 
 from connectable.models import InOut
@@ -149,9 +149,11 @@ class VariableValue(models.Model):
 
     def get_variable_value(self):
         if self.shared_var_value != None:
-            return self.shared_var_value.value
+            value = self.shared_var_value.value
         else:
-            return self.value
+            value = self.value
+
+        return value
 
     def __unicode__(self):
         return unicode(self.variable.vardef.name) + " - " + unicode(self.user)

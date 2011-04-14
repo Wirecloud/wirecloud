@@ -86,8 +86,9 @@ def _populate_variables_values_cache(user):
         if not var_value.variable.igadget.id in values_by_varname:
             values_by_varname[var_value.variable.igadget.id] = {}
 
-        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = var_value.value
-        values_by_varid[var_value.variable.id] = var_value.value
+        value = var_value.get_variable_value()
+        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
+        values_by_varid[var_value.variable.id] = value
 
     _variables_values_cache[user.id] = {
         'by_varid': values_by_varid,
