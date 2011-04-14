@@ -191,8 +191,13 @@ class Proxy(Resource):
                             substr = options.get('substr')
                             value = get_variable_value_by_ref(options.get('var_ref'), request.user)
                             data = data.replace(substr, value)
+                        elif action == 'basic_auth':
+                            user_value = get_variable_value_by_ref(options.get('user_ref'), request.user)
+                            password_value = get_variable_value_by_ref(options.get('pass_ref'), request.user)
+                            headers['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
+
                     fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
                     headers[fixed_name] = header[1]
 

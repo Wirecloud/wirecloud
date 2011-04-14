@@ -161,3 +161,14 @@ class ProxyTests(TestCase):
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=test_username&password=test_password')
+
+        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=|username|&password=|password|')
