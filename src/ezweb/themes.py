@@ -94,6 +94,7 @@ class ActiveThemeFinder(BaseFinder):
         filename = safe_join(self.location, path)
         if os.path.exists(filename):
             return filename
+        return []
 
     def list(self, ignore_patterns=[]):
         storage = FileSystemStorage(location=self.location)
