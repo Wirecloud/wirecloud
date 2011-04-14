@@ -8,28 +8,29 @@ span.icon {
     width: 20px;
 }
 
-.icon-catalogue { background-image: url(../images/catalogue.png); }
-.icon-dragboard { background-image: url(../images/dragboard.png); }
-.icon-error { background-image: url(../images/error.png); }
-.icon-filter { background-image: url(../images/filter.gif); }
-.icon-igadget-exit-fulldragboard { background-image: url(../images/igadget/exit_fulldragboard.png); }
-.icon-igadget-extract { background-image: url(../images/igadget/extract.png); }
-.icon-igadget-fulldragboard { background-image: url(../images/igadget/fulldragboard.png); }
-.icon-igadget-lower { background-image: url(../images/igadget/lower.png); }
-.icon-igadget-lower-to-bottom { background-image: url(../images/igadget/lowerToBottom.png); }
-.icon-igadget-menu-colors { background-image: url(../images/igadget/menu_colors.png); }
-.icon-igadget-raise { background-image: url(../images/igadget/raise.png); }
-.icon-igadget-raise-to-top { background-image: url(../images/igadget/raiseToTop.png); }
-.icon-igadget-settings { background-image: url(../images/settings.png); }
-.icon-igadget-snap { background-image: url(../images/igadget/snap.png); }
-.icon-igadget-transparency { background-image: url(../images/igadget/transparency.png); }
-.icon-info { background-image: url(../images/info.png); }
-.icon-mark-tab-visible { background-image: url(../images/visible.png); }
-.icon-move { background-image: url(../images/menu_move.png); }
-.icon-remove { background-image: url(../images/remove.png); }
-.icon-rename { background-image: url(../images/rename.gif); }
-.icon-show-floating { background-image: url(../images/show_floating.png); }
-.icon-tab-preferences { background-image: url(../images/preferences.png); }
-.icon-warning { background-image: url(../images/warning.png); }
-.icon-wiring { background-image: url(../images/wiring.png); }
-.icon-wiring-filter-param { background-image: url(../images/filter-param.png); }
+.icon-igadget-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -428px; }
+span.icon-igadget-settings { background-position: -48px -432px; }
+.icon-catalogue { background-image: url(../images/icons-sprite.png); background-position: 0px -528px; }
+.icon-wiring { background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
+.icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -528px; }
+.icon-dragboard { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
+.icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -552px; }
+.icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -576px; }
+.icon-filter { background-image: url(../images/icons-sprite.png); background-position: -48px -188px; }
+.icon-igadget-exit-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -164px; }
+.icon-igadget-extract { background-image: url(../images/icons-sprite.png); background-position: -48px -92px; }
+.icon-igadget-fulldragboard { background-image: url(../images/icons-sprite.png); background-position: -48px -68px; }
+.icon-igadget-lower { background-image: url(../images/icons-sprite.png); background-position: -48px -260px; }
+.icon-igadget-lower-to-bottom { background-image: url(../images/icons-sprite.png); background-position: -48px -116px; }
+.icon-igadget-menu-colors { background-image: url(../images/icons-sprite.png); background-position: -48px -308px; }
+.icon-igadget-raise { background-image: url(../images/icons-sprite.png); background-position: -48px -212px; }
+.icon-igadget-raise-to-top { background-image: url(../images/icons-sprite.png); background-position: -48px -236px; }
+.icon-igadget-snap { background-image: url(../images/icons-sprite.png); background-position: -48px -380px; }
+.icon-igadget-transparency { background-image: url(../images/icons-sprite.png); background-position: -48px -140px; }
+.icon-mark-tab-visible { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
+.icon-move { background-image: url(../images/icons-sprite.png); background-position: -48px -500px; }
+.icon-remove { background-image: url(../images/icons-sprite.png); background-position: -48px -332px; }
+.icon-rename { background-image: url(../images/icons-sprite.png); background-position: -48px -284px; }
+.icon-show-floating { background-image: url(../images/icons-sprite.png); background-position: -48px -452px; }
+.icon-tab-preferences { background-image: url(../images/icons-sprite.png); background-position: -48px -356px; }
+.icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -479px; }
