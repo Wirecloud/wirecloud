@@ -150,7 +150,6 @@ INSTALLED_APPS = (
     'connectable',
     'catalogue',
     'context',
-    'layout',
     'preferences',
     'translator',
     'gadgetGenerator',
