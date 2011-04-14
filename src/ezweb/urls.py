@@ -34,7 +34,7 @@ from django.conf.urls.defaults import patterns
 
 urlpatterns = patterns('ezweb.views',
     (r'^$', 'index'),
-    (r'^lite$', 'index', {'template': '/lite'}),
+    (r'^lite$', 'index', {'template': 'index_lite.html'}),
     (r'^viewer/workspace/(?P<public_ws_id>[\d]+)$', 'public_ws_viewer'),
 
     # Login service

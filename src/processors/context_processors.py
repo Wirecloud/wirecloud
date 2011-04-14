@@ -34,8 +34,6 @@ from django.contrib.auth.models import Group
 
 from catalogue.models import Category
 from commons.utils import json_encode
-#from preferences.views import get_user_theme
-from layout.models import Skin, SkinOrganization, TYPES
 
 
 def server_url(request):
@@ -131,46 +129,6 @@ def policy_lists(request):
     user_policies = request.session.get("policies")
 
     return {'policies': user_policies}
-
-
-# workspace skins
-def skins(request):
-    catalogue_type = TYPES[0][0]
-    ws_type = TYPES[1][0]
-
-    layout_name = settings.LAYOUT
-    skins = Skin.objects.filter(skin_template__type=ws_type, layout__name=layout_name)
-    skins = [skin.name for skin in skins.order_by('name')]
-
-    default_ws_skin = None
-    default_cat_skin = None
-    try:
-        orgs = Group.objects.filter(user=request.user)
-        #search the default skin in the user organizations
-        for org in orgs:
-            #workspace skin
-            try:
-                default_ws_skin = SkinOrganization.objects.filter(type=ws_type, organization=org, skin__layout__name=layout_name)[0].skin.name
-                break
-            except:
-                pass
-
-        for org in orgs:
-            #catalogue skin
-            try:
-                default_cat_skin = SkinOrganization.objects.filter(type=catalogue_type, organization=org, skin__layout__name=layout_name)[0].skin.name
-                break
-            except:
-                pass
-    except Exception:
-        pass
-    #if it is not related to an organization - > return the default skins
-    if (not default_ws_skin):
-        default_ws_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=ws_type, default=True).name
-    if (not default_cat_skin):
-        default_cat_skin = Skin.objects.get(layout__name=layout_name, skin_template__type=catalogue_type, default=True).name
-
-    return {'SKINS': json_encode(skins), 'DEFAULT_SKIN': default_ws_skin, 'CATALOGUE_SKIN': default_cat_skin}
 
 
 def installed_apps(request):

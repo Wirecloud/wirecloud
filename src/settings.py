@@ -65,7 +65,7 @@ DATABASE_PORT = ''             # Set to empty string for default. Not used with 
 LOGGING_LEVEL = 2
 #################################################################
 
-LAYOUT = "classic"
+THEME_ACTIVE = "defaulttheme"
 
 #HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
 
@@ -102,6 +102,8 @@ MEDIA_ROOT = path.join(BASEDIR, 'media')
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/ezweb/'
 
+STATIC_URL = '/static/'
+
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
@@ -112,6 +114,8 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
+    'ezweb.themes.load_template_source',
+    'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
 )
 
@@ -138,6 +142,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
+    'django.contrib.staticfiles',
     'ezweb',
     'gadget',
     'workspace',
@@ -153,7 +158,6 @@ INSTALLED_APPS = (
     'user',
     'API',
     'uploader',
-    'layout',
     'south',
     ### openid authentication ###
 #    'openid_auth',
@@ -172,6 +176,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
+    'django.core.context_processors.static',
+    'ezweb.themes.active_theme_context_processor',
     'processors.context_processors.home_gateway_url',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
@@ -179,11 +185,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.only_one_css_file',
     'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
-    'processors.context_processors.skins',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',
     'processors.context_processors.policy_lists',
+)
+
+STATICFILES_FINDERS = (
+    'ezweb.themes.ActiveThemeFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
 SESSION_COOKIE_AGE = 5184000  # 2 months

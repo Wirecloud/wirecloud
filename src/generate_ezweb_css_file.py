@@ -27,31 +27,32 @@
 #
 #...............................licence...........................................#
 
+import os
+
 from django.conf import settings
-from django.utils import simplejson
-
-from layout.models import Layout
-from processors.context_processors import ezweb_release
-
-base_dir = 'media/'
-layout = Layout.objects.get(name=settings.LAYOUT)
-
-layout_css = simplejson.loads(layout.layout_css)
-files_css_normal = [base_dir + layout_css["general"],
-                    base_dir + layout_css["dragboard"],
-                    base_dir + layout_css["wiring"],
-                    base_dir + layout_css["catalogue"]
-                    ]
-
-theme_css = simplejson.loads(layout.theme.theme_css)
-files_css_theme = [base_dir + theme_css["general"],
-                   base_dir + theme_css["dragboard"],
-                   base_dir + theme_css["wiring"],
-                   base_dir + theme_css["catalogue"]
-                   ]
 
 
-def write_file(final_file_name, file_list):
+DEFAULT_THEME_BASE_DIR = os.path.join(settings.THEME_PATH, 'default')
+
+
+def get_theme_css(base_dir, css_file):
+    theme_css_path = os.path.join(base_dir, 'css', css_file)
+    if os.path.isfile(theme_css_path):
+        return theme_css_path
+    else:
+        return os.path.join(DEFAULT_THEME_BASE_DIR, 'css', css_file)
+
+
+def compress(theme_name):
+    base_dir = os.path.join(settings.THEME_PATH, theme_name)
+    css_files = [
+        "ezweb.css",
+        "dragboard.css",
+        "wiring.css",
+        "catalogue.css",
+    ]
+    final_file_name = os.path.join(base_dir, 'css', "ezweb_compressed.css")
+
     try:
         res = open(final_file_name, 'w')
 
@@ -61,12 +62,9 @@ def write_file(final_file_name, file_list):
 
         header.close()
 
-        for file_name in file_list:
-            file = open(file_name, 'r')
-
-            #copying real js code to the resulting unique source file!
+        for css_file in css_files:
+            file = open(get_theme_css(base_dir, css_file), 'r')
             res.write(file.read())
-
             file.close()
 
         res.close()
@@ -75,5 +73,10 @@ def write_file(final_file_name, file_list):
 
 #Main
 
-write_file('media/css/ezweb_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_normal)
-write_file('media/themes/' + layout.theme.name + '/css/ezweb_theme_' + ezweb_release(None)['ezweb_release'] + '.css', files_css_theme)
+for filename in os.listdir(settings.THEME_PATH):
+    if filename.startswith('.'):
+        continue
+
+    theme_path = os.path.join(settings.THEME_PATH, filename)
+    if os.path.isdir(theme_path):
+        compress(filename)

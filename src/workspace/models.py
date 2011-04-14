@@ -35,7 +35,6 @@ from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext as  _
 
 from gadget.models import SharedVariableDef
-from layout.models import Branding
 
 
 class WorkSpace(models.Model):
@@ -46,8 +45,6 @@ class WorkSpace(models.Model):
     users = models.ManyToManyField(User, verbose_name=_('Users'), through='UserWorkSpace')
     targetOrganizations = models.ManyToManyField(Group, verbose_name=_('Target Organizations'), blank=True, null=True)
     forcedValues = models.TextField(blank=True)
-
-    branding = models.ForeignKey(Branding, verbose_name=_('Branding'), blank=True, null=True)
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)

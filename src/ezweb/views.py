@@ -47,17 +47,15 @@ from django.template import Context, loader, RequestContext
 from catalogue.templateParser import TemplateParser
 from catalogue.views import GadgetsCollection
 from commons.authentication import login_public_user
-from commons.get_data import get_catalogue_branding_data, get_workspace_branding_data
 from commons.http_utils import download_http_content
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
 from catalogue.models import GadgetResource
 from gadget.models import Gadget, XHTML
-from layout.models import Layout
 from workspace.models import WorkSpace
 
 
 @login_required
-def index(request, user_name=None, template="/"):
+def index(request, user_name=None, template="index.html"):
     if request.user.username != "public":
         return render_ezweb(request, user_name, template)
     else:
@@ -196,7 +194,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
                     name = catalogue_response['gadgetName']
                     post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
 
-                    return render_ezweb(request, template="/", user_name=request.user.username, post_load_script=post_load_script)
+                    return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
@@ -332,7 +330,7 @@ def public_ws_viewer(request, public_ws_id):
     request.user = public_user
 
     if (len(workspace.users.filter(username=public_user.username)) == 1):
-        return render_ezweb(request, template="/viewer", public_workspace=public_ws_id, last_user=last_user)
+        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id, last_user=last_user)
 
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
@@ -356,23 +354,7 @@ def manage_groups(user, groups):
     user.save()
 
 
-def get_layout_context(layout, user):
-    context = {}
-    #layout context
-    context["layout"] = simplejson.loads(layout.layout_css)
-    #theme context
-    context["theme"] = {}
-    context["theme"] = simplejson.loads(layout.theme.theme_css)
-    context["theme"]["name"] = layout.theme.name
-    context["theme"]["images"] = layout.theme.images
-    #branding context
-    context["branding"] = {}
-    context["branding"]["workspace"] = get_workspace_branding_data(None, user)
-    context["branding"]["catalogue"] = get_catalogue_branding_data(user)
-    return context
-
-
-def render_ezweb(request, user_name=None, template='/', public_workspace='', last_user='', post_load_script='[]'):
+def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """
 
     if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
@@ -409,14 +391,10 @@ def render_ezweb(request, user_name=None, template='/', public_workspace='', las
 
         screen_name = get_user_screen_name(request)
 
-        current_layout = Layout.objects.get(name=settings.LAYOUT)
-        template_file = simplejson.loads(current_layout.templates)[template]
-
         context = {'screen_name': screen_name,
                    'current_tab': 'dragboard',
                    'active_workspace': public_workspace,
                    'last_user': last_user,
                    'post_load_script': script}
-        context.update(get_layout_context(current_layout, request.user))
 
-        return render_to_response(template_file, context, context_instance=RequestContext(request))
+        return render_to_response(template, context, context_instance=RequestContext(request))

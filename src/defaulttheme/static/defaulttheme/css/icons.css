@@ -1,0 +1,35 @@
+.icon {
+    background-repeat: no-repeat;
+    background-position: left center;
+    padding-left: 18px !important;
+}
+
+span.icon {
+    width: 20px;
+}
+
+.icon-catalogue { background-image: url(../images/catalogue.png); }
+.icon-dragboard { background-image: url(../images/dragboard.png); }
+.icon-error { background-image: url(../images/error.png); }
+.icon-filter { background-image: url(../images/filter.gif); }
+.icon-igadget-exit-fulldragboard { background-image: url(../images/igadget/exit_fulldragboard.png); }
+.icon-igadget-extract { background-image: url(../images/igadget/extract.png); }
+.icon-igadget-fulldragboard { background-image: url(../images/igadget/fulldragboard.png); }
+.icon-igadget-lower { background-image: url(../images/igadget/lower.png); }
+.icon-igadget-lower-to-bottom { background-image: url(../images/igadget/lowerToBottom.png); }
+.icon-igadget-menu-colors { background-image: url(../images/igadget/menu_colors.png); }
+.icon-igadget-raise { background-image: url(../images/igadget/raise.png); }
+.icon-igadget-raise-to-top { background-image: url(../images/igadget/raiseToTop.png); }
+.icon-igadget-settings { background-image: url(../images/settings.png); }
+.icon-igadget-snap { background-image: url(../images/igadget/snap.png); }
+.icon-igadget-transparency { background-image: url(../images/igadget/transparency.png); }
+.icon-info { background-image: url(../images/info.png); }
+.icon-mark-tab-visible { background-image: url(../images/visible.png); }
+.icon-move { background-image: url(../images/menu_move.png); }
+.icon-remove { background-image: url(../images/remove.png); }
+.icon-rename { background-image: url(../images/rename.gif); }
+.icon-show-floating { background-image: url(../images/show_floating.png); }
+.icon-tab-preferences { background-image: url(../images/preferences.png); }
+.icon-warning { background-image: url(../images/warning.png); }
+.icon-wiring { background-image: url(../images/wiring.png); }
+.icon-wiring-filter-param { background-image: url(../images/filter-param.png); }

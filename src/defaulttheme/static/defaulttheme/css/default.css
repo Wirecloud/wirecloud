@@ -1,0 +1,164 @@
+/*
+ * BODY
+ */
+
+/* global background */
+body.dragboard_view, body.wiring_view{
+	background: white;
+	color: #4C5054
+}
+
+/*
+ * BANNER section
+ */
+
+/* banner */
+#ws_banner, #wiring_banner {
+	background: transparent;
+}
+
+#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
+	color:#4C5054;
+}
+
+/*
+ * TOOLBAR section
+ */
+
+/* MAIN toolbar button unmarked */
+#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div, #logs_header .toolbar_menu > div {
+	color: #ffffff;
+	font-weight: bold;
+	background: #0066B3;
+	border-color: #C2CBD2;
+}
+
+/* MAIN toolbar button marked */
+#ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section, #logs_header .toolbar_menu > div.selected_section {
+	color: #000000;
+	font-weight: bold;
+	background: #FFDE6B;
+}
+
+/* MAIN toolbar button hover */
+#ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover, #logs_header .toolbar_menu > div:hover {
+	color: #ffffff;
+	font-weight: bold;
+	background: #0066B3;
+	text-decoration: underline;
+}
+#ws_banner .toolbar_menu > div.selected_section:hover, #wiring_banner .toolbar_menu > div.selected_section:hover, #logs_header .toolbar_menu > div.selected_section:hover {
+	color: #000000;
+	font-weight: bold;
+	background: #FFDE6B;
+}
+
+/*
+ * TOOLBAR SMALL section
+ */
+
+/* SMALL toolbar button unmarked */
+#ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div, #logs_header .toolbar_menu_small > div {
+	color: #4C5054;
+	font-weight: bold;
+	background: #FFFFFF;
+	border-color:  #C2CBD2;
+}
+
+/* SMALL toolbar button marked */
+#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section, #logs_header .toolbar_menu_small > div.selected_section {
+	color: #4C5054;
+	font-weight: bold;
+	background: #FFFFFF;
+}
+
+/* SMALL toolbar button hover */
+#ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover, #logs_header .toolbar_menu_small > div:hover {
+	color: ;
+	font-weight: bold;
+	background: ;
+	text-decoration: underline;
+}
+#ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover, #logs_header .toolbar_menu_small > div.selected_section:hover {
+	color: #4C5054;
+	font-weight: bold;
+	background: #FFFFFF;
+}
+
+/*
+ * WRAPPER section
+ */
+
+/* dragboard */
+.dragboard{
+	background: transparent;
+	border-color: #C2CBD2;
+}
+
+.sidebar{
+	border-color: #C2CBD2;
+}
+
+/* wiring */
+#wiring{
+	background: transparent;
+	border-color: #C2CBD2;
+}
+
+/*
+ * TAB section
+ */
+
+/* add tab button */
+#add_tab_link {
+ 	color: #2D6F9C;
+	background: transparent;
+}
+
+#add_tab_link:hover {
+	color: #2D6F9C;
+	background: transparent;
+}
+
+/* not selected tab */
+#ws_header .tab_section .tab {
+	color: #4c5054;
+	background: transparent;
+	border-color: transparent;
+	font-weight: bold;
+}
+
+#ws_header .tab_section .tab:hover {
+	color: #4c5054;
+	border-color: #C2CBD2;
+	background: white;
+}
+
+/* selected tab */
+#ws_header .tab_section .current {
+ 	color: #4c5054;
+  	background: white;
+  	border-color: #C2CBD2;
+}
+
+#ws_header .tab_section .current:hover {
+	color: #4c5054;
+	background: white;
+	font-weight:bold;
+	border-color: #C2CBD2;
+}
+
+/*
+ * IGADGET section
+ */
+
+/* igadget box */
+div.gadget_window {
+	border-color: #C2CBD2 !important; /* quitar el important cuando se meta el skin al final del body */
+}
+
+/* igadget name */
+.gadget_menu span, .gadget_menu .igadget_name {
+  	color: #4C5054;
+  	font-weight: bold;
+}
