@@ -44,10 +44,21 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 
+from commons.get_data import get_variable_value_from_varname
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
 from proxy.utils import encode_query, is_valid_header
+
+
+VAR_REF_RE = re.compile(r'(?P<igadget_id>[1-9]\d*)/(?P<var_name>[^/]+)')
+
+
+def get_variable_value_by_ref(ref, user):
+
+    result = VAR_REF_RE.match(ref)
+    if result:
+        return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
 
 
 class MethodRequest(urllib2.Request):
@@ -68,7 +79,7 @@ class Proxy(Resource):
 
     blacklisted_http_headers = [
         'http_host',
-        'http_content_length'
+        'http_content_length',
     ]
 
     # set the timeout to 60 seconds
@@ -146,6 +157,7 @@ class Proxy(Resource):
                 header_name = header[0].lower()
                 if header_name == 'content_type' and header[1]:
                     headers["content-type"] = header[1]
+
                 elif header_name == 'cookie' or header_name == 'http_cookie':
 
                     cookie_parser = Cookie.SimpleCookie(header[1])
@@ -160,6 +172,26 @@ class Proxy(Resource):
                     content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
                     if content != '':
                         headers['Cookie'] = content
+
+                elif header_name == 'http_x_ezweb_secure_data':
+                    definitions = header[1].split('&')
+                    for definition in definitions:
+                        params = definition.split(',')
+                        if len(params) == 0:
+                            continue
+
+                        options = {}
+                        for pair in params:
+                            tokens = pair.split('=')
+                            option_name = urllib2.unquote(tokens[0].strip())
+                            options[option_name] = urllib2.unquote(tokens[1].strip())
+
+                        action = options.get('action', 'data')
+                        if action == 'data':
+                            substr = options.get('substr')
+                            value = get_variable_value_by_ref(options.get('var_ref'), request.user)
+                            data = data.replace(substr, value)
+
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
                     fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
                     headers[fixed_name] = header[1]

@@ -79,9 +79,40 @@ def _invalidate_cached_variables(igadget):
 
 def _populate_variables_values_cache(user):
     """ populates VariableValue cached values for that user """
-    _variables_values_cache[user.id] = {}
-    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef'):
-        _variables_values_cache[user.id][var_value.variable.id] = var_value.value
+    values_by_varid = {}
+    values_by_varname = {}
+
+    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef', 'variable__igadget'):
+        if not var_value.variable.igadget.id in values_by_varname:
+            values_by_varname[var_value.variable.igadget.id] = {}
+
+        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = var_value.value
+        values_by_varid[var_value.variable.id] = var_value.value
+
+    _variables_values_cache[user.id] = {
+        'by_varid': values_by_varid,
+        'by_varname': values_by_varname,
+    }
+
+
+def get_variable_value_from_var(user, variable):
+    if not user.id in _variables_values_cache:
+        _populate_variables_values_cache(user)
+
+    return _variables_values_cache[user.id]['by_varid'][variable.id]
+
+
+def get_variable_value_from_varname(user, igadget, var_name):
+
+    if 'id' in igadget:
+        igadget_id = igadget.id
+    else:
+        igadget_id = int(igadget)
+
+    if not user.id in _variables_values_cache:
+        _populate_variables_values_cache(user)
+
+    return _variables_values_cache[user.id]['by_varname'][igadget_id][var_name]
 
 
 def _invalidate_cached_variable_values(user):
@@ -552,10 +583,7 @@ def get_variable_data(variable, user, workspace, forced_values={}):
         if var_def.aspect == 'PREF':
             data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
     else:
-        if user.id not in _variables_values_cache:
-            _populate_variables_values_cache(user)
-
-        data_ret['value'] = _variables_values_cache[user.id][variable.id]
+        data_ret['value'] = get_variable_value_from_var(user, variable)
 
     if var_def.shared_var_def:
         data_ret['shared'] = variable.shared_value != None
