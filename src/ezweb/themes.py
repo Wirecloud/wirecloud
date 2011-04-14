@@ -60,7 +60,7 @@ def get_template_sources(template_name, template_dirs=None):
     def try_template(templates_dir):
         if templates_dir and os.path.isdir(templates_dir):
             try:
-                yield safe_join(templates_dir, template_name)
+                return safe_join(templates_dir, template_name)
             except UnicodeDecodeError:
                 raise
             except ValueError:
