@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase, Client
 
 from proxy.views import EZWEB_PROXY
+from workspace.models import VariableValue
+from workspace.utils import set_variable_value
 
 
 class FakeDownloader(object):
@@ -143,6 +145,10 @@ class ProxyTests(TestCase):
         self.assertEquals(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
 
     def test_secure_data(self):
+
+        set_variable_value(1, self.user, 'test_password')
+        self.assertTrue(VariableValue.objects.get(pk=1).value != 'test_password')
+
         client = Client()
         client.login(username='test', password='test')
 

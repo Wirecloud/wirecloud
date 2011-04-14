@@ -39,22 +39,21 @@ from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
-from commons.get_data import _invalidate_cached_variable_values, get_workspace_data, get_global_workspace_data, get_tab_data
+from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from igadget.models import Variable
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import Category
-from workspace.models import VariableValue, SharedVariableValue
+from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab, sync_group_workspaces
+from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_group_workspaces
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -502,44 +501,8 @@ class WorkSpaceVariableCollection(Resource):
 
             variables_to_notify = []
             for igVar in igadgetVariables:
-                variable_value = VariableValue.objects.filter(user=user, variable__id=igVar['id']).select_related('variable__vardef')[0]
+                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'], igVar.get('shared', None))
 
-                if 'shared' in igVar:
-                    if not igVar['shared']:
-                        #do not share the value: remove the relationship
-                        variable_value.shared_var_value = None
-                    else:
-                        shared_variable_def = variable_value.variable.vardef.shared_var_def
-                        variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
-                                                                                          shared_var_def=shared_variable_def)
-                        #share the specified value
-                        variable_value.shared_var_value.value = unicode(igVar['value'])
-                        variable_value.shared_var_value.save()
-
-                        #notify the rest of variables that are sharing the value
-                        #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
-                        variable_values = VariableValue.objects.filter(shared_var_value=variable_value.shared_var_value).exclude(id=variable_value.id)
-                        #Variables that correspond with these values
-                        for value in variable_values:
-                            try:
-                                variable = Variable.objects.get(abstract_variable=value.abstract_variable,
-                                                                igadget__tab__workspace__id=workspace_id)
-                                exists = False
-                                for var in variables_to_notify:
-                                    if var['id'] == variable.id:
-                                        var['value'] = value.shared_var_value.value
-                                        exists = True
-                                        break
-                                if not exists:
-                                    variables_to_notify.append({'id': variable.id, 'value': value.shared_var_value.value})
-                            except Variable.DoesNotExist:
-                                #it's not from the same workspace. Do nothing
-                                pass
-
-                variable_value.value = unicode(igVar['value'])
-                variable_value.save()
-
-            _invalidate_cached_variable_values(user)
             data = {'igadgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
 

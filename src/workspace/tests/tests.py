@@ -53,7 +53,7 @@ class WorkspaceTestCase(TestCase):
 
         client = Client()
         put_data = {
-            'igadgetVars': [{'id': 1, 'value': 'new_value'}],
+            'igadgetVars': [{'id': 2, 'value': 'new_value'}],
             'workspaceVars': [],
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False)
@@ -62,7 +62,7 @@ class WorkspaceTestCase(TestCase):
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
-        self.assertEqual(variables['password']['value'], 'new_value')
+        self.assertEqual(variables['username']['value'], 'new_value')
 
     def testLinkWorkspace(self):
 
