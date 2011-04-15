@@ -349,6 +349,7 @@ var URIs = {
   CONTRACT_APPLICATIONS_TRANSACTION: '/contract/subscribe/applications',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
+  ACTIVE_THEME: '{{ STATIC_URL }}{{ THEME_ACTIVE }}',
 {% if AUTHENTICATION_SERVER_URL %}
   EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api',
 {% endif %}

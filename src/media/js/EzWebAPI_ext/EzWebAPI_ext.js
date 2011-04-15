@@ -319,9 +319,8 @@ if (!window.preventDefaultStyle) {
     /* Theme style */
     try {
         /* TODO */
-        var contextManager = window.parent.OpManagerFactory.getInstance().activeWorkSpace.getContextManager();
-        var theme = contextManager._concepts['theme'];
-        EzWebExt.prependStyle(EzWebAPI.platform_domain + "/ezweb/themes/" + encodeURIComponent(theme.getValue()) + "/gadgets/gadget.css");
+        var theme = window.parent.URIs.ACTIVE_THEME;
+        EzWebExt.prependStyle(EzWebAPI.platform_domain + theme + "/css/gadget.css");
     } catch (e) {}
 
     /* Load default style */
