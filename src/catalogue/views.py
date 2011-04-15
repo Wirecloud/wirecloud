@@ -101,6 +101,8 @@ class GadgetsCollection(Resource):
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         json_response = get_catalogue_resource_info(resource, templateParser)
+        # get_catalogue_resource_info can make changes in the db
+        transaction.commit()
 
         if not gadget_already_exists:
             json_response["result"] = "ok"
