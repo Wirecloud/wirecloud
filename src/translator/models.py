@@ -80,18 +80,36 @@ class TransModel(models.Model):
             _translated_models_cache[table] = {
                 'default': {},
             }
-            for attr_trans in Translation.objects.filter(table=table, default=True):
-                try:
-                    _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
-                except KeyError:
-                    _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
-            for lang_code, lang_name in settings.LANGUAGES:
-                _translated_models_cache[table][lang_code] = {}
-                for attr_trans in Translation.objects.filter(table=table, language=lang_code):
+            for attr_trans in Translation.objects.filter(table=table):
+                if attr_trans.default:
                     try:
-                        _translated_models_cache[table][lang_code][attr_trans.element_id].append(attr_trans)
+                        _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
                     except KeyError:
-                        _translated_models_cache[table][lang_code][attr_trans.element_id] = [attr_trans]
+                        _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
+
+                if attr_trans.language not in _translated_models_cache[table]:
+                    _translated_models_cache[table][attr_trans.language] = {}
+
+                try:
+                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id].append(attr_trans)
+                except KeyError:
+                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id] = [attr_trans]
+
+        elif pk not in _translated_models_cache[table]['default']:
+            for attr_trans in Translation.objects.filter(table=table, element_id=pk):
+                if attr_trans.default:
+                    try:
+                        _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
+                    except KeyError:
+                        _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
+
+                if attr_trans.language not in _translated_models_cache[table]:
+                    _translated_models_cache[table][attr_trans.language] = {}
+
+                try:
+                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id].append(attr_trans)
+                except KeyError:
+                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id] = [attr_trans]
 
         # add default values
         try:
