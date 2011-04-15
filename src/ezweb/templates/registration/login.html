@@ -16,16 +16,13 @@
 <![endif]-->
 
 <!-- Base css -->
-<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/ezweb.css" />
-
-
-
+<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/ezweb.css" />
 <style>
 body{
   overflow: visible;
   color: #19446A;
   position:relative;
-	background: url("/ezweb/themes/default/images/fond.gif") top left;
+	background: url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/fond.gif) top left;
     margin:0;
     padding:0;
     font-size:80%;
@@ -49,14 +46,14 @@ img{
     position: relative;
     width:100%;
     z-index: 2;
-    background: url("/ezweb/themes/default/images/header_deg.gif") repeat-x left top;
+    background: url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/header_deg.gif) repeat-x left top;
 	color:white;
 	height: 65px;
 }
 #logo {
 	margin-top:5px;
-	background: url("/ezweb/themes/default/images/Open_Ez_Logo.png") no-repeat;
-	_background: url("/ezweb/themes/default/images/ie/Open_Ez_Logo-trans.png") no-repeat;
+	background: url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png) no-repeat;
+	_background: url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/ie/Open_Ez_Logo-trans.png) no-repeat;
 	width: 244px;
 	height: 46px;
 }
@@ -83,7 +80,7 @@ img{
 }
 
 .form-row #submit, #facebookconnect-login-form #submit{
-	background: transparent url("/ezweb/themes/default/images/header_deg.gif") repeat;
+	background: transparent url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/header_deg.gif) repeat;
 	color: white;
 }
 
@@ -93,7 +90,7 @@ img{
 }
 
 #other-methods{
-	text-align:center;	
+	text-align:center;
 }
 
 .errornote {
@@ -130,7 +127,7 @@ img{
 }
 
 input.openid {
-  background: white url("/ezweb/themes/default/images/login-openid-bg.gif") no-repeat;
+  background: white url({{ STATIC_URL }}{{ THEME_ACTIVE }}/images/login-openid-bg.gif) no-repeat;
   background-position: 0 50%;
   padding-left: 16px;
 }
@@ -243,7 +240,7 @@ h3{
 
 </style>
 
-<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+<link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/favicon.ico" />
 
 {# facebook_js #}
 
