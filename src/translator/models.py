@@ -135,6 +135,18 @@ class TransModel(models.Model):
 
         return TranslatedModel(self, data)
 
+    def delete(self, using=None):
+        pk = self.pk
+
+        super(TransModel, self).delete(using)
+
+        # invalidate cache entries
+        table = self.__class__.__module__ + "." + self.__class__.__name__
+        if table in _translated_models_cache:
+            for lang in _translated_models_cache[table]:
+                if pk in _translated_models_cache[table][lang]:
+                    del _translated_models_cache[table][lang][pk]
+
     class Meta:
         abstract = True
 
