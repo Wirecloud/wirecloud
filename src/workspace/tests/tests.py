@@ -31,6 +31,13 @@ class WorkspaceTestCase(TestCase):
         self.assertEqual('workspace' in data, True)
         self.assertEqual(len(data['workspace']['tabList']), 1)
 
+        tab = data['workspace']['tabList'][0]
+        variables = tab['igadgetList'][0]['variables']
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'test_username')
+        self.assertEqual(variables['prop']['value'], 'test_data')
+
     def testCreateEmptyWorkspace(self):
 
         workspace = createEmptyWorkSpace('Testing', self.user)
@@ -53,7 +60,11 @@ class WorkspaceTestCase(TestCase):
 
         client = Client()
         put_data = {
-            'igadgetVars': [{'id': 2, 'value': 'new_value'}],
+            'igadgetVars': [
+                {'id': 1, 'value': 'new_password'},
+                {'id': 2, 'value': 'new_username'},
+                {'id': 3, 'value': 'new_data'}
+            ],
             'workspaceVars': [],
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False)
@@ -62,7 +73,10 @@ class WorkspaceTestCase(TestCase):
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
-        self.assertEqual(variables['username']['value'], 'new_value')
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'new_username')
+        self.assertEqual(variables['prop']['value'], 'new_data')
 
     def testLinkWorkspace(self):
 
