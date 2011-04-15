@@ -452,7 +452,7 @@ class TemplateHandler(handler.ContentHandler):
         if _href != "":
             try:
                 self._xhtml = parse_gadget_code(self.uri, _href, self._gadgetURI, _content_type,
-                                                self.fromWGT, cacheable=_cacheable, user=self.user)
+                                                self.fromWGT, cacheable=_cacheable, user=self.user, request=self.request)
             except TemplateParseException:
                 raise
             except Exception, e:

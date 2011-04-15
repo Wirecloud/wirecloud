@@ -141,6 +141,7 @@ def includeTagBase(document, url, request):
 
     href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
+    document = u"%s" % document.decode('utf8')
     # HTML Parser
     subDocument = expScript.sub("", document)
     subDocument = expLink.sub("", subDocument)
@@ -168,7 +169,7 @@ def includeTagBase(document, url, request):
             head = "<head><base href='" + href + "'/>"
             lines[parser.getPosStartHead() - 1] = element1 + head + element2
 
-    return "".join("\n").join(lines)
+    return u"".join("\n").join(lines)
 
 
 def xpath(tree, query, xmlns):

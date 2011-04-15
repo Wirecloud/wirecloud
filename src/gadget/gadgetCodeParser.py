@@ -43,7 +43,9 @@ from gadget.models import XHTML
 
 
 def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
-                      cacheable=True, user=None):
+                      cacheable=True, user=None, request=None):
+    from gadget.utils import includeTagBase, fix_ezweb_scripts
+
     code = ""
 
     url = urlparse.urlparse(code_uri)
@@ -77,6 +79,9 @@ def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
         except URLError, e:
             msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
             raise TemplateParseException(msg)
+
+    code = includeTagBase(code, code_uri, request)
+    code = fix_ezweb_scripts(code, request)
 
     return XHTML.objects.create(uri=gadget_uri + "/xhtml", code=code,
                                 url=code_uri, content_type=content_type,
