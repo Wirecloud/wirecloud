@@ -88,15 +88,32 @@ load_template_source.is_usable = True
 class ActiveThemeFinder(BaseFinder):
 
     def __init__(self, apps=None, *args, **kwargs):
-        self.location = get_theme_dir(get_active_theme_name(), 'static')
+        self.active_theme = get_active_theme_name()
+        self.active_theme_location = get_theme_dir(self.active_theme, 'static')
+        self.default_theme_location = get_theme_dir(DEFAULT_THEME, 'static')
 
     def find(self, path, all=False):
-        filename = safe_join(self.location, path)
+        matches = []
+        filename = safe_join(self.active_theme_location, path)
         if os.path.exists(filename):
-            return filename
-        return []
+            if all:
+                matches.append(filename)
+            else:
+                return filename
+
+        new_path = path.replace(self.active_theme, DEFAULT_THEME, 1)
+        filename = safe_join(self.default_theme_location, new_path)
+        if os.path.exists(filename):
+            if all:
+                matches.append(filename)
+            else:
+                return filename
+
+        return matches
 
     def list(self, ignore_patterns=[]):
-        storage = FileSystemStorage(location=self.location)
-        for path in utils.get_files(storage, ignore_patterns):
-            yield path, storage
+        for location in (self.active_theme_location,
+                         self.default_theme_location):
+            storage = FileSystemStorage(location=location)
+            for path in utils.get_files(storage, ignore_patterns):
+                yield path, storage
