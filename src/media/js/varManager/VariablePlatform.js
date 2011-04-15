@@ -253,15 +253,18 @@ RWVariable.prototype = new Variable;
 
 
 RWVariable.prototype.set = function (value_, options_) {
+    var oldvalue;
+
 	if (this.aspect == Variable.prototype.PROPERTY && this.shared==true) {
 		//it is a shared property. Gadgets cannot set its value
 		throw new Error("Shared properties cannot be changed by gadgets");
 	}
 	this.varManager.incNestingLevel();
 
+    oldvalue = this.value;
 	this.value = value_;
 
-	if (this.aspect === this.PROPERTY && this.value != value_) {
+	if (this.aspect === this.PROPERTY && oldvalue != value_) {
 		this.varManager.markVariablesAsModified([this]);
 
 		if (this.shared == true) {
