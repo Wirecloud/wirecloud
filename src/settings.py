@@ -159,6 +159,7 @@ INSTALLED_APPS = (
     'API',
     'uploader',
     'south',
+    'deployment',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
