@@ -142,8 +142,9 @@ def includeTagBase(document, url, request):
 
     href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
-    # Are we sure document is always going to be utf-8? TODO
-    document = u"%s" % document.decode('utf8', 'ignore')
+    if not isinstance(document, unicode):
+        document = u"%s" % document.decode('utf8', 'ignore')
+
     # HTML Parser
     subDocument = expScript.sub("", document)
     subDocument = expLink.sub("", subDocument)
@@ -203,16 +204,11 @@ def fix_ezweb_scripts(xhtml_code, request):
         xmlns = xmltree.getroot().nsmap[prefix]
 
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
-    ezweb_scripts = []
     for script in scripts:
         if 'src' in script.attrib:
             script.text = ''
-
         if script.get('src', '').startswith('/ezweb/'):
-            ezweb_scripts.append(script)
-
-    for script in ezweb_scripts:
-        script.set('src', rootURL + script.get('src'))
+            script.set('src', rootURL + script.get('src'))
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')

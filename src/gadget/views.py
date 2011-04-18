@@ -44,7 +44,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget
+from gadget.utils import get_or_create_gadget, includeTagBase, fix_ezweb_scripts
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 
@@ -184,11 +184,13 @@ class GadgetCodeEntry(Resource):
             try:
                 if gadget.xhtml.url.startswith('/deployment/gadgets/'):
                     gadget.xhtml.code = get_xhtml_content(gadget.xhtml.url)
+                    gadget.xhtml.code = includeTagBase(gadget.xhtml.code, gadget.xhtml.url, request)
                 else:
                     gadget.xhtml.code = download_http_content(gadget.get_resource_url(gadget.xhtml.url, request), user=request.user)
+                gadget.xhtml.code = fix_ezweb_scripts(gadget.xhtml.code, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
-                msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.msg}
+                msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
         return HttpResponse(gadget.xhtml.code, mimetype='%s; charset=UTF-8' % content_type)
