@@ -30,8 +30,6 @@
 
 #
 
-from HTMLParser import HTMLParseError
-
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError
 from django.shortcuts import get_object_or_404
@@ -176,37 +174,26 @@ class GadgetCodeEntry(Resource):
 
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
-
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users__id=user.id)
-        xhtml = get_object_or_404(gadget.xhtml, id=gadget.xhtml.id)
 
         content_type = gadget.xhtml.content_type
         if not content_type:
             content_type = 'text/html'
 
-        if not xhtml.cacheable:
+        if not gadget.xhtml.cacheable:
             try:
-                if xhtml.url.startswith('/deployment/gadgets/'):
-                    xhtml.code = get_xhtml_content(xhtml.url)
+                if gadget.xhtml.url.startswith('/deployment/gadgets/'):
+                    gadget.xhtml.code = get_xhtml_content(gadget.xhtml.url)
+                    gadget.xhtml.code = includeTagBase(gadget.xhtml.code, gadget.xhtml.url, request)
                 else:
-                    xhtml.code = download_http_content(gadget.get_resource_url(xhtml.url, request),
-                                                       user=request.user)
-                xhtml.save()
+                    gadget.xhtml.code = download_http_content(gadget.get_resource_url(gadget.xhtml.url, request), user=request.user)
+                gadget.xhtml.code = fix_ezweb_scripts(gadget.xhtml.code, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
-                msg = _("XHTML code is not accessible")
-
-        xhtml_code = xhtml.code
-        if (content_type != 'text/html') and (content_type != 'application/xml+html'):
-            return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
-        else:
-            try:
-                xhtml_code = includeTagBase(xhtml_code, xhtml.url, request)
-                xhtml_code = fix_ezweb_scripts(xhtml_code, request)
-                return HttpResponse(xhtml_code, mimetype='%s; charset=UTF-8' % content_type)
-            except HTMLParseError, e:
-                msg = _("Error when the code was parsed: %(errorMsg)s") % {'errorMsg': e.msg}
+                msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+
+        return HttpResponse(gadget.xhtml.code, mimetype='%s; charset=UTF-8' % content_type)
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
