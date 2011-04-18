@@ -1,22 +1,19 @@
 # encoding: utf-8
-import datetime
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
+
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Changing field 'WorkSpace.creator'
         db.alter_column('workspace_workspace', 'creator_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User']))
 
-
     def backwards(self, orm):
-        
+
         # Changing field 'WorkSpace.creator'
         db.alter_column('workspace_workspace', 'creator_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['auth.User']))
-
 
     models = {
         'auth.group': {
@@ -59,13 +56,6 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'SharedVariableDef'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'})
-        },
-        'layout.branding': {
-            'Meta': {'object_name': 'Branding'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'link': ('django.db.models.fields.URLField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'viewer_logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
         },
         'workspace.abstractvariable': {
             'Meta': {'object_name': 'AbstractVariable'},
@@ -130,7 +120,6 @@ class Migration(SchemaMigration):
         },
         'workspace.workspace': {
             'Meta': {'object_name': 'WorkSpace'},
-            'branding': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['layout.Branding']", 'null': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'creator'", 'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),

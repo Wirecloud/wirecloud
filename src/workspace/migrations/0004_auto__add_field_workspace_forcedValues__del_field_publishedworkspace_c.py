@@ -93,13 +93,6 @@ class Migration(SchemaMigration):
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
         },
-        'layout.branding': {
-            'Meta': {'object_name': 'Branding'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'link': ('django.db.models.fields.URLField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'viewer_logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-        },
         'workspace.abstractvariable': {
             'Meta': {'object_name': 'AbstractVariable'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -164,7 +157,6 @@ class Migration(SchemaMigration):
         },
         'workspace.workspace': {
             'Meta': {'object_name': 'WorkSpace'},
-            'branding': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['layout.Branding']", 'null': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'creator'", 'to': "orm['auth.User']"}),
             'forcedValues': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

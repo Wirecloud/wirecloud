@@ -17,7 +17,6 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=30)),
             ('creator', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='creator', null=True, to=orm['auth.User'])),
-            ('branding', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['layout.Branding'], null=True, blank=True)),
         ))
         db.send_create_signal('workspace', ['WorkSpace'])
 
@@ -117,7 +116,6 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal('workspace', ['Tab'])
 
-
     def backwards(self, orm):
 
         # Removing unique constraint on 'SharedVariableValue', fields ['shared_var_def', 'user']
@@ -152,7 +150,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'Tab'
         db.delete_table('workspace_tab')
-
 
     models = {
         'auth.group': {
@@ -195,13 +192,6 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'SharedVariableDef'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'})
-        },
-        'layout.branding': {
-            'Meta': {'object_name': 'Branding'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'link': ('django.db.models.fields.URLField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'}),
-            'viewer_logo': ('django.db.models.fields.CharField', [], {'max_length': '500', 'null': 'True', 'blank': 'True'})
         },
         'workspace.abstractvariable': {
             'Meta': {'object_name': 'AbstractVariable'},
@@ -266,7 +256,6 @@ class Migration(SchemaMigration):
         },
         'workspace.workspace': {
             'Meta': {'object_name': 'WorkSpace'},
-            'branding': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['layout.Branding']", 'null': 'True', 'blank': 'True'}),
             'creator': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'creator'", 'null': 'True', 'to': "orm['auth.User']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '30'}),
