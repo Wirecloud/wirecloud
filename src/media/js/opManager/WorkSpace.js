@@ -326,10 +326,6 @@ function WorkSpace (workSpaceState) {
         var newTab = new Tab(tabInfo, this);
         this.tabInstances[tabInfo.id] = newTab;
         this.setTab(this.tabInstances[tabInfo.id]);
-        for(var i=0; i< tabInfo.workspaceVariables.length; i++){
-            this.varManager.parseWorkspaceVariable(tabInfo.workspaceVariables[i]);
-            this.wiring.processVar(tabInfo.workspaceVariables[i]);
-        }
 
         this.showTabBar();
         newTab.getDragboard().paint();
