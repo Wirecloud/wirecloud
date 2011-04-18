@@ -120,20 +120,22 @@ def get_and_add_gadget(vendor, name, version, users):
     return gadget
 
 
+includeTagBase_exp = re.compile(r'.*/deployment/gadgets/')
+includeTagBase_expScript = re.compile(r'<script.*</script>', re.I | re.S)
+includeTagBase_expLink = re.compile(r'<style.*</style>', re.I | re.S)
+includeTagBase_htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)', re.I)
+includeTagBase_headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)', re.I)
+
+
 def includeTagBase(document, url, request):
     # Get info url Gadget: host, username, Vendor, NameGadget and Version
 
-    exp = re.compile(r'.*/deployment/gadgets/')
-
     # Is the gadget in the platform?
-    if not exp.search(url):
+    if not includeTagBase_exp.search(url):
         return document
 
-    expScript = re.compile(r'<script.*</script>', re.I | re.S)
-    expLink = re.compile(r'<style.*</style>', re.I | re.S)
-
     # Get href base
-    elements = exp.sub("", url).split("/")
+    elements = includeTagBase_exp.sub("", url).split("/")
 
     if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
         host = "https://" + request.META['HTTP_HOST']
@@ -146,17 +148,16 @@ def includeTagBase(document, url, request):
         document = u"%s" % document.decode('utf8', 'ignore')
 
     # HTML Parser
-    subDocument = expScript.sub("", document)
-    subDocument = expLink.sub("", subDocument)
+    subDocument = includeTagBase_expScript.sub("", document)
+    subDocument = includeTagBase_expLink.sub("", subDocument)
     parser = HTMLHeadParser(subDocument)
     # Split document by lines
     lines = document.split("\n")
 
     # HTML document has not head tag
     if not parser.getPosStartHead() and parser.getPosStartHtml():
-        htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)', re.I)
-        if(htmlExp.search(lines[parser.getPosStartHtml() - 1])):
-            v = htmlExp.search(lines[parser.getPosStartHtml() - 1])
+        if(includeTagBase_headExp.search(lines[parser.getPosStartHtml() - 1])):
+            v = includeTagBase_headExp.search(lines[parser.getPosStartHtml() - 1])
             element1 = v.group("element1")
             element2 = v.group("element2")
             html = "<html><head><base href='" + href + "'/></head>"
@@ -164,9 +165,8 @@ def includeTagBase(document, url, request):
 
     # HTML document has head tag but has not base tag
     if parser.getPosStartHead() and not parser.getHrefBase():
-        headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)', re.I)
-        if(headExp.search(lines[parser.getPosStartHead() - 1])):
-            v = headExp.search(lines[parser.getPosStartHead() - 1])
+        if(includeTagBase_headExp.search(lines[parser.getPosStartHead() - 1])):
+            v = includeTagBase_headExp.search(lines[parser.getPosStartHead() - 1])
             element1 = v.group("element1")
             element2 = v.group("element2")
             head = "<head><base href='" + href + "'/>"
