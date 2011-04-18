@@ -17,10 +17,6 @@ body.dragboard_view, body.wiring_view{
 	background: transparent;
 }
 
-#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
-	color:#4C5054;
-}
-
 /*
  * TOOLBAR section
  */

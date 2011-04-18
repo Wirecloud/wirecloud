@@ -74,6 +74,11 @@ td {
     width: 100%;
     z-index: 2;
     height: 74px;
+    background: url(../images/header_deg.gif) repeat-x left top;
+}
+
+#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
+	color: #fff;
 }
 
 .form-row {
