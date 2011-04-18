@@ -241,21 +241,6 @@ function VarManager (_workSpace) {
 		this.sendBufferedVars();
 	}
 
-	VarManager.prototype.createWorkspaceVariable = function(name) {
-		var provisional_id = new Date().getTime();
-		
-		return new RWVariable(provisional_id, null, name, Variable.prototype.INOUT, this, "");
-		
-	}
-	
-	VarManager.prototype.addWorkspaceVariable = function(id, variable) {
-		this.workspaceVariables[id] = variable;
-	}
-
-	VarManager.prototype.getWorkspaceVariableById = function(varId) {
-		return this.workspaceVariables[varId];
-	}
-
 	VarManager.prototype.initializeInterface = function () {
 	    // Calling all SLOT vars handler
 	    var variable;
@@ -380,7 +365,6 @@ function VarManager (_workSpace) {
 	
 	// For now workspace variables must be in a separated hash table, because they have a
 	// different identifier space and can collide with the idenfiers of normal variables
-	this.workspaceVariables = new Hash();
 	
 	this.resetModifiedVariables();
 	
