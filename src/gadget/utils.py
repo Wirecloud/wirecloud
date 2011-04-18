@@ -124,12 +124,13 @@ def includeTagBase(document, url, request):
     # Get info url Gadget: host, username, Vendor, NameGadget and Version
 
     exp = re.compile(r'.*/deployment/gadgets/')
-    expScript = re.compile(r'<script.*</script>', re.I | re.S)
-    expLink = re.compile(r'<style.*</style>', re.I | re.S)
 
     # Is the gadget in the platform?
     if not exp.search(url):
         return document
+
+    expScript = re.compile(r'<script.*</script>', re.I | re.S)
+    expLink = re.compile(r'<style.*</style>', re.I | re.S)
 
     # Get href base
     elements = exp.sub("", url).split("/")
@@ -141,7 +142,8 @@ def includeTagBase(document, url, request):
 
     href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
-    document = u"%s" % document.decode('utf8')
+    # Are we sure document is always going to be utf-8? TODO
+    document = u"%s" % document.decode('utf8', 'ignore')
     # HTML Parser
     subDocument = expScript.sub("", document)
     subDocument = expLink.sub("", subDocument)
