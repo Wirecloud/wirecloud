@@ -106,19 +106,23 @@ a, a:visited{
 }
 
 .application_selector {
-  background:transparent url(../images/igadget/settings.png) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: -24px -456px;
  }
 
 #left_slider{
- background: transparent url(../images/leftSlider.png) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: 0px -288px;
 }
 
 #right_slider{
- background: transparent url(../images/rightSlider.png) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: -24px -288px;
 }
 
 #tab_marker{
-	background: transparent url(../images/tab_marker.png) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: 0px -240px;
 }
 
 #tab_space{
@@ -139,7 +143,8 @@ a, a:visited{
 }
 
 #logs_link {
-  background: transparent url(../images/info.png) no-repeat;
+  background-image: url(../images/icons-sprite.png);
+  background-position: -48px -504px; 
 }
 
 #logs_link.highlighted {
@@ -233,7 +238,8 @@ a, a:visited{
 }
 
 .drop_down_menu div .help_button {
-  background: transparent url(../images/help.gif) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: 0px -312px;
 }
 
 .underlined {
@@ -297,15 +303,18 @@ a, a:visited{
 }
 
 .tabOps_launcher{
-  background: transparent url(../images/tabops16px.png) no-repeat;
+  background: url("../images/icons-sprite.png");
+  background-position: -24px -264px;
 }
 
 .tab_dragger{
-	background: transparent url(../images/separator.gif) no-repeat;
+  background: url("../images/icons-sprite.png");
+  background-position: 0px -264px;
 }
 
 .closebutton {
-  background: transparent url(../images/remove.png) no-repeat;
+  background: url("../images/icons-sprite.png");
+  background-position: -48px -312px;
 }
 
 button {
@@ -406,7 +415,8 @@ button {
 
 
 .help_button {
-	background: transparent url(../images/help.gif) no-repeat scroll 0 0;
+  background: url("../images/icons-sprite.png");
+  background-position: 0px -312px;
 	display:block;
 }
 

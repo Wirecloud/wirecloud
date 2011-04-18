@@ -119,11 +119,13 @@
 }
 
 #wiring #unfold_chkItem{
-  background: url("../images/wiring/unchecked14px.png") no-repeat right bottom;
+  background: url("../images/icons-sprite.png") no-repeat center right;
+  background-position: -48px 0px;
+  padding: 0px 0px 0px 20px;
  }
 
 #wiring #unfold_chkItem.chkItem{
-  background: url("../images/wiring/checked14px.png") no-repeat right bottom;
+  background-position: -48px -24px;
 }
 
 #wiring #channels_list .channel .channelPipe {
