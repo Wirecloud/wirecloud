@@ -1,23 +1,25 @@
 # Spanish translation of EzWeb-Platform.
 # Copyright (C) 2008 Teléfonica I+D
 # This file is distributed under the same license as the EzWeb-Platform package.
+#
 # manuel <miglesia@pegaso.ls.fi.upm.es>, 2008.
 # jjmr <jjmr@tid.es>, 2011.
 # Álvaro Arranz García <aarranz@yaco.es>, 2011.
-#
+# Pablo Caro <correo@pablocaro.es>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-17 17:53+0100\n"
-"PO-Revision-Date: 2011-02-17 17:53+0100\n"
-"Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
-"Language-Team: Español/España <>\n"
+"PO-Revision-Date: 2011-04-19 12:25+0200\n"
+"Last-Translator: Pablo Caro <correo@pablocaro.es>\n"
+"Language-Team: Spanish <kde-i18n-doc@kde.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 1.2\n"
 
 #: manage.py:94
 #, python-format
@@ -71,7 +73,7 @@ msgstr ""
 
 #: API/views.py:72 gadget/views.py:72
 msgid "Missing template URL parameter"
-msgstr "Parametro URL del template no encontrado"
+msgstr "Parámetro URL del template no encontrado"
 
 #: authentication/__init__.py:44
 msgid "Logged out"
@@ -143,7 +145,7 @@ msgstr "IE Compatible"
 
 #: catalogue/models.py:96
 msgid "Is Solution"
-msgstr "Is Solution"
+msgstr "Es Solución"
 
 #: catalogue/models.py:98 ezweb/templates/catalogue/order_by_template.html:7
 #: gadget/models.py:62 workspace/models.py:119
@@ -286,7 +288,7 @@ msgstr "ERROR: falta un atributo en el Recurso"
 
 #: catalogue/templateParser.py:238 gadget/templateParser.py:523
 msgid "ERROR: missing the 'default' attribute at Translations element"
-msgstr "ERROR: falta el attributo 'default' en el elemento Translation"
+msgstr "ERROR: falta el atributo 'default' en el elemento Translation"
 
 #: catalogue/templateParser.py:245 catalogue/templateParser.py:251
 #: gadget/templateParser.py:530 gadget/templateParser.py:536
@@ -369,12 +371,12 @@ msgstr "El  %(name)s \"%(obj)s\" ha sido añadido correctamente"
 
 #: clms/admin.py:48 clms/admin.py:83
 msgid "You may edit it again below."
-msgstr ""
+msgstr "Puede editarlo de nuevo abajo"
 
 #: clms/admin.py:58 clms/admin.py:93
 #, python-format
 msgid "You may add another %s below."
-msgstr ""
+msgstr "Pueda añadir otro %s abajo"
 
 #: clms/admin.py:81
 #, python-format
@@ -386,6 +388,8 @@ msgstr "El %(name)s \"%(obj)s\" fue cambiado satisfactoriamente."
 msgid ""
 "The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
 msgstr ""
+"El %(name)s \"%(obj)s\" fue añadido satisfactoriamente. Puede editarlo de "
+"nuevo abajo."
 
 #: clms/admin.py:162 clms/admin.py:229 clms/templates/panels_db.html:18
 msgid "All Users"
@@ -405,16 +409,16 @@ msgstr "Elige un panel "
 
 #: clms/admin.py:224
 msgid "Change some content"
-msgstr ""
+msgstr "Modificar contenido"
 
 #: clms/admin.py:241 clms/templates/panel_list_popup.html:450
 #: clms/templates/panels_db.html:9
 msgid "All Languages"
-msgstr "Tdos los idiomas"
+msgstr "Todos los idiomas"
 
 #: clms/admin.py:244
 msgid "Choose some content"
-msgstr ""
+msgstr "Elija el contenido"
 
 #: clms/admin.py:260 clms/models.py:154
 #: clms/templates/panel_list_popup.html:428
@@ -427,25 +431,25 @@ msgstr " "
 
 #: clms/admin.py:354 clms/models.py:147
 msgid "Layout Template"
-msgstr "templateURI"
+msgstr "Layout Template"
 
 #: clms/admin.py:391 clms/models.py:193 clms/models.py:202
 #: igadget/models.py:58
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: clms/adminfilters.py:148
 #, python-format
 msgid "availability of %s"
-msgstr ""
+msgstr "disponibilidad de %s"
 
 #: clms/adminfilters.py:151
 msgid "Indistinct"
-msgstr ""
+msgstr "indistintamente"
 
 #: clms/adminfilters.py:151
 msgid "Yes"
-msgstr "Si"
+msgstr "Sí"
 
 #: clms/adminfilters.py:151
 msgid "No"
@@ -491,11 +495,11 @@ msgstr "Introduce el nombre"
 
 #: clms/models.py:31
 msgid "Type Content"
-msgstr ""
+msgstr "Tipo de contenido"
 
 #: clms/models.py:32
 msgid "Select a type content"
-msgstr ""
+msgstr "Seleccione un tipo de contenido"
 
 #: clms/models.py:34
 msgid "Url"
@@ -503,35 +507,35 @@ msgstr ""
 
 #: clms/models.py:35
 msgid "Enter url"
-msgstr ""
+msgstr "Introduzca una url"
 
 #: clms/models.py:38
 msgid "Enter HTML"
-msgstr ""
+msgstr "Introduzca HTML"
 
 #: clms/models.py:42
 msgid "Image File "
-msgstr ""
+msgstr "Archivo de imagen"
 
 #: clms/models.py:47
 msgid "Image Preview"
-msgstr ""
+msgstr "Previsualización"
 
 #: clms/models.py:79
 msgid "Content"
-msgstr "Concepto"
+msgstr "Contenido"
 
 #: clms/models.py:80
 msgid "Select a Content"
-msgstr "Selecciona un Concepto"
+msgstr "Selecciona un Contenido"
 
 #: clms/models.py:82
 msgid "Category Id"
-msgstr "Id de categoria"
+msgstr "Id de categoría"
 
 #: clms/models.py:83
 msgid "Select a Category"
-msgstr "Selecciona un Categoría"
+msgstr "Seleccione un Categoría"
 
 #: clms/models.py:94
 msgid "Panels"
@@ -551,7 +555,7 @@ msgstr "entero positivo"
 
 #: clms/models.py:108
 msgid "Enter the html"
-msgstr "Introduce el Html"
+msgstr "Introduzca el Html"
 
 #: clms/models.py:109
 msgid "Tokens"
@@ -567,11 +571,11 @@ msgstr ""
 
 #: clms/models.py:145
 msgid "Select some panels"
-msgstr ""
+msgstr "Seleccione algunos paneles"
 
 #: clms/models.py:148
 msgid "Select a layout template"
-msgstr ""
+msgstr "Seleccione una plantilla"
 
 #: clms/models.py:156
 msgid "description"
@@ -623,11 +627,11 @@ msgstr ""
 
 #: clms/templates/base_clms.html:44
 msgid "Login"
-msgstr "Registrarse"
+msgstr "Registro"
 
 #: clms/templates/base_clms.html:48
 msgid "Register"
-msgstr ""
+msgstr "Registro"
 
 #: clms/templates/base_clms.html:57
 msgid "Welcome"
@@ -640,7 +644,7 @@ msgstr "Salir"
 #: clms/templates/base_clms.html:73 clms/templates/base_clms.html.py:79
 #: ezweb/templates/header.html:25
 msgid "Profile"
-msgstr ""
+msgstr "Perfil"
 
 #: clms/templates/base_clms.html:74 clms/templates/base_clms.html.py:77
 #: clms/templates/base_clms.html:80
@@ -653,7 +657,7 @@ msgstr "Errores"
 
 #: clms/templates/favourite_layout_catalogue_view.html:7
 msgid "Favourites"
-msgstr ""
+msgstr "Favoritos"
 
 #: clms/templates/favourite_layout_catalogue_view.html:15
 msgid "No favourite layouts founds"
@@ -666,15 +670,15 @@ msgstr ""
 
 #: clms/templates/favourite_layout_detail.html:17
 msgid "Favourite"
-msgstr ""
+msgstr "Favorito"
 
 #: clms/templates/layout_catalogue_view.html:13
 msgid "Layout catalogue"
-msgstr "Layout catalogue"
+msgstr ""
 
 #: clms/templates/layout_catalogue_view.html:16
 msgid "Layout catalogue "
-msgstr "Layout catalogue "
+msgstr ""
 
 #: clms/templates/layout_detail.html:66
 msgid "Layout view"
@@ -682,19 +686,19 @@ msgstr ""
 
 #: clms/templates/paginator.html:7
 msgid "Previous Page"
-msgstr ""
+msgstr "Página anterior"
 
 #: clms/templates/paginator.html:29
 msgid "Next Page"
-msgstr ""
+msgstr "Página siguiente"
 
 #: clms/templates/panel_list_popup.html:409
 msgid "You would select a lang and a category for this content "
-msgstr ""
+msgstr "Debería seleccionar un idioma y una categoría para este contenido"
 
 #: clms/templates/panel_list_popup.html:413
 msgid "Already Assigned"
-msgstr ""
+msgstr "Ya asignado"
 
 #: clms/templates/panel_list_popup.html:425
 msgid "Languages"
@@ -703,7 +707,7 @@ msgstr "Idiomas"
 #: clms/templates/panel_list_popup.html:431
 #: clms/templates/panel_list_popup.html:463 clms/templates/panels_db.html:26
 msgid "Modify"
-msgstr ""
+msgstr "Modificar"
 
 #: clms/templates/panel_list_popup.html:434
 #: clms/templates/panel_list_popup.html:467 clms/templates/panels_db.html:30
@@ -718,15 +722,15 @@ msgstr "Valor por defecto"
 
 #: clms/templates/panel_list_popup.html:457
 msgid "All users"
-msgstr ""
+msgstr "Todos los usuarios"
 
 #: clms/templates/panel_list_popup.html:464 clms/templates/panels_db.html:27
 msgid "Assign"
-msgstr ""
+msgstr "Asignar"
 
 #: clms/templates/panel_list_popup.html:476
 msgid "Add Other "
-msgstr ""
+msgstr "Añadir otro"
 
 #: clms/templates/panel_list_popup.html:482
 #: ezweb/templates/application_catalogue.html:8 ezweb/templates/header.html:92
@@ -741,27 +745,27 @@ msgstr "Seleccionar"
 
 #: clms/templates/panel_list_popup.html:507
 msgid "Results"
-msgstr ""
+msgstr "Resultados"
 
 #: clms/templates/panel_list_popup.html:507
 msgid "Current Page"
-msgstr ""
+msgstr "Página actual"
 
 #: clms/templates/panel_list_popup.html:511
 msgid "First Page "
-msgstr ""
+msgstr "Primera página"
 
 #: clms/templates/panel_list_popup.html:514
 msgid "Before Page "
-msgstr ""
+msgstr "Página anterior"
 
 #: clms/templates/panel_list_popup.html:523
 msgid "Next Page "
-msgstr ""
+msgstr "Página Siguiente"
 
 #: clms/templates/panel_list_popup.html:526
 msgid "Last Page "
-msgstr "Last Page "
+msgstr "Última página"
 
 #: clms/templates/panel_list_popup.html:535 ezweb/templates/header.html:121
 #: ezweb/templates/header_lite.html:83
@@ -1088,7 +1092,7 @@ msgstr "URL de la plantilla inválida. Por favor, especifique una URL correcta."
 
 #: ezweb/views.py:186 ezweb/views.py:269
 msgid "Cancel by the user"
-msgstr ""
+msgstr "Cancelado por el usuario"
 
 #: ezweb/views.py:198 ezweb/views.py:229
 msgid "Error ocurred processing template!"
@@ -1096,7 +1100,7 @@ msgstr "Error al parsear el template"
 
 #: ezweb/views.py:208 ezweb/views.py:321
 msgid "Success"
-msgstr ""
+msgstr "Éxito"
 
 #: ezweb/views.py:224
 msgid "Gadget added correctly to Catalogue!"
@@ -1112,11 +1116,13 @@ msgid ""
 "Invalid params for gadget update! (gadget_vendor, gadget_name, "
 "gadget_version)"
 msgstr ""
+"¡Parámetros inválidos para la actualización del gadget!  (gadget_vendor, "
+"gadget_name, "
+"gadget_version)"
 
 #: ezweb/views.py:280 ezweb/views.py:285
-#, fuzzy
 msgid "Invalid gadget info! Please, specify a valid one!"
-msgstr "URL de la plantilla inválida. Por favor, especifique una URL correcta."
+msgstr "¡Información del gadget inválida! Por favor, especifique una correcta."
 
 #: ezweb/views.py:311 ezweb/views.py:316
 msgid "XHTML code is not accessible!"
@@ -1405,7 +1411,7 @@ msgstr "Añadir más pestañas"
 
 #: ezweb/templates/header.html:42 ezweb/templates/header_lite.html:15
 msgid "Add Tab"
-msgstr "Añadir Tab"
+msgstr "Nueva pestaña"
 
 #: ezweb/templates/header.html:62 ezweb/templates/header.html.py:90
 #: ezweb/templates/header.html:114 ezweb/templates/header_lite.html:36
@@ -1597,23 +1603,23 @@ msgstr "repeat"
 
 #: ezweb/templates/layouts/skin_form.html:109
 msgid "left"
-msgstr "left"
+msgstr ""
 
 #: ezweb/templates/layouts/skin_form.html:110
 msgid "right"
-msgstr "right"
+msgstr ""
 
 #: ezweb/templates/layouts/skin_form.html:111
 msgid "top"
-msgstr "top"
+msgstr ""
 
 #: ezweb/templates/layouts/skin_form.html:112
 msgid "bottom"
-msgstr "bottom"
+msgstr ""
 
 #: ezweb/templates/layouts/skin_form.html:113
 msgid "center"
-msgstr "center"
+msgstr ""
 
 #: ezweb/templates/layouts/skin_form.html:117
 msgid "Create a CSS rule for a background"
@@ -1649,7 +1655,7 @@ msgstr "campo obligatorio"
 #: media/themes/default/templates/registration/login.html:313
 #: media/themes/stl_telefonica/templates/registration/login.html:300
 msgid "Your username and password didn't match. Please try again."
-msgstr "Usuario o contraseña incorrecta. Por favor, intentalo otra vez."
+msgstr "Usuario o contraseña incorrecta. Por favor, inténtelo otra vez."
 
 #: ezweb/templates/registration/login.html:314
 #: media/themes/Zaragoza/templates/registration/login.html:315
@@ -1658,7 +1664,7 @@ msgstr "Usuario o contraseña incorrecta. Por favor, intentalo otra vez."
 #: media/themes/stl_telefonica/templates/registration/login.html:303
 msgid "The OpenID authentication process failed. Please, try again."
 msgstr ""
-"El proceso de autenticación con OpenId falló. Por favor, inténtalo de nuevo."
+"El proceso de autenticación con OpenId falló. Por favor, inténtelo de nuevo."
 
 #: ezweb/templates/registration/login.html:398
 #: media/themes/Zaragoza/templates/registration/login.html:392
@@ -1943,15 +1949,15 @@ msgstr "no se pudo obtener el código XHMTL: "
 
 #: igadget/models.py:42
 msgid "PositionX"
-msgstr "PosiciónX"
+msgstr ""
 
 #: igadget/models.py:43
 msgid "PositionY"
-msgstr "PosiciónY"
+msgstr ""
 
 #: igadget/models.py:44
 msgid "PositionZ"
-msgstr "PosiciónZ"
+msgstr ""
 
 #: igadget/models.py:47
 msgid "Minimized"
@@ -2053,7 +2059,7 @@ msgstr ""
 
 #: layout/models.py:46
 msgid "Logo Link"
-msgstr "Logo Link"
+msgstr ""
 
 #: layout/models.py:53
 msgid "Theme css"
@@ -2065,7 +2071,7 @@ msgstr "Images definition"
 
 #: layout/models.py:62
 msgid "templates"
-msgstr "templates"
+msgstr ""
 
 #: layout/models.py:63
 msgid "configurable elements"
@@ -2155,7 +2161,7 @@ msgstr "Error en el descubrikiento de OpenID"
 
 #: openid_auth/views.py:162
 msgid "Not allowed OpenID provider"
-msgstr ""
+msgstr "Proveedor de OpenID no permitido"
 
 #: openid_auth/views.py:200
 msgid "The request was cancelled."
@@ -2201,7 +2207,7 @@ msgstr "No se pudo actualizar las preferencias de la pestaña: "
 
 #: proxy/views.py:89 proxy/views.py:247
 msgid "Your must be logged in to access this service"
-msgstr ""
+msgstr "Debe estar logado para acceder a este servicio"
 
 #: proxy/views.py:93 proxy/views.py:95 proxy/views.py:251 proxy/views.py:253
 msgid "Invalid request Referer"
@@ -2226,11 +2232,11 @@ msgstr ""
 
 #: resourceSubscription/models.py:49
 msgid "Application"
-msgstr "Applicación"
+msgstr "Aplicación"
 
 #: stdimage/widgets.py:19
 msgid "Currently:"
-msgstr ""
+msgstr "Actualmente:"
 
 #: stdimage/widgets.py:20
 msgid "Change:"
