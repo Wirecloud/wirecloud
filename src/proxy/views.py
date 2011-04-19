@@ -287,7 +287,10 @@ def proxy_request(request, protocol, domain, path):
     else:
         method = request.method.upper()
 
-    raw_data = request.raw_post_data
+    if method in ('GET', 'DELETE'):
+        raw_data = ''
+    else:
+        raw_data = request.raw_post_data
 
     if not request.user.is_authenticated():
         return HttpResponseForbidden(_('Your must be logged in to access this service'))
