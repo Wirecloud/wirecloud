@@ -10,6 +10,8 @@ from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
 from connectable.models import InOut
+from gadget.models import Gadget
+from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
@@ -64,8 +66,7 @@ class WorkspaceTestCase(TestCase):
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
                 {'id': 3, 'value': 'new_data'}
-            ],
-            'workspaceVars': [],
+            ]
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False)
         client.login(username='test', password='test')
@@ -77,6 +78,35 @@ class WorkspaceTestCase(TestCase):
         self.assertEqual(variables['password']['secure'], True)
         self.assertEqual(variables['username']['value'], 'new_username')
         self.assertEqual(variables['prop']['value'], 'new_data')
+
+        # Add a new iGadget to the workspace
+        tab = Tab.objects.get(pk=1)
+        igadget_data = {
+            'gadget': '/Test/Test Gadget/1.0.0',
+            'name': 'test',
+            'top': 0,
+            'left': 0,
+            'width': 2,
+            'height': 2,
+            'zIndex': 1,
+            'layout': 0,
+            'icon_top': 0,
+            'icon_left': 0,
+            'menu_color': '',
+        }
+        Gadget.objects.get(pk=1).users.add(self.user)
+        created_igadget = SaveIGadget(igadget_data, self.user, tab, {})
+
+        data = get_global_workspace_data(workspace, self.user)
+
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 2)
+
+        # Remove the igadget
+        deleteIGadget(created_igadget, self.user)
+        data = get_global_workspace_data(workspace, self.user)
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 1)
 
     def testLinkWorkspace(self):
 

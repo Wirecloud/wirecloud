@@ -94,7 +94,7 @@
         "model": "gadget.Gadget",
         "pk": "1",
         "fields": {
-            "uri": "",
+            "uri": "/Test/Test Gadget/1.0.0",
             "vendor": "Test",
             "name": "Test Gadget",
             "version": "1.0.0",
