@@ -79,15 +79,18 @@ class GadgetsCollection(Resource):
         template_uri = request.POST['template_uri']
         templateParser = None
 
-        gadget_already_exists = False
         try:
             templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
-            transaction.commit()
 
         except IntegrityError, e:
             # Gadget already exists. Rollback transaction
-            gadget_already_exists = True
             transaction.rollback()
+            json_response = {
+                "result": "error",
+                "message": _('Gadget already exists!')
+            }
+            return HttpResponseBadRequest(simplejson.dumps(json_response),
+                                          mimetype='application/json; charset=UTF-8')
 
         except TemplateParseException, e:
             transaction.rollback()
@@ -101,18 +104,13 @@ class GadgetsCollection(Resource):
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         json_response = get_catalogue_resource_info(resource, templateParser)
+        json_response["result"] = "ok"
+
         # get_catalogue_resource_info can make changes in the db
         transaction.commit()
 
-        if not gadget_already_exists:
-            json_response["result"] = "ok"
-            return HttpResponse(simplejson.dumps(json_response),
-                                mimetype='application/json; charset=UTF-8')
-        else:
-            json_response["result"] = "error"
-            json_response["message"] = _('Gadget already exists!')
-            return HttpResponseBadRequest(simplejson.dumps(json_response),
-                                          mimetype='application/json; charset=UTF-8')
+        return HttpResponse(simplejson.dumps(json_response),
+                            mimetype='application/json; charset=UTF-8')
 
     def read(self, request, user_name, pag=0, offset=0):
 
