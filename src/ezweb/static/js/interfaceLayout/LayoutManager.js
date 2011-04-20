@@ -79,13 +79,8 @@ var LayoutManagerFactory = function () {
         this.rightTimeOut;
         //fixed section
         this.fixedTabBar = $('fixed_bar');
-        var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
-        if ($('lite_toolbar_section')) {
-            //$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
-            this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-        } else {
-            this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-        }
+
+        this.resizeTabBarWidth();
 
         this.tabMarker = $('tab_marker');
 
@@ -95,6 +90,11 @@ var LayoutManagerFactory = function () {
         this.scrollTabBarWidth = null;
 
         this.menus = new Array();
+        
+
+        // Listen to resize events
+        Event.observe(window, "resize", this.resizeWrapper.bind(this));
+    }
 
         // ***************
         // PUBLIC METHODS
@@ -204,14 +204,7 @@ var LayoutManagerFactory = function () {
 
         LayoutManager.prototype.resizeTabBar = function () {
             this.showTabs();
-            var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
-            if($('lite_toolbar_section')){
-                //$('ws_section_identifier').offsetWidth - 550 = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
-                this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - 550 - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-            }else{
-                this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - 30;
-            }
-
+            this.resizeTabBarWidth();
             this.changeTabBarSize(0);
         }
 
@@ -1111,8 +1104,7 @@ var LayoutManagerFactory = function () {
             }
             //now, the current menu is parentMenu
 
-    }
-
+        }
         LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
         LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
         LayoutManager.prototype.FADE_TAB_END = "#97A0A8";
@@ -1124,10 +1116,21 @@ var LayoutManagerFactory = function () {
             var fadder = new BackgroundFadder(tab, this.FADE_TAB_INI, ((tab.hasClassName("current"))?this.FADE_TAB_CUR_END:this.FADE_TAB_END), 0, 1000);
             fadder.fade();
         }
+        LayoutManager.prototype.IDENTIFIER_WIDTH = 550;
+        LayoutManager.prototype.SLIDER_WIDTH = 30;
 
-        // Listen to resize events
-        Event.observe(window, "resize", this.resizeWrapper.bind(this));
-    }
+        LayoutManager.prototype.resizeTabBarWidth = function () {
+            var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
+            if($('lite_toolbar_section')){
+                alert("width: "+ this.IDENTIFIER_WIDTH);
+                //$('ws_section_identifier').offsetWidth -this.IDENTIFIER_WIDTH = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
+                this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.IDENTIFIER_WIDTH - this.leftSlider.getWidth() - this.rightSlider.getWidth() - this.SLIDER_WIDTH;
+            }else{
+                this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - this.SLIDER_WIDTH;
+            }
+        }
+
+
 
     /*-----------------------------*
      * Tab scroll bar management   *
