@@ -31,14 +31,11 @@
 #
 
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.utils.translation import get_language, ugettext as  _
 
 from commons.translation_utils import get_trans_index
-
-
-# translated models cache
-_translated_models_cache = {}
 
 
 class TranslatedModel(object):
@@ -59,10 +56,16 @@ class TranslatedModel(object):
 
 class TransModel(models.Model):
 
+    def _get_table_id(self):
+        return self.__class__.__module__ + "." + self.__class__.__name__
+
+    def _get_cache_key(self):
+        table = self._get_table_id()
+        return 'TransModel/' + table
+
     def get_translated_model(self):
         language = get_language()[:2]
         pk = self.pk
-        table = self.__class__.__module__ + "." + self.__class__.__name__
 
         index_mapping = {}
         for field in iter(self._meta.fields):
@@ -76,44 +79,50 @@ class TransModel(models.Model):
 
         data = {}
 
-        if table not in _translated_models_cache:
-            _translated_models_cache[table] = {
+        key = self._get_cache_key()
+        translations = cache.get(key)
+        if translations == None:
+            translations = {
                 'default': {},
             }
-            for attr_trans in Translation.objects.filter(table=table):
+            for attr_trans in Translation.objects.filter(table=self._get_table_id()):
                 if attr_trans.default:
                     try:
-                        _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
+                        translations['default'][attr_trans.element_id].append(attr_trans)
                     except KeyError:
-                        _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
+                        translations['default'][attr_trans.element_id] = [attr_trans]
 
-                if attr_trans.language not in _translated_models_cache[table]:
-                    _translated_models_cache[table][attr_trans.language] = {}
+                if attr_trans.language not in translations:
+                    translations[attr_trans.language] = {}
 
                 try:
-                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id].append(attr_trans)
+                    translations[attr_trans.language][attr_trans.element_id].append(attr_trans)
                 except KeyError:
-                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id] = [attr_trans]
+                    translations[attr_trans.language][attr_trans.element_id] = [attr_trans]
 
-        elif pk not in _translated_models_cache[table]['default']:
-            for attr_trans in Translation.objects.filter(table=table, element_id=pk):
+            cache.set(key, translations)
+
+        elif pk not in translations['default']:
+            for attr_trans in Translation.objects.filter(table=self._get_table_id(), element_id=pk):
                 if attr_trans.default:
                     try:
-                        _translated_models_cache[table]['default'][attr_trans.element_id].append(attr_trans)
+                        translations['default'][attr_trans.element_id].append(attr_trans)
                     except KeyError:
-                        _translated_models_cache[table]['default'][attr_trans.element_id] = [attr_trans]
+                        translations['default'][attr_trans.element_id] = [attr_trans]
 
-                if attr_trans.language not in _translated_models_cache[table]:
-                    _translated_models_cache[table][attr_trans.language] = {}
+                if attr_trans.language not in translations:
+                    translations[attr_trans.language] = {}
 
                 try:
-                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id].append(attr_trans)
+                    translations[attr_trans.language][attr_trans.element_id].append(attr_trans)
                 except KeyError:
-                    _translated_models_cache[table][attr_trans.language][attr_trans.element_id] = [attr_trans]
+                    translations[attr_trans.language][attr_trans.element_id] = [attr_trans]
+
+            cache.set(key, translations)
 
         # add default values
         try:
-            attr_trans = _translated_models_cache[table]['default'][pk]
+            attr_trans = translations['default'][pk]
             for element in attr_trans:
                 if element.text_id in index_mapping:
                     attnames = index_mapping[element.text_id]
@@ -124,7 +133,7 @@ class TransModel(models.Model):
 
         # add specific values
         try:
-            attr_trans = _translated_models_cache[table][language][pk]
+            attr_trans = translations[language][pk]
             for element in attr_trans:
                 if element.text_id in index_mapping:
                     attnames = index_mapping[element.text_id]
@@ -136,16 +145,10 @@ class TransModel(models.Model):
         return TranslatedModel(self, data)
 
     def delete(self, using=None):
-        pk = self.pk
-
         super(TransModel, self).delete(using)
 
-        # invalidate cache entries
-        table = self.__class__.__module__ + "." + self.__class__.__name__
-        if table in _translated_models_cache:
-            for lang in _translated_models_cache[table]:
-                if pk in _translated_models_cache[table][lang]:
-                    del _translated_models_cache[table][lang][pk]
+        # invalidate cache entry
+        cache.delete(self._get_cache_key())
 
     class Meta:
         abstract = True
