@@ -32,6 +32,7 @@
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import get_language
@@ -48,36 +49,29 @@ from workspace.utils import createTab
 
 import re
 
-# cached variables
-_variables_values_cache = {}
-_variables_cache = None
+
+def _variable_cache_key(igadget):
+    return '_variable_cache/' + str(igadget.id)
 
 
 def _get_cached_variables(igadget):
-    """ populates cached Variable with all variables defined in all gadgets """
-    global _variables_cache
+    key = _variable_cache_key(igadget)
 
-    if _variables_cache == None:
-        _variables_cache = {}
-        variables = Variable.objects.all()
-    else:
-        variables = Variable.objects.filter(igadget__id=igadget.id)
+    variables = cache.get(key)
+    if variables == None:
+        variable_query = Variable.objects.filter(igadget__id=igadget.id).select_related('igadget', 'vardef')
+        variables = variable_query[::1]
+        cache.set(key, variables)
 
-    for variable in variables.select_related('igadget', 'vardef'):
-        if variable.igadget.id not in _variables_cache:
-            _variables_cache[variable.igadget.id] = [variable]
-        else:
-            _variables_cache[variable.igadget.id].append(variable)
-
-    return _variables_cache.get(igadget.id, [])
+    return variables
 
 
 def _invalidate_cached_variables(igadget):
-    if _variables_cache != None and igadget.id in _variables_cache:
-        del _variables_cache[igadget.id]
+    key = _variable_cache_key(igadget)
+    cache.delete(key)
 
 
-def _populate_variables_values_cache(user):
+def _populate_variables_values_cache(user, key):
     """ populates VariableValue cached values for that user """
     values_by_varid = {}
     values_by_varname = {}
@@ -90,17 +84,26 @@ def _populate_variables_values_cache(user):
         values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
         values_by_varid[var_value.variable.id] = value
 
-    _variables_values_cache[user.id] = {
+    values = {
         'by_varid': values_by_varid,
         'by_varname': values_by_varname,
     }
+    cache.set(key, values)
+
+    return values
+
+
+def _variable_values_cache_key(user):
+    return '_variables_values_cache/' + str(user.id)
 
 
 def get_variable_value_from_var(user, variable):
-    if not user.id in _variables_values_cache:
-        _populate_variables_values_cache(user)
+    key = _variable_values_cache_key(user)
+    values = cache.get(key)
+    if values == None:
+        values = _populate_variables_values_cache(user, key)
 
-    return _variables_values_cache[user.id]['by_varid'][variable.id]
+    return values['by_varid'][variable.id]
 
 
 def get_variable_value_from_varname(user, igadget, var_name):
@@ -110,15 +113,17 @@ def get_variable_value_from_varname(user, igadget, var_name):
     else:
         igadget_id = int(igadget)
 
-    if not user.id in _variables_values_cache:
-        _populate_variables_values_cache(user)
+    key = _variable_values_cache_key(user)
+    values = cache.get(key)
+    if values == None:
+        values = _populate_variables_values_cache(user, key)
 
-    return _variables_values_cache[user.id]['by_varname'][igadget_id][var_name]
+    return values['by_varname'][igadget_id][var_name]
 
 
 def _invalidate_cached_variable_values(user):
-    if user.id in _variables_values_cache:
-        del _variables_values_cache[user.id]
+    key = _variable_values_cache_key(user)
+    cache.delete(key)
 
 
 def get_wiring_variable_data(var, ig):
