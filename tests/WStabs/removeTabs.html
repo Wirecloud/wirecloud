@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://localhost:8000/" />
+<title>removeTabs</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">removeTabs</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/accounts/login/?next=/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>10000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>go_to_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_workspace</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@value='']</td>
+	<td>RemoveTabsWS</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>10000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>RemoveTabsWS</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_tab_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_tab_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>MyTab</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>MyTab 2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>MyTab 3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='tab_section']/div[@id='fixed_bar']/div[@id='scroll_bar']/div[1]/input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[4]/div[4]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>MyTab</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>MyTab 2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>MyTab 3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>op_config_menu_2_3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>RemoveTabsWS</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>MyTab</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>MyTab 2</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Sign out</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>
