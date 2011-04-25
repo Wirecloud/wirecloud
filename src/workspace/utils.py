@@ -29,7 +29,12 @@
 
 
 #
-from Crypto.Cipher import AES
+try:
+    from Crypto.Cipher import AES
+    HAS_AES = True
+except ImportError:
+    HAS_AES = False
+
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import Group
@@ -102,7 +107,7 @@ def set_variable_value(var_id, user, value, shared=None):
     variable_value = VariableValue.objects.filter(user=user, variable__id=var_id).select_related('variable__vardef')[0]
 
     new_value = unicode(value)
-    if variable_value.variable.vardef.secure:
+    if variable_value.variable.vardef.secure and HAS_AES:
         cipher = AES.new(settings.SECRET_KEY[:32])
         json_value = simplejson.dumps(new_value, ensure_ascii=False)
         padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '

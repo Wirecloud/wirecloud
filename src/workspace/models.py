@@ -30,7 +30,11 @@
 
 #
 
-from Crypto.Cipher import AES
+try:
+    from Crypto.Cipher import AES
+    HAS_AES = True
+except ImportError:
+    HAS_AES = False
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
@@ -153,7 +157,7 @@ class VariableValue(models.Model):
         else:
             value = self.value
 
-        if self.variable.vardef.secure:
+        if self.variable.vardef.secure and HAS_AES:
             cipher = AES.new(settings.SECRET_KEY[:32])
             try:
                 value = cipher.decrypt(value.decode('base64'))
