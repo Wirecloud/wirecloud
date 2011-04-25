@@ -1122,7 +1122,6 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.resizeTabBarWidth = function () {
             var section_identifier_width = $('ws_section_identifier')?$('ws_section_identifier').offsetWidth: 0;
             if($('lite_toolbar_section')){
-                alert("width: "+ this.IDENTIFIER_WIDTH);
                 //$('ws_section_identifier').offsetWidth -this.IDENTIFIER_WIDTH = left-side elements (section_identifier + max toolbar (and small_toolbar) menu)
                 this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.IDENTIFIER_WIDTH - this.leftSlider.getWidth() - this.rightSlider.getWidth() - this.SLIDER_WIDTH;
             }else{
