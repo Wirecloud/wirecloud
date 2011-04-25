@@ -85,10 +85,18 @@ _EzWebAPI.prototype._old_send = function(method, url, parameters, context, succe
 }
 
 _EzWebAPI.prototype.buildProxyURL = function(url, options) {
-	var final_url = url;
+	var final_url, protocolEnd, link, forceProxy = options != null && !!options.forceProxy;
 
-	var protocolEnd = url.indexOf('://');
-	if (protocolEnd != -1) {
+	final_url = url;
+
+	if (forceProxy) {
+		link = document.createElement('a');
+		link.href = final_url;
+		final_url = link.href;
+	}
+
+	protocolEnd = url.indexOf('://');
+	if (protocolEnd !== -1) {
 		var domainStart = protocolEnd + 3;
 		var pathStart = url.indexOf('/', domainStart);
 		if (pathStart === -1) {
@@ -99,10 +107,11 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
 		var domain = url.substr(domainStart, pathStart - domainStart);
 		var rest = url.substring(pathStart);
 
-		if ((protocol + '://' + domain) !== EzWebAPI.platform_domain)
+		if (forceProxy || (protocol + '://' + domain) !== EzWebAPI.platform_domain) {
 			final_url = this.platform.URIs.PROXY + '/' +
 				encodeURIComponent(protocol) + '/' +
 				encodeURIComponent(domain) + rest;
+		}
 	}
 
 	return final_url;

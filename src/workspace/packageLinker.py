@@ -31,7 +31,7 @@
 #
 
 from igadget.models import Variable, IGadget
-from workspace.models import WorkSpaceVariable, VariableValue, UserWorkSpace, SharedVariableValue
+from workspace.models import VariableValue, UserWorkSpace, SharedVariableValue
 
 
 class PackageLinker:
@@ -39,20 +39,18 @@ class PackageLinker:
     def link_workspace(self, workspace, user, creator, update_variable_values=True):
         # Linking user to workspace
 
-        #Linking gadgets to user!
-        ws_igadget_vars = self.link_gadgets(workspace, user)
+        # Linking gadgets to user!
+        variables = self.link_gadgets(workspace, user)
 
         #Linking workspace with user!
         user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
 
-        if (update_variable_values):
-            ws_vars = WorkSpaceVariable.objects.filter(workspace=workspace)
+        if update_variable_values:
 
-            abstract_var_list = self.get_abstract_var_list(ws_igadget_vars, ws_vars)
+            # Create a new VariableValue for each AbstractVariable
+            self.update_user_variable_values(variables, user, creator)
 
-            # Creating new VariableValue to each AbstractVariable
-            # Linking each new VariableValue to the user argument
-            self.update_user_variable_values(abstract_var_list, user, creator)
+        return user_workspace
 
     def unlink_workspace(self, workspace, user):
         user_workspace = UserWorkSpace.objects.filter(workspace=workspace, user=user)
@@ -60,7 +58,7 @@ class PackageLinker:
 
     def link_gadgets(self, workspace, user):
         # Getting all abstract variables of workspace
-        ws_igadget_vars = Variable.objects.filter(igadget__tab__workspace=workspace)
+        variables = Variable.objects.filter(igadget__tab__workspace=workspace)
 
         ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
@@ -72,7 +70,7 @@ class PackageLinker:
 
             gadget.save()
 
-        return ws_igadget_vars
+        return variables
 
     def add_user_to_workspace(self, workspace, user):
          #Checking if user is already linked to workspace
@@ -80,77 +78,64 @@ class PackageLinker:
             user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
             user_workspace.save()
 
-    def update_variable_value(self, user_variable_value, creator_value_available, abstract_variable, created):
-        if (creator_value_available):
+    def update_variable_value(self, user_variable_value, creator_value_available, variable, created):
+        if creator_value_available:
 
             user_variable_value.value = creator_value_available.get_variable_value()
-        else:
+        elif created:
             #Creator VariableValue not available (workspace published with old cloning algorithm)
             #Using AbstractVariable default value
-            if (created):
-                user_variable_value.value = abstract_variable.get_default_value()
+            user_variable_value.value = variable.get_default_value()
 
         return user_variable_value
 
-    def update_user_variable_values(self, abstract_var_list, user, creator):
-        for (abstract_var, variable) in abstract_var_list:
+    def update_user_variable_values(self, variables, user, creator):
+        for variable in variables:
             #Does user have his own VariableValue?
             try:
-                user_variable_value = VariableValue.objects.get(user=user, abstract_variable=abstract_var)
+                user_variable_value = VariableValue.objects.get(user=user, variable=variable)
             except VariableValue.DoesNotExist:
                 user_variable_value = None
 
             #Does creator have his own VariableValue?
             try:
-                creator_variable_value = VariableValue.objects.get(user=creator, abstract_variable=abstract_var)
+                creator_variable_value = VariableValue.objects.get(user=creator, variable=variable)
             except VariableValue.DoesNotExist:
                 creator_variable_value = None
 
             created = False
 
-            if (not user_variable_value):
-                #User VariableValue does not exist! Creating one!
+            if not user_variable_value:
+                # User VariableValue does not exist! Creating one!
 
-                user_variable_value = VariableValue(user=user, value='', abstract_variable=abstract_var)
+                user_variable_value = VariableValue(user=user, value='', variable=variable)
                 created = True
 
             #Updating User VariableValue value!
-            user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, abstract_var, created)
+            user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, variable, created)
 
-            if created:
-                if creator_variable_value:
+            if created and creator_variable_value:
 
-                    #check if it's shared (only for igadget variables)
-                    if variable and variable.vardef.shared_var_def:
-                        shared_concept = variable.vardef.shared_var_def
-                        shared_var_value, is_new = SharedVariableValue.objects.get_or_create(user=user,
-                                                                                              shared_var_def=shared_concept)
-                        if is_new:
-                            if variable.has_public_value():
-                                #clone the value the creator has set
-                                shared_var_value.value = SharedVariableValue.objects.get(user=creator,
-                                                                                         shared_var_def=shared_concept).value
-                            else:
-                                #set the default value
-                                shared_var_value.value = variable.get_default_value()
+                #check if it's shared (only for igadget variables)
+                if variable.vardef.shared_var_def:
+                    shared_concept = variable.vardef.shared_var_def
+                    shared_var_value, is_new = SharedVariableValue.objects.get_or_create(user=user,
+                                                                                          shared_var_def=shared_concept)
+                    if is_new:
+                        if variable.has_public_value():
+                            #clone the value the creator has set
+                            shared_var_value.value = SharedVariableValue.objects.get(user=creator,
+                                                                                     shared_var_def=shared_concept).value
+                        else:
+                            #set the default value
+                            shared_var_value.value = variable.get_default_value()
 
-                            shared_var_value.save()
+                        shared_var_value.save()
 
-                        if creator_variable_value.shared_var_value:
-                            user_variable_value.shared_var_value = shared_var_value
+                    if creator_variable_value.shared_var_value:
+                        user_variable_value.shared_var_value = shared_var_value
 
-                    #remove the cloned variable value
-                    #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
+                #remove the cloned variable value
+                #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
 
             user_variable_value.save()
-
-    def get_abstract_var_list(self, ws_igadget_vars, ws_vars):
-        abstract_var_list = []
-
-        for igadget_var in ws_igadget_vars:
-            abstract_var_list.append((igadget_var.abstract_variable, igadget_var))
-
-        for ws_var in ws_vars:
-            abstract_var_list.append((ws_var.abstract_variable, None))
-
-        return abstract_var_list

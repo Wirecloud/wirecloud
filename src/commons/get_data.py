@@ -31,64 +31,99 @@
 #
 
 from django.conf import settings
+from django.contrib.auth.models import Group
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import get_language
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
-from gadget.models import XHTML, ContextOption, UserPrefOption, Capability
-from igadget.models import Variable, VariableDef, IGadget
+from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
+from igadget.models import Variable, IGadget
+from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from twitterauth.models import TwitterUserProfile
-from workspace.models import Tab, WorkSpaceVariable, AbstractVariable, VariableValue, UserWorkSpace, PublishedWorkSpace
+from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
 from workspace.utils import createTab
 
 import re
 
-# cached variables
-_variables_values_cache = {}
-_variables_cache = None
+
+def _variable_cache_key(igadget):
+    return '_variable_cache/' + str(igadget.id)
 
 
 def _get_cached_variables(igadget):
-    """ populates cached Variable with all variables defined in all gadgets """
-    global _variables_cache
+    key = _variable_cache_key(igadget)
 
-    if _variables_cache == None:
-        _variables_cache = {}
-        variables = Variable.objects.all()
-    else:
-        variables = Variable.objects.filter(igadget__id=igadget.id)
+    variables = cache.get(key)
+    if variables == None:
+        variable_query = Variable.objects.filter(igadget__id=igadget.id).select_related('igadget', 'vardef')
+        variables = variable_query[::1]
+        cache.set(key, variables)
 
-    for variable in variables.select_related('igadget', 'vardef', 'abstract_variable'):
-        if variable.igadget.id not in _variables_cache:
-            _variables_cache[variable.igadget.id] = [variable]
-        else:
-            _variables_cache[variable.igadget.id].append(variable)
-
-    return _variables_cache.get(igadget.id, [])
+    return variables
 
 
 def _invalidate_cached_variables(igadget):
-    if _variables_cache != None and igadget.id in _variables_cache:
-        del _variables_cache[igadget.id]
+    key = _variable_cache_key(igadget)
+    cache.delete(key)
 
 
-def _populate_variables_values_cache(user):
+def _populate_variables_values_cache(user, key):
     """ populates VariableValue cached values for that user """
-    _variables_values_cache[user.id] = {}
-    for var_value in VariableValue.objects.filter(user__id=user.id):
-        _variables_values_cache[user.id][var_value.abstract_variable_id] = var_value.value
+    values_by_varid = {}
+    values_by_varname = {}
+
+    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef', 'variable__igadget'):
+        if not var_value.variable.igadget.id in values_by_varname:
+            values_by_varname[var_value.variable.igadget.id] = {}
+
+        value = var_value.get_variable_value()
+        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
+        values_by_varid[var_value.variable.id] = value
+
+    values = {
+        'by_varid': values_by_varid,
+        'by_varname': values_by_varname,
+    }
+    cache.set(key, values)
+
+    return values
+
+
+def _variable_values_cache_key(user):
+    return '_variables_values_cache/' + str(user.id)
+
+
+def get_variable_value_from_var(user, variable):
+    key = _variable_values_cache_key(user)
+    values = cache.get(key)
+    if values == None:
+        values = _populate_variables_values_cache(user, key)
+
+    return values['by_varid'][variable.id]
+
+
+def get_variable_value_from_varname(user, igadget, var_name):
+
+    if 'id' in igadget:
+        igadget_id = igadget.id
+    else:
+        igadget_id = int(igadget)
+
+    key = _variable_values_cache_key(user)
+    values = cache.get(key)
+    if values == None:
+        values = _populate_variables_values_cache(user, key)
+
+    return values['by_varname'][igadget_id][var_name]
 
 
 def _invalidate_cached_variable_values(user):
-    if user.id in _variables_values_cache:
-        del _variables_values_cache[user.id]
-
-
-def get_abstract_variable(id):
-    return AbstractVariable.objects.get(id=id)
+    key = _variable_values_cache_key(user)
+    cache.delete(key)
 
 
 def get_wiring_variable_data(var, ig):
@@ -134,7 +169,7 @@ def get_gadget_data(gadget):
     tgadget = gadget.get_translated_model()
     data_ret = {}
     data_variabledef = VariableDef.objects.filter(gadget=gadget)
-    data_vars = []
+    data_vars = {}
     for var in data_variabledef:
         tvar = var.get_translated_model()
         data_var = {}
@@ -159,7 +194,7 @@ def get_gadget_data(gadget):
         if var.aspect == 'GCTX' or var.aspect == 'ECTX':
             data_var['concept'] = var.contextoption_set.all().values('concept')[0]['concept']
 
-        data_vars.append(data_var)
+        data_vars[var.name] = data_var
 
     data_code = get_object_or_404(XHTML.objects.all().values('uri'), id=gadget.xhtml.id)
 
@@ -241,7 +276,6 @@ def get_inout_data(inout):
     """
         deprecated!!!!
     """
-    workSpaceVariableDAO = inout.workspace_variable
     data_ins = get_input_data(inout=inout)
     data_outs = get_output_data(inout=inout)
 
@@ -250,8 +284,6 @@ def get_inout_data(inout):
         'aspect': 'INOUT',
         'friend_code': inout.friend_code,
         'name': inout.name,
-        'value': workSpaceVariableDAO.value,
-        'variableId': workSpaceVariableDAO.id,
         'inputs': [d for d in data_ins],
         'outputs': [d for d in data_outs],
     }
@@ -283,47 +315,8 @@ def get_workspace_data(workspace, user):
 
 
 def get_workspace_variables_data(workSpaceDAO, user):
-    tab_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='TAB')
-    ws_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in tab_variables]
-
-    inout_variables = WorkSpaceVariable.objects.filter(workspace=workSpaceDAO, aspect='CHANNEL')
-    ws_inout_variables_data = [get_workspace_variable_data(d, user, workSpaceDAO) for d in inout_variables]
-
-    for inout in ws_inout_variables_data:
-        ws_variables_data.append(inout)
-
-    return ws_variables_data
-
-
-def get_workspace_variable_data(wvariable, user, workspace):
-    abstract_var = wvariable.abstract_variable
-
-    data_ret = {
-        'id': wvariable.id,
-        'name': abstract_var.name,
-        'abstract_var_id': wvariable.abstract_variable.id,
-        'aspect': wvariable.aspect,
-        'type': wvariable.type,
-    }
-
-    try:
-        variable_value = VariableValue.objects.get(abstract_variable=abstract_var, user=user)
-    except VariableValue.DoesNotExist:
-        from workspace.views import clone_original_variable_value
-
-        variable_value = clone_original_variable_value(abstract_var, workspace.creator, user)
-
-    data_ret['value'] = variable_value.value
-
-    if wvariable.aspect == 'TAB':
-        connectable = Out.objects.get(abstract_variable=abstract_var)
-        data_ret['tab_id'] = Tab.objects.filter(abstract_variable=abstract_var)[0].id
-    elif wvariable.aspect == 'CHANNEL':
-        connectable = InOut.objects.get(workspace_variable=wvariable)
-
-    data_ret['connectable'] = get_connectable_data(connectable)
-
-    return data_ret
+    inout_variables = InOut.objects.filter(workspace=workSpaceDAO)
+    return [get_connectable_data(inout) for inout in inout_variables]
 
 
 def get_remote_subscription_data(connectable):
@@ -343,13 +336,10 @@ def get_remote_subscription_data(connectable):
 def get_connectable_data(connectable):
     res_data = {}
 
-    res_data['id'] = connectable.id
-    res_data['name'] = connectable.name
-
     if isinstance(connectable, InOut):
         connectable_type = "inout"
-        ws_var_id = connectable.workspace_variable.id
-        ig_var_id = None
+        res_data['id'] = connectable.id
+        res_data['name'] = connectable.name
 
         # Locating IN connectables linked to this connectable
         res_data['ins'] = []
@@ -371,37 +361,25 @@ def get_connectable_data(connectable):
         for related_inout in related_inouts:
             res_data['out_inouts'].append(related_inout.out_inout_id)
 
-        #Locating the filter linked to this conectable!
+        # Locating the filter linked to this conectable!
         res_data['filter'] = connectable.filter_id
         res_data['filter_params'] = connectable.filter_param_values
 
-        #RemoteChannel data
+        # RemoteChannel data
         res_data['remote_subscription'] = get_remote_subscription_data(connectable)
 
-        #ReadOnly data
+        # ReadOnly data
         res_data['readOnly'] = connectable.readOnly
 
     elif isinstance(connectable, Out):
         connectable_type = "out"
-
-        #Checking asbtract_variable aspect
-        if (connectable.abstract_variable.type == "IGADGET"):
-            #It's a Gadget Variable!
-            ig_var_id = Variable.objects.get(abstract_variable=connectable.abstract_variable).id
-            ws_var_id = None
-        elif (connectable.abstract_variable.type == "WORKSPACE"):
-            #It's a Workspace Variable!
-            ws_var_id = WorkSpaceVariable.objects.get(abstract_variable=connectable.abstract_variable).id
-            ig_var_id = None
+        res_data['var_id'] = connectable.variable.id
 
     elif isinstance(connectable, In):
         connectable_type = "in"
-        ig_var_id = connectable.variable.id
-        ws_var_id = None
+        res_data['var_id'] = connectable.variable.id
 
     res_data['connectable_type'] = connectable_type
-    res_data['ig_var_id'] = ig_var_id
-    res_data['ws_var_id'] = ws_var_id
 
     return res_data
 
@@ -509,8 +487,7 @@ def get_global_workspace_data(workSpaceDAO, user):
                 tabs[i].position = i
                 tabs[i].save()
     else:
-        tab, _junk = createTab('MyTab', user, workSpaceDAO)
-        tabs = [tab]
+        tabs = [createTab('MyTab', user, workSpaceDAO)]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
@@ -530,13 +507,15 @@ def get_global_workspace_data(workSpaceDAO, user):
 
         tab['igadgetList'] = igadget_data
 
-    #WorkSpace variables processing
     workspace_variables_data = get_workspace_variables_data(workSpaceDAO, user)
-    data_ret['workspace']['workSpaceVariableList'] = workspace_variables_data
+    data_ret['workspace']['channels'] = workspace_variables_data
 
     # Filter information
     filters = Filter.objects.all()
     data_ret['workspace']['filters'] = [get_filter_data(f) for f in filters]
+
+    #Branding information
+    data_ret["workspace"]["branding"] = get_workspace_branding_data(workSpaceDAO, user)
 
     # Params
     last_published_workspace = PublishedWorkSpace.objects.filter(workspace=workSpaceDAO).order_by('-pk')
@@ -584,72 +563,45 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
         data_ret['icon_left'] = 0
 
     variables = _get_cached_variables(igadget)
-    data_ret['variables'] = [get_variable_data(variable, user, workspace, igadget_forced_values) for variable in variables]
+    data_ret['variables'] = {}
+    for variable in variables:
+        var_data = get_variable_data(variable, user, workspace, igadget_forced_values)
+        data_ret['variables'][variable.vardef.name] = var_data
 
     return data_ret
 
 
 def get_variable_data(variable, user, workspace, forced_values={}):
-    global _variables_values_cache
-
     var_def = variable.vardef
-    trans_var_def = var_def.get_translated_model()
 
     data_ret = {
         'id': variable.id,
-        'aspect': var_def.aspect,
-        'type': var_def.type,
-        'igadgetId': variable.igadget.id,
-        'vardefId': var_def.pk,
-        'name': var_def.name,
-        'label': trans_var_def.label,
-        'action_label': trans_var_def.action_label,
-        'friend_code': var_def.friend_code,
+        'name': variable.vardef.name,
     }
 
-    # Variable info is splited into 2 entities: AbstractVariable and Variable
-    abstract_var = variable.abstract_variable
+    if variable.vardef.aspect != 'PREF' and variable.vardef.aspect != 'PROP':
+        return data_ret
 
+    # Variable info is splited into 2 entities: VariableDef and VariableValue
     if variable.vardef.name in forced_values:
-        data_ret['value'] = forced_values[variable.vardef.name]['value']
+        if variable.vardef.secure:
+            data_ret['value'] = ''
+            data_ret['secure'] = True
+        else:
+            data_ret['value'] = forced_values[variable.vardef.name]['value']
+
         data_ret['readOnly'] = True
         if var_def.aspect == 'PREF':
             data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
     else:
-        data_ret[''] = 'normal'
-        if user.id not in _variables_values_cache:
-            _populate_variables_values_cache(user)
-        try:
-            data_ret['value'] = _variables_values_cache[user.id][abstract_var.id]
-        except KeyError:
-            from workspace.views import clone_original_variable_value
-            data_ret['value'] = clone_original_variable_value(abstract_var, workspace.creator, user).value
+        if variable.vardef.secure:
+            data_ret['value'] = ''
+            data_ret['secure'] = True
+        else:
+            data_ret['value'] = get_variable_value_from_var(user, variable)
 
     if var_def.shared_var_def:
-        data_ret['shared'] = data_ret['value'].shared_var_value != None
-
-    # Context management
-    if var_def.aspect == 'GCTX' or var_def.aspect == 'ECTX':
-        context = ContextOption.objects.get(varDef=variable.vardef)
-        data_ret['concept'] = context.concept
-
-    # Connectable management
-    # Only SLOTs and EVENTs
-    connectable = False
-    if var_def.aspect == 'SLOT':
-        try:
-            connectable = Out.objects.get(abstract_variable=abstract_var)
-        except Out.DoesNotExist:
-            connectable = Out.objects.create(abstract_variable=abstract_var, name=var_def.name)
-    if var_def.aspect == 'EVEN':
-        try:
-            connectable = In.objects.get(variable=variable)
-        except In.DoesNotExist:
-            connectable = In.objects.create(variable=variable, name=var_def.name)
-
-    if connectable:
-        connectable_data = get_connectable_data(connectable)
-        data_ret['connectable'] = connectable_data
+        data_ret['shared'] = variable.shared_value != None
 
     return data_ret
 
@@ -730,3 +682,65 @@ def get_concept_value(concept, data):
             data['twitterauth'].access_token])
 
     return res
+
+
+def get_workspace_branding_data(workspace, user):
+    ws_type = TYPES[1][0]
+    branding = None
+
+    #Get the Branding object
+    if workspace:
+        branding = workspace.branding
+    if not branding:
+        #get the organization branding
+        orgs = Group.objects.filter(user=user)
+        for org in orgs:
+            try:
+                branding = BrandingOrganization.objects.filter(type=ws_type, organization=org)[0].branding
+                break
+            except:
+                pass
+    if not branding:
+        #get the default branding
+        current_theme = Layout.objects.get(name=settings.LAYOUT).theme
+        branding = ThemeBranding.objects.get(theme=current_theme, type=ws_type).branding
+
+    # Format branding response
+    return get_branding_response(branding)
+
+
+def get_catalogue_branding_data(user):
+    branding = None
+    catalogue_type = TYPES[0][0]
+
+    # Get the Branding object
+    #get the organization branding
+    orgs = Group.objects.filter(user=user)
+    for org in orgs:
+        try:
+            branding = BrandingOrganization.objects.filter(type=catalogue_type, organization=org)[0].branding
+            break
+        except:
+            pass
+    if not branding:
+        #get the default branding
+        current_theme = Layout.objects.get(name=settings.LAYOUT).theme
+        branding = ThemeBranding.objects.get(theme=current_theme, type=catalogue_type).branding
+
+    # Format branding response
+    return get_branding_response(branding)
+
+
+def get_branding_response(branding):
+    data_ret = {}
+    elements = simplejson.loads(Layout.objects.get(name=settings.LAYOUT).elements)
+
+    data_ret["logo"] = {}
+    data_ret["logo"]["url"] = branding.logo
+    data_ret["logo"]["class"] = elements["logo"]
+    data_ret["viewer_logo"] = {}
+    data_ret["viewer_logo"]["url"] = branding.viewer_logo
+    data_ret["viewer_logo"]["class"] = elements["viewer_logo"]
+    if branding.link:
+        data_ret["link"] = branding.link
+    return data_ret

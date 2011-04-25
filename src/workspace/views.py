@@ -39,39 +39,29 @@ from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
-from commons.get_data import _invalidate_cached_variable_values, get_workspace_data, get_global_workspace_data, get_tab_data, get_workspace_variable_data
+from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from igadget.models import Variable
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import Category
-from workspace.models import VariableValue, SharedVariableValue
+from workspace.models import VariableValue
 from workspace.models import Tab
-from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace, WorkSpaceVariable
-from workspace.utils import deleteTab, createTab, setVisibleTab, sync_group_workspaces
+from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
+from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_group_workspaces
 
 
-def clone_original_variable_value(abstract_variable, creator, new_user):
-    try:
-        original_var_value = VariableValue.objects.get(abstract_variable=abstract_variable, user=creator)
+def clone_original_variable_value(variable, creator, new_user):
+    original_var_value = VariableValue.objects.get(variable=variable, user=creator)
 
-        value = original_var_value.get_variable_value()
-    except VariableValue.DoesNotExist:
-        #This VariableValue should exist.
-        #However, published workspaces cloned in the old-fashioned way don't have the VariableValue of the creator variable!
-        #Managing everything with AbstractVariable's default value, VariableValue it's unavailable!
-        value = abstract_variable.get_default_value()
+    value = original_var_value.get_variable_value()
 
-    cloned_value = VariableValue(user=new_user, value=value, abstract_variable=abstract_variable)
-    cloned_value.save()
-
-    return cloned_value
+    return VariableValue.objects.create(variable=variable, user=new_user, value=value)
 
 
 def getCategories(user):
@@ -178,13 +168,13 @@ def cloneWorkspace(workspace_id, user):
 def linkWorkspaceObject(user, workspace, creator, link_variable_values=True):
     packageLinker = PackageLinker()
 
-    packageLinker.link_workspace(workspace, user, creator, link_variable_values)
+    return packageLinker.link_workspace(workspace, user, creator, link_variable_values)
 
 
 def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
     workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-    linkWorkspaceObject(user, workspace, creator, link_variable_values)
+    return linkWorkspaceObject(user, workspace, creator, link_variable_values)
 
 
 class WorkSpaceCollection(Resource):
@@ -376,15 +366,10 @@ class TabCollection(Resource):
             tab_name = t['name']
             workspace = WorkSpace.objects.get(users__id=user.id, pk=workspace_id)
 
-            tab, wsVariable = createTab(tab_name, user, workspace)
+            tab = createTab(tab_name, user, workspace)
 
             # Returning created Ids
-            ids = {}
-
-            ids['id'] = tab.id
-            ids['name'] = tab.name
-
-            ids['workspaceVariables'] = [get_workspace_variable_data(wsVariable, user, workspace)]
+            ids = {'id': tab.id, 'name': tab.name}
 
             return HttpResponse(json_encode(ids), mimetype='application/json; charset=UTF-8')
 
@@ -513,57 +498,11 @@ class WorkSpaceVariableCollection(Resource):
             variables = simplejson.loads(received_json)
 
             igadgetVariables = variables['igadgetVars']
-            workSpaceVariables = variables['workspaceVars']
-
-            for wsVar in workSpaceVariables:
-                wsVarDAO = WorkSpaceVariable.objects.get(pk=wsVar['id'])
-
-                variable_value = VariableValue.objects.get(user=user, abstract_variable=wsVarDAO.abstract_variable)
-
-                variable_value.value = unicode(wsVar['value'])
-                variable_value.save()
 
             variables_to_notify = []
             for igVar in igadgetVariables:
-                igVarDAO = Variable.objects.get(pk=igVar['id'])
-                variable_value = VariableValue.objects.get(user=user, abstract_variable=igVarDAO.abstract_variable)
+                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'], igVar.get('shared', None))
 
-                if 'shared' in igVar:
-                    if not igVar['shared']:
-                        #do not share the value: remove the relationship
-                        variable_value.shared_var_value = None
-                    else:
-                        shared_variable_def = igVarDAO.vardef.shared_var_def
-                        variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
-                                                                                          shared_var_def=shared_variable_def)
-                        #share the specified value
-                        variable_value.shared_var_value.value = unicode(igVar['value'])
-                        variable_value.shared_var_value.save()
-
-                        #notify the rest of variables that are sharing the value
-                        #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
-                        variable_values = VariableValue.objects.filter(shared_var_value=variable_value.shared_var_value).exclude(id=variable_value.id)
-                        #Variables that correspond with these values
-                        for value in variable_values:
-                            try:
-                                variable = Variable.objects.get(abstract_variable=value.abstract_variable,
-                                                                igadget__tab__workspace__id=workspace_id)
-                                exists = False
-                                for var in variables_to_notify:
-                                    if var['id'] == variable.id:
-                                        var['value'] = value.shared_var_value.value
-                                        exists = True
-                                        break
-                                if not exists:
-                                    variables_to_notify.append({'id': variable.id, 'value': value.shared_var_value.value})
-                            except Variable.DoesNotExist:
-                                #it's not from the same workspace. Do nothing
-                                pass
-
-                variable_value.value = unicode(igVar['value'])
-                variable_value.save()
-
-            _invalidate_cached_variable_values(user)
             data = {'igadgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
 

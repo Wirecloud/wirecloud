@@ -44,17 +44,6 @@ function VarManager (_workSpace) {
 				this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
 			}
 		}
-		
-		// Workspace variables (Connectables and future variables!)
-		var ws_vars = workSpaceInfo['workspace']['workSpaceVariableList'];
-				
-		this.parseWorkspaceVariables(ws_vars);
-	}
-
-	VarManager.prototype.parseWorkspaceVariables = function (ws_vars) {
-		for (var i = 0; i<ws_vars.length; i++) {
-			this.parseWorkspaceVariable(ws_vars[i]);
-		}
 	}
 
 	/**
@@ -95,11 +84,10 @@ function VarManager (_workSpace) {
 		}
 
 		// Max lenght of buffered requests have been reached. Uploading to server!
-		if (this.igadgetModifiedVars.length > 0 || this.workspaceModifiedVars.length > 0) {
+		if (this.igadgetModifiedVars.length > 0) {
 			var variables = {};
 
 			variables['igadgetVars'] = this.igadgetModifiedVars;
-			variables['workspaceVars'] = this.workspaceModifiedVars;
 
 			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
 
@@ -117,39 +105,25 @@ function VarManager (_workSpace) {
 		}
 	}
 
-	VarManager.prototype.parseWorkspaceVariable = function (ws_var) {
-		var id = ws_var.id;
-		var name = ws_var.name;
-		var aspect = ws_var.aspect;
-		var value = ws_var.value;
-			
-		switch (aspect) {
-			case Variable.prototype.INOUT:
-				this.workspaceVariables[id] = new RWVariable(id, null, name, aspect, this, value);
-				break;
-			case Variable.prototype.TAB:
-				this.workspaceVariables[id] = new RVariable(id, null, name, aspect, this, value);
-				break;
-		}	
-	}
-	
-	VarManager.prototype.removeWorkspaceVariable = function (ws_varId) {
-		delete this.workspaceVariables[ws_varId];
-		this.workspaceModifiedVars.removeById(ws_varId);
-	}
+    VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
+        var name, id, variables, variable, gadget, gadgetId, igadgetId,
+            varInfo, objVars = {};
 
-	VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
-		var igadgetVars = igadget['variables'];
-		var objVars = {};
-		for (var i = 0; i<igadgetVars.length; i++) {
-			var id = igadgetVars[i].id;
-			var igadgetId = igadgetVars[i].igadgetId;
-			var name = igadgetVars[i].name;
-			var label = igadgetVars[i].label;
-			var action_label = igadgetVars[i].action_label;
-			var aspect = igadgetVars[i].aspect;
-			var value = igadgetVars[i].value;
-			var shared = igadgetVars[i].shared;
+        igadgetId = igadget['id'];
+        gadgetId = igadget.gadget.substr(9).split('/').join('_');
+        gadget = ShowcaseFactory.getInstance().getGadget(gadgetId);
+        variables = gadget.getTemplate().getVariables();
+
+        for (name in variables) {
+            variable = variables[name];
+            varInfo = name in igadget.variables ? igadget.variables[name] : {};
+
+            id = varInfo.id;
+            var label = variable.label;
+			var action_label = variable.action_label;
+			var aspect = variable.aspect;
+			var value = 'value' in varInfo ? varInfo.value : '';
+			var shared = 'shared' in varInfo ? varInfo.shared : null;
 
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
@@ -165,8 +139,8 @@ function VarManager (_workSpace) {
 					break;
 				case Variable.prototype.USER_PREF:
 					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
-					objVars[name].readOnly = igadgetVars[i].readOnly;
-					objVars[name].hidden = igadgetVars[i].hidden;
+					objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
+					objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
 					this.variables[id] = objVars[name];
 					break;
 			}
@@ -267,21 +241,6 @@ function VarManager (_workSpace) {
 		this.sendBufferedVars();
 	}
 
-	VarManager.prototype.createWorkspaceVariable = function(name) {
-		var provisional_id = new Date().getTime();
-		
-		return new RWVariable(provisional_id, null, name, Variable.prototype.INOUT, this, "");
-		
-	}
-	
-	VarManager.prototype.addWorkspaceVariable = function(id, variable) {
-		this.workspaceVariables[id] = variable;
-	}
-
-	VarManager.prototype.getWorkspaceVariableById = function(varId) {
-		return this.workspaceVariables[varId];
-	}
-
 	VarManager.prototype.initializeInterface = function () {
 	    // Calling all SLOT vars handler
 	    var variable;
@@ -320,21 +279,11 @@ function VarManager (_workSpace) {
 
 	VarManager.prototype.markVariablesAsModified = function (variables) {
 		if (this.modificationsEnabled) {
-			var varCollection;
 			
 			for (var j = 0; j < variables.length; j++) {
 				var variable = variables[j];
 				
-				// Is it a igadgetVar or a workspaceVar?
-				if (variable.aspect == Variable.prototype.INOUT ||
-				variable.aspect == Variable.prototype.TAB) {
-					varCollection = this.workspaceModifiedVars;
-				}
-				else {
-					varCollection = this.igadgetModifiedVars;
-				}
-				
-				var modVar = this.findVariableInCollection(varCollection, variable.id)
+				var modVar = this.findVariableInCollection(this.igadgetModifiedVars, variable.id)
 				if (modVar) {
 					modVar.value = variable.value;
 					return;
@@ -342,15 +291,16 @@ function VarManager (_workSpace) {
 				
 				//It's doesn't exist in the list
 				//It's time to create it!
-				var varInfo = {}
+                var varInfo = {
+   				    'id': variable.id,
+				    'value': variable.value
+                }
 				
-				varInfo['id'] = variable.id
-				varInfo['value'] = variable.value
 				if (variable.shared != null) { //it is a possible shared variable 
 					varInfo['shared'] = variable.shared
 				}
 				
-				varCollection.push(varInfo);
+				this.igadgetModifiedVars.push(varInfo);
 			}
 		}
 	
@@ -373,7 +323,6 @@ function VarManager (_workSpace) {
 	    this.nestingLevel = 0;
 	    this.buffered_requests = 0;
 	    this.igadgetModifiedVars = [];
-	    this.workspaceModifiedVars = [];
 		this.force_commit = false;
 	}
 	
@@ -416,16 +365,8 @@ function VarManager (_workSpace) {
 	
 	// For now workspace variables must be in a separated hash table, because they have a
 	// different identifier space and can collide with the idenfiers of normal variables
-	this.workspaceVariables = new Hash();
 	
-	this.igadgetModifiedVars = []
-	this.workspaceModifiedVars = []
-	
-	this.nestingLevel = 0;
-	
-	this.buffered_requests = 0;
-	
-	this.force_commit = false;
+	this.resetModifiedVariables();
 	
 	this.modificationsEnabled = true;
 	

@@ -9,15 +9,16 @@ from django.test import Client, TestCase
 from django.utils import simplejson
 
 from commons.get_data import get_global_workspace_data
-from commons.test import LocalizedTestCase
 from connectable.models import InOut
+from gadget.models import Gadget
+from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
-from workspace.models import WorkSpace, UserWorkSpace, Tab, WorkSpaceVariable
-from workspace.views import createEmptyWorkSpace
+from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
+from workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
-class WorkspaceTestCase(LocalizedTestCase):
+class WorkspaceTestCase(TestCase):
     fixtures = ['test_data']
 
     def setUp(self):
@@ -31,6 +32,13 @@ class WorkspaceTestCase(LocalizedTestCase):
         data = get_global_workspace_data(workspace, self.user)
         self.assertEqual('workspace' in data, True)
         self.assertEqual(len(data['workspace']['tabList']), 1)
+
+        tab = data['workspace']['tabList'][0]
+        variables = tab['igadgetList'][0]['variables']
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'test_username')
+        self.assertEqual(variables['prop']['value'], 'test_data')
 
     def testCreateEmptyWorkspace(self):
 
@@ -46,34 +54,6 @@ class WorkspaceTestCase(LocalizedTestCase):
         data = get_global_workspace_data(workspace, self.user)
         self.assertEqual('workspace' in data, True)
 
-    def vars_by_name(self, igadget_data):
-        variables = {}
-
-        for var in igadget_data['variables']:
-            variables[var['name']] = var
-
-        return variables
-
-    def testTranslations(self):
-
-        workspace = WorkSpace.objects.get(pk=1)
-
-        self.changeLanguage('en')
-        data = get_global_workspace_data(workspace, self.user)
-
-        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
-        igadget_vars = self.vars_by_name(igadget_data)
-        self.assertEqual(igadget_vars['password']['label'], 'Password Pref')
-        #self.assertEqual(igadget_vars['slot']['action_label'], 'Slot Action Label')
-
-        self.changeLanguage('es')
-        data = get_global_workspace_data(workspace, self.user)
-
-        igadget_data = data['workspace']['tabList'][0]['igadgetList'][0]
-        igadget_vars = self.vars_by_name(igadget_data)
-        self.assertEqual(igadget_vars['password']['label'], u'Contraseña')
-        #self.assertEqual(igadget_vars['slot']['action_label'], 'Etiqueta de acción del slot')
-
     def testVariableValuesCacheInvalidation(self):
 
         workspace = WorkSpace.objects.get(pk=1)
@@ -82,8 +62,11 @@ class WorkspaceTestCase(LocalizedTestCase):
 
         client = Client()
         put_data = {
-            'igadgetVars': [{'id': 1, 'value': 'new_value'}],
-            'workspaceVars': [],
+            'igadgetVars': [
+                {'id': 1, 'value': 'new_password'},
+                {'id': 2, 'value': 'new_username'},
+                {'id': 3, 'value': 'new_data'}
+            ]
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False)
         client.login(username='test', password='test')
@@ -91,10 +74,55 @@ class WorkspaceTestCase(LocalizedTestCase):
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
-        for variable in variables:
-            if variable['id'] == 1:
-                self.assertEqual(variable['value'], 'new_value')
-                break
+        self.assertEqual(variables['password']['value'], '')
+        self.assertEqual(variables['password']['secure'], True)
+        self.assertEqual(variables['username']['value'], 'new_username')
+        self.assertEqual(variables['prop']['value'], 'new_data')
+
+        # Add a new iGadget to the workspace
+        tab = Tab.objects.get(pk=1)
+        igadget_data = {
+            'gadget': '/Test/Test Gadget/1.0.0',
+            'name': 'test',
+            'top': 0,
+            'left': 0,
+            'width': 2,
+            'height': 2,
+            'zIndex': 1,
+            'layout': 0,
+            'icon_top': 0,
+            'icon_left': 0,
+            'menu_color': '',
+        }
+        Gadget.objects.get(pk=1).users.add(self.user)
+        created_igadget = SaveIGadget(igadget_data, self.user, tab, {})
+
+        data = get_global_workspace_data(workspace, self.user)
+
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 2)
+
+        # Remove the igadget
+        deleteIGadget(created_igadget, self.user)
+        data = get_global_workspace_data(workspace, self.user)
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 1)
+
+    def testLinkWorkspace(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        alternative_user = User.objects.get(username='test2')
+        new_workspace = linkWorkspace(alternative_user, workspace.id, self.user)
+
+        all_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=workspace)
+        initial_vars = all_variables.filter(user=self.user)
+        cloned_vars = all_variables.filter(user=alternative_user)
+
+        self.assertEqual(new_workspace.user, alternative_user)
+        self.assertEqual(workspace.creator, self.user)
+        self.assertEqual(new_workspace.workspace, workspace)
+        self.assertEqual(initial_vars.count(), cloned_vars.count())
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
@@ -143,17 +171,13 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         workspace = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
-        channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
-        self.assertEqual(channel_vars.count(), 1)
-
-        connectable = InOut.objects.get(workspace_variable=channel_vars[0])
-        self.assertEqual(connectable.readOnly, False)
+        channels = InOut.objects.filter(workspace=workspace)
+        self.assertEqual(channels.count(), 1)
+        self.assertEqual(channels[0].readOnly, False)
 
     def testBlockedChannels(self):
         workspace = buildWorkspaceFromTemplate(self.template2, self.user)
 
-        channel_vars = WorkSpaceVariable.objects.filter(workspace=workspace, aspect='CHANNEL')
-        self.assertEqual(channel_vars.count(), 1)
-
-        connectable = InOut.objects.get(workspace_variable=channel_vars[0])
-        self.assertEqual(connectable.readOnly, True)
+        connectables = InOut.objects.filter(workspace=workspace)
+        self.assertEqual(connectables.count(), 1)
+        self.assertEqual(connectables[0].readOnly, True)

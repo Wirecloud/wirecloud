@@ -151,6 +151,7 @@ class VariableDef(TransModel):
         ('GCTX', _('GadgetContext')),
         ('ECTX', _('ExternalContext')),
     )
+    secure = models.BooleanField(_('Secure'), default=False)
     aspect = models.CharField(_('Aspect'), max_length=4, choices=ASPECTS)
     label = models.CharField(_('Label'), max_length=150, null=True)
     action_label = models.CharField(_('Action label'), max_length=50, null=True)

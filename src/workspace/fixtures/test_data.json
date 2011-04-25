@@ -18,6 +18,24 @@
         }
     },
     {
+        "model": "auth.User",
+        "pk": "3",
+        "fields": {
+            "username": "test2",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2011-03-17 17:21:19",
+            "groups": [],
+            "user_permissions": [],
+            "password": "sha1$b85c0$28136cb118976e070a47e85bd67e7b9171ec4604",
+            "email": "",
+            "date_joined": "2011-03-17 17:21:19"
+        }
+    },
+    {
         "model": "gadget.XHTML",
         "pk": "1",
         "fields": {
@@ -46,20 +64,11 @@
         }
     },
     {
-        "model": "workspace.AbstractVariable",
-        "pk": "3",
-        "fields": {
-            "type": "WORKSPACE",
-            "name": "tab"
-        }
-    },
-    {
         "model": "workspace.Tab",
         "pk": "1",
         "fields": {
             "workspace": "1",
-            "name": "tab",
-            "abstract_variable": "3"
+            "name": "tab"
         }
     },
     {
@@ -85,7 +94,7 @@
         "model": "gadget.Gadget",
         "pk": "1",
         "fields": {
-            "uri": "",
+            "uri": "/Test/Test Gadget/1.0.0",
             "vendor": "Test",
             "name": "Test Gadget",
             "version": "1.0.0",
@@ -102,7 +111,8 @@
             "aspect": "PREF",
             "gadget": "1",
             "label": "__MSG_password_pref_label__",
-            "description": "__MSG_password_pref_label__"
+            "description": "__MSG_password_pref_label__",
+            "secure": true
         }
     },
     {
@@ -116,19 +126,24 @@
         }
     },
     {
-        "model": "workspace.AbstractVariable",
-        "pk": "1",
+        "model": "gadget.VariableDef",
+        "pk": "3",
         "fields": {
-            "type": "IGADGET",
-            "name": "password"
+            "name": "slot",
+            "type": "S",
+            "aspect": "SLOT",
+            "gadget": "1",
+            "action_label": "__MSG_slot_label__"
         }
     },
     {
-        "model": "workspace.AbstractVariable",
-        "pk": "2",
+        "model": "gadget.VariableDef",
+        "pk": "4",
         "fields": {
-            "type": "IGADGET",
-            "name": "username"
+            "name": "prop",
+            "type": "S",
+            "aspect": "PROP",
+            "gadget": "1"
         }
     },
     {
@@ -136,8 +151,7 @@
         "pk": "1",
         "fields": {
             "vardef": "1",
-            "igadget": "1",
-            "abstract_variable": "1"
+            "igadget": "1"
         }
     },
     {
@@ -145,15 +159,22 @@
         "pk": "2",
         "fields": {
             "vardef": "2",
-            "igadget": "1",
-            "abstract_variable": "2"
+            "igadget": "1"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "3",
+        "fields": {
+            "vardef": "4",
+            "igadget": "1"
         }
     },
     {
         "model": "workspace.VariableValue",
         "pk": "1",
         "fields": {
-            "abstract_variable": "1",
+            "variable": "1",
             "value": "test_password",
             "user": "2"
         }
@@ -162,8 +183,17 @@
         "model": "workspace.VariableValue",
         "pk": "2",
         "fields": {
-            "abstract_variable": "2",
+            "variable": "2",
             "value": "test_username",
+            "user": "2"
+        }
+    },
+    {
+        "model": "workspace.VariableValue",
+        "pk": "3",
+        "fields": {
+            "variable": "3",
+            "value": "test_data",
             "user": "2"
         }
     },
@@ -224,7 +254,7 @@
             "text_id": "password_pref_label",
             "value": "Password Pref",
             "language": "en",
-            "default": false
+            "default": true
         }
     },
     {
@@ -248,7 +278,7 @@
             "text_id": "displayName",
             "value": "Test Gadget",
             "language": "en",
-            "default": false
+            "default": true
         }
     },
     {
@@ -259,6 +289,30 @@
             "element_id": "1",
             "text_id": "displayName",
             "value": "Gadget de prueba",
+            "language": "es",
+            "default": false
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "5",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "3",
+            "text_id": "slot_label",
+            "value": "Slot Action Label",
+            "language": "en",
+            "default": true
+        }
+    },
+    {
+        "model": "translator.Translation",
+        "pk": "6",
+        "fields": {
+            "table": "gadget.models.VariableDef",
+            "element_id": "3",
+            "text_id": "slot_label",
+            "value": "Etiqueta de acción del slot",
             "language": "es",
             "default": false
         }

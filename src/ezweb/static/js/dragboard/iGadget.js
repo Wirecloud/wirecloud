@@ -2074,6 +2074,7 @@ IGadget.prototype.saveConfig = function () {
 
     // Commit
     varManager.decNestingLevel();
+    varManager.sendBufferedVars();
 
     this.setConfigurationVisible(false);
 };

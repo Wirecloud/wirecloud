@@ -49,7 +49,7 @@ class WiringTests(TransactionTestCase):
         self.assertEquals(response.status_code, 200)
         response_data = simplejson.loads(response.content)
         self.assertTrue('ids' in response_data and '-1' in response_data['ids'])
-        channel_id = response_data['ids']['-1']['new_id']
+        channel_id = response_data['ids']['-1']
         InOut.objects.get(id=self._read_only_channel_id)
         InOut.objects.get(id=channel_id, name='Provisional Channel')
 
@@ -126,7 +126,7 @@ class WiringTests(TransactionTestCase):
 
         response_data = simplejson.loads(response.content)
         self.assertTrue('ids' in response_data and len(response_data['ids']) == 3)
-        provisional_channel_id = response_data['ids']['-2']['new_id']
+        provisional_channel_id = response_data['ids']['-2']
 
         # Delete two of the channels created in the previous request
         # Rename the remaining one to "Provisional Channel"
@@ -156,7 +156,7 @@ class WiringTests(TransactionTestCase):
 
         response_data = simplejson.loads(response.content)
         self.assertTrue('ids' in response_data and '-1' in response_data['ids'])
-        new_channel_id = response_data['ids']['-1']['new_id']
+        new_channel_id = response_data['ids']['-1']
         InOut.objects.get(id=self._read_only_channel_id)
         InOut.objects.get(id=provisional_channel_id, name='Provisional Channel')
         InOut.objects.get(id=new_channel_id, name='New Channel')

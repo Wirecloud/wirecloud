@@ -30,10 +30,14 @@
 
 #
 
-from django.db import models
+from Crypto.Cipher import AES
+from django.conf import settings
 from django.contrib.auth.models import User, Group
+from django.db import models
+from django.utils import simplejson
 from django.utils.translation import ugettext as  _
 
+from connectable.models import InOut
 from gadget.models import SharedVariableDef
 
 
@@ -53,7 +57,7 @@ class WorkSpace(models.Model):
         return len(self.users.all()) > 1
 
     def setReadOnlyFields(self, readOnly):
-        #Get the igadget identifiers
+        # Get the igadget identifiers
         tabs = self.tab_set.all()
         try:
             for ig in reduce(lambda x, y: x + y, [list(t.igadget_set.all()) for t in tabs]):
@@ -62,14 +66,11 @@ class WorkSpace(models.Model):
         except Exception:
             pass
 
-        #Get the channel identifiers
-        try:
-            wsvars = self.workspacevariable_set.filter(workspace=self, aspect="CHANNEL")  # there must be at most one
-            for c in [wsvar.inout_set.all()[0] for wsvar in wsvars]:
-                c.readOnly = readOnly
-                c.save()
-        except WorkSpaceVariable.DoesNotExist:
-            pass
+        # Get the channel identifiers
+        inouts = InOut.objects.filter(workspace=self)
+        for inout in inouts:
+            inout.readOnly = readOnly
+            inout.save()
 
 
 class UserWorkSpace(models.Model):
@@ -122,47 +123,6 @@ class Category(models.Model):
         return unicode(self.category_id)
 
 
-class AbstractVariable(models.Model):
-
-    VAR_TYPES = (
-        ('IGADGET', _('IGadget')),
-        ('WORKSPACE', _('WorkSpace')),
-    )
-    type = models.CharField(_('Type'), max_length=10, choices=VAR_TYPES)
-    name = models.CharField(_('Name'), max_length=30)
-
-    def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.name)
-
-    def has_public_value(self):
-        # In workspace variables, channel values are not public
-        if self.type == 'WORKSPACE':
-            ws_var = WorkSpaceVariable.objects.get(abstract_variable=self)
-            return ws_var.has_public_value()
-
-        # Cycling import
-        from igadget.models import Variable
-
-        # Igadget variable
-        igadget_var = Variable.objects.get(abstract_variable=self)
-
-        return igadget_var.has_public_value()
-
-    def get_default_value(self):
-        # If it's a workspace variable, and there is not creator value!
-        # Returning ""
-        if self.type == 'WORKSPACE':
-            return ""
-
-        # Cycling import
-        from igadget.models import Variable
-
-        # Igadget variable
-        igadget_var = Variable.objects.get(abstract_variable=self)
-
-        return igadget_var.get_default_value()
-
-
 #sharing variables. Each user can have a value for a specified concept (SharedVariableDef)
 class SharedVariableValue(models.Model):
 
@@ -179,52 +139,32 @@ class SharedVariableValue(models.Model):
 
 class VariableValue(models.Model):
 
+    variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
     user = models.ForeignKey(User, verbose_name=_('User'))
-    value = models.TextField(_('Value'), null=True, blank=True)
-    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+    value = models.TextField(_('Value'), blank=True)
     shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
 
+    class Meta:
+        unique_together = ('variable', 'user')
+
     def get_variable_value(self):
-        if (self.abstract_variable.has_public_value()):
-            return self.value
+        if self.shared_var_value != None:
+            value = self.shared_var_value.value
+        else:
+            value = self.value
 
-        return self.abstract_variable.get_default_value()
+        if self.variable.vardef.secure:
+            cipher = AES.new(settings.SECRET_KEY[:32])
+            try:
+                value = cipher.decrypt(value.decode('base64'))
+                value = simplejson.loads(value)
+            except:
+                value = ''
 
-    def __unicode__(self):
-        return unicode(self.abstract_variable.name) + " - " + unicode(self.user)
-
-    def __getattribute__(self, name):
-        #return the shared value if it's shared
-        if name == 'value' and object.__getattribute__(self, 'shared_var_value'):
-            return object.__getattribute__(self, 'shared_var_value').value
-
-        return object.__getattribute__(self, name)
-
-
-class WorkSpaceVariable(models.Model):
-
-    workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
-    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
-
-    TYPES = (
-        ('N', _('Number')),
-        ('S', _('String')),
-        ('D', _('Date')),
-        ('B', _('Boolean')),
-    )
-    type = models.CharField(_('Type'), max_length=1, choices=TYPES)
-
-    ASPECTS = (
-        ('CHANNEL', _('Channel')),
-        ('TAB', _('Tab')),
-    )
-    aspect = models.CharField(_('Aspect'), max_length=12, choices=ASPECTS)
-
-    def has_public_value(self):
-        return self.aspect != "CHANNEL"
+        return value
 
     def __unicode__(self):
-        return unicode(self.pk) + " " + unicode(self.aspect)
+        return unicode(self.variable.vardef.name) + " - " + unicode(self.user)
 
 
 class Tab(models.Model):
@@ -233,10 +173,12 @@ class Tab(models.Model):
     visible = models.BooleanField(_('Visible'))
     position = models.IntegerField(null=True, blank=True)
     workspace = models.ForeignKey(WorkSpace, verbose_name=_('WorkSpace'))
-    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
 
     class Admin:
         pass
+
+    class Meta:
+        unique_together = ('name', 'workspace')
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)

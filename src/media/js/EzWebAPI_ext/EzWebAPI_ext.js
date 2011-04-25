@@ -733,6 +733,10 @@ EzWebExt.getRelativePosition = function(element1, element2) {
     var coordinates = {x: element1.offsetLeft, y: element1.offsetTop};
     var contextDocument = element1.ownerDocument;
 
+    if (element1 === element2) {
+        return {x: 0, y: 0};
+    }
+
     var parentNode = element1.offsetParent;
     while (parentNode != element2) {
         var cssStyle = contextDocument.defaultView.getComputedStyle(parentNode, null);
@@ -4123,51 +4127,63 @@ StyledElements.StyledAlert.prototype.insertInto = function(element, refElement){
 StyledElements.StyledAlert.prototype.repaint = function(temporal) {
     //temporal = temporal !== undefined ? temporal: false;
 
+    var ref_element;
+
     if (this.wrapperElement) {
-      // Adjust messageDiv height and messageDiv width
-      var width = (this.wrapperElement.offsetWidth * 80 / 100);
-      var height = (this.wrapperElement.offsetHeight * 80 / 100);
-      var positionHeight = (this.wrapperElement.offsetHeight * 10 / 100);
-      var positionWidth = (this.wrapperElement.offsetWidth * 10 / 100);
-/*
-      width = (width > this.options['max_width']) ? this.options['max_width']:
-                  ((width < this.options['min_width']) ? this.options['min_width'] : width);
-      height = (height > this.options['max_height']) ? this.options['max_height']:
-                  ((height < this.options['min_height']) ? this.options['min_height'] : height);
-*/
-      this.messageDiv.style.top = positionHeight + 'px';;
-      this.messageDiv.style.left = positionWidth + 'px';;
-      this.messageDiv.style.right = positionWidth + 'px';;
-      this.messageDiv.style.bottom = positionHeight + 'px';;
-      this.messageDiv.style.width = width + 'px';
-      this.messageDiv.style.height = height + 'px';
+        
+        ref_element = this.wrapperElement.parentNode;
+        var parent_position = EzWebExt.getRelativePosition(ref_element, document.body);
+        this.wrapperElement.style.top = parent_position.y + 'px';
+        this.wrapperElement.style.left = parent_position.x + 'px';
+        this.wrapperElement.style.width = ref_element.clientWidth + 'px';
+        this.wrapperElement.style.height = ref_element.clientHeight + 'px';
 
-      // Adjust Content Height
-      var messageDivStyle = document.defaultView.getComputedStyle(this.messageDiv, null);
-      var headerStyle = document.defaultView.getComputedStyle(this.header, null);
-      var contentStyle = document.defaultView.getComputedStyle(this.content.wrapperElement, null);
+        // Adjust messageDiv height and messageDiv width
+        var width = (this.wrapperElement.offsetWidth * 80 / 100);
+        var height = (this.wrapperElement.offsetHeight * 80 / 100);
+        var positionHeight = (this.wrapperElement.offsetHeight * 10 / 100);
+        var positionWidth = (this.wrapperElement.offsetWidth * 10 / 100);
+  /*
+        width = (width > this.options['max_width']) ? this.options['max_width']:
+                    ((width < this.options['min_width']) ? this.options['min_width'] : width);
+        height = (height > this.options['max_height']) ? this.options['max_height']:
+                    ((height < this.options['min_height']) ? this.options['min_height'] : height);
+  */
+        this.messageDiv.style.top = positionHeight + 'px';
+        this.messageDiv.style.left = positionWidth + 'px';
+        this.messageDiv.style.right = positionWidth + 'px';
+        this.messageDiv.style.bottom = positionHeight + 'px';
+        this.messageDiv.style.width = width + 'px';
+        this.messageDiv.style.height = height + 'px';
 
-      height = height - this.header.offsetHeight -
-		    messageDivStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    messageDivStyle.getPropertyCSSValue('border-bottom-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    headerStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    headerStyle.getPropertyCSSValue('margin-top').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    contentStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
-      if (height < 0)
-          height = 0;
-      this.content.wrapperElement.style.height = height + 'px';
+        // Adjust Content Height
+        var messageDivStyle = document.defaultView.getComputedStyle(this.messageDiv, null);
+        var headerStyle = document.defaultView.getComputedStyle(this.header, null);
+        var contentStyle = document.defaultView.getComputedStyle(this.content.wrapperElement, null);
 
-      // Addjust Content Width
-      width =  width -
-		    messageDivStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    messageDivStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    contentStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-		    contentStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-      if (width < 0)
-          width = 0;
-      this.content.wrapperElement.style.width = (width + 'px');
+        height = height - this.header.offsetHeight -
+            messageDivStyle.getPropertyCSSValue('border-top-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+            messageDivStyle.getPropertyCSSValue('border-bottom-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+            headerStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+            headerStyle.getPropertyCSSValue('margin-top').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+            contentStyle.getPropertyCSSValue('margin-bottom').getFloatValue(CSSPrimitiveValue.CSS_PX);
+        if (height < 0) {
+            height = 0;
+        }
+        this.content.wrapperElement.style.height = height + 'px';
 
-      this.content.repaint(temporal);
+        // Addjust Content Width
+        width =  width -
+          messageDivStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+          messageDivStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+          contentStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX) -
+          contentStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+        if (width < 0) {
+            width = 0;
+        }
+        this.content.wrapperElement.style.width = (width + 'px');
+
+        this.content.repaint(temporal);
     }
 }
 

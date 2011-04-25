@@ -33,9 +33,7 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from igadget.models import Variable
 from remoteChannel.models import RemoteChannel
-from workspace.models import WorkSpaceVariable, AbstractVariable
 
 
 class Filter(models.Model):
@@ -80,7 +78,7 @@ class RemoteSubscription(models.Model):
 class InOut(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    workspace_variable = models.ForeignKey(WorkSpaceVariable, verbose_name=_('WorkSpaceVariable'))
+    workspace = models.ForeignKey('workspace.WorkSpace', verbose_name=_('WorkSpace'))
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
     filter_param_values = models.TextField(_('Filter parameter values'), blank=True)
@@ -94,7 +92,7 @@ class InOut(models.Model):
 class In(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    variable = models.ForeignKey(Variable, verbose_name=_('Variable'))
+    variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
 
     def __unicode__(self):
@@ -104,7 +102,7 @@ class In(models.Model):
 class Out(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
-    abstract_variable = models.ForeignKey(AbstractVariable, verbose_name=_('AbstractVariable'))
+    variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
     inouts = models.ManyToManyField(InOut, verbose_name=_('InOut'))
 
     def __unicode__(self):

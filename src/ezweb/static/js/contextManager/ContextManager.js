@@ -87,33 +87,36 @@ function ContextManager (workspace_, workSpaceInfo_) {
 		}
 	}
 	
-	// Load igadget's context variables from workspace data model
-	this._loadIGadgetContextVarsFromWorkspace = function (workSpaceInfo) {
-		
-		var tabs = workSpaceInfo['workspace']['tabList'];
-		
-		// Tabs in workspace
-		for (var i=0; i<tabs.length; i++) {
-			var currentTab = tabs[i]; 
-			var igadgets = currentTab.igadgetList;
-			
+    // Load igadget's context variables from workspace data model
+    this._loadIGadgetContextVarsFromWorkspace = function (workSpaceInfo) {
+        var i, j, tabs, currentTab, currentIGadget, currentVar, contextVar,
+            dragboard, varname, relatedConcept, msg;
+
+        tabs = workSpaceInfo['workspace']['tabList'];
+
+        // Tabs in workspace
+        for (i = 0; i < tabs.length; i++) {
+            currentTab = tabs[i];
+            dragboard = this._workspace.getTab(currentTab.id).getDragboard();
+
 			// igadgets in tab
-			for (var j=0; j<igadgets.length; j++) {
-				var currentIGadget = igadgets[j];
-				var variables = currentIGadget['variables'];
-				
+			for (j = 0; j < currentTab.igadgetList.length; j++) {
+				currentIGadget = dragboard.getIGadget(currentTab.igadgetList[j].id);
+
+                                variables = currentIGadget.getGadget().getTemplate().getVariables();
+
 				// Variables of igadgets
-				for (var k = 0; k < variables.length; k++) {
-				var currentVar = variables[k];
+				for (varname in variables) {
+				    currentVar = variables[varname];
 					switch (currentVar.aspect) {
 					case Variable.prototype.EXTERNAL_CONTEXT:
 					case Variable.prototype.GADGET_CONTEXT:
-						var contextVar = new ContextVar(currentIGadget.id, currentVar.name, currentVar.concept)
+						contextVar = new ContextVar(currentIGadget.id, currentVar.name, currentVar.concept)
 						contextVar.setVarManager(this._workspace.getVarManager());
-						var relatedConcept = this._name2Concept[currentVar.concept];
+						relatedConcept = this._name2Concept[currentVar.concept];
 						if (relatedConcept) {
 							if (currentVar.aspect !== relatedConcept._type) {
-								var msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
+								msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
 								msg = interpolate(msg,
 									{concept: currentVar.concept,
 									 type: relatedConcept._type,

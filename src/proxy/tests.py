@@ -9,6 +9,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase, Client
 
 from proxy.views import EZWEB_PROXY
+from workspace.models import VariableValue
+from workspace.utils import set_variable_value
 
 
 class FakeDownloader(object):
@@ -19,6 +21,7 @@ class FakeDownloader(object):
     def reset(self):
         self._responses = {}
         self._cookie_responses = {}
+        self._echo_responses = {}
         self._exceptions = {}
 
     def set_response(self, url, response):
@@ -26,6 +29,9 @@ class FakeDownloader(object):
 
     def set_cookie_response(self, url, headers):
         self._cookie_responses[url] = headers
+
+    def set_echo_response(self, url):
+        self._echo_responses[url] = 1
 
     def set_exception(self, url, exception):
         self._exceptions[url] = exception
@@ -54,6 +60,9 @@ class FakeDownloader(object):
             response_headers = HTTPMessage(StringIO(headers_text))
             return self.build_response(url, 200, headers['Cookie'], 'OK', response_headers)
 
+        elif url in self._echo_responses:
+            return self.build_response(url, 200, data, 'OK')
+
         elif url in self._responses:
             return self.build_response(*self._responses[url])
         else:
@@ -62,8 +71,10 @@ class FakeDownloader(object):
 
 class ProxyTests(TestCase):
 
+    fixtures = ['test_data.json']
+
     def setUp(self):
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.user = User.objects.get(username='test')
         self._original_function = EZWEB_PROXY._do_request
         EZWEB_PROXY._do_request = FakeDownloader()
 
@@ -132,3 +143,38 @@ class ProxyTests(TestCase):
         self.assertTrue('newcookie' in response.cookies)
         self.assertEquals(response.cookies['newcookie'].value, 'test')
         self.assertEquals(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
+
+    def test_secure_data(self):
+
+        set_variable_value(1, self.user, 'test_password')
+        self.assertTrue(VariableValue.objects.get(pk=1).value != 'test_password')
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        pass_ref = '1/password'
+        user_ref = '1/username'
+        secure_data_header = 'action=data, substr=|password|, var_ref=' + pass_ref
+        secure_data_header += '&action=data, substr=|username|, var_ref=' + user_ref
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=test_username&password=test_password')
+
+        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=|username|&password=|password|')
