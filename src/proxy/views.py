@@ -190,6 +190,11 @@ class Proxy(Resource):
                         if action == 'data':
                             substr = options.get('substr')
                             value = get_variable_value_by_ref(options.get('var_ref'), request.user)
+                            encoding = options.get('encoding', 'none')
+                            if encoding == 'url':
+                                value = urlquote(value)
+                            elif encoding == 'base64':
+                                value = value.encode('base64')[:-1]
                             data = data.replace(substr, value)
                         elif action == 'basic_auth':
                             user_value = get_variable_value_by_ref(options.get('user_ref'), request.user)
