@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets/"
+                id="test.xml"
+                name="Test"
+                vendor="Yaco_Sistemas_S.L."
+                version="0.9"/>

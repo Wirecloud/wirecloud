@@ -1,0 +1,45 @@
+<Template schemaLocation="http://morfeo-project.org/2007/Template">
+<!-- Meta tags define gadgets properties -->
+    <Catalog.ResourceDescription>
+        <Vendor>Yaco Sistemas S.L.</Vendor>
+        <Name>Test</Name>
+        <Version>0.9</Version>
+        <Author>aarranz</Author>
+        <Mail>aarranz@yaco.es</Mail>
+        <Description>This gadget is used to test some of the features of the EzWeb platform</Description>
+        <ImageURI>images/catalogue.png</ImageURI>
+        <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+        <WikiURI>http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</WikiURI>
+    </Catalog.ResourceDescription>
+
+    <!-- EzWeb Gadgets Tags -->
+    <Platform.Preferences>
+        <Preference name="list" type="list" label="list" description="list preference" default="default">
+            <Option value="default" name="Default"/>
+            <Option value="1" name="value1"/>
+            <Option value="2" name="value2"/>
+        </Preference>
+        <Preference name="text" type="text" label="text" description="text preference" default="initial text"/>
+    </Platform.Preferences>
+
+    <!-- EzWeb Gadget Persistent State -->
+    <Platform.StateProperties>
+    </Platform.StateProperties>
+
+    <!-- EzWeb Gadget Data Wiring -->
+    <Platform.Wiring>
+        <Slot name="slot" type="text" label="slot" friendcode = "slot"/>
+        <Event name="event" type="text" label="event" friendcode = "event"/>
+    </Platform.Wiring>
+    <Platform.Link>
+        <XHTML href="test.html"/>
+    </Platform.Link>
+    <Platform.Rendering width="6" height="24"/>
+    <Platform.Context>
+        <!--
+        <Context name="lang" type="text" concept="language"/>
+        <GadgetContext name="height" type="text" concept="heightInPixels"/>
+        <GadgetContext name="lockStatus" type="text" concept="lockStatus"/>
+        -->
+    </Platform.Context>
+</Template>

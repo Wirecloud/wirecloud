@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <base href="http://localhost/ezweb/gadgets_src/portafirmas/">
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"></meta>
+        <title>Test</title>
+        <script language="javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
+        <style type="text/css">
+
+            #send {
+                white-space: nowrap;
+            }
+
+            .title {
+                white-space: nowrap;
+                margin-top: 7px;
+                margin-bottom: 2px;
+                display: block;
+                width: 100%;
+                font-weight: bold;
+            }
+
+            .content {
+                display:block;
+                min-height: 20px;
+                padding: 2px;
+                border:2px solid #4c5054;
+                background-color:#ccffcc;
+            }
+
+            input {
+                width:200px;
+                display:inline;
+            }
+
+            button {
+                display:inline;
+            }
+
+            body {
+                padding-left:5px;
+                padding-right:5px;
+            }
+        </style>
+        <script language="javascript">
+            function _listPrefHandler(value) {
+                document.getElementById("listPref").textContent = value;
+            }
+
+            function _textPrefHandler(value) {
+                document.getElementById("textPref").textContent = value;
+            }
+
+            function _wiringOutHandler(value) {
+                document.getElementById("wiringOut").textContent = value;
+            }
+
+            function sendEvent() {
+                wiringIn.set(document.getElementById("textWiringIn").value);
+                document.getElementById("textWiringIn").value = "";
+            }
+
+            var wiringIn = EzWebAPI.createRWGadgetVariable("event");
+            var wiringOut = EzWebAPI.createRGadgetVariable("slot", _wiringOutHandler);
+            var listPref = EzWebAPI.createRGadgetVariable("list", _listPrefHandler);
+            var textPref = EzWebAPI.createRGadgetVariable("text", _textPrefHandler);
+
+            function init() {
+                _listPrefHandler(listPref.get());
+                _textPrefHandler(textPref.get());
+            }
+        </script>
+    </head>
+    <body onload="init();">
+        <div class="title">List Pref:</div>
+        <div class="content" id="listPref"></div>
+        <div class="title">Text Pref:</div>
+        <div class="content" id="textPref"></div>
+        <div class="title">Event:</div>
+        <div id="send">
+            <input class="text_field" type="text" id="textWiringIn"/>
+            <button id='b1' onclick="sendEvent();">Send Event</button>
+        </div>
+        <div class="title">Slot:</div>
+        <div class="content" id="wiringOut"></div>
+    </body>
+</html>
