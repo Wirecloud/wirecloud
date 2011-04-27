@@ -61,6 +61,36 @@ def get_variable_value_by_ref(ref, user):
         return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
 
 
+def process_secure_data(text, request):
+
+    definitions = text.split('&')
+    for definition in definitions:
+        params = definition.split(',')
+        if len(params) == 0:
+            continue
+
+        options = {}
+        for pair in params:
+            tokens = pair.split('=')
+            option_name = urllib2.unquote(tokens[0].strip())
+            options[option_name] = urllib2.unquote(tokens[1].strip())
+
+        action = options.get('action', 'data')
+        if action == 'data':
+            substr = options.get('substr')
+            value = get_variable_value_by_ref(options.get('var_ref'), request['user'])
+            encoding = options.get('encoding', 'none')
+            if encoding == 'url':
+                value = urlquote(value)
+            elif encoding == 'base64':
+                value = value.encode('base64')[:-1]
+            request['data'] = request['data'].replace(substr, value)
+        elif action == 'basic_auth':
+            user_value = get_variable_value_by_ref(options.get('user_ref'), request['user'])
+            password_value = get_variable_value_by_ref(options.get('pass_ref'), request['user'])
+            request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+
+
 class MethodRequest(urllib2.Request):
 
     def __init__(self, method, *args, **kwargs):
@@ -131,6 +161,12 @@ class Proxy(Resource):
 
     def do_request(self, request, url, method, data):
 
+        request_data = {
+            "data": data,
+            "headers": {},
+            "user": request.user,
+        }
+
         # HTTP call
         try:
             url = iri_to_uri(url)
@@ -152,11 +188,10 @@ class Proxy(Resource):
             opener = urllib2.build_opener(proxy)
 
             # Adds original request Headers to the request
-            headers = {}
             for header in request.META.items():
                 header_name = header[0].lower()
                 if header_name == 'content_type' and header[1]:
-                    headers["content-type"] = header[1]
+                    request_data['headers']["content-type"] = header[1]
 
                 elif header_name == 'cookie' or header_name == 'http_cookie':
 
@@ -171,40 +206,15 @@ class Proxy(Resource):
 
                     content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
                     if content != '':
-                        headers['Cookie'] = content
+                        request_data['headers']['Cookie'] = content
 
                 elif header_name == 'http_x_ezweb_secure_data':
-                    definitions = header[1].split('&')
-                    for definition in definitions:
-                        params = definition.split(',')
-                        if len(params) == 0:
-                            continue
-
-                        options = {}
-                        for pair in params:
-                            tokens = pair.split('=')
-                            option_name = urllib2.unquote(tokens[0].strip())
-                            options[option_name] = urllib2.unquote(tokens[1].strip())
-
-                        action = options.get('action', 'data')
-                        if action == 'data':
-                            substr = options.get('substr')
-                            value = get_variable_value_by_ref(options.get('var_ref'), request.user)
-                            encoding = options.get('encoding', 'none')
-                            if encoding == 'url':
-                                value = urlquote(value)
-                            elif encoding == 'base64':
-                                value = value.encode('base64')[:-1]
-                            data = data.replace(substr, value)
-                        elif action == 'basic_auth':
-                            user_value = get_variable_value_by_ref(options.get('user_ref'), request.user)
-                            password_value = get_variable_value_by_ref(options.get('pass_ref'), request.user)
-                            headers['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+                    process_secure_data(header[1], request_data)
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
 
                     fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
-                    headers[fixed_name] = header[1]
+                    request_data['headers'][fixed_name] = header[1]
 
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
             if protocolVersion != None:
@@ -219,19 +229,19 @@ class Proxy(Resource):
                 hostName = socket.gethostname()
 
             via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
-            headers["Via"] = via_header
+            request_data['headers']["Via"] = via_header
 
-            if (method == 'POST' or method == 'PUT') and not 'content-type' in headers:
+            if (method == 'POST' or method == 'PUT') and not 'content-type' in request_data['headers']:
                 # Add Content-Type (Servlets bug)
-                headers['content-type'] = "application/x-www-form-urlencoded"
+                request_data['headers']['content-type'] = "application/x-www-form-urlencoded"
 
             # Remote user header
             if not request.user.is_anonymous():
-                headers['Remote-User'] = request.user.username
+                request_data['headers']['Remote-User'] = request.user.username
 
             # Open the request
             try:
-                res = self._do_request(opener, method, url, data, headers)
+                res = self._do_request(opener, method, url, request_data['data'], request_data['headers'])
             except urllib2.URLError, e:
                 if e.reason[0] == errno.ECONNREFUSED:
                     return HttpResponse(status=504)
