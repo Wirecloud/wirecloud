@@ -19,6 +19,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 import tarfile
+import os
 
 
 class Command(BaseCommand):
@@ -30,10 +31,13 @@ class Command(BaseCommand):
             raise CommandError('Wrong number of arguments')
 
         deployment_path = settings.GADGETS_DEPLOYMENT_DIR
-        if deployment_path.endswith('/'):
+        if deployment_path.endswith(os.sep):
             deployment_path = deployment_path[:-1]
-        deployment_path = deployment_path[:deployment_path.rindex('/')]
+        deployment_path = deployment_path[:deployment_path.rindex(os.sep)]
         deployment_path = settings.GADGETS_DEPLOYMENT_DIR[:len(deployment_path)]
+
+        if not(os.access(deployment_path, os.W_OK)):
+            raise CommandError('Can\'t write in ' + deployment_path)
 
         tar = tarfile.open(args[0], "r")
         tar.extractall(deployment_path)
