@@ -19,6 +19,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 import tarfile
+import os
 
 
 class Command(BaseCommand):
@@ -33,9 +34,13 @@ class Command(BaseCommand):
             raise CommandError('The target file must be a tar.gz file')
 
         deployment_path = settings.GADGETS_DEPLOYMENT_DIR
-        if deployment_path.endswith('/'):
+
+        if not(os.access(deployment_path, os.R_OK)):
+            raise CommandError('Can\'t read ' + deployment_path)
+
+        if deployment_path.endswith(os.sep):
             deployment_path = deployment_path[:-1]
-        deployment_path = deployment_path[:deployment_path.rindex('/')]
+        deployment_path = deployment_path[:deployment_path.rindex(os.sep)]
         deployment_path = settings.GADGETS_DEPLOYMENT_DIR[
             len(deployment_path) + 1:]
 
