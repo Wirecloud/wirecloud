@@ -197,6 +197,11 @@ class Proxy(Resource):
 
                     cookie_parser = Cookie.SimpleCookie(header[1])
 
+                    # Process secure data cookie
+                    if 'X-EzWeb-Secure-Data' in cookie_parser:
+                        process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request_data)
+                        del cookie_parser['X-EzWeb-Secure-Data']
+
                     # Remove EzWeb cookies
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
                         del cookie_parser[settings.SESSION_COOKIE_NAME]
