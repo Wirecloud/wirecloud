@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="" />
+<title>wiring</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">wiring</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/accounts/login/?next=/</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_username</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id_password</td>
+	<td>admin</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>submit</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>go_to_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_workspace</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@value='']</td>
+	<td>useconfigMashup</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>useconfigMashup</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>gadget_uri</td>
+	<td>/var/ezweb-data/Yaco_Sistemas_S.L._test.wgt</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>gadget_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>simple_search_text</td>
+	<td>test</td>
+</tr>
+<tr>
+	<td>keyPress</td>
+	<td>simple_search_text</td>
+	<td>\13</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='gadgets']/div/div[2]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[3]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>text</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>list</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[3]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>newChannel</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@value='Channel_1']</td>
+	<td>Channel 1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='events_list']/div/div[2]/div[1]/div[2]/div/div</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='slots_list']/div/div[2]/div[1]/div[2]/div/div</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//img[@title='Back to my application']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>sharing_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[3]/div[2]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//tr[1]/td[2]/input</td>
+	<td>mashup test</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div[30]/div[2]/table/tbody/tr[2]/td[2]/input</td>
+	<td>vendor</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//tr[3]/td[2]/input</td>
+	<td>0.1</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//tr[4]/td[2]/input</td>
+	<td>email@domain.es</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tr[7]/td/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td/table/tbody/tr[4]/td/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td/table/tbody/tr[1]/td/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tr[1]/td/table/tbody/tr/td/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td[2]/div/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>//div[2]/table/tbody/tr[1]/td[2]/select</td>
+	<td>label=Normal</td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>//tr[2]/td[2]/select</td>
+	<td>label=Use parametrized value</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div/textarea</td>
+	<td>texto inicial</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[31]/div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//tr[2]/td[2]/div/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>select</td>
+	<td>//tr[2]/td[2]/select</td>
+	<td>label=Use parametrized value</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//div/textarea</td>
+	<td>por defecto</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[31]/div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>mashups_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='mashups']/div/div[3]/div[1]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='resource_details']/div[2]/div[1]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>go_to_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>mashup test</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[4]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>text</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='config_interface']/div[1]/div[1]/input[@value='Cancel']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[4]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>text</td>
+	<td>prueba cambio texto</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Save']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[4]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>prueba cambio texto</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>text</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Save']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[4]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Set Defaults']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Save']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>settingsbutton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//body[@class='dragboard_view']/div[4]/div[1]/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyTextPresent</td>
+	<td>initial text</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Cancel']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[2]/div[3]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>go_to_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='workspace_sidebar']/span[text()='useconfigMashup']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>conf_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[2]/div[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='resource_details']/div[2]/div[2]/div[28]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>search_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='gadgets_button']/span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='gadgets']/div[1]/div[3]/div[1]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='resource_details']/div[2]/div[2]/div[28]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='catalogue_dragboard_link']/img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>link=Sign out</td>
+	<td></td>
+</tr>
+</tbody></table>
+</body>
+</html>
