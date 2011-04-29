@@ -38,12 +38,47 @@
 </tr>
 <tr>
 	<td>click</td>
+	<td>go_to_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>add_workspace</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@value='']</td>
+	<td>publishWS</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>publishWS</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
 	<td>edit_link</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>op_edit_menu_1_0</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -62,19 +97,19 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>simple_search_text</td>
 	<td>test</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[2]/button</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>op_edit_menu_1_0</td>
-	<td></td>
+	<td>keyPress</td>
+	<td>simple_search_text</td>
+	<td>\13</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -82,8 +117,33 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
 	<td>click</td>
-	<td>op_edit_menu_1_1</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='gadgets']/div/div[2]/button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>edit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,7 +188,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>op_sharing_menu_1_1</td>
+	<td>//div[@id='toolbar_section']/div[3]/div[2]</td>
 	<td></td>
 </tr>
 <tr>
@@ -138,7 +198,7 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>//div[31]/div[2]/table/tbody/tr[2]/td[2]/input</td>
+	<td>//div[32]/div[2]/table/tbody/tr[2]/td[2]/input</td>
 	<td>vendor</td>
 </tr>
 <tr>
@@ -163,12 +223,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>op_edit_menu_1_0</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>mashups_button</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
@@ -208,37 +273,32 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>op_edit_menu_1_1</td>
+	<td>//div[@id='catalogue_dragboard_link']/img</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='channels_list']/div[1]/div[1]/span</td>
+	<td>conf_link</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='channels_list']/div/div[1]/span</td>
+	<td>//div[@id='toolbar_section']/div[2]/div[4]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//img[@title='Back to my application']</td>
+	<td>//div[3]/button[1]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='dragboard_1_1']/div[3]/div[1]/input[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='dragboard_1_1']/div[1]/div[1]/input[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>op_edit_menu_1_0</td>
+	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
 	<td></td>
 </tr>
 <tr>
@@ -265,11 +325,6 @@
 	<td>clickAndWait</td>
 	<td>link=Sign out</td>
 	<td></td>
-</tr>
-<tr>
-	<td>waitForPopUp</td>
-	<td>_self</td>
-	<td>30000</td>
 </tr>
 </tbody></table>
 </body>
