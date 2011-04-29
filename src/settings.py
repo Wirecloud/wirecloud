@@ -160,6 +160,7 @@ INSTALLED_APPS = (
     'uploader',
     'south',
     'deployment',
+    'compressor',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
@@ -196,6 +197,7 @@ STATICFILES_FINDERS = (
     'ezweb.themes.ActiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
