@@ -83,7 +83,145 @@ directory is located somewhere in your PYTHONPATH.
 How to contribute to EzWeb
 --------------------------
 
-TODO
+EzWeb is a free software project. It's free to use and modify but it also
+means that your contributions are more than welcomed. What EzWeb can do
+for you is not the right question. Ask yourself what can you do for Ezweb!
+
+I'm glad you asked since there are a lot of things you can do:
+
+- Participate in the mailing lists. We want to hear you opinion and suggestions
+  so subscribe you to one of more of our mailing lists and write us emails.
+- Test the software and report bugs. Yes they are rare but we know there are
+  a few of them hidden waiting for you
+- Submit patches. If you found a bug and have a fix, please share it with
+  the community. If you have implemented a new cool feature do it too, there
+  is always room for improvements.
+- Translate it to your language. Right now only spanish, english and an
+  outdated portuguesse translation is what we have. Translating EzWeb is a
+  quite simple task if you happen to speak another language.
+- Write some documentation. We should have user, administrator and developer
+  guides and a bunch of tutorial and other newbie resources. We do have
+  documentation but we need your help to make it more consistent and easy to
+  find.
+- Spread the word. Everybody that sees the demo like it a lot but the problem
+  is that not a lot of people know EzWeb. Help us communicate its coolness
+  so more people can make it perfect.
+
+Let's see how you can participate in more detail.
+
+
+Participating in the mailing lists
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are several mailing lists you can subscribe to:
+
+TODO: put the new mailing lists here
+
+Testing the software and reporting bugs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+First download the software and install it. If you have any problem, please use
+the TODO:SUPPORT mailing list and we will happy to help you.
+
+Now, if you find a bug and it is confirmed in the mailing list, the next step
+is to report it so we don't forget about it and fix it. The place to do it is
+the TODO:TRACKER.
+
+Submitting patches
+~~~~~~~~~~~~~~~~~~
+
+EzWeb project is composed by Django (and hence Python) code and JavaScript
+code. Wherever you submit your patch you have follow the code guidelienes.
+Otherwise it's likely that your patch will be rejected and nobody wants
+that, right?
+
+So, what are those guidelines?
+
+Python code style
+.................
+
+We basically follow Django coding standards which, in turn, uses `PEP 8`_.
+We validate every commit agains the pep8_ program and also the pyflakes_
+program. Pyflakes will just help you to clean those parts that you not
+use anymore such as forgotten and unused module imports and variables.
+
+.. _PEP 8: http://www.python.org/dev/peps/pep-0008
+.. _pep8: http://pypi.python.org/pypi/pep8/
+.. _pyflakes: http://pypi.python.org/pypi/pyflakes/
+
+JavaScript code style
+.....................
+
+We have a JavaScript coding standard so you should follow it closely.
+We use the jslint_ program to validate every JavaScript commit.
+
+.. _jslint: http://www.jslint.com
+
+Once you have write the modification to the code we would like you to
+send the patch as a diff file. Use svn diff from the top-level trunk
+directory. Always attach your patch to a ticket in the Trac website,
+do not send it to the mailing list. Feel free to send a message to
+the mailing list if no recent activity is done in the ticket.
+
+A good thing when writing patches is to write tests too. If the patch
+fixes a bug, the test would be a regression test. If the patch
+implements a new feature, the tests could be several unit tests and
+some functional tests. Adding tests to your patch is a cheap ticket
+for success as it will rise the probabilities to have it accepted.
+
+Before writing a new feature patch is recommended to discuss it
+in the developer mailing list so no duplication work is done and
+the general design is similar with the rest of the project.
+
+
+Translating the documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Localizating a package is a very important phase of the project as it
+dramatically increase the number of potential users. All you have to
+do is take the .pot template and translate the strings using your
+favourite gettext strings editor.
+
+When you are finished create a ticket in the Trac website and attach
+your translation to it like any other patch.
+
+
+Writing documentation
+~~~~~~~~~~~~~~~~~~~~~
+
+We use the Sphinx_ documentation system so the docs should be written in
+`ReStructured text`_. The official documentation should be written in english
+but you are free to translate it to your favourite language. Keep in mind
+that we will only maintain the official one. As with the other patches
+you should create a ticket and attach your patch to it.
+
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _ReStructured text: http://docutils.sourceforge.net/docs/user/rst/quickstart.html
+
+This documentation will be versioned with the rest of the code helping to
+keep it up to date. It should also be accesible at a public URL. Ideally
+one URL for each EzWeb version.
+
+
+Spreading the word
+~~~~~~~~~~~~~~~~~~
+
+Feel free to talk about the nice things of EzWeb with your familiy, friends,
+coworkers and bosses. If you have some rants we prefer to read about them
+if the mailing lists just in case we can fix something that can change your
+opinion.
+
+In any case we need more marketing and you can easily help us here.
+
+
+Becoming a comitter
+~~~~~~~~~~~~~~~~~~~
+
+If the number and quality of your contributions are high, we will be very
+happy to give you write access to the main repository no matter your
+sex, race, religion or favourite ice cream flavour. Traditionally EzWeb
+development has not be very open but we are here to change that direction
+with your help.
 
 
 SCM branches guide
@@ -220,37 +358,3 @@ References:
 
 - http://nvie.com/posts/a-successful-git-branching-model/
 - http://stevelosh.com/blog/2009/08/a-guide-to-branching-in-mercurial/
-
-
-Testing
--------
-
-Selenium tests
-~~~~~~~~~~~~~~
-
-These tests are performed with Selenium IDE, a Firefox add-on that records
-clicking, typing, and other actions to make a test, which you can play back
-in the browser. You can find more information about Selenium
-at http://seleniumhq.org/download/
-
-Things to consider before playing the tests
-###########################################
-
-#. You must have some test data in your /var/ezweb-data/ directory.
-   You can get this test data from the project directory /tests/ezweb-data
-#. You must have executed ``python manage.py syncdb --migrate`` and
-   ``python manage.py loaddata extra_data``. These two commands will
-   syncronize the database and load some data needed for testing. All tests has been performed with the user **admin**, so this user must be in your database.
-#. Finally you must run ezweb ``python manage.py runserver`` and you'll
-   be able to open any test suite placed in tests directory and play selenium tests with no problem. 
-
-Note: It's highly recommended to run the tests with private browsing mode active in your Firefox to avoid cache problems.
-
-Test gadget
-###########
-This project has a special gadget only for testing wiring and verify that the
-properties of gadgets apply when they are changed. This gadget called "Test"
-works in pairs. This means that in tests this gadget is added to a workspace
-twice and interconected, and what you write in event field of one gadget
-appears in the "slot" field of the other. You can also change a gadget
-preference and it appears in the field "Text Pref".
