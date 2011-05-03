@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -25,85 +25,85 @@
 
 
 function VarManager (_workSpace) {
-	
-	VarManager.prototype.MAX_BUFFERED_REQUESTS = 10 
-	
-	// ****************
-	// PUBLIC METHODS 
-	// ****************
-	
 
-	VarManager.prototype.parseVariables = function (workSpaceInfo) {
-		// Igadget variables!
-		var tabs = workSpaceInfo['workspace']['tabList'];
-		
-		for (var i=0; i<tabs.length; i++) {
-			var igadgets = tabs[i]['igadgetList'];
-			
-			for (var j=0; j<igadgets.length; j++) {
-				this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
-			}
-		}
-	}
+    VarManager.prototype.MAX_BUFFERED_REQUESTS = 10
 
-	/**
-	 * Saves all modified variables.
-	 *
-	 * @param {Boolean} async if true, this method will do some asynchronous
-	 * tasks. Sometimes these operations cannot be done asynchronously
+    // ****************
+    // PUBLIC METHODS
+    // ****************
+
+
+    VarManager.prototype.parseVariables = function (workSpaceInfo) {
+        // Igadget variables!
+        var tabs = workSpaceInfo['workspace']['tabList'];
+
+        for (var i=0; i<tabs.length; i++) {
+            var igadgets = tabs[i]['igadgetList'];
+
+            for (var j=0; j<igadgets.length; j++) {
+                this.parseIGadgetVariables(igadgets[j], this.workSpace.getTabInstance(tabs[i].id));
+            }
+        }
+    }
+
+    /**
+     * Saves all modified variables.
+     *
+     * @param {Boolean} async if true, this method will do some asynchronous
+     * tasks. Sometimes these operations cannot be done asynchronously
          * because the browser will not wait for these operations. (default:
          * true)
-	 */
-	VarManager.prototype.sendBufferedVars = function (async) {
-		async = async !== false;
+     */
+    VarManager.prototype.sendBufferedVars = function (async) {
+        async = async !== false;
 
-		// Asynchronous handlers
-		function onSuccess(transport) {
-			var response = transport.responseText;
-			var modifiedVariables = JSON.parse(response);
-			var igadgetVars = modifiedVariables['igadgetVars']
+        // Asynchronous handlers
+        function onSuccess(transport) {
+            var response = transport.responseText;
+            var modifiedVariables = JSON.parse(response);
+            var igadgetVars = modifiedVariables['igadgetVars']
 
-			this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
-			for (var i = 0; i < igadgetVars.length; i++) {
-				var id = igadgetVars[i].id;
-				var variable = this.getVariableById(id);
-				variable.annotate(igadgetVars[i].value)
-			}
-			for (var i = 0; i < igadgetVars.length; i++) {
-				var id = igadgetVars[i].id;
-				var variable = this.getVariableById(id);
-				variable.set(igadgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
-			}
-			this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
-		}
+            this.modificationsEnabled = false; //lock the adding of modified variables to the buffer
+            for (var i = 0; i < igadgetVars.length; i++) {
+                var id = igadgetVars[i].id;
+                var variable = this.getVariableById(id);
+                variable.annotate(igadgetVars[i].value)
+            }
+            for (var i = 0; i < igadgetVars.length; i++) {
+                var id = igadgetVars[i].id;
+                var variable = this.getVariableById(id);
+                variable.set(igadgetVars[i].value) //set will not add the variable to the modified variables to be sent due to the 'disableModifications'
+            }
+            this.modificationsEnabled = true; //unlock the adding of modified variables to the buffer
+        }
 
-		function onError(transport, e) {
-			var logManager = LogManagerFactory.getInstance();
-			var msg = logManager.formatError(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
-			logManager.log(msg);
-		}
+        function onError(transport, e) {
+            var logManager = LogManagerFactory.getInstance();
+            var msg = logManager.formatError(gettext("Error saving variables to persistence: %(errorMsg)s."), transport, e);
+            logManager.log(msg);
+        }
 
-		// Max lenght of buffered requests have been reached. Uploading to server!
-		if (this.igadgetModifiedVars.length > 0) {
-			var variables = {};
+        // Max lenght of buffered requests have been reached. Uploading to server!
+        if (this.igadgetModifiedVars.length > 0) {
+            var variables = {};
 
-			variables['igadgetVars'] = this.igadgetModifiedVars;
+            variables['igadgetVars'] = this.igadgetModifiedVars;
 
-			var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
+            var uri = URIs.PUT_VARIABLES.evaluate({workspaceId: this.workSpace.getId()});
 
-			var options = {
-				method: 'PUT',
-				asynchronous: async,
-				contentType: 'application/json',
-				postBody: Object.toJSON(variables),
-				onSuccess: onSuccess.bind(this),
-				onFailure: onError.bind(this),
-				onException: onError.bind(this)
-			};
-			PersistenceEngineFactory.getInstance().send(uri, options);
-			this.resetModifiedVariables();
-		}
-	}
+            var options = {
+                method: 'PUT',
+                asynchronous: async,
+                contentType: 'application/json',
+                postBody: Object.toJSON(variables),
+                onSuccess: onSuccess.bind(this),
+                onFailure: onError.bind(this),
+                onException: onError.bind(this)
+            };
+            PersistenceEngineFactory.getInstance().send(uri, options);
+            this.resetModifiedVariables();
+        }
+    }
 
     VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
         var name, id, variables, variable, gadget, gadgetId, igadgetId, varInfo,
@@ -123,253 +123,253 @@ function VarManager (_workSpace) {
             value = 'value' in varInfo ? varInfo.value : '';
             shared = 'shared' in varInfo ? varInfo.shared : null;
 
-			switch (aspect) {
-				case Variable.prototype.PROPERTY:
-				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab, shared);
-					this.variables[id] = objVars[name];
-					break;
-				case Variable.prototype.EXTERNAL_CONTEXT:
-				case Variable.prototype.GADGET_CONTEXT:
-				case Variable.prototype.SLOT:
-					objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
-					this.variables[id] = objVars[name];
-					break;
-				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
-					objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
-					objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
-					this.variables[id] = objVars[name];
-					break;
-			}
-		}
-		
-		this.iGadgets[igadget['id']] = objVars;
-	}
+            switch (aspect) {
+                case Variable.prototype.PROPERTY:
+                case Variable.prototype.EVENT:
+                    objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab, shared);
+                    this.variables[id] = objVars[name];
+                    break;
+                case Variable.prototype.EXTERNAL_CONTEXT:
+                case Variable.prototype.GADGET_CONTEXT:
+                case Variable.prototype.SLOT:
+                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
+                    this.variables[id] = objVars[name];
+                    break;
+                case Variable.prototype.USER_PREF:
+                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
+                    objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
+                    objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
+                    this.variables[id] = objVars[name];
+                    break;
+            }
+        }
 
-	VarManager.prototype.registerVariable = function (iGadgetId, variableName, handler) {
-		var variable = this.findVariable(iGadgetId, variableName);
+        this.iGadgets[igadget['id']] = objVars;
+    }
 
-		if (variable) {
-			variable.setHandler(handler);
-		} else {
-			var transObj = {iGadgetId: iGadgetId, varName: variableName};
-			var msg = interpolate(gettext("IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\nIf you need it, please insert it into the gadget's template."), transObj, true);
-			OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
-		}
-	}
-	
-	VarManager.prototype.assignEventConnectable = function (iGadgetId, variableName, wEvent) {
-		var variable = this.findVariable(iGadgetId, variableName);
-		variable.assignEvent(wEvent);
-	}
-	
-	VarManager.prototype.getVariable = function (iGadgetId, variableName) {
-		var variable = this.findVariable(iGadgetId, variableName);
-		
-		// Error control
-		
-		return variable.get();
-	}
+    VarManager.prototype.registerVariable = function (iGadgetId, variableName, handler) {
+        var variable = this.findVariable(iGadgetId, variableName);
 
-	VarManager.prototype.setVariable = function (iGadgetId, variableName, value, options) {
-		if (typeof(value) !== 'string') {
-			var transObj = {iGadgetId: iGadgetId, varName: variableName};
-			var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
-			OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
+        if (variable) {
+            variable.setHandler(handler);
+        } else {
+            var transObj = {iGadgetId: iGadgetId, varName: variableName};
+            var msg = interpolate(gettext("IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\nIf you need it, please insert it into the gadget's template."), transObj, true);
+            OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
+        }
+    }
 
-			throw new Error();
-		}
+    VarManager.prototype.assignEventConnectable = function (iGadgetId, variableName, wEvent) {
+        var variable = this.findVariable(iGadgetId, variableName);
+        variable.assignEvent(wEvent);
+    }
 
-		var variable = this.findVariable(iGadgetId, variableName);
+    VarManager.prototype.getVariable = function (iGadgetId, variableName) {
+        var variable = this.findVariable(iGadgetId, variableName);
 
-		variable.set(value, options);
-	}
+        // Error control
 
-	VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
-		var variables = this.pendingVariables[iGadgetId];
-		if (!variables){
-			this.pendingVariables[iGadgetId] = new Array();
-			variables = this.pendingVariables[iGadgetId];
-		}
-		variables.push({"name":variableName, "value":value});
-	}
-	
-	VarManager.prototype.dispatchPendingVariables = function (iGadgetId) {
-		var variables = this.pendingVariables.remove(iGadgetId);
-		if (variables){
-			for (var i=0;i<variables.length;i++){
-				this.setVariable(iGadgetId, variables[i]["name"], variables[i]["value"]);
-			}
-		}
-	}
+        return variable.get();
+    }
 
-	VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
-		this.parseIGadgetVariables(igadgetInfo, tab);
-	}
-	
-	VarManager.prototype.removeInstance = function (iGadgetId) {
-		delete this.iGadgets[iGadgetId];
-		
-		this.removeIGadgetVariables(iGadgetId);
-	}
-	
-	
-	VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {
-		var variables_ids = this.variables.keys()
-		
-		for (var i=0; i<variables_ids.length; i++) {
-			if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
-				this.igadgetModifiedVars.removeById(variables_ids[i]);
-				delete this.variables[variables_ids[i]];
-			}
-		}
-	}
-	
-	VarManager.prototype.unload = function () {
-	}
+    VarManager.prototype.setVariable = function (iGadgetId, variableName, value, options) {
+        if (typeof(value) !== 'string') {
+            var transObj = {iGadgetId: iGadgetId, varName: variableName};
+            var msg = interpolate(gettext("IGadget %(iGadgetId)s attempted to establish a non-string value for the variable \"%(varName)s\"."), transObj, true);
+            OpManagerFactory.getInstance().logIGadgetError(iGadgetId, msg, Constants.Logging.ERROR_MSG);
 
-	VarManager.prototype.commitModifiedVariables = function() {
-		//If it have not been buffered all the requests, it's not time to send a PUT request
-		if (!this.force_commit && this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
-			this.buffered_requests++;
-			return
-		}
+            throw new Error();
+        }
 
-		this.sendBufferedVars();
-	}
+        var variable = this.findVariable(iGadgetId, variableName);
 
-	VarManager.prototype.initializeInterface = function () {
-	    // Calling all SLOT vars handler
-	    var variable;
-	    var vars;
-	    var varIndex;
-	    var gadgetIndex;
+        variable.set(value, options);
+    }
 
-	    for (gadgetIndex in this.iGadgets) {
-		vars = this.iGadgets[gadgetIndex];
+    VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
+        var variables = this.pendingVariables[iGadgetId];
+        if (!variables){
+            this.pendingVariables[iGadgetId] = new Array();
+            variables = this.pendingVariables[iGadgetId];
+        }
+        variables.push({"name":variableName, "value":value});
+    }
 
-			for (varIndex in vars) {
-			    variable = vars[varIndex];
-	
-			    if (variable.aspect == "SLOT" && variable.handler) {
-					try {
-					    variable.handler(variable.value);
-					} catch (e) {
-					}
-			    }
-			}
-		
-	    }
-	}
+    VarManager.prototype.dispatchPendingVariables = function (iGadgetId) {
+        var variables = this.pendingVariables.remove(iGadgetId);
+        if (variables){
+            for (var i=0;i<variables.length;i++){
+                this.setVariable(iGadgetId, variables[i]["name"], variables[i]["value"]);
+            }
+        }
+    }
 
-	VarManager.prototype.findVariableInCollection = function(varCollection, id){
-		for (var i = 0; i < varCollection.length; i++){
-			var modVar = varCollection[i];
-			
-			if (modVar.id == id) {
-				return modVar
-			}
-		}
-		return null;
-	}
+    VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
+        this.parseIGadgetVariables(igadgetInfo, tab);
+    }
+
+    VarManager.prototype.removeInstance = function (iGadgetId) {
+        delete this.iGadgets[iGadgetId];
+
+        this.removeIGadgetVariables(iGadgetId);
+    }
 
 
-	VarManager.prototype.markVariablesAsModified = function (variables) {
-		if (this.modificationsEnabled) {
-			
-			for (var j = 0; j < variables.length; j++) {
-				var variable = variables[j];
-				
-				var modVar = this.findVariableInCollection(this.igadgetModifiedVars, variable.id)
-				if (modVar) {
-					modVar.value = variable.value;
-					return;
-				}
-				
-				//It's doesn't exist in the list
-				//It's time to create it!
-                var varInfo = {
-   				    'id': variable.id,
-				    'value': variable.value
+    VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {
+        var variables_ids = this.variables.keys()
+
+        for (var i=0; i<variables_ids.length; i++) {
+            if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
+                this.igadgetModifiedVars.removeById(variables_ids[i]);
+                delete this.variables[variables_ids[i]];
+            }
+        }
+    }
+
+    VarManager.prototype.unload = function () {
+    }
+
+    VarManager.prototype.commitModifiedVariables = function() {
+        //If it have not been buffered all the requests, it's not time to send a PUT request
+        if (!this.force_commit && this.buffered_requests < VarManager.prototype.MAX_BUFFERED_REQUESTS) {
+            this.buffered_requests++;
+            return
+        }
+
+        this.sendBufferedVars();
+    }
+
+    VarManager.prototype.initializeInterface = function () {
+        // Calling all SLOT vars handler
+        var variable;
+        var vars;
+        var varIndex;
+        var gadgetIndex;
+
+        for (gadgetIndex in this.iGadgets) {
+        vars = this.iGadgets[gadgetIndex];
+
+            for (varIndex in vars) {
+                variable = vars[varIndex];
+
+                if (variable.aspect == "SLOT" && variable.handler) {
+                    try {
+                        variable.handler(variable.value);
+                    } catch (e) {
+                    }
                 }
-				
-				if (variable.shared != null) { //it is a possible shared variable 
-					varInfo['shared'] = variable.shared
-				}
-				
-				this.igadgetModifiedVars.push(varInfo);
-			}
-		}
-	
-	}
+            }
 
-	VarManager.prototype.incNestingLevel = function() {
-		if (this.modificationsEnabled)
-	    	this.nestingLevel++;
-	}
+        }
+    }
 
-	VarManager.prototype.decNestingLevel = function() {
-		if (this.modificationsEnabled) {
-			this.nestingLevel--;
-			if (this.nestingLevel == 0) 
-				this.commitModifiedVariables();
-		}
-	}
+    VarManager.prototype.findVariableInCollection = function(varCollection, id){
+        for (var i = 0; i < varCollection.length; i++){
+            var modVar = varCollection[i];
 
-	VarManager.prototype.resetModifiedVariables = function () {
-	    this.nestingLevel = 0;
-	    this.buffered_requests = 0;
-	    this.igadgetModifiedVars = [];
-		this.force_commit = false;
-	}
-	
-	VarManager.prototype.forceCommit = function(){
-		if (this.modificationsEnabled){ 
-			this.force_commit = true;
-		}
-	}
+            if (modVar.id == id) {
+                return modVar
+            }
+        }
+        return null;
+    }
 
-	VarManager.prototype.getIGadgetVariables = function (iGadgetId) {
-		return this.iGadgets[iGadgetId];
-	}
 
-	VarManager.prototype.getVariableById = function (varId) {
-		return this.variables[varId];
-	}
-	
-	VarManager.prototype.getVariableByName = function (igadgetId, varName) {
-		return this.findVariable(igadgetId, varName);
-	}
-	
-	VarManager.prototype.getWorkspace = function () {
-		return this.workSpace;
-	}
-	
-	// *********************************
-	// PRIVATE VARIABLES AND CONSTRUCTOR
-	// *********************************
-	
-	VarManager.prototype.findVariable = function (iGadgetId, name) {
-		var variables = this.iGadgets[iGadgetId];
-		var variable = variables[name];
-	
-		return variable;
-	}
+    VarManager.prototype.markVariablesAsModified = function (variables) {
+        if (this.modificationsEnabled) {
 
-	this.workSpace = _workSpace;
-	this.iGadgets = new Hash();
-	this.variables = new Hash();
-	
-	// For now workspace variables must be in a separated hash table, because they have a
-	// different identifier space and can collide with the idenfiers of normal variables
-	
-	this.resetModifiedVariables();
-	
-	this.modificationsEnabled = true;
-	
-	this.pendingVariables = new Hash(); //to manage igadgets loaded on demand caused by a wiring propagation
-	
-	// Creation of ALL EzWeb variables regarding one workspace
-	this.parseVariables(this.workSpace.workSpaceGlobalInfo);
+            for (var j = 0; j < variables.length; j++) {
+                var variable = variables[j];
+
+                var modVar = this.findVariableInCollection(this.igadgetModifiedVars, variable.id)
+                if (modVar) {
+                    modVar.value = variable.value;
+                    return;
+                }
+
+                //It's doesn't exist in the list
+                //It's time to create it!
+                var varInfo = {
+                    'id': variable.id,
+                    'value': variable.value
+                }
+
+                if (variable.shared != null) { //it is a possible shared variable
+                    varInfo['shared'] = variable.shared
+                }
+
+                this.igadgetModifiedVars.push(varInfo);
+            }
+        }
+
+    }
+
+    VarManager.prototype.incNestingLevel = function() {
+        if (this.modificationsEnabled)
+            this.nestingLevel++;
+    }
+
+    VarManager.prototype.decNestingLevel = function() {
+        if (this.modificationsEnabled) {
+            this.nestingLevel--;
+            if (this.nestingLevel == 0)
+                this.commitModifiedVariables();
+        }
+    }
+
+    VarManager.prototype.resetModifiedVariables = function () {
+        this.nestingLevel = 0;
+        this.buffered_requests = 0;
+        this.igadgetModifiedVars = [];
+        this.force_commit = false;
+    }
+
+    VarManager.prototype.forceCommit = function(){
+        if (this.modificationsEnabled){
+            this.force_commit = true;
+        }
+    }
+
+    VarManager.prototype.getIGadgetVariables = function (iGadgetId) {
+        return this.iGadgets[iGadgetId];
+    }
+
+    VarManager.prototype.getVariableById = function (varId) {
+        return this.variables[varId];
+    }
+
+    VarManager.prototype.getVariableByName = function (igadgetId, varName) {
+        return this.findVariable(igadgetId, varName);
+    }
+
+    VarManager.prototype.getWorkspace = function () {
+        return this.workSpace;
+    }
+
+    // *********************************
+    // PRIVATE VARIABLES AND CONSTRUCTOR
+    // *********************************
+
+    VarManager.prototype.findVariable = function (iGadgetId, name) {
+        var variables = this.iGadgets[iGadgetId];
+        var variable = variables[name];
+
+        return variable;
+    }
+
+    this.workSpace = _workSpace;
+    this.iGadgets = new Hash();
+    this.variables = new Hash();
+
+    // For now workspace variables must be in a separated hash table, because they have a
+    // different identifier space and can collide with the idenfiers of normal variables
+
+    this.resetModifiedVariables();
+
+    this.modificationsEnabled = true;
+
+    this.pendingVariables = new Hash(); //to manage igadgets loaded on demand caused by a wiring propagation
+
+    // Creation of ALL EzWeb variables regarding one workspace
+    this.parseVariables(this.workSpace.workSpaceGlobalInfo);
 }

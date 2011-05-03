@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -31,15 +31,15 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function Variable (id, iGadget, name, varManager) {
-	// True when a the value of the variable has changed and the callback has not been invoked!
-	this.annotated = false;
-	this.varManager = null;
-	this.id = null;
-	this.iGadget = null;
-	this.name = null;
-	this.value = null;
-	this.tab = null;
-	this.shared = null; //null means no sharing at all (true or false means that could be shared)
+    // True when a the value of the variable has changed and the callback has not been invoked!
+    this.annotated = false;
+    this.varManager = null;
+    this.id = null;
+    this.iGadget = null;
+    this.name = null;
+    this.value = null;
+    this.tab = null;
+    this.shared = null; //null means no sharing at all (true or false means that could be shared)
 }
 
 //////////////////////////////////////////////
@@ -47,13 +47,13 @@ function Variable (id, iGadget, name, varManager) {
 //////////////////////////////////////////////
 
 Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  value_, tab_, shared_) {
-	this.varManager = varManager_;
-	this.id = id;
-	this.iGadget = iGadget_;
-	this.vardef = vardef_;
-	this.value = value_;
-	this.tab = tab_;
-	this.shared = shared_;
+    this.varManager = varManager_;
+    this.id = id;
+    this.iGadget = iGadget_;
+    this.vardef = vardef_;
+    this.value = value_;
+    this.tab = tab_;
+    this.shared = shared_;
 }
 
 //////////////////////////////////////////////
@@ -61,32 +61,32 @@ Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  val
 //////////////////////////////////////////////
 
 Variable.prototype.get = function () {
-	return this.value;
+    return this.value;
 }
 
-Variable.prototype.setHandler = function () { } 
+Variable.prototype.setHandler = function () { }
 
-Variable.prototype.set = function (value) { } 
+Variable.prototype.set = function (value) { }
 
 Variable.prototype.setSharedState = function (shared_) {
-	this.shared = shared_;
+    this.shared = shared_;
 }
 
 Variable.prototype.annotate = function (value) {
-	this.annotated = true;
-	this.value = value;
+    this.annotated = true;
+    this.value = value;
 }
 
 Variable.prototype.assignConnectable = function (connectable) {
-	this.connectable = connectable;
+    this.connectable = connectable;
 }
 
 Variable.prototype.getConnectable = function () {
-	return this.connectable;
+    return this.connectable;
 }
 
 Variable.prototype.getWorkspace = function () {
-	return this.varManager.getWorkspace();
+    return this.varManager.getWorkspace();
 }
 
 //////////////////////////////////////////////
@@ -105,9 +105,9 @@ Variable.prototype.GADGET_CONTEXT = "GCTX"
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function RVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
+    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
 
-	this.handler = null;
+    this.handler = null;
 }
 
 //////////////////////////////////////////////
@@ -118,7 +118,7 @@ RVariable.prototype = new Variable;
 
 //////////////////////////////////////////////
 // PUBLIC METHODS TO BE INHERITANCED
-////////////////////////////////////////////// 
+//////////////////////////////////////////////
 
 
 
@@ -127,104 +127,104 @@ RVariable.prototype = new Variable;
 //////////////////////////////////////////////
 
 RVariable.prototype.setHandler = function (handler_) {
-	this.handler = handler_;
+    this.handler = handler_;
 }
 
 RVariable.prototype.set = function (newValue) {
-	if (this.annotated) {
-		// If annotated, the value must be managed!
+    if (this.annotated) {
+        // If annotated, the value must be managed!
 
-		var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
-		
-		if (this.shared != null){ //its a possible shared variable
-			varInfo[0]["shared"] = this.shared;
-		}
+        var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
 
-		switch (this.vardef.aspect) {
-			case Variable.prototype.SLOT:
-				
-				// On-demand loading of tabs!
-				// Only wiring variables are involved!
-				if (! this.tab.is_painted() ) {
-					this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
-					this.tab.paint();
-					return;
-				}
-				var opManager = OpManagerFactory.getInstance();
-				var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-				if (!iGadget.loaded) { //the tab is being painted due to another variable in the same tab and this gadget isn't fully loaded
-					this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
-					return;
-				}
-				iGadget.notifyEvent();
-			
-			case Variable.prototype.USER_PREF:
-			case Variable.prototype.EXTERNAL_CONTEXT:
-			case Variable.prototype.GADGET_CONTEXT:
+        if (this.shared != null){ //its a possible shared variable
+            varInfo[0]["shared"] = this.shared;
+        }
+
+        switch (this.vardef.aspect) {
+            case Variable.prototype.SLOT:
+
+                // On-demand loading of tabs!
+                // Only wiring variables are involved!
+                if (! this.tab.is_painted() ) {
+                    this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
+                    this.tab.paint();
+                    return;
+                }
+                var opManager = OpManagerFactory.getInstance();
+                var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+                if (!iGadget.loaded) { //the tab is being painted due to another variable in the same tab and this gadget isn't fully loaded
+                    this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
+                    return;
+                }
+                iGadget.notifyEvent();
+
+            case Variable.prototype.USER_PREF:
+            case Variable.prototype.EXTERNAL_CONTEXT:
+            case Variable.prototype.GADGET_CONTEXT:
                 if (this.vardef.aspect === this.USER_PREF) {
                     // Only gadget preferences are persisted
                     this.varManager.markVariablesAsModified(varInfo);
                 }
-				
-				this.value = newValue;
-				
-				if (this.handler) {
-					try {
-						this.handler(newValue);
-					} catch (e) {
-						var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
-						var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-						OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
-					}
-				} else {
-					var opManager = OpManagerFactory.getInstance();
-					var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-					if (iGadget.loaded) {
-						var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
-						var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-						opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
-					}
-				}
-				
-				break;
-			default:
-				break;
-		}
-		if (this.shared==true) {
-			this.varManager.forceCommit();
-		}
-		// And it must be changed to NOT annotated!
-		this.annotated = false;
-	}
+
+                this.value = newValue;
+
+                if (this.handler) {
+                    try {
+                        this.handler(newValue);
+                    } catch (e) {
+                        var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
+                        var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
+                        OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+                    }
+                } else {
+                    var opManager = OpManagerFactory.getInstance();
+                    var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+                    if (iGadget.loaded) {
+                        var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
+                        var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+                        opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+                    }
+                }
+
+                break;
+            default:
+                break;
+        }
+        if (this.shared==true) {
+            this.varManager.forceCommit();
+        }
+        // And it must be changed to NOT annotated!
+        this.annotated = false;
+    }
 }
 
 RVariable.prototype.refresh = function() {
-	switch (this.vardef.aspect) {
-		case Variable.prototype.USER_PREF:
-		case Variable.prototype.EXTERNAL_CONTEXT:
-		case Variable.prototype.GADGET_CONTEXT:
-		case Variable.prototype.SLOT:
-			if (this.handler) {
-				try {
-					this.handler(this.value);
-				} catch (e) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
-					var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-					OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
-				}
-			} else {
-				var opManager = OpManagerFactory.getInstance();
-				var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-				if (iGadget.loaded) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
-					var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-					opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
-				}
-			}
-			break;
-		default:
-			break;
-	}
+    switch (this.vardef.aspect) {
+        case Variable.prototype.USER_PREF:
+        case Variable.prototype.EXTERNAL_CONTEXT:
+        case Variable.prototype.GADGET_CONTEXT:
+        case Variable.prototype.SLOT:
+            if (this.handler) {
+                try {
+                    this.handler(this.value);
+                } catch (e) {
+                    var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
+                    var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
+                    OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+                }
+            } else {
+                var opManager = OpManagerFactory.getInstance();
+                var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
+                if (iGadget.loaded) {
+                    var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
+                    var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
+                    opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+                }
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ RVariable.prototype.refresh = function() {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function RWVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
+    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
 }
 
 //////////////////////////////////////////////
@@ -249,53 +249,53 @@ RWVariable.prototype = new Variable;
 RWVariable.prototype.set = function (value_, options_) {
     var oldvalue;
 
-	if (this.vardef.aspect == Variable.prototype.PROPERTY && this.shared==true) {
-		//it is a shared property. Gadgets cannot set its value
-		throw new Error("Shared properties cannot be changed by gadgets");
-	}
-	this.varManager.incNestingLevel();
+    if (this.vardef.aspect == Variable.prototype.PROPERTY && this.shared==true) {
+        //it is a shared property. Gadgets cannot set its value
+        throw new Error("Shared properties cannot be changed by gadgets");
+    }
+    this.varManager.incNestingLevel();
 
     oldvalue = this.value;
-	this.value = value_;
+    this.value = value_;
 
-	if (this.vardef.aspect === this.PROPERTY && oldvalue != value_) {
-		this.varManager.markVariablesAsModified([this]);
+    if (this.vardef.aspect === this.PROPERTY && oldvalue != value_) {
+        this.varManager.markVariablesAsModified([this]);
 
-		if (this.shared == true || this.vardef.secure === true) {
-			this.varManager.forceCommit();
-		}
-	}
+        if (this.shared == true || this.vardef.secure === true) {
+            this.varManager.forceCommit();
+        }
+    }
 
-	// Propagate changes to wiring module
-	// Only when variable is an Event, the connectable must start propagating
-	// When variable is INOUT, is the connectable who propagates
-	switch (this.vardef.aspect) {
-		case Variable.prototype.EVENT:
-			if (this.connectable != null) {
-				this.connectable.propagate(this.value, options_);
-				break;
-			}
-		default:
-			break;
-	}
+    // Propagate changes to wiring module
+    // Only when variable is an Event, the connectable must start propagating
+    // When variable is INOUT, is the connectable who propagates
+    switch (this.vardef.aspect) {
+        case Variable.prototype.EVENT:
+            if (this.connectable != null) {
+                this.connectable.propagate(this.value, options_);
+                break;
+            }
+        default:
+            break;
+    }
 
-	// This will save all modified vars if we are the root event
-	this.varManager.decNestingLevel();
+    // This will save all modified vars if we are the root event
+    this.varManager.decNestingLevel();
 }
 
 RWVariable.prototype.getFinalSlots = function () {
-	if (this.connectable == null) {
-		return;
-	}
+    if (this.connectable == null) {
+        return;
+    }
 
-	switch (this.vardef.aspect) {
-		case Variable.prototype.EVENT:
-			return this.connectable.getFinalSlots();
-		default:
-			return [];
-	}
+    switch (this.vardef.aspect) {
+        case Variable.prototype.EVENT:
+            return this.connectable.getFinalSlots();
+        default:
+            return [];
+    }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
