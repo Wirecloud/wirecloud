@@ -39,6 +39,7 @@ from django.utils.translation import get_language
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
+from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
 from igadget.models import Variable, IGadget
 from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
@@ -463,9 +464,8 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
     # Context information
-    concepts = Concept.objects.all()
     concept_values = get_concept_values(user)
-    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
+    data_ret['workspace']['concepts'] = get_concepts_data(concept_values)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
@@ -618,10 +618,27 @@ def get_constant_values():
     return res
 
 
+def get_extra_concepts():
+    extra_concepts = []
+
+    user_context_providers = get_user_context_providers()
+    for provider in user_context_providers:
+        extra_concepts += provider.get_concepts()
+
+    return extra_concepts
+
+
 def get_concept_values(user):
     concepts = Concept.objects.all()
 
-    concept_values = get_constant_values()
+    concept_values = {}
+
+    user_context_providers = get_user_context_providers()
+    for provider in user_context_providers:
+        concept_values.update(provider.get_context_values(user))
+
+    concept_values.update(get_constant_values())
+
     data = {}
     data['user'] = user
     try:
@@ -637,6 +654,22 @@ def get_concept_values(user):
             concept_values[concept.concept] = get_concept_value(concept, data)
 
     return concept_values
+
+
+def get_concepts_data(concept_values):
+    concepts = Concept.objects.all()
+    data = [get_concept_data(concept, concept_values) for concept in concepts]
+
+    extra_concepts = get_extra_concepts()
+    for concept in extra_concepts:
+        concept['type'] = 'ECTX'
+        if concept['concept'] in concept_values:
+            concept['value'] = concept_values[concept['concept']]
+        else:
+            concept['value'] = ''
+        data.append(concept)
+
+    return data
 
 
 def get_concept_data(concept, concept_values):
