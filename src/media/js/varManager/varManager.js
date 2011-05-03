@@ -106,8 +106,8 @@ function VarManager (_workSpace) {
 	}
 
     VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
-        var name, id, variables, variable, gadget, gadgetId, igadgetId,
-            varInfo, objVars = {};
+        var name, id, variables, variable, gadget, gadgetId, igadgetId, varInfo,
+        aspect, value, shared, objVars = {};
 
         igadgetId = igadget['id'];
         gadgetId = igadget.gadget.substr(9).split('/').join('_');
@@ -119,26 +119,24 @@ function VarManager (_workSpace) {
             varInfo = name in igadget.variables ? igadget.variables[name] : {};
 
             id = varInfo.id;
-            var label = variable.label;
-			var action_label = variable.action_label;
-			var aspect = variable.aspect;
-			var value = 'value' in varInfo ? varInfo.value : '';
-			var shared = 'shared' in varInfo ? varInfo.shared : null;
+            aspect = variable.aspect;
+            value = 'value' in varInfo ? varInfo.value : '';
+            shared = 'shared' in varInfo ? varInfo.shared : null;
 
 			switch (aspect) {
 				case Variable.prototype.PROPERTY:
 				case Variable.prototype.EVENT:
-					objVars[name] = new RWVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
+					objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.EXTERNAL_CONTEXT:
 				case Variable.prototype.GADGET_CONTEXT:
 				case Variable.prototype.SLOT:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
+					objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
 					this.variables[id] = objVars[name];
 					break;
 				case Variable.prototype.USER_PREF:
-					objVars[name] = new RVariable(id, igadgetId, name, aspect, this, value, label, action_label, tab, shared);
+					objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
 					objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
 					objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
 					this.variables[id] = objVars[name];

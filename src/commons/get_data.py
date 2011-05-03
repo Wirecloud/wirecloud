@@ -182,6 +182,8 @@ def get_gadget_data(gadget):
         data_var['friend_code'] = var.friend_code
         data_var['default_value'] = tvar.default_value
         data_var['shareable'] = var.shared_var_def != None
+        if var.aspect == 'PREF' or var.aspect == 'PROP':
+            data_var['secure'] = var.secure
 
         if var.aspect == 'PREF' and var.type == 'L':
             options = UserPrefOption.objects.filter(variableDef=var)

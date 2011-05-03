@@ -37,9 +37,6 @@ function Variable (id, iGadget, name, varManager) {
 	this.id = null;
 	this.iGadget = null;
 	this.name = null;
-	this.label = null;
-	this.action_label = null;
-	this.aspect = null;
 	this.value = null;
 	this.tab = null;
 	this.shared = null; //null means no sharing at all (true or false means that could be shared)
@@ -49,14 +46,11 @@ function Variable (id, iGadget, name, varManager) {
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
 
-Variable.prototype.Variable = function (id, iGadget_, name_, aspect_, varManager_,  value_, label_, action_label_, tab_, shared_) {
+Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  value_, tab_, shared_) {
 	this.varManager = varManager_;
 	this.id = id;
 	this.iGadget = iGadget_;
-	this.name = name_;
-	this.label = label_;
-	this.action_label = action_label_;
-	this.aspect = aspect_;
+	this.vardef = vardef_;
 	this.value = value_;
 	this.tab = tab_;
 	this.shared = shared_;
@@ -110,8 +104,8 @@ Variable.prototype.GADGET_CONTEXT = "GCTX"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_);
+function RVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
 
 	this.handler = null;
 }
@@ -140,26 +134,26 @@ RVariable.prototype.set = function (newValue) {
 	if (this.annotated) {
 		// If annotated, the value must be managed!
 
-		var varInfo = [{id: this.id, value: newValue, aspect: this.aspect}];
+		var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
 		
 		if (this.shared != null){ //its a possible shared variable
 			varInfo[0]["shared"] = this.shared;
 		}
 
-		switch (this.aspect) {
+		switch (this.vardef.aspect) {
 			case Variable.prototype.SLOT:
 				
 				// On-demand loading of tabs!
 				// Only wiring variables are involved!
 				if (! this.tab.is_painted() ) {
-					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
+					this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
 					this.tab.paint();
 					return;
 				}
 				var opManager = OpManagerFactory.getInstance();
 				var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
 				if (!iGadget.loaded) { //the tab is being painted due to another variable in the same tab and this gadget isn't fully loaded
-					this.varManager.addPendingVariable(this.iGadget, this.name, newValue);
+					this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
 					return;
 				}
 				iGadget.notifyEvent();
@@ -167,7 +161,7 @@ RVariable.prototype.set = function (newValue) {
 			case Variable.prototype.USER_PREF:
 			case Variable.prototype.EXTERNAL_CONTEXT:
 			case Variable.prototype.GADGET_CONTEXT:
-                if (this.aspect === this.USER_PREF) {
+                if (this.vardef.aspect === this.USER_PREF) {
                     // Only gadget preferences are persisted
                     this.varManager.markVariablesAsModified(varInfo);
                 }
@@ -178,7 +172,7 @@ RVariable.prototype.set = function (newValue) {
 					try {
 						this.handler(newValue);
 					} catch (e) {
-						var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
+						var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
 						var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
 						OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
 					}
@@ -186,7 +180,7 @@ RVariable.prototype.set = function (newValue) {
 					var opManager = OpManagerFactory.getInstance();
 					var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
 					if (iGadget.loaded) {
-						var transObj = {iGadgetId: this.iGadget, varName: this.name};
+						var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
 						var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
 						opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
 					}
@@ -205,7 +199,7 @@ RVariable.prototype.set = function (newValue) {
 }
 
 RVariable.prototype.refresh = function() {
-	switch (this.aspect) {
+	switch (this.vardef.aspect) {
 		case Variable.prototype.USER_PREF:
 		case Variable.prototype.EXTERNAL_CONTEXT:
 		case Variable.prototype.GADGET_CONTEXT:
@@ -214,7 +208,7 @@ RVariable.prototype.refresh = function() {
 				try {
 					this.handler(this.value);
 				} catch (e) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.name, exceptionMsg: e};
+					var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
 					var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
 					OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
 				}
@@ -222,7 +216,7 @@ RVariable.prototype.refresh = function() {
 				var opManager = OpManagerFactory.getInstance();
 				var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
 				if (iGadget.loaded) {
-					var transObj = {iGadgetId: this.iGadget, varName: this.name};
+					var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
 					var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
 					opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
 				}
@@ -237,8 +231,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_) {
-	Variable.prototype.Variable.call(this, id, iGadget_, name_, aspect_, varManager_, value_, label_, action_label_, tab_, shared_);
+function RWVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
+	Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
 }
 
 //////////////////////////////////////////////
@@ -255,7 +249,7 @@ RWVariable.prototype = new Variable;
 RWVariable.prototype.set = function (value_, options_) {
     var oldvalue;
 
-	if (this.aspect == Variable.prototype.PROPERTY && this.shared==true) {
+	if (this.vardef.aspect == Variable.prototype.PROPERTY && this.shared==true) {
 		//it is a shared property. Gadgets cannot set its value
 		throw new Error("Shared properties cannot be changed by gadgets");
 	}
@@ -264,10 +258,10 @@ RWVariable.prototype.set = function (value_, options_) {
     oldvalue = this.value;
 	this.value = value_;
 
-	if (this.aspect === this.PROPERTY && oldvalue != value_) {
+	if (this.vardef.aspect === this.PROPERTY && oldvalue != value_) {
 		this.varManager.markVariablesAsModified([this]);
 
-		if (this.shared == true) {
+		if (this.shared == true || this.vardef.secure === true) {
 			this.varManager.forceCommit();
 		}
 	}
@@ -275,7 +269,7 @@ RWVariable.prototype.set = function (value_, options_) {
 	// Propagate changes to wiring module
 	// Only when variable is an Event, the connectable must start propagating
 	// When variable is INOUT, is the connectable who propagates
-	switch (this.aspect) {
+	switch (this.vardef.aspect) {
 		case Variable.prototype.EVENT:
 			if (this.connectable != null) {
 				this.connectable.propagate(this.value, options_);
@@ -294,7 +288,7 @@ RWVariable.prototype.getFinalSlots = function () {
 		return;
 	}
 
-	switch (this.aspect) {
+	switch (this.vardef.aspect) {
 		case Variable.prototype.EVENT:
 			return this.connectable.getFinalSlots();
 		default:
