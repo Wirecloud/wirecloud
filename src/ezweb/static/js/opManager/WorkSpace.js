@@ -930,17 +930,23 @@ function WorkSpace (workSpaceState) {
 
         if (optionPosition === 0) {
             this.confLauncher.addClassName('disabled_button');
-            return;
+        } else {
+            this.confLauncher.removeClassName('disabled_button');
         }
-
-        this.confLauncher.removeClassName('disabled_button');
 
         // add the event listener
         Event.observe(this.confLauncher, 'click',
                         function(e){
                             var target = BrowserUtilsFactory.getInstance().getTarget(e);
                             target.blur();
-                            LayoutManagerFactory.getInstance().showToolbarMenu(this.confMenu, this.confLauncher, this.toolbarSection);
+                            if (this.confLauncher.className.indexOf('disabled_button') >= 0) {
+                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to configure it.");
+                                this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.setMsg(msg);
+                                this.messageWindowMenu.show();
+                            } else {
+                                LayoutManagerFactory.getInstance().showToolbarMenu(this.confMenu, this.confLauncher, this.toolbarSection);
+                            }
                         }.bind(this));
     }
 
@@ -974,17 +980,23 @@ function WorkSpace (workSpaceState) {
 
         if (optionPosition === 0) {
             this.sharingLauncher.addClassName('disabled_button');
-            return;
+        } else {
+            this.sharingLauncher.removeClassName('disabled_button');
         }
-
-        this.sharingLauncher.removeClassName('disabled_button');
 
         // add the event listener
         Event.observe(this.sharingLauncher, 'click',
                         function(e){
                             var target = BrowserUtilsFactory.getInstance().getTarget(e);
                             target.blur();
-                            LayoutManagerFactory.getInstance().showToolbarMenu(this.sharingMenu, this.sharingLauncher, this.toolbarSection);
+                            if (this.sharingLauncher.className.indexOf('disabled_button') >= 0) {
+                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to share it.");
+                                this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.setMsg(msg);
+                                this.messageWindowMenu.show();
+                            } else {
+                                LayoutManagerFactory.getInstance().showToolbarMenu(this.sharingMenu, this.sharingLauncher, this.toolbarSection);
+                            }
                         }.bind(this));
     }
 
@@ -1019,10 +1031,9 @@ function WorkSpace (workSpaceState) {
 
         if (optionPosition === 0) {
             this.editLauncher.addClassName('disabled_button');
-            return;
+        } else {
+            this.editLauncher.removeClassName('disabled_button');
         }
-
-        this.editLauncher.removeClassName('disabled_button');
 
         // add the event listener
         Event.observe(this.editLauncher, 'click',
@@ -1032,7 +1043,14 @@ function WorkSpace (workSpaceState) {
                             if (this.isAllowed('change_lock_status')) {
                                 this._lockFunc(!this._isLocked());
                             }
-                            LayoutManagerFactory.getInstance().showToolbarMenu(this.editMenu, this.editLauncher, this.toolbarSection);
+                            if (this.editLauncher.className.indexOf('disabled_button') >= 0) {
+                                var msg = gettext("This WorkSpace is blocked, please create a new one if you want to modify it.");
+                                this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.setMsg(msg);
+                                this.messageWindowMenu.show();
+                            } else {
+                                LayoutManagerFactory.getInstance().showToolbarMenu(this.editMenu, this.editLauncher, this.toolbarSection);
+                            }
                         }.bind(this));
     }
 
