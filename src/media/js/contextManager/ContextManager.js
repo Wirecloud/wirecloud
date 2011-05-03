@@ -143,6 +143,10 @@ function ContextManager (workspace_, workSpaceInfo_) {
     // PUBLIC METHODS
     // ****************
 
+    ContextManager.prototype.getConcept = function (name) {
+        return this._name2Concept[name];
+    };
+
     ContextManager.prototype.addInstance = function (iGadget, template) {
         if (!this._loaded)
             return;
