@@ -631,13 +631,20 @@ def get_extra_concepts():
 def get_concept_values(user):
     concepts = Concept.objects.all()
 
-    concept_values = {}
+    cache_key = 'constant_context/' + str(user.id)
+    constant_context = cache.get(cache_key)
+    if constant_context == None:
+        constant_context = {}
 
-    user_context_providers = get_user_context_providers()
-    for provider in user_context_providers:
-        concept_values.update(provider.get_context_values(user))
+        user_context_providers = get_user_context_providers()
+        for provider in user_context_providers:
+            context_values = provider.get_context_values(user)
+            constant_context.update(context_values)
 
-    concept_values.update(get_constant_values())
+        constant_context.update(get_constant_values())
+        cache.set(cache_key, constant_context)
+
+    concept_values = constant_context
 
     data = {}
     data['user'] = user
