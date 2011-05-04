@@ -389,6 +389,8 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
+    _RE = re.compile(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)')
+
     def __init__(self, context):
         self._context = context
 
@@ -417,7 +419,7 @@ class TemplateValueProcessor:
             return matching.group(0)
 
     def process(self, value):
-        return re.sub(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)', self.__repl, value)
+        return self._RE.sub(self.__repl, value)
 
 
 def process_forced_values(workspace, user, concept_values, workspace_data):
