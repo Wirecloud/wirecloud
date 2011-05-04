@@ -1231,7 +1231,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
             variable = variables[name];
             if (variable.vardef.aspect === Variable.prototype.USER_PREF) {
                 pref_params[name] = {
-                    label: variable.label,
+                    label: variable.vardef.label,
                     type: 'parametrizableValue',
                     variable: variable,
                     canBeHidden: true,
@@ -1239,10 +1239,10 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
                 };
                 empty_prefs = false;
             } else if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
-                if (variable.label && variable.label != '') {
-                    label = variable.label;
+                if (variable.vardef.label && variable.vardef.label != '') {
+                    label = variable.vardef.label;
                 } else {
-                    label = variable.name;
+                    label = variable.vardef.name;
                 }
                 prop_params[name] = {
                     label: label,
