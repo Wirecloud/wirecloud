@@ -1229,7 +1229,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
 
         for (name in variables) {
             variable = variables[name];
-            if (variable.aspect === Variable.prototype.USER_PREF) {
+            if (variable.vardef.aspect === Variable.prototype.USER_PREF) {
                 pref_params[name] = {
                     label: variable.label,
                     type: 'parametrizableValue',
@@ -1238,7 +1238,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
                     parentWindow: this
                 };
                 empty_prefs = false;
-            } else if (variable.aspect === Variable.prototype.PROPERTY) {
+            } else if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
                 if (variable.label && variable.label != '') {
                     label = variable.label;
                 } else {

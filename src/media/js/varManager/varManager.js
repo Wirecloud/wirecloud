@@ -252,7 +252,7 @@ function VarManager (_workSpace) {
             for (varIndex in vars) {
                 variable = vars[varIndex];
 
-                if (variable.aspect == "SLOT" && variable.handler) {
+                if (variable.vardef.aspect == "SLOT" && variable.handler) {
                     try {
                         variable.handler(variable.value);
                     } catch (e) {
