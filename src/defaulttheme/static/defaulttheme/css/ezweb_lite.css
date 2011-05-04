@@ -11,7 +11,7 @@
     right: 17px;
     text-decoration: none;
     top: 0px;
-    z-index: 10000;    
+    z-index: 10000;
 }
 
 #more img {
@@ -35,7 +35,7 @@
 
 #lite_toolbar_section .toolbar_marked{
     height: 24px;
-	background:  transparent url(../images/toolbar_marked_bg.jpg) no-repeat scroll 0 0;
+	background:  transparent url(/static/defaulttheme/images/toolbar_marked_bg.jpg) no-repeat scroll 0 0;
 }
 
 #lite_toolbar_section #workspace_link_container  .toolbar_unmarked {
@@ -46,7 +46,7 @@
 }
 
 #ws_operations_link{
-	background: transparent url(../images/tabops16px.png) no-repeat scroll 0 0 !important;
+	background: transparent url(/static/defaulttheme/images/tabops16px.png) no-repeat scroll 0 0 !important;
 	border: medium none;
 	height: 24px;
     margin:1px 0 0 -2px;
