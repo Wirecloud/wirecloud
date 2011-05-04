@@ -34,8 +34,10 @@
 from os import path
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+COMPRESS = not DEBUG
+COMPRESS_OFFLINE = not DEBUG
 
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False
@@ -103,6 +105,9 @@ MEDIA_ROOT = path.join(BASEDIR, 'media')
 MEDIA_URL = '/ezweb/'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = path.join(BASEDIR, 'static')
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_OUTPUT_DIR = ''
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
