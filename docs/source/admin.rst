@@ -4,4 +4,4 @@ Administrator Manual
 Dependencies
 ------------
 
-South, lxml, django_compressor
+South, lxml, django_compressor (BeautifulSoup)
