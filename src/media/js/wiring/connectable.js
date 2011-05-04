@@ -347,7 +347,7 @@ wEvent.prototype.getQualifiedName = function () {
 }
 
 wEvent.prototype.getLabel = function () {
-	return this.variable.label;
+	return this.variable.getLabel();
 }
 
 wEvent.prototype.getValue = function() {
@@ -622,10 +622,10 @@ wSlot.prototype._is_target_slot = function(variable, list) {
 }
 
 wSlot.prototype.getFinalSlots = function() {
-	var iGadgetName, action_label = this.variable.action_label;
+	var iGadgetName, action_label = this.variable.getActionLabel();
 	if (!action_label || action_label === '') {
 		action_label = gettext('Use in %(slotName)s');
-		action_label = interpolate(action_label, {slotName: this.variable.label}, true);
+		action_label = interpolate(action_label, {slotName: this.variable.getLabel()}, true);
 	}
 	iGadgetName = OpManagerFactory.getInstance().activeWorkSpace.getIgadget(this.variable.iGadget).name;
 
@@ -654,7 +654,7 @@ wSlot.prototype.getQualifiedName = function () {
 }
 
 wSlot.prototype.getLabel = function () {
-	return this.variable.label;
+	return this.variable.getLabel();
 }
 
 wSlot.prototype.refresh = function() {

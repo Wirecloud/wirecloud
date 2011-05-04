@@ -68,6 +68,18 @@ Variable.prototype.setHandler = function () { }
 
 Variable.prototype.set = function (value) { }
 
+Variable.prototype.getActionLabel = function () {
+    if (this.vardef.aspect === this.SLOT) {
+        return this.vardef.action_label;
+    } else {
+        return null;
+    }
+};
+
+Variable.prototype.getLabel = function () {
+    return this.vardef.label;
+};
+
 Variable.prototype.setSharedState = function (shared_) {
     this.shared = shared_;
 }

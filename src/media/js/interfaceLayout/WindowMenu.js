@@ -1211,8 +1211,8 @@ FormWindowMenu.prototype._clearListener = function() {
 
 FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
     var i, name, igadget, igadgets, igadget_params, pref_params,
-        prop_params, variable, variables, varManager, label, empty_prefs,
-        empty_props, var_elements;
+        prop_params, variable, variables, varManager, empty_prefs, empty_props,
+        var_elements;
 
     this.workspace = workspace;
     varManager = workspace.getVarManager();
@@ -1231,7 +1231,7 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
             variable = variables[name];
             if (variable.vardef.aspect === Variable.prototype.USER_PREF) {
                 pref_params[name] = {
-                    label: variable.vardef.label,
+                    label: variable.getLabel(),
                     type: 'parametrizableValue',
                     variable: variable,
                     canBeHidden: true,
@@ -1239,13 +1239,8 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
                 };
                 empty_prefs = false;
             } else if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
-                if (variable.vardef.label && variable.vardef.label != '') {
-                    label = variable.vardef.label;
-                } else {
-                    label = variable.vardef.name;
-                }
                 prop_params[name] = {
-                    label: label,
+                    label: variable.getLabel(),
                     type: 'parametrizableValue',
                     variable: variable,
                     parentWindow: this
