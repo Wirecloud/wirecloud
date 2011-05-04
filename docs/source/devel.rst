@@ -43,10 +43,6 @@ The templates directory contains Django templates that are processed by Django
 and converted into XHTML or other output formats before they are sent to the
 browser.
 
-The templates are usually found right in the templates directory but the
-static resources are placed into another directory inside the static one.
-This middle directory should has the same name as the theme itself.
-
 So, let's say your theme is called `serenity`, its directory layout should
 look like this:
 
@@ -55,13 +51,12 @@ look like this:
  serenity/
      __init__.py
      static/
-         serenity/
-             css/
-                styles.css
-             js/
-                custom_effects.js
-             images/
-                icon.png
+         css/
+            styles.css
+         js/
+            custom_effects.js
+         images/
+            icon.png
      templates/
          index.html
 
