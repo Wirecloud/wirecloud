@@ -1,9 +1,11 @@
 {% extends "base.html"%}
-{% load i18n %}
+{% load compress i18n %}
 
 {% block css %}
-<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb_lite.css"  />
+{% compress css %}
+<link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}/css/ezweb_lite_core.css"  />
 <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/ezweb_lite.css" />
+{% endcompress %}
 {% endblock %}
 
 {% block workspace_header %}

@@ -27,7 +27,7 @@ div.dragboard.fixed {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -480px;
 }
 
@@ -36,7 +36,7 @@ div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -432px;
 }
 
@@ -45,7 +45,7 @@ div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -336px;
 }
 
@@ -54,7 +54,7 @@ div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -456px;
 }
 
@@ -63,19 +63,19 @@ div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button {
-  background: url("../images/igadget/settings2.png");
+  background: url(../images/igadget/settings2.png);
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
-  background: url("../images/igadget/settings2-highlighted.png");
+  background: url(../images/igadget/settings2-highlighted.png);
 }
 
 div.gadget_window div.gadget_menu input[type="button"].errorbutton {
-  background: url("../images/warning.png");
+  background: url(../images/warning.png);
 }
 
 div.gadget_window div.gadget_menu input[type="button"].versionbutton {
-  background: url("../images/new.png");
+  background: url(../images/new.png);
 }
 
 div.color_button {
@@ -85,12 +85,12 @@ div.color_button {
 
 div.gadget_window div.snapButton {
   /* This icon represents that the iGadget is outside the grid */
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -48px -72px;
 }
 
 div.gadget_window .dragboardwiki {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -360px;
 }
 
@@ -99,18 +99,18 @@ div.gadget_window .dragboardwiki:hover {
 }
 
 div.gadget_window div.extractButton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -48px -360px;
 }
 
 div.gadget_window div.leftResizeHandle {
   /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url("../images/igadget/resize-handle-bottom-left.png") no-repeat left bottom;
+  background: transparent url(../images/igadget/resize-handle-bottom-left.png) no-repeat left bottom;
 }
 
 div.gadget_window div.rightResizeHandle {
   /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url("../images/igadget/resize-handle-bottom-right.png") no-repeat right bottom;
+  background: transparent url(../images/igadget/resize-handle-bottom-right.png) no-repeat right bottom;
 }
 
 .gadget_menu .igadget_name {

@@ -23,7 +23,7 @@ a, a:visited{
 }
 
 #loading-indicator {
-    background-image: url("../images/loading.gif");
+    background-image: url(../images/loading.gif);
     background-repeat: no-repeat;
     background-position: center center;
 }
@@ -106,22 +106,22 @@ a, a:visited{
 }
 
 .application_selector {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -456px;
  }
 
 #left_slider{
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: 0px -288px;
 }
 
 #right_slider{
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -288px;
 }
 
 #tab_marker{
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: 0px -240px;
 }
 
@@ -144,7 +144,7 @@ a, a:visited{
 
 #logs_link {
   background-image: url(../images/icons-sprite.png);
-  background-position: -48px -504px; 
+  background-position: -48px -504px;
 }
 
 #logs_link.highlighted {
@@ -238,7 +238,7 @@ a, a:visited{
 }
 
 .drop_down_menu div .help_button {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: 0px -312px;
 }
 
@@ -293,7 +293,7 @@ a, a:visited{
 }
 
 .color_input{
-	background-image:url("../images/colorpicker.png");
+	background-image:url(../images/colorpicker.png);
 	background-position:right center;
 	background-repeat:no-repeat;
 }
@@ -303,17 +303,17 @@ a, a:visited{
 }
 
 .tabOps_launcher{
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -24px -264px;
 }
 
 .tab_dragger{
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: 0px -264px;
 }
 
 .closebutton {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: -48px -312px;
 }
 
@@ -334,11 +334,11 @@ button {
 }
 
 .readOnlyIcon {
-    background-image: url("../images/unlock.png");
+    background-image: url(../images/unlock.png);
 }
 
 .readOnlyIcon.readOnly {
-    background-image: url("../images/lock.png");
+    background-image: url(../images/lock.png);
 }
 
 .visibilityIcon {
@@ -346,7 +346,7 @@ button {
 }
 
 .visibilityIcon.visible {
-    background-image: url("../images/visible.png");
+    background-image: url(../images/visible.png);
 }
 
 
@@ -415,7 +415,7 @@ button {
 
 
 .help_button {
-  background: url("../images/icons-sprite.png");
+  background: url(../images/icons-sprite.png);
   background-position: 0px -312px;
 	display:block;
 }
@@ -443,7 +443,7 @@ button {
 
 .popup_menu .submenu {
   padding-right: 2.5ex;
-  background-image: url('../../../js/EzWebAPI_ext/images/styledElements/submenu-mark.png');
+  background-image: url(/static/js/EzWebAPI_ext/images/styledElements/submenu-mark.png);
   background-position: right center;
   background-repeat: no-repeat;
 }
