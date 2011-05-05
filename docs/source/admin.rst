@@ -4,7 +4,7 @@ Administrator Manual
 Dependencies
 ------------
 
-South, lxml, django_compressor (BeautifulSoup)
+South, lxml, django_compressor (BeautifulSoup), johnny-cache
 
 
 Deployment notes
