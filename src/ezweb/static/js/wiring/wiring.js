@@ -242,7 +242,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 			variableDef = variables[var_name];
 			variable = varManager.getVariableByName(iGadgetId, variableDef.name);
 
-			switch (variable.aspect) {
+			switch (variableDef.aspect) {
 			case "EVEN":
 				connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
 

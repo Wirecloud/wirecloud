@@ -177,7 +177,7 @@ var ShowcaseFactory = function () {
                         var msg = "";
                         var variable = varManager.getVariableByName(igadgetId_, pair.key);
                         if (variable) {
-                            if(variable.aspect == Variable.prototype.USER_PREF) {
+                            if(variable.vardef.aspect == Variable.prototype.USER_PREF) {
                                 variable.annotate(pair.value);
                                 variable.set(pair.value);
                             }

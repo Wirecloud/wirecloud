@@ -260,5 +260,12 @@ function GadgetTemplate(variables_, size_) {
     /*
      * CONSTRUCTOR
      */
-    //this._generateUserPrefs();
+    var varname, variable;
+
+    for (varname in variableList) {
+        variable = variableList[varname];
+        if (typeof variable.label === 'undefined' || variable.label === null || variable.label === '') {
+            variable.label = variable.name;
+        }
+    }
 }
