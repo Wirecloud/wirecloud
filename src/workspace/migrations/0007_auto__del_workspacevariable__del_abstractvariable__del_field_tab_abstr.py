@@ -29,11 +29,11 @@ class Migration(SchemaMigration):
 
         #db.alter_column('workspace_variablevalue', 'variable', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['igadget.Variable']))
 
-        # Deleting model 'AbstractVariable'
-        db.delete_table('workspace_abstractvariable')
-
         # Deleting field 'VariableValue.abstract_variable'
         db.delete_column('workspace_variablevalue', 'abstract_variable_id')
+
+        # Deleting model 'AbstractVariable'
+        db.delete_table('workspace_abstractvariable')
 
         # Changing field 'VariableValue.value'
         db.alter_column('workspace_variablevalue', 'value', self.gf('django.db.models.fields.TextField')(default=''))
