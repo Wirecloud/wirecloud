@@ -88,7 +88,10 @@ class Resource:
         return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')
 
     def adaptRequest(self, request):
+        real_method = request.method
+        request.method = 'POST'
         request._load_post_and_files()
+        request.method = real_method
 
         return request
 
