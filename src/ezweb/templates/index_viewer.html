@@ -1,17 +1,12 @@
-{% extends "base_index.html"%}
-{% load i18n %}
+{% extends "index_lite.html"%}
+
+{% load compress %}
 
 {% block css %}
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ layout.lite }}" />
-	<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}{{ theme.lite }}" />
-	
-	<style>
-	   #wiring_header, #catalogue_header, #lite_toolbar_section, #ws_section_identifier{
-	   		display: none;
-	   }
-	</style>
-{% endblock %}
-
-{%block header%}
-	{% include "header_viewer.html" %}
+  {{ block.super }}
+  <style>
+  #wiring_header, #catalogue_header, #lite_toolbar_section, #ws_section_identifier {
+    display: none;
+  }
+  </style>
 {% endblock %}
