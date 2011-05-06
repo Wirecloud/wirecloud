@@ -138,6 +138,5 @@ class PackageLinker:
                 #remove the cloned variable value
                 #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
 
-            # check if the value is None, and avoid saving it on the BD in that case
-            if type(user_variable_value.value) != type(None):
+            if user_variable_value.value is not None:
                 user_variable_value.save()
