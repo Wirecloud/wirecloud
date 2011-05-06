@@ -28,7 +28,7 @@ function _EzWebAPI() {
 	this.platform = window.parent;
 	var ezwebLocation = this.platform.document.location;
 	this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
-    this.platform_protocol = ezwebLocation.protocol;
+    this.platform_protocol = ezwebLocation.protocol.substr(0, ezwebLocation.protocol.length - 1);
     this.platform_host = ezwebLocation.host;
 
 	// Get id from the URL
@@ -106,6 +106,7 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
         protocol = url.substr(0, protocolEnd);
         host = url.substr(hostStart, pathStart - hostStart);
         rest = url.substring(pathStart);
+        final_url = url;
     } else {
         if (url.charAt(0) === '/') {
             rest = url;
