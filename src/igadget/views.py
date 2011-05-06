@@ -104,7 +104,7 @@ class IGadgetCollection(Resource):
 
             raise TracedServerError(e, {'workspace': workspace_id, 'tab': tab_id}, request, msg)
 
-    @transaction.commit_manually
+    @transaction.commit_on_success
     def update(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
@@ -119,8 +119,6 @@ class IGadgetCollection(Resource):
             igadgets = received_data.get('iGadgets')
             for igadget in igadgets:
                 UpdateIGadget(igadget, user, tab)
-
-            transaction.commit()
 
             return HttpResponse('ok')
         except Tab.DoesNotExist, e:

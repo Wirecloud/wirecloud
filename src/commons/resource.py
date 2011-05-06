@@ -30,9 +30,8 @@
 
 #
 
-from django.http import Http404, HttpResponseNotAllowed, QueryDict
+from django.http import Http404, HttpResponseNotAllowed
 from django.http import HttpResponseServerError, HttpResponseForbidden
-from django.utils import datastructures
 
 from commons.authentication import Http403
 from commons.logs import log_exception, log_detailed_exception, log_request
@@ -89,7 +88,11 @@ class Resource:
         return HttpResponseServerError(get_json_error_response(msg), mimetype='application/json; charset=UTF-8')
 
     def adaptRequest(self, request):
-        request._post, request._files = QueryDict(request.raw_post_data, encoding=request._encoding), datastructures.MultiValueDict()
+        if request.META.get('CONTENT_LENGTH', '') != '':
+            real_method = request.method
+            request.method = 'POST'
+            request._load_post_and_files()
+            request.method = real_method
 
         return request
 
