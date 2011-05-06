@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load compress i18n %}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -13,40 +13,37 @@
 	<script src="http://ie7-js.googlecode.com/svn/version/2.0(beta3)/IE7.js" type="text/javascript"></script>
 	<![endif]-->
 
-  <!-- Base css -->
-  {% if only_one_css_file %}
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}themes/default/css/ezweb_compressed.css"/>
-  {% else %}
-    <link media="screen,projection" rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb.css"  />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css"  />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring.css"  />
-
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css"  />
-  {% endif %}
-
-  <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie.css" />
-  <![endif]-->
-
-  <!-- Theme css -->
-  {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/ezweb.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/dragboard.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/wiring.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/catalogue.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/catalogue_list.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/default_catalogue.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/default.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/icons.css" />
-
+    <!-- Base css -->
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring_core.css"  />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_core.css"  />
+    {% endcompress %}
     <!--[if IE]>
-      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/css/ie.css" />
+      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie_core.css" />
+    <![endif]-->
+
+    <!-- Theme css -->
+    {% block css %}
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ezweb.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dragboard.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wiring.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/catalogue_list.css" />
+
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/default_catalogue.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/default.css" />
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/icons.css" />
+    {% endcompress %}
+    <!--[if IE]>
+      <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/ie.css" />
     <![endif]-->
   {% endblock %}
 
   {% block meta %}
-  <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/favicon.ico" />
+  <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
   {% endblock %}
 </head>
 
@@ -77,7 +74,7 @@
   <div id="ws_banner" class="banner">
 
     <div id="logo_placeholder" class="logo_placeholder">
-      <img id="logo" class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img id="logo" class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
 
     <div id="toolbar_section" class="toolbar_section"></div>
@@ -137,12 +134,12 @@
 
   <div id="wiring_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="wiring_dragboard_link" class="first_toolbar_button">
-          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="wiring_operate_link" class="last_toolbar_button selected_section">{% trans 'Operate' %}</div>
       </div>
@@ -164,12 +161,12 @@
 <div id="catalogue_header" class="global_header" style="display:none">
   <div id="catalogue_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
+      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" width="244" height="36" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="catalogue_dragboard_link" class="first_toolbar_button">
-          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="search_button_toolbar" class="selected_section">{% trans "Search" %}</div>
         <div id="developers_button_toolbar" class="last_toolbar_button">Crear gadgets</div>
@@ -195,7 +192,7 @@
     <div class="toolbar_section">
       <div class="toolbar_menu">
         <div id="logs_dragboard_link" class="first_toolbar_button">
-          <img src="{{ STATIC_URL }}{{ THEME_ACTIVE }}/images/back.png" title="{% trans 'Back to my application' %}"/>
+          <img src="{{ STATIC_URL }}images/back.png" title="{% trans 'Back to my application' %}"/>
         </div>
         <div id="logs_all_toolbar" class="selected_section">{% trans 'All' %}</div>
         <div id="logs_igadget_toolbar" class="last_toolbar_button">{% trans 'iGadget' %}</div>
@@ -298,12 +295,13 @@
 
 <!-- JavaScript code -->
 
+{% compress js %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/json2.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/strftime-locales.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/jscolor/jscolor.js"></script>
-
+{% endcompress %}
 <script type="text/javascript">
 var URIs = {
   USER: '/user/{{ user.username }}',
@@ -348,7 +346,7 @@ var URIs = {
   CONTRACT_APPLICATIONS_TRANSACTION: '/contract/subscribe/applications',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
-  ACTIVE_THEME: '{{ STATIC_URL }}{{ THEME_ACTIVE }}',
+  ACTIVE_THEME: '{{ STATIC_URL }}',
 {% if AUTHENTICATION_SERVER_URL %}
   EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api',
 {% endif %}
@@ -388,16 +386,12 @@ var policy_lists = {{ policies|safe|default:"null" }};
 </script>
 
 
-<script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
-
-<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
-
-{% if only_one_js_file %}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/ezweb_{{ ezweb_release }}.js"></script>
-{% else %}
-   {% include "js_includes.js" %}
-{% endif %}
+{% compress js %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
+{% include "js_includes.js" %}
+{% endcompress %}
 
 {% block extra_scripts %}{% endblock %}
 

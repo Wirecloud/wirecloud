@@ -7,17 +7,17 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Deleting field 'Out.abstract_variable'
-        db.delete_column('connectable_out', 'abstract_variable_id')
-
         # Adding field 'Out.variable'
         db.add_column('connectable_out', 'variable', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['igadget.Variable']), keep_default=False)
 
-        # Deleting field 'InOut.workspace_variable'
-        db.delete_column('connectable_inout', 'workspace_variable_id')
+        # Deleting field 'Out.abstract_variable'
+        db.delete_column('connectable_out', 'abstract_variable_id')
 
         # Adding field 'InOut.workspace'
         db.add_column('connectable_inout', 'workspace', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['workspace.WorkSpace']), keep_default=False)
+
+        # Deleting field 'InOut.workspace_variable'
+        db.delete_column('connectable_inout', 'workspace_variable_id')
 
     def backwards(self, orm):
 

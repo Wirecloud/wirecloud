@@ -38,6 +38,7 @@ from django.utils.translation import get_language
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
+from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
 from igadget.models import Variable, IGadget
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
@@ -180,6 +181,8 @@ def get_gadget_data(gadget):
         data_var['friend_code'] = var.friend_code
         data_var['default_value'] = tvar.default_value
         data_var['shareable'] = var.shared_var_def != None
+        if var.aspect == 'PREF' or var.aspect == 'PROP':
+            data_var['secure'] = var.secure
 
         if var.aspect == 'PREF' and var.type == 'L':
             options = UserPrefOption.objects.filter(variableDef=var)
@@ -384,6 +387,8 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
+    _RE = re.compile(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)')
+
     def __init__(self, context):
         self._context = context
 
@@ -412,7 +417,7 @@ class TemplateValueProcessor:
             return matching.group(0)
 
     def process(self, value):
-        return re.sub(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)', self.__repl, value)
+        return self._RE.sub(self.__repl, value)
 
 
 def process_forced_values(workspace, user, concept_values, workspace_data):
@@ -459,9 +464,8 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
     # Context information
-    concepts = Concept.objects.all()
     concept_values = get_concept_values(user)
-    data_ret['workspace']['concepts'] = [get_concept_data(concept, concept_values) for concept in concepts]
+    data_ret['workspace']['concepts'] = get_concepts_data(concept_values)
 
     # Workspace preferences
     data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
@@ -611,10 +615,34 @@ def get_constant_values():
     return res
 
 
+def get_extra_concepts():
+    extra_concepts = []
+
+    user_context_providers = get_user_context_providers()
+    for provider in user_context_providers:
+        extra_concepts += provider.get_concepts()
+
+    return extra_concepts
+
+
 def get_concept_values(user):
     concepts = Concept.objects.all()
 
-    concept_values = get_constant_values()
+    cache_key = 'constant_context/' + str(user.id)
+    constant_context = cache.get(cache_key)
+    if constant_context == None:
+        constant_context = {}
+
+        user_context_providers = get_user_context_providers()
+        for provider in user_context_providers:
+            context_values = provider.get_context_values(user)
+            constant_context.update(context_values)
+
+        constant_context.update(get_constant_values())
+        cache.set(cache_key, constant_context)
+
+    concept_values = constant_context
+
     data = {}
     data['user'] = user
     try:
@@ -630,6 +658,22 @@ def get_concept_values(user):
             concept_values[concept.concept] = get_concept_value(concept, data)
 
     return concept_values
+
+
+def get_concepts_data(concept_values):
+    concepts = Concept.objects.all()
+    data = [get_concept_data(concept, concept_values) for concept in concepts]
+
+    extra_concepts = get_extra_concepts()
+    for concept in extra_concepts:
+        concept['type'] = 'ECTX'
+        if concept['concept'] in concept_values:
+            concept['value'] = concept_values[concept['concept']]
+        else:
+            concept['value'] = ''
+        data.append(concept)
+
+    return data
 
 
 def get_concept_data(concept, concept_values):

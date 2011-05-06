@@ -486,7 +486,7 @@ var LayoutManagerFactory = function () {
             msg = interpolate(msg, {
                 dragboardIcon: "<span class='icon icon-dragboard'></span>",
                 wiringIcon: "<span class='icon icon-wiring'></span>",
-                helpLink: videoTutorialMsg,
+                helpLink: videoTutorialMsg
             }, true);
             this.showTipMessage(msg, 0);
 
@@ -555,7 +555,7 @@ var LayoutManagerFactory = function () {
             var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
             msg = interpolate(msg, {
                 dragboardIcon: "<span class='icon icon-wiring'></span>",
-                helpLink: videoTutorialMsg,
+                helpLink: videoTutorialMsg
             }, true);
             this.showTipMessage(msg, 1);
 

@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -33,22 +33,22 @@
 
 function UserAdaptor() {
 
-	function _onSuccess(receivedData) {
-		var usernameJson = JSON.parse(receivedData.responseText);
-		var value = usernameJson.value;
-		OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(UserAdaptor.prototype.CONCEPT, value);
-	}
+    function _onSuccess(receivedData) {
+        var usernameJson = JSON.parse(receivedData.responseText);
+        var value = usernameJson.value;
+        OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(UserAdaptor.prototype.CONCEPT, value);
+    }
 
-	function _onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
-		                      {concept: UserAdaptor.prototype.CONCEPT}, true);
-		msg = logManager.formatError(gettext("Error getting concept %(concept)s: %(errorMsg)s."), transport, e);
-		logManager.log(msg);
-	}
+    function _onError(transport, e) {
+        var logManager = LogManagerFactory.getInstance();
+        var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
+                              {concept: UserAdaptor.prototype.CONCEPT}, true);
+        msg = logManager.formatError(gettext("Error getting concept %(concept)s: %(errorMsg)s."), transport, e);
+        logManager.log(msg);
+    }
 
-	var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: UserAdaptor.prototype.CONCEPT});
-	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
+    var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: UserAdaptor.prototype.CONCEPT});
+    PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
 }
 
 UserAdaptor.prototype.CONCEPT = 'username'
@@ -58,23 +58,23 @@ UserAdaptor.prototype.CONCEPT = 'username'
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function LanguageAdaptor() {
-	
-	function _onSuccess(receivedData) {
-		var json = JSON.parse(receivedData.responseText);
-		var value = json.value;
-		OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(LanguageAdaptor.prototype.CONCEPT, value);
-	}
 
-	function _onError(transport, e) {
-		var logManager = LogManagerFactory.getInstance();
-		var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
-		                      {concept: UserAdaptor.prototype.CONCEPT}, true);
-		msg = logManager.formatError(msg, transport, e);
-		logManager.log(msg);
-	}
+    function _onSuccess(receivedData) {
+        var json = JSON.parse(receivedData.responseText);
+        var value = json.value;
+        OpManagerFactory.getInstance().activeWorkSpace.getContextManager().notifyModifiedConcept(LanguageAdaptor.prototype.CONCEPT, value);
+    }
 
-	var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: LanguageAdaptor.prototype.CONCEPT});
-	PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
+    function _onError(transport, e) {
+        var logManager = LogManagerFactory.getInstance();
+        var msg = interpolate(gettext("Error getting concept %(concept)s: %(errorMsg)s."),
+                              {concept: UserAdaptor.prototype.CONCEPT}, true);
+        msg = logManager.formatError(msg, transport, e);
+        logManager.log(msg);
+    }
+
+    var uri = URIs.GET_CONTEXT_VALUE.evaluate({concept: LanguageAdaptor.prototype.CONCEPT});
+    PersistenceEngineFactory.getInstance().send_get(uri , this, _onSuccess, _onError);
 }
 
 LanguageAdaptor.prototype.CONCEPT = 'language'

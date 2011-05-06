@@ -307,7 +307,7 @@ td {
 }
 
 .section_identifier > div{
-	float: left;	
+	float: left;
 }
 
 #dragboard_link {
@@ -363,8 +363,6 @@ body.shared #workspace_link_container span {
   background: transparent url(../images/info.png) no-repeat;
   cursor: pointer;
 }
-
-
 
 .message_section {
     position: absolute;
@@ -824,7 +822,7 @@ button {
 }
 
 .sidebar_items > span:hover{
-	text-decoration: underline;	
+	text-decoration: underline;
 }
 
 .sidebar #add_workspace{

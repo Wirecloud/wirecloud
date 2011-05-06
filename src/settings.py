@@ -36,6 +36,8 @@ from django.utils.translation import ugettext_lazy as _
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+COMPRESS = not DEBUG
+COMPRESS_OFFLINE = not DEBUG
 
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False
@@ -103,6 +105,9 @@ MEDIA_ROOT = path.join(BASEDIR, 'media')
 MEDIA_URL = '/ezweb/'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = path.join(BASEDIR, 'static')
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_OUTPUT_DIR = ''
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -120,6 +125,8 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'johnny.middleware.LocalStoreClearMiddleware',  # this has to be first
+    'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'middleware.session_middleware.SessionMiddleware',
 #    'facebook.djangofb.FacebookMiddleware',
@@ -160,6 +167,8 @@ INSTALLED_APPS = (
     'uploader',
     'south',
     'deployment',
+    'compressor',
+    'johnny',
     ### openid authentication ###
 #    'openid_auth',
 #    'openid_auth.django_openidconsumer',
@@ -196,6 +205,7 @@ STATICFILES_FINDERS = (
     'ezweb.themes.ActiveThemeFinder',
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 SESSION_COOKIE_AGE = 5184000  # 2 months
@@ -251,6 +261,18 @@ GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 CERTIFICATION_ENABLED = False
 
 #SESSION_COOKIE_DOMAIN = '.domain'
+
+# Cache settings
+CACHES = {
+    'default': {
+        'BACKEND': 'johnny.backends.locmem.LocMemCache',
+        'OPTIONS': {
+            'MAX_ENTRIES': 3000,
+        },
+    }
+}
+JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASE_NAME
+
 
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)

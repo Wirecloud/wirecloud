@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -25,68 +25,68 @@
 
 
 function ContextManager (workspace_, workSpaceInfo_) {
-	
-	
-	// ***********************
-	// PRIVATED FUNCTIONS 
-	// ***********************
-	
-	/**
-	 * Adds all variables from workspace data model
-	 */
-	this._addContextVarsFromTemplate = function (iGadget, cVars, type) {
-		var varManager = this._workspace.getVarManager();
-		for (var i = 0; i < cVars.size(); i++) {
-			var cVar = cVars[i];
-			cVar.setVarManager(varManager);
-			var conceptName = cVar.getConceptName();
-			var relatedConcept = this._name2Concept[conceptName];
-			if (relatedConcept != null && relatedConcept._type != type)
-				relatedConcept = null;
 
-			if (relatedConcept == null) {
-				var msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
-				msg = interpolate(msg, {concept: conceptName, type: type, varName: cVar.getName()}, true);
-				OpManagerFactory.getInstance().logIGadgetError(iGadget.getId(), msg, Constants.Logging.ERROR_MSG);
-				continue;
-			}
-			relatedConcept.addIGadgetVar(cVar);
-		}
-	}
 
-	// Loads all concept from workspace data model.
-	this._loadConceptsFromWorkspace = function (workSpaceInfo_) {
-		this._concepts = new Hash();
-		this._name2Concept = new Hash();
+    // ***********************
+    // PRIVATED FUNCTIONS
+    // ***********************
 
-		var conceptsJson = workSpaceInfo_['workspace']['concepts'];
+    /**
+     * Adds all variables from workspace data model
+     */
+    this._addContextVarsFromTemplate = function (iGadget, cVars, type) {
+        var varManager = this._workspace.getVarManager();
+        for (var i = 0; i < cVars.size(); i++) {
+            var cVar = cVars[i];
+            cVar.setVarManager(varManager);
+            var conceptName = cVar.getConceptName();
+            var relatedConcept = this._name2Concept[conceptName];
+            if (relatedConcept != null && relatedConcept._type != type)
+                relatedConcept = null;
 
-		// Parses concepts json
-		for (var i = 0; i < conceptsJson.length; i++) {
-			var curConcept = conceptsJson[i];
-			// Creates the concept
-			var concept = new Concept(curConcept.concept, curConcept.type, curConcept.adaptor);
-			this._concepts[curConcept.concept] = concept;
+            if (relatedConcept == null) {
+                var msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
+                msg = interpolate(msg, {concept: conceptName, type: type, varName: cVar.getName()}, true);
+                OpManagerFactory.getInstance().logIGadgetError(iGadget.getId(), msg, Constants.Logging.ERROR_MSG);
+                continue;
+            }
+            relatedConcept.addIGadgetVar(cVar);
+        }
+    }
 
-			// Sets the concept value
-			if (curConcept.value != undefined) {
-				concept._setInitialValue(curConcept.value)
-			}
+    // Loads all concept from workspace data model.
+    this._loadConceptsFromWorkspace = function (workSpaceInfo_) {
+        this._concepts = new Hash();
+        this._name2Concept = new Hash();
 
-			// Relates the concept name to all its concept
-			for (var j = 0; j < curConcept.names.length; j++) {
-				var cname = curConcept.names[j];
-				var oldConcept = this._name2Concept[cname]
-				if (oldConcept != null) {
-					var msg = gettext("WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New related concept is '%(newConcept)s'.");
-					msg = interpolate(msg, {cname: cname, concept: oldConcept, newConcept: curConcept.concept}, true);
-					LogManagerFactory.getInstance().log(msg);
-				}
-				this._name2Concept[cname] = concept;
-			}
-		}
-	}
-	
+        var conceptsJson = workSpaceInfo_['workspace']['concepts'];
+
+        // Parses concepts json
+        for (var i = 0; i < conceptsJson.length; i++) {
+            var curConcept = conceptsJson[i];
+            // Creates the concept
+            var concept = new Concept(curConcept.concept, curConcept.type, curConcept.adaptor);
+            this._concepts[curConcept.concept] = concept;
+
+            // Sets the concept value
+            if (curConcept.value != undefined) {
+                concept._setInitialValue(curConcept.value)
+            }
+
+            // Relates the concept name to all its concept
+            for (var j = 0; j < curConcept.names.length; j++) {
+                var cname = curConcept.names[j];
+                var oldConcept = this._name2Concept[cname]
+                if (oldConcept != null) {
+                    var msg = gettext("WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New related concept is '%(newConcept)s'.");
+                    msg = interpolate(msg, {cname: cname, concept: oldConcept, newConcept: curConcept.concept}, true);
+                    LogManagerFactory.getInstance().log(msg);
+                }
+                this._name2Concept[cname] = concept;
+            }
+        }
+    }
+
     // Load igadget's context variables from workspace data model
     this._loadIGadgetContextVarsFromWorkspace = function (workSpaceInfo) {
         var i, j, tabs, currentTab, currentIGadget, currentVar, contextVar,
@@ -99,178 +99,182 @@ function ContextManager (workspace_, workSpaceInfo_) {
             currentTab = tabs[i];
             dragboard = this._workspace.getTab(currentTab.id).getDragboard();
 
-			// igadgets in tab
-			for (j = 0; j < currentTab.igadgetList.length; j++) {
-				currentIGadget = dragboard.getIGadget(currentTab.igadgetList[j].id);
+            // igadgets in tab
+            for (j = 0; j < currentTab.igadgetList.length; j++) {
+                currentIGadget = dragboard.getIGadget(currentTab.igadgetList[j].id);
 
-                                variables = currentIGadget.getGadget().getTemplate().getVariables();
+                variables = currentIGadget.getGadget().getTemplate().getVariables();
 
-				// Variables of igadgets
-				for (varname in variables) {
-				    currentVar = variables[varname];
-					switch (currentVar.aspect) {
-					case Variable.prototype.EXTERNAL_CONTEXT:
-					case Variable.prototype.GADGET_CONTEXT:
-						contextVar = new ContextVar(currentIGadget.id, currentVar.name, currentVar.concept)
-						contextVar.setVarManager(this._workspace.getVarManager());
-						relatedConcept = this._name2Concept[currentVar.concept];
-						if (relatedConcept) {
-							if (currentVar.aspect !== relatedConcept._type) {
-								msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
-								msg = interpolate(msg,
-									{concept: currentVar.concept,
-									 type: relatedConcept._type,
-									 varName: currentVar.name},
-									true);
-								OpManagerFactory.getInstance().logIGadgetError(currentIGadget.id, msg, Constants.Logging.ERROR_MSG);
-							} else {
-								relatedConcept.addIGadgetVar(contextVar);
-							}
-						}
-						break;
-					default:
-						break;
-					}
-				}
-			}
-		}
+                // Variables of igadgets
+                for (varname in variables) {
+                    currentVar = variables[varname];
+                    switch (currentVar.aspect) {
+                    case Variable.prototype.EXTERNAL_CONTEXT:
+                    case Variable.prototype.GADGET_CONTEXT:
+                        contextVar = new ContextVar(currentIGadget.id, currentVar.name, currentVar.concept)
+                        contextVar.setVarManager(this._workspace.getVarManager());
+                        relatedConcept = this._name2Concept[currentVar.concept];
+                        if (relatedConcept) {
+                            if (currentVar.aspect !== relatedConcept._type) {
+                                msg = gettext("There is not any concept of type \"%(type)s\" called \"%(concept)s\", the value of the iGadget variable \"%(varName)s\" will be empty.");
+                                msg = interpolate(msg,
+                                    {concept: currentVar.concept,
+                                     type: relatedConcept._type,
+                                     varName: currentVar.name},
+                                    true);
+                                OpManagerFactory.getInstance().logIGadgetError(currentIGadget.id, msg, Constants.Logging.ERROR_MSG);
+                            } else {
+                                relatedConcept.addIGadgetVar(contextVar);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
 
-		// Continues loading next module
-		this._loaded = true;
-	}
+        // Continues loading next module
+        this._loaded = true;
+    }
 
-	// ****************
-	// PUBLIC METHODS 
-	// ****************
-	
-	ContextManager.prototype.addInstance = function (iGadget, template) {
-		if (!this._loaded)
-			return;
+    // ****************
+    // PUBLIC METHODS
+    // ****************
 
-		if (template == null)
-			return;
+    ContextManager.prototype.getConcept = function (name) {
+        return this._name2Concept[name];
+    };
 
-		this._addContextVarsFromTemplate(iGadget, template.getExternalContextVars(iGadget.getId()), Concept.prototype.EXTERNAL);
-		this._addContextVarsFromTemplate(iGadget, template.getGadgetContextVars(iGadget.getId()), Concept.prototype.IGADGET);
-	}
+    ContextManager.prototype.addInstance = function (iGadget, template) {
+        if (!this._loaded)
+            return;
 
-	ContextManager.prototype.iGadgetLoaded = function (iGadget) {
-		if (!this._loaded)
-			return;
+        if (template == null)
+            return;
 
-		var iGadgetId = iGadget.getId();
-		var keys = this._concepts.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var concept = this._concepts[keys[i]];
-			concept.propagateIGadgetVarValues(iGadget);
-		}
-	}
+        this._addContextVarsFromTemplate(iGadget, template.getExternalContextVars(iGadget.getId()), Concept.prototype.EXTERNAL);
+        this._addContextVarsFromTemplate(iGadget, template.getGadgetContextVars(iGadget.getId()), Concept.prototype.IGADGET);
+    }
 
-	ContextManager.prototype.iGadgetUnloaded = function (iGadget) {
-		if (!this._loaded)
-			return;
+    ContextManager.prototype.iGadgetLoaded = function (iGadget) {
+        if (!this._loaded)
+            return;
 
-		var keys = this._concepts.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var concept = this._concepts[keys[i]];
-			if (concept._type !== Concept.prototype.IGADGET)
-				continue;
+        var iGadgetId = iGadget.getId();
+        var keys = this._concepts.keys();
+        for (var i = 0; i < keys.length; i++) {
+            var concept = this._concepts[keys[i]];
+            concept.propagateIGadgetVarValues(iGadget);
+        }
+    }
 
-			var ivar = concept.getIGadgetVar(iGadget.getId());
-			if (ivar != null)
-				ivar._clearHandler();
-		}
-	}
+    ContextManager.prototype.iGadgetUnloaded = function (iGadget) {
+        if (!this._loaded)
+            return;
 
-	ContextManager.prototype.removeInstance = function (iGadgetId_) {
-		if (!this._loaded)
-			return;
+        var keys = this._concepts.keys();
+        for (var i = 0; i < keys.length; i++) {
+            var concept = this._concepts[keys[i]];
+            if (concept._type !== Concept.prototype.IGADGET)
+                continue;
 
-		var keys = this._concepts.keys();
-		for (var i = 0; i < keys.length; i++) {
-			var key = keys[i];
-			this._concepts[key].deleteIGadgetVars(iGadgetId_);
-		}
-	}
+            var ivar = concept.getIGadgetVar(iGadget.getId());
+            if (ivar != null)
+                ivar._clearHandler();
+        }
+    }
 
-	/**
-	 * Notifies a value change on an platform context concept.
-	 *
-	 * @param {String} concept
-	 * @param {} value
-	 */
-	ContextManager.prototype.notifyModifiedConcept = function (concept, value) {
-		if (!this._loaded)
-			return;
+    ContextManager.prototype.removeInstance = function (iGadgetId_) {
+        if (!this._loaded)
+            return;
 
-		if (!this._concepts[concept])
-			return;
+        var keys = this._concepts.keys();
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            this._concepts[key].deleteIGadgetVars(iGadgetId_);
+        }
+    }
 
-		this._concepts[concept].setValue(value);
-	}
+    /**
+     * Notifies a value change on an platform context concept.
+     *
+     * @param {String} concept
+     * @param {} value
+     */
+    ContextManager.prototype.notifyModifiedConcept = function (concept, value) {
+        if (!this._loaded)
+            return;
 
-	/**
-	 * Notifies a value change on an igadget context concept.
-	 *
-	 * @param {iGadget} iGadget
-	 * @param {String} concept
-	 * @param {} value
-	 */
-	ContextManager.prototype.notifyModifiedGadgetConcept = function (iGadget, concept, value) {
-		if (!this._loaded)
-			return;
+        if (!this._concepts[concept])
+            return;
 
-		if (this._concepts[concept] == null)
-			return;
+        this._concepts[concept].setValue(value);
+    }
 
-		var ivar = this._concepts[concept].getIGadgetVar(iGadget.getId());
-		if (ivar == null) {
-			// Do nothing, igadget has not variables related to this concept
-			return;
-		}
+    /**
+     * Notifies a value change on an igadget context concept.
+     *
+     * @param {iGadget} iGadget
+     * @param {String} concept
+     * @param {} value
+     */
+    ContextManager.prototype.notifyModifiedGadgetConcept = function (iGadget, concept, value) {
+        if (!this._loaded)
+            return;
 
-		ivar.setValue(value);
-	}
+        if (this._concepts[concept] == null)
+            return;
 
-	ContextManager.prototype.getWorkspace = function () {
-		return this._workspace;
-	}
+        var ivar = this._concepts[concept].getIGadgetVar(iGadget.getId());
+        if (ivar == null) {
+            // Do nothing, igadget has not variables related to this concept
+            return;
+        }
 
+        ivar.setValue(value);
+    }
 
-	ContextManager.prototype.unload = function () {
-		var i, namekeys, conceptkeys;
-
-		// Delete all concept names
-		namekeys = this._name2Concept.keys();
-		for (i = 0; i < namekeys.length; i++) {
-			delete this._name2Concept[namekeys[i]];
-		}
-		delete this._name2Concept;
-
-		// Delete all the concepts
-		conceptkeys = this._concepts.keys();
-		for (i = 0; i < conceptkeys.length; i++) {
-			this._concepts[conceptkeys[i]].unload();
-			delete this._concepts[conceptkeys[i]];
-		}
-		delete this._concepts;
-
-		// Delete all the ContextManager attributes
-		delete this._loaded;
-		delete this._workspace;
-	}
+    ContextManager.prototype.getWorkspace = function () {
+        return this._workspace;
+    }
 
 
-	// *********************************************
-	// PRIVATE VARIABLES AND CONSTRUCTOR OPERATIONS
-	// *********************************************
+    ContextManager.prototype.unload = function () {
+        var i, namekeys, conceptkeys;
 
-	this._loaded = false;
-	this._concepts = new Hash();     // a concept is its adaptor an its value
-	this._name2Concept = new Hash(); // relates the name to its concept
-	this._workspace = workspace_;
-		
-	// Load all igadget context variables and concepts (in this order!)
-	this._loadConceptsFromWorkspace (workSpaceInfo_);
-	this._loadIGadgetContextVarsFromWorkspace (workSpaceInfo_);
+        // Delete all concept names
+        namekeys = this._name2Concept.keys();
+        for (i = 0; i < namekeys.length; i++) {
+            delete this._name2Concept[namekeys[i]];
+        }
+        delete this._name2Concept;
+
+        // Delete all the concepts
+        conceptkeys = this._concepts.keys();
+        for (i = 0; i < conceptkeys.length; i++) {
+            this._concepts[conceptkeys[i]].unload();
+            delete this._concepts[conceptkeys[i]];
+        }
+        delete this._concepts;
+
+        // Delete all the ContextManager attributes
+        delete this._loaded;
+        delete this._workspace;
+    }
+
+
+    // *********************************************
+    // PRIVATE VARIABLES AND CONSTRUCTOR OPERATIONS
+    // *********************************************
+
+    this._loaded = false;
+    this._concepts = new Hash();     // a concept is its adaptor an its value
+    this._name2Concept = new Hash(); // relates the name to its concept
+    this._workspace = workspace_;
+
+    // Load all igadget context variables and concepts (in this order!)
+    this._loadConceptsFromWorkspace (workSpaceInfo_);
+    this._loadIGadgetContextVarsFromWorkspace (workSpaceInfo_);
 }

@@ -28,6 +28,8 @@ function _EzWebAPI() {
 	this.platform = window.parent;
 	var ezwebLocation = this.platform.document.location;
 	this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
+    this.platform_protocol = ezwebLocation.protocol.substr(0, ezwebLocation.protocol.length - 1);
+    this.platform_host = ezwebLocation.host;
 
 	// Get id from the URL
 	var tmp = document.URL.split("?", 2)[1];
@@ -85,36 +87,45 @@ _EzWebAPI.prototype._old_send = function(method, url, parameters, context, succe
 }
 
 _EzWebAPI.prototype.buildProxyURL = function(url, options) {
-	var final_url, protocolEnd, link, forceProxy = options != null && !!options.forceProxy;
+    var final_url, protocolEnd, link, forceProxy, hostStart, pathStart, protocol,
+        host, rest;
 
-	final_url = url;
+    forceProxy = options != null && !!options.forceProxy;
 
-	if (forceProxy) {
-		link = document.createElement('a');
-		link.href = final_url;
-		final_url = link.href;
-	}
+    protocol = this.platform_protocol;
+    host = this.platform_host;
 
-	protocolEnd = url.indexOf('://');
-	if (protocolEnd !== -1) {
-		var domainStart = protocolEnd + 3;
-		var pathStart = url.indexOf('/', domainStart);
-		if (pathStart === -1) {
-			pathStart = url.length;
-		}
+    protocolEnd = url.indexOf('://');
+    if (protocolEnd !== -1) {
+        hostStart = protocolEnd + 3;
+        pathStart = url.indexOf('/', hostStart);
+        if (pathStart === -1) {
+            pathStart = url.length;
+        }
 
-		var protocol = url.substr(0, protocolEnd);
-		var domain = url.substr(domainStart, pathStart - domainStart);
-		var rest = url.substring(pathStart);
+        protocol = url.substr(0, protocolEnd);
+        host = url.substr(hostStart, pathStart - hostStart);
+        rest = url.substring(pathStart);
+        final_url = url;
+    } else {
+        if (url.charAt(0) === '/') {
+            rest = url;
+        } else {
+            rest = '/' + url;
+        }
 
-		if (forceProxy || (protocol + '://' + domain) !== EzWebAPI.platform_domain) {
-			final_url = this.platform.URIs.PROXY + '/' +
-				encodeURIComponent(protocol) + '/' +
-				encodeURIComponent(domain) + rest;
-		}
-	}
+        if (!forceProxy) {
+            final_url = EzWebAPI.platform_domain + rest;
+        }
+    }
 
-	return final_url;
+    if (forceProxy || protocol !== this.platform_protocol || host !== this.platform_host) {
+        final_url = this.platform.URIs.PROXY + '/' +
+            encodeURIComponent(protocol) + '/' +
+            encodeURIComponent(host) + rest;
+    }
+
+    return final_url;
 }
 
 _EzWebAPI.prototype.send = function(url, context, options) {

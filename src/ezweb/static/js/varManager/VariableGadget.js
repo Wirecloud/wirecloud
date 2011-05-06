@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -40,7 +40,7 @@ function GadgetVariable (iGadgetId, name) {
 // PARENT CONTRUCTOR (Super keyboard emulation)
 //////////////////////////////////////////////
 GadgetVariable.prototype.GadgetVariable = function (iGadget_, name_) {
-	this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();  
+	this.varManager = OpManagerFactory.getInstance().activeWorkSpace.getVarManager();
 
 	this.iGadgetId = iGadget_;
 	this.name = name_;
@@ -91,7 +91,7 @@ RGadgetVariable.prototype = new GadgetVariable;
 // OVERWRITTEN METHODS
 //////////////////////////////////////////////
 
-RGadgetVariable.prototype.register = function (handler) { 
+RGadgetVariable.prototype.register = function (handler) {
 	this.varManager.registerVariable(this.iGadgetId, this.name, handler);
 }
 

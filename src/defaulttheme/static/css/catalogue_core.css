@@ -15,7 +15,7 @@
 
 #catalogue #tag_categories li {
 	padding: 5px 0;
-	cursor: pointer;	
+	cursor: pointer;
 }
 
 #catalogue .center .resources .popularity.no_float, .no_float {
@@ -27,7 +27,7 @@
 }
 
 #catalogue .inline {
-  display: inline;	
+  display: inline;
 }
 
 #catalogue .submit_tag_link {
@@ -218,7 +218,7 @@
 #catalogue #catalogue_resources_header{
 	float: left;
 	clear: both;
-	width: 100%;	
+	width: 100%;
 }
 
 #catalogue .center .resources {
@@ -233,7 +233,7 @@
     display: inline;
     float:right;
     margin-right: 10px;
-}	
+}
 
 #catalogue .orderby {
 	display:inline;
@@ -246,7 +246,7 @@
 	padding-bottom:7px;
 	float:right;
 	margin-right: 10px;
-}	
+}
 
 #catalogue .center .resources .resource,  #catalogue .center .resources .resource_details {
   clear:both;
@@ -258,10 +258,10 @@
 	border-top: 1px solid;
 }
 
-/* 
+/*
 ///////////
-Resource 
-/////////// 
+Resource
+///////////
 */
 
 #catalogue .center .resources .resource_name,  #catalogue .center .resources .resource_name {
@@ -274,7 +274,7 @@ Resource
   cursor: pointer;
 }
 
-#catalogue .center .resources .resource_name { 
+#catalogue .center .resources .resource_name {
   cursor: default;
   float: left;
 }
@@ -303,7 +303,7 @@ Resource
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
-  background:transparent url(/ezweb/images/catalogue/ico_vot_no.gif) no-repeat scroll 0 0;
+  background:transparent url(../images/catalogue/ico_vot_no.gif) no-repeat scroll 0 0;
   float:left;
   height:15px;
   width:15px;
@@ -318,7 +318,7 @@ Resource
   height:15px;
   width:15px;
   cursor: default;
-  background:transparent url(/ezweb/images/catalogue/ico_vot_ok.gif) no-repeat scroll 0 0;
+  background:transparent url(../images/catalogue/ico_vot_ok.gif) no-repeat scroll 0 0;
 }
 
 #catalogue .center .resources .resource_details .popularity .md {
@@ -329,15 +329,15 @@ Resource
   height:15px;
   width:15px;
   cursor: default;
-  background:transparent url(/ezweb/images/catalogue/ico_vot_md.gif) no-repeat scroll 0 0;
+  background:transparent url(../images/catalogue/ico_vot_md.gif) no-repeat scroll 0 0;
 }
 
 #catalogue .padding_left {
-  padding-left: 5px; 
+  padding-left: 5px;
 }
 
 #catalogue .padding_right {
-  padding-right: 5px; 
+  padding-right: 5px;
 }
 
 #catalogue .section_title {
@@ -498,12 +498,12 @@ Resource
 }
 
 .help_text_disabled {
-	display: none;	
+	display: none;
 	position: absolute;
 }
 
 #app_image {
-	width: 150px;	
+	width: 150px;
 	height: 70px;
 	border: none;
 	clear: both;
@@ -513,7 +513,7 @@ Resource
 #app_name {
 	clear: both;
 	font-size: 16px;
-	float: left;	
+	float: left;
 	padding-bottom: 10px;
 	min-width: 400px;
 }

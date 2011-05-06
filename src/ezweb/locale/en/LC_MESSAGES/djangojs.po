@@ -946,6 +946,22 @@ msgid ""
 "responsible for the content of the uploaded files."
 msgstr ""
 
+#: ezweb/static/js/opManager/WorkSpace.js:906
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to configure "
+"it."
+msgstr ""
+
+#: ezweb/static/js/opManager/WorkSpace.js:955
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to share it."
+msgstr ""
+
+#: ezweb/static/js/opManager/WorkSpace.js:1006
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to modify it."
+msgstr ""
+
 #: media/js/log/LogManager.js:160
 msgid "unknown"
 msgstr ""

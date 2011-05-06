@@ -228,6 +228,7 @@ class TemplateHandler(handler.ContentHandler):
         _type = attrs.get('type', '')
         _description = attrs.get('description', '')
         _default_value = attrs.get('default', None)
+        _secure = attrs.get('secure', '').lower()
 
         if (_name != '' and _type != ''):
             #check if it's shared
@@ -240,7 +241,8 @@ class TemplateHandler(handler.ContentHandler):
                                friend_code=None,
                                default_value=_default_value,
                                gadget=self._gadget,
-                               shared_var_def=shared_concept)
+                               shared_var_def=shared_concept,
+                               secure=_secure == 'true')
 
             #vDef.save()
             relationship_eltos = {}
@@ -259,7 +261,7 @@ class TemplateHandler(handler.ContentHandler):
         _description = attrs.get('description', '')
         _label = attrs.get('label', '')
         _default_value = attrs.get('default', '')
-        _secure = attrs.get('secure', '')
+        _secure = attrs.get('secure', '').lower()
 
         if (_name != '' and _type != '' and _description != '' and _label != ''):
             #check if it's shared

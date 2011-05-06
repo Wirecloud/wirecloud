@@ -1,0 +1,17 @@
+CHANGES
+=======
+
+0.1.0 (2011-05-06)
+------------------
+- Initial version after the fork from EzWeb to wirecloud
+- The main differences from the EzWeb project are:
+   - Configurable workspaces
+   - Different theme infrastructures: we have removed
+     the layout application and now the user can not
+     change the appearance. Yes, we have removed this
+     feature.
+   - Speed improvements
+   - Selenium functional tests for the core features
+   - Optimize the gadget template processing
+   - Initial docs in Sphinx format. They are work in
+     progress, don't expect anything useful yet.

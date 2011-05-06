@@ -984,6 +984,7 @@ IGadgetDraggable.prototype.canBeDraggedFunc = function (draggable, context) {
 
 
 IGadgetDraggable.prototype.startFunc = function (draggable, context) {
+    context.selectedTab = null;
     context.selectedTabElement = null;
     context.layout = context.iGadget.layout;
     context.dragboard = context.layout.dragboard;

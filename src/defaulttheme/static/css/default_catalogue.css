@@ -12,16 +12,12 @@ body.catalogue_view {
  */
 
 /* banner */
-#catalogue_banner {
-	background: white;
-}
-
 #catalogue_header, #catalogue_header a{
 	color:#4C5054;
 }
 
 /* toolbar button marked */
-#catalogue_banner .toolbar_menu > div.selected_section,  
+#catalogue_banner .toolbar_menu > div.selected_section,
 #catalogue_banner .toolbar_menu > div.selected_section:hover {
 	color: #4C5054;
 	font-weight: bold;
