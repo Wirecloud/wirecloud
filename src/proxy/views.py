@@ -51,14 +51,17 @@ from commons.utils import get_xml_error
 from proxy.utils import encode_query, is_valid_header, check_empty_params, check_invalid_refs, ValidationError
 
 
-VAR_REF_RE = re.compile(r'(?P<igadget_id>[1-9]\d*)/(?P<var_name>[^/]+)')
+VAR_REF_RE = re.compile(r'^(?P<igadget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
 
 
 def get_variable_value_by_ref(ref, user):
 
     result = VAR_REF_RE.match(ref)
     if result:
-        return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
+        if result.group('igadget_id') == 'c':
+            return result.group('var_name')
+        else:
+            return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
 
 
 def process_secure_data(text, request, ignore_errors=False):

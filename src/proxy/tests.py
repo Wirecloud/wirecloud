@@ -179,6 +179,36 @@ class ProxyTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=|username|&password=|password|')
 
+        # Secure data header using constants
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        secure_data_header = 'action=data, substr=|password|, var_ref=c/test_password'
+        secure_data_header += '&action=data, substr=|username|, var_ref=c/test_username'
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=test_username&password=test_password')
+
+        # Secure data header using encoding=url
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        secure_data_header = 'action=data, substr=|password|, var_ref=c%2Fa%3D%2C%20z , encoding=url'
+        secure_data_header += '&action=data, substr=|username|, var_ref=c%2Fa%3D%2C%20z'
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=a=, z&password=a%3D%2C%20z')
+
         # Secure data header with empty parameters
         secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
         response = client.post('/proxy/http/example.com/path',
