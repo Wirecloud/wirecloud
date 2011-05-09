@@ -120,7 +120,8 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
     }
 
     if (forceProxy || protocol !== this.platform_protocol || host !== this.platform_host) {
-        final_url = this.platform.URIs.PROXY + '/' +
+        final_url = this.platform_domain +
+            this.platform.URIs.PROXY + '/' +
             encodeURIComponent(protocol) + '/' +
             encodeURIComponent(host) + rest;
     }
