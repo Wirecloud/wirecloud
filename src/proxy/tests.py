@@ -168,7 +168,7 @@ class ProxyTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=test_username&password=test_password')
 
-        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         response = client.post('/proxy/http/example.com/path',
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -178,6 +178,17 @@ class ProxyTests(TestCase):
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=|username|&password=|password|')
+
+        # Secure data header with empty parameters
+        secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 422)
 
     def test_secure_data_using_cookies(self):
 
@@ -203,7 +214,7 @@ class ProxyTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=test_username&password=test_password')
 
-        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
         response = client.post('/proxy/http/example.com/path',
                             'username=|username|&password=|password|',
@@ -213,3 +224,14 @@ class ProxyTests(TestCase):
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=|username|&password=|password|')
+
+        # Secure data header with empty parameters
+        secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
+        client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost')
+
+        self.assertEquals(response.status_code, 200)

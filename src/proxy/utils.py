@@ -33,7 +33,10 @@
 import re
 from urllib import unquote
 
+from django.http import HttpResponse
 from django.utils.http import urlencode
+from django.utils.translation import ugettext as _
+
 
 LOCALHOST_RE = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)))(:\d*)?$')
 
@@ -41,8 +44,41 @@ LOCALHOST_RE = re.compile('^((localhost)|(127\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0
 BLACKLISTED_HEADERS = {
     'connection': 1, 'content-length': 1, 'keep-alive': 1, 'proxy-authenticate': 1,
     'proxy-authorization': 1, 'te': 1, 'trailers': 1, 'transfer-encoding': 1,
-    'upgrade': 1
+    'upgrade': 1,
 }
+
+
+class ValidationError(Exception):
+
+    def __init__(self, msg):
+        self.msg = msg
+
+    def get_response(self):
+        return HttpResponse(self.msg, status=422)
+
+
+def check_empty_params(**kargs):
+    missing_params = []
+
+    for param_name in kargs:
+        if kargs[param_name] == '':
+            missing_params.append(param_name)
+
+    if len(missing_params) > 0:
+        msg = _('X-EzWeb-Secure-Data: The following required parameters are missing: %(params)s')
+        raise ValidationError(msg % {'params': ', '.join(missing_params)})
+
+
+def check_invalid_refs(**kargs):
+    invalid_params = []
+
+    for param_name in kargs:
+        if kargs[param_name] == None:
+            invalid_params.append(param_name)
+
+    if len(invalid_params) > 0:
+        msg = _('X-EzWeb-Secure-Data: The following required parameters are invalid: %(params)s')
+        raise ValidationError(msg % {'params': ', '.join(invalid_params)})
 
 
 def is_localhost(host):

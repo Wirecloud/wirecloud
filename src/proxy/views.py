@@ -48,7 +48,7 @@ from commons.get_data import get_variable_value_from_varname
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from proxy.utils import encode_query, is_valid_header
+from proxy.utils import encode_query, is_valid_header, check_empty_params, check_invalid_refs, ValidationError
 
 
 VAR_REF_RE = re.compile(r'(?P<igadget_id>[1-9]\d*)/(?P<var_name>[^/]+)')
@@ -61,34 +61,51 @@ def get_variable_value_by_ref(ref, user):
         return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
 
 
-def process_secure_data(text, request):
+def process_secure_data(text, request, ignore_errors=False):
 
     definitions = text.split('&')
     for definition in definitions:
-        params = definition.split(',')
-        if len(params) == 0:
-            continue
+        try:
+            params = definition.split(',')
+            if len(params) == 0:
+                continue
 
-        options = {}
-        for pair in params:
-            tokens = pair.split('=')
-            option_name = urllib2.unquote(tokens[0].strip())
-            options[option_name] = urllib2.unquote(tokens[1].strip())
+            options = {}
+            for pair in params:
+                tokens = pair.split('=')
+                option_name = urllib2.unquote(tokens[0].strip())
+                options[option_name] = urllib2.unquote(tokens[1].strip())
 
-        action = options.get('action', 'data')
-        if action == 'data':
-            substr = options.get('substr')
-            value = get_variable_value_by_ref(options.get('var_ref'), request['user'])
-            encoding = options.get('encoding', 'none')
-            if encoding == 'url':
-                value = urlquote(value)
-            elif encoding == 'base64':
-                value = value.encode('base64')[:-1]
-            request['data'] = request['data'].replace(substr, value)
-        elif action == 'basic_auth':
-            user_value = get_variable_value_by_ref(options.get('user_ref'), request['user'])
-            password_value = get_variable_value_by_ref(options.get('pass_ref'), request['user'])
-            request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+            action = options.get('action', 'data')
+            if action == 'data':
+                substr = options.get('substr', '')
+                var_ref = options.get('var_ref', '')
+                check_empty_params(substr=substr, var_ref=var_ref)
+
+                value = get_variable_value_by_ref(var_ref, request['user'])
+                check_invalid_refs(var_ref=value)
+
+                encoding = options.get('encoding', 'none')
+                if encoding == 'url':
+                    value = urlquote(value)
+                elif encoding == 'base64':
+                    value = value.encode('base64')[:-1]
+                request['data'] = request['data'].replace(substr, value)
+
+            elif action == 'basic_auth':
+                user_ref = options.get('user_ref', '')
+                password_ref = options.get('pass_ref', '')
+                check_empty_params(user_ref=user_ref, password_ref=password_ref)
+
+                user_value = get_variable_value_by_ref(user_ref, request['user'])
+                password_value = get_variable_value_by_ref(password_ref, request['user'])
+                check_invalid_refs(user_ref=user_value, password_ref=password_value)
+
+                request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+        except:
+            # TODO logging?
+            if not ignore_errors:
+                raise
 
 
 class MethodRequest(urllib2.Request):
@@ -199,7 +216,7 @@ class Proxy(Resource):
 
                     # Process secure data cookie
                     if 'X-EzWeb-Secure-Data' in cookie_parser:
-                        process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request_data)
+                        process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request_data, ignore_errors=True)
                         del cookie_parser['X-EzWeb-Secure-Data']
 
                     # Remove EzWeb cookies
@@ -214,7 +231,10 @@ class Proxy(Resource):
                         request_data['headers']['Cookie'] = content
 
                 elif header_name == 'http_x_ezweb_secure_data':
-                    process_secure_data(header[1], request_data)
+                    try:
+                        process_secure_data(header[1], request_data, ignore_errors=False)
+                    except ValidationError, e:
+                        return e.get_response()
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
 
