@@ -775,8 +775,8 @@ div.styled_numeric_field div.numeric_bottom_button {
   right: 2px;
   top: 5px;
   overflow: hidden;
-  margin: 0px;
   border: 1px solid transparent;
+  margin: -2px 0px 0px 2px;
 }
 
 .notebook .tab_area .tab .close_button:hover {
@@ -784,7 +784,15 @@ div.styled_numeric_field div.numeric_bottom_button {
   background: #E9E9E9;
 }
 
-.notebook .tab_area .tab .close_button div > span {
+.notebook .tab_area .tab.selected .close_button div > span {
+  display: inline-block;
+}
+
+.notebook .tab_area .tab.selected .close_button div {
+  display: inline-block;
+}
+
+.notebook .tab_area .tab .close_button div {
   display: none;
 }
 
