@@ -899,6 +899,14 @@ msgstr "Organización"
 msgid "Block gadgets and connections"
 msgstr "Bloquear los gadgets y sus conexiones"
 
+#: media/js/interfaceLayout/WindowMenu.js:1123
+msgid "Block gadgets"
+msgstr "Bloquear gadgets"
+
+#: media/js/interfaceLayout/WindowMenu.js:1124
+msgid "Block connections"
+msgstr "Bloquear conexiones"
+
 #: media/js/interfaceLayout/WindowMenu.js:1079
 msgid "Publish Workspace"
 msgstr "Publicar el entorno de trabajo"
@@ -941,6 +949,10 @@ msgstr "No se pueden mostrar los grupos disponibles"
 #: media/js/interfaceLayout/WindowMenu.js:1196
 msgid "You must select a group"
 msgstr "Debes seleccionar un grupo"
+
+#: media/js/interfaceLayout/WindowMenu.js:1159
+msgid "Clear"
+msgstr "Limpiar"
 
 #: media/js/interfaceLayout/WindowMenu.js:1219
 msgid "Properties"
