@@ -336,7 +336,7 @@ wInOut.prototype.fullDisconnect = function() {
  */
 function wEvent(variable, type, friendCode) {
 	this.variable = variable;
-	wIn.call(this, this.variable.name, type, friendCode, this.variable.id);
+	wIn.call(this, this.variable.vardef.name, type, friendCode, this.variable.id);
 	this.variable.assignConnectable(this);
 }
 
@@ -601,7 +601,7 @@ wTab.prototype.getQualifiedName = function () {
 function wSlot(variable, type, friendCode) {
 	this.variable = variable;
 	this.variable.assignConnectable(this);
-	wOut.call(this, this.variable.name, type, friendCode, this.variable.id);
+	wOut.call(this, this.variable.vardef.name, type, friendCode, this.variable.id);
 }
 wSlot.prototype = new wOut();
 
@@ -614,7 +614,7 @@ wSlot.prototype._is_target_slot = function(variable, list) {
 
 	for (i = 0; i < list.length; i += 1) {
 		slot = list[i];
-		if (slot.iGadget == variable.iGadget && slot.name == variable.name) {
+		if (slot.iGadget == variable.iGadget && slot.name == variable.vardef.name) {
 			return true;
 		}
 	}
@@ -632,7 +632,7 @@ wSlot.prototype.getFinalSlots = function() {
 	return [{
 		action_label: action_label,
 		iGadget: this.variable.iGadget,
-		name: this.variable.name,
+		name: this.variable.vardef.name,
 		iGadgetName: iGadgetName
 	}];
 }
