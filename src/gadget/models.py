@@ -160,6 +160,7 @@ class VariableDef(TransModel):
     default_value = models.TextField(_('Default value'), blank=True, null=True)
     shared_var_def = models.ForeignKey(SharedVariableDef, null=True, blank=True)
     gadget = models.ForeignKey(Gadget)
+    order = models.IntegerField(default=0, blank=True)
 
     def __unicode__(self):
         return self.gadget.uri + " " + self.aspect

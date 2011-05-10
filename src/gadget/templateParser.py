@@ -191,7 +191,10 @@ class TemplateHandler(handler.ContentHandler):
         self._gadgetHeight = ""
         self._gadgetURI = ""
         self._xhtml = ""
+        self._preference_index = 0
         self._lastPreference = ""
+        self._event_index = 0
+        self._slot_index = 0
         self._gadget = Gadget()
         self._capabilities = []
         #translation attributes
@@ -268,6 +271,7 @@ class TemplateHandler(handler.ContentHandler):
             shared_concept = get_shared_var_def(attrs)
 
             vDef = VariableDef(name=_name,
+                               order=self._preference_index,
                                description=_description,
                                type=self.typeText2typeCode(_type),
                                aspect='PREF',
@@ -277,6 +281,7 @@ class TemplateHandler(handler.ContentHandler):
                                gadget=self._gadget,
                                shared_var_def=shared_concept,
                                secure=_secure == 'true')
+            self._preference_index += 1
 
             #vDef.save()
             relationship_eltos = {}
@@ -318,11 +323,13 @@ class TemplateHandler(handler.ContentHandler):
         if (_name != '' and _type != '' and _friendCode != ''):
 
             vDef = VariableDef(name=_name, description=_description,
+                               order=self._event_index,
                                type=self.typeText2typeCode(_type),
                                aspect=self._EVENT,
                                friend_code=_friendCode,
                                label=_label,
                                gadget=self._gadget)
+            self._event_index += 1
 
             #vDef.save()
             relationship_eltos = {}
@@ -355,6 +362,7 @@ class TemplateHandler(handler.ContentHandler):
         if (_name != '' and _type != '' and _friendCode != ''):
 
             vDef = VariableDef(name=_name,
+                               order=self._slot_index,
                                description=_description,
                                type=self.typeText2typeCode(_type),
                                aspect=self._SLOT,
@@ -362,6 +370,7 @@ class TemplateHandler(handler.ContentHandler):
                                label=_label,
                                action_label=_action_label,
                                gadget=self._gadget)
+            self._slot_index += 1
 
             #vDef.save()
             relationship_eltos = {}
