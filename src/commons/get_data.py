@@ -176,24 +176,38 @@ def get_gadget_data(gadget):
         data_var['name'] = var.name
         data_var['type'] = var.type
         data_var['label'] = tvar.label
-        data_var['action_label'] = tvar.action_label
         data_var['description'] = tvar.description
-        data_var['friend_code'] = var.friend_code
-        data_var['default_value'] = tvar.default_value
         data_var['shareable'] = var.shared_var_def != None
+
+        if var.aspect == 'PREF':
+            data_var['default_value'] = tvar.default_value
+
+            if var.type == 'L':
+                options = UserPrefOption.objects.filter(variableDef=var)
+                value_options = []
+                for option in options:
+                    toption = option.get_translated_model()
+                    value_options.append([toption.value, toption.name])
+                data_var['value_options'] = value_options
+
+        elif var.aspect == 'SLOT':
+            data_var['action_label'] = tvar.action_label
+
+        if var.aspect in ('PREF', 'EVENT', 'SLOT'):
+
+            data_var['order'] = var.order
+
         if var.aspect == 'PREF' or var.aspect == 'PROP':
+
             data_var['secure'] = var.secure
 
-        if var.aspect == 'PREF' and var.type == 'L':
-            options = UserPrefOption.objects.filter(variableDef=var)
-            value_options = []
-            for option in options:
-                toption = option.get_translated_model()
-                value_options.append([toption.value, toption.name])
-            data_var['value_options'] = value_options
+        elif var.aspect == 'GCTX' or var.aspect == 'ECTX':
 
-        if var.aspect == 'GCTX' or var.aspect == 'ECTX':
             data_var['concept'] = var.contextoption_set.all().values('concept')[0]['concept']
+
+        elif var.aspect == 'EVENT' or var.aspect == 'SLOT':
+
+            data_var['friend_code'] = var.friend_code
 
         data_vars[var.name] = data_var
 
