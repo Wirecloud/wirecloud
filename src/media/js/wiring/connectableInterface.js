@@ -1381,24 +1381,22 @@ EventInterface.prototype = new SimpleConnectableInterface();
  * IGadget.
  */
 function IGadgetSlotsInterface (igadget, wiringGUI, parentInterface) {
+    var slots, i, _interface;
+
     ConnectableGroupInterface.call(this, wiringGUI, parentInterface, igadget.name);
     this.htmlElement.addClassName("igadget");
 
-    var connectables = wiringGUI.wiring.getIGadgetConnectables(igadget);
+    slots = wiringGUI.wiring.getIGadgetSlots(igadget);
     // Create Slot interfaces for the slots of this igadget
-    for (var i = 0; i < connectables.length; i++) {
-        var connectable = connectables[i];
-        if (!(connectable instanceof wSlot))
-            continue;
-
-        var _interface = new SlotInterface(wiringGUI, connectable, this);
+    for (i = 0; i < slots.length; i++) {
+        _interface = new SlotInterface(wiringGUI, slots[i], this);
 
         // Insert the HTMLElement of the SlotInterface
         this.contentElement.appendChild(_interface.getHTMLElement());
-        this.empty = false;
     }
+    this.empty = slots.length === 0;
 
-    if (this.empty == false) {
+    if (this.empty === false) {
         this.parentInterface._notifyNewEmptyStatus(this, false);
         this.htmlElement.removeClassName("empty");
     }
@@ -1433,22 +1431,20 @@ IGadgetSlotsInterface.prototype._decreaseConnections = function() {
  * IGadget.
  */
 function IGadgetEventsInterface (igadget, wiringGUI, parentInterface) {
+    var events, i, _interface;
+
     ConnectableGroupInterface.call(this, wiringGUI, parentInterface, igadget.name);
     this.htmlElement.addClassName("igadget");
 
-    var connectables = wiringGUI.wiring.getIGadgetConnectables(igadget);
+    events = wiringGUI.wiring.getIGadgetEvents(igadget);
     // Create Event interfaces for the events of this igadget
-    for (var i = 0; i < connectables.length; i++) {
-        var connectable = connectables[i];
-        if (!(connectable instanceof wEvent))
-            continue;
-
-        var _interface = new EventInterface(wiringGUI, connectable, this);
+    for (i = 0; i < events.length; i++) {
+        _interface = new EventInterface(wiringGUI, events[i], this);
 
         // Insert the HTMLElement of the Event Interface
         this.contentElement.appendChild(_interface.getHTMLElement());
-        this.empty = false;
     }
+    this.empty = events.length === 0;
 
     if (this.empty == false) {
         this.parentInterface._notifyNewEmptyStatus(this, false);
