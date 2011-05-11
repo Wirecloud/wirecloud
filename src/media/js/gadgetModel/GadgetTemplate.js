@@ -80,9 +80,9 @@ function GadgetTemplate(variables_, size_) {
 
     this._generateUserPrefs = function () {
 
-        prefs =  new Array();
-        sharedPrefs = new Array();
-        gadgetPrefs = new Array();
+        prefs = [];
+        sharedPrefs = [];
+        gadgetPrefs = [];
 
         var rawVar = null;
         var pref = null;
@@ -90,37 +90,47 @@ function GadgetTemplate(variables_, size_) {
             rawVar = variableList[i];
             if (rawVar.aspect == Variable.prototype.USER_PREF) {
                 pref = this._newUserPref(rawVar);
-                //add to the global list
                 prefs.push(pref);
-                if (!rawVar.shareable){
-                    //add it to the user-only prefs
-                    gadgetPrefs.push(pref);
-                }else{
-                    //add it to the shared prefs
-                    sharedPrefs.push(pref);
-                }
             }
         }
+
+        prefs.sort(function (var1, var2) {
+            return var1.order - var2.order;
+        });
+
+        for (i = 0; i < prefs.length; i += 1) {
+            if (!prefs[i].shareable) {
+                // add it to the user-only prefs
+                gadgetPrefs.push(prefs[i]);
+            } else {
+                // add it to the shared prefs
+                sharedPrefs.push(prefs[i]);
+            }
+        }
+
         return prefs;
-    }
+    };
 
     this.getUserPrefs = function () {
-        if (!prefs)
+        if (!prefs) {
             this._generateUserPrefs();
+        }
         return prefs;
-    }
+    };
 
     this.getSharedPrefs = function () {
-        if (!sharedPrefs)
+        if (!sharedPrefs) {
             this._generateUserPrefs();
+        }
         return sharedPrefs;
-    }
+    };
 
     this.getGadgetPrefs = function () {
-        if (!gadgetPrefs)
+        if (!gadgetPrefs) {
             this._generateUserPrefs();
+        }
         return gadgetPrefs;
-    }
+    };
 
     this.getExternalContextVars = function (igadget_) {
 
