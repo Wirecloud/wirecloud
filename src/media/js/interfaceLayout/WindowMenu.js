@@ -1211,8 +1211,7 @@ FormWindowMenu.prototype._clearListener = function() {
 
 FormWindowMenu.prototype._addVariableParametrization = function (workspace, fields) {
     var i, name, igadget, igadgets, igadget_params, pref_params,
-        prop_params, variable, variables, varManager, empty_prefs, empty_props,
-        var_elements;
+        prop_params, variable, variables, varManager, var_elements;
 
     this.workspace = workspace;
     varManager = workspace.getVarManager();
@@ -1222,50 +1221,46 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
     for (i = 0; i < igadgets.length; i++) {
         igadget = igadgets[i];
         variables = varManager.getIGadgetVariables(igadget.getId());
-        pref_params = {};
-        empty_prefs = true;
-        prop_params = {};
-        empty_props = true;
+        pref_params = [];
+        prop_params = [];
 
         for (name in variables) {
             variable = variables[name];
             if (variable.vardef.aspect === Variable.prototype.USER_PREF) {
-                pref_params[name] = {
+                pref_params.push({
                     label: variable.getLabel(),
                     type: 'parametrizableValue',
                     variable: variable,
                     canBeHidden: true,
                     parentWindow: this
-                };
-                empty_prefs = false;
+                });
             } else if (variable.vardef.aspect === Variable.prototype.PROPERTY) {
-                prop_params[name] = {
+                prop_params.push({
                     label: variable.getLabel(),
                     type: 'parametrizableValue',
                     variable: variable,
                     parentWindow: this
-                };
-                empty_props = false;
+                });
             }
         }
 
         var_elements = {};
-        if (!empty_prefs) {
+        if (pref_params.length !== 0) {
             var_elements['pref'] = {
                 label: gettext('Preferences'),
                 type: 'fieldset',
-                elements: pref_params
+                elements: this._prepareElements(pref_params.sort(this._sortVariables))
             }
         }
-        if (!empty_props) {
+        if (prop_params.length !== 0) {
             var_elements['props'] = {
                 label: gettext('Properties'),
                 type: 'fieldset',
-                elements: prop_params
+                elements: this._prepareElements(prop_params.sort(this._sortVariables))
             }
         }
 
-        if (!empty_prefs || !empty_props) {
+        if (pref_params.length + prop_params.length !== 0) {
             igadget_params[igadget.id] = {
                 label: igadget.name,
                 type: 'fieldset',
@@ -1281,6 +1276,20 @@ FormWindowMenu.prototype._addVariableParametrization = function (workspace, fiel
         nested: true,
         elements: igadget_params
     };
+};
+
+PublishWindowMenu.prototype._prepareElements = function (elements) {
+    var i, data = {};
+
+    for (i = 0; i < elements.length; i += 1) {
+        data[elements[i].variable.vardef.name] = elements[i];
+    }
+
+    return data;
+};
+
+PublishWindowMenu.prototype._sortVariables = function (var1, var2) {
+    return var1.variable.vardef.order - var2.variable.vardef.order;
 };
 
 PublishWindowMenu.prototype.show = function(parentWindow) {
