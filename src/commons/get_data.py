@@ -195,7 +195,7 @@ def get_gadget_data(gadget):
         elif var.aspect == 'SLOT':
             data_var['action_label'] = tvar.action_label
 
-        if var.aspect in ('PREF', 'EVENT', 'SLOT'):
+        if var.aspect in ('PREF', 'EVEN', 'SLOT'):
 
             data_var['order'] = var.order
 
@@ -207,7 +207,7 @@ def get_gadget_data(gadget):
 
             data_var['concept'] = var.contextoption_set.all().values('concept')[0]['concept']
 
-        elif var.aspect == 'EVENT' or var.aspect == 'SLOT':
+        elif var.aspect == 'EVEN' or var.aspect == 'SLOT':
 
             data_var['friend_code'] = var.friend_code
 
