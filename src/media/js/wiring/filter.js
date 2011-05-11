@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -82,34 +82,34 @@ Param.prototype.createHtmlLabel = function() {
 
 
 Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
-	var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
+    var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
 
-	var paramValueLayer = document.createElement("div");
-	Element.extend(paramValueLayer);
-	var paramInput = document.createElement("input");
-	Element.extend(paramInput);
-	paramInput.addClassName("paramValueInput");
-	paramInput.setAttribute ("value", channel.getFilterParams()[this._index]['value']);
-	Event.observe(paramInput, 'click',function(e){Event.stop(e);});
+    var paramValueLayer = document.createElement("div");
+    Element.extend(paramValueLayer);
+    var paramInput = document.createElement("input");
+    Element.extend(paramInput);
+    paramInput.addClassName("paramValueInput");
+    paramInput.setAttribute ("value", channel.getFilterParams()[this._index]['value']);
+    Event.observe(paramInput, 'click',function(e){Event.stop(e);});
 
-	var checkResult = function(e) {
-		var msg;
-		var target = BrowserUtilsFactory.getInstance().getTarget(e);
-		
-		// Sets the param value
-		this.channel.setFilterParam(this.param._index, target.value);
-		
-		
-		// Sets the channel value
-		this.valueElement.update(channel.getValue());
-		
-		// Shows a message (only with error)
-		if (this.channel.getFilter().getlastExecError() != null) {
-			LayoutManagerFactory.getInstance().showMessageMenu(this.channel.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
-			this.valueElement.nodeValue = gettext('undefined');
-		}
-	};
-	
+    var checkResult = function(e) {
+        var msg;
+        var target = BrowserUtilsFactory.getInstance().getTarget(e);
+
+        // Sets the param value
+        this.channel.setFilterParam(this.param._index, target.value);
+
+
+        // Sets the channel value
+        this.valueElement.update(channel.getValue());
+
+        // Shows a message (only with error)
+        if (this.channel.getFilter().getlastExecError() != null) {
+            LayoutManagerFactory.getInstance().showMessageMenu(this.channel.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
+            this.valueElement.nodeValue = gettext('undefined');
+        }
+    };
+
   // Sets the input
   Event.observe(paramInput, 'change', checkResult.bind(context));
   paramValueLayer.appendChild(paramInput);
@@ -126,22 +126,22 @@ function Filter (id_, name_, label_, nature_, code_, category_, params_, helpTex
   this._lastExecError = null;
   this._category = category_;
   this._helpText = helpText_;
-  
+
   // Sets the filter parameters
-  this.processParams (params_); 
-  
+  this.processParams (params_);
+
   // Sets the filter code
   try{
-  	 eval ('this._code = ' + code_);
-  	
-  	 if ((typeof this._code) != 'function')
-  		this._code = null;
-  	
+     eval ('this._code = ' + code_);
+
+     if ((typeof this._code) != 'function')
+        this._code = null;
+
   }catch(e){
-  	this._code = null;
-  	
-	var msg = interpolate(gettext("Error loading code of the filter '%(filterName)s'."), {filterName: this._label}, true);
-	LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+    this._code = null;
+
+    var msg = interpolate(gettext("Error loading code of the filter '%(filterName)s'."), {filterName: this._label}, true);
+    LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
   }
 }
 
@@ -188,134 +188,134 @@ Filter.prototype.getHelpText = function() {
 Filter.prototype.processParams = function(params_) {
   this._params = new Array();
   if (params_ != null && params_ != ''){
-  	var fParam, paramObject;
-  	var jsonParams = JSON.parse(params_);
-  	for (var i = 0; i < jsonParams.length; i++) {
-		fParam = jsonParams[i];
-		if (fParam.type == 'jpath'){
-			paramObject = new JPathParam (fParam.name, fParam.label, fParam.index, fParam.required, fParam.defaultValue);
-		} else {
-			paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.required, fParam.defaultValue);						
-		}
-		this.setParam(paramObject);  
-  	}
-  } 	
+    var fParam, paramObject;
+    var jsonParams = JSON.parse(params_);
+    for (var i = 0; i < jsonParams.length; i++) {
+        fParam = jsonParams[i];
+        if (fParam.type == 'jpath'){
+            paramObject = new JPathParam (fParam.name, fParam.label, fParam.index, fParam.required, fParam.defaultValue);
+        } else {
+            paramObject = new Param(fParam.name, fParam.label, fParam.type, fParam.index, fParam.required, fParam.defaultValue);
+        }
+        this.setParam(paramObject);
+    }
+  }
 }
 
-Filter.prototype.getInitialValues = function() {  
-	var params = [];
-	
-  	for (var i = 0; i < this._params.length; i++) {
-  		params.push({'index': this._params[i]._index, 'value': this._params[i]._defaultValue})
-  	}
-  	
-  	return params;	
+Filter.prototype.getInitialValues = function() {
+    var params = [];
+
+    for (var i = 0; i < this._params.length; i++) {
+        params.push({'index': this._params[i]._index, 'value': this._params[i]._defaultValue})
+    }
+
+    return params;
 }
 
 Filter.prototype.fillFilterParamValues = function(filterParams, valueElement) {
-	var paramLayers = valueElement.childElements();
-	
-	for (var i = 0; i < paramLayers.length; i++) {
-		var paramInput = paramLayers[i].childElements()[0];
-		
-		if(filterParams[i]['value']) 
-			paramInput.value = filterParams[i]['value'];
-		else
-			paramInput.value = null;
-	}
+    var paramLayers = valueElement.childElements();
+
+    for (var i = 0; i < paramLayers.length; i++) {
+        var paramInput = paramLayers[i].childElements()[0];
+
+        if(filterParams[i]['value'])
+            paramInput.value = filterParams[i]['value'];
+        else
+            paramInput.value = null;
+    }
 }
 
 Filter.prototype.run = function(channelValue_, paramValues_, channel) {
-	var i, msg, params = {};
+    var i, msg, params = {};
 
-	// Begins to run, no errors
-	this._lastExecError = null;
-	
-//	// Creates the varible for the channel value
-//	eval ("var channelValue = '" + channelValue_ + "';");
-	
-	try{
-		// Creates the variables for other params
-		for (i=0; i < this._params.length; ++i){ 
-				
-			var paramValue = paramValues_[i]['value'];
-			
-			if(!paramValue){
-				if(this._params[i].getRequired()){
-					msg = interpolate(gettext("Look out! '%(paramName)s' of '%(filterName)s' is required"), 
-						{paramName: this._params[i].getLabel(), filterName: this._label}, true);
-					this._lastExecError = msg;
-					return gettext('undefined');
-					
-				}else{
-					params [this._params[i].getName()] = null;
-					continue;
-				}
-			}
-			
-			
-			// Checks the type of parameter
-			switch (this._params[i].getType()){
-			case 'N': // Param is Number
-				var interger_value = parseInt(paramValue);
-				
-				if (isNaN(interger_value)){
-					msg = interpolate(gettext("Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It must be a number"), 
-						{paramName: this._params[i].getLabel(), filterName: this._label}, true);
-					LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
-					this._lastExecError = msg;
-					return gettext('undefined');
-				}
-				params[this._params[i].getName()] = paramValue;
-				break; 
-			case 'regexp': // Param is RegExp
-				if ((paramValue.indexOf('/') == 0) && (paramValue.lastIndexOf('/') > 0)){
-					var current_pattern = paramValue.substring(1, paramValue.lastIndexOf('/'));
-					var current_modifiers = paramValue.substring(paramValue.lastIndexOf('/') + 1, paramValue.length);
-					params[this._params[i].getName()] = new RegExp(current_pattern, current_modifiers);
-				}else {
-					params[this._params[i].getName()] = new RegExp (paramValue);
-				}
-				break;
-			case 'jpath': // Param is a JPATH expresion (for JSON)
-				var jpath_exp = this._params[i].parse(paramValue);
-				params[this._params[i].getName()] = this._params[i].parse(paramValue);
-				break;
-			default: // Otherwise is String
-				params[this._params[i].getName()] = paramValue.replace(/"/g,"'");
-				break;
-			}
-			
+    // Begins to run, no errors
+    this._lastExecError = null;
 
-		}
-	}catch(e){
-		msg = interpolate(gettext("Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)s."), 
-			{paramName: this._params[i].getLabel(), filterName: this._label, error: e}, true);
-		LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
-		this._lastExecError = msg;
-		return gettext('undefined');
-	}
-	
-	try{
-	
-		// Executes the filter code
-		return this._code(channelValue_, channel, params);
+//  // Creates the varible for the channel value
+//  eval ("var channelValue = '" + channelValue_ + "';");
 
-	}catch(err){
-		if(err.name == "DONT_PROPAGATE"){
-			throw new DontPropagateException(err)
-		}
-		else{
-			var msg = interpolate(gettext("Error executing code of the filter '%(filterName)s'."), {filterName: this._Label}, true);
-			LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
-			// Saves the message (for wiring interface)
-			if (this._params.length == 0){
-				this._lastExecError = msg;
-			}else{
-				this._lastExecError = interpolate(gettext("Error executing code of the filter '%(filterName)s'. Check the parametres."), {filterName: this._label}, true);
-			}
-			return gettext('undefined');
-		}
-	}
-	
+    try{
+        // Creates the variables for other params
+        for (i=0; i < this._params.length; ++i){
+
+            var paramValue = paramValues_[i]['value'];
+
+            if(!paramValue){
+                if(this._params[i].getRequired()){
+                    msg = interpolate(gettext("Look out! '%(paramName)s' of '%(filterName)s' is required"),
+                        {paramName: this._params[i].getLabel(), filterName: this._label}, true);
+                    this._lastExecError = msg;
+                    return gettext('undefined');
+
+                }else{
+                    params [this._params[i].getName()] = null;
+                    continue;
+                }
+            }
+
+
+            // Checks the type of parameter
+            switch (this._params[i].getType()){
+            case 'N': // Param is Number
+                var interger_value = parseInt(paramValue);
+
+                if (isNaN(interger_value)){
+                    msg = interpolate(gettext("Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It must be a number"),
+                        {paramName: this._params[i].getLabel(), filterName: this._label}, true);
+                    LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+                    this._lastExecError = msg;
+                    return gettext('undefined');
+                }
+                params[this._params[i].getName()] = paramValue;
+                break;
+            case 'regexp': // Param is RegExp
+                if ((paramValue.indexOf('/') == 0) && (paramValue.lastIndexOf('/') > 0)){
+                    var current_pattern = paramValue.substring(1, paramValue.lastIndexOf('/'));
+                    var current_modifiers = paramValue.substring(paramValue.lastIndexOf('/') + 1, paramValue.length);
+                    params[this._params[i].getName()] = new RegExp(current_pattern, current_modifiers);
+                }else {
+                    params[this._params[i].getName()] = new RegExp (paramValue);
+                }
+                break;
+            case 'jpath': // Param is a JPATH expresion (for JSON)
+                var jpath_exp = this._params[i].parse(paramValue);
+                params[this._params[i].getName()] = this._params[i].parse(paramValue);
+                break;
+            default: // Otherwise is String
+                params[this._params[i].getName()] = paramValue.replace(/"/g,"'");
+                break;
+            }
+
+
+        }
+    }catch(e){
+        msg = interpolate(gettext("Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)s."),
+            {paramName: this._params[i].getLabel(), filterName: this._label, error: e}, true);
+        LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+        this._lastExecError = msg;
+        return gettext('undefined');
+    }
+
+    try{
+
+        // Executes the filter code
+        return this._code(channelValue_, channel, params);
+
+    }catch(err){
+        if(err.name == "DONT_PROPAGATE"){
+            throw new DontPropagateException(err)
+        }
+        else{
+            var msg = interpolate(gettext("Error executing code of the filter '%(filterName)s'."), {filterName: this._Label}, true);
+            LogManagerFactory.getInstance().log(msg, Constants.ERROR_MSG);
+            // Saves the message (for wiring interface)
+            if (this._params.length == 0){
+                this._lastExecError = msg;
+            }else{
+                this._lastExecError = interpolate(gettext("Error executing code of the filter '%(filterName)s'. Check the parametres."), {filterName: this._label}, true);
+            }
+            return gettext('undefined');
+        }
+    }
+
 }

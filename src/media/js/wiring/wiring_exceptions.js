@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -22,13 +22,13 @@
 *
 *     http://morfeo-project.org
  */
- 
+
 function DontPropagateException(msg) {
     var err = new Error();
-    
+
     err.message = msg;
-       
+
     err.name = "DONT_PROPAGATE";
-    
+
     return err;
 }
