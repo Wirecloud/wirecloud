@@ -389,7 +389,7 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
-    _RE = re.compile(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)')
+    _RE = re.compile(r'(%+)\(([a-zA-Z][\w-]*(?:\.[a-zA-Z\][\w-]*)*)\)')
 
     def __init__(self, context):
         self._context = context
