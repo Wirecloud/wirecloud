@@ -218,8 +218,8 @@ function Wiring (workspace, workSpaceGlobalInfo) {
     }
 
     Wiring.prototype.addInstance = function (igadget) {
-        var varManager, iGadgetId, gadgetEntry, var_name, variableDef,
-            variables, variable, connectable;
+        var varManager, iGadgetId, gadgetEntry, i, variableDef,
+            connectables, variable, connectable;
 
 
         if (this.iGadgets[iGadgetId]) {
@@ -229,7 +229,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
         varManager = this.workspace.getVarManager();
         iGadgetId = igadget.getId();
-        variables  = igadget.getGadget().getTemplate().getVariables();
+        connectables  = igadget.getGadget().getTemplate().getConnectables();
 
         gadgetEntry = {
             events: [],
@@ -238,24 +238,18 @@ function Wiring (workspace, workSpaceGlobalInfo) {
         };
 
         // IGadget variables
-        for (var_name in variables) {
-            variableDef = variables[var_name];
+        for (i = 0; i < connectables.events.length; i += 1) {
+            variableDef = connectables.events[i];
             variable = varManager.getVariableByName(iGadgetId, variableDef.name);
-
-            switch (variableDef.aspect) {
-            case "EVEN":
-                connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-
-                gadgetEntry.events.push(connectable);
-                break;
-            case "SLOT":
-                connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
-
-                gadgetEntry.slots.push(connectable);
-                break;
-            default:
-                continue;
-            }
+            connectable = new wEvent(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
+            gadgetEntry.events.push(connectable);
+            gadgetEntry.connectables.push(connectable);
+        }
+        for (i = 0; i < connectables.slots.length; i += 1) {
+            variableDef = connectables.slots[i];
+            variable = varManager.getVariableByName(iGadgetId, variableDef.name);
+            connectable = new wSlot(variable, variableDef.type, variableDef.friend_code, variableDef.connectable_id);
+            gadgetEntry.slots.push(connectable);
             gadgetEntry.connectables.push(connectable);
         }
 

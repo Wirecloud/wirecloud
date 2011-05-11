@@ -43,6 +43,7 @@ function GadgetTemplate(variables_, size_) {
     var prefs =  null;
     var sharedPrefs = null;
     var gadgetPrefs = null;
+    var connectables = null;
 
     // ******************
     //  PUBLIC FUNCTIONS
@@ -93,9 +94,7 @@ function GadgetTemplate(variables_, size_) {
             }
         }
 
-        prefs = prefs.sort(function (var1, var2) {
-            return var1.order - var2.order;
-        });
+        prefs = prefs.sort(this._sortVariables);
 
         for (i = 0; i < prefs.length; i += 1) {
             pref = this._newUserPref(prefs[i]);
@@ -200,58 +199,38 @@ function GadgetTemplate(variables_, size_) {
         return objVars;
     }
 
-    this.getEventsId = function () {
+    
 
-        // JSON-coded Template-UserPrefs mapping
-        // Constructing the structure
+    this.getConnectables = function () {
 
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i in rawVars.length) {
-            rawVar = rawVars[i];
-            if (rawVar.aspect == Variable.prototype.EVENT) {
-                    objVars.push(rawVar.name);
+        var var_name, rawVar;
+
+        if (connectables === null) {
+            connectables = {
+                'events': [],
+                'slots': []
+            };
+
+            for (var_name in variableList) {
+                rawVar = variableList[var_name];
+                switch (rawVar.aspect) {
+                case Variable.prototype.EVENT:
+                    connectables.events.push(rawVar);
+                    break;
+                case Variable.prototype.SLOT:
+                    connectables.slots.push(rawVar);
+                    break;
+                default:
+                }
             }
+
+            connectables.events = connectables.events.sort(this._sortVariables);
+            connectables.slots = connectables.slots.sort(this._sortVariables);
         }
-        return objVars;
+
+        return connectables;
     }
 
-   this.getSlots = function () {
-
-        // JSON-coded Template-UserPrefs mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            if (rawVar.aspect == Variable.prototype.SLOT)
-            {
-                    objVars.push(rawVar);
-            }
-        }
-        return objVars;
-    }
-
-   this.getEvents = function () {
-
-        // JSON-coded Template-UserPrefs mapping
-        // Constructing the structure
-
-        var objVars = [];
-        var rawVars = variableList;
-        var rawVar = null;
-        for (var i in rawVars) {
-            rawVar = rawVars[i];
-            if (rawVar.aspect == Variable.prototype.EVENT)
-            {
-                    objVars.push(rawVar);
-            }
-        }
-        return objVars;
-    }
 
     this.getPropertiesId = function () {
 
@@ -283,3 +262,7 @@ function GadgetTemplate(variables_, size_) {
         }
     }
 }
+
+GadgetTemplate.prototype._sortVariables = function (var1, var2) {
+    return var1.order - var2.order;
+};
