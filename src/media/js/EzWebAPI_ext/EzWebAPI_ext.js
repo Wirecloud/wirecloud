@@ -4151,8 +4151,6 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
   */
         this.messageDiv.style.top = positionHeight + 'px';
         this.messageDiv.style.left = positionWidth + 'px';
-        this.messageDiv.style.right = positionWidth + 'px';
-        this.messageDiv.style.bottom = positionHeight + 'px';
         this.messageDiv.style.width = width + 'px';
         this.messageDiv.style.height = height + 'px';
 
@@ -4171,17 +4169,6 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
             height = 0;
         }
         this.content.wrapperElement.style.height = height + 'px';
-
-        // Addjust Content Width
-        width =  width -
-          messageDivStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          messageDivStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          contentStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          contentStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        if (width < 0) {
-            width = 0;
-        }
-        this.content.wrapperElement.style.width = (width + 'px');
 
         this.content.repaint(temporal);
     }
