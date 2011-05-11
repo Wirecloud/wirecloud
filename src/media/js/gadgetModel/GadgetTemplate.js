@@ -84,28 +84,32 @@ function GadgetTemplate(variables_, size_) {
         sharedPrefs = [];
         gadgetPrefs = [];
 
-        var rawVar = null;
-        var pref = null;
-        for (var i in variableList) {
+        var rawVar, pref, i;
+
+        for (i in variableList) {
             rawVar = variableList[i];
             if (rawVar.aspect == Variable.prototype.USER_PREF) {
-                pref = this._newUserPref(rawVar);
-                prefs.push(pref);
+                prefs.push(rawVar);
             }
         }
 
-        prefs.sort(function (var1, var2) {
+        prefs = prefs.sort(function (var1, var2) {
             return var1.order - var2.order;
         });
 
         for (i = 0; i < prefs.length; i += 1) {
+            pref = this._newUserPref(prefs[i]);
+
             if (!prefs[i].shareable) {
                 // add it to the user-only prefs
-                gadgetPrefs.push(prefs[i]);
+                gadgetPrefs.push(pref);
             } else {
                 // add it to the shared prefs
-                sharedPrefs.push(prefs[i]);
+                sharedPrefs.push(pref);
             }
+
+            // Replace the hash with a UserPref
+            prefs[i] = pref;
         }
 
         return prefs;
