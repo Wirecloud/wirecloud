@@ -193,6 +193,7 @@ class TemplateHandler(handler.ContentHandler):
         self._xhtml = ""
         self._preference_index = 0
         self._lastPreference = ""
+        self._property_index = 0
         self._event_index = 0
         self._slot_index = 0
         self._gadget = Gadget()
@@ -238,6 +239,7 @@ class TemplateHandler(handler.ContentHandler):
             shared_concept = get_shared_var_def(attrs)
 
             vDef = VariableDef(name=_name,
+                               order=self._property_index,
                                description=_description,
                                type=self.typeText2typeCode(_type),
                                aspect='PROP',
@@ -246,6 +248,7 @@ class TemplateHandler(handler.ContentHandler):
                                gadget=self._gadget,
                                shared_var_def=shared_concept,
                                secure=_secure == 'true')
+            self._property_index += 1
 
             #vDef.save()
             relationship_eltos = {}

@@ -193,7 +193,7 @@ def get_gadget_data(gadget):
         elif var.aspect == 'SLOT':
             data_var['action_label'] = tvar.action_label
 
-        if var.aspect in ('PREF', 'EVEN', 'SLOT'):
+        if var.aspect in ('PREF', 'PROP', 'EVEN', 'SLOT'):
 
             data_var['order'] = var.order
 
