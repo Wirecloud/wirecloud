@@ -298,10 +298,46 @@ function Wiring (workspace, workSpaceGlobalInfo) {
         if (iGadgetEntry == null) {
             var msg = gettext("Wiring error: Trying to retrieve the connectables of an inexistent igadget.");
             LogManagerFactory.getInstance().log(msg);
-            return;
+            return [];
         }
 
         return iGadgetEntry.connectables;
+    }
+
+    /**
+     * Returns a list of all events associated to a given iGadget.
+     *
+     * @param {Number} iGadget id of the iGadget to look up for connectables
+     * @return {Array}
+     */
+    Wiring.prototype.getIGadgetEvents = function(iGadget) {
+        var iGadgetEntry = this.iGadgets[iGadget.id];
+
+        if (iGadgetEntry == null) {
+            var msg = gettext("Wiring error: Trying to retrieve the connectables of an inexistent igadget.");
+            LogManagerFactory.getInstance().log(msg);
+            return [];
+        }
+
+        return iGadgetEntry.events;
+    }
+
+    /**
+     * Returns a list of all slots associated to a given iGadget.
+     *
+     * @param {Number} iGadget id of the iGadget to look up for connectables
+     * @return {Array}
+     */
+    Wiring.prototype.getIGadgetSlots = function(iGadget) {
+        var iGadgetEntry = this.iGadgets[iGadget.id];
+
+        if (iGadgetEntry == null) {
+            var msg = gettext("Wiring error: Trying to retrieve the connectables of an inexistent igadget.");
+            LogManagerFactory.getInstance().log(msg);
+            return [];
+        }
+
+        return iGadgetEntry.slots;
     }
 
     /**
