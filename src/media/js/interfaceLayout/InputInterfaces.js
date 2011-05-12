@@ -770,7 +770,7 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
  *
  */
 function ParametrizedTextInputInterface(fieldId, options) {
-    var i, param, contextFields, concepts, keys;
+    var i, param, contextFields, concepts, keys, dashIndex, provider, concept, option;
 
     InputInterface.call(this, fieldId, options);
 
@@ -779,10 +779,18 @@ function ParametrizedTextInputInterface(fieldId, options) {
     /* TODO */
     concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
     keys = concepts.keys();
-    contextFields = [];
+    contextFields = {
+        '': []
+    };
     for (i = 0; i < keys.length; i += 1) {
-        if (concepts[keys[i]]._type !== 'GCTX') {
-            contextFields.push({label: keys[i], value: keys[i]});
+        concept = concepts[keys[i]]
+        if (concept._type !== 'GCTX') {
+            dashIndex = keys[i].indexOf('-');
+            provider = keys[i].substring(0, dashIndex);
+            if (!(provider in contextFields)) {
+                contextFields[provider] = [];
+            }
+            contextFields[provider].push({label: keys[i], value: keys[i]});
         }
     }
 
@@ -799,9 +807,17 @@ function ParametrizedTextInputInterface(fieldId, options) {
         {
             label: gettext('Context'),
             value: 'context',
-            fields: contextFields
+            fields: contextFields['']
         }
     ];
+    delete contextFields[''];
+    for (i in contextFields) {
+        this.parameters.push({
+            label: i,
+            value: 'context',
+            fields: contextFields[i]
+        });
+    }
     /* TODO */
 
     this.wrapperElement = document.createElement('div');
@@ -819,10 +835,11 @@ function ParametrizedTextInputInterface(fieldId, options) {
     this.mainSelect = document.createElement('select');
     for (i = 0; i < this.parameters.length; i += 1) {
         param = this.parameters[i];
+        option = $(new Option(param.label, param.value));
         try {
-            this.mainSelect.add(new Option(param.label, param.value), null);
+            this.mainSelect.add(option, null);
         } catch (e) {
-            this.mainSelect.add(new Option(param.label, param.value));
+            this.mainSelect.add(option);
         }
     }
     Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
@@ -881,12 +898,14 @@ ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
 };
 
 ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
-    var fields, field, i;
+    var fields, field, i, selectedIndex, selectedLabel;
 
     this.secondSelect.innerHTML = '';
 
+    selectedIndex = this.mainSelect.selectedIndex;
+    selectedLabel = this.mainSelect.options[selectedIndex].getTextContent();
     for (i = 0; i < this.parameters.length; i += 1) {
-        if (this.parameters[i].value == this.mainSelect.value) {
+        if (this.parameters[i].label === selectedLabel) {
             fields = this.parameters[i].fields;
         }
     }
