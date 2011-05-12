@@ -1583,12 +1583,29 @@ Element.Methods = {
     element = $(element);
     var elementStyle = element.style;
 
-    for (var property in styles)
-      if (property == 'opacity') element.setOpacity(styles[property])
-      else
-        elementStyle[(property == 'float' || property == 'cssFloat') ?
-          (elementStyle.styleFloat === undefined ? 'cssFloat' : 'styleFloat') :
-          (camelized ? property : property.camelize())] = styles[property];
+    for (var property in styles) {
+        if (property == 'opacity') {
+            element.setOpacity(styles[property]);
+        } else {
+            var key = '';
+            if (property == 'float' || property == 'cssFloat') {
+                if (elementStyle.styleFloat === undefined) {
+                    key = 'cssFloat';
+                } else {
+                    key = 'styleFloat';
+                }
+            } else {
+                if (camelized) {
+                    key = property;
+                } else {
+                    key = property.camelize();
+                }
+            }
+            if (!(/^width|height$/.test(key) && parseFloat(styles[property]) < 0)) {
+                elementStyle[key] = styles[property];
+            }
+        }
+    }
 
     return element;
   },
