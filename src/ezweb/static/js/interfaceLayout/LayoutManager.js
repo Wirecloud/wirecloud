@@ -1278,9 +1278,14 @@ var LayoutManagerFactory = function () {
         //tabs are displayed in inverted order
         for (var i= this.scrollTabBar.childNodes.length-1; i>=0; i--){
             //get the tab id (tab_workspaceid_tabId)
-            aux = this.scrollTabBar.childNodes[i].id.split("_");
-            tabId = parseInt(aux[aux.length-1]);
-            ids.push(tabId);
+            aux = this.scrollTabBar.childNodes[i]
+            if (aux.id) {
+                if (aux.id.indexOf('tab') === 0) {
+                    aux = aux.id.split("_");
+                    tabId = parseInt(aux[aux.length-1]);
+                    ids.push(tabId);
+                }
+            }
         }
         var success = function(transport){
             //Do nothing
