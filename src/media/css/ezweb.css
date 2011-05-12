@@ -908,6 +908,15 @@ button {
 }
 
 
+.parametrized_text_input .context_selector {
+    white-space: nowrap;
+}
+
+.parametrized_text_input .description {
+    min-height: 16px;
+    margin: 5px 0px;
+}
+
 /* Popup menu */
 
 .popup_menu {

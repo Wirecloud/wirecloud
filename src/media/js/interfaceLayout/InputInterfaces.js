@@ -790,7 +790,11 @@ function ParametrizedTextInputInterface(fieldId, options) {
             if (!(provider in contextFields)) {
                 contextFields[provider] = [];
             }
-            contextFields[provider].push({label: concept._label, value: keys[i]});
+            contextFields[provider].push({
+                label: concept._label,
+                description: concept._description,
+                value: keys[i]
+            });
         }
     }
 
@@ -799,9 +803,21 @@ function ParametrizedTextInputInterface(fieldId, options) {
             label: gettext('User'),
             value: 'user',
             fields: [
-                {label: gettext('User Name'), value: 'username'},
-                {label: gettext('First Name'), value: 'first_name'},
-                {label: gettext('Last Name'), value: 'last_name'},
+                {
+                    label: gettext('User Name'),
+                    description: '',
+                    value: 'username'
+                },
+                {
+                    label: gettext('First Name'),
+                    description: '',
+                    value: 'first_name'
+                },
+                {
+                    label: gettext('Last Name'),
+                    description: '',
+                    value: 'last_name'
+                },
             ]
         },
         {
@@ -821,6 +837,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
     /* TODO */
 
     this.wrapperElement = document.createElement('div');
+    this.wrapperElement.className = 'parametrized_text_input';
 
     this.resetButton = document.createElement('button');
     Element.extend(this.resetButton);
@@ -832,10 +849,14 @@ function ParametrizedTextInputInterface(fieldId, options) {
         }
     }.bind(this));
 
+    this.selectorWrapperElement = document.createElement('div');
+    this.selectorWrapperElement.className = 'context_selector';
+    this.wrapperElement.appendChild(this.selectorWrapperElement);
+
     this.mainSelect = document.createElement('select');
     for (i = 0; i < this.parameters.length; i += 1) {
         param = this.parameters[i];
-        option = $(new Option(param.label, param.value));
+        option = new Option(param.label, param.value);
         try {
             this.mainSelect.add(option, null);
         } catch (e) {
@@ -843,16 +864,16 @@ function ParametrizedTextInputInterface(fieldId, options) {
         }
     }
     Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
-    this.wrapperElement.appendChild(this.mainSelect);
+    this.selectorWrapperElement.appendChild(this.mainSelect);
 
     this.secondSelect = document.createElement('select');
-    this.wrapperElement.appendChild(this.secondSelect);
-    this._updateSecondSelect();
+    this.selectorWrapperElement.appendChild(this.secondSelect);
+    Element.observe(this.secondSelect, 'change', this._updateDescription.bind(this));
 
     this.addButton = document.createElement('button');
     Element.extend(this.addButton);
     this.addButton.setTextContent(gettext('Add'));
-    this.wrapperElement.appendChild(this.addButton);
+    this.selectorWrapperElement.appendChild(this.addButton);
     this.addButton.observe('click', function() {
         var prefix, suffix, parameter, start;
 
@@ -870,12 +891,19 @@ function ParametrizedTextInputInterface(fieldId, options) {
         this.inputElement.selectionEnd = start + parameter.length + 3;
     }.bind(this));
 
+    this.descriptionDiv = document.createElement('div');
+    this.descriptionDiv.className = 'description';
+    this.wrapperElement.appendChild(this.descriptionDiv);
+
     this.inputElement = document.createElement('textarea');
     this.inputElement.style.display = 'block';
     Element.extend(this.inputElement);
     this.inputElement.setAttribute('cols', '50');
     this.inputElement.setAttribute('rows', '3');
     this.wrapperElement.appendChild(this.inputElement);
+
+    // Initialize
+    this._updateSecondSelect();
 }
 ParametrizedTextInputInterface.prototype = new InputInterface();
 
@@ -898,17 +926,11 @@ ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
 };
 
 ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
-    var fields, field, i, selectedIndex, selectedLabel;
+    var fields, field, i;
 
     this.secondSelect.innerHTML = '';
 
-    selectedIndex = this.mainSelect.selectedIndex;
-    selectedLabel = this.mainSelect.options[selectedIndex].getTextContent();
-    for (i = 0; i < this.parameters.length; i += 1) {
-        if (this.parameters[i].label === selectedLabel) {
-            fields = this.parameters[i].fields;
-        }
-    }
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
 
     for (i = 0; i < fields.length; i += 1) {
         field = fields[i];
@@ -918,6 +940,16 @@ ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
             this.secondSelect.add(new Option(field.label, field.value));
         }
     }
+
+    this._updateDescription();
+};
+
+ParametrizedTextInputInterface.prototype._updateDescription = function() {
+    var fields, field;
+
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
+    field = fields[this.secondSelect.selectedIndex];
+    this.descriptionDiv.setTextContent(field.description);
 };
 
 ParametrizedTextInputInterface.prototype._setValue = function(newValue) {
