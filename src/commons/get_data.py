@@ -81,9 +81,19 @@ def _populate_variables_values_cache(user, key):
         if not var_value.variable.igadget.id in values_by_varname:
             values_by_varname[var_value.variable.igadget.id] = {}
 
-        value = var_value.get_variable_value()
-        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
-        values_by_varid[var_value.variable.id] = value
+        if var_value.variable.vardef.secure:
+            entry = {
+                'secure': True,
+                'var_value': var_value,
+            }
+        else:
+            entry = {
+                'secure': False,
+                'value': var_value.get_variable_value()
+            }
+
+        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = entry
+        values_by_varid[var_value.variable.id] = entry
 
     values = {
         'by_varid': values_by_varid,
@@ -104,7 +114,11 @@ def get_variable_value_from_var(user, variable):
     if values == None:
         values = _populate_variables_values_cache(user, key)
 
-    return values['by_varid'][variable.id]
+    entry = values['by_varid'][variable.id]
+    if entry['secure'] == True:
+        return entry['var_value'].get_variable_value()
+    else:
+        return entry['value']
 
 
 def get_variable_value_from_varname(user, igadget, var_name):
@@ -119,7 +133,11 @@ def get_variable_value_from_varname(user, igadget, var_name):
     if values == None:
         values = _populate_variables_values_cache(user, key)
 
-    return values['by_varname'][igadget_id][var_name]
+    entry = values['by_varname'][igadget_id][var_name]
+    if entry['secure'] == True:
+        return entry['var_value'].get_variable_value()
+    else:
+        return entry['value']
 
 
 def _invalidate_cached_variable_values(user):
@@ -553,7 +571,6 @@ def get_tab_data(tab):
 
 
 def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
-    global _variables_cache
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
