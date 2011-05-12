@@ -770,71 +770,12 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
  *
  */
 function ParametrizedTextInputInterface(fieldId, options) {
-    var i, param, contextFields, concepts, keys, dashIndex, provider, concept, option;
+    var i, param, contextFields, option;
 
     InputInterface.call(this, fieldId, options);
 
     this.variable = options.variable;
-
-    /* TODO */
-    concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
-    keys = concepts.keys();
-    contextFields = {
-        '': []
-    };
-    for (i = 0; i < keys.length; i += 1) {
-        concept = concepts[keys[i]]
-        if (concept._type !== 'GCTX') {
-            dashIndex = keys[i].indexOf('-');
-            provider = keys[i].substring(0, dashIndex);
-            if (!(provider in contextFields)) {
-                contextFields[provider] = [];
-            }
-            contextFields[provider].push({
-                label: concept._label,
-                description: concept._description,
-                value: keys[i]
-            });
-        }
-    }
-
-    this.parameters = [
-        {
-            label: gettext('User'),
-            value: 'user',
-            fields: [
-                {
-                    label: gettext('User Name'),
-                    description: '',
-                    value: 'username'
-                },
-                {
-                    label: gettext('First Name'),
-                    description: '',
-                    value: 'first_name'
-                },
-                {
-                    label: gettext('Last Name'),
-                    description: '',
-                    value: 'last_name'
-                },
-            ]
-        },
-        {
-            label: gettext('Context'),
-            value: 'context',
-            fields: contextFields['']
-        }
-    ];
-    delete contextFields[''];
-    for (i in contextFields) {
-        this.parameters.push({
-            label: i,
-            value: 'context',
-            fields: contextFields[i]
-        });
-    }
-    /* TODO */
+    this.parameters = this.getAvailableParameters();
 
     this.wrapperElement = document.createElement('div');
     this.wrapperElement.className = 'parametrized_text_input';
@@ -918,6 +859,74 @@ ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
     }
 
     return str + arguments[2];
+};
+
+ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
+ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
+    var concepts, keys, dashIndex, provider, concept, parameters;
+
+    if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
+        concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
+        keys = concepts.keys();
+        contextFields = {
+            '': []
+        };
+        for (i = 0; i < keys.length; i += 1) {
+            concept = concepts[keys[i]]
+            if (concept._type !== 'GCTX') {
+                dashIndex = keys[i].indexOf('-');
+                provider = keys[i].substring(0, dashIndex);
+                if (!(provider in contextFields)) {
+                    contextFields[provider] = [];
+                }
+                contextFields[provider].push({
+                    label: concept._label,
+                    description: concept._description,
+                    value: keys[i]
+                });
+            }
+        }
+
+        parameters = [
+            {
+                label: gettext('User'),
+                value: 'user',
+                fields: [
+                    {
+                        label: gettext('User Name'),
+                        description: '',
+                        value: 'username'
+                    },
+                    {
+                        label: gettext('First Name'),
+                        description: '',
+                        value: 'first_name'
+                    },
+                    {
+                        label: gettext('Last Name'),
+                        description: '',
+                        value: 'last_name'
+                    },
+                ]
+            },
+            {
+                label: gettext('Context'),
+                value: 'context',
+                fields: contextFields['']
+            }
+        ];
+        delete contextFields[''];
+        for (i in contextFields) {
+            parameters.push({
+                label: i,
+                value: 'context',
+                fields: contextFields[i]
+            });
+        }
+        ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = parameters;
+    }
+
+    return ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS;
 };
 
 ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
