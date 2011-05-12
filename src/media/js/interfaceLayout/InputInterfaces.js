@@ -863,7 +863,7 @@ ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
 
 ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
 ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
-    var concepts, keys, dashIndex, provider, concept, parameters;
+    var concepts, keys, dashIndex, provider, concept, parameters, label;
 
     if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
         concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
@@ -879,8 +879,12 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
                 if (!(provider in contextFields)) {
                     contextFields[provider] = [];
                 }
-                contextFields[provider].push({
+                label = interpolate('%(label)s (%(concept)s)', {
                     label: concept._label,
+                    concept: keys[i]
+                }, true);
+                contextFields[provider].push({
+                    label: label,
                     description: concept._description,
                     value: keys[i]
                 });
