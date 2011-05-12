@@ -48,6 +48,8 @@ class Concept(models.Model):
         ('GCTX', _('iGadget')),
     )
     type = models.CharField(_('Type'), max_length=4, choices=TYPE)
+    label = models.CharField(_('Label'), max_length=50, blank=False)
+    description = models.TextField(_('Description'), blank=True)
     adaptor = models.CharField(_('Adaptor'), max_length=256, null=True)
 
     def __unicode__(self):

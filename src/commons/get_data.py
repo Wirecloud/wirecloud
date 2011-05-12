@@ -702,6 +702,8 @@ def get_concept_data(concept, concept_values):
     data_ret = {
         'concept': concept.pk,
         'type': concept.type,
+        'label': concept.label,
+        'description': concept.description,
         'names': [cname['name'] for cname in cnames],
     }
 

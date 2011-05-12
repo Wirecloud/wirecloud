@@ -790,7 +790,7 @@ function ParametrizedTextInputInterface(fieldId, options) {
             if (!(provider in contextFields)) {
                 contextFields[provider] = [];
             }
-            contextFields[provider].push({label: keys[i], value: keys[i]});
+            contextFields[provider].push({label: concept._label, value: keys[i]});
         }
     }
 
