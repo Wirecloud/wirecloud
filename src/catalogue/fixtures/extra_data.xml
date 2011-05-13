@@ -5,8 +5,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -22,7 +22,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="4" model="catalogue.gadgetresource">
@@ -30,8 +30,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">2.1</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">jjmr</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -47,7 +47,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="5" model="catalogue.gadgetresource">
@@ -55,8 +55,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.2</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">fabio</field>
         <field type="CharField" name="mail">fabio@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -72,7 +72,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="6" model="catalogue.gadgetresource">
@@ -80,8 +80,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -97,7 +97,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="7" model="catalogue.gadgetresource">
@@ -105,8 +105,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -122,7 +122,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="8" model="catalogue.gadgetresource">
@@ -130,8 +130,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">jmostazo</field>
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -147,7 +147,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="9" model="catalogue.gadgetresource">
@@ -155,8 +155,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">miglesia</field>
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -172,7 +172,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="10" model="catalogue.gadgetresource">
@@ -180,8 +180,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.0</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -197,7 +197,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="11" model="catalogue.gadgetresource">
@@ -205,8 +205,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.1</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -222,7 +222,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="12" model="catalogue.gadgetresource">
@@ -230,8 +230,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.3</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">jmartin</field>
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -247,7 +247,7 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
     <object pk="13" model="catalogue.gadgetresource">
@@ -255,8 +255,8 @@
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
         <field type="CharField" name="version">1.4</field>
-        <field type="BooleanField" name="ie_compatible">0</field>
-        <field type="BooleanField" name="solution">0</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
         <field type="CharField" name="author">agarcia</field>
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
@@ -272,8 +272,39 @@
         <field type="IntegerField" name="mashup_id"><None></None></field>
         <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">0</field>
+        <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="14" model="catalogue.gadgetresource">
+        <field type="CharField" name="short_name">Test</field>
+        <field type="CharField" name="display_name"></field>
+        <field type="CharField" name="vendor">Yaco Sistemas S.L.</field>
+        <field type="CharField" name="version">0.9</field>
+        <field type="BooleanField" name="ie_compatible">False</field>
+        <field type="BooleanField" name="solution">False</field>
+        <field type="CharField" name="author">aarranz</field>
+        <field type="CharField" name="mail">aarranz@yaco.es</field>
+        <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
+        <field type="TextField" name="description">This gadget is used to test some of the features of the EzWeb platform</field>
+        <field type="CharField" name="size"><None></None></field>
+        <field type="CharField" name="license"><None></None></field>
+        <field type="CharField" name="gadget_uri"><None></None></field>
+        <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
+        <field type="CharField" name="image_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/images/catalogue.png</field>
+        <field type="CharField" name="iphone_image_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/images/catalogue_iphone.png</field>
+        <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
+        <field type="CharField" name="template_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/test.xml</field>
+        <field type="IntegerField" name="mashup_id"><None></None></field>
+        <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
+        <field type="DecimalField" name="popularity">0.0</field>
+        <field type="BooleanField" name="fromWGT">True</field>
+        <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
+    </object>
+    <object pk="1" model="catalogue.userrelatedtogadgetresource">
+        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">14</field>
+        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
+        <field type="NullBooleanField" name="added_by">True</field>
+        <field type="NullBooleanField" name="preferred_by"><None></None></field>
     </object>
     <object pk="1" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">keyword</field>
@@ -369,5 +400,15 @@
         <field type="CharField" name="friendcode">poi</field>
         <field type="CharField" name="wiring">out</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
+    </object>
+    <object pk="25" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">slot</field>
+        <field type="CharField" name="wiring">in</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
+    </object>
+    <object pk="26" model="catalogue.gadgetwiring">
+        <field type="CharField" name="friendcode">event</field>
+        <field type="CharField" name="wiring">out</field>
+        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
 </django-objects>
