@@ -162,7 +162,7 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
         addIGadgetVariable(new_igadget, user, varDef, initial_value)
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(user)
+    _invalidate_cached_variable_values(new_igadget.tab.workspace)
 
     return new_igadget
 
