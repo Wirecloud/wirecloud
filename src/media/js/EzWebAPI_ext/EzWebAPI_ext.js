@@ -647,7 +647,7 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
-        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc, checkNamespace;
+        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc;
 
         // ugh!! ugly hack for IE which does not understand default namespace
         if (domElem.documentElement) {
@@ -684,6 +684,10 @@ if (document.getElementsByTagNameNS) {
 
     EzWebExt.getElementsByTagNameNS.checkNamespace = function (element, namespace, defaultNS) {
         // IE uses namespaceURI and tagUrn depending on the DomDocument instance
+        if (typeof namespace === 'undefined' || namespace === null) {
+            namespace = '';
+        }
+
         if ('tagUrn' in element) {
             if (namespace === defaultNS) {
                 return element.tagUrn === '';
