@@ -34,6 +34,8 @@ from lxml import etree
 from StringIO import StringIO
 
 from django.utils.http import urlquote
+from django.contrib.sites.models import Site
+from django.conf import settings
 
 from catalogue.models import GadgetResource
 from commons.authentication import Http403
@@ -137,10 +139,7 @@ def includeTagBase(document, url, request):
     # Get href base
     elements = includeTagBase_exp.sub("", url).split("/")
 
-    if(request.META['SERVER_PROTOCOL'].lower().find("https") > -1):
-        host = "https://" + request.META['HTTP_HOST']
-    else:
-        host = "http://" + request.META['HTTP_HOST']
+    host = get_site_domain(request)
 
     href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
 
@@ -184,13 +183,9 @@ def xpath(tree, query, xmlns):
 
 
 def fix_ezweb_scripts(xhtml_code, request):
-
     #xhtml_code = re.sub(r'<\?xml\s+version="[\d\.]+"(\s+encoding="[^"]")?\s*\?>', '', xhtml_code)
 
-    if request.META['SERVER_PROTOCOL'].lower().find("https") != -1:
-        rootURL = "https://" + request.META['HTTP_HOST']
-    else:
-        rootURL = "http://" + request.META['HTTP_HOST']
+    rootURL = get_site_domain(request)
 
     try:
         xmltree = etree.fromstring(xhtml_code).getroottree()
@@ -212,3 +207,17 @@ def fix_ezweb_scripts(xhtml_code, request):
 
     # return modified code
     return etree.tostring(xmltree, pretty_print=False, method='html')
+
+
+def get_site_domain(request):
+    try:
+        host = Site.objects.get(id=settings.SITE_ID).domain
+    except Site.DoesNotExist:
+        host = request.META['HTTP_HOST']
+
+    if request.META['SERVER_PROTOCOL'].lower().find("https") != -1:
+        rootURL = "https://" + host
+    else:
+        rootURL = "http://" + host
+
+    return rootURL
