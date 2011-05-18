@@ -104,12 +104,17 @@ function WiringInterface(wiring, workspace, wiringContainer) {
     platformPreferences.addCommitHandler(unfold_chkItem_listener);
     unfold_chkItem_listener({'wiring-unfold-by-default': platformPreferences.get('wiring-unfold-by-default')});
 
-    Event.observe($('unfold_chkItem'), "click",
-                function(e) {
-                  platformPreferences.set({
-                        'wiring-unfold-by-default': {value: !unfold_chkItem.hasClassName('chkItem')}
-                      });
-                }.bind(this));
+    // Add event listener only once
+    if (!unfold_chkItem.lastEvent) {
+        unfold_chkItem.lastEvent = function(e) {
+            platformPreferences.set({
+                'wiring-unfold-by-default': {
+                    value: !unfold_chkItem.hasClassName('chkItem')
+                }
+            });
+        }.bind(this);
+        Event.observe(unfold_chkItem, "click", unfold_chkItem.lastEvent);
+    }
 
     this._eventCreateChannel = function (e) {
         Event.stop(e);
