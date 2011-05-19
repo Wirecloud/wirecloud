@@ -382,7 +382,6 @@ body.shared #workspace_link_container span {
     display: block;
     padding: 2px 9px;
     margin: 0px;
-    cursor: pointer;
     z-index: 3;
     height: 18px;
     padding: 3px 5px 1px;

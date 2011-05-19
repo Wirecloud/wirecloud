@@ -325,7 +325,6 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.unmarkTab = function(tab_object) {
             var tab = tab_object.tabHTMLElement;
             var launcher = tab_object.tabOpsLauncher;
-            var renameEvent = tab_object.renameTabHandler;
             var changeEvent = tab_object.changeTabHandler;
             var dragger = tab_object.dragger;
 
@@ -335,11 +334,6 @@ var LayoutManagerFactory = function () {
             tabOpsLauncher.setStyle({'display':'none'});
             $(dragger).setStyle({'display':'none'});
 
-            //Rename is an operation for ws owners!
-            if (tab_object.workSpace.isOwned()) {
-                Event.stopObserving(tab, 'click', renameEvent);
-            }
-
             Event.observe(tab, 'click', changeEvent);
 
             tab.setStyle({"display": "block"}); // TODO
@@ -348,7 +342,6 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.markTab = function(tab_object) {
             var tab = tab_object.tabHTMLElement;
             var launcher = tab_object.tabOpsLauncher;
-            var renameHandler = tab_object.renameTabHandler;
             var changeHandler = tab_object.changeTabHandler;
             var dragger = tab_object.dragger;
 
@@ -366,17 +359,7 @@ var LayoutManagerFactory = function () {
             }
             if (this.currentViewType == 'dragboard') {
                 Event.stopObserving(tab, 'click', changeHandler);
-
-                //Rename is an operation for ws owners!
-                if (tab_object.workSpace.isOwned()) {
-                    Event.observe(tab, 'click', renameHandler);
-                }
             } else {
-                //Rename is an operation for ws owners!
-                if (tab_object.workSpace.isOwned()) {
-                    Event.stopObserving(tab, 'click', renameHandler);
-                }
-
                 Event.observe(tab, 'click', changeHandler);
             }
         }
@@ -785,6 +768,13 @@ var LayoutManagerFactory = function () {
                     this.menus['renameWorkSpaceMenu'] = new RenameWindowMenu(null);
                 }
                 this.currentMenu = this.menus['renameWorkSpaceMenu'];
+                break;
+            case 'renameTab':
+                if (!this.menus['renameTabMenu']) {
+                    this.menus['renameTabMenu'] = new RenameTabWindowMenu(extra_data);
+                }
+                this.menus['renameTabMenu'].setTab(extra_data);
+                this.currentMenu = this.menus['renameTabMenu'];
                 break;
             case 'useBrokenTheme':
                 if (!this.menus['alertMenu']) {

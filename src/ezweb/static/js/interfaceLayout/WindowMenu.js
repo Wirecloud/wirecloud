@@ -1580,6 +1580,45 @@ RenameWindowMenu.prototype.extraValidation = function(fields) {
     return null;
 }
 
+function RenameTabWindowMenu () {
+    var fields = {
+        'name': {label: gettext('New Name'),type: 'text', required: true}
+    }
+    FormWindowMenu.call(this, fields, gettext('Rename Tab'));
+}
+
+RenameTabWindowMenu.prototype = new FormWindowMenu();
+
+RenameTabWindowMenu.prototype.setTab = function(tab) {
+    this.tab = tab;
+}
+
+RenameTabWindowMenu.prototype.setFocus = function() {
+    this.fields['name'].inputInterface.focus();
+}
+
+RenameTabWindowMenu.prototype.executeOperation = function(form) {
+    var name = form["name"];
+    this.tab.updateInfo(name);
+    this.tab.fillWithLabel();
+}
+
+RenameTabWindowMenu.prototype.show = function(parentWindow) {
+    FormWindowMenu.prototype.show.call(this, parentWindow);
+    this.fields['name'].inputInterface.inputElement.value = this.tab.tabInfo.name;
+}
+
+RenameTabWindowMenu.prototype.extraValidation = function(fields) {
+    var value = fields["name"].inputInterface.inputElement.value;
+    if (value.length > 30) {
+        return gettext("The new name is too long. It must have less than 30 characters.");
+    } else if (this.tab.workSpace.tabExists(value)) {
+        return interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: value, wsName: this.tab.workSpace.workSpaceState.name}, true);
+    } else if (value == "" || value.match(/^\s$/)) {
+        return gettext("Error updating a tab: invalid name");
+    }
+    return null;
+}
 
 /**
  * Specific class for Sharing workspace results window!

@@ -111,46 +111,6 @@ function Tab (tabInfo, workSpace) {
         this.tabWidth = this.tabHTMLElement.getWidth();
     }
 
-    Tab.prototype.fillWithInput = function () {
-        var oldTabWidth= this.tabHTMLElement.getWidth();
-        this.tabNameHTMLElement.remove();
-        var inputHTML = "<input class='tab_name' value='"+this.tabInfo.name+"' size='"+(this.tabInfo.name.length)+"' maxlength=30 />";
-        new Insertion.After($(this.dragger), inputHTML);
-        this.tabNameHTMLElement =  Element.extend($(this.dragger).nextSibling);
-        var newTabWidth= this.tabHTMLElement.getWidth();
-        var difference= newTabWidth-oldTabWidth;
-        if (difference!=0)
-            LayoutManagerFactory.getInstance().changeTabBarSize(difference);
-        this.tabWidth = newTabWidth;
-
-        this.tabNameHTMLElement.focus();
-        this.tabNameHTMLElement.select();
-        Event.observe(this.tabNameHTMLElement, 'blur', function(e){Event.stop(e);
-                    this.fillWithLabel()}.bind(this));
-        Event.observe(this.tabNameHTMLElement, 'keypress', function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            if(e.keyCode == Event.KEY_RETURN){
-                                Event.stop(e);
-                                target.blur();
-                            } else{
-                                this.makeVisibleInTabBar();
-                            }}.bind(this));
-        Event.observe(this.tabNameHTMLElement, 'change', function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            this.updateInfo(target.value);}.bind(this));
-        Event.observe(this.tabNameHTMLElement, 'keyup', function(e){
-                            Event.stop(e);
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            target.size = (target.value.length==0)?1:target.value.length;
-                            var newTabWidth = target.parentNode.getWidth();
-                            var difference= newTabWidth-this.tabWidth;
-                            if (difference!=0)
-                                LayoutManagerFactory.getInstance().changeTabBarSize(difference);
-                            this.tabWidth = newTabWidth;
-                        }.bind(this));
-        Event.observe(this.tabNameHTMLElement, 'click', function(e){Event.stop(e);}); //do not propagate to div.
-    }
-
     Tab.prototype.unmark = function () {
         //this.hideDragboard();
         LayoutManagerFactory.getInstance().unmarkTab(this);
@@ -251,11 +211,6 @@ function Tab (tabInfo, workSpace) {
     this.locked = true;
 
     //tab event handlers
-    this.renameTabHandler = function(e){
-        this.makeVisibleInTabBar();
-        this.fillWithInput();
-    }.bind(this);
-
     this.changeTabHandler = function(e){
         this.workSpace.setTab(this);
         this.makeVisibleInTabBar();
@@ -555,9 +510,8 @@ Tab.prototype._createTabMenu = function() {
     this.menu.addOption('icon-rename',
         gettext("Rename"),
         function() {
-            OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().fillWithInput();
-            LayoutManagerFactory.getInstance().hideCover();
-        },
+            LayoutManagerFactory.getInstance().showWindowMenu("renameTab", null, null, this);
+        }.bind(this),
         0);
 
     if (this.tabInfo.visible != "true") {
