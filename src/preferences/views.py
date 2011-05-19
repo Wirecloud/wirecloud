@@ -38,6 +38,7 @@
 
 # @author jmostazo-upm
 
+from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -116,8 +117,18 @@ def update_tab_preferences(tab, preferences_json):
         preference.save()
 
 
+def make_workspace_preferences_cache_key(workspace_id):
+    return '_workspace_preferences_cache/' + str(workspace_id)
+
+
 def get_workspace_preference_values(workspace_id):
-    return parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+    cache_key = make_workspace_preferences_cache_key(workspace_id)
+    values = cache.get(cache_key)
+    if values == None:
+        values = parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+        cache.set(cache_key, values)
+
+    return values
 
 
 def update_workspace_preferences(workspace, preferences_json):
@@ -141,6 +152,9 @@ def update_workspace_preferences(workspace, preferences_json):
             preference.inherit = preference_data['inherit']
 
         preference.save()
+
+    cache_key = make_workspace_preferences_cache_key(workspace.id)
+    cache.delete(cache_key)
 
 
 class PlatformPreferencesCollection(Resource):

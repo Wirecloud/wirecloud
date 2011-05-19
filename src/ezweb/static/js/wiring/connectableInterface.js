@@ -412,11 +412,11 @@ function ChannelInterface(channel, wiringGUI) {
                       this.wiringGUI._changeChannel(this);
                     }.bind(this));
 
-    var inputDel = document.createElement("span");
+    var inputDel = document.createElement("img");
     Element.extend(inputDel);
-    inputDel.innerHTML = gettext("Remove");
-    inputDel.className = 'icon icon-remove';
     channelPipe.appendChild(inputDel);
+    inputDel.setAttribute("alt", gettext("Remove"));
+    inputDel.setAttribute("src", _currentTheme.getIconURL('channel-remove'));
     Event.observe(inputDel,
                   'click',
                   function (e) {

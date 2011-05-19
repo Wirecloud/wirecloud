@@ -84,10 +84,12 @@ ContextVar.prototype.unload = function () {
 //////////////////////////////////////////////////////////
 // Concept
 //////////////////////////////////////////////////////////
-function Concept(semanticConcept, type, adaptor) {
-    this._semanticConcept = semanticConcept;
-    this._type = type;
-    this._adaptor = adaptor;
+function Concept(data) {
+    this._semanticConcept = data.concept;
+    this._type = data.type;
+    this._adaptor = data.adaptor;
+    this._label = data.label;
+    this._description = data.description;
     this._value = null;
     this._initialValue = null;
 

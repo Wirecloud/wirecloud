@@ -92,6 +92,10 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
 
     forceProxy = options != null && !!options.forceProxy;
 
+    if (url.length > 4 && url.indexOf('www.') === 0) {
+        url = 'http://' + url;
+    }
+
     protocol = this.platform_protocol;
     host = this.platform_host;
 
@@ -120,7 +124,8 @@ _EzWebAPI.prototype.buildProxyURL = function(url, options) {
     }
 
     if (forceProxy || protocol !== this.platform_protocol || host !== this.platform_host) {
-        final_url = this.platform.URIs.PROXY + '/' +
+        final_url = this.platform_domain +
+            this.platform.URIs.PROXY + '/' +
             encodeURIComponent(protocol) + '/' +
             encodeURIComponent(host) + rest;
     }

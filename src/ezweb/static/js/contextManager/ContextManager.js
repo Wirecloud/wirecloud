@@ -65,7 +65,7 @@ function ContextManager (workspace_, workSpaceInfo_) {
         for (var i = 0; i < conceptsJson.length; i++) {
             var curConcept = conceptsJson[i];
             // Creates the concept
-            var concept = new Concept(curConcept.concept, curConcept.type, curConcept.adaptor);
+            var concept = new Concept(curConcept);
             this._concepts[curConcept.concept] = concept;
 
             // Sets the concept value

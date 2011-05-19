@@ -29,6 +29,8 @@
 
 
 #
+import random
+import re
 
 from django.conf import settings
 from django.core.cache import cache
@@ -45,8 +47,6 @@ from preferences.views import get_workspace_preference_values, get_tab_preferenc
 from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
 from workspace.utils import createTab
-
-import re
 
 
 def _variable_cache_key(igadget):
@@ -70,18 +70,29 @@ def _invalidate_cached_variables(igadget):
     cache.delete(key)
 
 
-def _populate_variables_values_cache(user, key):
+def _populate_variables_values_cache(workspace, user, key):
     """ populates VariableValue cached values for that user """
     values_by_varid = {}
     values_by_varname = {}
 
-    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef', 'variable__igadget'):
+    var_values = VariableValue.objects.filter(user__id=user.id, variable__igadget__tab__workspace=workspace)
+    for var_value in var_values.select_related('variable__vardef'):
         if not var_value.variable.igadget.id in values_by_varname:
             values_by_varname[var_value.variable.igadget.id] = {}
 
-        value = var_value.get_variable_value()
-        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
-        values_by_varid[var_value.variable.id] = value
+        if var_value.variable.vardef.secure:
+            entry = {
+                'secure': True,
+                'var_value': var_value,
+            }
+        else:
+            entry = {
+                'secure': False,
+                'value': var_value.get_variable_value()
+            }
+
+        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = entry
+        values_by_varid[var_value.variable.id] = entry
 
     values = {
         'by_varid': values_by_varid,
@@ -92,37 +103,62 @@ def _populate_variables_values_cache(user, key):
     return values
 
 
-def _variable_values_cache_key(user):
-    return '_variables_values_cache/' + str(user.id)
+def _variable_values_cache_key(workspace, user):
+
+    version = cache.get('_workspace_version/' + str(workspace.id))
+    if version is None:
+        version = random.randrange(1, 100000)
+        cache.set('_workspace_version/' + str(workspace.id), version)
+
+    return '/'.join(('_variables_values_cache', str(workspace.id), str(version), str(user.id)))
 
 
-def get_variable_value_from_var(user, variable):
-    key = _variable_values_cache_key(user)
+def get_variable_value_from_var(workspace, user, variable):
+    key = _variable_values_cache_key(workspace, user)
     values = cache.get(key)
     if values == None:
-        values = _populate_variables_values_cache(user, key)
+        values = _populate_variables_values_cache(workspace, user, key)
 
-    return values['by_varid'][variable.id]
+    entry = values['by_varid'][variable.id]
+    if entry['secure'] == True:
+        return entry['var_value'].get_variable_value()
+    else:
+        return entry['value']
 
 
 def get_variable_value_from_varname(user, igadget, var_name):
 
     if 'id' in igadget:
         igadget_id = igadget.id
-    else:
+        igadget = IGadget.objects.get(id=igadget_id)
+    elif not isinstance(igadget, IGadget):
         igadget_id = int(igadget)
+        igadget = IGadget.objects.get(id=igadget_id)
+    else:
+        igadget_id = igadget
 
-    key = _variable_values_cache_key(user)
+    workspace = igadget.tab.workspace
+    key = _variable_values_cache_key(workspace, user)
     values = cache.get(key)
     if values == None:
-        values = _populate_variables_values_cache(user, key)
+        values = _populate_variables_values_cache(workspace, user, key)
 
-    return values['by_varname'][igadget_id][var_name]
+    entry = values['by_varname'][igadget_id][var_name]
+    if entry['secure'] == True:
+        return entry['var_value'].get_variable_value()
+    else:
+        return entry['value']
 
 
-def _invalidate_cached_variable_values(user):
-    key = _variable_values_cache_key(user)
-    cache.delete(key)
+def _invalidate_cached_variable_values(workspace, user=None):
+    if user is not None:
+        key = _variable_values_cache_key(workspace, user)
+        cache.delete(key)
+    else:
+        try:
+            cache.incr('_workspace_version/' + str(workspace.id))
+        except ValueError:
+            pass
 
 
 def get_wiring_variable_data(var, ig):
@@ -401,7 +437,7 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
-    _RE = re.compile(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)')
+    _RE = re.compile(r'(%+)\(([a-zA-Z][\w-]*(?:\.[a-zA-Z\][\w-]*)*)\)')
 
     def __init__(self, context):
         self._context = context
@@ -548,7 +584,6 @@ def get_tab_data(tab):
 
 
 def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
-    global _variables_cache
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
@@ -611,7 +646,7 @@ def get_variable_data(variable, user, workspace, forced_values={}):
             data_ret['value'] = ''
             data_ret['secure'] = True
         else:
-            data_ret['value'] = get_variable_value_from_var(user, variable)
+            data_ret['value'] = get_variable_value_from_var(workspace, user, variable)
 
     if var_def.shared_var_def:
         data_ret['shared'] = variable.shared_value != None
@@ -697,6 +732,8 @@ def get_concept_data(concept, concept_values):
     data_ret = {
         'concept': concept.pk,
         'type': concept.type,
+        'label': concept.label,
+        'description': concept.description,
         'names': [cname['name'] for cname in cnames],
     }
 

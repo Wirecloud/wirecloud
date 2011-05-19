@@ -208,6 +208,10 @@ RVariable.prototype.set = function (newValue) {
                     }
                 }
 
+                if (this.vardef.secure === true) {
+                    this.value = '';
+                }
+
                 break;
             default:
                 break;
@@ -280,7 +284,7 @@ RWVariable.prototype.set = function (value_, options_) {
     oldvalue = this.value;
     this.value = value_;
 
-    if (this.vardef.aspect === this.PROPERTY && oldvalue != value_) {
+    if (this.vardef.aspect === this.PROPERTY && (oldvalue !== value_ || this.vardef.secure === true)) {
         this.varManager.markVariablesAsModified([this]);
 
         if (this.shared == true || this.vardef.secure === true) {
@@ -299,6 +303,10 @@ RWVariable.prototype.set = function (value_, options_) {
             }
         default:
             break;
+    }
+
+    if (this.vardef.secure === true) {
+        this.value = '';
     }
 
     // This will save all modified vars if we are the root event

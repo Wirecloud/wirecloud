@@ -144,7 +144,7 @@ def set_variable_value(var_id, user, value, shared=None):
     variable_value.save()
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(user)
+    _invalidate_cached_variable_values(variable_value.variable.igadget.tab.workspace, user)
 
     return variables_to_notify
 

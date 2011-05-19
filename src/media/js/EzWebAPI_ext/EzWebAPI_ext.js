@@ -184,8 +184,11 @@ if ('addEventListener' in document) {
                 }
         }
 
-        var wrapper = function() {
-            var e = window.event;
+        var wrapper = function(evt) {
+            var e = evt;
+            if (!e) {
+                e = window.event;
+            }
             e.stopPropagation = function() {
                 this.cancelBubble = true;
             }
@@ -646,7 +649,7 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
-        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc, checkNamespace;
+        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc;
 
         // ugh!! ugly hack for IE which does not understand default namespace
         if (domElem.documentElement) {
@@ -683,6 +686,10 @@ if (document.getElementsByTagNameNS) {
 
     EzWebExt.getElementsByTagNameNS.checkNamespace = function (element, namespace, defaultNS) {
         // IE uses namespaceURI and tagUrn depending on the DomDocument instance
+        if (typeof namespace === 'undefined' || namespace === null) {
+            namespace = '';
+        }
+
         if ('tagUrn' in element) {
             if (namespace === defaultNS) {
                 return element.tagUrn === '';
@@ -5003,7 +5010,7 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
 }
 
 StyledElements.PopupMenuBase.prototype.hide = function() {
-    var i;
+    var i, aux;
 
     if (!EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         return; // This Popup Menu is already hidden => nothing to do
@@ -5016,11 +5023,11 @@ StyledElements.PopupMenuBase.prototype.hide = function() {
     }
 
     for (i = 0; i < this._dynamicItems.length; i += 1) {
-        item = this._dynamicItems[i];
-        if (item instanceof StyledElements.SubMenuItem) {
-            item.hide();
+        aux = this._dynamicItems[i];
+        if (aux instanceof StyledElements.SubMenuItem) {
+            aux.hide();
         }
-        item.destroy();
+        aux.destroy();
     }
     this._dynamicItems = [];
     this._submenus = [];

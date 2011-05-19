@@ -77,7 +77,7 @@ function WiringInterface(wiring, workspace, wiringContainer) {
     // Slots
     this.slotTabs = new ConnectableColumnInterface(this.slot_list);
     titleElement = this.slotColumn.getElementsByClassName("title")[0];
-    
+
     this._toggleSlotColumnEvent = function (e) {this.toggleSlotColumn()}.bind(this);
     Event.observe(titleElement, "click", this._toggleSlotColumnEvent);
 
@@ -161,7 +161,7 @@ WiringInterface.prototype.hide = function () {
 var _buttonHandler = function () {
     OpManagerFactory.getInstance().activeWorkSpace.showWiring();
 };
-                    
+
 WiringInterface.prototype.getHeader = function(){
     return this.wiring_header;
 }
@@ -169,13 +169,13 @@ WiringInterface.prototype.getHeader = function(){
 /**
  *
  * set the proper handlers to the workspace toolbar buttons
- */ 
-    
+ */
+
 WiringInterface.prototype.initToolbar = function(){
     this.wiring_header = $('wiring_header');
     if (this.wiring_header) {
         this.wsLink = this.wiring_header.getElementsBySelector('#wiring_dragboard_link')[0];
-        
+
         //set the handlers
         this.workspace.setToolbarButton(this.wsLink);
     }
@@ -184,11 +184,11 @@ WiringInterface.prototype.initToolbar = function(){
 /**
  *
  * unset the handlers of the workspace toolbar buttons
- */     
+ */
 WiringInterface.prototype.unloadToolbar = function(){
     if (this.wiring_header) {
         this.workspace.unsetToolbarButton(this.wsLink);
-    }   
+    }
 }
 
 /**
@@ -230,7 +230,7 @@ WiringInterface.prototype.unload = function () {
     var filterMenu = $('wiring_filter_menu');
     this.filterMenu.remove();
     this.filterMenu = null;
-    
+
     // Remove Operation Menu
     this.remote_operations_menu.remove();
 }
@@ -478,12 +478,12 @@ WiringInterface.prototype.renewInterface = function () {
         this.channels[i].initialize();
 }
 
-WiringInterface.prototype.showMessage = function (msg, type) { 
-    if (type != undefined) 
-        LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning')); 
-    else 
-        LayoutManagerFactory.getInstance().showAlertMessage(msg); 
-} 
+WiringInterface.prototype.showMessage = function (msg, type) {
+    if (type != undefined)
+        LayoutManagerFactory.getInstance().showInfoMessage(msg, type, gettext('Warning'));
+    else
+        LayoutManagerFactory.getInstance().showAlertMessage(msg);
+}
 
 /**
  * Toggles the connection status of the given anchor in relation to the current
@@ -1269,31 +1269,31 @@ WiringInterface.prototype._createFilterMenu = function () {
  */
 WiringInterface.prototype._createRemoteChannelOperationsMenu = function () {
     this.remote_operations_menu = new RemoteChannelOperationsDropDownMenu('remote_channel_operations', null);
-    
+
     var disabled = gettext("Disabled");
     var read = gettext("Read");
     var write = gettext('Write');
-    
+
     var callback = function(e) {
         var target = BrowserUtilsFactory.getInstance().getTarget(e);
         target.blur();
-        
+
         Event.stop(e);
-        
+
         var operation_full_id = null;
         if (target.id)
             operation_full_id = target.id;
         else
             operation_full_id = target.parentNode.id;;
-        
+
         var op_code = parseInt(operation_full_id.charAt(operation_full_id.length - 1));
         var text = target.innerHTML;
-        
+
         // Update channel interface according to operation code!
         this.currentChannel.remote_subscription.setOpCode(op_code);
         this.currentChannel.updateRemoteSubscription();
     }.bind(this)
-    
+
     this.remote_operations_menu.addOption(null, disabled, callback, 0, null, null);
     this.remote_operations_menu.addOption(null, read, callback, 1, null, null);
     this.remote_operations_menu.addOption(null, write, callback, 2, null, null);

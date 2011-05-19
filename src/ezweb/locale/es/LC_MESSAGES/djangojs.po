@@ -531,6 +531,55 @@ msgstr ""
 "Mantén pulsado la tecla \"Control\" (o la tecla \"Command\" en Mac) para "
 "seleccionar más de un elemento."
 
+#: media/js/interfaceLayout/InputInterfaces.js:745
+msgid "Parametrize"
+msgstr "Parametrizar"
+
+#: media/js/interfaceLayout/InputInterfaces.js:747
+msgid "Modify"
+msgstr "Modificar"
+
+#: media/js/interfaceLayout/InputInterfaces.js:752
+msgid "This value won't be editable by the user"
+msgstr "Este valor no será editable por el usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:755
+msgid "This value will be editable by the user"
+msgstr "Este valor será editable por el usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:760
+msgid "This value will be visible to the user"
+msgstr "Este valor será visible para el usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:763
+msgid "This value won't be visible to the user"
+msgstr "Este valor no será visible para el usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:789
+msgid "User"
+msgstr "Usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:792
+msgid "User Name"
+msgstr "Nombre de usuario"
+
+#: media/js/interfaceLayout/InputInterfaces.js:793
+msgid "First Name"
+msgstr "Nombre"
+
+#: media/js/interfaceLayout/InputInterfaces.js:794
+msgid "Last Name"
+msgstr "Apellido"
+
+#: media/js/interfaceLayout/InputInterfaces.js:798
+msgid "Context"
+msgstr "Contexto"
+
+#: media/js/interfaceLayout/InputInterfaces.js:809
+#: media/js/interfaceLayout/WindowMenu.js:1787
+msgid "Use current value"
+msgstr "Usar el valor actual"
+
 #: media/js/interfaceLayout/LayoutManager.js:111
 msgid "%(task)s %(percentage)s%"
 msgstr "%(task)s %(percentage)s%"
@@ -850,6 +899,14 @@ msgstr "Organización"
 msgid "Block gadgets and connections"
 msgstr "Bloquear los gadgets y sus conexiones"
 
+#: media/js/interfaceLayout/WindowMenu.js:1123
+msgid "Block gadgets"
+msgstr "Bloquear gadgets"
+
+#: media/js/interfaceLayout/WindowMenu.js:1124
+msgid "Block connections"
+msgstr "Bloquear conexiones"
+
 #: media/js/interfaceLayout/WindowMenu.js:1079
 msgid "Publish Workspace"
 msgstr "Publicar el entorno de trabajo"
@@ -892,6 +949,19 @@ msgstr "No se pueden mostrar los grupos disponibles"
 #: media/js/interfaceLayout/WindowMenu.js:1196
 msgid "You must select a group"
 msgstr "Debes seleccionar un grupo"
+
+#: media/js/interfaceLayout/WindowMenu.js:1159
+msgid "Clear"
+msgstr "Limpiar"
+
+#: media/js/interfaceLayout/WindowMenu.js:1219
+msgid "Properties"
+msgstr "Propiedades"
+
+#: media/js/interfaceLayout/WindowMenu.js:1236
+#: media/js/interfaceLayout/WindowMenu.js:1798
+msgid "Parametrization"
+msgstr "Parametrización"
 
 #: media/js/interfaceLayout/WindowMenu.js:1230
 #: media/js/interfaceLayout/WindowMenu.js:1306
@@ -1031,6 +1101,30 @@ msgid ""
 "This WorkSpace is blocked, please create a new one if you want to modify it."
 msgstr "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si "
 "desea poder modificarlo."
+
+#: media/js/interfaceLayout/WindowMenu.js:1778
+msgid "Normal"
+msgstr "Normal"
+
+#: media/js/interfaceLayout/WindowMenu.js:1779
+msgid "Read Only"
+msgstr "Solo lectura"
+
+#: media/js/interfaceLayout/WindowMenu.js:1783
+msgid "Hidden"
+msgstr "Oculto"
+
+#: media/js/interfaceLayout/WindowMenu.js:1788
+msgid "Use gadget default value"
+msgstr "Usar el valor por defecto del gadget"
+
+#: media/js/interfaceLayout/WindowMenu.js:1789
+msgid "Use parametrized value"
+msgstr "Usar valor parametrizado"
+
+#: media/js/interfaceLayout/WindowMenu.js:1793
+msgid "Status"
+msgstr "Estado"
 
 #: media/js/log/LogManager.js:160
 msgid "unknown"
