@@ -48,7 +48,7 @@ from layout.models import ThemeBranding, TYPES, BrandingOrganization, Layout
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
-from workspace.utils import createTab
+from workspace.utils import createTab, decrypt_value, encrypt_value
 
 
 def _variable_cache_key(igadget):
@@ -86,32 +86,31 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     for var_value in var_values.select_related('variable__vardef'):
         varigadget = var_value.variable.igadget.id
         varname = var_value.variable.vardef.name
+        # forced_values uses string keys
+        svarigadget = str(varigadget)
 
         if not varigadget in values_by_varname:
             values_by_varname[varigadget] = {}
 
-        if var_value.variable.vardef.secure:
-            entry = {
-                'secure': True,
-                'var_value': var_value,
-            }
+        entry = {}
+        if svarigadget in forced_values['igadget'] and varname in forced_values['igadget'][svarigadget]:
+            fv_entry = forced_values['igadget'][svarigadget][varname]
+
+            entry['value'] = fv_entry['value']
+            if var_value.variable.vardef.secure:
+                entry['value'] = encrypt_value(entry['value'])
+
+            if 'hidden' in fv_entry:
+                entry['hidden'] = fv_entry['hidden']
+
+            entry['forced'] = True
         else:
-            entry = {
-                'secure': False,
-            }
-
-            # forced_values uses string keys
-            svarigadget = str(varigadget)
-            if svarigadget in forced_values['igadget'] and varname in forced_values['igadget'][svarigadget]:
-                fv_entry = forced_values['igadget'][svarigadget][varname]
-
-                entry['value'] = fv_entry['value']
-                if 'hidden' in fv_entry:
-                    entry['hidden'] = fv_entry['hidden']
-
-                entry['forced'] = True
-            else:
+            if not var_value.variable.vardef.secure:
                 entry['value'] = var_value.get_variable_value()
+            else:
+                entry['value'] = var_value.value
+
+        entry['secure'] = var_value.variable.vardef.secure
 
         values_by_varname[varigadget][varname] = entry
         values_by_varid[var_value.variable.id] = entry
@@ -154,7 +153,7 @@ def get_variable_value_from_varname(user, igadget, var_name):
 
     entry = values['by_varname'][igadget_id][var_name]
     if entry['secure'] == True:
-        return entry['var_value'].get_variable_value()
+        return decrypt_value(entry['value'])
     else:
         return entry['value']
 
@@ -185,7 +184,7 @@ class VariableValueCacheManager():
     def _process_entry(self, entry):
 
         if entry['secure'] == True:
-            return entry['var_value'].get_variable_value()
+            return decrypt_value(entry['value'])
         else:
             return entry['value']
 

@@ -30,11 +30,8 @@
 
 #
 
-from Crypto.Cipher import AES
-from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils import simplejson
 from django.utils.translation import ugettext as  _
 
 from connectable.models import InOut
@@ -159,12 +156,8 @@ class VariableValue(models.Model):
             value = self.value
 
         if self.variable.vardef.secure:
-            cipher = AES.new(settings.SECRET_KEY[:32])
-            try:
-                value = cipher.decrypt(value.decode('base64'))
-                value = simplejson.loads(value)
-            except:
-                value = ''
+            from workspace.utils import decrypt_value
+            value = decrypt_value(value)
 
         return value
 

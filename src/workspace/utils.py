@@ -97,6 +97,22 @@ def create_published_workspace_from_template(template, resource, contratable, us
     return published_workspace
 
 
+def encrypt_value(value):
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    json_value = simplejson.dumps(value, ensure_ascii=False)
+    padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
+    return cipher.encrypt(padded_value).encode('base64')
+
+
+def decrypt_value(value):
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    try:
+        value = cipher.decrypt(value.decode('base64'))
+        return simplejson.loads(value)
+    except:
+        return ''
+
+
 def set_variable_value(var_id, user, value, shared=None):
 
     variables_to_notify = []
@@ -104,10 +120,7 @@ def set_variable_value(var_id, user, value, shared=None):
 
     new_value = unicode(value)
     if variable_value.variable.vardef.secure:
-        cipher = AES.new(settings.SECRET_KEY[:32])
-        json_value = simplejson.dumps(new_value, ensure_ascii=False)
-        padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
-        new_value = cipher.encrypt(padded_value).encode('base64')
+        new_value = encrypt_value(new_value)
 
     if shared != None:
         if shared:
