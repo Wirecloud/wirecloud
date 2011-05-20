@@ -81,6 +81,8 @@ class UserWorkSpace(models.Model):
     workspace = models.ForeignKey(WorkSpace)
     user = models.ForeignKey(User)
     active = models.BooleanField(_('Active'), default=False)
+    manager = models.CharField(_('Manager'), max_length=100, blank=True)
+    reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
 
     def __unicode__(self):
         return unicode(self.workspace) + " - " + unicode(self.user)

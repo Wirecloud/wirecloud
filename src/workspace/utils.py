@@ -32,10 +32,11 @@
 from Crypto.Cipher import AES
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import Group
+#from django.contrib.auth.models import Group
 from django.utils import simplejson
 
-from workspace.models import Tab, PublishedWorkSpace, SharedVariableValue, VariableValue, WorkSpace
+from workspace.managers import get_workspace_managers
+from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, SharedVariableValue, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -145,7 +146,48 @@ def set_variable_value(var_id, user, value, shared=None):
 
 
 def sync_group_workspaces(user):
-    from workspace.views import linkWorkspace
+
+    packageLinker = PackageLinker()
+    reload_showcase = False
+    managers = get_workspace_managers()
+
+    workspaces_by_manager = {}
+    workspaces_by_ref = {}
+    for manager in managers:
+        workspaces_by_manager[manager.get_id()] = []
+        workspaces_by_ref[manager.get_id()] = {}
+
+    workspaces = UserWorkSpace.objects.filter(user=user)
+    for workspace in workspaces:
+        if workspace.manager != '':
+            workspaces_by_manager[workspace.manager].append(workspace.reason_ref)
+            workspaces_by_ref[workspace.manager][workspace.reason_ref] = workspace
+
+    for manager in managers:
+        current_workspaces = workspaces_by_manager[manager.get_id()]
+        result = manager.update_base_workspaces(user, current_workspaces)
+
+        for workspace_to_remove in result[0]:
+            workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
+            packageLinker.unlink_workspace(workspace, user)
+
+        for workspace_to_add in result[1]:
+            from_workspace = workspace_to_add[1]
+
+            if isinstance(from_workspace, WorkSpace):
+                workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+            else:
+                # TODO warning
+                continue
+
+            workspace.manager = manager.get_id()
+            workspace.reason_ref = workspace_to_add[0]
+            workspace.save()
+            reload_showcase = True
+
+    return reload_showcase
+
+'''
     # user workspaces
     workspaces = WorkSpace.objects.filter(users=user)
 
@@ -180,3 +222,4 @@ def sync_group_workspaces(user):
         # else: the user doesn't have this workspace yet, and he shouldn't
 
     return reload_showcase
+'''
