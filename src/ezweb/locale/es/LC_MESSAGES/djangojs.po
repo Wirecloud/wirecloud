@@ -1055,6 +1055,10 @@ msgstr "Nuevo Nombre"
 msgid "Rename Workspace"
 msgstr "Renombrar el espacio de trabajo"
 
+#: media/js/interfaceLayout/WindowMenu.js:1587
+msgid "Rename Tab"
+msgstr "Renombrar la pestaña"
+
 #: media/js/interfaceLayout/WindowMenu.js:1396
 msgid "The new name is too long. It must have less than 30 characters."
 msgstr "El nuevo nombre es demasiado largo. Debe tener menos de 30 caracteres."

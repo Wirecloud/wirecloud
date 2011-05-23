@@ -920,6 +920,10 @@ msgstr ""
 msgid "Rename Workspace"
 msgstr ""
 
+#: media/js/interfaceLayout/WindowMenu.js:1587
+msgid "Rename Tab"
+msgstr ""
+
 #: media/js/interfaceLayout/WindowMenu.js:1396
 msgid "The new name is too long. It must have less than 30 characters."
 msgstr ""
