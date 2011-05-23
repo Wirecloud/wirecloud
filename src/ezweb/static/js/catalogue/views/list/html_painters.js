@@ -76,6 +76,11 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
         var wiki = resource.getUriWiki();
         var template_url = resource.getUriTemplate();
         var user_vote = resource.getUserVote();
+        var ieCompatibleClass;
+        if (resource.getIeCompatible()) {
+            // Si es IE compatible ocultamos la advertencia
+            ieCompatibleClass = 'hidden';
+        }
 
         var update_result = get_extra_data('update_result', extra_data);
         var voting_result = get_extra_data('voting_result', extra_data);
@@ -94,7 +99,8 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
                                           'type': type, 'button_text': button_text, 'vendor': vendor, 'version': version,
                                           'creator': creator, 'versions': versions, 'wiki': wiki,
                                           'template_url': template_url, 'update_result': update_result,
-                                          'voting_result': voting_result, 'average_popularity': average_popularity });
+                                          'voting_result': voting_result, 'average_popularity': average_popularity,
+                                          'ie_compatible_class': ieCompatibleClass});
 
         // Inserting resource html to the root_element
         this.dom_element.update(resource_html);
