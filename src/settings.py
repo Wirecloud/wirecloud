@@ -246,14 +246,13 @@ CERTIFICATION_ENABLED = False
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'johnny.backends.locmem.LocMemCache',
+        'BACKEND': 'ezweb.cache.backends.locmem.LocMemCache',
         'OPTIONS': {
             'MAX_ENTRIES': 3000,
         },
     }
 }
 JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASE_NAME
-
 
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
