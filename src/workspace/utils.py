@@ -160,6 +160,8 @@ def set_variable_value(var_id, user, value, shared=None):
 
 def sync_group_workspaces(user):
 
+    from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
+
     packageLinker = PackageLinker()
     reload_showcase = False
     managers = get_workspace_managers()
@@ -181,21 +183,27 @@ def sync_group_workspaces(user):
         result = manager.update_base_workspaces(user, current_workspaces)
 
         for workspace_to_remove in result[0]:
-            workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
-            packageLinker.unlink_workspace(workspace, user)
+            user_workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
+            workspace = user_workspace.workspace
+            user_workspace.delete()
+
+            if workspace.userworkspace_set.count() == 0:
+                workspace.delete()
 
         for workspace_to_add in result[1]:
             from_workspace = workspace_to_add[1]
 
             if isinstance(from_workspace, WorkSpace):
-                workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+                user_workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+            elif isinstance(from_workspace, PublishedWorkSpace):
+                _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
             else:
                 # TODO warning
                 continue
 
-            workspace.manager = manager.get_id()
-            workspace.reason_ref = workspace_to_add[0]
-            workspace.save()
+            user_workspace.manager = manager.get_id()
+            user_workspace.reason_ref = workspace_to_add[0]
+            user_workspace.save()
             reload_showcase = True
 
     return reload_showcase
