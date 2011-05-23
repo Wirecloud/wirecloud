@@ -168,7 +168,7 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.assertEqual(self.workspace.name, 'Testing')
 
     def testBuildWorkspaceFromTemplate(self):
-        workspace = buildWorkspaceFromTemplate(self.template1, self.user)
+        workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
         get_global_workspace_data(self.workspace, self.user)
 
         channels = InOut.objects.filter(workspace=workspace)
@@ -176,7 +176,7 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         self.assertEqual(channels[0].readOnly, False)
 
     def testBlockedChannels(self):
-        workspace = buildWorkspaceFromTemplate(self.template2, self.user)
+        workspace, _junk = buildWorkspaceFromTemplate(self.template2, self.user)
 
         connectables = InOut.objects.filter(workspace=workspace)
         self.assertEqual(connectables.count(), 1)

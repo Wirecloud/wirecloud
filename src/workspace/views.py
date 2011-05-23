@@ -92,7 +92,7 @@ def createWorkSpace(workspaceName, user):
             try:
                 new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
                 if new_workspace != None:
-                    cloned_workspace = buildWorkspaceFromTemplate(new_workspace.template, user)
+                    cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
 
                     cloned_workspace.name = workspaceName
                     cloned_workspace.save()
@@ -648,7 +648,7 @@ class WorkSpaceAdderEntry(Resource):
         user = get_user_authentication(request)
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        workspace = buildWorkspaceFromTemplate(published_workspace.template, user)
+        workspace, _junk = buildWorkspaceFromTemplate(published_workspace.template, user)
 
         activate = request.GET.get('active') == "true"
         if not activate:
