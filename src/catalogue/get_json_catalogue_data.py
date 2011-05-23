@@ -320,6 +320,7 @@ def get_gadgetresource_data(untranslated_resource, user):
         'uriWiki': resource.wiki_page_uri,
         'mashupId': resource.mashup_id,
         'uriTemplate': resource.template_uri,
+        'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
         'added_by_user': user_related_data['added_by_user'],
         'versions': versions,

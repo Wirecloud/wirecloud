@@ -174,15 +174,15 @@ var CatalogueSearcher = function () {
 	  return;
 	}
 	
-	var success_callback = function (response) {
-	  var processed_response_data = this.caller.process_response(response, this);
-	 	  
-	  // "this" is binded to a "ResponseCommand" object
-	  this.set_data(processed_response_data);
-	  
-	  // processing command
-      this.process();
-	}
+    var success_callback = function (response) {
+        var processed_response_data = this.caller.process_response(response, this);
+
+        // "this" is binded to a "ResponseCommand" object
+        this.set_data(processed_response_data);
+
+        // processing command
+        this.process();
+    }
 		
 	var error_callback = function (transport, e) {
             var logManager, layoutManager, msg;
