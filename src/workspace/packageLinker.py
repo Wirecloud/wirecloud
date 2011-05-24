@@ -37,17 +37,20 @@ from workspace.models import VariableValue, UserWorkSpace, SharedVariableValue
 class PackageLinker:
 
     def link_workspace(self, workspace, user, creator, update_variable_values=True):
+
         # Linking user to workspace
+        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
+
+        if not created:
+            # The workspace is already linked to the user
+            return
 
         # Linking gadgets to user!
         variables = self.link_gadgets(workspace, user)
 
-        #Linking workspace with user!
-        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
-
         if update_variable_values:
 
-            # Create a new VariableValue for each AbstractVariable
+            # Create a new VariableValue for each Variable
             self.update_user_variable_values(variables, user, creator)
 
         return user_workspace
@@ -57,8 +60,9 @@ class PackageLinker:
         user_workspace.delete()
 
     def link_gadgets(self, workspace, user):
+
         # Getting all abstract variables of workspace
-        variables = Variable.objects.filter(igadget__tab__workspace=workspace)
+        variables = Variable.objects.filter(igadget__tab__workspace=workspace).select_related('vardef')
 
         ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
@@ -90,7 +94,13 @@ class PackageLinker:
         return user_variable_value
 
     def update_user_variable_values(self, variables, user, creator):
+
         for variable in variables:
+
+            # Only properties and preferences have value
+            if variable.vardef.aspect not in ('PROP', 'PREF'):
+                continue
+
             #Does user have his own VariableValue?
             try:
                 user_variable_value = VariableValue.objects.get(user=user, variable=variable)
