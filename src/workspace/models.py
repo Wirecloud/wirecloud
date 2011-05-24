@@ -30,15 +30,8 @@
 
 #
 
-try:
-    from Crypto.Cipher import AES
-    HAS_AES = True
-except ImportError:
-    HAS_AES = False
-from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils import simplejson
 from django.utils.translation import ugettext as  _
 
 from connectable.models import InOut
@@ -82,6 +75,8 @@ class UserWorkSpace(models.Model):
     workspace = models.ForeignKey(WorkSpace)
     user = models.ForeignKey(User)
     active = models.BooleanField(_('Active'), default=False)
+    manager = models.CharField(_('Manager'), max_length=100, blank=True)
+    reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
 
     def __unicode__(self):
         return unicode(self.workspace) + " - " + unicode(self.user)
@@ -157,13 +152,9 @@ class VariableValue(models.Model):
         else:
             value = self.value
 
-        if self.variable.vardef.secure and HAS_AES:
-            cipher = AES.new(settings.SECRET_KEY[:32])
-            try:
-                value = cipher.decrypt(value.decode('base64'))
-                value = simplejson.loads(value)
-            except:
-                value = ''
+        if self.variable.vardef.secure:
+            from workspace.utils import decrypt_value
+            value = decrypt_value(value)
 
         return value
 

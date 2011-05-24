@@ -77,7 +77,7 @@ def buildWorkspaceFromTemplate(template, user):
 
     fillWorkspaceUsingTemplate(workspace, template, xml)
 
-    return workspace
+    return (workspace, user_workspace)
 
 
 def fillWorkspaceUsingTemplate(workspace, template, xml=None):

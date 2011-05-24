@@ -53,7 +53,7 @@ from workspace.models import Category
 from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_group_workspaces
+from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_base_workspaces
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -92,7 +92,7 @@ def createWorkSpace(workspaceName, user):
             try:
                 new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
                 if new_workspace != None:
-                    cloned_workspace = buildWorkspaceFromTemplate(new_workspace.template, user)
+                    cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
 
                     cloned_workspace.name = workspaceName
                     cloned_workspace.save()
@@ -185,7 +185,7 @@ class WorkSpaceCollection(Resource):
 
         data_list = {'reloadShowcase': False}
         try:
-            data_list['reloadShowcase'] = sync_group_workspaces(user)
+            data_list['reloadShowcase'] = sync_base_workspaces(user)
             # updated user workspaces
             workspaces = WorkSpace.objects.filter(users=user)
 
@@ -648,7 +648,7 @@ class WorkSpaceAdderEntry(Resource):
         user = get_user_authentication(request)
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        workspace = buildWorkspaceFromTemplate(published_workspace.template, user)
+        workspace, _junk = buildWorkspaceFromTemplate(published_workspace.template, user)
 
         activate = request.GET.get('active') == "true"
         if not activate:

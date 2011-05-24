@@ -37,10 +37,11 @@ except ImportError:
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import Group
+#from django.contrib.auth.models import Group
 from django.utils import simplejson
 
-from workspace.models import Tab, PublishedWorkSpace, SharedVariableValue, VariableValue, WorkSpace
+from workspace.managers import get_workspace_managers
+from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, SharedVariableValue, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -101,17 +102,36 @@ def create_published_workspace_from_template(template, resource, contratable, us
     return published_workspace
 
 
+def encrypt_value(value):
+    if not HAS_AES:
+        return value
+
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    json_value = simplejson.dumps(value, ensure_ascii=False)
+    padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
+    return cipher.encrypt(padded_value).encode('base64')
+
+
+def decrypt_value(value):
+    if not HAS_AES:
+        return value
+
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    try:
+        value = cipher.decrypt(value.decode('base64'))
+        return simplejson.loads(value)
+    except:
+        return ''
+
+
 def set_variable_value(var_id, user, value, shared=None):
 
     variables_to_notify = []
     variable_value = VariableValue.objects.filter(user=user, variable__id=var_id).select_related('variable__vardef')[0]
 
     new_value = unicode(value)
-    if variable_value.variable.vardef.secure and HAS_AES:
-        cipher = AES.new(settings.SECRET_KEY[:32])
-        json_value = simplejson.dumps(new_value, ensure_ascii=False)
-        padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
-        new_value = cipher.encrypt(padded_value).encode('base64')
+    if variable_value.variable.vardef.secure:
+        new_value = encrypt_value(new_value)
 
     if shared != None:
         if shared:
@@ -149,39 +169,52 @@ def set_variable_value(var_id, user, value, shared=None):
     return variables_to_notify
 
 
-def sync_group_workspaces(user):
-    from workspace.views import linkWorkspace
-    # user workspaces
-    workspaces = WorkSpace.objects.filter(users=user)
+def sync_base_workspaces(user):
 
-    # all group workspaces
-    # the compression list outside the inside compression list is for flatten
-    # the inside list
-    group_workspaces = [workspace for sublist in
-                        [WorkSpace.objects.filter(targetOrganizations=org)
-                         for org in Group.objects.all()]
-                        for workspace in sublist]
+    from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
-    # workspaces assigned to the user's groups
-    # the compression list outside the inside compression list is for flatten
-    # the inside list
-    workspaces_by_group = [workspace for sublist in
-                           [WorkSpace.objects.filter(targetOrganizations=org)
-                            for org in user.groups.all()]
-                           for workspace in sublist]
-
-    reload_showcase = False
     packageLinker = PackageLinker()
+    reload_showcase = False
+    managers = get_workspace_managers()
 
-    for ws in group_workspaces:
-        if ws in workspaces:
-            if not ws in workspaces_by_group:
-                # the user already has this workspace, but he shouldn't
-                packageLinker.unlink_workspace(ws, user)
-        elif ws in workspaces_by_group:
-            # the user doesn't have this workspace yet, but he should
-            linkWorkspace(user, ws.id, ws.creator)
-            reload_showcase = True  # because this workspace is new for the user
-        # else: the user doesn't have this workspace yet, and he shouldn't
+    workspaces_by_manager = {}
+    workspaces_by_ref = {}
+    for manager in managers:
+        workspaces_by_manager[manager.get_id()] = []
+        workspaces_by_ref[manager.get_id()] = {}
+
+    workspaces = UserWorkSpace.objects.filter(user=user)
+    for workspace in workspaces:
+        if workspace.manager != '':
+            workspaces_by_manager[workspace.manager].append(workspace.reason_ref)
+            workspaces_by_ref[workspace.manager][workspace.reason_ref] = workspace
+
+    for manager in managers:
+        current_workspaces = workspaces_by_manager[manager.get_id()]
+        result = manager.update_base_workspaces(user, current_workspaces)
+
+        for workspace_to_remove in result[0]:
+            user_workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
+            workspace = user_workspace.workspace
+            user_workspace.delete()
+
+            if workspace.userworkspace_set.count() == 0:
+                workspace.delete()
+
+        for workspace_to_add in result[1]:
+            from_workspace = workspace_to_add[1]
+
+            if isinstance(from_workspace, WorkSpace):
+                user_workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+            elif isinstance(from_workspace, PublishedWorkSpace):
+                _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
+            else:
+                # TODO warning
+                continue
+
+            user_workspace.manager = manager.get_id()
+            user_workspace.reason_ref = workspace_to_add[0]
+            user_workspace.save()
+            reload_showcase = True
 
     return reload_showcase

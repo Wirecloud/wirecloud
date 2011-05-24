@@ -121,7 +121,12 @@ def make_workspace_preferences_cache_key(workspace_id):
     return '_workspace_preferences_cache/' + str(workspace_id)
 
 
-def get_workspace_preference_values(workspace_id):
+def get_workspace_preference_values(workspace):
+    if isinstance(workspace, WorkSpace):
+        workspace_id = workspace.id
+    else:
+        workspace_id = int(workspace)
+
     cache_key = make_workspace_preferences_cache_key(workspace_id)
     values = cache.get(cache_key)
     if values == None:

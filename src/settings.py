@@ -273,6 +273,10 @@ CACHES = {
 }
 JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASE_NAME
 
+WORKSPACE_MANAGERS = (
+    'workspace.workspace_managers.OrganizationWorkspaceManager',
+)
+
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
