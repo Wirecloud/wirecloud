@@ -43,7 +43,7 @@ class PackageLinker:
 
         if not created:
             # The workspace is already linked to the user
-            return
+            return user_workspace
 
         # Linking gadgets to user!
         variables = self.link_gadgets(workspace, user)
