@@ -65,7 +65,7 @@ class WorkspaceTestCase(TestCase):
             'igadgetVars': [
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
-                {'id': 3, 'value': 'new_data'}
+                {'id': 4, 'value': 'new_data'}
             ]
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False)

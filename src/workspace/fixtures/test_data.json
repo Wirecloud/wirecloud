@@ -166,6 +166,14 @@
         "model": "igadget.Variable",
         "pk": "3",
         "fields": {
+            "vardef": "3",
+            "igadget": "1"
+        }
+    },
+    {
+        "model": "igadget.Variable",
+        "pk": "4",
+        "fields": {
             "vardef": "4",
             "igadget": "1"
         }
@@ -192,7 +200,7 @@
         "model": "workspace.VariableValue",
         "pk": "3",
         "fields": {
-            "variable": "3",
+            "variable": "4",
             "value": "test_data",
             "user": "2"
         }
