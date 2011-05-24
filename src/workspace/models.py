@@ -114,6 +114,15 @@ class PublishedWorkSpace(models.Model):
         return unicode(self.pk) + " " + unicode(self.name)
 
 
+class GroupPublishedWorkspace(models.Model):
+
+    group = models.ForeignKey(Group)
+    workspace = models.ForeignKey(PublishedWorkSpace)
+
+    def __unicode__(self):
+        return '%s => %s' % (unicode(self.workspace), unicode(self.group))
+
+
 #Category for which a workspace is the defalult workspace
 class Category(models.Model):
 

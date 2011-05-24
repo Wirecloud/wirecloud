@@ -1,8 +1,12 @@
-from workspace.models import WorkSpace
+from workspace.models import GroupPublishedWorkspace, PublishedWorkSpace, WorkSpace
 
 
 def ref_from_workspace(workspace):
-    return 'group/' + str(workspace.id)
+
+    if isinstance(workspace, WorkSpace):
+        return 'group/' + str(workspace.id)
+    elif isinstance(workspace, PublishedWorkSpace):
+        return 'group_published/' + str(workspace.id)
 
 
 class OrganizationWorkspaceManager:
@@ -15,13 +19,23 @@ class OrganizationWorkspaceManager:
         workspaces_to_remove = current_workspace_refs[:]
         workspaces_to_add = []
 
+        user_groups = user.groups.all()
+
         # workspaces assigned to the user's groups
-        # the compression list outside the inside compression list is for flatten
+        # the compression list outside the inside compression list is for flattening
         # the inside list
         workspaces = [workspace for sublist in
                       [WorkSpace.objects.filter(targetOrganizations=org)
-                       for org in user.groups.all()]
+                       for org in user_groups]
                       for workspace in sublist]
+
+        # published workspaces assigned to the user's groups
+        # the compression list outside the inside compression list is for flattening
+        # the inside list
+        workspaces += [relation.workspace for sublist in
+                       [GroupPublishedWorkspace.objects.filter(group=group)
+                        for group in user_groups]
+                      for relation in sublist]
 
         for workspace in workspaces:
             ref = ref_from_workspace(workspace)
