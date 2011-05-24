@@ -53,7 +53,7 @@ from workspace.models import Category
 from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_group_workspaces
+from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_base_workspaces
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -185,7 +185,7 @@ class WorkSpaceCollection(Resource):
 
         data_list = {'reloadShowcase': False}
         try:
-            data_list['reloadShowcase'] = sync_group_workspaces(user)
+            data_list['reloadShowcase'] = sync_base_workspaces(user)
             # updated user workspaces
             workspaces = WorkSpace.objects.filter(users=user)
 

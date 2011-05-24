@@ -158,7 +158,7 @@ def set_variable_value(var_id, user, value, shared=None):
     return variables_to_notify
 
 
-def sync_group_workspaces(user):
+def sync_base_workspaces(user):
 
     from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
