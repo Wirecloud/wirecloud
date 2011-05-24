@@ -43,8 +43,9 @@ class Command(BaseCommand):
             if os.access(deployment_path, os.W_OK):
                 rmtree(deployment_path)
             else:
-                raise CommandError('Can\'t remove old deployment at '
-                                   + deployment_path)
+                print ('Couldn\'t remove old deployment at "' + deployment_path
+                       + '". Maybe it doesn\'t exist. Continuing with the'
+                       ' importation.')
 
         if deployment_path.endswith(os.sep):
             deployment_path = deployment_path[:-1]
@@ -58,4 +59,4 @@ class Command(BaseCommand):
         tar.extractall(deployment_path)
         tar.close()
 
-        print 'Successfully imported deployment from "%s"\n' % args[0]
+        print 'Successfully imported deployment from "%s"' % args[0]

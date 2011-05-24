@@ -48,4 +48,4 @@ class Command(BaseCommand):
         tar.add(settings.GADGETS_DEPLOYMENT_DIR, arcname=deployment_path)
         tar.close()
 
-        print 'Successfully exported deployment as "%s"\n' % args[0]
+        print 'Successfully exported deployment as "%s"' % args[0]
