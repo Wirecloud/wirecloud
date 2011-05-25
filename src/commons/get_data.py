@@ -439,6 +439,7 @@ def get_workspace_data(workspace, user):
         'name': workspace.name,
         'shared': workspace.is_shared(),
         'owned': workspace.creator == user,
+        'removable': workspace.creator == user and user_workspace.manager == '',
         'active': user_workspace.active,
     }
 

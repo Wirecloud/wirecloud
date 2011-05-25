@@ -32,7 +32,8 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
@@ -325,6 +326,17 @@ class WorkSpaceEntry(Resource):
     def delete(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
 
+        user_workspaces = UserWorkSpace.objects.select_related('workspace')
+        try:
+            user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
+        except UserWorkSpace.DoesNotExist:
+            raise Http404
+
+        workspace = user_workspace.workspace
+        if workspace.creator != user or user_workspace.manager != '':
+            return HttpResponseForbidden()
+
+        # Check if the user does not have any other workspace
         workspaces = WorkSpace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
 
         if workspaces.count() == 0:
@@ -332,13 +344,11 @@ class WorkSpaceEntry(Resource):
 
             raise TracedServerError(None, {'workspace': workspace_id}, request, msg)
 
-        # Gets Igadget, if it does not exist, a http 404 error is returned
-        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
-
+        # Remove the workspace
         PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
-
         workspace.delete()
-        #set a new active workspace (first workspace by default)
+
+        # Set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
 
