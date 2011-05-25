@@ -12,6 +12,7 @@ from commons.get_data import get_global_workspace_data
 from connectable.models import InOut
 from gadget.models import Gadget
 from igadget.utils import SaveIGadget, deleteIGadget
+from workspace.packageCloner import PackageCloner
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
@@ -123,6 +124,21 @@ class WorkspaceTestCase(TestCase):
         self.assertEqual(workspace.creator, self.user)
         self.assertEqual(new_workspace.workspace, workspace)
         self.assertEqual(initial_vars.count(), cloned_vars.count())
+
+    def testCloneWorkspace(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        packageCloner = PackageCloner()
+        cloned_workspace = packageCloner.clone_tuple(workspace)
+
+        self.assertNotEqual(workspace, cloned_workspace)
+
+        original_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=workspace)
+        cloned_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=cloned_workspace)
+
+        self.assertEqual(original_variables.count(), cloned_variables.count())
+        self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):

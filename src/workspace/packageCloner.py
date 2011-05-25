@@ -44,7 +44,7 @@ class FKCollection:
         table_name = cloned_tuple._meta.object_name
         pending_fks = self.get_fks(table_name, old_pk)
 
-        for (linker_app, linker_table, linker_field, linker_tuple_id) in pending_fks:
+        for linker_app, linker_table, linker_field, linker_tuple_id in pending_fks:
             model = get_model(linker_app, linker_table)
 
             linker_tuple = model.objects.get(id=linker_tuple_id)
@@ -178,24 +178,26 @@ class PackageCloner:
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
-        self.final_tables = ['User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue']
+        self.final_tables = ('User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue')
 
     def is_final_table(self, table_name):
-        return (table_name in self.final_tables)
+        return table_name in self.final_tables
 
     def clone_tuple(self, tuple):
         meta = tuple._meta
         table_name = meta.object_name
 
-        #Controlling when a final table is reached!
-        if (self.is_final_table(table_name)):
+        # Controlling when a final table is reached!
+        if self.is_final_table(table_name):
             return tuple
 
-        #Controlling when a tuple has been previously cloned!
+        # Controlling when a tuple has been previously cloned!
         new_id = self.mapping.get_mapping(table_name, tuple.id)
 
-        if (new_id):
+        if new_id:
+
             return get_tuple(meta.app_label, meta.module_name, new_id)
+
         else:
 
             model = get_model(meta.app_label, table_name)
@@ -204,33 +206,22 @@ class PackageCloner:
 
             fields = meta.fields
 
-            #Cloning all object data!
+            # Cloning all object data!
             for field in fields:
-                if (field != meta.auto_field):
-                    setattr(cloned_tuple, field.name, getattr(tuple, field.name))
-
-            #Getting an id!
-            cloned_tuple.save()
-
-            #Registering mapping between tuple and cloning tuple!
-            self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
-
-            #Marking all cloned object fks to be updated when the referenced tuple is cloned!
-            for field in fields:
-                if (isinstance(field, models.ForeignKey)):
-                    referenced_table = field.rel.to._meta.object_name
-
-                    #get the id of the foreignKey. It may be optional (Null)
+                if isinstance(field, models.ForeignKey):
+                    # get the id of the foreignKey. It may be optional (None)
                     fkValue = getattr(tuple, field.name)
                     if fkValue:
-                        referenced_tuple = fkValue.id
+                        fkValue = self.clone_tuple(fkValue)
 
-                        linker_app = meta.app_label
-                        linker_table = table_name
-                        linker_field = field.name
-                        linker_tuple_id = cloned_tuple.id
+                    setattr(cloned_tuple, field.name, fkValue)
 
-                        self.fks.add_fk(linker_app, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+                elif field != meta.auto_field:
+                    setattr(cloned_tuple, field.name, getattr(tuple, field.name))
+
+            # Getting an id!
+            cloned_tuple.save()
+            self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
 
             ##########################################################################################################
             #Marking many_to_many relationships to be updated when involved tuples are both cloned!
@@ -267,25 +258,7 @@ class PackageCloner:
                                            old_to_id=tuple.id, new_to_id=cloned_tuple.id, to_table=table_name)
             ###########################################################################################################
 
-            #When a cloned tuple is saved, it's necessary to update pending foreign keys!
-            self.fks.update_fks(cloned_tuple, tuple.id)
-
-            #Foreign keys fields must be cloned!
-            for field in fields:
-                if (isinstance(field, models.ForeignKey)):
-                    related_tuple = get_fk_tuple(tuple, field.name)
-
-                    #check if the foreign key is empty
-                    if related_tuple:
-                        cloned_related_tuple = self.clone_tuple(related_tuple)
-                        setattr(cloned_tuple, field.name, cloned_related_tuple)
-
-                    continue
-
-            #Saving already cloned fks!
-            cloned_tuple.save()
-
-            #Continue iterating over data-model structure
+            # Continue iterating over data-model structure
             related_objects = meta._related_objects_cache.keys()
 
             for related_table in related_objects:
@@ -314,11 +287,11 @@ class PackageCloner:
 
         for related_table in related_objects:
             related_model = related_table.model
-
             related_meta = related_model._meta
-            related_table_name = related_meta.object_name
-
-            related_tuples = get_related_tuples(related_table_name, related_table.field.name, from_ws.id)
+            related_tuples = get_related_tuples(related_meta.app_label,
+                                                related_meta.module_name,
+                                                related_table.field.name,
+                                                from_ws.id)
             for related_tuple in related_tuples:
                 self.clone_tuple(related_tuple)
 
