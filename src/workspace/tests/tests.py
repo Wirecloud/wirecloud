@@ -11,6 +11,7 @@ from django.utils import simplejson
 from commons.get_data import get_global_workspace_data
 from connectable.models import InOut
 from gadget.models import Gadget
+from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, deleteIGadget
 from workspace.packageCloner import PackageCloner
 from workspace.mashupTemplateGenerator import build_template_from_workspace
@@ -133,12 +134,35 @@ class WorkspaceTestCase(TestCase):
         cloned_workspace = packageCloner.clone_tuple(workspace)
 
         self.assertNotEqual(workspace, cloned_workspace)
+        self.assertEqual(cloned_workspace.users.count(), 0)
 
-        original_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=workspace)
-        cloned_variables = VariableValue.objects.filter(variable__igadget__tab__workspace=cloned_workspace)
+        original_igadgets = IGadget.objects.filter(tab__workspace=workspace)
+        cloned_igadgets = IGadget.objects.filter(tab__workspace=cloned_workspace)
+        self.assertEqual(original_igadgets.count(), cloned_igadgets.count())
+        self.assertNotEqual(original_igadgets[0].id, cloned_igadgets[0].id)
+
+        original_variables = Variable.objects.filter(igadget__tab__workspace=workspace)
+        cloned_variables = Variable.objects.filter(igadget__tab__workspace=cloned_workspace)
 
         self.assertEqual(original_variables.count(), cloned_variables.count())
         self.assertNotEqual(original_variables[0].id, cloned_variables[0].id)
+
+    def testMergeWorkspaces(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        packageCloner = PackageCloner()
+        cloned_workspace = packageCloner.clone_tuple(workspace)
+        linkWorkspace(self.user, cloned_workspace.id, self.user)
+
+        packageCloner = PackageCloner()
+        packageCloner.merge_workspaces(cloned_workspace, workspace, self.user)
+
+        # Check cache invalidation
+        data = get_global_workspace_data(workspace, self.user)
+        tab_list = data['workspace']['tabList']
+
+        self.assertEqual(len(tab_list), 2)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
