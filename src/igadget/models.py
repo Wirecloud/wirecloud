@@ -83,5 +83,4 @@ class Variable(models.Model):
         return self.vardef.has_public_value()
 
     def get_default_value(self):
-        return self.vardef.default_value
-
+        return self.vardef.get_default_value()
