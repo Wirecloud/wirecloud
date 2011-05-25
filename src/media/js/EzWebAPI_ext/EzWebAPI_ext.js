@@ -4556,6 +4556,10 @@ Pagination.prototype.changeElements = function(elements) {
 };
 
 Pagination.prototype.changePageSize = function(pageSize) {
+    if (this.pOptions.pageSize === pageSize) {
+        // It's the same size, nothing to do here
+        return;
+    }
     this.pOptions.pageSize = pageSize;
     this._calculatePages();
     this.events['paginationChanged'].dispatch(this.pOptions.pageSize, false);
