@@ -204,6 +204,7 @@ function WorkSpace (workSpaceState) {
             this.remoteChannelManager = new RemoteChannelManager(this.wiring);
 
             this.restricted = (!this.isOwned() && this.isShared()) || this.forceRestrictedSharing();
+            this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
 
             if (tabs.length > 0) {
@@ -904,7 +905,7 @@ function WorkSpace (workSpaceState) {
         }
 
         // Delete option
-        if ((nworkspaces > 1) && !this.restricted && this.isAllowed('add_remove_workspaces')) {
+        if ((nworkspaces > 1) && !this.removable && this.isAllowed('add_remove_workspaces')) {
             this.confMenu.addOption(gettext("Remove"),
                 function() {
                     var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
