@@ -170,7 +170,10 @@ class VariableDef(TransModel):
         return self.type != 'P' and self.aspect != 'SLOT' and self.aspect != 'EVENT'
 
     def get_default_value(self):
-        return self.default_value
+        if self.default_value is None:
+            return ''
+        else:
+            return self.default_value
 
 
 class UserPrefOption(TransModel):
