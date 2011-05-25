@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import get_model
 
 from workspace.packageLinker import PackageLinker
@@ -174,17 +174,21 @@ class MappingCollection:
 
 class PackageCloner:
 
+    extra_models = {
+        'WorkSpace': [('workspace', 'tab', 'workspace'), ('connectable', 'inout', 'workspace')],
+        'Tab': [('igadget', 'igadget', 'tab')],
+        'IGadget': [('igadget', 'variable', 'igadget')],
+    }
+
+    unique_variant = {
+        'Tab': 'name',
+    }
+
     def __init__(self):
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
         self.final_tables = ('User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue')
-
-        self.extra_models = {
-            'WorkSpace': [('workspace', 'tab', 'workspace'), ('connectable', 'inout', 'workspace')],
-            'Tab': [('igadget', 'igadget', 'tab')],
-            'IGadget': [('igadget', 'variable', 'igadget')],
-        }
 
     def is_final_table(self, table_name):
         return table_name in self.final_tables
@@ -226,7 +230,27 @@ class PackageCloner:
                     setattr(cloned_tuple, field.name, getattr(tuple, field.name))
 
             # Getting an id!
-            cloned_tuple.save()
+            try:
+                cloned_tuple.save()
+            except IntegrityError:
+                variant_field = self.unique_variant[table_name]
+                unique_key = {}
+
+                for unique_field in meta.unique_together[0]:
+                    unique_key[unique_field] = getattr(cloned_tuple, unique_field)
+
+                sufix = 2
+                duplicated_key = True
+                while duplicated_key:
+                    unique_key[variant_field] = getattr(cloned_tuple, variant_field) + ' ' + str(sufix)
+                    try:
+                        model.objects.get(**unique_key)
+                    except model.DoesNotExist:
+                        duplicated_key = False
+
+                setattr(cloned_tuple, variant_field, unique_key[variant_field])
+                cloned_tuple.save()
+
             self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
 
             ##########################################################################################################
