@@ -180,6 +180,12 @@ class PackageCloner:
         self.m2ms = Many2ManyCollection()
         self.final_tables = ('User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue')
 
+        self.extra_models = {
+            'WorkSpace': [('workspace', 'tab', 'workspace'), ('connectable', 'inout', 'workspace')],
+            'Tab': [('igadget', 'igadget', 'tab')],
+            'IGadget': [('igadget', 'variable', 'igadget')],
+        }
+
     def is_final_table(self, table_name):
         return table_name in self.final_tables
 
@@ -259,16 +265,11 @@ class PackageCloner:
             ###########################################################################################################
 
             # Continue iterating over data-model structure
-            related_objects = meta._related_objects_cache.keys()
-
-            for related_table in related_objects:
-                related_model = related_table.model
-
-                related_meta = related_model._meta
-
-                related_tuples = get_related_tuples(related_meta.app_label,
-                                                    related_meta.module_name,
-                                                    related_table.field.name,
+            extra_models = self.extra_models.get(table_name, [])
+            for model in extra_models:
+                related_tuples = get_related_tuples(model[0],  # app_label
+                                                    model[1],  # module_name
+                                                    model[2],  # field.name
                                                     tuple.id)
                 for related_tuple in related_tuples:
                     self.clone_tuple(related_tuple)
@@ -282,15 +283,12 @@ class PackageCloner:
         #Registering mapping between tuple and cloning tuple!
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
 
-        #Continue iterating over data-model structure
-        related_objects = meta._related_objects_cache.keys()
-
-        for related_table in related_objects:
-            related_model = related_table.model
-            related_meta = related_model._meta
-            related_tuples = get_related_tuples(related_meta.app_label,
-                                                related_meta.module_name,
-                                                related_table.field.name,
+        # Continue iterating over data-model structure
+        extra_models = self.extra_models.get(table_name, [])
+        for model in extra_models:
+            related_tuples = get_related_tuples(model[0],  # app_label
+                                                model[1],  # module_name
+                                                model[2],  # field.name
                                                 from_ws.id)
             for related_tuple in related_tuples:
                 self.clone_tuple(related_tuple)
