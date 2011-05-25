@@ -1,8 +1,6 @@
 from django.db import models, IntegrityError
 from django.db.models import get_model
 
-from workspace.packageLinker import PackageLinker
-
 
 #########################################
 # Auxiliar functions
@@ -18,11 +16,10 @@ def get_tuple(app_label, module_name, tuple_id):
     return model.objects.get(id=tuple_id)
 
 
-def get_related_tuples(app_label, module_name, field_name, tuple_id):
+def get_related_tuples(app_label, module_name, field_name, tuple_id, lookup={}):
     model = get_model(app_label, module_name)
-    kwargs = {}
-    kwargs[field_name] = tuple_id
-    return model.objects.filter(**kwargs)
+    lookup[field_name] = tuple_id
+    return model.objects.filter(**lookup)
 
 #################################################
 ## Logic classes
@@ -184,6 +181,9 @@ class PackageCloner:
         'Tab': 'name',
     }
 
+    fields_to_overwrite = {
+    }
+
     def __init__(self):
         self.mapping = MappingCollection()
         self.fks = FKCollection()
@@ -215,6 +215,7 @@ class PackageCloner:
             cloned_tuple = model()
 
             fields = meta.fields
+            fields_to_overwrite = self.fields_to_overwrite.get(table_name, {})
 
             # Cloning all object data!
             for field in fields:
@@ -227,7 +228,13 @@ class PackageCloner:
                     setattr(cloned_tuple, field.name, fkValue)
 
                 elif field != meta.auto_field:
-                    setattr(cloned_tuple, field.name, getattr(tuple, field.name))
+
+                    if field.name in fields_to_overwrite:
+                        value = fields_to_overwrite[field.name]
+                    else:
+                        value = getattr(tuple, field.name)
+
+                    setattr(cloned_tuple, field.name, value)
 
             # Getting an id!
             try:
@@ -291,10 +298,15 @@ class PackageCloner:
             # Continue iterating over data-model structure
             extra_models = self.extra_models.get(table_name, [])
             for model in extra_models:
+                lookup = {}
+                if len(model) > 3:
+                    lookup = model[3]
+
                 related_tuples = get_related_tuples(model[0],  # app_label
                                                     model[1],  # module_name
                                                     model[2],  # field.name
-                                                    tuple.id)
+                                                    tuple.id,
+                                                    lookup)
                 for related_tuple in related_tuples:
                     self.clone_tuple(related_tuple)
 
@@ -304,8 +316,16 @@ class PackageCloner:
         meta = from_ws._meta
         table_name = meta.object_name
 
-        #Registering mapping between tuple and cloning tuple!
+        # Registering mapping between tuple and cloning tuple!
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
+
+        self.final_tables = list(self.final_tables)
+        self.extra_models['Variable'] = (
+            ('workspace', 'variablevalue', 'variable', {'user': from_ws.creator}),
+        )
+        self.fields_to_overwrite['VariableValue'] = {
+            'user': user,
+        }
 
         # Continue iterating over data-model structure
         extra_models = self.extra_models.get(table_name, [])
@@ -317,9 +337,7 @@ class PackageCloner:
             for related_tuple in related_tuples:
                 self.clone_tuple(related_tuple)
 
-        # Linking merged workspace
-        packageLinker = PackageLinker()
-
-        packageLinker.link_workspace(to_ws, user, from_ws.creator)
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(to_ws)
 
         return to_ws
