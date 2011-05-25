@@ -65,31 +65,31 @@ class Many2ManyCollection:
     def __init__(self):
         self.many2many_list = []
 
-    def get_m2m_info(self, old_from_id, from_table, from_field, old_to_id, to_table):
+    def get_m2m_info(self, old_from_id, from_meta, from_field, old_to_id, to_meta):
         for m2m_info in self.many2many_list:
-            if (m2m_info['old_to_id'] == old_to_id and m2m_info['to_table'] == to_table and \
-                m2m_info['from_table'] == from_table and m2m_info['old_from_id'] == old_from_id and \
+            if (m2m_info['old_to_id'] == old_to_id and m2m_info['to_meta'] == to_meta and \
+                m2m_info['from_meta'] == from_meta and m2m_info['old_from_id'] == old_from_id and \
                 m2m_info['from_field'] == from_field):
                 return m2m_info
 
         return None
 
-    def add_m2m_info(self, old_from_id, new_from_id, from_table, from_field, old_to_id, new_to_id, to_table):
-        m2m_info = self.get_m2m_info(old_from_id, from_table, from_field, old_to_id, to_table)
+    def add_m2m_info(self, old_from_id, new_from_id, from_meta, from_field, old_to_id, new_to_id, to_meta):
+        m2m_info = self.get_m2m_info(old_from_id, from_meta, from_field, old_to_id, to_meta)
 
-        if (not m2m_info):
+        if not m2m_info:
             #Time to create the m2m_info object
 
-            m2m_info = dict()
-
-            m2m_info['old_from_id'] = old_from_id
-            m2m_info['new_from_id'] = new_from_id
-            m2m_info['from_table'] = from_table
-            m2m_info['from_field'] = from_field
-            m2m_info['old_to_id'] = old_to_id
-            m2m_info['new_to_id'] = new_to_id
-            m2m_info['to_table'] = to_table
-            m2m_info['completed'] = False
+            m2m_info = {
+                'old_from_id': old_from_id,
+                'new_from_id': new_from_id,
+                'from_meta': from_meta,
+                'from_field': from_field,
+                'old_to_id': old_to_id,
+                'new_to_id': new_to_id,
+                'to_meta': to_meta,
+                'completed': False,
+            }
 
             self.many2many_list.append(m2m_info)
 
@@ -121,19 +121,17 @@ class Many2ManyCollection:
 
     def update_m2m(self, m2m_info):
         if m2m_info['completed']:
-            from_model = eval(m2m_info['from_table'])
-            from_tuple = from_model.objects.get(id=m2m_info['new_from_id'])
-
-            to_model = eval(m2m_info['to_table'])
-            to_tuple = to_model.objects.get(id=m2m_info['new_to_id'])
+            from_meta = m2m_info['from_meta']
+            from_tuple = get_tuple(from_meta.app_label, from_meta.module_name, m2m_info['new_from_id'])
+            to_meta = m2m_info['to_meta']
+            to_tuple = get_tuple(to_meta.app_label, to_meta.module_name, m2m_info['new_to_id'])
 
             getattr(from_tuple, m2m_info['from_field']).add(to_tuple)
 
             from_tuple.save()
 
-            #Erasing m2m_info after linking
+            # Erasing m2m_info after linking
             self.many2many_list.remove(m2m_info)
-            del m2m_info
 
 
 class MappingCollection:
@@ -172,9 +170,22 @@ class MappingCollection:
 class PackageCloner:
 
     extra_models = {
-        'WorkSpace': [('workspace', 'tab', 'workspace'), ('connectable', 'inout', 'workspace')],
-        'Tab': [('igadget', 'igadget', 'tab')],
-        'IGadget': [('igadget', 'variable', 'igadget')],
+        'WorkSpace': (
+            ('workspace', 'tab', 'workspace'),
+            ('connectable', 'inout', 'workspace'),
+            ('preferences', 'workspacepreference', 'workspace'),
+        ),
+        'Tab': (
+            ('igadget', 'igadget', 'tab'),
+            ('preferences', 'tabpreference', 'tab'),
+        ),
+        'IGadget': (
+            ('igadget', 'variable', 'igadget'),
+        ),
+        'Variable': (
+            ('connectable', 'in', 'variable'),
+            ('connectable', 'out', 'variable'),
+        ),
     }
 
     unique_variant = {
@@ -271,11 +282,16 @@ class PackageCloner:
                 field_name = m2m_field.attname
                 m2m_objects = getattr(tuple, field_name).all()
                 for m2m_object in m2m_objects:
-                    referenced_model = m2m_object._meta.object_name
+                    referenced_meta = m2m_object._meta
                     referenced_tuple_id = m2m_object.id
 
-                    self.m2ms.add_m2m_info(old_from_id=tuple.id, new_from_id=cloned_tuple.id, from_table=table_name, from_field=field_name,
-                                           old_to_id=referenced_tuple_id, new_to_id=None, to_table=referenced_model)
+                    self.m2ms.add_m2m_info(old_from_id=tuple.id,
+                        new_from_id=cloned_tuple.id,
+                        from_meta=meta,
+                        from_field=field_name,
+                        old_to_id=referenced_tuple_id,
+                        new_to_id=None,
+                        to_meta=referenced_meta)
 
             #2. cloned TO-SIDE table first
             m2m_related_fields = meta._related_many_to_many_cache
@@ -284,15 +300,21 @@ class PackageCloner:
                 reverse_rel_name = '%s_set' % m2m_field.var_name
 
                 from_field = m2m_field.field.name
-                from_table_name = m2m_field.model._meta.object_name
 
                 m2m_objects = getattr(tuple, reverse_rel_name).all()
 
                 for m2m_object in m2m_objects:
+                    referenced_meta = m2m_object._meta
                     old_from_id = m2m_object.id
 
-                    self.m2ms.add_m2m_info(old_from_id=old_from_id, new_from_id=None, from_table=from_table_name, from_field=from_field,
-                                           old_to_id=tuple.id, new_to_id=cloned_tuple.id, to_table=table_name)
+                    self.m2ms.add_m2m_info(old_from_id=old_from_id,
+                        new_from_id=None,
+                        from_meta=referenced_meta,
+                        from_field=from_field,
+                        old_to_id=tuple.id,
+                        new_to_id=cloned_tuple.id,
+                        to_meta=meta)
+
             ###########################################################################################################
 
             # Continue iterating over data-model structure
@@ -320,7 +342,7 @@ class PackageCloner:
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
 
         self.final_tables = list(self.final_tables)
-        self.extra_models['Variable'] = (
+        self.extra_models['Variable'] += (
             ('workspace', 'variablevalue', 'variable', {'user': from_ws.creator}),
         )
         self.fields_to_overwrite['VariableValue'] = {
