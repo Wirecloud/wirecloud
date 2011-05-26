@@ -47,7 +47,7 @@ from django.utils.translation import ugettext as _
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from proxy.processors import get_proxy_processors
+from proxy.processors import get_request_proxy_processors, get_response_proxy_processors
 from proxy.utils import encode_query, is_valid_header, ValidationError
 
 
@@ -191,7 +191,7 @@ class Proxy(Resource):
 
             # Pass proxy processors to the new request
             try:
-                for processor in get_proxy_processors():
+                for processor in get_request_proxy_processors():
                     processor.process_request(request_data)
             except ValidationError, e:
                 return e.get_response()
@@ -213,7 +213,7 @@ class Proxy(Resource):
 
             # Add content-type header to the response
             res_info = res.info()
-            if ('Content-Type' in res_info):
+            if 'Content-Type' in res_info:
                 response = HttpResponse(res.read(), mimetype=res_info['Content-Type'])
             else:
                 response = HttpResponse(res.read())
@@ -235,12 +235,17 @@ class Proxy(Resource):
 
                     for key in cookie_parser:
                         response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
+
                 elif header_lower == 'via':
 
                     via_header = via_header + ', ' + headers[header]
 
                 elif is_valid_header(header_lower):
                     response[header] = headers[header]
+
+            # Pass proxy processors to the response
+            for processor in get_response_proxy_processors():
+                response = processor.process_response(request_data, response)
 
             response['Via'] = via_header
 

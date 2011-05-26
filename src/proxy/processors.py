@@ -10,11 +10,15 @@ from proxy.utils import check_empty_params, check_invalid_refs
 
 
 _ezweb_proxy_processors = None
+_ezweb_request_proxy_processors = []
+_ezweb_response_proxy_processors = []
 
 
 def get_proxy_processors():
     from django.conf import settings
     global _ezweb_proxy_processors
+    global _ezweb_request_proxy_processors
+    global _ezweb_response_proxy_processors
 
     if _ezweb_proxy_processors is None:
         if hasattr(settings, 'PROXY_PROCESSORS') and settings.PROXY_PROCESSORS != None:
@@ -36,11 +40,32 @@ def get_proxy_processors():
             except AttributeError:
                 raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable processor processor' % (module, attr))
 
+            if hasattr(processor, 'process_request'):
+                _ezweb_request_proxy_processors.append(processor)
+            if hasattr(processor, 'process_response'):
+                _ezweb_response_proxy_processors.insert(0, processor)
+
             processors.append(processor)
 
         _ezweb_proxy_processors = tuple(processors)
+        _ezweb_request_proxy_processors = tuple(_ezweb_request_proxy_processors)
+        _ezweb_response_proxy_processors = tuple(_ezweb_response_proxy_processors)
 
     return _ezweb_proxy_processors
+
+
+def get_request_proxy_processors():
+    if _ezweb_proxy_processors == None:
+        get_proxy_processors()
+
+    return _ezweb_request_proxy_processors
+
+
+def get_response_proxy_processors():
+    if _ezweb_proxy_processors == None:
+        get_proxy_processors()
+
+    return _ezweb_response_proxy_processors
 
 
 class FixServletBugsProcessor(object):
