@@ -44,72 +44,11 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 
-from commons.get_data import get_variable_value_from_varname
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
 from proxy.processors import get_proxy_processors
-from proxy.utils import encode_query, is_valid_header, check_empty_params, check_invalid_refs, ValidationError
-
-
-VAR_REF_RE = re.compile(r'^(?P<igadget_id>[1-9]\d*|c)/(?P<var_name>.+)$', re.S)
-
-
-def get_variable_value_by_ref(ref, user):
-
-    result = VAR_REF_RE.match(ref)
-    if result:
-        if result.group('igadget_id') == 'c':
-            return result.group('var_name')
-        else:
-            return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
-
-
-def process_secure_data(text, request, ignore_errors=False):
-
-    definitions = text.split('&')
-    for definition in definitions:
-        try:
-            params = definition.split(',')
-            if len(params) == 0:
-                continue
-
-            options = {}
-            for pair in params:
-                tokens = pair.split('=')
-                option_name = urllib2.unquote(tokens[0].strip())
-                options[option_name] = urllib2.unquote(tokens[1].strip())
-
-            action = options.get('action', 'data')
-            if action == 'data':
-                substr = options.get('substr', '')
-                var_ref = options.get('var_ref', '')
-                check_empty_params(substr=substr, var_ref=var_ref)
-
-                value = get_variable_value_by_ref(var_ref, request['user'])
-                check_invalid_refs(var_ref=value)
-
-                encoding = options.get('encoding', 'none')
-                if encoding == 'url':
-                    value = urlquote(value)
-                elif encoding == 'base64':
-                    value = value.encode('base64')[:-1]
-                request['data'] = request['data'].replace(substr, value)
-
-            elif action == 'basic_auth':
-                user_ref = options.get('user_ref', '')
-                password_ref = options.get('pass_ref', '')
-                check_empty_params(user_ref=user_ref, password_ref=password_ref)
-
-                user_value = get_variable_value_by_ref(user_ref, request['user'])
-                password_value = get_variable_value_by_ref(password_ref, request['user'])
-                check_invalid_refs(user_ref=user_value, password_ref=password_value)
-
-                request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
-        except:
-            # TODO logging?
-            if not ignore_errors:
-                raise
+from proxy.utils import encode_query, is_valid_header, ValidationError
 
 
 class MethodRequest(urllib2.Request):
@@ -187,6 +126,7 @@ class Proxy(Resource):
             "data": data,
             "headers": {},
             "user": request.user,
+            "cookies": None,
         }
 
         # HTTP call
@@ -209,7 +149,7 @@ class Proxy(Resource):
 
             opener = urllib2.build_opener(proxy)
 
-            # Adds original request Headers to the request
+            # Extract headers from META
             for header in request.META.items():
                 header_name = header[0].lower()
                 if header_name == 'content_type' and header[1]:
@@ -219,11 +159,6 @@ class Proxy(Resource):
 
                     cookie_parser = Cookie.SimpleCookie(header[1])
 
-                    # Process secure data cookie
-                    if 'X-EzWeb-Secure-Data' in cookie_parser:
-                        process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request_data, ignore_errors=True)
-                        del cookie_parser['X-EzWeb-Secure-Data']
-
                     # Remove EzWeb cookies
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
                         del cookie_parser[settings.SESSION_COOKIE_NAME]
@@ -231,15 +166,7 @@ class Proxy(Resource):
                     if hasattr(settings, 'CSRF_COOKIE_NAME') and settings.CSRF_COOKIE_NAME in cookie_parser:
                         del cookie_parser[settings.CSRF_COOKIE_NAME]
 
-                    content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
-                    if content != '':
-                        request_data['headers']['Cookie'] = content
-
-                elif header_name == 'http_x_ezweb_secure_data':
-                    try:
-                        process_secure_data(header[1], request_data, ignore_errors=False)
-                    except ValidationError, e:
-                        return e.get_response()
+                    request_data['cookies'] = cookie_parser
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
 
@@ -263,8 +190,17 @@ class Proxy(Resource):
             request_data['headers']["Via"] = via_header
 
             # Pass proxy processors to the new request
-            for processor in get_proxy_processors():
-                processor.process_request(request_data)
+            try:
+                for processor in get_proxy_processors():
+                    processor.process_request(request_data)
+            except ValidationError, e:
+                return e.get_response()
+
+            # Cookies
+            if request_data['cookies'] != None:
+                cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
+                if cookie_header_content != '':
+                    request_data['headers']['Cookie'] = cookie_header_content
 
             # Open the request
             try:

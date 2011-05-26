@@ -305,6 +305,7 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
 PROXY_PROCESSORS = (
 #    'proxy.processors.FixServletBugsProcessor',
+    'proxy.processors.SecureDataProcessor',
 )
 
 #Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
