@@ -48,6 +48,7 @@ from commons.get_data import get_variable_value_from_varname
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
+from proxy.processors import get_proxy_processors
 from proxy.utils import encode_query, is_valid_header, check_empty_params, check_invalid_refs, ValidationError
 
 
@@ -182,6 +183,7 @@ class Proxy(Resource):
     def do_request(self, request, url, method, data):
 
         request_data = {
+            "method": method,
             "data": data,
             "headers": {},
             "user": request.user,
@@ -244,6 +246,7 @@ class Proxy(Resource):
                     fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
                     request_data['headers'][fixed_name] = header[1]
 
+            # Build the Via header
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
             if protocolVersion != None:
                 protocolVersion = protocolVersion.group(1)
@@ -259,13 +262,9 @@ class Proxy(Resource):
             via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             request_data['headers']["Via"] = via_header
 
-            if (method == 'POST' or method == 'PUT') and not 'content-type' in request_data['headers']:
-                # Add Content-Type (Servlets bug)
-                request_data['headers']['content-type'] = "application/x-www-form-urlencoded"
-
-            # Remote user header
-            if not request.user.is_anonymous():
-                request_data['headers']['Remote-User'] = request.user.username
+            # Pass proxy processors to the new request
+            for processor in get_proxy_processors():
+                processor.process_request(request_data)
 
             # Open the request
             try:

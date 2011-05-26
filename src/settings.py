@@ -303,6 +303,9 @@ FORCE_SCRIPT_NAME = ""
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
+PROXY_PROCESSORS = (
+#    'proxy.processors.FixServletBugsProcessor',
+)
 
 #Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
 #OPENID_PROVIDERS = ["myopenid.com", "google.com"]
@@ -336,11 +339,11 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
 # External settings configuration
 try:
-    from clms.settings import *
+    from clms.settings import *  # pyflakes:ignore
 except ImportError:
     pass
 
 try:
-    from local_settings import *
+    from local_settings import *  # pyflakes:ignore
 except ImportError:
     pass
