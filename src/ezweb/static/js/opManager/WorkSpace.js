@@ -905,7 +905,7 @@ function WorkSpace (workSpaceState) {
         }
 
         // Delete option
-        if ((nworkspaces > 1) && !this.removable && this.isAllowed('add_remove_workspaces')) {
+        if ((nworkspaces > 1) && this.removable && this.isAllowed('add_remove_workspaces')) {
             this.confMenu.addOption(gettext("Remove"),
                 function() {
                     var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');
