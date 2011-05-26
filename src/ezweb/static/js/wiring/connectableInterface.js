@@ -416,7 +416,7 @@ function ChannelInterface(channel, wiringGUI) {
     Element.extend(inputDel);
     channelPipe.appendChild(inputDel);
     inputDel.setAttribute("alt", gettext("Remove"));
-    inputDel.setAttribute("src", _currentTheme.getIconURL('channel-remove'));
+    inputDel.setAttribute("src", window.URIs.ACTIVE_THEME + "images/remove.png");
     Event.observe(inputDel,
                   'click',
                   function (e) {
