@@ -251,20 +251,25 @@ class PackageCloner:
             try:
                 cloned_tuple.save()
             except IntegrityError:
-                variant_field = self.unique_variant[table_name]
+                variant_field = self.unique_variant.get(table_name, None)
+                if variant_field == None:
+                    raise
+
                 unique_key = {}
 
                 for unique_field in meta.unique_together[0]:
                     unique_key[unique_field] = getattr(cloned_tuple, unique_field)
 
-                sufix = 2
+                suffix = 2
                 duplicated_key = True
                 while duplicated_key:
-                    unique_key[variant_field] = getattr(cloned_tuple, variant_field) + ' ' + str(sufix)
+                    unique_key[variant_field] = getattr(cloned_tuple, variant_field) + ' ' + str(suffix)
                     try:
                         model.objects.get(**unique_key)
                     except model.DoesNotExist:
                         duplicated_key = False
+
+                    suffix += 1
 
                 setattr(cloned_tuple, variant_field, unique_key[variant_field])
                 cloned_tuple.save()
