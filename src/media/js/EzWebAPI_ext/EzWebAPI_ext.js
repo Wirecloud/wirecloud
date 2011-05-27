@@ -3442,7 +3442,6 @@ StyledElements.Tab = function(id, notebook, options) {
     this.tabElement = document.createElement("div");
     this.tabElement.className = "tab";
     this.name = document.createElement('span');
-    EzWebExt.setTextContent(this.name, options.name);
     this.tabElement.appendChild(this.name);
 
     /* call to the parent constructor */
@@ -3467,8 +3466,8 @@ StyledElements.Tab = function(id, notebook, options) {
                                      false);
     }
 
-    if (options.title !== undefined)
-        this.setTitle(options.title);
+    this.title = options.title;
+    this.rename(options.name);
 }
 StyledElements.Tab.prototype = new StyledElements.Container({extending: true});
 
@@ -3485,7 +3484,10 @@ StyledElements.Tab.prototype.close = function() {
  * <code>Tab</code>.
  */
 StyledElements.Tab.prototype.rename = function(newName) {
-    EzWebExt.setTextContent(this.name, newName);
+    this.nameText = newName;
+    EzWebExt.setTextContent(this.name, this.nameText);
+
+    this._updateTitle();
 }
 
 /**
@@ -3494,7 +3496,17 @@ StyledElements.Tab.prototype.rename = function(newName) {
  * los elementos HTML.
  */
 StyledElements.Tab.prototype.setTitle = function(newTitle) {
-    this.tabElement.setAttribute("title", newTitle);
+    this.title = newTitle;
+
+    this._updateTitle();
+};
+
+StyledElements.Tab.prototype._updateTitle = function() {
+    if (typeof this.title === 'undefined' || this.title === null) {
+        this.tabElement.setAttribute('title', this.nameText);
+    } else {
+        this.tabElement.setAttribute('title', this.title);
+    }
 }
 
 /**
