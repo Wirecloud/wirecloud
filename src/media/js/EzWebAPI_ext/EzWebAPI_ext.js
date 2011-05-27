@@ -3597,6 +3597,7 @@ StyledElements.StyledNotebook = function(options) {
     this.tabs = new Array();
     this.tabsById = new Array();
     this.visibleTab = null;
+    this.maxTabElementWidth = '';
 
     /* Process options */
     if (options['id'] != undefined)
@@ -3648,7 +3649,7 @@ StyledElements.StyledNotebook = function(options) {
             break;
 
         case 'shiftRight':
-            if (context.control._isTabVisible(context.control.tabs.length - 1)) {
+            if (context.control._isLastTabVisible()) {
                 return false;
             }
 
@@ -3699,15 +3700,38 @@ StyledElements.StyledNotebook.prototype = new StyledElements.StyledElement();
 /**
  * @private
  */
-StyledElements.StyledNotebook.prototype._isTabVisible = function(tabIndex) {
-    var tabElement = this.tabs[tabIndex].getTabElement();
+StyledElements.StyledNotebook.prototype._isTabVisible = function(tabIndex, full) {
+    var tabElement, tabAreaStart, tabAreaEnd, tabOffsetRight;
 
-    var tabAreaStart = this.tabArea.scrollLeft;
-    var tabAreaEnd = tabAreaStart + this.tabArea.clientWidth;
+    tabElement = this.tabs[tabIndex].getTabElement();
 
-    var tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
+    tabAreaStart = this.tabArea.scrollLeft;
+    tabAreaEnd = tabAreaStart + this.tabArea.clientWidth;
 
-    return tabElement.offsetLeft >= tabAreaStart && tabOffsetRight <= tabAreaEnd;
+    if (full) {
+        tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
+        return tabElement.offsetLeft >= tabAreaStart && tabOffsetRight <= tabAreaEnd;
+    } else {
+        return tabElement.offsetLeft >= tabAreaStart && tabElement.offsetLeft <= tabAreaEnd;
+    }
+}
+
+/**
+ * @private
+ */
+StyledElements.StyledNotebook.prototype._isLastTabVisible = function() {
+    var lastTab = this.tabs.length - 1;
+
+    if (this.tabs.length == 0) {
+        return true;
+    }
+    if (this._isTabVisible(lastTab, true)) {
+        return true;
+    }
+    if (!this._isTabVisible(lastTab)) {
+        return false;
+    }
+    return this.tabs.length < 2 || !this._isTabVisible(lastTab -1);
 }
 
 /**
@@ -3726,7 +3750,7 @@ StyledElements.StyledNotebook.prototype._enableDisableButtons = function() {
         EzWebExt.appendClassName(this.moveLeftButton, "enabled");
     }
 
-    if (this._isTabVisible(this.tabs.length - 1)) {
+    if (this._isLastTabVisible()) {
         EzWebExt.removeClassName(this.moveRightButton, "enabled");
     } else {
         EzWebExt.appendClassName(this.moveRightButton, "enabled");
@@ -3802,6 +3826,10 @@ StyledElements.StyledNotebook.prototype.createTab = function(options) {
     var tabElement = tab.getTabElement();
     this.tabArea.appendChild(tabElement);
     tab.insertInto(this.contentArea);
+    if (this.maxTabElementWidth === '') {
+        this._computeMaxTabElementWidth();
+    }
+    tabElement.style.maxWidth = this.maxTabElementWidth;
 
     if (!this.visibleTab) {
         this.visibleTab = tab;
@@ -3947,11 +3975,32 @@ StyledElements.StyledNotebook.prototype.focus = function(tabId) {
     this.transitionsQueue.addCommand({type: 'focus', tabId: tabId});
 }
 
+/**
+ * @private
+ */
+StyledElements.StyledNotebook.prototype._computeMaxTabElementWidth = function() {
+    var tabAreaWidth, tabElement, computedStyle, padding;
+
+    if (this.tabs.length == 0) {
+        this.maxTabElementWidth = '';
+    }
+
+    tabAreaWidth = this.tabArea.clientWidth;
+    tabElement = this.tabs[0].getTabElement();
+
+    computedStyle = document.defaultView.getComputedStyle(tabElement, null);
+    padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+    padding += computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+    padding += 2 * computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+    this.maxTabElementWidth = (tabAreaWidth - padding) + 'px';
+}
+
 StyledElements.StyledNotebook.prototype.repaint = function(temporal) {
-    var i;
+    var i, height;
     temporal = temporal !== undefined ? temporal: false;
 
-    var height = this._getUsableHeight();
+    height = this._getUsableHeight();
     if (height == null)
         return; // nothing to do
 
@@ -3962,10 +4011,15 @@ StyledElements.StyledNotebook.prototype.repaint = function(temporal) {
 
     // Resize content
     if (temporal) {
-        if (this.visibleTab)
+        if (this.visibleTab) {
             this.visibleTab.repaint(true);
+        }
     } else {
+        this._computeMaxTabElementWidth();
         for (i = 0; i < this.tabs.length; i++) {
+            tabElement = this.tabs[i].getTabElement();
+            tabElement.style.maxWidth = this.maxTabElementWidth;
+
             this.tabs[i].repaint(false);
         }
     }
