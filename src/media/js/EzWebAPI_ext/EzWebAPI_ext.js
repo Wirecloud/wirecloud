@@ -192,6 +192,9 @@ if ('addEventListener' in document) {
             e.stopPropagation = function() {
                 this.cancelBubble = true;
             }
+            e.preventDefault = function() {
+                this.returnValue = false;
+            }
             e.currentTarget = currentTarget;
             extraAdaptations(e);
             callback(e);
@@ -5135,11 +5138,7 @@ StyledElements.PopupMenu = function() {
 
     this._disableCallback = EzWebExt.bind(function(event) {
         event.stopPropagation();
-        if (event.preventDefault) {
-            event.preventDefault();
-        } else {
-            event.returnValue = false;
-        }
+        event.preventDefault();
         this.hide();
     }, this);
 
