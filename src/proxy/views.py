@@ -130,7 +130,7 @@ class Proxy(Resource):
                 "url": url,
                 "data": data,
                 "headers": {},
-                "cookies": None,
+                "cookies": Cookie.SimpleCookie(),
                 "user": request.user,
             }
 
@@ -198,10 +198,9 @@ class Proxy(Resource):
                 return e.get_response()
 
             # Cookies
-            if request_data['cookies'] != None:
-                cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
-                if cookie_header_content != '':
-                    request_data['headers']['Cookie'] = cookie_header_content
+            cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in request_data['cookies']])
+            if cookie_header_content != '':
+                request_data['headers']['Cookie'] = cookie_header_content
 
             # Open the request
             try:
