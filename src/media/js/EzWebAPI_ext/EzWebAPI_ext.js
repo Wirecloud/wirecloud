@@ -5135,7 +5135,11 @@ StyledElements.PopupMenu = function() {
 
     this._disableCallback = EzWebExt.bind(function(event) {
         event.stopPropagation();
-        event.preventDefault();
+        if (event.preventDefault) {
+            event.preventDefault();
+        } else {
+            event.returnValue = false;
+        }
         this.hide();
     }, this);
 
