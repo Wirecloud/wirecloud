@@ -55,7 +55,7 @@ class MethodRequest(urllib2.Request):
 
     def __init__(self, method, *args, **kwargs):
         self._method = method
-        urllib2.Request.__init__(self, *args, **kwargs)
+        super(MethodRequest, self).__init__(self, *args, **kwargs)
 
     def get_method(self):
         return self._method
@@ -121,17 +121,18 @@ class Proxy(Resource):
 
     def do_request(self, request, url, method, data):
 
-        request_data = {
-            "method": method,
-            "data": data,
-            "headers": {},
-            "user": request.user,
-            "cookies": None,
-        }
-
         # HTTP call
         try:
             url = iri_to_uri(url)
+
+            request_data = {
+                "method": method,
+                "url": url,
+                "data": data,
+                "headers": {},
+                "cookies": None,
+                "user": request.user,
+            }
 
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
@@ -204,7 +205,7 @@ class Proxy(Resource):
 
             # Open the request
             try:
-                res = self._do_request(opener, method, url, request_data['data'], request_data['headers'])
+                res = self._do_request(opener, request_data['method'], request_data['url'], request_data['data'], request_data['headers'])
             except urllib2.URLError, e:
                 if e.reason[0] == errno.ECONNREFUSED:
                     return HttpResponse(status=504)
