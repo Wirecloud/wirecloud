@@ -2028,6 +2028,10 @@ IGadget.prototype.saveConfig = function () {
 
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         prefName = curPref.getVarName();
         prefElement = $(this.prefElements[prefName]);
         if (!curPref.validate(curPref.getValueFromInterface())) {
@@ -2055,6 +2059,10 @@ IGadget.prototype.saveConfig = function () {
     var oldValue, newValue;
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         oldValue = curPref.getCurrentValue(varManager, this.id);
         newValue = curPref.getValueFromInterface();
 
@@ -2067,6 +2075,10 @@ IGadget.prototype.saveConfig = function () {
     // Commit new value of the variable
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         newValue = curPref.getValueFromInterface();
 
         curPref.setValue(varManager, this.id, newValue);
