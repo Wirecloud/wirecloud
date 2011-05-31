@@ -46,6 +46,8 @@ from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
+from igadget.models import IGadget
+from igadget.utils import deleteIGadget
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import build_template_from_workspace
@@ -346,6 +348,9 @@ class WorkSpaceEntry(Resource):
 
         # Remove the workspace
         PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
+        igadgets = IGadget.objects.filter(tab__workspace=workspace)
+        for igadget in igadgets:
+            deleteIGadget(igadget, user)
         workspace.delete()
 
         # Set a new active workspace (first workspace by default)
