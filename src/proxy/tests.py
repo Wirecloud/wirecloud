@@ -5,6 +5,7 @@ from httplib import HTTPMessage
 from StringIO import StringIO
 import urllib2
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
 
@@ -69,7 +70,7 @@ class FakeDownloader(object):
             return self.build_response(url, 404, '', 'Not Found')
 
 
-class ProxyTests(TestCase):
+class ProxyTestsBase(TestCase):
 
     fixtures = ['test_data.json']
 
@@ -80,6 +81,9 @@ class ProxyTests(TestCase):
 
     def tearDown(self):
         EZWEB_PROXY._do_request = self._original_function
+
+
+class ProxyTests(ProxyTestsBase):
 
     def test_basic_proxy_requests(self):
         EZWEB_PROXY._do_request.set_response('http://example.com/path', 'data')
@@ -143,6 +147,20 @@ class ProxyTests(TestCase):
         self.assertTrue('newcookie' in response.cookies)
         self.assertEquals(response.cookies['newcookie'].value, 'test')
         self.assertEquals(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
+
+
+class ProxySecureDataTests(ProxyTestsBase):
+
+    def setUp(self):
+        self.OLD_PROXY_PROCESSORS = settings.PROXY_PROCESSORS
+        settings.PROXY_PROCESSORS = (
+            'proxy.processors.SecureDataProcessor',
+        )
+        super(ProxySecureDataTests, self).setUp()
+
+    def tearDown(self):
+        settings.PROXY_PROCESSORS = self.OLD_PROXY_PROCESSORS
+        super(ProxySecureDataTests, self).tearDown()
 
     def test_secure_data(self):
 
