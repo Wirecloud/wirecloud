@@ -119,11 +119,8 @@ class ConnectableEntry(Resource):
                 for channel_delete in rel_old_channels:
                     channel_delete.delete()
 
-                for input in old_channel.in_set.all():
-                    input.inouts.remove(old_channel)
-
-                for output in old_channel.out_set.all():
-                    output.inouts.remove(old_channel)
+                old_channel.in_set.clear()
+                old_channel.out_set.clear()
 
                 if old_channel.remote_subscription:
                     old_channel.remote_subscription.delete()
