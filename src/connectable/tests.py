@@ -99,7 +99,10 @@ class WiringTests(TransactionTestCase):
         self.assertTrue('ids' in response_data and len(response_data['ids']) == 0)
         InOut.objects.get(id=self._read_only_channel_id)
         channel = InOut.objects.get(id=channel_id, name='New Channel')
+        # Call update() method to invalidate Django's cache
+        channel.in_set.update()
         self.assertEqual(channel.in_set.count(), 1)
+        channel.out_set.update()
         self.assertEqual(channel.out_set.count(), 1)
 
         # Disconnect "New Channel" from "slot" and "event"
@@ -126,7 +129,10 @@ class WiringTests(TransactionTestCase):
         self.assertTrue('ids' in response_data and len(response_data['ids']) == 0)
         InOut.objects.get(id=self._read_only_channel_id)
         channel = InOut.objects.get(id=channel_id, name='New Channel')
+        # Call update() method to invalidate Django's cache
+        channel.in_set.update()
         self.assertEqual(channel.in_set.count(), 0)
+        channel.out_set.update()
         self.assertEqual(channel.out_set.count(), 0)
 
         # Remove "New Channel"
