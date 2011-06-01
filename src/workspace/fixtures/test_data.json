@@ -147,6 +147,16 @@
         }
     },
     {
+        "model": "gadget.VariableDef",
+        "pk": "5",
+        "fields": {
+            "name": "event",
+            "type": "S",
+            "aspect": "EVEN",
+            "gadget": "1"
+        }
+    },
+    {
         "model": "igadget.Variable",
         "pk": "1",
         "fields": {
@@ -179,6 +189,14 @@
         }
     },
     {
+        "model": "igadget.Variable",
+        "pk": "5",
+        "fields": {
+            "vardef": "5",
+            "igadget": "1"
+        }
+    },
+    {
         "model": "workspace.VariableValue",
         "pk": "1",
         "fields": {
@@ -203,6 +221,24 @@
             "variable": "4",
             "value": "test_data",
             "user": "2"
+        }
+    },
+    {
+        "model": "connectable.In",
+        "pk": "1",
+        "fields": {
+            "name": "slot",
+            "variable": "3",
+            "inouts": []
+        }
+    },
+    {
+        "model": "connectable.Out",
+        "pk": "1",
+        "fields": {
+            "name": "event",
+            "variable": "5",
+            "inouts": []
         }
     },
     {

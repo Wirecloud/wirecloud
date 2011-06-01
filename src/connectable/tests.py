@@ -4,18 +4,17 @@ from django.utils import simplejson
 
 from connectable.models import InOut
 from connectable.utils import createChannel
-from workspace.views import createEmptyWorkSpace
+from workspace.models import WorkSpace
 
 
 class WiringTests(TransactionTestCase):
 
-    fixtures = 'test_workspace'
+    fixtures = ['test_data']
 
     def setUp(self):
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.user2 = User.objects.create_user('test2', 'test@example.com', 'test')
+        self.user = User.objects.get(username='test')
 
-        workspace = createEmptyWorkSpace('Testing', self.user)
+        workspace = WorkSpace.objects.get(id=1)
         self.workspace_id = workspace.pk
 
         read_only_channel = createChannel(workspace, 'Read-only Channel')
@@ -76,7 +75,61 @@ class WiringTests(TransactionTestCase):
         InOut.objects.get(id=self._read_only_channel_id)
         InOut.objects.get(id=channel_id, name='New Channel')
 
-        # Remove "New channel"
+        # Connecting "New Channel" to "slot" and "event"
+        data = simplejson.dumps({
+            'inOutList': {
+                self._read_only_channel_id: {
+                    'id': self._read_only_channel_id,
+                    'provisional_id': False,
+                    'name': 'Read-only Channel',
+                 },
+                channel_id: {
+                    'id': channel_id,
+                    'provisional_id': False,
+                    'name': 'New Channel',
+                    'ins': [3],
+                    'outs': [5],
+                 },
+            },
+        })
+        response = client.post(self.wiring_url, {'json': data})
+
+        self.assertEquals(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue('ids' in response_data and len(response_data['ids']) == 0)
+        InOut.objects.get(id=self._read_only_channel_id)
+        channel = InOut.objects.get(id=channel_id, name='New Channel')
+        self.assertEqual(channel.in_set.count(), 1)
+        self.assertEqual(channel.out_set.count(), 1)
+
+        # Disconnect "New Channel" from "slot" and "event"
+        data = simplejson.dumps({
+            'inOutList': {
+                self._read_only_channel_id: {
+                    'id': self._read_only_channel_id,
+                    'provisional_id': False,
+                    'name': 'Read-only Channel',
+                 },
+                channel_id: {
+                    'id': channel_id,
+                    'provisional_id': False,
+                    'name': 'New Channel',
+                    'ins': [],
+                    'outs': [],
+                 },
+            },
+        })
+        response = client.post(self.wiring_url, {'json': data})
+
+        self.assertEquals(response.status_code, 200)
+        response_data = simplejson.loads(response.content)
+        self.assertTrue('ids' in response_data and len(response_data['ids']) == 0)
+        InOut.objects.get(id=self._read_only_channel_id)
+        channel = InOut.objects.get(id=channel_id, name='New Channel')
+        self.assertEqual(channel.in_set.count(), 0)
+        self.assertEqual(channel.out_set.count(), 0)
+
+        # Remove "New Channel"
         data = simplejson.dumps({
             'inOutList': {
                 self._read_only_channel_id: {
