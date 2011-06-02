@@ -55,7 +55,7 @@ class MethodRequest(urllib2.Request):
 
     def __init__(self, method, *args, **kwargs):
         self._method = method
-        super(MethodRequest, self).__init__(self, *args, **kwargs)
+        urllib2.Request.__init__(self, *args, **kwargs)
 
     def get_method(self):
         return self._method
