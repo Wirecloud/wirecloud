@@ -6,7 +6,7 @@ body {
 
 /*BANNER*/
 #logo {
-	background: url(../images/ie/Open_Ez_Logo-trans.png) no-repeat;
+	background: url(../images/Open_Ez_Logo.png) no-repeat;
 }
 
 #toolbar_section{
@@ -87,69 +87,77 @@ body {
 /*DRAGBOARD*/
 /*igadget*/
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
-  background: url(../images/ie/igadget/close.png);
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -480px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].closebutton:hover {
-  background: url(../images/ie/igadget/close.png);
+  background-position: 0px -480px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].minimizebutton {
-  background: url(../images/ie/igadget/minimize.png);
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -432px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].minimizebutton:hover {
-  background: url(../images/ie/igadget/minimize.png);
+  background-position: 0px -432px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].maximizebutton {
-  background: url(../images/ie/igadget/maximize.png);
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -336px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].maximizebutton:hover {
-  background: url(../images/ie/igadget/maximize.png);
+  background-position: 0px -336px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settingsbutton {
-  background: url(../images/ie/igadget/settings.png);
+  background: url(../images/icons-sprite.png);
+  background-position: -24px -456px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
-  background: url(../images/ie/igadget/settings.png);
+  background-position: 0px -456px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button {
-  background: url(../images/ie/igadget/settings2.png);
+  background: url(../images/igadget/settings2.png);
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
-  background: url(../images/ie/igadget/settings2.png);
+  background: url(../images/igadget/settings2-highlighted.png);
 }
 
-* html div.gadget_window div.rightResizeHandle{
-	background: url(../images/ie/igadget/resize-handle-bottom-right.png) no-repeat;
+html div.gadget_window div.rightResizeHandle{
+/* Can not use sprite image cause the handle grows to 100%x100% when resizing */
+	background: url(../images/resize-handle-bottom-right.png) no-repeat;
 }
 
-* html div.gadget_window div.rightResizeHandle{
+html div.gadget_window div.rightResizeHandle{
 	right: 0;
 	bottom: 0;
 }
 
-* html div.gadget_window div.leftResizeHandle {
-	background: url(../images/ie/igadget/resize-handle-bottom-left.png) no-repeat;
+html div.gadget_window div.leftResizeHandle {
+/* Can not use sprite image cause the handle grows to 100%x100% when resizing */
+	background: url(../images/resize-handle-bottom-left.png) no-repeat;
 }
 
-* html div.gadget_window div.leftResizeHandle {
+html div.gadget_window div.leftResizeHandle {
 	left: 0;
 	bottom: 0;
 }
 
-* html div.gadget_window div.extractButton {
-	background: url(../images/ie/igadget/snap.png) no-repeat;
+html div.gadget_window div.extractButton {
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -360px;
 }
 
-* html div.gadget_window div.snapButton {
-	background: url(../images/ie/igadget/extract.png) no-repeat;
+html div.gadget_window div.snapButton {
+  background: url(../images/icons-sprite.png);
+  background-position: -48px -72px;
 }
 
 /*MENU_LAYER*/
