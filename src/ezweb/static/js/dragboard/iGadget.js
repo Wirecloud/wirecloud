@@ -753,8 +753,6 @@ IGadget.prototype.paint = function (onInit) {
     var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
         this.content.setAttribute("src", codeURL);
-    } else { // non IE6
-        this.content.setAttribute("data", codeURL);
     }
 
     // Position
