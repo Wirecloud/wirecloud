@@ -80,7 +80,8 @@ body {
 }
 
 * html .tabOps_launcher {
-	background: url(../images/ie/tabops16px.png) no-repeat;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -332px; 
 }
 
 /*DRAGBOARD*/
