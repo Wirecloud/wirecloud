@@ -326,11 +326,13 @@ button {
 }
 
 .readOnlyIcon {
-    background-image: url(../images/unlock.png);
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -552px;
 }
 
 .readOnlyIcon.readOnly {
-    background-image: url(../images/lock.png);
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -552px;
 }
 
 .visibilityIcon {
