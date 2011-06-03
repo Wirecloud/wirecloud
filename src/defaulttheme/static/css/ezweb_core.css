@@ -357,11 +357,13 @@ body.shared #workspace_link_container span {
 }
 
 #logs_link {
-  height: 16px;
-  border: none;
-  width: 16px;
-  background: transparent url(../images/info.png) no-repeat;
-  cursor: pointer;
+    height: 16px;
+    border: none;
+    width: 16px;
+    background-color: transparent;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -504px;
+    cursor: pointer;
 }
 
 .message_section {
