@@ -298,6 +298,7 @@
 #wiring img {
   margin: 2px;
   vertical-align: middle;
+  display: inline-block;
 }
 
 #wiring #channels_list .channel {

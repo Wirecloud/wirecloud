@@ -415,8 +415,8 @@ function ChannelInterface(channel, wiringGUI) {
     var inputDel = document.createElement("img");
     Element.extend(inputDel);
     channelPipe.appendChild(inputDel);
-    inputDel.setAttribute("alt", gettext("Remove"));
-    inputDel.setAttribute("src", window.URIs.ACTIVE_THEME + "images/remove.png");
+    inputDel.setAttribute("title", gettext("Remove"));
+    inputDel.className = "closebutton";
     Event.observe(inputDel,
                   'click',
                   function (e) {
