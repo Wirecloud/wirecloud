@@ -71,7 +71,9 @@ div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].errorbutton {
-  background: url(../images/warning.png);
+  background-image: url(../images/icons-sprite.png);
+  background-position: -24px -528px;
+  background-color: transparent;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].versionbutton {
