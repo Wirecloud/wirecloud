@@ -10,7 +10,7 @@ body {
 }
 
 #toolbar_section{
-	*margin-left: 10px;
+	margin-left: 10px;
 }
 
 .toolbar_marked, .toolbar_unmarked {
@@ -23,7 +23,7 @@ body {
 	background-color: #7c9ab1;
 }
 
-* html .toolbar_marked{
+html .toolbar_marked{
 	background-image: none;
 	background-color: #c4d4de;
 }
@@ -32,7 +32,7 @@ body {
 	text-align:center;
 }
 
-* html #workspace_link_container{
+html #workspace_link_container{
 	width: 150px;
 }
 
@@ -62,12 +62,14 @@ body {
 	background: url(../images/ie/menu-arrow-selected-trans.png) no-repeat;
 }
 
-* html #logs_link {
-	background: url(../images/ie/info-trans.png) no-repeat;
+html #logs_link {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -504px;
 }
 
-* html #logs_link.highlighted{
-	background: url(../images/ie/info_highlighted-trans.png) no-repeat;
+html #logs_link.highlighted{
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -526px;
 }
 
 * html #tab_section .tab {

@@ -143,26 +143,17 @@ a, a:visited{
 }
 
 #logs_link {
-  background-image: url(../images/icons-sprite.png);
-  background-position: -48px -504px;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -504px;
 }
 
 #logs_link.highlighted {
-  background: transparent url(../images/info_highlighted.png) no-repeat;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -526px;
 }
 
 #logs_console .entry {
     margin: 0.2ex;
-}
-
-#logs_console .igadget_info {
-    cursor:  pointer;
-    height:  16px;
-    margin:  1.1ex 10px 0;
-    vertical-align:bottom;
-    padding-left: 16px;
-    /* can't use sprite here because of the padding, which is necessary for the content of the span */
-    background: transparent url(../images/maximize.png) no-repeat scroll 0 0;
 }
 
 .message_section{

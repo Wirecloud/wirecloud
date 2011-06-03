@@ -35,20 +35,22 @@ function LogManager (parentLogger) {
 }
 
 LogManager.prototype._printEntry = function(entry) {
-    var dateElement, icon, wrapper, clearer;
+    var dateElement, icon, wrapper, clearer, icon;
 
     wrapper = document.createElement("div");
     wrapper.className = "entry";
+    icon = document.createElement("div");
+    wrapper.appendChild(icon);
 
     switch (entry.level) {
     case Constants.Logging.ERROR_MSG:
-        wrapper.className += " icon icon-error";
+        icon.className += " icon icon-error";
         break;
     case Constants.Logging.WARN_MSG:
-        wrapper.className += " icon icon-warning";
+        icon.className += " icon icon-warning";
         break;
     case Constants.Logging.INFO_MSG:
-        wrapper.className += " icon icon-info";
+        icon.className += " icon icon-info";
         break;
     }
 
@@ -224,11 +226,16 @@ function IGadgetLogManager (iGadget) {
 IGadgetLogManager.prototype = new LogManager();
 
 IGadgetLogManager.prototype.buildExtraInfo = function() {
-    var extraInfo = document.createElement('span');
+    var extraInfo = document.createElement('div'),
+        extraInfoIcon = document.createElement('div'),
+        extraInfoText = document.createElement('span');
     Element.extend(extraInfo);
-    extraInfo.className = "igadget_info";
-    extraInfo.setTextContent(this.iGadget.id);
-    extraInfo.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
+    extraInfo.className += " igadget_info_container";
+    extraInfo.appendChild(extraInfoIcon);
+    extraInfo.appendChild(extraInfoText);
+    extraInfoIcon.className = "igadget_info";
+    extraInfoText.setTextContent(this.iGadget.id);
+    extraInfoText.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
 
     extraInfo.style.cursor = "pointer";
     extraInfo.observe('click', function() {

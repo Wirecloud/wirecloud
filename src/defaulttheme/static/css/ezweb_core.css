@@ -853,6 +853,9 @@ button {
 #logs_console .icon {
     margin: 0px 0.5ex;
     vertical-align: bottom;
+    width: 16px;
+    height: 16px;
+    display: inline-block;
 }
 
 #logs_console p {
@@ -864,15 +867,19 @@ button {
     padding-right: 20px;
 }
 
+#logs_console .igadget_info_container {
+    display: inline-block;
+    margin-right: 10px;
+}
+
 #logs_console .igadget_info {
     cursor:  pointer;
-    display: inline-block;
     height:  16px;
-    margin:  0px 0.5ex;
-    vertical-align:bottom;
-    padding-left: 16px;
-    /* can't use sprite here because of the padding, which is necessary for the content of the span */
-    background: transparent url(../images/maximize.png) no-repeat scroll 0 0;
+    width: 16px;
+    vertical-align: bottom;
+    padding: 0px;
+    background-image: url(../images/icons-sprite.png); background-position: -24px -336px;
+    display: inline-block;
 }
 
 /* dragboard template ------------------------------------------------------------------------------- */
