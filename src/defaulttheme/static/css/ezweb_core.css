@@ -871,7 +871,8 @@ button {
     margin:  0px 0.5ex;
     vertical-align:bottom;
     padding-left: 16px;
-    background: transparent url(../images/igadget/maximize.png) no-repeat scroll 0 0
+    /* can't use sprite here because of the padding, which is necessary for the content of the span */
+    background: transparent url(../images/maximize.png) no-repeat scroll 0 0;
 }
 
 /* dragboard template ------------------------------------------------------------------------------- */

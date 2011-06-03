@@ -107,12 +107,12 @@ div.gadget_window div.extractButton {
 
 div.gadget_window div.leftResizeHandle {
   /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url(../images/igadget/resize-handle-bottom-left.png) no-repeat left bottom;
+  background: transparent url(../images/resize-handle-bottom-left.png) no-repeat left bottom;
 }
 
 div.gadget_window div.rightResizeHandle {
   /* Can not use sprite image cause the handle grows to 100%x100% when resizing */
-  background: transparent url(../images/igadget/resize-handle-bottom-right.png) no-repeat right bottom;
+  background: transparent url(../images/resize-handle-bottom-right.png) no-repeat right bottom;
 }
 
 .gadget_menu .igadget_name {
