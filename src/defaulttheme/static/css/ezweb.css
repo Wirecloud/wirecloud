@@ -247,9 +247,17 @@ a, a:visited{
 }
 
 .window_menu .window_content .section_name{
-	background: transparent url(../images/section.png) no-repeat scroll 0 0;
 	text-decoration: underline;
 	font-weight: bold;
+}
+
+.window_menu .window_content .section_icon {
+    background-color: transparent;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -236px;
+    display: inline-block;
+    width: 10px;
+    height: 16px;
 }
 
 .window_menu .window_content tr:hover {

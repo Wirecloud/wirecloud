@@ -876,8 +876,11 @@ FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
             var label = document.createElement('span')
             Element.extend(label);
             label.addClassName('section_name');
+            var icon = document.createElement('div');
+            icon.addClassName('section_icon');
 
             label.appendChild(document.createTextNode(field.label));
+            fieldset.appendChild(icon);
             fieldset.appendChild(label);
 
             var sectionHash = fieldHash;
