@@ -34,7 +34,7 @@
 }
 
 #wiring #channels_list .channel.selected .outAnchor.checked {
-    background-image: url(../images/icons-sprite.png); background-position: 0px -603px;
+    background-image: url(../images/icons-sprite.png); background-position: 0px -409px;
 }
 
 #wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
@@ -42,7 +42,7 @@
 }
 
 #wiring #channels_list .channel.selected .inAnchor.checked {
-    background-image: url(../images/icons-sprite.png); background-position: 0px -576px;
+    background-image: url(../images/icons-sprite.png); background-position: 0px -382px;
 }
 
 #wiring .tab {
