@@ -97,7 +97,7 @@ def get_catalogue_resource_info(resource, templateParser):
         'mashupId': resource.mashup_id,
         'availableApps': simplejson.dumps(get_available_apps_info()),
         'last_version': get_last_gadget_version(resource.short_name, resource.vendor),
-        'templateUrl': templateParser.uri
+        'templateUrl': templateParser.uri,
     }
 
     return info

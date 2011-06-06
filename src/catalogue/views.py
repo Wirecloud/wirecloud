@@ -54,7 +54,7 @@ from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_o
 from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
-from catalogue.catalogue_utils import get_vote_response
+from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_resource_from_template_uri, get_catalogue_resource_info
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
@@ -87,7 +87,7 @@ class GadgetsCollection(Resource):
             transaction.rollback()
             json_response = {
                 "result": "error",
-                "message": _('Gadget already exists!')
+                "message": _('Gadget already exists!'),
             }
             return HttpResponseBadRequest(simplejson.dumps(json_response),
                                           mimetype='application/json; charset=UTF-8')
@@ -120,25 +120,15 @@ class GadgetsCollection(Resource):
         orderby = request.GET.get('orderby', '-creation_date')
         scope = request.GET.get('scope', 'all')
 
-        #paginate
-        a = int(pag)
-        b = int(offset)
-
         # Get all the gadgets in the catalogue
-        gadgetlist = get_resources_that_must_be_shown(user).order_by(orderby)
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
-        items = len(gadgetlist)
+        resources = GadgetResource.objects.all().order_by(orderby)
+        resources = group_resources(resources)
+        resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
+        items = len(resources)
 
-        if not(a == 0 or b == 0):
-        # Get the requested gadgets
-            c = ((a - 1) * b)
-            d = (b * a)
+        resources = get_paginatedlist(resources, int(pag), int(offset))
 
-            if a == 1:
-                c = 0
-            gadgetlist = gadgetlist[c:d]
-
-        return get_resource_response(gadgetlist, format, items, user)
+        return get_resource_response(resources, format, items, user)
 
     @transaction.commit_on_success
     def delete(self, request, user_name, vendor, name, version=None):
@@ -269,11 +259,11 @@ class GadgetsCollectionBySimpleSearch(Resource):
         else:
             search_criteria = request.GET.get('search_criteria')
 
-        gadgetlist = []
+        gadgetlist = GadgetResource.objects.none()
 
         if criteria == 'and':
             gadgetlist = get_and_list(search_criteria, user)
-        elif (criteria == 'or' or criteria == 'simple_or'):
+        elif criteria == 'or' or criteria == 'simple_or':
             gadgetlist = get_or_list(search_criteria, user)
         elif criteria == 'not':
             gadgetlist = get_not_list(search_criteria, user)
@@ -330,15 +320,14 @@ class GadgetsCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='out'))
 
-        gadgetlist = get_uniquelist(gadgetlist)
+        resources = gadgetlist.order_by(orderby)
+        resources = group_resources(resources)
+        resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
 
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
+        items = len(resources)
+        resources = get_paginatedlist(resources, pag, offset)
 
-        items = len(gadgetlist)
-        gadgetlist = get_sortedlist(gadgetlist, orderby)
-        gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
-
-        return get_resource_response(gadgetlist, format, items, user)
+        return get_resource_response(resources, format, items, user)
 
 
 class GadgetsCollectionByGlobalSearch(Resource):

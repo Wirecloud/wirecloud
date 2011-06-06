@@ -242,7 +242,7 @@ var ShowcaseFactory = function () {
                 resource = data[i];
                 key = resource.getVendor() + '_' + resource.getName();
                 if (key in this.gadgetVersions) {
-                    versions = resource.getAllVersions().map(function(version) {return new GadgetVersion(version, 'catalogue');});
+                    versions = resource.getAllVersions();
                     sortedVersions = versions.sort(function(version1, version2) {
                         return -version1.compareTo(version2);
                     });

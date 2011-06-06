@@ -53,10 +53,8 @@ def get_vote_data(gadget, user):
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
     vote_data['popularity'] = popularity_value
-    vote = []
-    vote.append(vote_data)
 
-    return vote
+    return vote_data
 
 
 def get_tag_data(gadget_id, user_id):
@@ -268,7 +266,7 @@ def get_gadget_capabilities(gadget_id, user):
     return data_ret
 
 
-def get_gadgetresource_data(untranslated_resource, user):
+def get_resource_data(untranslated_resource, user):
     """Gets all the information related to the given gadget."""
     resource = untranslated_resource.get_translated_model()
 
@@ -277,7 +275,6 @@ def get_gadgetresource_data(untranslated_resource, user):
     else:
         displayName = resource.short_name
 
-    versions = GadgetResource.objects.filter(vendor=resource.vendor, short_name=resource.short_name).values_list('version', flat=True)
     data_tags = get_tag_data(gadget_id=resource.pk, user_id=user.id)
     data_events = get_event_data(gadget_id=resource.pk)
     data_slots = get_slot_data(gadget_id=resource.pk)
@@ -298,9 +295,13 @@ def get_gadgetresource_data(untranslated_resource, user):
         'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
         'added_by_user': resource.creator == user,
-        'versions': versions,
         'tags': [d for d in data_tags],
         'events': [d for d in data_events],
         'slots': [d for d in data_slots],
         'votes': get_vote_data(gadget=resource, user=user),
     }
+
+
+def get_resource_group_data(resource_group, user):
+
+    return [get_resource_data(resource, user) for resource in resource_group['variants']]

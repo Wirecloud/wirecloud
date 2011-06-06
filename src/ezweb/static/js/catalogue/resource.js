@@ -28,60 +28,40 @@ function ResourceState(resourceJSON_) {
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
-    var vendor = null;
-    var name = null;
-    var displayName = null;
-    var version = null;
-    var last_version = null;
-    var id = null;
-    var description = null;
-    var uriImage = null;
-    var uriWiki = null;
-    var mashupId = null;
-    var uriTemplate = null;
-    var addedBy = null;
+    var versions = resourceJSON_;
+    var currentVersion = null;
     var allVersions = [];
-    var tags = [];
-    var slots = [];
-    var events = [];
-    var votes = null;
-    var popularity = null;
-    var userVote = null;
-    var capabilities = [];
-    var availableApps = [];
-    var creator = [];
-    var extra_data = null;
-    var ieCompatible = false;
+    var data_by_version = {};
 
     //////////////////////////
     // GETTERS
     /////////////////////////
     this.getCreator = function() {
-        return creator;
+        return currentVersion.creator;
     }
 
     this.getVendor = function() {
-        return vendor;
+        return currentVersion.vendor;
     }
 
     this.getName = function() {
-        return name;
+        return currentVersion.name;
     }
 
     this.getDisplayName = function() {
-        return displayName;
+        return currentVersion.displayName;
     }
 
     this.getVersion = function() {
-        return version;
+        return currentVersion.version;
     }
 
     this.getLastVersion = function() {
-        return last_version;
+        return allVersions[0];
     }
 
     this.getId = function() {
-        return id;
+        return currentVersion.id;
     }
 
     this.getAllVersions = function() {
@@ -89,63 +69,63 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getDescription = function() {
-        return description;
+        return currentVersion.description;
     }
 
     this.getUriImage = function() {
-        return uriImage;
+        return currentVersion.uriImage;
     }
 
     this.getUriTemplate = function() {
-        return uriTemplate;
+        return currentVersion.uriTemplate;
     }
 
     this.getUriWiki = function() {
-        return uriWiki;
+        return currentVersion.uriWiki;
     }
 
     this.getMashupId = function() {
-        return mashupId;
+        return currentVersion.mashupId;
     }
 
     this.isMashup = function() {
-        return mashupId != null;
+        return currentVersion.mashupId != null;
     }
 
     this.isGadget = function() {
-        return mashupId == null;
+        return currentVersion.mashupId == null;
     }
 
     this.getAddedBy = function() {
-        return addedBy;
+        return currentVersion.addedBy;
     }
 
     this.getTags = function() {
-        return tags;
+        return currentVersion.tags;
     }
 
     this.getSlots = function() {
-        return slots;
+        return currentVersion.slots;
     }
 
     this.getEvents = function() {
-        return events;
+        return currentVersion.events;
     }
 
     this.getVotes = function() {
-        return votes;
+        return currentVersion.votes.votes_number;
     }
 
     this.getUserVote = function() {
-        return userVote;
+        return currentVersion.votes.user_vote;
     }
 
     this.getPopularity = function() {
-        return popularity;
+        return currentVersion.votes.popularity;
     }
 
     this.getCapabilities = function() {
-        return capabilities;
+        return currentVersion.capabilities;
     }
 
     this.getExtraData = function() {
@@ -153,7 +133,7 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getIeCompatible = function () {
-        return ieCompatible;
+        return currentVersion.ieCompatible;
     }
 
     //////////////
@@ -164,34 +144,12 @@ function ResourceState(resourceJSON_) {
         extra_data = extra_data_;
     }
 
-    this.setVersion = function(version_) {
-        version = version_;
-    }
-
     this.setTags = function(tagsJSON_) {
-        tags = tagsJSON_;
-    }
-
-    this.setSlots = function(slotsJSON_) {
-        slots.clear();
-
-        for (var i=0; i<slotsJSON_.length; i++) {
-            slots.push(slotsJSON_[i].friendcode);
-        }
-    }
-
-    this.setEvents = function(eventsJSON_) {
-        events.clear();
-
-        for (var i=0; i<eventsJSON_.length; i++) {
-            events.push(eventsJSON_[i].friendcode);
-        }
+        currentVersion.tags = tagsJSON_;
     }
 
     this.setVotes = function(voteDataJSON_) {
-        votes = voteDataJSON_.voteData[0].votes_number;
-        userVote = voteDataJSON_.voteData[0].user_vote;
-        popularity = voteDataJSON_.voteData[0].popularity;
+        currentVersion.votes = voteDataJSON_;
     }
 
     this.setAvailableApps = function (availableAppsObj) {
@@ -201,8 +159,20 @@ function ResourceState(resourceJSON_) {
     /////////////////////////////
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
+    this.changeVersion = function(version) {
+        if (version instanceof GadgetVersion) {
+            version = version.text;
+        }
+        currentVersion = data_by_version[allVersions[0].text];
+        if (currentVersion.availableApps) {
+            this.setAvailableApps(currentVersion.availableApps);
+        }
+    };
+
     this.getContract = function() {
-        for (i=0; i<capabilities.length; i++) {
+        var capabilities = this.getCapabilities();
+
+        for (i = 0; i < capabilities.length; i++) {
             var capability = capabilities[i];
 
             if (capability['name'].toLowerCase() == 'contratable') {
@@ -214,6 +184,8 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getGadgetApps = function() {
+        var capabilities = this.getCapabilities();
+
         for (i=0; i<capabilities.length; i++) {
             var capability = capabilities[i];
 
@@ -230,6 +202,8 @@ function ResourceState(resourceJSON_) {
     }
 
     this.isContratable = function () {
+        var capabilities = this.getCapabilities();
+
         for (var i = 0; i < capabilities.length; i++) {
             var capability = capabilities[i];
 
@@ -261,37 +235,20 @@ function ResourceState(resourceJSON_) {
     ////////////////////////
     // CONSTRUCTOR
     ////////////////////////
-    creator = resourceJSON_.author;
+    var i = 0;
 
-    vendor = resourceJSON_.vendor;
-    name = resourceJSON_.name;
-    displayName = resourceJSON_.displayName;
-    version = resourceJSON_.version;
+    for (i = 0; i < resourceJSON_.length; i += 1) {
+       version_data = resourceJSON_[i];
 
-    if (resourceJSON_.last_version)
-        last_version = resourceJSON_.last_version;
+       version_data['version'] = new GadgetVersion(version_data['version'], 'catalogue');
+       version_data['events'] = version_data['events'].map(function (x) {return x.friendcode;});
+       version_data['slots'] = version_data['slots'].map(function (x) {return x.friendcode;});
 
-    id = resourceJSON_.id;
-    allVersions = resourceJSON_.versions;
-    description = resourceJSON_.description;
-    uriImage = resourceJSON_.uriImage;
-    uriWiki = resourceJSON_.uriWiki;
-    ieCompatible = resourceJSON_.ieCompatible;
-
-    if (resourceJSON_.mashupId && resourceJSON_.mashupId != "")
-        mashupId = resourceJSON_.mashupId;
-
-    addedBy = resourceJSON_.added_by_user;
-    uriTemplate = resourceJSON_.uriTemplate;
-    votes = resourceJSON_.votes[0].votes_number;
-    userVote = resourceJSON_.votes[0].user_vote;
-    popularity = resourceJSON_.votes[0].popularity;
-    capabilities = resourceJSON_.capabilities;
-
-    if (resourceJSON_.availableApps)
-        this.setAvailableApps(resourceJSON_.availableApps);
-
-    this.setEvents(resourceJSON_.events);
-    this.setSlots(resourceJSON_.slots);
-    this.setTags(resourceJSON_.tags);
+       allVersions.push(version_data['version']);
+       data_by_version[version_data['version'].text] = version_data;
+    }
+    allVersions = allVersions.sort(function(version1, version2) {
+        return -version1.compareTo(version2);
+    });
+    this.changeVersion(allVersions[0]);
 }

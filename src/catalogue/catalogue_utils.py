@@ -35,7 +35,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from catalogue.get_json_catalogue_data import get_gadgetresource_data, get_tag_data, get_vote_data
+from catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
 from catalogue.models import GadgetResource, UserVote
 from commons.utils import get_xml_error, json_encode
@@ -60,43 +60,69 @@ def get_uniquelist(list, value=None):
     return uniquelist
 
 
-def filter_gadgets_by_organization(user, gadget_list, organization_list, scope):
-    """Filter gadgets that don't belong to given organization.
+def group_resources(resources):
+
+    ordered_list = []
+    grouped_resources = {}
+
+    for resource in resources:
+        key = resource.short_name + '/' + resource.vendor
+        if key not in grouped_resources:
+            entry = {
+                'short_name': resource.short_name,
+                'vendor': resource.vendor,
+                'variants': [],
+            }
+            grouped_resources[key] = entry
+            ordered_list.append(entry)
+        else:
+            entry = grouped_resources[key]
+
+        entry['variants'].append(resource)
+
+    return ordered_list
+
+
+def _valid_resource(resource, user, organization_list, scope):
+
+    if settings.CERTIFICATION_ENABLED:
+        certification_status = resource.certification
+
+        # Checking certification status!
+        if certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != resource.creator:
+            return False
+
+    # checking the scope of the query
+    if (scope == "mashup" or scope == "solution") and not resource.mashup_id:
+        return False
+    elif scope == "gadget" and resource.mashup_id:
+        return False
+
+    # Checking organizations!
+    resource_organizations = resource.organization.all()
+
+    if len(resource_organizations) == 0:
+        # There is no organization => always returned to client app!
+        return True
+
+    # There are organizations, if a gadget organization corresponds to a user organization
+    return len(set(resource_organizations) & set(organization_list)) > 0
+
+
+def _filter_resource_by_organization(entry, user, organization_list, scope):
+
+    entry['variants'] = [r for r in entry['variants'] if _valid_resource(r, user, organization_list, scope)]
+    return len(entry['variants']) > 0
+
+
+def filter_gadgets_by_organization(user, resources, organization_list, scope):
+    """
+    Filter gadgets that don't belong to given organization.
     Also filter gadgets that are not certificated!
     Also filters depending on the scope of the search (it could be mashup, gadget, all, ...)
     """
-    final_list = []
 
-    for gadget in gadget_list:
-        if settings.CERTIFICATION_ENABLED:
-            certification_status = gadget.certification
-
-            #Checking certification status!
-            if certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != gadget.creator:
-                continue
-
-        #checking the scope of the query
-        if ((scope == "mashup" or scope == "solution") and not gadget.mashup_id):
-            continue
-        elif scope == "gadget" and gadget.mashup_id:
-            continue
-#        elif scope == "solution" and not gadget.solution:
-#            continue
-        #else: (scope=="all") -> add to the list
-
-        #Checking organizations!
-        gadget_organizations = gadget.organization.all()
-
-        if len(gadget_organizations) == 0:
-            #There is no organization => always returned to client app!
-            final_list.append(gadget)
-            continue
-
-        #There are organizations, if a gadget organization corresponds to a user organization
-        if len(set(gadget_organizations) & set(organization_list)) > 0:
-            final_list.append(gadget)
-
-    return final_list
+    return [r for r in resources if _filter_resource_by_organization(r, user, organization_list, scope)]
 
 
 def get_sortedlist(list, orderby):
@@ -131,83 +157,50 @@ def get_paginatedlist(gadgetlist, pag, offset):
 def get_and_list(criterialist, user):
     """Returns a list of gadgets that match all the criteria in the list passed as parameter."""
 
-    #List of the gadgets that match the criteria in the database table GadgetResource
-    gadgetlist = []
-    #List of the gadgets that match the criteria in the database table UserTag
-    taglist = []
-    result = []
-    is_first_element = True
+    # List of the gadgets that match the criteria in the database table GadgetResource
+    criteria_filter = Q()
 
     criterialist = criterialist.split()
-    # This loop gets a result list of the gadgets that match any of the criteria
     for e in criterialist:
-        # Get a list of elements that match the given criteria
-        gadgetlist = get_resources_that_must_be_shown(user).filter(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
-        taglist = get_resources_that_must_be_shown(user).filter(usertag__tag__name__icontains=e)
-        if taglist:
-            gadgetlist = gadgetlist | taglist
-        gadgetlist = get_uniquelist(gadgetlist)
-        result.append(gadgetlist)
-    # This loop gets the gadgets that match all the criteria
-    for j in result:
-        if is_first_element:
-            gadgetlist = j
-            is_first_element = False
-        else:
-            gadgetlist = get_uniquelist(gadgetlist + j, 2)
-    return gadgetlist
+        criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+
+    return GadgetResource.objects.filter(criteria_filter)
 
 
 def get_or_list(criterialist, user):
     """Returns a list of gadgets that match any of the criteria in the list passed as parameter."""
-    gadgetlist = []
-    taglist = []
+    criteria_filter = Q()
+
     criterialist = criterialist.split()
 
     for e in criterialist:
-        # Get a list of elements that match the given value
-        gadgetlist += get_resources_that_must_be_shown(user).filter(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
-        taglist += get_resources_that_must_be_shown(user).filter(usertag__tag__name__icontains=e)
-    gadgetlist += taglist
-    gadgetlist = get_uniquelist(gadgetlist)
-    return gadgetlist
+        criteria_filter = criteria_filter | (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+
+    return GadgetResource.objects.filter(criteria_filter)
 
 
 def get_not_list(criterialist, user):
     """Returns a list of gadgets that don't match any of the criteria in the list passed as parameter."""
-    gadgetlist = []
-    taglist = []
-    is_first_element = True
+    criteria_filter = Q()
+
     criterialist = criterialist.split()
 
     for e in criterialist:
-        # Get the list of elements that don't match the given criteria in the GadgetResource table
-        if is_first_element:
-            gadgetlist = get_resources_that_must_be_shown(user).exclude(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
-            is_first_element = False
-        else:
-            gadgetlist = gadgetlist.exclude(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e))
-        # Get the list of gadgets that match any of the criteria in the UserTag database table
-        taglist += get_resources_that_must_be_shown(user).filter(usertag__tag__name__icontains=e)
-    gadgetlist = list(gadgetlist)
-    # Remove the gadgets in taglist of gadgetlist
-    for b in taglist:
-        if b in gadgetlist:
-            gadgetlist.remove(b)
-    gadgetlist = get_uniquelist(gadgetlist)
-    return gadgetlist
+        criteria_filter = criteria_filter & ~(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
+
+    return GadgetResource.objects.filter(criteria_filter)
 
 
-def get_resource_response(gadgetlist, format, items, user):
+def get_resource_response(resources, format, items, user):
     """Obtains all the information related to a gadget encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
-        gadgetresource = {'resourceList': [get_gadgetresource_data(resource, user) for resource in gadgetlist]}
-        response = HttpResponse(json_encode(gadgetresource), mimetype='application/json; charset=UTF-8')
+        data = {'resources': [get_resource_group_data(group, user) for group in resources]}
+        response = HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
         response.__setitem__('items', items)
         return response
     elif format == 'xml':
-        response = get_xml_description(gadgetlist, user)
+        response = get_xml_description(resources, user)
         response = HttpResponse(response, mimetype='text/xml; charset=UTF-8')
         response.__setitem__('items', items)
         return response
@@ -266,7 +259,7 @@ def get_resources_that_must_be_shown(user):
     # Gets the gadget with preferred version what were selected by the user
     preferred_gadgets = GadgetResource.objects.filter(
             userrelatedtogadgetresource__user=user,
-            userrelatedtogadgetresource__preferred_by=True
+            userrelatedtogadgetresource__preferred_by=True,
         ).values('id', 'vendor', 'short_name')
 
     # The preferred version of the gadgets will be shown in the catalog

@@ -96,34 +96,27 @@ var CatalogueSearcher = function () {
     this.last_search_options = search_options;
   }
   
-  this.process_response = function (response, command) {
-	var response_text = response.responseText;
-	var response_json = JSON.parse(response_text);
+    this.process_response = function (response, command) {
+	var response_json, resource_list, resources, i;
+
+        response_json = JSON.parse(response.responseText);
+	resource_list = response_json['resources'];
 	
-	var query_results_number = response.getResponseHeader('items'); 
-	
-	var resource_list = response_json['resourceList'];
-	
-	if (resource_list) {
-	  var resource_objects = [];
+        if (resource_list) {
+            resources = [];
+
+            for (i = 0; i < resource_list.length; i += 1) {
+                resources.push(new ResourceState(resource_list[i]));
+            }
 	  
-	  for (var i=0; i<resource_list.length; i++) {
-	    var resource_state = resource_list[i];
-	    var resource_obj = new ResourceState(resource_state);
-	    
-	    resource_objects.push(resource_obj);
-	  }
-	  
-	  var processed_data = {}
-	  
-	  processed_data['resources'] = resource_objects;
-	  processed_data['query_results_number'] = query_results_number;
-	  processed_data['resources_per_page'] = command.resources_per_page
-	  processed_data['current_page'] = command.current_page
-	  
-	  return processed_data;
-	}
-  }
+            return {
+                'resources': resources,
+                'query_results_number': response.getResponseHeader('items'),
+                'resources_per_page': command.resources_per_page,
+                'current_page': command.current_page
+            }
+        }
+    };
   
   this.repeat_last_search = function () {
 	var search_options = this.last_search_options;
