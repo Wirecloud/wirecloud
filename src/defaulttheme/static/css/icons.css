@@ -13,10 +13,13 @@
     display: inline-block;
     margin-right: 10px;
     vertical-align: top;
+    float: left;
 }
 
 .window_menu .window_content .msg {
     display: inline-block;
+    float: left;
+    width: 90%;
 }
 
 .window_menu .window_content .msg p {

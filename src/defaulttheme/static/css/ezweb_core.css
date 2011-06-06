@@ -546,6 +546,7 @@ body.shared .tab_dragger {
 .window_menu .window_content {
 	margin-top: 2ex;
     clear: both;
+    overflow: auto;
 }
 
 .window_menu .window_content > img {
