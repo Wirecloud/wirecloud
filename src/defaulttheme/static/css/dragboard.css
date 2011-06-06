@@ -77,7 +77,9 @@ div.gadget_window div.gadget_menu input[type="button"].errorbutton {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].versionbutton {
-  background: url(../images/new.png);
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -216px;
+    background-color: transparent;
 }
 
 div.color_button {
