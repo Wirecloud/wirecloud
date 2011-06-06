@@ -63,11 +63,12 @@ div.gadget_window div.gadget_menu input[type="button"].settingsbutton:hover {
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button {
-  background: url(../images/igadget/settings2.png);
+    background: url(../images/icons-sprite.png);
+    background-position: 0px -144px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].settings2button:hover {
-  background: url(../images/igadget/settings2-highlighted.png);
+    background-position: -24px -120px;
 }
 
 div.gadget_window div.gadget_menu input[type="button"].errorbutton {
