@@ -68,7 +68,7 @@ function WindowMenu(title) {
 
     this.iconElement = document.createElement('div');
     Element.extend(this.iconElement);
-    this.iconElement.className = "window-icon";
+    this.iconElement.className = "window-icon icon-size";
     this.windowContent.appendChild(this.iconElement);
 
     this.msgElement = document.createElement('div');

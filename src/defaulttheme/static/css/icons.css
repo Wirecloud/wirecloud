@@ -10,16 +10,17 @@
 }
 
 .window-icon {
-    width: 16px;
-    height: 16px;
     display: inline-block;
-    position: relative;
-    top: 4px;
     margin-right: 10px;
+    vertical-align: top;
 }
 
 .window_menu .window_content .msg {
     display: inline-block;
+}
+
+.window_menu .window_content .msg p {
+    margin-top: 0px;
 }
 
 span.icon {
