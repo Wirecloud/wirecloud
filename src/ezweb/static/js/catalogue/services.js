@@ -433,7 +433,7 @@ var CatalogueResourceSubmitter = function () {
   }
 
   this.delete_resource = function (resource) {
-    var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
+    var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -447,7 +447,7 @@ var CatalogueResourceSubmitter = function () {
       }
 
       layoutManager.logSubTask(gettext('Purging gadget info'));
-      var gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion();
+      var gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
       ShowcaseFactory.getInstance().deleteGadget(gadgetId);
 
       layoutManager._notifyPlatformReady();
@@ -482,7 +482,7 @@ var CatalogueResourceSubmitter = function () {
     var context = {
       name: resource.getName(),
       vendor: resource.getVendor(),
-      version: resource.getVersion()
+      version: resource.getVersion().text
     };
 
     msg = interpolate(msg, context, true);
@@ -490,7 +490,7 @@ var CatalogueResourceSubmitter = function () {
   }
 
   this.update_resource_html = function (resource) {
-	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion()};
+	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion().text};
     
 	var url = URIs.GET_GADGET.evaluate(context);
     url += '/xhtml';
@@ -533,7 +533,7 @@ var CatalogueVoter = function () {
   CatalogueService.call(this);
 	  
   this.vote = function (resource, vote) {   
-	var url = URIs.POST_RESOURCE_VOTES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+	var url = URIs.POST_RESOURCE_VOTES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -581,7 +581,7 @@ var CatalogueTagger = function () {
   CatalogueService.call(this);
 		  
   this.tag = function (resource, tags_data) {
-    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -627,7 +627,7 @@ var CatalogueTagger = function () {
   }
   
   this.delete_tag = function (resource, tag_id) {
-    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion() + '/' + tag_id;
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text + '/' + tag_id;
 
     var success_callback = function(response) {
       // processing command

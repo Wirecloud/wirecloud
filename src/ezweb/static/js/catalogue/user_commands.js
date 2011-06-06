@@ -126,7 +126,7 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
 
         // Normal instantiation!
         ShowcaseFactory.getInstance().addGadget(resource.getVendor(), resource.getName(),
-            resource.getVersion(), resource.getUriTemplate());
+            resource.getVersion().text, resource.getUriTemplate());
     }
 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
@@ -355,7 +355,7 @@ var ChangeResourceVersionCommand = function (dom_element, html_event, service_fa
 
         versions_area_div.update('');
 
-        for (var i=0; i<resource_versions.length; i++) {
+        for (var i = 0; i < resource_versions.length; i += 1) {
             var version = resource_versions[i];
 
             var element_tag = 'a'
@@ -376,10 +376,9 @@ var ChangeResourceVersionCommand = function (dom_element, html_event, service_fa
                 Event.observe(element, 'click', mark_as_preferred_version.bind(this));
             }
 
-            element.update('v'+version);
+            element.setTextContent('v' + version.text);
 
             versions_area_div.appendChild(element);
-
         }
     }
 

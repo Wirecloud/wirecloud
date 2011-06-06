@@ -32,12 +32,13 @@ function ResourceState(resourceJSON_) {
     var currentVersion = null;
     var allVersions = [];
     var data_by_version = {};
+    var extra_data = null;
 
     //////////////////////////
     // GETTERS
     /////////////////////////
     this.getCreator = function() {
-        return currentVersion.creator;
+        return currentVersion.author;
     }
 
     this.getVendor = function() {
@@ -163,7 +164,7 @@ function ResourceState(resourceJSON_) {
         if (version instanceof GadgetVersion) {
             version = version.text;
         }
-        currentVersion = data_by_version[allVersions[0].text];
+        currentVersion = data_by_version[version];
         if (currentVersion.availableApps) {
             this.setAvailableApps(currentVersion.availableApps);
         }
