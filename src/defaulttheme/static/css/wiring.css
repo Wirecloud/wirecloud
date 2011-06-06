@@ -137,7 +137,7 @@
 
 #wiring #channels_list .channel .channelPipe {
   border-color: #2D6F9C;
-  background: #97A0A8 url(../images/wiring/pipe.png);
+  background: #97A0A8 url(../images/pipe.png);
   -moz-border-radius:5%;
   -webkit-border-radius: 5%;
 }
