@@ -18,15 +18,15 @@
 }
 
 #wiring .eventColumn .igadget .anchor {
-    background-image: url(../images/icons-sprite.png); background-position: 0px -72px;
+    background-image: url(../images/icons-sprite.png); background-position: 0px -71px;
 }
 
 #wiring .slotColumn .igadget .anchor {
-    background-image: url(../images/icons-sprite.png); background-position: 0px -48px;
+    background-image: url(../images/icons-sprite.png); background-position: 0px -47px;
 }
 
 #wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
-  background: url(../images/wiring/inAnchorInEnabled.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -24px;
 }
 
 #wiring #channels_list .channel.selected .outAnchor, #wiring #channels_list .channel.selected .inAnchor{
@@ -38,7 +38,7 @@
 }
 
 #wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
-  background: url(../images/wiring/outAnchorOutEnabled.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px 0px;
 }
 
 #wiring #channels_list .channel.selected .inAnchor.checked {
@@ -81,14 +81,6 @@
 
 #wiring .tab.empty > .header_section {
   background: none;
-}
-
-#wiring .tab > .header_section > .anchor {
-  background: url(../images/wiring/outAnchor.png);
-}
-
-#wiring .tab > .header_section > .anchor.checked {
-  background: url(../images/wiring/outAnchorOutEnabled.png);
 }
 
 #wiring .igadget > .header_section .header_icon {
