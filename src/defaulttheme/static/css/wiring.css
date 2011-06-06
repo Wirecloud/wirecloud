@@ -74,10 +74,6 @@
     margin: 0px;
 }
 
-#wiring .igadget > .header_section .header_icon {
-    display: none;
-}
-
 #wiring .eventColumn .tab > .header_section .header_icon {
     float: left;
 }
@@ -103,16 +99,20 @@
   background: url(../images/wiring/outAnchorOutEnabled.png);
 }
 
-#wiring .igadget > .header_section {
-  background: url(../images/wiring/Lminus.png) no-repeat scroll left top;
+#wiring .igadget > .header_section .header_icon {
+    background-position: 0px -94px;
+    width: 19px;
+    height: 16px;
+    position: relative;
+    left: -2px;
 }
 
-#wiring .igadget.folded > .header_section {
-  background: url(../images/wiring/Lplus.png) no-repeat scroll left top;
+#wiring .igadget.folded > .header_section .header_icon {
+    background-position: -24px -94px;
 }
 
 #wiring .igadget.unfoldable > .header_section {
-  background: url(../images/wiring/LminusDisabled.png) no-repeat scroll left top;
+    background-position: 0px -118px;
 }
 
 #wiring .newChannel, #wiring #unfold_all_link {
