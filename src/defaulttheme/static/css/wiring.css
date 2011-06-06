@@ -150,7 +150,9 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url(../images/ops21px.png) no-repeat scroll 0 0;
+    background-image: url(../images/icons-sprite.png);
+    background-position: 0px -216px;
+    background-color: transparent;
 }
 
 #wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
