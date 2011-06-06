@@ -247,43 +247,6 @@ def get_all_gadget_versions(vendor, name):
     return ["%s" % (v['version']) for v in versions]
 
 
-def get_resources_that_must_be_shown(user):
-    """Obtains all the resources that the catalog must show to the user.
-    "The resources that must be shown" are the preferred version, which was
-    selected by the user, or the latest version of the resource
-    """
-    # Gets the names (without version) of all gadget from catalog
-    gadget_names_without_version = []
-    preferred_gadgets = []
-    gadget_names_without_version = [(gn['vendor'], gn['short_name']) for gn in GadgetResource.objects.values('vendor', 'short_name').distinct()]
-    # Gets the gadget with preferred version what were selected by the user
-    preferred_gadgets = GadgetResource.objects.filter(
-            userrelatedtogadgetresource__user=user,
-            userrelatedtogadgetresource__preferred_by=True,
-        ).values('id', 'vendor', 'short_name')
-
-    # The preferred version of the gadgets will be shown in the catalog
-    shown_gadget_ids = [pg['id'] for pg in preferred_gadgets]
-
-    # Remove all gadget with preferred version from 'gadget names without version' list
-    for pref_gadget in preferred_gadgets:
-        gadget_with_preferred_version = (pref_gadget['vendor'], pref_gadget['short_name'])
-        gadget_names_without_version.remove(gadget_with_preferred_version)
-
-    # All gadget in 'gadget names without version' list have not preferred version. Latest version is the preferred version by default
-    for gadget_name in gadget_names_without_version:
-        max_version = get_last_gadget_version(gadget_name[1], gadget_name[0])
-        gadget_max_version = GadgetResource.objects.get(short_name=gadget_name[1], vendor=gadget_name[0], version=max_version)
-        # Adds the identifier of the latest version of the current gadget to the list of the gadgets that will be displayed in the catalog
-        shown_gadget_ids.append(gadget_max_version.id)
-
-    # Gets all the gadgets that will appear in the catalog (preferred and latest version)
-    if len(shown_gadget_ids) > 0:
-        return GadgetResource.objects.extra(where=['catalogue_gadgetresource.id IN (%s)' % ",".join(["%s" % (id) for id in shown_gadget_ids])])
-    else:
-        return GadgetResource.objects.none()
-
-
 def get_last_gadget_version(name, vendor):
 
     version_list = get_all_gadget_versions(vendor, name)
