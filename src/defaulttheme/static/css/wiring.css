@@ -67,12 +67,19 @@
   -moz-border-radius-bottomright: 3px;
 }
 
-#wiring .eventColumn .tab > .header_section{
-  background: url(../images/wiring/tree.gif) no-repeat scroll 2px 5px;
+#wiring .header_section .header_icon {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -313px;
+    display: inline-block;
+    margin: 0px;
 }
 
-#wiring .slotColumn .tab > .header_section {
-  background: url(../images/wiring/tree.gif) no-repeat scroll 99% 5px;
+#wiring .eventColumn .tab > .header_section .header_icon {
+    float: left;
+}
+
+#wiring .slotColumn .tab > .header_section .header_icon {
+    float: right;
 }
 
 #wiring .tab > .header_section {

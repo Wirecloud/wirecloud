@@ -249,7 +249,7 @@
 }
 
 #wiring .eventColumn .tab > .header_section, #wiring .slotColumn .tab > .header_section {
-  padding: 6px 24px 2px 34px;
+  padding: 6px 24px 2px 24px;
   text-align: right;
 }
 

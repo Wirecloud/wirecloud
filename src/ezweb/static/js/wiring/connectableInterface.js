@@ -50,6 +50,9 @@ function ConnectableGroupInterface (wiringGUI, parentInterface, headerText) {
     this.headerElement = document.createElement("div");
     Element.extend(this.headerElement);
     this.headerElement.addClassName("header_section");
+    var icon = document.createElement("span");
+    icon.className = "header_icon icon-size";
+    this.headerElement.appendChild(icon);
     this.headerElement.appendChild(document.createTextNode(headerText));
     this.htmlElement.appendChild(this.headerElement);
 
