@@ -395,6 +395,11 @@ var LayoutManagerFactory = function () {
 
         // Dragboard operations (usually called together with Tab operations)
         LayoutManager.prototype.showDragboard = function(dragboard) {
+            if (dragboard === null) {
+                // There is no dragboard to show (i.e. when shutting down the platform), abort
+                return;
+            }
+
             if (this.currentView != null) {
                 this.currentView.hide();
                 //if the previous view was different and it had banner, change the banner

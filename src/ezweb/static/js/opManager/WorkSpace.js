@@ -759,7 +759,12 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.getActiveDragboard = function() {
-        return this.visibleTab.getDragboard();
+        if (this.visibleTab) {
+            return this.visibleTab.getDragboard();
+        } else {
+            // Shutting down the platform: no tab, no dragboard and no need to change to one
+            return null;
+        }
     }
 
     WorkSpace.prototype.shareWorkspace = function(value, groups) {
