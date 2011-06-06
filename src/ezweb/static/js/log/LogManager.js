@@ -234,7 +234,7 @@ IGadgetLogManager.prototype.buildExtraInfo = function() {
     extraInfo.appendChild(extraInfoIcon);
     extraInfo.appendChild(extraInfoText);
     extraInfoIcon.className = "igadget_info";
-    extraInfoText.setTextContent(this.iGadget.id);
+    extraInfoText.innerHTML = this.iGadget.id;
     extraInfoText.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
 
     extraInfo.style.cursor = "pointer";

@@ -36,10 +36,6 @@ html #workspace_link_container{
 	width: 150px;
 }
 
-#dragboard_link{
-	float:none;
-}
-
 #dragboard_link span{
 	top: 2px;
 }
