@@ -204,11 +204,14 @@ a, a:visited{
   opacity: 0.95;
 }
 
-.sidebar #add_workspace{
-	text-decoration: underline;
-	cursor: pointer;
-	background: transparent url(../images/add.png) no-repeat scroll 0 0;
-	padding-left:16px;
+.sidebar .add_workspace{
+    text-decoration: underline;
+    cursor: pointer;
+    position: relative;
+    top: 3px;
+    display: inline-block;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -192px;
 }
 
 .sidebar_title{

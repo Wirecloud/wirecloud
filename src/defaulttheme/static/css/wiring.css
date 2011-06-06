@@ -104,10 +104,6 @@
   background: url(../images/wiring/LminusDisabled.png) no-repeat scroll left top;
 }
 
-#wiring #newChannelForm .addSubmit {
-  background: url(../images/wiring/add.png);
-}
-
 #wiring .newChannel, #wiring #unfold_all_link {
   color: #2D6F9C;
   text-decoration: underline;
