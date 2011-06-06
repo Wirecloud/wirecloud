@@ -74,6 +74,10 @@
     margin: 0px;
 }
 
+#wiring .igadget > .header_section .header_icon {
+    display: none;
+}
+
 #wiring .eventColumn .tab > .header_section .header_icon {
     float: left;
 }
