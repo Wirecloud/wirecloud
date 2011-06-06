@@ -372,18 +372,19 @@ var CookieManager = new Object();
  * @param {Number} days number of days this cookie will be valid
  */
 CookieManager.createCookie = function(name, value, days) {
-	if (days) {
-		var date = new Date();
-		date.setTime(date.getTime()+(days*24*60*60*1000));
-		var expires = "; expires="+date.toGMTString();
-	} else {
-		var expires = "";
-	}
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+    } else {
+        var expires = "";
+    }
 
-	if (typeof value === 'object')
-		value = value.toJSON();
+    if (typeof value === 'object') {
+        value = Object.toJSON(value);
+    }
 
-	document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name+"="+value+expires+"; path=/";
 }
 
 /**

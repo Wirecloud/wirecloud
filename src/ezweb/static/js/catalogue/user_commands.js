@@ -383,13 +383,13 @@ var ChangeResourceVersionCommand = function (dom_element, html_event, service_fa
     }
 
     var mark_as_preferred_version = function (event) {
-        var target = BrowserUtilsFactory.getInstance().getTarget(event);
+        var target, resource;
 
-        var resource = this.data;
-        var preferred_version = target.version_code;
+        target = BrowserUtilsFactory.getInstance().getTarget(event);
+        resource = this.data;
 
-        this.services.change_preferred_version(resource, preferred_version);
-    }
+        this.services.change_preferred_version(resource, target.version_code);
+    };
 
 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
