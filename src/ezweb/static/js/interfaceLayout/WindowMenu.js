@@ -66,6 +66,11 @@ function WindowMenu(title) {
     this.windowContent.className = "window_content";
     this.htmlElement.appendChild(this.windowContent);
 
+    this.iconElement = document.createElement('div');
+    Element.extend(this.iconElement);
+    this.iconElement.className = "window-icon";
+    this.windowContent.appendChild(this.iconElement);
+
     this.msgElement = document.createElement('div');
     Element.extend(this.msgElement);
     this.msgElement.className = "msg";
@@ -634,7 +639,7 @@ function AlertWindowMenu () {
     WindowMenu.call(this, gettext('Warning'));
 
     // Warning icon
-    this.msgElement.className += ' icon icon-warning';
+    this.iconElement.className += ' icon-warning';
 
     // Accept button
     this.acceptButton = document.createElement('button');
@@ -683,7 +688,7 @@ function AddMashupWindowMenu (actions) {
     WindowMenu.call(this, gettext('Add Mashup'));
 
     // Warning icon
-    this.msgElement.className += ' icon icon-warning';
+    this.iconElement.className += ' icon-warning';
 
     // New Workspace button
     this.acceptButton = document.createElement('button');
@@ -766,7 +771,7 @@ function InfoWindowMenu(title) {
     WindowMenu.call(this, title);
 
     // Extra HTML Elements
-    this.msgElement.className += ' icon icon-info';
+    this.iconElement.className += ' icon-info';
 
     this.checkbox = document.createElement('input');
     Element.extend(this.checkbox);
@@ -1631,7 +1636,7 @@ function SharedWorkSpaceMenu() {
     WindowMenu.call(this, gettext('Shared WorkSpace Info'));
 
     // Extra HTML Elements
-    this.msgElement.className += ' icon icon-info';
+    this.iconElement.className += ' icon-info';
 
     // Extra HTML Elements (url and html_code)
     // Table
