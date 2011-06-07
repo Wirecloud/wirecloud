@@ -734,9 +734,6 @@ AddMashupWindowMenu.prototype.setFocus = function() {
 function MessageWindowMenu (element) {
     WindowMenu.call(this, '');
 
-    // Warning icon
-    this.msgElement.className += ' icon ';
-
     // Accept button
     this.button = document.createElement('button');
     Element.extend(this.button);
@@ -758,7 +755,7 @@ MessageWindowMenu.prototype.setType = function(type) {
     this.titleElement.update(titles[type]);
 
     // Update icon
-    this.msgElement.className += ' ' + icons[type];
+    this.iconElement.className += ' ' + icons[type];
 }
 
 /**

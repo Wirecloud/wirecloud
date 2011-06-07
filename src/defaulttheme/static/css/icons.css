@@ -19,7 +19,6 @@
 .window_menu .window_content .msg {
     display: inline-block;
     float: left;
-    width: 90%;
 }
 
 .window_menu .window_content .msg p {
