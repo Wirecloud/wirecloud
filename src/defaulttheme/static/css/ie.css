@@ -18,7 +18,7 @@ body {
 	padding-right: 4px;
 }
 
-* html .toolbar_unmarked {
+html .toolbar_unmarked {
 	background-image: none;
 	background-color: #7c9ab1;
 }
@@ -40,21 +40,21 @@ html #workspace_link_container{
 	top: 2px;
 }
 
-* html #dragboard_link{
+html #dragboard_link{
 	overflow: hidden;
 }
 
-* html .ws_name, * html #dragboard_link span, * html #dragboard_link{
+html .ws_name, html #dragboard_link span, html #dragboard_link{
 	width: 130px !important;
 }
 
 #workspace_menu_link{
 	clear:none;
-	*margin: 0px;
+	margin: 0px;
 	padding-top: 0px;
 }
 
-* html #ws_operations_link{
+html #ws_operations_link{
 	background: url(../images/ie/menu-arrow-selected-trans.png) no-repeat;
 }
 
@@ -68,18 +68,24 @@ html #logs_link.highlighted{
     background-position: -48px -526px;
 }
 
-* html #tab_section .tab {
+.tab_section #fixed_bar {
+    width: 50% !important;
+    display: inline-block;
+}
+
+.tab_section #fixed_bar #scroll_bar {
+    width: 100% !important;
+    right: 0px !important;
+}
+
+html #tab_section .tab {
 	background-image: none;
 }
 
-* html #add_tab_link{
-	background-image: none;
-	background-color: #d5d9da;
-}
-
-* html .tabOps_launcher {
-    background-image: url(../images/icons-sprite.png);
-    background-position: -48px -332px; 
+html #add_tab_link{
+    background-image: none;
+    background-color: transparent;
+    border: 0px;
 }
 
 /*DRAGBOARD*/
