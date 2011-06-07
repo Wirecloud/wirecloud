@@ -1121,6 +1121,10 @@ var LayoutManagerFactory = function () {
             }else{
                 this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - this.SLIDER_WIDTH;
             }
+            if (BrowserUtilsFactory.getInstance().getBrowser() === "IE7") {
+                // Hack for IE7
+                this.fixedTabBarMaxWidth = Math.floor(this.fixedTabBarMaxWidth * 0.95);
+            }
         }
 
 
