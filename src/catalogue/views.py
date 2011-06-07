@@ -47,7 +47,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from catalogue.models import Application, GadgetResource, GadgetWiring
-from catalogue.models import UserRelatedToGadgetResource, Tag, UserTag, UserVote
+from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_last_gadget_version
 from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_organization
@@ -152,54 +152,14 @@ class GadgetsCollection(Resource):
         return HttpResponse(simplejson.dumps(response_json),
                             mimetype='application/json; charset=UTF-8')
 
-    def update(self, request, user_name, vendor, name, version):
-        user = user_authentication(request, user_name)
-
-        # Get the gadget data from the request
-        preferred = PUT_parameter(request, 'preferred')
-
-        if preferred != None:
-            # Set all version of this gadget as no preferred
-            old_preferred_versions = UserRelatedToGadgetResource.objects.filter(
-                gadget__vendor=vendor, gadget__short_name=name, user=user, preferred_by=True)
-            for old_version in old_preferred_versions:
-                old_version.preferred_by = False
-                old_version.save()
-
-            new_preferred_versions = UserRelatedToGadgetResource.objects.filter(
-                gadget__vendor=vendor, gadget__short_name=name, gadget__version=version, user=user)
-
-            userRelated = None
-            if len(new_preferred_versions) == 0:
-                resource = get_object_or_404(GadgetResource, short_name=name,
-                                             vendor=vendor, version=version)
-                userRelated = UserRelatedToGadgetResource()
-                userRelated.gadget = resource
-                userRelated.user = user
-                userRelated.added_by = False
-            else:
-                userRelated = new_preferred_versions[0]
-
-            userRelated.preferred_by = True
-            userRelated.save()
-
-            resource = get_object_or_404(GadgetResource, short_name=name,
-                                         vendor=vendor, version=version)
-
-            return get_resource_response([resource], 'json', 1, user)
-
 
 def deleteOneGadget(resource, user, request):
 
     # Delete the gadget only if this user is the owner
-    if not user.is_superuser:
-        try:
-            userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
-        except UserRelatedToGadgetResource.DoesNotExist:
-            #the user is not the owner
-            msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
+    if not user.is_superuser and resource.creator != user:
+        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
 
-            raise Http403(msg)
+        raise Http403(msg)
 
     #Delete data from Application model
     apps = Application.objects.filter(resources=resource)
@@ -207,9 +167,6 @@ def deleteOneGadget(resource, user, request):
     for app in apps:
         app.remove_resource(resource)
 
-    # Delete the related user information to that gadget
-    userRelated = UserRelatedToGadgetResource.objects.filter(gadget=resource)
-    userRelated.delete()
     # Delete the related wiring information for that gadget
     GadgetWiring.objects.filter(idResource=resource.id).delete()
 

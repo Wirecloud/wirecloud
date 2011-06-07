@@ -33,7 +33,6 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
 
 from translator.models import TransModel
 
@@ -99,31 +98,6 @@ class Capability(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class UserRelatedToGadgetResource(models.Model):
-
-    gadget = models.ForeignKey(GadgetResource)
-    user = models.ForeignKey(User)
-    added_by = models.NullBooleanField(_('Added by'), null=True)
-    preferred_by = models.NullBooleanField(_('Preferred by'), null=True)
-
-    class Meta:
-        unique_together = ("gadget", "user")
-
-    def __unicode__(self):
-        args = {'user': self.user, 'gadget': self.gadget}
-        if self.added_by:
-            if self.preferred_by:
-                return ugettext(u"%(user)s added %(gadget)s to the catalogue "
-                                u"and prefers it") % args
-            else:
-                return ugettext(u"%(user)s added %(gadget)s to the catalogue") % args
-        elif self.preferred_by:
-            return ugettext(u"%(user)s prefers %(gadget)s") % args
-        else:
-            return ugettext(u"%(user)s neither added %(gadget)s "
-                            u"to the catalogue neither prefers it ¿?") % args
 
 
 class GadgetWiring(models.Model):

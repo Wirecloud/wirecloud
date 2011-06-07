@@ -32,7 +32,7 @@
 
 from django.contrib import admin
 
-from catalogue.models import GadgetResource, GadgetWiring, UserRelatedToGadgetResource
+from catalogue.models import GadgetResource, GadgetWiring
 from catalogue.models import UserTag, UserVote, Application, Tag, Category
 from catalogue.models import Capability
 
@@ -50,7 +50,6 @@ class GadgetResourceAdmin(admin.ModelAdmin):
 
 admin.site.register(GadgetResource, GadgetResourceAdmin)
 admin.site.register(GadgetWiring)
-admin.site.register(UserRelatedToGadgetResource)
 admin.site.register(UserTag)
 admin.site.register(UserVote)
 admin.site.register(Application)

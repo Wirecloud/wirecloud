@@ -40,7 +40,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Tag, Capability
+from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Tag, Capability
 from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
@@ -356,14 +356,7 @@ class TemplateHandler(handler.ContentHandler):
                 gadget.save()
 
             if self.save:
-                userRelated = UserRelatedToGadgetResource()
-                userRelated.gadget = gadget
-                userRelated.user = self._user
-                userRelated.added_by = True
-
-                userRelated.save()
-
-                #A gadget belongs to many organizations
+                # A gadget belongs to many organizations
                 for organization in self._organization_list:
                     gadget.organization.add(organization)
 
