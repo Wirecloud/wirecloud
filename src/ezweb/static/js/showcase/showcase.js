@@ -236,20 +236,17 @@ var ShowcaseFactory = function () {
 
         //Get all the gadgets name and vendor
         Showcase.prototype.setGadgetsState = function (data) {
-            var i, j, key, resource, versions, sortedVersions, currentGadgets, updated = false;
+            var i, j, key, resource, versions, last_version, currentGadgets, updated = false;
 
             for (i = 0; i < data.length; i += 1) {
                 resource = data[i];
                 key = resource.getVendor() + '_' + resource.getName();
                 if (key in this.gadgetVersions) {
-                    versions = resource.getAllVersions();
-                    sortedVersions = versions.sort(function(version1, version2) {
-                        return -version1.compareTo(version2);
-                    });
+                    last_version = resource.getLastVersion();
 
                     currentGadgets = this.gadgetVersions[key];
                     for (j = 0; j < currentGadgets.length; j += 1) {
-                        updated = currentGadgets[j].setLastVersion(sortedVersions[0]) || updated;
+                        updated = currentGadgets[j].setLastVersion(last_version) || updated;
                     }
                 }
             }
