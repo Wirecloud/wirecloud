@@ -300,12 +300,6 @@
         <field type="BooleanField" name="fromWGT">True</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="1" model="catalogue.userrelatedtogadgetresource">
-        <field to="catalogue.gadgetresource" name="gadget" rel="ManyToOneRel">14</field>
-        <field to="auth.user" name="user" rel="ManyToOneRel">1</field>
-        <field type="NullBooleanField" name="added_by">True</field>
-        <field type="NullBooleanField" name="preferred_by"><None></None></field>
-    </object>
     <object pk="1" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">keyword</field>
         <field type="CharField" name="wiring">in</field>
