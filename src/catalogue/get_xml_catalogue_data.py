@@ -33,7 +33,6 @@
 from django.shortcuts import get_object_or_404
 
 from catalogue.models import GadgetResource, GadgetWiring, UserTag, UserVote
-from catalogue.models import UserRelatedToGadgetResource
 
 
 def get_xml_description(gadgetlist, user):
@@ -50,7 +49,7 @@ def get_xml_description(gadgetlist, user):
         xml_event = get_events_by_resource(e.id)
         xml_slot = get_slots_by_resource(e.id)
         xml_vote = get_vote_by_resource(e, user)
-        xml_user_data = get_related_user_by_resource(e.id, user.id)
+        xml_user_data = get_related_user_by_resource(e, user)
 
         xml_resource += "\n".join(['<resource>',
             '<vendor>%s</vendor>' % e.vendor,
@@ -93,25 +92,11 @@ def get_slots_by_resource(gadget_id):
     return response
 
 
-def get_related_user_by_resource(gadget_id, user_id):
+def get_related_user_by_resource(resource, user):
 
-    added_by_user = ''
-
-    try:
-        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget__id=gadget_id, user__id=user_id)
-
-        if len(user_related_data_list) == 0:
-            added_by_user = 'No'
-            return "<Added_by_User>%s</Added_by_User>" % added_by_user
-
-        user_related_data = user_related_data_list[0]
-        if user_related_data.added_by:
-            added_by_user = 'Yes'
-        else:
-            added_by_user = 'No'
-
-    except UserRelatedToGadgetResource.DoesNotExist:
-        added_by_user = 'No'
+    added_by_user = 'No'
+    if resource.creator == user:
+        added_by_user = 'Yes'
 
     return "<Added_by_User>%s</Added_by_User>" % added_by_user
 

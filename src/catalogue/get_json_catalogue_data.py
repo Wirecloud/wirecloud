@@ -31,7 +31,7 @@
 #
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Capability
+from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Capability
 from resourceSubscription.models import Contract, Application
 #if the catalogue and the platform are separated we should make a request instead of using this:
 from workspace.utils import get_mashup_gadgets
@@ -49,14 +49,12 @@ def get_vote_data(gadget, user):
     except:
         vote_value = 0
     votes_number = UserVote.objects.filter(idResource=gadget).count()
-    popularity_value = gadget.popularity
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
-    vote_data['popularity'] = popularity_value
-    vote = []
-    vote.append(vote_data)
+    # Decimal data loses precision when converted to float
+    vote_data['popularity'] = str(gadget.popularity)
 
-    return vote
+    return vote_data
 
 
 def get_tag_data(gadget_id, user_id):
@@ -113,29 +111,6 @@ def get_slot_data(gadget_id):
         slot_data['friendcode'] = s.friendcode
         all_slots.append(slot_data)
     return all_slots
-
-
-def get_related_user_data(resource, user_id):
-    """Gets data associated with the relationship between user and gadget."""
-    data_ret = {}
-
-    try:
-        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget=resource, user__id=user_id)
-
-        if len(user_related_data_list) == 0:
-            data_ret['added_by_user'] = 'No'
-            return data_ret
-
-        user_related_data = user_related_data_list[0]
-        if user_related_data.added_by:
-            data_ret['added_by_user'] = 'Yes'
-        else:
-            data_ret['added_by_user'] = 'No'
-
-    except UserRelatedToGadgetResource.DoesNotExist:
-        data_ret['added_by_user'] = 'No'
-
-    return data_ret
 
 
 def get_apps_info(apps):
@@ -291,7 +266,7 @@ def get_gadget_capabilities(gadget_id, user):
     return data_ret
 
 
-def get_gadgetresource_data(untranslated_resource, user):
+def get_resource_data(untranslated_resource, user):
     """Gets all the information related to the given gadget."""
     resource = untranslated_resource.get_translated_model()
 
@@ -300,9 +275,6 @@ def get_gadgetresource_data(untranslated_resource, user):
     else:
         displayName = resource.short_name
 
-    user_related_data = get_related_user_data(resource, user_id=user.id)
-
-    versions = GadgetResource.objects.filter(vendor=resource.vendor, short_name=resource.short_name).values_list('version', flat=True)
     data_tags = get_tag_data(gadget_id=resource.pk, user_id=user.id)
     data_events = get_event_data(gadget_id=resource.pk)
     data_slots = get_slot_data(gadget_id=resource.pk)
@@ -322,10 +294,14 @@ def get_gadgetresource_data(untranslated_resource, user):
         'uriTemplate': resource.template_uri,
         'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
-        'added_by_user': user_related_data['added_by_user'],
-        'versions': versions,
+        'added_by_user': resource.creator == user,
         'tags': [d for d in data_tags],
         'events': [d for d in data_events],
         'slots': [d for d in data_slots],
         'votes': get_vote_data(gadget=resource, user=user),
     }
+
+
+def get_resource_group_data(resource_group, user):
+
+    return [get_resource_data(resource, user) for resource in resource_group['variants']]

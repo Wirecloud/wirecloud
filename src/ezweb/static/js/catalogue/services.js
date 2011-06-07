@@ -96,34 +96,39 @@ var CatalogueSearcher = function () {
     this.last_search_options = search_options;
   }
   
-  this.process_response = function (response, command) {
-	var response_text = response.responseText;
-	var response_json = JSON.parse(response_text);
+    this.process_response = function (response, command) {
+        var response_json, resource_list, preferred_versions, resources, i,
+            key;
+
+        response_json = JSON.parse(response.responseText);
+        resource_list = response_json['resources'];
 	
-	var query_results_number = response.getResponseHeader('items'); 
-	
-	var resource_list = response_json['resourceList'];
-	
-	if (resource_list) {
-	  var resource_objects = [];
-	  
-	  for (var i=0; i<resource_list.length; i++) {
-	    var resource_state = resource_list[i];
-	    var resource_obj = new ResourceState(resource_state);
-	    
-	    resource_objects.push(resource_obj);
-	  }
-	  
-	  var processed_data = {}
-	  
-	  processed_data['resources'] = resource_objects;
-	  processed_data['query_results_number'] = query_results_number;
-	  processed_data['resources_per_page'] = command.resources_per_page
-	  processed_data['current_page'] = command.current_page
-	  
-	  return processed_data;
-	}
-  }
+        if (resource_list) {
+            preferred_versions = CookieManager.readCookie('preferred_versions', true);
+            if (preferred_versions == null) {
+                preferred_versions = {};
+            }
+
+            resources = [];
+
+            for (i = 0; i < resource_list.length; i += 1) {
+                resource = new ResourceState(resource_list[i]);
+                resources.push(resource);
+                key = resource.getVendor() + '/' + resource.getName();
+                if (key in preferred_versions) {
+                    resource.changeVersion(preferred_versions[key]);
+                }
+            }
+
+            return {
+                'resources': resources,
+                'preferred_versions': preferred_versions,
+                'query_results_number': response.getResponseHeader('items'),
+                'resources_per_page': command.resources_per_page,
+                'current_page': command.current_page
+            }
+        }
+    };
   
   this.repeat_last_search = function () {
 	var search_options = this.last_search_options;
@@ -210,43 +215,18 @@ var CatalogueResourceSubmitter = function () {
 	
 	this.configured = true;
   }
-  
-  this.process_response = function (response_text, command) {
-	var resource_state = JSON.parse(response_text);
-	
-	resource_state['added_by_user'] = 'Yes';
-	resource_state['uriTemplate'] = resource_state['templateUrl'];
-	resource_state['name'] = resource_state['gadgetName'];
-	resource_state['id'] = resource_state['gadgetId'];
-	                                               
-    var votes = new Hash();
-	
-	votes['votes_number'] = 0;
-	votes['user_vote'] = 0;
-	votes['popularity'] = 0;
-	
-	resource_state['votes'] = [votes]; 
-	
-	if (resource_state['contratable']) {
-	  var capability = new Hash();
-	  
-	  capability['name'] = 'contratable';
-	  capability['value'] = 'true';
-	
-	  resource_state['capabilities'] = [capability];
-	}
-	else
-	  resource_state['capabilities'] = [];
-	
-	resource_state['events'] = [];
-	resource_state['slots'] = [];
-	resource_state['tags'] = []; 
-	
-	var resource_obj = new ResourceState(resource_state);
-	  
-	return resource_obj;
-  }
-  
+
+    this.process_response = function (response_text, command) {
+        var resource_state, resource;
+
+        resource_state = JSON.parse(response_text);
+	resource = new ResourceState(resource_state);
+        // Change version to the added one
+        resource.changeVersion(resource_state[0]['version']);
+
+	return resource;
+    };
+
   this.buy_resource_applications = function (resource) {
 	var contratationSuccess = function (transport) {
 	  var responseJSON = transport.responseText;
@@ -307,44 +287,28 @@ var CatalogueResourceSubmitter = function () {
 	this.persistence_engine.send_post(url, params, response_command, addingToAppSuccess, addingToAppError);
   }
   
-  this.change_preferred_version = function (resource, version) {
-	var url = URIs.GET_POST_RESOURCES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + version;
-    
-	var successCallback = function (response) {
-	  var response_text = response.responseText;
-	  var response_obj = JSON.parse(response_text);
-	  
-	  var resource_state = response_obj['resourceList'][0];
-	  
-	  var resource = new ResourceState(resource_state);
-	  
-	  this.set_data(resource);
-	  
-	  this.process();
-	}
-	
-	var errorCallback = function (response) {
-            var logManager, layoutManager, msg;
+    this.change_preferred_version = function (resource, version) {
+        var preferred_versions, response_command, key;
 
-            logManager = LogManagerFactory.getInstance();
-            layoutManager = LayoutManagerFactory.getInstance();
+        preferred_versions = CookieManager.readCookie('preferred_versions', true);
+        if (preferred_versions === null) {
+            preferred_versions = {};
+        }
+        key = resource.getVendor() + '/' + resource.getName();
+        if (version !== '') {
+            preferred_versions[key] = version.text;
+        } else {
+            delete preferred_versions[key];
+        }
+        CookieManager.createCookie('preferred_versions', preferred_versions, 30);
+        resource.changeVersion(version);
 
-            msg = logManager.formatError(gettext("Error changing the preferred version of this resource: %(errorMsg)s."), transport, e);
-            logManager.log(msg);
-            layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
-	}
-	
-	// CommandResponse creation
-    var response_command = new ResponseCommand(this.resp_command_processor, this);
-    
-    response_command.set_id('PAINT_RESOURCE_DETAILS');
-    
-    var params = new Hash();
-    
-    params['preferred'] = true;
-    
-	this.persistence_engine.send_update(url, params, response_command, successCallback, errorCallback);
-  }
+        // CommandResponse creation
+        response_command = new ResponseCommand(this.resp_command_processor, this);
+        response_command.set_id('PAINT_RESOURCE_DETAILS');
+	response_command.set_data(resource);
+	response_command.process();
+    };
   
   this.add_gadget_from_template = function (template_uri) {
 	
@@ -440,7 +404,7 @@ var CatalogueResourceSubmitter = function () {
   }
 
   this.delete_resource = function (resource) {
-    var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion();
+    var url = URIs.GET_POST_RESOURCES + "/" + resource.getVendor() + "/" + resource.getName() + "/" + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -454,7 +418,7 @@ var CatalogueResourceSubmitter = function () {
       }
 
       layoutManager.logSubTask(gettext('Purging gadget info'));
-      var gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion();
+      var gadgetId = resource.getVendor() + '_' + resource.getName() + '_' + resource.getVersion().text;
       ShowcaseFactory.getInstance().deleteGadget(gadgetId);
 
       layoutManager._notifyPlatformReady();
@@ -489,7 +453,7 @@ var CatalogueResourceSubmitter = function () {
     var context = {
       name: resource.getName(),
       vendor: resource.getVendor(),
-      version: resource.getVersion()
+      version: resource.getVersion().text
     };
 
     msg = interpolate(msg, context, true);
@@ -497,7 +461,7 @@ var CatalogueResourceSubmitter = function () {
   }
 
   this.update_resource_html = function (resource) {
-	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion()};
+	var context = {'vendor': resource.getVendor(), 'name': resource.getName(), 'version': resource.getVersion().text};
     
 	var url = URIs.GET_GADGET.evaluate(context);
     url += '/xhtml';
@@ -540,7 +504,7 @@ var CatalogueVoter = function () {
   CatalogueService.call(this);
 	  
   this.vote = function (resource, vote) {   
-	var url = URIs.POST_RESOURCE_VOTES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+	var url = URIs.POST_RESOURCE_VOTES + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -588,7 +552,7 @@ var CatalogueTagger = function () {
   CatalogueService.call(this);
 		  
   this.tag = function (resource, tags_data) {
-    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion();
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text;
 
     var success_callback = function(response) {
       // processing command
@@ -634,7 +598,7 @@ var CatalogueTagger = function () {
   }
   
   this.delete_tag = function (resource, tag_id) {
-    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion() + '/' + tag_id;
+    var url = URIs.POST_RESOURCE_TAGS + '/' + resource.getVendor() + '/' + resource.getName() + '/' + resource.getVersion().text + '/' + tag_id;
 
     var success_callback = function(response) {
       // processing command

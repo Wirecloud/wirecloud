@@ -51,7 +51,7 @@ from commons.logs import log, log_detailed_exception, log_request
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from catalogue.utils import add_resource_from_template, get_catalogue_resource_info
+from catalogue.utils import add_resource_from_template, get_added_resource_info
 from settings import BASEDIR as BASEDIR_PLATFORM
 from wgtPackageUtils import WgtPackageUtils
 
@@ -167,8 +167,7 @@ class Resources(Resource):
             except IntegrityError, e:
                 raise DeploymentException(_('Gadget already exists!'))
 
-            data = get_catalogue_resource_info(resource, templateParser)
-            data["result"] = "ok"
+            data = get_added_resource_info(resource, user)
             response = HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
             if not user_action:

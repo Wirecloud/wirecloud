@@ -47,16 +47,14 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
     }
 
     var get_all_versions_html = function (versions) {
-        var html = '';
+        var i, html = '';
 
-        for (var i=0; i<versions.length; i++) {
-            var version_display_name = 'v' + versions[i] + ' '
-
-            html += version_display_name;
+        for (i = 0; i < versions.length; i += 1) {
+            html += 'v' + versions[i].text + ' '
         }
 
         return html;
-    }
+    };
 
     this.paint = function (command, user_command_manager) {
         var resource = command.get_data();
@@ -70,7 +68,7 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
         var description = resource.getDescription();
         var vendor = resource.getVendor();
         var name = resource.getName();
-        var version = resource.getVersion();
+        var version = resource.getVersion().text;
         var creator = resource.getCreator();
         var versions = get_all_versions_html(resource.getAllVersions());
         var wiki = resource.getUriWiki();
@@ -335,7 +333,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
                 "The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
                 " Do you really want to continue to add version %(curr_version)s ");
 
-            msg = interpolate(msg, {curr_version: resource.getVersion(), last_version: resource.getLastVersion() }, true);
+            msg = interpolate(msg, {curr_version: resource.getVersion().text, last_version: resource.getLastVersion().text }, true);
 
             LayoutManagerFactory.getInstance().showYesNoDialog(msg,
                 function (){ continueAdding(resource) },

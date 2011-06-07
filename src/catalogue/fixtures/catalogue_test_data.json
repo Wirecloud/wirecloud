@@ -1,0 +1,103 @@
+[
+    {
+        "model": "catalogue.GadgetResource",
+        "pk": 1,
+        "fields": {
+            "short_name": "gadget1",
+            "vendor": "Test",
+            "version": "1.2",
+            "author": "test",
+            "mail": "test@example.com"
+        }
+    },
+    {
+        "model": "catalogue.GadgetResource",
+        "pk": 2,
+        "fields": {
+            "short_name": "gadget1",
+            "vendor": "Test",
+            "version": "1.10",
+            "author": "test",
+            "mail": "test@example.com"
+        }
+    },
+    {
+        "model": "catalogue.GadgetResource",
+        "pk": 3,
+        "fields": {
+            "short_name": "gadget2",
+            "vendor": "Test",
+            "version": "1.0",
+            "author": "test",
+            "mail": "test@example.com"
+        }
+    },
+    {
+        "model": "catalogue.GadgetResource",
+        "pk": 4,
+        "fields": {
+            "short_name": "agadget",
+            "vendor": "Test",
+            "version": "1.0",
+            "author": "test",
+            "mail": "test@example.com"
+        }
+    },
+    {
+        "model": "catalogue.GadgetResource",
+        "pk": 5,
+        "fields": {
+            "short_name": "zgadget",
+            "vendor": "Test",
+            "version": "1.0",
+            "author": "test",
+            "mail": "test@example.com"
+        }
+    },
+    {
+        "model": "catalogue.GadgetWiring",
+        "pk": 1,
+        "fields": {
+            "friendcode": "friendcode1",
+            "wiring": "out",
+            "idResource": 1
+        }
+    },
+    {
+        "model": "catalogue.GadgetWiring",
+        "pk": 2,
+        "fields": {
+            "friendcode": "friendcode2",
+            "wiring": "in",
+            "idResource": 1
+        }
+    },
+    {
+        "model": "catalogue.GadgetWiring",
+        "pk": 3,
+        "fields": {
+            "friendcode": "friendcode1",
+            "wiring": "out",
+            "idResource": 2
+        }
+    },
+    {
+        "model": "catalogue.GadgetWiring",
+        "pk": 4,
+        "fields": {
+            "friendcode": "friendcode2",
+            "wiring": "in",
+            "idResource": 2
+        }
+    },
+    {
+        "model": "catalogue.GadgetWiring",
+        "pk": 5,
+        "fields": {
+            "friendcode": "friendcode2",
+            "wiring": "out",
+            "idResource": 2
+        }
+    }
+
+]
