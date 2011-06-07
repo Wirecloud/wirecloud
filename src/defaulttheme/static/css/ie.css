@@ -68,16 +68,6 @@ html #logs_link.highlighted{
     background-position: -48px -526px;
 }
 
-.tab_section #fixed_bar {
-    width: 50% !important;
-    display: inline-block;
-}
-
-.tab_section #fixed_bar #scroll_bar {
-    width: 100% !important;
-    right: 0px !important;
-}
-
 html #tab_section .tab {
 	background-image: none;
 }

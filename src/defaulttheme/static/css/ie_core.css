@@ -12,14 +12,14 @@
 }
 
 .drop_down_menu .help_text{
-	*white-space: normal;
+	white-space: normal;
 }
 
 .helpwiringheader {
 	white-space: normal;
 }
 
-* html .window_menu .window_multiple_select{
+html .window_menu .window_multiple_select{
   height: 200px;
 }
 
@@ -42,11 +42,11 @@ body{
 }
 
 #catalogue #left_bar {
-	*width: 170px;
+	width: 170px;
 }
 
 #catalogue #catalogue_content {
-	*width: auto;
+	width: auto;
 }
 
 /* WIRING HACKS  to gain layout and paint the arrows properly*/

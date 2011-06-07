@@ -90,7 +90,6 @@ var LayoutManagerFactory = function () {
         this.scrollTabBarWidth = null;
 
         this.menus = new Array();
-        
 
         // Listen to resize events
         Event.observe(window, "resize", this.resizeWrapper.bind(this));
@@ -1184,7 +1183,7 @@ var LayoutManagerFactory = function () {
 
         this.scrollTabBarWidth = 0;
         for (var i=0; i<nodes.length;i++){
-            if (nodes[i].nodeType === nodes[i].ELEMENT_NODE) {
+            if (nodes[i].nodeType === 1) { // nodes[i].ELEMENT_NODE = 1
                 //add the node width. If it is a tab, border width are includes
                 this.scrollTabBarWidth += nodes[i].getWidth();
 
