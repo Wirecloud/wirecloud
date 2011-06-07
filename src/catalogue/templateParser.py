@@ -41,7 +41,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Tag, Capability
-from catalogue.catalogue_utils import get_all_gadget_versions, update_gadget_popularity
+from catalogue.catalogue_utils import get_all_resource_versions, update_gadget_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
@@ -321,9 +321,6 @@ class TemplateHandler(handler.ContentHandler):
             if len(required_fields) > 0:
                 raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
 
-            # Fetch the current list of versions for this resource (can be empty if there is not any version of this resource)
-            currentVersions = get_all_gadget_versions(self._vendor, self._name)
-
             gadget = GadgetResource()
 
             gadget.short_name = self._name
@@ -373,8 +370,13 @@ class TemplateHandler(handler.ContentHandler):
                     userTag.save()
 
                 # Copy all UserTag and UserVote entry from previous version
-                if len(currentVersions) > 0:
-                    previousVersion = GadgetResource.objects.get(vendor=self._vendor, short_name=self._name, version=max(currentVersions))
+                resource_versions = get_all_resource_versions(self._vendor, self._name)
+
+                resource_version = map(int, gadget.version.split('.'))
+                previous_versions = [v for v in resource_versions if v < resource_version]
+                if len(previous_versions) > 0:
+                    previous_version_string = '.'.join(map(str, max(previous_versions)))
+                    previousVersion = GadgetResource.objects.get(vendor=self._vendor, short_name=self._name, version=previous_version_string)
 
                     previousUserTags = UserTag.objects.filter(idResource=previousVersion)
 

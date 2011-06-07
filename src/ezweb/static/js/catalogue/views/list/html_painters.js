@@ -333,7 +333,7 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
                 "The current version, %(curr_version)s, is lower than the latest version in the catalogue: %(last_version)s." +
                 " Do you really want to continue to add version %(curr_version)s ");
 
-            msg = interpolate(msg, {curr_version: resource.getVersion(), last_version: resource.getLastVersion() }, true);
+            msg = interpolate(msg, {curr_version: resource.getVersion().text, last_version: resource.getLastVersion().text }, true);
 
             LayoutManagerFactory.getInstance().showYesNoDialog(msg,
                 function (){ continueAdding(resource) },

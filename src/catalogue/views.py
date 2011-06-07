@@ -49,13 +49,13 @@ from django.utils.translation import ugettext as _
 from catalogue.models import Application, GadgetResource, GadgetWiring
 from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
-from catalogue.catalogue_utils import get_last_gadget_version
+from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_organization
 from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_resource_from_template_uri, get_catalogue_resource_info
+from catalogue.utils import add_resource_from_template_uri, get_added_resource_info
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
@@ -103,10 +103,9 @@ class GadgetsCollection(Resource):
             msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
-        json_response = get_catalogue_resource_info(resource, templateParser)
-        json_response["result"] = "ok"
+        json_response = get_added_resource_info(resource, user)
 
-        # get_catalogue_resource_info can make changes in the db
+        # get_added_resource_info can make changes in the db
         transaction.commit()
 
         return HttpResponse(simplejson.dumps(json_response),
@@ -525,13 +524,11 @@ class GadgetVersionsCollection(Resource):
         gadgets = simplejson.loads(request.POST["gadgets"])
         result = []
         for g in gadgets:
-            version = get_last_gadget_version(g["name"], g["vendor"])
-            if version:  # the gadget is still in the catalogue
-                g["lastVersion"] = version
-                url = GadgetResource.objects.get(short_name=g["name"],
-                                                 vendor=g["vendor"],
-                                                 version=version).template_uri
-                g["lastVersionURL"] = url
+            latest_resource_version = get_latest_resource_version(g["name"], g["vendor"])
+            if latest_resource_version:
+                # the gadget is still in the catalogue
+                g["lastVersion"] = latest_resource_version.version
+                g["lastVersionURL"] = latest_resource_version.template_uri
                 result.append(g)
         json_result = {'gadgets': result}
         return HttpResponse(json_encode(json_result),

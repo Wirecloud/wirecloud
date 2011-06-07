@@ -49,10 +49,10 @@ def get_vote_data(gadget, user):
     except:
         vote_value = 0
     votes_number = UserVote.objects.filter(idResource=gadget).count()
-    popularity_value = gadget.popularity
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
-    vote_data['popularity'] = popularity_value
+    # Decimal data loses precision when converted to float
+    vote_data['popularity'] = str(gadget.popularity)
 
     return vote_data
 

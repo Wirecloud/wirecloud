@@ -215,43 +215,18 @@ var CatalogueResourceSubmitter = function () {
 	
 	this.configured = true;
   }
-  
-  this.process_response = function (response_text, command) {
-	var resource_state = JSON.parse(response_text);
-	
-	resource_state['added_by_user'] = 'Yes';
-	resource_state['uriTemplate'] = resource_state['templateUrl'];
-	resource_state['name'] = resource_state['gadgetName'];
-	resource_state['id'] = resource_state['gadgetId'];
-	                                               
-    var votes = new Hash();
-	
-	votes['votes_number'] = 0;
-	votes['user_vote'] = 0;
-	votes['popularity'] = 0;
-	
-	resource_state['votes'] = [votes]; 
-	
-	if (resource_state['contratable']) {
-	  var capability = new Hash();
-	  
-	  capability['name'] = 'contratable';
-	  capability['value'] = 'true';
-	
-	  resource_state['capabilities'] = [capability];
-	}
-	else
-	  resource_state['capabilities'] = [];
-	
-	resource_state['events'] = [];
-	resource_state['slots'] = [];
-	resource_state['tags'] = []; 
-	
-	var resource_obj = new ResourceState(resource_state);
-	  
-	return resource_obj;
-  }
-  
+
+    this.process_response = function (response_text, command) {
+        var resource_state, resource;
+
+        resource_state = JSON.parse(response_text);
+	resource = new ResourceState(resource_state);
+        // Change version to the added one
+        resource.changeVersion(resource_state[0]['version']);
+
+	return resource;
+    };
+
   this.buy_resource_applications = function (resource) {
 	var contratationSuccess = function (transport) {
 	  var responseJSON = transport.responseText;

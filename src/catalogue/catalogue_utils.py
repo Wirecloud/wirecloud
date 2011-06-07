@@ -241,26 +241,30 @@ def get_vote_response(gadget, user, format):
         return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
-def get_all_gadget_versions(vendor, name):
-    """Returns all the versions of a specified gadget name (formed by vendor and name)."""
-    versions = GadgetResource.objects.filter(vendor=vendor, short_name=name).values('version')
-    return ["%s" % (v['version']) for v in versions]
+def get_all_resource_versions(vendor, name):
+    """Returns all the versions of a specified resource name (formed by vendor and name)."""
+
+    versions = GadgetResource.objects.filter(vendor=vendor, short_name=name).values_list('version', flat=True)
+
+    # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
+    # allow comparing integers
+    return [map(int, v.split('.')) for v in versions]
 
 
-def get_last_gadget_version(name, vendor):
+def get_latest_resource_version(name, vendor):
 
-    version_list = get_all_gadget_versions(vendor, name)
-    if version_list:
-        #convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
-        #allow comparing integers
-        versions = [map(int, v.split(".")) for v in version_list]
+    resource_versions = GadgetResource.objects.filter(vendor=vendor, short_name=name)
+    if resource_versions.count() > 0:
+        # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
+        # allow comparing integers
+        versions = [map(int, r.version.split(".")) for r in resource_versions]
 
         index = 0
         for k in range(len(versions)):
             if max(versions[index], versions[k]) == versions[k]:
                 index = k
-        version = version_list[index]
-        return version
+
+        return resource_versions[k]
 
     return None
 

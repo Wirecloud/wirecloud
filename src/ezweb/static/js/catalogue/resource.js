@@ -164,7 +164,13 @@ function ResourceState(resourceJSON_) {
         if (version instanceof GadgetVersion) {
             version = version.text;
         }
-        currentVersion = data_by_version[version];
+
+        if (version in data_by_version) {
+            currentVersion = data_by_version[version];
+        } else {
+            currentVersion = data_by_version[allVersions[0].text];
+        }
+
         if (currentVersion.availableApps) {
             this.setAvailableApps(currentVersion.availableApps);
         }
