@@ -97,20 +97,32 @@ var CatalogueSearcher = function () {
   }
   
     this.process_response = function (response, command) {
-	var response_json, resource_list, resources, i;
+        var response_json, resource_list, preferred_versions, resources, i,
+            key;
 
         response_json = JSON.parse(response.responseText);
-	resource_list = response_json['resources'];
+        resource_list = response_json['resources'];
 	
         if (resource_list) {
+            preferred_versions = CookieManager.readCookie('preferred_versions', true);
+            if (preferred_versions == null) {
+                preferred_versions = {};
+            }
+
             resources = [];
 
             for (i = 0; i < resource_list.length; i += 1) {
-                resources.push(new ResourceState(resource_list[i]));
+                resource = new ResourceState(resource_list[i]);
+                resources.push(resource);
+                key = resource.getVendor() + '/' + resource.getName();
+                if (key in preferred_versions) {
+                    resource.changeVersion(preferred_versions[key]);
+                }
             }
-	  
+
             return {
                 'resources': resources,
+                'preferred_versions': preferred_versions,
                 'query_results_number': response.getResponseHeader('items'),
                 'resources_per_page': command.resources_per_page,
                 'current_page': command.current_page
