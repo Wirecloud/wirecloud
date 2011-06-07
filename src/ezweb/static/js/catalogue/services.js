@@ -288,13 +288,18 @@ var CatalogueResourceSubmitter = function () {
   }
   
     this.change_preferred_version = function (resource, version) {
-        var preferred_versions, response_command;
+        var preferred_versions, response_command, key;
 
         preferred_versions = CookieManager.readCookie('preferred_versions', true);
         if (preferred_versions === null) {
             preferred_versions = {};
         }
-        preferred_versions[resource.getVendor() + '/' + resource.getName()] = version.text;
+        key = resource.getVendor() + '/' + resource.getName();
+        if (version !== '') {
+            preferred_versions[key] = version.text;
+        } else {
+            delete preferred_versions[key];
+        }
         CookieManager.createCookie('preferred_versions', preferred_versions, 30);
         resource.changeVersion(version);
 

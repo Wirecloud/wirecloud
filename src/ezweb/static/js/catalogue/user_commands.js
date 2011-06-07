@@ -342,43 +342,49 @@ var VoteResourceCommand = function (dom_element, html_event, service_facade, dom
 
 var ChangeResourceVersionCommand = function (dom_element, html_event, service_facade, dom_wrapper, data, policy) {
     this.anonymous_function = function(event) {
-        var target = BrowserUtilsFactory.getInstance().getTarget(event);
-        var operation_area_div = target.nextSiblings()[0];
-        var versions_area_div = operation_area_div.getElementsBySelector('.operation_content')[0];
+        var target, operation_area_div, versions_area_div, resource,
+            resource_versions, html_versions, preferredVersions,
+            preferred_version, i, preferred_version_written,
+            preferred_version_obj;
+
+        target = BrowserUtilsFactory.getInstance().getTarget(event);
+        operation_area_div = target.nextSiblings()[0];
+        versions_area_div = operation_area_div.getElementsBySelector('.operation_content')[0];
 
         operation_area_div.toggleClassName('hidden');
 
-        var resource = this.data;
-
-        var resource_versions = resource.getAllVersions();
-        var html_versions = '';
+        resource = this.data;
+        resource_versions = resource.getAllVersions();
+        html_versions = '';
 
         versions_area_div.update('');
 
-        for (var i = 0; i < resource_versions.length; i += 1) {
-            var version = resource_versions[i];
-
-            var element_tag = 'a'
-
-            if (version == resource.getVersion()) {
-                element_tag  = 'div'
+        preferred_versions = CookieManager.readCookie('preferred_versions', true);
+        preferred_version = '';
+        if (preferred_versions !== null) {
+            key = resource.getVendor() + '/' + resource.getName();
+            if (key in preferred_versions) {
+                preferred_version = preferred_versions[key];
             }
+        }
+        this._addVersionLink(versions_area_div, '', preferred_version);
+        preferred_version_written = preferred_version === '';
+        if (preferred_version !== '') {
+            preferred_version_obj = new GadgetVersion(preferred_version);
+        }
 
-            var element = document.createElement(element_tag)
-            element = Element.extend(element);
-            element.addClassName('available_version');
-
-            element.version_code = version;
-
-            if (version == resource.getVersion()) {
-                element.addClassName('bold');
-            } else {
-                Event.observe(element, 'click', mark_as_preferred_version.bind(this));
+        for (i = 0; i < resource_versions.length; i += 1) {
+            current_version = resource_versions[i];
+            if (!preferred_version_written) {
+                result = current_version.compareTo(preferred_version_obj);
+                if (result === 0) {
+                    preferred_version_written = true;
+                } else if (result < 0) {
+                    this._addVersionLink(versions_area_div, preferred_version_obj, preferred_version, true);
+                    preferred_version_written = true;
+                }
             }
-
-            element.setTextContent('v' + version.text);
-
-            versions_area_div.appendChild(element);
+            this._addVersionLink(versions_area_div, current_version, preferred_version);
         }
     }
 
@@ -389,11 +395,46 @@ var ChangeResourceVersionCommand = function (dom_element, html_event, service_fa
         resource = this.data;
 
         this.services.change_preferred_version(resource, target.version_code);
+    }.bind(this);
+
+    this._addVersionLink = function (div, version, preferred_version, unavailable) {
+        var element_tag, element, version_str;
+
+        if (version instanceof GadgetVersion) {
+            version_str = version.text;
+        } else {
+            version_str = version;
+        }
+
+        if (version_str === preferred_version) {
+            element_tag = 'div';
+        } else {
+            element_tag = 'a';
+        }
+
+        element = document.createElement(element_tag);
+        element = Element.extend(element);
+        element.addClassName('available_version');
+
+        element.version_code = version;
+
+        if (version_str === preferred_version) {
+            element.addClassName('bold');
+        } else {
+            Event.observe(element, 'click', mark_as_preferred_version);
+        }
+
+        if (version_str === '') {
+            element.setTextContent(gettext('latest'));
+        } else {
+            element.setTextContent('v' + version.text);
+        }
+
+        div.appendChild(element);
     };
 
-
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, data, policy);
-}
+};
 
 var ShowResourceListCommand = function (dom_element, html_event, service_facade, dom_wrapper, data) {
     this.anonymous_function = function(event) {
