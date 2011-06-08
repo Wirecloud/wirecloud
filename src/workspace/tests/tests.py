@@ -67,12 +67,13 @@ class WorkspaceTestCase(TestCase):
             'igadgetVars': [
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
-                {'id': 4, 'value': 'new_data'}
+                {'id': 4, 'value': 'new_data'},
             ]
         }
-        put_data = simplejson.dumps(put_data, ensure_ascii=False)
+        put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
-        client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        result = client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
+        self.assertEqual(result.status_code, 200)
 
         data = get_global_workspace_data(workspace, self.user)
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
