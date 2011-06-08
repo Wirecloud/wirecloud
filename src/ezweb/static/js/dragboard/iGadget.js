@@ -575,8 +575,9 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
+        var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+
         this.content = document.createElement("iframe");
         Element.extend(this.content);
         this.content.addClassName("gadget_object");
@@ -593,7 +594,6 @@ IGadget.prototype.build = function () {
         this.content.addClassName("gadget_object");
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
-        this.content.setAttribute("data", codeURL);
         //this.content.innerHTML = "Loading...."; // TODO add an animation ?
     }
     Element.extend(this.content);
@@ -750,9 +750,9 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.visibility = "hidden";
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        this.content.setAttribute("src", codeURL);
+    if (this.content.tagName.toLowerCase() === 'object') {
+        var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+        this.content.setAttribute("data", codeURL);
     }
 
     // Position
