@@ -36,15 +36,15 @@ from API.views import IGadgetCollection, IGadgetEntry
 urlpatterns = patterns('API.views',
 
     # Gadgets
-    (r'^/(?P<user_name>[\.\-\w]+)/gadget[s]?[/]?$',
+    (r'^/(?P<user_name>[\.\-\w\@]+)/gadget[s]?[/]?$',
                 IGadgetCollection(permitted_methods=('POST',))),
     (r'^/gadget[s]?[/]?$',
                 IGadgetCollection(permitted_methods=('POST',))),
-    (r'^/(?P<user_name>[\.\-\w]+)/gadget[s]?/(?P<gadget_id>\d+)/igadget[s]?[/]?$',
+    (r'^/(?P<user_name>[\.\-\w\@]+)/gadget[s]?/(?P<gadget_id>\d+)/igadget[s]?[/]?$',
                 IGadgetCollection(permitted_methods=('DELETE',))),
     (r'^/gadget[s]?/(?P<gadget_id>\d+)/igadget[s]?[/]?$',
                 IGadgetCollection(permitted_methods=('DELETE',))),
-    (r'^/(?P<user_name>[\.\-\w]+)/igadget[s]?/(?P<igadget_id>\d+)$',
+    (r'^/(?P<user_name>[\.\-\w\@]+)/igadget[s]?/(?P<igadget_id>\d+)$',
                 IGadgetEntry(permitted_methods=('DELETE',))),
     (r'^/igadget[s]?/(?P<igadget_id>\d+)$',
                 IGadgetEntry(permitted_methods=('DELETE',))),

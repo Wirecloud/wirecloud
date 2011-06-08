@@ -57,10 +57,10 @@ urlpatterns = patterns('',
 
     # EzWeb
     (r'^', include('ezweb.urls')),
-    (r'^user/(?P<user_name>[\.\-\w]+)/$', include('ezweb.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/$', include('ezweb.urls')),
 
     # Gadgets
-    (r'^user/(?P<user_name>[\.\-\w]+)/gadget(s)?', include('gadget.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('gadget.urls')),
     (r'^gadget(s)?', include('gadget.urls')),
 
     # WorkSpaces
@@ -82,13 +82,13 @@ urlpatterns = patterns('',
     (r'^workspace(s)?/(?P<workspace_id>\d+)/connectable(s)?', include('connectable.urls')),
 
     # context
-    (r'^user/(?P<user_name>[\.\-\w]+)/context(s)?', include('context.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/context(s)?', include('context.urls')),
 
     # Platform Preferences
-    (r'^user/(?P<user_name>[\.\-\w]+)/preference(s)?', include('preferences.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/preference(s)?', include('preferences.urls')),
 
     # Catalogue Resource
-    (r'^user/(?P<user_name>[\.\-\w]+)/catalogue/', include('catalogue.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/catalogue/', include('catalogue.urls')),
 
     # Catalogue: Changing certification status
     (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
