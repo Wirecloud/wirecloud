@@ -61,6 +61,8 @@ OUT_XPATH = etree.ETXPath('Out')
 def buildWorkspaceFromTemplate(template, user):
 
     if isinstance(template, unicode):
+        # Work around: ValueError: Unicode strings with encoding declaration
+        # are not supported.
         template = template.encode('utf-8')
 
     xml = etree.fromstring(template)
@@ -83,6 +85,11 @@ def buildWorkspaceFromTemplate(template, user):
 def fillWorkspaceUsingTemplate(workspace, template, xml=None):
 
     if xml is None:
+        if isinstance(template, unicode):
+            # Work around: ValueError: Unicode strings with encoding
+            # declaration are not supported.
+            template = template.encode('utf-8')
+
         xml = etree.fromstring(template)
 
     user = workspace.creator
