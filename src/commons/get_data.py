@@ -289,7 +289,6 @@ def get_gadget_data(gadget):
         data_var['type'] = var.type
         data_var['label'] = tvar.label
         data_var['description'] = tvar.description
-        data_var['shareable'] = var.shared_var_def != None
 
         if var.aspect == 'PREF':
             data_var['default_value'] = tvar.default_value
@@ -699,8 +698,6 @@ def get_igadget_data(igadget, user, workspace, cache_manager=None):
 
 
 def get_variable_data(variable, user, workspace, cache_manager=None):
-    var_def = variable.vardef
-
     data_ret = {
         'id': variable.id,
         'name': variable.vardef.name,
@@ -714,9 +711,6 @@ def get_variable_data(variable, user, workspace, cache_manager=None):
 
     # Variable info is splited into 2 entities: VariableDef and VariableValue
     data_ret.update(cache_manager.get_variable_data(variable))
-
-    if var_def.shared_var_def:
-        data_ret['shared'] = variable.shared_value != None
 
     return data_ret
 

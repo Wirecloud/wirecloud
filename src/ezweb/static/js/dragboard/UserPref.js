@@ -76,10 +76,6 @@ UserPref.prototype.setValue = function (varManager, iGadgetId, newValue) {
     var variable = varManager.getVariableByName(iGadgetId, this.varName);
 
     if (!variable.readOnly && this.validate(newValue)) {
-        if (this.sharedElement){
-            //set the shared state in the variable
-            variable.setSharedState(this.sharedElement.checked);
-        }
         variable.set(newValue);
     }
 }
@@ -123,79 +119,10 @@ UserPref.prototype.makeInterface = function(varManager, iGadgetId) {
 
     if (variable.readOnly) {
         this.inputElement.disabled = true;
-    } else {
-        this.addSharedInterface(variable, this.inputElement, element);
     }
 
     return element;
 }
-
-UserPref.prototype.addSharedInterface = function(variable, prefField, container) {
-
-    function toggleEditLink(e){
-        cb = BrowserUtilsFactory.getInstance().getTarget(e);
-        if (cb.checked) {
-            this.link.show();
-            this.field.disabled = true;
-        } else {
-            this.link.hide();
-            this.field.disabled = false;
-        }
-    }
-
-    function toggleField(e){
-        edit_link = BrowserUtilsFactory.getInstance().getTarget(e);
-        edit_link.toggleClassName("edit")
-        this.field.disabled = !this.field.disabled;
-    }
-
-    if (variable.shared != null){ //it is shareable
-
-        var shared_element = document.createElement("div")
-        Element.extend(shared_element);
-        shared_element.addClassName("shared_conf_area")
-        //checkbox
-        var cb = document.createElement('input');
-        Element.extend(cb);
-        cb.type = 'checkbox';
-        cb.id = this.varName + "_shared_cb";
-        cb.checked = variable.shared;
-        shared_element.appendChild(cb);
-
-        var label = document.createElement('label')
-        label.htmlFor = cb.id;
-        label.appendChild(document.createTextNode(gettext('is shared?')));
-        shared_element.appendChild(label);
-
-        //edit link
-        var edit_link = document.createElement("a")
-        Element.extend(edit_link);
-        edit_link.addClassName("edit")
-        edit_link.appendChild(document.createTextNode(gettext('edit shared value')));
-        shared_element.appendChild(edit_link);
-
-        if (variable.shared) {
-            prefField.disabled = true;
-        } else {
-            prefField.disabled = false;
-            edit_link.setStyle({
-                "display": "none"
-            });
-        }
-
-        //add listeners
-        context = {"link":edit_link, "field":prefField};
-        Event.observe(cb, "click", toggleEditLink.bind(context))
-        context = {"field":prefField};
-        Event.observe(edit_link, "click", toggleField.bind(context))
-
-        //add all to the container
-        container.appendChild(shared_element);
-
-        this.sharedElement = cb;
-    }
-}
-
 
 //////////////////////////////////////////////
 // PUBLIC CONSTANTS

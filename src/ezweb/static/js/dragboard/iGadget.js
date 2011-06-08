@@ -1366,48 +1366,26 @@ IGadget.prototype._createPrefsInterface = function (prefs) {
  * This function builds the igadget configuration form.
  */
 IGadget.prototype._makeConfigureInterface = function () {
-    var gadgetPrefs, sharedPrefs, interfaceDiv, table, separator, shared_title, result, pref_counter;
+    var gadgetPrefs, interfaceDiv, result, buttons, button, floatClearer;
 
-    gadgetPrefs = this.gadget.getTemplate().getGadgetPrefs();
-    sharedPrefs = this.gadget.getTemplate().getSharedPrefs();
+    gadgetPrefs = this.gadget.getTemplate().getUserPrefs();
 
     interfaceDiv = document.createElement("div");
 
     this.prefElements = [];
 
-    // Add the gadget-only variables
+    /* result = [<table>, <visible_prefs_count>] */
     result = this._createPrefsInterface(gadgetPrefs);
-    table = result[0];
-    pref_counter = result[1];
-    interfaceDiv.appendChild(table);
+    interfaceDiv.appendChild(result[0]);
 
-    // Add the shareable variables
-    if (sharedPrefs.length > 0) {
-        // Add a separator
-        separator = document.createElement("hr");
-        interfaceDiv.appendChild(separator);
-        shared_title = document.createElement("h4");
-        Element.extend(shared_title);
-        shared_title.appendChild(document.createTextNode(gettext("Shared Values")));
-        interfaceDiv.appendChild(shared_title);
-
-        // Create the shared prefs interface
-        result = this._createPrefsInterface(sharedPrefs);
-        table = result[0];
-        pref_counter += result[1];
-        table.className = "shared_prefs";
-        interfaceDiv.appendChild(table);
-    }
-
-    if (pref_counter === 0) {
+    if (result[1] === 0) {
         interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
         return interfaceDiv;
     }
 
-    var buttons = document.createElement("div");
+    buttons = document.createElement("div");
     Element.extend(buttons);
     buttons.addClassName("buttons");
-    var button;
 
     // "Set Defaults" button
     button = document.createElement("input");
@@ -1443,7 +1421,7 @@ IGadget.prototype._makeConfigureInterface = function () {
     interfaceDiv.appendChild(buttons);
 
     // clean floats
-    var floatClearer = document.createElement("div");
+    floatClearer = document.createElement("div");
     Element.extend(floatClearer);
     floatClearer.addClassName("floatclearer");
     interfaceDiv.appendChild(floatClearer);

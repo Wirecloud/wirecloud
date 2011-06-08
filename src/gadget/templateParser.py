@@ -40,7 +40,7 @@ from commons.http_utils import download_http_content
 from commons.translation_utils import get_trans_index
 from deployment.wgtPackageUtils import get_wgt_local_path
 from gadgetCodeParser import parse_gadget_code
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability, SharedVariableDef
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
 from translator.models import Translation
 
 
@@ -158,15 +158,6 @@ class UriGadgetHandler(handler.ContentHandler):
         self._accumulator = ""
 
 
-def get_shared_var_def(attrs):
-
-    if 'shared_concept' in attrs:
-        name = attrs.get('shared_concept')
-        shared_var_def, create = SharedVariableDef.objects.get_or_create(name=name)
-        return shared_var_def
-    return None
-
-
 class TemplateHandler(handler.ContentHandler):
 
     _SLOT = "SLOT"
@@ -234,9 +225,7 @@ class TemplateHandler(handler.ContentHandler):
         _default_value = attrs.get('default', None)
         _secure = attrs.get('secure', '').lower()
 
-        if (_name != '' and _type != ''):
-            #check if it's shared
-            shared_concept = get_shared_var_def(attrs)
+        if _name != '' and _type != '':
 
             vDef = VariableDef(name=_name,
                                order=self._property_index,
@@ -246,7 +235,6 @@ class TemplateHandler(handler.ContentHandler):
                                friend_code=None,
                                default_value=_default_value,
                                gadget=self._gadget,
-                               shared_var_def=shared_concept,
                                secure=_secure == 'true')
             self._property_index += 1
 
@@ -270,9 +258,6 @@ class TemplateHandler(handler.ContentHandler):
         _secure = attrs.get('secure', '').lower()
 
         if (_name != '' and _type != '' and _description != '' and _label != ''):
-            #check if it's shared
-            shared_concept = get_shared_var_def(attrs)
-
             vDef = VariableDef(name=_name,
                                order=self._preference_index,
                                description=_description,
@@ -282,7 +267,6 @@ class TemplateHandler(handler.ContentHandler):
                                label=_label,
                                default_value=_default_value,
                                gadget=self._gadget,
-                               shared_var_def=shared_concept,
                                secure=_secure == 'true')
             self._preference_index += 1
 

@@ -121,16 +121,6 @@ class Capability(models.Model):
         unique_together = ('name', 'value', 'gadget')
 
 
-#Sharing variables. Different variables can be related to the same
-#concept (SharedVariableDef)and so, share the same value.
-class  SharedVariableDef (models.Model):
-
-    name = models.CharField(_('Name'), max_length=30)
-
-    def __unicode__(self):
-        return self.name
-
-
 class VariableDef(TransModel):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -158,7 +148,6 @@ class VariableDef(TransModel):
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
-    shared_var_def = models.ForeignKey(SharedVariableDef, null=True, blank=True)
     gadget = models.ForeignKey(Gadget)
     order = models.IntegerField(default=0, blank=True)
 

@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _
 from commons.authentication import Http403
 from gadget.models import Gadget, VariableDef
 from igadget.models import Position, IGadget, Variable
-from workspace.models import Tab, VariableValue, SharedVariableValue
+from workspace.models import Tab, VariableValue
 from connectable.models import In, Out
 
 
@@ -67,21 +67,8 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
         # Create Variable
         variable = Variable.objects.create(igadget=igadget, vardef=varDef)
 
-        #check if there is a shared value or set a new one
-        shared_value = None
-        if varDef.shared_var_def:
-            shared_value, created = SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
-            if created:
-                #init the value to share
-                shared_value.value = var_value
-                shared_value.save()
-            else:
-                #this VariableValue will take the previously shared value
-                var_value = shared_value.value
-
         # Creating a Variable Value for this variable
-        VariableValue.objects.create(user=user, variable=variable, value=var_value,
-                                      shared_var_value=shared_value)
+        VariableValue.objects.create(user=user, variable=variable, value=var_value)
 
     elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
         # Create Variable

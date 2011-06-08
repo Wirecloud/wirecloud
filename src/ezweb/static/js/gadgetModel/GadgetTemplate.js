@@ -41,8 +41,6 @@ function GadgetTemplate(variables_, size_) {
 
     //preferences section
     var prefs =  null;
-    var sharedPrefs = null;
-    var gadgetPrefs = null;
     var connectables = null;
 
     // ******************
@@ -82,8 +80,6 @@ function GadgetTemplate(variables_, size_) {
     this._generateUserPrefs = function () {
 
         prefs = [];
-        sharedPrefs = [];
-        gadgetPrefs = [];
 
         var rawVar, pref, i;
 
@@ -97,18 +93,7 @@ function GadgetTemplate(variables_, size_) {
         prefs = prefs.sort(this._sortVariables);
 
         for (i = 0; i < prefs.length; i += 1) {
-            pref = this._newUserPref(prefs[i]);
-
-            if (!prefs[i].shareable) {
-                // add it to the user-only prefs
-                gadgetPrefs.push(pref);
-            } else {
-                // add it to the shared prefs
-                sharedPrefs.push(pref);
-            }
-
-            // Replace the hash with a UserPref
-            prefs[i] = pref;
+            prefs[i] = this._newUserPref(prefs[i]);
         }
 
         return prefs;
@@ -119,20 +104,6 @@ function GadgetTemplate(variables_, size_) {
             this._generateUserPrefs();
         }
         return prefs;
-    };
-
-    this.getSharedPrefs = function () {
-        if (!sharedPrefs) {
-            this._generateUserPrefs();
-        }
-        return sharedPrefs;
-    };
-
-    this.getGadgetPrefs = function () {
-        if (!gadgetPrefs) {
-            this._generateUserPrefs();
-        }
-        return gadgetPrefs;
     };
 
     this.getExternalContextVars = function (igadget_) {
