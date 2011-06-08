@@ -154,10 +154,6 @@ div.config_interface label.invalid input {
   border-color: red;
 }
 
-table.shared_prefs td{
-	border-bottom-color: #CCCCCC;
-}
-
 /***
  *
  */
