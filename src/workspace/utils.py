@@ -41,7 +41,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 
 from workspace.managers import get_workspace_managers
-from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, SharedVariableValue, VariableValue, WorkSpace
+from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -124,41 +124,14 @@ def decrypt_value(value):
         return ''
 
 
-def set_variable_value(var_id, user, value, shared=None):
+def set_variable_value(var_id, user, value):
 
     variables_to_notify = []
-    variable_value = VariableValue.objects.filter(user=user, variable__id=var_id).select_related('variable__vardef')[0]
+    variable_value = VariableValue.objects.select_related('variable__vardef').get(user=user, variable__id=var_id)
 
     new_value = unicode(value)
     if variable_value.variable.vardef.secure:
         new_value = encrypt_value(new_value)
-
-    if shared != None:
-        if shared:
-            #do not share the value: remove the relationship
-            variable_value.shared_var_value = None
-        else:
-            shared_variable_def = variable_value.variable.vardef.shared_var_def
-            variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
-                                                                              shared_var_def=shared_variable_def)
-            #share the specified value
-            variable_value.shared_var_value.value = new_value
-            variable_value.shared_var_value.save()
-
-            #notify the rest of variables that are sharing the value
-            #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
-            variable_values = VariableValue.objects.filter(shared_var_value=variable_value.shared_var_value).exclude(id=variable_value.id)
-            #Variables that correspond with these values
-            for value in variable_values:
-                variable = value.variable
-                exists = False
-                for var in variables_to_notify:
-                    if var['id'] == variable.id:
-                        var['value'] = value.shared_var_value.value
-                        exists = True
-                        break
-                if not exists:
-                    variables_to_notify.append({'id': variable.id, 'value': value.shared_var_value.value})
 
     variable_value.value = new_value
     variable_value.save()

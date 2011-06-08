@@ -31,7 +31,7 @@
 #
 
 from igadget.models import Variable, IGadget
-from workspace.models import VariableValue, UserWorkSpace, SharedVariableValue
+from workspace.models import VariableValue, UserWorkSpace
 
 
 class PackageLinker:
@@ -123,30 +123,6 @@ class PackageLinker:
 
             #Updating User VariableValue value!
             user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, variable, created)
-
-            if created and creator_variable_value:
-
-                #check if it's shared (only for igadget variables)
-                if variable.vardef.shared_var_def:
-                    shared_concept = variable.vardef.shared_var_def
-                    shared_var_value, is_new = SharedVariableValue.objects.get_or_create(user=user,
-                                                                                          shared_var_def=shared_concept)
-                    if is_new:
-                        if variable.has_public_value():
-                            #clone the value the creator has set
-                            shared_var_value.value = SharedVariableValue.objects.get(user=creator,
-                                                                                     shared_var_def=shared_concept).value
-                        else:
-                            #set the default value
-                            shared_var_value.value = variable.get_default_value()
-
-                        shared_var_value.save()
-
-                    if creator_variable_value.shared_var_value:
-                        user_variable_value.shared_var_value = shared_var_value
-
-                #remove the cloned variable value
-                #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
 
             if user_variable_value.value is not None:
                 user_variable_value.save()

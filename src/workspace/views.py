@@ -516,7 +516,7 @@ class WorkSpaceVariableCollection(Resource):
 
             variables_to_notify = []
             for igVar in igadgetVariables:
-                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'], igVar.get('shared', None))
+                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'])
 
             data = {'igadgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')

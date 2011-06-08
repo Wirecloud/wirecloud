@@ -35,7 +35,6 @@ from django.db import models
 from django.utils.translation import ugettext as  _
 
 from connectable.models import InOut
-from gadget.models import SharedVariableDef
 
 
 class WorkSpace(models.Model):
@@ -131,35 +130,17 @@ class Category(models.Model):
         return unicode(self.category_id)
 
 
-#sharing variables. Each user can have a value for a specified concept (SharedVariableDef)
-class SharedVariableValue(models.Model):
-
-    shared_var_def = models.ForeignKey(SharedVariableDef)
-    user = models.ForeignKey(User)
-    value = models.TextField(_('Value'), null=True, blank=True)
-
-    class Meta:
-        unique_together = ('shared_var_def', 'user')
-
-    def __unicode__(self):
-        return unicode(self.shared_var_def.name) + " - " + unicode(self.user)
-
-
 class VariableValue(models.Model):
 
     variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'), blank=True)
-    shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
 
     class Meta:
         unique_together = ('variable', 'user')
 
     def get_variable_value(self):
-        if self.shared_var_value != None:
-            value = self.shared_var_value.value
-        else:
-            value = self.value
+        value = self.value
 
         if self.variable.vardef.secure:
             from workspace.utils import decrypt_value
