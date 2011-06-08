@@ -426,20 +426,48 @@ in the browser. You can find more information about Selenium
 at http://seleniumhq.org/download/
 
 Things to consider before running the tests
-###########################################
+...........................................
 
 #. You must have some test data in your /var/ezweb-data/ directory.
    You can get this test data from the project directory /tests/ezweb-data
 #. You must have executed ``python manage.py syncdb --migrate`` and
    ``python manage.py loaddata extra_data``. These two commands will
    syncronize the database and load some data needed for testing. All tests has been performed with the user **admin**, so this user must be in your database.
+#. For testing the adition of gadgets by template it's necessary a web server that serves this gadgets (you can see an example of web server in the next section).
 #. Finally you must run ezweb ``python manage.py runserver`` and you'll
    be able to open any test suite placed in tests directory and play selenium tests with no problem.
 
 Note: It's highly recommended to run the tests with private browsing mode active in your Firefox to avoid cache problems.
 
+Serving the templates of gadgets
+................................
+
+As it's been said before, for testing the adition of gadgets by template it's necessary a web server that serves this gadgets in http://localhost/gadgets/ url, for example Apache Web Server. The configuration must be the next:
+
+Create a simbolyc link from gadgets templates to /var/www/
+
+.. code-block:: bash
+
+   sudo ln -s ~/ezweb_project/tests/ezweb-data/src/ /var/www/
+
+Create and alias in /etc/apache2/apache2.conf for showing in http://localhost/gadgets/ the content of /var/www/src/ . You must also add the server name, in this case, localhost:
+
+.. code-block:: bash
+
+   ServerName localhost
+   Alias /gadgets/ /var/www/src/
+
+Add all permissions to /var/www/src
+
+.. code-block:: bash
+
+   chmod 777 src
+
+Finally, in http://localhost/gadgets/ you'll be able to get gadgets by template.
+
 Test gadget
-###########
+...........
+
 This project has a special gadget only for testing wiring and verify that the
 properties of gadgets apply when they are changed. This gadget called "Test"
 works in pairs. This means that in tests this gadget is added to a workspace

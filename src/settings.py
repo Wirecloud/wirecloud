@@ -219,7 +219,7 @@ LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 FIXTURE_DIRS = (
-    path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
+    path.join(BASEDIR, 'fixtures', 'data.json'),
     )
 
 # Set the log path
@@ -337,6 +337,7 @@ PROXY_PROCESSORS = (
 #TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
 #TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
+TEST_RUNNER = 'dstest.test_runner.run_tests'
 
 # External settings configuration
 try:
