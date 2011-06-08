@@ -575,9 +575,8 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
+    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
-        var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
-
         this.content = document.createElement("iframe");
         Element.extend(this.content);
         this.content.addClassName("gadget_object");
@@ -594,6 +593,9 @@ IGadget.prototype.build = function () {
         this.content.addClassName("gadget_object");
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
+        if (Prototype.Browser.Opera) {
+            this.content.setAttribute("data", codeURL);
+        }
         //this.content.innerHTML = "Loading...."; // TODO add an animation ?
     }
     Element.extend(this.content);
