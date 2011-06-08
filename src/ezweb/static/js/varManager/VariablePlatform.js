@@ -39,21 +39,19 @@ function Variable (id, iGadget, name, varManager) {
     this.name = null;
     this.value = null;
     this.tab = null;
-    this.shared = null; //null means no sharing at all (true or false means that could be shared)
 }
 
 //////////////////////////////////////////////
 // PARENT CONTRUCTOR (Super class emulation)
 //////////////////////////////////////////////
 
-Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  value_, tab_, shared_) {
+Variable.prototype.Variable = function (id, iGadget_, vardef_, varManager_,  value_, tab_) {
     this.varManager = varManager_;
     this.id = id;
     this.iGadget = iGadget_;
     this.vardef = vardef_;
     this.value = value_;
     this.tab = tab_;
-    this.shared = shared_;
 }
 
 //////////////////////////////////////////////
@@ -79,10 +77,6 @@ Variable.prototype.getActionLabel = function () {
 Variable.prototype.getLabel = function () {
     return this.vardef.label;
 };
-
-Variable.prototype.setSharedState = function (shared_) {
-    this.shared = shared_;
-}
 
 Variable.prototype.annotate = function (value) {
     this.annotated = true;
@@ -116,8 +110,8 @@ Variable.prototype.GADGET_CONTEXT = "GCTX"
 // RVARIABLE (Derivated class) <<PLATFORM>>
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
-    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
+function RVariable(id, iGadget_, vardef_, varManager_, value_, tab_) {
+    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_);
 
     this.handler = null;
 }
@@ -157,10 +151,6 @@ RVariable.prototype.set = function (newValue) {
         // If annotated, the value must be managed!
 
         var varInfo = [{id: this.id, value: newValue, aspect: this.vardef.aspect}];
-
-        if (this.shared != null){ //its a possible shared variable
-            varInfo[0]["shared"] = this.shared;
-        }
 
         switch (this.vardef.aspect) {
             case Variable.prototype.SLOT:
@@ -216,9 +206,6 @@ RVariable.prototype.set = function (newValue) {
             default:
                 break;
         }
-        if (this.shared==true) {
-            this.varManager.forceCommit();
-        }
         // And it must be changed to NOT annotated!
         this.annotated = false;
     }
@@ -257,8 +244,8 @@ RVariable.prototype.refresh = function() {
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function RWVariable(id, iGadget_, vardef_, varManager_, value_, tab_, shared_) {
-    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_, shared_);
+function RWVariable(id, iGadget_, vardef_, varManager_, value_, tab_) {
+    Variable.prototype.Variable.call(this, id, iGadget_, vardef_, varManager_, value_, tab_);
 }
 
 //////////////////////////////////////////////
@@ -275,10 +262,6 @@ RWVariable.prototype = new Variable;
 RWVariable.prototype.set = function (value_, options_) {
     var oldvalue;
 
-    if (this.vardef.aspect == Variable.prototype.PROPERTY && this.shared==true) {
-        //it is a shared property. Gadgets cannot set its value
-        throw new Error("Shared properties cannot be changed by gadgets");
-    }
     this.varManager.incNestingLevel();
 
     oldvalue = this.value;
@@ -287,7 +270,7 @@ RWVariable.prototype.set = function (value_, options_) {
     if (this.vardef.aspect === this.PROPERTY && (oldvalue !== value_ || this.vardef.secure === true)) {
         this.varManager.markVariablesAsModified([this]);
 
-        if (this.shared == true || this.vardef.secure === true) {
+        if (this.vardef.secure === true) {
             this.varManager.forceCommit();
         }
     }
