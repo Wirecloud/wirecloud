@@ -41,7 +41,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Tag, Capability
-from catalogue.catalogue_utils import get_all_resource_versions, update_gadget_popularity
+from catalogue.catalogue_utils import get_all_resource_versions, update_resource_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
@@ -389,7 +389,7 @@ class TemplateHandler(handler.ContentHandler):
                         newUserVote = UserVote(idUser=previousUserVote.idUser, vote=previousUserVote.vote, idResource=gadget)
                         newUserVote.save()
 
-                    update_gadget_popularity(gadget)
+                    update_resource_popularity(gadget)
 
             self._gadget_added = True
 

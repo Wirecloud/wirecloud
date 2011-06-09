@@ -53,7 +53,7 @@ from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
 from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
-from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
+from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_resource_from_template_uri, get_added_resource_info
 from commons.authentication import user_authentication, Http403
@@ -83,7 +83,7 @@ class ResourceCollection(Resource):
             templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
 
         except IntegrityError, e:
-            # Gadget already exists. Rollback transaction
+            # Resource already exists. Rollback transaction
             transaction.rollback()
             json_response = {
                 "result": "error",
@@ -177,7 +177,7 @@ def deleteOneGadget(resource, user, request):
         #    t.tag.delete()
         t.delete()
 
-    # Delete the related votes for that gadget
+    # Delete the related votes for that resource
     UserVote.objects.filter(idResource=resource.id).delete()
 
     # Remove the gadget from the showcase
@@ -308,7 +308,7 @@ class ResourceCollectionByGlobalSearch(Resource):
         slotlist = []
         # This variable counts the number of criteria for the search
         # to be passed as a parameter to the function
-        # get_uniquelist in order to get the gadgets that match the
+        # get_uniquelist in order to get the resources that match the
         # number of criteria
         fields = 0
 
@@ -322,7 +322,7 @@ class ResourceCollectionByGlobalSearch(Resource):
             notlist = get_not_list(search_criteria[2], user)
             fields = fields + 1
         if (search_criteria[3] != ""):
-            #get all the gadgets that match any of the given tags
+            #get all the resources that match any of the given tags
             criteria = search_criteria[3].split()
             for e in criteria:
                 taglist = CatalogueResource.objects.filter(
@@ -330,7 +330,7 @@ class ResourceCollectionByGlobalSearch(Resource):
             taglist = get_uniquelist(taglist)
             fields = fields + 1
         if (search_criteria[4] != ""):
-            #get all the gadgets that match any of the given events
+            #get all the resources that match any of the given events
             criteria = search_criteria[4].split()
             for e in criteria:
                 eventlist = CatalogueResource.objects.filter(
@@ -339,7 +339,7 @@ class ResourceCollectionByGlobalSearch(Resource):
             eventlist = get_uniquelist(eventlist)
             fields = fields + 1
         if (search_criteria[5] != ""):
-            #get all the gadgets that match any of the given slots
+            #get all the resources that match any of the given slots
             criteria = search_criteria[5].split()
             for e in criteria:
                 slotlist = CatalogueResource.objects.filter(
@@ -391,15 +391,15 @@ class ResourceTagCollection(Resource):
         inpsrc.setByteStream(StringIO(tags_xml))
         parser.parse(inpsrc)
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(CatalogueResource, short_name=name,
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name,
                                    vendor=vendor, version=version)
 
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
             try:
                 tag, created = Tag.objects.get_or_create(name=e)
-                UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=gadget)
+                UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=resource)
             except Exception, ex:
                 transaction.rollback()
                 msg = _("Error tagging resource!!")
@@ -407,18 +407,18 @@ class ResourceTagCollection(Resource):
                 raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml},
                                         request, msg)
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
     def delete(self, request, user_name, vendor, name, version, tag):
 
@@ -432,16 +432,16 @@ class ResourceTagCollection(Resource):
 
         format = request.GET.get('format', 'default')
 
-        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
         userTag = get_object_or_404(UserTag, id=tag)
 
-        #if there is no more gadgets tagged by an user with this tag, delete the Tag
+        #if there is no more resources tagged by an user with this tag, delete the Tag
         if UserTag.objects.filter(tag=userTag.tag).count() == 1:
             userTag.tag.delete()
 
         userTag.delete()
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
 
 class ResourceVoteCollection(Resource):
@@ -465,7 +465,7 @@ class ResourceVoteCollection(Resource):
                                            mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_gadget_popularity(resource)
+            update_resource_popularity(resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
@@ -476,13 +476,13 @@ class ResourceVoteCollection(Resource):
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
     def update(self, request, user_name, vendor, name, version):
 
@@ -496,12 +496,12 @@ class ResourceVoteCollection(Resource):
         # Get the vote from the request
         vote = PUT_parameter(request, 'vote')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
-            userVote = get_object_or_404(UserVote, idUser=user, idResource=gadget)
+            userVote = get_object_or_404(UserVote, idUser=user, idResource=resource)
             userVote.vote = vote
             userVote.save()
         except Exception, ex:
@@ -510,13 +510,13 @@ class ResourceVoteCollection(Resource):
                                            mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_gadget_popularity(gadget)
+            update_resource_popularity(resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
 
 class ResourceVersionCollection(Resource):

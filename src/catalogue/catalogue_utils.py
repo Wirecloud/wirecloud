@@ -105,7 +105,7 @@ def _valid_resource(resource, user, organization_list, scope):
         # There is no organization => always returned to client app!
         return True
 
-    # There are organizations, if a gadget organization corresponds to a user organization
+    # There are organizations, if a resource organization corresponds to a user organization
     return len(set(resource_organizations) & set(organization_list)) > 0
 
 
@@ -117,8 +117,8 @@ def _filter_resource_by_organization(entry, user, organization_list, scope):
 
 def filter_resources_by_organization(user, resources, organization_list, scope):
     """
-    Filter gadgets that don't belong to given organization.
-    Also filter gadgets that are not certificated!
+    Filter resources that don't belong to given organization.
+    Also filter resources that are not certificated!
     Also filters depending on the scope of the search (it could be mashup, gadget, all, ...)
     """
 
@@ -140,7 +140,7 @@ def get_sortedlist(list, orderby):
     return list
 
 
-def get_paginatedlist(gadgetlist, pag, offset):
+def get_paginatedlist(resourcelist, pag, offset):
     """Returns a list paginated with the parameters pag and offset."""
     a = int(pag)
     b = int(offset)
@@ -149,15 +149,15 @@ def get_paginatedlist(gadgetlist, pag, offset):
         d = (b * a)
         if a == 1:
             c = 0
-        gadgetlist = gadgetlist[c:d]
+        resourcelist = resourcelist[c:d]
 
-    return gadgetlist
+    return resourcelist
 
 
 def get_and_list(criterialist, user):
-    """Returns a list of gadgets that match all the criteria in the list passed as parameter."""
+    """Returns a list of resources that match all the criteria in the list passed as parameter."""
 
-    # List of the gadgets that match the criteria in the database table CatalogueResource
+    # List of the resources that match the criteria in the database table CatalogueResource
     criteria_filter = Q()
 
     criterialist = criterialist.split()
@@ -168,7 +168,7 @@ def get_and_list(criterialist, user):
 
 
 def get_or_list(criterialist, user):
-    """Returns a list of gadgets that match any of the criteria in the list passed as parameter."""
+    """Returns a list of resources that match any of the criteria in the list passed as parameter."""
     criteria_filter = Q()
 
     criterialist = criterialist.split()
@@ -180,7 +180,7 @@ def get_or_list(criterialist, user):
 
 
 def get_not_list(criterialist, user):
-    """Returns a list of gadgets that don't match any of the criteria in the list passed as parameter."""
+    """Returns a list of resources that don't match any of the criteria in the list passed as parameter."""
     criteria_filter = Q()
 
     criterialist = criterialist.split()
@@ -192,7 +192,7 @@ def get_not_list(criterialist, user):
 
 
 def get_resource_response(resources, format, items, user):
-    """Obtains all the information related to a gadget encoded in the properly format (json or xml)."""
+    """Obtains all the information related to a resource encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
         data = {'resources': [get_resource_group_data(group, user) for group in resources]}
@@ -208,34 +208,34 @@ def get_resource_response(resources, format, items, user):
         return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
-def get_tag_response(gadget, user, format):
-    """Obtains the all the tags related to a gadget encoded in
+def get_tag_response(resource, user, format):
+    """Obtains the all the tags related to a resource encoded in
     the properly format (json or xml).
     """
     if format == 'json' or format == 'default':
         tag = {}
-        tag_data_list = get_tag_data(gadget, user.id)
+        tag_data_list = get_tag_data(resource, user.id)
         tag['tagList'] = tag_data_list
         return HttpResponse(json_encode(tag), mimetype='application/json; charset=UTF-8')
     elif format == 'xml':
         response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
-        response += get_tags_by_resource(gadget, user)
+        response += get_tags_by_resource(resource, user)
         return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
     else:
         return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
 
 
-def get_vote_response(gadget, user, format):
-    """Obtains the vote related to a gadget and a user encoded in the properly format (json or xml)."""
+def get_vote_response(resource, user, format):
+    """Obtains the vote related to a resource and a user encoded in the properly format (json or xml)."""
 
     if format == 'json' or format == 'default':
         vote = {}
-        vote_data = get_vote_data(gadget, user)
+        vote_data = get_vote_data(resource, user)
         vote['voteData'] = vote_data
         return HttpResponse(json_encode(vote), mimetype='application/json; charset=UTF-8')
     elif format == 'xml':
         response = '<?xml version="1.0" encoding="UTF-8" ?>\n'
-        response += get_vote_by_resource(gadget, user)
+        response += get_vote_by_resource(resource, user)
         return HttpResponse(response, mimetype='text/xml; charset=UTF-8')
     else:
         return HttpResponseServerError(get_xml_error(_("Invalid format. Format must be either xml or json")), mimetype='application/xml; charset=UTF-8')
@@ -269,7 +269,8 @@ def get_latest_resource_version(name, vendor):
     return None
 
 
-def get_gadget_popularity(votes_sum, votes_number):
+def get_resource_popularity(votes_sum, votes_number):
+
     if votes_number == 0:
         return 0
 
@@ -283,21 +284,26 @@ def get_gadget_popularity(votes_sum, votes_number):
         mod = 1.0
     else:
         mod = 0.5
+
     result = floor + mod
+
     return result
 
 
-def update_gadget_popularity(gadget):
-    #Get all the votes on this gadget
-    votes = UserVote.objects.filter(idResource=gadget)
-    #Get the number of votes
-    votes_number = UserVote.objects.filter(idResource=gadget).count()
-    #Sum all the votes
+def update_resource_popularity(resource):
+
+    # Get all the votes on this resource
+    votes = UserVote.objects.filter(idResource=resource)
+
+    # Get the number of votes
+    votes_number = UserVote.objects.filter(idResource=resource).count()
+    # Sum all the votes
     votes_sum = 0.0
     for e in votes:
         votes_sum = votes_sum + e.vote
-    #Calculate the gadget popularity
-    popularity = get_gadget_popularity(votes_sum, votes_number)
-    #Update the gadget in the database
-    gadget.popularity = unicode(popularity)
-    gadget.save()
+
+    # Calculate the resource popularity
+    popularity = get_resource_popularity(votes_sum, votes_number)
+    # Update the resource in the database
+    resource.popularity = unicode(popularity)
+    resource.save()

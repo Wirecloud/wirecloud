@@ -56,11 +56,11 @@ class CatalogueResource(TransModel):
     license = models.CharField(_('License'), max_length=20, null=True, blank=True)
 
     gadget_uri = models.CharField(_('gadgetURI'), max_length=200, null=True, blank=True)
-    creation_date = models.DateTimeField('creation_date', null=True)
-    image_uri = models.CharField(_('imageURI'), max_length=200, null=True)
+    creation_date = models.DateTimeField('creation_date', null=True, blank=True)
+    image_uri = models.CharField(_('imageURI'), max_length=200, null=True, blank=True)
     iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, null=True, blank=True)
-    wiki_page_uri = models.CharField(_('wikiURI'), max_length=200)
-    template_uri = models.CharField(_('templateURI'), max_length=200)
+    wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
+    template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
     mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
 
     # For implementing "private gadgets" only visible for users that belongs to some concrete organizations
@@ -70,7 +70,7 @@ class CatalogueResource(TransModel):
     # Done via User groups!
     certification = models.ForeignKey(Group, related_name='certification', null=True, blank=True)
 
-    popularity = models.DecimalField(_('popularity'), null=True, max_digits=2, decimal_places=1)
+    popularity = models.DecimalField(_('popularity'), default=0, max_digits=2, decimal_places=1)
     fromWGT = models.BooleanField(_('fromWGT'), default=False)
 
     def resource_type(self):
@@ -83,7 +83,7 @@ class CatalogueResource(TransModel):
         unique_together = ("short_name", "vendor", "version")
 
     def __unicode__(self):
-        return self.short_name
+        return unicode(self.short_name)
 
 
 class Capability(models.Model):
@@ -96,7 +96,7 @@ class Capability(models.Model):
         unique_together = ('name', 'value', 'resource')
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
 
 class GadgetWiring(models.Model):
@@ -106,7 +106,7 @@ class GadgetWiring(models.Model):
     idResource = models.ForeignKey(CatalogueResource)
 
     def __unicode__(self):
-        return self.friendcode
+        return unicode(self.friendcode)
 
 
 class Tag(models.Model):
@@ -114,7 +114,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=20, unique=True)
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name)
 
 
 class UserTag(models.Model):
