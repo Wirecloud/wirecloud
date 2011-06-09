@@ -93,7 +93,7 @@ def _valid_resource(resource, user, organization_list, scope):
             return False
 
     # checking the scope of the query
-    if (scope == "mashup" or scope == "solution") and not resource.mashup_id:
+    if scope == "mashup" and not resource.mashup_id:
         return False
     elif scope == "gadget" and resource.mashup_id:
         return False
