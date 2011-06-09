@@ -98,6 +98,20 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
+    def test_last_version_query(self):
+
+        self.client.login(username='test', password='test')
+        resources = simplejson.dumps([
+            {'name': 'gadget1', 'vendor': 'Test'},
+            {'name': 'inexistantgadget', 'vendor': 'Test'},
+        ])
+        result = self.client.post('/user/test/catalogue/versions', {'resources': resources})
+        self.assertEqual(result.status_code, 200)
+        result_json = simplejson.loads(result.content)
+        self.assertTrue('resources' in result_json)
+        self.assertEqual(len(result_json['resources']), 1)
+        self.assertEqual(result_json['resources'][0]['lastVersion'], '1.10')
+
 
 class TranslationTestCase(LocalizedTestCase):
 

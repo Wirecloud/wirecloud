@@ -264,7 +264,7 @@ def get_latest_resource_version(name, vendor):
             if max(versions[index], versions[k]) == versions[k]:
                 index = k
 
-        return resource_versions[k]
+        return resource_versions[index]
 
     return None
 

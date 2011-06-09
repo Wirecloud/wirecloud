@@ -522,17 +522,34 @@ class ResourceVoteCollection(Resource):
 class ResourceVersionCollection(Resource):
 
     def create(self, request, user_name):
-        gadgets = simplejson.loads(request.POST["gadgets"])
+
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
+
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            received_json = request.POST.get('resources', None)
+
+        if not received_json:
+            return HttpResponseBadRequest(get_xml_error(_("resources JSON expected")), mimetype='application/xml; charset=UTF-8')
+
+        try:
+            resources = simplejson.loads(received_json)
+        except simplejson.JSONDecodeError, e:
+            return HttpResponse(get_xml_error(_("malformed json data: %s") % unicode(e)), status=422, mimetype='application/xml; charset=UTF-8')
+
         result = []
-        for g in gadgets:
+        for g in resources:
             latest_resource_version = get_latest_resource_version(g["name"], g["vendor"])
             if latest_resource_version:
-                # the gadget is still in the catalogue
+                # the resource is still in the catalogue
                 g["lastVersion"] = latest_resource_version.version
                 g["lastVersionURL"] = latest_resource_version.template_uri
                 result.append(g)
-        json_result = {'gadgets': result}
-        return HttpResponse(json_encode(json_result),
+
+        return HttpResponse(json_encode({'resources': result}),
                             mimetype='application/json; charset=UTF-8')
 
 
