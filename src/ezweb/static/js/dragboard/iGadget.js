@@ -593,7 +593,7 @@ IGadget.prototype.build = function () {
         this.content.addClassName("gadget_object");
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
-        if (Prototype.Browser.Opera) {
+        if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
             this.content.setAttribute("data", codeURL);
         }
         //this.content.innerHTML = "Loading...."; // TODO add an animation ?
@@ -752,7 +752,7 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.visibility = "hidden";
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    if (this.content.tagName.toLowerCase() === 'object') {
+    if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
         var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
         this.content.setAttribute("data", codeURL);
     }
