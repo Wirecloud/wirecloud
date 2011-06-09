@@ -1098,7 +1098,6 @@ msgstr ""
 msgid "Invalid path"
 msgstr ""
 
-#: ezweb/admin.py:44 ezweb/admin.py:54
 #: ezweb/templates/catalogue_adder_login.html:305
 #: ezweb/templates/registration/login.html:374 facebookconnect/forms.py:9
 #: media/themes/Zaragoza/templates/registration/login.html:377
