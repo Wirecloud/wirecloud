@@ -37,7 +37,7 @@ from django.utils.translation import ugettext_lazy as _
 from translator.models import TransModel
 
 
-class GadgetResource(TransModel):
+class CatalogueResource(TransModel):
 
     short_name = models.CharField(_('Name'), max_length=250)
     display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
@@ -91,7 +91,7 @@ class Capability(models.Model):
 
     name = models.CharField(_('Name'), max_length=50)
     value = models.CharField(_('Value'), max_length=50)
-    resource = models.ForeignKey(GadgetResource)
+    resource = models.ForeignKey(CatalogueResource)
 
     class Meta:
         unique_together = ('name', 'value', 'resource')
@@ -104,7 +104,7 @@ class GadgetWiring(models.Model):
 
     friendcode = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     wiring = models.CharField(_('Wiring'), max_length=5)
-    idResource = models.ForeignKey(GadgetResource)
+    idResource = models.ForeignKey(CatalogueResource)
 
     def __unicode__(self):
         return self.friendcode
@@ -125,7 +125,7 @@ class UserTag(models.Model):
     criteria = models.CharField(max_length=20, null=True)
     value = models.CharField(max_length=20, null=True)
     idUser = models.ForeignKey(User)
-    idResource = models.ForeignKey(GadgetResource)
+    idResource = models.ForeignKey(CatalogueResource)
 
     class Meta:
         unique_together = ("tag", "idUser", "idResource")
@@ -156,10 +156,10 @@ VOTES = (
 
 class UserVote(models.Model):
     """
-    A vote on an GadgetResource by a User.
+    A vote on a CatalogueResource by a User.
     """
     idUser = models.ForeignKey(User)
-    idResource = models.ForeignKey(GadgetResource)
+    idResource = models.ForeignKey(CatalogueResource)
     vote = models.SmallIntegerField(choices=VOTES)
 
     class Meta:
@@ -173,7 +173,7 @@ class UserVote(models.Model):
 ###### MarketPlace section ######
 
 class Application(TransModel):
-    resources = models.ManyToManyField(GadgetResource, related_name='resources', null=True, blank=True)
+    resources = models.ManyToManyField(CatalogueResource, related_name='resources', null=True, blank=True)
     tag = models.ForeignKey(Tag, verbose_name=_('Tag'))
     app_code = models.IntegerField(_('application_code'), primary_key=True)
     template_uri = models.URLField(_('templateURI'), null=True, blank=True)

@@ -31,7 +31,7 @@
 #
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Capability
+from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Capability
 from resourceSubscription.models import Contract, Application
 #if the catalogue and the platform are separated we should make a request instead of using this:
 from workspace.utils import get_mashup_gadgets
@@ -197,7 +197,7 @@ def get_apps_by_mashup_resource(mashup_id, user):
 
     #get the related resources
     for gadget in gadgets:
-        resource = GadgetResource.objects.get(short_name=gadget.name, vendor=gadget.vendor, version=gadget.version)
+        resource = CatalogueResource.objects.get(short_name=gadget.name, vendor=gadget.vendor, version=gadget.version)
         try:
             resource.capability_set.get(name='contratable', value='true')
             resources.append(resource)
@@ -231,7 +231,7 @@ def get_gadget_capabilities(gadget_id, user):
 
                 contract = None
 
-                mashup_id = GadgetResource.objects.get(id=gadget_id).mashup_id
+                mashup_id = CatalogueResource.objects.get(id=gadget_id).mashup_id
                 if mashup_id:
                     applications = get_apps_by_mashup_resource(mashup_id, user)
 

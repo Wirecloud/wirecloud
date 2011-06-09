@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 
 from catalogue.get_json_catalogue_data import get_resource_group_data, get_tag_data, get_vote_data
 from catalogue.get_xml_catalogue_data import get_xml_description, get_tags_by_resource, get_vote_by_resource
-from catalogue.models import GadgetResource, UserVote
+from catalogue.models import CatalogueResource, UserVote
 from commons.utils import get_xml_error, json_encode
 from commons.user_utils import CERTIFICATION_VERIFIED
 
@@ -157,14 +157,14 @@ def get_paginatedlist(gadgetlist, pag, offset):
 def get_and_list(criterialist, user):
     """Returns a list of gadgets that match all the criteria in the list passed as parameter."""
 
-    # List of the gadgets that match the criteria in the database table GadgetResource
+    # List of the gadgets that match the criteria in the database table CatalogueResource
     criteria_filter = Q()
 
     criterialist = criterialist.split()
     for e in criterialist:
         criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return GadgetResource.objects.filter(criteria_filter)
+    return CatalogueResource.objects.filter(criteria_filter)
 
 
 def get_or_list(criterialist, user):
@@ -176,7 +176,7 @@ def get_or_list(criterialist, user):
     for e in criterialist:
         criteria_filter = criteria_filter | (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return GadgetResource.objects.filter(criteria_filter)
+    return CatalogueResource.objects.filter(criteria_filter)
 
 
 def get_not_list(criterialist, user):
@@ -188,7 +188,7 @@ def get_not_list(criterialist, user):
     for e in criterialist:
         criteria_filter = criteria_filter & ~(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return GadgetResource.objects.filter(criteria_filter)
+    return CatalogueResource.objects.filter(criteria_filter)
 
 
 def get_resource_response(resources, format, items, user):
@@ -244,7 +244,7 @@ def get_vote_response(gadget, user, format):
 def get_all_resource_versions(vendor, name):
     """Returns all the versions of a specified resource name (formed by vendor and name)."""
 
-    versions = GadgetResource.objects.filter(vendor=vendor, short_name=name).values_list('version', flat=True)
+    versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name).values_list('version', flat=True)
 
     # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
     # allow comparing integers
@@ -253,7 +253,7 @@ def get_all_resource_versions(vendor, name):
 
 def get_latest_resource_version(name, vendor):
 
-    resource_versions = GadgetResource.objects.filter(vendor=vendor, short_name=name)
+    resource_versions = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
     if resource_versions.count() > 0:
         # convert from ["1.9", "1.10", "1.9.1"] to [[1,9], [1,10], [1,9,1]] to
         # allow comparing integers

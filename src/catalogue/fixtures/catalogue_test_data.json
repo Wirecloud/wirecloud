@@ -1,6 +1,6 @@
 [
     {
-        "model": "catalogue.GadgetResource",
+        "model": "catalogue.catalogueresource",
         "pk": 1,
         "fields": {
             "short_name": "gadget1",
@@ -11,7 +11,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetResource",
+        "model": "catalogue.catalogueresource",
         "pk": 2,
         "fields": {
             "short_name": "gadget1",
@@ -22,7 +22,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetResource",
+        "model": "catalogue.catalogueresource",
         "pk": 3,
         "fields": {
             "short_name": "gadget2",
@@ -33,7 +33,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetResource",
+        "model": "catalogue.catalogueresource",
         "pk": 4,
         "fields": {
             "short_name": "agadget",
@@ -44,7 +44,7 @@
         }
     },
     {
-        "model": "catalogue.GadgetResource",
+        "model": "catalogue.catalogueresource",
         "pk": 5,
         "fields": {
             "short_name": "zgadget",

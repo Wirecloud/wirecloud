@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="1" model="catalogue.gadgetresource">
+    <object pk="1" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Amazon</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -25,7 +25,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="4" model="catalogue.gadgetresource">
+    <object pk="4" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Flickr</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -50,7 +50,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="5" model="catalogue.gadgetresource">
+    <object pk="5" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Map Viewer</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -75,7 +75,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="6" model="catalogue.gadgetresource">
+    <object pk="6" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Notepad</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -100,7 +100,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="7" model="catalogue.gadgetresource">
+    <object pk="7" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Visor Datos de Equipo</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -125,7 +125,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="8" model="catalogue.gadgetresource">
+    <object pk="8" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Visor Imágenes</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -150,7 +150,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="9" model="catalogue.gadgetresource">
+    <object pk="9" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Visor Datos de Usuario</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -175,7 +175,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="10" model="catalogue.gadgetresource">
+    <object pk="10" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Yahoo Travel</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -200,7 +200,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="11" model="catalogue.gadgetresource">
+    <object pk="11" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Yahoo Trip Search</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -225,7 +225,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="12" model="catalogue.gadgetresource">
+    <object pk="12" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">YouTube Video Player</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -250,7 +250,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="13" model="catalogue.gadgetresource">
+    <object pk="13" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">YouTube Video Search</field>
         <field type="CharField" name="display_name"><None></None></field>
         <field type="CharField" name="vendor">Morfeo</field>
@@ -275,7 +275,7 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="14" model="catalogue.gadgetresource">
+    <object pk="14" model="catalogue.catalogueresource">
         <field type="CharField" name="short_name">Test</field>
         <field type="CharField" name="display_name"></field>
         <field type="CharField" name="vendor">Yaco Sistemas S.L.</field>
@@ -303,106 +303,106 @@
     <object pk="1" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">keyword</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">1</field>
     </object>
     <object pk="7" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">keyword</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">4</field>
     </object>
     <object pk="8" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">imageUrl</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">4</field>
     </object>
     <object pk="9" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
     <object pk="10" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">utmCoord</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">5</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">5</field>
     </object>
     <object pk="11" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
     <object pk="12" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">deviceId</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
     <object pk="13" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">deviceStatus</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">7</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">7</field>
     </object>
     <object pk="14" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">imageUrl</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">8</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">8</field>
     </object>
     <object pk="15" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
     <object pk="16" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">phone</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">9</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">9</field>
     </object>
     <object pk="17" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">yahoo_travel</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">10</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">10</field>
     </object>
     <object pk="18" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">poi</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">11</field>
     </object>
     <object pk="19" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">yahoo_travel</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">11</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">11</field>
     </object>
     <object pk="20" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">youtube_url</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">12</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">12</field>
     </object>
     <object pk="21" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">youtube_url</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
     <object pk="22" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
     <object pk="23" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">title</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
     <object pk="24" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">poi</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">13</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">13</field>
     </object>
     <object pk="25" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">slot</field>
         <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
     <object pk="26" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">event</field>
         <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">14</field>
+        <field to="catalogue.catalogueresource" name="idResource" rel="ManyToOneRel">14</field>
     </object>
 </django-objects>

@@ -40,7 +40,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Tag, Capability
+from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Tag, Capability
 from catalogue.catalogue_utils import get_all_resource_versions, update_gadget_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
@@ -126,7 +126,7 @@ class TemplateHandler(handler.ContentHandler):
 
         gadget = self._gadget
 
-        valid_gadget = GadgetResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
+        valid_gadget = CatalogueResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
 
         return valid_gadget
 
@@ -151,7 +151,7 @@ class TemplateHandler(handler.ContentHandler):
         if _friendCode != '' and wire != '':
             if self.save:
                 wiring = GadgetWiring(friendcode=_friendCode, wiring=_wiring,
-                                      idResource_id=get_object_or_404(GadgetResource,
+                                      idResource_id=get_object_or_404(CatalogueResource,
                                                                       short_name=self._name,
                                                                       vendor=self._vendor,
                                                                       version=self._version).id)
@@ -321,7 +321,7 @@ class TemplateHandler(handler.ContentHandler):
             if len(required_fields) > 0:
                 raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
 
-            gadget = GadgetResource()
+            gadget = CatalogueResource()
 
             gadget.short_name = self._name
             gadget.display_name = self._displayName
@@ -376,7 +376,7 @@ class TemplateHandler(handler.ContentHandler):
                 previous_versions = [v for v in resource_versions if v < resource_version]
                 if len(previous_versions) > 0:
                     previous_version_string = '.'.join(map(str, max(previous_versions)))
-                    previousVersion = GadgetResource.objects.get(vendor=self._vendor, short_name=self._name, version=previous_version_string)
+                    previousVersion = CatalogueResource.objects.get(vendor=self._vendor, short_name=self._name, version=previous_version_string)
 
                     previousUserTags = UserTag.objects.filter(idResource=previousVersion)
 

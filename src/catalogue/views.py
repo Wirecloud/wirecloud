@@ -46,7 +46,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from catalogue.models import Application, GadgetResource, GadgetWiring
+from catalogue.models import Application, CatalogueResource, GadgetWiring
 from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
@@ -120,7 +120,7 @@ class GadgetsCollection(Resource):
         scope = request.GET.get('scope', 'all')
 
         # Get all the gadgets in the catalogue
-        resources = GadgetResource.objects.all().order_by(orderby)
+        resources = CatalogueResource.objects.all().order_by(orderby)
         resources = group_resources(resources)
         resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
         items = len(resources)
@@ -137,13 +137,13 @@ class GadgetsCollection(Resource):
         response_json = {'result': 'ok', 'removedIGadgets': []}
         if version != None:
             #Delete only the specified version of the gadget
-            resource = get_object_or_404(GadgetResource, short_name=name,
+            resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
             result = deleteOneGadget(resource, user, request)
             response_json['removedIGadgets'] = result['removedIGadgets']
         else:
             #Delete all versions of the gadget
-            resources = get_list_or_404(GadgetResource, short_name=name, vendor=vendor)
+            resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
             for resource in resources:
                 result = deleteOneGadget(resource, user, request)
                 response_json['removedIGadgets'] += result['removedIGadgets']
@@ -215,7 +215,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
         else:
             search_criteria = request.GET.get('search_criteria')
 
-        resources = GadgetResource.objects.none()
+        resources = CatalogueResource.objects.none()
 
         if criteria == 'and':
             resources = get_and_list(search_criteria, user)
@@ -227,7 +227,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets that match any of the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode__icontains=e),
                     Q(gadgetwiring__wiring='out'))
 
@@ -235,7 +235,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets that match any of the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode__icontains=e),
                     Q(gadgetwiring__wiring='in'))
 
@@ -243,14 +243,14 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets that match any of the given tags
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     usertag__tag__name__icontains=e)
 
         elif criteria == 'connectSlot':
             #get all the gadgets compatible with the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='out'))
 
@@ -258,7 +258,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets compatible with the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='in'))
 
@@ -266,13 +266,13 @@ class GadgetsCollectionBySimpleSearch(Resource):
             #get all the gadgets compatible with the given slots
             search_criteria[0] = search_criteria[0].split()
             for e in search_criteria[0]:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='in'))
             #get all the gadgets compatible with the given events
             search_criteria[1] = search_criteria[1].split()
             for e in search_criteria[1]:
-                resources = GadgetResource.objects.filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='out'))
 
@@ -323,7 +323,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
             #get all the gadgets that match any of the given tags
             criteria = search_criteria[3].split()
             for e in criteria:
-                taglist = GadgetResource.objects.filter(
+                taglist = CatalogueResource.objects.filter(
                     usertag__tag__name__icontains=e)
             taglist = get_uniquelist(taglist)
             fields = fields + 1
@@ -331,7 +331,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
             #get all the gadgets that match any of the given events
             criteria = search_criteria[4].split()
             for e in criteria:
-                eventlist = GadgetResource.objects.filter(
+                eventlist = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode__icontains=e),
                     Q(gadgetwiring__wiring='out'))
             eventlist = get_uniquelist(eventlist)
@@ -340,7 +340,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
             #get all the gadgets that match any of the given slots
             criteria = search_criteria[5].split()
             for e in criteria:
-                slotlist = GadgetResource.objects.filter(
+                slotlist = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode__icontains=e),
                     Q(gadgetwiring__wiring='in'))
             slotlist = get_uniquelist(slotlist)
@@ -390,7 +390,7 @@ class GadgetTagsCollection(Resource):
         parser.parse(inpsrc)
 
         # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name,
+        gadget = get_object_or_404(CatalogueResource, short_name=name,
                                    vendor=vendor, version=version)
 
         # Insert the tags for these resource and user in the database
@@ -411,7 +411,7 @@ class GadgetTagsCollection(Resource):
         format = request.GET.get('format', 'default')
 
         # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version).id
+        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
@@ -430,7 +430,7 @@ class GadgetTagsCollection(Resource):
 
         format = request.GET.get('format', 'default')
 
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version).id
+        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
         userTag = get_object_or_404(UserTag, id=tag)
 
         #if there is no more gadgets tagged by an user with this tag, delete the Tag
@@ -453,7 +453,7 @@ class GadgetVotesCollection(Resource):
         vote = request.POST.get('vote')
 
         # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
@@ -476,7 +476,7 @@ class GadgetVotesCollection(Resource):
         format = request.GET.get('format', 'default')
 
         # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
@@ -496,7 +496,7 @@ class GadgetVotesCollection(Resource):
         vote = PUT_parameter(request, 'vote')
 
         # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
@@ -538,7 +538,7 @@ class GadgetVersionsCollection(Resource):
 class ResourceEnabler(Resource):
 
     def read(self, request, resource_id):
-        resource = get_object_or_404(GadgetResource, id=resource_id)
+        resource = get_object_or_404(CatalogueResource, id=resource_id)
 
         resource.certification = get_verified_certification_group()
 
@@ -555,11 +555,11 @@ class ApplicationManager(Resource):
     def create(self, request, user_name, application_id, resource_id):
         try:
             application = Application.objects.get(app_code=application_id)
-            resource = GadgetResource.objects.get(id=resource_id)
+            resource = CatalogueResource.objects.get(id=resource_id)
             application.add_resource(resource)
 
             return HttpResponse('{"result": "ok"}',
                                 mimetype='application/json; charset=UTF-8')
-        except Application.DoesNotExist, GadgetResource.DoesNotExist:
+        except Application.DoesNotExist, CatalogueResource.DoesNotExist:
             return HttpResponseServerError('{"result": "error"}',
                                            mimetype='application/json; charset=UTF-8')

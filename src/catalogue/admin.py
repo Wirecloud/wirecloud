@@ -32,7 +32,7 @@
 
 from django.contrib import admin
 
-from catalogue.models import GadgetResource, GadgetWiring
+from catalogue.models import CatalogueResource, GadgetWiring
 from catalogue.models import UserTag, UserVote, Application, Tag, Category
 from catalogue.models import Capability
 
@@ -42,13 +42,13 @@ class CategoyAdminView(admin.ModelAdmin):
     verbose_name_plural = 'Categories'
 
 
-class GadgetResourceAdmin(admin.ModelAdmin):
+class CatalogueResourceAdmin(admin.ModelAdmin):
 
     search_fields = ['short_name', 'vendor', 'author']
     list_display = ['short_name', 'vendor', 'author', 'resource_type', 'certification']
     verbose_name_plural = 'Resources'
 
-admin.site.register(GadgetResource, GadgetResourceAdmin)
+admin.site.register(CatalogueResource, CatalogueResourceAdmin)
 admin.site.register(GadgetWiring)
 admin.site.register(UserTag)
 admin.site.register(UserVote)

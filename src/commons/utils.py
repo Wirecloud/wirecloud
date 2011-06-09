@@ -46,7 +46,7 @@ from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.contrib.auth.models import User
 from django.utils import simplejson, translation
 
-from catalogue.models import GadgetResource
+from catalogue.models import CatalogueResource
 from commons.http_utils import download_http_content
 from gadget.models import XHTML
 
@@ -161,7 +161,7 @@ def load_gadgets():
         template_uri = gadget_file
         template_uri = "file://%s" % gadget_file
 
-        gadget_resources = GadgetResource.objects.filter(template_uri=template_uri)
+        gadget_resources = CatalogueResource.objects.filter(template_uri=template_uri)
         for gadget_resource in gadget_resources:
             gadget_resource.delete()
 

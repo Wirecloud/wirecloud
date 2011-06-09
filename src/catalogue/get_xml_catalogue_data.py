@@ -32,7 +32,7 @@
 
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetResource, GadgetWiring, UserTag, UserVote
+from catalogue.models import CatalogueResource, GadgetWiring, UserTag, UserVote
 
 
 def get_xml_description(gadgetlist, user):
@@ -102,7 +102,7 @@ def get_related_user_by_resource(resource, user):
 
 
 def get_all_versions(vendor, name):
-    versions_data = GadgetResource.objects.filter(vendor=vendor, short_name=name).values('version')
+    versions_data = CatalogueResource.objects.filter(vendor=vendor, short_name=name).values('version')
     return '\n'.join(["<version>%s</version>" % v['version'] for v in versions_data])
 
 

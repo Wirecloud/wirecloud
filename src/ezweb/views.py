@@ -49,7 +49,7 @@ from catalogue.views import GadgetsCollection
 from commons.authentication import login_public_user
 from commons.http_utils import download_http_content
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
-from catalogue.models import GadgetResource
+from catalogue.models import CatalogueResource
 from gadget.models import Gadget, XHTML
 from workspace.models import WorkSpace
 
@@ -250,7 +250,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
             return HttpResponseRedirect('/')
 
         try:
-            resource = GadgetResource.objects.get(short_name=name, vendor=vendor, version=version)
+            resource = CatalogueResource.objects.get(short_name=name, vendor=vendor, version=version)
             gadget_info['gadgetId'] = resource.id
         except Exception:
             #Send pingback ERROR
