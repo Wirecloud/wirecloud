@@ -115,7 +115,7 @@ def _filter_resource_by_organization(entry, user, organization_list, scope):
     return len(entry['variants']) > 0
 
 
-def filter_gadgets_by_organization(user, resources, organization_list, scope):
+def filter_resources_by_organization(user, resources, organization_list, scope):
     """
     Filter gadgets that don't belong to given organization.
     Also filter gadgets that are not certificated!

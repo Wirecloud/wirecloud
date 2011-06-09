@@ -50,7 +50,7 @@ from catalogue.models import Application, CatalogueResource, GadgetWiring
 from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
-from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_organization
+from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
 from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
@@ -67,7 +67,7 @@ from commons.utils import get_xml_error, json_encode
 from gadget.views import deleteGadget
 
 
-class GadgetsCollection(Resource):
+class ResourceCollection(Resource):
 
     @transaction.commit_manually
     def create(self, request, user_name, fromWGT=False):
@@ -119,10 +119,10 @@ class GadgetsCollection(Resource):
         orderby = request.GET.get('orderby', '-creation_date')
         scope = request.GET.get('scope', 'all')
 
-        # Get all the gadgets in the catalogue
+        # Get all resource in the catalogue
         resources = CatalogueResource.objects.all().order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
         items = len(resources)
 
         resources = get_paginatedlist(resources, int(pag), int(offset))
@@ -200,7 +200,7 @@ def deleteOneGadget(resource, user, request):
     return result
 
 
-class GadgetsCollectionBySimpleSearch(Resource):
+class ResourceCollectionBySimpleSearch(Resource):
 
     def read(self, request, user_name, criteria, pag=0, offset=0):
 
@@ -224,7 +224,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
         elif criteria == 'not':
             resources = get_not_list(search_criteria, user)
         elif criteria == 'event':
-            #get all the gadgets that match any of the given events
+            # get all resource matching any of the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
@@ -232,7 +232,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__wiring='out'))
 
         elif criteria == 'slot':
-            #get all the gadgets that match any of the given slots
+            # get all resource matching any of the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
@@ -240,14 +240,14 @@ class GadgetsCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__wiring='in'))
 
         elif criteria == 'tag':
-            #get all the gadgets that match any of the given tags
+            # get all resource matching any of the given tags
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
                     usertag__tag__name__icontains=e)
 
         elif criteria == 'connectSlot':
-            #get all the gadgets compatible with the given events
+            # get all resource compatible with the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
@@ -255,7 +255,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__wiring='out'))
 
         elif criteria == 'connectEvent':
-            #get all the gadgets compatible with the given slots
+            # get all resource compatible with the given slots
             search_criteria = search_criteria.split()
             for e in search_criteria:
                 resources = CatalogueResource.objects.filter(
@@ -263,13 +263,15 @@ class GadgetsCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__wiring='in'))
 
         elif criteria == 'connectEventSlot':
-            #get all the gadgets compatible with the given slots
+            # TODO
+
+            # get all resources compatible with the given slots
             search_criteria[0] = search_criteria[0].split()
             for e in search_criteria[0]:
                 resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='in'))
-            #get all the gadgets compatible with the given events
+            # get all resources compatible with the given events
             search_criteria[1] = search_criteria[1].split()
             for e in search_criteria[1]:
                 resources = CatalogueResource.objects.filter(
@@ -278,7 +280,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
 
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
 
         items = len(resources)
         resources = get_paginatedlist(resources, pag, offset)
@@ -286,7 +288,7 @@ class GadgetsCollectionBySimpleSearch(Resource):
         return get_resource_response(resources, format, items, user)
 
 
-class GadgetsCollectionByGlobalSearch(Resource):
+class ResourceCollectionByGlobalSearch(Resource):
 
     def read(self, request, user_name, pag=0, offset=0):
 
@@ -352,7 +354,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
         else:
             resources = get_uniquelist(resources)
 
-        resources = filter_gadgets_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
         items = len(resources)
 
         resources = get_sortedlist(resources, orderby)
@@ -361,7 +363,7 @@ class GadgetsCollectionByGlobalSearch(Resource):
         return get_resource_response(resources, format, items, user)
 
 
-class GadgetTagsCollection(Resource):
+class ResourceTagCollection(Resource):
 
     def create(self, request, user_name, vendor, name, version):
         format = request.POST.get('format', 'default')
@@ -442,7 +444,7 @@ class GadgetTagsCollection(Resource):
         return get_tag_response(gadget, user, format)
 
 
-class GadgetVotesCollection(Resource):
+class ResourceVoteCollection(Resource):
 
     def create(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
@@ -452,25 +454,24 @@ class GadgetVotesCollection(Resource):
         # Get the vote from the request
         vote = request.POST.get('vote')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
-            UserVote.objects.create(vote=vote, idUser=user, idResource=gadget)
+            UserVote.objects.create(vote=vote, idUser=user, idResource=resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_gadget_popularity(gadget)
+            update_gadget_popularity(resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
@@ -518,7 +519,7 @@ class GadgetVotesCollection(Resource):
         return get_vote_response(gadget, user, format)
 
 
-class GadgetVersionsCollection(Resource):
+class ResourceVersionCollection(Resource):
 
     def create(self, request, user_name):
         gadgets = simplejson.loads(request.POST["gadgets"])
