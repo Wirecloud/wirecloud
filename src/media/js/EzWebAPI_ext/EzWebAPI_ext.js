@@ -4001,8 +4001,9 @@ StyledElements.StyledNotebook.prototype.focus = function(tabId) {
 StyledElements.StyledNotebook.prototype._computeMaxTabElementWidth = function() {
     var tabAreaWidth, tabElement, computedStyle, padding;
 
-    if (this.tabs.length == 0) {
+    if (this.tabs.length === 0) {
         this.maxTabElementWidth = '';
+        return;
     }
 
     tabAreaWidth = this.tabArea.clientWidth;
