@@ -63,6 +63,10 @@ var LayoutManagerFactory = function () {
         this.logs = LogManagerFactory.getInstance();
         this.logsLink = $('logs_link');
 
+        this._clickCallback = this._clickCallback.bind(this);
+        this.timeout = null;
+        $("loading-window").observe('click', this._clickCallback);
+
         // Menu Layer
         this.currentMenu = null;                                                // current menu (either dropdown or window)
         this.coverLayerElement = $('menu_layer');                               // disabling background layer
@@ -170,24 +174,50 @@ var LayoutManagerFactory = function () {
             this._updateTaskProgress();
         }
 
+        LayoutManager.prototype._hideProgressIndicator = function () {
+            var loadingElement = $("loading-window");
+            var loadingMessage = $("loading-message");
+
+            loadingElement.addClassName('disabled');
+            loadingElement.removeClassName('fadding');
+            loadingMessage.setStyle({'opacity': '1'});
+
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+            }
+        };
+
+        LayoutManager.prototype._clickCallback = function (event) {
+            event = event || window.event;
+
+            if ($("loading-window").hasClassName("fadding")) {
+                this._hideProgressIndicator();
+            }
+            if (event.stopPropagation) {
+                event.stopPropagation();
+            } else {
+                event.cancelBubble = true;
+            }
+        };
+
         LayoutManager.prototype._notifyPlatformReady = function () {
             var loadingElement = $("loading-window");
             loadingElement.addClassName("fadding");
 
             var loadingMessage = $("loading-message");
             var step = 0;
+            var layoutManager = this;
             function fadder() {
                 ++step;
                 if (step < 80) {
                     loadingMessage.setStyle({'opacity': 1 - (step * 0.025)});
-                    setTimeout(fadder, 50);
+                    layoutManager.timeout = setTimeout(fadder, 50);
                 } else {
-                    loadingElement.addClassName('disabled');
-                    loadingElement.removeClassName('fadding');
-                    loadingMessage.setStyle({'opacity': '1'});
+                    layoutManager._hideProgressIndicator();
                 }
             }
-            setTimeout(fadder, 50);
+            layoutManager.timeout = setTimeout(fadder, 50);
         }
 
         LayoutManager.prototype.updateLocation = function(section){
