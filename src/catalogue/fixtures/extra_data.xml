@@ -295,7 +295,7 @@
         <field type="CharField" name="wiki_page_uri">http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb</field>
         <field type="CharField" name="template_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/test.xml</field>
         <field type="IntegerField" name="mashup_id"><None></None></field>
-        <field to="auth.group" name="certification" rel="ManyToOneRel">1</field>
+        <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
         <field type="DecimalField" name="popularity">0.0</field>
         <field type="BooleanField" name="fromWGT">True</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
