@@ -25,31 +25,6 @@
         <field type="BooleanField" name="fromWGT">False</field>
         <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
     </object>
-    <object pk="4" model="catalogue.gadgetresource">
-        <field type="CharField" name="short_name">Flickr</field>
-        <field type="CharField" name="display_name"><None></None></field>
-        <field type="CharField" name="vendor">Morfeo</field>
-        <field type="CharField" name="version">2.1</field>
-        <field type="BooleanField" name="ie_compatible">False</field>
-        <field type="BooleanField" name="solution">False</field>
-        <field type="CharField" name="author">jjmr</field>
-        <field type="CharField" name="mail">jjmr@tid.es</field>
-        <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
-        <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
-        <field type="CharField" name="size"><None></None></field>
-        <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
-        <field type="DateTimeField" name="creation_date">2008-12-01 15:19:13</field>
-        <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
-        <field type="CharField" name="iphone_image_uri"></field>
-        <field type="CharField" name="wiki_page_uri">http://trac.morfeo-project.org/trac/ezwebplatform/wiki/Flickr</field>
-        <field type="CharField" name="template_uri">http://demo.ezweb.morfeo-project.com/repository/flickr/flickr.xml</field>
-        <field type="IntegerField" name="mashup_id"><None></None></field>
-        <field to="auth.group" name="certification" rel="ManyToOneRel"><None></None></field>
-        <field type="DecimalField" name="popularity">0.0</field>
-        <field type="BooleanField" name="fromWGT">False</field>
-        <field to="auth.group" name="organization" rel="ManyToManyRel"></field>
-    </object>
     <object pk="5" model="catalogue.gadgetresource">
         <field type="CharField" name="short_name">Map Viewer</field>
         <field type="CharField" name="display_name"><None></None></field>
@@ -304,16 +279,6 @@
         <field type="CharField" name="friendcode">keyword</field>
         <field type="CharField" name="wiring">in</field>
         <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">1</field>
-    </object>
-    <object pk="7" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">keyword</field>
-        <field type="CharField" name="wiring">in</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
-    </object>
-    <object pk="8" model="catalogue.gadgetwiring">
-        <field type="CharField" name="friendcode">imageUrl</field>
-        <field type="CharField" name="wiring">out</field>
-        <field to="catalogue.gadgetresource" name="idResource" rel="ManyToOneRel">4</field>
     </object>
     <object pk="9" model="catalogue.gadgetwiring">
         <field type="CharField" name="friendcode">address</field>
