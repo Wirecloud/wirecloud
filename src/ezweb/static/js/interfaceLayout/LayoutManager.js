@@ -623,7 +623,7 @@ var LayoutManagerFactory = function () {
                         scndWK: workspaces[i]
                     };
                     workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function(){
-                        this.firstWK.mergeWith(this.scndWK.workSpaceState.id);
+                        this.firstWK.mergeWith(this.scndWK.workSpaceState);
                     }.bind(context), i);
                 }
             }

@@ -298,10 +298,17 @@ function WorkSpace (workSpaceState) {
     }
 
     var mergeError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+        var logManager, layoutManager, msg;
+
+        logManager = LogManagerFactory.getInstance();
+        msg = logManager.formatError(gettext("Error merging workspaces: %(errorMsg)s."), transport, e);
         logManager.log(msg);
-        LayoutManagerFactory.getInstance().hideCover();
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager.logStep('');
+        layoutManager._notifyPlatformReady();
+
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     }
 
     //**** TAB CALLBACK*****
@@ -802,8 +809,16 @@ function WorkSpace (workSpaceState) {
         PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, {workspace: this, params: data}, publishSuccess, publishError);
     }
 
-    WorkSpace.prototype.mergeWith = function(workspace_id) {
-        var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
+    WorkSpace.prototype.mergeWith = function(workspace) {
+        var workSpaceUrl, layoutManager, msg;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Merging workspaces"), 1);
+        msg = gettext('Merging "%(srcworkspace)s" into "%(dstworkspace)s"');
+        msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
+        layoutManager.logSubTask(msg);
+
+        workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace.id, 'to_ws_id': this.workSpaceState.id});
         PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
     };
 
