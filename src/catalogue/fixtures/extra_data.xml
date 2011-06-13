@@ -10,9 +10,7 @@
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Busqueda de productos en Amazon</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:18:19</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/amazon/amazon.jpg</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -34,9 +32,7 @@
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">This gadget version provide an engaging visual way to explore tagged photos through a fairly comprehensive web-service API</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:19:13</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/flickr/flickr.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -58,9 +54,7 @@
         <field type="CharField" name="mail">fabio@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Este gadget presenta la ubicacion en el plano de una determinada direccion o coordenadas UTM. Si se le pasa la precision, dibuja un circulo con el area seleccionada</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:19:39</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/localizador/google_maps.jpg</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -82,9 +76,7 @@
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Este gadget permite anadir una nota personal</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:19:51</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/notepad/notepad.jpg</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -106,9 +98,7 @@
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Este gadget presenta la informacion relativa a un equipo perteneciente a la red de encaminadores</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:14</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorEquipos/datosEquipo.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -130,9 +120,7 @@
         <field type="CharField" name="mail">jmostazo@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Este gadget permite mostrar imágenes recibidas en un slot</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:23</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorImagenes/visorImagenes.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -154,9 +142,7 @@
         <field type="CharField" name="mail">miglesia@pegaso.ls.fi.upm.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Este gadget presenta la informacion relativa a un usuario para el cual se ha detectado una averia</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:35</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/visorUsuarios/datosUsuario.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -178,9 +164,7 @@
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">muestra un plan de viaje mediante yahoo</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:46</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_travel/yahoo_travel.gif</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -202,9 +186,7 @@
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">buscador de planes de viajes de yahoo</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:20:57</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/yahoo_trip/trip_search.gif</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -226,9 +208,7 @@
         <field type="CharField" name="mail">jjmr@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">Reproductor de videos de Youtube</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:21:08</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_player/tuberep.png</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -250,9 +230,7 @@
         <field type="CharField" name="mail">abgp@tid.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel"><None></None></field>
         <field type="TextField" name="description">buscador de videos youtube y selector de peliculas</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2008-12-01 15:21:19</field>
         <field type="CharField" name="image_uri">http://demo.ezweb.morfeo-project.org/repository/youtube_search/tubesearch.jpeg</field>
         <field type="CharField" name="iphone_image_uri"></field>
@@ -274,9 +252,7 @@
         <field type="CharField" name="mail">aarranz@yaco.es</field>
         <field to="auth.user" name="creator" rel="ManyToOneRel">1</field>
         <field type="TextField" name="description">This gadget is used to test some of the features of the EzWeb platform</field>
-        <field type="CharField" name="size"><None></None></field>
         <field type="CharField" name="license"><None></None></field>
-        <field type="CharField" name="gadget_uri"><None></None></field>
         <field type="DateTimeField" name="creation_date">2011-05-13 12:24:03</field>
         <field type="CharField" name="image_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/images/catalogue.png</field>
         <field type="CharField" name="iphone_image_uri">/deployment/gadgets/admin/Yaco_Sistemas_S.L./Test/0.9/images/catalogue_iphone.png</field>
