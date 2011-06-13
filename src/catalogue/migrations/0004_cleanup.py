@@ -16,7 +16,13 @@ class Migration(SchemaMigration):
 
         db.delete_column('catalogue_catalogueresource', 'solution')
 
+        # Changing field 'CatalogueResource.popularity'
+        db.alter_column('catalogue_catalogueresource', 'popularity', self.gf('django.db.models.fields.DecimalField')(max_digits=2, decimal_places=1))
+
     def backwards(self, orm):
+
+        # Changing field 'CatalogueResource.popularity'
+        db.alter_column('catalogue_catalogueresource', 'popularity', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=2, decimal_places=1))
 
         db.add_column('catalogue_catalogueresource', 'solution', self.gf('django.db.models.fields.BooleanField')(default=False), keep_default=False)
 
@@ -90,14 +96,13 @@ class Migration(SchemaMigration):
             'gadget_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'ie_compatible': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'solution': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'image_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True'}),
             'iphone_image_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
             'license': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'mail': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'mashup_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'organization': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'organization'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.Group']"}),
-            'popularity': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '2', 'decimal_places': '1'}),
+            'popularity': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '2', 'decimal_places': '1'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'size': ('django.db.models.fields.CharField', [], {'max_length': '10', 'null': 'True', 'blank': 'True'}),
             'template_uri': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
