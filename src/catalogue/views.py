@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -30,23 +29,18 @@
 
 #
 
-import os
-import re
-from shutil import rmtree
-from urllib import url2pathname
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.http import  HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from catalogue.models import Application, CatalogueResource, GadgetWiring
+from catalogue.models import Application, CatalogueResource
 from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
@@ -55,7 +49,7 @@ from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_resource_from_template_uri, get_added_resource_info
+from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
@@ -64,7 +58,6 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
-from gadget.views import deleteGadget
 
 
 class ResourceCollection(Resource):
@@ -139,65 +132,17 @@ class ResourceCollection(Resource):
             #Delete only the specified version of the gadget
             resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
-            result = deleteOneGadget(resource, user, request)
+            result = delete_resource(resource, user)
             response_json['removedIGadgets'] = result['removedIGadgets']
         else:
             #Delete all versions of the gadget
             resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
             for resource in resources:
-                result = deleteOneGadget(resource, user, request)
+                result = delete_resource(resource, user)
                 response_json['removedIGadgets'] += result['removedIGadgets']
 
         return HttpResponse(simplejson.dumps(response_json),
                             mimetype='application/json; charset=UTF-8')
-
-
-def deleteOneGadget(resource, user, request):
-
-    # Delete the gadget only if this user is the owner
-    if not user.is_superuser and resource.creator != user:
-        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
-
-        raise Http403(msg)
-
-    #Delete data from Application model
-    apps = Application.objects.filter(resources=resource)
-
-    for app in apps:
-        app.remove_resource(resource)
-
-    # Delete the related wiring information for that gadget
-    GadgetWiring.objects.filter(idResource=resource.id).delete()
-
-    # Delete the related tags for that gadget
-    resourceTags = UserTag.objects.filter(idResource=resource.id)
-    for t in resourceTags:
-        #if there is no more gadgets tagged with these tags, delete the Tag
-        #if UserTag.objects.filter(tag = t.tag).count() == 1:
-        #    t.tag.delete()
-        t.delete()
-
-    # Delete the related votes for that resource
-    UserVote.objects.filter(idResource=resource.id).delete()
-
-    # Remove the gadget from the showcase
-    result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
-
-    # Delete the gadget if it is saved in the platform
-    if resource.fromWGT:
-        # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
-        exp = re.compile('/deployment/gadgets/(?P<path>.+/.+/.+/.+/).*$')
-        if exp.search(resource.template_uri):
-            v = exp.search(resource.template_uri)
-            path = url2pathname(v.group('path'))
-            path = os.path.join(settings.GADGETS_DEPLOYMENT_DIR, path).encode("utf8")
-            if os.path.isdir(path):
-                rmtree(path)
-
-    # Delete the object
-    resource.delete()
-
-    return result
 
 
 class ResourceCollectionBySimpleSearch(Resource):
