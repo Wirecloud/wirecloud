@@ -105,7 +105,7 @@ var LayoutManagerFactory = function () {
 
 
         LayoutManager.prototype._updateTaskProgress = function() {
-            var msg, subtaskpercentage, taskpercentage, title;
+            var msg, subtaskpercentage, taskpercentage;
 
             subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
             if (subtaskpercentage < 0) {
@@ -134,13 +134,7 @@ var LayoutManagerFactory = function () {
             }
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
-            title = $("loading-subtask-title");
-
-            if (title.setTextContent) {
-                title.setTextContent(msg);
-            } else {
-                title.innerHTML = msg;
-            }
+            $("loading-subtask-title").setTextContent(msg);
         }
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {

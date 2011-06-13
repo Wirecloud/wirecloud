@@ -114,7 +114,7 @@ Hash.prototype.clone = function() {
 }
 
 
-if (document.documentElement.textContent != undefined) {
+if ('textContent' in document.documentElement) {
 	/**
 	 * Changes the inner content of an Element treating it as pure text. If
 	 * the provided text contains HTML special characters they will be encoded.
@@ -130,7 +130,7 @@ if (document.documentElement.textContent != undefined) {
 	Element.prototype.getTextContent = function() {
 		return this.textContent;
 	}
-} else if (document.documentElement.innerText != undefined) {
+} else if ('innerText' in document.documentElement) {
 	Element.Methods.setTextContent = function(element, text) {
 		element.innerText = text;
 	}
