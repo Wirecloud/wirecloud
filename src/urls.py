@@ -128,9 +128,6 @@ urlpatterns = patterns('',
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
-
-    #Catalogue API
-    (r'^catalogue/API/', include('catalogue.API.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
