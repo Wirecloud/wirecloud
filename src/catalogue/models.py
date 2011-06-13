@@ -48,17 +48,15 @@ class CatalogueResource(TransModel):
     author = models.CharField(_('Author'), max_length=250)
     mail = models.CharField(_('Mail'), max_length=100)
 
-    # Person how added the resource to catalogue!
+    # Person who added the resource to catalogue!
     creator = models.ForeignKey(User, null=True, blank=True)
 
     description = models.TextField(_('Description'))
-    size = models.CharField(_('Size'), max_length=10, null=True, blank=True)
     license = models.CharField(_('License'), max_length=20, null=True, blank=True)
 
-    gadget_uri = models.CharField(_('gadgetURI'), max_length=200, null=True, blank=True)
-    creation_date = models.DateTimeField('creation_date', null=True, blank=True)
-    image_uri = models.CharField(_('imageURI'), max_length=200, null=True, blank=True)
-    iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, null=True, blank=True)
+    creation_date = models.DateTimeField('creation_date')
+    image_uri = models.CharField(_('imageURI'), max_length=200, blank=True)
+    iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, blank=True)
     wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
     mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
