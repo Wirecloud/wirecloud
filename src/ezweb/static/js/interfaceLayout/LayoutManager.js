@@ -105,33 +105,42 @@ var LayoutManagerFactory = function () {
 
 
         LayoutManager.prototype._updateTaskProgress = function() {
-            var msg, subtaskpercentage, taskpercentage;
+            var msg, subtaskpercentage, taskpercentage, title;
 
             subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
-            if (subtaskpercentage < 0)
+            if (subtaskpercentage < 0) {
                 subtaskpercentage = 0;
-            else if (subtaskpercentage > 100)
+            } else if (subtaskpercentage > 100) {
                 subtaskpercentage = 100;
+            }
 
             taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
             taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
             taskpercentage = Math.round(taskpercentage);
-            if (taskpercentage < 0)
+            if (taskpercentage < 0) {
                 taskpercentage = 0;
-            else if (taskpercentage > 100)
+            } else if (taskpercentage > 100) {
                 subtaskpercentage = 100;
+            }
 
             msg = gettext("%(task)s %(percentage)s%");
             msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
             $("loading-task-title").textContent = msg;
 
-            if (this.subTask != "")
+            if (this.subTask != "") {
                 msg = gettext("%(subTask)s: %(percentage)s%");
-            else
+            } else {
                 msg = "%(subTask)s";
+            }
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
-            $("loading-subtask-title").setTextContent(msg);
+            title = $("loading-subtask-title");
+
+            if (title.setTextContent) {
+                title.setTextContent(msg);
+            } else {
+                title.innerHTML = msg;
+            }
         }
 
         LayoutManager.prototype._startComplexTask = function(task, subtasks) {

@@ -31,7 +31,11 @@
  */
 
 Prototype.BrowserFeatures.OnHashChangeEvent = 'onhashchange' in window;
-Prototype.Browser.Safari = window.navigator.vendor.indexOf('Apple') !== -1;
+if (window.navigator.vendor) {
+    Prototype.Browser.Safari = window.navigator.vendor.indexOf('Apple') !== -1;
+} else {
+    Prototype.Browser.Safari = false;
+}
 
 Object.extend(Event, {
 	KEY_SHIFT:    16,
