@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import Application, GadgetWiring, UserTag, UserVote
+from catalogue.models import GadgetWiring, UserTag, UserVote
 from catalogue.templateParser import TemplateParser
 from commons.authentication import Http403
 from commons.exceptions import TemplateParseException
@@ -108,12 +108,6 @@ def delete_resource(resource, user):
         msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
 
         raise Http403(msg)
-
-    # Delete data from Application model
-    apps = Application.objects.filter(resources=resource)
-
-    for app in apps:
-        app.remove_resource(resource)
 
     # Delete the related wiring information for that resource
     GadgetWiring.objects.filter(idResource=resource.id).delete()

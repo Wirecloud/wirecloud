@@ -160,7 +160,6 @@ INSTALLED_APPS = (
     'preferences',
     'translator',
     'gadgetGenerator',
-    'resourceSubscription',
     'remoteChannel',
     'user',
     'API',

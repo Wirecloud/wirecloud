@@ -35,7 +35,6 @@ from django.conf.urls.defaults import patterns
 from catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
 from catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
 from catalogue.views import ResourceVoteCollection, ResourceVersionCollection
-from catalogue.views import ApplicationManager
 
 urlpatterns = patterns('catalogue.views',
     # Resources
@@ -60,7 +59,4 @@ urlpatterns = patterns('catalogue.views',
 
     #version check
     (r'^versions', ResourceVersionCollection(permitted_methods=('POST',))),
-
-    #Applications!
-    (r'^application/(?P<application_id>\d+)/resource/(?P<resource_id>\d+)/link', ApplicationManager(permitted_methods=('POST', 'GET',))),
- )
+)

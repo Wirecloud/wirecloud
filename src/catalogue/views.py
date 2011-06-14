@@ -40,7 +40,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from catalogue.models import Application, CatalogueResource
+from catalogue.models import CatalogueResource
 from catalogue.models import Tag, UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
@@ -508,21 +508,3 @@ class ResourceEnabler(Resource):
         resource.save()
 
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
-
-
-class ApplicationManager(Resource):
-
-    def read(self, request, user_name, application_id, resource_id):
-        pass
-
-    def create(self, request, user_name, application_id, resource_id):
-        try:
-            application = Application.objects.get(app_code=application_id)
-            resource = CatalogueResource.objects.get(id=resource_id)
-            application.add_resource(resource)
-
-            return HttpResponse('{"result": "ok"}',
-                                mimetype='application/json; charset=UTF-8')
-        except Application.DoesNotExist, CatalogueResource.DoesNotExist:
-            return HttpResponseServerError('{"result": "error"}',
-                                           mimetype='application/json; charset=UTF-8')
