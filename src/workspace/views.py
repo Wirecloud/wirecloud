@@ -732,7 +732,7 @@ class WorkSpacePublisherEntry(Resource):
             baseURL = settings.TEMPLATE_GENERATOR_URL
 
         url = baseURL + "/workspace/templateGenerator/" + str(published_workspace.id)
-        resource.templare_uri = url
+        resource.template_uri = url
         resource.save()
 
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
