@@ -84,18 +84,6 @@ function Gadget(gadget_, url_, options_) {
     this.setLastVersion = function(lastVersion) { return state.setLastVersion(lastVersion); }
     this.getLastVersion = function(){return state.getLastVersion();}
 
-    this.isContratable = function() {
-        var capabilities = state.getCapabilities();
-
-        for (var i=0; i<capabilities.length; i++) {
-            var capability = capabilities[i];
-            if (capability.name == 'Contratable')
-                return capability.value.toLowerCase() == "true";
-            else
-                return false
-        }
-    }
-
     // *******************
     //  PRIVATE FUNCTIONS
     // *******************

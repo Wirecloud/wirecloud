@@ -104,8 +104,6 @@ class PublishedWorkSpace(models.Model):
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
 
-    contratable = models.BooleanField(_('Contratable'), default=False)
-
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
 

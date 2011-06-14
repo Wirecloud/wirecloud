@@ -103,13 +103,6 @@ class Gadget(TransModel):
     def get_related_slots(self):
         return VariableDef.objects.filter(gadget=self, aspect='SLOT')
 
-    def is_contratable(self):
-        try:
-            Capability.objects.get(gadget=self, name="contratable", value="true")
-            return True
-        except Capability.DoesNotExist:
-            return False
-
 
 class Capability(models.Model):
 

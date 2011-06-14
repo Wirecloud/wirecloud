@@ -88,14 +88,8 @@ ResourcesPainter.prototype.paint = function (command, user_command_manager) {
             'description': resource.getDescription(),
             'average_popularity': this.get_popularity_html(resource.getPopularity())
         }
-
-        if (resource.isContratable() && ! resource.hasContract()) {
-            context.button_text = gettext('Buy');
-            context.type = 'contratable';
-        } else {
-            context.button_text = gettext('Add');
-            context.type = '';
-        }
+        context.button_text = gettext('Add');
+        context.type = '';
 
         resource_element = document.createElement('div');
         Element.extend(resource_element);

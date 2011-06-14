@@ -89,12 +89,12 @@ def get_mashup_gadgets(mashup_id):
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, resource, contratable, user):
+def create_published_workspace_from_template(template, resource, user):
     published_workspace = PublishedWorkSpace(name=resource.short_name,
         vendor=resource.vendor, version=resource.version,
         author=resource.author, mail=resource.mail,
         description=resource.description, imageURI=resource.image_uri,
-        wikiURI=resource.wiki_page_uri, contratable=contratable, params='',
+        wikiURI=resource.wiki_page_uri, params='',
         creator=user, template=template)
 
     published_workspace.save()

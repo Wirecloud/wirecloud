@@ -70,9 +70,6 @@ class TemplateParser:
         # Parse the input
         parseString(self.xml, self.handler)
 
-    def is_contratable(self):
-        return self.handler._contratable
-
     def get_gadget(self):
         return self.handler.get_gadget()
 
@@ -99,7 +96,6 @@ class TemplateHandler(handler.ContentHandler):
         self._user = user
         self._uri = uri
         self._gadget = None
-        self._contratable = False
         self._id = -1
 
         #Organizations
@@ -180,9 +176,6 @@ class TemplateHandler(handler.ContentHandler):
             capability = Capability(name=name.lower(), value=value.lower(), resource=self._gadget)
 
             capability.save()
-
-        if capability.name.lower() == 'contratable':
-            self._contratable = True
 
     def processOrganization(self, organization_accumulator):
         if not organization_accumulator:
@@ -346,7 +339,7 @@ class TemplateHandler(handler.ContentHandler):
             self._gadget = gadget
 
             if self.save and self._is_mashup:
-                published_mashup = create_published_workspace_from_template(self._xml, gadget, self._contratable, self._user)
+                published_mashup = create_published_workspace_from_template(self._xml, gadget, self._user)
                 gadget.mashup_id = published_mashup.id
 
             if self.save:
@@ -361,11 +354,6 @@ class TemplateHandler(handler.ContentHandler):
                 # workaround to add default tags
                 if self._is_mashup:
                     tag, created = Tag.objects.get_or_create(name="mashup")
-                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
-                    userTag.save()
-
-                if self._contratable:
-                    tag, created = Tag.objects.get_or_create(name="contratable")
                     userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
                     userTag.save()
 

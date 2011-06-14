@@ -153,10 +153,6 @@ function ResourceState(resourceJSON_) {
         currentVersion.votes = voteDataJSON_;
     }
 
-    this.setAvailableApps = function (availableAppsObj) {
-        availableApps = availableAppsObj;
-    }
-
     /////////////////////////////
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
@@ -170,74 +166,7 @@ function ResourceState(resourceJSON_) {
         } else {
             currentVersion = data_by_version[allVersions[0].text];
         }
-
-        if (currentVersion.availableApps) {
-            this.setAvailableApps(currentVersion.availableApps);
-        }
     };
-
-    this.getContract = function() {
-        var capabilities = this.getCapabilities();
-
-        for (i = 0; i < capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability['name'].toLowerCase() == 'contratable') {
-                return capability['contract'];
-            }
-        }
-
-        return null;
-    }
-
-    this.getGadgetApps = function() {
-        var capabilities = this.getCapabilities();
-
-        for (i=0; i<capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability['name'].toLowerCase() == 'contratable') {
-                return capability['applications'];
-            }
-        }
-
-        return [];
-    }
-
-    this.getAvailableApps = function() {
-        return availableApps;
-    }
-
-    this.isContratable = function () {
-        var capabilities = this.getCapabilities();
-
-        for (var i = 0; i < capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability.name.toLowerCase() == 'contratable')
-                return capability.value.toLowerCase() == "true";
-            else
-                return false
-        }
-
-        return false;
-    }
-
-    this.hasContract = function () {
-        var gadgetApps = this.getGadgetApps();
-
-        if (gadgetApps.length == 0)
-        return false;
-
-        for (var i=0; i<gadgetApps.length; i++) {
-            var app = gadgetApps[i];
-
-            if (! app['has_contract'])
-                return false;
-        }
-
-        return true;
-    }
 
     ////////////////////////
     // CONSTRUCTOR
