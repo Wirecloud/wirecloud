@@ -30,6 +30,7 @@
 
 #
 
+from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.utils.translation import ugettext as  _
@@ -103,6 +104,13 @@ class PublishedWorkSpace(models.Model):
 
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
+
+    def get_uri(self):
+        baseURL = ""
+        if hasattr(settings, 'TEMPLATE_GENERATOR_URL'):
+            baseURL = settings.TEMPLATE_GENERATOR_URL
+
+        return baseURL + "/workspace/templateGenerator/" + str(self.id)
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)

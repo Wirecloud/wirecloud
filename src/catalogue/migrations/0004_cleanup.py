@@ -36,7 +36,13 @@ class Migration(SchemaMigration):
         # Changing field 'CatalogueResource.image_uri'
         db.alter_column('catalogue_catalogueresource', 'image_uri', self.gf('django.db.models.fields.CharField')(default='', max_length=200))
 
+        # Adding field 'CatalogueResource.type'
+        db.add_column('catalogue_catalogueresource', 'type', self.gf('django.db.models.fields.SmallIntegerField')(default=0, max_length=4), keep_default=False)
+
     def backwards(self, orm):
+
+        # Deleting field 'CatalogueResource.type'
+        db.delete_column('catalogue_catalogueresource', 'type')
 
         # Adding field 'CatalogueResource.gadget_uri'
         db.add_column('catalogue_catalogueresource', 'gadget_uri', self.gf('django.db.models.fields.CharField')(max_length=200, null=True, blank=True), keep_default=False)
@@ -107,6 +113,7 @@ class Migration(SchemaMigration):
             'subscription_price': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Tag']"}),
             'template_uri': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.PositiveIntegerField', [], {'max_length': '4'}),
             'vendor': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
         },
         'catalogue.capability': {

@@ -721,21 +721,15 @@ class WorkSpacePublisherEntry(Resource):
 
             raise TracedServerError(e, workspace_id, request, msg)
 
-        published_workspace = PublishedWorkSpace.objects.get(id=resource.mashup_id)
+        # TODO
+        split_result = resource.template_uri.rsplit('/', 1)
+        mashup_id = split_result[1]
+        published_workspace = PublishedWorkSpace.objects.get(id=mashup_id)
         published_workspace.workspace = workspace
         published_workspace.params = received_json
         published_workspace.save()
 
-        #ask the template Generator for the template of the new mashup
-        baseURL = "http://" + request.get_host()
-        if hasattr(settings, 'TEMPLATE_GENERATOR_URL'):
-            baseURL = settings.TEMPLATE_GENERATOR_URL
-
-        url = baseURL + "/workspace/templateGenerator/" + str(published_workspace.id)
-        resource.template_uri = url
-        resource.save()
-
-        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
+        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': resource.template_uri}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
 
 

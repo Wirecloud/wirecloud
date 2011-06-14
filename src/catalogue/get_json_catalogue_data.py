@@ -147,7 +147,7 @@ def get_resource_data(untranslated_resource, user):
         'description': resource.description,
         'uriImage': resource.image_uri,
         'uriWiki': resource.wiki_page_uri,
-        'mashupId': resource.mashup_id,
+        'type': resource.resource_type(),
         'uriTemplate': resource.template_uri,
         'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),

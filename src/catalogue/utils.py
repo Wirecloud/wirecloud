@@ -37,7 +37,7 @@ from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import GadgetWiring, UserTag, UserVote
+from catalogue.models import GadgetWiring, Tag, UserTag, UserVote
 from catalogue.templateParser import TemplateParser
 from commons.authentication import Http403
 from commons.exceptions import TemplateParseException
@@ -131,3 +131,8 @@ def delete_resource(resource, user):
     resource.delete()
 
     return result
+
+
+def tag_resource(user, tag, resource):
+    tag, _junk = Tag.objects.get_or_create(name=tag)
+    UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=resource)

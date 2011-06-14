@@ -1,43 +1,26 @@
 # encoding: utf-8
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from south.v2 import DataMigration
 
 
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
+        for resource in orm.CatalogueResource.objects.all():
+            if resource.mashup_id != None:
+                resource.type = 1
+            else:
+                resource.type = 0
 
-        # Deleting model 'Application'
-        db.delete_table('catalogue_application')
+            if resource.mashup_id != None and resource.template_uri == '':
+                resource.template_uri = "/workspace/templateGenerator/" + str(resource.mashup_id)
 
-        # Removing M2M table for field resources on 'Application'
-        db.delete_table('catalogue_application_resources')
+            resource.save()
 
     def backwards(self, orm):
-
-        # Adding model 'Application'
-        db.create_table('catalogue_application', (
-            ('monthly_price', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('subscription_price', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('vendor', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('short_name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('template_uri', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Tag'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('app_code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
-            ('image_uri', self.gf('django.db.models.fields.URLField')(max_length=200, null=True)),
-        ))
-        db.send_create_signal('catalogue', ['Application'])
-
-        # Adding M2M table for field resources on 'Application'
-        db.create_table('catalogue_application_resources', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('application', models.ForeignKey(orm['catalogue.application'], null=False)),
-            ('catalogueresource', models.ForeignKey(orm['catalogue.catalogueresource'], null=False)),
-        ))
-        db.create_unique('catalogue_application_resources', ['application_id', 'catalogueresource_id'])
+        for resource in orm.CatalogueResource.objects.all():
+            if resource.type == 1:
+                resource.mashup_id = int(resource.template_uri.rsplit('/', 1)[1])
+                resource.save()
 
     models = {
         'auth.group': {

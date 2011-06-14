@@ -60,7 +60,7 @@ def get_xml_description(gadgetlist, user):
             '<description>%s</description>' % e.description,
             '<uriImage>%s</uriImage>' % e.image_uri,
             '<uriWiki>%s</uriWiki>' % e.wiki_page_uri,
-            '<mashupId>%s</mashupId>' % str(e.mashup_id),
+            '<type>%s</type>' % str(e.resource_type()),
             '<uriTemplate>%s</uriTemplate>' % e.template_uri,
             xml_user_data, xml_tag, xml_event, xml_slot, xml_vote,
             '</resource>'])

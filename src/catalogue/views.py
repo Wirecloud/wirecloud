@@ -41,7 +41,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from catalogue.models import CatalogueResource
-from catalogue.models import Tag, UserTag, UserVote
+from catalogue.models import UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
@@ -50,6 +50,7 @@ from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_pagina
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
+from catalogue.utils import tag_resource
 from commons.authentication import user_authentication, Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
@@ -343,8 +344,7 @@ class ResourceTagCollection(Resource):
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
             try:
-                tag, created = Tag.objects.get_or_create(name=e)
-                UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=resource)
+                tag_resource(user, e, resource)
             except Exception, ex:
                 transaction.rollback()
                 msg = _("Error tagging resource!!")

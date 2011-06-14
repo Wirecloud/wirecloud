@@ -40,7 +40,7 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Tag, Capability
+from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Capability
 from catalogue.catalogue_utils import get_all_resource_versions, update_resource_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
@@ -340,7 +340,7 @@ class TemplateHandler(handler.ContentHandler):
 
             if self.save and self._is_mashup:
                 published_mashup = create_published_workspace_from_template(self._xml, gadget, self._user)
-                gadget.mashup_id = published_mashup.id
+                gadget.template_uri = published_mashup.get_uri()
 
             if self.save:
                 gadget.save()
@@ -353,9 +353,8 @@ class TemplateHandler(handler.ContentHandler):
                 # TODO: process the resources
                 # workaround to add default tags
                 if self._is_mashup:
-                    tag, created = Tag.objects.get_or_create(name="mashup")
-                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
-                    userTag.save()
+                    from catalogue.utils import tag_resource
+                    tag_resource(self._user, 'mashup', gadget)
 
                 # Copy all UserTag and UserVote entry from previous version
                 resource_versions = get_all_resource_versions(self._vendor, self._name)

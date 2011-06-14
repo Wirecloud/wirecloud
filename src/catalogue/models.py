@@ -39,10 +39,17 @@ from translator.models import TransModel
 
 class CatalogueResource(TransModel):
 
+    RESOURCE_TYPES = ['gadget', 'mashup']
+    TYPE_CHOICES = (
+        (0, 'Gadget'),
+        (1, 'Mashup'),
+    )
+
     short_name = models.CharField(_('Name'), max_length=250)
     display_name = models.CharField(_('Display Name'), max_length=250, null=True, blank=True)
     vendor = models.CharField(_('Vendor'), max_length=250)
     version = models.CharField(_('Version'), max_length=150)
+    type = models.SmallIntegerField(_('Type'), max_length=4, choices=TYPE_CHOICES, null=False, blank=False)
     ie_compatible = models.BooleanField(_('IE Compatible'), default=False)
 
     author = models.CharField(_('Author'), max_length=250)
@@ -59,7 +66,6 @@ class CatalogueResource(TransModel):
     iphone_image_uri = models.CharField(_('iPhoneImageURI'), max_length=200, blank=True)
     wiki_page_uri = models.CharField(_('wikiURI'), max_length=200, blank=True)
     template_uri = models.CharField(_('templateURI'), max_length=200, blank=True)
-    mashup_id = models.IntegerField(_('mashupId'), null=True, blank=True)
 
     # For implementing "private gadgets" only visible for users that belongs to some concrete organizations
     organization = models.ManyToManyField(Group, related_name='organization', null=True, blank=True)
@@ -72,10 +78,7 @@ class CatalogueResource(TransModel):
     fromWGT = models.BooleanField(_('fromWGT'), default=False)
 
     def resource_type(self):
-        if (self.mashup_id):
-            return 'mashup'
-
-        return 'gadget'
+        return self.RESOURCE_TYPES[self.type]
 
     class Meta:
         unique_together = ("short_name", "vendor", "version")

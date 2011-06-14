@@ -86,15 +86,20 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getMashupId = function() {
-        return currentVersion.mashupId;
+        var index = currentVersion.uriTemplate.lastIndexOf('/');
+        if (index !== -1) {
+            return parseInt(currentVersion.uriTemplate.substr(index + 1), 10);
+        } else {
+            return null;
+        }
     }
 
     this.isMashup = function() {
-        return currentVersion.mashupId != null;
+        return currentVersion.type === 'mashup';
     }
 
     this.isGadget = function() {
-        return currentVersion.mashupId == null;
+        return currentVersion.type === 'mashup';
     }
 
     this.getAddedBy = function() {

@@ -1,43 +1,19 @@
 # encoding: utf-8
 from south.db import db
 from south.v2 import SchemaMigration
-from django.db import models
 
 
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Deleting model 'Application'
-        db.delete_table('catalogue_application')
-
-        # Removing M2M table for field resources on 'Application'
-        db.delete_table('catalogue_application_resources')
+        # Deleting field 'CatalogueResource.mashup_id'
+        db.delete_column('catalogue_catalogueresource', 'mashup_id')
 
     def backwards(self, orm):
 
-        # Adding model 'Application'
-        db.create_table('catalogue_application', (
-            ('monthly_price', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('subscription_price', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('vendor', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('description', self.gf('django.db.models.fields.TextField')()),
-            ('short_name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('template_uri', self.gf('django.db.models.fields.URLField')(max_length=200, null=True, blank=True)),
-            ('tag', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['catalogue.Tag'])),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=250)),
-            ('app_code', self.gf('django.db.models.fields.IntegerField')(primary_key=True)),
-            ('image_uri', self.gf('django.db.models.fields.URLField')(max_length=200, null=True)),
-        ))
-        db.send_create_signal('catalogue', ['Application'])
-
-        # Adding M2M table for field resources on 'Application'
-        db.create_table('catalogue_application_resources', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('application', models.ForeignKey(orm['catalogue.application'], null=False)),
-            ('catalogueresource', models.ForeignKey(orm['catalogue.catalogueresource'], null=False)),
-        ))
-        db.create_unique('catalogue_application_resources', ['application_id', 'catalogueresource_id'])
+        # Adding field 'CatalogueResource.mashup_id'
+        db.add_column('catalogue_catalogueresource', 'mashup_id', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True), keep_default=False)
 
     models = {
         'auth.group': {
@@ -91,7 +67,6 @@ class Migration(SchemaMigration):
             'iphone_image_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
             'license': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True', 'blank': 'True'}),
             'mail': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'mashup_id': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'organization': ('django.db.models.fields.related.ManyToManyField', [], {'blank': 'True', 'related_name': "'organization'", 'null': 'True', 'symmetrical': 'False', 'to': "orm['auth.Group']"}),
             'popularity': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '2', 'decimal_places': '1'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
