@@ -599,10 +599,11 @@ function WorkSpace (workSpaceState) {
         }
 
         var counter = this.tabInstances.keys().length + 1;
-        var tabName = "MyTab "+counter.toString();
+        var prefixName = gettext("Tab");
+        var tabName = prefixName + " " + counter.toString();
         //check if there is another tab with the same name
         while (this.tabExists(tabName)){
-            tabName = "MyTab "+(counter++).toString();
+            tabName = prefixName + " " + (counter++).toString();
         }
         var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': this.workSpaceState.id});
         var o = new Object;

@@ -1087,6 +1087,10 @@ msgstr ""
 "AVISO: Su fichero se subirá a un espacio compartido. <br/> EzWeb no se hace "
 "responsable del contenido de los ficheros subidos."
 
+#: ezweb/static/js/opManager/WorkSpace.js:602
+msgid "Tab"
+msgstr "Pestaña"
+
 #: ezweb/static/js/opManager/WorkSpace.js:906
 msgid ""
 "This WorkSpace is blocked, please create a new one if you want to configure "

@@ -950,6 +950,10 @@ msgid ""
 "responsible for the content of the uploaded files."
 msgstr ""
 
+#: ezweb/static/js/opManager/WorkSpace.js:602
+msgid "Tab"
+msgstr ""
+
 #: ezweb/static/js/opManager/WorkSpace.js:906
 msgid ""
 "This WorkSpace is blocked, please create a new one if you want to configure "
