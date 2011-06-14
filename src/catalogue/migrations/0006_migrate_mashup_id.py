@@ -79,7 +79,7 @@ class Migration(DataMigration):
             'popularity': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '2', 'decimal_places': '1'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'template_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),
-            'type': ('django.db.models.fields.SmallIntegerField', [], {'max_length': '4'}),
+            'type': ('django.db.models.fields.IntegerField', [], {'max_length': '4'}),
             'vendor': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'version': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'wiki_page_uri': ('django.db.models.fields.CharField', [], {'max_length': '200', 'blank': 'True'}),

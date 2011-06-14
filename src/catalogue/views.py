@@ -45,6 +45,7 @@ from catalogue.models import UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
+from catalogue.catalogue_utils import filter_resources_by_scope
 from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
 from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
@@ -114,9 +115,10 @@ class ResourceCollection(Resource):
         scope = request.GET.get('scope', 'all')
 
         # Get all resource in the catalogue
-        resources = CatalogueResource.objects.all().order_by(orderby)
+        resources = filter_resources_by_scope(CatalogueResource.objects.all(), scope)
+        resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
         items = len(resources)
 
         resources = get_paginatedlist(resources, int(pag), int(offset))
@@ -224,9 +226,10 @@ class ResourceCollectionBySimpleSearch(Resource):
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='out'))
 
+        resources = filter_resources_by_scope(resources, scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
-        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
 
         items = len(resources)
         resources = get_paginatedlist(resources, pag, offset)
@@ -260,6 +263,7 @@ class ResourceCollectionByGlobalSearch(Resource):
 
         if (search_criteria[0] != ""):
             andlist = get_and_list(search_criteria[0], user)
+            andlist = filter_resources_by_scope(andlist, scope)
             fields = fields + 1
         if (search_criteria[1] != ""):
             orlist = get_or_list(search_criteria[1], user)
@@ -300,7 +304,7 @@ class ResourceCollectionByGlobalSearch(Resource):
         else:
             resources = get_uniquelist(resources)
 
-        resources = filter_resources_by_organization(user, resources, user.groups.all(), scope)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
         items = len(resources)
 
         resources = get_sortedlist(resources, orderby)

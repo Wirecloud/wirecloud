@@ -83,7 +83,7 @@ def group_resources(resources):
     return ordered_list
 
 
-def _valid_resource(resource, user, organization_list, scope):
+def _valid_resource(resource, user, organization_list):
 
     if settings.CERTIFICATION_ENABLED:
         certification_status = resource.certification
@@ -91,10 +91,6 @@ def _valid_resource(resource, user, organization_list, scope):
         # Checking certification status!
         if certification_status and certification_status.name != CERTIFICATION_VERIFIED and user != resource.creator:
             return False
-
-    # checking the scope of the query
-    if scope != resource.resource_type():
-        return False
 
     # Checking organizations!
     resource_organizations = resource.organization.all()
@@ -107,20 +103,26 @@ def _valid_resource(resource, user, organization_list, scope):
     return len(set(resource_organizations) & set(organization_list)) > 0
 
 
-def _filter_resource_by_organization(entry, user, organization_list, scope):
+def _filter_resource_by_organization(entry, user, organization_list):
 
-    entry['variants'] = [r for r in entry['variants'] if _valid_resource(r, user, organization_list, scope)]
+    entry['variants'] = [r for r in entry['variants'] if _valid_resource(r, user, organization_list)]
     return len(entry['variants']) > 0
 
 
-def filter_resources_by_organization(user, resources, organization_list, scope):
+def filter_resources_by_organization(user, resources, organization_list):
     """
     Filter resources that don't belong to given organization.
     Also filter resources that are not certificated!
-    Also filters depending on the scope of the search (it could be mashup, gadget, all, ...)
     """
 
-    return [r for r in resources if _filter_resource_by_organization(r, user, organization_list, scope)]
+    return [r for r in resources if _filter_resource_by_organization(r, user, organization_list)]
+
+
+def filter_resources_by_scope(resources, scope):
+    if scope != 'all':
+        return resources.filter(type=CatalogueResource.RESOURCE_TYPES.index(scope))
+    else:
+        return resources
 
 
 def get_sortedlist(list, orderby):
