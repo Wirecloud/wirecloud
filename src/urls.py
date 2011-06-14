@@ -66,9 +66,6 @@ urlpatterns = patterns('',
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
 
-    # Contract Manager
-    (r'^contract(s)?', include('resourceSubscription.urls')),
-
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
 
