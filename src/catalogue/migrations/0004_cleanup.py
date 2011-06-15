@@ -37,7 +37,7 @@ class Migration(SchemaMigration):
         db.alter_column('catalogue_catalogueresource', 'image_uri', self.gf('django.db.models.fields.CharField')(default='', max_length=200))
 
         # Adding field 'CatalogueResource.type'
-        db.add_column('catalogue_catalogueresource', 'type', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=4, null=False), keep_default=False)
+        db.add_column('catalogue_catalogueresource', 'type', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, max_length=4, null=False), keep_default=False)
 
     def backwards(self, orm):
 
@@ -113,7 +113,6 @@ class Migration(SchemaMigration):
             'subscription_price': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'tag': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['catalogue.Tag']"}),
             'template_uri': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
-            'type': ('django.db.models.fields.IntegerField', [], {'max_length': '4'}),
             'vendor': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
         },
         'catalogue.capability': {
@@ -143,6 +142,7 @@ class Migration(SchemaMigration):
             'popularity': ('django.db.models.fields.DecimalField', [], {'default': '0', 'max_digits': '2', 'decimal_places': '1'}),
             'short_name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'template_uri': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'type': ('django.db.models.fields.PositiveSmallIntegerField', [], {'max_length': '4'}),
             'vendor': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
             'version': ('django.db.models.fields.CharField', [], {'max_length': '150'}),
             'wiki_page_uri': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
