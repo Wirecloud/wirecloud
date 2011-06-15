@@ -220,9 +220,9 @@ var CatalogueResourceSubmitter = function () {
         var resource_state, resource;
 
         resource_state = JSON.parse(response_text);
-	resource = new ResourceState(resource_state);
+        resource = new ResourceState(resource_state);
         // Change version to the added one
-        resource.changeVersion(resource_state[0]['version']);
+        resource.changeVersion(resource_state['versions'][0]['version']);
 
 	return resource;
     };

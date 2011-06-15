@@ -51,7 +51,7 @@ class CatalogueAPITestCase(TestCase):
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 4)
         self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0][0]['name'], 'agadget')
+        self.assertEqual(result_json['resources'][0]['name'], 'agadget')
 
         # List gadgets in reverse alphabetical order (short_name)
         result = self.client.get('/user/test/catalogue/resource/1/10?orderby=-short_name&search_boolean=AND&scope=gadget')
@@ -60,7 +60,7 @@ class CatalogueAPITestCase(TestCase):
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 4)
         self.assertTrue(len(result_json['resources'][0]) > 0)
-        self.assertEqual(result_json['resources'][0][0]['name'], 'zgadget')
+        self.assertEqual(result_json['resources'][0]['name'], 'zgadget')
 
     def test_simple_search(self):
 
@@ -79,10 +79,10 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]), 1)
-        gadget_data = result_json['resources'][0][0]
+        self.assertEqual(len(result_json['resources'][0]['versions']), 1)
+        gadget_data = result_json['resources'][0]
         self.assertEqual(gadget_data['name'], 'gadget1')
-        self.assertEqual(gadget_data['version'], '1.10')
+        self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
 
         # Search gadgets consuming "friendcode2" events
         result = self.client.get('/user/test/catalogue/search/slot/1/10?orderby=short_name&search_criteria=friendcode2&search_boolean=AND&scope=gadget')
@@ -90,8 +90,8 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]), 2)
-        gadget_data = result_json['resources'][0][0]
+        self.assertEqual(len(result_json['resources'][0]['versions']), 2)
+        gadget_data = result_json['resources'][0]
         self.assertEqual(gadget_data['name'], 'gadget1')
 
     def test_global_search(self):
@@ -109,10 +109,10 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]), 1)
-        gadget_data = result_json['resources'][0][0]
+        self.assertEqual(len(result_json['resources'][0]['versions']), 1)
+        gadget_data = result_json['resources'][0]
         self.assertEqual(gadget_data['name'], 'gadget1')
-        self.assertEqual(gadget_data['version'], '1.10')
+        self.assertEqual(gadget_data['versions'][0]['version'], '1.10')
 
         # Search by keyworkd "gadget2" and by event "friendcode2"
         result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
@@ -125,7 +125,7 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
         self.assertEqual(len(result_json['resources']), 1)
-        self.assertEqual(len(result_json['resources'][0]), 2)
+        self.assertEqual(len(result_json['resources'][0]['versions']), 2)
 
     def test_last_version_query(self):
 

@@ -28,7 +28,9 @@ function ResourceState(resourceJSON_) {
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
-    var versions = resourceJSON_;
+    var vendor = resourceJSON_.vendor;
+    var name = resourceJSON_.name;
+    var type = resourceJSON_.type;
     var currentVersion = null;
     var allVersions = [];
     var data_by_version = {};
@@ -42,11 +44,11 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getVendor = function() {
-        return currentVersion.vendor;
+        return vendor;
     }
 
     this.getName = function() {
-        return currentVersion.name;
+        return name;
     }
 
     this.getDisplayName = function() {
@@ -95,11 +97,11 @@ function ResourceState(resourceJSON_) {
     }
 
     this.isMashup = function() {
-        return currentVersion.type === 'mashup';
+        return type === 'mashup';
     }
 
     this.isGadget = function() {
-        return currentVersion.type === 'mashup';
+        return type === 'gadget';
     }
 
     this.getAddedBy = function() {
@@ -178,8 +180,9 @@ function ResourceState(resourceJSON_) {
     ////////////////////////
     var i = 0;
 
-    for (i = 0; i < resourceJSON_.length; i += 1) {
-       version_data = resourceJSON_[i];
+    var versions = resourceJSON_.versions;
+    for (i = 0; i < versions.length; i += 1) {
+       version_data = versions[i];
 
        version_data['version'] = new GadgetVersion(version_data['version'], 'catalogue');
        version_data['events'] = version_data['events'].map(function (x) {return x.friendcode;});

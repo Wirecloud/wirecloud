@@ -92,11 +92,16 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False):
 
 def get_added_resource_info(resource, user):
 
-    info = [get_resource_data(resource, user)]
+    info = {
+        'vendor': resource.vendor,
+        'name': resource.short_name,
+        'type': resource.resource_type(),
+        'versions': [get_resource_data(resource, user)],
+    }
 
     latest_version = get_latest_resource_version(resource.short_name, resource.vendor)
     if latest_version != resource:
-        info.append(get_resource_data(latest_version, user))
+        info['versions'].append(get_resource_data(latest_version, user))
 
     return info
 

@@ -53,6 +53,7 @@ def group_resources(resources):
             entry = {
                 'short_name': resource.short_name,
                 'vendor': resource.vendor,
+                'type': resource.resource_type(),
                 'variants': [],
             }
             grouped_resources[key] = entry

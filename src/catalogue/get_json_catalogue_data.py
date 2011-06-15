@@ -161,4 +161,17 @@ def get_resource_data(untranslated_resource, user):
 
 def get_resource_group_data(resource_group, user):
 
-    return [get_resource_data(resource, user) for resource in resource_group['variants']]
+    data = {
+        'vendor': resource_group['vendor'],
+        'name': resource_group['short_name'],
+        'type': resource_group['type'],
+        'versions': [],
+    }
+    for resource in resource_group['variants']:
+        current_resource_data = get_resource_data(resource, user)
+        del current_resource_data['vendor']
+        del current_resource_data['name']
+        del current_resource_data['type']
+        data['versions'].append(current_resource_data)
+
+    return data
