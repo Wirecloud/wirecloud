@@ -98,6 +98,35 @@ class CatalogueAPITestCase(TestCase):
 
         self.client.login(username='test', password='test')
 
+        # Search gadgets using "gadget1" as keyword
+        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_criteria=&search_boolean=AND&scope=gadget')
+        self.assertEqual(result.status_code, 200)
+        result_json = simplejson.loads(result.content)
+        self.assertEqual(len(result_json['resources']), 1)
+
+        # Search by keyworkd "gadget1" and by event "friendcode2"
+        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        self.assertEqual(result.status_code, 200)
+        result_json = simplejson.loads(result.content)
+        self.assertEqual(len(result_json['resources']), 1)
+        self.assertEqual(len(result_json['resources'][0]), 1)
+        gadget_data = result_json['resources'][0][0]
+        self.assertEqual(gadget_data['name'], 'gadget1')
+        self.assertEqual(gadget_data['version'], '1.10')
+
+        # Search by keyworkd "gadget2" and by event "friendcode2"
+        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget2&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=AND&scope=gadget')
+        self.assertEqual(result.status_code, 200)
+        result_json = simplejson.loads(result.content)
+        self.assertEqual(len(result_json['resources']), 0)
+
+        # Search by keyworkd "gadget1" or by event "friendcode2"
+        result = self.client.get('/user/test/catalogue/globalsearch/1/10?orderby=-popularity&search_criteria=gadget1&search_criteria=&search_criteria=&search_criteria=&search_criteria=friendcode2&search_criteria=&search_boolean=OR&scope=gadget')
+        self.assertEqual(result.status_code, 200)
+        result_json = simplejson.loads(result.content)
+        self.assertEqual(len(result_json['resources']), 1)
+        self.assertEqual(len(result_json['resources'][0]), 2)
+
     def test_last_version_query(self):
 
         self.client.login(username='test', password='test')
@@ -111,6 +140,25 @@ class CatalogueAPITestCase(TestCase):
         self.assertTrue('resources' in result_json)
         self.assertEqual(len(result_json['resources']), 1)
         self.assertEqual(result_json['resources'][0]['lastVersion'], '1.10')
+
+    def test_vote_queries(self):
+
+        User.objects.create_user('test2', 'test@example.com', 'test')
+
+        self.client.login(username='test', password='test')
+        result = self.client.post('/user/test/catalogue/voting/Test/gadget1/1.2', {'vote': 3})
+        self.assertEqual(result.status_code, 200)
+
+        self.client.login(username='test2', password='test')
+        result = self.client.post('/user/test2/catalogue/voting/Test/gadget1/1.2', {'vote': 4})
+        self.assertEqual(result.status_code, 200)
+
+        result_json = simplejson.loads(result.content)
+        self.assertTrue('voteData' in result_json)
+        self.assertTrue('popularity' in result_json['voteData'])
+        self.assertEqual(result_json['voteData']['popularity'], '3.5')
+        self.assertTrue('user_vote' in result_json['voteData'])
+        self.assertEqual(result_json['voteData']['user_vote'], 4)
 
 
 class TranslationTestCase(LocalizedTestCase):
