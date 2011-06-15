@@ -42,24 +42,6 @@ from commons.utils import get_xml_error, json_encode
 from commons.user_utils import CERTIFICATION_VERIFIED
 
 
-def get_uniquelist(list, value=None):
-    """Returns a list with non-repeated elements.
-
-    The second parameter indicates the minimum number of repetions of the elements
-    in the original list to be part of the result list.
-    """
-    uniquelist = []
-
-    if value == None or value == 1:
-        [uniquelist.append(x) for x in list if x not in uniquelist]
-    else:
-        for x in list:
-            if x not in uniquelist and list.count(x) >= value:
-                uniquelist.append(x)
-
-    return uniquelist
-
-
 def group_resources(resources):
 
     ordered_list = []
@@ -125,21 +107,6 @@ def filter_resources_by_scope(resources, scope):
         return resources
 
 
-def get_sortedlist(list, orderby):
-    """Returns a list ordered by the criteria passed as parameter."""
-    if orderby == '-creation_date':
-        list.sort(lambda x, y: cmp(y.creation_date, x.creation_date))
-    elif orderby == 'short_name':
-        list.sort(lambda x, y: cmp(x.short_name.lower(), y.short_name.lower()))
-    elif orderby == 'vendor':
-        list.sort(lambda x, y: cmp(x.vendor.lower(), y.vendor.lower()))
-    elif orderby == 'author':
-        list.sort(lambda x, y: cmp(x.author.lower(), y.author.lower()))
-    elif orderby == '-popularity':
-        list.sort(lambda x, y: cmp(y.popularity, x.popularity))
-    return list
-
-
 def get_paginatedlist(resourcelist, pag, offset):
     """Returns a list paginated with the parameters pag and offset."""
     a = int(pag)
@@ -154,7 +121,7 @@ def get_paginatedlist(resourcelist, pag, offset):
     return resourcelist
 
 
-def get_and_list(criterialist, user):
+def get_and_filter(criterialist, user):
     """Returns a list of resources that match all the criteria in the list passed as parameter."""
 
     # List of the resources that match the criteria in the database table CatalogueResource
@@ -164,31 +131,53 @@ def get_and_list(criterialist, user):
     for e in criterialist:
         criteria_filter = criteria_filter & (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return CatalogueResource.objects.filter(criteria_filter)
+    return criteria_filter
 
 
-def get_or_list(criterialist, user):
+def get_or_filter(criterialist, user):
     """Returns a list of resources that match any of the criteria in the list passed as parameter."""
     criteria_filter = Q()
 
     criterialist = criterialist.split()
-
     for e in criterialist:
         criteria_filter = criteria_filter | (Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return CatalogueResource.objects.filter(criteria_filter)
+    return criteria_filter
 
 
-def get_not_list(criterialist, user):
+def get_not_filter(criterialist, user):
     """Returns a list of resources that don't match any of the criteria in the list passed as parameter."""
     criteria_filter = Q()
 
     criterialist = criterialist.split()
-
     for e in criterialist:
         criteria_filter = criteria_filter & ~(Q(short_name__icontains=e) | Q(vendor__icontains=e) | Q(author__icontains=e) | Q(mail__icontains=e) | Q(description__icontains=e) | Q(version__icontains=e) | Q(usertag__tag__name__icontains=e))
 
-    return CatalogueResource.objects.filter(criteria_filter)
+    return criteria_filter
+
+
+def get_tag_filter(search_criteria):
+    search_criteria = search_criteria.split()
+    filters = Q()
+    for e in search_criteria:
+        filters = filters | Q(usertag__tag__name__icontains=e)
+    return filters
+
+
+def get_event_filter(search_criteria):
+    search_criteria = search_criteria.split()
+    filters = Q()
+    for e in search_criteria:
+        filters = filters | Q(gadgetwiring__friendcode__icontains=e)
+    return filters & Q(gadgetwiring__wiring='out')
+
+
+def get_slot_filter(search_criteria):
+    search_criteria = search_criteria.split()
+    filters = Q()
+    for e in search_criteria:
+        filters = filters | Q(gadgetwiring__friendcode__icontains=e)
+    return filters & Q(gadgetwiring__wiring='in')
 
 
 def get_resource_response(resources, format, items, user):

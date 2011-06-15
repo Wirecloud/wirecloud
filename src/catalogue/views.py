@@ -46,8 +46,8 @@ from catalogue.tagsParser import TagsXMLHandler
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
 from catalogue.catalogue_utils import filter_resources_by_scope
-from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list
-from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
+from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
+from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
@@ -166,34 +166,17 @@ class ResourceCollectionBySimpleSearch(Resource):
         resources = CatalogueResource.objects.none()
 
         if criteria == 'and':
-            resources = get_and_list(search_criteria, user)
+            filters = get_and_filter(search_criteria, user)
         elif criteria == 'or' or criteria == 'simple_or':
-            resources = get_or_list(search_criteria, user)
+            filters = get_or_filter(search_criteria, user)
         elif criteria == 'not':
-            resources = get_not_list(search_criteria, user)
+            filters = get_not_filter(search_criteria, user)
         elif criteria == 'event':
-            # get all resource matching any of the given events
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='out'))
-
+            filters = get_event_filter(search_criteria)
         elif criteria == 'slot':
-            # get all resource matching any of the given slots
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='in'))
-
+            filters = get_slot_filter(search_criteria)
         elif criteria == 'tag':
-            # get all resource matching any of the given tags
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                resources = CatalogueResource.objects.filter(
-                    usertag__tag__name__icontains=e)
-
+            filters = get_tag_filter(search_criteria)
         elif criteria == 'connectSlot':
             # get all resource compatible with the given events
             search_criteria = search_criteria.split()
@@ -205,27 +188,12 @@ class ResourceCollectionBySimpleSearch(Resource):
         elif criteria == 'connectEvent':
             # get all resource compatible with the given slots
             search_criteria = search_criteria.split()
+            filters = Q()
             for e in search_criteria:
-                resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='in'))
+                filters = filters | Q(gadgetwiring__friendcode=e)
+            filters = filters & Q(gadgetwiring__wiring='out')
 
-        elif criteria == 'connectEventSlot':
-            # TODO
-
-            # get all resources compatible with the given slots
-            search_criteria[0] = search_criteria[0].split()
-            for e in search_criteria[0]:
-                resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='in'))
-            # get all resources compatible with the given events
-            search_criteria[1] = search_criteria[1].split()
-            for e in search_criteria[1]:
-                resources = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='out'))
-
+        resources = CatalogueResource.objects.filter(filters)
         resources = filter_resources_by_scope(resources, scope)
         resources = resources.order_by(orderby)
         resources = group_resources(resources)
@@ -249,65 +217,32 @@ class ResourceCollectionByGlobalSearch(Resource):
         search_criteria = request.GET.getlist('search_criteria')
         search_boolean = request.GET.get('search_boolean')
 
-        andlist = []
-        orlist = []
-        notlist = []
-        taglist = []
-        eventlist = []
-        slotlist = []
-        # This variable counts the number of criteria for the search
-        # to be passed as a parameter to the function
-        # get_uniquelist in order to get the resources that match the
-        # number of criteria
-        fields = 0
-
-        if (search_criteria[0] != ""):
-            andlist = get_and_list(search_criteria[0], user)
-            andlist = filter_resources_by_scope(andlist, scope)
-            fields = fields + 1
-        if (search_criteria[1] != ""):
-            orlist = get_or_list(search_criteria[1], user)
-            fields = fields + 1
-        if (search_criteria[2] != ""):
-            notlist = get_not_list(search_criteria[2], user)
-            fields = fields + 1
-        if (search_criteria[3] != ""):
-            #get all the resources that match any of the given tags
-            criteria = search_criteria[3].split()
-            for e in criteria:
-                taglist = CatalogueResource.objects.filter(
-                    usertag__tag__name__icontains=e)
-            taglist = get_uniquelist(taglist)
-            fields = fields + 1
-        if (search_criteria[4] != ""):
-            #get all the resources that match any of the given events
-            criteria = search_criteria[4].split()
-            for e in criteria:
-                eventlist = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='out'))
-            eventlist = get_uniquelist(eventlist)
-            fields = fields + 1
-        if (search_criteria[5] != ""):
-            #get all the resources that match any of the given slots
-            criteria = search_criteria[5].split()
-            for e in criteria:
-                slotlist = CatalogueResource.objects.filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='in'))
-            slotlist = get_uniquelist(slotlist)
-            fields = fields + 1
-
-        resources = andlist + orlist + notlist + taglist + eventlist + slotlist
-        if search_boolean == "AND":
-            resources = get_uniquelist(resources, fields)
+        if search_boolean == 'AND':
+            join_filters = lambda x, y: x & y
         else:
-            resources = get_uniquelist(resources)
+            join_filters = lambda x, y: x | y
 
+        filters = Q()
+        if search_criteria[0] != "":
+            filters = get_and_filter(search_criteria[0], user)
+        if search_criteria[1] != "":
+            filters = join_filters(filters, get_or_filter(search_criteria[1], user))
+        if search_criteria[2] != "":
+            filters = join_filters(filters, get_not_filter(search_criteria[2], user))
+        if search_criteria[3] != "":
+            filters = join_filters(filters, get_tag_filter(search_criteria[3]))
+        if search_criteria[4] != "":
+            filters = join_filters(filters, get_event_filter(search_criteria[4]))
+        if search_criteria[5] != "":
+            filters = join_filters(filters, get_slot_filter(search_criteria[5]))
+
+        resources = CatalogueResource.objects.filter(filters)
+        resources = filter_resources_by_scope(resources, scope).distinct()
+        resources = resources.order_by(orderby)
+        resources = group_resources(resources)
         resources = filter_resources_by_organization(user, resources, user.groups.all())
         items = len(resources)
 
-        resources = get_sortedlist(resources, orderby)
         resources = get_paginatedlist(resources, pag, offset)
 
         return get_resource_response(resources, format, items, user)
