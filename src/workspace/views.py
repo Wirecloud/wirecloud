@@ -134,7 +134,7 @@ def createEmptyWorkSpace(workSpaceName, user):
     user_workspace.save()
 
     #Tab creation
-    createTab('MyTab', user, workspace)
+    createTab(_('Tab'), user, workspace)
 
     return workspace
 

@@ -37,6 +37,7 @@ from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import get_language
+from django.utils.translation import ugettext as _
 
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
@@ -618,7 +619,7 @@ def get_global_workspace_data(workSpaceDAO, user):
                 tabs[i].position = i
                 tabs[i].save()
     else:
-        tabs = [createTab('MyTab', user, workSpaceDAO)]
+        tabs = [createTab(_('Tab'), user, workSpaceDAO)]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
