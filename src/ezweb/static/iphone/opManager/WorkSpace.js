@@ -93,7 +93,7 @@ function WorkSpace (workSpaceState) {
  	    	this.igadgetIdsLoaded.push(igadgetId);
  	    	
  	    	var igadget = this.getIgadget(igadgetId);
- 	    	igadget._notifyLoaded();
+ 	    	igadget.privateNotifyLoaded();
 				
 			// Notify to the wiring module the igadget has been loaded
 			this.wiring.iGadgetLoaded(igadget);
@@ -117,7 +117,7 @@ function WorkSpace (workSpaceState) {
 		// Notify to the context manager the igadget has been unloaded
 		this.contextManager.iGadgetUnloaded(igadget);
 
-		igadget._notifyUnloaded();
+		igadget.privateNotifyUnloaded();
 	}
 	
 	WorkSpace.prototype.unload = function(){
