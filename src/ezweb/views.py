@@ -62,6 +62,15 @@ def index(request, user_name=None, template="index.html"):
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
 
+@login_required
+def render_workspace_view(request, workspace):
+    if request.user.username != "public":
+        post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace
+        return render_ezweb(request, request.user.username, "index.html", post_load_script=post_load_script)
+    else:
+        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+
+
 def redirected_login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
