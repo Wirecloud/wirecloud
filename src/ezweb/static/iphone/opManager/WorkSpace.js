@@ -133,10 +133,7 @@ function WorkSpace (workSpaceState) {
 	
 	WorkSpace.prototype.unloadTab = function(tabId){
 		var tab = this.tabInstances[tabId];
-		
-		this.varManager.removeWorkspaceVariable(tab.connectable.variable.id);
-		
-		tab.connectable.destroy();
+
 		tab.destroy();
 		
 		this.visibleTab = null;

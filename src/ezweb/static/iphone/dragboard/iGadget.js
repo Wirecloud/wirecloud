@@ -181,3 +181,10 @@ IGadget.prototype.save = function() {
 	data = {igadget: data.toJSON()};
 	persistenceEngine.send_post(uri , data, this, onSuccess, onError);
 }
+
+/*
+ * Perform the properly actions to show to the user that the gadget has received and event
+ */
+IGadget.prototype.notifyEvent = function () {
+    // nothing to do in iphone
+};
