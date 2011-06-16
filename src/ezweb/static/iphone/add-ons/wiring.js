@@ -1,3 +1,7 @@
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global Wiring */
+"use strict";
+
 /* 
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
@@ -22,39 +26,39 @@
 *
 *     http://morfeo-project.org
  */
- 
+
 // Special function to retrieve the related gadgets (used in the iphone prototype)
-	Wiring.prototype.getRelatedIgadgets = function(iGadgetId){
-		var events = this.iGadgets[iGadgetId].events;
-		var related = new Array();
-		var outputs = null;
-		
-		for (var i=0;i<events.length;i++){
-			var outputs = events[i].outputs; //gadget outputs
-			this.getRelatedOutputs(outputs, related);
-			
-		}
-		return related;
-	}
-	
-	Wiring.prototype.getRelatedOutputs = function(outputs, related){
-			var o = null;
-			var id = null;
-			var channelOutputs = null;
-			for (var j=0;j<outputs.length;j++){
-				o = outputs[j];
-				if (o.outputs){ //it is a channel
-					channelOutputs = o.outputs;
-					for (var k=0;k<channelOutputs.length;k++){ //channel outputs -> slots or channels
-						if (channelOutputs[k].outputs){ //it is a channel
-							this.getRelatedOutputs([channelOutputs[k]], related);
-						}else{ //it is a slot
-							id = channelOutputs[k].variable.iGadget;
-							if (!related.elementExists(id)){ //the iGadgetId is not in the related list already
-								related.push(id); //add to the related igadgets list the iGadgetId associated with the channel outputs
-							}
-						}
-					}
-				}
-			}
-	}
+Wiring.prototype.getRelatedIgadgets = function (iGadgetId) {
+    var events = this.iGadgets[iGadgetId].events,
+        related = [],
+        outputs, i;
+
+    for (i = 0; i < events.length; i += 1) {
+        outputs = events[i].outputs; //gadget outputs
+        this.getRelatedOutputs(outputs, related);
+
+    }
+
+    return related;
+};
+
+Wiring.prototype.getRelatedOutputs = function (outputs, related) {
+    var o, id, channelOutputs, j, k;
+
+    for (j = 0; j < outputs.length; j += 1) {
+        o = outputs[j];
+        if (o.outputs) { //it is a channel
+            channelOutputs = o.outputs;
+            for (k = 0; k < channelOutputs.length; k += 1) { //channel outputs -> slots or channels
+                if (channelOutputs[k].outputs) { //it is a channel
+                    this.getRelatedOutputs([channelOutputs[k]], related);
+                } else { //it is a slot
+                    id = channelOutputs[k].variable.iGadget;
+                    if (!related.elementExists(id)) { //the iGadgetId is not in the related list already
+                        related.push(id); //add to the related igadgets list the iGadgetId associated with the channel outputs
+                    }
+                }
+            }
+        }
+    }
+};

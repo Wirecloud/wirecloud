@@ -1,3 +1,7 @@
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global wSlot, OpManagerFactory */
+"use strict";
+
 /* 
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
@@ -23,9 +27,10 @@
 *     http://morfeo-project.org
  */
 
-wSlot.prototype.propagate = function(newValue, initial) {
-  this.variable.set(newValue);
-  //mark the related gadget affected with the propagation
-  if (!initial)
-  	OpManagerFactory.getInstance().markRelatedIgadget(this.variable.iGadget);
-}
+wSlot.prototype.propagate = function (newValue, initial) {
+    this.variable.set(newValue);
+    //mark the related gadget affected with the propagation
+    if (!initial) {
+        OpManagerFactory.getInstance().markRelatedIgadget(this.variable.iGadget);
+    }
+};

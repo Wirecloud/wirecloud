@@ -34,7 +34,7 @@ function Gadget(gadget_, url_) {
 	// ******************
 	//  PUBLIC FUNCTIONS
 	// ******************
-	var _this = this;
+	var privatethis = this;
 	
 	this.getVendor = function() { return state.getVendor(); }
 	this.getName = function() { return state.getName(); }
@@ -82,7 +82,7 @@ function Gadget(gadget_, url_) {
 			var response = transport.responseText;
 			var objRes = eval ('(' + response + ')');
 			state = new GadgetState(objRes);
-			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(_this);
+			ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(privatethis);
 		}
 		
 		var persistenceEngine = PersistenceEngineFactory.getInstance();
