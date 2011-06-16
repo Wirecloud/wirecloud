@@ -91,6 +91,7 @@ var OpManagerFactory = function () {
             if (active_ws_from_script && this.workSpaceInstances[active_ws_from_script]) {
                 activeWorkSpace = this.workSpaceInstances[active_ws_from_script];
             }
+            HistoryManager.currentState.workspace = activeWorkSpace.getId();
 
             // Total information of the active workspace must be downloaded!
             if (reloadShowcase) {
@@ -293,16 +294,17 @@ var OpManagerFactory = function () {
             PreferencesManagerFactory.getInstance().show();
         }
 
-        OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
+        OpManager.prototype.changeActiveWorkSpace = function (workspace) {
             var steps = this.activeWorkSpace != null ? 2 : 1;
 
+            HistoryManager.pushState({workspace: workspace.getId()});
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
 
             if (this.activeWorkSpace != null) {
                 this.activeWorkSpace.unload();
             }
 
-            this.activeWorkSpace = workSpace;
+            this.activeWorkSpace = workspace;
             this.activeWorkSpace.downloadWorkSpaceInfo();
         }
 
@@ -390,11 +392,6 @@ var OpManagerFactory = function () {
             Event.observe(window,
                           "beforeunload",
                           this.unloadEnvironment.bind(this),
-                          true);
-
-            Event.observe(window,
-                          "hashchange",
-                          function(){LayoutManagerFactory.getInstance().onHashChange()},
                           true);
 
             // EzWeb fly

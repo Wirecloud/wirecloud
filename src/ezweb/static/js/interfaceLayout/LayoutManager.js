@@ -223,13 +223,6 @@ var LayoutManagerFactory = function () {
             layoutManager.timeout = setTimeout(fadder, 50);
         }
 
-        LayoutManager.prototype.updateLocation = function(section){
-            if (!section)
-                section = "";
-            window.location = window.location.protocol+ "//" + window.location.host + window.location.pathname + "#" + section;
-
-        }
-
         LayoutManager.prototype.getCurrentViewType = function () {
             return this.currentViewType;
         }
@@ -399,16 +392,18 @@ var LayoutManagerFactory = function () {
         /*
          * Handler for changes in the hash to navigate to other areas
          */
-        LayoutManager.prototype.onHashChange = function(){
-            var hash_parts = window.location.hash.split("#");
+        LayoutManager.prototype.onHashChange = function(state) {
+            var ws_id, tab_id, nextWorkspace, opManager = OpManagerFactory.getInstance();
 
-            var section = hash_parts[0];
-            if (hash_parts.length > 1) {
-                //it is a subsection
-                section = hash_parts[1];
+            ws_id = parseInt(state.workspace, 10);
+            if (ws_id !== opManager.activeWorkSpace.getId()) {
+                nextWorkspace = opManager.workSpaceInstances[ws_id];
+                opManager.changeActiveWorkSpace(nextWorkspace);
+                return;
             }
-            if (section != this.currentViewType) {
-                switch (section){
+
+            if (state.view !== this.currentViewType) {
+                switch (state.view) {
                     case "wiring":
                         this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
                         break;
@@ -422,6 +417,10 @@ var LayoutManagerFactory = function () {
                     default:
                         this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
                 }
+            }
+            tab_id = parseInt(state.tab, 10);
+            if (state.view === "dragboard" && state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
+                opManager.activeWorkSpace.setTab(opManager.activeWorkSpace.getTab(state.tab));
             }
         };
 
@@ -448,7 +447,12 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'dragboard';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                workspace: HistoryManager.getCurrentState().workspace,
+                view: "dragboard",
+                tab: dragboard.tab.getId()
+            };
+            HistoryManager.pushState(state);
 
             this.showTabs();
             this.showSidebar();
@@ -494,7 +498,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'catalogue';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'catalogue'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
 
@@ -533,7 +541,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'logs';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'logs'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
             this.resizeContainer(this.currentView.logContainer);
@@ -562,7 +574,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'wiring';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'wiring'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
             this.resizeContainer(this.currentView.wiringContainer);
