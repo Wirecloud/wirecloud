@@ -13,7 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/admin/</td>
+	<td>/accounts/login/?next=/</td>
 	<td></td>
 </tr>
 <tr>
@@ -29,6 +29,11 @@
 <tr>
 	<td>clickAndWait</td>
 	<td>//input[@value='Log in']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>/admin/</td>
 	<td></td>
 </tr>
 <tr>
@@ -338,7 +343,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//img[@title='Back to my application']</td>
+	<td>//span[@title='Back to my application']</td>
 	<td></td>
 </tr>
 <tr>
@@ -393,7 +398,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[30]/div[1]/a</td>
+	<td>//div[31]/div[1]/a</td>
 	<td></td>
 </tr>
 <tr>
@@ -534,11 +539,6 @@
 <tr>
 	<td>assertTextPresent</td>
 	<td>Share WS Group</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='workspace_sidebar']/span[text()='Share WS Groups']</td>
 	<td></td>
 </tr>
 <tr>
