@@ -87,11 +87,6 @@ var ListView_ResourceDetailsPainter = function (details_structure_element) {
         var type = '';
         var button_text = gettext('Add');
 
-        if (resource.isContratable() && ! resource.hasContract()) {
-            button_text = 'Buy';
-            type = 'contratable';
-        }
-
         var resource_html =
             this.details_template.evaluate({'image_url': image_url, 'name': name, 'description': description,
                                           'type': type, 'button_text': button_text, 'vendor': vendor, 'version': version,
@@ -303,28 +298,13 @@ var ListView_DeveloperInfoPainter = function (structure_element) {
         // showYesNoDialog handlers
         // "Yes" handler
         var continueAdding = function (resource) {
-            // leave that gadget version and continue
-            if (resource.isContratable() && resource.isGadget()) {
-                // Link gadget with application
-                var available_apps = resource.getAvailableApps();
-
-                user_command_manager.set_available_apps(available_apps);
-
-                LayoutManagerFactory.getInstance().showWindowMenu('addGadgetToAppMenu',
-                    user_command_manager.get_service_facade(),
-                    function(){  },
-                    resource);
-            } else {
-                user_command_manager.get_service_facade().search_by_creation_date();
-            }
+            user_command_manager.get_service_facade().search_by_creation_date();
         }.bind(this);
 
         // "No" handler
         var rollback = function(resource) {
             user_command_manager.get_service_facade().delete_resource(resource);
         }.bind(this);
-
-        var context = {result: resource, continueAdding: continueAdding, rollback: rollback};
 
         // check if the new gadget is the last version
         if (resource.getLastVersion() != resource.getVersion()) {

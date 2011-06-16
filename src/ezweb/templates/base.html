@@ -345,21 +345,12 @@ var URIs = {
   GET_SUBSCRIBE_USER_TO_REMOTE_CHANNELS: new Template('/notifier/channels/register?channels=#{channels}&user={{ user.username }}'),
   POST_PUBLISH_REMOTE_CHANNELS: new Template('/notifier/channels/notify?channels=#{channels}'),
   POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
-  ADD_RESOURCE_TO_APP: new Template('/user/{{ user.username }}/catalogue/application/#{application_id}/resource/#{resource_id}/link'),
-  CONTRACT_APPLICATIONS_TRANSACTION: '/contract/subscribe/applications',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
   ACTIVE_THEME: '{{ STATIC_URL }}',
 {% if AUTHENTICATION_SERVER_URL %}
   EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api',
 {% endif %}
-{% if home_gateway_dispatcher_url %}
-  HOME_GATEWAY_DISPATCHER_URL: '{{ home_gateway_dispatcher_url }}serviceGadgets?user={{ user.username }}',
-  HOME_GATEWAY_DISPATCHER_UNSUBSCRIBE_URL: '{{ home_gateway_dispatcher_url }}unsubscribeServices',
-  HOME_GATEWAY_DISPATCHER_CANCEL_URL: '{{ home_gateway_dispatcher_url }}cancelServices'
-{% else %}
-  HOME_GATEWAY_DISPATCHER_URL: null
-{% endif%}
 };
 
 var ezweb_user_name = '{{ user.username }}';

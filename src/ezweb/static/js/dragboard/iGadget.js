@@ -459,32 +459,11 @@ IGadget.prototype.build = function () {
     Element.extend(button);
     button.setAttribute("type", "button");
     button.addClassName("closebutton");
-
-    if (this.gadget.isContratable()) {
-        var remove_and_cancel = function () {
+    button.observe("click",
+        function () {
             OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().cancelServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        var remove = function () {
-            OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().unsubscribeServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        button.observe("click",
-            function () {
-                LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
-            },
-            false);
-    } else {
-        button.observe("click",
-            function () {
-                OpManagerFactory.getInstance().removeInstance(this.id);
-            }.bind(this),
-            false);
-    }
+        }.bind(this),
+        false);
     button.setAttribute("title", gettext("Close"));
     button.setAttribute("alt", gettext("Close"));
     this.closeButtonElement = button;

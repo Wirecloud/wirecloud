@@ -103,17 +103,6 @@ var InstantiateCommand = function (dom_element, html_event, service_facade, dom_
     this.anonymous_function = function(event) {
         var resource = this.data;
 
-        //contratable resources
-        if (resource.isContratable() && !resource.hasContract()) {
-            LayoutManagerFactory.getInstance().showWindowMenu(
-                'purchaseAppMenu',
-                this.services,
-                function () {LayoutManagerFactory.getInstance().hideCover();},
-                resource);
-
-            return;
-        }
-
         //is mashup?
         if (resource.isMashup()) {
             LayoutManagerFactory.getInstance().showWindowMenu(

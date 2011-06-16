@@ -28,7 +28,9 @@ function ResourceState(resourceJSON_) {
     ///////////////////////
     // PRIVATE VARIABLES
     ///////////////////////
-    var versions = resourceJSON_;
+    var vendor = resourceJSON_.vendor;
+    var name = resourceJSON_.name;
+    var type = resourceJSON_.type;
     var currentVersion = null;
     var allVersions = [];
     var data_by_version = {};
@@ -42,11 +44,11 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getVendor = function() {
-        return currentVersion.vendor;
+        return vendor;
     }
 
     this.getName = function() {
-        return currentVersion.name;
+        return name;
     }
 
     this.getDisplayName = function() {
@@ -86,15 +88,20 @@ function ResourceState(resourceJSON_) {
     }
 
     this.getMashupId = function() {
-        return currentVersion.mashupId;
+        var index = currentVersion.uriTemplate.lastIndexOf('/');
+        if (index !== -1) {
+            return parseInt(currentVersion.uriTemplate.substr(index + 1), 10);
+        } else {
+            return null;
+        }
     }
 
     this.isMashup = function() {
-        return currentVersion.mashupId != null;
+        return type === 'mashup';
     }
 
     this.isGadget = function() {
-        return currentVersion.mashupId == null;
+        return type === 'gadget';
     }
 
     this.getAddedBy = function() {
@@ -153,10 +160,6 @@ function ResourceState(resourceJSON_) {
         currentVersion.votes = voteDataJSON_;
     }
 
-    this.setAvailableApps = function (availableAppsObj) {
-        availableApps = availableAppsObj;
-    }
-
     /////////////////////////////
     // CONVENIENCE FUNCTIONS
     /////////////////////////////
@@ -170,82 +173,16 @@ function ResourceState(resourceJSON_) {
         } else {
             currentVersion = data_by_version[allVersions[0].text];
         }
-
-        if (currentVersion.availableApps) {
-            this.setAvailableApps(currentVersion.availableApps);
-        }
     };
-
-    this.getContract = function() {
-        var capabilities = this.getCapabilities();
-
-        for (i = 0; i < capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability['name'].toLowerCase() == 'contratable') {
-                return capability['contract'];
-            }
-        }
-
-        return null;
-    }
-
-    this.getGadgetApps = function() {
-        var capabilities = this.getCapabilities();
-
-        for (i=0; i<capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability['name'].toLowerCase() == 'contratable') {
-                return capability['applications'];
-            }
-        }
-
-        return [];
-    }
-
-    this.getAvailableApps = function() {
-        return availableApps;
-    }
-
-    this.isContratable = function () {
-        var capabilities = this.getCapabilities();
-
-        for (var i = 0; i < capabilities.length; i++) {
-            var capability = capabilities[i];
-
-            if (capability.name.toLowerCase() == 'contratable')
-                return capability.value.toLowerCase() == "true";
-            else
-                return false
-        }
-
-        return false;
-    }
-
-    this.hasContract = function () {
-        var gadgetApps = this.getGadgetApps();
-
-        if (gadgetApps.length == 0)
-        return false;
-
-        for (var i=0; i<gadgetApps.length; i++) {
-            var app = gadgetApps[i];
-
-            if (! app['has_contract'])
-                return false;
-        }
-
-        return true;
-    }
 
     ////////////////////////
     // CONSTRUCTOR
     ////////////////////////
     var i = 0;
 
-    for (i = 0; i < resourceJSON_.length; i += 1) {
-       version_data = resourceJSON_[i];
+    var versions = resourceJSON_.versions;
+    for (i = 0; i < versions.length; i += 1) {
+       version_data = versions[i];
 
        version_data['version'] = new GadgetVersion(version_data['version'], 'catalogue');
        version_data['events'] = version_data['events'].map(function (x) {return x.friendcode;});

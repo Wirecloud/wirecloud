@@ -40,8 +40,8 @@ from django.contrib.auth.models import Group
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
-from catalogue.models import GadgetWiring, GadgetResource, UserTag, UserVote, Tag, Capability
-from catalogue.catalogue_utils import get_all_resource_versions, update_gadget_popularity
+from catalogue.models import GadgetWiring, CatalogueResource, UserTag, UserVote, Capability
+from catalogue.catalogue_utils import get_all_resource_versions, update_resource_popularity
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
 from commons.user_utils import get_certification_status
@@ -70,9 +70,6 @@ class TemplateParser:
         # Parse the input
         parseString(self.xml, self.handler)
 
-    def is_contratable(self):
-        return self.handler._contratable
-
     def get_gadget(self):
         return self.handler.get_gadget()
 
@@ -99,7 +96,6 @@ class TemplateHandler(handler.ContentHandler):
         self._user = user
         self._uri = uri
         self._gadget = None
-        self._contratable = False
         self._id = -1
 
         #Organizations
@@ -126,7 +122,7 @@ class TemplateHandler(handler.ContentHandler):
 
         gadget = self._gadget
 
-        valid_gadget = GadgetResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
+        valid_gadget = CatalogueResource.objects.get(vendor=gadget.vendor, short_name=gadget.short_name, version=gadget.version)
 
         return valid_gadget
 
@@ -151,7 +147,7 @@ class TemplateHandler(handler.ContentHandler):
         if _friendCode != '' and wire != '':
             if self.save:
                 wiring = GadgetWiring(friendcode=_friendCode, wiring=_wiring,
-                                      idResource_id=get_object_or_404(GadgetResource,
+                                      idResource_id=get_object_or_404(CatalogueResource,
                                                                       short_name=self._name,
                                                                       vendor=self._vendor,
                                                                       version=self._version).id)
@@ -180,9 +176,6 @@ class TemplateHandler(handler.ContentHandler):
             capability = Capability(name=name.lower(), value=value.lower(), resource=self._gadget)
 
             capability.save()
-
-        if capability.name.lower() == 'contratable':
-            self._contratable = True
 
     def processOrganization(self, organization_accumulator):
         if not organization_accumulator:
@@ -321,7 +314,7 @@ class TemplateHandler(handler.ContentHandler):
             if len(required_fields) > 0:
                 raise TemplateParseException(_("ERROR: The following fields are missing in resource description: %(fields)s") % {'fields': required_fields})
 
-            gadget = GadgetResource()
+            gadget = CatalogueResource()
 
             gadget.short_name = self._name
             gadget.display_name = self._displayName
@@ -337,6 +330,10 @@ class TemplateHandler(handler.ContentHandler):
             gadget.creation_date = datetime.today()
             gadget.popularity = '0.0'
             gadget.fromWGT = self.fromWGT
+            if self._is_mashup:
+                gadget.type = 1
+            else:
+                gadget.type = 0
 
             # Checking certification status
             gadget.certification = get_certification_status(self._user)
@@ -346,8 +343,8 @@ class TemplateHandler(handler.ContentHandler):
             self._gadget = gadget
 
             if self.save and self._is_mashup:
-                published_mashup = create_published_workspace_from_template(self._xml, gadget, self._contratable, self._user)
-                gadget.mashup_id = published_mashup.id
+                published_mashup = create_published_workspace_from_template(self._xml, gadget, self._user)
+                gadget.template_uri = published_mashup.get_uri()
 
             if self.save:
                 gadget.save()
@@ -360,14 +357,8 @@ class TemplateHandler(handler.ContentHandler):
                 # TODO: process the resources
                 # workaround to add default tags
                 if self._is_mashup:
-                    tag, created = Tag.objects.get_or_create(name="mashup")
-                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
-                    userTag.save()
-
-                if self._contratable:
-                    tag, created = Tag.objects.get_or_create(name="contratable")
-                    userTag = UserTag(tag=tag, idUser=self._user, idResource=gadget)
-                    userTag.save()
+                    from catalogue.utils import tag_resource
+                    tag_resource(self._user, 'mashup', gadget)
 
                 # Copy all UserTag and UserVote entry from previous version
                 resource_versions = get_all_resource_versions(self._vendor, self._name)
@@ -376,7 +367,7 @@ class TemplateHandler(handler.ContentHandler):
                 previous_versions = [v for v in resource_versions if v < resource_version]
                 if len(previous_versions) > 0:
                     previous_version_string = '.'.join(map(str, max(previous_versions)))
-                    previousVersion = GadgetResource.objects.get(vendor=self._vendor, short_name=self._name, version=previous_version_string)
+                    previousVersion = CatalogueResource.objects.get(vendor=self._vendor, short_name=self._name, version=previous_version_string)
 
                     previousUserTags = UserTag.objects.filter(idResource=previousVersion)
 
@@ -389,7 +380,7 @@ class TemplateHandler(handler.ContentHandler):
                         newUserVote = UserVote(idUser=previousUserVote.idUser, vote=previousUserVote.vote, idResource=gadget)
                         newUserVote.save()
 
-                    update_gadget_popularity(gadget)
+                    update_resource_popularity(gadget)
 
             self._gadget_added = True
 

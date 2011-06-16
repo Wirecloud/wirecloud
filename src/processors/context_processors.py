@@ -60,13 +60,6 @@ def is_anonymous(request):
     return {'is_anonymous': is_anonymous}
 
 
-def home_gateway_url(request):
-    if hasattr(settings, 'HOME_GATEWAY_DISPATCHER_URL'):
-        return {'home_gateway_dispatcher_url': settings.HOME_GATEWAY_DISPATCHER_URL}
-    else:
-        return {'home_gateway_dispatcher_url': None}
-
-
 def only_one_js_file(request):
     if hasattr(settings, 'ONLY_ONE_JS_FILE'):
         return {'only_one_js_file': settings.ONLY_ONE_JS_FILE}

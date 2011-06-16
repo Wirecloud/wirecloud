@@ -220,73 +220,13 @@ var CatalogueResourceSubmitter = function () {
         var resource_state, resource;
 
         resource_state = JSON.parse(response_text);
-	resource = new ResourceState(resource_state);
+        resource = new ResourceState(resource_state);
         // Change version to the added one
-        resource.changeVersion(resource_state[0]['version']);
+        resource.changeVersion(resource_state['versions'][0]['version']);
 
 	return resource;
     };
 
-  this.buy_resource_applications = function (resource) {
-	var contratationSuccess = function (transport) {
-	  var responseJSON = transport.responseText;
-	  var response = JSON.parse(responseJSON); 
-		
-	  // processing command
-      this.process();
-	}
-	
-	var contratationError = function () {
-	  alert("Error contracting application");
-	}
-	
-	var url = URIs.CONTRACT_APPLICATIONS_TRANSACTION;
-	var contract_list = []
-	
-	var gadget_apps = resource.getGadgetApps();
-	
-	for (var i=0; i<gadget_apps.length; i++) {
-	  var app = gadget_apps[i];
-		
-	  if (! app['has_contract']) {
-		var contract = {'username': ezweb_user_name, 'free': true, 'app_id': app['app_code']};
-		
-		contract_list.push(contract);
-	  }
-	}
-	
-	// CommandResponse creation
-    var response_command = new ResponseCommand(this.resp_command_processor, this);
-    response_command.set_id('REPEAT_SEARCH');
-	
-	var params = {'contract_list': Object.toJSON(contract_list)};
-	
-	this.persistence_engine.send_post(url, params, response_command, contratationSuccess, contratationError);
-  }
-  
-  this.add_gadget_to_app = function (gadget, application_id) {
-    var addingToAppSuccess = function (response) {
-      // processing command
-      this.process();
-	}
-	
-	var addingToAppError = function (response) {
-	  alert ("Error en addingToApp");
-	}
-	
-	var resource_id = gadget.getId();
-	
-	//Send request the application manager
-	var params = new Hash();
-	var url = URIs.ADD_RESOURCE_TO_APP.evaluate({"application_id": application_id, "resource_id":resource_id});
-	
-	// CommandResponse creation
-    var response_command = new ResponseCommand(this.resp_command_processor, this);
-    response_command.set_id('ADD_GADGET_TO_APP');
-	
-	this.persistence_engine.send_post(url, params, response_command, addingToAppSuccess, addingToAppError);
-  }
-  
     this.change_preferred_version = function (resource, version) {
         var preferred_versions, response_command, key;
 

@@ -66,9 +66,6 @@ urlpatterns = patterns('',
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
 
-    # Contract Manager
-    (r'^contract(s)?', include('resourceSubscription.urls')),
-
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
 
@@ -128,9 +125,6 @@ urlpatterns = patterns('',
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
-
-    #Catalogue API
-    (r'^catalogue/API/', include('catalogue.API.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

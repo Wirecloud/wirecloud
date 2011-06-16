@@ -69,8 +69,6 @@ LOGGING_LEVEL = 2
 
 THEME_ACTIVE = "defaulttheme"
 
-#HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
-
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
@@ -160,7 +158,6 @@ INSTALLED_APPS = (
     'preferences',
     'translator',
     'gadgetGenerator',
-    'resourceSubscription',
     'remoteChannel',
     'user',
     'API',
@@ -188,7 +185,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'ezweb.themes.active_theme_context_processor',
-    'processors.context_processors.home_gateway_url',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
     'processors.context_processors.only_one_js_file',

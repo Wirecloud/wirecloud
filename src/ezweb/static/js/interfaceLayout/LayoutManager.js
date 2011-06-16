@@ -858,37 +858,6 @@ var LayoutManagerFactory = function () {
                 this.currentMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
                 this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
                 break;
-            case 'contratableAddInstanceMenu':
-                if (!this.menus['contratableAddInstanceMenu']) {
-                    this.menus['contratableAddInstanceMenu'] = new ContratationWindow();
-                }
-                this.currentMenu = this.menus['contratableAddInstanceMenu'];
-                this.currentMenu.setHandler(handlerYesButton);
-                this.currentMenu.setSrc(extra_data);
-                break;
-            case 'addGadgetToAppMenu':
-                if (!this.menus['addGadgetToAppMenu']) {
-                    // Tricky solution: the service_facade is passed in the handlerYesButton parameter
-                    var service_facade = handlerYesButton;
-
-                    this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow(service_facade);
-                }
-                this.currentMenu = this.menus['addGadgetToAppMenu'];
-
-                this.currentMenu.setExtraData(extra_data);
-                break;
-            case 'purchaseAppMenu':
-                if (!this.menus['purchaseAppMenu']) {
-                    // Tricky solution: the service_facade is passed in the handlerYesButton parameter
-                    var service_facade = handlerYesButton;
-
-                    this.menus['purchaseAppMenu'] = new BuyingApplicationWindow(service_facade);
-                }
-                this.currentMenu = this.menus['purchaseAppMenu'];
-
-                this.currentMenu.setCloseListener(handlerNoButton);
-                this.currentMenu.setExtraData(extra_data);
-                break;
             default:
                 return;
             }
