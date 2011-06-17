@@ -40,7 +40,9 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.signals import user_logged_in
+from django.utils.translation import check_for_language, get_language, gettext_lazy as _
+
 from workspace.models import WorkSpace, Tab
 
 
@@ -65,3 +67,27 @@ class TabPreference(models.Model):
     name = models.CharField(_('Name'), max_length=250)
     inherit = models.BooleanField(_('Inherit'), default=False)
     value = models.CharField(_('Value'), max_length=250)
+
+
+def setup_language_from_preferences(sender, **kwargs):
+    user = kwargs['user']
+    request = kwargs['request']
+
+    lang_code = None
+    pref_exists = True
+    try:
+        lang_pref = PlatformPreference.objects.get(user=user, name="language")
+        if check_for_language(lang_pref.value):
+            lang_code = lang_pref.value
+    except PlatformPreference.DoesNotExist:
+        pref_exists = False
+
+    if lang_code is None:
+        lang_code = get_language()
+        if not pref_exists:
+            PlatformPreference.objects.create(user=user, name="language", value=lang_code)
+
+    request.session['django_language'] = lang_code
+
+
+user_logged_in.connect(setup_language_from_preferences)
