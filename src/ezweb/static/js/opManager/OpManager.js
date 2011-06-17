@@ -440,9 +440,16 @@ var OpManagerFactory = function () {
             }
         }
 
+        OpManager.prototype.preferencesChanged = function (modifiedValues) {
+            if ('language' in modifiedValues) {
+                setLanguage(modifiedValues.language);
+            }
+        };
+
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
+            var preferencesManager;
 
             switch (module) {
             case Modules.prototype.THEME_MANAGER:
@@ -451,6 +458,8 @@ var OpManagerFactory = function () {
                 break;
 
             case Modules.prototype.PLATFORM_PREFERENCES:
+                preferencesManager = PreferencesManagerFactory.getInstance();
+                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this));
                 this.showcaseModule = ShowcaseFactory.getInstance();
                 this.showcaseModule.init();
                 break;

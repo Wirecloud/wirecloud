@@ -1380,36 +1380,6 @@ function PreferencesWindowMenu(scope, manager) {
 
     this.manager = manager;
     var table = manager.getPreferencesDef().getInterface();
-
-    // Extra Elements
-    if (scope=="platform"){
-        var tbody = table.firstChild;
-
-        var row = tbody.insertRow(0);
-        var columnLabel = row.insertCell(-1);
-        columnLabel.className = "label";
-        var label = document.createElement("label")
-        label.appendChild(document.createTextNode(gettext("Language")))
-        columnLabel.appendChild(label);
-
-        var columnValue = row.insertCell(-1);
-        this.language = document.createElement("select");
-        for (var index=0; index<LANGUAGES.length; index++){
-            lang = LANGUAGES[index];
-            var option = new Option(lang[1], lang[0]);
-            try {
-                this.language.add(option, null);
-            } catch (e) {
-                this.language.add(option); // IE < 8
-            }
-            if (LANGUAGE_CODE == lang[0]){
-                option.setAttribute("selected","true");
-            }
-        }
-        columnValue.appendChild(this.language);
-
-    }
-
     this.windowContent.insertBefore(table, this.msgElement);
 
     // Accept button
@@ -1456,9 +1426,6 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
     } else {
         this.manager.save();
         this.hide();
-    }
-    if (this.language && this.language.value != LANGUAGE_CODE){
-        return setLanguage(this.language.value);
     }
 }
 
