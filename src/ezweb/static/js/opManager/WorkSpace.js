@@ -207,6 +207,10 @@ function WorkSpace (workSpaceState) {
             this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
 
+            if (this.initial_tab_id && this.initial_tab_id in this.tabInstances) {
+                visibleTabId = this.initial_tab_id;
+            }
+
             if (tabs.length > 0) {
                 //Only painting the "active" tab!
                 this.tabInstances[visibleTabId].getDragboard().paint();
@@ -494,11 +498,12 @@ function WorkSpace (workSpaceState) {
         return false;
     }
 
-    WorkSpace.prototype.downloadWorkSpaceInfo = function () {
+    WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
+        this.initial_tab_id = initial_tab;
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
         PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
-    }
+    };
 
     WorkSpace.prototype.showWiring = function() {
         if (!this.loaded)
@@ -567,9 +572,14 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.setTab = function(tab) {
-        if (!this.loaded)
+        if (!this.loaded || tab == null) {
             return;
-        if(this.visibleTab != null){
+        }
+        if (!(tab instanceof Tab)) {
+            throw new TypeError();
+        }
+
+        if (this.visibleTab != null) {
             this.visibleTab.unmark();
         }
         this.visibleTab = tab;

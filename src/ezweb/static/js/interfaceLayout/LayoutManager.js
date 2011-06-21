@@ -393,34 +393,43 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var ws_id, tab_id, nextWorkspace, opManager = OpManagerFactory.getInstance();
+            var ws_id, tab_id, tab, nextWorkspace, opManager;
+
+            opManager = OpManagerFactory.getInstance();
 
             ws_id = parseInt(state.workspace, 10);
             if (ws_id !== opManager.activeWorkSpace.getId()) {
                 nextWorkspace = opManager.workSpaceInstances[ws_id];
-                opManager.changeActiveWorkSpace(nextWorkspace);
+                opManager.changeActiveWorkSpace(nextWorkspace, state.tab);
                 return;
             }
 
             if (state.view !== this.currentViewType) {
                 switch (state.view) {
-                    case "wiring":
-                        this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
-                        break;
-                    case "catalogue":
-                        this.showCatalogue();
-                        break;
-                    case "logs":
-                        this.showLogs();
-                        break;
-                    case "dragboard":
-                    default:
-                        this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
+                case "wiring":
+                    this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
+                    break;
+                case "catalogue":
+                    this.showCatalogue();
+                    break;
+                case "logs":
+                    this.showLogs();
+                    break;
+                case "dragboard":
+                default:
+                    this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
                 }
             }
-            tab_id = parseInt(state.tab, 10);
-            if (state.view === "dragboard" && state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
-                opManager.activeWorkSpace.setTab(opManager.activeWorkSpace.getTab(state.tab));
+            switch (state.view) {
+            case "dragboard":
+                tab_id = parseInt(state.tab, 10);
+                if (state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
+                    tab = opManager.activeWorkSpace.getTab(state.tab);
+                    if (typeof tab !== "undefined") {
+                        opManager.activeWorkSpace.setTab(tab);
+                    }
+                }
+                break;
             }
         };
 

@@ -1,16 +1,17 @@
 var HistoryManager = new Object();
 
-HistoryManager.init = function() {
+HistoryManager.init = function(initial_workspace) {
     var hash = window.location.hash;
-    var initialState = this._parseStateFromHash(hash);
+    this.initialState = this._parseStateFromHash(hash);
+    this.initialState.workspace = "" + initial_workspace;
 
     if ('history' in window && 'pushState' in window.history) {
         Event.observe(window,
             "popstate",
             this._onpopstate.bind(this),
             true);
-        history.replaceState(initialState, "", window.location.href);
-        this.currentState = initialState;
+        history.replaceState(this.initialState, "", window.location.href);
+        this.currentState = this.initialState;
 
         this._pushState = function(data, title, url) {
             history.pushState(data, "", url);
@@ -22,13 +23,14 @@ HistoryManager.init = function() {
             "hashchange",
             this._onhashchange.bind(this),
             true);
-        this.currentState = initialState;
+        this.currentState = this.initialState;
 
         this._pushState = function(data, title, url) {
             var url = this._buildURL(data);
             window.location = url;
         };
     }
+    this.stateChangeEnabled = true;
 };
 
 HistoryManager._parseStateFromHash = function(hash) {
@@ -56,7 +58,11 @@ HistoryManager._prepareData = function(data) {
     var default_data = {
         view: "dragboard"
     }
-    return Object.extend(default_data, data);
+    data = Object.extend(default_data, data);
+    for (key in data) {
+        data[key] = "" + data[key];
+    }
+    return data;
 };
 
 HistoryManager._buildURL = function(data) {
@@ -74,9 +80,12 @@ HistoryManager._buildURL = function(data) {
         '#' + hash.substr(1);
 };
 
-
 HistoryManager.pushState = function(data) {
     var url, key, equal;
+
+    if (!this.stateChangeEnabled) {
+        return;
+    }
 
     data = this._prepareData(data);
     equal = true;
@@ -95,17 +104,28 @@ HistoryManager.pushState = function(data) {
 };
 
 HistoryManager._onhashchange = function() {
+    this.stateChangeEnabled = false;
+
     var hash = window.location.hash;
-    var state = this._parseStateFromHash(hash);
+    var state = Object.clone(this.initialState);
+    Object.extend(state, this._parseStateFromHash(hash));
+    this.currentState = state;
+
     LayoutManagerFactory.getInstance().onHashChange(state);
+
+    this.stateChangeEnabled = true;
 };
 
 HistoryManager._onpopstate = function(event) {
     if (event.state === null) {
         return;
     }
+    this.stateChangeEnabled = false;
+
     this.currentState = event.state;
     LayoutManagerFactory.getInstance().onHashChange(event.state);
+
+    this.stateChangeEnabled = true;
 };
 
 HistoryManager.getCurrentState = function() {
@@ -115,6 +135,3 @@ HistoryManager.getCurrentState = function() {
 HistoryManager.cloneCurrentState = function() {
     return Object.clone(this.currentState);
 };
-
-
-HistoryManager.init();
