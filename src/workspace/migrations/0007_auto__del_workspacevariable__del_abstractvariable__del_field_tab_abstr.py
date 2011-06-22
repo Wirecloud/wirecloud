@@ -12,6 +12,9 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
+        # Work around problems with constraint cache
+        db._constraint_cache = {}
+
         # Deleting model 'WorkSpaceVariable'
         db.delete_table('workspace_workspacevariable')
 

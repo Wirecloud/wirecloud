@@ -8,11 +8,11 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
 
-        # Deleting model 'Application'
-        db.delete_table('catalogue_application')
-
         # Removing M2M table for field resources on 'Application'
         db.delete_table('catalogue_application_resources')
+
+        # Deleting model 'Application'
+        db.delete_table('catalogue_application')
 
     def backwards(self, orm):
 
