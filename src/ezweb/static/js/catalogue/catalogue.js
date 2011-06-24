@@ -52,11 +52,7 @@ var Catalogue = function (dom_element, dom_wrapper) {
   this.set_response_command_dispatcher = function (command_processor) {
 	this.resp_command_dispatcher = command_processor;
   }
-  
-  this.set_available_apps = function (available_apps) {
-	this.available_apps = available_apps;
-  }
-  
+
   this.add_resource_by_template = function (template_url) {
 	  var services = this.user_command_manager.get_service_facade();
 	  

@@ -164,8 +164,4 @@ var ListView_UserCommandManager = function (dom_wrapper) {
     this.run_initial_commands = function () {
         this.services.search('VIEW_ALL', 1, 'AND', '', '');
     }
-
-    this.set_available_apps = function (available_apps) {
-        this.catalogue.set_available_apps(available_apps);
-    }
 }

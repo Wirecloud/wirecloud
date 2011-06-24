@@ -146,14 +146,6 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
 
         this.painters['DEVELOPERS_PAINTER'].paint_adding_gadget_results(resp_command, this.user_command_manager);
         break;
-    case 'ADD_GADGET_TO_APP':
-        display_options['developer_info'] = 'block';
-
-        this.show_section(display_options, command_id);
-
-        services.search_by_creation_date();
-
-        break;
     case 'REPEAT_SEARCH':
         services.repeat_last_search();
 
