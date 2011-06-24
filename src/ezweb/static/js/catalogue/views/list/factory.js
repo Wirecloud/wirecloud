@@ -77,8 +77,8 @@ var ListViewFactory  = function () {
         //////////////////////////
         this.dom_wrapper = new DOM_Wrapper(catalogue_element, this.get_dom_element_ids());
 
-        this.user_command_manager = new ListView_UserCommandManager(this.dom_wrapper);
-        this.resp_command_dispatcher = new ListView_ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
+        this.user_command_manager = new UserCommandManager(this.dom_wrapper);
+        this.resp_command_dispatcher = new ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
 
         this.gadgets_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
         this.mashups_painter = new ListView_ResourcesPainter(this.resource_structure_dom);

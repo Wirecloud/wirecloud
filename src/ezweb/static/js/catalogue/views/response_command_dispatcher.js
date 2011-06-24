@@ -23,20 +23,20 @@
 *     http://morfeo-project.org
  */
 
-var ListView_ResponseCommandDispatcher = function (dom_wrapper, user_command_manager) {
+var ResponseCommandDispatcher = function (dom_wrapper, user_command_manager) {
     this.dom_wrapper = dom_wrapper;
     this.user_command_manager = user_command_manager;
 
     // Painter's Hash
     this.painters = new Hash();
-}
+};
 
-ListView_ResponseCommandDispatcher.prototype.set_painter = function (painter_code, painter) {
+ResponseCommandDispatcher.prototype.set_painter = function (painter_code, painter) {
     this.painters[painter_code] = painter;
     this.painters[painter_code].set_dom_wrapper(this.dom_wrapper);
-}
+};
 
-ListView_ResponseCommandDispatcher.prototype.init = function () { 
+ResponseCommandDispatcher.prototype.init = function () {
     //PAINTERS
     var pagination_div = this.dom_wrapper.get_element_by_code('PAGINATION_AREA');
     this.painters['PAGINATION_PAINTER'].set_dom_element(pagination_div);
@@ -61,9 +61,9 @@ ListView_ResponseCommandDispatcher.prototype.init = function () {
     this.tab_bar = this.dom_wrapper.get_element_by_code('TAB_BAR');
     this.mashups_button = this.dom_wrapper.get_element_by_code('MASHUPS_BUTTON');
     this.gadgets_button = this.dom_wrapper.get_element_by_code('GADGETS_BUTTON');
-}
+};
 
-ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
+ResponseCommandDispatcher.prototype.process = function (resp_command) {
     var display_options = {
         'search_options': 'none', 'pagination':'none', 'developer_info': 'none',
         'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none',
@@ -154,9 +154,9 @@ ListView_ResponseCommandDispatcher.prototype.process = function (resp_command) {
         alert('Missing command code at ResponseCommandProcessor!');
         return;
     }
-}
+};
 
-ListView_ResponseCommandDispatcher.prototype.show_section = function (display_options, command_id) {
+ResponseCommandDispatcher.prototype.show_section = function (display_options, command_id) {
     var search_options = display_options['search_options'];
     var pagination = display_options['pagination'];
     var gadget_list = display_options['gadget_list'];
@@ -212,4 +212,4 @@ ListView_ResponseCommandDispatcher.prototype.show_section = function (display_op
     default:
         alert ('Error activating tab!');
     }
-}
+};

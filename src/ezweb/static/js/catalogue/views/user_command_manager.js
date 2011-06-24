@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-var ListView_UserCommandManager = function (dom_wrapper) {
+var UserCommandManager = function (dom_wrapper) {
 
     this.catalogue = null;
     this.services = null;
