@@ -29,6 +29,7 @@
 
 
 #
+from datetime import datetime
 
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError
@@ -36,6 +37,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import user_authentication, Http403
+from commons.cache import patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
@@ -180,20 +182,36 @@ class GadgetCodeEntry(Resource):
         if not content_type:
             content_type = 'text/html'
 
-        if not gadget.xhtml.cacheable:
+        code = gadget.xhtml.code
+        if not gadget.xhtml.cacheable or code == '':
             try:
                 if gadget.xhtml.url.startswith('/deployment/gadgets/'):
-                    gadget.xhtml.code = get_xhtml_content(gadget.xhtml.url)
-                    gadget.xhtml.code = includeTagBase(gadget.xhtml.code, gadget.xhtml.url, request)
+                    code = get_xhtml_content(gadget.xhtml.url)
+                    code = includeTagBase(code, gadget.xhtml.url, request)
                 else:
-                    gadget.xhtml.code = download_http_content(gadget.get_resource_url(gadget.xhtml.url, request), user=request.user)
-                gadget.xhtml.code = fix_ezweb_scripts(gadget.xhtml.code, request)
+                    code = download_http_content(gadget.get_resource_url(gadget.xhtml.url, request), user=request.user)
+                code = fix_ezweb_scripts(code, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        return HttpResponse(gadget.xhtml.code, mimetype='%s; charset=UTF-8' % content_type)
+        if gadget.xhtml.cacheable and gadget.xhtml.code == '':
+            gadget.xhtml.code = code
+            gadget.xhtml.code_timestamp = datetime.now()
+            gadget.xhtml.save()
+        elif not gadget.xhtml.cacheable and gadget.xhtml.code != '':
+            gadget.xhtml.code = ''
+            gadget.xhtml.code_timestamp = None
+            gadget.xhtml.save()
+
+        response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
+        cache_timeout = 0
+        if gadget.xhtml.cacheable:
+            cache_timeout = 3153600  # 1 year
+
+        patch_cache_headers(response, gadget.xhtml.code_timestamp, cache_timeout)
+        return response
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
