@@ -25,24 +25,23 @@
 
 
 function _EzWebAPI() {
-	this.platform = window.parent;
-	var ezwebLocation = this.platform.document.location;
-	this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
+    this.platform = window.parent;
+    var ezwebLocation = this.platform.document.location;
+    this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
     this.platform_protocol = ezwebLocation.protocol.substr(0, ezwebLocation.protocol.length - 1);
     this.platform_host = ezwebLocation.host;
 
-	// Get id from the URL
-	var tmp = document.URL.split("?", 2)[1];
-	tmp = tmp.split("#", 2)[0];
-	tmp = tmp.split("&");
-	for (var i = 0; i < tmp.length; i++) {
-		var current = tmp[i];
-		current = current.split("=", 2);
-		if (current[0] == "id") {
-			this.id = parseInt(current[1]);
-			break;
-		}
-	}
+    // Get id from the URL
+    var tmp = document.URL.substr(document.URL.lastIndexOf('#'));
+    tmp = tmp.split("&");
+    for (var i = 0; i < tmp.length; i++) {
+        var current = tmp[i];
+        current = current.split("=", 2);
+        if (current[0] == "id") {
+            this.id = parseInt(current[1]);
+            break;
+        }
+    }
 }
 
 _EzWebAPI.prototype.getId = function() {
