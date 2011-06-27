@@ -39,6 +39,7 @@ from django.utils import simplejson
 from django.utils.translation import get_language
 from django.utils.translation import ugettext as _
 
+from commons.cache import CacheableData
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
@@ -69,6 +70,7 @@ def _get_cached_variables(igadget):
 def _invalidate_cached_variables(igadget):
     key = _variable_cache_key(igadget)
     cache.delete(key)
+    _invalidate_cached_variable_values(igadget.tab.workspace)
 
 
 def _populate_variables_values_cache(workspace, user, key, forced_values=None):
@@ -123,14 +125,22 @@ def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     return values
 
 
-def _variable_values_cache_key(workspace, user):
-
+def _get_workspace_version(workspace):
     version = cache.get('_workspace_version/' + str(workspace.id))
     if version is None:
         version = random.randrange(1, 100000)
         cache.set('_workspace_version/' + str(workspace.id), version)
+    return version
 
+
+def _variable_values_cache_key(workspace, user):
+    version = _get_workspace_version(workspace)
     return '/'.join(('_variables_values_cache', str(workspace.id), str(version), str(user.id)))
+
+
+def _workspace_cache_key(workspace, user):
+    version = _get_workspace_version(workspace)
+    return '/'.join(('_workspace_global_data', str(workspace.id), str(version), str(user.id)))
 
 
 def get_variable_value_from_varname(user, igadget, var_name):
@@ -160,6 +170,9 @@ def get_variable_value_from_varname(user, igadget, var_name):
 def _invalidate_cached_variable_values(workspace, user=None):
     if user is not None:
         key = _variable_values_cache_key(workspace, user)
+        cache.delete(key)
+
+        key = _workspace_cache_key(workspace, user)
         cache.delete(key)
     else:
         try:
@@ -586,7 +599,7 @@ def process_forced_values(workspace, user, concept_values, preferences):
     return forced_values
 
 
-def get_global_workspace_data(workSpaceDAO, user):
+def _get_global_workspace_data(workSpaceDAO, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
@@ -648,6 +661,16 @@ def get_global_workspace_data(workSpaceDAO, user):
         data_ret["workspace"]["params"] = simplejson.loads(last_published_workspace[0].params)
 
     return data_ret
+
+
+def get_global_workspace_data(workspace, user):
+    key = _workspace_cache_key(workspace, user)
+    data = cache.get(key)
+    if data is None:
+        data = CacheableData(_get_global_workspace_data(workspace, user))
+        cache.set(key, data)
+
+    return data
 
 
 def get_tab_data(tab):

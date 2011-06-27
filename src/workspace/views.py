@@ -263,7 +263,7 @@ class WorkSpaceCollection(Resource):
             workspace = createWorkSpace(workspace_name, user)
             workspace_data = get_global_workspace_data(workspace, user)
 
-            return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+            return workspace_data.get_response()
 
         except Exception, e:
             transaction.rollback()
@@ -287,7 +287,7 @@ class WorkSpaceEntry(Resource):
             logout_request(request)
             request.user = relogin_after_public(request, last_user, None)
 
-        return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+        return workspace_data.get_response()
 
     @transaction.commit_on_success
     def update(self, request, workspace_id, last_user=''):
