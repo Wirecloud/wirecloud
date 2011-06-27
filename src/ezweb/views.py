@@ -38,10 +38,10 @@ from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
-from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
-from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, loader, RequestContext
 
 from catalogue.templateParser import TemplateParser
@@ -65,7 +65,11 @@ def index(request, user_name=None, template="index.html"):
 @login_required
 def render_workspace_view(request, workspace):
     if request.user.username != "public":
-        post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace
+        workspace = get_object_or_404(WorkSpace, pk=int(workspace))
+        if request.user not in workspace.users.all():
+            return HttpResponseForbidden()
+
+        post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
         return render_ezweb(request, request.user.username, "index.html", post_load_script=post_load_script)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
