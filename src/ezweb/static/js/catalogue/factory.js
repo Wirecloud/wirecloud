@@ -21,60 +21,33 @@
 *     is available at
 *
 *     http://morfeo-project.org
- */
+*/
 
-var CatalogueFactory  = function () {
+var CatalogueFactory = function () {
 
-  // *********************************
-  // SINGLETON INSTANCE
-  // *********************************
-	
-  var catalogue_dom = $('showcase');
-	
-  var persistence_engine = PersistenceEngineFactory.getInstance();
-	  
-  // FACTORIES
-  var list_view_factory = new ListViewFactory();
-	  
-  ////////////////////
-  // DEFAULT VALUE
-  ////////////////////
-  var default_view_factory = list_view_factory;
-	  
-  // ACTIVE VALUES
-  var active_instance = null;
-  var last_used_factory = null;
-	
-  // ************************
-  //  SINGLETON GET INSTANCE
-  // ************************
-				
-  return new function() {
-    this.getInstance = function() {
-	  if (! active_instance) {
-		active_instance = default_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = default_view_factory;
-		  
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	  }
-		
-	  return active_instance;
-	}
-	  
-	this.getListView = function() {
-	  if (! active_instance) {
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = list_view_factory;
-		  
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	  } else if (last_used_factory != list_view_factory) {
-		active_instance.destroy()
-		 
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = list_view_factory;
-	  }
-		
-	  return active_instance
-	}	    		
-  }
+    // *********************************
+    // SINGLETON INSTANCE
+    // *********************************
+
+    var catalogue_dom = $('showcase');
+
+    var persistence_engine = PersistenceEngineFactory.getInstance();
+
+    // ACTIVE VALUES
+    var active_instance = null;
+
+    // ************************
+    //  SINGLETON GET INSTANCE
+    // ************************
+    return new function() {
+        this.getInstance = function() {
+            if (!active_instance) {
+                var view_factory = new ListViewFactory();
+                active_instance = view_factory.create_catalogue(catalogue_dom, persistence_engine);
+                OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+            }
+
+            return active_instance;
+        }
+    }
 }();
