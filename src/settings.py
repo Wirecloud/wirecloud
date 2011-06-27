@@ -130,6 +130,7 @@ MIDDLEWARE_CLASSES = (
 #    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 #    'middleware.auth_middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
