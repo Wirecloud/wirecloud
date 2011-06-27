@@ -393,7 +393,7 @@ var LayoutManagerFactory = function () {
          * Handler for changes in the hash to navigate to other areas
          */
         LayoutManager.prototype.onHashChange = function(state) {
-            var ws_id, tab_id, tab, nextWorkspace, opManager;
+            var ws_id, tab_id, tab, nextWorkspace, opManager, dragboard;
 
             opManager = OpManagerFactory.getInstance();
 
@@ -407,7 +407,7 @@ var LayoutManagerFactory = function () {
             if (state.view !== this.currentViewType) {
                 switch (state.view) {
                 case "wiring":
-                    this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
+                    OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface().show();
                     break;
                 case "catalogue":
                     this.showCatalogue();
@@ -416,20 +416,21 @@ var LayoutManagerFactory = function () {
                     this.showLogs();
                     break;
                 case "dragboard":
-                default:
-                    this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
-                }
-            }
-            switch (state.view) {
-            case "dragboard":
-                tab_id = parseInt(state.tab, 10);
-                if (state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
-                    tab = opManager.activeWorkSpace.getTab(state.tab);
-                    if (typeof tab !== "undefined") {
-                        opManager.activeWorkSpace.setTab(tab);
+                    dragboard = null;
+                    tab_id = parseInt(state.tab, 10);
+                    if (state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
+                        tab = opManager.activeWorkSpace.getTab(state.tab);
+                        if (typeof tab !== "undefined") {
+                            dragboard = tab.getDragboard();
+                        }
                     }
+                    if (dragboard === null) {
+                        dragboard = opManager.activeWorkSpace.getActiveDragboard();
+                    }
+                    this.showDragboard(dragboard);
+                    break;
+                default:
                 }
-                break;
             }
         };
 
@@ -443,19 +444,23 @@ var LayoutManagerFactory = function () {
             if (this.currentView != null) {
                 this.currentView.hide();
                 //if the previous view was different and it had banner, change the banner
-                if (this.currentViewType != 'dragboard' && this.currentView.getHeader){
+                if (this.currentViewType !== 'dragboard' && this.currentView.getHeader) {
                     this.hideHeader(this.currentView.getHeader());
                 }
             }
 
-            this.showHeader(dragboard.getHeader());
+            this.showHeader(dragboard.tab.getHeader());
+            if (this.currentViewType !== 'dragboard') {
+                dragboard.workSpace.prepareToShow();
+            }
 
-            $(document.body).removeClassName(this.currentViewType+"_view");
+
+            $(document.body).removeClassName(this.currentViewType + "_view");
 
             this.currentView = dragboard.tab;
             this.currentViewType = 'dragboard';
 
-            $(document.body).addClassName(this.currentViewType+"_view");
+            $(document.body).addClassName(this.currentViewType + "_view");
             var state = {
                 workspace: HistoryManager.getCurrentState().workspace,
                 view: "dragboard",

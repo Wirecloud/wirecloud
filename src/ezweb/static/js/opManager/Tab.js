@@ -614,8 +614,10 @@ Tab.prototype.show = function() {
     LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
 
     this.dragboard._notifyVisibilityChange(true);
+    this.dragboard._notifyWindowResizeEvent();
     this.markAsCurrent();
-}
+    this.makeVisibleInTabBar();
+};
 
 /**
  *

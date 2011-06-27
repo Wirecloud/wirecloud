@@ -471,7 +471,7 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
-            this.activeWorkSpace.show();
+            LayoutManagerFactory.getInstance().showDragboard(this.activeWorkSpace.getActiveDragboard());
 
             if (refreshMenu != false){ //refreshMenu == true or null
                 this._refreshWorkspaceMenu();

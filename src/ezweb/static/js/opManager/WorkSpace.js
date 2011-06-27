@@ -528,40 +528,38 @@ function WorkSpace (workSpaceState) {
         return null;
     }
 
-    WorkSpace.prototype.show = function() {
+    WorkSpace.prototype.prepareToShow = function() {
+        var layoutManager = LayoutManagerFactory.getInstance();
 
-        if (!this.loaded)
+        if (!this.loaded) {
             return;
+        }
 
-        if (this.getHeader()) //there is a banner
+        if (this.getHeader()) {
+            //there is a banner
             this.fillWithLabel();
+        }
 
         var tabList = this.tabInstances.keys();
 
         for (var i = 0; i < tabList.length; i++) {
             var tab = this.tabInstances[tabList[i]];
 
-            if (tab == this.visibleTab)
-                tab.show();
-            else
+            if (this.visibleTab === tab) {
+                layoutManager.markTab(tab);
+            } else {
                 tab.unmark();
+            }
         }
-        if (tabList.length == 1){ //hide the tab if only one exists
-            this.hideTabBar()
-        }else{
-            this.showTabBar()
+        if (tabList.length == 1) { //hide the tab if only one exists
+            this.hideTabBar();
+        } else {
+            this.showTabBar();
         }
 
         // resize tab bar after displaying tabs
-        LayoutManagerFactory.getInstance().resizeTabBar();
-
-        if (this.visibleTab) {
-            //show the current tab in the tab bar if it isn't within the visible area
-            //!this.visibleTab => error during initialization
-            this.visibleTab.makeVisibleInTabBar();
-            this.visibleTab.getDragboard()._notifyWindowResizeEvent();
-        }
-    }
+        layoutManager.resizeTabBar();
+    };
 
     WorkSpace.prototype.isValid = function() {
         return this.valid;
@@ -584,7 +582,6 @@ function WorkSpace (workSpaceState) {
         }
         this.visibleTab = tab;
         this.visibleTab.show();
-
     }
 
     WorkSpace.prototype.getVisibleTab = function() {
@@ -668,13 +665,13 @@ function WorkSpace (workSpaceState) {
         this.visibleTab = null;
     }
 
-    WorkSpace.prototype.hideTabBar = function(){
+    WorkSpace.prototype.hideTabBar = function () {
         this.tabBar.setStyle({"visibility": "hidden"});
-    }
+    };
 
-    WorkSpace.prototype.showTabBar = function(){
+    WorkSpace.prototype.showTabBar = function () {
         this.tabBar.setStyle({"visibility": "visible"});
-    }
+    };
 
     WorkSpace.prototype.unload = function() {
 
