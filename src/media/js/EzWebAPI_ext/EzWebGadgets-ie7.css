@@ -18,3 +18,7 @@
     display: inline;
 }
 
+.error .header,
+.error .header table {
+    height: 35px!important;
+}
