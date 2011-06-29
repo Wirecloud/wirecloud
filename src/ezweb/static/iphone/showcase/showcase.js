@@ -1,4 +1,8 @@
-/* 
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global OpManagerFactory, PersistenceEngineFactory, Hash, Gadget, Modules, URIs */
+"use strict";
+
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -25,93 +29,101 @@
 
 
 /**
- * @author luismarcos.ayllon
- */
+* @author luismarcos.ayllon
+*/
 
-// This module provides a set of gadgets which can be deployed into dragboard as gadget instances 
-var ShowcaseFactory = function () {
+// This module provides a set of gadgets which can be deployed into dragboard as gadget instances
+var ShowcaseFactory = (function () {
 
-	// *********************************
-	// SINGLETON INSTANCE
-	// *********************************
-	var instance = null;
+    // *********************************
+    // SINGLETON INSTANCE
+    // *********************************
+    var instance = null;
 
-	// *********************************
-	// CONSTRUCTOR
-	// *********************************
-	function Showcase () {
-		
-		// ******************
-		// STATIC VARIABLES
-		// ******************
-	    Showcase.prototype.MODULE_HTML_ID = "showcase";
+    // *********************************
+    // CONSTRUCTOR
+    // *********************************
+    function Showcase() {
 
-		// ****************
-		// CALLBACK METHODS 
-		// ****************
+        var loadGadgets,
+            onErrorCallback,
+            private_gadgets,
+            private_loaded,
+            private_opManager,
+            private_persistenceEngine;
 
-		// Load gadgets from persistence system
-		loadGadgets = function (receivedData_) {
-			var response = receivedData_.responseText;
-			var jsonGadgetList = eval ('(' + response + ')');
-		
-			// Load all gadgets from persitence system
-			for (var i = 0; i<jsonGadgetList.length; i++) {
-				var jsonGadget = jsonGadgetList[i];
-				var gadget = new Gadget (jsonGadget, null);
-				var gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
-				
-				// Insert gadget object in showcase object model
-				_gadgets[gadgetId] = gadget;
-			}
-			
-			// Showcase loaded
-			_loaded = true;
-			_opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-			
-		}
-		
-		// Error callback (empty gadget list)
-		onErrorCallback = function (receivedData_) {
-			_loaded = true;
-			_opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
-		}
-		
-		// *******************************
-		// PRIVATE METHODS AND VARIABLES
-		// *******************************
-		var _gadgets = new Hash();
-		var _loaded = false;
-		var _opManager = OpManagerFactory.getInstance();
-		var _persistenceEngine = PersistenceEngineFactory.getInstance();			
-		
-		// ****************
-		// PUBLIC METHODS
-		// ****************
-		
-		// Get a gadget by its gadgetID
-		Showcase.prototype.getGadget = function (gadgetId_) {
-			return _gadgets[gadgetId_];
-		}
-		
-		
-		Showcase.prototype.init = function () {
-			// Initial load from persitence system
-			_persistenceEngine.send_get(URIs.GET_GADGETS, this, loadGadgets, onErrorCallback);
-		}
-		
-	}
-	
-	// *********************************
-	// SINGLETON GET INSTANCE
-	// *********************************
-	return new function() {
-    	this.getInstance = function() {
-    		if (instance == null) {
-        		instance = new Showcase();
-          	}
-         	return instance;
-       	}
-	}
-	
-}();
+        // ******************
+        // STATIC VARIABLES
+        // ******************
+        Showcase.prototype.MODULE_HTML_ID = "showcase";
+
+        // ****************
+        // CALLBACK METHODS
+        // ****************
+
+        // Load gadgets from persistence system
+        loadGadgets = function (receivedData) {
+            var response = receivedData.responseText,
+                jsonGadgetList = JSON.parse(response),
+                i, jsonGadget, gadget, gadgetId;
+
+            // Load all gadgets from persitence system
+            for (i = 0; i < jsonGadgetList.length; i += 1) {
+                jsonGadget = jsonGadgetList[i];
+                gadget = new Gadget(jsonGadget, null);
+                gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
+
+                // Insert gadget object in showcase object model
+                private_gadgets[gadgetId] = gadget;
+            }
+
+            // Showcase loaded
+            private_loaded = true;
+            private_opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+
+        };
+
+        // Error callback (empty gadget list)
+        onErrorCallback = function (receivedData) {
+            private_loaded = true;
+            private_opManager.continueLoadingGlobalModules(Modules.prototype.SHOWCASE);
+        };
+
+        // *******************************
+        // PRIVATE METHODS AND VARIABLES
+        // *******************************
+        private_gadgets = new Hash();
+        private_loaded = false;
+        private_opManager = OpManagerFactory.getInstance();
+        private_persistenceEngine = PersistenceEngineFactory.getInstance();
+
+        // ****************
+        // PUBLIC METHODS
+        // ****************
+
+        // Get a gadget by its gadgetID
+        Showcase.prototype.getGadget = function (gadgetId) {
+            return private_gadgets[gadgetId];
+        };
+
+
+        Showcase.prototype.init = function () {
+            // Initial load from persitence system
+            private_persistenceEngine.send_get(URIs.GET_GADGETS, this, loadGadgets, onErrorCallback);
+        };
+
+    }
+
+    // *********************************
+    // SINGLETON GET INSTANCE
+    // *********************************
+    return function () {
+        this.getInstance = function () {
+            if (instance === null || instance === undefined) {
+                instance = new Showcase();
+            }
+            return instance;
+        };
+    };
+
+}());
