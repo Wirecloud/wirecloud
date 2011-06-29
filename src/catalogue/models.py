@@ -39,7 +39,7 @@ from translator.models import TransModel
 
 class CatalogueResource(TransModel):
 
-    RESOURCE_TYPES = ('gadget', 'mashup')
+    RESOURCE_TYPES = ['gadget', 'mashup']
     TYPE_CHOICES = (
         (0, 'Gadget'),
         (1, 'Mashup'),
