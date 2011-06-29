@@ -346,9 +346,8 @@ var URIs = {
   POST_CHECK_VERSIONS: '/user/{{ user.username }}/catalogue/versions',
   FILE_UPLOADER: '/uploader',
   BASIC_THEME: '/ezweb/themes/default',
-  ACTIVE_THEME: '{{ STATIC_URL }}',
-{% if AUTHENTICATION_SERVER_URL %}
-  EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api',
+  ACTIVE_THEME: '{{ STATIC_URL }}'{% if AUTHENTICATION_SERVER_URL %},
+  EZSTEROIDS_API: '{{ AUTHENTICATION_SERVER_URL }}/api'
 {% endif %}
 };
 
