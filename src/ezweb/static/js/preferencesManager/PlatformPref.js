@@ -323,8 +323,11 @@ function Preferences(preferencesDef, values) {
 	// Bind _handleParentChanges method
 	this._handleParentChanges = this._handleParentChanges.bind(this);
 
-	// Init handlers attribute
-	this.handlers = [];
+    // Init handlers attribute
+    this.handlers = {
+        'pre-commit': [],
+        'post-commit': []
+    };
 }
 
 Preferences.prototype.resetInterface = function() {
@@ -334,15 +337,25 @@ Preferences.prototype.resetInterface = function() {
 	}
 }
 
-Preferences.prototype.addCommitHandler = function(handler) {
-	this.handlers.push(handler);
-}
+Preferences.prototype.addCommitHandler = function(handler, _event) {
+    _event = _event ? _event : 'pre-commit';
 
-Preferences.prototype.removeCommitHandler = function(handler) {
-	var index = this.handlers.indexOf(handler);
-	if (index != -1)
-		this.handlers.splice(index, 1);
-}
+    if (_event in this.handlers) {
+        this.handlers[_event].push(handler);
+    }
+};
+
+Preferences.prototype.removeCommitHandler = function(handler, _event) {
+    var index;
+
+    _event = _event ? _event : 'pre-commit';
+    if (_event in this.handlers) {
+        index = this.handlers['pre-commit'].indexOf(handler);
+        if (index !== -1) {
+            this.handlers['pre-commit'].splice(index, 1);
+        }
+    }
+};
 
 Preferences.prototype.get = function(name) {
 	return this._preferences[name].getEffectiveValue();
@@ -393,6 +406,13 @@ Preferences.prototype.set = function(newValues) {
 }
 
 Preferences.prototype._onSuccessSavePreferences = function() {
+    var i, handlers;
+
+    handlers = this.preferences.handlers['post-commit'];
+
+    for (i = 0; i < handlers.length; i += 1) {
+        handlers[i](this.modifiedValues);
+    }
 }
 
 Preferences.prototype._onErrorSavePreferences = function() {
@@ -421,11 +441,11 @@ Preferences.prototype._handleParentChanges = function(modifiedValues) {
  * notify modified values to each specific preference handlers.
  */
 Preferences.prototype._notifyCommitHandlers = function(modifiedValues) {
-	var len = this.handlers.length;
-	for (var i = 0; i < len; i++) {
-		this.handlers[i](modifiedValues);
-	}
-}
+    var len = this.handlers['pre-commit'].length;
+    for (var i = 0; i < len; i++) {
+	this.handlers['pre-commit'][i](modifiedValues);
+    }
+};
 
 /**
  * Saves the modified preferences. The new values are taken from the relevant
@@ -504,9 +524,15 @@ PlatformPreferences.prototype.buildTitle = function() {
 }
 
 PlatformPreferences.prototype._save = function(modifiedValues) {
-	PersistenceEngineFactory.getInstance().send_update(URIs.PLATFORM_PREFERENCES, {"preferences": JSON.stringify(modifiedValues)},
-	     this, this._onSuccessSavePreferences, this._onErrorSavePreferences);
-}
+    var context = {
+        preferences: this,
+        modifiedValues: modifiedValues
+    };
+
+    PersistenceEngineFactory.getInstance().send_update(URIs.PLATFORM_PREFERENCES,
+        {"preferences": JSON.stringify(modifiedValues)},
+        context, this._onSuccessSavePreferences, this._onErrorSavePreferences);
+};
 
 /**
  *
@@ -529,11 +555,16 @@ WorkSpacePreferences.prototype.getParentValue = function(name) {
 }
 
 WorkSpacePreferences.prototype._save = function(modifiedValues) {
-	var url = URIs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
+    var url, context = {
+        preferences: this,
+        modifiedValues: modifiedValues
+    };
 
-	PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
-	     this, this._onSuccessSavePreferences, this._onErrorSavePreferences);
-}
+    url = URIs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
+
+    PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
+         context, this._onSuccessSavePreferences, this._onErrorSavePreferences);
+};
 
 WorkSpacePreferences.prototype.destroy = function() {
 	PreferencesManagerFactory.getInstance().getPlatformPreferences().removeCommitHandler(this._handleParentChanges);
@@ -564,11 +595,16 @@ TabPreferences.prototype.getParentValue = function(name) {
 }
 
 TabPreferences.prototype._save = function(modifiedValues) {
-	var url = URIs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
+    var url, context = {
+        preferences: this,
+        modifiedValues: modifiedValues
+    };
 
-	PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
-	     this, this._onSuccessSavePreferences, this._onErrorSavePreferences);
-}
+    url = URIs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
+
+    PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
+         this, this._onSuccessSavePreferences.bind(modifiedValues), this._onErrorSavePreferences);
+};
 
 TabPreferences.prototype.destroy = function() {
 	this._workspace.preferences.removeCommitHandler(this._handleParentChanges);

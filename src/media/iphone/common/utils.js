@@ -84,20 +84,6 @@ function slide (backwards, element)
     	percent = 100;
 }
 
-/* language selection */
-function setLanguage(language) {
-	var onSuccess = function() {
-		window.location.reload();
-	}
-	
-	var onError = function() {}
-	
-	var persistenceEngine = PersistenceEngineFactory.getInstance();
-	var params = {language: language};
-	persistenceEngine.send_post("/i18n/setlang/", params, this, onSuccess, onError);
-	return false;
-}
-
 /* layout change function (landscape or portrait) */
 function updateLayout()
 {

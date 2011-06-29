@@ -118,11 +118,14 @@ var PreferencesManagerFactory = function () {
 
 		// Platform Preferences
 		var platformPreferences = {
-                  "language": {
-                    "label": gettext('Language'),
-                    "type": "select",
-                    "options": []
-                  },
+          "language": {
+            "label": gettext('Language'),
+            "type": "select",
+            "options": [
+                {value: 'default', label: gettext('Default setting')},
+                {value: 'browser', label: gettext('Browser detect')}
+            ]
+          },
 		  "skin": {
 		    "label":         gettext("Skin"),
 		    "type":          "select",
@@ -256,7 +259,7 @@ var PreferencesManagerFactory = function () {
 		  }
 		}
 
-		// Initialize some dynamic preferences (theme...)
+        // Initialize some dynamic preferences (theme...)
         for (i = 0; i < LANGUAGES.length; i += 1) {
             lang = LANGUAGES[i];
             platformPreferences['language']['options'].push({value: lang[0], label: lang[1]});

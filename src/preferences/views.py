@@ -50,7 +50,7 @@ from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
 from workspace.models import WorkSpace, Tab
 
 
@@ -182,6 +182,10 @@ class PlatformPreferencesCollection(Resource):
         try:
             preferences_json = simplejson.loads(received_json)
             update_preferences(user, preferences_json)
+
+            if 'language' in preferences_json:
+                update_session_lang(request, user)
+
             return HttpResponse('ok')
         except Exception, e:
             transaction.rollback()

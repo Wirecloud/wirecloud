@@ -38,10 +38,11 @@
 
 # @author jmostazo-upm
 
-from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.signals import user_logged_in
-from django.utils.translation import check_for_language, get_language, gettext_lazy as _
+from django.db import models
+from django.utils.translation import check_for_language, gettext_lazy as _
 
 from workspace.models import WorkSpace, Tab
 
@@ -69,25 +70,32 @@ class TabPreference(models.Model):
     value = models.CharField(_('Value'), max_length=250)
 
 
-def setup_language_from_preferences(sender, **kwargs):
-    user = kwargs['user']
-    request = kwargs['request']
-
+def update_session_lang(request, user):
     lang_code = None
     pref_exists = True
     try:
         lang_pref = PlatformPreference.objects.get(user=user, name="language")
-        if check_for_language(lang_pref.value):
+        if lang_pref.value in ('default', 'browser') or check_for_language(lang_pref.value):
             lang_code = lang_pref.value
     except PlatformPreference.DoesNotExist:
         pref_exists = False
 
-    if lang_code is None:
-        lang_code = get_language()
+    if lang_code in (None, 'default'):
+        lang_code = settings.DEFAULT_LANGUAGE
         if not pref_exists:
             PlatformPreference.objects.create(user=user, name="language", value=lang_code)
 
-    request.session['django_language'] = lang_code
+    if lang_code != 'browser':
+        request.session['django_language'] = lang_code
+    elif 'django_language' in request.session:
+        del request.session['django_language']
+
+
+def setup_language_from_preferences(sender, **kwargs):
+    user = kwargs['user']
+    request = kwargs['request']
+
+    update_session_lang(request, user)
 
 
 user_logged_in.connect(setup_language_from_preferences)

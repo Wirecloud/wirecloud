@@ -442,7 +442,7 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.preferencesChanged = function (modifiedValues) {
             if ('language' in modifiedValues) {
-                setLanguage(modifiedValues.language);
+                window.location.reload();
             }
         };
 
@@ -459,7 +459,7 @@ var OpManagerFactory = function () {
 
             case Modules.prototype.PLATFORM_PREFERENCES:
                 preferencesManager = PreferencesManagerFactory.getInstance();
-                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this));
+                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
                 this.showcaseModule = ShowcaseFactory.getInstance();
                 this.showcaseModule.init();
                 break;
