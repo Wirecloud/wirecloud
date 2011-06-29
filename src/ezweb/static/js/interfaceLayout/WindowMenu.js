@@ -541,7 +541,11 @@ FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
             Element.extend(label);
             label.addClassName('section_name');
             var icon = document.createElement('div');
-            icon.addClassName('section_icon');
+            if (BrowserUtilsFactory.getInstance().isIE()) {
+                icon.className += ' section_icon';
+            } else { 
+                icon.addClassName('section_icon');
+            }
 
             label.appendChild(document.createTextNode(field.label));
             fieldset.appendChild(icon);
