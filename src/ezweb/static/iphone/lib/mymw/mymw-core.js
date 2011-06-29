@@ -1,4 +1,8 @@
-/* 
+/*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: false, newcap: true, immed: true, strict: true */
+/*global document, navigator, node, window */
+"use strict";
+
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -21,88 +25,85 @@
 *     is available at
 *
 *     http://morfeo-project.org
- */
+*/
 
 
-if (typeof MYMW == "undefined" || !MYMW) {
-    var MYMW = {};
-	MYMW.ui = {};
+if (typeof window.MYMW === "undefined" || !window.MYMW) {
+    window.MYMW = {};
+    window.MYMW.ui = {};
 }
 
-String.prototype.supplant = function (o) 
-{
-	return this.replace(/{([^{}]*)}/g,
-		function (a, b) 
-		{
-			var r = o[b];
-			return typeof r === 'string' ? r : a;
-		}
-	);
+String.prototype.supplant = function (o) {
+    return this.replace(/\{([^{}]*)\}/g, function (a, b) {
+            var r = o[b];
+            return typeof r === 'string' ? r : a;
+        }
+    );
 };
-	
+
 // Detect clients
 var ua =  navigator.userAgent;
-var isOpera = ua.indexOf("Opera")>0;
-var isGecko = ua.indexOf("Gecko")>0;
-var isWmobile = !isOpera && !isGecko && (ua.indexOf("PPC")>0 || ua.indexOf("IEMobile")>0);
+var isOpera = ua.indexOf("Opera") > 0;
+var isGecko = ua.indexOf("Gecko") > 0;
+var isWmobile = !isOpera && !isGecko && (ua.indexOf("PPC") > 0 || ua.indexOf("IEMobile") > 0);
 
 function id(nid) {
-	return isWmobile ? document.all[nid] : document.getElementById(nid);
+    return isWmobile ? document.all[nid] : document.getElementById(nid);
 }
 
 function hasClass(nid, classStr) {
-	return (" "+id(node).className+" ").indexOf(" "+classStr+" ") >= 0;
-};
+    return (" " + id(node).className + " ").indexOf(" " + classStr + " ") >= 0;
+}
 
 function update(nid, content) {
-	id(nid).innerHTML = content;
+    id(nid).innerHTML = content;
 }
 
 function after(nid, content) {
-	var el = id(nid);
-	el.innerHTML = el.innerHTML + content;
+    var el = id(nid);
+    el.innerHTML = el.innerHTML + content;
 }
 
 function before(nid, content) {
-	var el = id(nid);
-	el.innerHTML = content + el.innerHTML;
+    var el = id(nid);
+    el.innerHTML = content + el.innerHTML;
 }
 
 function updateClass(nid, className) {
-	id(nid).className = className;
+    id(nid).className = className;
 }
 
 /*
 // not working for IEM
 HTMLElement.prototype.update = function( txt ) {
-	this.innerHTML = txt;
+    this.innerHTML = txt;
 }
 */
 
 /*
 function getElementsByClassName(classStr) {
-	var r=[];
-	var els=(document.getElementsByTagName)?document.getElementsByTagName("*"):document.all;
+    var r=[];
+    var els=(document.getElementsByTagName)?document.getElementsByTagName("*"):document.all;
 
-	for (var i=0; i<els.length; i++) {
-		var tmp=els[i].className.split(" ");
-		for (var j=0; j<tmp.length; j++) {
-			if (tmp[j] == classStr) { 
-				r[r.length] = els[i];
-			}
-		}
-	}
-	
-	return r
+    for (var i=0; i<els.length; i++) {
+        var tmp=els[i].className.split(" ");
+        for (var j=0; j<tmp.length; j++) {
+            if (tmp[j] == classStr) {
+                r[r.length] = els[i];
+            }
+        }
+    }
+
+    return r
 }
 */
 
 /*
 var dump = function(obj) {
-	for (var i in obj) {
-		if (obj.hasOwnProperty(i)) {
-			alert(i + " => " + obj[i]);
-		}
-	}
+    for (var i in obj) {
+        if (obj.hasOwnProperty(i)) {
+            alert(i + " => " + obj[i]);
+        }
+    }
 }
 */
