@@ -1,5 +1,5 @@
-/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: false, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global MYMW, update, updateClass */
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global MYMW, update, updateClass, ajax, tabview, id */
 "use strict";
 
 /* 
@@ -48,7 +48,9 @@
         update('mymw-content', contentHTML);
 
         for (i in attr) {
-            this.set(i, attr[i]);
+            if (attr.hasOwnProperty(i)) {
+                this.set(i, attr[i]);
+            }
         }
     };
 
@@ -209,13 +211,15 @@
         this._attr = attr || {};
 
         for (var i in attr) {
-            this.set(i, attr[i]);
+            if (attr.hasOwnProperty(i)) {
+                this.set(i, attr[i]);
+            }
         }
     };
     p = MYMW.ui.Tab.prototype;
 
     p.assignSlot = function (slot) {
-        if (slot != undefined) {
+        if (slot !== undefined) {
             this._slot = slot;
             this._renderBody();
             this._renderHead();
@@ -244,6 +248,8 @@
             if (this._attr.active === true) {
                 this._attr.highlight = false;
             }
+            this._renderHead();
+            break;
         case 'onclick' :
         case 'label' :
             this._renderHead();
@@ -255,8 +261,7 @@
     };
 
     p.get = function (name) {
-        switch (name) {
-        case 'content':
+        if (name === 'content') {
             var dataSrc = this.get('dataSrc'),
                 handle_ok, params;
             if (dataSrc && this.get('active') && (!this._loaded || !this.get('cacheData'))) {
@@ -267,14 +272,13 @@
                 params = "_mymw_rnd=" + Math.random(); // random param to avoid caching
                 ajax.apply(this, [dataSrc, handle_ok, null, params, true]);
             }
-            break;
         }
 
         return this._attr[name];
     };
 
     p.__show = function () {
-        if (this._slot != undefined) {
+        if (this._slot !== undefined) {
             if (!this._loaded) {
                 this.get('content');
             }
@@ -284,7 +288,7 @@
     };
 
     p.__hide = function () {
-        if (this._slot != undefined) {
+        if (this._slot !== undefined) {
             updateClass('mymw-slot-' + this._slot, 'mymw-inactive');
             updateClass('mymw-nav-' + this._slot, '');
         }
@@ -292,7 +296,7 @@
 
     p._renderHead = function () {
         if (this._disposed === false) {
-            if (this._slot != undefined) {
+            if (this._slot !== undefined) {
                 this.__updateHead();
                 update('mymw-nav-' + this._slot, this._head);
                 updateClass('mymw-nav-' + this._slot, this.get('active') ? 'mymw-selected' : this.get('highlight') ? 'mymw-highlight' : '');
@@ -320,7 +324,7 @@
 
     p._renderBody = function () {
         if (this._disposed === false) {
-            if (this._slot != undefined) {
+            if (this._slot !== undefined) {
                 this.__updateBody();
                 update('mymw-slot-' + this._slot, this._body); // asynch call, so we sinchronize UI
             }
@@ -331,7 +335,7 @@
 
     p.__updateHead = function () {
         // TODO the name of the variable "tabview" is hardcoded !
-        var onclick = 'javascript:tabview.set("activeId","' + this.get('id') + '");',
+        var onclick = 'tabview.set("activeId","' + this.get('id') + '");',
             label = this.get('label');
         this._head = "<a id='mymw-link-" + this._slot + "' href='#' onclick='" + onclick + "'>" + label + "</a>";
     };
@@ -339,4 +343,4 @@
     p.__updateBody = function () {
         this._body = this.get('content');
     };
-})();
+}());
