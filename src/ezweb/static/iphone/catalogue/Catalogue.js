@@ -32,7 +32,8 @@ var CatalogueFactory = (function () {
     // *********************************
     // SINGLETON INSTANCE
     // *********************************
-    var instance = null;
+    var instance = null,
+        Singleton;
 
     function Catalogue() {
 
@@ -215,7 +216,7 @@ var CatalogueFactory = (function () {
     //  SINGLETON GET INSTANCE
     // ************************
 
-    return function () {
+    Singleton = function () {
         this.getInstance = function () {
             if (instance === null || instance === undefined) {
                 instance = new Catalogue();
@@ -223,5 +224,7 @@ var CatalogueFactory = (function () {
             return instance;
         };
     };
+
+    return new Singleton();
 
 }());

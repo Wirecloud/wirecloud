@@ -38,7 +38,8 @@ var ShowcaseFactory = (function () {
     // *********************************
     // SINGLETON INSTANCE
     // *********************************
-    var instance = null;
+    var instance = null,
+        Singleton;
 
     // *********************************
     // CONSTRUCTOR
@@ -117,7 +118,7 @@ var ShowcaseFactory = (function () {
     // *********************************
     // SINGLETON GET INSTANCE
     // *********************************
-    return function () {
+    Singleton = function () {
         this.getInstance = function () {
             if (instance === null || instance === undefined) {
                 instance = new Showcase();
@@ -125,5 +126,7 @@ var ShowcaseFactory = (function () {
             return instance;
         };
     };
+
+    return new Singleton();
 
 }());

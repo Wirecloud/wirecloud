@@ -33,7 +33,8 @@ var OpManagerFactory = (function () {
     // *********************************
     // SINGLETON INSTANCE
     // *********************************
-    var instance = null;
+    var instance = null,
+        Singleton;
 
     function OpManager() {
 
@@ -271,13 +272,15 @@ var OpManagerFactory = (function () {
     // *********************************
     // SINGLETON GET INSTANCE
     // *********************************
-    return function () {
+    Singleton = function () {
         this.getInstance = function () {
-            if (instance === null && instance === undefined) {
+            if (instance === null || instance === undefined) {
                 instance = new OpManager();
             }
             return instance;
         };
     };
+
+    return new Singleton();
 
 }());
