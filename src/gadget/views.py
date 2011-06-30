@@ -208,7 +208,7 @@ class GadgetCodeEntry(Resource):
         response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
         cache_timeout = 0
         if gadget.xhtml.cacheable:
-            cache_timeout = 3153600  # 1 year
+            cache_timeout = 31536000  # 1 year
 
         patch_cache_headers(response, gadget.xhtml.code_timestamp, cache_timeout)
         return response
