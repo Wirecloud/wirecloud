@@ -54,7 +54,8 @@ def createConnectable(var):
     return connectable
 
 
-def addIGadgetVariable(igadget, user, varDef, initial_value=None):
+def addIGadgetVariable(igadget, varDef, initial_value=None):
+
     # Sets the default value of variable
     if initial_value:
         var_value = initial_value
@@ -67,8 +68,9 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
         # Create Variable
         variable = Variable.objects.create(igadget=igadget, vardef=varDef)
 
-        # Creating a Variable Value for this variable
-        VariableValue.objects.create(user=user, variable=variable, value=var_value)
+        # Creating Variable Values for this variable
+        for user in igadget.tab.workspace.users.all():
+            VariableValue.objects.create(user=user, variable=variable, value=var_value)
 
     elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
         # Create Variable
@@ -97,7 +99,7 @@ def UpgradeIGadget(igadget, user, new_gadget):
             var.vardef = varDef
             var.save()
         else:
-            addIGadgetVariable(igadget, user, varDef)
+            addIGadgetVariable(igadget, varDef)
 
     # check if the last version gadget hasn't a super-set of the current version gadget variableDefs
     currentGadgetVarDefs = VariableDef.objects.filter(gadget=currentGadget)
@@ -146,7 +148,7 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
             initial_value = initial_variable_values[varDef.name]
         else:
             initial_value = None
-        addIGadgetVariable(new_igadget, user, varDef, initial_value)
+        addIGadgetVariable(new_igadget, varDef, initial_value)
 
     from commons.get_data import _invalidate_cached_variable_values
     _invalidate_cached_variable_values(new_igadget.tab.workspace)
