@@ -187,9 +187,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'ezweb.themes.active_theme_context_processor',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
-    'processors.context_processors.only_one_js_file',
-    'processors.context_processors.only_one_css_file',
-    'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
@@ -287,12 +284,6 @@ WORKSPACE_MANAGERS = (
 #GADGET_GENERATOR_URL = 'http://localhost:9001'
 
 FORCE_SCRIPT_NAME = ""
-
-# Compact ezweb javascript and/or css files into one single file. If set to True,
-# you must set the EZWEB_RELEASE property to generate a versioned .js file
-#ONLY_ONE_JS_FILE=True
-#ONLY_ONE_CSS_FILE=True
-#EZWEB_RELEASE='2603'
 
 # Remote channels notifier
 #REMOTE_CHANNEL_NOTIFIER_URL = 'http://localhost:8888/notifier/channels/notify'
