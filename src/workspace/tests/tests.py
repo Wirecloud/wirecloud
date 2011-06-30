@@ -4,7 +4,7 @@ import codecs
 import os
 
 from lxml import etree
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import Client, TestCase
 from django.utils import simplejson
 
@@ -17,6 +17,7 @@ from workspace.packageCloner import PackageCloner
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
+from workspace.utils import sync_base_workspaces
 from workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
@@ -164,6 +165,48 @@ class WorkspaceTestCase(TestCase):
         tab_list = data['workspace']['tabList']
 
         self.assertEqual(len(tab_list), 2)
+
+    def test_shared_workspace(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        # Create a new group and share the workspace with it
+        group = Group.objects.create(name='test_users')
+        workspace.targetOrganizations.add(group)
+
+        other_user = User.objects.get(username='test2')
+        other_user.groups.add(group)
+        other_user.save()
+
+        # Sync shared workspaces
+        sync_base_workspaces(other_user)
+
+        # Check that other_user can access to the shared workspace
+        data = get_global_workspace_data(workspace, other_user)
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 1)
+
+        # Add a new iGadget to the workspace
+        tab = Tab.objects.get(pk=1)
+        igadget_data = {
+            'gadget': '/Test/Test Gadget/1.0.0',
+            'name': 'test',
+            'top': 0,
+            'left': 0,
+            'width': 2,
+            'height': 2,
+            'zIndex': 1,
+            'layout': 0,
+            'icon_top': 0,
+            'icon_left': 0,
+            'menu_color': '',
+        }
+        Gadget.objects.get(pk=1).users.add(self.user)
+        SaveIGadget(igadget_data, self.user, tab, {})
+
+        data = get_global_workspace_data(workspace, other_user)
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 2)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
