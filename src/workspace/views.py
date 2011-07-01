@@ -222,7 +222,7 @@ class WorkSpaceCollection(Resource):
 
                 if not cloned_workspace:
                     # create an empty workspace
-                    createEmptyWorkSpace('MyWorkSpace', user)
+                    createEmptyWorkSpace(_('WorkSpace'), user)
 
             # Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
