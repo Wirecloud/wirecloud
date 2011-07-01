@@ -32,6 +32,7 @@
 
 import re
 import string
+import urlparse
 
 from datetime import datetime
 from xml.sax import parseString, handler
@@ -270,13 +271,13 @@ class TemplateHandler(handler.ContentHandler):
             if self._accumulator == []:
                 self._imageURI = ''
             else:
-                self._imageURI = self._accumulator[0]
+                self._imageURI = urlparse.urljoin(self._uri, self._accumulator[0])
             return
         if name == 'iPhoneImageURI':
             if self._accumulator == []:
                 self._iPhoneImageURI = ''
             else:
-                self._iPhoneImageURI = self._accumulator[0]
+                self._iPhoneImageURI = urlparse.urljoin(self._uri, self._accumulator[0])
             return
         if name == 'WikiURI':
             if self._accumulator == []:
