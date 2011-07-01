@@ -1,9 +1,20 @@
 import time
 
 from django.http import HttpResponse
+from django.utils.cache import patch_cache_control
 from django.utils.http import http_date
 
 from commons.utils import json_encode
+
+
+def no_cache(func):
+
+    def _no_cache(*args, **kwargs):
+        response = func(*args, **kwargs)
+        patch_cache_control(response, no_cache=True, no_store=True, must_revalidate=True, max_age=0)
+        return response
+
+    return _no_cache
 
 
 def patch_cache_headers(response, timestamp=None, cache_timeout=None):
