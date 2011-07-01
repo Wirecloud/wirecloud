@@ -495,7 +495,7 @@ IGadget.prototype.build = function () {
     button.setAttribute("type", "button");
     button.observe("click", 
         function () {
-            this.toggleMinimizeStatus();
+            this.toggleMinimizeStatus(true);
         }.bind(this),
         false);
     if (this.minimized) {
@@ -1825,7 +1825,7 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this._recomputeHeight(true);
 
     // Notify resize event
-    reserveSpace = reserveSpace !== null ? reserveSpace : true;
+    reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence !== null ? persistence : true;
         this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
