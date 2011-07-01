@@ -755,7 +755,11 @@ msgstr "Crear"
 msgid "Nombre: "
 msgstr "Nombre: "
 
-#: media/js/interfaceLayout/WindowMenu.js:597
+#: media/js/interfaceLayout/WindowMenu.js:277
+msgid "Invalid name: you must write something"
+msgstr "Nombre inválido: nombre vacío."
+
+#: media/js/interfaceLayout/WindowMenu.js:284
 msgid "Invalid name: the name \\\"%(newName)s\\\" is already in use"
 msgstr "Nombre inválido: el nombre \\\"%(newName)s\\\" ya se está usando."
 
