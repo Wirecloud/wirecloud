@@ -32,7 +32,7 @@ function _EzWebAPI() {
     this.platform_host = ezwebLocation.host;
 
     // Get id from the URL
-    var tmp = document.URL.substr(document.URL.lastIndexOf('#'));
+    var tmp = document.URL.substr(document.URL.lastIndexOf('#') + 1);
     tmp = tmp.split("&");
     for (var i = 0; i < tmp.length; i++) {
         var current = tmp[i];
