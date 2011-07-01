@@ -668,9 +668,10 @@ IGadget.prototype.isAllowed = function (action) {
         return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_igadgets');
     case "move":
     case "resize":
-    case "minimize":
         var dragboard = this.layout.dragboard;
         return !dragboard.isLocked() && dragboard.getWorkspace().isAllowed('edit_layout');
+    case "minimize":
+        return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
     default:
         return false;
     }
@@ -682,6 +683,9 @@ IGadget.prototype._updateButtons = function () {
     }
     if (isElement(this.settingsButtonElement.parentNode)) {
         this.settingsButtonElement.remove();
+    }
+    if (isElement(this.minimizeButtonElement.parentNode)) {
+        this.minimizeButtonElement.remove();
     }
     if (isElement(this.closeButtonElement.parentNode)) {
         this.closeButtonElement.remove();
