@@ -46,6 +46,7 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from commons.authentication import user_authentication, Http403
+from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
 from commons.logs import log, log_detailed_exception, log_request
 from commons.logs_exception import TracedServerError
@@ -64,12 +65,10 @@ class Static(Resource):
 
 class Error(Resource):
 
+    @no_cache
     def read(self, request):
         msg = request.GET.get('msg', 'Gadget could not be created')
-        response = HttpResponse(msg, mimetype='text/plain')
-        response['Pragma'] = 'no-cache'
-
-        return response
+        return HttpResponse(msg, mimetype='text/plain')
 
 
 class DeploymentException(Exception):

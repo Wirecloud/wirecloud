@@ -37,7 +37,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import user_authentication, Http403
-from commons.cache import patch_cache_headers
+from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
@@ -119,6 +119,8 @@ def deleteGadget(user, short_name, vendor, version):
 
 
 class GadgetCollection(Resource):
+
+    @no_cache
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
 
@@ -153,6 +155,7 @@ class GadgetCollection(Resource):
 
 class GadgetEntry(Resource):
 
+    @no_cache
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
