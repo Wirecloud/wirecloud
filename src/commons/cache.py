@@ -1,4 +1,3 @@
-from datetime import datetime
 import time
 
 from django.http import HttpResponse
@@ -7,13 +6,14 @@ from django.utils.http import http_date
 from commons.utils import json_encode
 
 
-def patch_cache_headers(response, cache_timestamp, cache_timeout):
+def patch_cache_headers(response, timestamp=None, cache_timeout=None):
 
-    if cache_timestamp:
-        timestamp = int(time.mktime(cache_timestamp.timetuple()))
-        response['Last-Modified'] = http_date(timestamp)
-    else:
-        response['Last-Modified'] = http_date()
+    if timestamp is None:
+        timestamp = time.time() * 1000
+
+    timestamp = int(timestamp)
+    response['Last-Modified'] = http_date(timestamp / 1000)
+    response['ETag'] = '"' + str(timestamp) + '"'
 
     if cache_timeout != None and cache_timeout > 0:
         timeout_str = str(cache_timeout)
@@ -29,7 +29,7 @@ class CacheableData(object):
         self.data = data
 
         if timestamp is None:
-            timestamp = datetime.now()
+            timestamp = time.time() * 1000
         self.timestamp = timestamp
 
         self.timeout = timeout

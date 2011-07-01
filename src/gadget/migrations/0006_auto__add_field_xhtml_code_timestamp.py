@@ -8,7 +8,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Adding field 'XHTML.code_timestamp'
-        db.add_column('gadget_xhtml', 'code_timestamp', self.gf('django.db.models.fields.DateTimeField')(null=True, blank=True), keep_default=False)
+        db.add_column('gadget_xhtml', 'code_timestamp', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True), keep_default=False)
 
     def backwards(self, orm):
 
@@ -120,7 +120,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'XHTML'},
             'cacheable': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'code': ('django.db.models.fields.TextField', [], {}),
-            'code_timestamp': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'code_timestamp': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'content_type': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'uri': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'}),
