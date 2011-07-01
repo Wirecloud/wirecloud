@@ -139,7 +139,7 @@ IGadget.prototype.privateNotifyUnloaded = function () {
 };
 
 IGadget.prototype.getTabId = function () {
-    return "mymwtab_" + window.id;
+    return "mymwtab_" + this.id;
 };
 
 /**

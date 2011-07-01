@@ -163,7 +163,8 @@
 
     // not in YUI
     p.getTabIndexById = function (id) {
-        var index, i;
+        var index = null,
+            i;
         for (i = 0; i < this._tabs.length; i += 1) {
             if (this._tabs[i].get('id') === id) {
                 index = i;

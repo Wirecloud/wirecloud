@@ -48,7 +48,11 @@ var isGecko = ua.indexOf("Gecko") > 0;
 var isWmobile = !isOpera && !isGecko && (ua.indexOf("PPC") > 0 || ua.indexOf("IEMobile") > 0);
 
 function id(nid) {
-    return isWmobile ? document.all[nid] : document.getElementById(nid);
+    if (isWmobile) {
+        return document.all[nid];
+    } else {
+        return document.getElementById(nid);
+    }
 }
 
 function hasClass(nid, classStr) {
