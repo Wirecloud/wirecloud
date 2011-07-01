@@ -273,14 +273,20 @@ CreateWindowMenu.prototype.executeOperation = function() {
     var newName = this.nameInput.value;
     switch (this.element) {
     case 'workSpace':
-        if (!OpManagerFactory.getInstance().workSpaceExists(newName)) {
-            OpManagerFactory.getInstance().addWorkSpace(newName);
-        } else {
-            var msg = gettext('Invalid name: the name \"%(newName)s\" is already in use');
-            msg = interpolate(msg, {newName: newName}, true);
+        if (newName.length === 0) {
+            var msg = gettext("Invalid name: you must write something");
             this.setMsg(msg);
+            this.msgElement.addClassName('error clear');
+        } else {
+            if (!OpManagerFactory.getInstance().workSpaceExists(newName)) {
+                OpManagerFactory.getInstance().addWorkSpace(newName);
+            } else {
+                var msg = gettext('Invalid name: the name \"%(newName)s\" is already in use');
+                msg = interpolate(msg, {newName: newName}, true);
+                this.setMsg(msg);
+                this.msgElement.addClassName('error clear');
+            }
         }
-
         break;
     default:
         break;

@@ -21,6 +21,11 @@
     float: left;
 }
 
+.window_menu .window_content .msg.clear {
+    clear: both;
+    margin-top: 15px;
+}
+
 .window_menu .window_content .msg p {
     margin-top: 0px;
 }
