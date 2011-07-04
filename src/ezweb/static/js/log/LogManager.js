@@ -196,6 +196,21 @@ LogManager.prototype.reset = function() {
     }
 }
 
+LogManager.prototype.refresh = function () {
+    var i = this.entries.length - 1, 
+        reversedEntries = [];
+
+    for (i; i >= 0; i -= 1) {
+        reversedEntries.push(this.entries[i]);
+    }
+
+    this.reset();
+
+    while (reversedEntries.length > 0) {
+        this._addEntry(reversedEntries.pop());
+    }
+};
+
 LogManager.prototype.resetCounters = function() {
     this.errorCount = 0;
     this.totalCount = 0;
@@ -223,6 +238,7 @@ function IGadgetLogManager (iGadget) {
     globalManager.childManagers.push(this);
     this.iGadget = iGadget;
 }
+
 IGadgetLogManager.prototype = new LogManager();
 
 IGadgetLogManager.prototype.buildExtraInfo = function() {
@@ -236,7 +252,6 @@ IGadgetLogManager.prototype.buildExtraInfo = function() {
     extraInfoIcon.className = "igadget_info";
     extraInfoText.innerHTML = this.iGadget.id;
     extraInfoText.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
-
     extraInfo.style.cursor = "pointer";
     extraInfo.observe('click', function() {
         OpManagerFactory.getInstance().showLogs(this);
@@ -298,19 +313,25 @@ var LogManagerFactory = function () {
         });
         $('logs_clear_button').observe('click', function() {
             var i;
-                        this.reset();
-                        this.show();
+            this.reset();
+            this.show();
         }.bind(this));
 
         this.title = $$('#logs_header .title')[0];
         this.sectionIdentifier = $$('#logs_header .section_identifier')[0];
     }
+
     GlobalLogManager.prototype = new LogManager();
 
     GlobalLogManager.prototype.show = function(logManager) {
         var content, title, subtitle;
 
         logManager = logManager != null ? logManager : this;
+
+        if (BrowserUtilsFactory.getInstance().isIE()) {
+            // Hack for IE, it needs to repaint the entries
+            logManager.refresh();
+        }
 
         if (logManager === this) {
             $('logs_igadget_toolbar').removeClassName('selected_section');
@@ -358,11 +379,11 @@ var LogManagerFactory = function () {
         return this.header;
     }
 
-        GlobalLogManager.prototype.buildTitle = function() {
+    GlobalLogManager.prototype.buildTitle = function() {
         return gettext('EzWeb Platform Logs');
     }
 
-        GlobalLogManager.prototype.buildSubTitle = function() {
+    GlobalLogManager.prototype.buildSubTitle = function() {
         return '';
     }
 
