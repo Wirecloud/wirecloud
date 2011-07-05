@@ -196,18 +196,13 @@ LogManager.prototype.reset = function() {
     }
 }
 
-LogManager.prototype.refresh = function () {
-    var i = this.entries.length - 1, 
-        reversedEntries = [];
+LogManager.prototype.repaint = function () {
+    var i;
 
-    for (i; i >= 0; i -= 1) {
-        reversedEntries.push(this.entries[i]);
-    }
+    this.wrapperElement.innerHTML = "";
 
-    this.reset();
-
-    while (reversedEntries.length > 0) {
-        this._addEntry(reversedEntries.pop());
+    for (i = 0; i < this.entries.length; i += 1) {
+        this._printEntry(this.entries[i]);
     }
 };
 
@@ -241,7 +236,7 @@ function IGadgetLogManager (iGadget) {
 
 IGadgetLogManager.prototype = new LogManager();
 
-IGadgetLogManager.prototype.buildExtraInfo = function() {
+IGadgetLogManager.prototype.buildExtraInfo = function () {
     var extraInfo = document.createElement('div'),
         extraInfoIcon = document.createElement('div'),
         extraInfoText = document.createElement('span');
@@ -330,7 +325,7 @@ var LogManagerFactory = function () {
 
         if (BrowserUtilsFactory.getInstance().isIE()) {
             // Hack for IE, it needs to repaint the entries
-            logManager.refresh();
+            logManager.repaint();
         }
 
         if (logManager === this) {
