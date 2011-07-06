@@ -70,9 +70,8 @@ body.dragboard_view, body.wiring_view{
 
 /* SMALL toolbar button hover */
 #ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover, #logs_header .toolbar_menu_small > div:hover {
-	color: ;
 	font-weight: bold;
-	background: ;
+	background: #FFFFFF;
 	text-decoration: underline;
 }
 #ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover, #logs_header .toolbar_menu_small > div.selected_section:hover {
