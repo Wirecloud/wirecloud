@@ -82,9 +82,9 @@ var MosaicViewFactory = function () {
 
         this.gadgets_painter = new ResourcesPainter(this.RESOURCE_TEMPLATE);
         this.mashups_painter = new ResourcesPainter(this.RESOURCE_TEMPLATE);
-        this.pagination_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-        this.resource_details_painter = new ListView_ResourceDetailsPainter(this.resource_details_structure_dom);
-        this.developer_info_painter = new ListView_DeveloperInfoPainter(this.developer_info_structure_dom);
+        this.pagination_painter = new PaginationPainter(this.pagination_structure_dom);
+        this.resource_details_painter = new ResourceDetailsPainter(this.resource_details_structure_dom);
+        this.developer_info_painter = new DeveloperInfoPainter(this.developer_info_structure_dom);
 
         this.catalogue = new Catalogue(catalogue_element, this.dom_wrapper);
 

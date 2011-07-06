@@ -80,11 +80,11 @@ var ListViewFactory  = function () {
         this.user_command_manager = new UserCommandManager(this.dom_wrapper);
         this.resp_command_dispatcher = new ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
 
-        this.gadgets_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
-        this.mashups_painter = new ListView_ResourcesPainter(this.resource_structure_dom);
-        this.pagination_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-        this.resource_details_painter = new ListView_ResourceDetailsPainter(this.resource_details_structure_dom);
-        this.developer_info_painter = new ListView_DeveloperInfoPainter(this.developer_info_structure_dom);
+        this.gadgets_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
+        this.mashups_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
+        this.pagination_painter = new PaginationPainter(this.pagination_structure_dom);
+        this.resource_details_painter = new ResourceDetailsPainter(this.resource_details_structure_dom);
+        this.developer_info_painter = new DeveloperInfoPainter(this.developer_info_structure_dom);
 
         this.catalogue = new Catalogue(catalogue_element, this.dom_wrapper);
 
