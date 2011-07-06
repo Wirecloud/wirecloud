@@ -868,6 +868,10 @@ button {
     padding-right: 20px;
 }
 
+#logs_header .section_identifier {
+    width: auto;
+}
+
 #logs_console .igadget_info_container {
     display: inline-block;
     margin-right: 10px;
