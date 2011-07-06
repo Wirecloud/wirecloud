@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EzWeb-Platform 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-17 13:17+0100\n"
-"PO-Revision-Date: 2011-03-25 09:27+0100\n"
+"POT-Creation-Date: 2011-07-06 11:34+0200\n"
+"PO-Revision-Date: 2011-07-06 11:46+0200\n"
 "Last-Translator: Álvaro Arranz García <aarranz@yaco.es>\n"
 "Language-Team: Español/España <>\n"
 "Language: es\n"
@@ -19,16 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: media/clms/js/change_field.js:34 media/clms/js/change_field.js.py:134
-msgid "File"
-msgstr "Fichero"
-
-#: media/clms/js/change_field.js:102
-msgid "Wizard"
-msgstr "Asistente"
-
-#: media/iphone/dragboard/iGadget.js:145 media/iphone/gadgetModel/Gadget.js:60
-#: media/iphone/opManager/WorkSpace.js:69 media/js/log/LogManager.js:164
+#: ezweb/static/iphone/dragboard/iGadget.js:155
+#: ezweb/static/iphone/gadgetModel/Gadget.js:159
+#: ezweb/static/iphone/opManager/WorkSpace.js:74
+#: ezweb/static/js/log/LogManager.js:155
 msgid ""
 "JavaScript exception on file %(errorFile)s (line: %(errorLine)s): "
 "%(errorDesc)s"
@@ -36,11 +30,12 @@ msgstr ""
 "Excepción de JavaScript en el fichero %(errorFile)s (línea: %(errorLine)s): "
 "%(errorDesc)s"
 
-#: media/iphone/dragboard/iGadget.js:154 media/js/dragboard/iGadget.js:1895
+#: ezweb/static/iphone/dragboard/iGadget.js:167
 msgid "Error adding igadget to persistence: %(errorMsg)s."
 msgstr "Error al añadir el igadget en la persistencia: %(errorMsg)s."
 
-#: media/iphone/dragboard/iGadget.js:159 media/js/dragboard/dragboard.js:347
+#: ezweb/static/iphone/dragboard/iGadget.js:173
+#: ezweb/static/js/dragboard/dragboard.js:358
 msgid ""
 "The destination tab (%(tabName)s) is locked. Try to unlock it or select an "
 "unlocked tab."
@@ -48,75 +43,74 @@ msgstr ""
 "La pestaña de destino (%(tabName)s) está bloqueada. Intente desbloquearla o "
 "seleccione una pestaña no bloqueada."
 
-#: media/iphone/gadgetModel/Gadget.js:69 media/js/gadgetModel/Gadget.js:75
-msgid "The gadget could not be added to the showcase: %(errorMsg)s."
-msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
-
-#: media/iphone/gadgetModel/Gadget.js:140 media/js/gadgetModel/Gadget.js:163
+#: ezweb/static/iphone/gadgetModel/Gadget.js:82
+#: ezweb/static/js/gadgetModel/Gadget.js:167
 msgid ""
 "[GadgetVendor: %(vendor)s, GadgetName: %(name)s, GadgetVersion: %(version)s]"
 msgstr ""
 "[Distribuidor del gadget: %(vendor)s, nombre del gadget: %(name)s, versión: "
 "%(version)s]"
 
-#: media/js/catalogue/services.js:190
+#: ezweb/static/iphone/gadgetModel/Gadget.js:170
+#: ezweb/static/js/gadgetModel/Gadget.js:92
+msgid "The gadget could not be added to the showcase: %(errorMsg)s."
+msgstr "No se pudo añadir el gadget al showcase: %(errorMsg)s."
+
+#: ezweb/static/js/catalogue/services.js:195
 msgid "Error searching the catalogue: %(errorMsg)s."
 msgstr "Error al buscar en el catálogo: %(errorMsg)s"
 
-#: media/js/catalogue/services.js:325
-msgid "Error changing the preferred version of this resource: %(errorMsg)s."
-msgstr "Error al actualizar la versión favorita del recurso: %(errorMsg)s."
-
-#: media/js/catalogue/services.js:349
+#: ezweb/static/js/catalogue/services.js:257
 msgid "The resource could not be added to the catalogue: %(errorMsg)s."
 msgstr "No se pudo añadir el recurso al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/services.js:359
+#: ezweb/static/js/catalogue/services.js:267
 msgid "Processing catalogue response"
 msgstr "Procesando la respuesta del catálogo"
 
-#: media/js/catalogue/services.js:371
+#: ezweb/static/js/catalogue/services.js:279
 msgid "Adding the resource to the catalogue"
 msgstr "Añadiendo el recurso al catálogo"
 
-#: media/js/catalogue/services.js:372
+#: ezweb/static/js/catalogue/services.js:280
 msgid "Sending resource template to the catalogue"
 msgstr "Enviando la plantilla del recurso al catálogo"
 
-#: media/js/catalogue/services.js:401
+#: ezweb/static/js/catalogue/services.js:309
 msgid "The resource could not be added to the catalogue: %(errorMsg)s"
 msgstr "El recurso no pudo ser añadido al catálogo: %(errorMsg)s."
 
-#: media/js/catalogue/services.js:409
+#: ezweb/static/js/catalogue/services.js:317
 msgid "Gadget uploaded successfully"
 msgstr "Gadget subido correctamente"
 
-#: media/js/catalogue/services.js:422
+#: ezweb/static/js/catalogue/services.js:330
 msgid "Uploading packaged gadget"
 msgstr "Subiendo gadget empaquetado"
 
-#: media/js/catalogue/services.js:439
+#: ezweb/static/js/catalogue/services.js:347
 msgid "Removing affected iGadgets"
 msgstr "Eliminando los iGadgets afectados"
 
-#: media/js/catalogue/services.js:445
+#: ezweb/static/js/catalogue/services.js:353
 msgid "Purging gadget info"
 msgstr "Eliminando la información del gadget"
 
-#: media/js/catalogue/services.js:457 media/js/catalogue/services.js.py:505
-#: media/js/catalogue/services.js:547
+#: ezweb/static/js/catalogue/services.js:365
+#: ezweb/static/js/catalogue/services.js:413
+#: ezweb/static/js/catalogue/services.js:454
 msgid "Error deleting the Gadget: %(errorMsg)s."
 msgstr "Error al eliminar el gadget: %(errorMsg)s"
 
-#: media/js/catalogue/services.js:466
+#: ezweb/static/js/catalogue/services.js:374
 msgid "Deleting gadget resource from catalogue"
 msgstr "Eliminando el gadget del catálogo"
 
-#: media/js/catalogue/services.js:467
+#: ezweb/static/js/catalogue/services.js:375
 msgid "Requesting server"
 msgstr "Enviando petición al servidor"
 
-#: media/js/catalogue/services.js:475
+#: ezweb/static/js/catalogue/services.js:383
 msgid ""
 "Do you really want to remove the \"%(name)s\" (vendor: \"%(vendor)s\", "
 "version: \"%(version)s\") gadget?"
@@ -124,209 +118,192 @@ msgstr ""
 "¿Realmente quieres eliminar el gadget \"%(name)s\" (vendedor: \"%(vendor)s"
 "\", versión: \"%(version)s\")?"
 
-#: media/js/catalogue/services.js:496 media/js/catalogue/services.js.py:538
-#: media/js/catalogue/services.js:586 media/js/catalogue/services.js.py:630
+#: ezweb/static/js/catalogue/services.js:404
+#: ezweb/static/js/catalogue/services.js:445
+#: ezweb/static/js/catalogue/services.js:492
+#: ezweb/static/js/catalogue/services.js:535
 msgid "Done!"
 msgstr "¡Hecho!"
 
-#: media/js/catalogue/services.js:509
+#: ezweb/static/js/catalogue/services.js:417
 msgid ""
 "Error: the Gadget has not cached its HTML code. Instantiate it previously!"
 msgstr ""
 "Error: la plataforma no tiene almacenado el código HTML del gadget. Es "
 "necesario instanciarlo antes de realizar esta operación."
 
-#: media/js/catalogue/services.js:551
+#: ezweb/static/js/catalogue/services.js:458
 msgid "Error during voting!"
 msgstr "Error durante el proceso de votado"
 
-#: media/js/catalogue/services.js:595 media/js/catalogue/services.js.py:639
+#: ezweb/static/js/catalogue/services.js:501
+#: ezweb/static/js/catalogue/services.js:544
 msgid "Error tagging Gadget: %(errorMsg)s."
 msgstr "Error al etiquetar el gadget: %(errorMsg)s."
 
-#: media/js/catalogue/services.js:599 media/js/catalogue/services.js.py:643
+#: ezweb/static/js/catalogue/services.js:505
+#: ezweb/static/js/catalogue/services.js:548
 msgid "Error during tagging!"
 msgstr "Error durante el proceso de etiquetado"
 
-#: media/js/catalogue/views/html_painters.js:91
-#: media/js/interfaceLayout/WindowMenu.js:371
-msgid "Buy"
-msgstr "Comprar"
+#: ezweb/static/js/catalogue/user_commands.js:409
+msgid "latest"
+msgstr "última"
 
-#: media/js/catalogue/views/html_painters.js:94
-#: media/js/catalogue/views/list/html_painters.js:85
+#: ezweb/static/js/catalogue/views/html_painters.js:89
+#: ezweb/static/js/catalogue/views/list/html_painters.js:88
 msgid "Add"
 msgstr "Añadir"
 
-#: media/js/catalogue/views/list/html_painters.js:310
+#: ezweb/static/js/catalogue/views/list/html_painters.js:294
 msgid ""
 "The resource you are adding to the catalogue is not the latest version. "
 msgstr "El recurso que estás añadiendo al catálogo no es la última versión."
 
-#: media/js/cmsutils/widgets/SelectFilter2.js:62
-msgid "Clear all"
-msgstr "Eliminar todas"
-
-#: media/js/common/constants.js:34
+#: ezweb/static/js/common/constants.js:34
 msgid "Connection Refused"
 msgstr "Conexión rechazada"
 
-#: media/js/common/constants.js:35
+#: ezweb/static/js/common/constants.js:35
 msgid "Bad Request"
 msgstr "Petición incorrecta"
 
-#: media/js/common/constants.js:36
+#: ezweb/static/js/common/constants.js:36
 msgid "Unauthorized"
 msgstr "No autorizado"
 
-#: media/js/common/constants.js:37
+#: ezweb/static/js/common/constants.js:37
 msgid "Payment Required"
 msgstr "Se requiere pago"
 
-#: media/js/common/constants.js:38
+#: ezweb/static/js/common/constants.js:38
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: media/js/common/constants.js:39
+#: ezweb/static/js/common/constants.js:39
 msgid "Not Found"
 msgstr "No encontrado"
 
-#: media/js/common/constants.js:40
+#: ezweb/static/js/common/constants.js:40
 msgid "Method Not Allowed"
 msgstr "Método no permitido"
 
-#: media/js/common/constants.js:41
+#: ezweb/static/js/common/constants.js:41
 msgid "Not Acceptable"
 msgstr "No aceptable"
 
-#: media/js/common/constants.js:42
+#: ezweb/static/js/common/constants.js:42
 msgid "Proxy Authentication Required"
 msgstr "Se requiere autenticación en el proxy"
 
-#: media/js/common/constants.js:43
+#: ezweb/static/js/common/constants.js:43
 msgid "Request Timeout"
 msgstr "Tiempo de espera agotado"
 
-#: media/js/common/constants.js:44
+#: ezweb/static/js/common/constants.js:44
 msgid "Conflict"
 msgstr "Conflicto"
 
-#: media/js/common/constants.js:45
+#: ezweb/static/js/common/constants.js:45
 msgid "Gone"
 msgstr "Ya no disponible"
 
-#: media/js/common/constants.js:46
+#: ezweb/static/js/common/constants.js:46
 msgid "Length Required"
 msgstr "Requiere longitud"
 
-#: media/js/common/constants.js:47
+#: ezweb/static/js/common/constants.js:47
 msgid "Precondition Failed"
 msgstr "Falló precondición"
 
-#: media/js/common/constants.js:48
+#: ezweb/static/js/common/constants.js:48
 msgid "Request Entity Too Large"
 msgstr "Solicitud demasiado larga"
 
-#: media/js/common/constants.js:49
+#: ezweb/static/js/common/constants.js:49
 msgid "Request-URI Too Long"
 msgstr "URI demasiado larga"
 
-#: media/js/common/constants.js:50
+#: ezweb/static/js/common/constants.js:50
 msgid "Unsupported Media Type"
 msgstr "Tipo de medio no soportado"
 
-#: media/js/common/constants.js:51
+#: ezweb/static/js/common/constants.js:51
 msgid "Requested Range Not Satisfiable"
 msgstr "Rango solicitado no disponible"
 
-#: media/js/common/constants.js:52
+#: ezweb/static/js/common/constants.js:52
 msgid "Expectation Failed"
 msgstr "Falló expectativa"
 
-#: media/js/common/constants.js:53
+#: ezweb/static/js/common/constants.js:53
 msgid "Unprocessable Entity"
 msgstr "Entidad no procesable"
 
-#: media/js/common/constants.js:54
+#: ezweb/static/js/common/constants.js:54
 msgid "Locked"
 msgstr "Bloqueado"
 
-#: media/js/common/constants.js:55
+#: ezweb/static/js/common/constants.js:55
 msgid "Failed Dependency"
 msgstr "Falló dependencia"
 
-#: media/js/common/constants.js:56
+#: ezweb/static/js/common/constants.js:56
 msgid "Upgrade Required"
 msgstr "Actualización requerida"
 
-#: media/js/common/constants.js:57
+#: ezweb/static/js/common/constants.js:57
 msgid "Internal Server Error"
 msgstr "Error interno del servidor"
 
-#: media/js/common/constants.js:58
+#: ezweb/static/js/common/constants.js:58
 msgid "Not Implemented"
 msgstr "No implementado"
 
-#: media/js/common/constants.js:59
+#: ezweb/static/js/common/constants.js:59
 msgid "Bad Gateway"
 msgstr "Pasarela incorrecta"
 
-#: media/js/common/constants.js:60
+#: ezweb/static/js/common/constants.js:60
 msgid "Service Unavailable"
 msgstr "Servicio no disponible"
 
-#: media/js/common/constants.js:61
+#: ezweb/static/js/common/constants.js:61
 msgid "Gateway Timeout"
 msgstr "Tiempo de espera de la pasarela agotado"
 
-#: media/js/common/constants.js:62
+#: ezweb/static/js/common/constants.js:62
 msgid "HTTP Version Not Supported"
 msgstr "Versión de HTTP no soportada"
 
-#: media/js/common/constants.js:63
+#: ezweb/static/js/common/constants.js:63
 msgid "Variant Also Negotiates"
 msgstr "Variante también negocia"
 
-#: media/js/common/constants.js:64
+#: ezweb/static/js/common/constants.js:64
 msgid "Insufficient Storage"
 msgstr "Almacenamiento insuficiente"
 
-#: media/js/common/constants.js:65
+#: ezweb/static/js/common/constants.js:65
 msgid "Loop Detected"
 msgstr "Detectado bucle"
 
-#: media/js/common/constants.js:66
+#: ezweb/static/js/common/constants.js:66
 msgid "Not Extended"
 msgstr "No extendido"
 
-#: media/js/common/constants.js:69
+#: ezweb/static/js/common/constants.js:69
 msgid "Unknown status code"
 msgstr "Código de estado desconocido"
 
-#: media/js/common/utils.js:85
-msgid "There is not any icon identified by \"%(iconId)s\"."
-msgstr "No hay ningún icono identificado por \"%(iconId)s\"."
-
-#: media/js/common/utils.js:105
-msgid "Loading theme images"
-msgstr "Cargando imágenes del tema"
-
-#: media/js/common/utils.js:118
-msgid "%(current)s/%(total)s Error loading %(image)s"
-msgstr "%(current)s/%(total)s Error al cargar la imagen %(image)s"
-
-#: media/js/common/utils.js:121
-msgid "%(current)s/%(total)s %(image)s"
-msgstr "%(current)s/%(total)s %(image)s"
-
-#: media/js/contextManager/Adaptors.js:43
-#: media/js/contextManager/Adaptors.js:45
-#: media/js/contextManager/Adaptors.js:68
+#: ezweb/static/js/contextManager/Adaptors.js:43
+#: ezweb/static/js/contextManager/Adaptors.js:45
+#: ezweb/static/js/contextManager/Adaptors.js:68
 msgid "Error getting concept %(concept)s: %(errorMsg)s."
 msgstr "Error al recibir el concepto %(concept)s: %(errorMsg)s."
 
-#: media/js/contextManager/ContextManager.js:46
-#: media/js/contextManager/ContextManager.js:106
+#: ezweb/static/js/contextManager/ContextManager.js:46
+#: ezweb/static/js/contextManager/ContextManager.js:109
 msgid ""
 "There is not any concept of type \"%(type)s\" called \"%(concept)s\", the "
 "value of the iGadget variable \"%(varName)s\" will be empty."
@@ -334,7 +311,7 @@ msgstr ""
 "No existe ningún concepto del tipo \"%(type)s\" llamada \"%(concept)s\", el "
 "valor de la variable \"%(varName)s\" iGadget estará vacía."
 
-#: media/js/contextManager/ContextManager.js:75
+#: ezweb/static/js/contextManager/ContextManager.js:75
 msgid ""
 "WARNING: concept name '%(cname)s' is already related to '%(concept)s'. New "
 "related concept is '%(newConcept)s'."
@@ -342,31 +319,31 @@ msgstr ""
 "AVISO: el nombre del concepto '%(cname)s' ya está relacionado con '%(concept)"
 "s'. El nuevo concepto relacionado es '%(newConcept)s'."
 
-#: media/js/contextManager/ContextPlatform.js:137
-#: media/js/contextManager/ContextPlatform.js:143
+#: ezweb/static/js/contextManager/ContextPlatform.js:139
+#: ezweb/static/js/contextManager/ContextPlatform.js:145
 msgid "Concept does not have value, this is a Gadget Concept."
 msgstr "El concepto no tiene valor, este es un Concepto de Gadget"
 
-#: media/js/contextManager/ContextPlatform.js:198
+#: ezweb/static/js/contextManager/ContextPlatform.js:200
 msgid "Unexpected igadget variables. Concept does not have type yet."
 msgstr ""
 "Variables de igadget no esperadas. El concepto no tiene tipo asociado "
 "todavía."
 
-#: media/js/contextManager/ContextPlatform.js:222
+#: ezweb/static/js/contextManager/ContextPlatform.js:224
 msgid "Concept does not have type yet."
 msgstr "El concepto no tiene tipo aún."
 
-#: media/js/dragboard/DragboardLayout.js:117
-#: media/js/dragboard/DragboardLayout.js:123
-#: media/js/dragboard/DragboardLayout.js:129
-#: media/js/dragboard/DragboardLayout.js:135
+#: ezweb/static/js/dragboard/DragboardLayout.js:132
+#: ezweb/static/js/dragboard/DragboardLayout.js:138
+#: ezweb/static/js/dragboard/DragboardLayout.js:144
+#: ezweb/static/js/dragboard/DragboardLayout.js:150
 msgid "method \"%(method)s\" must be implemented."
 msgstr "el método \"%(method)s\" debe ser implementado"
 
-#: media/js/dragboard/FreeLayout.js:166
-#: media/js/dragboard/FullDragboardLayout.js:140
-#: media/js/dragboard/SmartColumnLayout.js:550
+#: ezweb/static/js/dragboard/FreeLayout.js:175
+#: ezweb/static/js/dragboard/FullDragboardLayout.js:145
+#: ezweb/static/js/dragboard/SmartColumnLayout.js:639
 msgid ""
 "There was a pending move that was cancelled because initializedMove function "
 "was called before it was finished."
@@ -374,94 +351,199 @@ msgstr ""
 "Hay un movimiento pendiente que ha sido cancelado sin haber terminado dado "
 "que se ha llamado a la función initializeMove."
 
-#: media/js/dragboard/UserPref.js:139
-msgid "is shared?"
-msgstr "¿está compartido?"
+#: ezweb/static/js/dragboard/FreeLayout.js:191
+#: ezweb/static/js/dragboard/FullDragboardLayout.js:155
+#: ezweb/static/js/dragboard/SmartColumnLayout.js:720
+msgid ""
+"Dragboard: You must call initializeMove function before calling to this "
+"function (moveTemporally)."
+msgstr ""
+"Dragboard: Hay que llamar a la función initializeMove antes de llamar a esta "
+"función (moveTemporally)."
 
-#: media/js/dragboard/UserPref.js:145
-msgid "edit shared value"
-msgstr "editar valor compartido"
+#: ezweb/static/js/dragboard/FreeLayout.js:202
+#: ezweb/static/js/dragboard/FullDragboardLayout.js:163
+#: ezweb/static/js/dragboard/SmartColumnLayout.js:763
+msgid "Function acceptMove called when there is not an started igadget move."
+msgstr ""
+"Función acceptMove llamada cuando no hay ningún movimiento de igadget activo."
 
-#: media/js/dragboard/dragboard.js:87 media/js/wiring/connectable.js:464
+#: ezweb/static/js/dragboard/FreeLayout.js:257
+msgid "No Floating Gadgets"
+msgstr "No hay gadget flotantes"
+
+#: ezweb/static/js/dragboard/FullDragboardLayout.js:173
+#: ezweb/static/js/dragboard/SmartColumnLayout.js:748
+msgid "Trying to cancel an inexistant temporal move."
+msgstr "Intentando cancelar un movimiento temporal inexistente."
+
+#: ezweb/static/js/dragboard/dragboard.js:93
+#: ezweb/static/js/wiring/connectable.js:459
 msgid "Error committing dragboard changes to persistence: %(errorMsg)s."
 msgstr "Error al almacenar los cambios en el servidor: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:605
+#: ezweb/static/js/dragboard/iGadget.js:337
+msgid "Error saving the new transparency value into persistence: %(errorMsg)s."
+msgstr ""
+"Error al guardar el valor de transparencia en el servidor: %(errorMsg)s."
+
+#: ezweb/static/js/dragboard/iGadget.js:369
+msgid "Snap to grid"
+msgstr "Ajustar a la rejilla"
+
+#: ezweb/static/js/dragboard/iGadget.js:377
+msgid "This iGadget is outside the grid."
+msgstr "Este iGadget está fuera de la rejilla."
+
+#: ezweb/static/js/dragboard/iGadget.js:381
+msgid "Extract from grid"
+msgstr "Extraer de la rejilla"
+
+#: ezweb/static/js/dragboard/iGadget.js:389
+msgid "This iGadget is aligned to the grid."
+msgstr "Este iGadget está alineado a la rejilla."
+
+#: ezweb/static/js/dragboard/iGadget.js:406
+msgid "Exit Full Dragboard"
+msgstr "Salir de Pantalla Completa"
+
+#: ezweb/static/js/dragboard/iGadget.js:415
+msgid "Full Dragboard"
+msgstr "Pantalla Completa"
+
+#: ezweb/static/js/dragboard/iGadget.js:456
+#: ezweb/static/js/dragboard/iGadget.js:457
+msgid "Close"
+msgstr "Cerrar"
+
+#: ezweb/static/js/dragboard/iGadget.js:475
+#: ezweb/static/js/dragboard/iGadget.js:476
+msgid "Menu"
+msgstr "Menú"
+
+#: ezweb/static/js/dragboard/iGadget.js:488
+#: ezweb/static/js/dragboard/iGadget.js:489
+#: ezweb/static/js/dragboard/iGadget.js:1734
+#: ezweb/static/js/dragboard/iGadget.js:1735
+msgid "Maximize"
+msgstr "Maximizar"
+
+#: ezweb/static/js/dragboard/iGadget.js:492
+#: ezweb/static/js/dragboard/iGadget.js:493
+#: ezweb/static/js/dragboard/iGadget.js:1744
+#: ezweb/static/js/dragboard/iGadget.js:1745
+msgid "Minimize"
+msgstr "Minimizar"
+
+#: ezweb/static/js/dragboard/iGadget.js:517
+msgid ""
+"<p><b>Do you really want to update \"%(igadgetName)s\" to its latest version?"
+"</b><br />The gadget state and connections will be kept, if possible."
+"<p>Note: It will reload your workspace</p>"
+msgstr ""
+"<p><b>¿Realmente quiere actualizar \"%(igadgetName)s\" a su última versión?</"
+"b><br />Siempre que sea posible, se conservará el estado y las conexiones "
+"del gadget.<p>Aviso: Esta operación recargará el entorno de trabajo</p>"
+
+#: ezweb/static/js/dragboard/iGadget.js:607
 msgid "Access to Information"
 msgstr "Acceder a la información"
 
-#: media/js/dragboard/iGadget.js:776 media/js/opManager/Tab.js:619
-#: media/js/opManager/WorkSpace.js:850
+#: ezweb/static/js/dragboard/iGadget.js:794
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:872
+#: ezweb/static/js/opManager/Tab.js:573
+#: ezweb/static/js/opManager/WorkSpace.js:888
 msgid "Preferences"
 msgstr "Preferencias"
 
-#: media/js/dragboard/iGadget.js:785
+#: ezweb/static/js/dragboard/iGadget.js:803
 msgid "Menu Bar Color..."
 msgstr "Color de la barra..."
 
-#: media/js/dragboard/iGadget.js:802
-msgid "Transparency"
-msgstr "Transparencia"
-
-#: media/js/dragboard/iGadget.js:815
-msgid "Lower"
-msgstr "Bajar"
-
-#: media/js/dragboard/iGadget.js:822
-msgid "Raise"
-msgstr "Elevar"
-
-#: media/js/dragboard/iGadget.js:829
+#: ezweb/static/js/dragboard/iGadget.js:853
 msgid "Lower To Bottom"
 msgstr "Enviar al fondo"
 
-#: media/js/dragboard/iGadget.js:837
+#: ezweb/static/js/dragboard/iGadget.js:861
 msgid "Raise To Top"
 msgstr "Traer al frente"
 
-#: media/js/dragboard/iGadget.js:1080
+#: ezweb/static/js/dragboard/iGadget.js:974
+msgid "Name changed from \"%(oldName)s\" to \"%(newName)s\" succesfully"
+msgstr ""
+"El nombre fue cambiado correctamente de \"%(oldName)s\" a \"%(newName)s\""
+
+#: ezweb/static/js/dragboard/iGadget.js:979
+msgid "Error renaming igadget from persistence: %(errorMsg)s."
+msgstr "Error al renombrar el igadget en la persistencia: %(errorMsg)s."
+
+#: ezweb/static/js/dragboard/iGadget.js:1027
+msgid ""
+"There is a new version of this gadget available. Current version: "
+"%(currentVersion)s - Last version: %(lastVersion)s"
+msgstr ""
+"Hay una nueva versión de este gadget. Versión actual: %(currentVersion)s - "
+"Última versión: %(lastVersion)s"
+
+#: ezweb/static/js/dragboard/iGadget.js:1039
+msgid "Do you want to remove the notice of the new version available?"
+msgstr "¿Desea eliminar el aviso de nueva versión?"
+
+#: ezweb/static/js/dragboard/iGadget.js:1050
+msgid ""
+"Error setting the refused version of the igadget to persistence: %(errorMsg)"
+"s."
+msgstr ""
+"Error al guardar la versión del gadget rechazada en el servidor: %(errorMsg)"
+"s."
+
+#: ezweb/static/js/dragboard/iGadget.js:1087
+msgid ""
+"<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
+"updated</b> because its version is not compatible "
+msgstr ""
+"<p>Lo sentimos, pero el gadget \"%(igadgetName)s\" <b>NO</b> pudo ser "
+"actualizado automaticamente porque las versiones no son compatibles "
+
+#: ezweb/static/js/dragboard/iGadget.js:1142
 msgid "Error updating igadget's menu color into persistence: %(errorMsg)s."
 msgstr ""
 "Error al actualizar el color de la barra de menú del igadget en la "
 "persistencia: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:1139
+#: ezweb/static/js/dragboard/iGadget.js:1203
 msgid "iGadget deleted"
 msgstr "el iGadget fue eliminado"
 
-#: media/js/dragboard/iGadget.js:1154
+#: ezweb/static/js/dragboard/iGadget.js:1218
 msgid "Error removing igadget from persistence: %(errorMsg)s."
 msgstr "Error al eliminar el igadget de la persistencia: %(errorMsg)s."
 
-#: media/js/dragboard/iGadget.js:1236
+#: ezweb/static/js/dragboard/iGadget.js:1318
 msgid "This IGadget does not have any user prefs"
 msgstr "Este IGadget no tiene preferencias de usuario"
 
-#: media/js/dragboard/iGadget.js:1251
-msgid "Shared Values"
-msgstr "Valores compartidos"
-
-#: media/js/dragboard/iGadget.js:1268
+#: ezweb/static/js/dragboard/iGadget.js:1329
 msgid "Set Defaults"
 msgstr "Predeterminados"
 
-#: media/js/dragboard/iGadget.js:1275
-#: media/js/interfaceLayout/WindowMenu.js:1518
+#: ezweb/static/js/dragboard/iGadget.js:1336
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1342
 msgid "Save"
 msgstr "Guardar"
 
-#: media/js/dragboard/iGadget.js:1282
-#: media/js/interfaceLayout/WindowMenu.js:558
-#: media/js/interfaceLayout/WindowMenu.js:941
-#: media/js/interfaceLayout/WindowMenu.js:1526
+#: ezweb/static/js/dragboard/iGadget.js:1347
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:231
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:496
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1350
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: media/js/dragboard/iGadget.js:1389
+#: ezweb/static/js/dragboard/iGadget.js:1463
 msgid "iGadget loaded"
 msgstr "iGadget cargado"
 
-#: media/js/dragboard/iGadget.js:1400
+#: ezweb/static/js/dragboard/iGadget.js:1474
 msgid ""
 "%(errorCount)s error for the iGadget \"%(name)s\" was notified before it was "
 "loaded"
@@ -475,178 +557,86 @@ msgstr[1] ""
 "Se notificaron %(errorCount)s errores para el iGadget \"%(name)s\" antes de "
 "que se cargara"
 
-#: media/js/dragboard/iGadget.js:1431
+#: ezweb/static/js/dragboard/iGadget.js:1506
 msgid "iGadget unloaded"
 msgstr "iGadget descargado"
 
-#: media/js/dragboard/iGadget.js:2031
+#: ezweb/static/js/dragboard/iGadget.js:1814
+#: ezweb/static/js/log/LogManager.js:366
+msgid "%(errorCount)s error"
+msgid_plural "%(errorCount)s errors"
+msgstr[0] "%(errorCount)s error"
+msgstr[1] "%(errorCount)s errores"
+
+#: ezweb/static/js/dragboard/iGadget.js:2145
 msgid "Error saving changes to persistence: %(errorMsg)s."
 msgstr "Error al guardar los cambios en el servidor: %(errorMsg)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:64
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:64
 msgid "The following required fields are empty: %(fields)s."
 msgstr "Los siguientes campos obligatorios están vacíos: %(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:67
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:67
 msgid "The following fields do not contain a valid URL: %(fields)s."
 msgstr "Los siguientes campos no contienen una URL válida: %(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:70
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:70
 msgid "The following fields do not contain a valid E-Mail address: %(fields)s."
 msgstr ""
 "Los siguientes campos no contienen una dirección de correo electrónico "
 "válida: %(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:73
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:73
 msgid "The following field do not contain a valid version number: %(fields)s."
 msgstr ""
 "Los siguientes campos no contienen número de versión válido: %(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:76
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:76
 msgid "The following fields contain invalid characters: %(fields)s."
 msgstr "Los siguientes campos contienen caracteres inválidos: %(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:79
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:79
 msgid "The following fields do not contain a valid color value: %(fields)s."
 msgstr ""
 "Los siguientes campos no contienen un valor válido para describir un color: "
 "%(fields)s."
 
-#: media/js/interfaceLayout/InputInterfaces.js:343
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:358
 msgid "Choose a local file"
 msgstr "Elegir un fichero local"
 
-#: media/js/interfaceLayout/InputInterfaces.js:391
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:406
 msgid "Format: X.X.X, where X is an integer."
 msgstr "Formato: X.X.X, siendo X un número entero."
 
-#: media/js/interfaceLayout/InputInterfaces.js:392
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:407
 msgid "Ex. \"0.1\", \"1.11\". NOTE: 1.01 should be 1.0.1"
 msgstr "Ejemplo: \"0.1\", \"1.11\". NOTA: 1.01 debería ser 1.0.1"
 
-#: media/js/interfaceLayout/InputInterfaces.js:582
+#: ezweb/static/js/interfaceLayout/InputInterfaces.js:597
 msgid ""
 "Hold down \"Control\", or \"Command\" on a Mac, to select more than one item"
 msgstr ""
 "Mantén pulsado la tecla \"Control\" (o la tecla \"Command\" en Mac) para "
 "seleccionar más de un elemento."
 
-#: media/js/interfaceLayout/InputInterfaces.js:745
-msgid "Parametrize"
-msgstr "Parametrizar"
-
-#: media/js/interfaceLayout/InputInterfaces.js:747
-msgid "Modify"
-msgstr "Modificar"
-
-#: media/js/interfaceLayout/InputInterfaces.js:752
-msgid "This value won't be editable by the user"
-msgstr "Este valor no será editable por el usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:755
-msgid "This value will be editable by the user"
-msgstr "Este valor será editable por el usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:760
-msgid "This value will be visible to the user"
-msgstr "Este valor será visible para el usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:763
-msgid "This value won't be visible to the user"
-msgstr "Este valor no será visible para el usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:789
-msgid "User"
-msgstr "Usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:792
-msgid "User Name"
-msgstr "Nombre de usuario"
-
-#: media/js/interfaceLayout/InputInterfaces.js:793
-msgid "First Name"
-msgstr "Nombre"
-
-#: media/js/interfaceLayout/InputInterfaces.js:794
-msgid "Last Name"
-msgstr "Apellido"
-
-#: media/js/interfaceLayout/InputInterfaces.js:798
-msgid "Context"
-msgstr "Contexto"
-
-#: media/js/interfaceLayout/InputInterfaces.js:809
-#: media/js/interfaceLayout/WindowMenu.js:1787
-msgid "Use current value"
-msgstr "Usar el valor actual"
-
-#: media/js/interfaceLayout/LayoutManager.js:111
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:115
 msgid "%(task)s %(percentage)s%"
 msgstr "%(task)s %(percentage)s%"
 
-#: media/js/interfaceLayout/LayoutManager.js:116
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:120
 msgid "%(subTask)s: %(percentage)s%"
 msgstr "%(subTask)s: %(percentage)s%"
 
-#: media/js/interfaceLayout/LayoutManager.js:429
-#: media/js/interfaceLayout/LayoutManager.js:470
-#: media/js/interfaceLayout/LayoutManager.js:536
-msgid "Video Tutorials"
-msgstr "Vídeo Tutoriales"
-
-#: media/js/interfaceLayout/LayoutManager.js:430
-msgid ""
-"In the Dragborad you can move and resize all your gadgets in order to "
-"perform and use your own application. Check the gadget preferences for "
-"further personalization %(settingsIcon)s. Go to the Catalogue to add more "
-"gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections "
-"among them %(wiringIcon)s. If you need more help visit the %(helpLink)s."
-msgstr ""
-"En el Dragboard puedes mover y redimensionar todos tus gadgets con el fin de "
-"configurar y utilizar tu propia aplicación. Comprueba las preferencias de "
-"usuario del gadget para mejorar su personalización %(settingsIcon)s. Entra "
-"en el Catálogo para añadir nuevos gadgets %(catalogueIcon)s y en el Wiring "
-"para establecer conexiones entre ellos %(wiringIcon)s. Si necesitas más "
-"ayuda visita los %(helpLink)s."
-
-#: media/js/interfaceLayout/LayoutManager.js:471
-msgid ""
-"Discover new gadgets, look for descriptions, tag them, make your rating, "
-"select the ones that best suit your needs and add them to the Dragboard "
-"%(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
-"Wiring interface %(wiringIcon)s in order to improve your experience. If you "
-"need more help visit the %(helpLink)s."
-msgstr ""
-"Descubre nuevos gadgets, consulta sus descripciones, etiquétalos, dales tu "
-"puntuación, elige los que mejor cubran tus necesidades y añádelos al "
-"Dragboard %(dragboardIcon)s. No olvides conectarlos con otros gadgets en la "
-"interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si necesitas "
-"más ayuda visita los %(helpLink)s."
-
-#: media/js/interfaceLayout/LayoutManager.js:537
-msgid ""
-"In the Wiring interface you can connect your gadgets among them. Create or "
-"select channels and link (by clicking) Events with Slots. Pay attention to "
-"the colours trying to help you, you can create some great wires following "
-"it. You can see the results of your wires at the Dragboard interface "
-"%(dragboardIcon)s. If you need more help visit the %(helpLink)s."
-msgstr ""
-"En la interfaz de Wiring puedes conectar tus gadgets entre sí. Crear o "
-"seleccionar canales y enlazar (haciendo click) Eventos y Ranuras. Presta "
-"atención a los colores, ya que pueden ayudarte, podrás crear conexiones "
-"acertadas siguiéndolos. Puedes probar el resultado de las conexiones en la "
-"interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita los "
-"%(helpLink)s."
-
-#: media/js/interfaceLayout/LayoutManager.js:770
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:791
 msgid "Do you really want to remove this tab?"
 msgstr "¿Realmente desea eliminar esta pestaña?"
 
-#: media/js/interfaceLayout/LayoutManager.js:778
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:799
 msgid "Do you want to cancel the subscription to the service?"
 msgstr "¿Realmente desea cancelar la subscripción a este servicio?"
 
-#: media/js/interfaceLayout/LayoutManager.js:810
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:828
 msgid ""
 "You are going to add a Mashup that could be composed by more than one "
 "gadget. Do you want to add it to a new Workspace or to the current one?"
@@ -655,268 +645,174 @@ msgstr ""
 "gadget. ¿Desea añadirlo a un nuevo entorno de trabajo o al entorno de "
 "trabajo actual?"
 
-#: media/js/interfaceLayout/LayoutManager.js:855
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:842
 msgid "Configuration"
 msgstr "Configuración"
 
-#: media/js/interfaceLayout/LayoutManager.js:856
-#: media/js/opManager/WorkSpace.js:907
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:843
+#: ezweb/static/js/opManager/WorkSpace.js:951
 msgid "Share"
 msgstr "Compartir"
 
-#: media/js/interfaceLayout/LayoutManager.js:857
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:844
 msgid "Edit"
 msgstr "Editar"
 
-#: media/js/interfaceLayout/LayoutManager.js:1233
+#: ezweb/static/js/interfaceLayout/LayoutManager.js:1248
 msgid "Error updating order: %(errorMsg)s."
 msgstr "Error al actualizar el orden: %(errorMsg)s."
 
-#: media/js/interfaceLayout/WindowMenu.js:208
-msgid "Contratation Information"
-msgstr "Información de contratación"
-
-#: media/js/interfaceLayout/WindowMenu.js:217
-msgid "Finish"
-msgstr "Terminar"
-
-#: media/js/interfaceLayout/WindowMenu.js:246
-msgid "Assign Gadget to Application"
-msgstr "Asignar un Gadget a una Aplicación"
-
-#: media/js/interfaceLayout/WindowMenu.js:291
-msgid "Assign"
-msgstr "Asignar"
-
-#: media/js/interfaceLayout/WindowMenu.js:339
-#: media/js/interfaceLayout/WindowMenu.js:406
-msgid "Buying composed application"
-msgstr "Comprar una aplicación compuesta"
-
-#: media/js/interfaceLayout/WindowMenu.js:343
-msgid ""
-"Buying this composed solution implies paying for the following applications."
-msgstr ""
-"La compra de esta solución compuesta implica el pago de las siguientes "
-"aplicaciones."
-
-#: media/js/interfaceLayout/WindowMenu.js:344
-msgid ""
-"Click on any of them to see a detailed description, including princing info."
-msgstr ""
-"Haga click en alguno de los siguientes elementos para ver una descripción "
-"detallada, incluyendo la información de las tarifas."
-
-#: media/js/interfaceLayout/WindowMenu.js:346
-msgid "Buying this gadget implies paying for the following application."
-msgstr "Comprar este gadget implica el pago de las siguientes aplicaciones."
-
-#: media/js/interfaceLayout/WindowMenu.js:347
-msgid "Click on it to see a detailed description, including princing info."
-msgstr ""
-"Haga click en él para ver una descripción detallada, incluyendo información "
-"de las tarifas."
-
-#: media/js/interfaceLayout/WindowMenu.js:368
-#: media/js/interfaceLayout/WindowMenu.js:1229
-#: media/js/interfaceLayout/WindowMenu.js:1305
-msgid "Name"
-msgstr "Nombre"
-
-#: media/js/interfaceLayout/WindowMenu.js:368
-msgid "Sign-up fee"
-msgstr "Tarifa de alta"
-
-#: media/js/interfaceLayout/WindowMenu.js:368
-msgid "Monthly fee"
-msgstr "Tarifa mensual"
-
-#: media/js/interfaceLayout/WindowMenu.js:409
-msgid "Buying gadget"
-msgstr "Compra de un gadget"
-
-#: media/js/interfaceLayout/WindowMenu.js:435
-msgid "already paid"
-msgstr "ya pagado"
-
-#: media/js/interfaceLayout/WindowMenu.js:444
-msgid "TOTAL"
-msgstr "TOTAL"
-
-#: media/js/interfaceLayout/WindowMenu.js:545
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:218
 msgid "Create workSpace"
 msgstr "Crear entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:553
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:226
 msgid "Create"
 msgstr "Crear"
 
-#: media/js/interfaceLayout/WindowMenu.js:563
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:236
 msgid "Nombre: "
 msgstr "Nombre: "
 
-#: media/js/interfaceLayout/WindowMenu.js:277
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:268
 msgid "Invalid name: you must write something"
 msgstr "Nombre inválido: nombre vacío."
 
-#: media/js/interfaceLayout/WindowMenu.js:284
-msgid "Invalid name: the name \\\"%(newName)s\\\" is already in use"
-msgstr "Nombre inválido: el nombre \\\"%(newName)s\\\" ya se está usando."
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:275
+msgid "Invalid name: the name \"%(newName)s\" is already in use"
+msgstr "Nombre inválido: el nombre \"%(newName)s\" ya se está usando."
 
-#: media/js/interfaceLayout/WindowMenu.js:619
-#: media/js/interfaceLayout/WindowMenu.js:734
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:298
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:403
+#: ezweb/static/js/wiring/wiringGUI.js:461
 msgid "Warning"
 msgstr "Aviso"
 
-#: media/js/interfaceLayout/WindowMenu.js:624
-#: media/js/interfaceLayout/WindowMenu.js:673
-#: media/js/interfaceLayout/WindowMenu.js:736
-#: media/js/interfaceLayout/WindowMenu.js:755
-#: media/js/interfaceLayout/WindowMenu.js:1411
-msgid "Info:"
-msgstr "Info:"
-
-#: media/js/interfaceLayout/WindowMenu.js:630
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:305
 msgid "Yes"
 msgstr "Sí"
 
-#: media/js/interfaceLayout/WindowMenu.js:637
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:312
 msgid "No"
 msgstr "No"
 
-#: media/js/interfaceLayout/WindowMenu.js:669
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:344
 msgid "Add Mashup"
 msgstr "Añadir Mashup"
 
-#: media/js/interfaceLayout/WindowMenu.js:678
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:350
 msgid "New Workspace"
 msgstr "Nuevo entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:684
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:356
 msgid "Current Workspace"
 msgstr "Entorno de trabajo actual"
 
-#: media/js/interfaceLayout/WindowMenu.js:723
-#: media/js/interfaceLayout/WindowMenu.js:934
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:392
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:489
 msgid "Accept"
 msgstr "Aceptar"
 
-#: media/js/interfaceLayout/WindowMenu.js:734
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:403
 msgid "Error"
 msgstr "Error"
 
-#: media/js/interfaceLayout/WindowMenu.js:734
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:403
 msgid "Info"
 msgstr "Info"
 
-#: media/js/interfaceLayout/WindowMenu.js:736
-msgid "Error:"
-msgstr "Error:"
-
-#: media/js/interfaceLayout/WindowMenu.js:736
-msgid "Warning:"
-msgstr "Aviso:"
-
-#: media/js/interfaceLayout/WindowMenu.js:762
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:426
 msgid "Don't show me anymore"
 msgstr "No volver a mostrar"
 
-#: media/js/interfaceLayout/WindowMenu.js:793
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:457
 msgid "Do you know what ... ?"
 msgstr "¿Sabías que ... ?"
 
-#: media/js/interfaceLayout/WindowMenu.js:927
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:482
 msgid "required field"
 msgstr "campo obligatorio"
 
-#: media/js/interfaceLayout/WindowMenu.js:1016
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:735
 msgid "Mashup Name"
 msgstr "Nombre del Mashup"
 
-#: media/js/interfaceLayout/WindowMenu.js:1017
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:736
 msgid "Vendor"
 msgstr "Distribuidor"
 
-#: media/js/interfaceLayout/WindowMenu.js:1018
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:737
 msgid "Version"
 msgstr "Versión"
 
-#: media/js/interfaceLayout/WindowMenu.js:1019
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:738
 msgid "Email"
 msgstr "E-Mail"
 
-#: media/js/interfaceLayout/WindowMenu.js:1021
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:740
 msgid "Detailed description"
 msgstr "Descripción detallada"
 
-#: media/js/interfaceLayout/WindowMenu.js:1024
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:743
 msgid "Description"
 msgstr "Descripción"
 
-#: media/js/interfaceLayout/WindowMenu.js:1025
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:744
 msgid "Wiki URL"
 msgstr "Wiki (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1026
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:745
 msgid "Author"
 msgstr "Autor"
 
-#: media/js/interfaceLayout/WindowMenu.js:1030
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:749
 msgid "Personalization"
 msgstr "Personalización"
 
-#: media/js/interfaceLayout/WindowMenu.js:1034
-msgid "Create your own skin for your application"
-msgstr "Crea tu propia apariencia (skin) para tu aplicación"
-
-#: media/js/interfaceLayout/WindowMenu.js:1039
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:753
 msgid "Image for the catalogue (170x80 px)"
 msgstr "Imagen para el catálogo (170x80 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1046
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:760
 msgid "Do not use any branding"
 msgstr "No utilizar imagen de marca"
 
-#: media/js/interfaceLayout/WindowMenu.js:1050
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:764
 msgid "Banner logo (250x50 px)"
 msgstr "Logo para la cabecera (250x50 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1057
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:771
 msgid "Banner logo for viewer mode (150x30 px)"
 msgstr "Logo para la cabecera en modo visor (150x30 px)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1064
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:778
 msgid "Clicking on these logos will open this page"
 msgstr "Hacer click en estos logos abrirá la página"
 
-#: media/js/interfaceLayout/WindowMenu.js:1070
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:784
 msgid "Advanced options"
 msgstr "Opciones avanzadas"
 
-#: media/js/interfaceLayout/WindowMenu.js:1073
-#: media/js/interfaceLayout/WindowMenu.js:1254
-#: media/js/interfaceLayout/WindowMenu.js:1328
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:787
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1070
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1144
 msgid "Organization"
 msgstr "Organización"
 
-#: media/js/interfaceLayout/WindowMenu.js:1074
-msgid "Block gadgets and connections"
-msgstr "Bloquear los gadgets y sus conexiones"
-
-#: media/js/interfaceLayout/WindowMenu.js:1123
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:788
 msgid "Block gadgets"
 msgstr "Bloquear gadgets"
 
-#: media/js/interfaceLayout/WindowMenu.js:1124
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:789
 msgid "Block connections"
 msgstr "Bloquear conexiones"
 
-#: media/js/interfaceLayout/WindowMenu.js:1079
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:796
 msgid "Publish Workspace"
 msgstr "Publicar el entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1084
-#: media/js/interfaceLayout/WindowMenu.js:1143
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:801
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:959
 msgid ""
 "WARNING: configured and stored data in your workspace (properties and "
 "preferences except passwords) will be shared!"
@@ -924,11 +820,24 @@ msgstr ""
 "¡ATENCIÓN: los datos almacenados y la configuración de tu espacio de trabajo "
 "(propiedades y preferencias salvo contraseñas) se compartirán!"
 
-#: media/js/interfaceLayout/WindowMenu.js:1102
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:819
 msgid "Upload File"
 msgstr "Subir fichero"
 
-#: media/js/interfaceLayout/WindowMenu.js:1125
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:824
+msgid "Clear"
+msgstr "Limpiar"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:879
+msgid "Properties"
+msgstr "Propiedades"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:896
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1476
+msgid "Parametrization"
+msgstr "Parametrización"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:941
 msgid ""
 "Share \"%(workspace)s\" workspace with everybody through either a public URL "
 "or an embed object"
@@ -936,154 +845,158 @@ msgstr ""
 "Compartir el workspace \"%(workspace)s\" públicamente por medio de una URL o "
 "de un objeto embebible en otro sitio web"
 
-#: media/js/interfaceLayout/WindowMenu.js:1126
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:942
 msgid "Share \"%(workspace)s\" workspace only with the following groups"
 msgstr ""
 "Compartir el espacio de trabajo \"%(workspace)s\" con uno de los siguientes "
 "grupos "
 
-#: media/js/interfaceLayout/WindowMenu.js:1134
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:950
 msgid "Share Workspace"
 msgstr "Compartir el entorno de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1150
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:966
 msgid "The available groups cannot be displayed"
 msgstr "No se pueden mostrar los grupos disponibles"
 
-#: media/js/interfaceLayout/WindowMenu.js:1196
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1012
 msgid "You must select a group"
 msgstr "Debes seleccionar un grupo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1159
-msgid "Clear"
-msgstr "Limpiar"
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1045
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1121
+msgid "Name"
+msgstr "Nombre"
 
-#: media/js/interfaceLayout/WindowMenu.js:1219
-msgid "Properties"
-msgstr "Propiedades"
-
-#: media/js/interfaceLayout/WindowMenu.js:1236
-#: media/js/interfaceLayout/WindowMenu.js:1798
-msgid "Parametrization"
-msgstr "Parametrización"
-
-#: media/js/interfaceLayout/WindowMenu.js:1230
-#: media/js/interfaceLayout/WindowMenu.js:1306
-#: media/js/wiring/connectableInterface.js:717
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1046
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1122
+#: ezweb/static/js/wiring/connectableInterface.js:668
 msgid "URL"
 msgstr "URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:1232
-#: media/js/interfaceLayout/WindowMenu.js:1315
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1048
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1131
 msgid "Image URL"
 msgstr "Imagen (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1238
-#: media/js/interfaceLayout/WindowMenu.js:1321
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1054
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1137
 msgid "iPhone Image URL"
 msgstr "Imagen para el iPhone (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1244
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1060
 msgid "Template color"
 msgstr "Color de la plantilla"
 
-#: media/js/interfaceLayout/WindowMenu.js:1247
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1063
 msgid "blue"
 msgstr "azul"
 
-#: media/js/interfaceLayout/WindowMenu.js:1248
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1064
 msgid "orange"
 msgstr "naranja"
 
-#: media/js/interfaceLayout/WindowMenu.js:1249
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1065
 msgid "red"
 msgstr "rojo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1250
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1066
 msgid "green"
 msgstr "verde"
 
-#: media/js/interfaceLayout/WindowMenu.js:1253
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1069
 msgid "Menu Color"
 msgstr "Color del menú"
 
-#: media/js/interfaceLayout/WindowMenu.js:1257
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1073
 msgid "Add new feed"
 msgstr "Añadir un feed nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1307
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1123
 msgid "Method"
 msgstr "Método"
 
-#: media/js/interfaceLayout/WindowMenu.js:1309
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1125
 msgid "Parse URL Parameters"
 msgstr "Interpretar los parámetros de la URL"
 
-#: media/js/interfaceLayout/WindowMenu.js:1310
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1126
 msgid "Fixed Params"
 msgstr "Parámetros fijos"
 
-#: media/js/interfaceLayout/WindowMenu.js:1311
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1127
 msgid "Default Param Values"
 msgstr "Valores por defecto de los parámetros"
 
-#: media/js/interfaceLayout/WindowMenu.js:1312
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1128
 msgid "Events"
 msgstr "Eventos"
 
-#: media/js/interfaceLayout/WindowMenu.js:1314
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1130
 msgid "Home URL"
 msgstr "URL inicial"
 
-#: media/js/interfaceLayout/WindowMenu.js:1327
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1143
 msgid "Menu Color (Hex.)"
 msgstr "Color del menú (Hex.)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1329
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1145
 msgid "Source"
 msgstr "Fuente"
 
-#: media/js/interfaceLayout/WindowMenu.js:1330
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1146
 msgid "Source URL"
 msgstr "Fuente (URL)"
 
-#: media/js/interfaceLayout/WindowMenu.js:1333
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1149
 msgid "Add new site"
 msgstr "Añadir un sitio nuevo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1373
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1189
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1219
 msgid "New Name"
 msgstr "Nuevo Nombre"
 
-#: media/js/interfaceLayout/WindowMenu.js:1375
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1191
 msgid "Rename Workspace"
 msgstr "Renombrar el espacio de trabajo"
 
-#: media/js/interfaceLayout/WindowMenu.js:1587
-msgid "Rename Tab"
-msgstr "Renombrar la pestaña"
-
-#: media/js/interfaceLayout/WindowMenu.js:1396
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1212
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1248
 msgid "The new name is too long. It must have less than 30 characters."
 msgstr "El nuevo nombre es demasiado largo. Debe tener menos de 30 caracteres."
 
-#: media/js/interfaceLayout/WindowMenu.js:1407
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1221
+msgid "Rename Tab"
+msgstr "Renombrar la pestaña"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1250
+#: ezweb/static/js/opManager/Tab.js:86
+msgid ""
+"Error updating a tab: the name %(tabName)s is already in use in workspace "
+"%(wsName)s."
+msgstr ""
+"Error al actualizar una pestaña: el nombre %(tabName)s ya está en uso en el "
+"entorno de trabajo %(wsName)s."
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1252
+#: ezweb/static/js/opManager/Tab.js:75
+msgid "Error updating a tab: invalid name"
+msgstr "Al actualizar una pestaña: nombre no válido"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1262
 msgid "Shared WorkSpace Info"
 msgstr "Información del WorkSpace"
 
-#: media/js/interfaceLayout/WindowMenu.js:1425
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1277
 msgid "URL:"
 msgstr "URL:"
 
-#: media/js/interfaceLayout/WindowMenu.js:1437
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1289
 msgid "HTML code:"
 msgstr "Código HTML:"
 
-#: media/js/interfaceLayout/WindowMenu.js:1492
-msgid "Language"
-msgstr "Lenguaje"
-
-#: media/js/interfaceLayout/WindowMenu.js:1587
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1414
 msgid ""
 "WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not "
 "responsible for the content of the uploaded files."
@@ -1091,126 +1004,113 @@ msgstr ""
 "AVISO: Su fichero se subirá a un espacio compartido. <br/> EzWeb no se hace "
 "responsable del contenido de los ficheros subidos."
 
-#: ezweb/static/js/opManager/WorkSpace.js:602
-msgid "Tab"
-msgstr "Pestaña"
-
-#: ezweb/static/js/opManager/WorkSpace.js:906
-msgid ""
-"This WorkSpace is blocked, please create a new one if you want to configure "
-"it."
-msgstr "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si "
-"desea poder configurarlo."
-
-#: ezweb/static/js/opManager/WorkSpace.js:955
-msgid ""
-"This WorkSpace is blocked, please create a new one if you want to share it."
-msgstr "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si "
-"desea poder compartirlo."
-
-#: ezweb/static/js/opManager/WorkSpace.js:1006
-msgid ""
-"This WorkSpace is blocked, please create a new one if you want to modify it."
-msgstr "Este espacio de trabajo está bloqueado, por favor cree uno nuevo si "
-"desea poder modificarlo."
-
-#: media/js/interfaceLayout/WindowMenu.js:1778
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1456
 msgid "Normal"
 msgstr "Normal"
 
-#: media/js/interfaceLayout/WindowMenu.js:1779
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1457
 msgid "Read Only"
 msgstr "Solo lectura"
 
-#: media/js/interfaceLayout/WindowMenu.js:1783
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1461
 msgid "Hidden"
 msgstr "Oculto"
 
-#: media/js/interfaceLayout/WindowMenu.js:1788
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1465
+msgid "Use current value"
+msgstr "Usar el valor actual"
+
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1466
 msgid "Use gadget default value"
 msgstr "Usar el valor por defecto del gadget"
 
-#: media/js/interfaceLayout/WindowMenu.js:1789
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1467
 msgid "Use parametrized value"
 msgstr "Usar valor parametrizado"
 
-#: media/js/interfaceLayout/WindowMenu.js:1793
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1471
 msgid "Status"
 msgstr "Estado"
 
-#: media/js/log/LogManager.js:160
+#: ezweb/static/js/interfaceLayout/WindowMenu.js:1474
+#: ezweb/static/js/wiring/connectableInterface.js:474
+msgid "Value"
+msgstr "Valor"
+
+#: ezweb/static/js/lib/prototype/prototype.improvements.js:81
+msgid "You are not allowed to perform this operation"
+msgstr "No estás autorizado a realizar esta operación"
+
+#: ezweb/static/js/log/LogManager.js:151
 msgid "unknown"
 msgstr "desconocido"
 
-#: media/js/log/LogManager.js:174
+#: ezweb/static/js/log/LogManager.js:165
 msgid "HTTP Error %(errorCode)s - %(errorDesc)s"
 msgstr "Error HTTP %(errorCode)s - %(errorDesc)s"
 
-#: media/js/log/LogManager.js:255
+#: ezweb/static/js/log/LogManager.js:262
 msgid "iGadget #%(iGadgetId)s Logs"
 msgstr "Registros del iGadget #%(iGadgetId)s"
 
-#: media/js/opManager/OpManager.js:108
+#: ezweb/static/js/log/LogManager.js:378
+msgid "EzWeb Platform Logs"
+msgstr "Registros de la Plataforma EzWeb"
+
+#: ezweb/static/js/opManager/OpManager.js:108
 msgid "Error loading EzWeb Platform: %(errorMsg)s."
 msgstr "Error al cargar la Plataforma EzWeb: %(errorMsg)s"
 
-#: media/js/opManager/OpManager.js:115
+#: ezweb/static/js/opManager/OpManager.js:115
 msgid "Error loading EzWeb Platform"
 msgstr "Error al cargar la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:132
+#: ezweb/static/js/opManager/OpManager.js:132
 msgid "Error creating a workspace: %(errorMsg)s."
 msgstr "Error al crear un entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:216
-msgid "Error cloning workspace: %(errorMsg)s."
-msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
+#: ezweb/static/js/opManager/OpManager.js:218
+msgid "Error merging workspace: %(errorMsg)s."
+msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:221 media/js/opManager/OpManager.js:261
+#: ezweb/static/js/opManager/OpManager.js:228
+#: ezweb/static/js/opManager/OpManager.js:268
 msgid "Adding the mashup"
 msgstr "Añadiendo el mashup"
 
-#: media/js/opManager/OpManager.js:222
+#: ezweb/static/js/opManager/OpManager.js:229
 msgid "Merging with current workspace"
 msgstr "Mezclando con el entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:253
+#: ezweb/static/js/opManager/OpManager.js:260
 msgid "Error adding the workspace: %(errorMsg)s."
 msgstr "Error al añadir el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/OpManager.js:262
+#: ezweb/static/js/opManager/OpManager.js:269
 msgid "Creating a new workspace"
 msgstr "Creando un nuevo entorno de trabajo"
 
-#: media/js/opManager/OpManager.js:277
+#: ezweb/static/js/opManager/OpManager.js:284
 msgid "Changing current workspace"
 msgstr "Cambiando el entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:361
+#: ezweb/static/js/opManager/OpManager.js:334
 msgid "Loading EzWeb Platform"
 msgstr "Cargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:362
+#: ezweb/static/js/opManager/OpManager.js:335
 msgid "Retrieving EzWeb code"
 msgstr "Descargando el código de la Plataforma EzWeb"
 
-#: media/js/opManager/OpManager.js:381
-msgid ""
-"There were errors while loading some of the images for the theme. Do you "
-"really want to use it?"
-msgstr ""
-"Han sucedido errores durante la carga de las imágenes del tema. ¿Quieres "
-"utilizarlo?"
-
-#: media/js/opManager/OpManager.js:441
+#: ezweb/static/js/opManager/OpManager.js:394
 msgid "Unloading Ezweb Platform"
 msgstr "Descargando la Plataforma Ezweb"
 
-#: media/js/opManager/OpManager.js:494
+#: ezweb/static/js/opManager/OpManager.js:460
 msgid "Activating current Workspace"
 msgstr "Entorno de trabajo actual"
 
-#: media/js/opManager/OpManager.js:527
+#: ezweb/static/js/opManager/OpManager.js:493
 msgid ""
 "Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when "
 "it did not exist or it was not loaded yet. This is an error in EzWeb "
@@ -1222,198 +1122,236 @@ msgstr ""
 "error de la Plataforma EzWeb, por favor informe de ello.\n"
 "Mensaje de error: %(errorMsg)s"
 
-#: media/js/opManager/OpManager.js:563
+#: ezweb/static/js/opManager/OpManager.js:533
 msgid "there must be one workspace at least"
 msgstr "debe haber al menos un entorno de trabajo"
 
-#: media/js/opManager/OpManager.js:564
+#: ezweb/static/js/opManager/OpManager.js:534
 msgid "Error removing workspace: %(errorMsg)s."
 msgstr "Error al eliminar entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/Tab.js:34
+#: ezweb/static/js/opManager/Tab.js:34
 msgid "Error renaming a tab, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al renombrar la pestaña, los cambios no se guardarán: %(errorMsg)s."
 
-#: media/js/opManager/Tab.js:44
+#: ezweb/static/js/opManager/Tab.js:44
 msgid "Error removing a tab: %(errorMsg)s."
 msgstr "Error al eliminar la pestaña: %(errorMsg)s"
 
-#: media/js/opManager/Tab.js:75
-msgid "Error updating a tab: invalid name"
-msgstr "Al actualizar una pestaña: nombre no válido"
-
-#: media/js/opManager/Tab.js:86
-msgid ""
-"Error updating a tab: the name %(tabName)s is already in use in workspace "
-"%(wsName)s."
-msgstr ""
-"Error al actualizar una pestaña: el nombre %(tabName)s ya está en uso en el "
-"entorno de trabajo %(wsName)s."
-
-#: media/js/opManager/Tab.js:446
+#: ezweb/static/js/opManager/Tab.js:401
 msgid "Options"
 msgstr "Opciones"
 
-#: media/js/opManager/Tab.js:462
+#: ezweb/static/js/opManager/Tab.js:417
 msgid "First Visible"
 msgstr "Primera visible"
 
-#: media/js/opManager/Tab.js:503
+#: ezweb/static/js/opManager/Tab.js:458
 msgid ""
 "Error marking as first visible tab, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al marcar como primera visible, los cambios no se guardarán: "
 "%(errorMsg)s."
 
-#: media/js/opManager/Tab.js:510
+#: ezweb/static/js/opManager/Tab.js:465
 msgid "Mark as Visible"
 msgstr "Marcar como visible"
 
-#: media/js/opManager/Tab.js:533 media/js/opManager/WorkSpace.js:842
+#: ezweb/static/js/opManager/Tab.js:488
+#: ezweb/static/js/opManager/WorkSpace.js:880
 msgid "Rename"
 msgstr "Renombrar"
 
-#: media/js/opManager/Tab.js:555
+#: ezweb/static/js/opManager/Tab.js:509
 msgid "no more tabs"
 msgstr "no hay más pestañas"
 
-#: media/js/opManager/Tab.js:578
+#: ezweb/static/js/opManager/Tab.js:532
 msgid "move to end"
 msgstr "mover al final"
 
-#: media/js/opManager/Tab.js:588
+#: ezweb/static/js/opManager/Tab.js:542
 msgid "Move before..."
 msgstr "Mover antes de..."
 
-#: media/js/opManager/Tab.js:597 media/js/opManager/WorkSpace.js:858
-#: media/js/wiring/connectableInterface.js:445
+#: ezweb/static/js/opManager/Tab.js:551
+#: ezweb/static/js/opManager/WorkSpace.js:896
+#: ezweb/static/js/wiring/connectableInterface.js:412
 msgid "Remove"
 msgstr "Eliminar"
 
-#: media/js/opManager/Tab.js:599
+#: ezweb/static/js/opManager/Tab.js:553
 msgid "Do you really want to remove the \"%(tabName)s\" tab?"
 msgstr "¿Realmente desea eliminar la pestaña \"%(tabName)s\"?"
 
-#: media/js/opManager/Tab.js:610
+#: ezweb/static/js/opManager/Tab.js:564
 msgid "Show Floating Gadget"
 msgstr "Mostrar Gadgets flotantes"
 
-#: media/js/opManager/WorkSpace.js:92
+#: ezweb/static/js/opManager/WorkSpace.js:92
 msgid "Error loading workspace: %(errorMsg)s"
 msgstr "Error al cargar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:96
+#: ezweb/static/js/opManager/WorkSpace.js:96
 msgid ""
 "Error loading workspace. Please, change active workspace or create a new one."
 msgstr ""
 "Error al cargar el entorno de trabajo. Por favor, cambia el entorno de "
 "trabajo o crea uno nuevo."
 
-#: media/js/opManager/WorkSpace.js:111
+#: ezweb/static/js/opManager/WorkSpace.js:111
 msgid "Unusable Tab"
 msgstr "Tab no usable"
 
-#: media/js/opManager/WorkSpace.js:139
+#: ezweb/static/js/opManager/WorkSpace.js:141
 msgid "Processing workspace data"
 msgstr "Procesando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:215
+#: ezweb/static/js/opManager/WorkSpace.js:224
 msgid "workspace loaded"
 msgstr "El entorno de trabajo fue cargado"
 
-#: media/js/opManager/WorkSpace.js:226
+#: ezweb/static/js/opManager/WorkSpace.js:235
 msgid "Error renaming workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al renombrar el entorno de trabajo, los cambios no se guardarán: "
 "%(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:242
+#: ezweb/static/js/opManager/WorkSpace.js:251
 msgid "Error removing workspace, changes will not be saved: %(errorMsg)s."
 msgstr ""
 "Error al eliminar el entorno de trabajo, los cambios no se guardarán: "
 "%(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:257
+#: ezweb/static/js/opManager/WorkSpace.js:258
+msgid "Workspace published successfully"
+msgstr "El entorno de trabajo ha sido publicado correctamente"
+
+#: ezweb/static/js/opManager/WorkSpace.js:270
 msgid "Error publishing workspace: %(errorMsg)s."
 msgstr "Error al publicar el entorno de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:274
-msgid "Error merging workspace: %(errorMsg)s."
-msgstr "Error al mezclar el entorno de trabajo: %(errorMsg)s."
+#: ezweb/static/js/opManager/WorkSpace.js:290
+msgid "Error merging workspaces: %(errorMsg)s."
+msgstr "Error al mezclar los entornos de trabajo: %(errorMsg)s."
 
-#: media/js/opManager/WorkSpace.js:301
+#: ezweb/static/js/opManager/WorkSpace.js:318
 msgid "Error creating a tab: %(errorMsg)s."
 msgstr "Error al crear una pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:393
+#: ezweb/static/js/opManager/WorkSpace.js:420
 msgid "Error updating a workspace: invalid name"
 msgstr "Error al actualizar el entorno de trabajo: nombre no válido"
 
-#: media/js/opManager/WorkSpace.js:405
+#: ezweb/static/js/opManager/WorkSpace.js:432
 msgid ""
 "Error updating a workspace: the name %(workSpaceName)s is already in use."
 msgstr ""
 "Error al actualizar un entorno de trabajo: el nombre %(workSpaceName)s ya se "
 "está usando."
 
-#: media/js/opManager/WorkSpace.js:450
+#: ezweb/static/js/opManager/WorkSpace.js:477
 msgid "Downloading workspace data"
 msgstr "Descargando los datos del entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:569
+#: ezweb/static/js/opManager/WorkSpace.js:580
+msgid "Tab"
+msgstr "Pestaña"
+
+#: ezweb/static/js/opManager/WorkSpace.js:597
 msgid "there must be one tab at least"
 msgstr "debe haber al menos una pestaña"
 
-#: media/js/opManager/WorkSpace.js:570 media/js/opManager/WorkSpace.js:575
+#: ezweb/static/js/opManager/WorkSpace.js:598
+#: ezweb/static/js/opManager/WorkSpace.js:603
 msgid "Error removing tab: %(errorMsg)s."
 msgstr "Error al eliminar la pestaña: %(errorMsg)s"
 
-#: media/js/opManager/WorkSpace.js:574
+#: ezweb/static/js/opManager/WorkSpace.js:602
 msgid "it contains some gadgets that cannot be removed"
 msgstr "contiene algunos gadgets que no pueden ser eliminados"
 
-#: media/js/opManager/WorkSpace.js:625
+#: ezweb/static/js/opManager/WorkSpace.js:649
 msgid "Unloading current workspace"
 msgstr "Cerrando el entorno de trabajo actual"
 
-#: media/js/opManager/WorkSpace.js:664
+#: ezweb/static/js/opManager/WorkSpace.js:686
 msgid "workspace unloaded"
 msgstr "Se cerró el entorno de trabajo"
 
-#: media/js/opManager/WorkSpace.js:729 media/js/opManager/WorkSpace.js:738
+#: ezweb/static/js/opManager/WorkSpace.js:756
+#: ezweb/static/js/opManager/WorkSpace.js:765
 msgid "The Workspace has NOT been successfully shared."
 msgstr "El entorno de trabajo no ha podido ser compartido."
 
-#: media/js/opManager/WorkSpace.js:731
+#: ezweb/static/js/opManager/WorkSpace.js:758
 msgid "The Workspace has been successfully shared."
 msgstr "El entorno de trabajo ha sido compartido correctamente."
 
-#: media/js/opManager/WorkSpace.js:833
+#: ezweb/static/js/opManager/WorkSpace.js:777
+msgid "Publishing current workspace"
+msgstr "Publicando el entorno de trabajo actual"
+
+#: ezweb/static/js/opManager/WorkSpace.js:789
+msgid "Merging workspaces"
+msgstr "Mezclando los entornos de trabajo"
+
+#: ezweb/static/js/opManager/WorkSpace.js:790
+msgid "Merging \"%(srcworkspace)s\" into \"%(dstworkspace)s\""
+msgstr "Mezclando \"%(srcworkspace)s\" con \"%(dstworkspace)s\""
+
+#: ezweb/static/js/opManager/WorkSpace.js:871
 msgid "Initial"
 msgstr "Inicial"
 
-#: media/js/opManager/WorkSpace.js:860
+#: ezweb/static/js/opManager/WorkSpace.js:898
 msgid "Do you really want to remove the \"%(workspaceName)s\" workspace?"
 msgstr "¿Realmente desea eliminar el entorno de trabajo \"%(workspaceName)s\"?"
 
-#: media/js/opManager/WorkSpace.js:872
+#: ezweb/static/js/opManager/WorkSpace.js:910
 msgid "Merge"
 msgstr "Mezclar"
 
-#: media/js/opManager/WorkSpace.js:915
+#: ezweb/static/js/opManager/WorkSpace.js:928
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to configure "
+"it."
+msgstr ""
+"Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
+"poder configurarlo."
+
+#: ezweb/static/js/opManager/WorkSpace.js:959
 msgid "Publish in gallery"
 msgstr "Publicar en galería"
 
-#: media/js/opManager/WorkSpace.js:949
+#: ezweb/static/js/opManager/WorkSpace.js:977
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to share it."
+msgstr ""
+"Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
+"poder compartirlo."
+
+#: ezweb/static/js/opManager/WorkSpace.js:1000
 msgid "Go to Gallery"
 msgstr "Ir a Galería"
 
-#: media/js/opManager/WorkSpace.js:959
+#: ezweb/static/js/opManager/WorkSpace.js:1008
 msgid "Go to Wiring tool"
 msgstr "Ir a Wiring"
 
-#: media/js/opManager/WorkSpace.js:1133
+#: ezweb/static/js/opManager/WorkSpace.js:1028
+msgid ""
+"This WorkSpace is blocked, please create a new one if you want to modify it."
+msgstr ""
+"Este espacio de trabajo está bloqueado, por favor cree uno nuevo si desea "
+"poder modificarlo."
+
+#: ezweb/static/js/opManager/WorkSpace.js:1065
+msgid "New Application"
+msgstr "Nueva Aplicación"
+
+#: ezweb/static/js/opManager/WorkSpace.js:1230
 msgid ""
 "Error marking as first active workspace, changes will not be saved: "
 "%(errorMsg)s."
@@ -1421,75 +1359,91 @@ msgstr ""
 "Error al marcar como primer espacio de trabajo visible, los cambios no se "
 "guardarán: %(errorMsg)s."
 
-#: media/js/preferencesManager/PlatformPref.js:224
+#: ezweb/static/js/preferencesManager/PlatformPref.js:224
 msgid "Inherit"
 msgstr "Heredar"
 
-#: media/js/preferencesManager/PlatformPref.js:468
+#: ezweb/static/js/preferencesManager/PlatformPref.js:516
 msgid "Platform Preferences"
 msgstr "Preferencias de Plataforma"
 
-#: media/js/preferencesManager/PlatformPref.js:488
+#: ezweb/static/js/preferencesManager/PlatformPref.js:542
 msgid "WorkSpace preferences (%(workspaceName)s)"
 msgstr "Preferencias del entorno de trabajo (%(workspaceName)s)"
 
-#: media/js/preferencesManager/PlatformPref.js:523
+#: ezweb/static/js/preferencesManager/PlatformPref.js:582
 msgid "Tab preferences (%(tabName)s)"
 msgstr "Preferencias de la pestaña (%(tabName)s)"
 
-#: media/js/preferencesManager/PreferencesManager.js:52
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:52
 msgid "Error retrieving platform preferences data: %(errorMsg)s"
 msgstr ""
 "Error al recibir los datos de las preferencias de plataforma: %(errorMsg)s"
 
-#: media/js/preferencesManager/PreferencesManager.js:120
-#: media/js/preferencesManager/PreferencesManager.js:148
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:117
+msgid "Language"
+msgstr "Lenguaje"
+
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:120
+msgid "Default setting"
+msgstr "Configuración por defecto"
+
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:121
+msgid "Browser detect"
+msgstr "Configuración del navegador"
+
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:125
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:159
 msgid "Skin"
 msgstr "Apariencia"
 
-#: media/js/preferencesManager/PreferencesManager.js:126
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:131
 msgid "Show catalogue help dialog"
 msgstr "Mostrar la ventana de ayuda sobre el catálogo"
 
-#: media/js/preferencesManager/PreferencesManager.js:132
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:137
 msgid "Show wiring help dialog"
 msgstr "Mostrar la ventana de ayuda sobre el wiring"
 
-#: media/js/preferencesManager/PreferencesManager.js:138
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:143
 msgid "Show dragboard help dialog"
 msgstr "Mostrar la ventana de ayuda sobre el dragboard"
 
-#: media/js/preferencesManager/PreferencesManager.js:151
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:149
+msgid "Unfold events and slots in the wiring editor by default"
+msgstr "Desplegar eventos y ranuras en el editor del wiring por defecto"
+
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:162
 msgid "Skin to use as default. (default: inherit)"
 msgstr "Apariencia (skin) por defecto. (defecto: heredado)"
 
-#: media/js/preferencesManager/PreferencesManager.js:155
-#: media/js/preferencesManager/PreferencesManager.js:197
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:166
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:208
 msgid "Default grid layout"
 msgstr "Distribución de la rejilla por defecto"
 
-#: media/js/preferencesManager/PreferencesManager.js:157
-#: media/js/preferencesManager/PreferencesManager.js:199
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:168
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:210
 msgid "Fixed to the grid"
 msgstr "Anclado a la rejilla"
 
-#: media/js/preferencesManager/PreferencesManager.js:157
-#: media/js/preferencesManager/PreferencesManager.js:199
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:168
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:210
 msgid "Out of the grid"
 msgstr "Fuera de la rejilla"
 
-#: media/js/preferencesManager/PreferencesManager.js:158
-#: media/js/preferencesManager/PreferencesManager.js:200
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:169
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:211
 msgid "Default layout for the new gadgets."
 msgstr "Distribución por defecto para los nuevos gadgets."
 
-#: media/js/preferencesManager/PreferencesManager.js:162
-#: media/js/preferencesManager/PreferencesManager.js:206
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:173
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:217
 msgid "Smart grid for gadgets fixed to the grid"
 msgstr "Rejilla inteligente para los gadgets ajustados a la rejilla"
 
-#: media/js/preferencesManager/PreferencesManager.js:164
-#: media/js/preferencesManager/PreferencesManager.js:208
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:175
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:219
 msgid ""
 "iGadgets will be automatically reordered if this option is enabled. "
 "(default: enabled)"
@@ -1497,33 +1451,33 @@ msgstr ""
 "En caso de activar esta opción, los iGadgets serán reordenados "
 "automáticamente. (por defecto: activado)"
 
-#: media/js/preferencesManager/PreferencesManager.js:168
-#: media/js/preferencesManager/PreferencesManager.js:214
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:179
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:225
 msgid "Grid columns"
 msgstr "Columnas de la rejilla"
 
-#: media/js/preferencesManager/PreferencesManager.js:170
-#: media/js/preferencesManager/PreferencesManager.js:216
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:181
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:227
 msgid "Grid columns. (default: 20)"
 msgstr "Columnas de la rejilla. (por defecto: 20)"
 
-#: media/js/preferencesManager/PreferencesManager.js:174
-#: media/js/preferencesManager/PreferencesManager.js:222
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:185
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:233
 msgid "Cell Height (in pixels)"
 msgstr "Altura de las celdas (en pixels)"
 
-#: media/js/preferencesManager/PreferencesManager.js:176
-#: media/js/preferencesManager/PreferencesManager.js:224
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:187
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:235
 msgid "Cell Height. Must be specified in pixel units. (default: 13)"
 msgstr "Altura de las celdas. Debe especificarse en pixels. (por defecto: 13)"
 
-#: media/js/preferencesManager/PreferencesManager.js:180
-#: media/js/preferencesManager/PreferencesManager.js:230
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:191
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:241
 msgid "Horizontal Margin between iGadgets (in pixels)"
 msgstr "Margen horizontal entre iGadgets (en pixels)"
 
-#: media/js/preferencesManager/PreferencesManager.js:182
-#: media/js/preferencesManager/PreferencesManager.js:232
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:193
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:243
 msgid ""
 "Horizontal Margin between iGadgets. Must be specified in pixel units. "
 "(default: 4)"
@@ -1531,13 +1485,13 @@ msgstr ""
 "Margen horizontal entre iGadgets. Debe especificarse en pixels. (por "
 "defecto: 4)"
 
-#: media/js/preferencesManager/PreferencesManager.js:186
-#: media/js/preferencesManager/PreferencesManager.js:238
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:197
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:249
 msgid "Vertical Margin between iGadgets (in pixels)"
 msgstr "Margen vertical entre iGadgets (en pixels)"
 
-#: media/js/preferencesManager/PreferencesManager.js:188
-#: media/js/preferencesManager/PreferencesManager.js:240
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:199
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:251
 msgid ""
 "Vertical Margin between iGadgets. Must be specified in pixel units. "
 "(default: 3)"
@@ -1545,23 +1499,28 @@ msgstr ""
 "Margen vertical entre iGadgets. Debe especificarse en pixels. (por defecto: "
 "3)"
 
-#: media/js/preferencesManager/PreferencesManager.js:245
+#: ezweb/static/js/preferencesManager/PreferencesManager.js:261
 msgid "Skin to use by default. (default: %(defaultValue)s)"
 msgstr "Apariencia (skin) por defecto. (defecto: heredado)"
 
-#: media/js/showcase/showcase.js:150
+#: ezweb/static/js/showcase/showcase.js:100
+#: ezweb/static/js/showcase/showcase.js:120
+msgid "Error retrieving showcase data: %(errorMsg)s."
+msgstr "Error al recibir los datos del showcase: %(errorMsg)s"
+
+#: ezweb/static/js/showcase/showcase.js:168
 msgid "\"%(variable)s\" variable is not an User Preference"
 msgstr "la variable \"%(variable)s\" no es una Preferencia de Usuario"
 
-#: media/js/showcase/showcase.js:154
+#: ezweb/static/js/showcase/showcase.js:172
 msgid "\"%(variable)s\" variable doesn't exists"
 msgstr "la variable \"%(variable)s\" no existe"
 
-#: media/js/varManager/varManager.js:91
+#: ezweb/static/js/varManager/varManager.js:80
 msgid "Error saving variables to persistence: %(errorMsg)s."
 msgstr "Error al guardar las variables en el servidor: %(errorMsg)s."
 
-#: media/js/varManager/varManager.js:178
+#: ezweb/static/js/varManager/varManager.js:153
 msgid ""
 "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\".\n"
 "If you need it, please insert it into the gadget's template."
@@ -1570,7 +1529,7 @@ msgstr ""
 "\".\n"
 "Si la necesita, añádala al template del gadget."
 
-#: media/js/varManager/varManager.js:198
+#: ezweb/static/js/varManager/varManager.js:173
 msgid ""
 "IGadget %(iGadgetId)s attempted to establish a non-string value for the "
 "variable \"%(varName)s\"."
@@ -1578,83 +1537,81 @@ msgstr ""
 "El iGadget %(iGadgetId)s ha intentado establecer un valor cuyo tipo no es "
 "string para la variable \"%(varName)s\"."
 
-#: media/js/wiring/connectable.js:53 media/js/wiring/connectable.js.py:65
-#: media/js/wiring/connectable.js:93
+#: ezweb/static/js/wiring/connectable.js:53
+#: ezweb/static/js/wiring/connectable.js:65
+#: ezweb/static/js/wiring/connectable.js:93
 msgid "Unimplemented function: %(funcName)s"
 msgstr "Función sin implementación: %(funcName)s"
 
-#: media/js/wiring/connectable.js:633
+#: ezweb/static/js/wiring/connectable.js:625
 msgid "Use in %(slotName)s"
 msgstr "Usar en %(slotName)s"
 
-#: media/js/wiring/connectableInterface.js:468
+#: ezweb/static/js/wiring/connectableInterface.js:435
 msgid "Channel name cannot be empty."
 msgstr "El nombre de un canal no puede estar vació."
 
-#: media/js/wiring/connectableInterface.js:472
+#: ezweb/static/js/wiring/connectableInterface.js:439
 msgid "A channel named \"%(channelName)s\" already exists."
 msgstr "El canal \"%(channelName)s\" ya existe."
 
-#: media/js/wiring/connectableInterface.js:509
-msgid "Value"
-msgstr "Valor"
-
-#: media/js/wiring/connectableInterface.js:534
+#: ezweb/static/js/wiring/connectableInterface.js:496
 msgid "Filters"
 msgstr "Filtros"
 
-#: media/js/wiring/connectableInterface.js:549
+#: ezweb/static/js/wiring/connectableInterface.js:511
 msgid "|"
 msgstr "|"
 
-#: media/js/wiring/connectableInterface.js:555
+#: ezweb/static/js/wiring/connectableInterface.js:517
 msgid "Remote channel"
 msgstr "Canal remoto"
 
-#: media/js/wiring/connectableInterface.js:592
+#: ezweb/static/js/wiring/connectableInterface.js:552
 msgid "Filter"
 msgstr "Filtro"
 
-#: media/js/wiring/connectableInterface.js:665
+#: ezweb/static/js/wiring/connectableInterface.js:621
 msgid "Operation"
 msgstr "Operación"
 
-#: media/js/wiring/connectableInterface.js:737
+#: ezweb/static/js/wiring/connectableInterface.js:687
 msgid "create a new URL"
 msgstr "crear una nueva URL"
 
-#: media/js/wiring/connectableInterface.js:874
+#: ezweb/static/js/wiring/connectableInterface.js:824
 msgid "Enter URL to read from or "
 msgstr "Introduzca la URL desde donde se leerá o "
 
-#: media/js/wiring/connectableInterface.js:879
+#: ezweb/static/js/wiring/connectableInterface.js:829
 msgid "Enter URL to write to or "
 msgstr "Introduzca la URL en donde se escribirá o "
 
-#: media/js/wiring/connectableInterface.js:952
-#: media/js/wiring/wiringGUI.js:1186
+#: ezweb/static/js/wiring/connectableInterface.js:902
+#: ezweb/static/js/wiring/wiringGUI.js:1208
 msgid "None"
 msgstr "Ninguno"
 
-#: media/js/wiring/connectableInterface.js:987
-#: media/js/wiring/connectableInterface.js:995
-#: media/js/wiring/connectableInterface.js:1003 media/js/wiring/filter.js:104
-#: media/js/wiring/filter.js.py:237 media/js/wiring/filter.js:254
-#: media/js/wiring/filter.js.py:283 media/js/wiring/filter.js:303
+#: ezweb/static/js/wiring/connectableInterface.js:937
+#: ezweb/static/js/wiring/connectableInterface.js:945
+#: ezweb/static/js/wiring/connectableInterface.js:953
+#: ezweb/static/js/wiring/filter.js:101 ezweb/static/js/wiring/filter.js:234
+#: ezweb/static/js/wiring/filter.js:251 ezweb/static/js/wiring/filter.js:280
+#: ezweb/static/js/wiring/filter.js:300
 msgid "undefined"
 msgstr "indefinido"
 
-#: media/js/wiring/filter.js:134
+#: ezweb/static/js/wiring/filter.js:131
 msgid "Error loading code of the filter '%(filterName)s'."
 msgstr "Error al cargar el código del filtro '%(filterName)s'."
 
-#: media/js/wiring/filter.js:234
+#: ezweb/static/js/wiring/filter.js:231
 msgid "Look out! '%(paramName)s' of '%(filterName)s' is required"
 msgstr ""
 "Cuidado, el parámetro '%(paramName)s' del filtro '%(filterName)s' es "
 "obligatorio"
 
-#: media/js/wiring/filter.js:250
+#: ezweb/static/js/wiring/filter.js:247
 msgid ""
 "Error loading parameter '%(paramName)s' of the filter '%(filterName)s'. It "
 "must be a number"
@@ -1662,7 +1619,7 @@ msgstr ""
 "Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s'. "
 "Debe ser un número."
 
-#: media/js/wiring/filter.js:279
+#: ezweb/static/js/wiring/filter.js:276
 msgid ""
 "Error loading param '%(paramName)s' of the filter '%(filterName)s': %(error)"
 "s."
@@ -1670,31 +1627,18 @@ msgstr ""
 "Error al cargar el parámetro '%(paramName)s' del filtro '%(filterName)s': "
 "%(error)"
 
-#: media/js/wiring/filter.js:295
+#: ezweb/static/js/wiring/filter.js:292
 msgid "Error executing code of the filter '%(filterName)s'."
 msgstr "Error al ejecutar el código del filtro '%(filterName)s'."
 
-#: media/js/wiring/filter.js:301
+#: ezweb/static/js/wiring/filter.js:298
 msgid ""
 "Error executing code of the filter '%(filterName)s'. Check the parametres."
 msgstr ""
 "Error al ejecutar el código del filtro '%(filterName)s'. Comprueba los "
 "parámetros."
 
-#: media/js/wiring/wiring.js:101
-msgid "Error in processVar: Channel input connectables can only be events."
-msgstr ""
-"Error en processVar: El atributo input de los conectables sólo puede "
-"contener eventos."
-
-#: media/js/wiring/wiring.js:123
-msgid ""
-"Error in processVar: Channel output connectables can only be slots or tabs."
-msgstr ""
-"Error en processVar: El atributo output de los conectables sólo puede "
-"contener slots o tabs."
-
-#: media/js/wiring/wiring.js:148
+#: ezweb/static/js/wiring/wiring.js:117
 msgid ""
 "Wiring: Loop detected while recovering wiring status from persistence.\n"
 "Output connection to channel \"%(targetChannel)s\" from channel "
@@ -1705,7 +1649,7 @@ msgstr ""
 " La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
 "\"%(sourceChannel)s\" será ignorada."
 
-#: media/js/wiring/wiring.js:242
+#: ezweb/static/js/wiring/wiring.js:215
 msgid ""
 "Error adding iGadget into the wiring module of the workspace: Gadget "
 "instance already exists."
@@ -1713,46 +1657,62 @@ msgstr ""
 "Error al añadir el iGadget al módulo de wiring del entorno de trabajo: la "
 "instancia de gadget ya existe."
 
-#: media/js/wiring/wiring.js:283
+#: ezweb/static/js/wiring/wiring.js:255
 msgid "Wiring error: Trying to remove an inexistent igadget."
 msgstr "Error de wiring: se intentó eliminar un igadget inexistente."
 
-#: media/js/wiring/wiring.js:309
+#: ezweb/static/js/wiring/wiring.js:281 ezweb/static/js/wiring/wiring.js:299
+#: ezweb/static/js/wiring/wiring.js:317
 msgid ""
 "Wiring error: Trying to retrieve the connectables of an inexistent igadget."
 msgstr ""
 "Error de wiring: se intentó obtener los conectables de un igadget "
 "inexistente."
 
-#: media/js/wiring/wiring.js:355
+#: ezweb/static/js/wiring/wiring.js:363
 msgid "Error creating channel %(channelName)s: Channel already exists"
 msgstr "Error al crear el canal %(channelName)s: el canal ya existe."
 
-#: media/js/wiring/wiring.js:453
+#: ezweb/static/js/wiring/wiring.js:451
 msgid "Error saving wiring status: %(errorMsg)s."
 msgstr "Error al guardar el estado del wiring: %(errorMsg)s"
 
-#: media/js/wiring/wiringGUI.js:49
+#: ezweb/static/js/wiring/wiringGUI.js:49
 msgid "Channel"
 msgstr "Canal"
 
-#: media/js/wiring/wiringGUI.js:1187
+#: ezweb/static/js/wiring/wiringGUI.js:476
+msgid "Please, create a new channel before creating connections."
+msgstr "Por favor, crea un nuevo canal antes de crear nuevas conexiones."
+
+#: ezweb/static/js/wiring/wiringGUI.js:478
+msgid "Please, select a channel before creating connections."
+msgstr "Por favor, seleciona un canal antes de crear conexiones."
+
+#: ezweb/static/js/wiring/wiringGUI.js:520
+msgid ""
+"You can not make that connection because if you do it, a loop will be "
+"created."
+msgstr ""
+"No se puede realizar esta conexión dado que en tal caso se crearía un bucle."
+
+#: ezweb/static/js/wiring/wiringGUI.js:1209
 msgid "Returns the value of the channel unfiltered."
 msgstr "Devuelve el valor de un canal sin filtrar."
 
-#: media/js/wiring/wiringGUI.js:1212
+#: ezweb/static/js/wiring/wiringGUI.js:1234
 msgid "Disabled"
 msgstr "Desactivado"
 
-#: media/js/wiring/wiringGUI.js:1213
+#: ezweb/static/js/wiring/wiringGUI.js:1235
 msgid "Read"
 msgstr "Lectura"
 
-#: media/js/wiring/wiringGUI.js:1214
+#: ezweb/static/js/wiring/wiringGUI.js:1236
 msgid "Write"
 msgstr "Escritura"
 
-#: media/js/wiring/wiringGUI.js:1286
+#: ezweb/static/js/wiring/wiringGUI.js:1308
 msgid ""
 "Lists of gadgets with events.\n"
 "This events produces a value\n"
@@ -1764,7 +1724,7 @@ msgstr ""
 "que será recibido en alguna\n"
 "ranura de otro gadget."
 
-#: media/js/wiring/wiringGUI.js:1290
+#: ezweb/static/js/wiring/wiringGUI.js:1312
 msgid ""
 "Channels allows you to manage\n"
 "the connections between different\n"
@@ -1774,7 +1734,7 @@ msgstr ""
 "las conexiones entre diferentes\n"
 "instancias de gadgets."
 
-#: media/js/wiring/wiringGUI.js:1293
+#: ezweb/static/js/wiring/wiringGUI.js:1315
 msgid ""
 "Lists of gadgets with slots.\n"
 "This slots receives values\n"
@@ -1786,111 +1746,214 @@ msgstr ""
 "producidos por los eventos de\n"
 "otros gadgets."
 
-#~ msgid "Choose all"
-#~ msgstr "Elegir todo"
+#: media/clms/js/change_field.js:34 media/clms/js/change_field.js.py:134
+msgid "File"
+msgstr "Fichero"
 
-#~ msgid "Chosen %s"
-#~ msgstr "Elegido %s"
+#: media/clms/js/change_field.js:102
+msgid "Wizard"
+msgstr "Asistente"
 
-#~ msgid "Select your choice(s) and click "
-#~ msgstr "Elige tus opciones y haz click "
+#: media/js/cmsutils/widgets/SelectFilter2.js:62
+msgid "Clear all"
+msgstr "Eliminar todas"
 
-#~ msgid "Error renaming igadget from persistence: %(errorMsg)s."
-#~ msgstr "Error al renombrar el igadget de la persistencia: %(errorMsg)s."
+#~ msgid "Buy"
+#~ msgstr "Comprar"
 
-#~ msgid "Snap to grid"
-#~ msgstr "Ajustar a la rejilla"
+#~ msgid "There is not any icon identified by \"%(iconId)s\"."
+#~ msgstr "No hay ningún icono identificado por \"%(iconId)s\"."
 
-#~ msgid "This iGadget is outside the grid."
-#~ msgstr "Este iGadget está fuera de la rejilla."
+#~ msgid "Loading theme images"
+#~ msgstr "Cargando imágenes del tema"
 
-#~ msgid "Extract from grid"
-#~ msgstr "Extraer de la rejilla"
+#~ msgid "%(current)s/%(total)s Error loading %(image)s"
+#~ msgstr "%(current)s/%(total)s Error al cargar la imagen %(image)s"
 
-#~ msgid "This iGadget is aligned to the grid."
-#~ msgstr "Este iGadget está alineado a la rejilla."
+#~ msgid "%(current)s/%(total)s %(image)s"
+#~ msgstr "%(current)s/%(total)s %(image)s"
 
-#~ msgid "Exit Full Dragboard"
-#~ msgstr "Salir de Pantalla Completa"
+#~ msgid "is shared?"
+#~ msgstr "¿está compartido?"
 
-#~ msgid "Full Dragboard"
-#~ msgstr "Pantalla Completa"
+#~ msgid "edit shared value"
+#~ msgstr "editar valor compartido"
 
-#~ msgid "Close"
-#~ msgstr "Cerrar"
+#~ msgid "Transparency"
+#~ msgstr "Transparencia"
 
-#~ msgid "Menu"
-#~ msgstr "Menú"
+#~ msgid "Lower"
+#~ msgstr "Bajar"
 
-#~ msgid "Maximize"
-#~ msgstr "Maximizar"
+#~ msgid "Raise"
+#~ msgstr "Elevar"
 
-#~ msgid "Minimize"
-#~ msgstr "Minimizar"
+#~ msgid "Shared Values"
+#~ msgstr "Valores compartidos"
 
-#~ msgid ""
-#~ "There is a new version of this gadget available. Current version: "
-#~ "%(currentVersion)s - Last version: %(lastVersion)s"
-#~ msgstr ""
-#~ "Hay una nueva versión de este gadget. Versión actual: %(currentVersion)s "
-#~ "- Última versión: %(lastVersion)s"
+#~ msgid "Parametrize"
+#~ msgstr "Parametrizar"
 
-#~ msgid ""
-#~ "<p><b>Do you really want to update \"%(igadgetName)s\" to its latest "
-#~ "version?</b><br />The gadget state and connections will be kept, if "
-#~ "possible.<p>Note: It will reload your workspace</p>"
-#~ msgstr ""
-#~ "<p><b>¿Realmente quiere actualizar \"%(igadgetName)s\" a su última "
-#~ "versión?</b><br />Siempre que sea posible, se conservará el estado y las "
-#~ "conexiones del gadget.<p>Aviso: Esta operación recargará el entorno de "
-#~ "trabajo</p>"
+#~ msgid "Modify"
+#~ msgstr "Modificar"
 
-#~ msgid "Do you want to remove the notice of the new version available?"
-#~ msgstr "¿Desea eliminar el aviso de nueva versión?"
+#~ msgid "This value won't be editable by the user"
+#~ msgstr "Este valor no será editable por el usuario"
 
-#~ msgid ""
-#~ "Error setting the refused version of the igadget to persistence: "
-#~ "%(errorMsg)s."
-#~ msgstr ""
-#~ "Error al hacer persistente la versión rechazada en la actualización del "
-#~ "igadget: %(errorMsg)s."
+#~ msgid "This value will be editable by the user"
+#~ msgstr "Este valor será editable por el usuario"
 
-#~ msgid ""
-#~ "<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
-#~ "updated</b> because its version is not compatible "
-#~ msgstr ""
-#~ "<p>Lo sentimos, pero el gadget \"%(igadgetName)s\" <b>NO</b> pudo ser "
-#~ "actualizado automaticamente porque las versiones no son compatibles "
+#~ msgid "This value will be visible to the user"
+#~ msgstr "Este valor será visible para el usuario"
 
-#~ msgid "%(errorCount)s error"
-#~ msgid_plural "%(errorCount)s errors"
-#~ msgstr[0] "%(errorCount)s error"
-#~ msgstr[1] "%(errorCount)s errores"
+#~ msgid "This value won't be visible to the user"
+#~ msgstr "Este valor no será visible para el usuario"
 
-#~ msgid "You are not allowed to perform this operation"
-#~ msgstr "No estás autorizado a realizar esta operación"
+#~ msgid "User"
+#~ msgstr "Usuario"
 
-#~ msgid "New Application"
-#~ msgstr "Nueva Aplicación"
+#~ msgid "User Name"
+#~ msgstr "Nombre de usuario"
 
-#~ msgid "Unlock"
-#~ msgstr "Desbloquear"
+#~ msgid "First Name"
+#~ msgstr "Nombre"
 
-#~ msgid "Lock"
-#~ msgstr "Bloquear"
+#~ msgid "Last Name"
+#~ msgstr "Apellido"
 
-#~ msgid "Please, create a new channel before creating connections."
-#~ msgstr "Por favor, crea un nuevo canal antes de crear nuevas conexiones."
+#~ msgid "Context"
+#~ msgstr "Contexto"
 
-#~ msgid "Please, select a channel before creating connections."
-#~ msgstr "Por favor, seleciona un canal antes de crear conexiones."
+#~ msgid "Video Tutorials"
+#~ msgstr "Vídeo Tutoriales"
 
 #~ msgid ""
-#~ "You can not make that connection because if you do it, a loop will be "
-#~ "created."
+#~ "In the Dragborad you can move and resize all your gadgets in order to "
+#~ "perform and use your own application. Check the gadget preferences for "
+#~ "further personalization %(settingsIcon)s. Go to the Catalogue to add more "
+#~ "gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections "
+#~ "among them %(wiringIcon)s. If you need more help visit the %(helpLink)s."
 #~ msgstr ""
-#~ "No se puede realizar esta conexión dado que en tal caso se crearía un "
-#~ "bucle."
+#~ "En el Dragboard puedes mover y redimensionar todos tus gadgets con el fin "
+#~ "de configurar y utilizar tu propia aplicación. Comprueba las preferencias "
+#~ "de usuario del gadget para mejorar su personalización %(settingsIcon)s. "
+#~ "Entra en el Catálogo para añadir nuevos gadgets %(catalogueIcon)s y en el "
+#~ "Wiring para establecer conexiones entre ellos %(wiringIcon)s. Si "
+#~ "necesitas más ayuda visita los %(helpLink)s."
+
+#~ msgid ""
+#~ "Discover new gadgets, look for descriptions, tag them, make your rating, "
+#~ "select the ones that best suit your needs and add them to the Dragboard "
+#~ "%(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
+#~ "Wiring interface %(wiringIcon)s in order to improve your experience. If "
+#~ "you need more help visit the %(helpLink)s."
+#~ msgstr ""
+#~ "Descubre nuevos gadgets, consulta sus descripciones, etiquétalos, dales "
+#~ "tu puntuación, elige los que mejor cubran tus necesidades y añádelos al "
+#~ "Dragboard %(dragboardIcon)s. No olvides conectarlos con otros gadgets en "
+#~ "la interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si "
+#~ "necesitas más ayuda visita los %(helpLink)s."
+
+#~ msgid ""
+#~ "In the Wiring interface you can connect your gadgets among them. Create "
+#~ "or select channels and link (by clicking) Events with Slots. Pay "
+#~ "attention to the colours trying to help you, you can create some great "
+#~ "wires following it. You can see the results of your wires at the "
+#~ "Dragboard interface %(dragboardIcon)s. If you need more help visit the "
+#~ "%(helpLink)s."
+#~ msgstr ""
+#~ "En la interfaz de Wiring puedes conectar tus gadgets entre sí. Crear o "
+#~ "seleccionar canales y enlazar (haciendo click) Eventos y Ranuras. Presta "
+#~ "atención a los colores, ya que pueden ayudarte, podrás crear conexiones "
+#~ "acertadas siguiéndolos. Puedes probar el resultado de las conexiones en "
+#~ "la interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita "
+#~ "los %(helpLink)s."
+
+#~ msgid "Contratation Information"
+#~ msgstr "Información de contratación"
+
+#~ msgid "Finish"
+#~ msgstr "Terminar"
+
+#~ msgid "Assign"
+#~ msgstr "Asignar"
+
+#~ msgid "Buying composed application"
+#~ msgstr "Comprar una aplicación compuesta"
+
+#~ msgid ""
+#~ "Buying this composed solution implies paying for the following "
+#~ "applications."
+#~ msgstr ""
+#~ "La compra de esta solución compuesta implica el pago de las siguientes "
+#~ "aplicaciones."
+
+#~ msgid ""
+#~ "Click on any of them to see a detailed description, including princing "
+#~ "info."
+#~ msgstr ""
+#~ "Haga click en alguno de los siguientes elementos para ver una descripción "
+#~ "detallada, incluyendo la información de las tarifas."
+
+#~ msgid "Buying this gadget implies paying for the following application."
+#~ msgstr "Comprar este gadget implica el pago de las siguientes aplicaciones."
+
+#~ msgid "Click on it to see a detailed description, including princing info."
+#~ msgstr ""
+#~ "Haga click en él para ver una descripción detallada, incluyendo "
+#~ "información de las tarifas."
+
+#~ msgid "Sign-up fee"
+#~ msgstr "Tarifa de alta"
+
+#~ msgid "Monthly fee"
+#~ msgstr "Tarifa mensual"
+
+#~ msgid "Buying gadget"
+#~ msgstr "Compra de un gadget"
+
+#~ msgid "already paid"
+#~ msgstr "ya pagado"
+
+#~ msgid "TOTAL"
+#~ msgstr "TOTAL"
+
+#~ msgid "Info:"
+#~ msgstr "Info:"
+
+#~ msgid "Error:"
+#~ msgstr "Error:"
+
+#~ msgid "Warning:"
+#~ msgstr "Aviso:"
+
+#~ msgid "Create your own skin for your application"
+#~ msgstr "Crea tu propia apariencia (skin) para tu aplicación"
+
+#~ msgid "Block gadgets and connections"
+#~ msgstr "Bloquear los gadgets y sus conexiones"
+
+#~ msgid "Error cloning workspace: %(errorMsg)s."
+#~ msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
+
+#~ msgid ""
+#~ "There were errors while loading some of the images for the theme. Do you "
+#~ "really want to use it?"
+#~ msgstr ""
+#~ "Han sucedido errores durante la carga de las imágenes del tema. ¿Quieres "
+#~ "utilizarlo?"
+
+#~ msgid "Error in processVar: Channel input connectables can only be events."
+#~ msgstr ""
+#~ "Error en processVar: El atributo input de los conectables sólo puede "
+#~ "contener eventos."
+
+#~ msgid ""
+#~ "Error in processVar: Channel output connectables can only be slots or "
+#~ "tabs."
+#~ msgstr ""
+#~ "Error en processVar: El atributo output de los conectables sólo puede "
+#~ "contener slots o tabs."
 
 #~ msgid "Theme description \"%(themeName)s\" could not be loaded."
 #~ msgstr "La descipción del tema \"%(themeName)s\" no pudo cargarse"
@@ -2185,32 +2248,6 @@ msgstr ""
 #~ msgid "Delete gadget"
 #~ msgstr "Eliminar Gadget"
 
-#~ msgid "Advanced Search"
-#~ msgstr "Búsqueda avanzada"
-
-#~ msgid "Development Options"
-#~ msgstr "Opciones de desarrollo"
-
-#~ msgid "Hide Tagging"
-#~ msgstr "Ocultar etiquetado"
-
-#~ msgid "Simple Search"
-#~ msgstr "Búsqueda sencilla"
-
-#~ msgid "Hide Development Options"
-#~ msgstr "Ocultar opciones de desarrollo"
-
-#~ msgid "Error POST"
-#~ msgstr "Error de POST"
-
-#~ msgid "Changing current theme"
-#~ msgstr "Cambiando el tema actual"
-
-#~ msgid ""
-#~ "Error loading \"%(theme)s\" theme. Current theme has not been changed."
-#~ msgstr ""
-#~ "Error cargando el tema \"%(theme)s\". El tema actual no ha cambiado."
-
 #~ msgid "Show active workspace"
 #~ msgstr "Mostrar el entorno de trabajo activo"
 
@@ -2225,15 +2262,6 @@ msgstr ""
 #~ msgstr ""
 #~ "Error cargando el tema \"%(theme)s\". Intentándolo con el tema por defecto"
 
-#~ msgid "Publish workspace"
-#~ msgstr "Publicar el entorno de trabajo"
-
-#~ msgid "Merge with workspace..."
-#~ msgstr "Mezclar con entorno de trabajo..."
-
-#~ msgid "Find built-in applications"
-#~ msgstr "Encontrar aplicaciones preconfiguradas"
-
 #~ msgid ""
 #~ "Wiring: Loop detected while recovering wiring status from persistence."
 #~ "\\nOutput connection to channel \"%(targetChannel)s\" from channel "
@@ -2243,12 +2271,3 @@ msgstr ""
 #~ "persistencia.\n"
 #~ " La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
 #~ "\"%(sourceChannel)s\" será ignorada."
-
-#~ msgid "Smart grid"
-#~ msgstr "Rejilla inteligente"
-
-#~ msgid "View all solutions"
-#~ msgstr "Ver todas las soluciones"
-
-#~ msgid "Purchase"
-#~ msgstr "Adquirir"
