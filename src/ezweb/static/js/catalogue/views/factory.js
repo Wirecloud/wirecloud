@@ -23,7 +23,7 @@
 *     http://morfeo-project.org
  */
 
-var ListViewFactory  = function () {
+var CatalogueViewFactory = function () {
 
     this.COMMANDS_INFO = new Hash({
         '#view_all': 'VIEW_ALL', '#simple_search input': 'SIMPLE_SEARCH',
@@ -131,4 +131,4 @@ var ListViewFactory  = function () {
 
         return this.catalogue;
     }
-}
+};

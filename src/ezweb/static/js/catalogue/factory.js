@@ -42,7 +42,7 @@ var CatalogueFactory = function () {
     return new function() {
         this.getInstance = function() {
             if (!active_instance) {
-                var view_factory = new ListViewFactory();
+                var view_factory = new CatalogueViewFactory();
                 active_instance = view_factory.create_catalogue(catalogue_dom, persistence_engine);
                 OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
             }
