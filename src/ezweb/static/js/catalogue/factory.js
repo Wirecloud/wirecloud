@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -23,24 +23,26 @@
 *     http://morfeo-project.org
 */
 
-var CatalogueFactory = function () {
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global $, CatalogueViewFactory, Modules, OpManagerFactory, PersistenceEngineFactory */
+"use strict";
+
+var CatalogueFactory = (function () {
 
     // *********************************
     // SINGLETON INSTANCE
     // *********************************
 
-    var catalogue_dom = $('showcase');
-
-    var persistence_engine = PersistenceEngineFactory.getInstance();
-
-    // ACTIVE VALUES
-    var active_instance = null;
+    var catalogue_dom = $('showcase'),
+        persistence_engine = PersistenceEngineFactory.getInstance(),
+        active_instance = null,
+        Singleton;
 
     // ************************
     //  SINGLETON GET INSTANCE
     // ************************
-    return new function() {
-        this.getInstance = function() {
+    Singleton = function () {
+        this.getInstance = function () {
             if (!active_instance) {
                 var view_factory = new CatalogueViewFactory();
                 active_instance = view_factory.create_catalogue(catalogue_dom, persistence_engine);
@@ -48,6 +50,8 @@ var CatalogueFactory = function () {
             }
 
             return active_instance;
-        }
-    }
-}();
+        };
+    };
+
+    return new Singleton();
+}());
