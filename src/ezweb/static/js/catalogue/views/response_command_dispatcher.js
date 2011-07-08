@@ -23,6 +23,10 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global alert, Hash, ShowcaseFactory */
+"use strict";
+
 var ResponseCommandDispatcher = function (dom_wrapper, user_command_manager) {
     this.dom_wrapper = dom_wrapper;
     this.user_command_manager = user_command_manager;
@@ -37,21 +41,23 @@ ResponseCommandDispatcher.prototype.set_painter = function (painter_code, painte
 };
 
 ResponseCommandDispatcher.prototype.init = function () {
+    var element;
+
     //PAINTERS
-    var pagination_div = this.dom_wrapper.get_element_by_code('PAGINATION_AREA');
-    this.painters['PAGINATION_PAINTER'].set_dom_element(pagination_div);
+    element = this.dom_wrapper.get_element_by_code('PAGINATION_AREA');
+    this.painters.PAGINATION_PAINTER.set_dom_element(element);
 
-    var gadgets_div = this.dom_wrapper.get_element_by_code('GADGET_LIST');
-    this.painters['GADGETS_PAINTER'].set_dom_element(gadgets_div);
+    element = this.dom_wrapper.get_element_by_code('GADGET_LIST');
+    this.painters.GADGETS_PAINTER.set_dom_element(element);
 
-    var mashups_div = this.dom_wrapper.get_element_by_code('MASHUP_LIST');
-    this.painters['MASHUPS_PAINTER'].set_dom_element(mashups_div);
+    element = this.dom_wrapper.get_element_by_code('MASHUP_LIST');
+    this.painters.MASHUPS_PAINTER.set_dom_element(element);
 
-    var developers_div = this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA');
-    this.painters['DEVELOPERS_PAINTER'].set_dom_element(developers_div);
+    element = this.dom_wrapper.get_element_by_code('DEVELOPER_INFO_AREA');
+    this.painters.DEVELOPERS_PAINTER.set_dom_element(element);
 
-    var resource_details_div = this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA');
-    this.painters['RESOURCE_DETAILS_PAINTER'].set_dom_element(resource_details_div);
+    element = this.dom_wrapper.get_element_by_code('RESOURCE_DETAILS_AREA');
+    this.painters.RESOURCE_DETAILS_PAINTER.set_dom_element(element);
 
     // TOOLBAR BUTTONS
     this.search_button = this.dom_wrapper.get_element_by_code('SEARCH_TOOLBAR_BUTTON');
@@ -64,87 +70,94 @@ ResponseCommandDispatcher.prototype.init = function () {
 };
 
 ResponseCommandDispatcher.prototype.process = function (resp_command) {
-    var display_options = {
-        'search_options': 'none', 'pagination':'none', 'developer_info': 'none',
-        'gadget_list':'none', 'mashup_list':'none', 'resource_details':'none',
-        'tab_bar': 'none'};
+    var display_options, services, command_id, command_data;
 
-    var services = this.user_command_manager.get_service_facade();
-    var command_id = resp_command.get_id();
+    display_options = {
+        'search_options': 'none',
+        'pagination': 'none',
+        'developer_info': 'none',
+        'gadget_list': 'none',
+        'mashup_list': 'none',
+        'resource_details': 'none',
+        'tab_bar': 'none'
+    };
+
+    services = this.user_command_manager.get_service_facade();
+    command_id = resp_command.get_id();
 
     switch (command_id) {
     case 'PAINT_GADGETS':
     case 'SHOW_GADGETS':
-        display_options['search_options'] = 'block';
-        display_options['pagination'] = 'block';
-        display_options['gadget_list'] = 'block';
-        display_options['tab_bar'] = 'block';
+        display_options.search_options = 'block';
+        display_options.pagination = 'block';
+        display_options.gadget_list = 'block';
+        display_options.tab_bar = 'block';
 
         this.show_section(display_options, command_id);
 
-        if (command_id == 'PAINT_GADGETS') {
-            this.painters['GADGETS_PAINTER'].paint(resp_command, this.user_command_manager);
+        if (command_id === 'PAINT_GADGETS') {
+            this.painters.GADGETS_PAINTER.paint(resp_command, this.user_command_manager);
             ShowcaseFactory.getInstance().setGadgetsState(resp_command.data.resources);
         }
 
-        this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+        this.painters.PAGINATION_PAINTER.paint(resp_command, this.user_command_manager);
 
         break;
     case 'PAINT_MASHUPS':
     case 'SHOW_MASHUPS':
-        display_options['search_options'] = 'block';
-        display_options['pagination'] = 'block';
-        display_options['mashup_list'] = 'block';
-        display_options['tab_bar'] = 'block';
+        display_options.search_options = 'block';
+        display_options.pagination = 'block';
+        display_options.mashup_list = 'block';
+        display_options.tab_bar = 'block';
 
         this.show_section(display_options, command_id);
 
-        if (command_id == 'PAINT_MASHUPS') {
-            this.painters['MASHUPS_PAINTER'].paint(resp_command, this.user_command_manager);
+        if (command_id === 'PAINT_MASHUPS') {
+            this.painters.MASHUPS_PAINTER.paint(resp_command, this.user_command_manager);
         }
 
-        this.painters['PAGINATION_PAINTER'].paint(resp_command, this.user_command_manager);
+        this.painters.PAGINATION_PAINTER.paint(resp_command, this.user_command_manager);
 
         break;
     case 'PAINT_RESOURCE_DETAILS':
-        display_options['resource_details'] = 'block';
+        display_options.resource_details = 'block';
 
         this.show_section(display_options, command_id);
 
-        this.painters['RESOURCE_DETAILS_PAINTER'].paint(resp_command, this.user_command_manager);
+        this.painters.RESOURCE_DETAILS_PAINTER.paint(resp_command, this.user_command_manager);
 
         break;
     case 'SHOW_DEVELOPER_INFO':
-        display_options['developer_info'] = 'block';
+        display_options.developer_info = 'block';
 
         this.show_section(display_options, command_id);
 
-        this.painters['DEVELOPERS_PAINTER'].paint(resp_command, this.user_command_manager);
+        this.painters.DEVELOPERS_PAINTER.paint(resp_command, this.user_command_manager);
 
         break;
     case 'SHOW_SEARCH_INFO':
-        display_options['search_options'] = 'block';
-        display_options['pagination'] = 'block';
-        display_options['tab_bar'] = 'block';
+        display_options.search_options = 'block';
+        display_options.pagination = 'block';
+        display_options.tab_bar = 'block';
 
-        var command_data = resp_command.get_data();
+        command_data = resp_command.get_data();
 
-        if (command_data == 'gadget')
-          display_options['gadget_list'] = 'block';
-
-        if (command_data == 'mashup')
-          display_options['mashup_list'] = 'block';
+        if (command_data === 'gadget') {
+            display_options.gadget_list = 'block';
+        } else if (command_data === 'mashup') {
+            display_options.mashup_list = 'block';
+        }
 
         this.show_section(display_options, command_id);
 
         break;
     case 'SUBMIT_GADGET':
     case 'SUBMIT_PACKAGED_GADGET':
-        display_options['developer_info'] = 'block';
+        display_options.developer_info = 'block';
 
         this.show_section(display_options, command_id);
 
-        this.painters['DEVELOPERS_PAINTER'].paint_adding_gadget_results(resp_command, this.user_command_manager);
+        this.painters.DEVELOPERS_PAINTER.paint_adding_gadget_results(resp_command, this.user_command_manager);
         break;
     case 'REPEAT_SEARCH':
         services.repeat_last_search();
@@ -157,13 +170,13 @@ ResponseCommandDispatcher.prototype.process = function (resp_command) {
 };
 
 ResponseCommandDispatcher.prototype.show_section = function (display_options, command_id) {
-    var search_options = display_options['search_options'];
-    var pagination = display_options['pagination'];
-    var gadget_list = display_options['gadget_list'];
-    var mashup_list = display_options['mashup_list'];
-    var resource_details = display_options['resource_details'];
-    var developer_info = display_options['developer_info'];
-    var tab_bar = display_options['tab_bar'];
+    var search_options = display_options.search_options,
+        pagination = display_options.pagination,
+        gadget_list = display_options.gadget_list,
+        mashup_list = display_options.mashup_list,
+        resource_details = display_options.resource_details,
+        developer_info = display_options.developer_info,
+        tab_bar = display_options.tab_bar;
 
 
     this.dom_wrapper.get_element_by_code('SEARCH_OPTIONS_AREA').setStyle({'display': search_options});
@@ -210,6 +223,6 @@ ResponseCommandDispatcher.prototype.show_section = function (display_options, co
         this.gadgets_button.removeClassName('current');
         break;
     default:
-        alert ('Error activating tab!');
+        alert('Error activating tab!');
     }
 };
