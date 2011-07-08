@@ -212,8 +212,8 @@ LOGOUT_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 
 FIXTURE_DIRS = (
-    path.join(BASEDIR, 'fixtures', 'data.json'),
-    )
+    path.join(BASEDIR, 'fixtures', 'django.contrib'),
+)
 
 # Set the log path
 # When empty, defaults to MEDIA_ROOT/logs
