@@ -235,7 +235,7 @@ var ResourceDetailsPainter = function (details_structure_element) {
     };
 
     this.create_simple_command = function (selector, command, resource, _event, user_command_manager) {
-        var elements = this.dom_element.getElementsBySelector();
+        var elements = this.dom_element.getElementsBySelector(selector);
 
         if (!elements || elements.length !== 1) {
             alert('Problem rendering resource details (' + selector + ')!');
@@ -304,7 +304,7 @@ var ResourceDetailsPainter = function (details_structure_element) {
         this.create_simple_command('.voting_resource', 'VOTE_RESOURCE', resource, 'click', user_command_manager);
 
         // Changing version
-        this.create_simple_command('.change_version_resource', 'CHANGE_RESOURCE_RESOURCE', resource, 'click', user_command_manager);
+        this.create_simple_command('.change_version_resource', 'CHANGE_RESOURCE_VERSION', resource, 'click', user_command_manager);
 
         // Tagging resource
         this.create_simple_command('.tagging_resource', 'TAG_RESOURCE', resource, 'click', user_command_manager);
