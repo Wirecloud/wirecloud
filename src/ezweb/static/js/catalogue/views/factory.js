@@ -23,25 +23,40 @@
 *     http://morfeo-project.org
  */
 
-var MosaicViewFactory = function () {
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global $, Catalogue, CatalogueResourceSubmitter, CatalogueSearcher, CatalogueTagger, CatalogueVoter, DeveloperInfoPainter, DOM_Wrapper, Hash, PaginationPainter, ResourceDetailsPainter, ResourcesPainter, ResponseCommandDispatcher, ServicesFacade, UserCommandManager */
+"use strict";
+
+var CatalogueViewFactory = function () {
 
     this.COMMANDS_INFO = new Hash({
-        '#view_all': 'VIEW_ALL', '#simple_search input': 'SIMPLE_SEARCH',
-        '#results_per_page': 'SIMPLE_SEARCH', '#results_order': 'SIMPLE_SEARCH',
-        '#gadgets_button': 'SHOW_GADGETS', '#mashups_button': 'SHOW_MASHUPS',
+        '#view_all': 'VIEW_ALL',
+        '#simple_search input': 'SIMPLE_SEARCH',
+        '#results_per_page': 'SIMPLE_SEARCH',
+        '#results_order': 'SIMPLE_SEARCH',
+        '#gadgets_button': 'SHOW_GADGETS',
+        '#mashups_button': 'SHOW_MASHUPS',
         '#developers_button_toolbar': 'SHOW_DEVELOPER_INFO',
         '#search_button_toolbar': 'SHOW_SEARCH_INFO'
     });
 
     this.DOM_ELEMENT_IDS = new Hash({
-        'ORDER_BY_COMBO': '#results_order', 'RESULTS_PER_PAGE_COMBO': '#results_per_page',
-        'PAGINATION_AREA': '#paginate', 'GADGET_LIST': '#gadgets',
-        'SEARCH_INPUT': '#simple_search input', 'RESOURCE_DETAILS_AREA': '#resource_details',
-        'MASHUP_LIST': '#mashups', 'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
-        'GADGETS_BUTTON': '#gadgets_button', 'MASHUPS_BUTTON': '#mashups_button',
-        'DEVELOPERS_BUTTON': '#developers_button_toolbar', 'DEVELOPER_INFO_AREA': '#developer_info',
-        'SEARCH_TOOLBAR_BUTTON': '#search_button_toolbar', 'TAB_BAR': '#catalogue_nav_bar .tab_section',
-        'CATALOGUE_CENTER':'#catalogue_center', 'BAR_AREA': '#catalogue_resources_header'
+        'ORDER_BY_COMBO': '#results_order',
+        'RESULTS_PER_PAGE_COMBO': '#results_per_page',
+        'PAGINATION_AREA': '#paginate',
+        'GADGET_LIST': '#gadgets',
+        'SEARCH_INPUT': '#simple_search input',
+        'RESOURCE_DETAILS_AREA': '#resource_details',
+        'MASHUP_LIST': '#mashups',
+        'SEARCH_OPTIONS_AREA': '#catalogue_resources_header',
+        'GADGETS_BUTTON': '#gadgets_button',
+        'MASHUPS_BUTTON': '#mashups_button',
+        'DEVELOPERS_BUTTON': '#developers_button_toolbar',
+        'DEVELOPER_INFO_AREA': '#developer_info',
+        'SEARCH_TOOLBAR_BUTTON': '#search_button_toolbar',
+        'TAB_BAR': '#catalogue_nav_bar .tab_section',
+        'CATALOGUE_CENTER': '#catalogue_center',
+        'BAR_AREA': '#catalogue_resources_header'
     });
 
     this.catalogue_structure_dom = $('list_view_catalogue_structure');
@@ -61,15 +76,15 @@ var MosaicViewFactory = function () {
 
     this.get_html_code = function () {
         return this.catalogue_structure_dom.innerHTML;
-    }
+    };
 
     this.get_commands_info = function () {
         return this.COMMANDS_INFO;
-    }
+    };
 
     this.get_dom_element_ids = function () {
         return this.DOM_ELEMENT_IDS;
-    }
+    };
 
     this.create_catalogue = function (catalogue_element, persistence_engine) {
         //////////////////////////
@@ -77,14 +92,14 @@ var MosaicViewFactory = function () {
         //////////////////////////
         this.dom_wrapper = new DOM_Wrapper(catalogue_element, this.get_dom_element_ids());
 
-        this.user_command_manager = new ListView_UserCommandManager(this.dom_wrapper);
-        this.resp_command_dispatcher = new ListView_ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
+        this.user_command_manager = new UserCommandManager(this.dom_wrapper);
+        this.resp_command_dispatcher = new ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
 
-        this.gadgets_painter = new ResourcesPainter(this.RESOURCE_TEMPLATE);
-        this.mashups_painter = new ResourcesPainter(this.RESOURCE_TEMPLATE);
-        this.pagination_painter = new ListView_PaginationPainter(this.pagination_structure_dom);
-        this.resource_details_painter = new ListView_ResourceDetailsPainter(this.resource_details_structure_dom);
-        this.developer_info_painter = new ListView_DeveloperInfoPainter(this.developer_info_structure_dom);
+        this.gadgets_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
+        this.mashups_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
+        this.pagination_painter = new PaginationPainter(this.pagination_structure_dom);
+        this.resource_details_painter = new ResourceDetailsPainter(this.resource_details_structure_dom);
+        this.developer_info_painter = new DeveloperInfoPainter(this.developer_info_structure_dom);
 
         this.catalogue = new Catalogue(catalogue_element, this.dom_wrapper);
 
@@ -130,16 +145,5 @@ var MosaicViewFactory = function () {
         this.catalogue.render();
 
         return this.catalogue;
-    }
-}
-
-MosaicViewFactory.prototype.RESOURCE_TEMPLATE = '<div class="top"></div>\
-<div class="toolbar">\
-    <div class="title click_for_details" title="#{name}">#{name}</div>\
-    <div><button class="instanciate_button #{type}">#{button_text}</button></div>\
-</div>\
-<div class="content">\
-    <div class="image click_for_details"><a title="Mostrar detalles del recurso"><img src="#{image_url}"></a></div>\
-    <div class="tags"><div class="important_tag_links"></div></div>\
-</div>\
-<div class="bottom"></div>';
+    };
+};

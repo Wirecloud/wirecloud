@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -23,33 +23,37 @@
 *     http://morfeo-project.org
  */
 
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global $, BrowserUtilsFactory, Event, LayoutManagerFactory, OpManagerFactory, Position */
+"use strict";
+
 var ResponseCommand = function (response_command_processor, caller) {
-  this.processor = response_command_processor;
-  this.caller = caller;
-  this.id = null;
-  this.data = null;
-}
+    this.processor = response_command_processor;
+    this.caller = caller;
+    this.id = null;
+    this.data = null;
+};
 
 // SETTERS
 ResponseCommand.prototype.set_id = function (command_id) {
-  this.id = command_id;
-}
+    this.id = command_id;
+};
 
 ResponseCommand.prototype.set_data = function (command_data) {
-  this.data = command_data;
-}
+    this.data = command_data;
+};
 
 // GETTERS
 ResponseCommand.prototype.get_id = function (command_id) {
-  return this.id;
-}
+    return this.id;
+};
 
 ResponseCommand.prototype.get_data = function (command_data) {
-  return this.data;
-}
+    return this.data;
+};
 
 // Process command
 ResponseCommand.prototype.process = function () {
-  this.processor.process(this);
-}
+    this.processor.process(this);
+};
 
