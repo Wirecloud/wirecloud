@@ -246,7 +246,7 @@ var TagResourceCommand = function (dom_element, html_event, service_facade, dom_
     };
 
     submit_tag_to_resource = function (event) {
-        if (event.keyCode === 13) {
+        if (event.type === 'click' || event.keyCode === 13) {
             this.services.tag(this.data, this.tag_input.value);
         }
     };
