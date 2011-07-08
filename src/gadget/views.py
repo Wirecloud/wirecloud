@@ -29,6 +29,7 @@
 
 
 #
+import time
 
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError
@@ -36,6 +37,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
 from commons.authentication import user_authentication, Http403
+from commons.cache import no_cache, patch_cache_headers
 from commons.utils import get_xml_error, json_encode, get_xhtml_content
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
@@ -117,6 +119,8 @@ def deleteGadget(user, short_name, vendor, version):
 
 
 class GadgetCollection(Resource):
+
+    @no_cache
     def read(self, request, user_name=None):
         user = user_authentication(request, user_name)
 
@@ -151,6 +155,7 @@ class GadgetCollection(Resource):
 
 class GadgetEntry(Resource):
 
+    @no_cache
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, users=user, vendor=vendor, name=name, version=version)
@@ -175,25 +180,42 @@ class GadgetCodeEntry(Resource):
     def read(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)
         gadget = get_object_or_404(Gadget, vendor=vendor, name=name, version=version, users__id=user.id)
+        xhtml = gadget.xhtml
 
-        content_type = gadget.xhtml.content_type
+        content_type = xhtml.content_type
         if not content_type:
             content_type = 'text/html'
 
-        if not gadget.xhtml.cacheable:
+        code = xhtml.code
+        if not xhtml.cacheable or code == '':
             try:
-                if gadget.xhtml.url.startswith('/deployment/gadgets/'):
-                    gadget.xhtml.code = get_xhtml_content(gadget.xhtml.url)
-                    gadget.xhtml.code = includeTagBase(gadget.xhtml.code, gadget.xhtml.url, request)
+                if xhtml.url.startswith('/deployment/gadgets/'):
+                    code = get_xhtml_content(xhtml.url)
+                    code = includeTagBase(code, xhtml.url, request)
                 else:
-                    gadget.xhtml.code = download_http_content(gadget.get_resource_url(gadget.xhtml.url, request), user=request.user)
-                gadget.xhtml.code = fix_ezweb_scripts(gadget.xhtml.code, request)
+                    code = download_http_content(gadget.get_resource_url(xhtml.url, request), user=request.user)
+                code = fix_ezweb_scripts(code, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
                 return HttpResponse(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
 
-        return HttpResponse(gadget.xhtml.code, mimetype='%s; charset=UTF-8' % content_type)
+        if xhtml.cacheable and (xhtml.code == '' or xhtml.code_timestamp is None):
+            xhtml.code = code
+            xhtml.code_timestamp = time.time() * 1000
+            xhtml.save()
+        elif not xhtml.cacheable and xhtml.code != '':
+            xhtml.code = ''
+            xhtml.code_timestamp = None
+            xhtml.save()
+
+        response = HttpResponse(code, mimetype='%s; charset=UTF-8' % content_type)
+        cache_timeout = 0
+        if xhtml.cacheable:
+            cache_timeout = 31536000  # 1 year
+
+        patch_cache_headers(response, xhtml.code_timestamp, cache_timeout)
+        return response
 
     def update(self, request, vendor, name, version, user_name=None):
         user = user_authentication(request, user_name)

@@ -53,6 +53,7 @@ from catalogue.catalogue_utils import get_vote_response, group_resources
 from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
 from commons.authentication import user_authentication, Http403
+from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
 from commons.logs import log
@@ -106,6 +107,7 @@ class ResourceCollection(Resource):
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
 
+    @no_cache
     def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
@@ -150,6 +152,7 @@ class ResourceCollection(Resource):
 
 class ResourceCollectionBySimpleSearch(Resource):
 
+    @no_cache
     def read(self, request, user_name, criteria, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
@@ -207,6 +210,7 @@ class ResourceCollectionBySimpleSearch(Resource):
 
 class ResourceCollectionByGlobalSearch(Resource):
 
+    @no_cache
     def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
@@ -293,6 +297,7 @@ class ResourceTagCollection(Resource):
 
         return get_tag_response(resource, user, format)
 
+    @no_cache
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
@@ -357,6 +362,7 @@ class ResourceVoteCollection(Resource):
 
         return get_vote_response(resource, user, format)
 
+    @no_cache
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
@@ -439,6 +445,7 @@ class ResourceVersionCollection(Resource):
 
 class ResourceEnabler(Resource):
 
+    @no_cache
     def read(self, request, resource_id):
         resource = get_object_or_404(CatalogueResource, id=resource_id)
 

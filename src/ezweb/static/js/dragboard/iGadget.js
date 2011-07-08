@@ -554,7 +554,7 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+    var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
         this.content = document.createElement("iframe");
         Element.extend(this.content);
@@ -736,7 +736,7 @@ IGadget.prototype.paint = function (onInit) {
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
     if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
-        var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+        var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
         this.content.setAttribute("data", codeURL);
     }
 

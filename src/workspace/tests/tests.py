@@ -32,7 +32,7 @@ class WorkspaceTestCase(TestCase):
     def testGetGlobalWorkspaceData(self):
 
         workspace = WorkSpace.objects.get(pk=1)
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
         self.assertEqual(len(data['workspace']['tabList']), 1)
 
@@ -54,7 +54,7 @@ class WorkspaceTestCase(TestCase):
         workspace_tabs = Tab.objects.filter(workspace=workspace)
         self.assertEqual(workspace_tabs.count(), 1)
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
 
     def testVariableValuesCacheInvalidation(self):
@@ -76,7 +76,7 @@ class WorkspaceTestCase(TestCase):
         result = client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(result.status_code, 200)
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
@@ -101,14 +101,14 @@ class WorkspaceTestCase(TestCase):
         Gadget.objects.get(pk=1).users.add(self.user)
         created_igadget = SaveIGadget(igadget_data, self.user, tab, {})
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
 
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 2)
 
         # Remove the igadget
         deleteIGadget(created_igadget, self.user)
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 1)
 
@@ -161,7 +161,7 @@ class WorkspaceTestCase(TestCase):
         packageCloner.merge_workspaces(cloned_workspace, workspace, self.user)
 
         # Check cache invalidation
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         tab_list = data['workspace']['tabList']
 
         self.assertEqual(len(tab_list), 2)
@@ -182,7 +182,7 @@ class WorkspaceTestCase(TestCase):
         sync_base_workspaces(other_user)
 
         # Check that other_user can access to the shared workspace
-        data = get_global_workspace_data(workspace, other_user)
+        data = get_global_workspace_data(workspace, other_user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 1)
 
@@ -204,7 +204,7 @@ class WorkspaceTestCase(TestCase):
         Gadget.objects.get(pk=1).users.add(self.user)
         SaveIGadget(igadget_data, self.user, tab, {})
 
-        data = get_global_workspace_data(workspace, other_user)
+        data = get_global_workspace_data(workspace, other_user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 2)
 
