@@ -449,7 +449,7 @@ button {
 
 .popup_menu .submenu {
   padding-right: 2.5ex;
-  background-image: url(/static/js/EzWebAPI_ext/images/styledElements/submenu-mark.png);
+  background-image: url(/ezweb/js/EzWebAPI_ext/images/styledElements/submenu-mark.png);
   background-position: right center;
   background-repeat: no-repeat;
 }
