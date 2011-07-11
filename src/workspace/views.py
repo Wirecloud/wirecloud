@@ -686,7 +686,7 @@ class WorkSpaceAdderEntry(Resource):
 
         workspace_data = get_global_workspace_data(workspace, user)
 
-        return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
 
 
 def check_json_fields(json, fields):
