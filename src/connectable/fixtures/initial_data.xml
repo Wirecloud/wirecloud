@@ -123,35 +123,35 @@
     	<field type="TextField" name="params">__MSG_substr_params__</field>
     </object>
     <object pk="16" model="connectable.filter">
-        <field type="CharField" name="name">toLowerCase</field>
+        <field type="CharField" name="name">tolowercase</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
         	return channelValue.toLowerCase();
         }
         ]]>
         </field>
-        <field type="CharField" name="label">__MSG_toLowerCase_label__</field>
+        <field type="CharField" name="label">__MSG_tolowercase_label__</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text">__MSG_toLowerCase_helptext__</field>
+        <field type="TextField" name="help_text">__MSG_tolowercase_helptext__</field>
         <field type="TextField" name="params"><None></None></field>    
     </object>
     <object pk="17" model="connectable.filter">
-        <field type="CharField" name="name">toUpperCase</field>
+        <field type="CharField" name="name">touppercase</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
         	return channelValue.toUpperCase();
         }
         ]]>
         </field>
-        <field type="CharField" name="label">__MSG_toUpperCase_label__</field>
+        <field type="CharField" name="label">__MSG_touppercase_label__</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text">__MSG_toUpperCase_helptext__</field>
+        <field type="TextField" name="help_text">__MSG_touppercase_helptext__</field>
 	<field type="TextField" name="params"><None></None></field>    
     </object>
     <object pk="18" model="connectable.filter">
-        <field type="CharField" name="name">JSONParser.parse</field>
+        <field type="CharField" name="name">jsonparse</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
         	var result;
@@ -167,17 +167,14 @@
         }
         ]]>
         </field>
-        <field type="CharField" name="label">JSON Parser</field>
+        <field type="CharField" name="label">__MSG_jsonparser_label__</field>
         <field type="CharField" name="nature">JSLIB</field>
         <field type="CharField" name="category">JSON</field>
-        <field type="TextField" name="help_text"><![CDATA[Find elements in JSON structures.
-
-Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales" target="_blank">this page</a> for further information. 
-]]></field>
-		<field type="TextField" name="params">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>
-	</object>
+        <field type="TextField" name="help_text">__MSG_jsonparser_helptext__</field>
+        <field type="TextField" name="params">__MSG_jsonparser_params__</field>
+   </object>
    <object pk="19" model="connectable.filter">
-        <field type="CharField" name="name">Demultiplex</field>
+        <field type="CharField" name="name">barrier</field>
         <field type="TextField" name="code"><![CDATA[
   function(channelValue, channel, params){
     			if (!channel._allInputsModified()){
@@ -185,10 +182,10 @@ Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales
     			}
 				else{
 					channel._unmarkAllInputsAsModified();
-					if (params["correspondence"]){
+					if (params["mapping"]){
 						//change the indexes given by the user
 						var inputValues = channel._getJSONInput();
-						var userIndexes = eval('('+params["correspondence"]+')');
+						var userIndexes = eval('('+params["mapping"]+')');
 						var newInputs = {};
 						var newIndex, value = null;
 						var indexes = inputValues.keys();
@@ -206,21 +203,17 @@ Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales
 				}
 			}
         ]]></field>
-        <field type="CharField" name="label">Demultiplex</field>
+        <field type="CharField" name="label">__MSG_barrier_label__</field>
         <field type="CharField" name="nature">PATT</field>
         <field type="CharField" name="category">TRANS</field>
-        <field type="TextField" name="help_text">Propagates only when all the inputs have been modified.
-If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
-That is, "{'name1':'value1', 'name2':'value2'}".
-Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
-{'name1': 'new_index1','name2': 'new_index2'}</field>
-        <field type="TextField" name="params">[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]</field>
+        <field type="TextField" name="help_text">__MSG_barrier_helptext__</field>
+        <field type="TextField" name="params">__MSG_barrier_params__</field>
     </object>
-       <object pk="20" model="connectable.filter">
-         <field type="CharField" name="name">contains</field>
+    <object pk="20" model="connectable.filter">
+        <field type="CharField" name="name">contains</field>
         <field type="TextField" name="code"><![CDATA[
         function(channelValue, channel, params){
-			var result = channelValue.match(params['string']);
+			var result = channelValue.match(params['pattern']);
 			if(result){
 				return channelValue;
 			}else{
@@ -229,34 +222,24 @@ Optionally, you can change the indexes of the structure by giving a string like 
         }
         ]]>
         </field>
-        <field type="CharField" name="label">Contains [String]</field>
+        <field type="CharField" name="label">__MSG_contains_label__</field>
         <field type="CharField" name="nature">NATIVE</field>
         <field type="CharField" name="category">STR</field>
-        <field type="TextField" name="help_text"><![CDATA[Searchs for a specified value in the value
-of the channel using both a string 
-or <a href="http://www.regular-expressions.info/" target="_blank"> regular expressions</a>. 
-If there is any occurrence, it returns the 
-whole value of the channel, else, 
-the value is NOT propagated.
-
-e.g. Looks up the string 'EzWeb'  
-Channel value: 'Welcome to EzWeb platform'
-String (given by user): 'EzWeb'
-Returns: 'Welcome to EzWeb platform']]></field>
-    	<field type="TextField" name="params">[{"name": "string", "type": "S", "index": 0, "required":true, "label": "String"}]</field>
-	</object>
-	<object pk="21" model="connectable.filter">
-        <field type="CharField" name="name">Acumulator</field>
+        <field type="TextField" name="help_text">__MSG_contains_helptext__</field>
+    	<field type="TextField" name="params">__MSG_contains_params__</field>
+    </object>
+    <object pk="21" model="connectable.filter">
+        <field type="CharField" name="name">acumulator</field>
         <field type="TextField" name="code"><![CDATA[
   function(channelValue, channel, params){
     			if (!channel._allInputsModified()){
     				throw new DontPropagateException("Waiting for inputs");
     			}
 				else{
-					if (params["correspondence"]){
+					if (params["mapping"]){
 						//change the indexes given by the user
 						var inputValues = channel._getJSONInput();
-						var userIndexes = eval('('+params["correspondence"]+')');
+						var userIndexes = eval('('+params["mapping"]+')');
 						var newInputs = {};
 						var newIndex, value = null;
 						var indexes = inputValues.keys();
@@ -274,15 +257,11 @@ Returns: 'Welcome to EzWeb platform']]></field>
 				}
 			}
         ]]></field>
-        <field type="CharField" name="label">Accumulator</field>
+        <field type="CharField" name="label">__MSG_accumulator_label__</field>
         <field type="CharField" name="nature">PATT</field>
         <field type="CharField" name="category">TRANS</field>
-        <field type="TextField" name="help_text">Propagates only when all the inputs have any value but it doesn't wait for new values.
-If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
-That is, "{'name1':'value1', 'name2':'value2'}".
-Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
-{'name1': 'new_index1','name2': 'new_index2'}</field>
-        <field type="TextField" name="params">[{"name": "correspondence", "type": "S", "index": 0, "label": "Indexes"}]</field>
+        <field type="TextField" name="help_text">__MSG_accumulator_helptext__</field>
+        <field type="TextField" name="params">__MSG_accumulator_params__</field>
     </object>
     <object pk="1" model="translator.translation">
         <field type="CharField" name="text_id">concat_label</field>
@@ -709,7 +688,7 @@ Valor devuelto: 'Web'</field>
         <field type="TextField" name="value">[{"name": "length", "type": "N", "index": 1, "label": "Tamaño"},{"name": "start", "type": "N", "index": 0, "required":true, "label": "Inicio"}]</field>
     </object>
     <object pk="39" model="translator.translation">
-        <field type="CharField" name="text_id">toLowerCase_label</field>
+        <field type="CharField" name="text_id">tolowercase_label</field>
         <field type="IntegerField" name="element_id">16</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">en</field>
@@ -717,7 +696,7 @@ Valor devuelto: 'Web'</field>
         <field type="TextField" name="value">To Lower Case</field>
     </object>
     <object pk="40" model="translator.translation">
-        <field type="CharField" name="text_id">toLowerCase_label</field>
+        <field type="CharField" name="text_id">tolowercase_label</field>
         <field type="IntegerField" name="element_id">16</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">es</field>
@@ -725,7 +704,7 @@ Valor devuelto: 'Web'</field>
         <field type="TextField" name="value">Minúsculas</field>
     </object>
     <object pk="41" model="translator.translation">
-        <field type="CharField" name="text_id">toLowerCase_helptext</field>
+        <field type="CharField" name="text_id">tolowercase_helptext</field>
         <field type="IntegerField" name="element_id">16</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">en</field>
@@ -738,7 +717,7 @@ Channel value: 'EZWEB'
 Returns: 'ezweb'</field>
     </object>
     <object pk="42" model="translator.translation">
-        <field type="CharField" name="text_id">toLowerCase_helptext</field>
+        <field type="CharField" name="text_id">tolowercase_helptext</field>
         <field type="IntegerField" name="element_id">16</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">es</field>
@@ -750,7 +729,7 @@ Valor del canal: 'EZWEB'
 Valor devuelto: 'ezweb'</field>
     </object>
     <object pk="43" model="translator.translation">
-        <field type="CharField" name="text_id">toUpperCase_label</field>
+        <field type="CharField" name="text_id">touppercase_label</field>
         <field type="IntegerField" name="element_id">17</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">en</field>
@@ -758,7 +737,7 @@ Valor devuelto: 'ezweb'</field>
         <field type="TextField" name="value">To Upper Case</field>
     </object>
     <object pk="44" model="translator.translation">
-        <field type="CharField" name="text_id">toUpperCase_label</field>
+        <field type="CharField" name="text_id">touppercase_label</field>
         <field type="IntegerField" name="element_id">17</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">es</field>
@@ -766,7 +745,7 @@ Valor devuelto: 'ezweb'</field>
         <field type="TextField" name="value">Mayúsculas</field>
     </object>
     <object pk="45" model="translator.translation">
-        <field type="CharField" name="text_id">toUpperCase_helptext</field>
+        <field type="CharField" name="text_id">touppercase_helptext</field>
         <field type="IntegerField" name="element_id">17</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">en</field>
@@ -779,7 +758,7 @@ Channel value: 'ezweb'
 Returns: 'EZWEB'</field>
     </object>
     <object pk="46" model="translator.translation">
-        <field type="CharField" name="text_id">toUpperCase_helptext</field>
+        <field type="CharField" name="text_id">touppercase_helptext</field>
         <field type="IntegerField" name="element_id">17</field>
         <field type="CharField" name="table">connectable.models.Filter</field>
         <field type="CharField" name="language">es</field>
@@ -789,5 +768,251 @@ Returns: 'EZWEB'</field>
 ejemplo
 Valor del canal: 'ezweb'
 Valor devuelto: 'EZWEB'</field>
+    </object>
+    <object pk="47" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_label</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">JSON Parser</field>
+    </object>
+    <object pk="48" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_label</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Analizador JSON</field>
+    </object>
+    <object pk="49" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_helptext</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value"><![CDATA[Find elements in JSON structures.
+
+Visit <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales" target="_blank">this page</a> for further information. 
+]]></field>
+    </object>
+    <object pk="50" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_helptext</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value"><![CDATA[Búsca elementos en una estructura JSON.
+
+Visita <a href="http://forge.morfeo-project.org/wiki/index.php/Filtros_de_Canales" target="_blank">esta página</a> para mayor información.]]></field>
+    </object>
+    <object pk="51" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_params</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expression"}]</field>
+    </object>
+    <object pk="52" model="translator.translation">
+        <field type="CharField" name="text_id">jsonparser_params</field>
+        <field type="IntegerField" name="element_id">18</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">[{"name": "jpExp", "type": "jpath", "index": 0, "required":true, "label": "Expresión"}]</field>
+    </object>
+    <object pk="53" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_label</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">Barrier</field>
+    </object>
+    <object pk="54" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_label</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Barrera</field>
+    </object>
+    <object pk="55" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_helptext</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">Propagates only when all the inputs have been modified.
+If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
+That is, "{'name1':'value1', 'name2':'value2'}".
+Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
+{'name1': 'new_index1','name2': 'new_index2'}</field>
+    </object>
+    <object pk="56" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_helptext</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Espera hasta que todas las entradas hayan propagado un
+valor. En el caso de que se haya propagado un valor por
+cada una de las entradas, este filtro genera una
+estructura JSON en la que la clave es el nombre de la
+entrada y el valor es el último valor propagado. Después
+de esta propagación, se reinicia el estado y se vuelve a
+esperar a que todos las entradas vuelvan a propagar un
+evento.
+
+Se puede usar el parámetro "Mapeado de claves" para cambiar
+la clave que se utilizará para una determinada entrada. Un
+ejemplo del contenido de este parámetro es el siguiente:
+{"name1": "key1", "name2": "key2"}</field>
+    </object>
+    <object pk="57" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_params</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">[{"name": "mapping", "type": "S", "index": 0, "label": "Key Mapping"}]</field>
+    </object>
+    <object pk="58" model="translator.translation">
+        <field type="CharField" name="text_id">barrier_params</field>
+        <field type="IntegerField" name="element_id">19</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">[{"name": "mapping", "type": "S", "index": 0, "label": "Mappeado de claves"}]</field>
+    </object>
+    <object pk="59" model="translator.translation">
+        <field type="CharField" name="text_id">contains_label</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">Contains [String]</field>
+    </object>
+    <object pk="60" model="translator.translation">
+        <field type="CharField" name="text_id">contains_label</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Contiene [String]</field>
+    </object>
+    <object pk="61" model="translator.translation">
+        <field type="CharField" name="text_id">contains_helptext</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value"><![CDATA[Searchs for a specified value in the value
+of the channel using both a string 
+or <a href="http://www.regular-expressions.info/" target="_blank"> regular expressions</a>. 
+If there is any occurrence, it returns the 
+whole value of the channel, else, 
+the value is NOT propagated.
+
+e.g. Looks up the string 'EzWeb'
+Channel value: 'Welcome to EzWeb platform'
+String (given by user): 'EzWeb'
+Returns: 'Welcome to EzWeb platform']]></field>
+    </object>
+    <object pk="62" model="translator.translation">
+        <field type="CharField" name="text_id">contains_helptext</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value"><![CDATA[
+Comprueba que el valor del canal cumpla una <a href="http://www.regular-expressions.info/" target="_blank">expresión
+regular</a>, en cuyo caso el valor del canal se propagará,
+en cualquier otro caso, está propagación no tendrá lugar.
+
+Ejemplo: Comprobar que el valor contenga 'EzWeb'
+Valor del canal: 'Welcome to EzWeb platform'
+Patrón: 'EzWeb'
+Valor propagado: 'Welcome to EzWeb platform']]></field>
+    </object>
+    <object pk="63" model="translator.translation">
+        <field type="CharField" name="text_id">contains_params</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">[{"name": "pattern", "type": "S", "index": 0, "required":true, "label": "Pattern"}]</field>
+    </object>
+    <object pk="64" model="translator.translation">
+        <field type="CharField" name="text_id">contains_params</field>
+        <field type="IntegerField" name="element_id">20</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">[{"name": "pattern", "type": "S", "index": 0, "required":true, "label": "Patrón"}]</field>
+    </object>
+    <object pk="65" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_label</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">Accumulator</field>
+    </object>
+    <object pk="66" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_label</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Acumulador</field>
+    </object>
+    <object pk="67" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_helptext</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">Propagates only when all the inputs have any value but it doesn't wait for new values.
+If all the inputs are available, this filter generates a JSON structure containing the name and the value of each input.
+That is, "{'name1':'value1', 'name2':'value2'}".
+Optionally, you can change the indexes of the structure by giving a string like this as a parameter:
+{'name1': 'new_index1','name2': 'new_index2'}</field>
+    </object>
+    <object pk="68" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_helptext</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">Espera hasta que todas las entradas hayan propagado un
+valor. En el caso de que se haya propagado un valor por
+cada una de las entradas, este filtro genera una
+estructura JSON en la que la clave es el nombre de la
+entrada y el valor es el último valor propagado. Después
+de esta propagación, cada evento que llegue al canal
+volverá a generar esta estructura JSON.
+
+Se puede usar el parámetro "Mapeado de claves" para cambiar
+la clave que se utilizará para una determinada entrada. Un
+ejemplo del contenido de este parámetro es el siguiente:
+{"name1": "key1", "name2": "key2"}</field>
+    </object>
+    <object pk="69" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_params</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">en</field>
+        <field type="BooleanField" name="default">True</field>
+        <field type="TextField" name="value">[{"name": "mapping", "type": "S", "index": 0, "label": "Key Mapping"}]</field>
+    </object>
+    <object pk="70" model="translator.translation">
+        <field type="CharField" name="text_id">accumulator_params</field>
+        <field type="IntegerField" name="element_id">21</field>
+        <field type="CharField" name="table">connectable.models.Filter</field>
+        <field type="CharField" name="language">es</field>
+        <field type="BooleanField" name="default">False</field>
+        <field type="TextField" name="value">[{"name": "mapping", "type": "S", "index": 0, "label": "Mappeado de claves"}]</field>
     </object>
 </django-objects>
