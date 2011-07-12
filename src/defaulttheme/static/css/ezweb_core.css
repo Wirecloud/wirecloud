@@ -449,7 +449,7 @@ body.shared .tab_dragger {
 }
 
 .drop_down_menu .option {
-    padding: 5px;
+    padding: 5px 5px 5px 25px;
     display: block;
     cursor: pointer;
     white-space: nowrap;
