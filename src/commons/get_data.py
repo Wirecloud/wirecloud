@@ -429,7 +429,9 @@ def get_inout_data(inout):
     }
 
 
-def get_filter_data(filter_):
+def get_filter_data(filter__):
+    filter_ = filter__.get_translated_model()
+
     return {
         'id': filter_.pk,
         'name': filter_.name,
