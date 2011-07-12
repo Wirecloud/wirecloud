@@ -857,7 +857,8 @@ button {
     vertical-align: bottom;
     width: 16px;
     height: 16px;
-    display: inline-block;
+    display: block;
+    float: left;
 }
 
 #logs_console p {
