@@ -207,3 +207,7 @@ html div.gadget_window div.snapButton {
 #wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
 	white-space: normal;
 }
+
+#logs_header .title {
+  padding: 0 3ex;
+}
