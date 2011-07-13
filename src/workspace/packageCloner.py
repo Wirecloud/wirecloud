@@ -1,6 +1,7 @@
 from django.db import models, IntegrityError
 from django.db.models import get_model
 
+from commons.utils import save_alternative
 
 #########################################
 # Auxiliar functions
@@ -255,24 +256,7 @@ class PackageCloner:
                 if variant_field == None:
                     raise
 
-                unique_key = {}
-
-                for unique_field in meta.unique_together[0]:
-                    unique_key[unique_field] = getattr(cloned_tuple, unique_field)
-
-                suffix = 2
-                duplicated_key = True
-                while duplicated_key:
-                    unique_key[variant_field] = getattr(cloned_tuple, variant_field) + ' ' + str(suffix)
-                    try:
-                        model.objects.get(**unique_key)
-                    except model.DoesNotExist:
-                        duplicated_key = False
-
-                    suffix += 1
-
-                setattr(cloned_tuple, variant_field, unique_key[variant_field])
-                cloned_tuple.save()
+                save_alternative(model, variant_field, cloned_tuple)
 
             self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
 

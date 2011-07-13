@@ -234,3 +234,24 @@ def db_table_exists(table, cursor=None):
         raise Exception("unable to determine if the table '%s' exists" % table)
     else:
         return table in table_names
+
+
+def save_alternative(model, variant_field, instance):
+    unique_key = {}
+
+    for unique_field in model._meta.unique_together[0]:
+        unique_key[unique_field] = getattr(instance, unique_field)
+
+    suffix = 2
+    duplicated_key = True
+    while duplicated_key:
+        unique_key[variant_field] = getattr(instance, variant_field) + ' ' + str(suffix)
+        try:
+            model.objects.get(**unique_key)
+        except model.DoesNotExist:
+            duplicated_key = False
+
+        suffix += 1
+
+    setattr(instance, variant_field, unique_key[variant_field])
+    instance.save()
