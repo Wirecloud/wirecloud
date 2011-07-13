@@ -4,8 +4,13 @@ Administrator Manual
 Dependencies
 ------------
 
-South, lxml, django_compressor (BeautifulSoup), johnny-cache
-
+* A Database Manager (MySQL, PostgreSQL, Sqlite3...)
+* Python 2.5, 2.6 or 2.7. Python 3 and other versions are not supported.
+* Django 1.3
+* South
+* lxml
+* django_compressor (BeautifulSoup)
+* johnny-cache
 
 Deployment notes
 ----------------
