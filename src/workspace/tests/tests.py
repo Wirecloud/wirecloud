@@ -56,6 +56,8 @@ class WorkspaceTestCase(TestCase):
 
         data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
+        self.assertEqual(data['workspace']['owned'], True)
+        self.assertEqual(data['workspace']['shared'], False)
 
     def testVariableValuesCacheInvalidation(self):
 
@@ -69,7 +71,7 @@ class WorkspaceTestCase(TestCase):
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
                 {'id': 4, 'value': 'new_data'},
-            ]
+            ],
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
@@ -248,8 +250,19 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
 
     def testFillWorkspaceUsingTemplate(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
-        get_global_workspace_data(self.workspace, self.user)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
+        self.assertEqual(len(data['workspace']['tabList']), 1)
+
+        # Workspace template 2 adds a new Tab
+        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        self.assertEqual(len(data['workspace']['tabList']), 2)
+
+        # Check that we handle the case where there are 2 tabs with the same name
+        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        self.assertEqual(len(data['workspace']['tabList']), 3)
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)

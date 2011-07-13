@@ -11,6 +11,8 @@
     <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
     <Organization></Organization>
     <IncludedResources>
+        <Tab id="1" name="Tab">
+        </Tab>
     </IncludedResources>
   </Catalog.ResourceDescription>
   <Platform.Wiring>
