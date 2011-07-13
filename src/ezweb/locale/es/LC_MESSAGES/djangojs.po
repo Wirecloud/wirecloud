@@ -1758,516 +1758,137 @@ msgstr "Asistente"
 msgid "Clear all"
 msgstr "Eliminar todas"
 
-#~ msgid "Buy"
-#~ msgstr "Comprar"
-
-#~ msgid "There is not any icon identified by \"%(iconId)s\"."
-#~ msgstr "No hay ningún icono identificado por \"%(iconId)s\"."
-
-#~ msgid "Loading theme images"
-#~ msgstr "Cargando imágenes del tema"
-
-#~ msgid "%(current)s/%(total)s Error loading %(image)s"
-#~ msgstr "%(current)s/%(total)s Error al cargar la imagen %(image)s"
-
-#~ msgid "%(current)s/%(total)s %(image)s"
-#~ msgstr "%(current)s/%(total)s %(image)s"
-
-#~ msgid "is shared?"
-#~ msgstr "¿está compartido?"
-
-#~ msgid "edit shared value"
-#~ msgstr "editar valor compartido"
-
-#~ msgid "Transparency"
-#~ msgstr "Transparencia"
-
-#~ msgid "Lower"
-#~ msgstr "Bajar"
-
-#~ msgid "Raise"
-#~ msgstr "Elevar"
-
-#~ msgid "Shared Values"
-#~ msgstr "Valores compartidos"
-
-#~ msgid "Parametrize"
-#~ msgstr "Parametrizar"
-
-#~ msgid "Modify"
-#~ msgstr "Modificar"
-
-#~ msgid "This value won't be editable by the user"
-#~ msgstr "Este valor no será editable por el usuario"
-
-#~ msgid "This value will be editable by the user"
-#~ msgstr "Este valor será editable por el usuario"
-
-#~ msgid "This value will be visible to the user"
-#~ msgstr "Este valor será visible para el usuario"
-
-#~ msgid "This value won't be visible to the user"
-#~ msgstr "Este valor no será visible para el usuario"
-
-#~ msgid "User"
-#~ msgstr "Usuario"
-
-#~ msgid "User Name"
-#~ msgstr "Nombre de usuario"
-
-#~ msgid "First Name"
-#~ msgstr "Nombre"
-
-#~ msgid "Last Name"
-#~ msgstr "Apellido"
-
-#~ msgid "Context"
-#~ msgstr "Contexto"
-
-#~ msgid "Video Tutorials"
-#~ msgstr "Vídeo Tutoriales"
-
-#~ msgid ""
-#~ "In the Dragborad you can move and resize all your gadgets in order to "
-#~ "perform and use your own application. Check the gadget preferences for "
-#~ "further personalization %(settingsIcon)s. Go to the Catalogue to add more "
-#~ "gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections "
-#~ "among them %(wiringIcon)s. If you need more help visit the %(helpLink)s."
-#~ msgstr ""
-#~ "En el Dragboard puedes mover y redimensionar todos tus gadgets con el fin "
-#~ "de configurar y utilizar tu propia aplicación. Comprueba las preferencias "
-#~ "de usuario del gadget para mejorar su personalización %(settingsIcon)s. "
-#~ "Entra en el Catálogo para añadir nuevos gadgets %(catalogueIcon)s y en el "
-#~ "Wiring para establecer conexiones entre ellos %(wiringIcon)s. Si "
-#~ "necesitas más ayuda visita los %(helpLink)s."
-
-#~ msgid ""
-#~ "Discover new gadgets, look for descriptions, tag them, make your rating, "
-#~ "select the ones that best suit your needs and add them to the Dragboard "
-#~ "%(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
-#~ "Wiring interface %(wiringIcon)s in order to improve your experience. If "
-#~ "you need more help visit the %(helpLink)s."
-#~ msgstr ""
-#~ "Descubre nuevos gadgets, consulta sus descripciones, etiquétalos, dales "
-#~ "tu puntuación, elige los que mejor cubran tus necesidades y añádelos al "
-#~ "Dragboard %(dragboardIcon)s. No olvides conectarlos con otros gadgets en "
-#~ "la interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si "
-#~ "necesitas más ayuda visita los %(helpLink)s."
-
-#~ msgid ""
-#~ "In the Wiring interface you can connect your gadgets among them. Create "
-#~ "or select channels and link (by clicking) Events with Slots. Pay "
-#~ "attention to the colours trying to help you, you can create some great "
-#~ "wires following it. You can see the results of your wires at the "
-#~ "Dragboard interface %(dragboardIcon)s. If you need more help visit the "
-#~ "%(helpLink)s."
-#~ msgstr ""
-#~ "En la interfaz de Wiring puedes conectar tus gadgets entre sí. Crear o "
-#~ "seleccionar canales y enlazar (haciendo click) Eventos y Ranuras. Presta "
-#~ "atención a los colores, ya que pueden ayudarte, podrás crear conexiones "
-#~ "acertadas siguiéndolos. Puedes probar el resultado de las conexiones en "
-#~ "la interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita "
-#~ "los %(helpLink)s."
-
-#~ msgid "Contratation Information"
-#~ msgstr "Información de contratación"
-
-#~ msgid "Finish"
-#~ msgstr "Terminar"
-
-#~ msgid "Assign"
-#~ msgstr "Asignar"
-
-#~ msgid "Buying composed application"
-#~ msgstr "Comprar una aplicación compuesta"
-
-#~ msgid ""
-#~ "Buying this composed solution implies paying for the following "
-#~ "applications."
-#~ msgstr ""
-#~ "La compra de esta solución compuesta implica el pago de las siguientes "
-#~ "aplicaciones."
-
-#~ msgid ""
-#~ "Click on any of them to see a detailed description, including princing "
-#~ "info."
-#~ msgstr ""
-#~ "Haga click en alguno de los siguientes elementos para ver una descripción "
-#~ "detallada, incluyendo la información de las tarifas."
-
-#~ msgid "Buying this gadget implies paying for the following application."
-#~ msgstr "Comprar este gadget implica el pago de las siguientes aplicaciones."
-
-#~ msgid "Click on it to see a detailed description, including princing info."
-#~ msgstr ""
-#~ "Haga click en él para ver una descripción detallada, incluyendo "
-#~ "información de las tarifas."
-
-#~ msgid "Sign-up fee"
-#~ msgstr "Tarifa de alta"
-
-#~ msgid "Monthly fee"
-#~ msgstr "Tarifa mensual"
-
-#~ msgid "Buying gadget"
-#~ msgstr "Compra de un gadget"
-
-#~ msgid "already paid"
-#~ msgstr "ya pagado"
-
-#~ msgid "TOTAL"
-#~ msgstr "TOTAL"
-
-#~ msgid "Info:"
-#~ msgstr "Info:"
-
-#~ msgid "Error:"
-#~ msgstr "Error:"
-
-#~ msgid "Warning:"
-#~ msgstr "Aviso:"
-
-#~ msgid "Create your own skin for your application"
-#~ msgstr "Crea tu propia apariencia (skin) para tu aplicación"
-
-#~ msgid "Block gadgets and connections"
-#~ msgstr "Bloquear los gadgets y sus conexiones"
-
-#~ msgid "Error cloning workspace: %(errorMsg)s."
-#~ msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
-
-#~ msgid ""
-#~ "There were errors while loading some of the images for the theme. Do you "
-#~ "really want to use it?"
-#~ msgstr ""
-#~ "Han sucedido errores durante la carga de las imágenes del tema. ¿Quieres "
-#~ "utilizarlo?"
-
-#~ msgid "Error in processVar: Channel input connectables can only be events."
-#~ msgstr ""
-#~ "Error en processVar: El atributo input de los conectables sólo puede "
-#~ "contener eventos."
-
-#~ msgid ""
-#~ "Error in processVar: Channel output connectables can only be slots or "
-#~ "tabs."
-#~ msgstr ""
-#~ "Error en processVar: El atributo output de los conectables sólo puede "
-#~ "contener slots o tabs."
-
-#~ msgid "Theme description \"%(themeName)s\" could not be loaded."
-#~ msgstr "La descipción del tema \"%(themeName)s\" no pudo cargarse"
-
-#~ msgid "Theme"
-#~ msgstr "Tema"
-
-#~ msgid ""
-#~ "If the Tab is locked, you will not be able to move, resize and do other "
-#~ "task over its iGadgets."
-#~ msgstr ""
-#~ "Si una pestaña está bloqueada, no se podrá mover, redimensionar If the "
-#~ "Tab is locked, you will not be able to move, resize and do other task "
-#~ "over its iGadgets."
-
-#~ msgid "Mark as Active"
-#~ msgstr "Marcar como activo"
-
-#~ msgid "Share workspace"
-#~ msgstr "Compartir el entorno de trabajo"
-
-#~ msgid "Error loading base theme. Expect problems."
-#~ msgstr "Error cargando el tema base."
-
-#~ msgid ""
-#~ "Error in the handler of the \"%(varName)s\" RVariable in iGadget "
-#~ "%(iGadgetId)s: %(exceptionMsg)s."
-#~ msgstr ""
-#~ "Error en el manejador de \"%(varName)s\" RVariable en el iGadget "
-#~ "%(iGadgetId)s: %(exceptionMsg)s."
-
-#~ msgid ""
-#~ "IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\"."
-#~ "\\nIf you need it, please insert it into the gadget's template."
-#~ msgstr ""
-#~ "El IGadget %(iGadgetId)s no dispone de ninguna variable llamada "
-#~ "\"%(varName)s\".\n"
-#~ "Si la necesita, añádala al template del gadget."
-
-#~ msgid ""
-#~ "<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
-#~ "updated</b> because its version is not compatible with the last version."
-#~ "<br/>If you want to update the gadget you must replace <b>by hand</b> the "
-#~ "existing one with the gadget available in the catalogue.</p><b>Do you "
-#~ "want to remove the notice of the new version available?</b>"
-#~ msgstr ""
-#~ "<p>Lo sentimos pero el gadget \"%(igadgetName)s\" <b>no puede ser "
-#~ "actualizado automáticamente</b> porque su versión no es compatible con la "
-#~ "última versión disponible.<br/>Si desea actualizar el gadget puede "
-#~ "reemplazarlo <b>de forma manual</b> por el gadget disponible en el "
-#~ "catálogo.</p><b>¿Desea eliminar el aviso de la disponibilidad de una "
-#~ "nueva versión?</b>"
-
-#~ msgid "Search"
-#~ msgstr "Buscar"
-
-#~ msgid "or"
-#~ msgstr "o"
-
-#~ msgid "Reload"
-#~ msgstr "Recargar"
-
-#~ msgid "Reload Catalogue"
-#~ msgstr "Recargar Catálogo"
-
-#~ msgid "Gadgets per page: "
-#~ msgstr "Gadgets por página: "
-
-#~ msgid "Go to first page"
-#~ msgstr "Ir a la primera página"
-
-#~ msgid "Go to previous page"
-#~ msgstr "Ir a la página anterior"
-
-#~ msgid "Go to last page"
-#~ msgstr "Ir a la última página"
-
-#~ msgid "Go to next page"
-#~ msgstr "Ir a la página siguiente"
-
-#~ msgid " Order by"
-#~ msgstr " Ordenar por"
-
-#~ msgid "Creation date"
-#~ msgstr "Fecha de creación"
-
-#~ msgid "Popularity"
-#~ msgstr "Popularidad"
-
-#~ msgid "All common tags"
-#~ msgstr "Todas las etiquetas comunes"
-
-#~ msgid "My common tags"
-#~ msgstr "Mis etiquetas comunes"
-
-#~ msgid "Others common tags"
-#~ msgstr "Etiquetas comunes de otros"
-
-#~ msgid "Search by Tag"
-#~ msgstr "Buscar por etiqueta"
-
-#~ msgid "Search by Event"
-#~ msgstr "Buscar por evento"
-
-#~ msgid "Search by Slot"
-#~ msgstr "Buscar por ranura"
-
-#~ msgid "Search by Slot connectivity for %(resourceName)s %(resourceVersion)s"
-#~ msgstr ""
-#~ "Buscar por conectividad de ranura para %(resourceName)s %(resourceVersion)"
-#~ "s"
-
-#~ msgid ""
-#~ "Search by Event connectivity for %(resourceName)s %(resourceVersion)s"
-#~ msgstr ""
-#~ "Buscar por conectividad de evento para %(resourceName)s %(resourceVersion)"
-#~ "s"
-
-#~ msgid ""
-#~ "Search by Event and Slot connectivity for %(resourceName)s "
-#~ "%(resourceVersion)s"
-#~ msgstr ""
-#~ "Buscar por conectividad de ranura y evento para %(resourceName)s "
-#~ "%(resourceVersion)s"
-
-#~ msgid "Global Search"
-#~ msgstr "Búqueda global"
-
-#~ msgid "and"
-#~ msgstr "y"
-
-#~ msgid "not"
-#~ msgstr "no"
-
-#~ msgid "neither"
-#~ msgstr "ni"
-
-#~ msgid "nor"
-#~ msgstr "no"
-
-#~ msgid "Tags: "
-#~ msgstr "Etiquetas: "
-
-#~ msgid "Events: "
-#~ msgstr "Eventos: "
-
-#~ msgid "Slots: "
-#~ msgstr "Ranuras: "
-
-#~ msgid "Tags:"
-#~ msgstr "Etiquetas: "
-
-#~ msgid "Show resource details"
-#~ msgstr "Mostrar detalles del recurso"
-
-#~ msgid "Mashup details"
-#~ msgstr "Detalles del mashup"
-
-#~ msgid "More info"
-#~ msgstr "Más info"
-
-#~ msgid "Vote Me... "
-#~ msgstr "Vótame..."
-
-#~ msgid "Vote Saved "
-#~ msgstr "Voto guardado"
-
-#~ msgid "Ehh..."
-#~ msgstr "Ehh..."
-
-#~ msgid "Pretty Good"
-#~ msgstr "Bueno"
-
-#~ msgid "Out Standing"
-#~ msgstr "Notable"
-
-#~ msgid "Awesome!"
-#~ msgstr "¡Fantástico!"
-
-#~ msgid "Vote Result:"
-#~ msgstr "Resultado de los votos:"
-
-#~ msgid "Tagcloud"
-#~ msgstr "Nube de etiquetas"
-
-#~ msgid "All tags"
-#~ msgstr "Todas las etiquetas"
-
-#~ msgid "My tags"
-#~ msgstr "Mis etiquetas"
-
-#~ msgid "Others tags"
-#~ msgstr "Etiquetas de otros"
-
-#~ msgid "New tags"
-#~ msgstr "Nuevas etiquetas"
-
-#~ msgid "Tag"
-#~ msgstr "Etiquetar"
-
-#~ msgid "Tag the resource"
-#~ msgstr "Etiquetar el recurso"
-
-#~ msgid "Show More..."
-#~ msgstr "Ver más..."
-
-#~ msgid "Resource connectivity"
-#~ msgstr "Conectividad del recurso"
-
-#~ msgid "All compatible gadgets by events are highlighted in this color"
-#~ msgstr ""
-#~ "Todos los gadgets compatibles por eventos están resaltados en este color"
-
-#~ msgid "Search by all compatible events"
-#~ msgstr "Buscar por todos los eventos compatibles"
-
-#~ msgid "All compatible gadgets by slots are highlighted in this color"
-#~ msgstr ""
-#~ "Todos los gadgets compatibles por ranuras están resaltados en este color"
-
-#~ msgid "Search by all compatible slots"
-#~ msgstr "Buscar por todos las ranuras compatibles"
-
-#~ msgid "Slots"
-#~ msgstr "Ranuras"
-
-#~ msgid "Search all connectable gadgets"
-#~ msgstr "Buscar todos los gadgets conectables"
-
-#~ msgid "Advanced Search by connectivity"
-#~ msgstr "Búsqueda avanzada por conectividad"
-
-#~ msgid "Hide Advanced Search by connectivity"
-#~ msgstr "Ocultar búsqueda avanzada por conectividad"
-
-#~ msgid "Selected version"
-#~ msgstr "Versión seleccionada"
-
-#~ msgid "Choose the version you want to view"
-#~ msgstr "Seleccione la versión que desea ver"
-
-#~ msgid "Show all versions"
-#~ msgstr "Mostrar todas las versiones"
-
-#~ msgid "Access to the Template"
-#~ msgstr "Acceder al template"
-
-#~ msgid "Update code"
-#~ msgstr "Actualizar el código"
-
-#~ msgid "Add Gadget"
-#~ msgstr "Añadir Gadget"
-
-#~ msgid "Merge Mashup"
-#~ msgstr "Mezclar Mashup"
-
-#~ msgid "Hide all versions"
-#~ msgstr "Ocultar todas las versiones"
-
-#~ msgid "Search by "
-#~ msgstr "Buscar por "
-
-#~ msgid "Select this version as preferred version"
-#~ msgstr "Seleccionar esta versión como versión favorita"
-
-#~ msgid "Delete this version of the gadget"
-#~ msgstr "Eliminar esta versión del gadget"
-
-#~ msgid "delete"
-#~ msgstr "eliminar"
-
-#~ msgid "Delete"
-#~ msgstr "Eliminar"
-
-#~ msgid "Delete tag"
-#~ msgstr "Eliminar etiqueta"
-
-#~ msgid "%(voteCount)s vote"
-#~ msgid_plural "%(voteCount)s votes"
-#~ msgstr[0] "%(voteCount)s voto"
-#~ msgstr[1] "%(voteCount)s votos"
-
-#~ msgid "Error creating the resource: %(errorMsg)s."
-#~ msgstr "Error al crear el recurso: %(errorMsg)s"
-
-#~ msgid "Error sending tags: %(errorMsg)s."
-#~ msgstr "Error al enviar las etiquetas: %(errorMsg)s"
-
-#~ msgid "Error removing tag: %(errorMsg)s."
-#~ msgstr "Error al eliminar la etiqueta: %(errorMsg)s"
-
-#~ msgid "Delete gadget"
-#~ msgstr "Eliminar Gadget"
-
-#~ msgid "Show active workspace"
-#~ msgstr "Mostrar el entorno de trabajo activo"
-
-#~ msgid ""
-#~ "WARNING! All versions of this gadget will be removed too! Do you really "
-#~ "want to remove this gadget?"
-#~ msgstr ""
-#~ "¡Atención! ¡Está a punto de eliminar todas las versiones de este gadget! "
-#~ "¿Está seguro de que quiere realizar esta operación?"
-
-#~ msgid "Error loading \"%(theme)s\" theme. Trying with \"default\" theme."
-#~ msgstr ""
-#~ "Error cargando el tema \"%(theme)s\". Intentándolo con el tema por defecto"
-
-#~ msgid ""
-#~ "Wiring: Loop detected while recovering wiring status from persistence."
-#~ "\\nOutput connection to channel \"%(targetChannel)s\" from channel "
-#~ "\"%(sourceChannel)s\" will be ignored."
-#~ msgstr ""
-#~ "Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
-#~ "persistencia.\n"
-#~ " La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
-#~ "\"%(sourceChannel)s\" será ignorada."
+msgid "Transparency"
+msgstr "Transparencia"
+
+msgid "Lower"
+msgstr "Bajar"
+
+msgid "Raise"
+msgstr "Elevar"
+
+msgid "Parametrize"
+msgstr "Parametrizar"
+
+msgid "Modify"
+msgstr "Modificar"
+
+msgid "This value won't be editable by the user"
+msgstr "Este valor no será editable por el usuario"
+
+msgid "This value will be editable by the user"
+msgstr "Este valor será editable por el usuario"
+
+msgid "This value will be visible to the user"
+msgstr "Este valor será visible para el usuario"
+
+msgid "This value won't be visible to the user"
+msgstr "Este valor no será visible para el usuario"
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "User Name"
+msgstr "Nombre de usuario"
+
+msgid "First Name"
+msgstr "Nombre"
+
+msgid "Last Name"
+msgstr "Apellido"
+
+msgid "Context"
+msgstr "Contexto"
+
+msgid "Video Tutorials"
+msgstr "Vídeo Tutoriales"
+
+msgid ""
+"In the Dragborad you can move and resize all your gadgets in order to "
+"perform and use your own application. Check the gadget preferences for "
+"further personalization %(settingsIcon)s. Go to the Catalogue to add more "
+"gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections "
+"among them %(wiringIcon)s. If you need more help visit the %(helpLink)s."
+msgstr ""
+"En el Dragboard puedes mover y redimensionar todos tus gadgets con el fin "
+"de configurar y utilizar tu propia aplicación. Comprueba las preferencias "
+"de usuario del gadget para mejorar su personalización %(settingsIcon)s. "
+"Entra en el Catálogo para añadir nuevos gadgets %(catalogueIcon)s y en el "
+"Wiring para establecer conexiones entre ellos %(wiringIcon)s. Si "
+"necesitas más ayuda visita los %(helpLink)s."
+
+msgid ""
+"Discover new gadgets, look for descriptions, tag them, make your rating, "
+"select the ones that best suit your needs and add them to the Dragboard "
+"%(dragboardIcon)s. Don't forget to connect them with other gadgets in the "
+"Wiring interface %(wiringIcon)s in order to improve your experience. If "
+"you need more help visit the %(helpLink)s."
+msgstr ""
+"Descubre nuevos gadgets, consulta sus descripciones, etiquétalos, dales "
+"tu puntuación, elige los que mejor cubran tus necesidades y añádelos al "
+"Dragboard %(dragboardIcon)s. No olvides conectarlos con otros gadgets en "
+"la interfaz de Wiring %(wiringIcon)s para mejorar tu experiencia. Si "
+"necesitas más ayuda visita los %(helpLink)s."
+
+msgid ""
+"In the Wiring interface you can connect your gadgets among them. Create "
+"or select channels and link (by clicking) Events with Slots. Pay "
+"attention to the colours trying to help you, you can create some great "
+"wires following it. You can see the results of your wires at the "
+"Dragboard interface %(dragboardIcon)s. If you need more help visit the "
+"%(helpLink)s."
+msgstr ""
+"En la interfaz de Wiring puedes conectar tus gadgets entre sí. Crear o "
+"seleccionar canales y enlazar (haciendo click) Eventos y Ranuras. Presta "
+"atención a los colores, ya que pueden ayudarte, podrás crear conexiones "
+"acertadas siguiéndolos. Puedes probar el resultado de las conexiones en "
+"la interfaz de Dragboard %(dragboardIcon)s. Si necesitas más ayuda visita "
+"los %(helpLink)s."
+
+msgid "Block gadgets and connections"
+msgstr "Bloquear los gadgets y sus conexiones"
+
+msgid "Error cloning workspace: %(errorMsg)s."
+msgstr "Error al clonar el entorno de trabajo: %(errorMsg)s."
+
+msgid "Share workspace"
+msgstr "Compartir el entorno de trabajo"
+
+msgid ""
+"Error in the handler of the \"%(varName)s\" RVariable in iGadget "
+"%(iGadgetId)s: %(exceptionMsg)s."
+msgstr ""
+"Error en el manejador de \"%(varName)s\" RVariable en el iGadget "
+"%(iGadgetId)s: %(exceptionMsg)s."
+
+msgid ""
+"IGadget %(iGadgetId)s does not have any variable named \"%(varName)s\"."
+"\\nIf you need it, please insert it into the gadget's template."
+msgstr ""
+"El IGadget %(iGadgetId)s no dispone de ninguna variable llamada "
+"\"%(varName)s\".\n"
+"Si la necesita, añádala al template del gadget."
+
+msgid ""
+"<p>Sorry but the \"%(igadgetName)s\" gadget <b>cannot be automatically "
+"updated</b> because its version is not compatible with the last version."
+"<br/>If you want to update the gadget you must replace <b>by hand</b> the "
+"existing one with the gadget available in the catalogue.</p><b>Do you "
+"want to remove the notice of the new version available?</b>"
+msgstr ""
+"<p>Lo sentimos pero el gadget \"%(igadgetName)s\" <b>no puede ser "
+"actualizado automáticamente</b> porque su versión no es compatible con la "
+"última versión disponible.<br/>Si desea actualizar el gadget puede "
+"reemplazarlo <b>de forma manual</b> por el gadget disponible en el "
+"catálogo.</p><b>¿Desea eliminar el aviso de la disponibilidad de una "
+"nueva versión?</b>"
+
+msgid ""
+"Wiring: Loop detected while recovering wiring status from persistence."
+"\\nOutput connection to channel \"%(targetChannel)s\" from channel "
+"\"%(sourceChannel)s\" will be ignored."
+msgstr ""
+"Wiring: Bucle detectado mientras se recuperaba el estado del wiring desde "
+"persistencia.\n"
+" La conexión de salida al canal \"%(targetChannel)s\" desde el canal "
+"\"%(sourceChannel)s\" será ignorada."
