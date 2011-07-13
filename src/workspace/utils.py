@@ -36,10 +36,11 @@ except ImportError:
     HAS_AES = False
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-#from django.contrib.auth.models import Group
 from django.utils import simplejson
 
+from commons.utils import save_alternative
 from workspace.managers import get_workspace_managers
 from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
@@ -57,19 +58,25 @@ def deleteTab(tab, user):
     tab.delete()
 
 
-def createTab(tab_name, user, workspace):
+def createTab(tab_name, user, workspace, allow_renaming=False):
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
     if tabs.count() == 0:
         visible = True
 
-    #it's always the last tab
+    # It's always the last tab
     position = Tab.objects.filter(workspace=workspace).count()
 
     # Creating tab
     tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
-    tab.save()
+    try:
+        tab.save()
+    except IntegrityError:
+        if allow_renaming:
+            save_alternative(Tab, 'name', tab)
+        else:
+            raise
 
     return tab
 
