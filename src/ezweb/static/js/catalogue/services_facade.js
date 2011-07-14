@@ -74,6 +74,15 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
 
         this.template_input = this.dom_wrapper.get_element_by_code('SUBMIT_GADGET_INPUT');
 
+        this.searcher.set_base_options({
+            operation: 'VIEW_ALL',
+            criteria: '',
+            starting_page: 1,
+            resources_per_page: this.get_selected_option(this.resources_per_page_combo),
+            order_by: this.get_selected_option(this.order_by_combo),
+            boolean_operator: 'AND'
+        });
+
         this.configured = true;
     };
 
@@ -147,6 +156,10 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
     };
 
     this.repeat_last_search = function () {
+        if (!this.configured) {
+            this.configure();
+        }
+
         this.searcher.repeat_last_search();
     };
 

@@ -50,19 +50,28 @@ var CatalogueSearcher = function () {
     this.simple_search_template = null;
     this.configured = false;
     this.resp_command_processor = null;
-    this.last_search_options = null;
-    this.initialized_scopes = new Hash();
+    this.last_search_options = {};
+    this.base_options = null;
+
+    this.set_base_options = function(options) {
+        this.base_options = options;
+    };
 
     this.set_scope = function (scope) {
         this.scope = scope;
 
-        if (this.initialized_scopes[scope]) {
+        if (this.last_search_options[scope]) {
             return true;
         }
 
-        this.initialized_scopes[scope] = true;
+        this.last_search_options[scope] = Object.clone(this.base_options);
+        this.last_search_options[scope].scope = scope;
 
         return false;
+    };
+
+    this.invalidate_last_results = function (scope) {
+        delete this.last_search_options[scope];
     };
 
     this.get_scope = function () {
@@ -89,7 +98,7 @@ var CatalogueSearcher = function () {
     };
 
     this.save_search_options = function (operation, criteria, starting_page, resources_per_page, order_by, search_boolean, search_scope) {
-        this.last_search_options = new Hash({
+        this.last_search_options[search_scope] = {
             operation: operation,
             criteria: criteria,
             starting_page: starting_page,
@@ -97,7 +106,7 @@ var CatalogueSearcher = function () {
             order_by: order_by,
             boolean_operator: search_boolean,
             scope: search_scope
-        });
+        };
     };
 
     this.process_response = function (response, command) {
@@ -135,7 +144,7 @@ var CatalogueSearcher = function () {
     };
 
     this.repeat_last_search = function () {
-        var search_options = this.last_search_options,
+        var search_options = this.last_search_options[this.scope],
             operation = search_options.operation,
             criteria = search_options.criteria,
             starting_page = search_options.starting_page,

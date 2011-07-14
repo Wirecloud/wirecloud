@@ -43,8 +43,6 @@ var Catalogue = function (dom_element, dom_wrapper) {
 
     this.available_apps = [];
 
-    this.first_search_done = false;
-
     this.set_html_code = function (html_code) {
         this.html_code = html_code;
     };
@@ -121,14 +119,13 @@ var Catalogue = function (dom_element, dom_wrapper) {
     };
 
     this.show = function () {
+        var services = this.user_command_manager.get_service_facade();
+
         this.render();
 
-        if (!this.first_search_done) {
-            this.user_command_manager.run_initial_commands();
-            this.first_search_done = true;
-        }
-        this.fit_height();
+        services.repeat_last_search();
 
+        this.fit_height();
         this.show_bar();
 
         LayoutManagerFactory.getInstance().showCatalogue();

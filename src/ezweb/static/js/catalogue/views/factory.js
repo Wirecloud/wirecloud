@@ -130,8 +130,6 @@ var CatalogueViewFactory = function () {
         this.resource_submitter = new CatalogueResourceSubmitter();
 
         // Configuring searcher
-        this.searcher.set_scope('gadget');
-
         this.services.set_voter(this.voter);
         this.services.set_tagger(this.tagger);
         this.services.set_searcher(this.searcher);
@@ -143,6 +141,8 @@ var CatalogueViewFactory = function () {
         this.user_command_manager.set_services(this.services);
 
         this.catalogue.render();
+        this.services.configure();
+        this.searcher.set_scope('gadget');
 
         return this.catalogue;
     };

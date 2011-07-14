@@ -174,8 +174,4 @@ var UserCommandManager = function (dom_wrapper) {
     this.get_service_facade = function () {
         return this.services;
     };
-
-    this.run_initial_commands = function () {
-        this.services.search('VIEW_ALL', 1, 'AND', '', '');
-    };
 };
