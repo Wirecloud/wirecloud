@@ -481,7 +481,7 @@ var PaginationPainter = function (pagination_structure_element) {
         this.dom_element.update('');
 
         current_page = command_data.current_page;
-        number_of_pages = Math.ceil(parseInt(command_data.query_results_numbe, 10) /
+        number_of_pages = Math.ceil(parseInt(command_data.query_results_number, 10) /
             parseInt(command_data.resources_per_page, 10));
 
         first = 'link';
