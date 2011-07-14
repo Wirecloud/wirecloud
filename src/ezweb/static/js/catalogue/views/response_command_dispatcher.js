@@ -88,34 +88,35 @@ ResponseCommandDispatcher.prototype.process = function (resp_command) {
     switch (command_id) {
     case 'PAINT_GADGETS':
     case 'SHOW_GADGETS':
-        display_options.search_options = 'block';
-        display_options.pagination = 'block';
-        display_options.gadget_list = 'block';
-        display_options.tab_bar = 'block';
-
-        this.show_section(display_options, command_id);
-
-        if (command_id === 'PAINT_GADGETS') {
-            this.painters.GADGETS_PAINTER.paint(resp_command, this.user_command_manager);
-            ShowcaseFactory.getInstance().setGadgetsState(resp_command.data.resources);
-        }
-
-        this.painters.PAGINATION_PAINTER.paint(resp_command, this.user_command_manager);
-
-        break;
     case 'PAINT_MASHUPS':
     case 'SHOW_MASHUPS':
         display_options.search_options = 'block';
         display_options.pagination = 'block';
-        display_options.mashup_list = 'block';
         display_options.tab_bar = 'block';
 
-        this.show_section(display_options, command_id);
-
-        if (command_id === 'PAINT_MASHUPS') {
+        switch (command_id) {
+        case 'PAINT_GADGETS':
+            display_options.gadget_list = 'block';
+            this.painters.GADGETS_PAINTER.paint(resp_command, this.user_command_manager);
+            ShowcaseFactory.getInstance().setGadgetsState(resp_command.data.resources);
+            services.set_last_results('gadget', resp_command.data);
+            break;
+        case 'PAINT_MASHUPS':
+            display_options.mashup_list = 'block';
             this.painters.MASHUPS_PAINTER.paint(resp_command, this.user_command_manager);
+            services.set_last_results('mashup', resp_command.data);
+            break;
+        case 'SHOW_GADGETS':
+            display_options.gadget_list = 'block';
+            resp_command.data = services.get_last_results('gadget');
+            break;
+        case 'SHOW_MASHUPS':
+            display_options.mashup_list = 'block';
+            resp_command.data = services.get_last_results('mashup');
+            break;
         }
 
+        this.show_section(display_options, command_id);
         this.painters.PAGINATION_PAINTER.paint(resp_command, this.user_command_manager);
 
         break;

@@ -267,13 +267,14 @@ function WorkSpace (workSpaceState) {
         LayoutManagerFactory.getInstance().hideCover();
     }
 
-    var publishSuccess = function(transport) {
+    var publishSuccess = function (transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
-                this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
-    }
+        this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
+        CatalogueFactory.getInstance().invalidate_last_results('mashup');
+    };
 
     var publishError = function(transport, e) {
         var logManager, layoutManager, msg;

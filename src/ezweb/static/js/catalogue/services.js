@@ -51,6 +51,7 @@ var CatalogueSearcher = function () {
     this.configured = false;
     this.resp_command_processor = null;
     this.last_search_options = {};
+    this.last_search_results = {};
     this.base_options = null;
 
     this.set_base_options = function(options) {
@@ -60,18 +61,24 @@ var CatalogueSearcher = function () {
     this.set_scope = function (scope) {
         this.scope = scope;
 
-        if (this.last_search_options[scope]) {
-            return true;
+        if (typeof this.last_search_options[scope] === 'undefined') {
+            this.last_search_options[scope] = Object.clone(this.base_options);
+            this.last_search_options[scope].scope = scope;
         }
 
-        this.last_search_options[scope] = Object.clone(this.base_options);
-        this.last_search_options[scope].scope = scope;
+        return !!this.last_search_results[scope];
+    };
 
-        return false;
+    this.set_last_results = function (scope, results) {
+        this.last_search_results[scope] = results;
+    };
+
+    this.get_last_results = function (scope) {
+        return this.last_search_results[scope];
     };
 
     this.invalidate_last_results = function (scope) {
-        delete this.last_search_options[scope];
+        delete this.last_search_results[scope];
     };
 
     this.get_scope = function () {

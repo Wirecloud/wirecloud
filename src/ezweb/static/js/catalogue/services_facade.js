@@ -163,6 +163,18 @@ var ServicesFacade = function (persistence_engine, dom_wrapper, resp_command_pro
         this.searcher.repeat_last_search();
     };
 
+    this.set_last_results = function (scope, results) {
+        this.searcher.set_last_results(scope, results);
+    };
+
+    this.get_last_results = function (scope) {
+        return this.searcher.get_last_results(scope);
+    };
+
+    this.invalidate_last_results = function (scope) {
+        this.searcher.invalidate_last_results(scope);
+    };
+
     this.search_by_creation_date = function () {
         var order_by = this.set_option(this.order_by_combo, '-creation_date');
 

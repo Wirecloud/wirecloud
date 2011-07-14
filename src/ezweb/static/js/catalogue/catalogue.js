@@ -65,6 +65,11 @@ var Catalogue = function (dom_element, dom_wrapper) {
         this.user_command_manager.add_gadget_to_app(gadget, app);
     };
 
+    this.invalidate_last_results = function (scope) {
+        var services = this.user_command_manager.get_service_facade();
+        services.invalidate_last_results(scope);
+    };
+
     this.render = function () {
         if (this.rendered) {
             return;
@@ -119,11 +124,23 @@ var Catalogue = function (dom_element, dom_wrapper) {
     };
 
     this.show = function () {
-        var services = this.user_command_manager.get_service_facade();
+        var command_id, command, services, last_results;
 
         this.render();
 
-        services.repeat_last_search();
+        services = this.user_command_manager.get_service_facade();
+        last_results = services.get_last_results(services.searcher.scope);
+        if (last_results) {
+            if (services.searcher.scope === 'gadget') {
+                command_id = 'SHOW_GADGETS';
+            } else {
+                command_id = 'SHOW_MASHUPS';
+            }
+            command = services.create_local_command(command_id, null);
+            command.process();
+        } else {
+            services.repeat_last_search();
+        }
 
         this.fit_height();
         this.show_bar();

@@ -470,9 +470,6 @@ var PaginationPainter = function (pagination_structure_element) {
     this.pagination_template = new Template(this.pagination_structure_element.innerHTML);
     this.pagination_element = new Template('<a title="#{text} #{page}">#{page}</a>');
 
-    this.gadgets_last_search_options = null;
-    this.mashups_last_search_options = null;
-
     this.paint = function (command, user_command_manager) {
         var command_data, command_id, current_page, number_of_pages, first,
             last, next, previous, pagination_html, page_indexes_dom_elements,
@@ -480,23 +477,6 @@ var PaginationPainter = function (pagination_structure_element) {
 
         command_data = command.get_data();
         command_id = command.get_id();
-
-        switch (command_id) {
-        case 'PAINT_GADGETS':
-            this.gadgets_last_search_options = command_data;
-            break;
-        case 'PAINT_MASHUPS':
-            this.mashups_last_search_options = command_data;
-            break;
-        case 'SHOW_MASHUPS':
-            command_data = this.mashups_last_search_options;
-            break;
-        case 'SHOW_GADGETS':
-            command_data = this.gadgets_last_search_options;
-            break;
-        default:
-            alert('Error at Pagination painter');
-        }
 
         this.dom_element.update('');
 
