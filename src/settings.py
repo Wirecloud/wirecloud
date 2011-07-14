@@ -111,6 +111,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_OUTPUT_DIR = ''
+COMPRESS_JS_FILTERS = (
+    'compressor.filters.jsmin.JSMinFilter',
+    'ezweb.compressor_filters.JSUseStrictFilter',
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
