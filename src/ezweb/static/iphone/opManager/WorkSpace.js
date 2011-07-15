@@ -183,6 +183,10 @@ function WorkSpace(workSpaceState) {
         return this.varManager;
     };
 
+    WorkSpace.prototype.getContextManager = function () {
+        return this.contextManager;
+    };
+
     WorkSpace.prototype.getActiveDragboard = function () {
         return this.visibleTab.getDragboard();
     };
