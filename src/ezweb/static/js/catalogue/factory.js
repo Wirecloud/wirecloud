@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -21,60 +21,37 @@
 *     is available at
 *
 *     http://morfeo-project.org
- */
+*/
 
-var CatalogueFactory  = function () {
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global $, CatalogueViewFactory, Modules, OpManagerFactory, PersistenceEngineFactory */
+"use strict";
 
-  // *********************************
-  // SINGLETON INSTANCE
-  // *********************************
-	
-  var catalogue_dom = $('showcase');
-	
-  var persistence_engine = PersistenceEngineFactory.getInstance();
-	  
-  // FACTORIES
-  var list_view_factory = new ListViewFactory();
-	  
-  ////////////////////
-  // DEFAULT VALUE
-  ////////////////////
-  var default_view_factory = list_view_factory;
-	  
-  // ACTIVE VALUES
-  var active_instance = null;
-  var last_used_factory = null;
-	
-  // ************************
-  //  SINGLETON GET INSTANCE
-  // ************************
-				
-  return new function() {
-    this.getInstance = function() {
-	  if (! active_instance) {
-		active_instance = default_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = default_view_factory;
-		  
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	  }
-		
-	  return active_instance;
-	}
-	  
-	this.getListView = function() {
-	  if (! active_instance) {
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = list_view_factory;
-		  
-		OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
-	  } else if (last_used_factory != list_view_factory) {
-		active_instance.destroy()
-		 
-		active_instance = list_view_factory.create_catalogue(catalogue_dom, persistence_engine);
-		last_used_factory = list_view_factory;
-	  }
-		
-	  return active_instance
-	}	    		
-  }
-}();
+var CatalogueFactory = (function () {
+
+    // *********************************
+    // SINGLETON INSTANCE
+    // *********************************
+
+    var catalogue_dom = $('showcase'),
+        persistence_engine = PersistenceEngineFactory.getInstance(),
+        active_instance = null,
+        Singleton;
+
+    // ************************
+    //  SINGLETON GET INSTANCE
+    // ************************
+    Singleton = function () {
+        this.getInstance = function () {
+            if (!active_instance) {
+                var view_factory = new CatalogueViewFactory();
+                active_instance = view_factory.create_catalogue(catalogue_dom, persistence_engine);
+                OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
+            }
+
+            return active_instance;
+        };
+    };
+
+    return new Singleton();
+}());

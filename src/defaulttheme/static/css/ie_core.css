@@ -45,10 +45,6 @@ body{
 	width: 170px;
 }
 
-#catalogue #catalogue_content {
-	width: auto;
-}
-
 /* WIRING HACKS  to gain layout and paint the arrows properly*/
 
 #event_list, 

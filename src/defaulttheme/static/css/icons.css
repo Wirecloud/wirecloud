@@ -1,7 +1,6 @@
 .icon {
     background-repeat: no-repeat;
     background-position: left center;
-    padding-left: 18px !important;
 }
 
 .icon-size {
@@ -16,9 +15,9 @@
     float: left;
 }
 
-.window_menu .window_content .msg {
-    display: inline-block;
-    float: left;
+.window_menu .window_content .msg.clear {
+    clear: both;
+    margin-top: 15px;
 }
 
 .window_menu .window_content .msg p {

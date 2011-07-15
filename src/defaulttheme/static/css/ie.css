@@ -80,6 +80,10 @@ html #add_tab_link{
 
 /*DRAGBOARD*/
 /*igadget*/
+div.gadget_window div.gadget_menu span { 
+    float: left; 
+} 
+ 
 div.gadget_window div.gadget_menu input[type="button"].closebutton {
   background: url(../images/icons-sprite.png);
   background-position: -24px -480px;
@@ -202,4 +206,8 @@ html div.gadget_window div.snapButton {
 /* Filter params */
 #wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
 	white-space: normal;
+}
+
+#logs_header .title {
+  padding: 0 3ex;
 }

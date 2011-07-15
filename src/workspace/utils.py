@@ -36,10 +36,11 @@ except ImportError:
     HAS_AES = False
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-#from django.contrib.auth.models import Group
 from django.utils import simplejson
 
+from commons.utils import save_alternative
 from workspace.managers import get_workspace_managers
 from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
@@ -57,19 +58,25 @@ def deleteTab(tab, user):
     tab.delete()
 
 
-def createTab(tab_name, user, workspace):
+def createTab(tab_name, user, workspace, allow_renaming=False):
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
     if tabs.count() == 0:
         visible = True
 
-    #it's always the last tab
+    # It's always the last tab
     position = Tab.objects.filter(workspace=workspace).count()
 
     # Creating tab
     tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
-    tab.save()
+    try:
+        tab.save()
+    except IntegrityError:
+        if allow_renaming:
+            save_alternative(Tab, 'name', tab)
+        else:
+            raise
 
     return tab
 
@@ -89,17 +96,13 @@ def get_mashup_gadgets(mashup_id):
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, resource, contratable, user):
-    published_workspace = PublishedWorkSpace(name=resource.short_name,
+def create_published_workspace_from_template(template, resource, user):
+    return PublishedWorkSpace.objects.create(name=resource.short_name,
         vendor=resource.vendor, version=resource.version,
         author=resource.author, mail=resource.mail,
         description=resource.description, imageURI=resource.image_uri,
-        wikiURI=resource.wiki_page_uri, contratable=contratable, params='',
+        wikiURI=resource.wiki_page_uri, params='',
         creator=user, template=template)
-
-    published_workspace.save()
-
-    return published_workspace
 
 
 def encrypt_value(value):

@@ -212,344 +212,6 @@ WindowMenu.prototype.setFocus = function () {
 }
 
 /**
-*
-*/
-function ContratationWindow() {
-    WindowMenu.call(this, gettext('Contratation Information'));
-
-    this.iframe = document.createElement('iframe');
-    this.iframe.setAttribute('src', '');
-    this.iframe.setAttribute('width', 480);
-    this.iframe.setAttribute('height', 550);
-    this.windowContent.appendChild(this.iframe);
-
-    // Finish button
-    this.acceptButton = document.createElement('button');
-    this.acceptButton.appendChild(document.createTextNode(gettext('Finish')));
-    this._acceptListener = this._acceptListener.bind(this);
-    this.acceptButton.observe("click", this._acceptListener);
-    this.windowBottom.appendChild(this.acceptButton);
-}
-
-ContratationWindow.prototype = new WindowMenu();
-
-ContratationWindow.prototype.setSrc = function(src) {
-    this.iframe.src=src;
-}
-
-ContratationWindow.prototype.setCloseListener = function(closeListener) {
-    this._closeListener = closeListener;
-}
-
-ContratationWindow.prototype.setHandler = function(acceptHandler) {
-    this.acceptHandler = acceptHandler;
-}
-
-ContratationWindow.prototype._acceptListener = function(e) {
-    this.acceptHandler();
-    this.hide();
-}
-
-/**
-*
-*/
-function AddingGadgetToApplicationWindow(service_facade) {
-    WindowMenu.call(this, gettext('Assign Gadget to Application'));
-
-    this.service_facade = service_facade;
-
-    this.content = document.createElement('div');
-    this.content.setAttribute('id', 'gadgetToAppWindow');
-    Element.extend(this.content);
-
-    this.content.innerHTML = '<b>Application:</b> <select class="app_appList"></select><br /><br /><div class="app_info"><b>Name:</b><div class="app_name"></div><b>Vendor:</b><div class="app_vendor"></div><b>Business model:</b><div class="app_business">App Business Model</div><b>List of Gadgets:</b><div class="app_gadgets"></div><b>Description:</b><div class="app_desc"></div></div><div class="app_img_container"><img class="app_image app_img" src="" /></div><div class="app_gadgets_desc"></div>';
-
-    document.body.insertBefore(this.htmlElement, $("header"));
-
-    this.windowContent.appendChild(this.content);
-
-    this.link = document.createElement('div');
-    this.link.className = ('show_external_link');
-
-    this.link.innerHTML = '<a style="float: right; padding-top: 5px;" target="_blank" href="http://emarketplace1.hi.inet:3980/BOCL/BMPS_BOCL.html">View business model description</a>'
-
-    this.windowContent.appendChild(this.link);
-
-    this.app_select = this.content.getElementsBySelector('.app_appList')[0];
-    this.app_name = this.content.getElementsBySelector('.app_name')[0];
-    this.app_vendor = this.content.getElementsBySelector('.app_vendor')[0];
-    this.app_image = this.content.getElementsBySelector('.app_img')[0];
-    this.app_desc = this.content.getElementsBySelector('.app_desc')[0];
-    this.app_gadgets = this.content.getElementsBySelector('.app_gadgets')[0];
-
-    var catalogue = CatalogueFactory.getInstance();
-    var apps = catalogue.get_available_apps();
-
-    var select_options = "";
-
-    for (var i=0; i<apps.length; i++) {
-        var app = apps[i];
-        var select_option = '<option value="' + app['app_code'] + '">' + app['short_name'] + '</option>';
-
-        select_options += select_option;
-    }
-
-    this.app_select.innerHTML = select_options;
-
-    Event.observe(this.app_select, 'change', function () { this.update_window() }.bind(this));
-
-    // Finish button
-    this.acceptButton = document.createElement('button');
-    this.acceptButton.appendChild(document.createTextNode(gettext('Assign')));
-
-    this._acceptListener = this._acceptListener.bind(this);
-    this.acceptButton.observe("click", this._acceptListener);
-
-    this.windowBottom.appendChild(this.acceptButton);
-}
-
-AddingGadgetToApplicationWindow.prototype = new WindowMenu();
-
-AddingGadgetToApplicationWindow.prototype._acceptListener = function(e) {
-    this.service_facade.add_gadget_to_app(this._gadget, this._appId);
-    this.hide();
-}
-
-AddingGadgetToApplicationWindow.prototype.setExtraData = function(resource) {
-    this._gadgetId = resource.getId();
-    this._gadget = resource;
-
-    this.update_window();
-}
-
-AddingGadgetToApplicationWindow.prototype._closeListener = function(e) {
-
-}
-
-AddingGadgetToApplicationWindow.prototype.update_window = function() {
-    var selectedIndex = this.app_select.selectedIndex;
-
-    if (selectedIndex != -1) {
-        this._appId = this.app_select[selectedIndex].value;
-
-        var apps = CatalogueFactory.getInstance().get_available_apps();
-
-        var app = apps[selectedIndex];
-
-        this.app_name.innerHTML = app['name'];
-        this.app_vendor.innerHTML = app['vendor'];
-        this.app_gadgets.innerHTML = app['gadget_list'];
-        this.app_desc.innerHTML = app['description'];
-        this.app_image.setAttribute('src', app['image_uri']);
-    }
-}
-
-/**
-*
-*/
-function BuyingApplicationWindow(service_facade) {
-    WindowMenu.call(this, gettext('Buying composed application'));
-
-    this.service_facade = service_facade;
-
-    // Text messages for SOLUTIONS
-    this.text_introduction_solution = gettext("Buying this composed solution implies paying for the following applications.");
-    this.text_hint_solution = gettext("Click on any of them to see a detailed description, including princing info.");
-
-    // Text messages for GADGETS
-    this.text_introduction_gadget = gettext("Buying this gadget implies paying for the following application.");
-    this.text_hint_gadget = gettext("Click on it to see a detailed description, including princing info.");
-
-    this.content = document.createElement('div');
-    Element.extend(this.content);
-
-    this.text_message = document.createElement('div');
-    Element.extend(this.text_message);
-    this.text_message.className = "purchase_window_text";
-    this.content.appendChild(this.text_message);
-
-    document.body.insertBefore(this.htmlElement, $("header"));
-    this.windowContent.appendChild(this.content);
-
-    this.help_menu = document.createElement('div');
-    Element.extend(this.help_menu);
-    this.help_menu.className = "help_text_disabled";
-    document.body.insertBefore(this.help_menu, $("header"));
-
-    this._apps_table = document.createElement('div');
-    this.content.appendChild(this._apps_table);
-
-    this.table_html = '<center><table cellpadding="0px" cellspacing="0px" id="purchase_window_table" class="purchase_window_table"><thead><th class="app_name">' + gettext("Name") + '</th><th class="app_signup_price">' + gettext("Sign-up fee") + '</th><th class="app_monthly_price">' + gettext("Monthly fee") + '</th></thead>';
-
-    // Finish button
-    this.acceptButton = document.createElement('button');
-    this.acceptButton.appendChild(document.createTextNode(gettext('Buy')));
-
-    this.acceptButton.className = 'contratable';
-
-    this._acceptListener = this._acceptListener.bind(this);
-    this.acceptButton.observe("click", this._acceptListener);
-
-    this.windowBottom.appendChild(this.acceptButton);
-}
-
-BuyingApplicationWindow.prototype = new WindowMenu();
-
-BuyingApplicationWindow.prototype.setCloseListener = function(closeHandler) {
-    this._closeHandler = closeHandler;
-}
-
-BuyingApplicationWindow.prototype.setHandler = function(acceptHandler) {
-    this.acceptHandler = function(){this.hideApplicationPopUp(this.help_menu); acceptHandler(this._resource);}.bind(this);
-}
-
-BuyingApplicationWindow.prototype._acceptListener = function(e) {
-    this.service_facade.buy_resource_applications(this._resource);
-    this.hide();
-}
-
-BuyingApplicationWindow.prototype._closeListener = function(e) {
-    this.hideApplicationPopUp(this.help_menu);
-    this.hide();
-}
-
-BuyingApplicationWindow.prototype.setExtraData = function(extra_data) {
-    this.show();
-    this._resource = extra_data;
-
-    if (this._resource.isMashup()) {
-        this.titleElement.update(gettext('Buying composed application'));
-        this.text_message.update('<div class="purchase_window_text">' + this.text_introduction_solution + " " +  this.text_hint_solution + '</div>');
-    } else {
-        this.titleElement.update(gettext('Buying gadget'));
-        this.text_message.update('<div class="purchase_window_text">' + this.text_introduction_gadget + " " +  this.text_hint_gadget + '</div>');
-    }
-
-    var resource_apps = this._resource.getGadgetApps();
-
-    var apps_html = "<tbody>";
-
-    var total_signup_price = 0;
-    var total_monthly_price = 0;
-
-    for (var i=0; i<resource_apps.length; i++) {
-        var app = resource_apps[i];
-
-        if (! app['has_contract']) {
-            var signup_price = parseInt(app['subscription_price']) ;
-            var monthly_price = parseInt(app['monthly_price']);
-
-            total_signup_price += signup_price;
-            total_monthly_price += monthly_price;
-
-            signup_price += ' €';
-            monthly_price += ' €';
-
-            var html = '<tr><td class="app_name">' + app['name'] + '</td><td class="center_text">' + signup_price + '</td><td class="center_text right_border">' + monthly_price + '</td></tr>';
-        } else {
-            var html = '<tr><td class="app_name">' + app['name'] + '</td><td class="center_text">' + gettext('already paid') + '</td><td class="center_text right_border">' + gettext('already paid') + '</td></tr>';
-        }
-
-        apps_html += html;
-    }
-
-    total_signup_price += ' €';
-    total_monthly_price += ' €';
-
-    var total_row = '<tr class="total_row"><td class="total_name">' + gettext('TOTAL') + '</td><td class="center_text">' + total_signup_price + '</td><td class="center_text right_border">' + total_monthly_price + '</td></tr>';
-
-    apps_html += total_row;
-    apps_html += "</tbody></table></center>";
-    final_html = this.table_html + apps_html;
-
-    this._apps_table.update();
-    this._apps_table.update(final_html);
-
-    var app_names = $$(".purchase_window_table td.app_name");
-    for (var i=0; i<app_names.length; i++) {
-        var element = app_names[i];
-        var app = resource_apps[i];
-
-        app['window_menu'] = this;
-        app['help_menu'] = this.help_menu;
-
-        Event.observe(element, 'click', function (e) { BuyingApplicationWindow.prototype.showApplicationPopUp(e, this, this['help_menu']) }.bind(app));
-    }
-
-    BuyingApplicationWindow.prototype.showApplicationPopUp = function(e, app, help_menu) {
-        var app_name = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_name');
-        var app_image = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_image');
-        var app_signup_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_signup_fee', 'Sing-up fee:');
-        var app_monthly_fee = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_monthly_fee', 'Monthly fee:');
-        var app_vendor = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_vendor', 'Vendor:');
-        var app_gadget_list = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_gadget_list', 'List of Gadgets:');
-        var app_desc = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_desc', 'Description:');
-        var app_close = BuyingApplicationWindow.prototype.getOrCreateById(help_menu, 'app_close');
-
-        if (app['name'] == app_name.innerHTML && app['vendor'] == app_vendor.innerHTML) {
-            help_menu.className = "help_text_enabled drop_down_menu";
-            return;
-        }
-
-        app_image.setAttribute('src', app['image_uri']);
-        app_name.innerHTML = app['name'];
-        app_vendor.innerHTML = app['vendor'];
-        app_desc.innerHTML = app['description'];
-        app_gadget_list.innerHTML = app['gadget_list'];
-        app_signup_fee.innerHTML = app['subscription_price'] + ' €';
-        app_monthly_fee.innerHTML = app['monthly_price'] + ' €' ;
-
-        help_menu.className = "help_text_enabled drop_down_menu";
-
-        var element = Event.element(e);
-        var cumulativeOffset = Position.cumulativeOffset(element);
-
-        help_menu.style.top = cumulativeOffset[1] + 'px';
-        help_menu.style.left = element.getWidth() + cumulativeOffset[0] + 'px';
-    }
-
-    BuyingApplicationWindow.prototype.hideApplicationPopUp = function(help_menu) {
-        help_menu.className = "help_text_disabled";
-    }
-
-    BuyingApplicationWindow.prototype.getOrCreateById = function (help_menu, id, text) {
-        var element_type = 'div';
-        if (id == 'app_image')
-            element_type = 'img';
-
-        var selector =  element_type+'#'+id;
-        var elements_by_id = help_menu.getElementsBySelector(selector);
-
-        if (elements_by_id.length == 1) {
-            return elements_by_id[0];
-        } else {
-            if (text) {
-                var container = document.createElement('div');
-                container.innerHTML = gettext(text)
-                help_menu.appendChild(container);
-                if (id == 'app_desc' || id == "app_gadget_list")
-                    container.className = "clearing_both";
-                else
-                    container.className = "floating_left";
-            }
-
-            var element = document.createElement(element_type);
-            Element.extend(element);
-            help_menu.appendChild(element);
-            element.setAttribute('id', id);
-
-            if (id == "app_close") {
-                element.className = "closebutton"
-                Event.observe (element, 'click', function () { BuyingApplicationWindow.prototype.hideApplicationPopUp(this) }.bind(help_menu));
-            }
-
-            return element;
-        }
-    }
-
-}
-
-/**
  * Specific class for dialogs about creating things.
  */
 function CreateWindowMenu (element) {
@@ -611,14 +273,20 @@ CreateWindowMenu.prototype.executeOperation = function() {
     var newName = this.nameInput.value;
     switch (this.element) {
     case 'workSpace':
-        if (!OpManagerFactory.getInstance().workSpaceExists(newName)) {
-            OpManagerFactory.getInstance().addWorkSpace(newName);
-        } else {
-            var msg = gettext('Invalid name: the name \"%(newName)s\" is already in use');
-            msg = interpolate(msg, {newName: newName}, true);
+        if (newName.length === 0) {
+            var msg = gettext("Invalid name: you must write something");
             this.setMsg(msg);
+            this.msgElement.addClassName('error clear');
+        } else {
+            if (!OpManagerFactory.getInstance().workSpaceExists(newName)) {
+                OpManagerFactory.getInstance().addWorkSpace(newName);
+            } else {
+                var msg = gettext('Invalid name: the name \"%(newName)s\" is already in use');
+                msg = interpolate(msg, {newName: newName}, true);
+                this.setMsg(msg);
+                this.msgElement.addClassName('error clear');
+            }
         }
-
         break;
     default:
         break;
@@ -879,7 +547,11 @@ FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
             Element.extend(label);
             label.addClassName('section_name');
             var icon = document.createElement('div');
-            icon.addClassName('section_icon');
+            if (BrowserUtilsFactory.getInstance().isIE()) {
+                icon.className += ' section_icon';
+            } else { 
+                icon.addClassName('section_icon');
+            }
 
             label.appendChild(document.createTextNode(field.label));
             fieldset.appendChild(icon);
@@ -1718,36 +1390,6 @@ function PreferencesWindowMenu(scope, manager) {
 
     this.manager = manager;
     var table = manager.getPreferencesDef().getInterface();
-
-    // Extra Elements
-    if (scope=="platform"){
-        var tbody = table.firstChild;
-
-        var row = tbody.insertRow(0);
-        var columnLabel = row.insertCell(-1);
-        columnLabel.className = "label";
-        var label = document.createElement("label")
-        label.appendChild(document.createTextNode(gettext("Language")))
-        columnLabel.appendChild(label);
-
-        var columnValue = row.insertCell(-1);
-        this.language = document.createElement("select");
-        for (var index=0; index<LANGUAGES.length; index++){
-            lang = LANGUAGES[index];
-            var option = new Option(lang[1], lang[0]);
-            try {
-                this.language.add(option, null);
-            } catch (e) {
-                this.language.add(option); // IE < 8
-            }
-            if (LANGUAGE_CODE == lang[0]){
-                option.setAttribute("selected","true");
-            }
-        }
-        columnValue.appendChild(this.language);
-
-    }
-
     this.windowContent.insertBefore(table, this.msgElement);
 
     // Accept button
@@ -1794,9 +1436,6 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
     } else {
         this.manager.save();
         this.hide();
-    }
-    if (this.language && this.language.value != LANGUAGE_CODE){
-        return setLanguage(this.language.value);
     }
 }
 

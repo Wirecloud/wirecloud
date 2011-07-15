@@ -449,7 +449,7 @@ body.shared .tab_dragger {
 }
 
 .drop_down_menu .option {
-    padding: 5px;
+    padding: 5px 5px 5px 25px;
     display: block;
     cursor: pointer;
     white-space: nowrap;
@@ -583,6 +583,7 @@ body.shared .tab_dragger {
 }
 
 .window_menu .window_content .msg {
+  margin-left: 26px;
   text-align: justify;
 }
 
@@ -856,7 +857,8 @@ button {
     vertical-align: bottom;
     width: 16px;
     height: 16px;
-    display: inline-block;
+    display: block;
+    float: left;
 }
 
 #logs_console p {
@@ -866,6 +868,10 @@ button {
 #logs_header {
     text-align: right;
     padding-right: 20px;
+}
+
+#logs_header .section_identifier {
+    width: auto;
 }
 
 #logs_console .igadget_info_container {

@@ -34,9 +34,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 from remoteChannel.models import RemoteChannel
+from translator.models import TransModel
 
 
-class Filter(models.Model):
+class Filter(TransModel):
 
     name = models.CharField(_('Name'), max_length=30)
     code = models.TextField(_('Code'), blank=True, null=True)

@@ -39,8 +39,16 @@ from django.conf import settings
 
 def logout(request, next_page=settings.LOGOUT_URL, template_name='registration/logged_out.html'):
     "Logs out the user and displays 'You are logged out' message."
-    request.session.clear()
-    request.session.delete()
+    if 'django_language' in request.session:
+        old_lang = request.session['django_language']
+    else:
+        old_lang = None
+
+    request.session.flush()
+
+    if old_lang is not None:
+        request.session['django_language'] = old_lang
+
     if next_page is None:
         return render_to_response(template_name, {'title': _('Logged out')}, context_instance=RequestContext(request))
     else:
