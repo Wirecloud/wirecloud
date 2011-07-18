@@ -333,40 +333,6 @@ var OpManagerFactory = function () {
             this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(gadget, options);
         }
 
-        OpManager.prototype.unsubscribeServices = function (gadgetId) {
-            var unsubscribeOk = function (transport) {
-            }
-
-            var unsubscribeError = function (transport) {
-            }
-
-            unsubscribe_url += "?igadget=";
-            unsubscribe_url += gadgetId;
-            unsubscribe_url += "&user=";
-            unsubscribe_url += ezweb_user_name;
-
-            var params = {'method': "GET", 'url':  unsubscribe_url};
-            this.persistenceEngine.send_post("/proxy", params, this, unsubscribeOk, unsubscribeError);
-        }
-
-        OpManager.prototype.cancelServices = function (gadgetId) {
-            var cancelOk = function (transport) {
-            }
-
-            var cancelError = function (transport) {
-            }
-
-            var cancel_url = URIs.HOME_GATEWAY_DISPATCHER_CANCEL_URL;
-
-            cancel_url += "?igadget=";
-            cancel_url += gadgetId;
-            cancel_url += "&user=";
-            cancel_url += ezweb_user_name;
-
-            var params = {'method': "GET", 'url':  cancel_url};
-            this.persistenceEngine.send_post("/proxy", params, this, cancelOk, cancelError);
-        }
-
         OpManager.prototype.removeInstance = function (iGadgetId, orderFromServer) {
             if (!this.loadCompleted)
                 return;
@@ -478,9 +444,16 @@ var OpManagerFactory = function () {
             }
         }
 
+        OpManager.prototype.preferencesChanged = function (modifiedValues) {
+            if ('language' in modifiedValues) {
+                window.location.reload();
+            }
+        };
+
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
+            var preferencesManager;
 
             switch (module) {
             case Modules.prototype.THEME_MANAGER:
@@ -489,6 +462,8 @@ var OpManagerFactory = function () {
                 break;
 
             case Modules.prototype.PLATFORM_PREFERENCES:
+                preferencesManager = PreferencesManagerFactory.getInstance();
+                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
                 this.showcaseModule = ShowcaseFactory.getInstance();
                 this.showcaseModule.init();
                 break;

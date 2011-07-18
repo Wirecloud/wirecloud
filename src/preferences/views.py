@@ -46,11 +46,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
 from commons.authentication import get_user_authentication
+from commons.cache import no_cache
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
 from workspace.models import WorkSpace, Tab
 
 
@@ -164,6 +165,7 @@ def update_workspace_preferences(workspace, preferences_json):
 
 class PlatformPreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name):
         user = get_user_authentication(request)
 
@@ -182,6 +184,10 @@ class PlatformPreferencesCollection(Resource):
         try:
             preferences_json = simplejson.loads(received_json)
             update_preferences(user, preferences_json)
+
+            if 'language' in preferences_json:
+                update_session_lang(request, user)
+
             return HttpResponse('ok')
         except Exception, e:
             transaction.rollback()
@@ -192,6 +198,7 @@ class PlatformPreferencesCollection(Resource):
 
 class WorkSpacePreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name, workspace_id):
         user = get_user_authentication(request)
 
@@ -227,6 +234,7 @@ class WorkSpacePreferencesCollection(Resource):
 
 class TabPreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name, workspace_id, tab_id):
         user = get_user_authentication(request)
 

@@ -4,7 +4,7 @@ import codecs
 import os
 
 from lxml import etree
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.test import Client, TestCase
 from django.utils import simplejson
 
@@ -17,6 +17,7 @@ from workspace.packageCloner import PackageCloner
 from workspace.mashupTemplateGenerator import build_template_from_workspace
 from workspace.mashupTemplateParser import buildWorkspaceFromTemplate, fillWorkspaceUsingTemplate
 from workspace.models import WorkSpace, UserWorkSpace, Tab, VariableValue
+from workspace.utils import sync_base_workspaces
 from workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
@@ -31,7 +32,7 @@ class WorkspaceTestCase(TestCase):
     def testGetGlobalWorkspaceData(self):
 
         workspace = WorkSpace.objects.get(pk=1)
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
         self.assertEqual(len(data['workspace']['tabList']), 1)
 
@@ -53,8 +54,10 @@ class WorkspaceTestCase(TestCase):
         workspace_tabs = Tab.objects.filter(workspace=workspace)
         self.assertEqual(workspace_tabs.count(), 1)
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         self.assertEqual('workspace' in data, True)
+        self.assertEqual(data['workspace']['owned'], True)
+        self.assertEqual(data['workspace']['shared'], False)
 
     def testVariableValuesCacheInvalidation(self):
 
@@ -68,14 +71,14 @@ class WorkspaceTestCase(TestCase):
                 {'id': 1, 'value': 'new_password'},
                 {'id': 2, 'value': 'new_username'},
                 {'id': 4, 'value': 'new_data'},
-            ]
+            ],
         }
         put_data = simplejson.dumps(put_data, ensure_ascii=False).encode('utf-8')
         client.login(username='test', password='test')
         result = client.put('/workspace/1/variables', put_data, content_type='application/json', HTTP_HOST='localhost', HTTP_REFERER='http://localhost')
         self.assertEqual(result.status_code, 200)
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         variables = data['workspace']['tabList'][0]['igadgetList'][0]['variables']
         self.assertEqual(variables['password']['value'], '')
         self.assertEqual(variables['password']['secure'], True)
@@ -100,14 +103,14 @@ class WorkspaceTestCase(TestCase):
         Gadget.objects.get(pk=1).users.add(self.user)
         created_igadget = SaveIGadget(igadget_data, self.user, tab, {})
 
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
 
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 2)
 
         # Remove the igadget
         deleteIGadget(created_igadget, self.user)
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         igadget_list = data['workspace']['tabList'][0]['igadgetList']
         self.assertEqual(len(igadget_list), 1)
 
@@ -160,10 +163,52 @@ class WorkspaceTestCase(TestCase):
         packageCloner.merge_workspaces(cloned_workspace, workspace, self.user)
 
         # Check cache invalidation
-        data = get_global_workspace_data(workspace, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
         tab_list = data['workspace']['tabList']
 
         self.assertEqual(len(tab_list), 2)
+
+    def test_shared_workspace(self):
+
+        workspace = WorkSpace.objects.get(pk=1)
+
+        # Create a new group and share the workspace with it
+        group = Group.objects.create(name='test_users')
+        workspace.targetOrganizations.add(group)
+
+        other_user = User.objects.get(username='test2')
+        other_user.groups.add(group)
+        other_user.save()
+
+        # Sync shared workspaces
+        sync_base_workspaces(other_user)
+
+        # Check that other_user can access to the shared workspace
+        data = get_global_workspace_data(workspace, other_user).get_data()
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 1)
+
+        # Add a new iGadget to the workspace
+        tab = Tab.objects.get(pk=1)
+        igadget_data = {
+            'gadget': '/Test/Test Gadget/1.0.0',
+            'name': 'test',
+            'top': 0,
+            'left': 0,
+            'width': 2,
+            'height': 2,
+            'zIndex': 1,
+            'layout': 0,
+            'icon_top': 0,
+            'icon_left': 0,
+            'menu_color': '',
+        }
+        Gadget.objects.get(pk=1).users.add(self.user)
+        SaveIGadget(igadget_data, self.user, tab, {})
+
+        data = get_global_workspace_data(workspace, other_user).get_data()
+        igadget_list = data['workspace']['tabList'][0]['igadgetList']
+        self.assertEqual(len(igadget_list), 2)
 
 
 class ParamatrizedWorkspaceGenerationTestCase(TestCase):
@@ -205,8 +250,19 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
 
     def testFillWorkspaceUsingTemplate(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
-        get_global_workspace_data(self.workspace, self.user)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(self.workspace.name, 'Testing')
+        self.assertEqual(len(data['workspace']['tabList']), 1)
+
+        # Workspace template 2 adds a new Tab
+        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        self.assertEqual(len(data['workspace']['tabList']), 2)
+
+        # Check that we handle the case where there are 2 tabs with the same name
+        fillWorkspaceUsingTemplate(self.workspace, self.template2)
+        data = get_global_workspace_data(self.workspace, self.user).get_data()
+        self.assertEqual(len(data['workspace']['tabList']), 3)
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)

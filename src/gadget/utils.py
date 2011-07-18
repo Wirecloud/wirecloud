@@ -37,7 +37,7 @@ from django.utils.http import urlquote
 from django.contrib.sites.models import Site
 from django.conf import settings
 
-from catalogue.models import GadgetResource
+from catalogue.models import CatalogueResource
 from commons.authentication import Http403
 from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import Gadget
@@ -49,7 +49,7 @@ def get_or_add_gadget_from_catalogue(vendor, name, version, user, request):
     try:
         gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
     except:
-        resource = GadgetResource.objects.get(vendor=vendor, short_name=name, version=version)
+        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
         templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
         templateParser.parse()
         gadget = templateParser.getGadget()
@@ -99,7 +99,7 @@ def get_or_create_gadget_from_catalogue(vendor, name, version, user, users, requ
     try:
         gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
     except Gadget.DoesNotExist:
-        resource = GadgetResource.objects.get(vendor=vendor, short_name=name, version=version)
+        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
 
         templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
         templateParser.parse()

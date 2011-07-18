@@ -459,32 +459,11 @@ IGadget.prototype.build = function () {
     Element.extend(button);
     button.setAttribute("type", "button");
     button.addClassName("closebutton");
-
-    if (this.gadget.isContratable()) {
-        var remove_and_cancel = function () {
+    button.observe("click",
+        function () {
             OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().cancelServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        var remove = function () {
-            OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().unsubscribeServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        button.observe("click",
-            function () {
-                LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
-            },
-            false);
-    } else {
-        button.observe("click",
-            function () {
-                OpManagerFactory.getInstance().removeInstance(this.id);
-            }.bind(this),
-            false);
-    }
+        }.bind(this),
+        false);
     button.setAttribute("title", gettext("Close"));
     button.setAttribute("alt", gettext("Close"));
     this.closeButtonElement = button;
@@ -516,7 +495,7 @@ IGadget.prototype.build = function () {
     button.setAttribute("type", "button");
     button.observe("click", 
         function () {
-            this.toggleMinimizeStatus();
+            this.toggleMinimizeStatus(true);
         }.bind(this),
         false);
     if (this.minimized) {
@@ -575,7 +554,7 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+    var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
         this.content = document.createElement("iframe");
         Element.extend(this.content);
@@ -689,9 +668,10 @@ IGadget.prototype.isAllowed = function (action) {
         return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_igadgets');
     case "move":
     case "resize":
-    case "minimize":
         var dragboard = this.layout.dragboard;
         return !dragboard.isLocked() && dragboard.getWorkspace().isAllowed('edit_layout');
+    case "minimize":
+        return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
     default:
         return false;
     }
@@ -703,6 +683,9 @@ IGadget.prototype._updateButtons = function () {
     }
     if (isElement(this.settingsButtonElement.parentNode)) {
         this.settingsButtonElement.remove();
+    }
+    if (isElement(this.minimizeButtonElement.parentNode)) {
+        this.minimizeButtonElement.remove();
     }
     if (isElement(this.closeButtonElement.parentNode)) {
         this.closeButtonElement.remove();
@@ -753,7 +736,7 @@ IGadget.prototype.paint = function (onInit) {
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
     if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
-        var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+        var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
         this.content.setAttribute("data", codeURL);
     }
 
@@ -1842,7 +1825,7 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this._recomputeHeight(true);
 
     // Notify resize event
-    reserveSpace = reserveSpace !== null ? reserveSpace : true;
+    reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence !== null ? persistence : true;
         this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);

@@ -45,8 +45,16 @@ body{
 	width: 170px;
 }
 
-#catalogue #catalogue_content {
-	width: auto;
+.sidebar #add_workspace {
+    width: 100%;
+}
+
+.sidebar #add_workspace span {
+    float: left;
+}
+
+.sidebar #add_workspace span.add_workspace  {
+    top: 0;
 }
 
 /* WIRING HACKS  to gain layout and paint the arrows properly*/

@@ -127,7 +127,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     tab_id_mapping = {}
 
     for tabElement in tabs:
-        tab = createTab(tabElement.get('name'), user, workspace)
+        tab = createTab(tabElement.get('name'), user, workspace, allow_renaming=True)
         tab_id_mapping[tabElement.get('id')] = tab
 
         preferences = PREFERENCE_XPATH(tabElement)
@@ -261,3 +261,6 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             out_channel = channel_connectables[out_channel_element.get('id')]['connectable']
             relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
             relation.save()
+
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(workspace)

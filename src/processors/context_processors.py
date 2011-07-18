@@ -60,36 +60,8 @@ def is_anonymous(request):
     return {'is_anonymous': is_anonymous}
 
 
-def home_gateway_url(request):
-    if hasattr(settings, 'HOME_GATEWAY_DISPATCHER_URL'):
-        return {'home_gateway_dispatcher_url': settings.HOME_GATEWAY_DISPATCHER_URL}
-    else:
-        return {'home_gateway_dispatcher_url': None}
-
-
-def only_one_js_file(request):
-    if hasattr(settings, 'ONLY_ONE_JS_FILE'):
-        return {'only_one_js_file': settings.ONLY_ONE_JS_FILE}
-    else:
-        return {'only_one_js_file': None}
-
-
-def only_one_css_file(request):
-    if hasattr(settings, 'ONLY_ONE_CSS_FILE'):
-        return {'only_one_css_file': settings.ONLY_ONE_CSS_FILE}
-    else:
-        return {'only_one_css_file': False}
-
-
 def remote_channels_enabled(request):
     return {'remote_channels_enabled': hasattr(settings, 'REMOTE_CHANNEL_NOTIFIER_URL')}
-
-
-def ezweb_release(request):
-    if hasattr(settings, 'EZWEB_RELEASE'):
-        return {'ezweb_release': settings.EZWEB_RELEASE}
-    else:
-        return {'ezweb_release': 'default'}
 
 
 #private method: gets the tags and category children from an specific category (Category model)

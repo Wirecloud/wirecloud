@@ -132,6 +132,7 @@ class Proxy(Resource):
                 "headers": {},
                 "cookies": Cookie.SimpleCookie(),
                 "user": request.user,
+                "original-request": request,
             }
 
             # Request creation

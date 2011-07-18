@@ -33,7 +33,7 @@
 from django.conf import settings
 from lxml import etree
 
-from igadget.models import IGadget, Variable
+from igadget.models import IGadget
 from workspace.models import Tab
 from preferences.models import WorkSpacePreference, TabPreference
 from connectable.models import InOut, In, Out, RelatedInOut
@@ -104,10 +104,6 @@ def build_template_from_workspace(options, workspace, user):
     readOnlyGadgets = options.get('readOnlyGadgets', False)
     readOnlyConnectables = options.get('readOnlyConnectables', False)
 
-    contratable = options.get('contratable')
-    if not contratable:
-        contratable = False
-
     parametrization = options.get('parametrization')
     if not parametrization:
         parametrization = {}
@@ -148,7 +144,6 @@ def build_template_from_workspace(options, workspace, user):
                 etree.SubElement(tabElement, 'Preference', name=preference.name, value=preference.value)
 
     wiring = etree.SubElement(template, 'Platform.Wiring')
-    contratable = False
 
     # iGadgets
     for igadget in included_igadgets:
@@ -157,8 +152,6 @@ def build_template_from_workspace(options, workspace, user):
         igadget_params = {}
         if igadget_id in parametrization:
             igadget_params = parametrization[igadget_id]
-
-        contratable = contratable or gadget.is_contratable()
 
         resource = etree.SubElement(tabs[igadget.tab.id], 'Resource', id=igadget_id, vendor=gadget.vendor, name=gadget.name, version=gadget.version, title=igadget.name)
         if readOnlyGadgets:
@@ -215,9 +208,6 @@ def build_template_from_workspace(options, workspace, user):
 
         for slot in slots:
             wiring.append(etree.Element('Slot', name=slot.name, type=typeCode2typeText(slot.type), label=slot.label, friendcode=slot.friend_code))
-
-    if contratable:
-        etree.append(etree.Element('Capability', name="contratable", value="true"))
 
     # wiring channel and connections
     channel_vars = InOut.objects.filter(workspace=workspace)

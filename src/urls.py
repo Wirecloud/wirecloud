@@ -36,6 +36,8 @@ from django.conf import settings
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.decorators.cache import cache_page
+from django.views.i18n import javascript_catalog
 
 admin.autodiscover()
 
@@ -66,9 +68,6 @@ urlpatterns = patterns('',
 
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
-
-    # Contract Manager
-    (r'^contract(s)?', include('resourceSubscription.urls')),
 
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
@@ -124,14 +123,11 @@ urlpatterns = patterns('',
     (r'^i18n/', include('django.conf.urls.i18n')),
 
     # Django JavaScript Internacionalitation
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+    (r'^jsi18n/$', cache_page(60 * 60 * 24)(javascript_catalog), js_info_dict),
 
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
-
-    #Catalogue API
-    (r'^catalogue/API/', include('catalogue.API.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
