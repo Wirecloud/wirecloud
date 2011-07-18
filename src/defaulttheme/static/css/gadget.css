@@ -1,0 +1,7 @@
+.warning  table {
+    background: transparent;
+}
+
+.warning  table td {
+    border: none;
+}

@@ -326,10 +326,6 @@ if (!window.preventDefaultStyle) {
     try {
         /* TODO */
         var theme = window.parent.URIs.ACTIVE_THEME;
-
-        if (EzWebExt.Browser.isIE()) {
-            EzWebExt.prependStyle(EzWebAPI.platform_domain + "/ezweb/themes/" + encodeURIComponent(theme.getValue()) + "/gadgets/gadget-ie.css");
-        }
         
         EzWebExt.prependStyle(EzWebAPI.platform_domain + theme + "/css/gadget.css");
     } catch (e) {}
