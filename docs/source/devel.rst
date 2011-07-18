@@ -134,6 +134,78 @@ a couple of caveats:
 * Unlike the ``process_*`` methods which get called once per request,
   ``__init__`` gets called only once, when the Web server starts up.
 
+Adapting your gadgets to run in iPhone
+--------------------------------------
+
+Empty HTML tags
+~~~~~~~~~~~~~~~
+
+The Safari browser from iPhone has problems with empty HTML tags. You have to
+avoid them in the gadget's HTML if you want it to run in iPhones.
+
+For example, this HTML template wouldn't work:
+
+.. code-block:: html
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+            <base href="http://example.com/gadgets/somegadget/"></base>
+            <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"></meta>
+            <title>Some Gadget</title>
+
+            <!-- EzWeb Gadgets project JavaScript Library -->
+            <script type="text/javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
+            <script type="text/javascript" src="/ezweb/js/EzWebAPI_ext/EzWebAPI_ext.js"></script>
+
+            <script type="text/javascript" src="js/main.js"></script>
+
+            <!-- Custom Style -->
+            <link rel="stylesheet" type="text/css" href="css/style.css"></link>
+        </head>
+        <body>
+        <!-- Initial HTML content -->
+        </body>
+    </html>
+
+On the other hand, this alternative template would work smoothly:
+
+.. code-block:: html
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+            <base href="http://example.com/gadgets/somegadget/"/>
+            <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
+            <title>Some Gadget</title>
+
+            <!-- EzWeb Gadgets project JavaScript Library -->
+            <script type="text/javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
+            <script type="text/javascript" src="/ezweb/js/EzWebAPI_ext/EzWebAPI_ext.js"></script>
+
+            <script type="text/javascript" src="js/main.js"></script>
+
+            <!-- Custom Style -->
+            <link rel="stylesheet" type="text/css" href="css/style.css"/>
+        </head>
+        <body>
+        <!-- Initial HTML content -->
+        </body>
+    </html>
+
+Did you notice any difference? Some tags that were previously empty are now
+self-closing tags:
+
+- **base**
+- **meta**
+- **link**
+
+For some reason, iPhone's Safari handles well the empty *script* tags, so you
+don't have to worry about them.
+
+Remember to change your empty tags into self-closing ones, and enjoy your gadget
+in an iPhone.
+
 How to contribute to EzWeb
 --------------------------
 
