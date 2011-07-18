@@ -633,6 +633,12 @@ FormWindowMenu.prototype._insertField = function(fieldId, field, row, fieldHash)
         row.appendChild(inputCell);
     }
 
+    if (field.type == 'color') {
+        var icon = document.createElement('div');
+        icon.className = "icon icon-size icon-color";
+        inputCell.appendChild(icon);
+    }
+
     var inputInterface = InterfaceFactory.createInterface(fieldId, field);
     inputInterface._insertInto(inputCell);
 

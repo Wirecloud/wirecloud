@@ -296,12 +296,6 @@ a, a:visited{
 	padding: 10px;
 }
 
-.color_input{
-	background-image:url(../images/colorpicker.png);
-	background-position:right center;
-	background-repeat:no-repeat;
-}
-
 .required_mark{
 	color: red;
 }
@@ -427,9 +421,11 @@ button {
 	display:block;
 }
 
-
-.color_button {
-	background: transparent url(../images/colorpicker.png) no-repeat scroll 0 0;
+.icon.icon-size.icon-color {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+    top: 5px;
 }
 
 /* Popup menu */

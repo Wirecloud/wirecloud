@@ -55,3 +55,4 @@ span.icon-igadget-settings { background-position: -48px -408px; }
 .icon-tab-preferences { background-image: url(../images/icons-sprite.png); background-position: -48px -332px; }
 .icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -455px; }
 .icon-back { background-image: url(../images/icons-sprite.png); background-position: 0px -192px; display: block; }
+.icon-color, .color_button { background-image: url(../images/icons-sprite.png); background-position: 0px -576px; }
