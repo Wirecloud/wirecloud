@@ -5,3 +5,13 @@
 .warning  table td {
     border: none;
 }
+
+body button,
+body .styled_button > div,
+body input[type="button"] {
+    background: transparent !important;
+    border: none;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
