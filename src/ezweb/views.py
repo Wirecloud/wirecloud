@@ -63,16 +63,21 @@ def index(request, user_name=None, template="index.html"):
 
 
 @login_required
-def render_workspace_view(request, workspace):
+def render_workspace_view(request, workspace, template="index.html"):
     if request.user.username != "public":
         workspace = get_object_or_404(WorkSpace, pk=int(workspace))
         if request.user not in workspace.users.all():
             return HttpResponseForbidden()
 
         post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
-        return render_ezweb(request, request.user.username, "index.html", post_load_script=post_load_script)
+        return render_ezweb(request, request.user.username, template, post_load_script=post_load_script)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+
+
+@login_required
+def render_lite_workspace_view(request, workspace):
+    return render_workspace_view(request, workspace, "index_lite.html")
 
 
 def redirected_login(request):

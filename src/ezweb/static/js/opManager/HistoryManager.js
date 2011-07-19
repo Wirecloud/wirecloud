@@ -66,7 +66,9 @@ HistoryManager._prepareData = function(data) {
 };
 
 HistoryManager._buildURL = function(data) {
-    var key, hash = '';
+    var key,
+        hash = '',
+        lite = '';
 
     for (key in data) {
         if (key === 'workspace') {
@@ -74,8 +76,13 @@ HistoryManager._buildURL = function(data) {
         }
         hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
     }
+
+    if (window.location.pathname.indexOf('lite') >= 0) {
+        lite = "/lite";
+    }
+
     return window.location.protocol + "//" +
-        window.location.host +
+        window.location.host + lite +
         "/workspaces/" + data.workspace +
         '#' + hash.substr(1);
 };
