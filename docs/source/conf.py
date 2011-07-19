@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# EzWeb documentation build configuration file, created by
+# Wirecloud documentation build configuration file, created by
 # sphinx-quickstart on Fri Apr 15 11:35:56 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'EzWeb'
+project = u'Wirecloud'
 copyright = u'2011, Yaco Sistemas'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'EzWebdoc'
+htmlhelp_basename = 'Wireclouddoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -178,7 +178,7 @@ htmlhelp_basename = 'EzWebdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'EzWeb.tex', u'EzWeb Documentation',
+  ('index', 'Wirecloud.tex', u'Wirecloud Documentation',
    u'Yaco Sistemas', 'manual'),
 ]
 
@@ -211,6 +211,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'ezweb', u'EzWeb Documentation',
+    ('index', 'wirecloud', u'Wirecloud Documentation',
      [u'Yaco Sistemas'], 1)
 ]

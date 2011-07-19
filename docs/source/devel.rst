@@ -5,30 +5,30 @@ Developer Manual
 Writing custom themes
 ---------------------
 
-If you want to customize the look and fell of EzWeb you need to write a custom
-`theme`. Doing so it's not a difficult task. These are the things you can do
-by writing a custom theme:
+If you want to customize the look and fell of Wirecloud you need to write a
+custom `theme`. Doing so it's not a difficult task. These are the things you
+can do by writing a custom theme:
 
 - Change CSS files
 - Replace or add images
 - Add custom Javascript files
 - Change Django templates
 
-EzWeb comes with a very basic theme called the `default theme`. It is very useful
-for two reasons:
+Wirecloud comes with a very basic theme called the `default theme`. It is very
+useful for two reasons:
 
 - It's a good starting point to learn how to write a theme.
 - Your theme does not need to define everything. If something is not found in
-  it, Ezweb will use the matching file in the default theme.
+  it, Wirecloud will use the matching file in the default theme.
 
 
 Anatomy of a theme
 ~~~~~~~~~~~~~~~~~~
 
-A theme is a python package with just an __init__.py file on it. It doesn't need
-to be a Django application but you can choose to add more funcionality on it
-(e. g. custom views or models) if your want and make it a real Django app. It's
-just not required.
+A theme is a python package with just an __init__.py file on it. It doesn't
+need to be a Django application but you can choose to add more funcionality on
+it (e. g. custom views or models) if your want and make it a real Django app.
+It's just not required.
 
 Then, there are two main directories in a theme:
 
@@ -64,12 +64,12 @@ look like this:
 Activating a theme
 ~~~~~~~~~~~~~~~~~~
 At a given point of time there can be just one active theme for all the users
-o a EzWeb instance. This may change in the future so we can allow the users
+o a Wirecloud instance. This may change in the future so we can allow the users
 to specify a different theme.
 
 They way the active theme is selected is by using a option in the settings.py
 file. That option is called `THEME_ACTIVE` and its value should be the name
-of the Python package that contains the theme. EzWeb will try to import the
+of the Python package that contains the theme. Wirecloud will try to import the
 theme using the `__import__` function so it's very important that the theme
 directory is located somewhere in your PYTHONPATH.
 
@@ -81,17 +81,17 @@ Activating proxy processor
 
 To activate a proxy processor, add it to the PROXY_PROCESSORS list in your
 Django settings. For example, here's the default PROXY_PROCESSORS used by
-EzWeb::
+Wirecloud::
 
   PROXY_PROCESSORS = (
     'proxy.processors.SecureDataProcessor',
   )
 
-During the request phase, EzWeb applies proxy processors in the order it's
+During the request phase, Wirecloud applies proxy processors in the order it's
 defined in PROXY_PROCESSORS, top-down. During the response phase, the classes
 are applied in reverse order, from the bottom up.
 
-An EzWeb installation doesn't requre any proxy processor -- e.g.,
+An Wirecloud installation doesn't requre any proxy processor -- e.g.,
 PROXY_PROCESSORS can be empty, if you'd like.
 
 Writing your own proxy processor
@@ -154,7 +154,7 @@ For example, this HTML template wouldn't work:
             <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"></meta>
             <title>Some Gadget</title>
 
-            <!-- EzWeb Gadgets project JavaScript Library -->
+            <!-- Wirecloud Gadgets project JavaScript Library -->
             <script type="text/javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
             <script type="text/javascript" src="/ezweb/js/EzWebAPI_ext/EzWebAPI_ext.js"></script>
 
@@ -179,7 +179,7 @@ On the other hand, this alternative template would work smoothly:
             <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
             <title>Some Gadget</title>
 
-            <!-- EzWeb Gadgets project JavaScript Library -->
+            <!-- Wirecloud Gadgets project JavaScript Library -->
             <script type="text/javascript" src="/ezweb/js/EzWebAPI/EzWebAPI.js"></script>
             <script type="text/javascript" src="/ezweb/js/EzWebAPI_ext/EzWebAPI_ext.js"></script>
 
@@ -203,15 +203,15 @@ self-closing tags:
 For some reason, iPhone's Safari handles well the empty *script* tags, so you
 don't have to worry about them.
 
-Remember to change your empty tags into self-closing ones, and enjoy your gadget
-in an iPhone.
+Remember to change your empty tags into self-closing ones, and enjoy your
+gadget in an iPhone.
 
-How to contribute to EzWeb
---------------------------
+How to contribute to Wirecloud
+------------------------------
 
-EzWeb is a free software project. It's free to use and modify but it also
-means that your contributions are more than welcomed. What EzWeb can do
-for you is not the right question. Ask yourself what can you do for Ezweb!
+Wirecloud is a free software project. It's free to use and modify but it also
+means that your contributions are more than welcomed. What Wirecloud can do
+for you is not the right question. Ask yourself what can you do for Wirecloud!
 
 I'm glad you asked since there are a lot of things you can do:
 
@@ -223,14 +223,14 @@ I'm glad you asked since there are a lot of things you can do:
   the community. If you have implemented a new cool feature do it too, there
   is always room for improvements.
 - Translate it to your language. Right now only spanish, english and an
-  outdated portuguesse translation is what we have. Translating EzWeb is a
+  outdated portuguesse translation is what we have. Translating Wirecloud is a
   quite simple task if you happen to speak another language.
 - Write some documentation. We should have user, administrator and developer
   guides and a bunch of tutorial and other newbie resources. We do have
   documentation but we need your help to make it more consistent and easy to
   find.
 - Spread the word. Everybody that sees the demo like it a lot but the problem
-  is that not a lot of people know EzWeb. Help us communicate its coolness
+  is that not a lot of people know Wirecloud. Help us communicate its coolness
   so more people can make it perfect.
 
 Let's see how you can participate in more detail.
@@ -256,7 +256,7 @@ the TODO:TRACKER.
 Submitting patches
 ~~~~~~~~~~~~~~~~~~
 
-EzWeb project is composed by Django (and hence Python) code and JavaScript
+Wirecloud project is composed by Django (and hence Python) code and JavaScript
 code. Wherever you submit your patch you have follow the code guidelienes.
 Otherwise it's likely that your patch will be rejected and nobody wants
 that, right?
@@ -326,16 +326,16 @@ you should create a ticket and attach your patch to it.
 
 This documentation will be versioned with the rest of the code helping to
 keep it up to date. It should also be accesible at a public URL. Ideally
-one URL for each EzWeb version.
+one URL for each Wirecloud version.
 
 
 Spreading the word
 ~~~~~~~~~~~~~~~~~~
 
-Feel free to talk about the nice things of EzWeb with your familiy, friends,
-coworkers and bosses. If you have some rants we prefer to read about them
-if the mailing lists just in case we can fix something that can change your
-opinion.
+Feel free to talk about the nice things of Wirecloud with your familiy,
+friends, coworkers and bosses. If you have some rants we prefer to read about
+them if the mailing lists just in case we can fix something that can change
+your opinion.
 
 In any case we need more marketing and you can easily help us here.
 
@@ -345,7 +345,7 @@ Becoming a comitter
 
 If the number and quality of your contributions are high, we will be very
 happy to give you write access to the main repository no matter your
-sex, race, religion or favourite ice cream flavour. Traditionally EzWeb
+sex, race, religion or favourite ice cream flavour. Traditionally Wirecloud
 development has not be very open but we are here to change that direction
 with your help.
 
@@ -353,10 +353,10 @@ with your help.
 SCM branches guide
 ------------------
 
-EzWeb uses Mercurial, a distributed source code management tool. As with other
-DSCM tools, it's very easy to create branches and merge them later and because
-of that a set of rules and guidelines are needed in order to keep insanity
-under control.
+Wirecloud uses Mercurial, a distributed source code management tool. As with
+other DSCM tools, it's very easy to create branches and merge them later and
+because of that a set of rules and guidelines are needed in order to keep
+insanity under control.
 
 There are two types of branches in the repository:
 
@@ -445,7 +445,7 @@ to the develop branch::
   hg clone https://hg.yaco.es/ezweb
   hg update develop
 
-If he already had an old version of ezweb he would do a pull instead
+If he already had an old version of wirecloud he would do a pull instead
 of a clone. The update is still mandatory.
 
 Now he can create a new branch to start developing a new feature::
@@ -506,15 +506,18 @@ Things to consider before running the tests
    ``python manage.py loaddata extra_data``. These two commands will
    syncronize the database and load some data needed for testing. All tests has been performed with the user **admin**, so this user must be in your database.
 #. For testing the adition of gadgets by template it's necessary a web server that serves this gadgets (you can see an example of web server in the next section).
-#. Finally you must run ezweb ``python manage.py runserver`` and you'll
+#. Finally you must run wirecloud ``python manage.py runserver`` and you'll
    be able to open any test suite placed in tests directory and play selenium tests with no problem.
 
-Note: It's highly recommended to run the tests with private browsing mode active in your Firefox to avoid cache problems.
+Note: It's highly recommended to run the tests with private browsing mode
+active in your Firefox to avoid cache problems.
 
 Serving the templates of gadgets
 ................................
 
-As it's been said before, for testing the adition of gadgets by template it's necessary a web server that serves this gadgets in http://localhost/gadgets/ url, for example Apache Web Server. The configuration must be the next:
+As it's been said before, for testing the adition of gadgets by template it's
+necessary a web server that serves this gadgets in http://localhost/gadgets/
+url, for example Apache Web Server. The configuration must be the next:
 
 Create a simbolyc link from gadgets templates to /var/www/
 
@@ -522,7 +525,9 @@ Create a simbolyc link from gadgets templates to /var/www/
 
    sudo ln -s ~/ezweb_project/tests/ezweb-data/src/ /var/www/
 
-Create and alias in /etc/apache2/apache2.conf for showing in http://localhost/gadgets/ the content of /var/www/src/ . You must also add the server name, in this case, localhost:
+Create and alias in /etc/apache2/apache2.conf for showing in
+http://localhost/gadgets/ the content of /var/www/src/ . You must also add the
+server name, in this case, localhost:
 
 .. code-block:: bash
 
@@ -535,7 +540,8 @@ Add all permissions to /var/www/src
 
    chmod 777 src
 
-Finally, in http://localhost/gadgets/ you'll be able to get gadgets by template.
+Finally, in http://localhost/gadgets/ you'll be able to get gadgets by
+template.
 
 Test gadget
 ...........
