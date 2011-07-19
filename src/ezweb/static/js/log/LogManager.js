@@ -35,20 +35,22 @@ function LogManager (parentLogger) {
 }
 
 LogManager.prototype._printEntry = function(entry) {
-    var dateElement, icon, wrapper, clearer;
+    var dateElement, icon, wrapper, clearer, icon;
 
     wrapper = document.createElement("div");
     wrapper.className = "entry";
+    icon = document.createElement("div");
+    wrapper.appendChild(icon);
 
     switch (entry.level) {
     case Constants.Logging.ERROR_MSG:
-        wrapper.className += " icon icon-error";
+        icon.className += " icon icon-error";
         break;
     case Constants.Logging.WARN_MSG:
-        wrapper.className += " icon icon-warning";
+        icon.className += " icon icon-warning";
         break;
     case Constants.Logging.INFO_MSG:
-        wrapper.className += " icon icon-info";
+        icon.className += " icon icon-info";
         break;
     }
 
@@ -194,6 +196,16 @@ LogManager.prototype.reset = function() {
     }
 }
 
+LogManager.prototype.repaint = function () {
+    var i;
+
+    this.wrapperElement.innerHTML = "";
+
+    for (i = 0; i < this.entries.length; i += 1) {
+        this._printEntry(this.entries[i]);
+    }
+};
+
 LogManager.prototype.resetCounters = function() {
     this.errorCount = 0;
     this.totalCount = 0;
@@ -221,15 +233,20 @@ function IGadgetLogManager (iGadget) {
     globalManager.childManagers.push(this);
     this.iGadget = iGadget;
 }
+
 IGadgetLogManager.prototype = new LogManager();
 
-IGadgetLogManager.prototype.buildExtraInfo = function() {
-    var extraInfo = document.createElement('span');
+IGadgetLogManager.prototype.buildExtraInfo = function () {
+    var extraInfo = document.createElement('div'),
+        extraInfoIcon = document.createElement('div'),
+        extraInfoText = document.createElement('span');
     Element.extend(extraInfo);
-    extraInfo.className = "igadget_info";
-    extraInfo.setTextContent(this.iGadget.id);
-    extraInfo.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
-
+    extraInfo.className += " igadget_info_container";
+    extraInfo.appendChild(extraInfoIcon);
+    extraInfo.appendChild(extraInfoText);
+    extraInfoIcon.className = "igadget_info";
+    extraInfoText.innerHTML = this.iGadget.id;
+    extraInfoText.setAttribute('title', this.iGadget.name + "\n " + this.iGadget.gadget.getInfoString());
     extraInfo.style.cursor = "pointer";
     extraInfo.observe('click', function() {
         OpManagerFactory.getInstance().showLogs(this);
@@ -291,19 +308,25 @@ var LogManagerFactory = function () {
         });
         $('logs_clear_button').observe('click', function() {
             var i;
-                        this.reset();
-                        this.show();
+            this.reset();
+            this.show();
         }.bind(this));
 
         this.title = $$('#logs_header .title')[0];
         this.sectionIdentifier = $$('#logs_header .section_identifier')[0];
     }
+
     GlobalLogManager.prototype = new LogManager();
 
     GlobalLogManager.prototype.show = function(logManager) {
         var content, title, subtitle;
 
         logManager = logManager != null ? logManager : this;
+
+        if (BrowserUtilsFactory.getInstance().isIE()) {
+            // Hack for IE, it needs to repaint the entries
+            logManager.repaint();
+        }
 
         if (logManager === this) {
             $('logs_igadget_toolbar').removeClassName('selected_section');
@@ -351,11 +374,11 @@ var LogManagerFactory = function () {
         return this.header;
     }
 
-        GlobalLogManager.prototype.buildTitle = function() {
+    GlobalLogManager.prototype.buildTitle = function() {
         return gettext('EzWeb Platform Logs');
     }
 
-        GlobalLogManager.prototype.buildSubTitle = function() {
+    GlobalLogManager.prototype.buildSubTitle = function() {
         return '';
     }
 

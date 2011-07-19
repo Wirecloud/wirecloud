@@ -5,6 +5,7 @@ from httplib import HTTPMessage
 from StringIO import StringIO
 import urllib2
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
 
@@ -69,7 +70,7 @@ class FakeDownloader(object):
             return self.build_response(url, 404, '', 'Not Found')
 
 
-class ProxyTests(TestCase):
+class ProxyTestsBase(TestCase):
 
     fixtures = ['test_data.json']
 
@@ -80,6 +81,9 @@ class ProxyTests(TestCase):
 
     def tearDown(self):
         EZWEB_PROXY._do_request = self._original_function
+
+
+class ProxyTests(ProxyTestsBase):
 
     def test_basic_proxy_requests(self):
         EZWEB_PROXY._do_request.set_response('http://example.com/path', 'data')
@@ -144,6 +148,20 @@ class ProxyTests(TestCase):
         self.assertEquals(response.cookies['newcookie'].value, 'test')
         self.assertEquals(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
 
+
+class ProxySecureDataTests(ProxyTestsBase):
+
+    def setUp(self):
+        self.OLD_PROXY_PROCESSORS = settings.PROXY_PROCESSORS
+        settings.PROXY_PROCESSORS = (
+            'proxy.processors.SecureDataProcessor',
+        )
+        super(ProxySecureDataTests, self).setUp()
+
+    def tearDown(self):
+        settings.PROXY_PROCESSORS = self.OLD_PROXY_PROCESSORS
+        super(ProxySecureDataTests, self).tearDown()
+
     def test_secure_data(self):
 
         set_variable_value(1, self.user, 'test_password')
@@ -168,7 +186,7 @@ class ProxyTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=test_username&password=test_password')
 
-        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         response = client.post('/proxy/http/example.com/path',
                             'username=|username|&password=|password|',
                             content_type='application/x-www-form-urlencoded',
@@ -178,6 +196,47 @@ class ProxyTests(TestCase):
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=|username|&password=|password|')
+
+        # Secure data header using constants
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        secure_data_header = 'action=data, substr=|password|, var_ref=c/test_password'
+        secure_data_header += '&action=data, substr=|username|, var_ref=c/test_username'
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=test_username&password=test_password')
+
+        # Secure data header using encoding=url
+        EZWEB_PROXY._do_request.reset()
+        EZWEB_PROXY._do_request.set_echo_response('http://example.com/path')
+        secure_data_header = 'action=data, substr=|password|, var_ref=c%2Fa%3D%2C%20z , encoding=url'
+        secure_data_header += '&action=data, substr=|username|, var_ref=c%2Fa%3D%2C%20z'
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 200)
+        self.assertEquals(response.content, 'username=a=, z&password=a%3D%2C%20z')
+
+        # Secure data header with empty parameters
+        secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost',
+                            HTTP_X_EZWEB_SECURE_DATA=secure_data_header)
+
+        self.assertEquals(response.status_code, 422)
 
     def test_secure_data_using_cookies(self):
 
@@ -203,7 +262,7 @@ class ProxyTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=test_username&password=test_password')
 
-        secure_data_header = 'action=basic_auth, user_ref=' + pass_ref + ', pass_ref=' + user_ref
+        secure_data_header = 'action=basic_auth, user_ref=' + user_ref + ', pass_ref=' + pass_ref
         client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
         response = client.post('/proxy/http/example.com/path',
                             'username=|username|&password=|password|',
@@ -213,3 +272,14 @@ class ProxyTests(TestCase):
 
         self.assertEquals(response.status_code, 200)
         self.assertEquals(response.content, 'username=|username|&password=|password|')
+
+        # Secure data header with empty parameters
+        secure_data_header = 'action=basic_auth, user_ref=, pass_ref='
+        client.cookies['X-EzWeb-Secure-Data'] = secure_data_header
+        response = client.post('/proxy/http/example.com/path',
+                            'username=|username|&password=|password|',
+                            content_type='application/x-www-form-urlencoded',
+                            HTTP_HOST='localhost',
+                            HTTP_REFERER='http://localhost')
+
+        self.assertEquals(response.status_code, 200)

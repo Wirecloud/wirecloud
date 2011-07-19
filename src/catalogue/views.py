@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -30,33 +29,31 @@
 
 #
 
-import os
-import re
-from shutil import rmtree
-from urllib import url2pathname
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.http import  HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from catalogue.models import Application, GadgetResource, GadgetWiring
-from catalogue.models import UserRelatedToGadgetResource, Tag, UserTag, UserVote
+from catalogue.models import CatalogueResource
+from catalogue.models import UserTag, UserVote
 from catalogue.tagsParser import TagsXMLHandler
-from catalogue.catalogue_utils import get_last_gadget_version, get_resources_that_must_be_shown
-from catalogue.catalogue_utils import get_resource_response, filter_gadgets_by_organization
-from catalogue.catalogue_utils import get_and_list, get_or_list, get_not_list, is_ie
-from catalogue.catalogue_utils import get_uniquelist, get_sortedlist, get_paginatedlist
-from catalogue.catalogue_utils import get_tag_response, update_gadget_popularity
-from catalogue.catalogue_utils import get_vote_response
-from catalogue.utils import add_resource_from_template_uri, get_catalogue_resource_info
+from catalogue.catalogue_utils import get_latest_resource_version
+from catalogue.catalogue_utils import get_resource_response, filter_resources_by_organization
+from catalogue.catalogue_utils import filter_resources_by_scope
+from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_filter
+from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
+from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
+from catalogue.catalogue_utils import get_vote_response, group_resources
+from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
+from catalogue.utils import tag_resource
 from commons.authentication import user_authentication, Http403
+from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
 from commons.http_utils import PUT_parameter
 from commons.logs import log
@@ -64,10 +61,9 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
-from gadget.views import deleteGadget
 
 
-class GadgetsCollection(Resource):
+class ResourceCollection(Resource):
 
     @transaction.commit_manually
     def create(self, request, user_name, fromWGT=False):
@@ -83,11 +79,11 @@ class GadgetsCollection(Resource):
             templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
 
         except IntegrityError, e:
-            # Gadget already exists. Rollback transaction
+            # Resource already exists. Rollback transaction
             transaction.rollback()
             json_response = {
                 "result": "error",
-                "message": _('Gadget already exists!')
+                "message": _('Gadget already exists!'),
             }
             return HttpResponseBadRequest(simplejson.dumps(json_response),
                                           mimetype='application/json; charset=UTF-8')
@@ -103,43 +99,33 @@ class GadgetsCollection(Resource):
             msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
-        json_response = get_catalogue_resource_info(resource, templateParser)
-        json_response["result"] = "ok"
+        json_response = get_added_resource_info(resource, user)
 
-        # get_catalogue_resource_info can make changes in the db
+        # get_added_resource_info can make changes in the db
         transaction.commit()
 
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
 
+    @no_cache
     def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
-        isIE = is_ie(request)
 
         format = request.GET.get('format', 'default')
         orderby = request.GET.get('orderby', '-creation_date')
         scope = request.GET.get('scope', 'all')
 
-        #paginate
-        a = int(pag)
-        b = int(offset)
+        # Get all resource in the catalogue
+        resources = filter_resources_by_scope(CatalogueResource.objects.all(), scope)
+        resources = resources.order_by(orderby)
+        resources = group_resources(resources)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
+        items = len(resources)
 
-        # Get all the gadgets in the catalogue
-        gadgetlist = get_resources_that_must_be_shown(user, isIE).order_by(orderby)
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
-        items = len(gadgetlist)
+        resources = get_paginatedlist(resources, int(pag), int(offset))
 
-        if not(a == 0 or b == 0):
-        # Get the requested gadgets
-            c = ((a - 1) * b)
-            d = (b * a)
-
-            if a == 1:
-                c = 0
-            gadgetlist = gadgetlist[c:d]
-
-        return get_resource_response(gadgetlist, format, items, user)
+        return get_resource_response(resources, format, items, user)
 
     @transaction.commit_on_success
     def delete(self, request, user_name, vendor, name, version=None):
@@ -149,118 +135,27 @@ class GadgetsCollection(Resource):
         response_json = {'result': 'ok', 'removedIGadgets': []}
         if version != None:
             #Delete only the specified version of the gadget
-            resource = get_object_or_404(GadgetResource, short_name=name,
+            resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
-            result = deleteOneGadget(resource, user, request)
+            result = delete_resource(resource, user)
             response_json['removedIGadgets'] = result['removedIGadgets']
         else:
             #Delete all versions of the gadget
-            resources = get_list_or_404(GadgetResource, short_name=name, vendor=vendor)
+            resources = get_list_or_404(CatalogueResource, short_name=name, vendor=vendor)
             for resource in resources:
-                result = deleteOneGadget(resource, user, request)
+                result = delete_resource(resource, user)
                 response_json['removedIGadgets'] += result['removedIGadgets']
 
         return HttpResponse(simplejson.dumps(response_json),
                             mimetype='application/json; charset=UTF-8')
 
-    def update(self, request, user_name, vendor, name, version):
-        user = user_authentication(request, user_name)
 
-        # Get the gadget data from the request
-        preferred = PUT_parameter(request, 'preferred')
+class ResourceCollectionBySimpleSearch(Resource):
 
-        if preferred != None:
-            # Set all version of this gadget as no preferred
-            old_preferred_versions = UserRelatedToGadgetResource.objects.filter(
-                gadget__vendor=vendor, gadget__short_name=name, user=user, preferred_by=True)
-            for old_version in old_preferred_versions:
-                old_version.preferred_by = False
-                old_version.save()
-
-            new_preferred_versions = UserRelatedToGadgetResource.objects.filter(
-                gadget__vendor=vendor, gadget__short_name=name, gadget__version=version, user=user)
-
-            userRelated = None
-            if len(new_preferred_versions) == 0:
-                resource = get_object_or_404(GadgetResource, short_name=name,
-                                             vendor=vendor, version=version)
-                userRelated = UserRelatedToGadgetResource()
-                userRelated.gadget = resource
-                userRelated.user = user
-                userRelated.added_by = False
-            else:
-                userRelated = new_preferred_versions[0]
-
-            userRelated.preferred_by = True
-            userRelated.save()
-
-            resource = get_object_or_404(GadgetResource, short_name=name,
-                                         vendor=vendor, version=version)
-
-            return get_resource_response([resource], 'json', 1, user)
-
-
-def deleteOneGadget(resource, user, request):
-
-    # Delete the gadget only if this user is the owner
-    if not user.is_superuser:
-        try:
-            userRelated = UserRelatedToGadgetResource.objects.get(gadget=resource, user=user, added_by=True)
-        except UserRelatedToGadgetResource.DoesNotExist:
-            #the user is not the owner
-            msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
-
-            raise Http403(msg)
-
-    #Delete data from Application model
-    apps = Application.objects.filter(resources=resource)
-
-    for app in apps:
-        app.remove_resource(resource)
-
-    # Delete the related user information to that gadget
-    userRelated = UserRelatedToGadgetResource.objects.filter(gadget=resource)
-    userRelated.delete()
-    # Delete the related wiring information for that gadget
-    GadgetWiring.objects.filter(idResource=resource.id).delete()
-
-    # Delete the related tags for that gadget
-    resourceTags = UserTag.objects.filter(idResource=resource.id)
-    for t in resourceTags:
-        #if there is no more gadgets tagged with these tags, delete the Tag
-        #if UserTag.objects.filter(tag = t.tag).count() == 1:
-        #    t.tag.delete()
-        t.delete()
-
-    # Delete the related votes for that gadget
-    UserVote.objects.filter(idResource=resource.id).delete()
-
-    # Remove the gadget from the showcase
-    result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
-
-    # Delete the gadget if it is saved in the platform
-    if resource.fromWGT:
-        # pattern /deployment/gadgets/(username)/(vendor)/(name)/(version)/...
-        exp = re.compile('/deployment/gadgets/(?P<path>.+/.+/.+/.+/).*$')
-        if exp.search(resource.template_uri):
-            v = exp.search(resource.template_uri)
-            path = url2pathname(v.group('path'))
-            path = os.path.join(settings.GADGETS_DEPLOYMENT_DIR, path).encode("utf8")
-            if os.path.isdir(path):
-                rmtree(path)
-
-    # Delete the object
-    resource.delete()
-
-    return result
-
-
-class GadgetsCollectionBySimpleSearch(Resource):
-
+    @no_cache
     def read(self, request, user_name, criteria, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
-        isIE = is_ie(request)
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -271,84 +166,54 @@ class GadgetsCollectionBySimpleSearch(Resource):
         else:
             search_criteria = request.GET.get('search_criteria')
 
-        gadgetlist = []
+        resources = CatalogueResource.objects.none()
 
         if criteria == 'and':
-            gadgetlist = get_and_list(search_criteria, user, isIE)
-        elif (criteria == 'or' or criteria == 'simple_or'):
-            gadgetlist = get_or_list(search_criteria, user, isIE)
+            filters = get_and_filter(search_criteria, user)
+        elif criteria == 'or' or criteria == 'simple_or':
+            filters = get_or_filter(search_criteria, user)
         elif criteria == 'not':
-            gadgetlist = get_not_list(search_criteria, user, isIE)
+            filters = get_not_filter(search_criteria, user)
         elif criteria == 'event':
-            #get all the gadgets that match any of the given events
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='out'))
-
+            filters = get_event_filter(search_criteria)
         elif criteria == 'slot':
-            #get all the gadgets that match any of the given slots
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='in'))
-
+            filters = get_slot_filter(search_criteria)
         elif criteria == 'tag':
-            #get all the gadgets that match any of the given tags
-            search_criteria = search_criteria.split()
-            for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    usertag__tag__name__icontains=e)
-
+            filters = get_tag_filter(search_criteria)
         elif criteria == 'connectSlot':
-            #get all the gadgets compatible with the given events
+            # get all resource compatible with the given events
             search_criteria = search_criteria.split()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
+                resources = CatalogueResource.objects.filter(
                     Q(gadgetwiring__friendcode=e),
                     Q(gadgetwiring__wiring='out'))
 
         elif criteria == 'connectEvent':
-            #get all the gadgets compatible with the given slots
+            # get all resource compatible with the given slots
             search_criteria = search_criteria.split()
+            filters = Q()
             for e in search_criteria:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='in'))
+                filters = filters | Q(gadgetwiring__friendcode=e)
+            filters = filters & Q(gadgetwiring__wiring='out')
 
-        elif criteria == 'connectEventSlot':
-            #get all the gadgets compatible with the given slots
-            search_criteria[0] = search_criteria[0].split()
-            for e in search_criteria[0]:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='in'))
-            #get all the gadgets compatible with the given events
-            search_criteria[1] = search_criteria[1].split()
-            for e in search_criteria[1]:
-                gadgetlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode=e),
-                    Q(gadgetwiring__wiring='out'))
+        resources = CatalogueResource.objects.filter(filters)
+        resources = filter_resources_by_scope(resources, scope)
+        resources = resources.order_by(orderby)
+        resources = group_resources(resources)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
 
-        gadgetlist = get_uniquelist(gadgetlist)
+        items = len(resources)
+        resources = get_paginatedlist(resources, pag, offset)
 
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
-
-        items = len(gadgetlist)
-        gadgetlist = get_sortedlist(gadgetlist, orderby)
-        gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
-
-        return get_resource_response(gadgetlist, format, items, user)
+        return get_resource_response(resources, format, items, user)
 
 
-class GadgetsCollectionByGlobalSearch(Resource):
+class ResourceCollectionByGlobalSearch(Resource):
 
+    @no_cache
     def read(self, request, user_name, pag=0, offset=0):
 
         user = user_authentication(request, user_name)
-        isIE = is_ie(request)
 
         orderby = request.GET.get('orderby', '-creation_date')
         format = request.GET.get('format', 'default')
@@ -356,70 +221,38 @@ class GadgetsCollectionByGlobalSearch(Resource):
         search_criteria = request.GET.getlist('search_criteria')
         search_boolean = request.GET.get('search_boolean')
 
-        andlist = []
-        orlist = []
-        notlist = []
-        taglist = []
-        eventlist = []
-        slotlist = []
-        # This variable counts the number of criteria for the search
-        # to be passed as a parameter to the function
-        # get_uniquelist in order to get the gadgets that match the
-        # number of criteria
-        fields = 0
-
-        if (search_criteria[0] != ""):
-            andlist = get_and_list(search_criteria[0], user, isIE)
-            fields = fields + 1
-        if (search_criteria[1] != ""):
-            orlist = get_or_list(search_criteria[1], user, isIE)
-            fields = fields + 1
-        if (search_criteria[2] != ""):
-            notlist = get_not_list(search_criteria[2], user, isIE)
-            fields = fields + 1
-        if (search_criteria[3] != ""):
-            #get all the gadgets that match any of the given tags
-            criteria = search_criteria[3].split()
-            for e in criteria:
-                taglist += get_resources_that_must_be_shown(user, isIE).filter(
-                    usertag__tag__name__icontains=e)
-            taglist = get_uniquelist(taglist)
-            fields = fields + 1
-        if (search_criteria[4] != ""):
-            #get all the gadgets that match any of the given events
-            criteria = search_criteria[4].split()
-            for e in criteria:
-                eventlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='out'))
-            eventlist = get_uniquelist(eventlist)
-            fields = fields + 1
-        if (search_criteria[5] != ""):
-            #get all the gadgets that match any of the given slots
-            criteria = search_criteria[5].split()
-            for e in criteria:
-                slotlist += get_resources_that_must_be_shown(user, isIE).filter(
-                    Q(gadgetwiring__friendcode__icontains=e),
-                    Q(gadgetwiring__wiring='in'))
-            slotlist = get_uniquelist(slotlist)
-            fields = fields + 1
-
-        gadgetlist = andlist + orlist + notlist + taglist + eventlist + slotlist
-        if search_boolean == "AND":
-            gadgetlist = get_uniquelist(gadgetlist, fields)
+        if search_boolean == 'AND':
+            join_filters = lambda x, y: x & y
         else:
-            gadgetlist = get_uniquelist(gadgetlist)
+            join_filters = lambda x, y: x | y
 
-        gadgetlist = filter_gadgets_by_organization(user, gadgetlist, user.groups.all(), scope)
-        items = len(gadgetlist)
+        filters = Q()
+        if search_criteria[0] != "":
+            filters = get_and_filter(search_criteria[0], user)
+        if search_criteria[1] != "":
+            filters = join_filters(filters, get_or_filter(search_criteria[1], user))
+        if search_criteria[2] != "":
+            filters = join_filters(filters, get_not_filter(search_criteria[2], user))
+        if search_criteria[3] != "":
+            filters = join_filters(filters, get_tag_filter(search_criteria[3]))
+        if search_criteria[4] != "":
+            filters = join_filters(filters, get_event_filter(search_criteria[4]))
+        if search_criteria[5] != "":
+            filters = join_filters(filters, get_slot_filter(search_criteria[5]))
 
-        gadgetlist = get_sortedlist(gadgetlist, orderby)
-        gadgetlist = get_paginatedlist(gadgetlist, pag, offset)
+        resources = CatalogueResource.objects.filter(filters)
+        resources = filter_resources_by_scope(resources, scope).distinct()
+        resources = resources.order_by(orderby)
+        resources = group_resources(resources)
+        resources = filter_resources_by_organization(user, resources, user.groups.all())
+        items = len(resources)
 
-        return get_resource_response(gadgetlist, format, items, user)
+        resources = get_paginatedlist(resources, pag, offset)
+
+        return get_resource_response(resources, format, items, user)
 
 
-class GadgetTagsCollection(Resource):
+class ResourceTagCollection(Resource):
 
     def create(self, request, user_name, vendor, name, version):
         format = request.POST.get('format', 'default')
@@ -439,23 +272,22 @@ class GadgetTagsCollection(Resource):
 
         # Parse the input
         try:
-            from StringIO import StringIO
+            from cStringIO import StringIO  # pyflakes:ignore
         except ImportError:
-            from cStringIO import StringIO
+            from StringIO import StringIO  # pyflakes:ignore
 
         inpsrc = InputSource()
         inpsrc.setByteStream(StringIO(tags_xml))
         parser.parse(inpsrc)
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name,
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name,
                                    vendor=vendor, version=version)
 
         # Insert the tags for these resource and user in the database
         for e in handler._tags:
             try:
-                tag, created = Tag.objects.get_or_create(name=e)
-                UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=gadget)
+                tag_resource(user, e, resource)
             except Exception, ex:
                 transaction.rollback()
                 msg = _("Error tagging resource!!")
@@ -463,18 +295,19 @@ class GadgetTagsCollection(Resource):
                 raise TracedServerError(ex, {'resource': vendor + name + version, 'tags': tags_xml},
                                         request, msg)
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
+    @no_cache
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version).id
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
     def delete(self, request, user_name, vendor, name, version, tag):
 
@@ -488,19 +321,19 @@ class GadgetTagsCollection(Resource):
 
         format = request.GET.get('format', 'default')
 
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version).id
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version).id
         userTag = get_object_or_404(UserTag, id=tag)
 
-        #if there is no more gadgets tagged by an user with this tag, delete the Tag
+        #if there is no more resources tagged by an user with this tag, delete the Tag
         if UserTag.objects.filter(tag=userTag.tag).count() == 1:
             userTag.tag.delete()
 
         userTag.delete()
 
-        return get_tag_response(gadget, user, format)
+        return get_tag_response(resource, user, format)
 
 
-class GadgetVotesCollection(Resource):
+class ResourceVoteCollection(Resource):
 
     def create(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
@@ -510,36 +343,36 @@ class GadgetVotesCollection(Resource):
         # Get the vote from the request
         vote = request.POST.get('vote')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
-            UserVote.objects.create(vote=vote, idUser=user, idResource=gadget)
+            UserVote.objects.create(vote=vote, idUser=user, idResource=resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_gadget_popularity(gadget)
+            update_resource_popularity(resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
+    @no_cache
     def read(self, request, user_name, vendor, name, version):
         format = request.GET.get('format', 'default')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Get the user's id for that user_name
         user = user_authentication(request, user_name)
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
     def update(self, request, user_name, vendor, name, version):
 
@@ -553,12 +386,12 @@ class GadgetVotesCollection(Resource):
         # Get the vote from the request
         vote = PUT_parameter(request, 'vote')
 
-        # Get the gadget's id for those vendor, name and version
-        gadget = get_object_or_404(GadgetResource, short_name=name, vendor=vendor, version=version)
+        # Get the resource's id for those vendor, name and version
+        resource = get_object_or_404(CatalogueResource, short_name=name, vendor=vendor, version=version)
 
         # Insert the vote for these resource and user in the database
         try:
-            userVote = get_object_or_404(UserVote, idUser=user, idResource=gadget)
+            userVote = get_object_or_404(UserVote, idUser=user, idResource=resource)
             userVote.vote = vote
             userVote.save()
         except Exception, ex:
@@ -567,59 +400,57 @@ class GadgetVotesCollection(Resource):
                                            mimetype='application/xml; charset=UTF-8')
 
         try:
-            update_gadget_popularity(gadget)
+            update_resource_popularity(resource)
         except Exception, ex:
             log(ex, request)
             return HttpResponseServerError(get_xml_error(unicode(ex)),
                                            mimetype='application/xml; charset=UTF-8')
 
-        return get_vote_response(gadget, user, format)
+        return get_vote_response(resource, user, format)
 
 
-class GadgetVersionsCollection(Resource):
+class ResourceVersionCollection(Resource):
 
     def create(self, request, user_name):
-        gadgets = simplejson.loads(request.POST["gadgets"])
+
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
+
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            received_json = request.POST.get('resources', None)
+
+        if not received_json:
+            return HttpResponseBadRequest(get_xml_error(_("resources JSON expected")), mimetype='application/xml; charset=UTF-8')
+
+        try:
+            resources = simplejson.loads(received_json)
+        except simplejson.JSONDecodeError, e:
+            return HttpResponse(get_xml_error(_("malformed json data: %s") % unicode(e)), status=422, mimetype='application/xml; charset=UTF-8')
+
         result = []
-        for g in gadgets:
-            version = get_last_gadget_version(g["name"], g["vendor"])
-            if version:  # the gadget is still in the catalogue
-                g["lastVersion"] = version
-                url = GadgetResource.objects.get(short_name=g["name"],
-                                                 vendor=g["vendor"],
-                                                 version=version).template_uri
-                g["lastVersionURL"] = url
+        for g in resources:
+            latest_resource_version = get_latest_resource_version(g["name"], g["vendor"])
+            if latest_resource_version:
+                # the resource is still in the catalogue
+                g["lastVersion"] = latest_resource_version.version
+                g["lastVersionURL"] = latest_resource_version.template_uri
                 result.append(g)
-        json_result = {'gadgets': result}
-        return HttpResponse(json_encode(json_result),
+
+        return HttpResponse(json_encode({'resources': result}),
                             mimetype='application/json; charset=UTF-8')
 
 
 class ResourceEnabler(Resource):
 
+    @no_cache
     def read(self, request, resource_id):
-        resource = get_object_or_404(GadgetResource, id=resource_id)
+        resource = get_object_or_404(CatalogueResource, id=resource_id)
 
         resource.certification = get_verified_certification_group()
 
         resource.save()
 
         return HttpResponse('{"result": "ok"}', mimetype='application/json; charset=UTF-8')
-
-
-class ApplicationManager(Resource):
-
-    def read(self, request, user_name, application_id, resource_id):
-        pass
-
-    def create(self, request, user_name, application_id, resource_id):
-        try:
-            application = Application.objects.get(app_code=application_id)
-            resource = GadgetResource.objects.get(id=resource_id)
-            application.add_resource(resource)
-
-            return HttpResponse('{"result": "ok"}',
-                                mimetype='application/json; charset=UTF-8')
-        except Application.DoesNotExist, GadgetResource.DoesNotExist:
-            return HttpResponseServerError('{"result": "error"}',
-                                           mimetype='application/json; charset=UTF-8')

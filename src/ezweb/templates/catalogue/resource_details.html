@@ -30,6 +30,12 @@
  <div>#{versions}</div>
  <div class="bold padding_left floating_left padding_right">{% trans 'More info at:' %}</div>
  <div class="link"><a target="_blank" href="#{wiki}">#{wiki}</a></div>
+
+    <div class="section_ie_compatibility #{ie_compatible_class}">
+        <div class="bold padding_left floating_left warning">
+            {% trans "This gadget hasn't been tested with Internet Explorer. Be aware that it could not work properly." %}
+        </div>
+    </div>
  
  <div class="section_title bold">{% trans 'Advanced operations' %}</div>
  

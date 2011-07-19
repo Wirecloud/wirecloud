@@ -920,6 +920,10 @@ msgstr ""
 msgid "Rename Workspace"
 msgstr ""
 
+#: media/js/interfaceLayout/WindowMenu.js:1587
+msgid "Rename Tab"
+msgstr ""
+
 #: media/js/interfaceLayout/WindowMenu.js:1396
 msgid "The new name is too long. It must have less than 30 characters."
 msgstr ""
@@ -944,6 +948,10 @@ msgstr ""
 msgid ""
 "WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not "
 "responsible for the content of the uploaded files."
+msgstr ""
+
+#: ezweb/static/js/opManager/WorkSpace.js:602
+msgid "Tab"
 msgstr ""
 
 #: ezweb/static/js/opManager/WorkSpace.js:906

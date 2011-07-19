@@ -53,7 +53,6 @@ img{
 #logo {
 	margin-top:5px;
 	background: url({{ STATIC_URL }}images/Open_Ez_Logo.png) no-repeat;
-	_background: url({{ STATIC_URL }}images/ie/Open_Ez_Logo-trans.png) no-repeat;
 	width: 244px;
 	height: 46px;
 }
@@ -109,17 +108,19 @@ img{
         cursor:pointer;
 }
 
-#login-section{
-	border: 1px solid;
-	-moz-border-radius: 6px;
-	background: #E3F0F7;
-	margin: auto;
-	width: 70%;
-	margin-bottom: 40px;
-	margin-top: 27px;
-	padding: 10px;
-	border-right: 2px solid;
-	border-bottom: 2px solid;
+#login-section {
+    border: 1px solid;
+    -moz-border-radius: 6px;
+    background: #E3F0F7;
+    margin: auto;
+    width: 70%;
+    min-width: 250px;
+    margin-left: auto;
+    margin-bottom: 40px;
+    margin-top: 27px;
+    padding: 10px;
+    border-right: 2px solid;
+    border-bottom: 2px solid;
 }
 
 #openid_link{
@@ -177,9 +178,11 @@ table{
         margin-top:5px;
 }
 
-#greeting a{
-        color:white;
+#greeting a,
+#greeting span {
+    color: grey;
 }
+
 #greeting .languages{
         display:inline;
         margin-left: 20px;
@@ -438,11 +441,12 @@ var installed_apps = {{ installed_apps|safe }};
 	</div>
 </div>
 <script type="text/javascript">
-var is_iphone = (navigator.userAgent.indexOf('iPhone')!=-1 || navigator.userAgent.indexOf('iPod')!=-1 );
+var is_iphone = (navigator.userAgent.indexOf('iPhone') !== -1 || navigator.userAgent.indexOf('iPod') !== -1);
 
-if (is_iphone){
-  document.getElementById('training').style.display="none";
-  document.getElementById('tips').style.display="none";
+if (is_iphone) {
+    document.getElementById('training').style.display = "none";
+    document.getElementById('tips').style.display = "none";
+    document.getElementById("login-section").style.marginLeft = '25px';
 }
 </script>
 

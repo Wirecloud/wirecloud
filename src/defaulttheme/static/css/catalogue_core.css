@@ -258,6 +258,17 @@
 	border-top: 1px solid;
 }
 
+#catalogue .section_ie_compatibility .warning {
+    background-color: #FFFFA8;
+    border: black solid 1px;
+    padding: 3px;
+    margin-top: 2px;
+}
+
+#catalogue .section_ie_compatibility .hidden {
+    display: none;
+}
+
 /*
 ///////////
 Resource
@@ -303,7 +314,8 @@ Resource
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
-  background:transparent url(../images/catalogue/ico_vot_no.gif) no-repeat scroll 0 0;
+  background-image: url(../images/icons-sprite.png);
+  background-position: 0px -168px;
   float:left;
   height:15px;
   width:15px;
@@ -318,10 +330,11 @@ Resource
   height:15px;
   width:15px;
   cursor: default;
-  background:transparent url(../images/catalogue/ico_vot_ok.gif) no-repeat scroll 0 0;
+  background-image: url(../images/icons-sprite.png);
+  background-position: -24px -168px;
 }
 
-#catalogue .center .resources .resource_details .popularity .md {
+#catalogue .center .resources .popularity .md {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -329,7 +342,8 @@ Resource
   height:15px;
   width:15px;
   cursor: default;
-  background:transparent url(../images/catalogue/ico_vot_md.gif) no-repeat scroll 0 0;
+  background-image: url(../images/icons-sprite.png);
+  background-position: -24px -144px;
 }
 
 #catalogue .padding_left {

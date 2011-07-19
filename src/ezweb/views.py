@@ -38,18 +38,18 @@ from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
-from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
-from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, loader, RequestContext
 
 from catalogue.templateParser import TemplateParser
-from catalogue.views import GadgetsCollection
+from catalogue.views import ResourceCollection
 from commons.authentication import login_public_user
 from commons.http_utils import download_http_content
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
-from catalogue.models import GadgetResource
+from catalogue.models import CatalogueResource
 from gadget.models import Gadget, XHTML
 from workspace.models import WorkSpace
 
@@ -60,6 +60,24 @@ def index(request, user_name=None, template="index.html"):
         return render_ezweb(request, user_name, template)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+
+
+@login_required
+def render_workspace_view(request, workspace, template="index.html"):
+    if request.user.username != "public":
+        workspace = get_object_or_404(WorkSpace, pk=int(workspace))
+        if request.user not in workspace.users.all():
+            return HttpResponseForbidden()
+
+        post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
+        return render_ezweb(request, request.user.username, template, post_load_script=post_load_script)
+    else:
+        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+
+
+@login_required
+def render_lite_workspace_view(request, workspace):
+    return render_workspace_view(request, workspace, "index_lite.html")
 
 
 def redirected_login(request):
@@ -148,7 +166,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
             catalogue_response = {}
             try:
                 #Adding to catalogue if it doesn't exist!
-                gc = GadgetsCollection()
+                gc = ResourceCollection()
 
                 http_response = gc.create(request, request.user.username, fromWGT=fromWGT)
                 if not user_action:
@@ -250,7 +268,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
             return HttpResponseRedirect('/')
 
         try:
-            resource = GadgetResource.objects.get(short_name=name, vendor=vendor, version=version)
+            resource = CatalogueResource.objects.get(short_name=name, vendor=vendor, version=version)
             gadget_info['gadgetId'] = resource.id
         except Exception:
             #Send pingback ERROR

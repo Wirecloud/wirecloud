@@ -459,32 +459,11 @@ IGadget.prototype.build = function () {
     Element.extend(button);
     button.setAttribute("type", "button");
     button.addClassName("closebutton");
-
-    if (this.gadget.isContratable()) {
-        var remove_and_cancel = function () {
+    button.observe("click",
+        function () {
             OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().cancelServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        var remove = function () {
-            OpManagerFactory.getInstance().removeInstance(this.id);
-            OpManagerFactory.getInstance().unsubscribeServices(this.id);
-            LayoutManagerFactory.getInstance().hideCover();
-        }.bind(this);
-
-        button.observe("click",
-            function () {
-                LayoutManagerFactory.getInstance().showWindowMenu('cancelService', remove_and_cancel, remove);
-            },
-            false);
-    } else {
-        button.observe("click",
-            function () {
-                OpManagerFactory.getInstance().removeInstance(this.id);
-            }.bind(this),
-            false);
-    }
+        }.bind(this),
+        false);
     button.setAttribute("title", gettext("Close"));
     button.setAttribute("alt", gettext("Close"));
     this.closeButtonElement = button;
@@ -516,7 +495,7 @@ IGadget.prototype.build = function () {
     button.setAttribute("type", "button");
     button.observe("click", 
         function () {
-            this.toggleMinimizeStatus();
+            this.toggleMinimizeStatus(true);
         }.bind(this),
         false);
     if (this.minimized) {
@@ -575,7 +554,7 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
+    var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
         this.content = document.createElement("iframe");
         Element.extend(this.content);
@@ -593,7 +572,9 @@ IGadget.prototype.build = function () {
         this.content.addClassName("gadget_object");
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
-        this.content.setAttribute("data", codeURL);
+        if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
+            this.content.setAttribute("data", codeURL);
+        }
         //this.content.innerHTML = "Loading...."; // TODO add an animation ?
     }
     Element.extend(this.content);
@@ -687,9 +668,10 @@ IGadget.prototype.isAllowed = function (action) {
         return !this.readOnly && this.layout.dragboard.getWorkspace().isAllowed('add_remove_igadgets');
     case "move":
     case "resize":
-    case "minimize":
         var dragboard = this.layout.dragboard;
         return !dragboard.isLocked() && dragboard.getWorkspace().isAllowed('edit_layout');
+    case "minimize":
+        return this.layout.dragboard.getWorkspace().isAllowed('edit_layout');
     default:
         return false;
     }
@@ -701,6 +683,9 @@ IGadget.prototype._updateButtons = function () {
     }
     if (isElement(this.settingsButtonElement.parentNode)) {
         this.settingsButtonElement.remove();
+    }
+    if (isElement(this.minimizeButtonElement.parentNode)) {
+        this.minimizeButtonElement.remove();
     }
     if (isElement(this.closeButtonElement.parentNode)) {
         this.closeButtonElement.remove();
@@ -750,10 +735,8 @@ IGadget.prototype.paint = function (onInit) {
     this.element.style.visibility = "hidden";
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
-    var codeURL = this.gadget.getXHtml().getURICode() + "?id=" + this.id;
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        this.content.setAttribute("src", codeURL);
-    } else { // non IE6
+    if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
+        var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
         this.content.setAttribute("data", codeURL);
     }
 
@@ -1366,48 +1349,26 @@ IGadget.prototype._createPrefsInterface = function (prefs) {
  * This function builds the igadget configuration form.
  */
 IGadget.prototype._makeConfigureInterface = function () {
-    var gadgetPrefs, sharedPrefs, interfaceDiv, table, separator, shared_title, result, pref_counter;
+    var gadgetPrefs, interfaceDiv, result, buttons, button, floatClearer;
 
-    gadgetPrefs = this.gadget.getTemplate().getGadgetPrefs();
-    sharedPrefs = this.gadget.getTemplate().getSharedPrefs();
+    gadgetPrefs = this.gadget.getTemplate().getUserPrefs();
 
     interfaceDiv = document.createElement("div");
 
     this.prefElements = [];
 
-    // Add the gadget-only variables
+    /* result = [<table>, <visible_prefs_count>] */
     result = this._createPrefsInterface(gadgetPrefs);
-    table = result[0];
-    pref_counter = result[1];
-    interfaceDiv.appendChild(table);
+    interfaceDiv.appendChild(result[0]);
 
-    // Add the shareable variables
-    if (sharedPrefs.length > 0) {
-        // Add a separator
-        separator = document.createElement("hr");
-        interfaceDiv.appendChild(separator);
-        shared_title = document.createElement("h4");
-        Element.extend(shared_title);
-        shared_title.appendChild(document.createTextNode(gettext("Shared Values")));
-        interfaceDiv.appendChild(shared_title);
-
-        // Create the shared prefs interface
-        result = this._createPrefsInterface(sharedPrefs);
-        table = result[0];
-        pref_counter += result[1];
-        table.className = "shared_prefs";
-        interfaceDiv.appendChild(table);
-    }
-
-    if (pref_counter === 0) {
+    if (result[1] === 0) {
         interfaceDiv.innerHTML = gettext("This IGadget does not have any user prefs");
         return interfaceDiv;
     }
 
-    var buttons = document.createElement("div");
+    buttons = document.createElement("div");
     Element.extend(buttons);
     buttons.addClassName("buttons");
-    var button;
 
     // "Set Defaults" button
     button = document.createElement("input");
@@ -1443,7 +1404,7 @@ IGadget.prototype._makeConfigureInterface = function () {
     interfaceDiv.appendChild(buttons);
 
     // clean floats
-    var floatClearer = document.createElement("div");
+    floatClearer = document.createElement("div");
     Element.extend(floatClearer);
     floatClearer.addClassName("floatclearer");
     interfaceDiv.appendChild(floatClearer);
@@ -1864,7 +1825,7 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this._recomputeHeight(true);
 
     // Notify resize event
-    reserveSpace = reserveSpace !== null ? reserveSpace : true;
+    reserveSpace = (typeof reserveSpace !== 'undefined' && reserveSpace !== null) ? reserveSpace : true;
     if (reserveSpace) {
         var persist = persistence !== null ? persistence : true;
         this.layout._notifyResizeEvent(this, this.contentWidth, oldHeight, this.contentWidth, this.getHeight(), false, persist, reserveSpace);
@@ -2028,6 +1989,10 @@ IGadget.prototype.saveConfig = function () {
 
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         prefName = curPref.getVarName();
         prefElement = $(this.prefElements[prefName]);
         if (!curPref.validate(curPref.getValueFromInterface())) {
@@ -2055,6 +2020,10 @@ IGadget.prototype.saveConfig = function () {
     var oldValue, newValue;
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         oldValue = curPref.getCurrentValue(varManager, this.id);
         newValue = curPref.getValueFromInterface();
 
@@ -2067,6 +2036,10 @@ IGadget.prototype.saveConfig = function () {
     // Commit new value of the variable
     for (i = 0; i < prefs.length; i++) {
         curPref = prefs[i];
+        if (curPref.isHidden(varManager, this.id)) {
+            continue;
+        }
+
         newValue = curPref.getValueFromInterface();
 
         curPref.setValue(varManager, this.id, newValue);

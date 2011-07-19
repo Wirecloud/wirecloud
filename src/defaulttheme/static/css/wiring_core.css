@@ -249,7 +249,7 @@
 }
 
 #wiring .eventColumn .tab > .header_section, #wiring .slotColumn .tab > .header_section {
-  padding: 6px 24px 2px 34px;
+  padding: 6px 24px 2px 24px;
   text-align: right;
 }
 
@@ -282,7 +282,6 @@
 }
 
 #wiring .igadget > .header_section {
-  padding-left: 20px;
   cursor:pointer;
 }
 
@@ -298,6 +297,7 @@
 #wiring img {
   margin: 2px;
   vertical-align: middle;
+  display: inline-block;
 }
 
 #wiring #channels_list .channel {

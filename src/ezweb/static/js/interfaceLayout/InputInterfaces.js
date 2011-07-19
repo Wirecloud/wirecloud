@@ -770,41 +770,15 @@ ParametrizableValueInputInterface.prototype._updateButton = function() {
  *
  */
 function ParametrizedTextInputInterface(fieldId, options) {
-    var i, param, contextFields, concepts, keys;
+    var i, param, contextFields, option;
 
     InputInterface.call(this, fieldId, options);
 
     this.variable = options.variable;
-
-    /* TODO */
-    concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
-    keys = concepts.keys();
-    contextFields = [];
-    for (i = 0; i < keys.length; i += 1) {
-        if (concepts[keys[i]]._type !== 'GCTX') {
-            contextFields.push({label: keys[i], value: keys[i]});
-        }
-    }
-
-    this.parameters = [
-        {
-            label: gettext('User'),
-            value: 'user',
-            fields: [
-                {label: gettext('User Name'), value: 'username'},
-                {label: gettext('First Name'), value: 'first_name'},
-                {label: gettext('Last Name'), value: 'last_name'},
-            ]
-        },
-        {
-            label: gettext('Context'),
-            value: 'context',
-            fields: contextFields
-        }
-    ];
-    /* TODO */
+    this.parameters = this.getAvailableParameters();
 
     this.wrapperElement = document.createElement('div');
+    this.wrapperElement.className = 'parametrized_text_input';
 
     this.resetButton = document.createElement('button');
     Element.extend(this.resetButton);
@@ -816,26 +790,31 @@ function ParametrizedTextInputInterface(fieldId, options) {
         }
     }.bind(this));
 
+    this.selectorWrapperElement = document.createElement('div');
+    this.selectorWrapperElement.className = 'context_selector';
+    this.wrapperElement.appendChild(this.selectorWrapperElement);
+
     this.mainSelect = document.createElement('select');
     for (i = 0; i < this.parameters.length; i += 1) {
         param = this.parameters[i];
+        option = new Option(param.label, param.value);
         try {
-            this.mainSelect.add(new Option(param.label, param.value), null);
+            this.mainSelect.add(option, null);
         } catch (e) {
-            this.mainSelect.add(new Option(param.label, param.value));
+            this.mainSelect.add(option);
         }
     }
     Element.observe(this.mainSelect, 'change', this._updateSecondSelect.bind(this));
-    this.wrapperElement.appendChild(this.mainSelect);
+    this.selectorWrapperElement.appendChild(this.mainSelect);
 
     this.secondSelect = document.createElement('select');
-    this.wrapperElement.appendChild(this.secondSelect);
-    this._updateSecondSelect();
+    this.selectorWrapperElement.appendChild(this.secondSelect);
+    Element.observe(this.secondSelect, 'change', this._updateDescription.bind(this));
 
     this.addButton = document.createElement('button');
     Element.extend(this.addButton);
     this.addButton.setTextContent(gettext('Add'));
-    this.wrapperElement.appendChild(this.addButton);
+    this.selectorWrapperElement.appendChild(this.addButton);
     this.addButton.observe('click', function() {
         var prefix, suffix, parameter, start;
 
@@ -853,12 +832,19 @@ function ParametrizedTextInputInterface(fieldId, options) {
         this.inputElement.selectionEnd = start + parameter.length + 3;
     }.bind(this));
 
+    this.descriptionDiv = document.createElement('div');
+    this.descriptionDiv.className = 'description';
+    this.wrapperElement.appendChild(this.descriptionDiv);
+
     this.inputElement = document.createElement('textarea');
     this.inputElement.style.display = 'block';
     Element.extend(this.inputElement);
     this.inputElement.setAttribute('cols', '50');
     this.inputElement.setAttribute('rows', '3');
     this.wrapperElement.appendChild(this.inputElement);
+
+    // Initialize
+    this._updateSecondSelect();
 }
 ParametrizedTextInputInterface.prototype = new InputInterface();
 
@@ -875,6 +861,78 @@ ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
     return str + arguments[2];
 };
 
+ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
+ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
+    var concepts, keys, dashIndex, provider, concept, parameters, label;
+
+    if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
+        concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
+        keys = concepts.keys();
+        contextFields = {
+            '': []
+        };
+        for (i = 0; i < keys.length; i += 1) {
+            concept = concepts[keys[i]]
+            if (concept._type !== 'GCTX') {
+                dashIndex = keys[i].indexOf('-');
+                provider = keys[i].substring(0, dashIndex);
+                if (!(provider in contextFields)) {
+                    contextFields[provider] = [];
+                }
+                label = interpolate('%(label)s (%(concept)s)', {
+                    label: concept._label,
+                    concept: keys[i]
+                }, true);
+                contextFields[provider].push({
+                    label: label,
+                    description: concept._description,
+                    value: keys[i]
+                });
+            }
+        }
+
+        parameters = [
+            {
+                label: gettext('User'),
+                value: 'user',
+                fields: [
+                    {
+                        label: gettext('User Name'),
+                        description: '',
+                        value: 'username'
+                    },
+                    {
+                        label: gettext('First Name'),
+                        description: '',
+                        value: 'first_name'
+                    },
+                    {
+                        label: gettext('Last Name'),
+                        description: '',
+                        value: 'last_name'
+                    },
+                ]
+            },
+            {
+                label: gettext('Context'),
+                value: 'context',
+                fields: contextFields['']
+            }
+        ];
+        delete contextFields[''];
+        for (i in contextFields) {
+            parameters.push({
+                label: i,
+                value: 'context',
+                fields: contextFields[i]
+            });
+        }
+        ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = parameters;
+    }
+
+    return ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS;
+};
+
 ParametrizedTextInputInterface.prototype.escapeValue = function(value) {
     return value.replace(ParametrizedTextInputInterface.prototype._ESCAPE_RE,
         ParametrizedTextInputInterface.prototype._ESCAPE_FUNC);
@@ -885,11 +943,7 @@ ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
 
     this.secondSelect.innerHTML = '';
 
-    for (i = 0; i < this.parameters.length; i += 1) {
-        if (this.parameters[i].value == this.mainSelect.value) {
-            fields = this.parameters[i].fields;
-        }
-    }
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
 
     for (i = 0; i < fields.length; i += 1) {
         field = fields[i];
@@ -899,6 +953,16 @@ ParametrizedTextInputInterface.prototype._updateSecondSelect = function() {
             this.secondSelect.add(new Option(field.label, field.value));
         }
     }
+
+    this._updateDescription();
+};
+
+ParametrizedTextInputInterface.prototype._updateDescription = function() {
+    var fields, field;
+
+    fields = this.parameters[this.mainSelect.selectedIndex].fields;
+    field = fields[this.secondSelect.selectedIndex];
+    this.descriptionDiv.setTextContent(field.description);
 };
 
 ParametrizedTextInputInterface.prototype._setValue = function(newValue) {

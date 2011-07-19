@@ -49,12 +49,16 @@ ADMINS = (
 MANAGERS = ADMINS
 
 
-DATABASE_ENGINE = 'sqlite3'    # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = path.join(BASEDIR, 'ezweb.db')     # Or full path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': path.join(BASEDIR, 'ezweb.db'),  # Or path to database file if using sqlite3.
+        'USER': '',                              # Not used with sqlite3.
+        'PASSWORD': '',                          # Not used with sqlite3.
+        'HOST': '',                              # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                              # Set to empty string for default. Not used with sqlite3.
+    },
+}
 
 
 #################################################################
@@ -69,8 +73,6 @@ LOGGING_LEVEL = 2
 
 THEME_ACTIVE = "defaulttheme"
 
-#HOME_GATEWAY_DISPATCHER_URL = "http://localhost:8001/hgwDispatcher/"
-
 # Local time zone for this installation. Choices can be found here:
 # http://www.postgresql.org/docs/8.1/static/datetime-keywords.html#DATETIME-TIMEZONE-SET-TABLE
 # although not all variations may be possible on all operating systems.
@@ -82,6 +84,7 @@ DATE_FORMAT = 'd/m/Y'
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
 LANGUAGE_CODE = 'en'
+DEFAULT_LANGUAGE = 'browser'
 
 LANGUAGES = (
     ('es', _('Spanish')),
@@ -108,11 +111,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASEDIR, 'static')
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_OUTPUT_DIR = ''
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/'
+COMPRESS_JS_FILTERS = (
+    'compressor.filters.jsmin.JSMinFilter',
+    'ezweb.compressor_filters.JSUseStrictFilter',
+)
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
@@ -120,8 +122,8 @@ SECRET_KEY = '15=7f)g=)&spodi3bg8%&4fqt%f3rpg%b$-aer5*#a*(rqm79e'
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'ezweb.themes.load_template_source',
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -132,6 +134,7 @@ MIDDLEWARE_CLASSES = (
 #    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'middleware.http.ConditionalGetMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 #    'middleware.auth_middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
@@ -160,7 +163,6 @@ INSTALLED_APPS = (
     'preferences',
     'translator',
     'gadgetGenerator',
-    'resourceSubscription',
     'remoteChannel',
     'user',
     'API',
@@ -181,19 +183,15 @@ INSTALLED_APPS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.auth',
+    'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.static',
     'ezweb.themes.active_theme_context_processor',
-    'processors.context_processors.home_gateway_url',
     'processors.context_processors.server_url',
     'processors.context_processors.is_anonymous',
-    'processors.context_processors.only_one_js_file',
-    'processors.context_processors.only_one_css_file',
-    'processors.context_processors.ezweb_release',
     'processors.context_processors.tag_categories',
     'processors.context_processors.installed_apps',
     'processors.context_processors.remote_channels_enabled',
@@ -220,7 +218,7 @@ LOGIN_REDIRECT_URL = '/'
 
 FIXTURE_DIRS = (
     path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
-    )
+)
 
 # Set the log path
 # When empty, defaults to MEDIA_ROOT/logs
@@ -265,14 +263,17 @@ CERTIFICATION_ENABLED = False
 # Cache settings
 CACHES = {
     'default': {
-        'BACKEND': 'johnny.backends.locmem.LocMemCache',
+        'BACKEND': 'ezweb.cache.backends.locmem.LocMemCache',
         'OPTIONS': {
             'MAX_ENTRIES': 3000,
         },
     }
 }
-JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASE_NAME
+JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASES['default']['NAME']
 
+WORKSPACE_MANAGERS = (
+    'workspace.workspace_managers.OrganizationWorkspaceManager',
+)
 
 # Template Generator URL. This URL is only needed to allow publishing
 # a Workspace when EzWeb is running with the develop server (manage.py)
@@ -289,17 +290,15 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX = '%s-cache' % DATABASE_NAME
 
 FORCE_SCRIPT_NAME = ""
 
-# Compact ezweb javascript and/or css files into one single file. If set to True,
-# you must set the EZWEB_RELEASE property to generate a versioned .js file
-#ONLY_ONE_JS_FILE=True
-#ONLY_ONE_CSS_FILE=True
-#EZWEB_RELEASE='2603'
-
 # Remote channels notifier
 #REMOTE_CHANNEL_NOTIFIER_URL = 'http://localhost:8888/notifier/channels/notify'
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
+PROXY_PROCESSORS = (
+#    'proxy.processors.FixServletBugsProcessor',
+    'proxy.processors.SecureDataProcessor',
+)
 
 #Open Id providers. Uncomment this if you only allow certain providers to authenticate users.
 #OPENID_PROVIDERS = ["myopenid.com", "google.com"]
@@ -330,14 +329,15 @@ NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 #TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
 #TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
+TEST_RUNNER = 'dstest.test_runner.run_tests'
 
 # External settings configuration
 try:
-    from clms.settings import *
+    from clms.settings import *  # pyflakes:ignore
 except ImportError:
     pass
 
 try:
-    from local_settings import *
+    from local_settings import *  # pyflakes:ignore
 except ImportError:
     pass

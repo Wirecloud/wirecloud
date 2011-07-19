@@ -63,6 +63,10 @@ var LayoutManagerFactory = function () {
         this.logs = LogManagerFactory.getInstance();
         this.logsLink = $('logs_link');
 
+        this._clickCallback = this._clickCallback.bind(this);
+        this.timeout = null;
+        $("loading-window").observe('click', this._clickCallback);
+
         // Menu Layer
         this.currentMenu = null;                                                // current menu (either dropdown or window)
         this.coverLayerElement = $('menu_layer');                               // disabling background layer
@@ -90,7 +94,6 @@ var LayoutManagerFactory = function () {
         this.scrollTabBarWidth = null;
 
         this.menus = new Array();
-        
 
         // Listen to resize events
         Event.observe(window, "resize", this.resizeWrapper.bind(this));
@@ -105,27 +108,30 @@ var LayoutManagerFactory = function () {
             var msg, subtaskpercentage, taskpercentage;
 
             subtaskpercentage = Math.round((this.currentStep * 100) / this.totalSteps);
-            if (subtaskpercentage < 0)
+            if (subtaskpercentage < 0) {
                 subtaskpercentage = 0;
-            else if (subtaskpercentage > 100)
+            } else if (subtaskpercentage > 100) {
                 subtaskpercentage = 100;
+            }
 
             taskpercentage = (this.currentSubTask * 100) / this.totalSubTasks;
             taskpercentage += subtaskpercentage * (1 / this.totalSubTasks);
             taskpercentage = Math.round(taskpercentage);
-            if (taskpercentage < 0)
+            if (taskpercentage < 0) {
                 taskpercentage = 0;
-            else if (taskpercentage > 100)
+            } else if (taskpercentage > 100) {
                 subtaskpercentage = 100;
+            }
 
             msg = gettext("%(task)s %(percentage)s%");
             msg = interpolate(msg, {task: this.task, percentage: taskpercentage}, true);
             $("loading-task-title").textContent = msg;
 
-            if (this.subTask != "")
+            if (this.subTask != "") {
                 msg = gettext("%(subTask)s: %(percentage)s%");
-            else
+            } else {
                 msg = "%(subTask)s";
+            }
 
             msg = interpolate(msg, {subTask: this.subTask, percentage: subtaskpercentage}, true);
             $("loading-subtask-title").setTextContent(msg);
@@ -171,31 +177,50 @@ var LayoutManagerFactory = function () {
             this._updateTaskProgress();
         }
 
+        LayoutManager.prototype._hideProgressIndicator = function () {
+            var loadingElement = $("loading-window");
+            var loadingMessage = $("loading-message");
+
+            loadingElement.addClassName('disabled');
+            loadingElement.removeClassName('fadding');
+            loadingMessage.setStyle({'opacity': '1'});
+
+            if (this.timeout) {
+                clearTimeout(this.timeout);
+                this.timeout = null;
+            }
+        };
+
+        LayoutManager.prototype._clickCallback = function (event) {
+            event = event || window.event;
+
+            if ($("loading-window").hasClassName("fadding")) {
+                this._hideProgressIndicator();
+            }
+            if (event.stopPropagation) {
+                event.stopPropagation();
+            } else {
+                event.cancelBubble = true;
+            }
+        };
+
         LayoutManager.prototype._notifyPlatformReady = function () {
             var loadingElement = $("loading-window");
             loadingElement.addClassName("fadding");
 
             var loadingMessage = $("loading-message");
             var step = 0;
+            var layoutManager = this;
             function fadder() {
                 ++step;
                 if (step < 80) {
                     loadingMessage.setStyle({'opacity': 1 - (step * 0.025)});
-                    setTimeout(fadder, 50);
+                    layoutManager.timeout = setTimeout(fadder, 50);
                 } else {
-                    loadingElement.addClassName('disabled');
-                    loadingElement.removeClassName('fadding');
-                    loadingMessage.setStyle({'opacity': '1'});
+                    layoutManager._hideProgressIndicator();
                 }
             }
-            setTimeout(fadder, 50);
-        }
-
-        LayoutManager.prototype.updateLocation = function(section){
-            if (!section)
-                section = "";
-            window.location = window.location.protocol+ "//" + window.location.host + window.location.pathname + "#" + section;
-
+            layoutManager.timeout = setTimeout(fadder, 50);
         }
 
         LayoutManager.prototype.getCurrentViewType = function () {
@@ -325,7 +350,6 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.unmarkTab = function(tab_object) {
             var tab = tab_object.tabHTMLElement;
             var launcher = tab_object.tabOpsLauncher;
-            var renameEvent = tab_object.renameTabHandler;
             var changeEvent = tab_object.changeTabHandler;
             var dragger = tab_object.dragger;
 
@@ -335,11 +359,6 @@ var LayoutManagerFactory = function () {
             tabOpsLauncher.setStyle({'display':'none'});
             $(dragger).setStyle({'display':'none'});
 
-            //Rename is an operation for ws owners!
-            if (tab_object.workSpace.isOwned()) {
-                Event.stopObserving(tab, 'click', renameEvent);
-            }
-
             Event.observe(tab, 'click', changeEvent);
 
             tab.setStyle({"display": "block"}); // TODO
@@ -348,7 +367,6 @@ var LayoutManagerFactory = function () {
         LayoutManager.prototype.markTab = function(tab_object) {
             var tab = tab_object.tabHTMLElement;
             var launcher = tab_object.tabOpsLauncher;
-            var renameHandler = tab_object.renameTabHandler;
             var changeHandler = tab_object.changeTabHandler;
             var dragger = tab_object.dragger;
 
@@ -366,17 +384,7 @@ var LayoutManagerFactory = function () {
             }
             if (this.currentViewType == 'dragboard') {
                 Event.stopObserving(tab, 'click', changeHandler);
-
-                //Rename is an operation for ws owners!
-                if (tab_object.workSpace.isOwned()) {
-                    Event.observe(tab, 'click', renameHandler);
-                }
             } else {
-                //Rename is an operation for ws owners!
-                if (tab_object.workSpace.isOwned()) {
-                    Event.stopObserving(tab, 'click', renameHandler);
-                }
-
                 Event.observe(tab, 'click', changeHandler);
             }
         }
@@ -384,51 +392,81 @@ var LayoutManagerFactory = function () {
         /*
          * Handler for changes in the hash to navigate to other areas
          */
-        LayoutManager.prototype.onHashChange = function(){
-            var hash_parts = window.location.hash.split("#");
+        LayoutManager.prototype.onHashChange = function(state) {
+            var ws_id, tab_id, tab, nextWorkspace, opManager, dragboard;
 
-            var section = hash_parts[0];
-            if (hash_parts.length > 1) {
-                //it is a subsection
-                section = hash_parts[1];
+            opManager = OpManagerFactory.getInstance();
+
+            ws_id = parseInt(state.workspace, 10);
+            if (ws_id !== opManager.activeWorkSpace.getId()) {
+                nextWorkspace = opManager.workSpaceInstances[ws_id];
+                opManager.changeActiveWorkSpace(nextWorkspace, state.tab);
+                return;
             }
-            if (section != this.currentViewType) {
-                switch (section){
-                    case "wiring":
-                        this.showWiring(OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface());
-                        break;
-                    case "catalogue":
-                        this.showCatalogue();
-                        break;
-                    case "logs":
-                        this.showLogs();
-                        break;
-                    case "dragboard":
-                    default:
-                        this.showDragboard(OpManagerFactory.getInstance().activeWorkSpace.getActiveDragboard());
+
+            if (state.view !== this.currentViewType) {
+                switch (state.view) {
+                case "wiring":
+                    OpManagerFactory.getInstance().activeWorkSpace.getWiringInterface().show();
+                    break;
+                case "catalogue":
+                    this.showCatalogue();
+                    break;
+                case "logs":
+                    this.showLogs();
+                    break;
+                case "dragboard":
+                    dragboard = null;
+                    tab_id = parseInt(state.tab, 10);
+                    if (state.tab !== opManager.activeWorkSpace.visibleTab.getId()) {
+                        tab = opManager.activeWorkSpace.getTab(state.tab);
+                        if (typeof tab !== "undefined") {
+                            dragboard = tab.getDragboard();
+                        }
+                    }
+                    if (dragboard === null) {
+                        dragboard = opManager.activeWorkSpace.getActiveDragboard();
+                    }
+                    this.showDragboard(dragboard);
+                    break;
+                default:
                 }
             }
         };
 
         // Dragboard operations (usually called together with Tab operations)
         LayoutManager.prototype.showDragboard = function(dragboard) {
+            if (dragboard === null) {
+                // There is no dragboard to show (i.e. when shutting down the platform), abort
+                return;
+            }
+
             if (this.currentView != null) {
                 this.currentView.hide();
                 //if the previous view was different and it had banner, change the banner
-                if (this.currentViewType != 'dragboard' && this.currentView.getHeader){
+                if (this.currentViewType !== 'dragboard' && this.currentView.getHeader) {
                     this.hideHeader(this.currentView.getHeader());
                 }
             }
 
-            this.showHeader(dragboard.getHeader());
+            this.showHeader(dragboard.tab.getHeader());
+            if (this.currentViewType !== 'dragboard') {
+                dragboard.workSpace.prepareToShow();
+            }
 
-            $(document.body).removeClassName(this.currentViewType+"_view");
+
+            $(document.body).removeClassName(this.currentViewType + "_view");
 
             this.currentView = dragboard.tab;
             this.currentViewType = 'dragboard';
 
-            $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            $(document.body).addClassName(this.currentViewType + "_view");
+            var state = {
+                workspace: HistoryManager.getCurrentState().workspace,
+                view: "dragboard",
+                tab: dragboard.tab.getId()
+            };
+            HistoryManager.pushState(state);
 
             this.showTabs();
             this.showSidebar();
@@ -474,7 +512,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'catalogue';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'catalogue'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
 
@@ -513,7 +555,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'logs';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'logs'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
             this.resizeContainer(this.currentView.logContainer);
@@ -542,7 +588,11 @@ var LayoutManagerFactory = function () {
             this.currentViewType = 'wiring';
 
             $(document.body).addClassName(this.currentViewType+"_view");
-            this.updateLocation(this.currentViewType);
+            var state = {
+                'workspace': HistoryManager.getCurrentState().workspace,
+                'view': 'wiring'
+            };
+            HistoryManager.pushState(state);
 
             this.hideSidebar();
             this.resizeContainer(this.currentView.wiringContainer);
@@ -636,7 +686,7 @@ var LayoutManagerFactory = function () {
                         scndWK: workspaces[i]
                     };
                     workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function(){
-                        this.firstWK.mergeWith(this.scndWK.workSpaceState.id);
+                        this.firstWK.mergeWith(this.scndWK.workSpaceState);
                     }.bind(context), i);
                 }
             }
@@ -786,6 +836,13 @@ var LayoutManagerFactory = function () {
                 }
                 this.currentMenu = this.menus['renameWorkSpaceMenu'];
                 break;
+            case 'renameTab':
+                if (!this.menus['renameTabMenu']) {
+                    this.menus['renameTabMenu'] = new RenameTabWindowMenu(extra_data);
+                }
+                this.menus['renameTabMenu'].setTab(extra_data);
+                this.currentMenu = this.menus['renameTabMenu'];
+                break;
             case 'useBrokenTheme':
                 if (!this.menus['alertMenu']) {
                     this.menus['alertMenu'] = new AlertWindowMenu();
@@ -830,37 +887,6 @@ var LayoutManagerFactory = function () {
                 this.currentMenu = this.menus['addMashupMenu'];
                 this.currentMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
                 this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
-                break;
-            case 'contratableAddInstanceMenu':
-                if (!this.menus['contratableAddInstanceMenu']) {
-                    this.menus['contratableAddInstanceMenu'] = new ContratationWindow();
-                }
-                this.currentMenu = this.menus['contratableAddInstanceMenu'];
-                this.currentMenu.setHandler(handlerYesButton);
-                this.currentMenu.setSrc(extra_data);
-                break;
-            case 'addGadgetToAppMenu':
-                if (!this.menus['addGadgetToAppMenu']) {
-                    // Tricky solution: the service_facade is passed in the handlerYesButton parameter
-                    var service_facade = handlerYesButton;
-
-                    this.menus['addGadgetToAppMenu'] = new AddingGadgetToApplicationWindow(service_facade);
-                }
-                this.currentMenu = this.menus['addGadgetToAppMenu'];
-
-                this.currentMenu.setExtraData(extra_data);
-                break;
-            case 'purchaseAppMenu':
-                if (!this.menus['purchaseAppMenu']) {
-                    // Tricky solution: the service_facade is passed in the handlerYesButton parameter
-                    var service_facade = handlerYesButton;
-
-                    this.menus['purchaseAppMenu'] = new BuyingApplicationWindow(service_facade);
-                }
-                this.currentMenu = this.menus['purchaseAppMenu'];
-
-                this.currentMenu.setCloseListener(handlerNoButton);
-                this.currentMenu.setExtraData(extra_data);
                 break;
             default:
                 return;
@@ -1127,6 +1153,10 @@ var LayoutManagerFactory = function () {
             }else{
                 this.fixedTabBarMaxWidth = $("bar").offsetWidth - $("add_tab_link").offsetWidth - section_identifier_width - this.leftSlider.getWidth() - this.rightSlider.getWidth() - this.SLIDER_WIDTH;
             }
+            if (BrowserUtilsFactory.getInstance().getBrowser() === "IE7") {
+                // Hack for IE7
+                this.fixedTabBarMaxWidth = Math.floor(this.fixedTabBarMaxWidth * 0.95);
+            }
         }
 
 
@@ -1189,7 +1219,7 @@ var LayoutManagerFactory = function () {
 
         this.scrollTabBarWidth = 0;
         for (var i=0; i<nodes.length;i++){
-            if (nodes[i].nodeType === nodes[i].ELEMENT_NODE) {
+            if (nodes[i].nodeType === 1) { // nodes[i].ELEMENT_NODE = 1
                 //add the node width. If it is a tab, border width are includes
                 this.scrollTabBarWidth += nodes[i].getWidth();
 
@@ -1278,9 +1308,14 @@ var LayoutManagerFactory = function () {
         //tabs are displayed in inverted order
         for (var i= this.scrollTabBar.childNodes.length-1; i>=0; i--){
             //get the tab id (tab_workspaceid_tabId)
-            aux = this.scrollTabBar.childNodes[i].id.split("_");
-            tabId = parseInt(aux[aux.length-1]);
-            ids.push(tabId);
+            aux = this.scrollTabBar.childNodes[i]
+            if (aux.id) {
+                if (aux.id.indexOf('tab') === 0) {
+                    aux = aux.id.split("_");
+                    tabId = parseInt(aux[aux.length-1]);
+                    ids.push(tabId);
+                }
+            }
         }
         var success = function(transport){
             //Do nothing

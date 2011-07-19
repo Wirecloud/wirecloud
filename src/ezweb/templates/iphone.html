@@ -4,15 +4,11 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
-<title>{% trans "EzWeb Platform" %}</title>
-<head>
-
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-
-<link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/iphone.css" />
-<link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <title>{% trans "EzWeb Platform" %}</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/iphone.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 </head>
 
 <body onload="initialLoad();"  onorientationchange="updateLayout();">
@@ -76,14 +72,17 @@
 	    
 	</div>
 </div>
-<script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}js/lib/prototype/prototype.js"></script>
+
+<script type="text/javascript" language="javascript">
+    var policy_lists = {{ policies|safe|default:"null" }};
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.js"></script>
+<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 {% if only_one_js_file %}
       <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/ezweb_iphone_{{ ezweb_release }}.js"></script>
 {% else %}
       {% include "js_iphone_includes.js" %}
 {% endif %}
-
-<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 
 <script type="text/javascript" language="javascript">
 _URIConstants = function(){}

@@ -40,7 +40,8 @@ from translator.models import TransModel
 class XHTML(models.Model):
 
     uri = models.CharField(_('URI'), max_length=255, unique=True)
-    code = models.TextField(_('Code'))
+    code = models.TextField(_('Code'), blank=True)
+    code_timestamp = models.BigIntegerField(_('Cache timestamp'), null=True, blank=True)
     url = models.CharField(_('URL'), max_length=500)
     content_type = models.CharField(_('Content type'), max_length=50, blank=True, null=True)
     cacheable = models.BooleanField(_('Cacheable'), default=True, blank=True)
@@ -103,13 +104,6 @@ class Gadget(TransModel):
     def get_related_slots(self):
         return VariableDef.objects.filter(gadget=self, aspect='SLOT')
 
-    def is_contratable(self):
-        try:
-            Capability.objects.get(gadget=self, name="contratable", value="true")
-            return True
-        except Capability.DoesNotExist:
-            return False
-
 
 class Capability(models.Model):
 
@@ -119,16 +113,6 @@ class Capability(models.Model):
 
     class Meta:
         unique_together = ('name', 'value', 'gadget')
-
-
-#Sharing variables. Different variables can be related to the same
-#concept (SharedVariableDef)and so, share the same value.
-class  SharedVariableDef (models.Model):
-
-    name = models.CharField(_('Name'), max_length=30)
-
-    def __unicode__(self):
-        return self.name
 
 
 class VariableDef(TransModel):
@@ -158,8 +142,8 @@ class VariableDef(TransModel):
     description = models.CharField(_('Description'), max_length=250, null=True)
     friend_code = models.CharField(_('Friend code'), max_length=30, null=True)
     default_value = models.TextField(_('Default value'), blank=True, null=True)
-    shared_var_def = models.ForeignKey(SharedVariableDef, null=True, blank=True)
     gadget = models.ForeignKey(Gadget)
+    order = models.IntegerField(default=0, blank=True)
 
     def __unicode__(self):
         return self.gadget.uri + " " + self.aspect
@@ -169,7 +153,10 @@ class VariableDef(TransModel):
         return self.type != 'P' and self.aspect != 'SLOT' and self.aspect != 'EVENT'
 
     def get_default_value(self):
-        return self.default_value
+        if self.default_value is None:
+            return ''
+        else:
+            return self.default_value
 
 
 class UserPrefOption(TransModel):

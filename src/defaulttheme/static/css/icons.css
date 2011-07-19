@@ -1,7 +1,27 @@
 .icon {
     background-repeat: no-repeat;
     background-position: left center;
-    padding-left: 18px !important;
+}
+
+.icon-size {
+    width: 16px;
+    height: 16px;
+}
+
+.window-icon {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: top;
+    float: left;
+}
+
+.window_menu .window_content .msg.clear {
+    clear: both;
+    margin-top: 15px;
+}
+
+.window_menu .window_content .msg p {
+    margin-top: 0px;
 }
 
 span.icon {
@@ -34,3 +54,5 @@ span.icon-igadget-settings { background-position: -48px -408px; }
 .icon-show-floating { background-image: url(../images/icons-sprite.png); background-position: -48px -428px; }
 .icon-tab-preferences { background-image: url(../images/icons-sprite.png); background-position: -48px -332px; }
 .icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -455px; }
+.icon-back { background-image: url(../images/icons-sprite.png); background-position: 0px -192px; display: block; }
+.icon-color, .color_button { background-image: url(../images/icons-sprite.png); background-position: 0px -576px; }

@@ -3,10 +3,6 @@
   font-weight:bold;
 }
 
-button.contratable {
-  background:transparent url(../images/contratable.gif) repeat scroll 0 0;
-}
-
 #catalogue .toolbar {
   border-color: 1px solid #C2CBD2;
 }

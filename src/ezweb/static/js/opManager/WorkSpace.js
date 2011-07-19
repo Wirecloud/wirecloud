@@ -204,7 +204,12 @@ function WorkSpace (workSpaceState) {
             this.remoteChannelManager = new RemoteChannelManager(this.wiring);
 
             this.restricted = (!this.isOwned() && this.isShared()) || this.forceRestrictedSharing();
+            this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
+
+            if (this.initial_tab_id && this.initial_tab_id in this.tabInstances) {
+                visibleTabId = this.initial_tab_id;
+            }
 
             if (tabs.length > 0) {
                 //Only painting the "active" tab!
@@ -266,13 +271,14 @@ function WorkSpace (workSpaceState) {
         LayoutManagerFactory.getInstance().hideCover();
     }
 
-    var publishSuccess = function(transport) {
+    var publishSuccess = function (transport) {
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext('Workspace published successfully'));
         layoutManager.logStep('');
         layoutManager._notifyPlatformReady();
-                this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
-    }
+        this.workspace.workSpaceGlobalInfo.workspace.params = this.params;
+        CatalogueFactory.getInstance().invalidate_last_results('mashup');
+    };
 
     var publishError = function(transport, e) {
         var logManager, layoutManager, msg;
@@ -297,10 +303,17 @@ function WorkSpace (workSpaceState) {
     }
 
     var mergeError = function(transport, e) {
-        var logManager = LogManagerFactory.getInstance();
-        var msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
+        var logManager, layoutManager, msg;
+
+        logManager = LogManagerFactory.getInstance();
+        msg = logManager.formatError(gettext("Error merging workspaces: %(errorMsg)s."), transport, e);
         logManager.log(msg);
-        LayoutManagerFactory.getInstance().hideCover();
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager.logStep('');
+        layoutManager._notifyPlatformReady();
+
+        layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
     }
 
     //**** TAB CALLBACK*****
@@ -486,11 +499,12 @@ function WorkSpace (workSpaceState) {
         return false;
     }
 
-    WorkSpace.prototype.downloadWorkSpaceInfo = function () {
+    WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
+        this.initial_tab_id = initial_tab;
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
         PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
-    }
+    };
 
     WorkSpace.prototype.showWiring = function() {
         if (!this.loaded)
@@ -515,40 +529,38 @@ function WorkSpace (workSpaceState) {
         return null;
     }
 
-    WorkSpace.prototype.show = function() {
+    WorkSpace.prototype.prepareToShow = function() {
+        var layoutManager = LayoutManagerFactory.getInstance();
 
-        if (!this.loaded)
+        if (!this.loaded) {
             return;
+        }
 
-        if (this.getHeader()) //there is a banner
+        if (this.getHeader()) {
+            //there is a banner
             this.fillWithLabel();
+        }
 
         var tabList = this.tabInstances.keys();
 
         for (var i = 0; i < tabList.length; i++) {
             var tab = this.tabInstances[tabList[i]];
 
-            if (tab == this.visibleTab)
-                tab.show();
-            else
+            if (this.visibleTab === tab) {
+                layoutManager.markTab(tab);
+            } else {
                 tab.unmark();
+            }
         }
-        if (tabList.length == 1){ //hide the tab if only one exists
-            this.hideTabBar()
-        }else{
-            this.showTabBar()
+        if (tabList.length == 1) { //hide the tab if only one exists
+            this.hideTabBar();
+        } else {
+            this.showTabBar();
         }
 
         // resize tab bar after displaying tabs
-        LayoutManagerFactory.getInstance().resizeTabBar();
-
-        if (this.visibleTab) {
-            //show the current tab in the tab bar if it isn't within the visible area
-            //!this.visibleTab => error during initialization
-            this.visibleTab.makeVisibleInTabBar();
-            this.visibleTab.getDragboard()._notifyWindowResizeEvent();
-        }
-    }
+        layoutManager.resizeTabBar();
+    };
 
     WorkSpace.prototype.isValid = function() {
         return this.valid;
@@ -559,14 +571,18 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.setTab = function(tab) {
-        if (!this.loaded)
+        if (!this.loaded || tab == null) {
             return;
-        if(this.visibleTab != null){
+        }
+        if (!(tab instanceof Tab)) {
+            throw new TypeError();
+        }
+
+        if (this.visibleTab != null) {
             this.visibleTab.unmark();
         }
         this.visibleTab = tab;
         this.visibleTab.show();
-
     }
 
     WorkSpace.prototype.getVisibleTab = function() {
@@ -591,10 +607,11 @@ function WorkSpace (workSpaceState) {
         }
 
         var counter = this.tabInstances.keys().length + 1;
-        var tabName = "MyTab "+counter.toString();
+        var prefixName = gettext("Tab");
+        var tabName = prefixName + " " + counter.toString();
         //check if there is another tab with the same name
         while (this.tabExists(tabName)){
-            tabName = "MyTab "+(counter++).toString();
+            tabName = prefixName + " " + (counter++).toString();
         }
         var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': this.workSpaceState.id});
         var o = new Object;
@@ -649,13 +666,13 @@ function WorkSpace (workSpaceState) {
         this.visibleTab = null;
     }
 
-    WorkSpace.prototype.hideTabBar = function(){
+    WorkSpace.prototype.hideTabBar = function () {
         this.tabBar.setStyle({"visibility": "hidden"});
-    }
+    };
 
-    WorkSpace.prototype.showTabBar = function(){
+    WorkSpace.prototype.showTabBar = function () {
         this.tabBar.setStyle({"visibility": "visible"});
-    }
+    };
 
     WorkSpace.prototype.unload = function() {
 
@@ -758,7 +775,12 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.getActiveDragboard = function() {
-        return this.visibleTab.getDragboard();
+        if (this.visibleTab) {
+            return this.visibleTab.getDragboard();
+        } else {
+            // Shutting down the platform: no tab, no dragboard and no need to change to one
+            return null;
+        }
     }
 
     WorkSpace.prototype.shareWorkspace = function(value, groups) {
@@ -796,8 +818,16 @@ function WorkSpace (workSpaceState) {
         PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, {workspace: this, params: data}, publishSuccess, publishError);
     }
 
-    WorkSpace.prototype.mergeWith = function(workspace_id) {
-        var workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace_id, 'to_ws_id': this.workSpaceState.id});
+    WorkSpace.prototype.mergeWith = function(workspace) {
+        var workSpaceUrl, layoutManager, msg;
+
+        layoutManager = LayoutManagerFactory.getInstance();
+        layoutManager._startComplexTask(gettext("Merging workspaces"), 1);
+        msg = gettext('Merging "%(srcworkspace)s" into "%(dstworkspace)s"');
+        msg = interpolate(msg, {srcworkspace: workspace.name, dstworkspace: this.getName()}, true);
+        layoutManager.logSubTask(msg);
+
+        workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace.id, 'to_ws_id': this.workSpaceState.id});
         PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
     };
 
@@ -904,7 +934,7 @@ function WorkSpace (workSpaceState) {
         }
 
         // Delete option
-        if ((nworkspaces > 1) && !this.restricted && this.isAllowed('add_remove_workspaces')) {
+        if ((nworkspaces > 1) && this.removable && this.isAllowed('add_remove_workspaces')) {
             this.confMenu.addOption(gettext("Remove"),
                 function() {
                     var msg = gettext('Do you really want to remove the "%(workspaceName)s" workspace?');

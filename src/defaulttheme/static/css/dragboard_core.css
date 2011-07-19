@@ -240,15 +240,6 @@ div.shared_conf_area a{
 	vertical-align:middle;
 }
 
-table.shared_prefs {
-	border-collapse: collapse;
-}
-
-table.shared_prefs td{
-	border-bottom:1px solid;
-	padding: 3px 0;
-}
-
 div.config_interface label.invalid input {
 	border: 1px solid;	
 }

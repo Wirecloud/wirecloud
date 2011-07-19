@@ -107,7 +107,7 @@ function VarManager (_workSpace) {
 
     VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
         var name, id, variables, variable, gadget, gadgetId, igadgetId, varInfo,
-        aspect, value, shared, objVars = {};
+        aspect, value, objVars = {};
 
         igadgetId = igadget['id'];
         gadgetId = igadget.gadget.substr(9).split('/').join('_');
@@ -121,22 +121,21 @@ function VarManager (_workSpace) {
             id = varInfo.id;
             aspect = variable.aspect;
             value = 'value' in varInfo ? varInfo.value : '';
-            shared = 'shared' in varInfo ? varInfo.shared : null;
 
             switch (aspect) {
                 case Variable.prototype.PROPERTY:
                 case Variable.prototype.EVENT:
-                    objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab, shared);
+                    objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.EXTERNAL_CONTEXT:
                 case Variable.prototype.GADGET_CONTEXT:
                 case Variable.prototype.SLOT:
-                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
+                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.USER_PREF:
-                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab, shared);
+                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab);
                     objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
                     objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
                     this.variables[id] = objVars[name];
@@ -292,10 +291,6 @@ function VarManager (_workSpace) {
                 var varInfo = {
                     'id': variable.id,
                     'value': variable.value
-                }
-
-                if (variable.shared != null) { //it is a possible shared variable
-                    varInfo['shared'] = variable.shared
                 }
 
                 this.igadgetModifiedVars.push(varInfo);

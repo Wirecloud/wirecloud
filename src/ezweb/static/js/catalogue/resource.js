@@ -1,4 +1,4 @@
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -21,271 +21,191 @@
 *     is available at
 *
 *     http://morfeo-project.org
- */
+*/
+
+/*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+/*global $, GadgetVersion */
+"use strict";
 
 function ResourceState(resourceJSON_) {
 
-  ///////////////////////
-  // PRIVATE VARIABLES
-  ///////////////////////
-  var vendor = null;
-  var name = null;
-  var displayName = null;
-  var version = null;
-  var last_version = null;
-  var id = null;
-  var description = null;
-  var uriImage = null;
-  var uriWiki = null;
-  var mashupId = null;
-  var uriTemplate = null;
-  var addedBy = null;
-  var allVersions = [];
-  var tags = [];
-  var slots = [];
-  var events = [];
-  var votes = null;
-  var popularity = null;
-  var userVote = null;
-  var capabilities = [];
-  var availableApps = [];
-  var creator = [];
-  var extra_data = null;
-	
-  //////////////////////////
-  // GETTERS
-  /////////////////////////
-  this.getCreator = function() { 
-    return creator;
-  }
-  
-  this.getVendor = function() { 
-    return vendor;
-  }
-	
-  this.getName = function() { 
-    return name;
-  }
-	
-  this.getDisplayName = function() {
-    return displayName;
-  }
-	
-  this.getVersion = function() { 
-	return version;
-  }
-  
-  this.getLastVersion = function() { 
-	return last_version;
-  }
-	
-  this.getId = function() { 
-	return id;
-  }
-  
-  this.getAllVersions = function() { 
-	return allVersions;
-  }
-  
-  this.getDescription = function() { 
-    return description;
-  }
-  
-  this.getUriImage = function() { 
-    return uriImage;
-  }
-  
-  this.getUriTemplate = function() { 
-	return uriTemplate;
-  }
-	
-  this.getUriWiki = function() { 
-	return uriWiki;
-  }
-  
-  this.getMashupId = function() { 
-	return mashupId;
-  }
-  
-  this.isMashup = function() { 
-	return mashupId != null;
-  }
-  
-  this.isGadget = function() { 
-	return mashupId == null;
-  }
-  
-  this.getAddedBy = function() { 
-    return addedBy;
-  }
+    ///////////////////////
+    // PRIVATE VARIABLES
+    ///////////////////////
+    var vendor = resourceJSON_.vendor,
+        name = resourceJSON_.name,
+        type = resourceJSON_.type,
+        currentVersion = null,
+        allVersions = [],
+        data_by_version = {},
+        extra_data = null,
+    ///////////////////////////
+    // CONSTRUCTOR VARIABLES
+    ///////////////////////////
+        i = 0,
+        versions,
+        version_data;
 
-  this.getTags = function() { 
-	return tags;
-  }
-  
-  this.getSlots = function() { 
-	return slots;
-  }
-  
-  this.getEvents = function() { 
-	return events;
-  }
-  
-  this.getVotes = function() {
-	return votes;
-  }
-	
-  this.getUserVote = function() {
-	return userVote;
-  }
-	
-  this.getPopularity = function() {
-	return popularity;
-  }
-  
-  this.getCapabilities = function() {
-	return capabilities; 
-  }
-  
-  this.getExtraData = function() {
-	return extra_data; 
-  }
-  
-  //////////////
-  // SETTERS
-  //////////////
-  
-  this.setExtraData = function(extra_data_) {
-	extra_data = extra_data_; 
-  } 
-  
-  this.setVersion = function(version_) {
-    version = version_; 
-  } 
-  
-  this.setTags = function(tagsJSON_) {
-	tags = tagsJSON_;
-  }
-  
-  this.setSlots = function(slotsJSON_) {
-	slots.clear();
-		
-	for (var i=0; i<slotsJSON_.length; i++) {
-	  slots.push(slotsJSON_[i].friendcode);
-	}
-  }
-	
-  this.setEvents = function(eventsJSON_) {
-	events.clear();
-		
-	for (var i=0; i<eventsJSON_.length; i++) {
-	  events.push(eventsJSON_[i].friendcode);
-	}
-  }
-	
-  this.setVotes = function(voteDataJSON_) {
-	votes = voteDataJSON_.voteData[0].votes_number;
-	userVote = voteDataJSON_.voteData[0].user_vote;
-	popularity = voteDataJSON_.voteData[0].popularity;
-  }
-  
-  this.setAvailableApps = function (availableAppsObj) {
-    availableApps = availableAppsObj;
-  }
+    //////////////////////////
+    // GETTERS
+    /////////////////////////
+    this.getCreator = function () {
+        return currentVersion.author;
+    };
 
-  /////////////////////////////
-  // CONVENIENCE FUNCTIONS
-  /////////////////////////////
-  this.getContract = function() { 
-	for (i=0; i<capabilities.length; i++) {
-	  var capability = capabilities[i];
-			
-	  if (capability['name'].toLowerCase() == 'contratable') {
-		return capability['contract'];
-	  }
-	}
-		
-	return null;
-  }
-	
-  this.getGadgetApps = function() { 
-	for (i=0; i<capabilities.length; i++) {
-	  var capability = capabilities[i];
-			
-	  if (capability['name'].toLowerCase() == 'contratable') {
-		return capability['applications'];
-	  }
-	}
-		
-	return [];
-  }
-  
-  this.getAvailableApps = function() { 	
-	return availableApps;
-  }
-  
-  this.isContratable = function () {
-	for (var i = 0; i < capabilities.length; i++) {
-	  var capability = capabilities[i];
-	  
-	  if (capability.name.toLowerCase() == 'contratable')
-        return capability.value.toLowerCase() == "true";
-	  else
-		return false 
+    this.getVendor = function () {
+        return vendor;
+    };
+
+    this.getName = function () {
+        return name;
+    };
+
+    this.getDisplayName = function () {
+        return currentVersion.displayName;
+    };
+
+    this.getVersion = function () {
+        return currentVersion.version;
+    };
+
+    this.getLastVersion = function () {
+        return allVersions[0];
+    };
+
+    this.getId = function () {
+        return currentVersion.id;
+    };
+
+    this.getAllVersions = function () {
+        return allVersions;
+    };
+
+    this.getDescription = function () {
+        return currentVersion.description;
+    };
+
+    this.getUriImage = function () {
+        return currentVersion.uriImage;
+    };
+
+    this.getUriTemplate = function () {
+        return currentVersion.uriTemplate;
+    };
+
+    this.getUriWiki = function () {
+        return currentVersion.uriWiki;
+    };
+
+    this.getMashupId = function () {
+        var index = currentVersion.uriTemplate.lastIndexOf('/');
+        if (index !== -1) {
+            return parseInt(currentVersion.uriTemplate.substr(index + 1), 10);
+        } else {
+            return null;
+        }
+    };
+
+    this.isMashup = function () {
+        return type === 'mashup';
+    };
+
+    this.isGadget = function () {
+        return type === 'gadget';
+    };
+
+    this.getAddedBy = function () {
+        return currentVersion.addedBy;
+    };
+
+    this.getTags = function () {
+        return currentVersion.tags;
+    };
+
+    this.getSlots = function () {
+        return currentVersion.slots;
+    };
+
+    this.getEvents = function () {
+        return currentVersion.events;
+    };
+
+    this.getVotes = function () {
+        return currentVersion.votes.votes_number;
+    };
+
+    this.getUserVote = function () {
+        return currentVersion.votes.user_vote;
+    };
+
+    this.getPopularity = function () {
+        return currentVersion.votes.popularity;
+    };
+
+    this.getCapabilities = function () {
+        return currentVersion.capabilities;
+    };
+
+    this.getExtraData = function () {
+        return extra_data;
+    };
+
+    this.getIeCompatible = function () {
+        return currentVersion.ieCompatible;
+    };
+
+    //////////////
+    // SETTERS
+    //////////////
+
+    this.setExtraData = function (extra_data_) {
+        extra_data = extra_data_;
+    };
+
+    this.setTags = function (tagsJSON_) {
+        currentVersion.tags = tagsJSON_;
+    };
+
+    this.setVotes = function (voteDataJSON_) {
+        currentVersion.votes = voteDataJSON_;
+    };
+
+    /////////////////////////////
+    // CONVENIENCE FUNCTIONS
+    /////////////////////////////
+    this.changeVersion = function (version) {
+        if (version instanceof GadgetVersion) {
+            version = version.text;
+        }
+
+        if (version in data_by_version) {
+            currentVersion = data_by_version[version];
+        } else {
+            currentVersion = data_by_version[allVersions[0].text];
+        }
+    };
+
+    ////////////////////////
+    // CONSTRUCTOR
+    ////////////////////////
+    versions = resourceJSON_.versions;
+
+    function flat_friendcode(x) {
+        return x.friendcode;
     }
-	
-	return false;
-  }
 
-  this.hasContract = function () {
-    var gadgetApps = this.getGadgetApps();
-    
-    if (gadgetApps.length == 0)
-      return false;
-		
-	for (var i=0; i<gadgetApps.length; i++) {
-	  var app = gadgetApps[i];
-			
-	  if (! app['has_contract'])
-		return false;
-	}
+    for (i = 0; i < versions.length; i += 1) {
+        version_data = versions[i];
 
-	return true;		    
-  }
-  
-  ////////////////////////
-  // CONSTRUCTOR
-  ////////////////////////
-  creator = resourceJSON_.author;
-  
-  vendor = resourceJSON_.vendor;
-  name = resourceJSON_.name;
-  displayName = resourceJSON_.displayName;
-  version = resourceJSON_.version;
-  
-  if (resourceJSON_.last_version)
-    last_version = resourceJSON_.last_version;
-  
-  id = resourceJSON_.id;
-  allVersions = resourceJSON_.versions;
-  description = resourceJSON_.description;
-  uriImage = resourceJSON_.uriImage;
-  uriWiki = resourceJSON_.uriWiki;
+        version_data.version = new GadgetVersion(version_data.version, 'catalogue');
+        version_data.events = version_data.events.map(flat_friendcode);
+        version_data.slots = version_data.slots.map(flat_friendcode);
 
-  if (resourceJSON_.mashupId && resourceJSON_.mashupId != "")
-	mashupId = resourceJSON_.mashupId;
-  
-  addedBy = resourceJSON_.added_by_user;
-  uriTemplate = resourceJSON_.uriTemplate;
-  votes = resourceJSON_.votes[0].votes_number;
-  userVote = resourceJSON_.votes[0].user_vote;
-  popularity = resourceJSON_.votes[0].popularity;	
-  capabilities = resourceJSON_.capabilities;
-  
-  if (resourceJSON_.availableApps)
-	this.setAvailableApps(resourceJSON_.availableApps);
-  
-  this.setEvents(resourceJSON_.events);
-  this.setSlots(resourceJSON_.slots);
-  this.setTags(resourceJSON_.tags);
+        allVersions.push(version_data.version);
+        data_by_version[version_data.version.text] = version_data;
+    }
+    allVersions = allVersions.sort(function (version1, version2) {
+        return -version1.compareTo(version2);
+    });
+    this.changeVersion(allVersions[0]);
 }

@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
 from commons.authentication import user_authentication
+from commons.cache import no_cache
 from commons.get_data import get_concept_data, get_concept_value
 from commons.http_utils import PUT_parameter
 from context.models import Concept, ConceptName
@@ -46,6 +47,7 @@ from commons.utils import get_xml_error, json_encode
 
 class ContextCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name):
         user = user_authentication(request, user_name)
         concepts = Concept.objects.all()
@@ -93,6 +95,7 @@ class ContextCollection(Resource):
 
 class ContextEntry(Resource):
 
+    @no_cache
     def read(self, request, user_name, concept_name):
         user = user_authentication(request, user_name)
         concept = get_object_or_404(Concept, concept=concept_name)
@@ -170,6 +173,7 @@ class ContextEntry(Resource):
 
 class ContextValueEntry(Resource):
 
+    @no_cache
     def read(self, request, user_name, concept_name):
         user = user_authentication(request, user_name)
 

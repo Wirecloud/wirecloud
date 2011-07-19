@@ -29,13 +29,17 @@
 
 
 #
+import random
+import re
 
 from django.conf import settings
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import get_language
+from django.utils.translation import ugettext as _
 
+from commons.cache import CacheableData
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from context.models import Concept, ConceptName, Constant
 from context.utils import get_user_context_providers
@@ -44,9 +48,7 @@ from igadget.models import Variable, IGadget
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
 from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
-from workspace.utils import createTab
-
-import re
+from workspace.utils import createTab, decrypt_value, encrypt_value
 
 
 def _variable_cache_key(igadget):
@@ -68,20 +70,51 @@ def _get_cached_variables(igadget):
 def _invalidate_cached_variables(igadget):
     key = _variable_cache_key(igadget)
     cache.delete(key)
+    _invalidate_cached_variable_values(igadget.tab.workspace)
 
 
-def _populate_variables_values_cache(user, key):
+def _populate_variables_values_cache(workspace, user, key, forced_values=None):
     """ populates VariableValue cached values for that user """
     values_by_varid = {}
     values_by_varname = {}
 
-    for var_value in VariableValue.objects.filter(user__id=user.id).select_related('variable__vardef', 'variable__igadget'):
-        if not var_value.variable.igadget.id in values_by_varname:
-            values_by_varname[var_value.variable.igadget.id] = {}
+    if forced_values == None:
+        concept_values = get_concept_values(user)
+        preferences = get_workspace_preference_values(workspace)
+        forced_values = process_forced_values(workspace, user, concept_values, preferences)
 
-        value = var_value.get_variable_value()
-        values_by_varname[var_value.variable.igadget.id][var_value.variable.vardef.name] = value
-        values_by_varid[var_value.variable.id] = value
+    var_values = VariableValue.objects.filter(user__id=user.id, variable__igadget__tab__workspace=workspace)
+    for var_value in var_values.select_related('variable__vardef'):
+        varigadget = var_value.variable.igadget.id
+        varname = var_value.variable.vardef.name
+        # forced_values uses string keys
+        svarigadget = str(varigadget)
+
+        if not varigadget in values_by_varname:
+            values_by_varname[varigadget] = {}
+
+        entry = {}
+        if svarigadget in forced_values['igadget'] and varname in forced_values['igadget'][svarigadget]:
+            fv_entry = forced_values['igadget'][svarigadget][varname]
+
+            entry['value'] = fv_entry['value']
+            if var_value.variable.vardef.secure:
+                entry['value'] = encrypt_value(entry['value'])
+
+            if 'hidden' in fv_entry:
+                entry['hidden'] = fv_entry['hidden']
+
+            entry['forced'] = True
+        else:
+            if not var_value.variable.vardef.secure:
+                entry['value'] = var_value.get_variable_value()
+            else:
+                entry['value'] = var_value.value
+
+        entry['secure'] = var_value.variable.vardef.secure
+
+        values_by_varname[varigadget][varname] = entry
+        values_by_varid[var_value.variable.id] = entry
 
     values = {
         'by_varid': values_by_varid,
@@ -92,37 +125,130 @@ def _populate_variables_values_cache(user, key):
     return values
 
 
-def _variable_values_cache_key(user):
-    return '_variables_values_cache/' + str(user.id)
+def _get_workspace_version(workspace):
+    version = cache.get('_workspace_version/' + str(workspace.id))
+    if version is None:
+        version = random.randrange(1, 100000)
+        cache.set('_workspace_version/' + str(workspace.id), version)
+    return version
 
 
-def get_variable_value_from_var(user, variable):
-    key = _variable_values_cache_key(user)
-    values = cache.get(key)
-    if values == None:
-        values = _populate_variables_values_cache(user, key)
+def _variable_values_cache_key(workspace, user):
+    version = _get_workspace_version(workspace)
+    return '/'.join(('_variables_values_cache', str(workspace.id), str(version), str(user.id)))
 
-    return values['by_varid'][variable.id]
+
+def _workspace_cache_key(workspace, user):
+    version = _get_workspace_version(workspace)
+    return '/'.join(('_workspace_global_data', str(workspace.id), str(version), str(user.id)))
 
 
 def get_variable_value_from_varname(user, igadget, var_name):
 
     if 'id' in igadget:
         igadget_id = igadget.id
-    else:
+        igadget = IGadget.objects.get(id=igadget_id)
+    elif not isinstance(igadget, IGadget):
         igadget_id = int(igadget)
+        igadget = IGadget.objects.get(id=igadget_id)
+    else:
+        igadget_id = igadget
 
-    key = _variable_values_cache_key(user)
+    workspace = igadget.tab.workspace
+    key = _variable_values_cache_key(workspace, user)
     values = cache.get(key)
     if values == None:
-        values = _populate_variables_values_cache(user, key)
+        values = _populate_variables_values_cache(workspace, user, key)
 
-    return values['by_varname'][igadget_id][var_name]
+    entry = values['by_varname'][igadget_id][var_name]
+    if entry['secure'] == True:
+        return decrypt_value(entry['value'])
+    else:
+        return entry['value']
 
 
-def _invalidate_cached_variable_values(user):
-    key = _variable_values_cache_key(user)
-    cache.delete(key)
+def _invalidate_cached_variable_values(workspace, user=None):
+    if user is not None:
+        key = _variable_values_cache_key(workspace, user)
+        cache.delete(key)
+
+        key = _workspace_cache_key(workspace, user)
+        cache.delete(key)
+    else:
+        try:
+            cache.incr('_workspace_version/' + str(workspace.id))
+        except ValueError:
+            pass
+
+
+class VariableValueCacheManager():
+
+    workspace = None
+    user = None
+    values = None
+    forced_values = None
+
+    def __init__(self, workspace, user, forced_values=None):
+        self.workspace = workspace
+        self.user = user
+        self.forced_values = forced_values
+
+    def _process_entry(self, entry):
+
+        if entry['secure'] == True:
+            return decrypt_value(entry['value'])
+        else:
+            return entry['value']
+
+    def get_variable_values(self):
+        if self.values == None:
+            key = _variable_values_cache_key(self.workspace, self.user)
+            self.values = cache.get(key)
+            if self.values == None:
+                self.values = _populate_variables_values_cache(self.workspace, self.user, key, self.forced_values)
+
+        return self.values
+
+    def get_variable_value_from_var(self, variable):
+        values = self.get_variable_values()
+        entry = values['by_varid'][variable.id]
+        return self._process_entry(entry)
+
+    def get_variable_value_from_varname(self, igadget, var_name):
+
+        if 'id' in igadget:
+            igadget_id = igadget.id
+            igadget = IGadget.objects.get(id=igadget_id)
+        elif not isinstance(igadget, IGadget):
+            igadget_id = int(igadget)
+            igadget = IGadget.objects.get(id=igadget_id)
+        else:
+            igadget_id = igadget
+
+        values = self.get_variable_values()
+        entry = values['by_varname'][igadget_id][var_name]
+        return self._process_entry(entry)
+
+    def get_variable_data(self, variable):
+        values = self.get_variable_values()
+        entry = values['by_varid'][variable.id]
+        data_ret = {}
+
+        if entry['secure']:
+            data_ret['value'] = ''
+            data_ret['secure'] = True
+        else:
+            data_ret['value'] = entry['value']
+
+        if 'forced' in entry and entry['forced'] == True:
+            data_ret['readOnly'] = True
+            if 'hidden' in entry:
+                data_ret['hidden'] = entry['hidden']
+
+        return data_ret
+
+    def invalidate(self):
+        _invalidate_cached_variable_values(self.workspace, self.user)
 
 
 def get_wiring_variable_data(var, ig):
@@ -176,24 +302,37 @@ def get_gadget_data(gadget):
         data_var['name'] = var.name
         data_var['type'] = var.type
         data_var['label'] = tvar.label
-        data_var['action_label'] = tvar.action_label
         data_var['description'] = tvar.description
-        data_var['friend_code'] = var.friend_code
-        data_var['default_value'] = tvar.default_value
-        data_var['shareable'] = var.shared_var_def != None
+
+        if var.aspect == 'PREF':
+            data_var['default_value'] = tvar.default_value
+
+            if var.type == 'L':
+                options = UserPrefOption.objects.filter(variableDef=var)
+                value_options = []
+                for option in options:
+                    toption = option.get_translated_model()
+                    value_options.append([toption.value, toption.name])
+                data_var['value_options'] = value_options
+
+        elif var.aspect == 'SLOT':
+            data_var['action_label'] = tvar.action_label
+
+        if var.aspect in ('PREF', 'PROP', 'EVEN', 'SLOT'):
+
+            data_var['order'] = var.order
+
         if var.aspect == 'PREF' or var.aspect == 'PROP':
+
             data_var['secure'] = var.secure
 
-        if var.aspect == 'PREF' and var.type == 'L':
-            options = UserPrefOption.objects.filter(variableDef=var)
-            value_options = []
-            for option in options:
-                toption = option.get_translated_model()
-                value_options.append([toption.value, toption.name])
-            data_var['value_options'] = value_options
+        elif var.aspect == 'GCTX' or var.aspect == 'ECTX':
 
-        if var.aspect == 'GCTX' or var.aspect == 'ECTX':
             data_var['concept'] = var.contextoption_set.all().values('concept')[0]['concept']
+
+        elif var.aspect == 'EVEN' or var.aspect == 'SLOT':
+
+            data_var['friend_code'] = var.friend_code
 
         data_vars[var.name] = data_var
 
@@ -290,7 +429,9 @@ def get_inout_data(inout):
     }
 
 
-def get_filter_data(filter_):
+def get_filter_data(filter__):
+    filter_ = filter__.get_translated_model()
+
     return {
         'id': filter_.pk,
         'name': filter_.name,
@@ -311,6 +452,7 @@ def get_workspace_data(workspace, user):
         'name': workspace.name,
         'shared': workspace.is_shared(),
         'owned': workspace.creator == user,
+        'removable': workspace.creator == user and user_workspace.manager == '',
         'active': user_workspace.active,
     }
 
@@ -387,7 +529,7 @@ def get_connectable_data(connectable):
 
 class TemplateValueProcessor:
 
-    _RE = re.compile(r'(%+)\(([a-zA-Z]\w*(?:\.[a-zA-Z]\w*)*)\)')
+    _RE = re.compile(r'(%+)\(([a-zA-Z][\w-]*(?:\.[a-zA-Z\][\w-]*)*)\)')
 
     def __init__(self, context):
         self._context = context
@@ -420,7 +562,7 @@ class TemplateValueProcessor:
         return self._RE.sub(self.__repl, value)
 
 
-def process_forced_values(workspace, user, concept_values, workspace_data):
+def process_forced_values(workspace, user, concept_values, preferences):
     try:
         forced_values = simplejson.loads(workspace.forcedValues)
     except:
@@ -441,8 +583,8 @@ def process_forced_values(workspace, user, concept_values, workspace_data):
     param_values = {}
     empty_params = []
     for param in forced_values['extra_prefs']:
-        if param in workspace_data['preferences']:
-            param_values[param] = workspace_data['preferences'][param]['value']
+        if param in preferences:
+            param_values[param] = preferences[param]['value']
         else:
             empty_params.append(param)
             param_values[param] = ''
@@ -459,7 +601,7 @@ def process_forced_values(workspace, user, concept_values, workspace_data):
     return forced_values
 
 
-def get_global_workspace_data(workSpaceDAO, user):
+def _get_global_workspace_data(workSpaceDAO, user):
     data_ret = {}
     data_ret['workspace'] = get_workspace_data(workSpaceDAO, user)
 
@@ -468,14 +610,17 @@ def get_global_workspace_data(workSpaceDAO, user):
     data_ret['workspace']['concepts'] = get_concepts_data(concept_values)
 
     # Workspace preferences
-    data_ret['workspace']['preferences'] = get_workspace_preference_values(workSpaceDAO.pk)
+    preferences = get_workspace_preference_values(workSpaceDAO.pk)
+    data_ret['workspace']['preferences'] = preferences
 
     # Process forced variable values
-    forced_values = process_forced_values(workSpaceDAO, user, concept_values, data_ret['workspace'])
+    forced_values = process_forced_values(workSpaceDAO, user, concept_values, preferences)
     data_ret['workspace']['empty_params'] = forced_values['empty_params']
     data_ret['workspace']['extra_prefs'] = forced_values['extra_prefs']
     if len(forced_values['empty_params']) > 0:
         return data_ret
+
+    cache_manager = VariableValueCacheManager(workSpaceDAO, user, forced_values)
 
     # Tabs processing
     # Check if the workspace's tabs have order
@@ -489,7 +634,7 @@ def get_global_workspace_data(workSpaceDAO, user):
                 tabs[i].position = i
                 tabs[i].save()
     else:
-        tabs = [createTab('MyTab', user, workSpaceDAO)]
+        tabs = [createTab(_('Tab'), user, workSpaceDAO)]
 
     tabs_data = [get_tab_data(tab) for tab in tabs]
 
@@ -501,11 +646,7 @@ def get_global_workspace_data(workSpaceDAO, user):
 
         igadget_data = []
         for igadget in igadgets:
-            igadget_forced_values = {}
-            key = str(igadget.id)
-            if 'igadget' in forced_values and key in forced_values['igadget']:
-                igadget_forced_values = forced_values['igadget'][key]
-            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, igadget_forced_values))
+            igadget_data.append(get_igadget_data(igadget, user, workSpaceDAO, cache_manager))
 
         tab['igadgetList'] = igadget_data
 
@@ -524,6 +665,16 @@ def get_global_workspace_data(workSpaceDAO, user):
     return data_ret
 
 
+def get_global_workspace_data(workspace, user):
+    key = _workspace_cache_key(workspace, user)
+    data = cache.get(key)
+    if data is None:
+        data = CacheableData(_get_global_workspace_data(workspace, user))
+        cache.set(key, data)
+
+    return data
+
+
 def get_tab_data(tab):
     return {
         'id': tab.id,
@@ -533,8 +684,7 @@ def get_tab_data(tab):
     }
 
 
-def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
-    global _variables_cache
+def get_igadget_data(igadget, user, workspace, cache_manager=None):
 
     data_ret = {'id': igadget.id,
         'name': igadget.name,
@@ -561,18 +711,19 @@ def get_igadget_data(igadget, user, workspace, igadget_forced_values={}):
         data_ret['icon_top'] = 0
         data_ret['icon_left'] = 0
 
+    if cache_manager == None:
+        cache_manager = VariableValueCacheManager(workspace, user)
+
     variables = _get_cached_variables(igadget)
     data_ret['variables'] = {}
     for variable in variables:
-        var_data = get_variable_data(variable, user, workspace, igadget_forced_values)
+        var_data = get_variable_data(variable, user, workspace, cache_manager)
         data_ret['variables'][variable.vardef.name] = var_data
 
     return data_ret
 
 
-def get_variable_data(variable, user, workspace, forced_values={}):
-    var_def = variable.vardef
-
+def get_variable_data(variable, user, workspace, cache_manager=None):
     data_ret = {
         'id': variable.id,
         'name': variable.vardef.name,
@@ -581,26 +732,11 @@ def get_variable_data(variable, user, workspace, forced_values={}):
     if variable.vardef.aspect != 'PREF' and variable.vardef.aspect != 'PROP':
         return data_ret
 
+    if cache_manager == None:
+        cache_manager = VariableValueCacheManager(workspace, user)
+
     # Variable info is splited into 2 entities: VariableDef and VariableValue
-    if variable.vardef.name in forced_values:
-        if variable.vardef.secure:
-            data_ret['value'] = ''
-            data_ret['secure'] = True
-        else:
-            data_ret['value'] = forced_values[variable.vardef.name]['value']
-
-        data_ret['readOnly'] = True
-        if var_def.aspect == 'PREF':
-            data_ret['hidden'] = forced_values[variable.vardef.name]['hidden']
-    else:
-        if variable.vardef.secure:
-            data_ret['value'] = ''
-            data_ret['secure'] = True
-        else:
-            data_ret['value'] = get_variable_value_from_var(user, variable)
-
-    if var_def.shared_var_def:
-        data_ret['shared'] = variable.shared_value != None
+    data_ret.update(cache_manager.get_variable_data(variable))
 
     return data_ret
 
@@ -683,6 +819,8 @@ def get_concept_data(concept, concept_values):
     data_ret = {
         'concept': concept.pk,
         'type': concept.type,
+        'label': concept.label,
+        'description': concept.description,
         'names': [cname['name'] for cname in cnames],
     }
 

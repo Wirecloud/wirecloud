@@ -31,23 +31,26 @@
 #
 
 from igadget.models import Variable, IGadget
-from workspace.models import VariableValue, UserWorkSpace, SharedVariableValue
+from workspace.models import VariableValue, UserWorkSpace
 
 
 class PackageLinker:
 
     def link_workspace(self, workspace, user, creator, update_variable_values=True):
+
         # Linking user to workspace
+        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
+
+        if not created:
+            # The workspace is already linked to the user
+            return user_workspace
 
         # Linking gadgets to user!
         variables = self.link_gadgets(workspace, user)
 
-        #Linking workspace with user!
-        user_workspace, created = UserWorkSpace.objects.get_or_create(user=user, workspace=workspace, defaults={'active': False})
-
         if update_variable_values:
 
-            # Create a new VariableValue for each AbstractVariable
+            # Create a new VariableValue for each Variable
             self.update_user_variable_values(variables, user, creator)
 
         return user_workspace
@@ -57,8 +60,9 @@ class PackageLinker:
         user_workspace.delete()
 
     def link_gadgets(self, workspace, user):
+
         # Getting all abstract variables of workspace
-        variables = Variable.objects.filter(igadget__tab__workspace=workspace)
+        variables = Variable.objects.filter(igadget__tab__workspace=workspace).select_related('vardef')
 
         ws_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
@@ -90,7 +94,13 @@ class PackageLinker:
         return user_variable_value
 
     def update_user_variable_values(self, variables, user, creator):
+
         for variable in variables:
+
+            # Only properties and preferences have value
+            if variable.vardef.aspect not in ('PROP', 'PREF'):
+                continue
+
             #Does user have his own VariableValue?
             try:
                 user_variable_value = VariableValue.objects.get(user=user, variable=variable)
@@ -114,30 +124,5 @@ class PackageLinker:
             #Updating User VariableValue value!
             user_variable_value = self.update_variable_value(user_variable_value, creator_variable_value, variable, created)
 
-            if created and creator_variable_value:
-
-                #check if it's shared (only for igadget variables)
-                if variable.vardef.shared_var_def:
-                    shared_concept = variable.vardef.shared_var_def
-                    shared_var_value, is_new = SharedVariableValue.objects.get_or_create(user=user,
-                                                                                          shared_var_def=shared_concept)
-                    if is_new:
-                        if variable.has_public_value():
-                            #clone the value the creator has set
-                            shared_var_value.value = SharedVariableValue.objects.get(user=creator,
-                                                                                     shared_var_def=shared_concept).value
-                        else:
-                            #set the default value
-                            shared_var_value.value = variable.get_default_value()
-
-                        shared_var_value.save()
-
-                    if creator_variable_value.shared_var_value:
-                        user_variable_value.shared_var_value = shared_var_value
-
-                #remove the cloned variable value
-                #creator_variable_value.delete() -> problems sharing workspaces. it cannot be done
-
-            # check if the value is None, and avoid saving it on the BD in that case
-            if type(user_variable_value.value) != type(None):
+            if user_variable_value.value is not None:
                 user_variable_value.save()

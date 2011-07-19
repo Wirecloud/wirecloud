@@ -184,10 +184,16 @@ if ('addEventListener' in document) {
                 }
         }
 
-        var wrapper = function() {
-            var e = window.event;
+        var wrapper = function(evt) {
+            var e = evt;
+            if (!e) {
+                e = window.event;
+            }
             e.stopPropagation = function() {
                 this.cancelBubble = true;
+            }
+            e.preventDefault = function() {
+                this.returnValue = false;
             }
             e.currentTarget = currentTarget;
             extraAdaptations(e);
@@ -320,6 +326,7 @@ if (!window.preventDefaultStyle) {
     try {
         /* TODO */
         var theme = window.parent.URIs.ACTIVE_THEME;
+        
         EzWebExt.prependStyle(EzWebAPI.platform_domain + theme + "/css/gadget.css");
     } catch (e) {}
 
@@ -646,7 +653,7 @@ if (document.getElementsByTagNameNS) {
     }
 } else {
     EzWebExt.getElementsByTagNameNS = function(domElem, strNsURI, lName) {
-        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc, checkNamespace;
+        var defaultNS, arrElems, allElems, i, elem, oldLanguage, doc;
 
         // ugh!! ugly hack for IE which does not understand default namespace
         if (domElem.documentElement) {
@@ -683,6 +690,10 @@ if (document.getElementsByTagNameNS) {
 
     EzWebExt.getElementsByTagNameNS.checkNamespace = function (element, namespace, defaultNS) {
         // IE uses namespaceURI and tagUrn depending on the DomDocument instance
+        if (typeof namespace === 'undefined' || namespace === null) {
+            namespace = '';
+        }
+
         if ('tagUrn' in element) {
             if (namespace === defaultNS) {
                 return element.tagUrn === '';
@@ -3430,7 +3441,6 @@ StyledElements.Tab = function(id, notebook, options) {
     this.tabElement = document.createElement("div");
     this.tabElement.className = "tab";
     this.name = document.createElement('span');
-    EzWebExt.setTextContent(this.name, options.name);
     this.tabElement.appendChild(this.name);
 
     /* call to the parent constructor */
@@ -3455,8 +3465,8 @@ StyledElements.Tab = function(id, notebook, options) {
                                      false);
     }
 
-    if (options.title !== undefined)
-        this.setTitle(options.title);
+    this.title = options.title;
+    this.rename(options.name);
 }
 StyledElements.Tab.prototype = new StyledElements.Container({extending: true});
 
@@ -3473,7 +3483,10 @@ StyledElements.Tab.prototype.close = function() {
  * <code>Tab</code>.
  */
 StyledElements.Tab.prototype.rename = function(newName) {
-    EzWebExt.setTextContent(this.name, newName);
+    this.nameText = newName;
+    EzWebExt.setTextContent(this.name, this.nameText);
+
+    this._updateTitle();
 }
 
 /**
@@ -3482,7 +3495,17 @@ StyledElements.Tab.prototype.rename = function(newName) {
  * los elementos HTML.
  */
 StyledElements.Tab.prototype.setTitle = function(newTitle) {
-    this.tabElement.setAttribute("title", newTitle);
+    this.title = newTitle;
+
+    this._updateTitle();
+};
+
+StyledElements.Tab.prototype._updateTitle = function() {
+    if (typeof this.title === 'undefined' || this.title === null) {
+        this.tabElement.setAttribute('title', this.nameText);
+    } else {
+        this.tabElement.setAttribute('title', this.title);
+    }
 }
 
 /**
@@ -3590,6 +3613,7 @@ StyledElements.StyledNotebook = function(options) {
     this.tabs = new Array();
     this.tabsById = new Array();
     this.visibleTab = null;
+    this.maxTabElementWidth = '';
 
     /* Process options */
     if (options['id'] != undefined)
@@ -3641,7 +3665,7 @@ StyledElements.StyledNotebook = function(options) {
             break;
 
         case 'shiftRight':
-            if (context.control._isTabVisible(context.control.tabs.length - 1)) {
+            if (context.control._isLastTabVisible()) {
                 return false;
             }
 
@@ -3692,15 +3716,38 @@ StyledElements.StyledNotebook.prototype = new StyledElements.StyledElement();
 /**
  * @private
  */
-StyledElements.StyledNotebook.prototype._isTabVisible = function(tabIndex) {
-    var tabElement = this.tabs[tabIndex].getTabElement();
+StyledElements.StyledNotebook.prototype._isTabVisible = function(tabIndex, full) {
+    var tabElement, tabAreaStart, tabAreaEnd, tabOffsetRight;
 
-    var tabAreaStart = this.tabArea.scrollLeft;
-    var tabAreaEnd = tabAreaStart + this.tabArea.clientWidth;
+    tabElement = this.tabs[tabIndex].getTabElement();
 
-    var tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
+    tabAreaStart = this.tabArea.scrollLeft;
+    tabAreaEnd = tabAreaStart + this.tabArea.clientWidth;
 
-    return tabElement.offsetLeft >= tabAreaStart && tabOffsetRight <= tabAreaEnd;
+    if (full) {
+        tabOffsetRight = tabElement.offsetLeft + tabElement.offsetWidth;
+        return tabElement.offsetLeft >= tabAreaStart && tabOffsetRight <= tabAreaEnd;
+    } else {
+        return tabElement.offsetLeft >= tabAreaStart && tabElement.offsetLeft <= tabAreaEnd;
+    }
+}
+
+/**
+ * @private
+ */
+StyledElements.StyledNotebook.prototype._isLastTabVisible = function() {
+    var lastTab = this.tabs.length - 1;
+
+    if (this.tabs.length == 0) {
+        return true;
+    }
+    if (this._isTabVisible(lastTab, true)) {
+        return true;
+    }
+    if (!this._isTabVisible(lastTab)) {
+        return false;
+    }
+    return this.tabs.length < 2 || !this._isTabVisible(lastTab -1);
 }
 
 /**
@@ -3719,7 +3766,7 @@ StyledElements.StyledNotebook.prototype._enableDisableButtons = function() {
         EzWebExt.appendClassName(this.moveLeftButton, "enabled");
     }
 
-    if (this._isTabVisible(this.tabs.length - 1)) {
+    if (this._isLastTabVisible()) {
         EzWebExt.removeClassName(this.moveRightButton, "enabled");
     } else {
         EzWebExt.appendClassName(this.moveRightButton, "enabled");
@@ -3795,6 +3842,10 @@ StyledElements.StyledNotebook.prototype.createTab = function(options) {
     var tabElement = tab.getTabElement();
     this.tabArea.appendChild(tabElement);
     tab.insertInto(this.contentArea);
+    if (this.maxTabElementWidth === '') {
+        this._computeMaxTabElementWidth();
+    }
+    tabElement.style.maxWidth = this.maxTabElementWidth;
 
     if (!this.visibleTab) {
         this.visibleTab = tab;
@@ -3940,11 +3991,33 @@ StyledElements.StyledNotebook.prototype.focus = function(tabId) {
     this.transitionsQueue.addCommand({type: 'focus', tabId: tabId});
 }
 
+/**
+ * @private
+ */
+StyledElements.StyledNotebook.prototype._computeMaxTabElementWidth = function() {
+    var tabAreaWidth, tabElement, computedStyle, padding;
+
+    if (this.tabs.length === 0) {
+        this.maxTabElementWidth = '';
+        return;
+    }
+
+    tabAreaWidth = this.tabArea.clientWidth;
+    tabElement = this.tabs[0].getTabElement();
+
+    computedStyle = document.defaultView.getComputedStyle(tabElement, null);
+    padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
+    padding += computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
+    padding += 2 * computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+    this.maxTabElementWidth = (tabAreaWidth - padding) + 'px';
+}
+
 StyledElements.StyledNotebook.prototype.repaint = function(temporal) {
-    var i;
+    var i, height;
     temporal = temporal !== undefined ? temporal: false;
 
-    var height = this._getUsableHeight();
+    height = this._getUsableHeight();
     if (height == null)
         return; // nothing to do
 
@@ -3955,10 +4028,15 @@ StyledElements.StyledNotebook.prototype.repaint = function(temporal) {
 
     // Resize content
     if (temporal) {
-        if (this.visibleTab)
+        if (this.visibleTab) {
             this.visibleTab.repaint(true);
+        }
     } else {
+        this._computeMaxTabElementWidth();
         for (i = 0; i < this.tabs.length; i++) {
+            tabElement = this.tabs[i].getTabElement();
+            tabElement.style.maxWidth = this.maxTabElementWidth;
+
             this.tabs[i].repaint(false);
         }
     }
@@ -4151,8 +4229,6 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
   */
         this.messageDiv.style.top = positionHeight + 'px';
         this.messageDiv.style.left = positionWidth + 'px';
-        this.messageDiv.style.right = positionWidth + 'px';
-        this.messageDiv.style.bottom = positionHeight + 'px';
         this.messageDiv.style.width = width + 'px';
         this.messageDiv.style.height = height + 'px';
 
@@ -4171,17 +4247,6 @@ StyledElements.StyledAlert.prototype.repaint = function(temporal) {
             height = 0;
         }
         this.content.wrapperElement.style.height = height + 'px';
-
-        // Addjust Content Width
-        width =  width -
-          messageDivStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          messageDivStyle.getPropertyCSSValue('border-right-width').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          contentStyle.getPropertyCSSValue('margin-right').getFloatValue(CSSPrimitiveValue.CSS_PX) -
-          contentStyle.getPropertyCSSValue('margin-left').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        if (width < 0) {
-            width = 0;
-        }
-        this.content.wrapperElement.style.width = (width + 'px');
 
         this.content.repaint(temporal);
     }
@@ -4562,6 +4627,10 @@ Pagination.prototype.changeElements = function(elements) {
 };
 
 Pagination.prototype.changePageSize = function(pageSize) {
+    if (this.pOptions.pageSize === pageSize) {
+        // It's the same size, nothing to do here
+        return;
+    }
     this.pOptions.pageSize = pageSize;
     this._calculatePages();
     this.events['paginationChanged'].dispatch(this.pOptions.pageSize, false);
@@ -5016,7 +5085,7 @@ StyledElements.PopupMenuBase.prototype.show = function(refPosition) {
 }
 
 StyledElements.PopupMenuBase.prototype.hide = function() {
-    var i;
+    var i, aux;
 
     if (!EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         return; // This Popup Menu is already hidden => nothing to do
@@ -5029,11 +5098,11 @@ StyledElements.PopupMenuBase.prototype.hide = function() {
     }
 
     for (i = 0; i < this._dynamicItems.length; i += 1) {
-        item = this._dynamicItems[i];
-        if (item instanceof StyledElements.SubMenuItem) {
-            item.hide();
+        aux = this._dynamicItems[i];
+        if (aux instanceof StyledElements.SubMenuItem) {
+            aux.hide();
         }
-        item.destroy();
+        aux.destroy();
     }
     this._dynamicItems = [];
     this._submenus = [];

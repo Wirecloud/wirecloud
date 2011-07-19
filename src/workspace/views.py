@@ -32,19 +32,23 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
+from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
 from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
+from igadget.models import IGadget
+from igadget.utils import deleteIGadget
 from packageCloner import PackageCloner
 from packageLinker import PackageLinker
 from workspace.mashupTemplateGenerator import build_template_from_workspace
@@ -53,7 +57,7 @@ from workspace.models import Category
 from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_group_workspaces
+from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_base_workspaces
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -92,7 +96,7 @@ def createWorkSpace(workspaceName, user):
             try:
                 new_workspace = Category.objects.get(category_id=getCategoryId(category)).new_workspace
                 if new_workspace != None:
-                    cloned_workspace = buildWorkspaceFromTemplate(new_workspace.template, user)
+                    cloned_workspace, _junk = buildWorkspaceFromTemplate(new_workspace.template, user)
 
                     cloned_workspace.name = workspaceName
                     cloned_workspace.save()
@@ -131,7 +135,7 @@ def createEmptyWorkSpace(workSpaceName, user):
     user_workspace.save()
 
     #Tab creation
-    createTab('MyTab', user, workspace)
+    createTab(_('Tab'), user, workspace)
 
     return workspace
 
@@ -180,12 +184,13 @@ def linkWorkspace(user, workspace_id, creator, link_variable_values=True):
 class WorkSpaceCollection(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request):
         user = get_user_authentication(request)
 
         data_list = {'reloadShowcase': False}
         try:
-            data_list['reloadShowcase'] = sync_group_workspaces(user)
+            data_list['reloadShowcase'] = sync_base_workspaces(user)
             # updated user workspaces
             workspaces = WorkSpace.objects.filter(users=user)
 
@@ -219,7 +224,7 @@ class WorkSpaceCollection(Resource):
 
                 if not cloned_workspace:
                     # create an empty workspace
-                    createEmptyWorkSpace('MyWorkSpace', user)
+                    createEmptyWorkSpace(_('WorkSpace'), user)
 
             # Now we can fetch all the workspaces of an user
             workspaces = WorkSpace.objects.filter(users__id=user.id)
@@ -260,7 +265,7 @@ class WorkSpaceCollection(Resource):
             workspace = createWorkSpace(workspace_name, user)
             workspace_data = get_global_workspace_data(workspace, user)
 
-            return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+            return workspace_data.get_response()
 
         except Exception, e:
             transaction.rollback()
@@ -284,7 +289,7 @@ class WorkSpaceEntry(Resource):
             logout_request(request)
             request.user = relogin_after_public(request, last_user, None)
 
-        return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+        return workspace_data.get_response()
 
     @transaction.commit_on_success
     def update(self, request, workspace_id, last_user=''):
@@ -325,6 +330,17 @@ class WorkSpaceEntry(Resource):
     def delete(self, request, workspace_id, last_user=''):
         user = get_user_authentication(request)
 
+        user_workspaces = UserWorkSpace.objects.select_related('workspace')
+        try:
+            user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
+        except UserWorkSpace.DoesNotExist:
+            raise Http404
+
+        workspace = user_workspace.workspace
+        if workspace.creator != user or user_workspace.manager != '':
+            return HttpResponseForbidden()
+
+        # Check if the user does not have any other workspace
         workspaces = WorkSpace.objects.filter(users__id=user.id).exclude(pk=workspace_id)
 
         if workspaces.count() == 0:
@@ -332,13 +348,14 @@ class WorkSpaceEntry(Resource):
 
             raise TracedServerError(None, {'workspace': workspace_id}, request, msg)
 
-        # Gets Igadget, if it does not exist, a http 404 error is returned
-        workspace = get_object_or_404(WorkSpace, users__id=user.id, pk=workspace_id)
-
+        # Remove the workspace
         PublishedWorkSpace.objects.filter(workspace=workspace).update(workspace=None)
-
+        igadgets = IGadget.objects.filter(tab__workspace=workspace)
+        for igadget in igadgets:
+            deleteIGadget(igadget, user)
         workspace.delete()
-        #set a new active workspace (first workspace by default)
+
+        # Set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
 
@@ -501,7 +518,7 @@ class WorkSpaceVariableCollection(Resource):
 
             variables_to_notify = []
             for igVar in igadgetVariables:
-                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'], igVar.get('shared', None))
+                variables_to_notify += set_variable_value(igVar['id'], user, igVar['value'])
 
             data = {'igadgetVars': variables_to_notify}
             return HttpResponse(json_encode(data), mimetype='application/json; charset=UTF-8')
@@ -513,9 +530,10 @@ class WorkSpaceVariableCollection(Resource):
             raise TracedServerError(e, received_json, request, msg)
 
 
-class  WorkSpaceMergerEntry(Resource):
+class WorkSpaceMergerEntry(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request, from_ws_id, to_ws_id):
         from_ws = get_object_or_404(WorkSpace, id=from_ws_id)
         to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
@@ -530,7 +548,7 @@ class  WorkSpaceMergerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class  WorkSpaceSharerEntry(Resource):
+class WorkSpaceSharerEntry(Resource):
 
     @transaction.commit_on_success
     def update(self, request, workspace_id, share_boolean):
@@ -583,6 +601,7 @@ class  WorkSpaceSharerEntry(Resource):
             result = {"result": "ok"}
             return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
+    @no_cache
     def read(self, request, workspace_id):
         get_user_authentication(request)
 
@@ -603,9 +622,10 @@ class  WorkSpaceSharerEntry(Resource):
         return HttpResponse(json_encode(groups), mimetype='application/json; charset=UTF-8')
 
 
-class  WorkSpaceLinkerEntry(Resource):
+class WorkSpaceLinkerEntry(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -615,9 +635,10 @@ class  WorkSpaceLinkerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class  WorkSpaceClonerEntry(Resource):
+class WorkSpaceClonerEntry(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -626,9 +647,10 @@ class  WorkSpaceClonerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class  PublishedWorkSpaceMergerEntry(Resource):
+class PublishedWorkSpaceMergerEntry(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request, published_ws_id, to_ws_id):
         user = get_user_authentication(request)
 
@@ -644,11 +666,12 @@ class  PublishedWorkSpaceMergerEntry(Resource):
 class WorkSpaceAdderEntry(Resource):
 
     @transaction.commit_on_success
+    @no_cache
     def read(self, request, workspace_id):
         user = get_user_authentication(request)
 
         published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        workspace = buildWorkspaceFromTemplate(published_workspace.template, user)
+        workspace, _junk = buildWorkspaceFromTemplate(published_workspace.template, user)
 
         activate = request.GET.get('active') == "true"
         if not activate:
@@ -663,7 +686,7 @@ class WorkSpaceAdderEntry(Resource):
 
         workspace_data = get_global_workspace_data(workspace, user)
 
-        return HttpResponse(json_encode(workspace_data), mimetype='application/json; charset=UTF-8')
+        return HttpResponse(json_encode(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
 
 
 def check_json_fields(json, fields):
@@ -706,21 +729,15 @@ class WorkSpacePublisherEntry(Resource):
 
             raise TracedServerError(e, workspace_id, request, msg)
 
-        published_workspace = PublishedWorkSpace.objects.get(id=resource.mashup_id)
+        # TODO
+        split_result = resource.template_uri.rsplit('/', 1)
+        mashup_id = split_result[1]
+        published_workspace = PublishedWorkSpace.objects.get(id=mashup_id)
         published_workspace.workspace = workspace
         published_workspace.params = received_json
         published_workspace.save()
 
-        #ask the template Generator for the template of the new mashup
-        baseURL = "http://" + request.get_host()
-        if hasattr(settings, 'TEMPLATE_GENERATOR_URL'):
-            baseURL = settings.TEMPLATE_GENERATOR_URL
-
-        url = baseURL + "/workspace/templateGenerator/" + str(published_workspace.id)
-        resource.templare_uri = url
-        resource.save()
-
-        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': url}
+        response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': resource.template_uri}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
 
 

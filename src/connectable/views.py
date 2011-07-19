@@ -37,6 +37,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.authentication import get_user_authentication
+from commons.cache import no_cache
 from commons.get_data import get_inout_data, get_wiring_data, get_tab_data, get_filter_data
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -50,6 +51,7 @@ from workspace.models import WorkSpace, Tab
 
 class ConnectableEntry(Resource):
 
+    @no_cache
     def read(self, request, workspace_id):
         get_user_authentication(request)
         wiring = {}
@@ -118,6 +120,9 @@ class ConnectableEntry(Resource):
                 rel_old_channels = RelatedInOut.objects.filter(out_inout=old_channel)
                 for channel_delete in rel_old_channels:
                     channel_delete.delete()
+
+                old_channel.in_set.clear()
+                old_channel.out_set.clear()
 
                 if old_channel.remote_subscription:
                     old_channel.remote_subscription.delete()

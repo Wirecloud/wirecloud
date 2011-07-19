@@ -357,11 +357,13 @@ body.shared #workspace_link_container span {
 }
 
 #logs_link {
-  height: 16px;
-  border: none;
-  width: 16px;
-  background: transparent url(../images/info.png) no-repeat;
-  cursor: pointer;
+    height: 16px;
+    border: none;
+    width: 16px;
+    background-color: transparent;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -48px -504px;
+    cursor: pointer;
 }
 
 .message_section {
@@ -382,7 +384,6 @@ body.shared #workspace_link_container span {
     display: block;
     padding: 2px 9px;
     margin: 0px;
-    cursor: pointer;
     z-index: 3;
     height: 18px;
     padding: 3px 5px 1px;
@@ -448,7 +449,7 @@ body.shared .tab_dragger {
 }
 
 .drop_down_menu .option {
-    padding: 5px;
+    padding: 5px 5px 5px 25px;
     display: block;
     cursor: pointer;
     white-space: nowrap;
@@ -545,6 +546,7 @@ body.shared .tab_dragger {
 .window_menu .window_content {
 	margin-top: 2ex;
     clear: both;
+    overflow: auto;
 }
 
 .window_menu .window_content > img {
@@ -581,6 +583,7 @@ body.shared .tab_dragger {
 }
 
 .window_menu .window_content .msg {
+  margin-left: 26px;
   text-align: justify;
 }
 
@@ -852,6 +855,10 @@ button {
 #logs_console .icon {
     margin: 0px 0.5ex;
     vertical-align: bottom;
+    width: 16px;
+    height: 16px;
+    display: block;
+    float: left;
 }
 
 #logs_console p {
@@ -863,14 +870,23 @@ button {
     padding-right: 20px;
 }
 
+#logs_header .section_identifier {
+    width: auto;
+}
+
+#logs_console .igadget_info_container {
+    display: inline-block;
+    margin-right: 10px;
+}
+
 #logs_console .igadget_info {
     cursor:  pointer;
-    display: inline-block;
     height:  16px;
-    margin:  0px 0.5ex;
-    vertical-align:bottom;
-    padding-left: 16px;
-    background: transparent url(../images/igadget/maximize.png) no-repeat scroll 0 0
+    width: 16px;
+    vertical-align: bottom;
+    padding: 0px;
+    background-image: url(../images/icons-sprite.png); background-position: -24px -336px;
+    display: inline-block;
 }
 
 /* dragboard template ------------------------------------------------------------------------------- */
@@ -910,6 +926,15 @@ button {
     clear: both;
 }
 
+
+.parametrized_text_input .context_selector {
+    white-space: nowrap;
+}
+
+.parametrized_text_input .description {
+    min-height: 16px;
+    margin: 5px 0px;
+}
 
 /* Popup menu */
 

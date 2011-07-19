@@ -193,14 +193,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
     // PUBLIC METHODS
     // ****************
 
-
-    /**
-    * Gets the banner related to the workspace this dragboard belongs to
-    */
-    Dragboard.prototype.getHeader = function () {
-        return this.tab.getHeader();
-    };
-
     /**
      * Gets the width of the usable dragboard area.
      *

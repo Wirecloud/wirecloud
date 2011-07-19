@@ -61,6 +61,8 @@ OUT_XPATH = etree.ETXPath('Out')
 def buildWorkspaceFromTemplate(template, user):
 
     if isinstance(template, unicode):
+        # Work around: ValueError: Unicode strings with encoding declaration
+        # are not supported.
         template = template.encode('utf-8')
 
     xml = etree.fromstring(template)
@@ -77,12 +79,17 @@ def buildWorkspaceFromTemplate(template, user):
 
     fillWorkspaceUsingTemplate(workspace, template, xml)
 
-    return workspace
+    return (workspace, user_workspace)
 
 
 def fillWorkspaceUsingTemplate(workspace, template, xml=None):
 
     if xml is None:
+        if isinstance(template, unicode):
+            # Work around: ValueError: Unicode strings with encoding
+            # declaration are not supported.
+            template = template.encode('utf-8')
+
         xml = etree.fromstring(template)
 
     user = workspace.creator
@@ -120,7 +127,7 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     tab_id_mapping = {}
 
     for tabElement in tabs:
-        tab = createTab(tabElement.get('name'), user, workspace)
+        tab = createTab(tabElement.get('name'), user, workspace, allow_renaming=True)
         tab_id_mapping[tabElement.get('id')] = tab
 
         preferences = PREFERENCE_XPATH(tabElement)
@@ -254,3 +261,6 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             out_channel = channel_connectables[out_channel_element.get('id')]['connectable']
             relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
             relation.save()
+
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(workspace)

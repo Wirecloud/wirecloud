@@ -33,15 +33,18 @@
 from os import path
 from urllib2 import URLError, HTTPError
 
-from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from catalogue.catalogue_utils import get_last_gadget_version
-from catalogue.get_json_catalogue_data import get_available_apps_info
+from catalogue.catalogue_utils import get_latest_resource_version
+from catalogue.get_json_catalogue_data import get_resource_data
+from catalogue.models import GadgetWiring, Tag, UserTag, UserVote
 from catalogue.templateParser import TemplateParser
+from commons.authentication import Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
+from deployment.utils import undeploy_wgt_gadget
 from deployment.wgtPackageUtils import get_wgt_local_path
+from gadget.views import deleteGadget
 
 
 def add_resource_from_template_uri(template_uri, user, fromWGT=False):
@@ -87,17 +90,54 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False):
     return templateParser, templateParser.get_gadget()
 
 
-def get_catalogue_resource_info(resource, templateParser):
+def get_added_resource_info(resource, user):
+
     info = {
-        'contratable': templateParser.is_contratable(),
-        'gadgetName': resource.short_name,
-        'version': resource.version,
         'vendor': resource.vendor,
-        'gadgetId': resource.id,
-        'mashupId': resource.mashup_id,
-        'availableApps': simplejson.dumps(get_available_apps_info()),
-        'last_version': get_last_gadget_version(resource.short_name, resource.vendor),
-        'templateUrl': templateParser.uri
+        'name': resource.short_name,
+        'type': resource.resource_type(),
+        'versions': [get_resource_data(resource, user)],
     }
 
+    latest_version = get_latest_resource_version(resource.short_name, resource.vendor)
+    if latest_version != resource:
+        info['versions'].append(get_resource_data(latest_version, user))
+
     return info
+
+
+def delete_resource(resource, user):
+
+    # Delete the resource only if this user is the owner
+    if not user.is_superuser and resource.creator != user:
+        msg = _("user %(username)s is not the owner of the resource %(resource_id)s") % {'username': user.username, 'resource_id': resource.id}
+
+        raise Http403(msg)
+
+    # Delete the related wiring information for that resource
+    GadgetWiring.objects.filter(idResource=resource.id).delete()
+
+    # Delete the related tags for that resource
+    UserTag.objects.filter(idResource=resource.id).delete()
+
+    # Delete the related votes for that resource
+    UserVote.objects.filter(idResource=resource.id).delete()
+
+    result = {'removedIGadgets': []}
+    if resource.resource_type() == 'gadget':
+        # Remove the gadget from the showcase
+        result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
+
+        # Delete the gadget if it is saved in the platform
+        if resource.fromWGT:
+            undeploy_wgt_gadget(resource)
+
+    # Delete the object
+    resource.delete()
+
+    return result
+
+
+def tag_resource(user, tag, resource):
+    tag, _junk = Tag.objects.get_or_create(name=tag)
+    UserTag.objects.get_or_create(tag=tag, idUser=user, idResource=resource)

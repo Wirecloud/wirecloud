@@ -1,8 +1,7 @@
-from django.db import models
+from django.db import models, IntegrityError
 from django.db.models import get_model
 
-from workspace.packageLinker import PackageLinker
-
+from commons.utils import save_alternative
 
 #########################################
 # Auxiliar functions
@@ -18,11 +17,10 @@ def get_tuple(app_label, module_name, tuple_id):
     return model.objects.get(id=tuple_id)
 
 
-def get_related_tuples(app_label, module_name, field_name, tuple_id):
+def get_related_tuples(app_label, module_name, field_name, tuple_id, lookup={}):
     model = get_model(app_label, module_name)
-    kwargs = {}
-    kwargs[field_name] = tuple_id
-    return model.objects.filter(**kwargs)
+    lookup[field_name] = tuple_id
+    return model.objects.filter(**lookup)
 
 #################################################
 ## Logic classes
@@ -44,7 +42,7 @@ class FKCollection:
         table_name = cloned_tuple._meta.object_name
         pending_fks = self.get_fks(table_name, old_pk)
 
-        for (linker_app, linker_table, linker_field, linker_tuple_id) in pending_fks:
+        for linker_app, linker_table, linker_field, linker_tuple_id in pending_fks:
             model = get_model(linker_app, linker_table)
 
             linker_tuple = model.objects.get(id=linker_tuple_id)
@@ -68,31 +66,31 @@ class Many2ManyCollection:
     def __init__(self):
         self.many2many_list = []
 
-    def get_m2m_info(self, old_from_id, from_table, from_field, old_to_id, to_table):
+    def get_m2m_info(self, old_from_id, from_meta, from_field, old_to_id, to_meta):
         for m2m_info in self.many2many_list:
-            if (m2m_info['old_to_id'] == old_to_id and m2m_info['to_table'] == to_table and \
-                m2m_info['from_table'] == from_table and m2m_info['old_from_id'] == old_from_id and \
+            if (m2m_info['old_to_id'] == old_to_id and m2m_info['to_meta'] == to_meta and \
+                m2m_info['from_meta'] == from_meta and m2m_info['old_from_id'] == old_from_id and \
                 m2m_info['from_field'] == from_field):
                 return m2m_info
 
         return None
 
-    def add_m2m_info(self, old_from_id, new_from_id, from_table, from_field, old_to_id, new_to_id, to_table):
-        m2m_info = self.get_m2m_info(old_from_id, from_table, from_field, old_to_id, to_table)
+    def add_m2m_info(self, old_from_id, new_from_id, from_meta, from_field, old_to_id, new_to_id, to_meta):
+        m2m_info = self.get_m2m_info(old_from_id, from_meta, from_field, old_to_id, to_meta)
 
-        if (not m2m_info):
+        if not m2m_info:
             #Time to create the m2m_info object
 
-            m2m_info = dict()
-
-            m2m_info['old_from_id'] = old_from_id
-            m2m_info['new_from_id'] = new_from_id
-            m2m_info['from_table'] = from_table
-            m2m_info['from_field'] = from_field
-            m2m_info['old_to_id'] = old_to_id
-            m2m_info['new_to_id'] = new_to_id
-            m2m_info['to_table'] = to_table
-            m2m_info['completed'] = False
+            m2m_info = {
+                'old_from_id': old_from_id,
+                'new_from_id': new_from_id,
+                'from_meta': from_meta,
+                'from_field': from_field,
+                'old_to_id': old_to_id,
+                'new_to_id': new_to_id,
+                'to_meta': to_meta,
+                'completed': False,
+            }
 
             self.many2many_list.append(m2m_info)
 
@@ -124,19 +122,17 @@ class Many2ManyCollection:
 
     def update_m2m(self, m2m_info):
         if m2m_info['completed']:
-            from_model = eval(m2m_info['from_table'])
-            from_tuple = from_model.objects.get(id=m2m_info['new_from_id'])
-
-            to_model = eval(m2m_info['to_table'])
-            to_tuple = to_model.objects.get(id=m2m_info['new_to_id'])
+            from_meta = m2m_info['from_meta']
+            from_tuple = get_tuple(from_meta.app_label, from_meta.module_name, m2m_info['new_from_id'])
+            to_meta = m2m_info['to_meta']
+            to_tuple = get_tuple(to_meta.app_label, to_meta.module_name, m2m_info['new_to_id'])
 
             getattr(from_tuple, m2m_info['from_field']).add(to_tuple)
 
             from_tuple.save()
 
-            #Erasing m2m_info after linking
+            # Erasing m2m_info after linking
             self.many2many_list.remove(m2m_info)
-            del m2m_info
 
 
 class MappingCollection:
@@ -174,28 +170,56 @@ class MappingCollection:
 
 class PackageCloner:
 
+    extra_models = {
+        'WorkSpace': (
+            ('workspace', 'tab', 'workspace'),
+            ('connectable', 'inout', 'workspace'),
+            ('preferences', 'workspacepreference', 'workspace'),
+        ),
+        'Tab': (
+            ('igadget', 'igadget', 'tab'),
+            ('preferences', 'tabpreference', 'tab'),
+        ),
+        'IGadget': (
+            ('igadget', 'variable', 'igadget'),
+        ),
+        'Variable': (
+            ('connectable', 'in', 'variable'),
+            ('connectable', 'out', 'variable'),
+        ),
+    }
+
+    unique_variant = {
+        'Tab': 'name',
+    }
+
+    fields_to_overwrite = {
+    }
+
     def __init__(self):
         self.mapping = MappingCollection()
         self.fks = FKCollection()
         self.m2ms = Many2ManyCollection()
-        self.final_tables = ['User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel', 'SharedVariableDef', 'SharedVariableValue']
+        self.final_tables = ('User', 'VariableDef', 'Gadget', 'PublishedWorkSpace', 'Filter', 'UserWorkSpace', 'RemoteChannel')
 
     def is_final_table(self, table_name):
-        return (table_name in self.final_tables)
+        return table_name in self.final_tables
 
     def clone_tuple(self, tuple):
         meta = tuple._meta
         table_name = meta.object_name
 
-        #Controlling when a final table is reached!
-        if (self.is_final_table(table_name)):
+        # Controlling when a final table is reached!
+        if self.is_final_table(table_name):
             return tuple
 
-        #Controlling when a tuple has been previously cloned!
+        # Controlling when a tuple has been previously cloned!
         new_id = self.mapping.get_mapping(table_name, tuple.id)
 
-        if (new_id):
+        if new_id:
+
             return get_tuple(meta.app_label, meta.module_name, new_id)
+
         else:
 
             model = get_model(meta.app_label, table_name)
@@ -203,34 +227,38 @@ class PackageCloner:
             cloned_tuple = model()
 
             fields = meta.fields
+            fields_to_overwrite = self.fields_to_overwrite.get(table_name, {})
 
-            #Cloning all object data!
+            # Cloning all object data!
             for field in fields:
-                if (field != meta.auto_field):
-                    setattr(cloned_tuple, field.name, getattr(tuple, field.name))
-
-            #Getting an id!
-            cloned_tuple.save()
-
-            #Registering mapping between tuple and cloning tuple!
-            self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
-
-            #Marking all cloned object fks to be updated when the referenced tuple is cloned!
-            for field in fields:
-                if (isinstance(field, models.ForeignKey)):
-                    referenced_table = field.rel.to._meta.object_name
-
-                    #get the id of the foreignKey. It may be optional (Null)
+                if isinstance(field, models.ForeignKey):
+                    # get the id of the foreignKey. It may be optional (None)
                     fkValue = getattr(tuple, field.name)
                     if fkValue:
-                        referenced_tuple = fkValue.id
+                        fkValue = self.clone_tuple(fkValue)
 
-                        linker_app = meta.app_label
-                        linker_table = table_name
-                        linker_field = field.name
-                        linker_tuple_id = cloned_tuple.id
+                    setattr(cloned_tuple, field.name, fkValue)
 
-                        self.fks.add_fk(linker_app, linker_table, linker_field, linker_tuple_id, referenced_table, referenced_tuple)
+                elif field != meta.auto_field:
+
+                    if field.name in fields_to_overwrite:
+                        value = fields_to_overwrite[field.name]
+                    else:
+                        value = getattr(tuple, field.name)
+
+                    setattr(cloned_tuple, field.name, value)
+
+            # Getting an id!
+            try:
+                cloned_tuple.save()
+            except IntegrityError:
+                variant_field = self.unique_variant.get(table_name, None)
+                if variant_field == None:
+                    raise
+
+                save_alternative(model, variant_field, cloned_tuple)
+
+            self.mapping.add_mapping(table_name, tuple.id, cloned_tuple.id)
 
             ##########################################################################################################
             #Marking many_to_many relationships to be updated when involved tuples are both cloned!
@@ -243,11 +271,16 @@ class PackageCloner:
                 field_name = m2m_field.attname
                 m2m_objects = getattr(tuple, field_name).all()
                 for m2m_object in m2m_objects:
-                    referenced_model = m2m_object._meta.object_name
+                    referenced_meta = m2m_object._meta
                     referenced_tuple_id = m2m_object.id
 
-                    self.m2ms.add_m2m_info(old_from_id=tuple.id, new_from_id=cloned_tuple.id, from_table=table_name, from_field=field_name,
-                                           old_to_id=referenced_tuple_id, new_to_id=None, to_table=referenced_model)
+                    self.m2ms.add_m2m_info(old_from_id=tuple.id,
+                        new_from_id=cloned_tuple.id,
+                        from_meta=meta,
+                        from_field=field_name,
+                        old_to_id=referenced_tuple_id,
+                        new_to_id=None,
+                        to_meta=referenced_meta)
 
             #2. cloned TO-SIDE table first
             m2m_related_fields = meta._related_many_to_many_cache
@@ -256,47 +289,35 @@ class PackageCloner:
                 reverse_rel_name = '%s_set' % m2m_field.var_name
 
                 from_field = m2m_field.field.name
-                from_table_name = m2m_field.model._meta.object_name
 
                 m2m_objects = getattr(tuple, reverse_rel_name).all()
 
                 for m2m_object in m2m_objects:
+                    referenced_meta = m2m_object._meta
                     old_from_id = m2m_object.id
 
-                    self.m2ms.add_m2m_info(old_from_id=old_from_id, new_from_id=None, from_table=from_table_name, from_field=from_field,
-                                           old_to_id=tuple.id, new_to_id=cloned_tuple.id, to_table=table_name)
+                    self.m2ms.add_m2m_info(old_from_id=old_from_id,
+                        new_from_id=None,
+                        from_meta=referenced_meta,
+                        from_field=from_field,
+                        old_to_id=tuple.id,
+                        new_to_id=cloned_tuple.id,
+                        to_meta=meta)
+
             ###########################################################################################################
 
-            #When a cloned tuple is saved, it's necessary to update pending foreign keys!
-            self.fks.update_fks(cloned_tuple, tuple.id)
+            # Continue iterating over data-model structure
+            extra_models = self.extra_models.get(table_name, [])
+            for model in extra_models:
+                lookup = {}
+                if len(model) > 3:
+                    lookup = model[3]
 
-            #Foreign keys fields must be cloned!
-            for field in fields:
-                if (isinstance(field, models.ForeignKey)):
-                    related_tuple = get_fk_tuple(tuple, field.name)
-
-                    #check if the foreign key is empty
-                    if related_tuple:
-                        cloned_related_tuple = self.clone_tuple(related_tuple)
-                        setattr(cloned_tuple, field.name, cloned_related_tuple)
-
-                    continue
-
-            #Saving already cloned fks!
-            cloned_tuple.save()
-
-            #Continue iterating over data-model structure
-            related_objects = meta._related_objects_cache.keys()
-
-            for related_table in related_objects:
-                related_model = related_table.model
-
-                related_meta = related_model._meta
-
-                related_tuples = get_related_tuples(related_meta.app_label,
-                                                    related_meta.module_name,
-                                                    related_table.field.name,
-                                                    tuple.id)
+                related_tuples = get_related_tuples(model[0],  # app_label
+                                                    model[1],  # module_name
+                                                    model[2],  # field.name
+                                                    tuple.id,
+                                                    lookup)
                 for related_tuple in related_tuples:
                     self.clone_tuple(related_tuple)
 
@@ -306,25 +327,28 @@ class PackageCloner:
         meta = from_ws._meta
         table_name = meta.object_name
 
-        #Registering mapping between tuple and cloning tuple!
+        # Registering mapping between tuple and cloning tuple!
         self.mapping.add_mapping(table_name, from_ws.id, to_ws.id)
 
-        #Continue iterating over data-model structure
-        related_objects = meta._related_objects_cache.keys()
+        self.final_tables = list(self.final_tables)
+        self.extra_models['Variable'] += (
+            ('workspace', 'variablevalue', 'variable', {'user': from_ws.creator}),
+        )
+        self.fields_to_overwrite['VariableValue'] = {
+            'user': user,
+        }
 
-        for related_table in related_objects:
-            related_model = related_table.model
-
-            related_meta = related_model._meta
-            related_table_name = related_meta.object_name
-
-            related_tuples = get_related_tuples(related_table_name, related_table.field.name, from_ws.id)
+        # Continue iterating over data-model structure
+        extra_models = self.extra_models.get(table_name, [])
+        for model in extra_models:
+            related_tuples = get_related_tuples(model[0],  # app_label
+                                                model[1],  # module_name
+                                                model[2],  # field.name
+                                                from_ws.id)
             for related_tuple in related_tuples:
                 self.clone_tuple(related_tuple)
 
-        # Linking merged workspace
-        packageLinker = PackageLinker()
-
-        packageLinker.link_workspace(to_ws, user, from_ws.creator)
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(to_ws)
 
         return to_ws

@@ -38,6 +38,7 @@
 
 # @author jmostazo-upm
 
+from django.core.cache import cache
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -45,11 +46,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import simplejson
 
 from commons.authentication import get_user_authentication
+from commons.cache import no_cache
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
-from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference
+from preferences.models import PlatformPreference, WorkSpacePreference, TabPreference, update_session_lang
 from workspace.models import WorkSpace, Tab
 
 
@@ -116,8 +118,23 @@ def update_tab_preferences(tab, preferences_json):
         preference.save()
 
 
-def get_workspace_preference_values(workspace_id):
-    return parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+def make_workspace_preferences_cache_key(workspace_id):
+    return '_workspace_preferences_cache/' + str(workspace_id)
+
+
+def get_workspace_preference_values(workspace):
+    if isinstance(workspace, WorkSpace):
+        workspace_id = workspace.id
+    else:
+        workspace_id = int(workspace)
+
+    cache_key = make_workspace_preferences_cache_key(workspace_id)
+    values = cache.get(cache_key)
+    if values == None:
+        values = parseInheritableValues(WorkSpacePreference.objects.filter(workspace=workspace_id))
+        cache.set(cache_key, values)
+
+    return values
 
 
 def update_workspace_preferences(workspace, preferences_json):
@@ -142,9 +159,13 @@ def update_workspace_preferences(workspace, preferences_json):
 
         preference.save()
 
+    cache_key = make_workspace_preferences_cache_key(workspace.id)
+    cache.delete(cache_key)
+
 
 class PlatformPreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name):
         user = get_user_authentication(request)
 
@@ -163,6 +184,10 @@ class PlatformPreferencesCollection(Resource):
         try:
             preferences_json = simplejson.loads(received_json)
             update_preferences(user, preferences_json)
+
+            if 'language' in preferences_json:
+                update_session_lang(request, user)
+
             return HttpResponse('ok')
         except Exception, e:
             transaction.rollback()
@@ -173,6 +198,7 @@ class PlatformPreferencesCollection(Resource):
 
 class WorkSpacePreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name, workspace_id):
         user = get_user_authentication(request)
 
@@ -208,6 +234,7 @@ class WorkSpacePreferencesCollection(Resource):
 
 class TabPreferencesCollection(Resource):
 
+    @no_cache
     def read(self, request, user_name, workspace_id, tab_id):
         user = get_user_authentication(request)
 

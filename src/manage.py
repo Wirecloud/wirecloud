@@ -76,9 +76,11 @@ class EzwebManagementUtility(ManagementUtility):
             parser.print_lax_help()
             sys.stderr.write(self.main_help_text() + '\n')
         else:
-            mysql_workaround = subcommand == "syncdb" and settings.DATABASE_ENGINE == "mysql"
+            from django.db import connections, DEFAULT_DB_ALIAS
+            db = options.__dict__.get('database', DEFAULT_DB_ALIAS)
+            mysql_workaround = subcommand == "syncdb" and settings.DATABASES[db]['ENGINE'] == "mysql"
             if mysql_workaround:
-                from django.db import connection
+                connection = connections[db]
                 cursor = connection.cursor()
                 cursor.execute("SET FOREIGN_KEY_CHECKS = 0")
 

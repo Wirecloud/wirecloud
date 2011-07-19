@@ -44,51 +44,11 @@ from django.utils.encoding import iri_to_uri
 from django.utils.http import urlencode, urlquote
 from django.utils.translation import ugettext as _
 
-from commons.get_data import get_variable_value_from_varname
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from proxy.utils import encode_query, is_valid_header
-
-
-VAR_REF_RE = re.compile(r'(?P<igadget_id>[1-9]\d*)/(?P<var_name>[^/]+)')
-
-
-def get_variable_value_by_ref(ref, user):
-
-    result = VAR_REF_RE.match(ref)
-    if result:
-        return get_variable_value_from_varname(user, result.group('igadget_id'), result.group('var_name'))
-
-
-def process_secure_data(text, request):
-
-    definitions = text.split('&')
-    for definition in definitions:
-        params = definition.split(',')
-        if len(params) == 0:
-            continue
-
-        options = {}
-        for pair in params:
-            tokens = pair.split('=')
-            option_name = urllib2.unquote(tokens[0].strip())
-            options[option_name] = urllib2.unquote(tokens[1].strip())
-
-        action = options.get('action', 'data')
-        if action == 'data':
-            substr = options.get('substr')
-            value = get_variable_value_by_ref(options.get('var_ref'), request['user'])
-            encoding = options.get('encoding', 'none')
-            if encoding == 'url':
-                value = urlquote(value)
-            elif encoding == 'base64':
-                value = value.encode('base64')[:-1]
-            request['data'] = request['data'].replace(substr, value)
-        elif action == 'basic_auth':
-            user_value = get_variable_value_by_ref(options.get('user_ref'), request['user'])
-            password_value = get_variable_value_by_ref(options.get('pass_ref'), request['user'])
-            request['headers']['Authorization'] = 'Basic ' + (user_value + ':' + password_value).encode('base64')[:-1]
+from proxy.processors import get_request_proxy_processors, get_response_proxy_processors
+from proxy.utils import encode_query, is_valid_header, ValidationError
 
 
 class MethodRequest(urllib2.Request):
@@ -161,15 +121,19 @@ class Proxy(Resource):
 
     def do_request(self, request, url, method, data):
 
-        request_data = {
-            "data": data,
-            "headers": {},
-            "user": request.user,
-        }
-
         # HTTP call
         try:
             url = iri_to_uri(url)
+
+            request_data = {
+                "method": method,
+                "url": url,
+                "data": data,
+                "headers": {},
+                "cookies": Cookie.SimpleCookie(),
+                "user": request.user,
+                "original-request": request,
+            }
 
             # Request creation
             proto, host, cgi, param, query = urlparse.urlparse(url)[:5]
@@ -187,7 +151,7 @@ class Proxy(Resource):
 
             opener = urllib2.build_opener(proxy)
 
-            # Adds original request Headers to the request
+            # Extract headers from META
             for header in request.META.items():
                 header_name = header[0].lower()
                 if header_name == 'content_type' and header[1]:
@@ -197,11 +161,6 @@ class Proxy(Resource):
 
                     cookie_parser = Cookie.SimpleCookie(header[1])
 
-                    # Process secure data cookie
-                    if 'X-EzWeb-Secure-Data' in cookie_parser:
-                        process_secure_data(cookie_parser['X-EzWeb-Secure-Data'].value, request_data)
-                        del cookie_parser['X-EzWeb-Secure-Data']
-
                     # Remove EzWeb cookies
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
                         del cookie_parser[settings.SESSION_COOKIE_NAME]
@@ -209,18 +168,14 @@ class Proxy(Resource):
                     if hasattr(settings, 'CSRF_COOKIE_NAME') and settings.CSRF_COOKIE_NAME in cookie_parser:
                         del cookie_parser[settings.CSRF_COOKIE_NAME]
 
-                    content = ', '.join([cookie_parser[key].OutputString() for key in cookie_parser])
-                    if content != '':
-                        request_data['headers']['Cookie'] = content
-
-                elif header_name == 'http_x_ezweb_secure_data':
-                    process_secure_data(header[1], request_data)
+                    request_data['cookies'] = cookie_parser
 
                 elif self.http_headerRE.match(header_name) and not header_name in self.blacklisted_http_headers:
 
                     fixed_name = header_name.replace("http_", "", 1).replace('_', '-')
                     request_data['headers'][fixed_name] = header[1]
 
+            # Build the Via header
             protocolVersion = self.protocolRE.match(request.META['SERVER_PROTOCOL'])
             if protocolVersion != None:
                 protocolVersion = protocolVersion.group(1)
@@ -236,17 +191,21 @@ class Proxy(Resource):
             via_header = "%s %s (EzWeb-python-Proxy/1.1)" % (protocolVersion, hostName)
             request_data['headers']["Via"] = via_header
 
-            if (method == 'POST' or method == 'PUT') and not 'content-type' in request_data['headers']:
-                # Add Content-Type (Servlets bug)
-                request_data['headers']['content-type'] = "application/x-www-form-urlencoded"
+            # Pass proxy processors to the new request
+            try:
+                for processor in get_request_proxy_processors():
+                    processor.process_request(request_data)
+            except ValidationError, e:
+                return e.get_response()
 
-            # Remote user header
-            if not request.user.is_anonymous():
-                request_data['headers']['Remote-User'] = request.user.username
+            # Cookies
+            cookie_header_content = ', '.join([cookie_parser[key].OutputString() for key in request_data['cookies']])
+            if cookie_header_content != '':
+                request_data['headers']['Cookie'] = cookie_header_content
 
             # Open the request
             try:
-                res = self._do_request(opener, method, url, request_data['data'], request_data['headers'])
+                res = self._do_request(opener, request_data['method'], request_data['url'], request_data['data'], request_data['headers'])
             except urllib2.URLError, e:
                 if e.reason[0] == errno.ECONNREFUSED:
                     return HttpResponse(status=504)
@@ -255,7 +214,7 @@ class Proxy(Resource):
 
             # Add content-type header to the response
             res_info = res.info()
-            if ('Content-Type' in res_info):
+            if 'Content-Type' in res_info:
                 response = HttpResponse(res.read(), mimetype=res_info['Content-Type'])
             else:
                 response = HttpResponse(res.read())
@@ -277,12 +236,17 @@ class Proxy(Resource):
 
                     for key in cookie_parser:
                         response.set_cookie(key, cookie_parser[key].value, expires=cookie_parser[key]['expires'], path=cookie_parser[key]['path'], domain=cookie_parser[key]['domain'])
+
                 elif header_lower == 'via':
 
                     via_header = via_header + ', ' + headers[header]
 
                 elif is_valid_header(header_lower):
                     response[header] = headers[header]
+
+            # Pass proxy processors to the response
+            for processor in get_response_proxy_processors():
+                response = processor.process_response(request_data, response)
 
             response['Via'] = via_header
 

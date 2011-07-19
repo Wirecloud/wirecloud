@@ -46,12 +46,13 @@ from django.utils.translation import ugettext as _
 from django.views.static import serve
 
 from commons.authentication import user_authentication, Http403
+from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
 from commons.logs import log, log_detailed_exception, log_request
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error
-from catalogue.utils import add_resource_from_template, get_catalogue_resource_info
+from catalogue.utils import add_resource_from_template, get_added_resource_info
 from settings import BASEDIR as BASEDIR_PLATFORM
 from wgtPackageUtils import WgtPackageUtils
 
@@ -64,12 +65,10 @@ class Static(Resource):
 
 class Error(Resource):
 
+    @no_cache
     def read(self, request):
         msg = request.GET.get('msg', 'Gadget could not be created')
-        response = HttpResponse(msg, mimetype='text/plain')
-        response['Pragma'] = 'no-cache'
-
-        return response
+        return HttpResponse(msg, mimetype='text/plain')
 
 
 class DeploymentException(Exception):
@@ -167,8 +166,7 @@ class Resources(Resource):
             except IntegrityError, e:
                 raise DeploymentException(_('Gadget already exists!'))
 
-            data = get_catalogue_resource_info(resource, templateParser)
-            data["result"] = "ok"
+            data = get_added_resource_info(resource, user)
             response = HttpResponse(simplejson.dumps(data), mimetype='application/json; charset=UTF-8')
 
             if not user_action:

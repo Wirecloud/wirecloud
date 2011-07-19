@@ -36,11 +36,13 @@ except ImportError:
     HAS_AES = False
 
 from django.conf import settings
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import Group
 from django.utils import simplejson
 
-from workspace.models import Tab, PublishedWorkSpace, SharedVariableValue, VariableValue, WorkSpace
+from commons.utils import save_alternative
+from workspace.managers import get_workspace_managers
+from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -56,19 +58,25 @@ def deleteTab(tab, user):
     tab.delete()
 
 
-def createTab(tab_name, user, workspace):
+def createTab(tab_name, user, workspace, allow_renaming=False):
 
     visible = False
     tabs = Tab.objects.filter(workspace=workspace, visible=True)
     if tabs.count() == 0:
         visible = True
 
-    #it's always the last tab
+    # It's always the last tab
     position = Tab.objects.filter(workspace=workspace).count()
 
     # Creating tab
     tab = Tab(name=tab_name, visible=visible, position=position, workspace=workspace)
-    tab.save()
+    try:
+        tab.save()
+    except IntegrityError:
+        if allow_renaming:
+            save_alternative(Tab, 'name', tab)
+        else:
+            raise
 
     return tab
 
@@ -88,100 +96,101 @@ def get_mashup_gadgets(mashup_id):
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, resource, contratable, user):
-    published_workspace = PublishedWorkSpace(name=resource.short_name,
+def create_published_workspace_from_template(template, resource, user):
+    return PublishedWorkSpace.objects.create(name=resource.short_name,
         vendor=resource.vendor, version=resource.version,
         author=resource.author, mail=resource.mail,
         description=resource.description, imageURI=resource.image_uri,
-        wikiURI=resource.wiki_page_uri, contratable=contratable, params='',
+        wikiURI=resource.wiki_page_uri, params='',
         creator=user, template=template)
 
-    published_workspace.save()
 
-    return published_workspace
+def encrypt_value(value):
+    if not HAS_AES:
+        return value
+
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    json_value = simplejson.dumps(value, ensure_ascii=False)
+    padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
+    return cipher.encrypt(padded_value).encode('base64')
 
 
-def set_variable_value(var_id, user, value, shared=None):
+def decrypt_value(value):
+    if not HAS_AES:
+        return value
+
+    cipher = AES.new(settings.SECRET_KEY[:32])
+    try:
+        value = cipher.decrypt(value.decode('base64'))
+        return simplejson.loads(value)
+    except:
+        return ''
+
+
+def set_variable_value(var_id, user, value):
 
     variables_to_notify = []
-    variable_value = VariableValue.objects.filter(user=user, variable__id=var_id).select_related('variable__vardef')[0]
+    variable_value = VariableValue.objects.select_related('variable__vardef').get(user=user, variable__id=var_id)
 
     new_value = unicode(value)
-    if variable_value.variable.vardef.secure and HAS_AES:
-        cipher = AES.new(settings.SECRET_KEY[:32])
-        json_value = simplejson.dumps(new_value, ensure_ascii=False)
-        padded_value = json_value + (cipher.block_size - len(json_value) % cipher.block_size) * ' '
-        new_value = cipher.encrypt(padded_value).encode('base64')
-
-    if shared != None:
-        if shared:
-            #do not share the value: remove the relationship
-            variable_value.shared_var_value = None
-        else:
-            shared_variable_def = variable_value.variable.vardef.shared_var_def
-            variable_value.shared_var_value = SharedVariableValue.objects.get(user=user,
-                                                                              shared_var_def=shared_variable_def)
-            #share the specified value
-            variable_value.shared_var_value.value = new_value
-            variable_value.shared_var_value.save()
-
-            #notify the rest of variables that are sharing the value
-            #VariableValues whose value is shared (they have a relationship with a SharedVariableValue)
-            variable_values = VariableValue.objects.filter(shared_var_value=variable_value.shared_var_value).exclude(id=variable_value.id)
-            #Variables that correspond with these values
-            for value in variable_values:
-                variable = value.variable
-                exists = False
-                for var in variables_to_notify:
-                    if var['id'] == variable.id:
-                        var['value'] = value.shared_var_value.value
-                        exists = True
-                        break
-                if not exists:
-                    variables_to_notify.append({'id': variable.id, 'value': value.shared_var_value.value})
+    if variable_value.variable.vardef.secure:
+        new_value = encrypt_value(new_value)
 
     variable_value.value = new_value
     variable_value.save()
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(user)
+    _invalidate_cached_variable_values(variable_value.variable.igadget.tab.workspace, user)
 
     return variables_to_notify
 
 
-def sync_group_workspaces(user):
-    from workspace.views import linkWorkspace
-    # user workspaces
-    workspaces = WorkSpace.objects.filter(users=user)
+def sync_base_workspaces(user):
 
-    # all group workspaces
-    # the compression list outside the inside compression list is for flatten
-    # the inside list
-    group_workspaces = [workspace for sublist in
-                        [WorkSpace.objects.filter(targetOrganizations=org)
-                         for org in Group.objects.all()]
-                        for workspace in sublist]
+    from workspace.mashupTemplateParser import buildWorkspaceFromTemplate
 
-    # workspaces assigned to the user's groups
-    # the compression list outside the inside compression list is for flatten
-    # the inside list
-    workspaces_by_group = [workspace for sublist in
-                           [WorkSpace.objects.filter(targetOrganizations=org)
-                            for org in user.groups.all()]
-                           for workspace in sublist]
-
-    reload_showcase = False
     packageLinker = PackageLinker()
+    reload_showcase = False
+    managers = get_workspace_managers()
 
-    for ws in group_workspaces:
-        if ws in workspaces:
-            if not ws in workspaces_by_group:
-                # the user already has this workspace, but he shouldn't
-                packageLinker.unlink_workspace(ws, user)
-        elif ws in workspaces_by_group:
-            # the user doesn't have this workspace yet, but he should
-            linkWorkspace(user, ws.id, ws.creator)
-            reload_showcase = True  # because this workspace is new for the user
-        # else: the user doesn't have this workspace yet, and he shouldn't
+    workspaces_by_manager = {}
+    workspaces_by_ref = {}
+    for manager in managers:
+        workspaces_by_manager[manager.get_id()] = []
+        workspaces_by_ref[manager.get_id()] = {}
+
+    workspaces = UserWorkSpace.objects.filter(user=user)
+    for workspace in workspaces:
+        if workspace.manager != '':
+            workspaces_by_manager[workspace.manager].append(workspace.reason_ref)
+            workspaces_by_ref[workspace.manager][workspace.reason_ref] = workspace
+
+    for manager in managers:
+        current_workspaces = workspaces_by_manager[manager.get_id()]
+        result = manager.update_base_workspaces(user, current_workspaces)
+
+        for workspace_to_remove in result[0]:
+            user_workspace = workspaces_by_ref[manager.get_id()][workspace_to_remove]
+            workspace = user_workspace.workspace
+            user_workspace.delete()
+
+            if workspace.userworkspace_set.count() == 0:
+                workspace.delete()
+
+        for workspace_to_add in result[1]:
+            from_workspace = workspace_to_add[1]
+
+            if isinstance(from_workspace, WorkSpace):
+                user_workspace = packageLinker.link_workspace(from_workspace, user, from_workspace.creator)
+            elif isinstance(from_workspace, PublishedWorkSpace):
+                _junk, user_workspace = buildWorkspaceFromTemplate(from_workspace.template, user)
+            else:
+                # TODO warning
+                continue
+
+            user_workspace.manager = manager.get_id()
+            user_workspace.reason_ref = workspace_to_add[0]
+            user_workspace.save()
+            reload_showcase = True
 
     return reload_showcase

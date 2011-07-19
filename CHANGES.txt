@@ -1,6 +1,43 @@
 CHANGES
 =======
 
+0.2.0 (2011-07-19)
+------------------
+- Features:
+  - HTTP cache support
+  - Better integration with Django 1.3
+  - Proxy proccessors that allow modifications on the request that
+    is routed through the proxy.
+- Optimizations:
+  - Use sprites for the icons and other images of the user interface
+  - Better handling of the base tag of the gadgets by reading the hostname
+    from the active Site object.
+- Usability improvements:
+  - Tab renaming now uses a dialog instead of being inline because that's
+    easier to test with Selenium.
+    - Localization of default labels for tabs, workspaces, etc.
+- Cleanups:
+  - Remove the UserRelatedToGadgetResource model from the catalogue app
+    because it didn't provide a clear value but increased the complexity.
+  - Remove the SharedVarDef (gadget app) and SharedVarValue (workspace app)
+    models because the increased the number of joins needed in the queries
+    and they weren't really needed.
+  - Remove the marketplace support from the catalogue since it was a
+    experimental feature that we didn't really need/use.
+  - Lots of cleanups on the catalogue javascript.
+  - Remove old support for compressing javascript and css files.
+- Bug fixes:
+  - Several bug fixes in the javascript delivered to Internet Explorer
+  - Fixes and updates for the iPhone support
+  - Support for Safari on Mac OS X
+  - Fix workspace merging
+  - Fix the preferences saving in configurable mashups
+  - Fix cached variables errors
+  - Fix error when adding a gadget that was removed from the workspace
+  - Fix error when unplugging an event/slots channel
+  - Avoid creating workspace with empty names
+  - Lots of misc bug fixes
+
 0.1.0 (2011-05-06)
 ------------------
 - Initial version after the fork from EzWeb to wirecloud

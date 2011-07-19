@@ -1,0 +1,47 @@
+from workspace.models import GroupPublishedWorkspace, PublishedWorkSpace, WorkSpace
+
+
+def ref_from_workspace(workspace):
+
+    if isinstance(workspace, WorkSpace):
+        return 'group/' + str(workspace.id)
+    elif isinstance(workspace, PublishedWorkSpace):
+        return 'group_published/' + str(workspace.id)
+
+
+class OrganizationWorkspaceManager:
+
+    def get_id(self):
+        return 'ezweb_organizations'
+
+    def update_base_workspaces(self, user, current_workspace_refs):
+
+        workspaces_to_remove = current_workspace_refs[:]
+        workspaces_to_add = []
+
+        user_groups = user.groups.all()
+
+        # workspaces assigned to the user's groups
+        # the compression list outside the inside compression list is for flattening
+        # the inside list
+        workspaces = [workspace for sublist in
+                      [WorkSpace.objects.filter(targetOrganizations=org)
+                       for org in user_groups]
+                      for workspace in sublist]
+
+        # published workspaces assigned to the user's groups
+        # the compression list outside the inside compression list is for flattening
+        # the inside list
+        workspaces += [relation.workspace for sublist in
+                       [GroupPublishedWorkspace.objects.filter(group=group)
+                        for group in user_groups]
+                      for relation in sublist]
+
+        for workspace in workspaces:
+            ref = ref_from_workspace(workspace)
+            if ref not in current_workspace_refs:
+                workspaces_to_add.append((ref, workspace))
+            else:
+                workspaces_to_remove.remove(ref)
+
+        return (workspaces_to_remove, workspaces_to_add)

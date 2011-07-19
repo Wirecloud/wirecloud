@@ -37,7 +37,8 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404
 
 from commons.authentication import get_user_authentication, Http403
-from commons.get_data import get_igadget_data, get_variable_data
+from commons.cache import no_cache
+from commons.get_data import VariableValueCacheManager, get_igadget_data, get_variable_data
 from commons.http_utils import PUT_parameter
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -51,14 +52,16 @@ from workspace.models import Tab, WorkSpace, UserWorkSpace
 
 class IGadgetCollection(Resource):
 
+    @no_cache
     def read(self, request, workspace_id, tab_id):
         user = get_user_authentication(request)
 
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
         data_list = {}
+        cache_manager = VariableValueCacheManager(workspace, user)
         igadgets = IGadget.objects.filter(tab__workspace__users__id=user.id, tab__workspace__pk=workspace_id, tab__pk=tab_id)
-        data_list['iGadgets'] = [get_igadget_data(igadget, user, workspace) for igadget in igadgets]
+        data_list['iGadgets'] = [get_igadget_data(igadget, user, workspace, cache_manager) for igadget in igadgets]
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
@@ -134,6 +137,7 @@ class IGadgetCollection(Resource):
 
 class IGadgetEntry(Resource):
 
+    @no_cache
     def read(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -235,6 +239,7 @@ class IGadgetVersion(Resource):
 
 class IGadgetVariableCollection(Resource):
 
+    @no_cache
     def read(self, request, workspace_id, tab_id, igadget_id):
         user = get_user_authentication(request)
 
@@ -283,6 +288,7 @@ class IGadgetVariableCollection(Resource):
 
 class IGadgetVariable(Resource):
 
+    @no_cache
     def read(self, request, workspace_id, tab_id, igadget_id, var_id):
         user = get_user_authentication(request)
 

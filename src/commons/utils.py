@@ -46,7 +46,7 @@ from django.core.serializers.json import DateTimeAwareJSONEncoder
 from django.contrib.auth.models import User
 from django.utils import simplejson, translation
 
-from catalogue.models import GadgetResource
+from catalogue.models import CatalogueResource
 from commons.http_utils import download_http_content
 from gadget.models import XHTML
 
@@ -161,7 +161,7 @@ def load_gadgets():
         template_uri = gadget_file
         template_uri = "file://%s" % gadget_file
 
-        gadget_resources = GadgetResource.objects.filter(template_uri=template_uri)
+        gadget_resources = CatalogueResource.objects.filter(template_uri=template_uri)
         for gadget_resource in gadget_resources:
             gadget_resource.delete()
 
@@ -234,3 +234,24 @@ def db_table_exists(table, cursor=None):
         raise Exception("unable to determine if the table '%s' exists" % table)
     else:
         return table in table_names
+
+
+def save_alternative(model, variant_field, instance):
+    unique_key = {}
+
+    for unique_field in model._meta.unique_together[0]:
+        unique_key[unique_field] = getattr(instance, unique_field)
+
+    suffix = 2
+    duplicated_key = True
+    while duplicated_key:
+        unique_key[variant_field] = getattr(instance, variant_field) + ' ' + str(suffix)
+        try:
+            model.objects.get(**unique_key)
+        except model.DoesNotExist:
+            duplicated_key = False
+
+        suffix += 1
+
+    setattr(instance, variant_field, unique_key[variant_field])
+    instance.save()

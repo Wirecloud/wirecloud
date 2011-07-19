@@ -30,19 +30,12 @@
 
 #
 
-try:
-    from Crypto.Cipher import AES
-    HAS_AES = True
-except ImportError:
-    HAS_AES = False
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
-from django.utils import simplejson
 from django.utils.translation import ugettext as  _
 
 from connectable.models import InOut
-from gadget.models import SharedVariableDef
 
 
 class WorkSpace(models.Model):
@@ -82,6 +75,8 @@ class UserWorkSpace(models.Model):
     workspace = models.ForeignKey(WorkSpace)
     user = models.ForeignKey(User)
     active = models.BooleanField(_('Active'), default=False)
+    manager = models.CharField(_('Manager'), max_length=100, blank=True)
+    reason_ref = models.CharField(_('Reason Ref'), max_length=100, help_text=_('Reference to the reason why it was added. Used by Workspace Managers to sync workspaces'), blank=True)
 
     def __unicode__(self):
         return unicode(self.workspace) + " - " + unicode(self.user)
@@ -110,10 +105,24 @@ class PublishedWorkSpace(models.Model):
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
 
-    contratable = models.BooleanField(_('Contratable'), default=False)
+    def get_uri(self):
+        baseURL = ""
+        if hasattr(settings, 'TEMPLATE_GENERATOR_URL'):
+            baseURL = settings.TEMPLATE_GENERATOR_URL
+
+        return baseURL + "/workspace/templateGenerator/" + str(self.id)
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)
+
+
+class GroupPublishedWorkspace(models.Model):
+
+    group = models.ForeignKey(Group)
+    workspace = models.ForeignKey(PublishedWorkSpace)
+
+    def __unicode__(self):
+        return '%s => %s' % (unicode(self.workspace), unicode(self.group))
 
 
 #Category for which a workspace is the defalult workspace
@@ -127,43 +136,21 @@ class Category(models.Model):
         return unicode(self.category_id)
 
 
-#sharing variables. Each user can have a value for a specified concept (SharedVariableDef)
-class SharedVariableValue(models.Model):
-
-    shared_var_def = models.ForeignKey(SharedVariableDef)
-    user = models.ForeignKey(User)
-    value = models.TextField(_('Value'), null=True, blank=True)
-
-    class Meta:
-        unique_together = ('shared_var_def', 'user')
-
-    def __unicode__(self):
-        return unicode(self.shared_var_def.name) + " - " + unicode(self.user)
-
-
 class VariableValue(models.Model):
 
     variable = models.ForeignKey('igadget.Variable', verbose_name=_('Variable'))
     user = models.ForeignKey(User, verbose_name=_('User'))
     value = models.TextField(_('Value'), blank=True)
-    shared_var_value = models.ForeignKey(SharedVariableValue, blank=True, null=True)
 
     class Meta:
         unique_together = ('variable', 'user')
 
     def get_variable_value(self):
-        if self.shared_var_value != None:
-            value = self.shared_var_value.value
-        else:
-            value = self.value
+        value = self.value
 
-        if self.variable.vardef.secure and HAS_AES:
-            cipher = AES.new(settings.SECRET_KEY[:32])
-            try:
-                value = cipher.decrypt(value.decode('base64'))
-                value = simplejson.loads(value)
-            except:
-                value = ''
+        if self.variable.vardef.secure:
+            from workspace.utils import decrypt_value
+            value = decrypt_value(value)
 
         return value
 

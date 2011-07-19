@@ -35,7 +35,7 @@ from django.utils.translation import ugettext as _
 from commons.authentication import Http403
 from gadget.models import Gadget, VariableDef
 from igadget.models import Position, IGadget, Variable
-from workspace.models import Tab, VariableValue, SharedVariableValue
+from workspace.models import Tab, VariableValue
 from connectable.models import In, Out
 
 
@@ -54,7 +54,8 @@ def createConnectable(var):
     return connectable
 
 
-def addIGadgetVariable(igadget, user, varDef, initial_value=None):
+def addIGadgetVariable(igadget, varDef, initial_value=None):
+
     # Sets the default value of variable
     if initial_value:
         var_value = initial_value
@@ -67,21 +68,9 @@ def addIGadgetVariable(igadget, user, varDef, initial_value=None):
         # Create Variable
         variable = Variable.objects.create(igadget=igadget, vardef=varDef)
 
-        #check if there is a shared value or set a new one
-        shared_value = None
-        if varDef.shared_var_def:
-            shared_value, created = SharedVariableValue.objects.get_or_create(user=user, shared_var_def=varDef.shared_var_def)
-            if created:
-                #init the value to share
-                shared_value.value = var_value
-                shared_value.save()
-            else:
-                #this VariableValue will take the previously shared value
-                var_value = shared_value.value
-
-        # Creating a Variable Value for this variable
-        VariableValue.objects.create(user=user, variable=variable, value=var_value,
-                                      shared_var_value=shared_value)
+        # Creating Variable Values for this variable
+        for user in igadget.tab.workspace.users.all():
+            VariableValue.objects.create(user=user, variable=variable, value=var_value)
 
     elif varDef.aspect == 'SLOT' or varDef.aspect == 'EVEN':
         # Create Variable
@@ -110,7 +99,7 @@ def UpgradeIGadget(igadget, user, new_gadget):
             var.vardef = varDef
             var.save()
         else:
-            addIGadgetVariable(igadget, user, varDef)
+            addIGadgetVariable(igadget, varDef)
 
     # check if the last version gadget hasn't a super-set of the current version gadget variableDefs
     currentGadgetVarDefs = VariableDef.objects.filter(gadget=currentGadget)
@@ -159,10 +148,10 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
             initial_value = initial_variable_values[varDef.name]
         else:
             initial_value = None
-        addIGadgetVariable(new_igadget, user, varDef, initial_value)
+        addIGadgetVariable(new_igadget, varDef, initial_value)
 
     from commons.get_data import _invalidate_cached_variable_values
-    _invalidate_cached_variable_values(user)
+    _invalidate_cached_variable_values(new_igadget.tab.workspace)
 
     return new_igadget
 
@@ -290,6 +279,8 @@ def deleteIGadget(igadget, user):
     position.delete()
     icon_position = igadget.icon_position
     icon_position.delete()
-    igadget.delete()
+
     from commons.get_data import _invalidate_cached_variables
     _invalidate_cached_variables(igadget)
+
+    igadget.delete()

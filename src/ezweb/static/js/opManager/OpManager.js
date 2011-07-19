@@ -91,6 +91,7 @@ var OpManagerFactory = function () {
             if (active_ws_from_script && this.workSpaceInstances[active_ws_from_script]) {
                 activeWorkSpace = this.workSpaceInstances[active_ws_from_script];
             }
+            HistoryManager.init(activeWorkSpace.getId());
 
             // Total information of the active workspace must be downloaded!
             if (reloadShowcase) {
@@ -103,7 +104,7 @@ var OpManagerFactory = function () {
                 if (this.activeWorkSpace == null && workSpaces.length > 0)
                     this.activeWorkSpace = this.workSpaceInstances[workSpaces[0].id];
 
-                this.activeWorkSpace.downloadWorkSpaceInfo();
+                this.activeWorkSpace.downloadWorkSpaceInfo(HistoryManager.getCurrentState().tab);
             }
         }
 
@@ -227,10 +228,17 @@ var OpManagerFactory = function () {
 
             }
             var mergeError = function(transport, e) {
-                var logManager = LogManagerFactory.getInstance();
-                var msg = logManager.formatError(gettext("Error cloning workspace: %(errorMsg)s."), transport, e);
+                var logManager, layoutManager, msg;
+
+                logManager = LogManagerFactory.getInstance();
+                msg = logManager.formatError(gettext("Error merging workspace: %(errorMsg)s."), transport, e);
                 logManager.log(msg);
-                LayoutManagerFactory.getInstance().logStep('');
+
+                layoutManager = LayoutManagerFactory.getInstance();
+                layoutManager.logStep('');
+                layoutManager._notifyPlatformReady();
+
+                layoutManager.showMessageMenu(msg, Constants.Logging.ERROR_MSG);
             }
 
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
@@ -286,17 +294,25 @@ var OpManagerFactory = function () {
             PreferencesManagerFactory.getInstance().show();
         }
 
-        OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
-            var steps = this.activeWorkSpace != null ? 2 : 1;
+        OpManager.prototype.changeActiveWorkSpace = function (workspace, initial_tab) {
+            var state, steps = this.activeWorkSpace != null ? 2 : 1;
 
+            state = {
+                workspace: workspace.getId(),
+                view: "dragboard"
+            };
+            if (initial_tab) {
+                state.tab = initial_tab;
+            }
+            HistoryManager.pushState(state);
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Changing current workspace"), steps);
 
             if (this.activeWorkSpace != null) {
                 this.activeWorkSpace.unload();
             }
 
-            this.activeWorkSpace = workSpace;
-            this.activeWorkSpace.downloadWorkSpaceInfo();
+            this.activeWorkSpace = workspace;
+            this.activeWorkSpace.downloadWorkSpaceInfo(initial_tab);
         }
 
 
@@ -315,40 +331,6 @@ var OpManagerFactory = function () {
 
             var gadget = this.showcaseModule.getGadget(gadgetId);
             this.activeWorkSpace.getVisibleTab().getDragboard().addInstance(gadget, options);
-        }
-
-        OpManager.prototype.unsubscribeServices = function (gadgetId) {
-            var unsubscribeOk = function (transport) {
-            }
-
-            var unsubscribeError = function (transport) {
-            }
-
-            unsubscribe_url += "?igadget=";
-            unsubscribe_url += gadgetId;
-            unsubscribe_url += "&user=";
-            unsubscribe_url += ezweb_user_name;
-
-            var params = {'method': "GET", 'url':  unsubscribe_url};
-            this.persistenceEngine.send_post("/proxy", params, this, unsubscribeOk, unsubscribeError);
-        }
-
-        OpManager.prototype.cancelServices = function (gadgetId) {
-            var cancelOk = function (transport) {
-            }
-
-            var cancelError = function (transport) {
-            }
-
-            var cancel_url = URIs.HOME_GATEWAY_DISPATCHER_CANCEL_URL;
-
-            cancel_url += "?igadget=";
-            cancel_url += gadgetId;
-            cancel_url += "&user=";
-            cancel_url += ezweb_user_name;
-
-            var params = {'method': "GET", 'url':  cancel_url};
-            this.persistenceEngine.send_post("/proxy", params, this, cancelOk, cancelError);
         }
 
         OpManager.prototype.removeInstance = function (iGadgetId, orderFromServer) {
@@ -383,11 +365,6 @@ var OpManagerFactory = function () {
             Event.observe(window,
                           "beforeunload",
                           this.unloadEnvironment.bind(this),
-                          true);
-
-            Event.observe(window,
-                          "hashchange",
-                          function(){LayoutManagerFactory.getInstance().onHashChange()},
                           true);
 
             // EzWeb fly
@@ -460,16 +437,23 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
-            this.activeWorkSpace.show();
+            LayoutManagerFactory.getInstance().showDragboard(this.activeWorkSpace.getActiveDragboard());
 
             if (refreshMenu != false){ //refreshMenu == true or null
                 this._refreshWorkspaceMenu();
             }
         }
 
+        OpManager.prototype.preferencesChanged = function (modifiedValues) {
+            if ('language' in modifiedValues) {
+                window.location.reload();
+            }
+        };
+
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
+            var preferencesManager;
 
             switch (module) {
             case Modules.prototype.THEME_MANAGER:
@@ -478,6 +462,8 @@ var OpManagerFactory = function () {
                 break;
 
             case Modules.prototype.PLATFORM_PREFERENCES:
+                preferencesManager = PreferencesManagerFactory.getInstance();
+                preferencesManager.getPlatformPreferences().addCommitHandler(this.preferencesChanged.bind(this), 'post-commit');
                 this.showcaseModule = ShowcaseFactory.getInstance();
                 this.showcaseModule.init();
                 break;
@@ -496,13 +482,7 @@ var OpManagerFactory = function () {
                 var layoutManager = LayoutManagerFactory.getInstance();
                 layoutManager.logSubTask(gettext("Activating current Workspace"));
 
-                if (this.activeWorkSpace.isEmpty() && this.workSpaceInstances.keys().length ==1){
-                    this.showActiveWorkSpace();
-                    //TODO: Show list view catalogue
-                }
-                else{
-                    this.showActiveWorkSpace();
-                }
+                this.showActiveWorkSpace();
 
                 //fixes for IE6
                 //Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs

@@ -18,15 +18,15 @@
 }
 
 #wiring .eventColumn .igadget .anchor {
-  background: url(../images/wiring/inAnchor.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -71px;
 }
 
 #wiring .slotColumn .igadget .anchor {
-  background: url(../images/wiring/outAnchor.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -47px;
 }
 
 #wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
-  background: url(../images/wiring/inAnchorInEnabled.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -24px;
 }
 
 #wiring #channels_list .channel.selected .outAnchor, #wiring #channels_list .channel.selected .inAnchor{
@@ -34,23 +34,15 @@
 }
 
 #wiring #channels_list .channel.selected .outAnchor.checked {
-  background: url(../images/wiring/inAnchorOutEnabled.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -409px;
 }
 
 #wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
-  background: url(../images/wiring/outAnchorOutEnabled.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px 0px;
 }
 
 #wiring #channels_list .channel.selected .inAnchor.checked {
-  background: url(../images/wiring/outAnchorInEnabled.png);
-}
-
-#wiring #channels_list .channel .inAnchor {
-  background: url(../images/wiring/outAnchorChannel.png);
-}
-
-#wiring #channels_list .channel .outAnchor {
-  background: url(../images/wiring/inAnchorChannel.png);
+    background-image: url(../images/icons-sprite.png); background-position: 0px -382px;
 }
 
 #wiring .tab {
@@ -67,12 +59,19 @@
   -moz-border-radius-bottomright: 3px;
 }
 
-#wiring .eventColumn .tab > .header_section{
-  background: url(../images/wiring/tree.gif) no-repeat scroll 2px 5px;
+#wiring .header_section .header_icon {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -313px;
+    display: inline-block;
+    margin: 0px;
 }
 
-#wiring .slotColumn .tab > .header_section {
-  background: url(../images/wiring/tree.gif) no-repeat scroll 99% 5px;
+#wiring .eventColumn .tab > .header_section .header_icon {
+    float: left;
+}
+
+#wiring .slotColumn .tab > .header_section .header_icon {
+    float: right;
 }
 
 #wiring .tab > .header_section {
@@ -84,28 +83,20 @@
   background: none;
 }
 
-#wiring .tab > .header_section > .anchor {
-  background: url(../images/wiring/outAnchor.png);
+#wiring .igadget > .header_section .header_icon {
+    background-position: 0px -94px;
+    width: 19px;
+    height: 16px;
+    position: relative;
+    left: -2px;
 }
 
-#wiring .tab > .header_section > .anchor.checked {
-  background: url(../images/wiring/outAnchorOutEnabled.png);
+#wiring .igadget.folded > .header_section .header_icon {
+    background-position: -24px -94px;
 }
 
-#wiring .igadget > .header_section {
-  background: url(../images/wiring/Lminus.png) no-repeat scroll left top;
-}
-
-#wiring .igadget.folded > .header_section {
-  background: url(../images/wiring/Lplus.png) no-repeat scroll left top;
-}
-
-#wiring .igadget.unfoldable > .header_section {
-  background: url(../images/wiring/LminusDisabled.png) no-repeat scroll left top;
-}
-
-#wiring #newChannelForm .addSubmit {
-  background: url(../images/wiring/add.png);
+#wiring .igadget.unfoldable > .header_section .header_icon {
+    background-position: 0px -118px;
 }
 
 #wiring .newChannel, #wiring #unfold_all_link {
@@ -130,7 +121,7 @@
 
 #wiring #channels_list .channel .channelPipe {
   border-color: #2D6F9C;
-  background: #97A0A8 url(../images/wiring/pipe.png);
+  background: #97A0A8 url(../images/pipe.png);
   -moz-border-radius:5%;
   -webkit-border-radius: 5%;
 }
@@ -150,7 +141,9 @@
 }
 
 #wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
-	background: transparent url(../images/ops21px.png) no-repeat scroll 0 0;
+    background-image: url(../images/icons-sprite.png);
+    background-position: 0px -216px;
+    background-color: transparent;
 }
 
 #wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {

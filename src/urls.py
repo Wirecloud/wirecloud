@@ -36,6 +36,8 @@ from django.conf import settings
 from django.conf.urls.defaults import patterns, include
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.views.decorators.cache import cache_page
+from django.views.i18n import javascript_catalog
 
 admin.autodiscover()
 
@@ -57,17 +59,16 @@ urlpatterns = patterns('',
 
     # EzWeb
     (r'^', include('ezweb.urls')),
-    (r'^user/(?P<user_name>[\.\-\w]+)/$', include('ezweb.urls')),
+    (r'^workspaces/(?P<workspace>\d+)/?$', 'ezweb.views.render_workspace_view'),
+    (r'^lite/workspaces/(?P<workspace>\d+)/?$', 'ezweb.views.render_lite_workspace_view'),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/$', include('ezweb.urls')),
 
     # Gadgets
-    (r'^user/(?P<user_name>[\.\-\w]+)/gadget(s)?', include('gadget.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/gadget(s)?', include('gadget.urls')),
     (r'^gadget(s)?', include('gadget.urls')),
 
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
-
-    # Contract Manager
-    (r'^contract(s)?', include('resourceSubscription.urls')),
 
     # Remote Channel Manager
     (r'^channel(s)?/external', include('remoteChannel.urls')),
@@ -82,13 +83,13 @@ urlpatterns = patterns('',
     (r'^workspace(s)?/(?P<workspace_id>\d+)/connectable(s)?', include('connectable.urls')),
 
     # context
-    (r'^user/(?P<user_name>[\.\-\w]+)/context(s)?', include('context.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/context(s)?', include('context.urls')),
 
     # Platform Preferences
-    (r'^user/(?P<user_name>[\.\-\w]+)/preference(s)?', include('preferences.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/preference(s)?', include('preferences.urls')),
 
     # Catalogue Resource
-    (r'^user/(?P<user_name>[\.\-\w]+)/catalogue/', include('catalogue.urls')),
+    (r'^user/(?P<user_name>[\.\-\w\@]+)/catalogue/', include('catalogue.urls')),
 
     # Catalogue: Changing certification status
     (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
@@ -123,14 +124,11 @@ urlpatterns = patterns('',
     (r'^i18n/', include('django.conf.urls.i18n')),
 
     # Django JavaScript Internacionalitation
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+    (r'^jsi18n/$', cache_page(60 * 60 * 24)(javascript_catalog), js_info_dict),
 
     (r'^API', include('API.urls')),
 
     (r'^uploader', include('uploader.urls')),
-
-    #Catalogue API
-    (r'^catalogue/API/', include('catalogue.API.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

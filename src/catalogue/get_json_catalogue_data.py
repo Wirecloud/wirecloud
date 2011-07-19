@@ -31,10 +31,7 @@
 #
 from django.shortcuts import get_object_or_404
 
-from catalogue.models import GadgetWiring, GadgetResource, UserRelatedToGadgetResource, UserTag, UserVote, Capability
-from resourceSubscription.models import Contract, Application
-#if the catalogue and the platform are separated we should make a request instead of using this:
-from workspace.utils import get_mashup_gadgets
+from catalogue.models import GadgetWiring, UserTag, UserVote, Capability
 
 
 def get_vote_data(gadget, user):
@@ -49,14 +46,12 @@ def get_vote_data(gadget, user):
     except:
         vote_value = 0
     votes_number = UserVote.objects.filter(idResource=gadget).count()
-    popularity_value = gadget.popularity
     vote_data['user_vote'] = vote_value
     vote_data['votes_number'] = votes_number
-    vote_data['popularity'] = popularity_value
-    vote = []
-    vote.append(vote_data)
+    # Decimal data loses precision when converted to float
+    vote_data['popularity'] = str(gadget.popularity)
 
-    return vote
+    return vote_data
 
 
 def get_tag_data(gadget_id, user_id):
@@ -115,183 +110,20 @@ def get_slot_data(gadget_id):
     return all_slots
 
 
-def get_related_user_data(resource, user_id):
-    """Gets data associated with the relationship between user and gadget."""
-    data_ret = {}
-
-    try:
-        user_related_data_list = UserRelatedToGadgetResource.objects.filter(gadget=resource, user__id=user_id)
-
-        if len(user_related_data_list) == 0:
-            data_ret['added_by_user'] = 'No'
-            return data_ret
-
-        user_related_data = user_related_data_list[0]
-        if user_related_data.added_by:
-            data_ret['added_by_user'] = 'Yes'
-        else:
-            data_ret['added_by_user'] = 'No'
-
-    except UserRelatedToGadgetResource.DoesNotExist:
-        data_ret['added_by_user'] = 'No'
-
-    return data_ret
-
-
-def get_apps_info(apps):
-    data_ret = []
-
-    for app in apps:
-        data_ret.append(app.get_info())
-
-    return data_ret
-
-
-def get_available_apps_info():
-    data_ret = []
-    apps = Application.objects.all().order_by('tag__name')
-
-    for app in apps:
-        data_ret.append(app.get_info())
-
-    return data_ret
-
-
-def get_apps_by_gadget_resource(gadget_id):
-    return Application.objects.filter(resources__id=gadget_id).order_by('tag__name')
-
-
-def contains(app, resources):
-    """Check if the set of gadgets of an app contains the given resources."""
-    return app['gadgets'] >= resources
-
-
-def get_sets(base_app, gadgets_by_apps, mashup_resources):
-    apps = []
-    if contains(base_app, mashup_resources):
-        apps.append(base_app)
-    else:
-        #try with a bigger set: compound a new one
-        for index, new_app in enumerate(gadgets_by_apps):
-            app = {}
-            #register the involved apps
-            app['apps'] = base_app['apps'] + new_app['apps']
-            #merge both gadget sets
-            app['gadgets'] = base_app['gadgets'].union(new_app['gadgets'])
-
-            #recursion
-            apps = apps + get_sets(app, gadgets_by_apps[index + 1::], mashup_resources)
-
-    return apps
-
-
-def get_best_set(app_sets, user):
-    #PROVISIONAL: return the first one by now
-    #return app_sets[0]
-    best_set = None
-    best_set_count = None
-    for app_set in app_sets:
-        not_bought_count = 0
-        for app in app_set['apps']:
-            try:
-                Contract.objects.get(user=user, application=app)
-            except Contract.DoesNotExist:
-                not_bought_count += 1
-
-        if (best_set_count == None) or (not_bought_count < best_set_count):
-            best_set_count = not_bought_count
-            best_set = app_set
-
-    return best_set
-
-
-def get_min_set_to_cover_gadgets(mashup_resources, gadgets_by_apps, user):
-    """Calculate the min set of apps a user needs to buy to use a mashup."""
-    app = {'apps': [], 'gadgets': set([])}
-    app_sets = get_sets(app, gadgets_by_apps, mashup_resources)
-    #choose one of the sets
-    return get_best_set(app_sets, user)
-
-
-def get_apps_by_mashup_resource(mashup_id, user):
-    """Checks which is the set of applications that contains
-    all the contratable gadgets in a mashup.
-    """
-    resources = []
-    gadgets = get_mashup_gadgets(mashup_id)
-
-    #get the related resources
-    for gadget in gadgets:
-        resource = GadgetResource.objects.get(short_name=gadget.name, vendor=gadget.vendor, version=gadget.version)
-        try:
-            resource.capability_set.get(name='contratable', value='true')
-            resources.append(resource)
-        except:
-            #not contratable
-            pass
-
-    #get all the applications related to these resources
-    all_apps = Application.objects.filter(resources__in=resources).distinct()
-    gadgets_by_apps = [{'apps':[app], 'gadgets':set(app.resources.all())} for app in all_apps]
-
-    #get the minimun set of apps that covers the gadget set
-    #param1: set of mashup's gadgets
-    #param2: list of all possible apps
-    apps_set = get_min_set_to_cover_gadgets(set(resources), gadgets_by_apps, user)
-    if apps_set:
-        return apps_set['apps']
-    else:
-        return []
-
-
 def get_gadget_capabilities(gadget_id, user):
     data_ret = []
-    try:
-        capability_list = Capability.objects.filter(resource__id=gadget_id)
+    capabilities = Capability.objects.filter(resource__id=gadget_id)
 
-        for capability in capability_list:
-            cap = {}
-
-            if capability.name.lower() == 'contratable':
-
-                contract = None
-
-                mashup_id = GadgetResource.objects.get(id=gadget_id).mashup_id
-                if mashup_id:
-                    applications = get_apps_by_mashup_resource(mashup_id, user)
-
-                else:
-                    applications = get_apps_by_gadget_resource(gadget_id)
-
-                apps_info = get_apps_info(applications)
-
-                #check which applications are already bought
-                contracts = []
-                for index, application in enumerate(applications):
-                    try:
-                        contract = Contract.objects.get(user=user, application=application)
-                        apps_info[index]['has_contract'] = True
-                        contracts.append(contract.get_info())
-
-                    except Contract.DoesNotExist:
-                        apps_info[index]['has_contract'] = False
-
-                cap['applications'] = apps_info
-
-                if contracts:
-                    cap['contract'] = contracts
-
-            cap['name'] = capability.name
-            cap['value'] = capability.value
-
-            data_ret.append(cap)
-    except Capability.DoesNotExist:
-        data_ret = {}
+    for capability in capabilities:
+        data_ret.append({
+            'name': capability.name,
+            'value': capability.value,
+        })
 
     return data_ret
 
 
-def get_gadgetresource_data(untranslated_resource, user):
+def get_resource_data(untranslated_resource, user):
     """Gets all the information related to the given gadget."""
     resource = untranslated_resource.get_translated_model()
 
@@ -300,9 +132,6 @@ def get_gadgetresource_data(untranslated_resource, user):
     else:
         displayName = resource.short_name
 
-    user_related_data = get_related_user_data(resource, user_id=user.id)
-
-    versions = GadgetResource.objects.filter(vendor=resource.vendor, short_name=resource.short_name).values_list('version', flat=True)
     data_tags = get_tag_data(gadget_id=resource.pk, user_id=user.id)
     data_events = get_event_data(gadget_id=resource.pk)
     data_slots = get_slot_data(gadget_id=resource.pk)
@@ -318,13 +147,31 @@ def get_gadgetresource_data(untranslated_resource, user):
         'description': resource.description,
         'uriImage': resource.image_uri,
         'uriWiki': resource.wiki_page_uri,
-        'mashupId': resource.mashup_id,
+        'type': resource.resource_type(),
         'uriTemplate': resource.template_uri,
+        'ieCompatible': resource.ie_compatible,
         'capabilities': get_gadget_capabilities(gadget_id=resource.pk, user=user),
-        'added_by_user': user_related_data['added_by_user'],
-        'versions': versions,
+        'added_by_user': resource.creator == user,
         'tags': [d for d in data_tags],
         'events': [d for d in data_events],
         'slots': [d for d in data_slots],
         'votes': get_vote_data(gadget=resource, user=user),
     }
+
+
+def get_resource_group_data(resource_group, user):
+
+    data = {
+        'vendor': resource_group['vendor'],
+        'name': resource_group['short_name'],
+        'type': resource_group['type'],
+        'versions': [],
+    }
+    for resource in resource_group['variants']:
+        current_resource_data = get_resource_data(resource, user)
+        del current_resource_data['vendor']
+        del current_resource_data['name']
+        del current_resource_data['type']
+        data['versions'].append(current_resource_data)
+
+    return data

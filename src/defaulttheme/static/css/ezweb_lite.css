@@ -46,7 +46,9 @@
 }
 
 #ws_operations_link{
-	background: transparent url(../images/tabops16px.png) no-repeat scroll 0 0 !important;
+	background-color: transparent !important;
+    background-image: url(../images/icons-sprite.png) !important;
+    background-position: -48px -332px !important; 
 	border: medium none;
 	height: 24px;
     margin:1px 0 0 -2px;

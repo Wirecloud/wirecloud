@@ -38,7 +38,6 @@ var PreferencesManagerFactory = function () {
 		this.preferencesDef = new Hash();
                 this.preferenceManagers = new Hash();
 		this.preferences = null;
-		this.languageModified = false; // Language preference has a special behavior
 
 		/**** PRIVATE METHODS ****/
 		var _onSuccessInitPreferences = function(transport_) {
@@ -115,10 +114,18 @@ var PreferencesManagerFactory = function () {
 		/*
 		 * Constructor code
 		 */
-		var definitions;
+		var definitions, lang, i;
 
 		// Platform Preferences
 		var platformPreferences = {
+          "language": {
+            "label": gettext('Language'),
+            "type": "select",
+            "options": [
+                {value: 'default', label: gettext('Default setting')},
+                {value: 'browser', label: gettext('Browser detect')}
+            ]
+          },
 		  "skin": {
 		    "label":         gettext("Skin"),
 		    "type":          "select",
@@ -252,7 +259,12 @@ var PreferencesManagerFactory = function () {
 		  }
 		}
 
-		// Initialize some dynamic preferences (theme...)
+        // Initialize some dynamic preferences (theme...)
+        for (i = 0; i < LANGUAGES.length; i += 1) {
+            lang = LANGUAGES[i];
+            platformPreferences['language']['options'].push({value: lang[0], label: lang[1]});
+        }
+
 		platformPreferences['skin']['defaultValue'] = _DEFAULT_SKIN;
 		var desc = gettext("Skin to use by default. (default: %(defaultValue)s)");
 		platformPreferences['skin']['description'] = interpolate(desc, {defaultValue: _DEFAULT_SKIN}, true);
