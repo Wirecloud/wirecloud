@@ -37,6 +37,8 @@ class OrganizationWorkspaceManager:
                         for group in user_groups]
                       for relation in sublist]
 
+        workspaces = set(workspaces)
+
         for workspace in workspaces:
             ref = ref_from_workspace(workspace)
             if ref not in current_workspace_refs:
