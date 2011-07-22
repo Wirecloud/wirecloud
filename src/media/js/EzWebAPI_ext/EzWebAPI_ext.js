@@ -749,7 +749,7 @@ EzWebExt.getRelativePosition = function(element1, element2) {
     }
 
     var parentNode = element1.offsetParent;
-    while (parentNode != element2) {
+    while (parentNode != element2 && parentNode !== null && parentNode != undefined) {
         var cssStyle = contextDocument.defaultView.getComputedStyle(parentNode, null);
         var p = cssStyle.getPropertyValue('position');
         if (p != 'static') {
@@ -5106,7 +5106,6 @@ StyledElements.PopupMenuBase.prototype.hide = function() {
     }
     this._dynamicItems = [];
     this._submenus = [];
-    this.wrapperElement.innerHTML = '';
     if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
         EzWebExt.removeFromParent(this.wrapperElement);
     }
