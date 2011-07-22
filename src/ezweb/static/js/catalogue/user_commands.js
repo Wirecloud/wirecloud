@@ -54,7 +54,7 @@ var UserCommand = function (dom_element, html_event, services, dom_wrapper, data
 
 var ViewAllCommand  = function (dom_element, html_event, service_facade, dom_wrapper) {
     this.anonymous_function =  function (event) {
-        this.services.search('VIEW_ALL', 1, 'AND');
+        this.services.search('VIEW_ALL', 1, 'AND', 'gadget');
     };
 
     UserCommand.call(this, dom_element, html_event, service_facade, dom_wrapper, null);

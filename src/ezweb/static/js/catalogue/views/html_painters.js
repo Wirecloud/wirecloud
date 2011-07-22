@@ -473,7 +473,7 @@ var PaginationPainter = function (pagination_structure_element) {
     this.paint = function (command, user_command_manager) {
         var command_data, command_id, current_page, number_of_pages, first,
             last, next, previous, pagination_html, page_indexes_dom_elements,
-            page_indexes_dom_element;
+            page_indexes_dom_element, last_options;
 
         command_data = command.get_data();
         command_id = command.get_id();
@@ -490,13 +490,13 @@ var PaginationPainter = function (pagination_structure_element) {
         previous = 'link';
 
         if (current_page === 1 || number_of_pages === 0) {
-            first = 'text';
-            previous = 'text';
+            first = 'disabled';
+            previous = 'disabled';
         }
 
         if (current_page === number_of_pages || number_of_pages === 0) {
-            last = 'text';
-            next = 'text';
+            last = 'disabled';
+            next = 'disabled';
         }
 
         pagination_html = this.pagination_template.evaluate({
@@ -516,13 +516,23 @@ var PaginationPainter = function (pagination_structure_element) {
         }
 
         page_indexes_dom_element = page_indexes_dom_elements[0];
+        if (command.caller) {
+            last_options = command.caller.last_search_options[command.caller.get_scope()];
+        }
 
-        this.paint_page_indexes(page_indexes_dom_element, number_of_pages, current_page, user_command_manager);
-        this.bind_buttons(user_command_manager, current_page, number_of_pages);
+        this.paint_page_indexes(last_options, page_indexes_dom_element, number_of_pages, current_page, user_command_manager);
+        this.bind_buttons(last_options, user_command_manager, current_page, number_of_pages);
     };
 
-    this.bind_button = function (user_command_manager, page, html_event, element_selector, command_id, element) {
+    this.bind_button = function (user_command_manager, page, html_event, element_selector, command_id, element, last_options) {
         var data = {'starting_page': page};
+
+        if (last_options !== undefined) {
+//             command_id = opts.operation;
+            data.boolean_operator = last_options.boolean_operator;
+            data.criteria = last_options.criteria;
+            data.scope = last_options.scope;
+        }
 
         if (! element) {
             element = this.dom_element.getElementsBySelector(element_selector)[0];
@@ -534,21 +544,21 @@ var PaginationPainter = function (pagination_structure_element) {
         user_command_manager.create_command_from_data(command_id, element, data, html_event);
     };
 
-    this.bind_buttons = function (user_command_manager, current_page, number_of_pages) {
+    this.bind_buttons = function (last_options, user_command_manager, current_page, number_of_pages) {
         if (current_page !== 1) {
             // Binding events of go_first and go_previous buttons
-            this.bind_button(user_command_manager, 1, 'click', '.beginning', 'SIMPLE_SEARCH');
-            this.bind_button(user_command_manager, current_page - 1, 'click', '.previous', 'SIMPLE_SEARCH');
+            this.bind_button(user_command_manager, 1, 'click', '.beginning', 'SIMPLE_SEARCH', undefined, last_options);
+            this.bind_button(user_command_manager, current_page - 1, 'click', '.previous', 'SIMPLE_SEARCH', undefined, last_options);
         }
 
         if (current_page !== number_of_pages) {
             // Binding events of go_first and go_previous buttons
-            this.bind_button(user_command_manager, current_page + 1, 'click', '.next', 'SIMPLE_SEARCH');
-            this.bind_button(user_command_manager, number_of_pages, 'click', '.last', 'SIMPLE_SEARCH');
+            this.bind_button(user_command_manager, current_page + 1, 'click', '.next', 'SIMPLE_SEARCH', undefined, last_options);
+            this.bind_button(user_command_manager, number_of_pages, 'click', '.last', 'SIMPLE_SEARCH', undefined, last_options);
         }
     };
 
-    this.paint_page_indexes = function (page_indexes_div, number_of_pages, current_page, user_command_manager) {
+    this.paint_page_indexes = function (last_options, page_indexes_div, number_of_pages, current_page, user_command_manager) {
         var lower_page, top_margin, max_page, i, page_element, page_html, text, page_number;
 
         lower_page = current_page - 2;
@@ -559,6 +569,7 @@ var PaginationPainter = function (pagination_structure_element) {
 
         top_margin = Math.min(4, number_of_pages - 1);
         max_page = lower_page + top_margin;
+        max_page = Math.min(max_page, number_of_pages);
 
         for (i = lower_page; i <= max_page; i += 1) {
             page_element = document.createElement('span');
@@ -574,7 +585,7 @@ var PaginationPainter = function (pagination_structure_element) {
 
                 page_html = this.pagination_element.evaluate({'page': page_number, 'text': text});
 
-                this.bind_button(user_command_manager, i, 'click', null, 'SIMPLE_SEARCH', page_element);
+                this.bind_button(user_command_manager, i, 'click', null, 'SIMPLE_SEARCH', page_element, last_options);
             } else {
                 page_html = i;
             }
