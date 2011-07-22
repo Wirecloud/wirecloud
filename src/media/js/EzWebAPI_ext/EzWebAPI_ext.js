@@ -321,18 +321,30 @@ EzWebExt.appendStyle = function(url) {
 /* Load JavaScript */
 EzWebExt.importJS(EzWebExt.getResourceURL("/ComputedStyle.js"));
 
+// Default styles for gadgets
 if (!window.preventDefaultStyle) {
     /* Theme style */
     try {
-        /* TODO */
-        var theme = window.parent.URIs.ACTIVE_THEME;
-        
-        EzWebExt.prependStyle(EzWebAPI.platform_domain + theme + "/css/gadget.css");
+        var theme = window.parent.URIs.ACTIVE_THEME,
+            theme_path = EzWebAPI.platform_domain;
+
+        if (theme_path[theme_path.length - 1] !== '/' && theme[0] !== '/') {
+            theme_path += "/";
+        } else if (theme_path[theme_path.length - 1] === '/' && theme[0] === '/') {
+            theme = theme.substr(1);
+        }
+
+        theme_path += theme;
+
+        if (theme_path[theme_path.length - 1] !== '/') {
+            theme_path += "/";
+        }
+
+        EzWebExt.prependStyle(theme_path + "css/gadget.css");
     } catch (e) {}
 
     /* Load default style */
     EzWebExt.prependStyle(EzWebExt.getResourceURL("/EzWebGadgets.css"));
-
 
     if (EzWebExt.Browser.isIE() && EzWebExt.Browser.getShortVersion() < 8) {
         EzWebExt.prependStyle(EzWebExt.getResourceURL("/EzWebGadgets-ie7.css"));
