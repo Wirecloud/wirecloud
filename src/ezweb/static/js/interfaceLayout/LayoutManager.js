@@ -450,10 +450,14 @@ var LayoutManagerFactory = function () {
             }
 
             this.showHeader(dragboard.tab.getHeader());
-            if (this.currentViewType !== 'dragboard') {
+
+            var newWS = false;
+            if (this.currentViewType === 'dragboard') {
+                newWS = this.currentView.workSpace.getId() !== dragboard.workSpace.getId();
+            }
+            if (this.currentViewType !== 'dragboard' || newWS) {
                 dragboard.workSpace.prepareToShow();
             }
-
 
             $(document.body).removeClassName(this.currentViewType + "_view");
 
@@ -642,38 +646,19 @@ var LayoutManagerFactory = function () {
 
         //WorkSpaceMenu is dinamic so the different options must be added.
         LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
-            //Add to the toolbar the two main options
-            /*var goToMenu = workSpace.getGoToMenu()
-            var options_length = goToMenu.MAX_OPTIONS - goToMenu.getOptionsLength() - 1; //add less than the maximun because the workspace name can be long
-            */
             var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
-            if (wsListMenu){
+            if (wsListMenu) {
                 wsListMenu.clearOptions();
-
-                /*var in_toolbar = "";*/
-                for (var i=0;i<workspaces.length; i++){
-                    /*in_toolbar = "";
-                    if (i<options_length){
-                        //Add to the Toolbar menu
-                        var nameToShow = (workspaces[i].workSpaceState.name.length>15)?workspaces[i].workSpaceState.name.substring(0, 15)+"..." : workspaces[i].workSpaceState.name;
-                        goToMenu.addOption(nameToShow,
-                                    function () {
-                                        OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-                                    }.bind(workspaces[i]),
-                                    i);
-                        in_toolbar = "shown";
-                    }*/
+                for (var i = 0; i < workspaces.length; i += 1) {
                     //Add to the Sidebar Menu
                     wsListMenu.addOption(workspaces[i].workSpaceState.name,
-                                    function () {
-                                        LayoutManagerFactory.getInstance().hideCover();
-                                        OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-                                    }.bind(workspaces[i]),
-                                    i)/*,
-                                    in_toolbar);*/
+                        function () {
+                            LayoutManagerFactory.getInstance().hideCover();
+                            OpManagerFactory.getInstance().changeActiveWorkSpace(this)
+                        }.bind(workspaces[i]), i);
                 }
             }
-        }
+        };
 
         //merge Menu is dinamic so the different options must be added.
         LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces) {
@@ -690,21 +675,22 @@ var LayoutManagerFactory = function () {
                     }.bind(context), i);
                 }
             }
-        }
+        };
 
         /**
          * General function to create the DropDownMenu
          */
-        LayoutManager.prototype.initDropDownMenu = function(idMenu,parentMenu){
+        LayoutManager.prototype.initDropDownMenu = function (idMenu, parentMenu) {
             var menuHTML = $(idMenu);
-            if (menuHTML)
+            if (menuHTML) {
                 menuHTML.remove();
+            }
 
             // add the DOM element and create the menu
             menuHTML = '<div id="' + idMenu + '" class="drop_down_menu"></div>'
             new Insertion.After($('menu_layer'), menuHTML);
             return new DropDownMenu(idMenu, parentMenu);
-        }
+        };
 
         /**
          * Shows the asked drop down menu.
