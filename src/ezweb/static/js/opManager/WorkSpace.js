@@ -972,6 +972,7 @@ function WorkSpace (workSpaceState) {
                             if (this.confLauncher.className.indexOf('disabled_button') >= 0) {
                                 var msg = gettext("This WorkSpace is blocked, please create a new one if you want to configure it.");
                                 this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.iconElement.className += ' icon-error';
                                 this.messageWindowMenu.setMsg(msg);
                                 this.messageWindowMenu.show();
                             } else {
@@ -1022,6 +1023,7 @@ function WorkSpace (workSpaceState) {
                             if (this.sharingLauncher.className.indexOf('disabled_button') >= 0) {
                                 var msg = gettext("This WorkSpace is blocked, please create a new one if you want to share it.");
                                 this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.iconElement.className += ' icon-error';
                                 this.messageWindowMenu.setMsg(msg);
                                 this.messageWindowMenu.show();
                             } else {
@@ -1076,6 +1078,7 @@ function WorkSpace (workSpaceState) {
                             if (this.editLauncher.className.indexOf('disabled_button') >= 0) {
                                 var msg = gettext("This WorkSpace is blocked, please create a new one if you want to modify it.");
                                 this.messageWindowMenu = new MessageWindowMenu();
+                                this.messageWindowMenu.iconElement.className += ' icon-error';
                                 this.messageWindowMenu.setMsg(msg);
                                 this.messageWindowMenu.show();
                             } else {
