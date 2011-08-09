@@ -98,7 +98,7 @@ IGadget.prototype.paint = function () {
     } else {
         html += 'gadget_content_full">';
     }
-    html += '<object id="object_' + this.id + '" onload=\'OpManagerFactory.getInstance().igadgetLoaded(' + this.id + ');\' class="gadget_object" type="text/html" data="' + this.gadget.getXHtml().getURICode() + '?id=' + this.id + '" standby="Loading...">';
+    html += '<object id="object_' + this.id + '" onload=\'OpManagerFactory.getInstance().igadgetLoaded(' + this.id + ');\' class="gadget_object" type="text/html" data="' + this.gadget.getXHtml().getURICode() + '#id=' + this.id + '" standby="Loading...">';
     html += '"Loading...."';
     html += '</object></div>';
 

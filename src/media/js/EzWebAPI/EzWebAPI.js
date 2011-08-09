@@ -25,22 +25,21 @@
 
 
 function _EzWebAPI() {
+    var idx, tmp, i, current, ezwebLocation;
+
     this.platform = window.parent;
-    var ezwebLocation = this.platform.document.location;
+    ezwebLocation = this.platform.document.location;
     this.platform_domain = ezwebLocation.protocol + '//' + ezwebLocation.host;
     this.platform_protocol = ezwebLocation.protocol.substr(0, ezwebLocation.protocol.length - 1);
     this.platform_host = ezwebLocation.host;
 
     // Get id from the URL
-    var idx = document.URL.lastIndexOf('#');
-    var is_iphone = (navigator.userAgent.indexOf('iPhone') != -1 || navigator.userAgent.indexOf('iPod') != -1);
-    if (idx < 0 && is_iphone) {
-        idx = document.URL.lastIndexOf('?');
-    }
-    var tmp = document.URL.substr(idx + 1);
+
+    idx = document.URL.lastIndexOf('#');
+    tmp = document.URL.substr(idx + 1);
     tmp = tmp.split("&");
-    for (var i = 0; i < tmp.length; i++) {
-        var current = tmp[i];
+    for (i = 0; i < tmp.length; i++) {
+        current = tmp[i];
         current = current.split("=", 2);
         if (current[0] == "id") {
             this.id = parseInt(current[1]);
