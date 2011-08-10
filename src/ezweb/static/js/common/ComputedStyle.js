@@ -2,7 +2,7 @@
  *                         Computed Style                                           *
  *----------------------------------------------------------------------------------*/
 
-var useInternalComputedStyle = window.getComputedStyle === undefined;
+var useInternalComputedStyle = typeof window.getComputedStyle === "undefined";
 if (!useInternalComputedStyle) {
   try {
     var computedStyle = document.defaultView.getComputedStyle(document.documentElement, null);

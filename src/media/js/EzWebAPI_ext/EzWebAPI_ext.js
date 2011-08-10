@@ -319,7 +319,7 @@ EzWebExt.appendStyle = function(url) {
 /* ---------------------------------------------------------------- */
 
 /* Load JavaScript */
-EzWebExt.importJS(EzWebExt.getResourceURL("/ComputedStyle.js"));
+EzWebExt.importJS(EzWebAPI.platform_domain + "/static/js/common/ComputedStyle.js");
 
 // Default styles for gadgets
 if (!window.preventDefaultStyle) {

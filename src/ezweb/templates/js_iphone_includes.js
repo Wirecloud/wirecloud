@@ -1,6 +1,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/lib/mymw/mymw-core.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/lib/mymw/mymw-tabs.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
