@@ -11,7 +11,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
 </head>
 
-<body onload="initialLoad();"  onorientationchange="updateLayout();">
+<body>
 
 <!-- HEADER -->
 <div id="header">
@@ -102,23 +102,19 @@ var URIs = new _URIConstants();
 </script>
 
 <!-- Initialization code -->
-<script language="JavaScript">
-    
-    function initialLoad(){
-    	this.showcaseModule = ShowcaseFactory.getInstance();
-    	this.showcaseModule.init();
-    	checkInterval = setInterval(checkTab, 400);
-    	updateInterval = setInterval(updateLayout, 300);
-    }
-    
-    var loaded = false;
-    var updateInterval;
-    var checkInterval;
+<script type="text/javascript">
+
+    setTimeout(function () {
+        ShowcaseFactory.getInstance().init();
+        window.addEventListener('touchend', checkTab, true);
+        window.addEventListener('resize', updateLayout, true);
+        updateLayout();
+    }, 0);
+
 	var tabview; //TO REMOVE EARLY
 	var isAnonymousUser = {% if is_anonymous %}true;{% else %}false;{% endif %} 
 	var opManager = OpManagerFactory.getInstance();
-    var _currentWidth = 0;
-    
+
     var last_logged_user = '{{ last_user }}';
     var installed_apps = {{ installed_apps|safe }};
 	

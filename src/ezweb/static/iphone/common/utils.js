@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global setTimeout, window, PersistenceEngineFactory, loaded:true, document, OpManagerFactory, clearInterval, updateInterval */
+/*global setTimeout, window, PersistenceEngineFactory, document, OpManagerFactory, clearInterval, updateInterval */
 "use strict";
 
 /* 
@@ -68,35 +68,17 @@ function setLanguage(language) {
 }
 
 /* layout change function (landscape or portrait) */
-function updateLayout() {
+function updateLayout () {
     var orient = (window.orientation === 0 || window.orientation === 180) ? "portrait" : "landscape";
-    if (!loaded) {
-        /*Use it to test the iphone rotation in a browser
-        * if (window.innerWidth != _currentWidth || !loaded)
-        {
-            _currentWidth = window.innerWidth;
-            var orient = _currentWidth <= 320 ? "portrait" : "landscape";
-        */
-        // change the orientation properties
-        document.body.setAttribute("orient", orient);
-        document.body.className = orient;
-        if (OpManagerFactory.getInstance().loadCompleted) {
-            loaded = true;
-            clearInterval(updateInterval);
-            OpManagerFactory.getInstance().activeWorkSpace.updateLayout(orient);
-        } else {
-            loaded = false;
-        }
-    } else {
-        //the onorientationchange has hapenned
-        document.body.setAttribute("orient", orient);
-        document.body.className = orient;
+    document.body.className = orient;
+
+    if (OpManagerFactory.getInstance().loadCompleted) {
         OpManagerFactory.getInstance().activeWorkSpace.updateLayout(orient);
     }
 }
 
 /* tab change function */
-function checkTab() {
+function checkTab () {
     if (OpManagerFactory.getInstance().visibleLayer === "tabs_container") {
         var xoffset = window.pageXOffset,
             tabWidth = window.innerWidth,
