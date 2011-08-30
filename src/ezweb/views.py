@@ -55,22 +55,22 @@ from workspace.models import WorkSpace
 
 
 @login_required
-def index(request, user_name=None, template="index.html"):
+def index(request, user_name=None):
     if request.user.username != "public":
-        return render_ezweb(request, user_name, template)
+        return render_ezweb(request, user_name)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
 
 @login_required
-def render_workspace_view(request, workspace, template="index.html"):
+def render_workspace_view(request, workspace):
     if request.user.username != "public":
         workspace = get_object_or_404(WorkSpace, pk=int(workspace))
         if request.user not in workspace.users.all():
             return HttpResponseForbidden()
 
         post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
-        return render_ezweb(request, request.user.username, template, post_load_script=post_load_script)
+        return render_ezweb(request, request.user.username, None, post_load_script=post_load_script)
     else:
         return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
 
@@ -212,7 +212,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
                     name = catalogue_response['gadgetName']
                     post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
 
-                    return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
+                    return render_ezweb(request, view_type="index", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
@@ -348,7 +348,7 @@ def public_ws_viewer(request, public_ws_id):
     request.user = public_user
 
     if (len(workspace.users.filter(username=public_user.username)) == 1):
-        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id, last_user=last_user)
+        return render_ezweb(request, view_type="viewer", public_workspace=public_ws_id, last_user=last_user)
 
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
@@ -372,51 +372,53 @@ def manage_groups(user, groups):
     user.save()
 
 
-def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
+def render_ezweb(request, user_name=None, view_type=None, public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """
-
-    if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
-        request.session['policies'] = "null"
-        return render_to_response('iphone.html', {},
-                  context_instance=RequestContext(request))
-    if request.META['HTTP_USER_AGENT'].find("Android") >= 0:
-        request.session['policies'] = "null"
-        return render_to_response('iphone.html', {},
-                  context_instance=RequestContext(request))
-    else:
-        #Checking profile!
-        try:
-            user_profile = request.user.get_profile()
-            user_profile.execute_server_script(request)
-
-            script = user_profile.merge_client_scripts(post_load_script)
-        except Exception:
-            script = post_load_script
-
-        if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
-            url = settings.AUTHENTICATION_SERVER_URL
-
-            if (not url.endswith('/')):
-                url += '/'
-
-            url = "%sapi/user/%s/data.json" % (url, request.user.username)
-
-            try:
-                user_data = simplejson.loads(download_http_content(url))
-
-                manage_groups(request.user, user_data['groups'])
-                request.session['policies'] = json_encode({"user_policies": user_data['user_policies'], "all_policies": user_data['all_policies']})
-            except:
-                request.session['policies'] = "null"
+    if view_type is None:
+        if 'view' in request.GET:
+            view_type = request.GET['view']
         else:
+            user_agent = request.META['HTTP_USER_AGENT']
+            if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or user_agent.find('Android') != -1:
+                view_type = 'iphone'
+            else:
+                view_type = 'index'
+
+    # Checking profile!
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        url = settings.AUTHENTICATION_SERVER_URL
+
+        if (not url.endswith('/')):
+            url += '/'
+
+        url = "%sapi/user/%s/data.json" % (url, request.user.username)
+
+        try:
+            user_data = simplejson.loads(download_http_content(url))
+
+            manage_groups(request.user, user_data['groups'])
+            request.session['policies'] = json_encode({"user_policies": user_data['user_policies'], "all_policies": user_data['all_policies']})
+        except:
             request.session['policies'] = "null"
+    else:
+        request.session['policies'] = "null"
 
-        screen_name = get_user_screen_name(request)
+    try:
+        user_profile = request.user.get_profile()
+        user_profile.execute_server_script(request)
 
-        context = {'screen_name': screen_name,
-                   'current_tab': 'dragboard',
-                   'active_workspace': public_workspace,
-                   'last_user': last_user,
-                   'post_load_script': script}
+        script = user_profile.merge_client_scripts(post_load_script)
+    except Exception:
+        script = post_load_script
 
-        return render_to_response(template, context, context_instance=RequestContext(request))
+    screen_name = get_user_screen_name(request)
+
+    context = {
+        'screen_name': screen_name,
+        'current_tab': 'dragboard',
+        'active_workspace': public_workspace,
+        'last_user': last_user,
+        'post_load_script': script,
+    }
+
+    return render_to_response(view_type + '.html', context, context_instance=RequestContext(request))
