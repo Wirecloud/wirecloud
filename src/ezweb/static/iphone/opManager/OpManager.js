@@ -108,9 +108,10 @@ var OpManagerFactory = (function () {
                 this.activeWorkSpace.unload();
             }
 
+            this.loadCompleted = false;
             this.activeWorkSpace = workSpace;
-
             this.activeWorkSpace.downloadWorkSpaceInfo();
+            this.showGadgetsMenuFromWorskspaceMenu();
         };
 
         OpManager.prototype.sendEvent = function (gadget, event, value) {
@@ -238,35 +239,24 @@ var OpManagerFactory = (function () {
 
             //generate the workspace list
             var wkeys = this.workSpaceInstances.keys(),
-                html = "<ul>",
-                i, wname, workspace;
+                i, wname, workspace, workspaceEntry;
+
+            this.workspaceListElement.innerHTML = '';
             for (i = 0; i < wkeys.length; i += 1) {
                 workspace = this.workSpaceInstances.get(wkeys[i]);
                 wname = workspace.getName();
+                workspaceEntry = document.createElement('li');
+                workspaceEntry.textContent = wname;
                 if (workspace === this.activeWorkSpace) {
-                    html += "<li id='" + workspace.getId() + "_item' class='selected'>" + wname + "<small>★</small></li>";
+                    workspaceEntry.setAttribute('class', 'selected');
+                    workspaceEntry.addEventListener('click', this.showGadgetsMenuFromWorskspaceMenu.bind(this), false);
                 } else {
-                    html += "<li id='" + workspace.getId() + "_item'><a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + wkeys[i] + ");'>" + wname + "</a></li>";
+                    workspaceEntry.addEventListener('click', this.changeActiveWorkSpace.bind(this, workspace), false);
                 }
+                this.workspaceListElement.appendChild(workspaceEntry);
             }
-            html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
-
-            this.workspaceListElement.update(html);
+            //html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
         };
-
-        OpManager.prototype.selectActiveWorkspace = function (workspaceKey) {
-            var newWorkspace = this.workSpaceInstances.get(workspaceKey),
-                newElement = $(newWorkspace.getId() + "_item"),
-                oldElement = $(this.activeWorkSpace.getId() + "_item");
-
-            newElement.update(newWorkspace.getName() + "<small>★</small>");
-            newElement.className = "selected";
-            oldElement.update("<a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + this.activeWorkSpace.workSpaceGlobalInfo.workspace.id + ");'>" + this.activeWorkSpace.getName() + "</a>");
-            oldElement.className = "";
-            this.loadCompleted = false;
-            this.changeActiveWorkSpace(newWorkspace);
-        };
-
     }
 
     // *********************************

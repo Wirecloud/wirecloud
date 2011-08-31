@@ -1522,7 +1522,7 @@ StyledElements.Tab = function(id, notebook, options) {
     this.tabElement.appendChild(this.name);
 
     /* call to the parent constructor */
-    StyledElements.Container.call(this, options['containerOptions'], ['close']);
+    StyledElements.Container.call(this, options['containerOptions'], ['show', 'hide', 'close']);
 
     EzWebExt.prependClassName(this.wrapperElement, "tab hidden"); // TODO
 
@@ -1611,9 +1611,11 @@ StyledElements.Tab.prototype.setVisible = function (newStatus) {
         EzWebExt.appendClassName(this.tabElement, "selected");
         EzWebExt.removeClassName(this.wrapperElement, "hidden");
         this.repaint(false);
+        this.events['show'].dispatch(this);
     } else {
         EzWebExt.removeClassName(this.tabElement, "selected");
         EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.events['hide'].dispatch(this);
     }
 }
 
