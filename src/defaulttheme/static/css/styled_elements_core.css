@@ -1,41 +1,3 @@
-html {
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background: #EDECEB;
-}
-
-div.loading {
-  background: white url(images/loading.gif) no-repeat center center;
-  position:   absolute;
-  top:        0px;
-  left:       0px;
-  right:      0px;
-  bottom:     0px;
-  z-index:    100000;
-}
-
-div {
-  margin: 0;
-  padding: 0;
-}
-
-div.center {
-  margin-left:  auto;
-  margin-right: auto;
-  text-align:   center;
-}
-
-div.buttons {
-  white-space: nowrap;
-}
-
 .hidden {
     visibility: hidden;
 }
@@ -46,9 +8,6 @@ div.buttons {
     filter: alpha(opacity=40);
 }
 
-p {
-  margin: 0.5em 3px;
-}
 /*****************************************************************************/
 /*                              StyledElements                               */
 /*****************************************************************************/
@@ -90,7 +49,7 @@ div.styled_select div.text {
 }
 
 div.styled_select div.arrow {
-  background: transparent url(images/styledElements/select_button.png) no-repeat scroll 0 0;
+  background: transparent url("../images/styledElements/select_button.png") no-repeat scroll 0 0;
   height:   20px;
   position: absolute;
   right:    0px;
@@ -362,7 +321,7 @@ div.styled_numeric_field div.numeric_bottom_button {
   position: absolute;
   width: 5px;
   height: 100%;
-  background: transparent url(images/styledElements/vhandler.png) no-repeat scroll 0 center;
+  background: transparent url("../images/styledElements/vhandler.png") no-repeat scroll 0 center;
   cursor: col-resize;
   float:left;
 }
@@ -637,7 +596,7 @@ div.styled_select {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  background:  transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
+  background:  transparent url("../images/styledElements/button.png") repeat-x scroll 0 0;
   border:      1px solid #888888;
   color:       white;
   height:      20px;
@@ -693,7 +652,7 @@ div.styled_numeric_field div.numeric_top_button {
   -moz-border-radius: 0px 4px 0px 0px;
   -webkit-border-radius: 0px 4px 0px 0px;
   border-radius: 0px 4px 0px 0px;
-  background:transparent url(images/styledElements/top_button.png) no-repeat scroll 0px -2px;
+  background:transparent url("../images/styledElements/top_button.png") no-repeat scroll 0px -2px;
   height: 11px;
   right:-3px;
   top:-1px;
@@ -703,9 +662,9 @@ div.styled_numeric_field div.numeric_top_button {
 
 div.styled_numeric_field div.numeric_bottom_button {
   -moz-border-radius: 0px 0px 4px 0px;
-  -webkit-border-radius: 0px 4px 0px 0px;
-  border-radius: 0px 4px 0px 0px;
-  background: transparent url(images/styledElements/bottom_button.png) no-repeat scroll 0px -1px;
+  -webkit-border-radius: 0px 0px 4px 0px;
+  border-radius: 0px 0px 4px 0px;
+  background: transparent url("../images/styledElements/bottom_button.png") no-repeat scroll 0px -1px;
   height:     10px;
   right:      -3px;
   top:        9px;
@@ -723,7 +682,7 @@ div.styled_numeric_field div.numeric_bottom_button {
   -webkit-border-radius: 4px;
   border-radius: 4px;
   border: 1px solid #888888;
-  background: transparent url(images/styledElements/button.png) repeat-x scroll 0 0;
+  background: transparent url("../images/styledElements/button.png") repeat-x scroll 0 0;
 }
 
 .styled_button span {
@@ -798,14 +757,14 @@ div.styled_numeric_field div.numeric_bottom_button {
 .notebook .tab_area .tab.selected {
   height: 18px;
   border-bottom: 0 none;
-  background: #EDECEB url(images/styledElements/selectedTab.png) repeat-x scroll 0 0;
+  background: #EDECEB url("../images/styledElements/selectedTab.png") repeat-x scroll 0 0;
 }
 
 .notebook div.tab_wrapper > .tab_area_msg {
   right: 80px;
   border: 1px solid #3B7614;
   background-color: #B6F48E;
-  background: #a5f2c9 url(images/icon_success.gif) no-repeat right;
+  background: #a5f2c9 url("../images/styledElements/icon_success.gif") no-repeat right;
   padding: 2px 5px;
   font-size: 90%;
   min-width: 250px;
@@ -844,12 +803,12 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_alert .message {
-  /*-moz-border-radius: 10px;
+  -moz-border-radius: 10px;
   -webkit-border-radius: 10px;
-  border-radius: 10px;*/
+  border-radius: 10px;
   border-style:solid;
   border-width:2px 4px 4px 2px;
-  background:url(images/degradado.png) no-repeat scroll 0 0;
+  background: url("../images/styledElements/alert_gradient.png") no-repeat scroll 0 0;
   position:absolute;
   margin:0px;
   padding:0px;
@@ -913,17 +872,17 @@ div.styled_numeric_field div.numeric_bottom_button {
 }
 
 .styled_alert .message .close_button { 
-  background:transparent url(images/dialog/dialog-cancel-error.png) no-repeat scroll 0 5px;
+  background:transparent url("../images/dialog/dialog-cancel-error.png") no-repeat scroll 0 5px;
 	cursor:pointer;
 	width:22px;
 }
 
 .styled_alert.warning .message .close_button { 
-  background:transparent url(images/dialog/dialog-cancel-warning.png) no-repeat scroll 0 5px;
+  background:transparent url("../images/dialog/dialog-cancel-warning.png") no-repeat scroll 0 5px;
 }
 
 .styled_alert.info .message .close_button { 
-  background:transparent url(images/dialog/dialog-cancel-info.png) no-repeat scroll 0 5px;
+  background:transparent url("../images/dialog/dialog-cancel-info.png") no-repeat scroll 0 5px;
 }
 
 .styled_alert .message .content {
@@ -950,25 +909,25 @@ div.styled_numeric_field div.numeric_bottom_button {
 .pagination .go-first-button div {
   width: 16px;
   height: 16px;
-  background: transparent url("images/styledElements/go-first.png") no-repeat center center;
+  background: transparent url("../images/styledElements/go-first.png") no-repeat center center;
 }
 
 .pagination .go-prev-button div {
   width: 16px;
   height: 16px;
-  background: transparent url("images/styledElements/go-previous.png") no-repeat center center;
+  background: transparent url("../images/styledElements/go-previous.png") no-repeat center center;
 }
 
 .pagination .go-next-button div {
   width: 16px;
   height: 16px;
-  background: transparent url("images/styledElements/go-next.png") no-repeat center center;
+  background: transparent url("../images/styledElements/go-next.png") no-repeat center center;
 }
 
 .pagination .go-last-button div {
   width: 16px;
   height: 16px;
-  background: transparent url("images/styledElements/go-last.png") no-repeat center center;
+  background: transparent url("../images/styledElements/go-last.png") no-repeat center center;
 }
 
 /* Popup menu */
