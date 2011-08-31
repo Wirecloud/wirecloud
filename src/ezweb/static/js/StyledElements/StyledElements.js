@@ -2159,6 +2159,17 @@ StyledElements.StyledNotebook.prototype.disable = function() {
     this.setDisabled(true);
 }
 
+StyledElements.StyledNotebook.prototype.destroy = function () {
+    if (EzWebExt.XML.isElement(this.wrapperElement.parentNode)) {
+        EzWebExt.removeFromParent(this.wrapperElement);
+    }
+
+    this.tabs = null;
+    this.tabsById = null;
+    this.visibleTab = null;
+
+    StyledElements.StyledElement.prototype.destroy.call(this);
+};
 
 /**
  * Muestra un diálogo de alerta con un mensaje, título e icono.
@@ -2275,6 +2286,8 @@ StyledElements.StyledAlert.prototype.close = function() {
 
 StyledElements.StyledAlert.prototype.destroy = function() {
     this.close();
+
+    StyledElements.StyledElement.prototype.destroy.call(this);
 };
 
 StyledElements.StyledAlert.prototype.insertInto = function(element, refElement){
@@ -3037,6 +3050,8 @@ StyledElements.MenuItem.prototype.destroy = function() {
     EzWebExt.removeEventListener(this.wrapperElement, "mouseout", this._mouseoutEventHandler, false);
     this._mouseoverEventHandler = null;
     this._mouseoutEventHandler = null;
+
+    StyledElements.StyledElement.prototype.destroy.call(this);
 }
 
 
@@ -3205,6 +3220,8 @@ StyledElements.PopupMenuBase.prototype.destroy = function() {
     }
     this._items = null;
     this._menuItemCallback = null;
+
+    StyledElements.StyledElement.prototype.destroy.call(this);
 }
 
 /**
@@ -3257,11 +3274,11 @@ StyledElements.PopupMenu.prototype._menuItemCallback = function(menuItem) {
 }
 
 StyledElements.PopupMenu.prototype.destroy = function() {
-    StyledElements.PopupMenuBase.prototype.destroy.call(this);
-
     EzWebExt.removeEventListener(this._disableLayer, "click", this._disableCallback, false);
     EzWebExt.removeEventListener(this._disableLayer, "contextmenu", this._disableCallback, false);
     this._disableCallback = null;
+
+    StyledElements.PopupMenuBase.prototype.destroy.call(this);
 }
 
 /**
