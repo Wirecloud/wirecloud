@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global WorkSpace, alert, PersistenceEngineFactory, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, tabview:true, URIs, setTimeout */
+/*global WorkSpace, alert, PersistenceEngineFactory, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, URIs, setTimeout */
 "use strict";
 
 /* 
@@ -164,8 +164,6 @@ var OpManagerFactory = (function () {
                     this.showActiveWorkSpace(this.activeWorkSpace);
                     this.visibleLayer = "tabs_container";
                 }
-                //TODO: remove this variable when the MYMWTab Framework is updated
-                tabview = this.activeWorkSpace.tabView;
                 return;
             }
         };
@@ -192,7 +190,8 @@ var OpManagerFactory = (function () {
 
 
         OpManager.prototype.showDragboard = function (iGadgetId) {
-            this.activeWorkSpace.getActiveDragboard().paint(iGadgetId);
+            var dragboard = this.activeWorkSpace.getIgadget(iGadgetId).dragboard;
+            dragboard.paint(iGadgetId);
             this.visibleLayer = "dragboard";
         };
 

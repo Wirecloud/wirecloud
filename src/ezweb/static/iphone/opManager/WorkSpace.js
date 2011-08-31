@@ -48,6 +48,9 @@ function WorkSpace(workSpaceState) {
 
         visibleTabId = null;
 
+        this.notebook = new StyledElements.StyledNotebook();
+        this.notebook.insertInto($('dragboard'));
+
         if (tabs.length > 0) {
             for (i = 0; i < tabs.length; i += 1) {
                 tab = tabs[i];
@@ -91,16 +94,10 @@ function WorkSpace(workSpaceState) {
     // ****************
 
     WorkSpace.prototype.igadgetLoaded = function (igadgetId) {
-        //TODO: propagate only the values that affect to the Gadget with iGadgetId as identifier
-        // in other case, this function always propagate the variable value to all the gadgets and there are two problems:
-        // - there are non-instantiated gadgets -> the handler doesn't exist
-        // - the instantiated gadgets will re-execute their handlers
+        var igadget = this.getIgadget(igadgetId);
 
-        if (!this.igadgetIdsLoaded.elementExists(igadgetId)) { //to prevent from propagating unnecessary initial values
-            this.igadgetIdsLoaded.push(igadgetId);
-
-            var igadget = this.getIgadget(igadgetId);
-            igadget.privateNotifyLoaded();
+        if (!igadget.loaded) {
+            igadget._notifyLoaded();
 
             // Notify to the wiring module the igadget has been loaded
             this.wiring.iGadgetLoaded(igadget);
@@ -125,14 +122,17 @@ function WorkSpace(workSpaceState) {
         // Notify to the context manager the igadget has been unloaded
         this.contextManager.iGadgetUnloaded(igadget);
 
-        igadget.privateNotifyUnloaded();
+        igadget._notifyUnloaded();
     };
 
     WorkSpace.prototype.unload = function () {
-
         // After that, tab info is managed
         for (var i = 0; i < this.tabInstances.length; i += 1) {
             this.unloadTab(i);
+        }
+        if (this.notebook !== null) {
+            this.notebook.destroy();
+            this.notebook = null;
         }
         this.tabInstances.length = 0;
         this.wiring.unload();
@@ -248,8 +248,6 @@ function WorkSpace(workSpaceState) {
     /**** Display the IGadgets menu ***/
     WorkSpace.prototype.paint = function () {
         this.tabsContainerElement.update();
-        //initialize the list of igadget loaded identifiers
-        this.igadgetIdsLoaded = [];
 
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
@@ -281,11 +279,7 @@ function WorkSpace(workSpaceState) {
     };
 
     WorkSpace.prototype.show = function () {
-        //initialize the list of igadget loaded identifiers
-        delete this.igadgetIdsLoaded;
-        this.igadgetIdsLoaded = [];
-
-        //show the igadget list and hide the dragboard
+        // show the igadget list and hide the dragboard
         this.visibleTab.getDragboard().hide();
         this.tabsContainerElement.setStyle({
             display: "block"
@@ -334,19 +328,17 @@ function WorkSpace(workSpaceState) {
         //notify this to the ContextManager. The orient value may be "portrait" or "landscape".
         this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
         //TODO: change the tab labels according to the orientation
-        var step = 0,
+        var step = window.innerWidth,
             scrolling = 0,
-            i;
-        if (orient === "portrait") {
-            step = this.scrollPortrait;
-            this.tabView.set("maxTabs", 3);
-        } else { //landscape
-            step = this.scrollLandscape;
-            this.tabView.set("maxTabs", 4);
-        }
+            iGadgets, contextManager, i;
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].updateLayout(scrolling);
             scrolling += step;
+        }
+
+        iGadgets = this.getIGadgets();
+        for (i = 0; i < iGadgets.length; i += 1) {
+            this.contextManager.notifyModifiedGadgetConcept(iGadgets[i], Concept.prototype.WIDTHINPIXELS, step);
         }
 
         //set current scroll
@@ -355,6 +347,8 @@ function WorkSpace(workSpaceState) {
         } else {
             window.scrollTo(0, 1);
         }
+
+        this.notebook.repaint();
     };
 
     WorkSpace.prototype.goTab = function (tab) {
@@ -389,14 +383,7 @@ function WorkSpace(workSpaceState) {
     this.loaded = false;
     this.visibleTab = null;
     this.visibleTabIndex = 0;
-
-    this.tabView = new MYMW.ui.TabView("dragboard", {
-        maxTabs : 3
-    });
-    this.igadgetIdsLoaded = null;
+    this.notebook = null;
 
     this.tabsContainerElement = $('tabs_container');
-    //scrolling
-    this.scrollPortrait = 320;
-    this.scrollLandscape = 480;
 }
