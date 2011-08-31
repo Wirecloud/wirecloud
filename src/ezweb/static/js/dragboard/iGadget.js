@@ -810,6 +810,10 @@ IGadget.prototype.paint = function (onInit) {
         true);
 };
 
+IGadget.prototype.load = function () {
+    this.getTab().paint();
+};
+
 IGadget.prototype.isPainted = function () {
     return this.menu !== null;
 };
