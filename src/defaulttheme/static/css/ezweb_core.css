@@ -74,11 +74,6 @@ td {
     width: 100%;
     z-index: 2;
     height: 74px;
-    background: url(../images/header_deg.gif) repeat-x left top;
-}
-
-#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
-	color: #fff;
 }
 
 .form-row {
@@ -153,13 +148,6 @@ td {
 	text-align: center;
 }
 
-.bar {
-    position: absolute;
-    bottom: -2px;
-    width: 100%;
-    left: 0;
-}
-
 .tab_section {
     position: absolute;
     bottom: 0;
@@ -169,18 +157,6 @@ td {
     width: 100%;
     z-index: 3;
     white-space: nowrap
-}
-
-#catalogue_nav_bar {
-   left:0;
-   position:absolute;
-   width:100%;
-   display: none;
-   margin-bottom:1px;
-}
-
-#catalogue_nav_bar .tab_section {
-   padding-right: 10px;
 }
 
 .tab_section #fixed_bar {
@@ -258,11 +234,6 @@ td {
 
 .global_header .toolbar_menu > div.selected_section {
   padding-bottom: 9px;
-}
-
-.global_header .toolbar_menu .first_toolbar_button {
-	border-left: 0px;
-	border-left: 1px solid;
 }
 
 .global_header .last_toolbar_button {
@@ -386,17 +357,10 @@ body.shared #workspace_link_container span {
     height: 18px;
     padding: 3px 5px 1px;
     font-weight: bold;
-	border: 1px solid;
 }
 
 .disabled {
     display: none !important;
-}
-
-.tab_section .current, .tab_section .tab:hover {
-	border: 1px solid;
-  	border-bottom: 0px none;
-	padding-top: 4px;
 }
 
 .tab span {
@@ -752,7 +716,6 @@ button {
     overflow-x: hidden;
     z-index: 1;
     visibility: hidden;
-	border-top: 1px solid;
 }
 
 .container_content {

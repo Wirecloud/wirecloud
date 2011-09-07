@@ -71,13 +71,6 @@ IGadget.prototype.getId = function () {
     return this.id;
 };
 
-IGadget.prototype.getVisibleName = function () {
-    var visibleName = this.name;
-    if (visibleName.length > 13) {
-        visibleName = visibleName.substring(0, 11) + "...";
-    }
-    return visibleName;
-};
 
 IGadget.prototype.getRelatedGadgetsHTML = function () {
     var relatedhtml = "",

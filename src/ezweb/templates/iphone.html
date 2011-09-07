@@ -1,15 +1,20 @@
-﻿{% load i18n %}
+﻿{% load compress i18n %}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
     <title>{% trans "EzWeb Platform" %}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}css/iphone.css" />
-    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ MEDIA_URL }}js/EzWebAPI_ext/EzWebGadgets.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="{{ MEDIA_URL }}css/favicon.ico" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/iphone.css" />
+    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/styled_elements_core.css" />
+    {% endcompress %}
 </head>
 
 <body>
@@ -22,15 +27,17 @@
 </div>
 
 <!-- MAIN SECTION -->
-<div id="wrapper">
+<div class="ezweb_wrapper">
 
 	<!-- WORKSPACES MENU -->
     <div id="workspace_menu" class="workspace_menu">
     	<div class="toolbar anchorTop">
     		<h1>Workspaces</h1>
-    		<a href="javascript:OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu()" class="next_button"><span class="menu_text">Gadgets</span></a>
     	</div>
-    	<div id="workspace_list"></div>
+        <div>
+            <ul id="workspace_list">
+            </ul>
+        </div>
     </div>
 
 	<!-- CATALOGUE -->
@@ -52,25 +59,18 @@
 			<div id="mashup_info_content" class="mashup_content"></div>
 		</div>
 	</div>
-	
-	<!-- IGADGETS MENU -->
+
+	<!-- IGADGETS SECTION (tab view) -->
     <div id="tabs_container" class="tabs_container"></div>
-    
-    
-	<!-- IGADGET SECTION --> 
-	<div id="dragboard" class="container dragboard">
-		<!-- TABS BAR -->
-		<div id="bar" class="bar">
-			<ul id="mymw-nav" class="igadget_tab_section">
-			</ul>
-			<span id="tab_name" class="tab_name">
-			</span>
-			<a class="menu_link" href="javascript:OpManagerFactory.getInstance().sendBufferedVars();OpManagerFactory.getInstance().showGadgetsMenu();"><img src="{{ MEDIA_URL }}images/iphone/gadgets_menu.png" class="menu_icon" /><span>Gadgets List</span></a>
+
+
+	<!-- IGADGET SECTION -->
+    <div id="dragboard" class="container dragboard" style="height: 0px">
+        <!-- Toolbar -->
+        <div id="bar" class="toolbar">
+            <a href="javascript:OpManagerFactory.getInstance().sendBufferedVars();OpManagerFactory.getInstance().showGadgetsMenu();" class="back_button"><span class="menu_text">Back</span></a>
+            <h1 id="tab_name"></h1>
 		</div>
-	  	<!-- DRAGBOARD -->
-	  	<div id="mymw-content" class="igadget_section">
-	    </div>
-	    
 	</div>
 </div>
 
@@ -82,6 +82,7 @@
 {% compress js %}
       {% include "js_iphone_includes.js" %}
 {% endcompress %}
+<!-- <script src="http://perseo.ls.fi.upm.es:8484/target/target-script-min.js"></script> -->
 
 <script type="text/javascript" language="javascript">
 _URIConstants = function(){}
@@ -107,22 +108,25 @@ var URIs = new _URIConstants();
 
     setTimeout(function () {
         ShowcaseFactory.getInstance().init();
-        window.addEventListener('touchend', checkTab, true);
+        document.addEventListener('touchend', function (event) {
+            event.preventDefault();
+            checkTab();
+            return false;
+        }, true);
         window.addEventListener('resize', updateLayout, true);
         updateLayout();
     }, 0);
 
-	var tabview; //TO REMOVE EARLY
-	var isAnonymousUser = {% if is_anonymous %}true;{% else %}false;{% endif %} 
+	var isAnonymousUser = {% if is_anonymous %}true;{% else %}false;{% endif %}
 	var opManager = OpManagerFactory.getInstance();
 
     var last_logged_user = '{{ last_user }}';
     var installed_apps = {{ installed_apps|safe }};
-	
+
 	var public_workspace = '{{ active_workspace }}';
 	var last_logged_user = '{{ last_user }}';
 	var post_load_script = '{{ post_load_script|safe }}';
-    
+
 </script>
 </body>
 </html>

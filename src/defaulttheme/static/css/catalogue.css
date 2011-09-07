@@ -63,12 +63,17 @@
 	-webkit-border-radius: 4px;
 }
 
+.resource_details img {
+    background: white;
+}
+
 #catalogue .center .resources .resource .resource_name,  #catalogue .center .resources .resource_details .resource_name{
 	font-weight: bold;
 }
 
 #catalogue .center .resources .resource .image {
-  border-color: #BBBBBB;
+    border-color: #BBBBBB;
+    background: white;
 }
 
 #catalogue .bold {
@@ -76,7 +81,7 @@
 }
 
 #catalogue .link {
-  
+
 }
 
 #catalogue .link:hover {

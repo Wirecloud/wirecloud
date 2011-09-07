@@ -31,6 +31,9 @@ a, a:visited{
 #loading-message {
     font-size: 10pt;
     font-weight: bold;
+    -moz-box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
+    box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
 }
 
 .hidden {
@@ -71,6 +74,14 @@ a, a:visited{
   background: transparent url(../images/menu-arrow-selected.png) no-repeat scroll 0 0;
 }
 
+.global_header {
+    background: url(../images/header_deg.gif) repeat-x left top;
+}
+
+#ws_banner, #wiring_banner, #ws_banner a, #wiring_banner a {
+    color: #fff;
+}
+
 .global_header .toolbar_menu > div.selected_section {
   -moz-border-radius-bottomleft:5px;
   -moz-border-radius-bottomright:5px;
@@ -81,9 +92,10 @@ a, a:visited{
 }
 
 .global_header .toolbar_menu .first_toolbar_button {
-  -moz-border-radius-bottomleft: 5px;
-  -webkit-border-bottom-left-radius:5px;
-  border-bottom-left-radius:5px;
+    -moz-border-radius-bottomleft: 5px;
+    -webkit-border-bottom-left-radius:5px;
+    border-bottom-left-radius:5px;
+    border-left: 1px solid;
 }
 
 .global_header .last_toolbar_button {
@@ -247,7 +259,10 @@ a, a:visited{
 }
 
 .window_menu, .help_text_enabled {
-  border-color: #2D6F9C;
+    border-color: #2D6F9C;
+    -moz-box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
+    box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
 }
 
 .window_menu .window_title, .help_text_enabled #app_name {

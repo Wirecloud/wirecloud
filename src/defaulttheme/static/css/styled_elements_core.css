@@ -359,22 +359,25 @@ div.styled_numeric_field div.numeric_bottom_button {
   display: none;
 }
 
-.notebook .tab_wrapper .move_left {
+.notebook .tab_wrapper .move_left, .notebook .tab_wrapper .move_right {
   color: #AAA;
   cursor: default;
   position: absolute;
-  left: 0px;
   width: 16px;
   top: 0px !important;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.notebook .tab_wrapper .move_left {
+  left: 0px;
 }
 
 .notebook .tab_wrapper .move_right {
-  color: #AAA;
-  cursor: default;
-  position: absolute;
   right: 0px;
-  width: 16px;
-  top: 0px;
 }
 
 .notebook .tab_wrapper .move_left.enabled, .notebook .tab_wrapper .move_right.enabled {
@@ -817,7 +820,7 @@ div.styled_numeric_field div.numeric_bottom_button {
 
 .styled_alert.error .message{
   border-color:#890000;
-	background-color:#FFACAC;  
+	background-color:#FFACAC;
 }
 
 .styled_alert.info .message{
@@ -871,17 +874,17 @@ div.styled_numeric_field div.numeric_bottom_button {
 	color:#3B7614;
 }
 
-.styled_alert .message .close_button { 
+.styled_alert .message .close_button {
   background:transparent url("../images/dialog/dialog-cancel-error.png") no-repeat scroll 0 5px;
 	cursor:pointer;
 	width:22px;
 }
 
-.styled_alert.warning .message .close_button { 
+.styled_alert.warning .message .close_button {
   background:transparent url("../images/dialog/dialog-cancel-warning.png") no-repeat scroll 0 5px;
 }
 
-.styled_alert.info .message .close_button { 
+.styled_alert.info .message .close_button {
   background:transparent url("../images/dialog/dialog-cancel-info.png") no-repeat scroll 0 5px;
 }
 

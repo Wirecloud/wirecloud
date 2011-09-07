@@ -2,7 +2,7 @@
 /*global setTimeout, window, PersistenceEngineFactory, document, OpManagerFactory, clearInterval, updateInterval */
 "use strict";
 
-/* 
+/*
 *     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 *     S.A.Unipersonal (Telefonica I+D)
 *
@@ -71,6 +71,9 @@ function setLanguage(language) {
 function updateLayout () {
     var orient = (window.orientation === 0 || window.orientation === 180) ? "portrait" : "landscape";
     document.body.className = orient;
+
+    document.styleSheets[0].deleteRule(0);
+    document.styleSheets[0].insertRule('.container {width: 100%; height: ' + window.innerHeight + 'px;}', 0);
 
     if (OpManagerFactory.getInstance().loadCompleted) {
         OpManagerFactory.getInstance().activeWorkSpace.updateLayout(orient);

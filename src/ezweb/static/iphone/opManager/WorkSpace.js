@@ -251,14 +251,8 @@ function WorkSpace(workSpaceState) {
 
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
-            step = 0,
+            step = window.innerWidth,
             i;
-
-        if (document.body.getAttribute("orient") === "portrait") {
-            step = this.scrollPortrait;
-        } else {
-            step = this.scrollLandscape;
-        }
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].show(scrolling, i);
@@ -284,12 +278,7 @@ function WorkSpace(workSpaceState) {
         this.tabsContainerElement.setStyle({
             display: "block"
         });
-        var step = 0;
-        if (document.body.getAttribute("orient") === "portrait") {
-            step = this.scrollPortrait;
-        } else {
-            step = this.scrollLandscape;
-        }
+        var step = window.innerWidth;
         window.scrollTo(this.visibleTabIndex * step, 1);
     };
 

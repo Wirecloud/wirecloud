@@ -115,18 +115,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
     };
 
-    /**
-    * Removes the mark on the related igadget. It has to be called at least:
-    * - when the user clicks on the tab containing that igadget
-    * - when the user clicks on the related gadget icon
-    */
-    Dragboard.prototype.unmarkRelatedIgadget = function (iGadgetId) {
-        var r = $("related_" + iGadgetId);
-        if (r) {
-            r.removeClassName("active");
-        }
-    };
-
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIGadget, position, width, height, igadget, gadget, gadgetid, minimized, i,
             opManager = OpManagerFactory.getInstance();
