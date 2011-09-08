@@ -41,7 +41,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Wirecloud'
-copyright = u'2011, Yaco Sistemas'
+copyright = u'2011, Yaco Sistemas & Universidad Politécnica de Madrid'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
