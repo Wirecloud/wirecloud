@@ -98,14 +98,14 @@ Install the database and the appropriate python dependencies: ``postgresql``, ``
         $ sudo apt-get install python-psycopg2
 
 
-Now you have to creating the project Database
+Now you have to create the project Database.
 
 .. admonition:: Note
 
     We assume that your user has superadmin permissions in PostgreSQL. Usually
     this means that you have to login as the postgres user (i.e. $ su postgres).
 
-The PostgreSQL database and user is created with these instructions:
+The PostgreSQL database and user can be created with these instructions:
 
 .. code-block:: bash
 
@@ -115,8 +115,8 @@ The PostgreSQL database and user is created with these instructions:
 If you want to create a user protected with password you should use the -P option.
 
 We also have to permit connections to the database from the local computer. To
-do so, edit /etc/postgresql/X.X/main/pg_hba.conf and add the following line
-(not at the end):
+do so, edit /etc/postgresql/X.X/main/pg_hba.conf and add the following lines
+as the firsts rules:
 
 .. code-block:: bash
 
@@ -146,8 +146,8 @@ Before running Wirecloud you must populate the database using this command:
 
     $ python manage.py syncdb --migrate
 
-This will create database tables without adding any content. You can add initial demo
-content issuing the following command:
+This will create database tables without adding any content. You can add
+initial demo content issuing the following command:
 
 .. code-block:: bash
 
