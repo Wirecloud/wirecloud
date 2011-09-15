@@ -252,6 +252,9 @@ def UpdateIGadget(igadget, user, tab):
     # save the changes
     position.save()
 
+    from commons.get_data import _invalidate_cached_variables
+    _invalidate_cached_variables(ig)
+
 
 def deleteIGadget(igadget, user):
 
