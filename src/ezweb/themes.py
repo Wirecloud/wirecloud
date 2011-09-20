@@ -66,7 +66,10 @@ def get_template_sources(template_name, template_dirs=None):
             except ValueError:
                 pass
 
-    yield try_template(get_theme_dir(get_active_theme_name(), 'templates'))
+    active_theme_source = try_template(get_theme_dir(get_active_theme_name(), 'templates'))
+    if active_theme_source:
+        yield active_theme_source
+
     yield try_template(get_theme_dir(DEFAULT_THEME, 'templates'))
 
 
