@@ -378,13 +378,13 @@ var DeveloperInfoPainter = function (structure_element) {
 
     this.local_ids = new Hash({'NEW_GADGET_BUTTON':   '#submit_link',     'GADGET_TEMPLATE_INPUT': '#template_uri',
                              'NEW_PACKAGE_BUTTON':  '#gadget_link',     'NEW_PACKAGE_FORM':      '#upload_form',
-                             'NEW_FEED_BUTTON':     '#new_feed_button', 'NEW_WEBSITE_BUTTON':    '#new_website_button'});
+                             'NEW_WEBSITE_BUTTON':    '#new_website_button'});
 
     this.structure_template_element = structure_element;
 
     this.paint = function (command, user_command_manager) {
         var selector, new_gadget_button, new_gadget_input, new_package_button,
-            new_package_form, new_feed_button, new_website_button, data;
+            new_package_form, new_website_button, data;
 
         this.dom_element.update(this.structure_template_element.innerHTML);
 
@@ -400,9 +400,6 @@ var DeveloperInfoPainter = function (structure_element) {
         selector = this.local_ids.NEW_PACKAGE_FORM;
         new_package_form = this.dom_wrapper.get_element_by_selector(selector);
 
-        selector = this.local_ids.NEW_FEED_BUTTON;
-        new_feed_button = this.dom_wrapper.get_element_by_selector(selector);
-
         selector = this.local_ids.NEW_WEBSITE_BUTTON;
         new_website_button = this.dom_wrapper.get_element_by_selector(selector);
 
@@ -413,10 +410,6 @@ var DeveloperInfoPainter = function (structure_element) {
         // New gadget from package
         data = new Hash({'upload_form': new_package_form});
         user_command_manager.create_command_from_data('SUBMIT_PACKAGED_GADGET', new_package_button, data, 'click');
-
-        // New gadget from feed
-        data = {'window': 'addFeed'};
-        user_command_manager.create_command_from_data('SHOW_WINDOW', new_feed_button, data, 'click');
 
         // New gadget from website
         data = {'window': 'addSite'};

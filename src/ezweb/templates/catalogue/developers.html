@@ -1,71 +1,54 @@
 {% load i18n %}
 
 <div class="advanced_develop" id="advanced_develop">
-    
-    <div class="developer_block">
-      <div class="developer_title">Nuevo gadget a partir de feed RSS</div>
-      <div>
-        <div class="float_left"><img class="developer_image" src="{{STATIC_URL}}/images/developer_rss.jpg"></img></div>
-        <div class="float_left">
-          <div class="developer_description">¿No está tu <b>feed RSS favorito</b> en el catálogo de EzWeb? Tranquilo, hay una solución.</div>
-          <div class="developer_description">Simplemente introduciendo la URL del feed en un asistente, puedes crear automáticamente tu propio gadget lector de noticias.  
-          Además, todo el mundo podrá usar tu gadget. </div>
-          <div class="developer_description">¡Así de fácil es crear un gadget en EzWeb! </div>
-          <button id="new_feed_button">Crear</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="developer_block">    
-      <div class="developer_title">Nuevo gadget a partir de sitio web</div>
-      <div>
-        <div class="float_left"><img class="developer_image" src="{{STATIC_URL}}/images/developer_url.jpg"></img></div>
-        <div class="float_left">
-		  <div class="developer_description">Otra forma sencilla de crear gadgets en EzWeb es a partir de una <b>URL de un sitio web.</b></div>
-          <div class="developer_description">Usando un simple asistente, podrás crear automáticamente los gadgets de tus sitios web favoritos. ¡Pruébalo, tardas menos de 1 minuto! </div>
-          <button id="new_website_button">Crear</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="developer_block">
-      <div class="developer_title">Nuevo gadget a partir de template</div>
-      <div>
-        <div class="float_left"><img class="developer_image" src="{{STATIC_URL}}/images/catalogue/developer_template.png"></img></div>
-        <div class="float_left">
-          <div class="developer_description">La creación de este tipo de gadgets no puede automatizarse (ya que cada uno puede tratar temas diferentes) y
-          requiere conocimientos de programación. Está, por tanto, solo recomendado para usuarios avanzados. </div>
-          <div class="developer_description">Un template es un fichero XML escrito por el desarrollador del gadget, expresando la funcionalidad que cada gadget usa de la 
-          Plataforma EzWeb. Para crear un nuevo gadget, su debe <b>escribir la URL del template en el siguiente campo de texto</b> y hacer click en el botón adjunto.  </div>
-           
-          <input type="text" name="template_uri" id="template_uri">
-		  <button class="submit_link" id="submit_link">Crear</button>
-         </div>
-      </div>
-    </div>
-    
-    <div class="developer_block">
-      <div class="developer_title">Nuevo gadget a partir de paquete</div>
-      <div>
-        <div class="float_left"><img class="developer_image" src="{{STATIC_URL}}/images/catalogue/developer_package.jpg"></img></div>
-        <div class="float_left">
-          <div class="developer_description">Para facilitar la tarea de los desarrolladores de gadgets, se ha creado un <b>entorno de desarrollo (IDE) de gadgets</b>. Esta
-           herramienta <b>genera un único fichero comprimido</b> con todos los ficheros que componen el gadget. </div>
-          <div class="developer_description">Para agregar un gadget comprimido en un paquete, solo hay que <b>localizar el fichero del gadget en el siguiente campo de texto</b> 
-          y hacer click botón adjunto. </div>     
-         </div>
-         
-         <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/deployment/gadgets/" id="upload_form">				
-           <input type="hidden" value="0" name="user_action">
-           <input type="hidden" value="off" name="add_to_ws">
-           <input type="file" name="file" id="gadget_uri">
-           <button id="gadget_link">Crear</button>
-         </form>
-         <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
-      </div>
-    </div>
-	
-	<div class="developer_block">
 
+    <div class="developer_block">
+        <div class="developer_title">{% trans "Creating new gadgets from web sites" %}</div>
+        <div class="float_left">
+            <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_url.jpg" />
+        </div>
+        <div class="float_left">
+            <div class="developer_description">{% trans "The easiest way to create a new gadget is <b>to provide the URL of a web site.</b>" %}</div>
+            <div class="developer_description">{% trans "By using a wizard, you will be able to automatically create those gadgets you really like from your favourite web pages. Try it! It will take you no more than 1 minute!" %}</div>
+            <button id="new_website_button">{% trans "Create" %}</button>
+        </div>
+    </div>
+
+    <div class="developer_block">
+        <div class="developer_title">{% trans "Adding gadgets from packages" %}</div>
+        <div>
+            <div class="float_left">
+                <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_package.jpg" />
+            </div>
+            <div class="float_left">
+                <div class="developer_description">{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</div> 
+            </div>
+
+            <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/deployment/gadgets/" id="upload_form">
+            <div>
+               <input type="hidden" value="0" name="user_action"></input>
+               <input type="hidden" value="off" name="add_to_ws"></input>
+               <input type="file" name="file" id="gadget_uri"></input>
+               <button id="gadget_link">{% trans "Add" %}</button>
+            </div>
+            </form>
+            <iframe frameborder="0" style="display: none;" id="upload" name="upload"></iframe>
+        </div>
+    </div>
+
+    <div class="developer_block">
+        <div class="developer_title">{% trans "Adding gadgets and composite applications from their templates" %}</div>
+        <div>
+            <div class="float_left">
+                <img class="developer_image" src="{{STATIC_URL}}images/catalogue/developer_template.png"></img>
+            </div>
+            <div class="float_left">
+                <div class="developer_description">{% trans "If you have the XML template of a gadget or a composite application, you can add it to the catalogue by writing the URL of the template in the text field below." %}</div>
+                <input type="text" name="template_uri" id="template_uri">
+    		<button class="submit_link" id="submit_link">{% trans "Add" %}</button>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
