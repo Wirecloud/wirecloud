@@ -76,7 +76,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.minimized = minimized;
     this.configurationVisible = false;
     this.highlightTimeout = null;
-
+    this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
 
     if (fulldragboard) {
         this.minimized = false;
@@ -125,7 +125,6 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
 
     // Menu attributes
     this.extractOptionId = null;
-    this.extractOptionOrder = 0;
 
     this.lowerOpId = null;
     this.raiseOpId = null;
@@ -554,7 +553,6 @@ IGadget.prototype.build = function () {
     this.contentWrapper.appendChild(this.configurationElement);
 
     // Gadget Content
-    var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
     if (BrowserUtilsFactory.getInstance().isIE()) {
         this.content = document.createElement("iframe");
         Element.extend(this.content);
@@ -562,7 +560,7 @@ IGadget.prototype.build = function () {
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
 //      this.content.innerHTML = "Loading...."; // TODO add an animation ?
-        this.content.setAttribute("src", codeURL);
+        this.content.setAttribute("src", this.codeURL);
         this.content.setAttribute("width", "100%");
         this.content.setAttribute("frameBorder", "0");
 
@@ -573,7 +571,7 @@ IGadget.prototype.build = function () {
         this.content.setAttribute("type", "text/html"); // TODO xhtml? => application/xhtml+xml
         this.content.setAttribute("standby", "Loading...");
         if (Prototype.Browser.Opera || Prototype.Browser.Safari) {
-            this.content.setAttribute("data", codeURL);
+            this.content.setAttribute("data", this.codeURL);
         }
         //this.content.innerHTML = "Loading...."; // TODO add an animation ?
     }
@@ -736,8 +734,7 @@ IGadget.prototype.paint = function (onInit) {
     this.layout.dragboard.dragboardElement.appendChild(this.element);
 
     if (this.content.tagName.toLowerCase() === 'object' && !Prototype.Browser.Safari) {
-        var codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
-        this.content.setAttribute("data", codeURL);
+        this.content.setAttribute("data", this.codeURL);
     }
 
     // Position
@@ -840,6 +837,18 @@ IGadget.prototype._createIGadgetMenu = function () {
                         }.bind(this),
                         0);
 
+    this.menu.addOption('icon-igadget-reload',
+                        gettext("Reload"),
+                        function () {
+                            if ('data' in this.content) {
+                                this.content.setAttribute('data', this.codeURL);
+                            } else {
+                                this.content.src = this.codeURL;
+                            }
+                            LayoutManagerFactory.getInstance().hideCover();
+                        }.bind(this),
+                        1);
+
     if (this.layout.dragboard.getWorkspace().isOwned()) {
         this.menuColorEntryId = this.menu.addOption('icon-igadget-menu-colors',
             gettext("Menu Bar Color..."),
@@ -858,7 +867,7 @@ IGadget.prototype._createIGadgetMenu = function () {
                     Event.pointerX(e),
                     y + (menuEntry.offsetHeight / 2));
             }.bind(this),
-            1);
+            2);
 
         this.transparencyEntryId = this.menu.addOption('icon-igadget-transparency',
             gettext("Transparency"),
@@ -866,10 +875,10 @@ IGadget.prototype._createIGadgetMenu = function () {
                 this.toggleTransparency();
                 LayoutManagerFactory.getInstance().hideCover();
             }.bind(this),
-            2);
+            3);
 
         // Extract/Snap from/to grid option (see _updateExtractOption)
-        this.extractOptionOrder = 2;
+        var extractOptionOrder = 3;
         this.extractOptionId = this.menu.addOption("",
             "",
             function () {},
