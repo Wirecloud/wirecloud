@@ -142,9 +142,7 @@ td {
 }
 
 .logo_layout {
-    max-height:50px;
-    max-width:250px;
-    position:relative;
+    position: relative;
 }
 
 .logo_placeholder {

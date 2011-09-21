@@ -39,6 +39,10 @@ a, a:visited{
 
 /* header ------------------------------------------------------------------------------------------ */
 
+.logo_layout {
+    width: 244px;
+    height: 36px;
+}
 
 .go_back{
 	text-decoration: underline;
