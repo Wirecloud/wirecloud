@@ -128,6 +128,9 @@ var Catalogue = function (dom_element, dom_wrapper) {
 
         this.render();
 
+        this.resp_command_dispatcher.search_button.addClassName('selected_section');
+        this.resp_command_dispatcher.developers_button.removeClassName('selected_section');
+
         services = this.user_command_manager.get_service_facade();
         last_results = services.get_last_results(services.searcher.scope);
         if (last_results) {
