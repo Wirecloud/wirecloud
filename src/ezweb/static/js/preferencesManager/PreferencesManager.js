@@ -149,9 +149,9 @@ var PreferencesManagerFactory = function () {
 		    "type":         "boolean",
 		    "description":  ''
 		  },
-                  "wiring-unfold-by-default": {
+                  "wiring-expand-by-default": {
                     "defaultValue": false,
-                    "label":        gettext("Unfold events and slots in the wiring editor by default"),
+                    "label":        gettext("Expand events and slots in the wiring editor by default"),
                     "type":         "boolean",
                     "description":  ''
                   }

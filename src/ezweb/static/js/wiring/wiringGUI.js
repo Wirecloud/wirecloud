@@ -91,24 +91,24 @@ function WiringInterface(wiring, workspace, wiringContainer) {
     var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
     var unfold_chkItem = $('unfold_chkItem');
     var unfold_chkItem_listener = function (modifiedValues) {
-        if (!('wiring-unfold-by-default' in modifiedValues)) {
+        if (!('wiring-expand-by-default' in modifiedValues)) {
             return;
         }
 
-        if (modifiedValues['wiring-unfold-by-default']) {
+        if (modifiedValues['wiring-expand-by-default']) {
             unfold_chkItem.addClassName('chkItem');
         } else {
             unfold_chkItem.removeClassName('chkItem');
         }
     };
     platformPreferences.addCommitHandler(unfold_chkItem_listener);
-    unfold_chkItem_listener({'wiring-unfold-by-default': platformPreferences.get('wiring-unfold-by-default')});
+    unfold_chkItem_listener({'wiring-expand-by-default': platformPreferences.get('wiring-expand-by-default')});
 
     // Add event listener only once
     if (!unfold_chkItem.lastEvent) {
         unfold_chkItem.lastEvent = function(e) {
             platformPreferences.set({
-                'wiring-unfold-by-default': {
+                'wiring-expand-by-default': {
                     value: !unfold_chkItem.hasClassName('chkItem')
                 }
             });
@@ -300,7 +300,7 @@ WiringInterface.prototype._addTab = function (tab) {
     }
 
     platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
-    if (!platformPreferences.get('wiring-unfold-by-default')) {
+    if (!platformPreferences.get('wiring-expand-by-default')) {
         tabEvents.toggle(false);
         tabSlots.toggle(false);
     }

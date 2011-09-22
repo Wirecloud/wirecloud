@@ -130,7 +130,7 @@ ConnectableGroupInterface.prototype.toggle = function (userAction) {
 }
 
 /**
- * Folds or unfolds this <code>ConnectableGroupInterface</code> depending on the
+ * Folds or expands this <code>ConnectableGroupInterface</code> depending on the
  * current interface status.
  */
 ConnectableGroupInterface.prototype.forceToggle = function () {
