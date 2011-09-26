@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}iphone/common/MobileScrollManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
