@@ -76,7 +76,9 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.minimized = minimized;
     this.configurationVisible = false;
     this.highlightTimeout = null;
-    this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
+    if (this.id) {
+        this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
+    }
 
     if (fulldragboard) {
         this.minimized = false;
@@ -841,7 +843,8 @@ IGadget.prototype._createIGadgetMenu = function () {
                         gettext("Reload"),
                         function () {
                             if ('data' in this.content) {
-                                this.content.setAttribute('data', this.codeURL);
+                                this.contentWrapper.removeChild(this.content);
+                                this.contentWrapper.appendChild(this.content);
                             } else {
                                 this.content.src = this.codeURL;
                             }
@@ -2076,6 +2079,7 @@ IGadget.prototype.save = function (options) {
     function onSuccess(transport) {
         var igadgetInfo = JSON.parse(transport.responseText);
         this.id = igadgetInfo['id'];
+        this.codeURL = this.gadget.getXHtml().getURICode() + "#id=" + this.id;
         this.layout.dragboard.addIGadget(this, igadgetInfo, options);
     }
 
