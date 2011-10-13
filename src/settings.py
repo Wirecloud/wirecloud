@@ -131,6 +131,7 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
 #    'middleware.session_middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
 #    'facebook.djangofb.FacebookMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
