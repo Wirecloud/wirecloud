@@ -330,8 +330,6 @@ PROXY_PROCESSORS = (
 #TWITTER_CONSUMER_KEY = "YOUR CONSUMER KEY FROM TWITTER"
 #TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
-TEST_RUNNER = 'dstest.test_runner.run_tests'
-
 # External settings configuration
 try:
     from clms.settings import *  # pyflakes:ignore

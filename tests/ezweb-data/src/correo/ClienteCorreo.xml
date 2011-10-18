@@ -7,8 +7,8 @@
         <Author>jmostazo (modificado por ablanco@yaco.es)</Author>
         <Mail>jmostazo@pegaso.ls.fi.upm.es</Mail>
         <Description>Gadget Cliente de correo genérico</Description>
-        <ImageURI>http://localhost/gadgets/test/correo/images/catalogue.png</ImageURI>
-        <iPhoneImageURI>http://localhost/gadgets/test/correo/images/catalogue_iphone.png</iPhoneImageURI>
+        <ImageURI>http://localhost:8001/test/correo/images/catalogue.png</ImageURI>
+        <iPhoneImageURI>http://localhost:8001/test/correo/images/catalogue_iphone.png</iPhoneImageURI>
         <WikiURI>http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb#Gadget_lector_de_correo</WikiURI>
     </Catalog.ResourceDescription>
 
@@ -70,7 +70,7 @@
     </Platform.Wiring>
 
     <Platform.Link>
-        <XHTML href="http://localhost/gadgets/test/correo/ClienteCorreo.html"/>
+        <XHTML href="http://localhost:8001/test/correo/ClienteCorreo.html"/>
     </Platform.Link>
 
     <Platform.Rendering height="24" width="10"/>
