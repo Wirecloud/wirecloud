@@ -215,9 +215,4 @@ def get_site_domain(request):
     except Site.DoesNotExist:
         host = request.META['HTTP_HOST']
 
-    if request.META['SERVER_PROTOCOL'].lower().find("https") != -1:
-        rootURL = "https://" + host
-    else:
-        rootURL = "http://" + host
-
-    return rootURL
+    return "//" + host
