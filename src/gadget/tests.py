@@ -16,6 +16,8 @@ from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.models import Gadget
 
 
+BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
+
 class FakeDownloader(object):
 
     def __init__(self):
@@ -62,14 +64,14 @@ class GCPRemoteCodeTests(TestCase):
         http_utils.download_http_content = self._original_function
 
     def test_parse_gadget_code(self):
-        http_utils.download_http_content.set_response("http://example.com/code", "gadget code")
+        http_utils.download_http_content.set_response("http://example.com/code", BASIC_HTML_GADGET_CODE)
 
         xhtml = parse_gadget_code('http://example.com/',
                                   'http://example.com/code',
                                   'http://example.com/gadget',
                                   'text/html', False)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget/xhtml')
-        self.assertEquals(xhtml.code, 'gadget code')
+        self.assertEquals(xhtml.code, BASIC_HTML_GADGET_CODE)
         self.assertEquals(xhtml.url, 'http://example.com/code')
         self.assertEquals(xhtml.content_type, 'text/html')
 
@@ -128,24 +130,24 @@ class GCPLocalCodeTests(TestCase):
         fd.close()
 
     def test_parse_gadget_code_from_wgt(self):
-        self._create_gadget_code('test/Morfeo/Test_Gadget1/0.1/gcp_test.html', 'gadget code')
+        self._create_gadget_code('test/Morfeo/Test_Gadget1/0.1/gcp_test.html', BASIC_HTML_GADGET_CODE)
         xhtml = parse_gadget_code('http://example.com',
                                   'deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html',
                                   'http://example.com/gadget1',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget1/xhtml')
-        self.assertEquals(xhtml.code, 'gadget code')
+        self.assertEquals(xhtml.code, BASIC_HTML_GADGET_CODE)
         self.assertEquals(xhtml.url, 'deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html')
         self.assertEquals(xhtml.content_type, 'text/html')
 
         # now with an absolute path
-        self._create_gadget_code('test/Morfeo/Test_Gadget2/0.1/gcp_test.html', 'gadget code')
+        self._create_gadget_code('test/Morfeo/Test_Gadget2/0.1/gcp_test.html', BASIC_HTML_GADGET_CODE)
         xhtml = parse_gadget_code('http://example.com',
                                   '/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html',  # absolute path
                                   'http://example.com/gadget2',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget2/xhtml')
-        self.assertEquals(xhtml.code, 'gadget code')
+        self.assertEquals(xhtml.code, BASIC_HTML_GADGET_CODE)
         self.assertEquals(xhtml.url, '/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html')
         self.assertEquals(xhtml.content_type, 'text/html')
 
