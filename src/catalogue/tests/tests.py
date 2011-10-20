@@ -15,6 +15,10 @@ from catalogue.models import GadgetWiring
 from commons.test import LocalizedTestCase
 
 
+# Avoid nose to repeat these tests (they are runned through __init__.py)
+__test__ = False
+
+
 class AddGadgetTestCase(TestCase):
 
     def setUp(self):
