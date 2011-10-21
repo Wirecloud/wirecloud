@@ -40,6 +40,10 @@ class OrganizationWorkspaceManager:
         workspaces = set(workspaces)
 
         for workspace in workspaces:
+            if workspace.creator == user:
+                # Ignore workspaces created by the user
+                continue
+
             ref = ref_from_workspace(workspace)
             if ref not in current_workspace_refs:
                 workspaces_to_add.append((ref, workspace))
