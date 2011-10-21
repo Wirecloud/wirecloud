@@ -2,7 +2,7 @@ import os
 import time
 import re
 
-from django.test import TestCase
+from django.core.cache import cache
 from lxml import etree
 
 try:
@@ -13,6 +13,16 @@ except:
 
 from proxy.tests import ProxyTests
 
+
+def format_selenium_command(func_name, arg1, arg2=None):
+    text = func_name + '("' + arg1
+    if arg2 is not None:
+        text += '", "' + arg2
+    text += '")'
+
+    return text
+
+
 class SeleniumWrapperException(Exception):
 
     def __init__(self, command, args):
@@ -20,11 +30,7 @@ class SeleniumWrapperException(Exception):
         self.cmd_args = args
 
     def __str__(self):
-        text = str(self.command) + ' ' + str(self.cmd_args[0])
-        if len(self.cmd_args) >= 2:
-            text += ' ' + str(self.cmd_args[1])
-
-        return text
+        return format_selenium_command(self.command, *self.cmd_args)
 
 
 class SeleniumAssertionFailure(Exception):
@@ -60,7 +66,7 @@ class SeleniumHTMLWrapper(object):
     def addSelection(self, locator, optionLocator):
         self.selenium.add_selection(locator, optionLocator)
 
-    def verifyText(self, locator, pattern):
+    def assertText(self, locator, pattern):
         if self.selenium.get_text(pattern) != pattern:
             raise SeleniumAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
 
@@ -72,7 +78,7 @@ class SeleniumHTMLWrapper(object):
         if self.selenium.is_text_present(pattern):
             raise SeleniumAssertionFailure('text was present: ' + pattern)
 
-    def verifyValue(self, locator, pattern):
+    def assertValue(self, locator, pattern):
         if self.selenium.get_value(pattern) != pattern:
             raise SeleniumAssertionFailure('The value of the input element "' + locator + '" was not equal to "' + pattern + '"')
 
@@ -80,9 +86,9 @@ class SeleniumHTMLWrapper(object):
         self.selenium.click(locator)
 
     def clickAndWait(self, locator, timeout):
-        self.selenium.click(locator)
         if timeout == '':
             timeout = '30000'
+        self.selenium.click(locator)
         self.selenium.wait_for_page_to_load(timeout)
 
     def keyPress(self, locator, keySequence):
@@ -93,7 +99,7 @@ class SeleniumHTMLWrapper(object):
         self.selenium.open(url)
 
     def pause(self, timeout):
-        time.sleep(float(timeout)/1000)
+        time.sleep(float(timeout) / 1000)
 
     def storeValue(self, locator, variableName):
         self.values[variableName] = self.selenium.get_value(locator)
@@ -138,6 +144,7 @@ class TestSelenium(SeleniumTestCase):
         steps = xml.xpath('//xhtml:table/xhtml:tbody/xhtml:tr',
             namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
 
+        counter = 0
         for step in steps:
             func_name = step[0].text
 
@@ -146,7 +153,17 @@ class TestSelenium(SeleniumTestCase):
             except SeleniumSoftAssertionFailure, e:
                 self.verificationErrors.append(str(e))
             except SeleniumAssertionFailure, e:
-                self.fail(str(e))
+                command = format_selenium_command(func_name, step[1].text, step[2].text)
+                self.fail(str(e) + ' | line: ' + counter + ', cmd: ' + command)
+            except Exception, e:
+                if hasattr(e, 'message') and e.message.startswith('Timed out'):
+                    msg = 'command "%(command)s" timed out on line: %(line)s'
+                    command = format_selenium_command(func_name, step[1].text, step[2].text)
+                    self.fail(msg % {'command': command, 'line': counter})
+                else:
+                    raise e
+
+            counter += 1
 
     def _process_selenium_html_suite(self, path):
         xml = etree.parse(path, etree.XMLParser())
@@ -161,6 +178,7 @@ class TestSelenium(SeleniumTestCase):
         super(TestSelenium, self).setUp()
         self.wrapper = SeleniumHTMLWrapper(self.selenium)
         self.verificationErrors = []
+        cache.clear()
 
     def tearDown(self):
         self.assertEqual([], self.verificationErrors)
