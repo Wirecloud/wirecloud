@@ -566,7 +566,7 @@ class WorkSpaceSharerEntry(Resource):
         if (owner != user):
             msg = 'You are not the owner of the workspace, so you can not share it!'
             result = {'result': 'error', 'description': msg}
-            return HttpResponseServerError(json_encode(result), mimetype='application/json; charset=UTF-8')
+            return HttpResponseForbidden(json_encode(result), mimetype='application/json; charset=UTF-8')
 
         #Everything right!
         if 'groups' not in request.REQUEST:
@@ -576,7 +576,7 @@ class WorkSpaceSharerEntry(Resource):
 
             linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
 
-            url = request.META['HTTP_REFERER'] + 'viewer/workspace/' + workspace_id
+            url = request.build_absolute_uri('/viewer/workspace/' + workspace_id)
 
             result = {"result": "ok", "url": url}
             return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
