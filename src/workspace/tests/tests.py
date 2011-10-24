@@ -5,6 +5,7 @@ import os
 
 from lxml import etree
 from django.contrib.auth.models import User, Group
+from django.core.cache import cache
 from django.test import Client, TestCase
 from django.utils import simplejson
 
@@ -25,7 +26,14 @@ from workspace.views import createEmptyWorkSpace, linkWorkspace
 __test__ = False
 
 
-class WorkspaceTestCase(TestCase):
+class CacheTestCase(TestCase):
+
+    def setUp(self):
+        super(CacheTestCase, self).setUp()
+        cache.clear()
+
+
+class WorkspaceTestCase(CacheTestCase):
     fixtures = ['test_data']
 
     def setUp(self):
