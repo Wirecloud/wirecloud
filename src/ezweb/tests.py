@@ -165,6 +165,8 @@ class TestSelenium(SeleniumTestCase):
 
             counter += 1
 
+        self.assertEqual([], self.verificationErrors)
+
     def _process_selenium_html_suite(self, path):
         xml = etree.parse(path, etree.XMLParser())
 
@@ -179,9 +181,6 @@ class TestSelenium(SeleniumTestCase):
         self.wrapper = SeleniumHTMLWrapper(self.selenium)
         self.verificationErrors = []
         cache.clear()
-
-    def tearDown(self):
-        self.assertEqual([], self.verificationErrors)
 
     def test_selenium(self):
         from django.conf import settings
