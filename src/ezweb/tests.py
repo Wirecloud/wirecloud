@@ -154,7 +154,7 @@ class TestSelenium(SeleniumTestCase):
                 self.verificationErrors.append(str(e))
             except SeleniumAssertionFailure, e:
                 command = format_selenium_command(func_name, step[1].text, step[2].text)
-                self.fail(str(e) + ' | line: ' + counter + ', cmd: ' + command)
+                self.fail(str(e) + ' | line: ' + str(counter) + ', cmd: ' + str(command))
             except Exception, e:
                 if hasattr(e, 'message') and e.message.startswith('Timed out'):
                     msg = 'command "%(command)s" timed out on line: %(line)s'
