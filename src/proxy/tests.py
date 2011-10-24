@@ -7,6 +7,7 @@ import urllib2
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase, Client
 
 from proxy.views import EZWEB_PROXY
@@ -156,6 +157,7 @@ class ProxySecureDataTests(ProxyTestsBase):
         settings.PROXY_PROCESSORS = (
             'proxy.processors.SecureDataProcessor',
         )
+        cache.clear()
         super(ProxySecureDataTests, self).setUp()
 
     def tearDown(self):
