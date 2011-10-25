@@ -46,7 +46,6 @@ from context.utils import get_user_context_providers
 from gadget.models import XHTML, UserPrefOption, Capability, VariableDef
 from igadget.models import Variable, IGadget
 from preferences.views import get_workspace_preference_values, get_tab_preference_values
-from twitterauth.models import TwitterUserProfile
 from workspace.models import Tab, VariableValue, UserWorkSpace, PublishedWorkSpace
 from workspace.utils import createTab, decrypt_value, encrypt_value
 
@@ -783,6 +782,7 @@ def get_concept_values(user):
     data['user'] = user
     try:
         if 'twitterauth' in settings.INSTALLED_APPS:
+            from twitterauth.models import TwitterUserProfile
             data['twitterauth'] = TwitterUserProfile.objects.get(user__id=user.id)
         else:
             data['twitterauth'] = None
