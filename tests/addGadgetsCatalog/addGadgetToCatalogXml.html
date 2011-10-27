@@ -32,8 +32,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,13 +43,23 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Go to Gallery »']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>simple_search_text</td>
 	<td>test</td>
+</tr>
+<tr>
+	<td>keyPress</td>
+	<td>simple_search_text</td>
+	<td>\13</td>
 </tr>
 <tr>
 	<td>pause</td>

@@ -32,13 +32,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>go_to_link</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>click</td>
+	<td>go_to_link</td>
 	<td></td>
 </tr>
 <tr>
@@ -48,7 +48,7 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>//input[@value='']</td>
+	<td>//div[@class='window_menu']//input[@value='']</td>
 	<td>Share WS Link</td>
 </tr>
 <tr>
@@ -57,8 +57,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -75,16 +75,10 @@
 	<td>pause</td>
 	<td>3000</td>
 	<td></td>
-</tr>
-<tr>
+</tr><tr>
 	<td>type</td>
 	<td>simple_search_text</td>
 	<td>test</td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
 </tr>
 <tr>
 	<td>keyPress</td>
@@ -93,7 +87,7 @@
 </tr>
 <tr>
 	<td>pause</td>
-	<td>5000</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
@@ -153,7 +147,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[@class='window_menu']//button[text()='Accept']</td>
 	<td></td>
 </tr>
 <tr>
@@ -173,7 +167,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@class='window_menu']/div[1]/a</td>
+	<td>//div[@class='window_menu']//*[@class='closebutton']</td>
 	<td></td>
 </tr>
 <tr>
@@ -182,8 +176,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -203,12 +197,12 @@
 </tr>
 <tr>
 	<td>open</td>
-	<td>/#dragboard</td>
+	<td>/</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -227,8 +221,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -237,23 +231,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']//div[text()='Remove']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[2]/div[4]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[3]/button[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>//div[contains(@class,'window_menu')]//button[text()='Yes']</td>
 	<td></td>
 </tr>
 <tr>

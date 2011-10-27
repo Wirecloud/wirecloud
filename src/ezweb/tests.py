@@ -101,6 +101,9 @@ class SeleniumHTMLWrapper(object):
     def pause(self, timeout):
         time.sleep(float(timeout) / 1000)
 
+    def select(self, selectLocator, optionLocator):
+        self.selenium.select(selectLocator, optionLocator)
+
     def storeValue(self, locator, variableName):
         self.values[variableName] = self.selenium.get_value(locator)
 
@@ -118,6 +121,9 @@ class SeleniumHTMLWrapper(object):
     def verifyValue(self, locator, pattern):
         if self.selenium.get_value(locator) != pattern:
             raise SeleniumSoftAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
+
+    def waitForElementPresent(self, locator):
+        self.selenium.wait_for_element_present(locator)
 
     def waitForPopUp(self, windowId, timeout):
         self.selenium.wait_for_pop_up(windowId, timeout)

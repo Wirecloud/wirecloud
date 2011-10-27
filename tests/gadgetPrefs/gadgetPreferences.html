@@ -32,8 +32,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>10000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -53,12 +53,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[1]</td>
+	<td>//div[contains(@class, 'window_menu')]//button[text()='Create']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,7 +73,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Go to Gallery »']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
@@ -98,7 +103,7 @@
 </tr>
 <tr>
 	<td>pause</td>
-	<td>8000</td>
+	<td>10000</td>
 	<td></td>
 </tr>
 <tr>
@@ -118,12 +123,12 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>bg</td>
+	<td>//*[@name="bg"]</td>
 	<td>color rojo</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>textcolor</td>
+	<td>//*[@name="textcolor"]</td>
 	<td>color cañón</td>
 </tr>
 <tr>
@@ -143,12 +148,12 @@
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>bg</td>
+	<td>//*[@name="bg"]</td>
 	<td>color rojo</td>
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>textcolor</td>
+	<td>//*[@name="textcolor"]</td>
 	<td>color cañón</td>
 </tr>
 <tr>
@@ -173,22 +178,22 @@
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>bg</td>
+	<td>//*[@name="bg"]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>textcolor</td>
+	<td>//*[@name="textcolor"]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>bg</td>
+	<td>//*[@name="bg"]</td>
 	<td>rojillo</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>textcolor</td>
+	<td>//*[@name="textcolor"]</td>
 	<td>color cañón</td>
 </tr>
 <tr>
@@ -208,12 +213,12 @@
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>bg</td>
+	<td>//*[@name="bg"]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyValue</td>
-	<td>textcolor</td>
+	<td>//*[@name="textcolor"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -223,12 +228,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[2]/div[4]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Remove']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[contains(@class,'window_menu')]//button[text()='Yes']</td>
 	<td></td>
 </tr>
 <tr>

@@ -268,7 +268,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[1]</td>
+	<td>//div[contains(@class, 'window_menu')]//button[text()='Create']</td>
 	<td></td>
 </tr>
 <tr>
@@ -283,7 +283,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[4]/div[1]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Go to Gallery »']</td>
 	<td></td>
 </tr>
 <tr>
@@ -297,18 +297,13 @@
 	<td>test</td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>keyPress</td>
 	<td>simple_search_text</td>
 	<td>\13</td>
 </tr>
 <tr>
 	<td>pause</td>
-	<td>5000</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
@@ -323,7 +318,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[4]/div[2]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Go to Wiring tool »']</td>
 	<td></td>
 </tr>
 <tr>
@@ -544,11 +539,6 @@
 <tr>
 	<td>click</td>
 	<td>conf_link</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
