@@ -52,9 +52,39 @@
 	<td></td>
 </tr>
 <tr>
+	<td>click</td>
+	<td>developers_button_toolbar</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>template_uri</td>
+	<td>http://localhost:8001/test/test.xml</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>submit_link</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>Test_Selenium</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextPresent</td>
+	<td>This gadget is used to test some of the features of the EzWeb platform</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>simple_search_text</td>
-	<td>test</td>
+	<td>Test_Selenium</td>
 </tr>
 <tr>
 	<td>keyPress</td>
@@ -78,7 +108,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[contains(@class, 'window_menu')]//button[text()='Yes']</td>
 	<td></td>
 </tr>
 <tr>
@@ -87,33 +117,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>developers_button_toolbar</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
-	<td>template_uri</td>
-	<td>http://localhost:8001/test/test.xml</td>
+	<td>simple_search_text</td>
+	<td>Test_Selenium</td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>submit_link</td>
-	<td></td>
+	<td>keyPress</td>
+	<td>simple_search_text</td>
+	<td>\13</td>
 </tr>
 <tr>
 	<td>pause</td>
-	<td>2000</td>
+	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>Test</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>This gadget is used to test some of the features of the EzWeb platform</td>
+	<td>assertTextNotPresent</td>
+	<td>Test_Selenium</td>
 	<td></td>
 </tr>
 <tr>

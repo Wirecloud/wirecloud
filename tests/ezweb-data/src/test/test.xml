@@ -2,7 +2,7 @@
 <!-- Meta tags define gadgets properties -->
     <Catalog.ResourceDescription>
         <Vendor>Yaco Sistemas S.L.</Vendor>
-        <Name>Test</Name>
+        <Name>Test_Selenium</Name>
         <Version>0.9</Version>
         <Author>aarranz</Author>
         <Mail>aarranz@yaco.es</Mail>
