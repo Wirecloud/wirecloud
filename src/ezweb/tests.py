@@ -66,6 +66,11 @@ class SeleniumHTMLWrapper(object):
     def addSelection(self, locator, optionLocator):
         self.selenium.add_selection(locator, optionLocator)
 
+    def assertElementPresent(self, locator):
+        if not self.selenium.is_element_present(locator):
+            msg = '"%(locator)s" element is not present'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
+
     def assertText(self, locator, pattern):
         text = self._parseVariables(pattern)
         element_text = self.selenium.get_text(locator)
@@ -116,6 +121,7 @@ class SeleniumHTMLWrapper(object):
         self.values[variableName] = self.selenium.get_value(locator)
 
     def type(self, locator, text):
+        text = self._parseVariables(text)
         self.selenium.type(locator, text)
 
     def verifyText(self, locator, pattern):
@@ -169,6 +175,9 @@ class TestSelenium(SeleniumTestCase):
         xml = etree.parse(path, etree.XMLParser())
         steps = xml.xpath('//xhtml:table/xhtml:tbody/xhtml:tr',
             namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
+
+        from django.conf import settings
+        self.wrapper.values['GWT_GADGETS_DIR'] = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
         counter = 0
         for step in steps:

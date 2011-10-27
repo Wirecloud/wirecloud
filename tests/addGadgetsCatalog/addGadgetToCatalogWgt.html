@@ -62,19 +62,19 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>The resource could not be added to the catalogue: Error deploying packaged gadget into catalogue: [] Key 'file' not found in</td>
+	<td>assertElementPresent</td>
+	<td>//div[contains(@class,'window_menu')]//*[contains(@class,'icon-error')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button</td>
+	<td>//div[contains(@class,'window_menu')]//*[text()='Accept']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
 	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Morfeo_Calendar_Viewer.wgt</td>
+	<td>${GWT_GADGETS_DIR}/Morfeo_Calendar_Viewer.wgt</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -82,8 +82,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>pause</td>
-	<td>3000</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -99,7 +104,7 @@
 <tr>
 	<td>type</td>
 	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Morfeo_Cliente_Correo.wgt</td>
+	<td>${GWT_GADGETS_DIR}/Morfeo_Cliente_Correo.wgt</td>
 </tr>
 <tr>
 	<td>clickAndWait</td>
@@ -107,8 +112,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>pause</td>
-	<td>3000</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -124,7 +134,7 @@
 <tr>
 	<td>type</td>
 	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Morfeo_FeedList.wgt</td>
+	<td>${GWT_GADGETS_DIR}/Morfeo_FeedList.wgt</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -132,8 +142,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>pause</td>
-	<td>3000</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
@@ -149,7 +164,7 @@
 <tr>
 	<td>type</td>
 	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Morfeo_FeedReader.wgt</td>
+	<td>${GWT_GADGETS_DIR}/Morfeo_FeedReader.wgt</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -157,58 +172,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>pause</td>
-	<td>3000</td>
+	<td>2000</td>
 	<td></td>
 </tr>
 <tr>
 	<td>verifyTextPresent</td>
 	<td>FeedReader</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>developers_button_toolbar</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Alfresco_Espacios.wgt</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>gadget_link</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>Alfresco Espacios</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>developers_button_toolbar</td>
-	<td></td>
-</tr>
-<tr>
-	<td>type</td>
-	<td>gadget_uri</td>
-	<td>/var/ezweb-data/Yaco_Sistemas_S.L._Alfresco_Tareas.wgt</td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>gadget_link</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
 	<td></td>
 </tr>
 <tr>
@@ -269,21 +244,6 @@
 <tr>
 	<td>clickAndWait</td>
 	<td>link=FeedReader</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Delete</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>//input[@value=&quot;Yes, I'm sure&quot;]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>link=Alfresco Espacios</td>
 	<td></td>
 </tr>
 <tr>
