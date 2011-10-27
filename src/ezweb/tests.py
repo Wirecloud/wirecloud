@@ -67,20 +67,28 @@ class SeleniumHTMLWrapper(object):
         self.selenium.add_selection(locator, optionLocator)
 
     def assertText(self, locator, pattern):
-        if self.selenium.get_text(locator) != pattern:
-            raise SeleniumAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_text(locator)
+        if element_text != text:
+            msg = '"%(locator)s" text content is not equal to "%(text)s" (real content: "%(element_text)s")'
+            raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
     def assertTextPresent(self, pattern):
-        if not self.selenium.is_text_present(pattern):
-            raise SeleniumAssertionFailure('text was not present: ' + pattern)
+        text = self._parseVariables(pattern)
+        if not self.selenium.is_text_present(text):
+            raise SeleniumAssertionFailure('text is not present: ' + text)
 
     def assertTextNotPresent(self, pattern):
-        if self.selenium.is_text_present(pattern):
-            raise SeleniumAssertionFailure('text was present: ' + pattern)
+        text = self._parseVariables(pattern)
+        if self.selenium.is_text_present(text):
+            raise SeleniumAssertionFailure('text is present: ' + text)
 
     def assertValue(self, locator, pattern):
-        if self.selenium.get_value(locator) != pattern:
-            raise SeleniumAssertionFailure('The value of the input element "' + locator + '" was not equal to "' + pattern + '"')
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_value(locator)
+        if element_text != text:
+            msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
+            raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
     def click(self, locator):
         self.selenium.click(locator)
@@ -111,16 +119,28 @@ class SeleniumHTMLWrapper(object):
         self.selenium.type(locator, text)
 
     def verifyText(self, locator, pattern):
-        if self.selenium.get_text(locator) != pattern:
-            raise SeleniumSoftAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_text(locator)
+        if element_text != text:
+            msg = '"%(locator)s" text content is not equal to "%(text)s" (real content: "%(element_text)s")'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
     def verifyTextPresent(self, pattern):
-        if not self.selenium.is_text_present(pattern):
-            raise SeleniumSoftAssertionFailure('text was not present: ' + pattern)
+        text = self._parseVariables(pattern)
+        if not self.selenium.is_text_present(text):
+            raise SeleniumSoftAssertionFailure('text is not present: ' + text)
+
+    def verifyTextNotPresent(self, pattern):
+        text = self._parseVariables(pattern)
+        if not self.selenium.is_text_present(text):
+            raise SeleniumSoftAssertionFailure('text is present: ' + text)
 
     def verifyValue(self, locator, pattern):
-        if self.selenium.get_value(locator) != pattern:
-            raise SeleniumSoftAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_value(locator)
+        if element_text != text:
+            msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
     def waitForElementPresent(self, locator):
         self.selenium.wait_for_element_present(locator)
