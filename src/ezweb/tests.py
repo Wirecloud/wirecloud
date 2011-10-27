@@ -67,7 +67,7 @@ class SeleniumHTMLWrapper(object):
         self.selenium.add_selection(locator, optionLocator)
 
     def assertText(self, locator, pattern):
-        if self.selenium.get_text(pattern) != pattern:
+        if self.selenium.get_text(locator) != pattern:
             raise SeleniumAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
 
     def assertTextPresent(self, pattern):
@@ -79,7 +79,7 @@ class SeleniumHTMLWrapper(object):
             raise SeleniumAssertionFailure('text was present: ' + pattern)
 
     def assertValue(self, locator, pattern):
-        if self.selenium.get_value(pattern) != pattern:
+        if self.selenium.get_value(locator) != pattern:
             raise SeleniumAssertionFailure('The value of the input element "' + locator + '" was not equal to "' + pattern + '"')
 
     def click(self, locator):
@@ -108,7 +108,7 @@ class SeleniumHTMLWrapper(object):
         self.selenium.type(locator, text)
 
     def verifyText(self, locator, pattern):
-        if self.selenium.get_text(pattern) != pattern:
+        if self.selenium.get_text(locator) != pattern:
             raise SeleniumSoftAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
 
     def verifyTextPresent(self, pattern):
@@ -116,7 +116,7 @@ class SeleniumHTMLWrapper(object):
             raise SeleniumSoftAssertionFailure('text was not present: ' + pattern)
 
     def verifyValue(self, locator, pattern):
-        if self.selenium.get_text(pattern) != pattern:
+        if self.selenium.get_value(locator) != pattern:
             raise SeleniumSoftAssertionFailure('The value of the element "' + locator + '" was not equal to "' + pattern + '"')
 
     def waitForPopUp(self, windowId, timeout):
