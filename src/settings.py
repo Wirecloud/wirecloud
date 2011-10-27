@@ -219,6 +219,7 @@ LOGIN_REDIRECT_URL = '/'
 
 FIXTURE_DIRS = (
     path.join(BASEDIR, 'fixtures', 'django.contrib.auth'),
+    path.join(BASEDIR, 'fixtures', 'django.contrib.sites'),
 )
 
 # Set the log path
