@@ -22,7 +22,7 @@ from workspace.utils import sync_base_workspaces
 from workspace.views import createEmptyWorkSpace, linkWorkspace
 
 
-# Avoid nose to repeat these tests (they are runned through __init__.py)
+# Avoid nose to repeat these tests (they are run through __init__.py)
 __test__ = False
 
 
