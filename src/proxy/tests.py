@@ -9,10 +9,11 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.test import TestCase, Client
+from django.utils import unittest
 
 from proxy.views import EZWEB_PROXY
 from workspace.models import VariableValue
-from workspace.utils import set_variable_value
+from workspace.utils import HAS_AES, set_variable_value
 
 
 class FakeDownloader(object):
@@ -150,6 +151,7 @@ class ProxyTests(ProxyTestsBase):
         self.assertEquals(response.cookies['newcookie']['path'], '/proxy/http/example.com/')
 
 
+@unittest.skipIf(not HAS_AES, 'python-crypto not found')
 class ProxySecureDataTests(ProxyTestsBase):
 
     def setUp(self):
