@@ -32,8 +32,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -47,25 +47,21 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
-	<td>//input[@value='']</td>
+	<td>//div[contains(@class, 'window_menu')]//input[@value='']</td>
 	<td>useconfigMashup</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[1]</td>
+	<td>//div[contains(@class, 'window_menu')]//button[text()='Create']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
+<tr>
 <tr>
 	<td>assertTextPresent</td>
 	<td>useconfigMashup</td>
@@ -517,13 +513,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>//div[@id='resource_details']/div[2]/div[2]/div[29]</td>
+	<td>click</td>
+	<td>//div[@id='toolbar_section']//div[text()='Remove']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[contains(@class,'window_menu')]//button[text()='Yes']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertTextNotPresent</td>
+	<td>AddTabsWS</td>
 	<td></td>
 </tr>
 <tr>
