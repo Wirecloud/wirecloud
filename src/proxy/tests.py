@@ -16,6 +16,10 @@ from workspace.models import VariableValue
 from workspace.utils import HAS_AES, set_variable_value
 
 
+# Avoid nose to repeat these tests (they are run through ezweb/tests.py)
+__test__ = False
+
+
 class FakeDownloader(object):
 
     def __init__(self):

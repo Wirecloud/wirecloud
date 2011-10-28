@@ -11,7 +11,7 @@ except:
     class SeleniumTestCase(object):
         pass
 
-from proxy.tests import ProxyTests
+from proxy.tests import ProxyTests, ProxySecureDataTests
 
 
 def format_selenium_command(func_name, arg1, arg2=None):
