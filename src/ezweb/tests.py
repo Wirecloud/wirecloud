@@ -66,6 +66,11 @@ class SeleniumHTMLWrapper(object):
     def addSelection(self, locator, optionLocator):
         self.selenium.add_selection(locator, optionLocator)
 
+    def assertElementNotPresent(self, locator):
+        if self.selenium.is_element_present(locator):
+            msg = '"%(locator)s" element is present'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
+
     def assertElementPresent(self, locator):
         if not self.selenium.is_element_present(locator):
             msg = '"%(locator)s" element is not present'
@@ -123,6 +128,16 @@ class SeleniumHTMLWrapper(object):
     def type(self, locator, text):
         text = self._parseVariables(text)
         self.selenium.type(locator, text)
+
+    def verifyElementNotPresent(self, locator):
+        if self.selenium.is_element_present(locator):
+            msg = '"%(locator)s" element is present'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
+
+    def verifyElementPresent(self, locator):
+        if not self.selenium.is_element_present(locator):
+            msg = '"%(locator)s" element is not present'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
 
     def verifyText(self, locator, pattern):
         text = self._parseVariables(pattern)
