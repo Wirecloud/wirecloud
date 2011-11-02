@@ -27,7 +27,7 @@
  * Base class for managing window menus whose HTML code is in templates/index.html.
  */
 
-function WindowMenu(title) {
+function WindowMenu(title, extra_class) {
     // Allow hierarchy
     if (arguments.length == 0)
         return;
@@ -36,6 +36,9 @@ function WindowMenu(title) {
     this.htmlElement = document.createElement('div');  // create the root HTML element
     Element.extend(this.htmlElement);
     this.htmlElement.className = "window_menu";
+    if (extra_class != null) {
+        this.htmlElement.addClassName(extra_class);
+    }
 
     // Window Top
     var windowTop = document.createElement('div');
@@ -481,17 +484,15 @@ TipWindowMenu.prototype = new InfoWindowMenu();
 /**
  * Form dialog.
  */
-function FormWindowMenu (fields, title) {
+function FormWindowMenu (fields, title, extra_class) {
 
     this.fields = {};
-
-
 
     // Allow hierarchy
     if (arguments.length == 0)
         return;
 
-    WindowMenu.call(this, title);
+    WindowMenu.call(this, title, extra_class);
 
     var table_ = this._buildFieldTable(fields, this.fields);
     this.windowContent.insertBefore(table_, this.msgElement);
@@ -832,7 +833,7 @@ function PublishWindowMenu(workspace) {
 
     this._addVariableParametrization(workspace, fields);
 
-    FormWindowMenu.call(this, fields, gettext('Publish Workspace'));
+    FormWindowMenu.call(this, fields, gettext('Publish Workspace'), 'publish_workspace');
 
     //fill a warning message
     var warning = document.createElement('div');
@@ -1540,7 +1541,7 @@ function ParametrizeWindowMenu(inputInterface) {
         'separator': {type: 'separator'},
         'value': {label: gettext('Value'), type: 'parametrizedText', variable: inputInterface.variable}
     }
-    FormWindowMenu.call(this, fields, gettext('Parametrization'));
+    FormWindowMenu.call(this, fields, gettext('Parametrization'), 'variable_parametrization');
 
     this.inputInterface = inputInterface;
 
