@@ -257,3 +257,16 @@ class WiringTests(TransactionTestCase):
         response = client.post(self.wiring_url, {'json': data})
         self.assertEquals(response.status_code, 403)
         InOut.objects.get(id=self._read_only_channel_id, name='Read-only Channel')
+
+    def test_read_only_channels_cannot_be_deleted(self):
+
+        client = Client()
+        client.login(username='test', password='test')
+
+        data = simplejson.dumps({
+            'inOutList': {
+            },
+        })
+        response = client.post(self.wiring_url, {'json': data})
+        self.assertEquals(response.status_code, 403)
+        InOut.objects.get(id=self._read_only_channel_id, name='Read-only Channel')
