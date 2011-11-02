@@ -36,7 +36,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
-from commons.authentication import get_user_authentication
+from commons.authentication import get_user_authentication, Http403
 from commons.cache import no_cache
 from commons.get_data import get_inout_data, get_wiring_data, get_tab_data, get_filter_data
 from commons.logs_exception import TracedServerError
@@ -95,6 +95,9 @@ class ConnectableEntry(Resource):
         try:
             new_channels = json['inOutList']
             old_channels = InOut.objects.filter(workspace=workspace)
+            old_channels_by_id = {}
+            for channel in old_channels:
+                old_channels_by_id[channel.id] = channel
 
             # Mapping between provisional ids and database-generated ids!!!
             id_mapping = {}
@@ -107,9 +110,30 @@ class ConnectableEntry(Resource):
             # will be removed from this list if they appear in the inOuList
             # argument
             channelsDeletedByUser = old_channels[::1]
+            for channel_id in new_channels:
+                new_channel_data = new_channels[channel_id]
+                if not new_channel_data.get('provisional_id', False):
+                    channel = old_channels_by_id[new_channel_data['id']]
 
-            # Disconnect all channels in the workspace
+                    if channel.readOnly:
+                        if new_channel_data['name'] != channel.name:
+                            msg = _('Read-only channels cannot be renamed: %(channel_name)s')
+                            raise Http403(msg % {'channel_name': channel.name})
+
+                    channelsDeletedByUser.remove(channel)
+
+            # Check the user doesn't try to delete any read-only channel
+            for channel in channelsDeletedByUser:
+                if channel.readOnly:
+                    msg = _('Read-only channels cannot be removed: %(channel_name)s')
+                    raise Http403(msg % {'channel_name': channel.name})
+
+            # Disconnect all channels in the workspace, except read only channels
             for old_channel in old_channels:
+
+                if old_channel.readOnly:
+                    continue
+
                 # Deleting the old relationships between channels
                 # First delete the relationships where old_channel is the input
                 rel_old_channels = RelatedInOut.objects.filter(in_inout=old_channel)
@@ -163,7 +187,7 @@ class ConnectableEntry(Resource):
                     id_mapping[new_channel_data['id']] = channel.id
 
                 else:
-                    channel = InOut.objects.get(id=channel_id)
+                    channel = old_channels_by_id[new_channel_data['id']]
 
                     filter = None
                     filter_params = ''
@@ -177,8 +201,6 @@ class ConnectableEntry(Resource):
                     channel.filter_param_values = filter_params
                     channel.friend_code = ""
                     channel.save()
-
-                    channelsDeletedByUser.remove(channel)
 
                 # In connections
                 # InOut out connections will be created later
@@ -211,12 +233,16 @@ class ConnectableEntry(Resource):
                     relationship = RelatedInOut(in_inout=channel, out_inout=InOut.objects.get(id=inout_id))
                     relationship.save()
 
-            for deleted_channel_id in channelsDeletedByUser:
-                deleteChannel(deleted_channel_id)
+            for deleted_channel in channelsDeletedByUser:
+                deleteChannel(deleted_channel)
 
             json_result = {'ids': id_mapping, 'urls': rchannels_urls_to_ids}
 
             return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
+        except Http403, e:
+
+            raise e
+
         except Exception, e:
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
             raise TracedServerError(e, json, request, msg)
