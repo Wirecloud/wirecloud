@@ -180,7 +180,6 @@ INSTALLED_APPS = (
     ### facebook applications ###
 #    'facebook',
 #    'facebookconnect',
-#   'clms',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -332,11 +331,6 @@ PROXY_PROCESSORS = (
 #TWITTER_CONSUMER_SECRET = "YOUR CONSUMER SECRET FROM TWITTER"
 
 # External settings configuration
-try:
-    from clms.settings import *  # pyflakes:ignore
-except ImportError:
-    pass
-
 try:
     from local_settings import *  # pyflakes:ignore
 except ImportError:

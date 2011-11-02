@@ -43,10 +43,6 @@ admin.autodiscover()
 
 from catalogue.views import ResourceEnabler
 
-#from clms import admin_view as clms_admin_view
-#from clms.admin import clms_site, setup_admin
-#setup_admin(clms_site)
-
 #JavaScript translation
 js_info_dict = {
     'packages': ('ezweb', )
@@ -100,9 +96,6 @@ urlpatterns = patterns('',
     # Proxy
     (r'^proxy', include('proxy.urls')),
 
-    # CLMS
-    #(r'^clms/', include('clms.urls')),
-
     # Django contrib
     #(r'^registration/login_form/$', 'registration.views.login_form'),
 
@@ -110,12 +103,6 @@ urlpatterns = patterns('',
     # custom logouts (to enable anonymous access)
     (r'^logout$', 'authentication.logout'),
     (r'^admin/logout/$', 'authentication.logout'),
-
-    #Admin CLMS interface
-    #(r'^admin/clms/(?P<layout_id>\d+)/content/popup/', clms_admin_view.panel_list_popup),
-    #(r'^admin/clms/content/popup/', clms_admin_view.panel_list_popup),
-    #(r'^admin/clms/content/filter/', clms_admin_view.contents_filter),
-    #(r'^admin/clms/(?P<url>.*)', clms_site.root),
 
     #Admin interface
     (r'^admin/', include(admin.site.urls)),

@@ -1,8 +1,0 @@
-
-<div style="display:{% if is_default %}none{% else %}inline{% endif %}" id="add_default_{{layout.id}}" >
-    <img style="margin-right:10px" id="plus" src="{{ MEDIA_URL }}clms/images/add_default.gif" onClick="javascript:{petition_ajax('{% url clms.views.add_default layout.id %}', {{ layout.id }}, '{{ view }}', 'default');}">
-</div>
-
-<div style="display:{% if is_default %}inline{% else %}none{% endif %}" id="del_default_{{layout.id}}" class="del_default">
-    <img style="margin-right:10px" id="plus" src="{{ MEDIA_URL }}clms/images/del_default.gif" onClick="javascript:{petition_ajax('{% url clms.views.del_default layout.id%}', {{ layout.id }}, '{{ view }}', 'default');}">
-</div>

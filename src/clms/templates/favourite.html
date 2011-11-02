@@ -1,8 +1,0 @@
-
-<div style="display:{% if is_favourite %}inline{% else %}none{% endif %}" id="add_favourite_{{layout.id}}">
-    <img style="margin-right:10px" id="plus" src="{{ MEDIA_URL }}clms/images/add_favourites.gif" onClick="javascript:{petition_ajax('{% url clms.views.add_favourite layout.id %}', {{ layout.id }}, '{{ view }}', 'favourite');}">
-</div>
-
-<div style="display:{% if is_favourite %}none{% else %}inline{% endif %}" id="del_favourite_{{layout.id}}">
-    <img style="margin-right:10px" id="plus" src="{{ MEDIA_URL }}clms/images/del_favourites.gif" onClick="javascript:{petition_ajax('{% url clms.views.del_favourite layout.id%}', {{ layout.id }}, '{{ view }}', 'favourite');}">
-</div>
