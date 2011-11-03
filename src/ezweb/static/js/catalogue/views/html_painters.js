@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Constants, Element, document, gettext, Hash, interpolate, LayoutManagerFactory, Template */
+/*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
 var HTML_Painter = function () {
@@ -149,11 +149,11 @@ ResourcesPainter.prototype.paint = function (command, user_command_manager) {
 ResourcesPainter.prototype._renderFullTagList = function (resource, tag_links, user_command_manager) {
     var i, search_options, tags, tag, tag_element;
 
-    search_options = new Hash({
+    search_options = {
         starting_page: 1,
         boolean_operator: 'AND',
         scope: ''
-    });
+    };
 
     tags = resource.getTags();
     for (i = 0; i < tags.length; i += 1) {
@@ -175,11 +175,11 @@ ResourcesPainter.prototype._renderFullTagList = function (resource, tag_links, u
 ResourcesPainter.prototype._renderImportantTagList = function (resource, tag_links, user_command_manager) {
     var i, search_options, tags, tag, tag_element, len;
 
-    search_options = new Hash({
+    search_options = {
         starting_page: 1,
         boolean_operator: 'AND',
         scope: ''
-    });
+    };
 
     tags = resource.getTags();
     tags = tags.sort(function (a, b) {
@@ -317,11 +317,11 @@ var ResourceDetailsPainter = function (details_structure_element) {
 
         tag_links = tag_links_list[0];
 
-        search_options = new Hash({
+        search_options = {
             starting_page: 1,
             boolean_operator: 'AND',
             scope: ''
-        });
+        };
 
         tags = resource.getTags();
         for (j = 0; j < tags.length; j += 1) {
@@ -376,9 +376,13 @@ ResourceDetailsPainter.prototype = new HTML_Painter();
 var DeveloperInfoPainter = function (structure_element) {
     HTML_Painter.call(this);
 
-    this.local_ids = new Hash({'NEW_GADGET_BUTTON':   '#submit_link',     'GADGET_TEMPLATE_INPUT': '#template_uri',
-                             'NEW_PACKAGE_BUTTON':  '#gadget_link',     'NEW_PACKAGE_FORM':      '#upload_form',
-                             'NEW_WEBSITE_BUTTON':    '#new_website_button'});
+    this.local_ids = {
+        'NEW_GADGET_BUTTON':     '#submit_link',
+        'GADGET_TEMPLATE_INPUT': '#template_uri',
+        'NEW_PACKAGE_BUTTON':    '#gadget_link',
+        'NEW_PACKAGE_FORM':      '#upload_form',
+        'NEW_WEBSITE_BUTTON':    '#new_website_button'
+    };
 
     this.structure_template_element = structure_element;
 
@@ -404,11 +408,11 @@ var DeveloperInfoPainter = function (structure_element) {
         new_website_button = this.dom_wrapper.get_element_by_selector(selector);
 
         // New gadget from template
-        data = new Hash({'template_url_element': new_gadget_input});
+        data = {'template_url_element': new_gadget_input};
         user_command_manager.create_command_from_data('SUBMIT_GADGET', new_gadget_button, data, 'click');
 
         // New gadget from package
-        data = new Hash({'upload_form': new_package_form});
+        data = {'upload_form': new_package_form};
         user_command_manager.create_command_from_data('SUBMIT_PACKAGED_GADGET', new_package_button, data, 'click');
 
         // New gadget from website

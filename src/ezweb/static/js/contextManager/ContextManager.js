@@ -56,8 +56,8 @@ function ContextManager (workspace_, workSpaceInfo_) {
 
     // Loads all concept from workspace data model.
     this._loadConceptsFromWorkspace = function (workSpaceInfo_) {
-        this._concepts = new Hash();
-        this._name2Concept = new Hash();
+        this._concepts = {};
+        this._name2Concept = {};
 
         var conceptsJson = workSpaceInfo_['workspace']['concepts'];
 
@@ -163,9 +163,9 @@ function ContextManager (workspace_, workSpaceInfo_) {
             return;
 
         var iGadgetId = iGadget.getId();
-        var keys = this._concepts.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var concept = this._concepts[keys[i]];
+        var concept_key;
+        for (concept_key in this._concepts) {
+            var concept = this._concepts[concept_key];
             concept.propagateIGadgetVarValues(iGadget);
         }
     }
@@ -174,28 +174,29 @@ function ContextManager (workspace_, workSpaceInfo_) {
         if (!this._loaded)
             return;
 
-        var keys = this._concepts.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var concept = this._concepts[keys[i]];
-            if (concept._type !== Concept.prototype.IGADGET)
+        var concept_key;
+        for (concept_key in this._concepts) {
+            var concept = this._concepts[concept_key];
+            if (concept._type !== Concept.prototype.IGADGET) {
                 continue;
+            }
 
             var ivar = concept.getIGadgetVar(iGadget.getId());
-            if (ivar != null)
+            if (ivar != null) {
                 ivar._clearHandler();
+            }
         }
-    }
+    };
 
     ContextManager.prototype.removeInstance = function (iGadgetId_) {
         if (!this._loaded)
             return;
 
-        var keys = this._concepts.keys();
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            this._concepts[key].deleteIGadgetVars(iGadgetId_);
+        var concept_key;
+        for (concept_key in this._concepts) {
+            this._concepts[concept_key].deleteIGadgetVars(iGadgetId_);
         }
-    }
+    };
 
     /**
      * Notifies a value change on an platform context concept.
@@ -204,11 +205,9 @@ function ContextManager (workspace_, workSpaceInfo_) {
      * @param {} value
      */
     ContextManager.prototype.notifyModifiedConcept = function (concept, value) {
-        if (!this._loaded)
+        if (!this._loaded || typeof this._concepts[concept] === 'undefined') {
             return;
-
-        if (!this._concepts[concept])
-            return;
+        }
 
         this._concepts[concept].setValue(value);
     }
@@ -221,11 +220,9 @@ function ContextManager (workspace_, workSpaceInfo_) {
      * @param {} value
      */
     ContextManager.prototype.notifyModifiedGadgetConcept = function (iGadget, concept, value) {
-        if (!this._loaded)
+        if (!this._loaded || typeof this._concepts[concept] === 'undefined') {
             return;
-
-        if (this._concepts[concept] == null)
-            return;
+        }
 
         var ivar = this._concepts[concept].getIGadgetVar(iGadget.getId());
         if (ivar == null) {
@@ -242,27 +239,25 @@ function ContextManager (workspace_, workSpaceInfo_) {
 
 
     ContextManager.prototype.unload = function () {
-        var i, namekeys, conceptkeys;
+        var i, name_key, concept_key;
 
         // Delete all concept names
-        namekeys = this._name2Concept.keys();
-        for (i = 0; i < namekeys.length; i++) {
-            delete this._name2Concept[namekeys[i]];
+        for (name_key in this._name2Concept) {
+            delete this._name2Concept[name_key];
         }
         delete this._name2Concept;
 
         // Delete all the concepts
-        conceptkeys = this._concepts.keys();
-        for (i = 0; i < conceptkeys.length; i++) {
-            this._concepts[conceptkeys[i]].unload();
-            delete this._concepts[conceptkeys[i]];
+        for (concept_key in this._concepts) {
+            this._concepts[concept_key].unload();
+            delete this._concepts[concept_key];
         }
         delete this._concepts;
 
         // Delete all the ContextManager attributes
         delete this._loaded;
         delete this._workspace;
-    }
+    };
 
 
     // *********************************************
@@ -270,8 +265,8 @@ function ContextManager (workspace_, workSpaceInfo_) {
     // *********************************************
 
     this._loaded = false;
-    this._concepts = new Hash();     // a concept is its adaptor an its value
-    this._name2Concept = new Hash(); // relates the name to its concept
+    this._concepts = {};     // a concept is its adaptor an its value
+    this._name2Concept = {}; // relates the name to its concept
     this._workspace = workspace_;
 
     // Load all igadget context variables and concepts (in this order!)

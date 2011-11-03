@@ -35,8 +35,8 @@ var PreferencesManagerFactory = function () {
 
 	function PreferencesManager () {
 		/**** PRIVATE VARIABLES ****/
-		this.preferencesDef = new Hash();
-                this.preferenceManagers = new Hash();
+		this.preferencesDef = {};
+                this.preferenceManagers = {};
 		this.preferences = null;
 
 		/**** PRIVATE METHODS ****/

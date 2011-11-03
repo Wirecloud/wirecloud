@@ -489,7 +489,7 @@ wChannel.prototype.getFilterParams = function() {
  * @private
  */
 wChannel.prototype._getJSONInput = function() {
-    var json = new Hash();
+    var json = {};
 
     for (var i = 0; i < this.inputs.length; i++) {
         json[this.inputs[i].getName()] = this.inputs[i].getValue();

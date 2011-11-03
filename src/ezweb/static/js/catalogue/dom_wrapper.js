@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, alert, Hash*/
+/*global $, alert */
 "use strict";
 
 var DOM_Wrapper = function (root_element, element_ids) {
@@ -56,17 +56,14 @@ DOM_Wrapper.prototype.search_by_selector = function (element_selector) {
 };
 
 DOM_Wrapper.prototype.init = function () {
-    var element_codes, element_code, element_selector, element, i;
+    var element_code, element_selector, element, i;
 
-    this.dom_codes = new Hash();
-    element_codes = this.dom_element_ids.keys();
-
-    for (i = 0; i < element_codes.length; i += 1) {
-        element_code = element_codes[i];
+    this.dom_codes = {};
+    for (element_code in this.dom_element_ids) {
         element_selector = this.dom_element_ids[element_code];
 
         element = this.search_by_selector(element_selector);
-              
+
         this.dom_codes[element_code] = element;
     }
 };
@@ -76,12 +73,9 @@ DOM_Wrapper.prototype.get_element_by_code = function (element_code) {
 };
 
 DOM_Wrapper.prototype.get_code_by_element = function (element) {
-    var codes, code, i, html_element;
+    var code, html_element;
 
-    codes = this.dom_codes.keys();
-
-    for (i = 0; i < codes.length; i += 1) {
-        code = codes[i];
+    for (code in this.dom_codes) {
         html_element = this.dom_codes[code];
 
         if (html_element === element) {

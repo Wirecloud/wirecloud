@@ -65,10 +65,11 @@ function RemoteChannelManager(wiring) {
     // Mark channel to be published!
     // Programs a remote update operation MILLISECONDS_TO_WAIT from now!
     RemoteChannelManager.prototype.publish_channel_value = function(channel_id, channel_value) {
-        if  (! RemoteChannelManager.prototype.ENABLED)
+        if (!RemoteChannelManager.prototype.ENABLED) {
             return;
+        }
 
-        if (! this.uncommited_channel_values[channel_id]) {
+        if (!this.uncommited_channel_values[channel_id]) {
             // Creating  array of values for this channel
             this.uncommited_channel_values[channel_id] = new Array();
         }

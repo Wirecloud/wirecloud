@@ -187,21 +187,27 @@ function VarManager (_workSpace) {
 
     VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
         var variables = this.pendingVariables[iGadgetId];
-        if (!variables){
-            this.pendingVariables[iGadgetId] = new Array();
-            variables = this.pendingVariables[iGadgetId];
+        if (!variables) {
+            variables = [];
+            this.pendingVariables[iGadgetId] = variables;
         }
-        variables.push({"name":variableName, "value":value});
-    }
+        variables.push({
+            "name": variableName,
+            "value": value
+        });
+    };
 
     VarManager.prototype.dispatchPendingVariables = function (iGadgetId) {
-        var variables = this.pendingVariables.remove(iGadgetId);
-        if (variables){
-            for (var i=0;i<variables.length;i++){
+        var variables, i;
+
+        variables = this.pendingVariables[iGadgetId];
+        delete this.pendingVariables[iGadgetId];
+        if (variables) {
+            for (i = 0; i < variables.length; i += 1) {
                 this.setVariable(iGadgetId, variables[i]["name"], variables[i]["value"]);
             }
         }
-    }
+    };
 
     VarManager.prototype.addInstance = function (iGadget, igadgetInfo, tab) {
         this.parseIGadgetVariables(igadgetInfo, tab);
@@ -215,12 +221,13 @@ function VarManager (_workSpace) {
 
 
     VarManager.prototype.removeIGadgetVariables = function (iGadgetId) {
-        var variables_ids = this.variables.keys()
+        var variable_id, variable;
 
-        for (var i=0; i<variables_ids.length; i++) {
-            if (this.variables[variables_ids[i]].iGadget == iGadgetId) {
-                this.igadgetModifiedVars.removeById(variables_ids[i]);
-                delete this.variables[variables_ids[i]];
+        for (variable_id in this.variables) {
+            variable = this.variables[variable_id];
+            if (variable.iGadget === iGadgetId) {
+                this.igadgetModifiedVars.removeById(variable_id);
+                delete this.variables[variable_id];
             }
         }
     }
@@ -353,8 +360,8 @@ function VarManager (_workSpace) {
     }
 
     this.workSpace = _workSpace;
-    this.iGadgets = new Hash();
-    this.variables = new Hash();
+    this.iGadgets = {};
+    this.variables = {};
 
     // For now workspace variables must be in a separated hash table, because they have a
     // different identifier space and can collide with the idenfiers of normal variables
@@ -363,7 +370,7 @@ function VarManager (_workSpace) {
 
     this.modificationsEnabled = true;
 
-    this.pendingVariables = new Hash(); //to manage igadgets loaded on demand caused by a wiring propagation
+    this.pendingVariables = {}; //to manage igadgets loaded on demand caused by a wiring propagation
 
     // Creation of ALL EzWeb variables regarding one workspace
     this.parseVariables(this.workSpace.workSpaceGlobalInfo);

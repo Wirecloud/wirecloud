@@ -56,7 +56,7 @@ var ShowcaseFactory = function () {
                 currentGadgetVersions, sortedGadgets, key;
 
             jsonGadgetList = JSON.parse(receivedData_.responseText);
-            this.gadgets = new Hash();
+            this.gadgets = {};
             this.gadgetVersions = {};
 
             // Load all gadgets from persitence system
@@ -99,7 +99,7 @@ var ShowcaseFactory = function () {
 
                 opManager = OpManagerFactory.getInstance();
 
-                opManager.changeActiveWorkSpace(opManager.workSpaceInstances[id]);
+                opManager.changeActiveWorkSpace(opManager.workSpaceInstances.get(id));
             }
 
             var onError = function (transport, e) {
@@ -141,7 +141,7 @@ var ShowcaseFactory = function () {
         // *******************************
         // PRIVATE METHODS AND VARIABLES
         // *******************************
-        this.gadgets = new Hash();
+        this.gadgets = {};
         this.opManager = OpManagerFactory.getInstance();
         this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
@@ -208,7 +208,8 @@ var ShowcaseFactory = function () {
 
         // Remove a Showcase gadget
         Showcase.prototype.deleteGadget = function (gadgetId_) {
-            var gadget = this.gadgets.remove(gadgetId_);
+            var gadget = this.gadgets[gadgetId_];
+            delete this.gadgets[gadgetId_];
             //gadget.remove();
         }
 
@@ -225,11 +226,15 @@ var ShowcaseFactory = function () {
 
         //Get all the gadgets name and vendor
         Showcase.prototype.getGadgetsData = function () {
-            var data = [];
-            var keys = this.gadgets.keys();
-            for (var i=0;i<keys.length;i++){
-                var g = this.gadgets[keys[i]];
-                data.push({"name":g.getName(), "vendor":g.getVendor(), "version":g.getVersion().text});
+            var gadget_key, g, data = [];
+
+            for (gadget_key in this.gadgets) {
+                g = this.gadgets[gadget_key];
+                data.push({
+                    "name": g.getName(),
+                    "vendor": g.getVendor(),
+                    "version": g.getVersion().text
+                });
             }
             return data;
         }
@@ -262,21 +267,21 @@ var ShowcaseFactory = function () {
 
             gadget.setImage(imageSrc_);
             gadget.setTags(tags_);
-        }
+        };
 
         // Add a tag to a Showcase gadget
         Showcase.prototype.tagGadget = function (gadgetId_, tags_) {
-            for (var i = 0; i<tags_.length; i++) {
+            for (var i = 0; i < tags_.length; i++) {
                 var tag = tags_[i];
                 this.gadgets[gadgetId_].addTag(tag);
             }
-        }
+        };
 
         // Deploy a Showcase gadget into dragboard as gadget instance
         Showcase.prototype.addInstance = function (gadgetId_) {
             var gadget = this.gadgets[gadgetId_];
             this.opManager.addInstance (gadget);
-        }
+        };
     }
 
     // *********************************

@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global document, Error, gettext, interpolate, Hash*/
+/*global document, Error, gettext, interpolate */
 
 /////////////////////////////////////
 // MultiValuedSize
@@ -61,7 +61,7 @@ function DragboardLayout(dragboard) {
     }
 
     this.dragboard = dragboard;
-    this.iGadgets = new Hash();
+    this.iGadgets = {};
 }
 
 /**
@@ -69,10 +69,9 @@ function DragboardLayout(dragboard) {
  */
 DragboardLayout.prototype._notifyWindowResizeEvent = function (widthChanged, heightChanged) {
     // Notify each igadget
-    var iGadget;
-    var igadgetKeys = this.iGadgets.keys();
-    for (var i = 0; i < igadgetKeys.length; i++) {
-        iGadget = this.iGadgets[igadgetKeys[i]];
+    var igadget_key, iGadget;
+    for (igadget_key in this.iGadgets) {
+        iGadget = this.iGadgets[igadget_key];
         iGadget._notifyWindowResizeEvent();
     }
 };
@@ -292,11 +291,10 @@ DragboardLayout.prototype.removeIGadget = function (iGadget, affectsDragboard) {
  *        moved.
  */
 DragboardLayout.prototype.moveTo = function (destLayout) {
-    var i, igadgetKeys, iGadget;
+    var igadget_key, iGadget;
 
-    igadgetKeys = this.iGadgets.keys();
-    for (i = 0; i < igadgetKeys.length; i++) {
-        iGadget = this.iGadgets[igadgetKeys[i]];
+    for (igadget_key in this.iGadgets) {
+        iGadget = this.iGadgets[igadget_key];
         iGadget.moveToLayout(destLayout);
     }
 };
@@ -306,10 +304,10 @@ DragboardLayout.prototype.moveTo = function (destLayout) {
  * references.
  */
 DragboardLayout.prototype.destroy = function () {
-    var i, keys = this.iGadgets.keys();
+    var igadget_key;
 
-    for (i = 0; i < keys.length; i++) {
-        this.iGadgets[keys[i]].destroy();
+    for (igadget_key in this.iGadgets) {
+        this.iGadgets[igadget_key].destroy();
     }
     this.iGadgets = null;
     this.dragboard = null;

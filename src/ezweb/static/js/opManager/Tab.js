@@ -336,9 +336,10 @@ function Tab (tabInfo, workSpace) {
                     this.referenceTab = this;
                 }
                 var keys = this.workSpace.tabInstances.keys();
-                for(var i = 0;i<keys.length;i++){
-                    if(this.workSpace.tabInstances[keys[i]].tabName == id){
-                        this.referenceTab = this.workSpace.tabInstances[keys[i]];
+                for (var i = 0; i < keys.length; i++) {
+                    var tab = this.workSpace.tabInstances.get(keys[i]);
+                    if (tab.tabName == id) {
+                        this.referenceTab = tab;
                         break;
                     }
                 }

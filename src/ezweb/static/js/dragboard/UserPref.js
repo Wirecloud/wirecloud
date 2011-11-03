@@ -173,13 +173,14 @@ ListUserPref.prototype._makeInterface = function (variable) {
 }
 
 ListUserPref.prototype.validate = function (newValue) {
-    if (this.optionHash == null) {
-        this.optionHash = new Hash();
-        for (var i = 0; i < this.options.length; i++)
+    if (this.optionHash === null) {
+        this.optionHash = {};
+        for (var i = 0; i < this.options.length; i++) {
             this.optionHash[this.options[i][0]] = true;
+	}
     }
 
-    return this.optionHash[newValue] != undefined;
+    return this.optionHash[newValue] !== undefined;
 }
 
 /**

@@ -55,10 +55,10 @@ var OpManagerFactory = (function () {
             for (i = 0; i < workSpaces.length; i += 1) {
                 workSpace = workSpaces[i];
 
-                this.workSpaceInstances[workSpace.id] = new WorkSpace(workSpace);
+                this.workSpaceInstances.set(workSpace.id, new WorkSpace(workSpace));
 
                 if (workSpace.active) {
-                    this.activeWorkSpace = this.workSpaceInstances[workSpace.id];
+                    this.activeWorkSpace = this.workSpaceInstances.get(workSpace.id);
                 }
 
             }
@@ -140,7 +140,7 @@ var OpManagerFactory = (function () {
                 disabledWorkSpaces = [],
                 j = 0, i, workSpace;
             for (i = 0; i < workSpaceIds.length; i += 1) {
-                workSpace = this.workSpaceInstances[workSpaceIds[i]];
+                workSpace = this.workSpaceInstances.get(workSpaceIds[i]);
                 if (workSpace !== this.activeWorkSpace) {
                     disabledWorkSpaces[j] = workSpace;
                     j += 1;
@@ -240,13 +240,14 @@ var OpManagerFactory = (function () {
             //generate the workspace list
             var wkeys = this.workSpaceInstances.keys(),
                 html = "<ul>",
-                i, wname;
+                i, wname, workspace;
             for (i = 0; i < wkeys.length; i += 1) {
-                wname = this.workSpaceInstances[wkeys[i]].getName();
-                if (this.workSpaceInstances[wkeys[i]] === this.activeWorkSpace) {
-                    html += "<li id='" + this.workSpaceInstances[wkeys[i]].getId() + "_item' class='selected'>" + wname + "<small>★</small></li>";
+                workspace = this.workSpaceInstances.get(wkeys[i]);
+                wname = workspace.getName();
+                if (workspace === this.activeWorkSpace) {
+                    html += "<li id='" + workspace.getId() + "_item' class='selected'>" + wname + "<small>★</small></li>";
                 } else {
-                    html += "<li id='" + this.workSpaceInstances[wkeys[i]].getId() + "_item'><a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + wkeys[i] + ");'>" + wname + "</a></li>";
+                    html += "<li id='" + workspace.getId() + "_item'><a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + wkeys[i] + ");'>" + wname + "</a></li>";
                 }
             }
             html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
@@ -255,7 +256,7 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.selectActiveWorkspace = function (workspaceKey) {
-            var newWorkspace = this.workSpaceInstances[workspaceKey],
+            var newWorkspace = this.workSpaceInstances.get(workspaceKey),
                 newElement = $(newWorkspace.getId() + "_item"),
                 oldElement = $(this.activeWorkSpace.getId() + "_item");
 

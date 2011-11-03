@@ -103,17 +103,6 @@ Object.genGUID = function()
 	return output;
 }
 
-Hash.prototype.clone = function() {
-	var newHash = new Hash();
-
-	this.each(function (pair) {
-		newHash[pair.key] = pair.value;
-	});
-
-	return newHash;
-}
-
-
 if ('textContent' in document.documentElement) {
 	/**
 	 * Changes the inner content of an Element treating it as pure text. If
@@ -182,33 +171,30 @@ if (document.documentElement.getBoundingClientRect != undefined) {
 Ajax.Request.prototype.request = function(url) {
     this.url = url;
     this.method = this.options.method;
-    var params = Object.clone(this.options.parameters);
+    var params = Object.isString(this.options.parameters) ?
+          this.options.parameters :
+          Object.toQueryString(this.options.parameters);
 
-//    if (!['get', 'post'].include(this.method)) {
-//      // simulate other verbs over post
-//      params['_method'] = this.method;
-//      this.method = 'post';
-//    }
-
-    this.parameters = params;
-
-    if (params = Hash.toQueryString(params)) {
-      // when GET, append parameters to URL
-      if (this.method == 'get')
-        this.url += (this.url.include('?') ? '&' : '?') + params;
-      else if (/Konqueror|Safari|KHTML/.test(navigator.userAgent))
-        params += '&_=';
+    if (!['get', 'post', 'put', 'delete'].include(this.method)) {
+      params += (params ? '&' : '') + "_method=" + this.method;
+      this.method = 'post';
     }
 
+    if (params && this.method === 'get') {
+      this.url += (this.url.include('?') ? '&' : '?') + params;
+    }
+
+    this.parameters = params.toQueryParams();
+
     try {
-      if (this.options.onCreate) this.options.onCreate(this.transport);
-      Ajax.Responders.dispatch('onCreate', this, this.transport);
+      var response = new Ajax.Response(this);
+      if (this.options.onCreate) this.options.onCreate(response);
+      Ajax.Responders.dispatch('onCreate', this, response);
 
       this.transport.open(this.method.toUpperCase(), this.url,
         this.options.asynchronous);
 
-      if (this.options.asynchronous)
-        setTimeout(function() { this.respondToReadyState(1) }.bind(this), 10);
+      if (this.options.asynchronous) this.respondToReadyState.bind(this).defer(1);
 
       this.transport.onreadystatechange = this.onStateChange.bind(this);
       this.setRequestHeaders();
@@ -265,52 +251,22 @@ Ajax.Request.prototype.setRequestHeaders = function() {
     }
 };
 
-Ajax.Base.prototype.setOptions = function(options) {
-	this.options = {
-		method:       'post',
-		asynchronous: true,
-		contentType:  'application/x-www-form-urlencoded',
-		encoding:     'UTF-8',
-		parameters:   '',
-		evalJS:       false
-	}
-	Object.extend(this.options, options || {});
+Ajax.Base.prototype.initialize = function(options) {
+    this.options = {
+      method:       'post',
+      asynchronous: true,
+      contentType:  'application/x-www-form-urlencoded',
+      encoding:     'UTF-8',
+      parameters:   '',
+      evalJSON:     false,
+      evalJS:       false
+    };
+    Object.extend(this.options, options || { });
 
-	this.options.method = this.options.method.toLowerCase();
-	if (typeof this.options.parameters == 'string')
-		this.options.parameters = this.options.parameters.toQueryParams();
-}
+    this.options.method = this.options.method.toLowerCase();
 
-Ajax.Request.prototype.evalResponse = function() {
-	if (this.options.evalJS !== true)
-		return;
-
-	try {
-		return eval((this.transport.responseText || '').unfilterJSON());
-	} catch (e) {
-		this.dispatchException(e);
-	}
-}
-
-/*
- * Cherry-picked from prototype 1.7
- *
- * Modified to consider status 0 as error
- */
-Ajax.Request.prototype.success = function() {
-	var status = this.getStatus();
-	return status != null && (status >= 200 && status < 300) || status == 304;
-}
-
-Ajax.Request.prototype.getStatus = function() {
-	try {
-		if (this.transport.status === 1223) {
-			return 204;
-		}
-		return this.transport.status || 0;
-	} catch (e) {
-		return 0;
-	}
+    if (Object.isHash(this.options.parameters))
+      this.options.parameters = this.options.parameters.toObject();
 };
 
 /*

@@ -112,15 +112,13 @@ RemoteSubscription.prototype.getID = function () {
 }
 
 RemoteSubscription.prototype.getData = function () {
-    var data = new Hash();
-
     this._url = this._channel_GUI.remote_url_input.value;
 
-    data['url'] = this._url;
-    data['op_code'] = this._op_code;
-    data['id'] = this._id;
-
-    return data;
+    return {
+        'url': this._url,
+        'op_code': this._op_code,
+        'id': this._id
+    };
 }
 
 RemoteSubscription.prototype.createURL = function () {

@@ -102,12 +102,10 @@ FullDragboardLayout.prototype.adaptWidth = function (contentWidth, fullSize) {
 };
 
 FullDragboardLayout.prototype.initialize = function () {
-    var iGadget, i, key;
+    var iGadget, key;
 
     // Insert igadgets
-    var igadgetKeys = this.iGadgets.keys();
-    for (i = 0; i < igadgetKeys.length; i++) {
-        key = igadgetKeys[i];
+    for (key in this.iGadgets) {
         iGadget = this.iGadgets[key];
         iGadget.paint(true);
     }
@@ -184,16 +182,15 @@ FullDragboardLayout.prototype.cancelMove = function () {
 
 FullDragboardLayout.prototype._notifyDragboardVisibilityChange = function (visibility) {
     // Notify each igadget
-    var igadgetKeys, iGadget, i;
-    igadgetKeys = this.iGadgets.keys();
+    var key, iGadget;
     if (visibility) {
-        for (i = 0; i < igadgetKeys.length; i++) {
-            iGadget = this.iGadgets[igadgetKeys[i]];
+        for (key in this.iGadgets) {
+            iGadget = this.iGadgets[key];
             iGadget.element.style.position = '';
         }
     } else {
-        for (i = 0; i < igadgetKeys.length; i++) {
-            iGadget = this.iGadgets[igadgetKeys[i]];
+        for (key in this.iGadgets) {
+            iGadget = this.iGadgets[key];
             iGadget.element.style.position = 'absolute';
         }
     }

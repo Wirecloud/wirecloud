@@ -278,7 +278,7 @@ DropDownMenu.prototype.clearSubmenuOptions = function() {
 function FilterDropDownMenu(idMenu_, parentMenu) {
     DropDownMenu.call(this, idMenu_, parentMenu);
 
-    this.optionHelps = new Hash();
+    this.optionHelps = {};
 }
 
 // Defining inheritance
@@ -378,13 +378,13 @@ FilterDropDownMenu.prototype.removeOption = function(opId) {
 
 FilterDropDownMenu.prototype.remove = function () {
     // Removes all the helps
-    var helpIds = this.optionHelps.keys();
-    for (var i = 0; i < helpIds.length; i++) {
-        this.optionHelps[helpIds[i]].remove();
+    var help_id;
+    for (help_id in this.optionsHelps) {
+        this.optionHelps[helpi_id].remove();
     }
 
     DropDownMenu.prototype.remove.call(this);
-}
+};
 
 
 /**

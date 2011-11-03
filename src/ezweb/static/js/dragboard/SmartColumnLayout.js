@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IGadget, LogManagerFactory, MultiValuedSize, Hash*/
+/*global gettext, Constants, DragboardLayout, DragboardPosition, DragboardCursor, IGadget, LogManagerFactory, MultiValuedSize */
 
 /////////////////////////////////////
 // ColumnLayout
@@ -257,9 +257,9 @@ ColumnLayout.prototype._searchInsertPoint = function (_matrix, x, y, width, heig
 };
 
 ColumnLayout.prototype._moveSpaceDown = function (_matrix, iGadget, offsetY) {
-    var affectedIGadgets, position, finalPosition, edgeY, igadget, x, y, i, keys, key;
+    var affectedIGadgets, position, finalPosition, edgeY, igadget, x, y, key;
 
-    affectedIGadgets = new Hash();
+    affectedIGadgets = {};
     position = this._getPositionOn(_matrix, iGadget);
     finalPosition = position.clone();
     finalPosition.y += offsetY;
@@ -279,9 +279,7 @@ ColumnLayout.prototype._moveSpaceDown = function (_matrix, iGadget, offsetY) {
     }
 
     // Move affected gadgets instances
-    keys = affectedIGadgets.keys();
-    for (i = 0; i < keys.length; i++) {
-        key = keys[i];
+    for (key in affectedIGadgets) {
         igadget = this.iGadgets[key];
         this._moveSpaceDown(_matrix, igadget, affectedIGadgets[key]);
     }
@@ -303,7 +301,7 @@ ColumnLayout.prototype._moveSpaceUp = function (_matrix, iGadget) {
     offsetY -= 1;
 
     if (offsetY > 0) {
-        var affectedIGadgets = new Hash();
+        var affectedIGadgets = {};
         var finalPosition = position.clone();
         finalPosition.y -= offsetY;
 
@@ -327,10 +325,8 @@ ColumnLayout.prototype._moveSpaceUp = function (_matrix, iGadget) {
         this._reserveSpace(_matrix, iGadget);
 
         // Move affected gadgets instances
-        var keys = affectedIGadgets.keys();
-        var i;
-        for (i = 0; i < keys.length; i++) {
-            this._moveSpaceUp(_matrix, affectedIGadgets[keys[i]]);
+        for (key in affectedIGadgets) {
+            this._moveSpaceUp(_matrix, affectedIGadgets[key]);
         }
 
         //return true if the igadget position has been modified
@@ -521,10 +517,7 @@ ColumnLayout.prototype.initialize = function () {
     this._clearMatrix();
 
     // Insert igadgets
-    var igadgetKeys = this.iGadgets.keys();
-    for (i = 0; i < igadgetKeys.length; i++) {
-        key = igadgetKeys[i];
-
+    for (key in this.iGadgets) {
         iGadget = this.iGadgets[key];
 
         position = iGadget.getPosition();
@@ -655,7 +648,7 @@ ColumnLayout.prototype.moveTo = function (destLayout) {
 };
 
 ColumnLayout.prototype.initializeMove = function (igadget, draggable) {
-    var msg, keys, i, lastGadget, lastY, tmp;
+    var msg, key, i, lastGadget, lastY, tmp;
 
     draggable = draggable || null; // default value of draggable argument
 
@@ -671,9 +664,8 @@ ColumnLayout.prototype.initializeMove = function (igadget, draggable) {
     // Make a copy of the positions of the gadgets
     this.shadowPositions = [];
 
-    keys = this.iGadgets.keys();
-    for (i = 0; i < keys.length; i++) {
-        this.shadowPositions[keys[i]] = this.iGadgets[keys[i]].getPosition().clone();
+    for (key in this.iGadgets) {
+        this.shadowPositions[key] = this.iGadgets[key].getPosition().clone();
     }
 
     // Shadow matrix = current matrix without the gadget to move
@@ -733,9 +725,9 @@ ColumnLayout.prototype.disableCursor = function () {
 ColumnLayout.prototype._restorePositions = function () {
     this._clearMatrix();
 
-    var keys = this.iGadgets.keys();
-    for (var i = 0; i < keys.length; i++) {
-        var curIGadget = this.iGadgets[keys[i]];
+    var key;
+    for (key in this.iGadgets) {
+        var curIGadget = this.iGadgets[key];
         if (curIGadget !== this.igadgetToMove) {
             curIGadget.setPosition(this._getPositionOn(this._matrix, curIGadget));
 
@@ -952,10 +944,10 @@ SmartColumnLayout.prototype.initialize = function () {
     var modified = ColumnLayout.prototype.initialize.call(this);
 
     // remove holes moving igadgets to the topmost positions
-    var iGadget;
-    var keys = this.iGadgets.keys();
-    for (var i = 0; i < keys.length; i++) {
-        iGadget = this.iGadgets[keys[i]];
+    var iGadget, key, keys = [];
+    for (key in this.iGadgets) {
+        keys.push(key);
+        iGadget = this.iGadgets[key];
         modified = modified || this._moveSpaceUp(this.matrix, iGadget);
     }
     if (modified) {
@@ -1115,7 +1107,7 @@ SmartColumnLayout.prototype._insertAt = function (iGadget, x, y) {
 SmartColumnLayout.prototype._removeFromMatrix = function (_matrix, iGadget) {
     this._clearSpace(_matrix, iGadget);
 
-    var affectedIGadgets = new Hash();
+    var modified = false, affectedIGadgets = {};
     var affectedgadget, x, y, columnsize;
     var position = this._getPositionOn(_matrix, iGadget);
     var edgeY = position.y + iGadget.getHeight();
@@ -1125,12 +1117,13 @@ SmartColumnLayout.prototype._removeFromMatrix = function (_matrix, iGadget) {
         columnsize = _matrix[position.x + x].length;
         for (y = edgeY; y < columnsize; y++) {
             affectedgadget = _matrix[position.x + x][y];
-            if ((affectedgadget != null) && (affectedIGadgets[affectedgadget.code] == undefined)) {
-                affectedIGadgets[affectedgadget.code] = 1;
+            if ((affectedgadget != null) && (typeof affectedIGadgets[affectedgadget.code] !== true)) {
+		affectedIGadgets[affectedgadget.code] = true;
+                modified = true;
                 this._moveSpaceUp(_matrix, affectedgadget);
                 break;
             }
         }
     }
-    return affectedIGadgets.keys().length > 0;
+    return modified;
 };

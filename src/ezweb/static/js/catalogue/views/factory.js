@@ -24,12 +24,12 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, Catalogue, CatalogueResourceSubmitter, CatalogueSearcher, CatalogueTagger, CatalogueVoter, DeveloperInfoPainter, DOM_Wrapper, Hash, PaginationPainter, ResourceDetailsPainter, ResourcesPainter, ResponseCommandDispatcher, ServicesFacade, UserCommandManager */
+/*global $, Catalogue, CatalogueResourceSubmitter, CatalogueSearcher, CatalogueTagger, CatalogueVoter, DeveloperInfoPainter, DOM_Wrapper, PaginationPainter, ResourceDetailsPainter, ResourcesPainter, ResponseCommandDispatcher, ServicesFacade, UserCommandManager */
 "use strict";
 
 var CatalogueViewFactory = function () {
 
-    this.COMMANDS_INFO = new Hash({
+    this.COMMANDS_INFO = {
         '#view_all': 'VIEW_ALL',
         '#simple_search input': 'SIMPLE_SEARCH',
         '#results_per_page': 'SIMPLE_SEARCH',
@@ -38,9 +38,9 @@ var CatalogueViewFactory = function () {
         '#mashups_button': 'SHOW_MASHUPS',
         '#developers_button_toolbar': 'SHOW_DEVELOPER_INFO',
         '#search_button_toolbar': 'SHOW_SEARCH_INFO'
-    });
+    };
 
-    this.DOM_ELEMENT_IDS = new Hash({
+    this.DOM_ELEMENT_IDS = {
         'ORDER_BY_COMBO': '#results_order',
         'RESULTS_PER_PAGE_COMBO': '#results_per_page',
         'PAGINATION_AREA': '#paginate',
@@ -57,7 +57,7 @@ var CatalogueViewFactory = function () {
         'TAB_BAR': '#catalogue_nav_bar .tab_section',
         'CATALOGUE_CENTER': '#catalogue_center',
         'BAR_AREA': '#catalogue_resources_header'
-    });
+    };
 
     this.catalogue_structure_dom = $('list_view_catalogue_structure');
     this.resource_structure_dom = $('list_view_resource_structure_template');

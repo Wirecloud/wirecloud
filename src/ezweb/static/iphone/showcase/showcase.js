@@ -75,7 +75,7 @@ var ShowcaseFactory = (function () {
                 gadgetId = gadget.getVendor() + '_' + gadget.getName() + '_' + gadget.getVersion();
 
                 // Insert gadget object in showcase object model
-                private_gadgets[gadgetId] = gadget;
+                private_gadgets.set(gadgetId, gadget);
             }
 
             // Showcase loaded
@@ -104,7 +104,7 @@ var ShowcaseFactory = (function () {
 
         // Get a gadget by its gadgetID
         Showcase.prototype.getGadget = function (gadgetId) {
-            return private_gadgets[gadgetId];
+            return private_gadgets.get(gadgetId);
         };
 
 

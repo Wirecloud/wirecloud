@@ -186,7 +186,7 @@ function WorkSpace (workSpaceState) {
                 for (var i = 0; i < tabs.length; i++) {
                     var tab = tabs[i];
                     var tabInstance = new Tab(tab, this);
-                    this.tabInstances[tab.id] = tabInstance;
+                    this.tabInstances.set(tab.id, tabInstance);
 
                     if (tab.visible) {
                         visibleTabId = tab.id;
@@ -207,17 +207,17 @@ function WorkSpace (workSpaceState) {
             this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
 
-            if (this.initial_tab_id && this.initial_tab_id in this.tabInstances) {
+            if (this.initial_tab_id && this.tabInstances.get(this.initial_tab_id)) {
                 visibleTabId = this.initial_tab_id;
             }
 
             if (tabs.length > 0) {
                 //Only painting the "active" tab!
-                this.tabInstances[visibleTabId].getDragboard().paint();
+                this.tabInstances.get(visibleTabId).getDragboard().paint();
             }
 
             //set the visible tab. It will be displayed as current tab afterwards
-            this.visibleTab = this.tabInstances[visibleTabId];
+            this.visibleTab = this.tabInstances.get(visibleTabId);
 
         } catch (error) {
             // Error during initialization
@@ -254,11 +254,10 @@ function WorkSpace (workSpaceState) {
         logManager.log(msg);
     }
     var deleteSuccess = function(transport) {
-        var tabList = this.tabInstances.keys();
+        var i, tab_keys = this.tabInstances.keys();
 
-        for (var i=0; i<tabList.length; i++) {
-            var tab = this.tabInstances[tabList[i]];
-            tab.destroy();
+        for (i = 0; i < tab_keys.length; i += 1) {
+            this.tabInstances[tab_keys[i]].destroy();
             //TODO:treatment of wiring, varManager, etc.
         }
         LayoutManagerFactory.getInstance().hideCover();
@@ -298,7 +297,7 @@ function WorkSpace (workSpaceState) {
         var data = JSON.parse(response);
         //update the new wsInfo
         opManager = OpManagerFactory.getInstance();
-        opManager.changeActiveWorkSpace(opManager.workSpaceInstances[data.merged_workspace_id]);
+        opManager.changeActiveWorkSpace(opManager.workSpaceInstances.get(data.merged_workspace_id));
         LayoutManagerFactory.getInstance().hideCover();
     }
 
@@ -325,8 +324,8 @@ function WorkSpace (workSpaceState) {
         tabInfo.preferences = {};
 
         var newTab = new Tab(tabInfo, this);
-        this.tabInstances[tabInfo.id] = newTab;
-        this.setTab(this.tabInstances[tabInfo.id]);
+        this.tabInstances.set(tabInfo.id, newTab);
+        this.setTab(newTab);
 
         this.showTabBar();
         newTab.getDragboard().paint();
@@ -373,7 +372,7 @@ function WorkSpace (workSpaceState) {
     };
 
     WorkSpace.prototype.getTabInstance = function(tabId) {
-        return this.tabInstances[tabId];
+        return this.tabInstances.get(tabId);
     }
 
 
@@ -493,8 +492,8 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.isEmpty = function () {
-        if (this.tabInstances.keys().length == 1){
-         return this.visibleTab.dragboard.getIGadgets().length == 0;
+        if (this.tabInstances.keys().length >= 1) {
+            return this.visibleTab.dragboard.getIGadgets().length === 0;
         }
         return false;
     }
@@ -518,13 +517,14 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.getIgadget = function(igadgetId) {
-        var tabs = this.tabInstances.keys();
-        for (var i = 0; i < tabs.length; i++) {
-            var tab = tabs[i];
-            var igadget = this.tabInstances[tab].getDragboard().getIGadget(igadgetId);
+        var i, tab_keys = this.tabInstances.keys();
+        for (i = 0; i < tab_keys.length; i += 1) {
+            var tab = this.tabInstances.get(tab_keys[i]);
+            var igadget = tab.getDragboard().getIGadget(igadgetId);
 
-            if (igadget)
+            if (igadget) {
                 return igadget;
+            }
         }
         return null;
     }
@@ -544,7 +544,7 @@ function WorkSpace (workSpaceState) {
         var tabList = this.tabInstances.keys();
 
         for (var i = 0; i < tabList.length; i++) {
-            var tab = this.tabInstances[tabList[i]];
+            var tab = this.tabInstances.get(tabList[i]);
 
             if (this.visibleTab === tab) {
                 layoutManager.markTab(tab);
@@ -567,7 +567,7 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.getTab = function(tabId) {
-        return this.tabInstances[tabId];
+        return this.tabInstances.get(tabId);
     }
 
     WorkSpace.prototype.setTab = function(tab) {
@@ -594,31 +594,33 @@ function WorkSpace (workSpaceState) {
 
     WorkSpace.prototype.tabExists = function(tabName){
         var tabValues = this.tabInstances.values();
-        for(var i=0;i<tabValues.length;i++){
-            if(tabValues[i].tabInfo.name == tabName)
+        for (var i = 0; i < tabValues.length; i++) {
+            if (tabValues[i].tabInfo.name === tabName) {
                 return true;
+            }
         }
         return false;
     }
 
     WorkSpace.prototype.addTab = function() {
+	var counter, prefixName, tabName, url, params;
+
         if (!this.isValid()) {
             return;
         }
 
-        var counter = this.tabInstances.keys().length + 1;
-        var prefixName = gettext("Tab");
-        var tabName = prefixName + " " + counter.toString();
+        counter = this.tabInstances.keys().length + 1;
+        prefixName = gettext("Tab");
+        tabName = prefixName + " " + counter.toString();
         //check if there is another tab with the same name
-        while (this.tabExists(tabName)){
+        while (this.tabExists(tabName)) {
             tabName = prefixName + " " + (counter++).toString();
         }
-        var tabsUrl = URIs.GET_POST_TABS.evaluate({'workspace_id': this.workSpaceState.id});
-        var o = new Object;
-        o.name = tabName;
-        tabData = Object.toJSON(o);
-        params = 'tab=' + tabData;
-        PersistenceEngineFactory.getInstance().send_post(tabsUrl, params, this, createTabSuccess, createTabError);
+        url = URIs.GET_POST_TABS.evaluate({'workspace_id': this.workSpaceState.id});
+        params = {
+            tab: Object.toJSON({name: tabName})
+        };
+        PersistenceEngineFactory.getInstance().send_post(url, params, this, createTabSuccess, createTabError);
     }
 
     //It returns if the tab can be removed and shows an error window if it isn't possible
@@ -645,7 +647,7 @@ function WorkSpace (workSpaceState) {
 
         this.unloadTab(tab.getId());
 
-        if (this.tabInstances.keys().length == 1) {
+        if (this.tabInstances.keys().length === 1) {
             this.hideTabBar();
         }
         //set the first tab as current
@@ -658,9 +660,9 @@ function WorkSpace (workSpaceState) {
         if (!this.valid)
             return;
 
-        var tab = this.tabInstances[tabId];
+        var tab = this.tabInstances.get(tabId);
 
-        this.tabInstances.remove(tabId);
+        this.tabInstances.unset(tabId);
         tab.destroy();
 
         this.visibleTab = null;
@@ -765,10 +767,10 @@ function WorkSpace (workSpaceState) {
         if (!this.loaded)
             return;
 
-        var iGadgets = new Array();
+        var iGadgets = [];
         var keys = this.tabInstances.keys();
         for (var i = 0; i < keys.length; i++) {
-            iGadgets = iGadgets.concat(this.tabInstances[keys[i]].getDragboard().getIGadgets());
+            iGadgets = iGadgets.concat(this.tabInstances.get(keys[i]).getDragboard().getIGadgets());
         }
 
         return iGadgets;
@@ -1211,7 +1213,7 @@ function WorkSpace (workSpaceState) {
     this.wiringInterface = null;
     this.varManager = null;
     this.tabInstances = new Hash();
-        this.highlightTimeouts = {};
+    this.highlightTimeouts = {};
     this.wiring = null;
     this.varManager = null;
     this.remoteChannelManager = null;
@@ -1252,28 +1254,24 @@ function WorkSpace (workSpaceState) {
     /*
      * OPERATIONS
      */
-
-
-    this._lockFunc = function(locked) {
-        var keys = this.tabInstances.keys();
-        for (var i = 0; i < keys.length; i++) {
-            this.tabInstances[keys[i]].setLock(locked);
+    this._lockFunc = function (locked) {
+        var i, tab_keys = this.tabInstances.keys();
+        for (i = 0; i < tab_keys.length; i += 1) {
+            this.tabInstances.get(tab_keys[i]).setLock(locked);
         }
         this._manageAddTabElement(locked)
 
     }.bind(this);
 
-    this._isLocked = function(){
-        var keys = this.tabInstances.keys();
-        var all = true;
-        var locked = null;
-        for (var i = 0; i < keys.length; i++) {
-            if (!this.tabInstances[keys[i]].dragboard.isLocked()){
+    this._isLocked = function () {
+        var i, tab_keys = this.tabInstances.keys(), all = true;
+        for (i = 0; i < tab_keys.length; i += 1) {
+            if (!this.tabInstances.get(tab_keys[i]).dragboard.isLocked()) {
                 all = false;
             }
         }
         return all;
-    }
+    };
 
     this.markAsActive = function () {
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
@@ -1322,7 +1320,7 @@ WorkSpace.prototype.highlightTab = function(tab) {
     var tabElement;
 
     if (typeof tab === 'number') {
-        tab = this.tabInstances[tab];
+        tab = this.tabInstances.get(tab);
     }
 
     if (!(tab instanceof Tab)) {

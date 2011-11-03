@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, Hash, window, IE7*/
+/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window, IE7*/
 /*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory*/
 /*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
 /*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
@@ -2238,10 +2238,10 @@ IGadget.prototype.moveToLayout = function (newLayout) {
             logManager.log(msg);
         };
 
-        var data = new Hash();
+        var data = {};
         data['iGadgets'] = [];
 
-        var iGadgetInfo = new Hash();
+        var iGadgetInfo = {};
         iGadgetInfo['id'] = this.id;
         if (!(newLayout instanceof FullDragboardLayout)) {
             iGadgetInfo['top'] = this.position.y;
@@ -2262,7 +2262,7 @@ IGadget.prototype.moveToLayout = function (newLayout) {
         data['iGadgets'].push(iGadgetInfo);
 
         data = {
-            'igadgets': data.toJSON()
+            'igadgets': Object.toJSON(data)
         };
         var persistenceEngine = PersistenceEngineFactory.getInstance();
         var uri = URIs.GET_IGADGETS.evaluate({

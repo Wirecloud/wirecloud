@@ -98,12 +98,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
         // TODO only send real changes
         var iGadget, iGadgetInfo, uri, position;
-        var data = new Hash();
+        var data = {};
         data['iGadgets'] = [];
 
         for (var i = 0; i < keys.length; i++) {
-            iGadget = this.iGadgetsByCode[keys[i]];
-            iGadgetInfo = new Hash();
+            iGadget = this.iGadgetsByCode.get(keys[i]);
+            iGadgetInfo = {};
             position = iGadget.getPosition();
             iGadgetInfo['id'] = iGadget.id;
             iGadgetInfo['tab'] = this.tabId;
@@ -130,7 +130,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
             data['iGadgets'].push(iGadgetInfo);
         }
 
-        data = {'igadgets': data.toJSON()};
+        data = {'igadgets': Object.toJSON(data)};
         var persistenceEngine = PersistenceEngineFactory.getInstance();
         uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
         persistenceEngine.send_update(uri, data, this, onSuccess, onError);
@@ -264,7 +264,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
         // propagate the fixed status change event
         var igadgetKeys = this.iGadgets.keys();
         for (var i = 0; i < igadgetKeys.length; i++) {
-            iGadget = this.iGadgets[igadgetKeys[i]];
+            iGadget = this.iGadgets.get(igadgetKeys[i]);
             iGadget._notifyLockEvent(this.fixed);
         }
     };
@@ -398,14 +398,14 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.removeInstance = function (iGadgetId, orderFromServer) {
-        var igadget = this.iGadgets[iGadgetId];
+        var igadget = this.iGadgets.get(iGadgetId);
 
         igadget.remove(orderFromServer);
         igadget.destroy();
     };
 
     Dragboard.prototype.saveConfig = function (iGadgetId) {
-        var igadget = this.iGadgets[iGadgetId];
+        var igadget = this.iGadgets.get(iGadgetId);
         try {
             igadget.saveConfig();
 
@@ -415,12 +415,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.setDefaultPrefs = function (iGadgetId) {
-        var igadget = this.iGadgets[iGadgetId];
+        var igadget = this.iGadgets.get(iGadgetId);
         igadget.setDefaultPrefs();
     };
 
     Dragboard.prototype.notifyErrorOnIGadget = function (iGadgetId) {
-        var igadget = this.iGadgets[iGadgetId];
+        var igadget = this.iGadgets.get(iGadgetId);
         igadget.notifyError();
     };
 
@@ -429,13 +429,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.getIGadget = function (iGadgetId) {
-        return this.iGadgets[iGadgetId];
+        return this.iGadgets.get(iGadgetId);
     };
 
     Dragboard.prototype.hasReadOnlyIGadgets = function () {
         var igadgetKeys = this.iGadgets.keys();
         for (var i = 0; i < igadgetKeys.length; i++) {
-            if (this.iGadgets[igadgetKeys[i]].readOnly) {
+            if (this.iGadgets.get(igadgetKeys[i]).readOnly) {
                 return true;
             }
         }
@@ -454,12 +454,12 @@ function Dragboard(tab, workSpace, dragboardElement) {
      */
     Dragboard.prototype._registerIGadget = function (iGadget) {
         if (iGadget.id) {
-            this.iGadgets[iGadget.id] = iGadget;
+            this.iGadgets.set(iGadget.id, iGadget);
         }
 
         iGadget.code = this.currentCode++;
 
-        this.iGadgetsByCode[iGadget.code] = iGadget;
+        this.iGadgetsByCode.set(iGadget.code, iGadget);
         var zpos = iGadget.getZPosition();
         if (zpos !== null) {
             if (this.orderList[zpos] !== undefined) {
@@ -488,8 +488,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
      * @param iGadget the iGadget to register
      */
     Dragboard.prototype._deregisterIGadget = function (iGadget) {
-        delete this.iGadgets[iGadget.id];
-        delete this.iGadgetsByCode[iGadget.code];
+        this.iGadgets.unset(iGadget.id);
+        this.iGadgetsByCode.unset(iGadget.code);
 
         // Update z order List
         var zpos = iGadget.getZPosition();
@@ -504,11 +504,11 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.addIGadget = function (iGadget, igadgetInfo, options) {
-        if (!this.iGadgetsByCode[iGadget.code]) {
+        if (!this.iGadgetsByCode.get(iGadget.code)) {
             throw new Error();
         }
 
-        this.iGadgets[iGadget.id] = iGadget;
+        this.iGadgets.set(iGadget.id, iGadget);
 
         var oldHeight = iGadget.getHeight();
         var oldWidth = iGadget.getWidth();

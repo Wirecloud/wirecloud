@@ -863,30 +863,29 @@ ParametrizedTextInputInterface.prototype._ESCAPE_FUNC = function() {
 
 ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = null;
 ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
-    var concepts, keys, dashIndex, provider, concept, parameters, label;
+    var concepts, conceptName, dashIndex, provider, concept, parameters, label;
 
     if (ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS === null) {
         concepts = OpManagerFactory.getInstance().activeWorkSpace.contextManager._concepts;
-        keys = concepts.keys();
         contextFields = {
             '': []
         };
-        for (i = 0; i < keys.length; i += 1) {
-            concept = concepts[keys[i]]
+        for (conceptName in concepts) {
+            concept = concepts[conceptName];
             if (concept._type !== 'GCTX') {
-                dashIndex = keys[i].indexOf('-');
-                provider = keys[i].substring(0, dashIndex);
+                dashIndex = conceptName.indexOf('-');
+                provider = conceptName.substring(0, dashIndex);
                 if (!(provider in contextFields)) {
                     contextFields[provider] = [];
                 }
                 label = interpolate('%(label)s (%(concept)s)', {
                     label: concept._label,
-                    concept: keys[i]
+                    concept: conceptName
                 }, true);
                 contextFields[provider].push({
                     label: label,
                     description: concept._description,
-                    value: keys[i]
+                    value: conceptName
                 });
             }
         }
@@ -920,11 +919,11 @@ ParametrizedTextInputInterface.prototype.getAvailableParameters = function() {
             }
         ];
         delete contextFields[''];
-        for (i in contextFields) {
+        for (conceptName in contextFields) {
             parameters.push({
-                label: i,
+                label: conceptName,
                 value: 'context',
-                fields: contextFields[i]
+                fields: contextFields[conceptName]
             });
         }
         ParametrizedTextInputInterface.prototype._CONTEXT_PARAMS = parameters;

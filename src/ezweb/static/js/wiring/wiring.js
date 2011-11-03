@@ -35,7 +35,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
                                        filterData.nature, filterData.code, filterData.category,
                                        filterData.params, filterData.help_text);
 
-        this.filters[filterData.id] = filterObject;
+        this.filters.set(filterData.id, filterObject);
     }
 
     Wiring.prototype.processTab = function (tabData) {
@@ -63,7 +63,7 @@ function Wiring (workspace, workSpaceGlobalInfo) {
         channel = new wChannel(varData.name, varData.id, false, readOnly);
 
         // Setting channel filter
-        channel.setFilter(this.filters[varData.filter]);
+        channel.setFilter(this.filters.get(varData.filter));
 
         // Setting channel remote operation data
         remote_subscription = new RemoteSubscription(varData.remote_subscription);
@@ -207,14 +207,14 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
     Wiring.prototype.iGadgetLoaded = function (iGadget) {
         var entry = this.iGadgets[iGadget.getId()];
-
     }
 
     Wiring.prototype.iGadgetUnloaded = function (iGadget) {
         var entry = this.iGadgets[iGadget.getId()];
 
-        for (var i = 0; i < entry.slots.length; i++)
+        for (var i = 0; i < entry.slots.length; i++) {
             entry.slots[i].variable.setHandler(null);
+        }
     }
 
     Wiring.prototype.addInstance = function (igadget) {
@@ -269,15 +269,17 @@ function Wiring (workspace, workSpaceGlobalInfo) {
             return;
         }
 
-        for (var i = 0; i < entry.events.length; i++)
+        for (var i = 0; i < entry.events.length; i++) {
             entry.events[i].destroy();
+        }
         entry.events.clear();
 
-        for (var i = 0; i < entry.slots.length; i++)
+        for (var i = 0; i < entry.slots.length; i++) {
             entry.slots[i].destroy();
+        }
         entry.slots.clear();
 
-        this.iGadgets.remove(iGadgetId)
+        delete this.iGadgets[iGadgetId];
     }
 
     /**
@@ -474,7 +476,6 @@ function Wiring (workspace, workSpaceGlobalInfo) {
      * Saves the wiring state.
      */
     Wiring.prototype.serialize = function () {
-        var gadgetKeys = this.iGadgets.keys();
         var serialized_channels = {};
 
         // Channels
@@ -552,9 +553,9 @@ function Wiring (workspace, workSpaceGlobalInfo) {
 
     this.loaded = false;
     this.persistenceEngine = PersistenceEngineFactory.getInstance();
-    this.iGadgets = new Hash();
-    this.channels = new Array();
-    this.channelsById = new Hash();
+    this.iGadgets = {};
+    this.channels = [];
+    this.channelsById = {};
     this.filters = new Hash();
     this.channelsForRemoving = [];
     this.provisionalChannels = [];

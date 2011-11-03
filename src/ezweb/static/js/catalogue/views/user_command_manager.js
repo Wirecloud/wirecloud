@@ -52,12 +52,9 @@ var UserCommandManager = function (dom_wrapper) {
     };
 
     this.register_commands = function (dom_element) {
-        var command_keys, i, element_selector, command_code, element;
+        var element_selector, command_code, element;
 
-        command_keys = this.commands_info.keys();
-
-        for (i = 0; i < command_keys.length; i += 1) {
-            element_selector = command_keys[i];
+        for (element_selector in this.commands_info) {
             command_code = this.commands_info[element_selector];
 
             element = this.dom_wrapper.search_by_selector(element_selector);

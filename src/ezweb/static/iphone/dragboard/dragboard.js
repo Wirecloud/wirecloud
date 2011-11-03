@@ -166,7 +166,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
             // Create instance model
             igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this);
-            this.iGadgets[curIGadget.id] = igadget;
+            this.iGadgets.set(curIGadget.id, igadget);
 
             if (curIGadget.code >= this.currentCode) {
                 this.currentCode =  curIGadget.code + 1;
@@ -185,13 +185,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
         //disconect and delete the connectables and variables of all tab iGadgets
         for (i = 0; i < keys.length; i += 1) {
             this.workSpace.removeIGadgetData(keys[i]);
-            delete this.iGadgets[keys[i]];
+            this.iGadgets.unset(keys[i]);
         }
         //TODO: have all references been removed?,delete the object
     };
 
     Dragboard.prototype.saveConfig = function (iGadgetId) {
-        var igadget = this.iGadgets[iGadgetId];
+        var igadget = this.iGadgets.get(iGadgetId);
         try {
             igadget.saveConfig();
 
@@ -209,7 +209,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.getIGadget = function (iGadgetId) {
-        return this.iGadgets[iGadgetId];
+        return this.iGadgets.get(iGadgetId);
     };
 
     Dragboard.prototype.getWorkspace = function () {

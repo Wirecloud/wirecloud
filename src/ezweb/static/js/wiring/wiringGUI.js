@@ -462,8 +462,9 @@ WiringInterface.prototype.renewInterface = function () {
 
     // Build the interface
     var tabs = this.workspace.tabInstances.keys();
-    for (var i = 0; i < tabs.length; i++)
-        this._addTab(this.workspace.tabInstances[tabs[i]]);
+    for (var i = 0; i < tabs.length; i++) {
+        this._addTab(this.workspace.tabInstances.get(tabs[i]));
+    }
 
     var channels = this.wiring.getChannels();
     for (var i = 0; i < channels.length; i++) {

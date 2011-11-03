@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Hash, ShowcaseFactory */
+/*global alert, ShowcaseFactory */
 "use strict";
 
 var ResponseCommandDispatcher = function (dom_wrapper, user_command_manager) {
@@ -32,7 +32,7 @@ var ResponseCommandDispatcher = function (dom_wrapper, user_command_manager) {
     this.user_command_manager = user_command_manager;
 
     // Painter's Hash
-    this.painters = new Hash();
+    this.painters = {};
 };
 
 ResponseCommandDispatcher.prototype.set_painter = function (painter_code, painter) {

@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global alert, Constants, CookieManager, document, Element, gettext, Hash, interpolate */
+/*global alert, Constants, CookieManager, document, Element, gettext, interpolate */
 /*global LayoutManagerFactory, LogManagerFactory, OpManagerFactory, ResourceState, ResponseCommand, ShowcaseFactory, Template, URIs, window */
 "use strict";
 
@@ -178,12 +178,12 @@ var CatalogueSearcher = function () {
         }
 
         url = null;
-        params = new Hash({
+        params = {
             'orderby': order_by,
             'search_criteria': search_criteria,
             'search_boolean': search_boolean,
             'scope': this.scope
-        });
+        };
         response_command = new ResponseCommand(this.resp_command_processor, this);
         command_id = this.get_command_id_by_scope();
 
@@ -315,7 +315,7 @@ var CatalogueResourceSubmitter = function () {
         response_command = new ResponseCommand(this.resp_command_processor, this);
         response_command.set_id('SUBMIT_GADGET');
 
-        params = new Hash({template_uri: template_uri});
+        params = {template_uri: template_uri};
 
         this.persistence_engine.send_post(URIs.GET_POST_RESOURCES, params, response_command, success_callback, error_callback);
     };
@@ -578,7 +578,7 @@ var CatalogueTagger = function () {
         response_command.set_data(resource);
 
         //Send request to update gadget's code
-        params = new Hash({tags_xml: tags_data});
+        params = {tags_xml: tags_data};
 
         this.persistence_engine.send_post(url, params, response_command, success_callback, error_callback);
     };
