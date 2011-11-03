@@ -32,8 +32,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="fadding"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -47,23 +47,18 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
 	<td>type</td>
-	<td>//input[@value='']</td>
+	<td>//div[contains(@class, 'window_menu')]//input[@value='']</td>
 	<td>publishWS</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//button[1]</td>
+	<td>//div[contains(@class, 'window_menu')]//button[text()='Create']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>5000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,7 +98,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[2]/button</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Test']/ancestor::node()[@class='resource']//node()[contains(@class,'instanciate_button')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -118,7 +113,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[2]/button</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Test']/ancestor::node()[@class='resource']//node()[contains(@class,'instanciate_button')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -178,32 +173,37 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='toolbar_section']/div[3]/div[2]</td>
+	<td>//div[@id='toolbar_section']//div[text()='Publish in gallery']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//tr[1]/td[2]/input</td>
+	<td>//div[contains(@class,'publish_workspace')]//tr/td[1]/label[text()='Mashup Name']/parent::*/parent::tr/td[2]/input</td>
 	<td>mashup test</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//div[32]/div[2]/table/tbody/tr[2]/td[2]/input</td>
+	<td>//div[contains(@class,'publish_workspace')]//tr/td[1]/label[text()='Vendor']/parent::*/parent::tr/td[2]/input</td>
 	<td>vendor</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//tr[3]/td[2]/input</td>
+	<td>//div[contains(@class,'publish_workspace')]//tr/td[1]/label[text()='Version']/parent::*/parent::tr/td[2]/input</td>
 	<td>0.1</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//tr[4]/td[2]/input</td>
+	<td>//div[contains(@class,'publish_workspace')]//tr/td[1]/label[text()='Email']/parent::*/parent::tr/td[2]/input</td>
 	<td>email@domain.es</td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[contains(@class,'publish_workspace')]//button[text()='Accept']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -228,7 +228,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='mashups']/div/div[3]/div[1]/div[1]</td>
+	<td>//node()[contains(@class,'resource_name') and text()='mashup test']/ancestor::node()[@class='resource']//node()[contains(@class,'click_for_details')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -248,17 +248,17 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='resource_details']/div[2]/div[2]/div[29]</td>
+	<td>//div[@id='resource_details']//node()[contains(@class,'delete_resource')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[3]/button[1]</td>
+	<td>//div[contains(@class,'window_menu')]//button[text()='Yes']</td>
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>//div[@id='gadgets_button']/span</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -277,33 +277,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>3000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='toolbar_section']//div[text()='Go to Gallery »']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[3]/div[1]/div[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='resource_details']/div[2]/div[2]/div[29]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[3]/button[1]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>pause</td>
-	<td>3000</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
