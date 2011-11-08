@@ -157,9 +157,6 @@ wOut.prototype.fullDisconnect = function() {
         inouts[i].disconnect(this);
 }
 
-wOut.prototype.refresh = function() {
-}
-
 /**
  * @abstract
  *
@@ -224,9 +221,6 @@ wIn.prototype.getFinalSlots = function() {
     }
 
     return slots;
-}
-
-wIn.prototype.refresh = function() {
 }
 
 /**
@@ -620,8 +614,4 @@ wSlot.prototype.getQualifiedName = function () {
 
 wSlot.prototype.getLabel = function () {
     return this.variable.getLabel();
-}
-
-wSlot.prototype.refresh = function() {
-    this.variable.refresh();
 }
