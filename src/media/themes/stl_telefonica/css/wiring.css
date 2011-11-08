@@ -467,22 +467,7 @@
   font-size: 10px;
 }
 
-#wiring .option_link_separator {
-  color: #000000;
-  font-size: 10px;
-}
-
 #wiring .selected_option_link {
   font-weight: bold;
   font-size: 11px;
-}
-
-#wiring .create_url_link {
-  color: #2D6F9C;
-  cursor: pointer;
-  font-size: 10px;
-}
-
-#wiring .channel.selected .channelContent label#remote_operation_tip {
-  font-size: 10px;
 }

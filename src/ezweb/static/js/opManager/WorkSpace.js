@@ -201,8 +201,6 @@ function WorkSpace (workSpaceState) {
 
             this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"));
 
-            this.remoteChannelManager = new RemoteChannelManager(this.wiring);
-
             this.restricted = (!this.isOwned() && this.isShared()) || this.forceRestrictedSharing();
             this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
@@ -342,10 +340,6 @@ function WorkSpace (workSpaceState) {
     // PUBLIC METHODS
     // ****************
 
-
-    WorkSpace.prototype.subscribe_to_channels = function() {
-        this.remoteChannelManager.subscribe_to_channels();
-    }
 
     WorkSpace.prototype.igadgetLoaded = function(igadgetId) {
         var igadget = this.getIgadget(igadgetId);
@@ -1216,7 +1210,6 @@ function WorkSpace (workSpaceState) {
     this.highlightTimeouts = {};
     this.wiring = null;
     this.varManager = null;
-    this.remoteChannelManager = null;
     this.contextManager = null;
     this.loaded = false;
     this.wiringLayer = null;

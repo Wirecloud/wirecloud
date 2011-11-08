@@ -368,7 +368,6 @@ function wChannel(name, id, provisional_id, readOnly) {
     wInOut.call(this, name, null, null, id);
     this.filter = null;
     this.filterParams = new Array();
-    this.remoteSubscription = null;
     this.readOnly = readOnly;
     this.annotated = true;
     this.value = '';
@@ -403,26 +402,6 @@ wChannel.prototype.getValueWithoutFilter = function() {
 
 wChannel.prototype.getFilter = function() {
     return this.filter;
-}
-
-wChannel.prototype.getRemoteSubscription = function() {
-    return this.remoteSubscription;
-}
-
-wChannel.prototype.setRemoteSubscription = function(remoteSubscription) {
-    this.remoteSubscription = remoteSubscription;
-}
-
-wChannel.prototype.is_remote_reading_channel = function() {
-    return this.remoteSubscription.is_reading();
-}
-
-wChannel.prototype.is_remote_writing_channel = function() {
-    return this.remoteSubscription.is_writing();
-}
-
-wChannel.prototype.is_remote_channel = function() {
-    return this.is_remote_writing_channel() || this.is_remote_reading_channel();
 }
 
 wChannel.prototype.is_read_only = function(){
@@ -499,26 +478,12 @@ wChannel.prototype._getJSONInput = function() {
 }
 
 
-wChannel.prototype.notifyRemoteChannel = function(value) {
-    // Update value of a remote channel! Write operation!
-    if (! this.remoteSubscription.is_writing()) {
-        // Nothing to do!
-        return;
-    }
-
-    var workspace = OpManagerFactory.getInstance().activeWorkSpace;
-    var remote_channel_id = this.remoteSubscription.getID();
-
-    workspace.remoteChannelManager.publish_channel_value(remote_channel_id, value);
-}
-
 /**
  * @param newValue new value for this <code>wChannel</code>
  */
 wChannel.prototype.propagate = function(newValue, options) {
     if (this.annotated) {
         //it must be propagated
-        this.notifyRemoteChannel(this.value);
         wInOut.prototype.propagate.call(this, this.value, options);
     }
     this.annotated = true;

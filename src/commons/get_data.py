@@ -461,20 +461,6 @@ def get_workspace_variables_data(workSpaceDAO, user):
     return [get_connectable_data(inout) for inout in inout_variables]
 
 
-def get_remote_subscription_data(connectable):
-    if connectable.remote_subscription:
-        subscription = {}
-
-        subscription['url'] = connectable.remote_subscription.remote_channel.url
-        subscription['op_code'] = connectable.remote_subscription.operation_code
-        subscription['id'] = connectable.remote_subscription.id
-        subscription['remote_channel_id'] = connectable.remote_subscription.remote_channel.id
-
-        return subscription
-    else:
-        return None
-
-
 def get_connectable_data(connectable):
     res_data = {}
 
@@ -506,9 +492,6 @@ def get_connectable_data(connectable):
         # Locating the filter linked to this conectable!
         res_data['filter'] = connectable.filter_id
         res_data['filter_params'] = connectable.filter_param_values
-
-        # RemoteChannel data
-        res_data['remote_subscription'] = get_remote_subscription_data(connectable)
 
         # ReadOnly data
         res_data['readOnly'] = connectable.readOnly

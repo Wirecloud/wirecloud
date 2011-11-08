@@ -29,11 +29,11 @@
 
 
 #
-from connectable.models import InOut, Filter
+from connectable.models import InOut
 from commons.utils import json_encode
 
 
-def createChannel(workspace, name, filter=None, filter_params={}, remote_subscription=None):
+def createChannel(workspace, name, filter=None, filter_params={}):
 
     fparam_values = ''
     if filter is not None:
@@ -41,7 +41,6 @@ def createChannel(workspace, name, filter=None, filter_params={}, remote_subscri
 
     channel = InOut(workspace=workspace,
          name=name,
-         remote_subscription=remote_subscription,
          filter=filter,
          filter_param_values=fparam_values,
          friend_code="")
@@ -51,8 +50,5 @@ def createChannel(workspace, name, filter=None, filter_params={}, remote_subscri
 
 
 def deleteChannel(channel):
-
-    if channel.remote_subscription:
-        channel.remote_subscription.delete()
 
     channel.delete()

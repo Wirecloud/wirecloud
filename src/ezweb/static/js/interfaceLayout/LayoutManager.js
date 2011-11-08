@@ -732,18 +732,6 @@ var LayoutManagerFactory = function () {
                 this.currentMenu = menu;
                 this.currentMenu.show('right', posX, posY);
                 break;
-            case 'remoteChannelOperationsMenu':
-                this.currentMenu = menu;
-                var position;
-
-                if (posY + menu.menu.getHeight() <= BrowserUtilsFactory.getInstance().getHeight()) {
-                    //the menu has enough room to be displayed from top to bottom
-                    this.currentMenu.show('left-bottom', posX, posY);
-                } else {
-                    this.currentMenu.show('left-top', posX, posY);
-                }
-                this.showClickableCover();
-                break;
             case 'filterMenu':
                 this.currentMenu = menu;
                 var position;

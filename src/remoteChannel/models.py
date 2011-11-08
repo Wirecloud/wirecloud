@@ -29,14 +29,3 @@
 
 
 #
-from django.db import models
-from django.utils.translation import ugettext as _
-
-
-class RemoteChannel(models.Model):
-
-    url = models.URLField(verify_exists=False, unique=True)
-    value = models.TextField(_('Value'), null=True, blank=True)
-
-    def __unicode__(self):
-        return self.url

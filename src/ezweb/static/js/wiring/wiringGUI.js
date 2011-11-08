@@ -127,7 +127,6 @@ function WiringInterface(wiring, workspace, wiringContainer) {
 
     // Menues
     this._createFilterMenu();
-    this._createRemoteChannelOperationsMenu();
 }
 
 WiringInterface.prototype.show = function () {
@@ -230,16 +229,9 @@ WiringInterface.prototype.unload = function () {
     var filterMenu = $('wiring_filter_menu');
     this.filterMenu.remove();
     this.filterMenu = null;
-
-    // Remove Operation Menu
-    this.remote_operations_menu.remove();
 }
 
 WiringInterface.prototype.setFilterParam = function () {
-    this.changed = true;
-}
-
-WiringInterface.prototype.notifyRemoteSubscriptionChange = function () {
     this.changed = true;
 }
 
@@ -1261,43 +1253,6 @@ WiringInterface.prototype._createFilterMenu = function () {
     }
 
     this.filterMenu = filterMenu;
-}
-
-/**
- * Creating the menu for presenting the channel remote operations available to users.
- *
- * @private
- */
-WiringInterface.prototype._createRemoteChannelOperationsMenu = function () {
-    this.remote_operations_menu = new RemoteChannelOperationsDropDownMenu('remote_channel_operations', null);
-
-    var disabled = gettext("Disabled");
-    var read = gettext("Read");
-    var write = gettext('Write');
-
-    var callback = function(e) {
-        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-        target.blur();
-
-        Event.stop(e);
-
-        var operation_full_id = null;
-        if (target.id)
-            operation_full_id = target.id;
-        else
-            operation_full_id = target.parentNode.id;;
-
-        var op_code = parseInt(operation_full_id.charAt(operation_full_id.length - 1));
-        var text = target.innerHTML;
-
-        // Update channel interface according to operation code!
-        this.currentChannel.remote_subscription.setOpCode(op_code);
-        this.currentChannel.updateRemoteSubscription();
-    }.bind(this)
-
-    this.remote_operations_menu.addOption(null, disabled, callback, 0, null, null);
-    this.remote_operations_menu.addOption(null, read, callback, 1, null, null);
-    this.remote_operations_menu.addOption(null, write, callback, 2, null, null);
 }
 
 /**

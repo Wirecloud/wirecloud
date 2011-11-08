@@ -435,21 +435,6 @@
   cursor:pointer;
 }
 
-#wiring .option_link_separator {
-  display: inline;
-  padding-right: 5px;
-  float: right;
-}
-
 #wiring .channelContent td {
   vertical-align: top;
-}
-
-#wiring .create_url_link{
-	cursor: pointer;
-}
-
-#wiring .create_url_link, #wiring #remote_operation_tip {
-  display: block;
-  margin-top: -2px;
 }

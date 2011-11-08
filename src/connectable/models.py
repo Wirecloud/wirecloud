@@ -33,7 +33,6 @@
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from remoteChannel.models import RemoteChannel
 from translator.models import TransModel
 
 
@@ -62,20 +61,6 @@ class Filter(TransModel):
         return str(self.pk) + " " + self.name
 
 
-class RemoteSubscription(models.Model):
-    remote_channel = models.ForeignKey(RemoteChannel, verbose_name=_('Remote Channel'))
-
-    REMOTE_OPERATION = (
-        ('0', 'DISABLED'),
-        ('1', 'READ'),
-        ('2', 'WRITE'),
-    )
-    operation_code = models.CharField(_('Operation'), max_length=1, choices=REMOTE_OPERATION)
-
-    def __unicode__(self):
-        return self.url
-
-
 class InOut(models.Model):
 
     name = models.CharField(_('Name'), max_length=30)
@@ -83,7 +68,6 @@ class InOut(models.Model):
     friend_code = models.CharField(_('Friend code'), max_length=30, blank=True, null=True)
     filter = models.ForeignKey(Filter, verbose_name=_('Filter'), null=True)
     filter_param_values = models.TextField(_('Filter parameter values'), blank=True)
-    remote_subscription = models.ForeignKey(RemoteSubscription, verbose_name=_('Subscription'), null=True)
     readOnly = models.BooleanField(_('Read Only'), default=False)
 
     def __unicode__(self):

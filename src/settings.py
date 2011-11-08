@@ -195,7 +195,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'processors.context_processors.is_anonymous',
     'processors.context_processors.tag_categories',
     'processors.context_processors.installed_apps',
-    'processors.context_processors.remote_channels_enabled',
     'processors.context_processors.ezweb_organizations',
     'processors.context_processors.policy_lists',
 )
@@ -291,9 +290,6 @@ WORKSPACE_MANAGERS = (
 #GADGET_GENERATOR_URL = 'http://localhost:9001'
 
 FORCE_SCRIPT_NAME = ""
-
-# Remote channels notifier
-#REMOTE_CHANNEL_NOTIFIER_URL = 'http://localhost:8888/notifier/channels/notify'
 
 NOT_PROXY_FOR = ['localhost', '127.0.0.1']
 
