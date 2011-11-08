@@ -1,3 +1,4 @@
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
