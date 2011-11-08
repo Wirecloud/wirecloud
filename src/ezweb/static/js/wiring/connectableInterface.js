@@ -365,7 +365,6 @@ function ChannelInterface(channel, wiringGUI) {
         this.inputs = channel.inputs.clone();
         this.outputs = channel.outputs.clone();
         this.filter = channel.getFilter();
-        this.remote_subscription = channel.getRemoteSubscription();
     } else {
         // New channel
         this.connectable = null;
@@ -373,10 +372,7 @@ function ChannelInterface(channel, wiringGUI) {
         this.inputs = new Array();
         this.outputs = new Array();
         this.filter = null;
-        this.remote_subscription = new RemoteSubscription();
     }
-
-    this.remote_subscription.setChannelGUI(this);
 
     this.inputsForAdding = new Array();
     this.inputsForRemoving = new Array();
@@ -390,8 +386,6 @@ function ChannelInterface(channel, wiringGUI) {
     // Links and tables for structuring channel's info!
     this.filter_link = null;
     this.filter_table = null;
-    this.remote_channel_link = null;
-    this.remote_channel_table = null;
 
     // Label of operation menu
     this.operations_menu_label = null;
@@ -522,31 +516,6 @@ function ChannelInterface(channel, wiringGUI) {
           this._toggle_table_status(this.filter_table, this.filter_link);
       }.bind(this));
 
-    // Separator
-    var separator = document.createElement("div");
-    Element.extend(separator);
-    separator.addClassName('option_link_separator');
-    separator.innerHTML = gettext("|");
-    channelContent.appendChild(separator);
-
-    // External channels link
-    var remote_link = document.createElement("div");
-    Element.extend(remote_link);
-    remote_link.addClassName('option_link');
-    remote_link.innerHTML = gettext("Remote channel");
-    channelContent.appendChild(remote_link);
-
-    this.remote_channel_link = remote_link;
-
-    Event.observe(remote_link,
-      'click',
-      function (e) {
-          Event.stop(e);
-          this.wiringGUI.notifyRemoteSubscriptionChange();
-          this.remote_subscription.markAsChanged();
-          this._toggle_table_status(this.remote_channel_table, this.remote_channel_link);
-      }.bind(this));
-
     ////////////////////////////////////////////////
     // FILTER TABLE
     ////////////////////////////////////////////////
@@ -619,114 +588,6 @@ function ChannelInterface(channel, wiringGUI) {
     this.paramValueLayer = document.createElement("div");
     Element.extend(this.paramValueLayer);
     valueCol.appendChild(this.paramValueLayer);
-
-    ////////////////////////////////////////////////
-    // REMOTE CHANNEL's TABLE
-    ////////////////////////////////////////////////
-
-    var table = document.createElement("table");
-        var contentTable = document.createElement('tbody');
-        table.appendChild(contentTable);
-    Element.extend(table);
-    table.addClassName("contentTable");
-    table.addClassName('fold_table');
-    channelContent.appendChild(table);
-
-    this.remote_channel_table = table;
-
-    // OPERATION ROW!
-
-    var contentRow = contentTable.insertRow(-1);
-    Element.extend(contentRow);
-
-    // OPERATION LABEL COLUMN
-
-    var labelCol = contentRow.insertCell(-1);
-    labelCol.setAttribute ("width", '20%');
-
-    var labelContent = document.createElement("label");
-    labelContent.innerHTML = gettext("Operation") + ":";
-    labelCol.appendChild(labelContent);
-
-    //OPERATION CONTENT COLUMN
-    var contentCol = contentRow.insertCell(-1);
-
-    var operations_layer = document.createElement("div");
-    Element.extend(operations_layer);
-    operations_layer.addClassName("filterValue");
-    contentCol.appendChild(operations_layer);
-
-    this.operations_menu_label = document.createElement("div");
-    Element.extend(this.operations_menu_label);
-    this.operations_menu_label.addClassName("inline");
-    operations_layer.appendChild(this.operations_menu_label);
-
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        var operationsMenuButton = document.createElement('<input type="button" />');
-        Element.extend(operationsMenuButton);
-    } else {
-        var operationsMenuButton = document.createElement('input');
-        operationsMenuButton.type = "button";
-    }
-
-    operations_layer.appendChild(operationsMenuButton);
-    operationsMenuButton.addClassName("filterMenuLauncher");
-    operationsMenuButton.observe('click',
-        function(e) {
-            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-            target.blur();
-            Event.stop(e);
-            LayoutManagerFactory.getInstance().showDropDownMenu(
-                'remoteChannelOperationsMenu',
-                this.wiringGUI.remote_operations_menu,
-                Event.pointerX(e),
-                Event.pointerY(e));
-        }.bind(this)
-    );
-
-    // READ/WRITE URL ROW!
-
-    this.remote_url_row = contentTable.insertRow(-1);
-    Element.extend(this.remote_url_row);
-
-    // READ/WRITE URL LABEL TD
-
-    var labelCol = this.remote_url_row.insertCell(-1);
-    labelCol.setAttribute ("width", '20%');
-
-    var labelContent = document.createElement("label");
-    labelContent.innerHTML = gettext("URL") + ":";
-    labelCol.appendChild(labelContent);
-
-    // READ/WRITE URL CONTENT TD
-
-    var contentCol = this.remote_url_row.insertCell(-1);
-
-    this.remote_url_input = document.createElement("input");
-    Element.extend(this.remote_url_input);
-    this.remote_url_input.addClassName('paramValueInput');
-    contentCol.appendChild(this.remote_url_input);
-
-    this.url_input_label = document.createElement("label");
-    Element.extend(this.url_input_label);
-    this.url_input_label.setAttribute("id", "remote_operation_tip");
-    contentCol.appendChild(this.url_input_label);
-
-    var create_url_link = document.createElement("div");
-    Element.extend(create_url_link);
-    create_url_link.addClassName('create_url_link');
-    create_url_link.innerHTML = gettext("create a new URL");
-    contentCol.appendChild(create_url_link);
-
-    Event.observe(create_url_link,
-    "click",
-    function (e) {
-        this.remote_subscription.createURL(this);
-    }.bind(this));
-
-    ////////////////////////////////////////////////
-    // END OF OPTIONAL AREAS!
-    ////////////////////////////////////////////////
 
     // Update the initial information
     this._updateFilterInterface();
@@ -841,35 +702,6 @@ ChannelInterface.prototype.getFilter = function() {
     return this.filter;
 }
 
-ChannelInterface.prototype.updateRemoteSubscription = function() {
-    var op_code = this.remote_subscription.getOpCode();
-    var operation_text = this.wiringGUI.remote_operations_menu.getTextFromOp(op_code);
-    var url = this.remote_subscription.getURL();
-
-    // Updating remote channel interface
-    this.remote_url_input.value = url;
-    this.operations_menu_label.innerHTML = operation_text;
-
-    switch (op_code) {
-        case 0:
-            this.remote_url_row.addClassName('hide');
-            break;
-        case 1:
-            // Read from remote channel!
-            this.url_input_label.innerHTML = gettext("Enter URL to read from or ");
-            this.remote_url_row.removeClassName('hide');
-            break;
-        case 2:
-            // Write to remote channel!
-            this.url_input_label.innerHTML = gettext("Enter URL to write to or ");
-            this.remote_url_row.removeClassName('hide');
-            break;
-    }
-
-    this.wiringGUI.remote_operations_menu.hide();
-    LayoutManagerFactory.getInstance().hideCover();
-}
-
 ChannelInterface.prototype._getFilterParams = function () {
     // No filter, no params
     if (this.filter == null)
@@ -950,9 +782,6 @@ ChannelInterface.prototype._updateFilterInterface = function() {
     // Sets the channel value and the channel filter params
     this.valueElement.setTextContent(this.getValueWithFilter());
     this._showFilterParams();
-
-    // Updating remote channel interface!
-    this.updateRemoteSubscription();
 }
 
 ChannelInterface.prototype.setFilter = function(filter, wiring) {
@@ -1027,9 +856,6 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
     case 3: // Channel creation & general updates
         if (this.connectable == null)
             this.connectable = wiring.createChannel(this.name);
-
-        // Add external channel subscription
-        this.connectable.setRemoteSubscription(this.remote_subscription)
 
         // Update channel name
         this.connectable._name= this.name;

@@ -66,9 +66,6 @@ urlpatterns = patterns('',
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
 
-    # Remote Channel Manager
-    (r'^channel(s)?/external', include('remoteChannel.urls')),
-
     # Deployment Tool
     (r'^deployment/', include('deployment.urls')),
 

@@ -462,33 +462,3 @@ ColorDropDownMenu.prototype.addOption = function() {
 
 ColorDropDownMenu.prototype.removeOption = function() {
 }
-
-/////////////////////////////////////////////////////////////////////////
-// Remote Channel Operations
-/////////////////////////////////////////////////////////////////////////
-// Specific drop down menu for the remote channel operations!
-function RemoteChannelOperationsDropDownMenu(idMenu_, parentMenu) {
-    var menuHTML = '<div id="remote_channel_operations" class="drop_down_menu">';
-
-    new Insertion.After($('menu_layer'), menuHTML);
-
-    DropDownMenu.call(this, idMenu_, parentMenu);
-}
-
-// Defining inheritance
-RemoteChannelOperationsDropDownMenu.prototype = new DropDownMenu();
-
-RemoteChannelOperationsDropDownMenu.prototype.getTextFromOp = function(op_code) {
-    var menu_options = this.menu.childElements();
-
-    for (var i=0; i<menu_options.length; i++) {
-        var option_id = menu_options[i].id;
-        var id_len = option_id.length;
-        var last_character = parseInt(option_id.charAt(id_len - 1));
-
-        if (last_character == op_code)
-            return menu_options[i].getTextContent();
-
-    }
-}
-

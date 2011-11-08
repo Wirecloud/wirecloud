@@ -42,10 +42,9 @@ from commons.get_data import get_inout_data, get_wiring_data, get_tab_data, get_
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import json_encode
-from connectable.models import In, Out, RelatedInOut, InOut, Filter, RemoteSubscription
+from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from connectable.utils import createChannel, deleteChannel
 from igadget.models import IGadget
-from remoteChannel.models import RemoteChannel
 from workspace.models import WorkSpace, Tab
 
 
@@ -102,9 +101,6 @@ class ConnectableEntry(Resource):
             # Mapping between provisional ids and database-generated ids!!!
             id_mapping = {}
 
-            # Hash for mapping External Channels URLs and IDs
-            rchannels_urls_to_ids = []
-
             # A list of the channels removed by the user
             # Initially, all channels are considered to be deleted, and they
             # will be removed from this list if they appear in the inOuList
@@ -148,30 +144,9 @@ class ConnectableEntry(Resource):
                 old_channel.in_set.clear()
                 old_channel.out_set.clear()
 
-                if old_channel.remote_subscription:
-                    old_channel.remote_subscription.delete()
-
             # Adding channels recreating JSON structure!
             for channel_id in new_channels:
                 new_channel_data = new_channels[channel_id]
-
-                # Remote subscriptions!
-                remote_subscription = None
-                if new_channel_data.get('remote_subscription', None):
-                    op_code = unicode(new_channel_data['remote_subscription']['op_code'])
-                    url = new_channel_data['remote_subscription']['url']
-
-                    if op_code != '0':
-                        remote_channel, created = RemoteChannel.objects.get_or_create(url=url)
-
-                        data = dict()
-                        data['url'] = url
-                        data['id'] = remote_channel.id
-
-                        rchannels_urls_to_ids.append(data)
-
-                        remote_subscription = RemoteSubscription(operation_code=op_code, remote_channel=remote_channel)
-                        remote_subscription.save()
 
                 if new_channel_data.get('provisional_id', False):
                     # It's necessary to create a new channel from scratch
@@ -181,7 +156,7 @@ class ConnectableEntry(Resource):
                     if new_channel_data.get('filter_id', ''):
                         filter = Filter.objects.get(id=new_channel_data['filter_id'])
                         filter_params = new_channel_data['filter_params']
-                    channel = createChannel(workspace, new_channel_data['name'], filter, filter_params, remote_subscription)
+                    channel = createChannel(workspace, new_channel_data['name'], filter, filter_params)
 
                     # A channel has been generated. It's necessary to correlate provisional and final ids!
                     id_mapping[new_channel_data['id']] = channel.id
@@ -195,7 +170,6 @@ class ConnectableEntry(Resource):
                         filter = Filter.objects.get(id=new_channel_data['filter'])
                         filter_params = json_encode(new_channel_data['filter_params'])
 
-                    channel.remote_subscription = remote_subscription
                     channel.name = new_channel_data['name']
                     channel.filter = filter
                     channel.filter_param_values = filter_params
@@ -236,7 +210,7 @@ class ConnectableEntry(Resource):
             for deleted_channel in channelsDeletedByUser:
                 deleteChannel(deleted_channel)
 
-            json_result = {'ids': id_mapping, 'urls': rchannels_urls_to_ids}
+            json_result = {'ids': id_mapping}
 
             return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
         except Http403, e:

@@ -15,7 +15,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkSpace.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/InitialScriptExecuter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/opManager/RemoteChannelManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/OpManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/HistoryManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/varManager/VariableGadget.js"></script>
@@ -35,7 +34,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/dragboard/ElementPositions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring_exceptions.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/filter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/wiring/external_channel.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectable.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiring.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiringGUI.js"></script>

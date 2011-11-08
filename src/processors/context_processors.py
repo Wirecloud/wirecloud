@@ -60,10 +60,6 @@ def is_anonymous(request):
     return {'is_anonymous': is_anonymous}
 
 
-def remote_channels_enabled(request):
-    return {'remote_channels_enabled': hasattr(settings, 'REMOTE_CHANNEL_NOTIFIER_URL')}
-
-
 #private method: gets the tags and category children from an specific category (Category model)
 def _get_Category_Info(cat, userOrgs):
     catObject = {}
