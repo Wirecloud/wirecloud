@@ -355,11 +355,14 @@ class WorkSpaceEntry(Resource):
             deleteIGadget(igadget, user)
         workspace.delete()
 
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(workspace)
+
         # Set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
 
-        return HttpResponse('ok')
+        return HttpResponse(status=204)
 
 
 class TabCollection(Resource):
@@ -420,7 +423,10 @@ class TabCollection(Resource):
                 tab.position = order.index(tab.id)
                 tab.save()
 
-            return HttpResponse('ok')
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
+            return HttpResponse(status=204)
 
         except Exception, e:
             transaction.rollback()
@@ -475,7 +481,10 @@ class TabEntry(Resource):
 
             tab.save()
 
-            return HttpResponse('ok')
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
+            return HttpResponse(status=204)
         except Exception, e:
             transaction.rollback()
             msg = _("tab cannot be updated: ") + unicode(e)

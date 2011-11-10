@@ -78,6 +78,9 @@ def createTab(tab_name, user, workspace, allow_renaming=False):
         else:
             raise
 
+    from commons.get_data import _invalidate_cached_variable_values
+    _invalidate_cached_variable_values(workspace)
+
     return tab
 
 
