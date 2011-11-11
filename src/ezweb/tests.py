@@ -2,6 +2,7 @@ import os
 import time
 import re
 
+from django.conf import settings
 from django.core.cache import cache
 from lxml import etree
 
@@ -223,13 +224,13 @@ class SeleniumHTMLWrapper(object):
 class TestSelenium(SeleniumTestCase):
 
     fixtures = ['extra_data', 'selenium_test_data']
+    __test__ = False
 
     def _process_selenium_html_test(self, path):
         xml = etree.parse(path, etree.XMLParser())
         steps = xml.xpath('//xhtml:table/xhtml:tbody/xhtml:tr',
             namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
 
-        from django.conf import settings
         self.wrapper.values['GWT_GADGETS_DIR'] = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
         counter = 0
@@ -271,8 +272,6 @@ class TestSelenium(SeleniumTestCase):
         cache.clear()
 
     def test_selenium(self):
-        from django.conf import settings
-
         tests_dir = os.path.join(settings.BASEDIR, '../tests')
         for test_dir_name in os.listdir(tests_dir):
             test_dir = os.path.join(tests_dir, test_dir_name)
@@ -280,3 +279,20 @@ class TestSelenium(SeleniumTestCase):
             if os.path.isdir(test_dir) and os.path.isfile(suite_path):
                 for test in self._process_selenium_html_suite(suite_path):
                     yield self._process_selenium_html_test, os.path.join(test_dir, test)
+
+
+browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', (
+    '*firefox',
+    '*googlechrome',
+))
+
+for browser in browsers:
+    class_name = browser[1:] + 'SeleniumTestCase'
+    locals()[class_name] = type(
+        class_name,
+        (TestSelenium,),
+        dict(
+            __test__ = True,
+            selenium_browser_command = browser,
+        )
+    )
