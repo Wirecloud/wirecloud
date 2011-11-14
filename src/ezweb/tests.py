@@ -287,7 +287,13 @@ browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', (
 ))
 
 for browser in browsers:
-    class_name = browser[1:] + 'SeleniumTestCase'
+    index = browser.find(' ')
+    if index != -1:
+        browser_name = browser[1:index]
+    else:
+        browser_name = browser[1:]
+
+    class_name = browser_name + 'SeleniumTestCase'
     locals()[class_name] = type(
         class_name,
         (TestSelenium,),
