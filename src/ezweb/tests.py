@@ -98,6 +98,11 @@ class SeleniumHTMLWrapper(object):
             msg = '"%(locator)s" text content is equal to "%(text)s"'
             raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text})
 
+    def assertNotVisible(self, locator):
+        if self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is visible'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
+
     def assertTextPresent(self, pattern):
         text = self._parseVariables(pattern)
         if not self.selenium.is_text_present(text):
@@ -114,6 +119,11 @@ class SeleniumHTMLWrapper(object):
         if element_text != text:
             msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
             raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
+
+    def assertVisible(self, locator):
+        if not self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is not visible'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
 
     def assertXpathCount(self, locator, expected_count):
         count = self.selenium.get_xpath_count(locator)
@@ -170,6 +180,11 @@ class SeleniumHTMLWrapper(object):
             msg = '"%(locator)s" text content is equal to "%(text)s"'
             raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text})
 
+    def verifyNotVisible(self, locator):
+        if self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is visible'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
+
     def verifyText(self, locator, pattern):
         text = self._parseVariables(pattern)
         element_text = self.selenium.get_text(locator)
@@ -193,6 +208,11 @@ class SeleniumHTMLWrapper(object):
         if element_text != text:
             msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
             raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
+
+    def verifyVisible(self, locator):
+        if not self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is not visible'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
 
     def assertXpathCount(self, locator, expected_count):
         count = self.selenium.get_xpath_count(locator)
