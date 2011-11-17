@@ -768,9 +768,9 @@ IGadget.prototype.paint = function (onInit) {
         this.element.addClassName("gadget_window_readonly");
     }
 
-    // Time to SHOW the igadget (we need to take into account the gadget can be iconified)
+    // Time to show the igadget (we need to take into account the gadget can be iconified)
     if (!this.onFreeLayout() || !minimizedStatusBackup) {
-        this.element.style.visibility = "visible";
+        this.element.style.visibility = "";
     }
 
     // Mark as draggable
@@ -1821,11 +1821,11 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
         this.minimizeButtonElement.setAttribute("alt", gettext("Minimize"));
         this.minimizeButtonElement.removeClassName("maximizebutton");
         this.minimizeButtonElement.addClassName("minimizebutton");
-        this.contentWrapper.setStyle({"visibility": "visible", "border": ""});
+        this.contentWrapper.setStyle({"visibility": "", "border": ""});
 
         if (this.onFreeLayout()) {
             // Floating gadget
-            this.element.setStyle({"visibility": "visible"});
+            this.element.setStyle({"visibility": ""});
             this.iconElement.setStyle({"display": "none"});
         } else {
             //Linked to the grid
