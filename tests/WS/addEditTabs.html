@@ -62,9 +62,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>AddTabsWS</td>
+	<td>allowNativeXpath</td>
+	<td>false</td>
 	<td></td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[@id='workspace_name']</td>
+	<td>AddTabsWS</td>
 </tr>
 <tr>
 	<td>click</td>
@@ -82,28 +87,28 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\bfirst\b')]/span</td>
 	<td>Tab</td>
-	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\blast\b')]/span</td>
 	<td>Tab 2</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\blast\b')]/input</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='tab_section']/div[@id='fixed_bar']/div[@id='scroll_bar']/div[1]/input</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[4]/div[1]/span</td>
+	<td>//div[contains(@class, 'drop_down_menu') and contains(@style, 'display: block;')]//span[text()='Rename']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>//td[2]/input</td>
+	<td>//div[contains(@class,'window_menu')]//tr/td[1]/label[text()='New Name']/parent::*/parent::tr/td[2]/input</td>
 	<td>Renamed</td>
 </tr>
 <tr>
@@ -117,9 +122,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\bfirst\b')]/span</td>
+	<td>Tab</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\blast\b')]/span</td>
 	<td>Renamed</td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>
@@ -148,7 +158,7 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[2]/button</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Map Viewer']/ancestor::node()[@class='resource']//node()[contains(@class,'instanciate_button')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -157,8 +167,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>Renamed</td>
+	<td>assertXpathCount</td>
+	<td>//div[@id='wrapper']//div[matches(@class,'\bdragboard\b')]//object</td>
+	<td>1</td>
+</tr>
+<tr>
+	<td>assertVisible</td>
+	<td>//div[@id='wrapper']//div[matches(@class,'\bdragboard\b')]//object</td>
 	<td></td>
 </tr>
 <tr>
@@ -168,37 +183,22 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>edit_link</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\bfirst\b')]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
-	<td>Tab</td>
+	<td>pause</td>
+	<td>5000</td>
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextNotPresent</td>
-	<td>Tab 2</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>edit_link</td>
+	<td>assertNotVisible</td>
+	<td>//div[@id='wrapper']//div[matches(@class,'\bdragboard\b')]//object</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='tab_section']/div[@id='fixed_bar']/div[@id='scroll_bar']/div[2]/</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextNotPresent</td>
-	<td>Map Viewer</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>//div[@id='tab_section']/div[@id='fixed_bar']/div[@id='scroll_bar']/div[2]/input</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\blast\b')]/input</td>
 	<td></td>
 </tr>
 <tr>
@@ -222,19 +222,14 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextPresent</td>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\bfirst\b')]/span</td>
+	<td>Tab</td>
+</tr>
+<tr>
+	<td>assertText</td>
+	<td>//div[@id='fixed_bar']//div[matches(@class,'\btab\b') and matches(@class,'\blast\b')]/span</td>
 	<td>2Renamed</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>Renamed</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextNotPresent</td>
-	<td>Tab 2</td>
-	<td></td>
 </tr>
 <tr>
 	<td>click</td>
