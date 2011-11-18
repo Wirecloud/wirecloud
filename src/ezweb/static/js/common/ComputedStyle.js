@@ -2,6 +2,8 @@
  *                         Computed Style                                           *
  *----------------------------------------------------------------------------------*/
 
+(function(window) {
+
 var useInternalComputedStyle = typeof window.getComputedStyle === "undefined";
 if (!useInternalComputedStyle) {
   try {
@@ -220,10 +222,18 @@ if (useInternalComputedStyle) {
     * @param element
     * @param context not used by this implementation
     */
+  window.CSSPrimitiveValue = CSSPrimitiveValue;
+  window.CSSColorComponentValue = CSSColorComponentValue;
   window.getComputedStyle = function(element, context) {
+    if (element == null) {
+        throw new Error('Operation is not supported');
+    }
     return new ComputedCSSStyleDeclaration(element);
   }
 
-  if (document.defaultView === undefined)
-    document.defaultView = window;
+  if (window.document.defaultView === undefined) {
+    window.document.defaultView = window;
+  }
 }
+
+})(window);
