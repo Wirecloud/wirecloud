@@ -67,18 +67,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>pause</td>
-	<td>2000</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>Test_Selenium</td>
-	<td></td>
-</tr>
-<tr>
-	<td>assertTextPresent</td>
-	<td>This gadget is used to test some of the features of the EzWeb platform</td>
+	<td>waitForElementPresent</td>
+	<td>//*[@id="loading-window" and @class="disabled"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -97,13 +87,23 @@
 	<td></td>
 </tr>
 <tr>
-	<td>click</td>
-	<td>//div[@id='gadgets']/div/div[2]/div/img</td>
+	<td>assertElementPresent</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Test_Selenium']/ancestor::node()[@class='resource']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementPresent</td>
+	<td>//node()[contains(@class,'desc') and text()='This gadget is used to test some of the features of the EzWeb platform']/ancestor::node()[@class='resource']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//div[@id='resource_details']/div[2]/div[2]/div[29]</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Test_Selenium']/ancestor::node()[@class='resource']//node()[contains(@class,'click_for_details')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='resource_details']//node()[contains(@class,'delete_resource')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -132,8 +132,8 @@
 	<td></td>
 </tr>
 <tr>
-	<td>assertTextNotPresent</td>
-	<td>Test_Selenium</td>
+	<td>assertElementNotPresent</td>
+	<td>//node()[contains(@class,'resource_name') and text()='Test_Selenium']/ancestor::node()[@class='resource']</td>
 	<td></td>
 </tr>
 <tr>
