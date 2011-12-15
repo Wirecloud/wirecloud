@@ -78,11 +78,9 @@
 </script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
-{% if only_one_js_file %}
-      <script type="text/javascript" language="javascript" src="{{ MEDIA_URL }}iphone/ezweb_iphone_{{ ezweb_release }}.js"></script>
-{% else %}
+{% compress js %}
       {% include "js_iphone_includes.js" %}
-{% endif %}
+{% endcompress %}
 
 <script type="text/javascript" language="javascript">
 _URIConstants = function(){}
