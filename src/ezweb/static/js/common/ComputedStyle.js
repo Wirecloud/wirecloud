@@ -2,14 +2,23 @@
  *                         Computed Style                                           *
  *----------------------------------------------------------------------------------*/
 
-var useInternalComputedStyle = window.getComputedStyle === undefined;
+(function(window) {
+
+var cssProperties = [
+];
+
+var useInternalComputedStyle = typeof window.getComputedStyle === "undefined";
 if (!useInternalComputedStyle) {
+  // Detect partial native implementations
   try {
-    var computedStyle = document.defaultView.getComputedStyle(document.documentElement, null);
-    var width = computedStyle.getPropertyCSSValue('width');
+    var computedStyle, width;
+
+    computedStyle = document.defaultView.getComputedStyle(document.documentElement, null);
+    width = computedStyle.getPropertyCSSValue('width');
     width = width.getFloatValue(CSSPrimitiveValue.CSS_PX);
   } catch (e) {
     useInternalComputedStyle = true;
+    cssProperties = computedStyle;
 
     var _nativeGetComputedStyle = document.defaultView.getComputedStyle;
     var _internalGetCurrentStyle = function(element, property, ieProperty) {
@@ -191,7 +200,22 @@ if (useInternalComputedStyle) {
     * Partial implementation of ComputedCSSStyleDeclaration
     */
   function ComputedCSSStyleDeclaration(element) {
+    var i;
+
     this._element = element;
+    if (Object.defineProperty) {
+      for (i = 0; i < cssProperties.length; i += 1) {
+        this._defProp(cssProperties[i]);
+      }
+    }
+  }
+
+  ComputedCSSStyleDeclaration.prototype._defProp = function(property) {
+    Object.defineProperty(this, property, {
+      get: function () { return this.getPropertyValue(property); },
+      enumerable: true,
+      configurable: false
+    });
   }
 
   ComputedCSSStyleDeclaration.prototype._getIEProperty = function(property) {
@@ -220,10 +244,18 @@ if (useInternalComputedStyle) {
     * @param element
     * @param context not used by this implementation
     */
+  window.CSSPrimitiveValue = CSSPrimitiveValue;
+  window.CSSColorComponentValue = CSSColorComponentValue;
   window.getComputedStyle = function(element, context) {
+    if (element == null) {
+        throw new Error('Operation is not supported');
+    }
     return new ComputedCSSStyleDeclaration(element);
   }
 
-  if (document.defaultView === undefined)
-    document.defaultView = window;
+  if (window.document.defaultView === undefined) {
+    window.document.defaultView = window;
+  }
 }
+
+})(window);

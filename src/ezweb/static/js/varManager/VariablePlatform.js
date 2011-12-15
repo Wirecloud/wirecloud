@@ -211,35 +211,6 @@ RVariable.prototype.set = function (newValue) {
     }
 }
 
-RVariable.prototype.refresh = function() {
-    switch (this.vardef.aspect) {
-        case Variable.prototype.USER_PREF:
-        case Variable.prototype.EXTERNAL_CONTEXT:
-        case Variable.prototype.GADGET_CONTEXT:
-        case Variable.prototype.SLOT:
-            if (this.handler) {
-                try {
-                    this.handler(this.value);
-                } catch (e) {
-                    var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
-                    var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-                    OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
-                }
-            } else {
-                var opManager = OpManagerFactory.getInstance();
-                var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-                if (iGadget.loaded) {
-                    var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
-                    var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                    opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
-                }
-            }
-            break;
-        default:
-            break;
-    }
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // RWVARIABLE (Derivated class)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

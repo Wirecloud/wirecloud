@@ -2,6 +2,7 @@ import os
 import time
 import re
 
+from django.conf import settings
 from django.core.cache import cache
 from lxml import etree
 
@@ -15,9 +16,13 @@ from proxy.tests import ProxyTests, ProxySecureDataTests
 
 
 def format_selenium_command(func_name, arg1, arg2=None):
-    text = func_name + '("' + arg1
-    if arg2 is not None:
-        text += '", "' + arg2
+    text = func_name + '("'
+    if arg1 is not None:
+        text += arg1
+
+        if arg2 is not None:
+            text += '", "' + arg2
+
     text += '")'
 
     return text
@@ -66,6 +71,9 @@ class SeleniumHTMLWrapper(object):
     def addSelection(self, locator, optionLocator):
         self.selenium.add_selection(locator, optionLocator)
 
+    def allowNativeXpath(self, allow):
+        self.selenium.allow_native_xpath(allow)
+
     def assertElementNotPresent(self, locator):
         if self.selenium.is_element_present(locator):
             msg = '"%(locator)s" element is present'
@@ -83,6 +91,18 @@ class SeleniumHTMLWrapper(object):
             msg = '"%(locator)s" text content is not equal to "%(text)s" (real content: "%(element_text)s")'
             raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
+    def assertNotText(self, locator, pattern):
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_text(locator)
+        if element_text == text:
+            msg = '"%(locator)s" text content is equal to "%(text)s"'
+            raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text})
+
+    def assertNotVisible(self, locator):
+        if self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is visible'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
+
     def assertTextPresent(self, pattern):
         text = self._parseVariables(pattern)
         if not self.selenium.is_text_present(text):
@@ -99,6 +119,17 @@ class SeleniumHTMLWrapper(object):
         if element_text != text:
             msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
             raise SeleniumAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
+
+    def assertVisible(self, locator):
+        if not self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is not visible'
+            raise SeleniumAssertionFailure(msg % {'locator': locator})
+
+    def assertXpathCount(self, locator, expected_count):
+        count = self.selenium.get_xpath_count(locator)
+        if count != expected_count:
+            msg = 'XPath count for "%(locator)s" do not match %(count)s (real value: "%(real_value)s")'
+            raise SeleniumAssertionFailure(msg % {'locator': locator, 'count': expected_count, 'real_value': count})
 
     def click(self, locator):
         self.selenium.click(locator)
@@ -119,6 +150,9 @@ class SeleniumHTMLWrapper(object):
     def pause(self, timeout):
         time.sleep(float(timeout) / 1000)
 
+    def refresh(self):
+        self.selenium.refresh()
+
     def select(self, selectLocator, optionLocator):
         self.selenium.select(selectLocator, optionLocator)
 
@@ -137,6 +171,18 @@ class SeleniumHTMLWrapper(object):
     def verifyElementPresent(self, locator):
         if not self.selenium.is_element_present(locator):
             msg = '"%(locator)s" element is not present'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
+
+    def verifytNotText(self, locator, pattern):
+        text = self._parseVariables(pattern)
+        element_text = self.selenium.get_text(locator)
+        if element_text == text:
+            msg = '"%(locator)s" text content is equal to "%(text)s"'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text})
+
+    def verifyNotVisible(self, locator):
+        if self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is visible'
             raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
 
     def verifyText(self, locator, pattern):
@@ -163,6 +209,17 @@ class SeleniumHTMLWrapper(object):
             msg = '"%(locator)s" value is not equal to "%(text)s" (real value: "%(element_text)s")'
             raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'text': text, 'element_text': element_text})
 
+    def verifyVisible(self, locator):
+        if not self.selenium.is_visible(locator):
+            msg = '"%(locator)s" is not visible'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator})
+
+    def assertXpathCount(self, locator, expected_count):
+        count = self.selenium.get_xpath_count(locator)
+        if count != expected_count:
+            msg = 'XPath count for "%(locator)s" do not match %(count)s (real value: "%(real_value)s")'
+            raise SeleniumSoftAssertionFailure(msg % {'locator': locator, 'count': expected_count, 'real_value': count})
+
     def waitForElementPresent(self, locator):
         self.selenium.wait_for_element_present(locator)
 
@@ -178,20 +235,22 @@ class SeleniumHTMLWrapper(object):
             if arg2 is None:
                 arg2 = ''
             return func(arg1, arg2)
-        else:
+        elif func.im_func.func_code.co_argcount == 2:
             return func(arg1)
+        else:
+            return func()
 
 
 class TestSelenium(SeleniumTestCase):
 
     fixtures = ['extra_data', 'selenium_test_data']
+    __test__ = False
 
     def _process_selenium_html_test(self, path):
         xml = etree.parse(path, etree.XMLParser())
         steps = xml.xpath('//xhtml:table/xhtml:tbody/xhtml:tr',
             namespaces={'xhtml': 'http://www.w3.org/1999/xhtml'})
 
-        from django.conf import settings
         self.wrapper.values['GWT_GADGETS_DIR'] = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
         counter = 0
@@ -233,8 +292,6 @@ class TestSelenium(SeleniumTestCase):
         cache.clear()
 
     def test_selenium(self):
-        from django.conf import settings
-
         tests_dir = os.path.join(settings.BASEDIR, '../tests')
         for test_dir_name in os.listdir(tests_dir):
             test_dir = os.path.join(tests_dir, test_dir_name)
@@ -242,3 +299,21 @@ class TestSelenium(SeleniumTestCase):
             if os.path.isdir(test_dir) and os.path.isfile(suite_path):
                 for test in self._process_selenium_html_suite(suite_path):
                     yield self._process_selenium_html_test, os.path.join(test_dir, test)
+
+
+browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
+    'Firefox': '*firefox',
+    'GoogleChrome': '*googlechrome',
+})
+
+for browser_name in browsers:
+    browser = browsers[browser_name]
+    class_name = browser_name + 'SeleniumTestCase'
+    locals()[class_name] = type(
+        class_name,
+        (TestSelenium,),
+        dict(
+            __test__ = True,
+            selenium_browser_command = browser,
+        )
+    )

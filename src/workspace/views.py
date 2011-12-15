@@ -355,11 +355,14 @@ class WorkSpaceEntry(Resource):
             deleteIGadget(igadget, user)
         workspace.delete()
 
+        from commons.get_data import _invalidate_cached_variable_values
+        _invalidate_cached_variable_values(workspace)
+
         # Set a new active workspace (first workspace by default)
         activeWorkspace = workspaces[0]
         setActiveWorkspace(user, activeWorkspace)
 
-        return HttpResponse('ok')
+        return HttpResponse(status=204)
 
 
 class TabCollection(Resource):
@@ -398,7 +401,17 @@ class TabCollection(Resource):
 
     @transaction.commit_on_success
     def update(self, request, workspace_id):
-        get_user_authentication(request)
+        user = get_user_authentication(request)
+
+        user_workspaces = UserWorkSpace.objects.select_related('workspace')
+        try:
+            user_workspace = user_workspaces.get(user__id=user.id, workspace__id=workspace_id)
+        except UserWorkSpace.DoesNotExist:
+            raise Http404
+
+        workspace = user_workspace.workspace
+        if workspace.creator != user or user_workspace.manager != '':
+            return HttpResponseForbidden()
 
         received_json = PUT_parameter(request, 'order')
         try:
@@ -410,7 +423,10 @@ class TabCollection(Resource):
                 tab.position = order.index(tab.id)
                 tab.save()
 
-            return HttpResponse('ok')
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
+            return HttpResponse(status=204)
 
         except Exception, e:
             transaction.rollback()
@@ -438,9 +454,19 @@ class TabEntry(Resource):
         if not received_json:
             return HttpResponseBadRequest(get_xml_error(_("tab JSON expected")), mimetype='application/xml; charset=UTF-8')
 
+        tabs = Tab.objects.select_related('workspace')
+        try:
+            tab = tabs.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
+        except Tab.DoesNotExist:
+            raise Http404
+
+        workspace = tab.workspace
+        user_workspace = UserWorkSpace.objects.get(user__id=user.id, workspace__id=workspace_id)
+        if workspace.creator != user or user_workspace.manager != '':
+            return HttpResponseForbidden()
+
         try:
             t = simplejson.loads(received_json)
-            tab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=workspace_id, pk=tab_id)
 
             if 'visible' in t:
                 visible = t['visible']
@@ -455,7 +481,10 @@ class TabEntry(Resource):
 
             tab.save()
 
-            return HttpResponse('ok')
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
+            return HttpResponse(status=204)
         except Exception, e:
             transaction.rollback()
             msg = _("tab cannot be updated: ") + unicode(e)
