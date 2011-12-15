@@ -30,13 +30,22 @@ using pip:
 Database Installation and Configuration
 ---------------------------------------
 
-The database connection must be defined in the configuration file by setting
+The database connection must be defined in the configuration file by modifying
 the ``DATABASE`` setting. You can use all `database engines supported by Django.`_
 
-We will include in this documentation examples of configuring both PostgreSQL
-and SQLite databases.
+By default, Wirecloud is configured and prepared to use a SQLite database. This
+is the recommended database for giving it a try. To use this configuration, just
+make sure you have installed the sqlite module for python:
 
-.. _`database engines supported by Django.`: http://docs.djangoproject.com/en/1.3/ref/settings/#database-engine
+.. code-block:: bash
+
+    $ sudo apt-get install python-pysqlite2
+
+
+Here below there are examples of how to configure both PostgreSQL and SQLite
+databases.
+
+.. _`database engines supported by Django.`: http://docs.djangoproject.com/en/1.3/ref/settings/#databases
 
 SQLite
 ~~~~~~
@@ -49,7 +58,7 @@ parameters into the local_settings.py file:
         DATABASE = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': 'database.db',
+                'NAME': '<dbfile>',
                 'USER': '',
                 'PASSWORD': '',
                 'HOST': '',
@@ -57,7 +66,14 @@ parameters into the local_settings.py file:
             }
         }
 
-where ``NAME`` is the path of the database.
+where ``dbfile`` is the full path to the database file.
+
+Install the appropriate python module: ``python-pysqlite2``:
+
+.. code-block:: bash
+
+    $ sudo apt-get install python-pysqlite2
+
 
 .. admonition:: Note
 
@@ -77,7 +93,7 @@ following parameters:
                 'ENGINE': 'django.db.backends.postgresql_psycopg2',
                 'NAME': '<dbname>',
                 'USER': '<dbuser>',
-                'PASSWORD': 'password',
+                'PASSWORD': '<dbpassword>',
                 'HOST': '',
                 'PORT': '',
             }
