@@ -29,51 +29,6 @@
 
 /******GENERAL UTILS **********/
 
-//ARRAY EXTENSIONS
-Array.prototype.elementExists = function (element) {
-    if (this.indexOf(element) !== -1) {
-        return true;
-    }
-    return false;
-};
-
-Array.prototype.getElementById = function (id) {
-    for (var i = 0; i < this.length; i += 1) {
-        if (this[i].getId() === id) {
-            return this[i];
-        }
-    }
-    return null;
-};
-
-Array.prototype.getElementByName = function (elementName) {
-    for (var i = 0; i < this.length; i += 1) {
-        if (this[i].getName() === elementName) {
-            return this[i];
-        }
-    }
-    return null;
-};
-
-Array.prototype.remove = function (element) {
-    var index = this.indexOf(element);
-    if (index !== -1) {
-        this.splice(index, 1);
-    }
-};
-
-Array.prototype.removeById = function (id) {
-    var element, i;
-    for (i = 0; i < this.length; i += 1) {
-        if (this[i].getId() === id) {
-            element = this[i];
-            this.splice(i, 1);
-            return element;
-        }
-    }
-    return null;
-};
-
 /* Slide utility function */
 var percent = 100;
 var slideSpeed = 20;
