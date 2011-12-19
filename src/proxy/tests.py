@@ -16,7 +16,7 @@ from workspace.models import VariableValue
 from workspace.utils import HAS_AES, set_variable_value
 
 
-# Avoid nose to repeat these tests (they are run through ezweb/tests.py)
+# Avoid nose to repeat these tests (they are run through ezweb/tests/__init__.py)
 __test__ = False
 
 

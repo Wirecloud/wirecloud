@@ -12,7 +12,9 @@ except:
     class SeleniumTestCase(object):
         pass
 
-from proxy.tests import ProxyTests, ProxySecureDataTests
+# Avoid nose to repeat these tests (they are run through ezweb/tests/__init__.py)
+__test__ = False
+
 
 
 def format_selenium_command(func_name, arg1, arg2=None):
