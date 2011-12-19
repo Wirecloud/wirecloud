@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import unittest
 
-from ezweb.plugins import get_plugins, WirecloudPlugin
+from ezweb.plugins import clear_cache, get_plugins, WirecloudPlugin
 
 try:
     from djangosanetesting.cases import UnitTestCase
@@ -42,6 +42,7 @@ class WirecloudPluginTestCase(UnitTestCase):
         settings.WIRECLOUD_PLUGINS = (
             'WirecloudTestPlugin1',
         )
+        clear_cache()
 
         self.assertEqual(len(get_plugins()), 1)
 
@@ -50,5 +51,6 @@ class WirecloudPluginTestCase(UnitTestCase):
             'WirecloudTestPlugin1',
             'WirecloudTestPlugin2',
         )
+        clear_cache()
 
         self.assertRaises(ImproperlyConfigured, get_plugins)

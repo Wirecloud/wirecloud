@@ -70,7 +70,22 @@ def get_plugins():
 
 
 def get_active_features():
+
+    global _wirecloud_plugins
+    global _wirecloud_features
+
+    if _wirecloud_plugins is None:
+        get_plugins()
+
     return _wirecloud_features
+
+
+def clear_cache():
+    global _wirecloud_plugins
+    global _wirecloud_features
+
+    _wirecloud_plugins = None
+    _wirecloud_features = None
 
 
 class WirecloudPlugin(object):
