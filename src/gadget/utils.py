@@ -42,6 +42,7 @@ from commons.authentication import Http403
 from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import Gadget
 from gadget.templateParser import TemplateParser
+from ezweb.plugins import get_gadget_api_extensions
 from workspace.models import WorkSpace, UserWorkSpace
 
 
@@ -202,7 +203,12 @@ def fix_ezweb_scripts(xhtml_code, request):
     for script in scripts:
         if 'src' in script.attrib:
             script.text = ''
-        if script.get('src', '').startswith('/ezweb/'):
+        if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
+            files = get_gadget_api_extensions('index')
+            files.reverse()
+            for file in files:
+                script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
+        elif script.get('src', '').startswith('/ezweb/'):
             script.set('src', rootURL + script.get('src'))
 
     # return modified code

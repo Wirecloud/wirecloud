@@ -88,9 +88,35 @@ def clear_cache():
     _wirecloud_features = None
 
 
+def get_extra_javascripts(view):
+    plugins = get_plugins()
+    files = []
+
+    for plugin in plugins:
+        files += plugin.get_scripts(view)
+
+    return files
+
+
+def get_gadget_api_extensions(view):
+    plugins = get_plugins()
+    files = []
+
+    for plugin in plugins:
+        files += plugin.get_gadget_api_extensions(view)
+
+    return files
+
+
 class WirecloudPlugin(object):
 
     features = {}
 
     def get_features(self):
         return self.features
+
+    def get_scripts(self):
+        return ()
+
+    def get_gadget_api_extensions(self):
+        return ()
