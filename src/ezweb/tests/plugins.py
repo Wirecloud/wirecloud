@@ -2,7 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.utils import unittest
 
-from ezweb.plugins import clear_cache, get_plugins, WirecloudPlugin
+from ezweb.plugins import clear_cache, get_active_features, get_plugins, \
+    get_extra_javascripts, get_gadget_api_extensions, WirecloudPlugin
 
 try:
     from djangosanetesting.cases import UnitTestCase
@@ -15,23 +16,44 @@ except:
 __test__ = False
 
 
-
 class WirecloudTestPlugin1(WirecloudPlugin):
-    feautes = {
+
+    features = {
         'feature1': '0.1',
     }
 
+    def get_scripts(view):
+        if view == 'index':
+            return ('a.js', 'b.js')
+        else:
+            return ('a.js',)
+
+    def get_gadget_api_extensions(view):
+        if view == 'index':
+            return ('d.js',)
+        else:
+            return ()
+
 
 class WirecloudTestPlugin2(WirecloudPlugin):
-    feautes = {
-        'feature1': '0.2',
+
+    features = {
+        'feature2': '0.2',
+    }
+
+
+class WirecloudTestConflictingPlugin(WirecloudPlugin):
+
+    features = {
+        'feature1': '0.1',
+        'feature2': '0.2',
     }
 
 
 class WirecloudPluginTestCase(UnitTestCase):
 
     def setUp(self):
-        self.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS' , ())
+        self.OLD_WIRECLOUD_PLUGINS = getattr(settings, 'WIRECLOUD_PLUGINS', ())
         super(WirecloudPluginTestCase, self).setUp()
 
     def tearDown(self):
@@ -41,15 +63,21 @@ class WirecloudPluginTestCase(UnitTestCase):
     def test_basic_conf(self):
         settings.WIRECLOUD_PLUGINS = (
             'WirecloudTestPlugin1',
+            'WirecloudTestPlugin2',
         )
         clear_cache()
 
-        self.assertEqual(len(get_plugins()), 1)
+        self.assertEqual(len(get_plugins()), 2)
+        self.assertEqual(len(get_active_features()), 3)
+        self.assertEqual(len(get_extra_javascripts('index')), 2)
+        self.assertEqual(len(get_extra_javascripts('iphone')), 1)
+        self.assertEqual(len(get_gadget_api_extensions('index')), 2)
+        self.assertEqual(len(get_gadget_api_extensions('iphone')), 1)
 
     def test_several_plugins_with_the_same_feature(self):
         settings.WIRECLOUD_PLUGINS = (
             'WirecloudTestPlugin1',
-            'WirecloudTestPlugin2',
+            'WirecloudTestConflictingPlugin',
         )
         clear_cache()
 
