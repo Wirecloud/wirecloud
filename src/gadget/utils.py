@@ -201,9 +201,13 @@ def fix_ezweb_scripts(xhtml_code, request):
 
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     for script in scripts:
+
         if 'src' in script.attrib:
             script.text = ''
+
         if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
+            script.set('src', rootURL + script.get('src'))
+
             files = get_gadget_api_extensions('index')
             files.reverse()
             for file in files:
