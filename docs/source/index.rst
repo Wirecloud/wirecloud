@@ -13,8 +13,8 @@ Contents:
 
    intro
    user
-   admin
-   devel
+   platform/index.rst
+   gadgets/index.rst
 
 
 Indices and tables
