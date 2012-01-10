@@ -43,7 +43,7 @@ Then set ``TEST_RUNNER`` in ``settings.py``: ::
 
     TEST_RUNNER = 'djangosanetesting.testrunner.DstNoseTestSuiteRunner'
 
-.. admonition:: Note
+.. note::
 
     Make sure that ``djangosanetesting`` comes *after* ``south`` in
     ``INSTALLED_APPS``.
