@@ -38,21 +38,168 @@ from django.contrib.sites.models import Site
 from django.conf import settings
 
 from catalogue.models import CatalogueResource
+from commons import http_utils
 from commons.authentication import Http403
+from commons.template import TemplateParser
+from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.htmlHeadParser import HTMLHeadParser
-from gadget.models import Gadget
-from gadget.templateParser import TemplateParser
+from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
+from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
+
+def create_gadget_from_template(template, user, request=None):
+
+    """Creates a gadget from a template"""
+
+    if isinstance(template, TemplateParser):
+        parser = template
+    else:
+        template_content = http_utils.download_http_content(template, user=user)
+        parser = TemplateParser(template_content, template)
+
+    if parser.get_resource_type() != 'gadget':
+        raise Exception()
+
+    gadget_info = parser.get_resource_info()
+
+    gadget = Gadget()
+
+    gadget.uri = '/'.join(('', 'gadgets', gadget_info['vendor'], gadget_info['name'], gadget_info['version']))
+
+    gadget.vendor=gadget_info['vendor']
+    gadget.name=gadget_info['name']
+    gadget.version=gadget_info['version']
+
+    gadget.description = gadget_info['description']
+    gadget.display_name = gadget_info['display_name']
+    gadget.author = gadget_info['author']
+
+    gadget.xhtml = parse_gadget_code(gadget_info['code_url'], gadget.uri, gadget_info['code_content_type'], False, cacheable=gadget_info['code_cacheable'], user=user, request=request)
+
+    gadget.mail = gadget_info['mail']
+    gadget.wikiURI = gadget_info['doc_uri']
+    gadget.imageURI = gadget_info['image_uri']
+    gadget.iPhoneImageURI = gadget_info['iphone_image_uri']
+    gadget.width = gadget_info['gadget_width']
+    gadget.height = gadget_info['gadget_height']
+    gadget.menuColor = gadget_info['gadget_menucolor']
+
+    gadget.save()
+
+    variable_definitions = {}
+    user_options = {}
+
+    order = 0
+    for preference in gadget_info['preferences']:
+        vDef = VariableDef.objects.create(
+            name=preference['name'],
+            order=order,
+            description=preference['description'],
+            type=parser.typeText2typeCode(preference['type']),
+            aspect='PREF',
+            friend_code=None,
+            label=preference['label'],
+            default_value=preference['default_value'],
+            gadget=gadget,
+            secure=preference['secure']
+        )
+        variable_definitions[vDef.name] = vDef
+        user_options[vDef.name] = {}
+        for option in preference.get('options', ()):
+            upo = UserPrefOption.objects.create(
+                value=option['value'],
+                name=option['label'],
+                variableDef=vDef
+            )
+            user_options[vDef.name][upo.name] = upo
+
+        order += 1
+
+    order = 0
+    for prop in gadget_info['properties']:
+        vDef = VariableDef.objects.create(
+            name=prop['name'],
+            order=order,
+            description=prop['description'],
+            type=parser.typeText2typeCode(prop['type']),
+            aspect='PROP',
+            friend_code=None,
+            label=prop['label'],
+            default_value=prop['default_value'],
+            gadget=gadget,
+            secure=prop['secure'],
+        )
+        variable_definitions[vDef.name] = vDef
+        order += 1
+
+    order = 0
+    for slot in gadget_info['slots']:
+        vDef = VariableDef.objects.create(
+            name=slot['name'],
+            order=order,
+            description=slot['description'],
+            type=parser.typeText2typeCode(slot['type']),
+            aspect='EVEN',
+            friend_code=slot['friendcode'],
+            label=slot['label'],
+            action_label=slot['action_label'],
+            gadget=gadget,
+        )
+        variable_definitions[vDef.name] = vDef
+        order += 1
+
+    order = 0
+    for event in gadget_info['events']:
+        vDef = VariableDef.objects.create(
+            name=event['name'],
+            order=order,
+            description=event['description'],
+            type=parser.typeText2typeCode(event['type']),
+            aspect='SLOT',
+            friend_code=event['friendcode'],
+            label=event['label'],
+            gadget=gadget,
+        )
+        variable_definitions[vDef.name] = vDef
+        order += 1
+
+    gadget_table = gadget.__class__.__module__ + "." + gadget.__class__.__name__
+    for lang in gadget_info['translations']:
+        translation = gadget_info['translations'][lang]
+        for index in translation:
+            value = translation[index]
+            usages = gadget_info['translation_index_usage'][index]
+            for use in usages:
+                if use['type'] == 'gadget':
+                    table=gadget_table
+                    element_id=gadget.id
+                elif use['type'] == 'vdef':
+                    vDef = variable_definitions[use['variable']]
+                    table = vDef.__class__.__module__ + "." + vDef.__class__.__name__
+                    element_id=vDef.id
+                elif use['type'] == 'upo':
+                    upo = user_options[use['variable']][use['option']]
+                    table = upo.__class__.__module__ + "." + upo.__class__.__name__
+                    element_id=upo.id
+
+                Translation.objects.create(
+                    text_id=index,
+                    element_id=element_id,
+                    table=table,
+                    language=lang,
+                    value=value,
+                    default=gadget_info['default_lang'] == lang
+                )
+
+    return gadget
 
 def get_or_add_gadget_from_catalogue(vendor, name, version, user, request):
     try:
         gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
     except:
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-        templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
-        templateParser.parse()
-        gadget = templateParser.getGadget()
+        gadget = create_gadget_from_template(resource.template_uri, user, request)
 
     gadget.users.add(user)
     gadget.save()
@@ -68,16 +215,15 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
         raise Http403()
 
     ########### Template Parser
-    templateParser = TemplateParser(templateURL, user, fromWGT, request)
+    template_content = http_utils.download_http_content(templateURL, user=user)
+    templateParser = TemplateParser(template_content, templateURL)
 
     # Gadget is created only once
-    gadget_uri = templateParser.getGadgetUri()
+    gadget_uri = templateParser.get_resource_uri()
     try:
         gadget = Gadget.objects.get(uri=gadget_uri)
     except Gadget.DoesNotExist:
-        # Parser creates the gadget. It's made only if the gadget does not exist
-        templateParser.parse()
-        gadget = templateParser.getGadget()
+        gadget = create_gadget_from_template(templateParser, user, request)
 
     # A new user has added the gadget in his showcase
     # check if the workspace in which the igadget is being added is shared
@@ -101,9 +247,7 @@ def get_or_create_gadget_from_catalogue(vendor, name, version, user, users, requ
     except Gadget.DoesNotExist:
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
 
-        templateParser = TemplateParser(resource.template_uri, user, resource.fromWGT, request)
-        templateParser.parse()
-        gadget = templateParser.getGadget()
+        gadget = create_gadget_from_template(resource.template_uri, user, request)
 
     for user in users:
         gadget.users.add(user)

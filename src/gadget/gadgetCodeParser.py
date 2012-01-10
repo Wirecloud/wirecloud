@@ -31,6 +31,7 @@
 #
 
 import os.path
+import time
 import urlparse
 from urllib2 import URLError, HTTPError
 
@@ -42,9 +43,8 @@ from deployment.wgtPackageUtils import get_wgt_local_path
 from gadget.models import XHTML
 
 
-def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
+def parse_gadget_code(code_uri, gadget_uri, content_type, from_wgt,
                       cacheable=True, user=None, request=None):
-    from gadget.utils import includeTagBase, fix_ezweb_scripts
 
     code = ""
 
@@ -65,12 +65,10 @@ def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
 
     else:
         if url.scheme == '':
-            fetch_uri = urlparse.urljoin(main_uri, code_uri)
-        else:
-            fetch_uri = code_uri
+            raise Exception()
 
         try:
-            code = http_utils.download_http_content(fetch_uri, user=user)
+            code = http_utils.download_http_content(code_uri, user=user)
         except HTTPError, e:
             msg = _("Error opening URL: code %(errorCode)s(%(errorMsg)s)") % {
                 'errorCode': e.code, 'errorMsg': e.msg,
@@ -80,9 +78,12 @@ def parse_gadget_code(main_uri, code_uri, gadget_uri, content_type, from_wgt,
             msg = _("Error opening URL: %(errorMsg)s") % {'errorMsg': e.reason}
             raise TemplateParseException(msg)
 
-    code = includeTagBase(code, code_uri, request)
-    code = fix_ezweb_scripts(code, request)
+    if not cacheable:
+        code = ''
+        code_timestamp = None
+    else:
+        code_timestamp = time.time() * 1000
 
     return XHTML.objects.create(uri=gadget_uri + "/xhtml", code=code,
-                                url=code_uri, content_type=content_type,
-                                cacheable=cacheable)
+                                code_timestamp=code_timestamp, url=code_uri,
+                                content_type=content_type, cacheable=cacheable)

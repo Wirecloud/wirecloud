@@ -6,6 +6,7 @@ from tempfile import mkdtemp
 from urllib2 import URLError, HTTPError
 
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.test import TestCase
 
 from commons import http_utils
@@ -14,6 +15,7 @@ from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
 from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.models import Gadget
+from gadget.utils import create_gadget_from_template
 
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
@@ -66,8 +68,7 @@ class GCPRemoteCodeTests(TestCase):
     def test_parse_gadget_code(self):
         http_utils.download_http_content.set_response("http://example.com/code", BASIC_HTML_GADGET_CODE)
 
-        xhtml = parse_gadget_code('http://example.com/',
-                                  'http://example.com/code',
+        xhtml = parse_gadget_code('http://example.com/code',
                                   'http://example.com/gadget',
                                   'text/html', False)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget/xhtml')
@@ -79,7 +80,6 @@ class GCPRemoteCodeTests(TestCase):
         http_utils.download_http_content.reset()
         http_utils.download_http_content.set_http_error("http://example.com/code")
         self.assertRaises(TemplateParseException, parse_gadget_code,
-                          'http://example.com',
                           'http://example.com/code',
                           'http://example.com/gadget',
                           'text/html', False)
@@ -88,14 +88,12 @@ class GCPRemoteCodeTests(TestCase):
         http_utils.download_http_content.reset()
         http_utils.download_http_content.set_url_error("http://example.com/code")
         self.assertRaises(TemplateParseException, parse_gadget_code,
-                          'http://example.com',
                           'http://example.com/code',
                           'http://example.com/gadget',
                           'text/html', False)
 
     def test_invalid_scheme(self):
         self.assertRaises(TemplateParseException, parse_gadget_code,
-                          'http://example.com',
                           'file:///tmp/code',
                           'http://example.com/gadget',
                           'text/html', False)
@@ -131,8 +129,7 @@ class GCPLocalCodeTests(TestCase):
 
     def test_parse_gadget_code_from_wgt(self):
         self._create_gadget_code('test/Morfeo/Test_Gadget1/0.1/gcp_test.html', BASIC_HTML_GADGET_CODE)
-        xhtml = parse_gadget_code('http://example.com',
-                                  'deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html',
+        xhtml = parse_gadget_code('deployment/gadgets/test/Morfeo/Test_Gadget1/0.1/gcp_test.html',
                                   'http://example.com/gadget1',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget1/xhtml')
@@ -142,8 +139,7 @@ class GCPLocalCodeTests(TestCase):
 
         # now with an absolute path
         self._create_gadget_code('test/Morfeo/Test_Gadget2/0.1/gcp_test.html', BASIC_HTML_GADGET_CODE)
-        xhtml = parse_gadget_code('http://example.com',
-                                  '/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html',  # absolute path
+        xhtml = parse_gadget_code('/deployment/gadgets/test/Morfeo/Test_Gadget2/0.1/gcp_test.html',  # absolute path
                                   'http://example.com/gadget2',
                                   'text/html', True)
         self.assertEquals(xhtml.uri, 'http://example.com/gadget2/xhtml')
@@ -153,11 +149,9 @@ class GCPLocalCodeTests(TestCase):
 
         # now with a non existing file
         self.assertRaises(TemplateParseException, parse_gadget_code,
-                          'http://example.com',
                           '/deployment/gadgets/non_existing_file.html',
                           'http://example.com/gadget2',
                           'text/html', True)
-
 
 class ShowcaseTestCase(LocalizedTestCase):
 
@@ -165,6 +159,33 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
+        self._original_function = http_utils.download_http_content
+        http_utils.download_http_content = FakeDownloader()
+        self.user = User.objects.get(username='test')
+
+    def tearDown(self):
+        super(ShowcaseTestCase, self).tearDown()
+        http_utils.download_http_content = self._original_function
+
+    def test_basic_gadget_creation(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template1.xml'))
+        template = f.read()
+        f.close()
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        gadget = create_gadget_from_template(template_uri, self.user)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['displayName'], 'Test Gadget')
+        self.assertEqual(data['version'], '0.1')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['event']['label'], 'Event label')
+        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
 
     def testTranslations(self):
         gadget = Gadget.objects.get(pk=1)
@@ -180,4 +201,3 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['displayName'], 'Gadget de prueba')
         self.assertEqual(data['variables']['password']['label'], u'Contraseña')
         self.assertEqual(data['variables']['slot']['action_label'], u'Etiqueta de acción del slot')
-
