@@ -148,7 +148,7 @@ class TemplateParser(object):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description)
-        self._add_translation_index(self._info['description'], type='gadget')
+        self._add_translation_index(self._info['description'], type='gadget', field='description')
 
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description)
         self._info['mail'] = self._get_field(MAIL_XPATH, self._resource_description)
@@ -158,8 +158,8 @@ class TemplateParser(object):
 
     def _parse_gadget_info(self):
 
-        self._info['display_name'] = DISPLAY_NAME_XPATH(self._resource_description)[0].text
-        self._add_translation_index(self._info['display_name'], type='gadget')
+        self._info['display_name'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
+        self._add_translation_index(self._info['display_name'], type='gadget', field='display_name')
         self._info['iphone_image_uri'] = self._get_url_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
         preferences = PREFERENCES_XPATH(self._doc)[0]

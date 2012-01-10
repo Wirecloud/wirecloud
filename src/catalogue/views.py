@@ -73,10 +73,9 @@ class ResourceCollection(Resource):
             json = {"message": msg, "result": "error"}
             return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
         template_uri = request.POST['template_uri']
-        templateParser = None
 
         try:
-            templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
+            resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
 
         except IntegrityError, e:
             # Resource already exists. Rollback transaction

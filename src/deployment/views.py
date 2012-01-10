@@ -162,7 +162,7 @@ class Resources(Resource):
 
             # Add the gadget to the catalogue
             try:
-                templateParser, resource = add_resource_from_template(info.URLTEMPLATE.encode("utf8"), template.encode('utf-8'), user, fromWGT=True)
+                resource = add_resource_from_template(info.URLTEMPLATE.encode("utf8"), template.encode('utf-8'), user, fromWGT=True)
             except IntegrityError, e:
                 raise DeploymentException(_('Gadget already exists!'))
 

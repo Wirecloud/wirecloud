@@ -30,6 +30,7 @@
 
 #
 
+from datetime import datetime
 from os import path
 from urllib2 import URLError, HTTPError
 
@@ -37,14 +38,16 @@ from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import GadgetWiring, Tag, UserTag, UserVote
-from catalogue.templateParser import TemplateParser
+from catalogue.models import GadgetWiring, CatalogueResource, Tag, UserTag, UserVote
+from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from commons.exceptions import TemplateParseException
 from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from deployment.utils import undeploy_wgt_gadget
 from deployment.wgtPackageUtils import get_wgt_local_path
 from gadget.views import deleteGadget
+from translator.models import Translation
 
 
 def add_resource_from_template_uri(template_uri, user, fromWGT=False):
@@ -84,10 +87,72 @@ def add_resource_from_template_uri(template_uri, user, fromWGT=False):
 
 
 def add_resource_from_template(template_uri, template, user, fromWGT=False):
-    templateParser = TemplateParser(template_uri, template, user, fromWGT=fromWGT)
-    templateParser.parse()
 
-    return templateParser, templateParser.get_gadget()
+    parser = TemplateParser(template, base=template_uri)
+
+    resource_info = parser.get_resource_info()
+
+    resource = CatalogueResource(
+        short_name=resource_info['name'],
+        display_name=resource_info['display_name'],
+        vendor=resource_info['vendor'],
+        version=resource_info['version'],
+        author=resource_info['author'],
+        description=resource_info['description'],
+        mail=resource_info['mail'],
+        image_uri=resource_info['image_uri'],
+        iphone_image_uri=resource_info['iphone_image_uri'],
+        wiki_page_uri=resource_info['doc_uri'],
+        template_uri=template_uri,
+        creation_date=datetime.today(),
+        popularity='0.0',
+        certification=get_certification_status(user)
+    )
+
+    if resource_info['type'] == 'mashup':
+        resource.type = 1
+    else:
+        resource.type = 0
+
+    resource.save()
+
+    for slot in resource_info['slots']:
+        GadgetWiring.objects.create(
+            idResource=resource,
+            wiring='in',
+            friendcode=slot['friendcode']
+        )
+
+    for event in resource_info['events']:
+        GadgetWiring.objects.create(
+            idResource=resource,
+            wiring='out',
+            friendcode=event['friendcode']
+        )
+
+    resource_table = resource.__class__.__module__ + "." + resource.__class__.__name__
+    for lang in resource_info['translations']:
+        translation = resource_info['translations'][lang]
+        for index in translation:
+            value = translation[index]
+            usages = resource_info['translation_index_usage'][index]
+            for use in usages:
+                if use['type'] != 'gadget':
+                    continue
+
+                Translation.objects.create(
+                    text_id=index,
+                    element_id=resource.id,
+                    table=resource_table,
+                    language=lang,
+                    value=value,
+                    default=resource_info['default_lang'] == lang
+                )
+
+                # Create only a translation entry for this index
+                break
+
+    return resource
 
 
 def get_added_resource_info(resource, user):

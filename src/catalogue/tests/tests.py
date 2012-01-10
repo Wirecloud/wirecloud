@@ -26,7 +26,7 @@ class AddGadgetTestCase(TestCase):
         self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
 
     def test_add_resource_from_template_uri(self):
-        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
+        gadget = add_resource_from_template_uri(self.template_uri, self.user)
 
         events = GadgetWiring.objects.filter(idResource=gadget, wiring='out')
         self.assertTrue(events.count() == 1 and events[0].friendcode == 'test_friend_code')
@@ -174,7 +174,7 @@ class TranslationTestCase(LocalizedTestCase):
         self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
 
     def testTranslations(self):
-        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
+        gadget = add_resource_from_template_uri(self.template_uri, self.user)
         self.changeLanguage('en')
         data = get_resource_data(gadget, self.user)
 
