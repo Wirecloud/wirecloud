@@ -7,6 +7,7 @@ from urllib2 import URLError, HTTPError
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.cache import cache
 from django.test import TestCase
 
 from commons import http_utils
@@ -19,6 +20,7 @@ from gadget.utils import create_gadget_from_template
 
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
+
 
 class FakeDownloader(object):
 
@@ -153,6 +155,7 @@ class GCPLocalCodeTests(TestCase):
                           'http://example.com/gadget2',
                           'text/html', True)
 
+
 class ShowcaseTestCase(LocalizedTestCase):
 
     fixtures = ['test_data']
@@ -162,6 +165,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self._original_function = http_utils.download_http_content
         http_utils.download_http_content = FakeDownloader()
         self.user = User.objects.get(username='test')
+        cache.clear()
 
     def tearDown(self):
         super(ShowcaseTestCase, self).tearDown()
@@ -179,7 +183,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
-        self.assertEqual(data['displayName'], 'Test Gadget')
+        self.assertEqual(data['name'], 'Test')
         self.assertEqual(data['version'], '0.1')
 
         self.assertEqual(data['variables']['prop']['label'], 'Property label')
@@ -201,3 +205,23 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['displayName'], 'Gadget de prueba')
         self.assertEqual(data['variables']['password']['label'], u'Contraseña')
         self.assertEqual(data['variables']['slot']['action_label'], u'Etiqueta de acción del slot')
+
+    def test_repeated_translation_indexes(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template2.xml'))
+        template = f.read()
+        f.close()
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        gadget = create_gadget_from_template(template_uri, self.user)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['displayName'], 'Test Gadget')
+        self.assertEqual(data['version'], '0.2')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Label')
+        self.assertEqual(data['variables']['pref']['label'], 'Label')
+        self.assertEqual(data['variables']['event']['label'], 'Label')
+        self.assertEqual(data['variables']['slot']['label'], 'Label')
