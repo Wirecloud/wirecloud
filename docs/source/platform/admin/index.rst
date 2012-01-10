@@ -243,14 +243,14 @@ First install the Apache server:
 Then create a django.wsgi file anywhere (It's recommended to have it inside
 your wirecloud installation):
 
-.. code-block:: bash
+.. code-block:: python
 
     import os
     import sys
 
     path = '/path/to/wirecloud/src'
     if path not in sys.path:
-    sys.path.insert(0,path)
+        sys.path.insert(0, path)
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 
