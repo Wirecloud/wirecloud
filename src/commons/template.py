@@ -46,7 +46,7 @@ DISPLAY_NAME_XPATH = etree.ETXPath('DisplayName')
 CODE_XPATH = etree.ETXPath('/Template/Platform.Link')
 PREFERENCES_XPATH = etree.ETXPath('/Template/Platform.Preferences')
 PREFERENCE_XPATH = etree.ETXPath('Preference')
-OPTION_XPATH = etree
+OPTION_XPATH = etree.ETXPath('Option')
 PROPERTY_XPATH = etree.ETXPath('/Template/Platform.StateProperties/Property')
 WIRING_XPATH = etree.ETXPath('/Template/Platform.Wiring')
 SLOT_XPATH = etree.ETXPath('Slot')
@@ -179,10 +179,11 @@ class TemplateParser(object):
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
                 for option in OPTION_XPATH(preference):
-                    self._add_translation_index(option.get('label'), type='upo', variable=preference.get('name'), option=preference.get('label'))
+                    option_label = option.get('label', option.get('name')) 
+                    self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_label)
                     preference_info['options'].append({
-                        'label': preference.get('label'),
-                        'value': preference.get('value'),
+                        'label': option_label,
+                        'value': option.get('value'),
                     })
 
             self._info['preferences'].append(preference_info)

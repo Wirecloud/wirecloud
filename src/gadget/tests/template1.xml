@@ -13,7 +13,9 @@
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>
-    <Preference default="value" description="__MSG_prefDescription__" label="__MSG_prefLabel__" name="pref" type="text"/>
+    <Preference default="value" description="__MSG_prefDescription__" label="__MSG_prefLabel__" name="pref" type="list">
+      <Option label="__MSG_optionName__" value="1"/>
+    </Preference>
   </Platform.Preferences>
 
   <Platform.StateProperties>
@@ -35,19 +37,19 @@
 
   <Translations default="en">
     <Translation lang="en">
-      <msg name="displayName">Test Gadget</msg>
       <msg name="description">Test Gadget description</msg>
       <msg name="prefDescription">Preference description</msg>
       <msg name="prefLabel">Preference label</msg>
+      <msg name="optionName">Option name</msg>
       <msg name="propLabel">Property label</msg>
       <msg name="eventLabel">Event label</msg>
       <msg name="slotLabel">Slot label</msg>
     </Translation>
     <Translation lang="es">
-      <msg name="displayName">Gadget de pruebas</msg>
       <msg name="description">Descripción del Gadget de pruebas</msg>
       <msg name="prefDescription">Descripción de la preferencia</msg>
       <msg name="prefLabel">Etiqueta de la preferencia</msg>
+      <msg name="optionName">Nombre de la opción</msg>
       <msg name="propLabel">Etiqueta de la propiedad</msg>
       <msg name="eventLabel">Etiqueta del evento</msg>
       <msg name="slotLabel">Etiqueta de la ranura</msg>

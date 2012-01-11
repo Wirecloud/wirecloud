@@ -188,6 +188,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.assertEqual(data['variables']['prop']['label'], 'Property label')
         self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
         self.assertEqual(data['variables']['event']['label'], 'Event label')
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
 
