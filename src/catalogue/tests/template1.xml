@@ -18,7 +18,7 @@
   </Platform.Preferences>
 
   <Platform.StateProperties>
-    <Property label="__MSG_popLabel__" name="prop" type="text"/>
+    <Property label="__MSG_propLabel__" name="prop" type="text"/>
   </Platform.StateProperties>
 
   <Platform.Wiring>
