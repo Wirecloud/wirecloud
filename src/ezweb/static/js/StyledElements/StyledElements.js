@@ -2425,17 +2425,20 @@ StyledElements.Alternative = function(id, initialName, options) {
     this.altId = id;
 
     /* call to the parent constructor */
-    StyledElements.Container.call(this, options, []);
+    StyledElements.Container.call(this, options, ['show', 'hide']);
 
     EzWebExt.appendClassName(this.wrapperElement, "hidden"); // TODO
 }
 StyledElements.Alternative.prototype = new StyledElements.Container({extending: true});
 
 StyledElements.Alternative.prototype.setVisible = function (newStatus) {
-    if (newStatus)
+    if (newStatus) {
+        this.events['show'].dispatch();
         EzWebExt.removeClassName(this.wrapperElement, "hidden");
-    else
+    } else {
         EzWebExt.appendClassName(this.wrapperElement, "hidden");
+        this.events['hide'].dispatch();
+    }
 }
 
 StyledElements.Alternative.prototype.getId = function() {
@@ -2464,7 +2467,7 @@ StyledElements.StyledAlternatives = function(options) {
     this.wrapperElement.appendChild(this.contentArea);
 
     this.visibleAlt = null;
-    this.alternatives = new Array();
+    this.alternatives = [];
 
     /* Process options */
     if (options['id'])
@@ -2503,10 +2506,10 @@ StyledElements.StyledAlternatives = function(options) {
         } else {
           // Finish current transition
           context.outAlternative.setVisible(false);
-          context.outAlternative.wrapperElement.style.left = null;
-          context.outAlternative.wrapperElement.style.width = null;
-          context.inAlternative.wrapperElement.style.left = null;
-          context.inAlternative.wrapperElement.style.width = null;
+          context.outAlternative.wrapperElement.style.left = '';
+          context.outAlternative.wrapperElement.style.width = '';
+          context.inAlternative.wrapperElement.style.left = '';
+          context.inAlternative.wrapperElement.style.width = '';
 
           context.alternativesObject.visibleAlt = context.inAlternative;
           return false; // we have finished here
@@ -2573,14 +2576,16 @@ StyledElements.StyledAlternatives.prototype.repaint = function(temporal) {
     temporal = temporal !== undefined ? temporal: false;
 
     var height = this._getUsableHeight();
-    if (height == null)
+    if (height == null) {
         return; // nothing to do
+    }
 
     this.wrapperElement.style.height = (height + "px");
 
     // Resize content
-    for (var i = 0; i < this.alternatives.length; i++)
+    for (var i = 0; i < this.alternatives.length; i++) {
         this.alternatives[i].repaint(temporal);
+    }
 }
 
 StyledElements.StyledAlternatives.prototype.createAlternative = function(options) {
@@ -2604,6 +2609,11 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     /* Return the alternative container */
     return alt;
 }
+
+StyledElements.StyledAlternatives.prototype.clear = function() {
+    this.alternatives = [];
+    this.contentArea.innerHTML = '';
+};
 
 /**
  * Changes current visible alternative.
