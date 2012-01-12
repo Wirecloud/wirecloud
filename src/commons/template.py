@@ -76,12 +76,12 @@ class TemplateParser(object):
     _doc = None
     _resource_description = None
     _parsed = False
-    _info = {}
-    _translation_indexes = {}
 
     def __init__(self, template, base=None):
 
         self.base = base
+        self._info = {}
+        self._translation_indexes = {}
 
         if isinstance(template, str):
             self._doc = etree.fromstring(template)
@@ -179,7 +179,7 @@ class TemplateParser(object):
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
                 for option in OPTION_XPATH(preference):
-                    option_label = option.get('label', option.get('name')) 
+                    option_label = option.get('label', option.get('name'))
                     self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_label)
                     preference_info['options'].append({
                         'label': option_label,
@@ -351,6 +351,9 @@ class TemplateParser(object):
         if len(translations_elements) == 0:
             return
 
+        missing_translations = []
+        extra_translations = set()
+
         translations = translations_elements[0]
         self._info['default_lang'] = translations.get('default')
 
@@ -358,12 +361,28 @@ class TemplateParser(object):
             current_catalogue = {}
 
             for msg in MSG_XPATH(translation):
+                if msg.get('name') not in self._translation_indexes:
+                    extra_translations.add(msg.get('name'))
+
                 current_catalogue[msg.get('name')] = msg.text
 
             self._info['translations'][translation.get('lang')] = current_catalogue
 
         if self._info['default_lang'] not in self._info['translations']:
             raise TemplateParseException(_("ERROR: There isn't a Translation element with the default language (%(default_lang)s) translations") % {'default_lang': self._info['default_lang']})
+
+        for index in self._translation_indexes:
+            if index not in self._info['translations'][self._info['default_lang']]:
+                missing_translations.append(index)
+
+        if len(missing_translations) > 0:
+            msg = _("ERROR: the following translation indexes need a default value: %(indexes)s.")
+            raise TemplateParseException(msg % {'indexes': ', '.join(missing_translations)})
+
+        if len(extra_translations) > 0:
+            msg = _("ERROR: the following translation indexes are not used: %(indexes)s.")
+            raise TemplateParseException(msg % {'indexes': ', '.join(extra_translations)})
+
         self._info['translation_index_usage'] = self._translation_indexes
 
     def typeText2typeCode(self, typeText):

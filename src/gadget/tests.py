@@ -216,6 +216,26 @@ class ShowcaseTestCase(LocalizedTestCase):
         gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
         self.assertEqual(gadget, gadget2)
 
+    def test_gadget_template_with_missing_translation_indexes(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template3.xml'))
+        template = f.read()
+        f.close()
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        self.assertRaises(TemplateParseException, get_or_add_gadget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
+
+    def test_gadget_template_with_notused_translation_indexes(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template4.xml'))
+        template = f.read()
+        f.close()
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        self.assertRaises(TemplateParseException, get_or_add_gadget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
+
     def testTranslations(self):
         gadget = Gadget.objects.get(pk=1)
 
