@@ -1,5 +1,6 @@
 .hidden {
     visibility: hidden;
+    height: 0;
 }
 
 .disabled {

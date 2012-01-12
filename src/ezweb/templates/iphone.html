@@ -6,9 +6,9 @@
 <head>
     <title>{% trans "EzWeb Platform" %}</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
     <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
 
     {% compress css %}
@@ -20,9 +20,9 @@
 <body>
 
 <!-- MAIN SECTION -->
-<div class="ezweb_wrapper">
+<div class="ezweb_wrapper" style="display: none;">
 
-	<!-- WORKSPACES MENU -->
+    <!-- WORKSPACES MENU -->
     <div id="workspace_menu" class="workspace_menu">
     	<div class="toolbar anchorTop">
     		<h1>Workspaces</h1>
@@ -33,38 +33,33 @@
         </div>
     </div>
 
-	<!-- CATALOGUE -->
-	<div id="mashup_catalogue" class="mashup tabs_container">
-		<div class="container mashup_tab" id="mashup_container">
-			<div class="toolbar anchorTop">
-				<a href="javascript:CatalogueFactory.getInstance().hide()" class="back_button"><span class="menu_text">Menu</span></a>
-				<h1>Catalogue</h1>
-			</div>
-			<div id="mashup_catalogue_content" class="tab_content"></div>
-		</div>
-	</div>
-	<div id="mashup_info" class="mashup tabs_container">
-		<div class="container mashup_tab" id="mashup_container">
-			<div class="toolbar anchorTop">
-				<a href="javascript:CatalogueFactory.getInstance().show()" class="back_button"><span class="menu_text">Catalogue</span></a>
-				<h1>Mashup Info</h1>
-			</div>
-			<div id="mashup_info_content" class="mashup_content"></div>
-		</div>
-	</div>
+    <!-- CATALOGUE -->
+    <div id="mashup_catalogue" class="mashup tabs_container">
+        <div class="ezweb_container mashup_tab" id="mashup_container">
+            <div class="toolbar anchorTop">
+                <a href="javascript:CatalogueFactory.getInstance().hide()" class="back_button"><span class="menu_text">Menu</span></a>
+                <h1>{% trans "Catalogue" %}</h1>
+            </div>
+            <div id="mashup_catalogue_content" class="tab_content"></div>
+        </div>
+    </div>
+    <div id="mashup_info" class="mashup tabs_container">
+        <div class="ezweb_container mashup_tab" id="mashup_container">
+            <div class="toolbar anchorTop">
+                <a href="javascript:CatalogueFactory.getInstance().show()" class="back_button"><span class="menu_text">Catalogue</span></a>
+                <h1>{% trans "Mashup Info" %}</h1>
+            </div>
+            <div id="mashup_info_content" class="mashup_content"></div>
+        </div>
+    </div>
 
-	<!-- IGADGETS SECTION (tab view) -->
-    <div id="tabs_container" class="tabs_container"></div>
-
-
-	<!-- IGADGET SECTION -->
-    <div id="dragboard" class="container dragboard" style="height: 0px">
-        <!-- Toolbar -->
+    <!-- IGADGET VIEW -->
+    <div id="dragboard" class="ezweb_container dragboard">
         <div id="bar" class="toolbar">
-            <a href="javascript:OpManagerFactory.getInstance().sendBufferedVars();OpManagerFactory.getInstance().showGadgetsMenu();" class="back_button"><span class="menu_text">Back</span></a>
+            <div onclick="javascript:OpManagerFactory.getInstance().showGadgetsMenu();" class="back_button"><span class="menu_text">Back</span></div>
             <h1 id="tab_name"></h1>
-		</div>
 	</div>
+    </div>
 </div>
 
 <script type="text/javascript" language="javascript">
@@ -101,12 +96,8 @@ var URIs = new _URIConstants();
 
     setTimeout(function () {
         ShowcaseFactory.getInstance().init();
-        document.addEventListener('touchend', function (event) {
-            event.preventDefault();
-            checkTab();
-            return false;
-        }, true);
         window.addEventListener('resize', updateLayout, true);
+        window.addEventListener('onorientationchange', updateLayout, true);
         updateLayout();
     }, 0);
 

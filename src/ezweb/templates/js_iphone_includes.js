@@ -2,6 +2,8 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/NavigationHeader.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}iphone/interface/MobileDragboard.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/utils.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/common/MobileScrollManager.js"></script>

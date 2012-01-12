@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, Tab, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, URIs, last_logged_user, PersistenceEngineFactory, document, window, Concept, MYMW, $ */
+/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, URIs, last_logged_user, PersistenceEngineFactory, document, window, Concept, StyledElements, Tab, $ */
 "use strict";
 
  /*
@@ -40,36 +40,10 @@ function WorkSpace(workSpaceState) {
     // Not like the remaining methods. This is a callback function to process AJAX requests, so must be public.
     loadWorkSpace = function (transport) {
         // JSON-coded iGadget-variable mapping
-        var response = transport.responseText,
-            tabs, visibleTabId, i, tab;
+        var response = transport.responseText;
         this.workSpaceGlobalInfo = JSON.parse(response);
 
-        tabs = this.workSpaceGlobalInfo.workspace.tabList;
-
-        visibleTabId = null;
-
-        this.notebook = new StyledElements.StyledNotebook();
-        this.notebook.insertInto($('dragboard'));
-
-        if (tabs.length > 0) {
-            for (i = 0; i < tabs.length; i += 1) {
-                tab = tabs[i];
-                this.tabInstances.push(new Tab(tab, this, i));
-
-                if (tab.visible) {
-                    this.visibleTabIndex = i;
-                }
-            }
-        }
-        this.varManager = new VarManager(this);
-
-        this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
-        this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
-
         this.loaded = true;
-
-        //set the visible tab. It will be displayed as current tab afterwards
-        this.visibleTab = this.tabInstances[this.visibleTabIndex];
 
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
     };
@@ -88,11 +62,60 @@ function WorkSpace(workSpaceState) {
         alert(msg);
     };
 
+    WorkSpace.prototype._buildInterface = function () {
+        var loginButton;
+
+        this.tabsContainerElement = OpManagerFactory.getInstance().workspaceTabsAlternative;
+        // TODO layout reusage
+        this.tabsContainerElement.clear();
+        this.layout = new StyledElements.BorderLayout();
+
+        /************************************************
+         *  Toolbar *
+         ************************************************/
+
+        loginButton = document.createElement('a');
+        loginButton.setAttribute('class', 'logout');
+        if (isAnonymousUser) {
+            loginButton.setAttribute('href', '/accounts/login/?next=' + document.location.path);
+            loginButton.textContent = gettext('Sign in');
+        } else {
+            loginButton.setAttribute('href', '/logout')
+            loginButton.textContent = gettext('Sign out');
+        }
+
+        this.toolbar = new StyledElements.NavigationHeader({
+            backButton: gettext('Menu'),
+            title: '',
+            extraButton: loginButton
+        });
+        this.toolbar.addEventListener('back', function () {
+            OpManagerFactory.getInstance().showWorkspaceMenu();
+        });
+        this.layout.getNorthContainer().appendChild(this.toolbar);
+
+        new MobileScrollManager(this.layout.getCenterContainer().wrapperElement, {
+            'capture': true,
+            'propagate': false,
+            'onend': checkTab
+        });
+
+        /************************************************
+         *  Navbar *
+         ************************************************/
+        this.layout.getSouthContainer().addClassName('navbar');
+
+        this.tabsContainerElement.appendChild(this.layout);
+        this.layout.repaint();
+    };
+
+    WorkSpace.prototype._scroll = function (index) {
+        this.layout.getCenterContainer().wrapperElement.scrollLeft = index * window.innerWidth;
+    };
 
     // ****************
     // PUBLIC METHODS
     // ****************
-
     WorkSpace.prototype.igadgetLoaded = function (igadgetId) {
         var igadget = this.getIgadget(igadgetId);
 
@@ -130,13 +153,16 @@ function WorkSpace(workSpaceState) {
         for (var i = 0; i < this.tabInstances.length; i += 1) {
             this.unloadTab(i);
         }
-        if (this.notebook !== null) {
-            this.notebook.destroy();
-            this.notebook = null;
+        if (this.alternatives !== null) {
+            this.alternatives.destroy();
+            this.alternatives = null;
         }
-        this.tabInstances.length = 0;
+        this.tabInstances = [];
         this.wiring.unload();
         this.contextManager.unload();
+        OpManagerFactory.getInstance().globalDragboard.clear();
+        this.tabsContainerElement = null;
+        this.layout.destroy();
     };
 
     WorkSpace.prototype.unloadTab = function (tabId) {
@@ -246,38 +272,46 @@ function WorkSpace(workSpaceState) {
     };
 
     /**** Display the IGadgets menu ***/
-    WorkSpace.prototype.paint = function () {
-        this.tabsContainerElement.update();
-
+    WorkSpace.prototype.init = function () {
         //Create a menu for each tab of the workspace and paint it as main screen.
         var scrolling = 0,
             step = window.innerWidth,
-            i;
+            i, tabs, tab;
+
+        tabs = this.workSpaceGlobalInfo.workspace.tabList;
+
+        if (tabs.length > 0) {
+            for (i = 0; i < tabs.length; i += 1) {
+                tab = tabs[i];
+                this.tabInstances.push(new Tab(tab, this, i));
+
+                if (tab.visible) {
+                    this.visibleTabIndex = i;
+                }
+            }
+        }
+        //set the visible tab. It will be displayed as current tab afterwards
+        this.visibleTab = this.tabInstances[this.visibleTabIndex];
+
+        this.varManager = new VarManager(this);
+
+        this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
+        this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
+        this._buildInterface();
 
         for (i = 0; i < this.tabInstances.length; i += 1) {
-            this.tabInstances[i].show(scrolling, i);
+            this.tabInstances[i].paint(this.layout.getCenterContainer(), scrolling, i);
             scrolling += step;
         }
+
         //show the menu
-        this.tabsContainerElement.setStyle({
-            display: "block"
-        });
+        var opManager = OpManagerFactory.getInstance();
+        opManager.alternatives.showAlternative(this.tabsContainerElement);
 
-        window.scrollTo(this.visibleTabIndex * step, 1);
-    };
-
-    WorkSpace.prototype.hide = function () {
-        this.tabsContainerElement.setStyle({
-            display: "none"
-        });
+        this.updateVisibleTab(this.visibleTabIndex);
     };
 
     WorkSpace.prototype.show = function () {
-        // show the igadget list and hide the dragboard
-        this.visibleTab.getDragboard().hide();
-        this.tabsContainerElement.setStyle({
-            display: "block"
-        });
         var step = window.innerWidth;
         window.scrollTo(this.visibleTabIndex * step, 1);
     };
@@ -307,19 +341,36 @@ function WorkSpace(workSpaceState) {
     };
 
     WorkSpace.prototype.updateVisibleTab = function (index) {
+        var i, img, tabsLength = this.getNumberOfTabs();
+
         if (this.visibleTabIndex !== index) {
             this.visibleTabIndex = index;
             this.visibleTab = this.tabInstances[this.visibleTabIndex];
         }
+        this.toolbar.setTitle(this.visibleTab.tabInfo.name);
+
+        this.layout.getSouthContainer().clear();
+        for (i = 0; i < tabsLength; i += 1) {
+            img = document.createElement('img');
+            if (i !== index) {
+                img.src = "/ezweb/images/iphone/greyball.png";
+            } else {
+                img.src = "/ezweb/images/iphone/whiteball.png";
+            }
+            this.layout.getSouthContainer().appendChild(img);
+        }
+
+        this._scroll(index);
     };
 
     WorkSpace.prototype.updateLayout = function (orient) {
-        //notify this to the ContextManager. The orient value may be "portrait" or "landscape".
-        this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
-        //TODO: change the tab labels according to the orientation
         var step = window.innerWidth,
             scrolling = 0,
             iGadgets, contextManager, i;
+
+        //notify this to the ContextManager. The orient value may be "portrait" or "landscape".
+        this.contextManager.notifyModifiedConcept(Concept.prototype.ORIENTATION, orient);
+
         for (i = 0; i < this.tabInstances.length; i += 1) {
             this.tabInstances[i].updateLayout(scrolling);
             scrolling += step;
@@ -330,14 +381,10 @@ function WorkSpace(workSpaceState) {
             this.contextManager.notifyModifiedGadgetConcept(iGadgets[i], Concept.prototype.WIDTHINPIXELS, step);
         }
 
-        //set current scroll
+        // set current scroll
         if (OpManagerFactory.getInstance().visibleLayer === "tabs_container") {
-            window.scrollTo(this.visibleTabIndex * step, 1);
-        } else {
-            window.scrollTo(0, 1);
+            this._scroll(this.visibleTabIndex);
         }
-
-        this.notebook.repaint();
     };
 
     WorkSpace.prototype.goTab = function (tab) {
@@ -372,7 +419,7 @@ function WorkSpace(workSpaceState) {
     this.loaded = false;
     this.visibleTab = null;
     this.visibleTabIndex = 0;
-    this.notebook = null;
-
-    this.tabsContainerElement = $('tabs_container');
+    this.alternatives = null;
+    this.tabsContainerElement = null;
+    this.layout = null;
 }

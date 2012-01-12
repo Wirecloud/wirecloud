@@ -39,7 +39,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     // HTML Elements
     this.dragboardElement = $('dragboard');
-    this.tabNameElement = $('tab_name');
     this.barElement = $('bar');
 
     //Atributes
@@ -54,24 +53,15 @@ function Dragboard(tab, workSpace, dragboardElement) {
     // ****************
 
     Dragboard.prototype.paint = function (iGadgetId) {
-        var iGadget = this.getIGadget(iGadgetId);
+        var opManager, iGadget;
 
-        this.workSpace.notebook.goToTab(iGadget.getTab());
+        opManager = OpManagerFactory.getInstance();
+        iGadget = this.getIGadget(iGadgetId);
 
-        if (OpManagerFactory.getInstance().visibleLayer !== "dragboard") {
-            //Paints the dragboard and the visibleIGadget and hide the gadget menu
-            this.workSpace.hide();
-            this.dragboardElement.setStyle({
-                height: "",
-                overflow: ""
-            });
-
-            //show the bar element
-            this.barElement.setStyle({
-                display: "block"
-            });
-        }
-        this.workSpace.notebook.repaint();
+        opManager.globalDragboard.show(iGadget.getTab());
+        opManager.alternatives.showAlternative(opManager.igadgetViewAlternative);
+        opManager.visibleLayer = "dragboard";
+        updateLayout();
     };
 
     Dragboard.prototype.paintRelatedIGadget = function (iGadgetId) {
@@ -85,20 +75,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
             this.paint(iGadgetId);
         }
     };
-
-    Dragboard.prototype.hide = function () {
-        //hide and clean the dragboard layer
-        this.dragboardElement.setStyle({
-            height: "0px",
-            overflow: "hidden"
-        });
-
-        //clean the bar and the content
-        this.barElement.setStyle({
-            display: "none"
-        });
-    };
-
 
     Dragboard.prototype.markRelatedIgadget = function (iGadgetId) {
         $("related_" + iGadgetId).addClassName("active");
@@ -117,7 +93,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIGadget, position, width, height, igadget, gadget, gadgetid, minimized, i,
-            opManager = OpManagerFactory.getInstance();
+            container, opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
         this.iGadgets = new Hash();
@@ -134,7 +110,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
             gadget = ShowcaseFactory.getInstance().getGadget(gadgetid);
 
             // Create instance model
-            igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this);
+            container = opManager.globalDragboard.newIGadgetContainer();
+            igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this, container);
             this.iGadgets.set(curIGadget.id, igadget);
 
             if (curIGadget.code >= this.currentCode) {
@@ -157,10 +134,10 @@ function Dragboard(tab, workSpace, dragboardElement) {
             this.workSpace.removeIGadgetData(keys[i]);
 
             igadget = this.iGadgets.get(keys[i]);
-            igadget.destroy();
             this.iGadgets.unset(keys[i]);
+            igadget.destroy();
         }
-        //TODO: have all references been removed?,delete the object
+        this.iGadgets = null;
     };
 
     Dragboard.prototype.saveConfig = function (iGadgetId) {
@@ -174,7 +151,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.showInstance = function (igadget) {
-        igadget.paint(this.dragboardElement, this.dragboardStyle);
+        igadget.paint();
     };
 
     Dragboard.prototype.getIGadgets = function () {
@@ -190,7 +167,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype._updateIGadgetInfo = function (iGadget) {
-        this.tabNameElement.textContent = this.tab.tabInfo.name;
+        OpManagerFactory.getInstance().globalDragboard._updateIGadgetInfo(iGadget);
         this.workSpace.updateVisibleTab(this.tab.index);
     };
 

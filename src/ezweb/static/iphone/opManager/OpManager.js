@@ -76,22 +76,6 @@ var OpManagerFactory = (function () {
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
 
-        // Singleton modules
-        //this.contextManagerModule = null;
-        this.persistenceEngine = PersistenceEngineFactory.getInstance();
-
-        this.loadCompleted = false;
-        this.visibleLayer = null;
-
-        // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workSpaceInstances = new Hash();
-        this.activeWorkSpace = null;
-
-        // workspace menu element
-        this.workspaceMenuElement = $('workspace_menu');
-        this.workspaceListElement = $('workspace_list');
-
-
         // ****************
         // PUBLIC METHODS
         // ****************
@@ -147,7 +131,7 @@ var OpManagerFactory = (function () {
                     j += 1;
                 }
             }
-            this.activeWorkSpace.paint();
+            this.activeWorkSpace.init();
         };
 
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
@@ -197,11 +181,7 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.showGadgetsMenu = function () {
-            if (this.visibleLayer === "workspace_menu") {
-                this.workspaceMenuElement.setStyle({
-                    display: "none"
-                });
-            }
+            this.alternatives.showAlternative(this.workspaceTabsAlternative);
             this.visibleLayer = "tabs_container";
             this.activeWorkSpace.show();
         };
@@ -211,10 +191,8 @@ var OpManagerFactory = (function () {
                 setTimeout(function () {
                     OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu();
                 }, 100);
+                return;
             }
-            this.workspaceMenuElement.setStyle({
-                display: "none"
-            });
             this.showActiveWorkSpace(this.activeWorkSpace);
             this.visibleLayer = "tabs_container";
         };
@@ -228,15 +206,6 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.showWorkspaceMenu = function () {
-            if (this.visibleLayer === "tabs_container") {
-                this.activeWorkSpace.hide();
-            }
-            this.visibleLayer = "workspace_menu";
-            //show the workspace list and the "add mashup" option
-            this.workspaceMenuElement.setStyle({
-                display: "block"
-            });
-
             //generate the workspace list
             var wkeys = this.workSpaceInstances.keys(),
                 i, wname, workspace, workspaceEntry;
@@ -256,7 +225,37 @@ var OpManagerFactory = (function () {
                 this.workspaceListElement.appendChild(workspaceEntry);
             }
             //html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
+
+            this.alternatives.showAlternative(this.workspaceListAlternative);
+            this.visibleLayer = "workspace_menu";
         };
+
+        // Singleton modules
+        //this.contextManagerModule = null;
+        this.persistenceEngine = PersistenceEngineFactory.getInstance();
+
+        this.loadCompleted = false;
+        this.visibleLayer = null;
+
+        // Variables for controlling the collection of wiring and dragboard instances of a user
+        this.workSpaceInstances = new Hash();
+        this.activeWorkSpace = null;
+
+        // workspace menu element
+        this.workspaceMenuElement = $('workspace_menu');
+        this.workspaceListElement = $('workspace_list');
+        this.alternatives = new StyledElements.StyledAlternatives();
+        this.workspaceListAlternative = this.alternatives.createAlternative();
+        this.workspaceListAlternative.appendChild(this.workspaceMenuElement);
+
+        this.workspaceTabsAlternative = this.alternatives.createAlternative({'class': 'tabs_container'});
+
+        this.igadgetViewAlternative = this.alternatives.createAlternative();
+        this.globalDragboard = new MobileDragboard();
+        this.igadgetViewAlternative.appendChild(this.globalDragboard);
+        this.igadgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
+
+        this.alternatives.insertInto(document.body);
     }
 
     // *********************************

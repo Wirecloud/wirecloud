@@ -1,4 +1,4 @@
-.container {
+.ezweb_container {
     width: 100%;
 }
 
@@ -67,7 +67,7 @@ img {
     width: auto;
 }
 
-.ezweb_tab > .toolbar {
+.ezweb_tab > .toolbar, .dragboard .toolbar {
     padding: 10px 35px 10px 75px;
 }
 
@@ -117,7 +117,6 @@ img {
 
 /* WORKSPACE MENU */
 .workspace_menu {
-    display: none;
     width: 100%;
 }
 
@@ -187,18 +186,22 @@ img {
 .tabs_container {
     display: block;
     width: 100%;
+    overflow: auto;
 }
 
 .ezweb_tab {
     position: absolute;
+    height: 100%;
     width: 100%;
-    background: black;
+    background: transparent;
+    overflow: hidden;
 }
 
 .tab_content {
     position: relative;
     text-align: left;
     padding: 0 5px;
+    overflow: hidden;
 }
 
 .igadget_item {
@@ -302,6 +305,7 @@ img {
 /* DRAGBOARD SECTION */
 
 .dragboard {
+    height: 100%;
     width: 100%;
     position: absolute;
     overflow: hidden;
@@ -403,6 +407,7 @@ body.landscape #mymw-nav {
 }
 
 .gadget_content {
+    overflow: hidden;
     display: block;
     position: absolute;
     left: 0px;

@@ -494,7 +494,7 @@ IGadget.prototype.build = function () {
     button = document.createElement("input");
     Element.extend(button);
     button.setAttribute("type", "button");
-    button.observe("click", 
+    button.observe("click",
         function () {
             this.toggleMinimizeStatus(true);
         }.bind(this),
@@ -2089,7 +2089,7 @@ IGadget.prototype.save = function (options) {
 
     function onError(transport, e) {
         var logManager, msg;
-        
+
         logManager = LogManagerFactory.getInstance();
         msg = logManager.formatError(gettext("Error adding igadget to persistence: %(errorMsg)s."), transport, e);
         logManager.log(msg);
@@ -2104,7 +2104,7 @@ IGadget.prototype.save = function (options) {
     var gadget_uri = URIs.GET_GADGET.evaluate({vendor: this.gadget.getVendor(),
                                                name: this.gadget.getName(),
                                                version: this.gadget.getVersion().text});
- 
+
     var persistenceEngine = PersistenceEngineFactory.getInstance();
     var data = Object.toJSON({
         'uri': uri,

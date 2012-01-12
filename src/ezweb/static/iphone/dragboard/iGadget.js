@@ -31,7 +31,7 @@
 * This class represents a instance of a Gadget.
 * @author aarranz
 */
-function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard) {
+function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alternative) {
     this.id = iGadgetId;
     this.code = iGadgetCode;
     this.name = iGadgetName;
@@ -41,10 +41,7 @@ function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard) {
     this.element = null;
     this.content = null;
 
-    this.tab = this.dragboard.workSpace.notebook.createTab({
-        closable: false,
-        name: this.name,
-    });
+    this.tab = alternative;
     this.tab.addEventListener('show', function () {
         this.dragboard._updateIGadgetInfo(this);
         this.paint();
@@ -126,6 +123,11 @@ IGadget.prototype._notifyLoaded = function () {
         unloadElement = this.content.contentDocument.defaultView;
 
     unloadElement.addEventListener('unload', opManager.igadgetUnloaded.bind(opManager, this.id));
+    // FIXME
+    new MobileScrollManager(this.content.contentDocument, {
+        'capture': true,
+        'propagate': true
+    });
 };
 
 IGadget.prototype._notifyUnloaded = function () {

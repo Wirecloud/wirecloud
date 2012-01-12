@@ -199,6 +199,12 @@ a, a:visited{
   background: #F0E68C !important;
 }
 
+.tab_section .current, .tab_section .tab:hover {
+       border: 1px solid;
+       border-bottom: 0px none;
+       padding-top: 4px;
+}
+
 .disabled {
   display: none !important;
 }
@@ -408,6 +414,7 @@ button {
 
 .container {
   background-color:#E0E0E0 url(../images/init.dat) no-repeat scroll bottom center;
+  border-top: 1px solid;
 }
 
 
