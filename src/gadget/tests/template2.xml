@@ -2,7 +2,7 @@
   <!-- Gadget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
-    <Name>Test</Name>
+    <Name>test</Name>
     <DisplayName>__MSG_displayName__</DisplayName>
     <Version>0.2</Version>
     <Author>admin</Author>

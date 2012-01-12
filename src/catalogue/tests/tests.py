@@ -53,7 +53,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 4)
+        self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
         self.assertEqual(result_json['resources'][0]['name'], 'agadget')
 
@@ -62,7 +62,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 4)
+        self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
         self.assertEqual(result_json['resources'][0]['name'], 'zgadget')
 

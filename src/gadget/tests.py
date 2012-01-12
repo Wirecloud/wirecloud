@@ -16,7 +16,7 @@ from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
 from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.models import Gadget
-from gadget.utils import create_gadget_from_template
+from gadget.utils import create_gadget_from_template, get_or_add_gadget_from_catalogue
 
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
@@ -158,7 +158,7 @@ class GCPLocalCodeTests(TestCase):
 
 class ShowcaseTestCase(LocalizedTestCase):
 
-    fixtures = ['test_data']
+    fixtures = ['catalogue_test_data', 'test_data']
 
     def setUp(self):
         super(ShowcaseTestCase, self).setUp()
@@ -183,7 +183,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         self.changeLanguage('en')
         data = get_gadget_data(gadget)
-        self.assertEqual(data['name'], 'Test')
+        self.assertEqual(data['name'], 'test')
         self.assertEqual(data['version'], '0.1')
 
         self.assertEqual(data['variables']['prop']['label'], 'Property label')
@@ -191,6 +191,30 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
         self.assertEqual(data['variables']['event']['label'], 'Event label')
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
+
+    def test_gadget_creation_from_catalogue(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template1.xml'))
+        template = f.read()
+        f.close()
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        gadget = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
+        self.assertEqual(data['variables']['event']['label'], 'Event label')
+        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
+
+        gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        self.assertEqual(gadget, gadget2)
 
     def testTranslations(self):
         gadget = Gadget.objects.get(pk=1)
