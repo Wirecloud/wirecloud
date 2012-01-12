@@ -194,12 +194,12 @@ def create_gadget_from_template(template, user, request=None):
 
     return gadget
 
-def get_or_add_gadget_from_catalogue(vendor, name, version, user, request, assign_to_users=None):
+def get_or_add_gadget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
     try:
         gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
     except:
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-        gadget = create_gadget_from_template(resource.template_uri, user, request)
+        gadget = create_gadget_from_template(resource.template_uri, user, request=request)
 
     if assign_to_users is None:
         assign_to_users = (user,)
