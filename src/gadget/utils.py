@@ -194,14 +194,19 @@ def create_gadget_from_template(template, user, request=None):
 
     return gadget
 
-def get_or_add_gadget_from_catalogue(vendor, name, version, user, request):
+def get_or_add_gadget_from_catalogue(vendor, name, version, user, request, assign_to_users=None):
     try:
         gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
     except:
         resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
         gadget = create_gadget_from_template(resource.template_uri, user, request)
 
-    gadget.users.add(user)
+    if assign_to_users is None:
+        assign_to_users = (user,)
+
+    for user in assign_to_users:
+        gadget.users.add(user)
+
     gadget.save()
 
     return gadget
@@ -238,22 +243,6 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
         gadget.users.add(user)
 
     return {"gadget": gadget, "templateParser": templateParser}
-
-
-def get_or_create_gadget_from_catalogue(vendor, name, version, user, users, request):
-
-    try:
-        gadget = Gadget.objects.get(vendor=vendor, name=name, version=version)
-    except Gadget.DoesNotExist:
-        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-
-        gadget = create_gadget_from_template(resource.template_uri, user, request)
-
-    for user in users:
-        gadget.users.add(user)
-
-    gadget.save()
-    return gadget
 
 
 def get_and_add_gadget(vendor, name, version, users):
