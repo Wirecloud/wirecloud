@@ -1,5 +1,5 @@
 /*
- *     (C) Copyright 2011 Universidad Politécnica de Madrid
+ *     (C) Copyright 2011-2012 Universidad Politécnica de Madrid
  *
  *     This file is part of Wirecloud Platform.
  *
@@ -19,25 +19,27 @@
  *
  */
 
-
 function MobileScrollManager(element, options) {
     var touchstart, touchend, touchmove,
         searchTarget, scrollParentX, scrollParentX,
         baseX, baseY, baseScrollTop, baseScrollLeft,
-        target;
+        target, defaultOptions;
 
-    searchTarget = function (element, property) {
+    searchTarget = function (element, property, nextLevel) {
         var computedStyle, prop_value, currentElement = element;
 
-        while (currentElement !== null && currentElement.tagName.toLowerCase() !== 'body') {
-            computedStyle = document.defaultView.getComputedStyle(currentElement, null);
+        while (currentElement !== null) {
+            computedStyle = element.ownerDocument.defaultView.getComputedStyle(currentElement, null);
             prop_value = computedStyle.getPropertyValue(property);
-            if (prop_value !== 'visible' && prop_value !== 'inherit') {
+            if (prop_value === 'auto' || prop_value === 'scroll') {
                 return currentElement;
             }
             currentElement = currentElement.parentElement;
         }
 
+        if (nextLevel && element.ownerDocument !== nextLevel.ownerDocument) {
+            return searchTarget(nextLevel, property, null);
+        }
         return null;
     };
 
@@ -83,11 +85,6 @@ function MobileScrollManager(element, options) {
             baseScrollTop = target.scrollTop;
             baseScrollLeft = target.scrollLeft;
         }
-
-//        event.stopPropagation();
-//        event.preventDefault();
-
-//        return false;
     };
 
     touchmove = function (event) {
@@ -141,16 +138,27 @@ function MobileScrollManager(element, options) {
     };
 
     touchend = function (event) {
+        target = null;
+        if (options.onend) {
+            try {
+                options.onend.call(this);
+            } catch (e) {};
+        }
         event.stopPropagation();
         event.preventDefault();
         return false;
     };
 
-    var defaultOptions = {
+    defaultOptions = {
         'capture': true,
-        'propage': true
+        'propage': true,
+        'parentContainer': null,
+        'onend': null
     };
+    options = EzWebExt.merge(defaultOptions, options);
+
     element.addEventListener('touchstart', touchstart, options.capture);
     element.addEventListener('touchmove', touchmove, options.capture);
     element.addEventListener('touchend', touchend, options.capture);
+    element.addEventListener('touchcancel', touchend, options.capture);
 }
