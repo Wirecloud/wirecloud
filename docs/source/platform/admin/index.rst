@@ -7,7 +7,7 @@ Dependencies
 * A Database Manager (MySQL, PostgreSQL, Sqlite3...)
 * Python 2.5, 2.6 or 2.7. Python 3 and other versions are not supported.
 * Django 1.3
-* South
+* South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
 * johnny-cache
