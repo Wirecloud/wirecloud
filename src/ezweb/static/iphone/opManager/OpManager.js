@@ -56,12 +56,10 @@ var OpManagerFactory = (function () {
                 workSpace = workSpaces[i];
 
                 this.workSpaceInstances.set(workSpace.id, new WorkSpace(workSpace));
-
-                if (workSpace.active) {
-                    this.activeWorkSpace = this.workSpaceInstances.get(workSpace.id);
-                }
-
             }
+
+            HistoryManager.init();
+            this.activeWorkSpace = this.workSpaceInstances.get(parseInt(HistoryManager.getCurrentState().workspace, 10));
 
             // Total information of the active workspace must be downloaded!
             this.activeWorkSpace.downloadWorkSpaceInfo();
@@ -87,13 +85,20 @@ var OpManagerFactory = (function () {
             this.activeWorkSpace.sendBufferedVars();
         };
 
-        OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
+        OpManager.prototype.changeActiveWorkSpace = function (workspace) {
+            var state;
+
             if (this.activeWorkSpace !== null && this.activeWorkSpace !== undefined) {
                 this.activeWorkSpace.unload();
             }
 
             this.loadCompleted = false;
-            this.activeWorkSpace = workSpace;
+            this.activeWorkSpace = workspace;
+            state = {
+                workspace: workspace.getId(),
+                view: "dragboard"
+            };
+            HistoryManager.pushState(state);
             this.activeWorkSpace.downloadWorkSpaceInfo();
             this.showGadgetsMenuFromWorskspaceMenu();
         };

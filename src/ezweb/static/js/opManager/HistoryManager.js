@@ -1,9 +1,12 @@
 var HistoryManager = new Object();
 
 HistoryManager.init = function(initial_workspace) {
-    var hash = window.location.hash;
-    this.initialState = this._parseStateFromHash(hash);
-    this.initialState.workspace = "" + initial_workspace;
+    this.initialState = this._parseStateFromHash(window.location.hash);
+    if (initial_workspace != null) {
+        this.initialState.workspace = "" + initial_workspace;
+    } else {
+        this.initialState.workspace = this._parseWorkspaceFromPathName(window.location.pathname);
+    }
 
     if ('history' in window && 'pushState' in window.history) {
         Event.observe(window,
@@ -52,6 +55,12 @@ HistoryManager._parseStateFromHash = function(hash) {
     }
 
     return data;
+};
+
+HistoryManager._parseWorkspaceFromPathName = function(pathname) {
+    var index = pathname.lastIndexOf('/');
+
+    return pathname.substr(index + 1);
 };
 
 HistoryManager._prepareData = function(data) {
