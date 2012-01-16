@@ -55,7 +55,6 @@ urlpatterns = patterns('',
 
     # EzWeb
     (r'^', include('ezweb.urls')),
-    (r'^workspaces/(?P<workspace>\d+)/?$', 'ezweb.views.render_workspace_view'),
     (r'^user/(?P<user_name>[\.\-\w\@]+)/$', include('ezweb.urls')),
 
     # Gadgets

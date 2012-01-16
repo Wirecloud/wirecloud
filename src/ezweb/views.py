@@ -35,9 +35,10 @@ import urlparse
 
 from django.conf import settings
 from django.contrib.auth import load_backend
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
@@ -52,14 +53,13 @@ from commons.utils import get_xml_error, get_xhtml_content, json_encode
 from catalogue.models import CatalogueResource
 from gadget.models import Gadget, XHTML
 from workspace.models import WorkSpace
+from workspace.utils import get_workspace_list
 
 
-@login_required
-def index(request, user_name=None):
-    if request.user.username != "public":
-        return render_ezweb(request, user_name)
-    else:
-        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+@user_passes_test(lambda u: u.is_authenticated() and u.username != 'public')
+def select_workspace(request):
+    _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
+    return HttpResponseRedirect(reverse('wirecloud.workspace_view', args=(active_workspace.workspace.id,)))
 
 
 @login_required

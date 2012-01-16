@@ -30,10 +30,12 @@
 
 #
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url
 
 urlpatterns = patterns('ezweb.views',
-    (r'^$', 'index'),
+    (r'^$', 'select_workspace'),
+    url(r'^workspaces/(?P<workspace>\d+)/?$', 'render_workspace_view', name='wirecloud.workspace_view'),
+
     (r'^lite$', 'index', {'template': 'index_lite.html'}),
     (r'^viewer/workspace/(?P<public_ws_id>[\d]+)$', 'public_ws_viewer'),
 
