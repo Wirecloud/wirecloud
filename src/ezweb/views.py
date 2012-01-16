@@ -77,7 +77,7 @@ def render_workspace_view(request, workspace):
 
 @login_required
 def render_lite_workspace_view(request, workspace):
-    return render_workspace_view(request, workspace, "index_lite.html")
+    return render_workspace_view(request, workspace, "lite")
 
 
 def redirected_login(request):
@@ -212,7 +212,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
                     name = catalogue_response['gadgetName']
                     post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
 
-                    return render_ezweb(request, view_type="index", user_name=request.user.username, post_load_script=post_load_script)
+                    return render_ezweb(request, view_type="classic", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
@@ -380,9 +380,9 @@ def render_ezweb(request, user_name=None, view_type=None, public_workspace='', l
         else:
             user_agent = request.META['HTTP_USER_AGENT']
             if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or user_agent.find('Android') != -1:
-                view_type = 'iphone'
+                view_type = 'smartphone'
             else:
-                view_type = 'index'
+                view_type = 'classic'
 
     # Checking profile!
     if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
@@ -421,4 +421,4 @@ def render_ezweb(request, user_name=None, view_type=None, public_workspace='', l
         'post_load_script': script,
     }
 
-    return render_to_response(view_type + '.html', context, context_instance=RequestContext(request))
+    return render_to_response('wirecloud/views/%s.html' % view_type, context, context_instance=RequestContext(request))
