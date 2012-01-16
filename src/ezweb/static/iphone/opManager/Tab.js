@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global isAnonymousUser, Insertion, $, Dragboard */
+/*global Insertion, $, Dragboard */
 "use strict";
 
 /*
@@ -41,45 +41,38 @@ function Tab(tabInfo, workSpace, index) {
     /*                                                                       *
      *  Paint the igadget list of this tab. It is used in the first charge.  *
      *                                                                       */
-    Tab.prototype.show = function (scrollLeft, index) {
+    Tab.prototype.paint = function (container, scrollLeft, index) {
         var iGadgets = this.dragboard.getIGadgets(),
-            html = "",
-            nameToShow = (this.tabInfo.name.length > 15) ? this.tabInfo.name.substring(0, 15) + "..." : this.tabInfo.name,
-            i, tabsLength, insertion;
-        //var handler = function(){this.dragboard.setVisibleIGadget(iGadgets[i]);this.dragboard.paint();}.bind(this);
+            i, tabsLength, opManager, tabContent,
+            iGadgetElement, icon, navBarElement;
 
-        html += '<div class="container tab" id="' + this.tabName + '" style="left:' + scrollLeft + 'px">';
-        html += '<div class="toolbar anchorTop"><a href="javascript:OpManagerFactory.getInstance().showWorkspaceMenu()" class="back_button"><span class="menu_text">Menu</span></a>' + '<h1>' + nameToShow + '</h1>';
-        if (isAnonymousUser) {
-            html += '<a href="/accounts/login/?next=/" class="logout">Sign-in</a></div>';
-        } else {
-            html += '<a href="/logout" class="logout">Exit</a></div>';
-        }
-        html += '<div class="tab_content">';
+        this.tabElement = document.createElement('div');
+        this.tabElement.setAttribute('class', "ezweb_tab");
+        this.tabElement.setAttribute('id', this.tabName);
+        this.tabElement.style.left = scrollLeft + 'px';
+
+        /*
+         * Tab content
+         */
+        opManager = OpManagerFactory.getInstance();
+
+        tabContent = document.createElement('div');
+        tabContent.setAttribute('class', 'tab_content');
         for (i = 0; i < iGadgets.length; i += 1) {
-            html += '<div class="igadget_item">';
-            html += '<a href="javascript:OpManagerFactory.getInstance().showDragboard(' + iGadgets[i].id + ');">';
-            html += '<img class="igadget_icon" src="' + iGadgets[i].getGadget().getIPhoneImageURI() + '" />';
-            html += '</a>';
-            html += '<a href="javascript:OpManagerFactory.getInstance().showDragboard(' + iGadgets[i].id + ');">' + iGadgets[i].getVisibleName() + '</a>';
-            html += '</div>';
+            iGadgetElement = document.createElement('div');
+            iGadgetElement.setAttribute('class', 'igadget_item');
+            icon = document.createElement('img');
+            icon.setAttribute('class', "igadget_icon");
+            icon.setAttribute('src', iGadgets[i].getGadget().getIPhoneImageURI());
+            iGadgetElement.appendChild(icon);
+
+            iGadgetElement.appendChild(document.createTextNode(iGadgets[i].name));
+            iGadgetElement.addEventListener('click', opManager.showDragboard.bind(opManager, iGadgets[i].id), false);
+            tabContent.appendChild(iGadgetElement);
         }
-        html += '</div>';
-        tabsLength = this.workSpace.getNumberOfTabs();
-        if (tabsLength > 1) {
-            html += '<div class="navbar">';
-            for (i = 0; i < tabsLength; i += 1) {
-                if (i !== index) {
-                    html += '<img src="/ezweb/images/iphone/greyball.png"></img>';
-                } else {
-                    html += '<img src="/ezweb/images/iphone/whiteball.png"></img>';
-                }
-            }
-            html += '</div>';
-        }
-        html += '</div>';
-        insertion = new Insertion.Bottom(this.tabsContainer, html);
-        this.tabElement = $(this.tabName);
+        this.tabElement.appendChild(tabContent);
+
+        container.appendChild(this.tabElement);
     };
 
     Tab.prototype.updateLayout = function (scrollLeft) {
@@ -113,6 +106,5 @@ function Tab(tabInfo, workSpace, index) {
     this.tabName = "tab_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
 
     this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
-    this.tabsContainer = $('tabs_container');
     this.tabElement = null;
 }

@@ -63,31 +63,6 @@ Element.addMethods({
 		}
 	});
 
-if ( window.EzSteroidsAPI.is_activated() ) {
-	// Backup prototype observe method
-	var _observe = Event.observe;
-
-	Object.extend(Event, {
-		// Old prototype observe method
-		_observe: _observe,
-
-		/*
-		 * Event extension to manage user privileges
-		 */
-		observe: function(element, name, observer, useCapture, featureId) {
-			if (featureId && !EzSteroidsAPI.evaluePolicy(featureId)) {
-				// If the user isn't allowed
-				observer = function(msg) {
-					var msg = gettext("You are not allowed to perform this operation");
-					LogManagerFactory.getInstance().showMessage(msg);
-				}
-			}
-			this._observe(element, name, observer, useCapture);
-		}
-	});
-}
-
-
 
 Object.genGUID = function()
 {

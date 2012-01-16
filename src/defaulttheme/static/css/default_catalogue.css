@@ -43,6 +43,10 @@ body.catalogue_view {
 
 /* TABS */
 
+#catalogue_nav_bar .tab_section {
+   padding-right: 10px;
+}
+
 /* not selected tab */
 #catalogue_nav_bar .tab_section .tab {
 	color: #4c5054;

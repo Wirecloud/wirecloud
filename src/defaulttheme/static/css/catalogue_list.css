@@ -67,16 +67,12 @@
 	font-weight: bold;
 }
 
-#catalogue .center .resources .resource .image {
-  border-color: #BBBBBB;
-}
-
 #catalogue .bold {
   font-weight: bold;
 }
 
 #catalogue .link {
-  
+
 }
 
 #catalogue .link:hover {

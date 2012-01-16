@@ -17,12 +17,16 @@ body.dragboard_view, body.wiring_view{
 	background: transparent;
 }
 
+.global_header .toolbar_menu > div, .global_header .toolbar_menu_small > div {
+    box-shadow: 0.4ex 0.4ex 0.3ex rgba(0,0,0,0.5);
+}
+
 /*
  * TOOLBAR section
  */
 
 /* MAIN toolbar button unmarked */
-#ws_banner .toolbar_menu > div, #wiring_banner .toolbar_menu > div, #logs_header .toolbar_menu > div {
+.global_header .toolbar_menu > div {
 	color: #ffffff;
 	font-weight: bold;
 	background: #0066B3;
@@ -30,20 +34,21 @@ body.dragboard_view, body.wiring_view{
 }
 
 /* MAIN toolbar button marked */
-#ws_banner .toolbar_menu > div.selected_section, #wiring_banner .toolbar_menu > div.selected_section, #logs_header .toolbar_menu > div.selected_section {
+.global_header .toolbar_menu > div.selected_section {
 	color: #000000;
 	font-weight: bold;
 	background: #FFDE6B;
 }
 
 /* MAIN toolbar button hover */
-#ws_banner .toolbar_menu > div:hover, #wiring_banner .toolbar_menu > div:hover, #logs_header .toolbar_menu > div:hover {
+.global_header .toolbar_menu > div:hover {
 	color: #ffffff;
 	font-weight: bold;
 	background: #0066B3;
 	text-decoration: underline;
 }
-#ws_banner .toolbar_menu > div.selected_section:hover, #wiring_banner .toolbar_menu > div.selected_section:hover, #logs_header .toolbar_menu > div.selected_section:hover {
+
+.global_header .toolbar_menu > div.selected_section:hover {
 	color: #000000;
 	font-weight: bold;
 	background: #FFDE6B;
@@ -54,7 +59,7 @@ body.dragboard_view, body.wiring_view{
  */
 
 /* SMALL toolbar button unmarked */
-#ws_banner .toolbar_menu_small > div, #wiring_banner .toolbar_menu_small > div, #logs_header .toolbar_menu_small > div {
+.global_header .toolbar_menu_small > div {
 	color: #4C5054;
 	font-weight: bold;
 	background: #FFFFFF;
@@ -62,19 +67,19 @@ body.dragboard_view, body.wiring_view{
 }
 
 /* SMALL toolbar button marked */
-#ws_banner .toolbar_menu_small > div.selected_section, #wiring_banner .toolbar_menu_small > div.selected_section, #logs_header .toolbar_menu_small > div.selected_section {
+.global_header .toolbar_menu_small > div.selected_section {
 	color: #4C5054;
 	font-weight: bold;
 	background: #FFFFFF;
 }
 
 /* SMALL toolbar button hover */
-#ws_banner .toolbar_menu_small > div:hover, #wiring_banner .toolbar_menu_small > div:hover, #logs_header .toolbar_menu_small > div:hover {
+.global_header .toolbar_menu_small > div:hover {
 	font-weight: bold;
 	background: #FFFFFF;
 	text-decoration: underline;
 }
-#ws_banner .toolbar_menu_small > div.selected_section:hover, #wiring_banner .toolbar_menu_small > div.selected_section:hover, #logs_header .toolbar_menu_small > div.selected_section:hover {
+.global_header .toolbar_menu_small > div.selected_section:hover {
 	color: #4C5054;
 	font-weight: bold;
 	background: #FFFFFF;
@@ -85,7 +90,7 @@ body.dragboard_view, body.wiring_view{
  */
 
 /* dragboard */
-.dragboard{
+.dragboard {
 	background: transparent;
 	border-color: #C2CBD2;
 }

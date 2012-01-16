@@ -441,9 +441,50 @@ var installed_apps = {{ installed_apps|safe }};
 	</div>
 </div>
 <script type="text/javascript">
-var is_iphone = (navigator.userAgent.indexOf('iPhone') !== -1 || navigator.userAgent.indexOf('iPod') !== -1);
+function getQueryMap(query_string) {
+    var params, i, separator, param_name, param_value, result = {};
 
-if (is_iphone) {
+    if (typeof query_string === 'undefined' || query_string === null) {
+        query_string = document.location.search.substr(1);
+    } else if (typeof query_string !== 'string') {
+        throw new TypeError();
+    }
+
+    params = query_string.split('&');
+    for (i = 0; i < params.length; i += 1) {
+        separator = params[i].indexOf('=');
+        if (separator === -1) {
+            continue;
+        }
+        param_name = decodeURIComponent(params[i].substr(0, separator));
+        param_value = decodeURIComponent(params[i].substr(separator + 1));
+        if (!(param_name in result)) {
+            result[param_name] = [];
+        }
+        result[param_name].push(param_value);
+    }
+    return result;
+}
+
+function is_mobile() {
+    var main_query, next_query_string, next_query = null, separator_index;
+
+    main_query = getQueryMap();
+    separator_index = main_query['next'][0].indexOf('?');
+    if (separator_index !== -1) {
+        next_query_string = main_query['next'][0].substr(separator_index + 1);
+        next_query = getQueryMap(next_query_string);
+    }
+    if (next_query !== null && 'view' in next_query) {
+        return next_query['view'][0] === 'iphone';
+    } else {
+        return navigator.userAgent.indexOf('iPhone') !== -1 ||
+            navigator.userAgent.indexOf('iPod') !== -1 ||
+            navigator.userAgent.indexOf('Android') !== -1;
+    }
+}
+
+if (is_mobile()) {
     document.getElementById('training').style.display = "none";
     document.getElementById('tips').style.display = "none";
     document.getElementById("login-section").style.marginLeft = '25px';
