@@ -86,13 +86,10 @@ HistoryManager._buildURL = function(data) {
         hash += '&' + encodeURI(key) + '=' + encodeURI(data[key]);
     }
 
-    if (window.location.pathname.indexOf('lite') >= 0) {
-        lite = "/lite";
-    }
-
     return window.location.protocol + "//" +
         window.location.host + lite +
         "/workspaces/" + data.workspace +
+        window.location.search +
         '#' + hash.substr(1);
 };
 
