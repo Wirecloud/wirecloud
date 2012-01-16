@@ -30,12 +30,14 @@
 
 #
 from django.contrib.auth.models import Group, User
+from django.core.urlresolvers import reverse
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+from django.utils.http import urlencode
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
@@ -546,7 +548,8 @@ class WorkSpaceSharerEntry(Resource):
 
             linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
 
-            url = request.build_absolute_uri('/viewer/workspace/' + workspace_id)
+            workspace_path = reverse('wirecloud.workspace_view', args=(workspace_id,))
+            url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
             return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
