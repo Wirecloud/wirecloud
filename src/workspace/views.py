@@ -124,15 +124,9 @@ def createEmptyWorkSpace(workSpaceName, user):
 
 
 def setActiveWorkspace(user, workspace):
-    activeUserWorkSpaces = UserWorkSpace.objects.filter(user__id=user.id, active=True).exclude(workspace__pk=workspace.pk)
-    for activeUserWorkSpace in activeUserWorkSpaces:
-        activeUserWorkSpace.active = False
-        activeUserWorkSpace.save()
 
-    currentUserWorkspace = UserWorkSpace.objects.get(workspace=workspace, user=user)
-    currentUserWorkspace.active = True
-
-    currentUserWorkspace.save()
+    UserWorkSpace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
+    UserWorkSpace.objects.filter(user=user, workspace=workspace).update(active=True)
 
 
 def cloneWorkspace(workspace_id, user):
