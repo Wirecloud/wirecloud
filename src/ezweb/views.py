@@ -41,6 +41,7 @@ from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import simplejson
+from django.utils.http import urlencode
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, loader, RequestContext
@@ -57,9 +58,14 @@ from workspace.utils import get_workspace_list
 
 
 @user_passes_test(lambda u: u.is_authenticated() and u.username != 'public')
-def select_workspace(request):
+def select_workspace(request, mode=None):
     _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
-    return HttpResponseRedirect(reverse('wirecloud.workspace_view', args=(active_workspace.workspace.id,)))
+
+    url = reverse('wirecloud.workspace_view', args=(active_workspace.workspace.id,))
+    if mode:
+        url += '?' + urlencode({'view': mode})
+
+    return HttpResponseRedirect(url)
 
 
 @login_required
