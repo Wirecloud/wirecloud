@@ -36,6 +36,7 @@ import urlparse
 from django.conf import settings
 from django.contrib.auth import load_backend
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
@@ -78,7 +79,7 @@ def render_workspace_view(request, workspace):
         post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
         return render_ezweb(request, request.user.username, None, post_load_script=post_load_script)
     else:
-        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+        return redirect_to_login(request.get_full_path())
 
 
 @login_required
