@@ -34,7 +34,7 @@
 from os import path
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
