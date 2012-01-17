@@ -268,8 +268,8 @@ def get_workspace_list(user):
     if len(active_workspaces) == 0:
 
         # set the first workspace as active
-        active_workspace = workspaces.all()[0]
-        setActiveWorkspace(user, active_workspace)
+        active_workspace = UserWorkSpace.objects.filter(user=user)[0]
+        setActiveWorkspace(user, active_workspace.workspace)
 
     elif len(active_workspaces) > 1:
 
