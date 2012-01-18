@@ -43,7 +43,7 @@ from commons.authentication import Http403
 from commons.template import TemplateParser
 from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.htmlHeadParser import HTMLHeadParser
-from gadget.models import VariableDef, ContextOption, UserPrefOption, Gadget, Capability
+from gadget.models import VariableDef, UserPrefOption, Gadget
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
@@ -194,12 +194,32 @@ def create_gadget_from_template(template, user, request=None):
 
     return gadget
 
+
+def get_resource_from_catalogue(vendor, name, **selectors):
+    resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
+
+    version = selectors.get('version', None)
+    if version is not None:
+        resources = resources.filter(version=version)
+
+    resource_type = selectors.get('resource_type', None)
+    if resource_type is not None:
+        resources = resources.filter(type=resource_type)
+
+    return resources[0]
+
+
+def create_gadget_from_catalogue(user, vendor, name, **selectors):
+    selectors['resource_type'] = 0  # Gadget
+    resource = get_resource_from_catalogue(vendor, name, **selectors)
+    return create_gadget_from_template(resource.template_uri, user)
+
+
 def get_or_add_gadget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
     try:
         gadget = Gadget.objects.get(name=name, vendor=vendor, version=version)
     except:
-        resource = CatalogueResource.objects.get(vendor=vendor, short_name=name, version=version)
-        gadget = create_gadget_from_template(resource.template_uri, user, request=request)
+        gadget = create_gadget_from_catalogue(user, vendor, name, version=version)
 
     if assign_to_users is None:
         assign_to_users = (user,)
