@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    intro
+   architecture
    user
    platform/index.rst
    gadgets/index.rst
@@ -21,6 +22,5 @@ Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

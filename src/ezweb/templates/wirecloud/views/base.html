@@ -382,7 +382,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 <script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
 {% compress js %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
-{% include "js_includes.js" %}
+{% include "wirecloud/views/js_includes.js" %}
 {% endcompress %}
 
 {% block extra_scripts %}{% endblock %}

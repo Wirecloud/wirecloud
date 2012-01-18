@@ -31,34 +31,17 @@
 Wiring.prototype.getRelatedIgadgets = function (iGadgetId) {
     var events = this.iGadgets[iGadgetId].events,
         related = [],
-        outputs, i;
+        slots, slot, i, j;
 
     for (i = 0; i < events.length; i += 1) {
-        outputs = events[i].outputs; //gadget outputs
-        this.getRelatedOutputs(outputs, related);
-
+        slots = events[i].getFinalSlots();
+        for (j = 0; j < slots.length; j += 1) {
+            slot = slots[j];
+            if (!related.elementExists(slot.iGadget)) {
+                related.push(slot.iGadget);
+            }
+       }
     }
 
     return related;
-};
-
-Wiring.prototype.getRelatedOutputs = function (outputs, related) {
-    var o, id, channelOutputs, j, k;
-
-    for (j = 0; j < outputs.length; j += 1) {
-        o = outputs[j];
-        if (o.outputs) { //it is a channel
-            channelOutputs = o.outputs;
-            for (k = 0; k < channelOutputs.length; k += 1) { //channel outputs -> slots or channels
-                if (channelOutputs[k].outputs) { //it is a channel
-                    this.getRelatedOutputs([channelOutputs[k]], related);
-                } else { //it is a slot
-                    id = channelOutputs[k].variable.iGadget;
-                    if (!related.elementExists(id)) { //the iGadgetId is not in the related list already
-                        related.push(id); //add to the related igadgets list the iGadgetId associated with the channel outputs
-                    }
-                }
-            }
-        }
-    }
 };

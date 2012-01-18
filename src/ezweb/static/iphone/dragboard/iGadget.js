@@ -31,15 +31,21 @@
 * This class represents a instance of a Gadget.
 * @author aarranz
 */
-function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard) {
+function IGadget(gadget, iGadgetId, iGadgetCode, iGadgetName, dragboard, alternative) {
     this.id = iGadgetId;
     this.code = iGadgetCode;
     this.name = iGadgetName;
     this.gadget = gadget;
 
     this.dragboard = dragboard;
-    this.iGadgetElement = $('mymw-content');
-    this.iGadgetTabBar = $('mymw-nav');
+    this.element = null;
+    this.content = null;
+
+    this.tab = alternative;
+    this.tab.addEventListener('show', function () {
+        this.dragboard._updateIGadgetInfo(this);
+        this.paint();
+    }.bind(this));
 
     this.loaded = false;
 }
@@ -55,31 +61,17 @@ IGadget.prototype.getGadget = function () {
 * Return the Tab of the IGadget
 */
 IGadget.prototype.getTab = function () {
-    return this.dragboard.tab;
+    return this.tab;
 };
 
 IGadget.prototype.getId = function () {
     return this.id;
 };
 
-IGadget.prototype.getVisibleName = function () {
-    var visibleName = this.name;
-    if (visibleName.length > 13) {
-        visibleName = visibleName.substring(0, 11) + "...";
-    }
-    return visibleName;
-};
 
-/**
-* Paints the gadget instance
-* @param where HTML Element where the igadget will be painted
-*/
-IGadget.prototype.paint = function () {
-
-    //Generate the related gadgets html
+IGadget.prototype.getRelatedGadgetsHTML = function () {
     var relatedhtml = "",
-        related = this.dragboard.workSpace.getRelatedIGadgets(this.id),
-        i, html, tab;
+        related = this.dragboard.workSpace.getRelatedIGadgets(this.id);
 
     if (related.length > 0) {
         relatedhtml += '<div id="related_gadgets" class="related_gadgets">';
@@ -91,55 +83,59 @@ IGadget.prototype.paint = function () {
         relatedhtml += '</div>';
     }
 
-    // Generate the Gadget html
-    html = '<div id="gadget_' + this.id + '" class="';
-    if (related.length > 0) {
-        html += 'gadget_content">';
-    } else {
-        html += 'gadget_content_full">';
-    }
-    html += '<object id="object_' + this.id + '" onload=\'OpManagerFactory.getInstance().igadgetLoaded(' + this.id + ');\' class="gadget_object" type="text/html" data="' + this.gadget.getXHtml().getURICode() + '?id=' + this.id + '" standby="Loading...">';
-    html += '"Loading...."';
-    html += '</object></div>';
-
-    //create a new Tab and add the new content
-    tab = new MYMW.ui.Tab({
-        id : this.getTabId(),
-        label : this.getVisibleName(),
-        content : html + relatedhtml,
-        onclick : function () {
-            this.dragboard.unmarkRelatedIgadget(this.id);
-            this.dragboard.updateTab();
-        }.bind(this)
-    });
-    this.dragboard.workSpace.tabView.addTab(tab);
-    this.dragboard.workSpace.tabView.set('activeTab', tab);
+    return relatedhtml;
 };
 
-IGadget.prototype.privateNotifyLoaded = function () {
+/**
+* Paints the gadget instance
+* @param where HTML Element where the igadget will be painted
+*/
+IGadget.prototype.paint = function () {
+    var i, html, tab, opManager;
+
+    if (this.element !== null) {
+        return;
+    }
+
+    opManager = OpManagerFactory.getInstance();
+    this.element = document.createElement('div');
+    this.element.setAttribute('class', 'gadget_content');
+    this.content = document.createElement('object');
+    this.content.addEventListener('load', opManager.igadgetLoaded.bind(opManager, this.id), true);
+    this.content.setAttribute('class', 'gadget_object');
+    this.content.setAttribute('type', 'text/html');
+    this.content.setAttribute('data', this.gadget.getXHtml().getURICode() + '#id=' + this.id);
+    this.element.appendChild(this.content);
+
+    this.tab.appendChild(this.element);
+};
+
+IGadget.prototype.load = IGadget.prototype.paint;
+
+IGadget.prototype._notifyLoaded = function () {
     if (this.loaded) {
         return;
     }
 
     this.loaded = true;
 
-    var unloadElement = $("object_" + this.id).contentDocument.defaultView;
+    var opManager = OpManagerFactory.getInstance(),
+        unloadElement = this.content.contentDocument.defaultView;
 
-    Event.observe(unloadElement, 'unload', function () {
-        OpManagerFactory.getInstance().igadgetUnloaded(this.id);
-    }.bind(this), true);
+    unloadElement.addEventListener('unload', opManager.igadgetUnloaded.bind(opManager, this.id));
+    // FIXME
+    new MobileScrollManager(this.content.contentDocument, {
+        'capture': true,
+        'propagate': true
+    });
 };
 
-IGadget.prototype.privateNotifyUnloaded = function () {
+IGadget.prototype._notifyUnloaded = function () {
     if (!this.loaded) {
         return;
     }
 
     this.loaded = false;
-};
-
-IGadget.prototype.getTabId = function () {
-    return "mymwtab_" + this.id;
 };
 
 /**
@@ -212,4 +208,15 @@ IGadget.prototype.save = function () {
 */
 IGadget.prototype.notifyEvent = function () {
     // nothing to do in iphone
+};
+
+/**
+ * This method must be called to avoid memory leaks caused by circular references.
+ */
+IGadget.prototype.destroy = function () {
+    if (this.element) {
+        this.element.remove();
+        this.element = null;
+        this.content = null;
+    }
 };

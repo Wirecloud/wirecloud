@@ -7,7 +7,7 @@ Dependencies
 * A Database Manager (MySQL, PostgreSQL, Sqlite3...)
 * Python 2.5, 2.6 or 2.7. Python 3 and other versions are not supported.
 * Django 1.3
-* South
+* South 0.7.3+
 * lxml
 * django-compressor (BeautifulSoup)
 * johnny-cache
@@ -75,7 +75,7 @@ Install the appropriate python module: ``python-pysqlite2``:
     $ sudo apt-get install python-pysqlite2
 
 
-.. admonition:: Note
+.. note::
 
     SQLite is not a recommended database for put your site in production, but
     it is only useful in the developing process.
@@ -116,7 +116,7 @@ Install the database and the appropriate python dependencies: ``postgresql``, ``
 
 Now you have to create the project Database.
 
-.. admonition:: Note
+.. note::
 
     We assume that your user has superadmin permissions in PostgreSQL. Usually
     this means that you have to login as the postgres user (i.e. $ su postgres).
@@ -176,7 +176,7 @@ be accomplished by running:
 
     $ python manage.py migrate
 
-.. admonition:: Note
+.. note::
 
     It is strongly recommended to perform a full database backup before
     starting to migrate wirecloud to a new version.
@@ -222,7 +222,7 @@ performance using the following command:
 
     $ python manage.py compress
 
-.. admonition:: Note
+.. note::
 
     Don't forget to rerun the collectstatic and compress commands each time the
     wirecloud code is updated.
@@ -243,14 +243,14 @@ First install the Apache server:
 Then create a django.wsgi file anywhere (It's recommended to have it inside
 your wirecloud installation):
 
-.. code-block:: bash
+.. code-block:: python
 
     import os
     import sys
 
     path = '/path/to/wirecloud/src'
     if path not in sys.path:
-    sys.path.insert(0,path)
+        sys.path.insert(0, path)
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
 

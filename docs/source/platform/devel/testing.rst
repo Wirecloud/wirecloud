@@ -43,7 +43,7 @@ Then set ``TEST_RUNNER`` in ``settings.py``: ::
 
     TEST_RUNNER = 'djangosanetesting.testrunner.DstNoseTestSuiteRunner'
 
-.. admonition:: Note
+.. note::
 
     Make sure that ``djangosanetesting`` comes *after* ``south`` in
     ``INSTALLED_APPS``.
@@ -65,7 +65,8 @@ folder into /var/ezweb-data and provide the test gadget code through a HTTP
 server in http://localhost:8001/.
 
 A very easy way for having a HTTP server for the gadgets is executing:
-.. code-block::
+.. code-block:: bash
+
     $ cd tests/ezweb-data/gadgets
     $ python -m SimpleHTTPServer 8001
 
@@ -81,6 +82,7 @@ If you still want to run the tests manually with Selenium IDE you should
 configure not only a wirecloud server, but also populate the database with the
 correct data. This can be done with the following commands:
 .. code-block:: bash
+
    $ python manage.py syncdb --migrate
    $ python manage.py loaddata extra_data selenium_test_data
 

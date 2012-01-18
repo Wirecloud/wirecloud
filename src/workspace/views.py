@@ -29,20 +29,21 @@
 
 
 #
-from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.core.urlresolvers import reverse
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+from django.utils.http import urlencode
 
 from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
-from commons.http_utils import PUT_parameter, download_http_content
+from commons.http_utils import PUT_parameter
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -57,7 +58,7 @@ from workspace.models import Category
 from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, setVisibleTab, set_variable_value, sync_base_workspaces
+from workspace.utils import deleteTab, createTab, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -66,24 +67,6 @@ def clone_original_variable_value(variable, creator, new_user):
     value = original_var_value.get_variable_value()
 
     return VariableValue.objects.create(variable=variable, user=new_user, value=value)
-
-
-def getCategories(user):
-    if 'AUTHENTICATION_SERVER_URL' in settings:
-        # Use EzSteroids
-        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
-        received_json = download_http_content(url, user=user)
-        return simplejson.loads(received_json)['category_list']
-    else:
-        # Not use EzSteroids
-        return user.groups.get_query_set()
-
-
-def getCategoryId(category):
-    if category.__class__ == {}.__class__:
-        return category["id"]
-    else:
-        return category.id
 
 
 def createWorkSpace(workspaceName, user):
@@ -141,15 +124,9 @@ def createEmptyWorkSpace(workSpaceName, user):
 
 
 def setActiveWorkspace(user, workspace):
-    activeUserWorkSpaces = UserWorkSpace.objects.filter(user__id=user.id, active=True).exclude(workspace__pk=workspace.pk)
-    for activeUserWorkSpace in activeUserWorkSpaces:
-        activeUserWorkSpace.active = False
-        activeUserWorkSpace.save()
 
-    currentUserWorkspace = UserWorkSpace.objects.get(workspace=workspace, user=user)
-    currentUserWorkspace.active = True
-
-    currentUserWorkspace.save()
+    UserWorkSpace.objects.filter(user=user, active=True).exclude(workspace=workspace).update(active=False)
+    UserWorkSpace.objects.filter(user=user, workspace=workspace).update(active=True)
 
 
 def cloneWorkspace(workspace_id, user):
@@ -188,59 +165,19 @@ class WorkSpaceCollection(Resource):
     def read(self, request):
         user = get_user_authentication(request)
 
-        data_list = {'reloadShowcase': False}
         try:
-            data_list['reloadShowcase'] = sync_base_workspaces(user)
-            # updated user workspaces
-            workspaces = WorkSpace.objects.filter(users=user)
 
-            if not data_list['reloadShowcase'] and workspaces.count() == 0:
-                # There is no workspace for the user
-
-                cloned_workspace = None
-
-                # it's the first time the user has logged in.
-                # try to assign a default workspace according to user category
-                try:
-                    categories = getCategories(user)
-                    if len(categories) > 0:
-                        #take the first one which has a default workspace
-                        for category in categories:
-                            try:
-                                default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
-                                # duplicate the workspace for the user
-                                cloned_workspace = cloneWorkspace(default_workspace.id, user)
-                                linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
-                                setActiveWorkspace(user, cloned_workspace)
-                                data_list['reloadShowcase'] = True
-                                break
-                            except Category.DoesNotExist:
-                                # the user category doesn't have a default workspace
-                                # try with other categories
-                                continue
-
-                except Exception, e:
-                    pass
-
-                if not cloned_workspace:
-                    # create an empty workspace
-                    createEmptyWorkSpace(_('WorkSpace'), user)
-
-            # Now we can fetch all the workspaces of an user
-            workspaces = WorkSpace.objects.filter(users__id=user.id)
-
-            # if there is no active workspace
-            if UserWorkSpace.objects.filter(user=user, active=True).count() == 0:
-                # set the first workspace as active
-                setActiveWorkspace(user, workspaces.all()[0])
+            workspaces, _junk, reload_showcase = get_workspace_list(user)
 
         except Exception, e:
             msg = _("error reading workspace: ") + unicode(e)
 
             raise TracedServerError(e, "bad creation of default workspaces", request, msg)
 
-        workspace_list = [get_workspace_data(workspace, user) for workspace in workspaces]
-        data_list['workspaces'] = workspace_list
+        data_list = {
+            'workspaces': [get_workspace_data(workspace, user) for workspace in workspaces],
+            'reloadShowcase': reload_showcase,
+        }
 
         return HttpResponse(json_encode(data_list), mimetype='application/json; charset=UTF-8')
 
@@ -605,7 +542,8 @@ class WorkSpaceSharerEntry(Resource):
 
             linkWorkspaceObject(public_user, workspace, owner, link_variable_values=True)
 
-            url = request.build_absolute_uri('/viewer/workspace/' + workspace_id)
+            workspace_path = reverse('wirecloud.workspace_view', args=(workspace_id,))
+            url = request.build_absolute_uri(workspace_path + '?' + urlencode({u'view': 'viewer'}))
 
             result = {"result": "ok", "url": url}
             return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')

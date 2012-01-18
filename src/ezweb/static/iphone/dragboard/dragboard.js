@@ -39,7 +39,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     // HTML Elements
     this.dragboardElement = $('dragboard');
-    this.tabNameElement = $('tab_name');
     this.barElement = $('bar');
 
     //Atributes
@@ -49,43 +48,20 @@ function Dragboard(tab, workSpace, dragboardElement) {
     this.workSpace = workSpace;
     this.workSpaceId = workSpace.workSpaceState.id;
 
-    this.visibleIGadget = null;
-
     // ****************
     // PUBLIC METHODS
     // ****************
 
-    Dragboard.prototype.updateTab = function () {
-        //update the interface
-        this.tabNameElement.update(this.tab.tabInfo.name);
-        //update the internal data
-        this.workSpace.updateVisibleTab(this.tab.index);
-    };
-
     Dragboard.prototype.paint = function (iGadgetId) {
-        this.setVisibleIGadget(iGadgetId);
+        var opManager, iGadget;
 
-        //update the tab name (the internal data is already up-to-date)
-        this.updateTab();
+        opManager = OpManagerFactory.getInstance();
+        iGadget = this.getIGadget(iGadgetId);
 
-        //paints the visible igadget
-        if (this.visibleIGadget) {
-            this.visibleIGadget.paint();
-        }
-
-        if (OpManagerFactory.getInstance().visibleLayer !== "dragboard") {
-            //Paints the dragboard and the visibleIGadget and hide the gadget menu
-            this.workSpace.hide();
-            this.dragboardElement.setStyle({
-                display: "block"
-            });
-            //slide(false, this.dragboardElement);
-
-            //show the bar element
-            this.barElement.setStyle({
-                display: "block"
-            });
-        }
+        opManager.globalDragboard.show(iGadget.getTab());
+        opManager.alternatives.showAlternative(opManager.igadgetViewAlternative);
+        opManager.visibleLayer = "dragboard";
+        updateLayout();
     };
 
     Dragboard.prototype.paintRelatedIGadget = function (iGadgetId) {
@@ -99,25 +75,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
             this.paint(iGadgetId);
         }
     };
-
-    Dragboard.prototype.hide = function () {
-        //hide and clean the dragboard layer
-        this.dragboardElement.setStyle({
-            display: "none"
-        });
-
-        //clean the igadget
-        if (this.visibleIGadget) {
-            this.visibleIGadget =  null;
-        }
-
-        //clean the bar and the content
-        this.workSpace.tabView.clear();
-        this.barElement.setStyle({
-            display: "none"
-        });
-    };
-
 
     Dragboard.prototype.markRelatedIgadget = function (iGadgetId) {
         $("related_" + iGadgetId).addClassName("active");
@@ -134,21 +91,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
     };
 
-    /**
-    * Removes the mark on the related igadget. It has to be called at least:
-    * - when the user clicks on the tab containing that igadget
-    * - when the user clicks on the related gadget icon
-    */
-    Dragboard.prototype.unmarkRelatedIgadget = function (iGadgetId) {
-        var r = $("related_" + iGadgetId);
-        if (r) {
-            r.removeClassName("active");
-        }
-    };
-
     Dragboard.prototype.parseTab = function (tabInfo) {
         var curIGadget, position, width, height, igadget, gadget, gadgetid, minimized, i,
-            opManager = OpManagerFactory.getInstance();
+            container, opManager = OpManagerFactory.getInstance();
 
         this.currentCode = 1;
         this.iGadgets = new Hash();
@@ -165,7 +110,8 @@ function Dragboard(tab, workSpace, dragboardElement) {
             gadget = ShowcaseFactory.getInstance().getGadget(gadgetid);
 
             // Create instance model
-            igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this);
+            container = opManager.globalDragboard.newIGadgetContainer();
+            igadget = new IGadget(gadget, curIGadget.id, curIGadget.code, curIGadget.name, this, container);
             this.iGadgets.set(curIGadget.id, igadget);
 
             if (curIGadget.code >= this.currentCode) {
@@ -181,13 +127,17 @@ function Dragboard(tab, workSpace, dragboardElement) {
 
     Dragboard.prototype.destroy = function () {
         var keys = this.iGadgets.keys(),
-            i;
+            i, igadget;
+
         //disconect and delete the connectables and variables of all tab iGadgets
         for (i = 0; i < keys.length; i += 1) {
             this.workSpace.removeIGadgetData(keys[i]);
+
+            igadget = this.iGadgets.get(keys[i]);
             this.iGadgets.unset(keys[i]);
+            igadget.destroy();
         }
-        //TODO: have all references been removed?,delete the object
+        this.iGadgets = null;
     };
 
     Dragboard.prototype.saveConfig = function (iGadgetId) {
@@ -201,7 +151,7 @@ function Dragboard(tab, workSpace, dragboardElement) {
     };
 
     Dragboard.prototype.showInstance = function (igadget) {
-        igadget.paint(this.dragboardElement, this.dragboardStyle);
+        igadget.paint();
     };
 
     Dragboard.prototype.getIGadgets = function () {
@@ -216,14 +166,9 @@ function Dragboard(tab, workSpace, dragboardElement) {
         return this.workSpace;
     };
 
-    Dragboard.prototype.getVisibleIGadget = function () {
-        return this.visibleIGadget;
-    };
-
-    Dragboard.prototype.setVisibleIGadget = function (iGadgetId) {
-        this.visibleIGadget = this.getIGadget(iGadgetId);
-        this.unmarkRelatedIgadget(iGadgetId);
-        this.updateTab();
+    Dragboard.prototype._updateIGadgetInfo = function (iGadget) {
+        OpManagerFactory.getInstance().globalDragboard._updateIGadgetInfo(iGadget);
+        this.workSpace.updateVisibleTab(this.tab.index);
     };
 
     // *******************

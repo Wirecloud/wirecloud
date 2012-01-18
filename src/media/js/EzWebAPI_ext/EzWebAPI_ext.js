@@ -1062,17 +1062,42 @@ EzWebExt.ALERT_ERROR = 2;
 
 
 /**
- * Permite forzar el valor que tendrá la variable <code>this</code> cuando se
- * llame a la función indicada.
+ * Creates a new function that, when called, itself calls this function in the
+ * context of the provided <code>this</code> value, with a given sequence of
+ * arguments preceding any provided when the new function was called.
  *
- * @param {Object} func Función a la que se le forzará el valor de la variable
- * <code>this</code>
- * @param {Object} _this valor que tendrá la variable <code>this</code>.
+ * @param {Object} func Function to bind
+ * @param {Object} _this The value to be passed as the <code>this</code
+ *     parameter to the target function when the bound function is called.  The
+ *     value is ignored if the bound function is constructed using the new
+ *     operator.
+ * @param {Any} arg1, arg2 ... Arguments to prepend to arguments provided to
+ *     the bound function when invoking the target function.
+ *
  * @return a new function that forces the value of <code>this</code> and calls
  * the given function.
  */
-EzWebExt.bind = function (func, _this) {
-    return function() {return func.apply(_this, arguments)}
+if (typeof Function.prototype.bind !== 'undefined') {
+    EzWebExt.bind = function (func, _this /*, arg1, arg2 ...*/) {
+        return func.bind.apply(func, Array.prototype.slice.call(arguments, 1));
+    };
+} else {
+    EzWebExt.bind = function (func, _this /*, arg1, arg2 ...*/) {
+        if (typeof func !== "function") { // closest thing possible to the ECMAScript 5 internal IsCallable function
+            throw new TypeError("Function.prototype.bind - what is trying to be fBound is not callable");
+        }
+
+        var aArgs = Array.prototype.slice.call(arguments, 2),
+            fNOP = function () {},
+            fBound = function () {
+                return func.apply(this instanceof fNOP ? this : _this || window, aArgs.concat(Array.prototype.slice.call(arguments)));
+            };
+
+        fNOP.prototype = func.prototype;
+        fBound.prototype = new fNOP();
+
+        return fBound;
+    };
 }
 
 /**
