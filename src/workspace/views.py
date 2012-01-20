@@ -1,34 +1,29 @@
 # -*- coding: utf-8 -*-
 
-#...............................licence...........................................
-#
+# Copyright 2012 Universidad Politécnica de Madrid
+
+# This file is part of Wirecloud.
+
+# Wirecloud is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Wirecloud is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with Wirecloud.  If not, see <http://www.gnu.org/licenses/>.
+
+# This file is based on Morfeo EzWeb Platform
+
 #     (C) Copyright 2008 Telefonica Investigacion y Desarrollo
 #     S.A.Unipersonal (Telefonica I+D)
-#
-#     This file is part of Morfeo EzWeb Platform.
-#
-#     Morfeo EzWeb Platform is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU Affero General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     (at your option) any later version.
-#
-#     Morfeo EzWeb Platform is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU Affero General Public License for more details.
-#
-#     You should have received a copy of the GNU Affero General Public License
-#     along with Morfeo EzWeb Platform.  If not, see <http://www.gnu.org/licenses/>.
-#
-#     Info about members and contributors of the MORFEO project
-#     is available at
-#
-#     http://morfeo-project.org
-#
-#...............................licence...........................................#
 
 
-#
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db import transaction, IntegrityError
@@ -36,6 +31,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServer
 from django.http import HttpResponseForbidden, Http404
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.utils.http import urlencode
 
@@ -47,6 +43,7 @@ from commons.http_utils import PUT_parameter
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.service import Service
 from commons.utils import get_xml_error, json_encode
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -706,6 +703,35 @@ class WorkSpacePublisherEntry(Resource):
 
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': resource.template_uri}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
+
+
+class WorkspaceExportService(Service):
+
+    @method_decorator(user_passes_test(lambda u: u.is_authenticated() and u.username != 'public'))
+    def process(self, request, workspace_id):
+
+        if 'options' not in request.POST:
+            return HttpResponseBadRequest(get_xml_error(_("exporting options expected")), mimetype='application/xml; charset=UTF-8')
+
+        user = get_user_authentication(request)
+        workspace = get_object_or_404(WorkSpace, id=workspace_id)
+
+        if not user.is_staff and workspace.creator != user:
+            return HttpResponseForbidden()
+
+        received_json = request.POST['options']
+        try:
+            mashup = simplejson.loads(received_json)
+            missing_fields = check_json_fields(mashup, ['name', 'vendor', 'version', 'email'])
+            if len(missing_fields) > 0:
+                raise Exception(_('Malformed mashup JSON. The following field(s) are missing: %(fields)s.') % {'fields': missing_fields})
+
+        except Exception, e:
+            msg = _("mashup cannot be exported: ") + unicode(e)
+            return HttpResponseBadRequest(get_xml_error(msg), mimetype='application/xml; charset=UTF-8')
+
+        template = build_template_from_workspace(mashup, workspace, user)
+        return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
 
 
 class GeneratorURL(Resource):

@@ -81,6 +81,9 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$',
         views.WorkSpaceMergerEntry(permitted_methods=('GET', ))),
 
+    # Export workspace
+    (r'^/((?P<workspace_id>\d+)/export[/]?)$', views.WorkspaceExportService()),
+
     # Add workspaces
     (r'^/((?P<workspace_id>\d+)/add?[/]?)?$',
         views.WorkSpaceAdderEntry(permitted_methods=('GET', ))),
