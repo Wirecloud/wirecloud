@@ -46,7 +46,7 @@ class HttpMethodNotAllowed(Exception):
     """
 
 
-class Resource:
+class Resource(object):
 
     def __init__(self, authentication=None, permitted_methods=None, mimetype=None):
 
