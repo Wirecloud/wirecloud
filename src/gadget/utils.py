@@ -31,7 +31,7 @@
 #
 import re
 from lxml import etree
-from StringIO import StringIO
+from cStringIO import StringIO
 
 from django.utils.http import urlquote
 from django.contrib.sites.models import Site
@@ -40,7 +40,9 @@ from django.conf import settings
 from catalogue.models import CatalogueResource
 from commons import http_utils
 from commons.authentication import Http403
+from commons.http_utils import download_http_content
 from commons.template import TemplateParser
+from commons.wgt import WgtDeployer, WgtFile
 from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import VariableDef, UserPrefOption, Gadget
@@ -48,7 +50,10 @@ from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
 
-def create_gadget_from_template(template, user, request=None):
+wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)
+
+
+def create_gadget_from_template(template, user, request=None, base=None):
 
     """Creates a gadget from a template"""
 
@@ -56,7 +61,9 @@ def create_gadget_from_template(template, user, request=None):
         parser = template
     else:
         template_content = http_utils.download_http_content(template, user=user)
-        parser = TemplateParser(template_content, template)
+        if base is None:
+            base = template
+        parser = TemplateParser(template_content, base=base)
 
     if parser.get_resource_type() != 'gadget':
         raise Exception()
@@ -75,7 +82,8 @@ def create_gadget_from_template(template, user, request=None):
     gadget.display_name = gadget_info['display_name']
     gadget.author = gadget_info['author']
 
-    gadget.xhtml = parse_gadget_code(gadget_info['code_url'], gadget.uri, gadget_info['code_content_type'], False, cacheable=gadget_info['code_cacheable'], user=user, request=request)
+    gadget_code = parser.get_absolute_url(gadget_info['code_url'], base)
+    gadget.xhtml = parse_gadget_code(gadget_code, gadget.uri, gadget_info['code_content_type'], False, cacheable=gadget_info['code_cacheable'], user=user, request=request)
 
     gadget.mail = gadget_info['mail']
     gadget.wikiURI = gadget_info['doc_uri']
@@ -194,6 +202,11 @@ def create_gadget_from_template(template, user, request=None):
 
     return gadget
 
+def create_gadget_from_wgt(wgt_uri, user):
+
+    wgt_file = WgtFile(StringIO(download_http_content(wgt_uri)))
+    template = wgt_deployer.deploy(wgt_file, user)
+    return create_gadget_from_template(template, user)
 
 def get_resource_from_catalogue(vendor, name, **selectors):
     resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
@@ -212,7 +225,10 @@ def get_resource_from_catalogue(vendor, name, **selectors):
 def create_gadget_from_catalogue(user, vendor, name, **selectors):
     selectors['resource_type'] = 0  # Gadget
     resource = get_resource_from_catalogue(vendor, name, **selectors)
-    return create_gadget_from_template(resource.template_uri, user)
+    if resource.template_uri.lower().endswith('.wgt'):
+        return create_gadget_from_wgt(resource.template_uri, user)
+    else:
+        return create_gadget_from_template(resource.template_uri, user)
 
 
 def get_or_add_gadget_from_catalogue(vendor, name, version, user, request=None, assign_to_users=None):
