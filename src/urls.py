@@ -64,6 +64,9 @@ urlpatterns = patterns('',
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
 
+    # Showcase
+    (r'^showcase/', include('gadget.showcase_urls')),
+
     # Deployment Tool
     (r'^deployment/', include('deployment.urls')),
 

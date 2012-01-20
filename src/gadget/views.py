@@ -32,7 +32,7 @@
 import time
 
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 
@@ -44,11 +44,14 @@ from commons.get_data import get_gadget_data
 from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.template import TemplateParser
+from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget, includeTagBase, fix_ezweb_scripts
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, includeTagBase, fix_ezweb_scripts
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
+from workspace.utils import create_published_workspace_from_template
 
 
 def parseAndCreateGadget(request, user, workspaceId):
@@ -151,6 +154,26 @@ class GadgetCollection(Resource):
         gadget_entry = GadgetEntry()
         # POST and GET behavior is alike, both must return a Gadget JSON representation
         return gadget_entry.read(request, gadgetVendor, gadgetName, gadgetVersion, user_name)
+
+
+class Showcase(Resource):
+
+    @commit_on_http_success
+    def create(self, request):
+
+        if 'url' not in request.POST:
+            return HttpResponseBadRequest()
+
+        url = request.POST['url']
+        template_content = download_http_content(url, user=request.user)
+        template = TemplateParser(template_content, base=url)
+
+        if template.get_resource_type() == 'gadget':
+            create_gadget_from_template(template, request.user, request)
+        else:
+            create_published_workspace_from_template(template, request.user)
+
+        return HttpResponse(status=201)
 
 
 class GadgetEntry(Resource):
