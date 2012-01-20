@@ -43,7 +43,7 @@ MAIL_XPATH = etree.ETXPath('Mail')
 DOC_URI_XPATH = etree.ETXPath('WikiURI')
 
 DISPLAY_NAME_XPATH = etree.ETXPath('DisplayName')
-CODE_XPATH = etree.ETXPath('/Template/Platform.Link')
+CODE_XPATH = etree.ETXPath('/Template/Platform.Link/XHTML')
 PREFERENCES_XPATH = etree.ETXPath('/Template/Platform.Preferences')
 PREFERENCE_XPATH = etree.ETXPath('Preference')
 OPTION_XPATH = etree.ETXPath('Option')
@@ -82,6 +82,7 @@ class TemplateParser(object):
         self.base = base
         self._info = {}
         self._translation_indexes = {}
+        self._url_fields = []
 
         if isinstance(template, str):
             self._doc = etree.fromstring(template)
@@ -129,15 +130,14 @@ class TemplateParser(object):
         elif not required:
             return ''
         else:
-            raise TemplateParseException()
+            msg = _('missing required field: %(field)s')
+            raise TemplateParseException(msg % {'field': xpath})
 
-    def _get_url_field(self, *args, **kwargs):
+    def _get_url_field(self, field, *args, **kwargs):
 
         value = self._get_field(*args, **kwargs)
-        if value.strip() != '':
-            return urlparse.urljoin(self.base, value)
-        else:
-            return ''
+        self._url_fields.append(field)
+        self._info[field] = value
 
     def _parse_basic_info(self):
 
@@ -153,14 +153,14 @@ class TemplateParser(object):
         self._info['author'] = self._get_field(AUTHOR_XPATH, self._resource_description)
         self._info['mail'] = self._get_field(MAIL_XPATH, self._resource_description)
         self._info['organization'] = self._get_field(ORGANIZATION_XPATH, self._resource_description, required=False)
-        self._info['image_uri'] = self._get_url_field(IMAGE_URI_XPATH, self._resource_description)
-        self._info['doc_uri'] = self._get_url_field(DOC_URI_XPATH, self._resource_description)
+        self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
+        self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
 
     def _parse_gadget_info(self):
 
         self._info['display_name'] = self._get_field(DISPLAY_NAME_XPATH, self._resource_description, required=False)
         self._add_translation_index(self._info['display_name'], type='gadget', field='display_name')
-        self._info['iphone_image_uri'] = self._get_url_field(IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
+        self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
         preferences = PREFERENCES_XPATH(self._doc)[0]
         self._info['preferences'] = []
@@ -229,8 +229,14 @@ class TemplateParser(object):
                 'friendcode': event.get('friendcode'),
             })
 
-        xhtml_element = CODE_XPATH(self._doc)[0]
-        self._info['code_url'] = urlparse.urljoin(self.base, xhtml_element.get('href'))
+        xhtml_elements = CODE_XPATH(self._doc)
+        if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':
+            xhtml_element = xhtml_elements[0]
+            self._info['code_url'] = xhtml_element.get('href')
+        else:
+            msg = _('missing required attribute in Platform.Link: href')
+            raise TemplateParseException(msg)
+
         self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 
@@ -399,6 +405,9 @@ class TemplateParser(object):
         else:
             raise TemplateParseException(_(u"ERROR: unkown TEXT TYPE ") + typeText)
 
+    def set_base(self, base):
+        self.base = base
+
     def get_resource_type(self):
         return self._info['type']
 
@@ -411,8 +420,29 @@ class TemplateParser(object):
     def get_resource_version(self):
         return self._info['version']
 
+    def get_resource_basic_info(self):
+        return self._info
+
     def get_resource_info(self):
         if not self._parsed:
             self._parse_extra_info()
 
         return self._info
+
+    def get_absolute_url(self, url, base=None):
+        if base is None:
+            base = self.base
+
+        return urlparse.urljoin(base, url)
+
+    def get_resource_processed_info(self, base=None):
+        info = self.get_resource_info()
+
+        if base is None:
+            base = self.base
+
+        # process url fields
+        for field in self._url_fields:
+            value = info[field]
+            if value.strip() != '':
+                info[field] = urlparse.urljoin(base, value)
