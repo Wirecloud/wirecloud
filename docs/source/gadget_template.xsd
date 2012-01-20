@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Wirecloud Gadget Template -->
+<!-- Version: 1.0 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Template">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Catalog.ResourceDescription"/>
+        <xs:element ref="Platform.Preferences"/>
+        <xs:element ref="Platform.StateProperties"/>
+        <xs:element ref="Platform.Wiring"/>
+        <xs:element ref="Platform.Link"/>
+        <xs:element ref="Platform.Rendering"/>
+        <xs:element ref="Platform.Context"/>
+      </xs:sequence>
+      <xs:attribute name="schemaLocation" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:anyURI">
+            <xs:enumeration value="http://morfeo-project.org/2007/Template"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="iPhoneImageURI">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="XHTML">
+    <xs:complexType>
+      <xs:attribute name="href" type="xs:anyURI" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="WikiURI">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Version">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Vendor">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Slot">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="friendcode" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Property">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.Wiring">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Event" maxOccurs="unbounded"/>
+        <xs:element ref="Slot" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.StateProperties">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Property"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.Rendering">
+    <xs:complexType>
+      <xs:attribute name="width" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="height" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.Preferences" type="xs:string"/>
+  <xs:element name="Platform.Link">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="XHTML"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.Context" type="xs:string"/>
+  <xs:element name="Name">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Mail">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="ImageURI">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Event">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="friendcode" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Description">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Catalog.ResourceDescription">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Vendor"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Version"/>
+        <xs:element ref="Author"/>
+        <xs:element ref="Mail"/>
+        <xs:element ref="Description"/>
+        <xs:element ref="ImageURI"/>
+        <xs:element ref="iPhoneImageURI"/>
+        <xs:element ref="WikiURI"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Author">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>

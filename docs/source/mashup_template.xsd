@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Wirecloud Mashup Template -->
+<!-- Version: 1.0 -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Template">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Catalog.ResourceDescription"/>
+        <xs:element ref="Platform.Wiring"/>
+      </xs:sequence>
+      <xs:attribute name="schemaLocation" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:anyURI">
+            <xs:enumeration value="http://morfeo-project.org/2007/Template"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Tab">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Resource" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Slot">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="text"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="friendcode" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Resource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Position"/>
+        <xs:element ref="Rendering"/>
+      </xs:sequence>
+      <xs:attribute name="version" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="vendor" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="title" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Rendering">
+    <xs:complexType>
+      <xs:attribute name="width" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="minimized" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="layout" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="height" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="fulldragboard" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Position">
+    <xs:complexType>
+      <xs:attribute name="z" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="y" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="x" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Platform.Wiring">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Slot" maxOccurs="unbounded"/>
+        <xs:element ref="Event" maxOccurs="unbounded"/>
+        <xs:element ref="Slot" maxOccurs="unbounded"/>
+        <xs:element ref="Channel" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Out">
+    <xs:complexType>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="igadget" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Organization">
+    <xs:complexType/>
+  </xs:element>
+  <xs:element name="Name">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Mail">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="IncludedResources">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Tab"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="In">
+    <xs:complexType>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="igadget" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="WikiURI">
+    <xs:simpleType>
+      <xs:restriction base="xs:anyURI"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Version">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Vendor">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="ImageURI" type="xs:anyURI"/>
+  <xs:element name="Event">
+    <xs:complexType>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="label" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="friendcode" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Description" type="xs:string"/>
+  <xs:element name="Channel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="In"/>
+        <xs:element ref="Out"/>
+      </xs:sequence>
+      <xs:attribute name="name" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="id" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:byte"/>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Catalog.ResourceDescription">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="Vendor"/>
+        <xs:element ref="Name"/>
+        <xs:element ref="Version"/>
+        <xs:element ref="Author"/>
+        <xs:element ref="Mail"/>
+        <xs:element ref="Description"/>
+        <xs:element ref="ImageURI"/>
+        <xs:element ref="WikiURI"/>
+        <xs:element ref="Organization"/>
+        <xs:element ref="IncludedResources"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Author">
+    <xs:simpleType>
+      <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>

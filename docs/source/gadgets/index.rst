@@ -6,3 +6,4 @@ Gadget development documentation
 
     template.rst
     EzWebAPI.rst
+    gadget_template_schema.rst
