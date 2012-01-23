@@ -460,137 +460,6 @@ function ChannelInterface(channel, wiringGUI) {
     // Channel data:
     ////////////////////////////////////////////////
 
-    // Channel information showed when the channel is selected
-    var table = document.createElement("table");
-    Element.extend(table);
-    var contentTable = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
-    table.appendChild(contentTable)
-    Element.extend(contentTable);
-    channelContent.appendChild(table);
-
-    // Creates the row for the channel information
-    var contentRow = contentTable.insertRow(-1);
-    Element.extend(contentRow);
-
-    //Channel value
-    //label
-    labelCol = contentRow.insertCell(-1);
-    labelCol.setAttribute ("width", '20%');
-
-    labelContent = document.createElement("label");
-    labelContent.innerHTML = gettext("Value") + ":";
-    labelCol.appendChild(labelContent);
-
-    //value
-    valueCol = contentRow.insertCell(-1);
-    this.valueElement = document.createElement("div");
-    Element.extend(this.valueElement);
-
-    valueCol.appendChild(this.valueElement);
-
-    var contentRow = contentTable.insertRow(-1);
-    Element.extend(contentRow);
-    var labelCol = contentRow.insertCell(-1);
-
-    ////////////////////////////////////////////////
-    // OPTIONAL AREAS!! Hidden by default!
-    ////////////////////////////////////////////////
-
-    ////////////////////////////////////////////////
-    // OPERATION LINKS!
-    ////////////////////////////////////////////////
-
-    // Filter link
-    var filter_link = document.createElement("div");
-    Element.extend(filter_link);
-    filter_link.addClassName('option_link');
-    filter_link.innerHTML = gettext("Filters");
-    channelContent.appendChild(filter_link);
-
-    this.filter_link = filter_link;
-
-    Event.observe(filter_link,
-      'click',
-      function (e) {
-          Event.stop(e);
-          this._toggle_table_status(this.filter_table, this.filter_link);
-      }.bind(this));
-
-    ////////////////////////////////////////////////
-    // FILTER TABLE
-    ////////////////////////////////////////////////
-
-    var table = document.createElement("table");
-    Element.extend(table);
-    var contentTable = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
-    Element.extend(contentTable);
-    table.appendChild(contentTable)
-    table.addClassName("contentTable");
-    table.addClassName('fold_table');
-    channelContent.appendChild(table);
-
-    this.filter_table = table;
-
-    // Filter name row
-    //label
-    var contentRow = contentTable.insertRow(-1);
-    Element.extend(contentRow);
-
-    var labelCol = contentRow.insertCell(-1);
-
-    var labelContent = document.createElement("label");
-    labelContent.innerHTML = gettext("Filter") + ":";
-    labelCol.appendChild(labelContent);
-
-    //value
-    var valueCol = contentRow.insertCell(-1);
-
-    this.filterLabelDiv = document.createElement("div");
-    Element.extend(this.filterLabelDiv);
-    this.filterLabelDiv.addClassName("filterValue");
-    valueCol.appendChild(this.filterLabelDiv);
-
-    this.filterInput = document.createTextNode("");
-    this.filterLabelDiv.appendChild(this.filterInput);
-
-    if (BrowserUtilsFactory.getInstance().isIE()) {
-        var filterMenuButton = document.createElement('<input type="button" />');
-        Element.extend(filterMenuButton);
-    } else {
-        var filterMenuButton = document.createElement('input');
-        filterMenuButton.type = "button";
-    }
-    this.filterLabelDiv.appendChild(filterMenuButton);
-    filterMenuButton.addClassName("filterMenuLauncher");
-    filterMenuButton.observe('click',
-        function(e) {
-            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-            target.blur();
-            Event.stop(e);
-            LayoutManagerFactory.getInstance().showDropDownMenu(
-                'filterMenu',
-                this.wiringGUI.filterMenu,
-                Event.pointerX(e),
-                Event.pointerY(e));
-        }.bind(this)
-    );
-
-    //Params row
-    //label
-    contentRow = contentTable.insertRow(-1);
-    labelCol = contentRow.insertCell(-1);
-    this.paramLabelLayer = document.createElement("div");
-    Element.extend(this.paramLabelLayer);
-    labelCol.appendChild(this.paramLabelLayer);
-
-    //value
-    valueCol = contentRow.insertCell(-1);
-    this.paramValueLayer = document.createElement("div");
-    Element.extend(this.paramValueLayer);
-    valueCol.appendChild(this.paramValueLayer);
-
-    // Update the initial information
-    this._updateFilterInterface();
     this.channelNameInput.focus();
 
     // Anchors
@@ -784,20 +653,12 @@ ChannelInterface.prototype._updateFilterInterface = function() {
     this._showFilterParams();
 }
 
-ChannelInterface.prototype.setFilter = function(filter, wiring) {
+ChannelInterface.prototype.setFilter = function(filter) {
     this.filter = filter;
-
-    var initial_values = []
-    if (filter != null)
-        initial_values = this.filter.getInitialValues();
-
-    this._changeFilterToConnectable(wiring, initial_values);
-
-    this._updateFilterInterface();
 }
 
 ChannelInterface.prototype.getFilterParams = function() {
-    return this.connectable.filterParams;
+    return this.filterParams;
 }
 
 ChannelInterface.prototype.getValue = function() {
@@ -859,6 +720,8 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
 
         // Update channel name
         this.connectable._name= this.name;
+        this.connectable.setFilter(this.filter);
+        this.connectable.setFilterParams(paramValues);
         break;
 
     case 4:
@@ -1012,61 +875,6 @@ ChannelInterface.prototype.destroy = function() {
     this.wiringGUI = null;
 }
 
-/**
- * Change filter and filterParams to channel's connectable
- */
-ChannelInterface.prototype._changeFilterToConnectable = function(wiring, paramValues) {
-    if (this.connectable == null)
-            this.connectable = wiring.createChannel(this.name);
-
-    this.connectable.setFilter(this.filter);
-    this.connectable.setFilterParams(paramValues);
-}
-
-/**
- * Shows the given optional table and hides the rest of them!
- */
-ChannelInterface.prototype._toggle_table_status = function (table, link) {
-    if (link == this.last_clicked_option_link && this.opened_optional_table) {
-        // Doing click over the same link that is already showed to user!
-        // Hidding table!
-        table.addClassName('fold_table');
-        link.removeClassName('selected_option_link');
-
-        this.opened_optional_table = false;
-    } else {
-        // Hiding all tables!
-        this._fold_all_tables();
-
-        // Showing given table!
-        table.removeClassName('fold_table');
-        link.toggleClassName('selected_option_link');
-
-        this.opened_optional_table = true;
-    }
-
-    this.last_clicked_option_link = link;
-
-    this.wiringGUI.redrawChannelOutputs(this.wiringGUI.currentChannel);
-    this.wiringGUI.redrawChannelInputs(this.wiringGUI.currentChannel);
-}
-
-/**
- * Fold all optional tables!
- */
-ChannelInterface.prototype._fold_all_tables = function () {
-    var content_tables = $$('.contentTable');
-
-    for (var i=0; i<content_tables.length; i++) {
-        content_tables[i].addClassName('fold_table');
-    }
-
-    var option_links = $$('.option_link');
-
-    for (var i=0; i<option_links.length; i++) {
-        option_links[i].removeClassName('selected_option_link');
-    }
-}
 
 /**
  * @abstract
