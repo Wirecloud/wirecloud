@@ -304,6 +304,8 @@ class TemplateParser(object):
                     'vendor': resource.get('vendor'),
                     'version': resource.get('version'),
                     'title': resource.get('title'),
+                    'properties': {},
+                    'preferences': {},
                     'position': {
                         'x': position.get('x'),
                         'y': position.get('y'),
