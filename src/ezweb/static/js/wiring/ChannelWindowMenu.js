@@ -1,3 +1,6 @@
+/*jslint browser: true, sloppy: true, nomen: true, maxerr: 50, indent: 4 */
+/*global gettext, Element, WindowMenu, BrowserUtilsFactory, Event, LayoutManagerFactory */
+
 function addRow(tbody, label, value_element) {
     var contentRow, labelCol, labelContent, valueCol;
 
@@ -21,8 +24,8 @@ function addRow(tbody, label, value_element) {
 /**
  * Specific class for dialogs about creating things.
  */
-function ChannelWindowMenu (wiringGUI) {
-    var table, labelCol, labelContent, contentRow;
+function ChannelWindowMenu(wiringGUI) {
+    var table, filterMenuButton;
 
     WindowMenu.call(this, '');
 
@@ -34,8 +37,8 @@ function ChannelWindowMenu (wiringGUI) {
     Element.extend(table);
 
     // IE6 and IE7 needs a tbody to display dynamic tables
-    this.contentTable = document.createElement('tbody'); 
-    table.appendChild(this.contentTable)
+    this.contentTable = document.createElement('tbody');
+    table.appendChild(this.contentTable);
     Element.extend(this.contentTable);
     this.windowContent.appendChild(table);
 
@@ -61,16 +64,16 @@ function ChannelWindowMenu (wiringGUI) {
     this.filterLabelDiv.appendChild(this.filterInput);
 
     if (BrowserUtilsFactory.getInstance().isIE()) {
-        var filterMenuButton = document.createElement('<input type="button" />');
+        filterMenuButton = document.createElement('<input type="button" />');
         Element.extend(filterMenuButton);
     } else {
-        var filterMenuButton = document.createElement('input');
+        filterMenuButton = document.createElement('input');
         filterMenuButton.type = "button";
     }
     this.filterLabelDiv.appendChild(filterMenuButton);
     filterMenuButton.addClassName("filterMenuLauncher");
     filterMenuButton.observe('click',
-        function(e) {
+        function (e) {
             var target = BrowserUtilsFactory.getInstance().getTarget(e);
             target.blur();
             Event.stop(e);
@@ -78,14 +81,15 @@ function ChannelWindowMenu (wiringGUI) {
                 'filterMenu',
                 this.wiringGUI.filterMenu,
                 Event.pointerX(e),
-                Event.pointerY(e));
+                Event.pointerY(e)
+            );
         }.bind(this)
-    );
+        );
     addRow(this.contentTable, gettext("Filter") + ":", this.filterLabelDiv);
 }
 ChannelWindowMenu.prototype = new WindowMenu();
 
-ChannelWindowMenu.prototype.show = function(parentWindow, channel) {
+ChannelWindowMenu.prototype.show = function (parentWindow, channel) {
     this.channel = channel;
     this._updateFilterInterface();
     WindowMenu.prototype.show.call(this, parentWindow);
@@ -96,7 +100,7 @@ ChannelWindowMenu.prototype.show = function(parentWindow, channel) {
  *
  * @private
  */
-ChannelWindowMenu.prototype._updateFilterInterface = function() {
+ChannelWindowMenu.prototype._updateFilterInterface = function () {
 
     // Sets the filter name
     var filterName;
@@ -114,7 +118,7 @@ ChannelWindowMenu.prototype._updateFilterInterface = function() {
     // Sets the channel value and the channel filter params
     //this.valueElement.setTextContent(this.channel.getValueWithFilter());
     this._updateFilterParams();
-}
+};
 
 /**
  * @private
@@ -128,7 +132,7 @@ ChannelWindowMenu.prototype._updateFilterParams = function () {
     var i, params, p, param, initial_values;
 
     // Removes previous parameters
-    for (i = 0; i < this.param_rows.length; i++) {
+    for (i = 0; i < this.param_rows.length; i += 1) {
         this.contentTable.removeChild(this.param_rows[i]);
     }
 
@@ -140,8 +144,8 @@ ChannelWindowMenu.prototype._updateFilterParams = function () {
     // Adds a new row for each param of the current filter
     params = this.channel.filter.getParams();
     initial_values = this.channel.filter.getInitialValues();
-    for (p = 0; p < params.length; p++) {
+    for (p = 0; p < params.length; p += 1) {
         param = params[p];
         this.param_rows.push(addRow(this.contentTable, param, param.createHtmlValue(this.wiringGUI, this.channel, this.valueElement)));
     }
-}
+};
