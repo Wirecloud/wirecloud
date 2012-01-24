@@ -112,7 +112,7 @@ def build_template_from_workspace(options, workspace, user):
     workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
-    template = etree.Element('Template', schemaLocation="http://morfeo-project.org/2007/Template")
+    template = etree.Element('Template', xmlns="http://morfeo-project.org/2007/Template")
     desc = etree.Element('Catalog.ResourceDescription')
     template.append(desc)
     etree.SubElement(desc, 'Vendor').text = vendor

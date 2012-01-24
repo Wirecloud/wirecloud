@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<Template schemaLocation="http://morfeo-project.org/2007/Template">
+<Template xmlns="http://morfeo-project.org/2007/Template">
   <Catalog.ResourceDescription>
     <Vendor>EzWeb Test Suite</Vendor>
     <Name>Test Workspace</Name>

@@ -1,4 +1,5 @@
-<?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
+<?xml version="1.0" ?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
   <!-- Gadget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
