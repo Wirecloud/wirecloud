@@ -30,45 +30,47 @@ from commons.translation_utils import get_trans_index
 __all__ = ('TemplateParser',)
 
 
-RESOURCE_DESCRIPTION_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription')
-NAME_XPATH = etree.ETXPath('Name')
-VENDOR_XPATH = etree.ETXPath('Vendor')
-VERSION_XPATH = etree.ETXPath('Version')
-DESCRIPTION_XPATH = etree.ETXPath('Description')
-AUTHOR_XPATH = etree.ETXPath('Author')
-ORGANIZATION_XPATH = etree.ETXPath('Organization')
-IMAGE_URI_XPATH = etree.ETXPath('ImageURI')
-IPHONE_IMAGE_URI_XPATH = etree.ETXPath('iPhoneImageURI')
-MAIL_XPATH = etree.ETXPath('Mail')
-DOC_URI_XPATH = etree.ETXPath('WikiURI')
+WIRECLOUD_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
 
-DISPLAY_NAME_XPATH = etree.ETXPath('DisplayName')
-CODE_XPATH = etree.ETXPath('/Template/Platform.Link/XHTML')
-PREFERENCES_XPATH = etree.ETXPath('/Template/Platform.Preferences')
-PREFERENCE_XPATH = etree.ETXPath('Preference')
-OPTION_XPATH = etree.ETXPath('Option')
-PROPERTY_XPATH = etree.ETXPath('/Template/Platform.StateProperties/Property')
-WIRING_XPATH = etree.ETXPath('/Template/Platform.Wiring')
-SLOT_XPATH = etree.ETXPath('Slot')
-EVENT_XPATH = etree.ETXPath('Event')
-CONTEXT_XPATH = etree.ETXPath('/Template/Platform.Context')
-PLATFORM_RENDERING_XPATH = etree.ETXPath('/Template/Platform.Rendering')
-MENUCOLOR_XPATH = etree.ETXPath('/Template/MenuColor')
+RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
+NAME_XPATH = 't:Name'
+VENDOR_XPATH = 't:Vendor'
+VERSION_XPATH = 't:Version'
+DESCRIPTION_XPATH = 't:Description'
+AUTHOR_XPATH = 't:Author'
+ORGANIZATION_XPATH = 't:Organization'
+IMAGE_URI_XPATH = 't:ImageURI'
+IPHONE_IMAGE_URI_XPATH = 't:iPhoneImageURI'
+MAIL_XPATH = 't:Mail'
+DOC_URI_XPATH = 't:WikiURI'
 
-INCLUDED_RESOURCES_XPATH = etree.ETXPath('IncludedResources')
-TAB_XPATH = etree.ETXPath('Tab')
-RESOURCE_XPATH = etree.ETXPath('Resource')
-POSITION_XPATH = etree.ETXPath('Position')
-RENDERING_XPATH = etree.ETXPath('Rendering')
-PARAM_XPATH = etree.ETXPath('Param')
-PROPERTIES_XPATH = etree.ETXPath('Property')
-CHANNEL_XPATH = etree.ETXPath('Channel')
-IN_XPATH = etree.ETXPath('In')
-OUT_XPATH = etree.ETXPath('Out')
+DISPLAY_NAME_XPATH = 't:DisplayName'
+CODE_XPATH = '/t:Template/t:Platform.Link/t:XHTML'
+PREFERENCES_XPATH = '/t:Template/t:Platform.Preferences'
+PREFERENCE_XPATH = 't:Preference'
+OPTION_XPATH = 't:Option'
+PROPERTY_XPATH = '/t:Template/t:Platform.StateProperties/Property'
+WIRING_XPATH = '/t:Template/t:Platform.Wiring'
+SLOT_XPATH = 't:Slot'
+EVENT_XPATH = 't:Event'
+CONTEXT_XPATH = '/t:Template/t:Platform.Context'
+PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
+MENUCOLOR_XPATH = '/t:Template/t:MenuColor'
 
-TRANSLATIONS_XPATH = etree.ETXPath('/Template/Translations')
-TRANSLATION_XPATH = etree.ETXPath('Translation')
-MSG_XPATH = etree.ETXPath('msg')
+INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
+TAB_XPATH = 't:Tab'
+RESOURCE_XPATH = 't:Resource'
+POSITION_XPATH = 't:Position'
+RENDERING_XPATH = 't:Rendering'
+PARAM_XPATH = 't:Param'
+PROPERTIES_XPATH = 't:Property'
+CHANNEL_XPATH = 't:Channel'
+IN_XPATH = 't:In'
+OUT_XPATH = 't:Out'
+
+TRANSLATIONS_XPATH = '/t:Template/t:Translations'
+TRANSLATION_XPATH = 't:Translation'
+MSG_XPATH = 't:msg'
 
 
 class TemplateParser(object):
@@ -93,14 +95,31 @@ class TemplateParser(object):
         else:
             self._doc = template
 
-        self._resource_description = RESOURCE_DESCRIPTION_XPATH(self._doc)[0]
+        prefix = self._doc.prefix
+        xmlns = None
+        if prefix in self._doc.nsmap:
+            xmlns = self._doc.nsmap[prefix]
+
+        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+            raise TemplateParseException('The template is not a valid wirecloud template')
+        self._uses_namespace = xmlns is not None
+
+
+        self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
 
-        included_resources_elements = INCLUDED_RESOURCES_XPATH(self._resource_description)
+        included_resources_elements = self._xpath(INCLUDED_RESOURCES_XPATH, self._resource_description)
         if len(included_resources_elements) == 1:
             self._info['type'] = 'mashup'
         else:
             self._info['type'] = 'gadget'
+
+    def _xpath(self, query, element):
+        if self._uses_namespace:
+            return element.xpath(query, namespaces={'t': WIRECLOUD_TEMPLATE_NS})
+        else:
+            query = query.replace('t:', '')
+            return element.xpath(query)
 
     def _add_translation_index(self, value, **kwargs):
         index = get_trans_index(value)
@@ -124,7 +143,7 @@ class TemplateParser(object):
 
     def _get_field(self, xpath, element, required=True):
 
-        elements = xpath(element)
+        elements = self._xpath(xpath, element)
         if len(elements) == 1 and elements[0].text and len(elements[0].text.strip()) > 0:
             return elements[0].text
         elif not required:
@@ -162,9 +181,9 @@ class TemplateParser(object):
         self._add_translation_index(self._info['display_name'], type='gadget', field='display_name')
         self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
 
-        preferences = PREFERENCES_XPATH(self._doc)[0]
+        preferences = self._xpath(PREFERENCES_XPATH, self._doc)[0]
         self._info['preferences'] = []
-        for preference in PREFERENCE_XPATH(preferences):
+        for preference in self._xpath(PREFERENCE_XPATH, preferences):
             self._add_translation_index(preference.get('label'), type='vdef', variable=preference.get('name'))
             self._add_translation_index(preference.get('description', ''), type='vdef', variable=preference.get('name'))
             preference_info = {
@@ -178,7 +197,7 @@ class TemplateParser(object):
 
             if preference_info['type'] == 'list':
                 preference_info['options'] = []
-                for option in OPTION_XPATH(preference):
+                for option in self._xpath(OPTION_XPATH, preference):
                     option_label = option.get('label', option.get('name'))
                     self._add_translation_index(option_label, type='upo', variable=preference.get('name'), option=option_label)
                     preference_info['options'].append({
@@ -189,7 +208,7 @@ class TemplateParser(object):
             self._info['preferences'].append(preference_info)
 
         self._info['properties'] = []
-        for prop in PROPERTY_XPATH(self._doc):
+        for prop in self._xpath(PROPERTY_XPATH, self._doc):
             self._add_translation_index(prop.get('label'), type='vdef', variable=prop.get('name'))
             self._add_translation_index(prop.get('description', ''), type='vdef', variable=prop.get('name'))
             self._info['properties'].append({
@@ -201,10 +220,10 @@ class TemplateParser(object):
                 'secure': prop.get('secure', 'false').lower() == 'true',
             })
 
-        wiring_element = WIRING_XPATH(self._doc)[0]
+        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
         self._info['slots'] = []
-        for slot in SLOT_XPATH(wiring_element):
+        for slot in self._xpath(SLOT_XPATH, wiring_element):
             self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('action_label', ''), type='vdef', variable=slot.get('name'))
             self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
@@ -218,7 +237,7 @@ class TemplateParser(object):
             })
 
         self._info['events'] = []
-        for event in EVENT_XPATH(wiring_element):
+        for event in self._xpath(EVENT_XPATH, wiring_element):
             self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
             self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
             self._info['events'].append({
@@ -229,7 +248,7 @@ class TemplateParser(object):
                 'friendcode': event.get('friendcode'),
             })
 
-        xhtml_elements = CODE_XPATH(self._doc)
+        xhtml_elements = self._xpath(CODE_XPATH, self._doc)
         if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':
             xhtml_element = xhtml_elements[0]
             self._info['code_url'] = xhtml_element.get('href')
@@ -240,7 +259,7 @@ class TemplateParser(object):
         self._info['code_content_type'] = xhtml_element.get('content-type', 'text/html')
         self._info['code_cacheable'] = xhtml_element.get('cacheable', 'true').lower() == 'true'
 
-        rendering_element = PLATFORM_RENDERING_XPATH(self._doc)[0]
+        rendering_element = self._xpath(PLATFORM_RENDERING_XPATH, self._doc)[0]
         self._info['gadget_width'] = rendering_element.get('width')
         self._info['gadget_height'] = rendering_element.get('height')
 
@@ -248,16 +267,16 @@ class TemplateParser(object):
 
     def _parse_workspace_info(self):
 
-        workspace_structure = INCLUDED_RESOURCES_XPATH(self._resource_description)[0]
+        workspace_structure = self._xpath(INCLUDED_RESOURCES_XPATH, self._resource_description)[0]
         self._info['readonly'] = workspace_structure.get('readonly', 'false').lower() == 'true'
 
         preferences = {}
-        for preference in PREFERENCE_XPATH(workspace_structure):
+        for preference in self._xpath(PREFERENCE_XPATH, workspace_structure):
             preferences[preference.get('name')] = preference.get('value')
         self._info['preferences'] = preferences
 
         params = {}
-        for param in PARAM_XPATH(workspace_structure):
+        for param in self._xpath(PARAM_XPATH, workspace_structure):
             params[param.get('name')] = {
                'label': param.get('label'),
                'type': param.get('type'),
@@ -265,19 +284,19 @@ class TemplateParser(object):
         self._info['params'] = params
 
         tabs = {}
-        for tab in TAB_XPATH(workspace_structure):
+        for tab in self._xpath(TAB_XPATH, workspace_structure):
             tab_info = {
                 'name': tab.get('name'),
                 'preferences': {},
                 'resources': [],
             }
 
-            for preference in PREFERENCE_XPATH(tab):
+            for preference in self._xpath(PREFERENCE_XPATH, tab):
                 tab_info['preferences'][preference.get('name')] = preference.get('value')
 
-            for resource in RESOURCE_XPATH(tab):
-                position = POSITION_XPATH(resource)[0]
-                rendering = RENDERING_XPATH(resource)[0]
+            for resource in self._xpath(RESOURCE_XPATH, tab):
+                position = self._xpath(POSITION_XPATH, resource)[0]
+                rendering = self._xpath(RENDERING_XPATH, resource)[0]
 
                 resource_info = {
                     'id': resource.get('id'),
@@ -297,13 +316,13 @@ class TemplateParser(object):
                     },
                 }
 
-                for prop in PROPERTIES_XPATH(resource):
+                for prop in self._xpath(PROPERTIES_XPATH, resource):
                     resource_info['properties'][prop.get('name')] = {
                         'readonly': prop.get('readonly', 'false').lower() == 'true',
                         'value': prop.get('value'),
                     }
 
-                for pref in PREFERENCE_XPATH(resource):
+                for pref in self._xpath(PREFERENCE_XPATH, resource):
                     resource_info['preferences'][pref.get('name')] = {
                         'readonly': pref.get('readonly', 'false').lower() == 'true',
                         'hidden': pref.get('hidden', 'false').lower() == 'true',
@@ -316,9 +335,9 @@ class TemplateParser(object):
 
         self._info['tabs'] = tabs
 
-        wiring_element = WIRING_XPATH(self._doc)[0]
+        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
         channels = {}
-        for channel in CHANNEL_XPATH(wiring_element):
+        for channel in self._xpath(CHANNEL_XPATH, wiring_element):
             channel_info = {
                 'id': int(channel.get('id')),
                 'name': channel.get('name'),
@@ -330,19 +349,19 @@ class TemplateParser(object):
                 'out_channels': [],
             }
 
-            for in_ in IN_XPATH(channel):
+            for in_ in self._xpath(IN_XPATH, channel):
                 channel_info['ins'].append({
                     'igadget': in_.get('igadget'),
                     'name': in_.get('name'),
                 })
 
-            for out in OUT_XPATH(channel):
+            for out in self._xpath(OUT_XPATH, channel):
                 channel_info['outs'].append({
                     'igadget': out.get('igadget'),
                     'name': out.get('name'),
                 })
 
-            for out_channel in CHANNEL_XPATH(channel):
+            for out_channel in self._xpath(CHANNEL_XPATH, channel):
                 channel_info['out_channels'].append(out_channel.get('id'))
 
             channels[channel.get('id')] = channel_info
@@ -352,7 +371,7 @@ class TemplateParser(object):
     def _parse_translation_catalogue(self):
         self._info['translations'] = {}
 
-        translations_elements = TRANSLATIONS_XPATH(self._doc)
+        translations_elements = self._xpath(TRANSLATIONS_XPATH, self._doc)
 
         if len(translations_elements) == 0:
             return
@@ -363,10 +382,10 @@ class TemplateParser(object):
         translations = translations_elements[0]
         self._info['default_lang'] = translations.get('default')
 
-        for translation in TRANSLATION_XPATH(translations):
+        for translation in self._xpath(TRANSLATION_XPATH, translations):
             current_catalogue = {}
 
-            for msg in MSG_XPATH(translation):
+            for msg in self._xpath(MSG_XPATH, translation):
                 if msg.get('name') not in self._translation_indexes:
                     extra_translations.add(msg.get('name'))
 
