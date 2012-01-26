@@ -351,7 +351,6 @@ def get_gadget_data(gadget):
     data_ret['menuColor'] = gadget.menuColor
     data_ret['version'] = gadget.version
     data_ret['mail'] = gadget.mail
-    data_ret['shared'] = gadget.shared
     data_ret['last_update'] = gadget.last_update
     data_ret['size'] = {}
     data_ret['size']['width'] = gadget.width
