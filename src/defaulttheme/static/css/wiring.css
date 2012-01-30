@@ -1,4 +1,8 @@
-
+.r-corners{
+-webkit-border-radius: 6px;
+-moz-border-radius: 6px;
+-ms-border-radius: 6px;
+}
 
 #wiring .borderLeftCell {
   border-color: 1px solid #AAA;
@@ -114,37 +118,18 @@
   background: #97A0A8 url(../images/pipe.png);
 }
 
-#wiring .channels_list .channel .channelContent {
-  border-style: solid;
-  border-color: #525248;
-  background: #F7F7F7;
-  -moz-border-radius-bottomleft: 9px;
-  -moz-border-radius-bottomright: 9px;
-  -webkit-border-top-left-radius: 9px;
-  -webkit-border-top-right-radius: 9px
+.channelPipe * {
+  vertical-align: middle;
 }
 
 #wiring .channels_list .channel.selected .channelPipe {
   background-color: #2D6F9C;
 }
 
-#wiring .channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+.channel_window .filter_menu_button {
     background-image: url(../images/icons-sprite.png);
     background-position: 0px -216px;
     background-color: transparent;
-}
-
-#wiring .channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
-	font-size: 95%
-}
-
-#wiring .channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
-	font-size: 90%;
-}
-
-#wiring .channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
-  background: #E0E0E0;
-  font-size: 90%;
 }
 
 #wiring #wiring_messages {
@@ -166,12 +151,14 @@
 
 #wiring .channelNameInput {
    background: transparent;
+   color: #000;
+   
 }
 
 #wiring .selected .channelNameInput {
-	background: transparent url(../images/fond.gif) repeat;
+	background: transparent;
+	font-weight: bold;
 }
-
 .canvas .arrow {
   stroke: #2D6F9C;
   fill:   none;
@@ -195,14 +182,4 @@
   -moz-border-radius:6px;
   background:white;
   font-size:80%;
-}
-
-#wiring .option_link {
-  color: #2D6F9C;
-  font-size: 10px;
-}
-
-#wiring .selected_option_link {
-  font-weight: bold;
-  font-size: 11px;
 }

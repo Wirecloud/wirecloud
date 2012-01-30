@@ -365,6 +365,7 @@ function ChannelInterface(channel, wiringGUI) {
         this.inputs = channel.inputs.clone();
         this.outputs = channel.outputs.clone();
         this.filter = channel.getFilter();
+        this.filterParams = channel.getFilterParams();
     } else {
         // New channel
         this.connectable = null;
@@ -372,6 +373,7 @@ function ChannelInterface(channel, wiringGUI) {
         this.inputs = new Array();
         this.outputs = new Array();
         this.filter = null;
+        this.filterParams = null;
     }
 
     this.inputsForAdding = new Array();
@@ -409,22 +411,26 @@ function ChannelInterface(channel, wiringGUI) {
                       this.wiringGUI._changeChannel(this);
                     }.bind(this));
 
-    var inputDel = document.createElement("img");
-    Element.extend(inputDel);
-    channelPipe.appendChild(inputDel);
-    inputDel.setAttribute("title", gettext("Remove"));
-    inputDel.className = "closebutton";
-    Event.observe(inputDel,
-                  'click',
-                  function (e) {
-                      Event.stop(e);
-                      this.wiringGUI._removeChannel(this);
-                  }.bind(this));
+    var del_button = new StyledElements.StyledButton({
+        'title': gettext("Remove"),
+        'class': 'closebutton',
+        'plain': true,
+    });
+    del_button.insertInto(channelPipe);
+    del_button.addEventListener('click', this.wiringGUI._removeChannel.bind(this.wiringGUI, this));
 
-    this.channelNameInput = document.createElement("input");
+    var edit_button = new StyledElements.StyledButton({
+        'title': gettext("Edit"),
+        'class': 'icon icon-size icon-channel-settings',
+        'plain': true,
+    });
+    edit_button.insertInto(channelPipe);
+    edit_button.addEventListener('click', this.wiringGUI._editChannel.bind(this.wiringGUI, this));
+    
+    this.channelNameInput = document.createElement("span");
     Element.extend(this.channelNameInput);
     channelPipe.appendChild(this.channelNameInput);
-    this.channelNameInput.setAttribute ("value", this.name);
+    this.channelNameInput.setTextContent(this.name);
     this.channelNameInput.addClassName ("channelNameInput");
     this.channelNameInput.observe('click',
                   function(e) {
@@ -449,11 +455,7 @@ function ChannelInterface(channel, wiringGUI) {
     }
     this.channelNameInput.observe('change', checkName.bind(this));
 
-    var channelContent = document.createElement("div");
-    Element.extend(channelContent);
-    this.htmlElement.appendChild(channelContent);
-    channelContent.addClassName("channelContent");
-    Event.observe(channelContent, 'click', function(e) {Event.stop(e);});
+   
 
     ////////////////////////////////////////////////
     // MANDATORY AREA!! Impossible to fold!
@@ -571,95 +573,17 @@ ChannelInterface.prototype.getFilter = function() {
     return this.filter;
 }
 
-ChannelInterface.prototype._getFilterParams = function () {
-    // No filter, no params
-    if (this.filter == null)
-        return;
-
-    var fParams = {};
-    var params = this.filter.getParams();
-    var valueNodes = this.paramValueLayer.childNodes;
-    for (var i = 0; i < valueNodes.length; i++) {
-        fParams[params[i].getIndex()] = valueNodes[i].getTextContent();
-    }
-
-    return fParams;
-}
-
-/**
- * @private
- *
- * Builds/Rebuilds the filter params interface.
- * @param {ChannelInterface} channel
- * @param {Filter} filter
- * @param {}
- */
-ChannelInterface.prototype._showFilterParams = function () {
-    // No filter, no params
-    if (this.filter == null)
-        return;
-
-    // Adds a new row for each param of the current filter
-    var params = this.filter.getParams();
-    for (var p = 0; p < params.length; p++) {
-        this.paramLabelLayer.appendChild(params[p].createHtmlLabel());
-        this.paramValueLayer.appendChild(params[p].createHtmlValue(this.wiringGUI, this, this.valueElement));
-    }
-}
-
-/**
- * @private
- *
- * Fills filter params interface.
- * @param {ChannelInterface} channel
- * @param {Filter} filter
- * @param {}
- */
-ChannelInterface.prototype._fillFilterParams = function () {
-    // No filter, no params
-    if (this.filter == null)
-        return;
-
-    // Fill each input of the params with the filterParams value
-    this.filter.fillFilterParamValues(this.connectable.filterParams, this.paramValueLayer);
-}
-
-
-/**
- * Updates the interface according to the new filter.
- *
- * @private
- */
-ChannelInterface.prototype._updateFilterInterface = function() {
-    // Removes the params of the previous filter
-    this.paramLabelLayer.setTextContent('');
-    this.paramValueLayer.setTextContent('');
-
-    // Sets the filter name
-    var filterName;
-    if (this.filter == null) {
-        filterName = gettext("None");
-    } else {
-        filterName = this.filter.getLabel();
-    }
-
-    // Workaround "this.filterInput.setTextContent(filterName);" not working on IE
-    this.filterLabelDiv.removeChild(this.filterInput);
-    this.filterInput = document.createTextNode(filterName);
-    this.filterLabelDiv.insertBefore(this.filterInput, this.filterLabelDiv.childNodes[0]);
-
-    // Sets the channel value and the channel filter params
-    this.valueElement.setTextContent(this.getValueWithFilter());
-    this._showFilterParams();
-}
-
 ChannelInterface.prototype.setFilter = function(filter) {
     this.filter = filter;
 }
 
-ChannelInterface.prototype.getFilterParams = function() {
+ChannelInterface.prototype.getFilterParams = function () {
     return this.filterParams;
-}
+};
+
+ChannelInterface.prototype.setFilterParams = function (filterParams) {
+    this.filterParams = filterParams;
+};
 
 ChannelInterface.prototype.getValue = function() {
     if (this.connectable) {
@@ -721,7 +645,7 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
         // Update channel name
         this.connectable._name= this.name;
         this.connectable.setFilter(this.filter);
-        this.connectable.setFilterParams(paramValues);
+        this.connectable.setFilterParams(this.paramValues);
         break;
 
     case 4:
@@ -751,17 +675,19 @@ ChannelInterface.prototype.exists = function() {
     return this.connectable != null;
 }
 
+/**
+ * Selects this ChannelInterface
+ */
 ChannelInterface.prototype.check = function() {
-    this._fillFilterParams();
-    this.valueElement.setTextContent(this.getValueWithFilter());
     this.htmlElement.addClassName("selected");
-    this.channelNameInput.focus();
-}
+};
 
+/**
+ * Unselects this ChannelInterface
+ */
 ChannelInterface.prototype.uncheck = function() {
     this.htmlElement.removeClassName("selected");
-    this.channelNameInput.blur();
-}
+};
 
 ChannelInterface.prototype.getHTMLElement = function() {
     return this.htmlElement;

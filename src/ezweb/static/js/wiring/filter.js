@@ -66,52 +66,6 @@ Param.prototype.getDefaultValue = function() {
     return this._defaultValue;
 }
 
-Param.prototype.createHtmlLabel = function() {
-    var labelLayer = document.createElement("div");
-    Element.extend(labelLayer);
-    labelLayer.addClassName('paramName');
-    var labelElement = document.createElement("label");
-    labelElement.innerHTML = this._label + ':';
-    labelElement.className = 'icon icon-wiring-filter-param';
-    labelLayer.appendChild(labelElement);
-    return labelLayer;
-}
-
-
-Param.prototype.createHtmlValue = function(wiringGUI, channel, valueElement){
-    var context = {wiringGUI:wiringGUI, channel:channel, filter:channel.getFilter(), param:this, valueElement:valueElement};
-
-    var paramValueLayer = document.createElement("div");
-    Element.extend(paramValueLayer);
-    var paramInput = document.createElement("input");
-    Element.extend(paramInput);
-    paramInput.addClassName("paramValueInput");
-    paramInput.setAttribute ("value", channel.getFilterParams()[this._index]['value']);
-    Event.observe(paramInput, 'click',function(e){Event.stop(e);});
-
-    var checkResult = function(e) {
-        var msg;
-        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-
-        // Sets the param value
-        this.channel.setFilterParam(this.param._index, target.value);
-
-
-        // Sets the channel value
-        this.valueElement.update(channel.getValue());
-
-        // Shows a message (only with error)
-        if (this.channel.getFilter().getlastExecError() != null) {
-            LayoutManagerFactory.getInstance().showMessageMenu(this.channel.getFilter().getlastExecError(), Constants.Logging.WARN_MSG);
-            this.valueElement.nodeValue = gettext('undefined');
-        }
-    };
-
-  // Sets the input
-  Event.observe(paramInput, 'change', checkResult.bind(context));
-  paramValueLayer.appendChild(paramInput);
-  return paramValueLayer;
-}
 
 // This class represents the filter of the a channel
 function Filter (id_, name_, label_, nature_, code_, category_, params_, helpText_) {

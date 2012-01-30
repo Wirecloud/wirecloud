@@ -178,10 +178,6 @@
   display: none;
 }
 
-#wiring .option_link {
-  cursor: pointer;
-}
-
 #wiring #wiring_options {
   position: relative;
   float:    right;
@@ -410,20 +406,13 @@
 	display: inline;
 }
 
-#wiring .fold_table, #wiring .hide {
+#wiring .hide {
   display: none;
 }
 
 #wiring .contentTable {
   width: 100%;
   border-top: 1px solid #000000;
-}
-
-#wiring .option_link {
-  display: inline;
-  padding-right: 5px;
-  float: right;
-  cursor:pointer;
 }
 
 #wiring .channelContent td {

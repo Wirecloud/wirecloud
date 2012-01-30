@@ -49,6 +49,7 @@ function WiringInterface(id, options) {
     this.friend_codes = {};
     this.friend_codes_counter = 0;
     this.channelBaseName = gettext("Channel");
+    this.channel_window_menu = new ChannelWindowMenu(this);
 
     this.eventColumn = this.wrapperElement.getElementsByClassName('event_column')[0];
     this.slotColumn = this.wrapperElement.getElementsByClassName('slot_column')[0];
@@ -484,6 +485,13 @@ WiringInterface.prototype._createChannel = function () {
 
     this._changeChannel(channel);
 }
+
+WiringInterface.prototype._editChannel = function (channel) {
+    if (this.currentChannel !== channel) {
+        this._changeChannel(channel);
+    }
+    this.channel_window_menu.show(null, channel);
+};
 
 /**
  * @param {ChannelInterface} channel
@@ -1145,7 +1153,7 @@ WiringInterface.prototype._createFilterMenu = function () {
     var filterMenu = new FilterDropDownMenu('wiring_filter_menu');
 
     var callback = function() {
-        this.wiringGUI._updateFilterFunc(this.wiringGUI.currentChannel, this.filter);
+        this.wiringGUI._updateFilterFunc(this.filter);
     };
 
     filterMenu.addOptionWithHelp (
@@ -1173,19 +1181,11 @@ WiringInterface.prototype._createFilterMenu = function () {
  *
  * @private
  */
-WiringInterface.prototype._updateFilterFunc = function(channel, filter) {
+WiringInterface.prototype._updateFilterFunc = function(filter) {
     // Close Filter Menu
     LayoutManagerFactory.getInstance().hideCover();
 
-    if (channel.getFilter() == filter)
-        return; // There is not a real change => nothing to do
-
-    this.changed = true;
-    channel.setFilter(filter, this.wiring);
-
-    // The filter content size has changed, and the selected channel and its arrows must be repainted
-    this.uncheckChannel(channel);
-    this.highlightChannel(channel);
+    this.changed = this.channel_window_menu.changeFilter(filter) || this.changed;
 }
 
 /**

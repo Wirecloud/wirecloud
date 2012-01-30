@@ -47,7 +47,7 @@ span.icon {
 }
 
 .icon-tab-menu { background-image: url(../images/icons-sprite.png); background-position: -48px 0; }
-.icon-igadget-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
+.icon-igadget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
 span.icon-igadget-settings { background-position: -48px -408px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
 .icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
