@@ -278,7 +278,7 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
         # add the gadget to the showcase of the user
         gadget.users.add(user)
 
-    return {"gadget": gadget, "templateParser": templateParser}
+    return gadget
 
 
 def get_and_add_gadget(vendor, name, version, users):

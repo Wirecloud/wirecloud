@@ -73,9 +73,7 @@ def parseAndCreateGadget(request, user, workspaceId):
 
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
-        result = get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
-
-        return result
+        return get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
 
     except TemplateParseException, e:
         msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
@@ -143,17 +141,9 @@ class GadgetCollection(Resource):
         user = user_authentication(request, user_name)
 
         #create the gadget
-        result = parseAndCreateGadget(request, user, request.POST['workspaceId'])
-        templateParser = result["templateParser"]
+        gadget = parseAndCreateGadget(request, user, request.POST['workspaceId'])
 
-        #return the data
-        gadgetName = templateParser.getGadgetName()
-        gadgetVendor = templateParser.getGadgetVendor()
-        gadgetVersion = templateParser.getGadgetVersion()
-
-        gadget_entry = GadgetEntry()
-        # POST and GET behavior is alike, both must return a Gadget JSON representation
-        return gadget_entry.read(request, gadgetVendor, gadgetName, gadgetVersion, user_name)
+        return HttpResponse(json_encode(get_gadget_data(gadget)), mimetype='application/json; charset=UTF-8')
 
 
 class Showcase(Resource):
