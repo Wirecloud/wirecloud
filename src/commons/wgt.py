@@ -35,8 +35,21 @@ class WgtFile(object):
         doc = etree.fromstring(config)
         self._template_filename = doc.get('id')
 
+    def read(self, path):
+        return self._zip.read(path)
+
     def get_template(self):
-        return self._zip.read(self._template_filename)
+        return self.read(self._template_filename)
+
+    def extract_file(self, file_name, output_path, recreate_=False):
+        dir_path = os.path.dirname(output_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        f = open(output_path, 'wb')
+        contents = self.read(file_name)
+        f.write(contents)
+        f.close()
 
     def extract(self, path):
 
