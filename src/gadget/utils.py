@@ -44,9 +44,8 @@ from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
-from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.htmlHeadParser import HTMLHeadParser
-from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget
+from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
@@ -75,16 +74,21 @@ def create_gadget_from_template(template, user, request=None, base=None):
 
     gadget.uri = parser.get_resource_uri()
 
-    gadget.vendor=gadget_info['vendor']
-    gadget.name=gadget_info['name']
-    gadget.version=gadget_info['version']
+    gadget.vendor = gadget_info['vendor']
+    gadget.name = gadget_info['name']
+    gadget.version = gadget_info['version']
 
     gadget.description = gadget_info['description']
     gadget.display_name = gadget_info['display_name']
     gadget.author = gadget_info['author']
 
     gadget_code = parser.get_absolute_url(gadget_info['code_url'], base)
-    gadget.xhtml = parse_gadget_code(gadget_code, gadget.uri, gadget_info['code_content_type'], False, cacheable=gadget_info['code_cacheable'], user=user, request=request)
+    gadget.xhtml = XHTML.objects.create(
+        uri=gadget.uri + "/xhtml",
+        url=gadget_code,
+        content_type=gadget_info['code_content_type'],
+        cacheable=gadget_info['code_cacheable']
+    )
 
     gadget.mail = gadget_info['mail']
     gadget.wikiURI = gadget_info['doc_uri']
@@ -190,16 +194,16 @@ def create_gadget_from_template(template, user, request=None, base=None):
             usages = gadget_info['translation_index_usage'][index]
             for use in usages:
                 if use['type'] == 'gadget':
-                    table=gadget_table
-                    element_id=gadget.id
+                    table = gadget_table
+                    element_id = gadget.id
                 elif use['type'] == 'vdef':
                     vDef = variable_definitions[use['variable']]
                     table = vDef.__class__.__module__ + "." + vDef.__class__.__name__
-                    element_id=vDef.id
+                    element_id = vDef.id
                 elif use['type'] == 'upo':
                     upo = user_options[use['variable']][use['option']]
                     table = upo.__class__.__module__ + "." + upo.__class__.__name__
-                    element_id=upo.id
+                    element_id = upo.id
 
                 Translation.objects.create(
                     text_id=index,
