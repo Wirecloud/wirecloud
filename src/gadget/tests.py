@@ -192,6 +192,15 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['event']['label'], 'Event label')
         self.assertEqual(data['variables']['slot']['label'], 'Slot label')
 
+        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['language']['concept'], 'language')
+        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['user']['concept'], 'username')
+        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
+        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
+        self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
+        self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
+
     def test_gadget_creation_from_catalogue(self):
         template_uri = "http://example.com/path/gadget.xml"
         f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template1.xml'))
