@@ -213,11 +213,17 @@ def create_gadget_from_template(template, user, request=None, base=None):
 
     return gadget
 
-def create_gadget_from_wgt(wgt_uri, user):
 
-    wgt_file = WgtFile(StringIO(download_http_content(wgt_uri)))
+def create_gadget_from_wgt(wgt, user):
+
+    if isinstance(wgt, WgtFile):
+        wgt_file = wgt
+    else:
+        wgt_file = WgtFile(StringIO(download_http_content(wgt)))
+
     template = wgt_deployer.deploy(wgt_file, user)
     return create_gadget_from_template(template, user)
+
 
 def get_resource_from_catalogue(vendor, name, **selectors):
     resources = CatalogueResource.objects.filter(vendor=vendor, short_name=name)
