@@ -140,6 +140,7 @@ class TemplateParser(object):
             self._parse_workspace_info()
 
         self._parse_translation_catalogue()
+        self._parsed = True
         self._doc = None
         self._resource_description = None
 
