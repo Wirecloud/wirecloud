@@ -59,14 +59,16 @@ from commons.http_utils import PUT_parameter
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.transaction import commit_on_http_success
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
 
 
 class ResourceCollection(Resource):
 
-    @transaction.commit_manually
+    @commit_on_http_success
     def create(self, request, user_name, fromWGT=False):
+
         user = user_authentication(request, user_name)
         if 'template_uri' not in request.POST:
             msg = _("template_uri param expected")
@@ -79,7 +81,6 @@ class ResourceCollection(Resource):
 
         except IntegrityError, e:
             # Resource already exists. Rollback transaction
-            transaction.rollback()
             json_response = {
                 "result": "error",
                 "message": _('Gadget already exists!'),
@@ -99,9 +100,6 @@ class ResourceCollection(Resource):
             raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
 
         json_response = get_added_resource_info(resource, user)
-
-        # get_added_resource_info can make changes in the db
-        transaction.commit()
 
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
