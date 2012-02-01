@@ -73,7 +73,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
 
     gadget = Gadget()
 
-    gadget.uri = '/'.join(('', 'gadgets', gadget_info['vendor'], gadget_info['name'], gadget_info['version']))
+    gadget.uri = parser.get_resource_uri()
 
     gadget.vendor=gadget_info['vendor']
     gadget.name=gadget_info['name']
