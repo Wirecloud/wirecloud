@@ -29,16 +29,20 @@
 
 #
 
+import os
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
+from django.conf import settings
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
 from django.http import  HttpResponseBadRequest, HttpResponseServerError
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.views.static import serve
 
 from catalogue.models import CatalogueResource
 from catalogue.models import UserTag, UserVote
@@ -50,12 +54,12 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
+from catalogue.utils import add_gadget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
 from commons.authentication import user_authentication, Http403
 from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
-from commons.http_utils import PUT_parameter
+from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
@@ -64,20 +68,45 @@ from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
 
 
+def serve_catalogue_media(request, vendor, name, version, file_path):
+
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(('GET',))
+
+    local_path = os.path.join(settings.CATALOGUE_MEDIA_ROOT, vendor, name, version, file_path)
+    if not os.path.isfile(local_path):
+        return HttpResponse(status=404)
+
+    if settings.DEBUG:
+        return serve(request, '/'.join((vendor, name, version, file_path)), document_root=settings.CATALOGUE_MEDIA_ROOT)
+    else:
+        response = HttpResponse()
+        response['X-Sendfile'] = smart_str(local_path)
+        return response
+
+
 class ResourceCollection(Resource):
 
     @commit_on_http_success
-    def create(self, request, user_name, fromWGT=False):
+    def create(self, request, user_name=None, fromWGT=False):
 
         user = user_authentication(request, user_name)
-        if 'template_uri' not in request.POST:
-            msg = _("template_uri param expected")
-            json = {"message": msg, "result": "error"}
-            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
-        template_uri = request.POST['template_uri']
+        overrides = None
 
         try:
-            resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
+            if 'file' in request.FILES:
+
+                request_file = request.FILES['file']
+                resource = add_gadget_from_wgt(request_file, user)
+
+            elif 'template_uri' in request.POST:
+                template_uri = request.POST['template_uri']
+                template = download_http_content(template_uri, user=user)
+                resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
+            else:
+                msg = _("Missing parameter: template_uri or file")
+                json = {"message": msg, "result": "error"}
+                return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
 
         except IntegrityError, e:
             # Resource already exists. Rollback transaction

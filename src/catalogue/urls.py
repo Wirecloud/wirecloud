@@ -30,7 +30,7 @@
 
 #
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url
 
 from catalogue.views import ResourceCollection, ResourceCollectionByGlobalSearch
 from catalogue.views import ResourceCollectionBySimpleSearch, ResourceTagCollection
@@ -59,4 +59,6 @@ urlpatterns = patterns('catalogue.views',
 
     #version check
     (r'^versions', ResourceVersionCollection(permitted_methods=('POST',))),
+
+    url(r'^media/(?P<vendor>[\w ]+)/(?P<name>[\w ]+)/(?P<version>[\d.]+)/(?P<file_path>.+)', 'serve_catalogue_media', name='wirecloud_catalogue.media'),
 )

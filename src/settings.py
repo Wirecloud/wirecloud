@@ -252,6 +252,7 @@ AUTHENTICATION_BACKENDS = (
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 
 # WGT deployment dirs
+CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 

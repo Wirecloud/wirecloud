@@ -87,6 +87,7 @@ urlpatterns = patterns('',
 
     # Catalogue: Changing certification status
     (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
+    (r'^catalogue/', include('catalogue.urls')),
 
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),
