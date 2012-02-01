@@ -89,13 +89,14 @@ class WgtDeployer(object):
         template_content = wgt_file.get_template()
         template_parser = TemplateParser(template_content)
 
-        gadget_dir = os.path.join(self._root_dir,
+        gadget_rel_dir = os.path.join(
             user.username,
             template_parser.get_resource_vendor(),
             template_parser.get_resource_name(),
             template_parser.get_resource_version(),
         )
-        template_parser.set_base(gadget_dir)
+        gadget_dir = os.path.join(self._root_dir, gadget_rel_dir)
+        template_parser.set_base(gadget_rel_dir + os.sep)
 
         self._create_folders(gadget_dir)
         wgt_file.extract(gadget_dir)
