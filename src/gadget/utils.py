@@ -30,6 +30,7 @@
 
 #
 import re
+import os
 from lxml import etree
 from cStringIO import StringIO
 
@@ -360,10 +361,13 @@ def xpath(tree, query, xmlns):
         return tree.xpath(query, namespaces={'xhtml': xmlns})
 
 
-def fix_ezweb_scripts(xhtml_code, request):
-    #xhtml_code = re.sub(r'<\?xml\s+version="[\d\.]+"(\s+encoding="[^"]")?\s*\?>', '', xhtml_code)
+def fix_gadget_code(xhtml_code, base_url, request):
 
     rootURL = get_site_domain(request)
+    force_base = False
+    if not base_url.startswith(('http://', 'https://')):
+        base_url = rootURL + '/deployment/gadgets/' + base_url
+        force_base = True
 
     try:
         xmltree = etree.fromstring(xhtml_code).getroottree()
@@ -376,6 +380,18 @@ def fix_ezweb_scripts(xhtml_code, request):
     if prefix in xmltree.getroot().nsmap:
         xmlns = xmltree.getroot().nsmap[prefix]
 
+    # Fix base element
+    base_elements = xpath(xmltree, '/xhtml:html//xhtml:base', xmlns)
+    for base_element in base_elements[1:]:
+        base_element.parent.remove(base_element)
+
+    if len(base_elements) >= 1 and force_base:
+        base_elements[0].set('href', base_url)
+    elif len(base_elements) == 0:
+        head_element = xpath(xmltree, '/xhtml:html/xhtml:head', xmlns)[0]
+        head_element.insert(0, etree.Element('base', href=base_url))
+
+    # Fix scripts
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     for script in scripts:
         if 'src' in script.attrib:

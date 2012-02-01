@@ -30,7 +30,9 @@
 
 #
 import time
+import os
 
+from django.conf import settings
 from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
@@ -48,7 +50,7 @@ from commons.template import TemplateParser
 from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget, create_gadget_from_template, includeTagBase, fix_ezweb_scripts
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 from workspace.utils import create_published_workspace_from_template
@@ -202,12 +204,12 @@ class GadgetCodeEntry(Resource):
         code = xhtml.code
         if not xhtml.cacheable or code == '':
             try:
-                if xhtml.url.startswith('/deployment/gadgets/'):
-                    code = get_xhtml_content(xhtml.url)
-                    code = includeTagBase(code, xhtml.url, request)
-                else:
+                if xhtml.url.startswith(('http://', 'https://')):
                     code = download_http_content(gadget.get_resource_url(xhtml.url, request), user=request.user)
-                code = fix_ezweb_scripts(code, request)
+                else:
+                    code = download_http_content('file://' + os.path.join(settings.GADGETS_DEPLOYMENT_DIR, xhtml.url), user=request.user)
+
+                code = fix_gadget_code(code, xhtml.url, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
