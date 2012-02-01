@@ -251,23 +251,27 @@ class TemplateParser(object):
                 'friendcode': event.get('friendcode'),
             })
 
-        context_element = self._xpath(CONTEXT_XPATH, self._doc)[0]
-
         self._info['context'] = []
-        for gcontext in self._xpath(GADGET_CONTEXT_XPATH, context_element):
-            self._info['context'].append({
-                'name': gcontext.get('name'),
-                'type': gcontext.get('type'),
-                'concept': gcontext.get('concept'),
-                'aspect': 'GCTX',
-            })
-        for pcontext in self._xpath(PLATFORM_CONTEXT_XPATH, context_element):
-            self._info['context'].append({
-                'name': pcontext.get('name'),
-                'type': pcontext.get('type'),
-                'concept': pcontext.get('concept'),
-                'aspect': 'ECTX',
-            })
+
+        context_elements = self._xpath(CONTEXT_XPATH, self._doc)
+        if len(context_elements) == 1:
+
+            context_element = context_elements[0]
+
+            for gcontext in self._xpath(GADGET_CONTEXT_XPATH, context_element):
+                self._info['context'].append({
+                    'name': gcontext.get('name'),
+                    'type': gcontext.get('type'),
+                    'concept': gcontext.get('concept'),
+                    'aspect': 'GCTX',
+                })
+            for pcontext in self._xpath(PLATFORM_CONTEXT_XPATH, context_element):
+                self._info['context'].append({
+                    'name': pcontext.get('name'),
+                    'type': pcontext.get('type'),
+                    'concept': pcontext.get('concept'),
+                    'aspect': 'ECTX',
+                })
 
         xhtml_elements = self._xpath(CODE_XPATH, self._doc)
         if len(xhtml_elements) == 1 and xhtml_elements[0].get('href', '') != '':
