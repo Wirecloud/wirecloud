@@ -482,7 +482,7 @@ class TemplateParser(object):
         if not self._parsed:
             self._parse_extra_info()
 
-        return self._info
+        return dict(self._info)
 
     def get_absolute_url(self, url, base=None):
         if base is None:
