@@ -73,8 +73,10 @@ def extract_resource_media_from_package(template, package, base_path):
 
 def add_gadget_from_wgt(file, user, wgt_file=None, template=None):
 
+    close_wgt = False
     if wgt_file is None:
         wgt_file = WgtFile(file)
+        close_wgt = True
 
     if template is None:
         template_contents = wgt_file.get_template()
@@ -96,7 +98,7 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None):
 
     overrides = extract_resource_media_from_package(template, wgt_file, local_dir)
     template_uri = reverse('wirecloud_catalogue.media', args=resource_id + (file_name,))
-    if wgt_file != file:
+    if close_wgt:
         wgt_file.close()
 
     f = open(local_wgt, "wb")
