@@ -272,8 +272,13 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
     if workspace.creator != user:
         raise Http403()
 
-    ########### Template Parser
-    template_content = http_utils.download_http_content(templateURL, user=user)
+    if fromWGT:
+        templateURL = 'file://' + os.path.join(settings.BASEDIR, templateURL[1:])
+        wgt_file = WgtFile(StringIO(download_http_content(templateURL)))
+        template_content = wgt_file.get_template()
+    else:
+        template_content = http_utils.download_http_content(templateURL, user=user)
+
     templateParser = TemplateParser(template_content, templateURL)
 
     # Gadget is created only once
@@ -281,7 +286,10 @@ def get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT=False)
     try:
         gadget = Gadget.objects.get(uri=gadget_uri)
     except Gadget.DoesNotExist:
-        gadget = create_gadget_from_template(templateParser, user, request)
+        if fromWGT:
+            gadget = create_gadget_from_wgt(wgt_file, user)
+        else:
+            gadget = create_gadget_from_template(templateParser, user, request)
 
     # A new user has added the gadget in his showcase
     # check if the workspace in which the igadget is being added is shared
