@@ -45,7 +45,7 @@ from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.gadgetCodeParser import parse_gadget_code
 from gadget.htmlHeadParser import HTMLHeadParser
-from gadget.models import VariableDef, UserPrefOption, Gadget
+from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
@@ -171,6 +171,15 @@ def create_gadget_from_template(template, user, request=None, base=None):
         )
         variable_definitions[vDef.name] = vDef
         order += 1
+
+    for context in gadget_info['context']:
+        vDef = VariableDef.objects.create(
+            name=context['name'],
+            type=parser.typeText2typeCode(event['type']),
+            aspect=context['aspect'],
+            gadget=gadget,
+        )
+        ContextOption.objects.create(concept=context['concept'], varDef=vDef)
 
     gadget_table = gadget.__class__.__module__ + "." + gadget.__class__.__name__
     for lang in gadget_info['translations']:
