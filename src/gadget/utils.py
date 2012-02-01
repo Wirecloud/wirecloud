@@ -29,12 +29,10 @@
 
 
 #
-import re
 import os
 from lxml import etree
 from cStringIO import StringIO
 
-from django.utils.http import urlquote
 from django.contrib.sites.models import Site
 from django.conf import settings
 
@@ -44,7 +42,6 @@ from commons.authentication import Http403
 from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
-from gadget.htmlHeadParser import HTMLHeadParser
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
@@ -303,58 +300,6 @@ def get_and_add_gadget(vendor, name, version, users):
 
     gadget.save()
     return gadget
-
-
-includeTagBase_exp = re.compile(r'.*/deployment/gadgets/')
-includeTagBase_expScript = re.compile(r'<script.*</script>', re.I | re.S)
-includeTagBase_expLink = re.compile(r'<style.*</style>', re.I | re.S)
-includeTagBase_htmlExp = re.compile(r'(?P<element1>.*)<html>(?P<element2>.*)', re.I)
-includeTagBase_headExp = re.compile(r'(?P<element1>.*)<head>(?P<element2>.*)', re.I)
-
-
-def includeTagBase(document, url, request):
-    # Get info url Gadget: host, username, Vendor, NameGadget and Version
-
-    # Is the gadget in the platform?
-    if not includeTagBase_exp.search(url):
-        return document
-
-    # Get href base
-    elements = includeTagBase_exp.sub("", url).split("/")
-
-    host = get_site_domain(request)
-
-    href = "/".join([host, 'deployment', 'gadgets', urlquote(elements[0]), urlquote(elements[1]), urlquote(elements[2]), urlquote(elements[3])]) + "/"
-
-    if not isinstance(document, unicode):
-        document = u"%s" % document.decode('utf8', 'ignore')
-
-    # HTML Parser
-    subDocument = includeTagBase_expScript.sub("", document)
-    subDocument = includeTagBase_expLink.sub("", subDocument)
-    parser = HTMLHeadParser(subDocument)
-    # Split document by lines
-    lines = document.split("\n")
-
-    # HTML document has not head tag
-    if not parser.getPosStartHead() and parser.getPosStartHtml():
-        if(includeTagBase_headExp.search(lines[parser.getPosStartHtml() - 1])):
-            v = includeTagBase_headExp.search(lines[parser.getPosStartHtml() - 1])
-            element1 = v.group("element1")
-            element2 = v.group("element2")
-            html = "<html><head><base href='" + href + "'/></head>"
-            lines[parser.getPosStartHtml() - 1] = element1 + html + element2
-
-    # HTML document has head tag but has not base tag
-    if parser.getPosStartHead() and not parser.getHrefBase():
-        if(includeTagBase_headExp.search(lines[parser.getPosStartHead() - 1])):
-            v = includeTagBase_headExp.search(lines[parser.getPosStartHead() - 1])
-            element1 = v.group("element1")
-            element2 = v.group("element2")
-            head = "<head><base href='" + href + "'/>"
-            lines[parser.getPosStartHead() - 1] = element1 + head + element2
-
-    return u"".join("\n").join(lines)
 
 
 def xpath(tree, query, xmlns):
