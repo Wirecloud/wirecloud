@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
+  <Catalog.ResourceDescription>
+    <Vendor>Morfeo</Vendor>
+    <Name>test</Name>
+    <Version>0.1/</Version>
+    <Author>admin</Author>
+    <Mail>test@example.com</Mail>
+    <Description>description</Description>
+    <ImageURI>images/catalogue.png</ImageURI>
+    <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+    <WikiURI>doc/index.html</WikiURI>
+  </Catalog.ResourceDescription>
+
+  <Platform.Preferences>
+  </Platform.Preferences>
+
+  <Platform.StateProperties>
+  </Platform.StateProperties>
+
+  <Platform.Wiring>
+  </Platform.Wiring>
+
+  <Platform.Link>
+    <XHTML href="test.html"/>
+  </Platform.Link>
+
+  <Platform.Rendering height="24" width="10"/>
+  <Platform.Context>
+  </Platform.Context>
+</Template>

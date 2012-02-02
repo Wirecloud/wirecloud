@@ -69,11 +69,16 @@ class ShowcaseTestCase(LocalizedTestCase):
         super(ShowcaseTestCase, self).tearDown()
         http_utils.download_http_content = self._original_function
 
+    def read_template(self, template):
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', template))
+        contents = f.read()
+        f.close()
+
+        return contents
+
     def test_basic_gadget_creation(self):
         template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template1.xml'))
-        template = f.read()
-        f.close()
+        template = self.read_template('template1.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -101,9 +106,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def test_gadget_creation_from_catalogue(self):
         template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template1.xml'))
-        template = f.read()
-        f.close()
+        template = self.read_template('template1.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -125,9 +128,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def test_gadget_template_with_missing_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template3.xml'))
-        template = f.read()
-        f.close()
+        template = self.read_template('template3.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -135,9 +136,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def test_gadget_template_with_notused_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template4.xml'))
-        template = f.read()
-        f.close()
+        template = self.read_template('template4.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -160,9 +159,7 @@ class ShowcaseTestCase(LocalizedTestCase):
 
     def test_repeated_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', 'template2.xml'))
-        template = f.read()
-        f.close()
+        template = self.read_template('template2.xml')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -177,3 +174,20 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['pref']['label'], 'Label')
         self.assertEqual(data['variables']['event']['label'], 'Label')
         self.assertEqual(data['variables']['slot']['label'], 'Label')
+
+    def test_invalid_format(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+
+
+        template = self.read_template('template5.xml')
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
+        template = self.read_template('template6.xml')
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
+        template = self.read_template('template7.xml')
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
