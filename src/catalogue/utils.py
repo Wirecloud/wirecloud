@@ -171,7 +171,7 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
             value = translation[index]
             usages = resource_info['translation_index_usage'][index]
             for use in usages:
-                if use['type'] != 'gadget':
+                if use['type'] != 'resource':
                     continue
 
                 Translation.objects.create(

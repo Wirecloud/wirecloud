@@ -150,7 +150,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
             order=order,
             description=slot['description'],
             type=parser.typeText2typeCode(slot['type']),
-            aspect='EVEN',
+            aspect='SLOT',
             friend_code=slot['friendcode'],
             label=slot['label'],
             action_label=slot['action_label'],
@@ -166,7 +166,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
             order=order,
             description=event['description'],
             type=parser.typeText2typeCode(event['type']),
-            aspect='SLOT',
+            aspect='EVEN',
             friend_code=event['friendcode'],
             label=event['label'],
             gadget=gadget,
@@ -177,7 +177,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
     for context in gadget_info['context']:
         vDef = VariableDef.objects.create(
             name=context['name'],
-            type=parser.typeText2typeCode(event['type']),
+            type=parser.typeText2typeCode(context['type']),
             aspect=context['aspect'],
             gadget=gadget,
         )
@@ -190,7 +190,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
             value = translation[index]
             usages = gadget_info['translation_index_usage'][index]
             for use in usages:
-                if use['type'] == 'gadget':
+                if use['type'] == 'resource':
                     table = gadget_table
                     element_id = gadget.id
                 elif use['type'] == 'vdef':
