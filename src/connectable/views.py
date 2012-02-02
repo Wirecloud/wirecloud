@@ -210,6 +210,9 @@ class ConnectableEntry(Resource):
             for deleted_channel in channelsDeletedByUser:
                 deleteChannel(deleted_channel)
 
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
             json_result = {'ids': id_mapping}
 
             return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
