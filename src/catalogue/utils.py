@@ -76,7 +76,7 @@ def extract_resource_media_from_package(template, package, base_path):
     return overrides
 
 
-def add_gadget_from_wgt(file, user, wgt_file=None, template=None):
+def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=False):
 
     close_wgt = False
     if wgt_file is None:
@@ -111,8 +111,8 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None):
     f.write(file.read())
     f.close()
 
-    resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
-    return resource
+    if not deploy_only:
+        return add_resource_from_template(template_uri, template, user, overrides=overrides)
 
 
 def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):

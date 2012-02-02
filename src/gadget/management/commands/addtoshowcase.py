@@ -31,10 +31,20 @@ from commons.wgt import WgtFile
 from commons.template import TemplateParser
 
 
+class FakeUser():
+
+    def __init__(self, username):
+        self.username = username
+
+
 class Command(BaseCommand):
     args = '<file.wgt>...'
     help = 'Adds a packaged gadget into the showcase'
     option_list = BaseCommand.option_list + (
+        make_option('-d', '--deploy-only',
+            action='store_true',
+            dest='deploy_only',
+            default=False),
         make_option('-r', '--reinstall',
             action='store_true',
             dest='reinstall',
@@ -45,7 +55,11 @@ class Command(BaseCommand):
         if len(args) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
-        user = User.objects.get(pk=1)
+        if not options['deploy_only']:
+            user = User.objects.get(pk=1)
+        else:
+            user = FakeUser('admin')
+
         for file_name in args:
             try:
                 wgt_file = WgtFile(file_name)
@@ -57,7 +71,7 @@ class Command(BaseCommand):
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
                 try:
-                    create_gadget_from_wgt(wgt_file, user)
+                    create_gadget_from_wgt(wgt_file, user, deploy_only=options['deploy_only'])
                 except IntegrityError:
                     if not options['reinstall']:
                         raise

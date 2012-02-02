@@ -35,6 +35,10 @@ class Command(BaseCommand):
     args = '<file.wgt>...'
     help = 'Adds a packaged gadget into the catalogue'
     option_list = BaseCommand.option_list + (
+        make_option('-d', '--deploy-only',
+            action='store_true',
+            dest='deploy_only',
+            default=False),
         make_option('-r', '--reinstall',
             action='store_true',
             dest='reinstall',
@@ -45,7 +49,10 @@ class Command(BaseCommand):
         if len(args) < 1:
             raise CommandError(_('Wrong number of arguments'))
 
-        user = User.objects.get(pk=1)
+        user = None
+        if not options['deploy_only']:
+            user = User.objects.get(pk=1)
+
         for file_name in args:
             try:
                 f = open(file_name, 'rb')
@@ -58,7 +65,7 @@ class Command(BaseCommand):
                 template_contents = wgt_file.get_template()
                 template = TemplateParser(template_contents)
                 try:
-                    add_gadget_from_wgt(f, user, wgt_file=wgt_file, template=template)
+                    add_gadget_from_wgt(f, user, wgt_file=wgt_file, template=template, deploy_only=options['deploy_only'])
                 except IntegrityError:
                     if not options['reinstall']:
                         raise

@@ -214,7 +214,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
     return gadget
 
 
-def create_gadget_from_wgt(wgt, user):
+def create_gadget_from_wgt(wgt, user, deploy_only=False):
 
     if isinstance(wgt, WgtFile):
         wgt_file = wgt
@@ -222,7 +222,8 @@ def create_gadget_from_wgt(wgt, user):
         wgt_file = WgtFile(StringIO(download_http_content(wgt)))
 
     template = wgt_deployer.deploy(wgt_file, user)
-    return create_gadget_from_template(template, user)
+    if not deploy_only:
+        return create_gadget_from_template(template, user)
 
 
 def get_resource_from_catalogue(vendor, name, **selectors):
