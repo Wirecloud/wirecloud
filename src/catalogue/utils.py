@@ -33,6 +33,7 @@
 import os
 from datetime import datetime
 from urllib2 import URLError, HTTPError
+from urlparse import urljoin
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -53,20 +54,24 @@ from gadget.views import deleteGadget
 from translator.models import Translation
 
 
-
 def extract_resource_media_from_package(template, package, base_path):
 
     overrides = {}
     resource_info = template.get_resource_info()
 
     if not resource_info['image_uri'].startswith(('http://', 'https://', '//')):
-        package.extract_file(resource_info['image_uri'], os.path.join(base_path, resource_info['image_uri']), True)
-        overrides['image_uri'] = '/catalogue/media/' + '/'.join((
-            template.get_resource_vendor(),
-            template.get_resource_name(),
-            template.get_resource_version(),
-            resource_info['image_uri']
-        ))
+        try:
+            package.extract_file(resource_info['image_uri'], os.path.join(base_path, resource_info['image_uri']), True)
+        except KeyError:
+            overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/gadget_image.png')
+
+        else:
+            overrides['image_uri'] = reverse('wirecloud_catalogue.media', args=(
+                template.get_resource_vendor(),
+                template.get_resource_name(),
+                template.get_resource_version(),
+                resource_info['image_uri']
+            ))
 
     return overrides
 

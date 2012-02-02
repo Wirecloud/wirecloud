@@ -42,12 +42,13 @@ class WgtFile(object):
         return self.read(self._template_filename)
 
     def extract_file(self, file_name, output_path, recreate_=False):
+        contents = self.read(file_name)
+
         dir_path = os.path.dirname(output_path)
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
         f = open(output_path, 'wb')
-        contents = self.read(file_name)
         f.write(contents)
         f.close()
 
