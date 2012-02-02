@@ -1,0 +1,132 @@
+[
+    {
+        "pk": 1,
+        "model": "gadget.xhtml",
+        "fields": {
+            "cacheable": true,
+            "url": "admin/Yaco Sistemas S.L./Test/0.9/test.html",
+            "uri": "/gadgets/Yaco Sistemas S.L./Test/0.9/xhtml",
+            "code": "",
+            "content_type": "text/html",
+            "code_timestamp": null
+        }
+    },
+    {
+        "pk": 1,
+        "model": "gadget.gadget",
+        "fields": {
+            "users": [],
+            "menuColor": "",
+            "display_name": "",
+            "name": "Test",
+            "author": "aarranz",
+            "description": "This gadget is used to test some of the features of the EzWeb platform",
+            "uri": "/gadgets/Yaco Sistemas S.L./Test/0.9",
+            "imageURI": "images/catalogue.png",
+            "width": 6,
+            "version": "0.9",
+            "mail": "aarranz@yaco.es",
+            "vendor": "Yaco Sistemas S.L.",
+            "xhtml": 1,
+            "height": 24,
+            "last_update": null,
+            "iPhoneImageURI": "images/catalogue_iphone.png",
+            "wikiURI": "http://forge.morfeo-project.org/wiki/index.php/Gadgets_EzWeb"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "gadget.variabledef",
+        "fields": {
+            "default_value": "default",
+            "action_label": null,
+            "name": "list",
+            "description": "list preference",
+            "label": "list",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 0,
+            "type": "L",
+            "gadget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "gadget.variabledef",
+        "fields": {
+            "default_value": "initial text",
+            "action_label": null,
+            "name": "text",
+            "description": "text preference",
+            "label": "text",
+            "aspect": "PREF",
+            "friend_code": null,
+            "order": 1,
+            "type": "S",
+            "gadget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "gadget.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": "",
+            "name": "slot",
+            "description": "",
+            "label": "slot",
+            "aspect": "EVEN",
+            "friend_code": "slot",
+            "order": 0,
+            "type": "S",
+            "gadget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "gadget.variabledef",
+        "fields": {
+            "default_value": null,
+            "action_label": null,
+            "name": "event",
+            "description": "",
+            "label": "event",
+            "aspect": "SLOT",
+            "friend_code": "event",
+            "order": 0,
+            "type": "S",
+            "gadget": 1,
+            "secure": false
+        }
+    },
+    {
+        "pk": 1,
+        "model": "gadget.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "Default",
+            "value": "default"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "gadget.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value1",
+            "value": "1"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "gadget.userprefoption",
+        "fields": {
+            "variableDef": 1,
+            "name": "value2",
+            "value": "2"
+        }
+    }
+]
