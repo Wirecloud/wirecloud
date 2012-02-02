@@ -38,9 +38,9 @@ from catalogue.views import ResourceVoteCollection, ResourceVersionCollection
 
 urlpatterns = patterns('catalogue.views',
     # Resources
-    (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', ResourceCollection(permitted_methods=('DELETE', 'PUT'))),
+    (r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$', ResourceCollection(permitted_methods=('DELETE', 'PUT'))),
     (r'^resource/(?P<pag>\d+)/(?P<offset>\d+)$', ResourceCollection(permitted_methods=('GET',))),
-    (r'^resource/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$', ResourceCollection(permitted_methods=('DELETE',))),
+    (r'^resource/(?P<vendor>[^/]+)/(?P<name>[^/]+)$', ResourceCollection(permitted_methods=('DELETE',))),
     (r'^resource$', ResourceCollection(permitted_methods=('GET', 'POST',))),
 
     # Search Resources
@@ -48,17 +48,17 @@ urlpatterns = patterns('catalogue.views',
     (r'^search/(?P<criteria>\w+)/(?P<pag>\d+)/(?P<offset>\d+)$', ResourceCollectionBySimpleSearch(permitted_methods=('GET',))),
 
     # Tags
-    (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<tag>\d+)$',
+    (r'^tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<tag>\d+)$',
         ResourceTagCollection(permitted_methods=('DELETE',))),
-    (r'^tag(s)?/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
+    (r'^tag(s)?/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         ResourceTagCollection(permitted_methods=('GET', 'POST',))),
 
     # Vote resources
-    (r'^voting/(?P<vendor>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<name>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)/(?P<version>[\@_\%_\._\!_\s_\-_\|_\&_\/_\:_\(_\)_\w]+)$',
+    (r'^voting/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         ResourceVoteCollection(permitted_methods=('GET', 'POST', 'PUT',))),
 
     #version check
     (r'^versions', ResourceVersionCollection(permitted_methods=('POST',))),
 
-    url(r'^media/(?P<vendor>[\w ]+)/(?P<name>[\w ]+)/(?P<version>[\d.]+)/(?P<file_path>.+)', 'serve_catalogue_media', name='wirecloud_catalogue.media'),
+    url(r'^media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)', 'serve_catalogue_media', name='wirecloud_catalogue.media'),
 )
