@@ -30,6 +30,10 @@ from commons.translation_utils import get_trans_index
 __all__ = ('TemplateParser',)
 
 
+NAME_RE = re.compile(r'^[^/]+$')
+VENDOR_RE = re.compile(r'^[^/]+$')
+VERSION_RE = re.compile(r'^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$')
+
 WIRECLOUD_TEMPLATE_NS = 'http://morfeo-project.org/2007/Template'
 
 RESOURCE_DESCRIPTION_XPATH = '/t:Template/t:Catalog.ResourceDescription'
@@ -163,10 +167,16 @@ class TemplateParser(object):
 
     def _parse_basic_info(self):
 
-        self._info['name'] = self._get_field(NAME_XPATH, self._resource_description)
-        self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description)
-        self._info['version'] = self._get_field(VERSION_XPATH, self._resource_description)
-        if not re.match('^(?:[1-9]\d*\.|0\.)*(?:[1-9]\d*|0)$', self._info['version']):
+        self._info['name'] = self._get_field(NAME_XPATH, self._resource_description).strip()
+        if not re.match(NAME_RE, self._info['name']):
+            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
+
+        self._info['vendor'] = self._get_field(VENDOR_XPATH, self._resource_description).strip()
+        if not re.match(NAME_RE, self._info['vendor']):
+            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
+
+        self._info['version'] = self._get_field(VERSION_XPATH, self._resource_description).strip()
+        if not re.match(VERSION_RE, self._info['version']):
             raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         self._info['description'] = self._get_field(DESCRIPTION_XPATH, self._resource_description)
