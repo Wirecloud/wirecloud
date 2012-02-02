@@ -110,42 +110,6 @@ def add_gadget_from_wgt(file, user, wgt_file=None, template=None):
     return resource
 
 
-def add_resource_from_template_uri(template_uri, user, fromWGT=False):
-
-    if fromWGT:
-
-        localPath = get_wgt_local_path(template_uri)
-        if not os.path.isfile(localPath):
-            raise Exception(_("'%(file)s' is not a file") % {'file': localPath})
-
-        f = open(localPath, 'r')
-        template = f.read()
-        f.close()
-
-    else:
-
-        try:
-            template = download_http_content(template_uri, user=user)
-        except HTTPError, e:
-            msg = _("Error downloading resource template '%(url)s': code %(errorCode)s (%(errorMsg)s)")
-            raise TemplateParseException(msg % {'url': template_uri, 'errorCode': e.code, 'errorMsg': e.msg})
-        except URLError, e:
-            if isinstance(e.reason, str) or isinstance(e.reason, unicode):
-                context = {'errorMsg': e.reason, 'url': template_uri}
-                msg = _("Bad resource template URL '%(url)s': %(errorMsg)s") % context
-            else:
-                context = {'errorMsg': e.reason.strerror, 'url': template_uri}
-                msg = _("Error downloading resource template '%(url)s': %(errorMsg)s") % context
-
-            raise TemplateParseException(msg)
-        except ValueError, e:
-            context = {'errorMsg': e, 'url': template_uri}
-            msg = _("Bad resource template URL '%(url)s': %(errorMsg)s") % context
-            raise TemplateParseException(msg)
-
-    return add_resource_from_template(template_uri, template, user, fromWGT=fromWGT)
-
-
 def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):
 
     if isinstance(template, TemplateParser):

@@ -1,1 +1,1 @@
-from catalogue.tests.tests import AddGadgetTestCase, CatalogueAPITestCase, TranslationTestCase, WGTDeploymentTestCase  # pyflakes:ignore
+from catalogue.tests.tests import AddGadgetTestCase, CatalogueAPITestCase, WGTDeploymentTestCase  # pyflakes:ignore
