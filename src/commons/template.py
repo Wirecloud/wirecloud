@@ -190,6 +190,73 @@ class TemplateParser(object):
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
 
+    def _parse_wiring_info(self, channels=False):
+        self._info['slots'] = []
+        self._info['events'] = []
+
+        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
+
+        for slot in self._xpath(SLOT_XPATH, wiring_element):
+            self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
+            self._add_translation_index(slot.get('action_label', ''), type='vdef', variable=slot.get('name'))
+            self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
+            self._info['slots'].append({
+                'name': slot.get('name'),
+                'type': slot.get('type'),
+                'label': slot.get('label'),
+                'description': slot.get('description', ''),
+                'action_label': slot.get('action_label', ''),
+                'friendcode': slot.get('friendcode'),
+            })
+
+        for event in self._xpath(EVENT_XPATH, wiring_element):
+            self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
+            self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
+            self._info['events'].append({
+                'name': event.get('name'),
+                'type': event.get('type'),
+                'label': event.get('label'),
+                'description': event.get('description', ''),
+                'friendcode': event.get('friendcode'),
+            })
+
+        if parse_channels:
+            self._parse_wiring_channel_info(wiring_element)
+
+    def _parse_wiring_channel_info(self, wiring_element):
+
+        channels = {}
+        for channel in self._xpath(CHANNEL_XPATH, wiring_element):
+            channel_info = {
+                'id': int(channel.get('id')),
+                'name': channel.get('name'),
+                'readonly': channel.get('readonly', 'false').lower() == 'true',
+                'filter': channel.get('filter'),
+                'filter_params': channel.get('filter_params'),
+                'ins': [],
+                'outs': [],
+                'out_channels': [],
+            }
+
+            for in_ in self._xpath(IN_XPATH, channel):
+                channel_info['ins'].append({
+                    'igadget': in_.get('igadget'),
+                    'name': in_.get('name'),
+                })
+
+            for out in self._xpath(OUT_XPATH, channel):
+                channel_info['outs'].append({
+                    'igadget': out.get('igadget'),
+                    'name': out.get('name'),
+                })
+
+            for out_channel in self._xpath(CHANNEL_XPATH, channel):
+                channel_info['out_channels'].append(out_channel.get('id'))
+
+            channels[channel.get('id')] = channel_info
+
+        self._info['channels'] = channels
+
     def _parse_gadget_info(self):
 
         self._get_url_field('iphone_image_uri', IPHONE_IMAGE_URI_XPATH, self._resource_description, required=False)
@@ -233,33 +300,7 @@ class TemplateParser(object):
                 'secure': prop.get('secure', 'false').lower() == 'true',
             })
 
-        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
-
-        self._info['slots'] = []
-        for slot in self._xpath(SLOT_XPATH, wiring_element):
-            self._add_translation_index(slot.get('label'), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('action_label', ''), type='vdef', variable=slot.get('name'))
-            self._add_translation_index(slot.get('description', ''), type='vdef', variable=slot.get('name'))
-            self._info['slots'].append({
-                'name': slot.get('name'),
-                'type': slot.get('type'),
-                'label': slot.get('label'),
-                'description': slot.get('description', ''),
-                'action_label': slot.get('action_label', ''),
-                'friendcode': slot.get('friendcode'),
-            })
-
-        self._info['events'] = []
-        for event in self._xpath(EVENT_XPATH, wiring_element):
-            self._add_translation_index(event.get('label'), type='vdef', variable=event.get('name'))
-            self._add_translation_index(event.get('description', ''), type='vdef', variable=event.get('name'))
-            self._info['events'].append({
-                'name': event.get('name'),
-                'type': event.get('type'),
-                'label': event.get('label'),
-                'description': event.get('description', ''),
-                'friendcode': event.get('friendcode'),
-            })
+        self._parse_wiring_info()
 
         self._info['context'] = []
 
@@ -372,38 +413,8 @@ class TemplateParser(object):
 
         self._info['tabs'] = tabs
 
+        self._parse_wiring_info(channels=True)
         wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
-        channels = {}
-        for channel in self._xpath(CHANNEL_XPATH, wiring_element):
-            channel_info = {
-                'id': int(channel.get('id')),
-                'name': channel.get('name'),
-                'readonly': channel.get('readonly', 'false').lower() == 'true',
-                'filter': channel.get('filter'),
-                'filter_params': channel.get('filter_params'),
-                'ins': [],
-                'outs': [],
-                'out_channels': [],
-            }
-
-            for in_ in self._xpath(IN_XPATH, channel):
-                channel_info['ins'].append({
-                    'igadget': in_.get('igadget'),
-                    'name': in_.get('name'),
-                })
-
-            for out in self._xpath(OUT_XPATH, channel):
-                channel_info['outs'].append({
-                    'igadget': out.get('igadget'),
-                    'name': out.get('name'),
-                })
-
-            for out_channel in self._xpath(CHANNEL_XPATH, channel):
-                channel_info['out_channels'].append(out_channel.get('id'))
-
-            channels[channel.get('id')] = channel_info
-
-        self._info['channels'] = channels
 
     def _parse_translation_catalogue(self):
         self._info['translations'] = {}
