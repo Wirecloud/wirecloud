@@ -34,12 +34,14 @@ from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
-from django.http import  HttpResponseBadRequest, HttpResponseServerError
+from django.http import  HttpResponseBadRequest, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
+from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
 from django.utils.encoding import smart_str
 from django.views.static import serve
@@ -85,8 +87,35 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
         return response
 
 
+def iframe_error(func):
+
+    def wrapper(self, request, *args, **kwargs):
+        if not request.REQUEST.get('iframe', False):
+            return func(self, request, *args, **kwargs)
+
+        error_msg = response = None
+        try:
+            response = func(self, request, *args, **kwargs)
+        except Exception, e:
+            error_msg = str(e)
+
+        if response is not None and (response.status_code >= 300 or response.status_code < 200):
+            error_msg = response.content
+
+        if error_msg:
+            return HttpResponseRedirect(reverse('iframe_error') + '?msg=' + urlquote_plus(str(error_msg)) + '#error')
+
+    return wrapper
+
+@no_cache
+def error(request):
+    msg = request.GET.get('msg', 'Gadget could not be added')
+    return HttpResponse(msg, mimetype='text/plain')
+
+
 class ResourceCollection(Resource):
 
+    @iframe_error
     @commit_on_http_success
     def create(self, request, user_name=None, fromWGT=False):
 
@@ -112,21 +141,10 @@ class ResourceCollection(Resource):
             # Resource already exists. Rollback transaction
             json_response = {
                 "result": "error",
-                "message": _('Gadget already exists!'),
+                "message": _('Resource already exists'),
             }
-            return HttpResponseBadRequest(simplejson.dumps(json_response),
-                                          mimetype='application/json; charset=UTF-8')
-
-        except TemplateParseException, e:
-            transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.msg}
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
-
-        except Exception, e:
-            # Internal error
-            transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
+            return HttpResponse(simplejson.dumps(json_response),
+                status=409, mimetype='application/json; charset=UTF-8')
 
         json_response = get_added_resource_info(resource, user)
 

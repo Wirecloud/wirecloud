@@ -60,5 +60,6 @@ urlpatterns = patterns('catalogue.views',
     #version check
     (r'^versions', ResourceVersionCollection(permitted_methods=('POST',))),
 
+    url(r'^error', 'error', name='iframe_error'),
     url(r'^media/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/(?P<file_path>.+)', 'serve_catalogue_media', name='wirecloud_catalogue.media'),
 )
