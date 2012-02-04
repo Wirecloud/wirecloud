@@ -42,6 +42,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from commons.utils import save_alternative
 from workspace.managers import get_workspace_managers
 from workspace.models import Category, Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
@@ -102,6 +103,10 @@ def get_mashup_gadgets(mashup_id):
 
 
 def create_published_workspace_from_template(template, user):
+
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
+
     workspace_info = template.get_resource_basic_info()
     return PublishedWorkSpace.objects.create(name=workspace_info['name'],
         vendor=workspace_info['vendor'], version=workspace_info['version'],

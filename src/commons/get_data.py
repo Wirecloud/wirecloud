@@ -605,7 +605,7 @@ def _get_global_workspace_data(workSpaceDAO, user):
 
     # Tabs processing
     # Check if the workspace's tabs have order
-    tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('id')
+    tabs = Tab.objects.filter(workspace=workSpaceDAO).order_by('position')
     if tabs.count() > 0:
         if tabs[0].position != None:
             tabs = tabs.order_by('position')

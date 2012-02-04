@@ -190,7 +190,7 @@ class TemplateParser(object):
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
 
-    def _parse_wiring_info(self, channels=False):
+    def _parse_wiring_info(self, parse_channels=False):
         self._info['slots'] = []
         self._info['events'] = []
 
@@ -359,7 +359,7 @@ class TemplateParser(object):
             }
         self._info['params'] = params
 
-        tabs = {}
+        tabs = []
         for tab in self._xpath(TAB_XPATH, workspace_structure):
             tab_info = {
                 'name': tab.get('name'),
@@ -409,11 +409,11 @@ class TemplateParser(object):
 
                 tab_info['resources'].append(resource_info)
 
-            tabs[tab.get('id')] = tab_info
+            tabs.append(tab_info)
 
         self._info['tabs'] = tabs
 
-        self._parse_wiring_info(channels=True)
+        self._parse_wiring_info(parse_channels=True)
         wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
     def _parse_translation_catalogue(self):

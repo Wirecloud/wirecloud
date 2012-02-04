@@ -105,11 +105,8 @@ def fillWorkspaceUsingTemplate(workspace, template):
             'type': param.get('type'),
         }
 
-    tab_id_mapping = {}
-    for tab_id in workspace_info['tabs']:
-        tab_entry = workspace_info['tabs'][tab_id]
+    for tab_entry in workspace_info['tabs']:
         tab = createTab(tab_entry.get('name'), user, workspace, allow_renaming=True)
-        tab_id_mapping[tab_id] = tab
 
         new_values = {}
         for preference_name in tab_entry['preferences']:

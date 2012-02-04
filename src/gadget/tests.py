@@ -16,6 +16,7 @@ from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
 from gadget.models import Gadget
 from gadget.utils import create_gadget_from_template, get_or_add_gadget_from_catalogue
+from workspace.utils import create_published_workspace_from_template
 
 
 BASIC_HTML_GADGET_CODE = "<html><body><p>gadget code</p></body></html>"
@@ -69,8 +70,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         super(ShowcaseTestCase, self).tearDown()
         http_utils.download_http_content = self._original_function
 
-    def read_template(self, template):
-        f = open(os.path.join(os.path.dirname(__file__), 'tests', template))
+    def read_template(self, *template):
+        f = open(os.path.join(os.path.dirname(__file__), 'tests', *template))
         contents = f.read()
         f.close()
 
@@ -179,7 +180,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['event']['label'], 'Label')
         self.assertEqual(data['variables']['slot']['label'], 'Label')
 
-    def test_invalid_format(self):
+    def test_gadgets_with_invalid_format(self):
         template_uri = "http://example.com/path/gadget.xml"
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
 
@@ -195,3 +196,12 @@ class ShowcaseTestCase(LocalizedTestCase):
         template = self.read_template('template7.xml')
         http_utils.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
+    def test_basic_mashup(self):
+        template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')
+        workspace = create_published_workspace_from_template(template, self.user)
+
+        self.assertEqual(workspace.vendor, 'EzWeb Test Suite')
+        self.assertEqual(workspace.name, 'Test Workspace')
+        self.assertEqual(workspace.version, '1')
+        self.assertEqual(workspace.creator, self.user)
