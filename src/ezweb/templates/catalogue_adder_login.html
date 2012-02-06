@@ -4,7 +4,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% trans "EzWeb Platform" %}</title>
+<title>{% trans "Wirecloud Platform" %}</title>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
@@ -204,7 +204,7 @@ h3{
       var browser=navigator.appName;
 
       if (browser.toLowerCase().substring(0, 8) != 'netscape') {
-           alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
+           alert('Currently Wirecloud is only Firefox 2+ compliant! Please, try Wirecloud with this browser!');
 	   return false;
       }      
       cancel = false;
@@ -245,9 +245,9 @@ h3{
 <div id="content-main">
 	
 	<!-- Training -->
-	<h1 id="warning"> {% trans 'This operation requires login. Please sing-in into the EzWeb platform!' %}</h1>
+	<h1 id="warning"> {% trans 'This operation requires login. Please sing-in into the Wirecloud platform!' %}</h1>
 	<div id="training" class="training">
-		<h2 id="title"> {% trans 'Thanks to EzWeb you will be able to combine your favorite services to make your life easier' %}</h2>
+		<h2 id="title"> {% trans 'Thanks to Wirecloud you will be able to combine your favorite services to make your life easier' %}</h2>
 		<div id="training-content" class="training-content">
 			<h3>{% trans 'Watch our videos!' %}</h3>
 			<table cellspacing="0">
@@ -281,7 +281,7 @@ h3{
 							<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
 						</a> 
 					</td>
-					<td>{% trans "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue." %}</td>
+					<td>{% trans "Share your workspaces/<b>mashups</b> as items in Wirecloud's catalogue." %}</td>
 				</tr>
 				<tr>
 					<td align="center">
@@ -317,7 +317,7 @@ h3{
 				    <input type="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
-				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
+				{% trans 'Your first time in Wirecloud? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
 			</div>
 		</div>
 		<div id="tips">
