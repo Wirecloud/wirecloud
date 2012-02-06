@@ -24,7 +24,7 @@ def start_server(ezweb_path, server_name='', server_port=8000):
     container = tornado.wsgi.WSGIContainer(application)
     http_server = tornado.httpserver.HTTPServer(container)
 
-    print "EzWeb server listening at http://%s:%s/" % (server_name, server_port)
+    print "Wirecloud server listening at http://%s:%s/" % (server_name, server_port)
 
     http_server.listen(server_port, server_name)
 

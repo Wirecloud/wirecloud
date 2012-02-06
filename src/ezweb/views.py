@@ -131,7 +131,7 @@ def send_pingback(request, params):
 
 
 def add_gadget_script(request, fromWGT=False, user_action=True):
-    """ Page for adding gadgets to catalogue without loading EzWeb """
+    """ Page for adding gadgets to catalogue without loading Wirecloud """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('template_uri' in request.REQUEST):
             template_uri = request.REQUEST['template_uri']
@@ -153,7 +153,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
                 gadget = templateParser.get_gadget()
 
-                params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
+                params = {'msg': _('Adding a gadget to Wirecloud!'), 'template_uri': template_uri, 'gadget': gadget}
 
                 if 'pingback' in request.REQUEST:
                     params['pingback'] = request.REQUEST['pingback']
@@ -213,7 +213,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
                 if ('add_to_ws' in request.REQUEST and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
-                    #Loading ezweb for automating gadget instantiation
+                    #Loading wirecloud for automating gadget instantiation
                     vendor = catalogue_response['vendor']
                     version = catalogue_response['version']
                     name = catalogue_response['gadgetName']
@@ -247,7 +247,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
 
 def update_gadget_script(request, fromWGT=False, user_action=True):
-    """ Page for adding gadgets to catalogue without loading EzWeb """
+    """ Page for adding gadgets to catalogue without loading Wirecloud """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('gadget_vendor' in request.REQUEST and 'gadget_name' in request.REQUEST and 'gadget_version' in  request.REQUEST):
             vendor = request.REQUEST['gadget_vendor']
@@ -340,7 +340,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
 
 
 def public_ws_viewer(request, public_ws_id):
-    """ EzWeb viewer """
+    """ Wirecloud viewer """
     try:
         workspace = WorkSpace.objects.get(id=public_ws_id)
     except WorkSpace.DoesNotExist:

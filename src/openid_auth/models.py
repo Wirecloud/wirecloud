@@ -57,7 +57,7 @@ class OpenIDBackend:
                     transaction.rollback() 
                     user.username = secondary_name
                     
-                #for OpenID users, their password in EzWeb isn't important
+                #for OpenID users, their password in Wirecloud isn't important
                 #let's use a random one
                 import random
                 user.set_password(random.randint(0,1000000))

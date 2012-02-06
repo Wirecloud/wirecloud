@@ -278,14 +278,14 @@ WORKSPACE_MANAGERS = (
 )
 
 # Template Generator URL. This URL is only needed to allow publishing
-# a Workspace when EzWeb is running with the develop server (manage.py)
+# a Workspace when Wirecloud is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 
 #TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
 
 
 # Gadget Template Generator URL. This URL is only needed to allow creating
-# a Gadget when EzWeb is running with the develop server (manage.py)
+# a Gadget when Wirecloud is running with the develop server (manage.py)
 # or if this application is moved to another server
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #GADGET_GENERATOR_URL = 'http://localhost:9001'
@@ -307,7 +307,7 @@ PROXY_PROCESSORS = (
 ##### Facebook Connect data #####
 #################################
 
-# To enable Facebook Connect authentication in EzWeb (having your application set up in Facebook) you must:
+# To enable Facebook Connect authentication in Wirecloud (having your application set up in Facebook) you must:
 #    1. Enable the facebook and facebookconnect applications
 #    2. Enable the Middlewares (facebook.djangofb.FacebookMiddleware, facebookconnect.middleware.FacebookConnectMiddleware)
 #    3. Enable the backend facebookconnect.models.FacebookBackend

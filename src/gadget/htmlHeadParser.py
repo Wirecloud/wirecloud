@@ -31,7 +31,7 @@ from HTMLParser import HTMLParser
 
 
 class HTMLHeadParser(HTMLParser):
-    """HTML Parser for EzWeb"""
+    """HTML Parser for Wirecloud"""
     def __init__(self, document):
         HTMLParser.__init__(self)
         self.starthead = None

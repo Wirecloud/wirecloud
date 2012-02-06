@@ -47,7 +47,7 @@ def load_template_source(template_name, template_dirs=None):
         except IOError:
             tried.append(filepath)
 
-    # Default EzWeb templates
+    # Default Wirecloud templates
     filepath = safe_join(settings.BASEDIR, 'ezweb', 'templates', template_name)
     try:
         return (open(filepath).read().decode(settings.FILE_CHARSET), filepath)
