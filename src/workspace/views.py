@@ -43,6 +43,7 @@ from commons.http_utils import PUT_parameter
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.template import TemplateParser
 from commons.service import Service
 from commons.utils import get_xml_error, json_encode
 from igadget.models import IGadget
@@ -55,7 +56,7 @@ from workspace.models import Category
 from workspace.models import VariableValue
 from workspace.models import Tab
 from workspace.models import PublishedWorkSpace, UserWorkSpace, WorkSpace
-from workspace.utils import deleteTab, createTab, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
+from workspace.utils import deleteTab, createTab, create_published_workspace_from_template, getCategories, getCategoryId, get_workspace_list, setVisibleTab, set_variable_value
 
 
 def clone_original_variable_value(variable, creator, new_user):
@@ -684,22 +685,20 @@ class WorkSpacePublisherEntry(Resource):
         user = get_user_authentication(request)
         workspace = get_object_or_404(WorkSpace, id=workspace_id)
 
-        template = build_template_from_workspace(mashup, workspace, user)
+        template = TemplateParser(build_template_from_workspace(mashup, workspace, user))
+
+        published_workspace = create_published_workspace_from_template(template, user)
+        published_workspace.workspace = workspace
+        published_workspace.params = received_json
+        published_workspace.save()
+
         try:
-            _junk, resource = add_resource_from_template('', template, user)
+            resource = add_resource_from_template(published_workspace.get_template_url(request), template, user)
         except IntegrityError, e:
             transaction.rollback()
             msg = _("mashup cannot be published: duplicated mashup")
 
             raise TracedServerError(e, workspace_id, request, msg)
-
-        # TODO
-        split_result = resource.template_uri.rsplit('/', 1)
-        mashup_id = split_result[1]
-        published_workspace = PublishedWorkSpace.objects.get(id=mashup_id)
-        published_workspace.workspace = workspace
-        published_workspace.params = received_json
-        published_workspace.save()
 
         response = {'result': 'ok', 'published_workspace_id': published_workspace.id, 'url': resource.template_uri}
         return HttpResponse(json_encode(response), mimetype='application/json; charset=UTF-8')
@@ -734,7 +733,7 @@ class WorkspaceExportService(Service):
         return HttpResponse(template, mimetype='application/xml; charset=UTF-8')
 
 
-class GeneratorURL(Resource):
+class MashupTemplate(Resource):
 
     def read(self, request, workspace_id):
         user = get_user_authentication(request)

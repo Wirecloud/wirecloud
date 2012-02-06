@@ -30,7 +30,7 @@
 
 #
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url
 
 from connectable.views import ConnectableEntry
 from workspace import views
@@ -88,7 +88,6 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<workspace_id>\d+)/add?[/]?)?$',
         views.WorkSpaceAdderEntry(permitted_methods=('GET', ))),
 
-    # Create template for mashup
-    (r'^/templateGenerator/((?P<workspace_id>\d+)[/]?)?$',
-        views.GeneratorURL(permitted_methods=('GET', ))),
+    url(r'^/published/(?P<workspace_id>\d+)/template.xml$',
+        views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 )

@@ -113,7 +113,7 @@ def create_published_workspace_from_template(template, user):
         author=workspace_info['author'], mail=workspace_info['mail'],
         description=workspace_info['description'], imageURI=workspace_info['image_uri'],
         wikiURI=workspace_info['doc_uri'], params='',
-        creator=user, template=template.base)
+        creator=user, template=template.get_contents())
 
 
 def encrypt_value(value):

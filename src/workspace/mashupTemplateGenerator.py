@@ -233,4 +233,4 @@ def build_template_from_workspace(options, workspace, user):
             variable = out.variable
             etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
 
-    return etree.tostring(template, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+    return template

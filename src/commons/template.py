@@ -475,6 +475,9 @@ class TemplateParser(object):
     def set_base(self, base):
         self.base = base
 
+    def get_contents(self):
+        return etree.tostring(self._doc, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+
     def get_resource_type(self):
         return self._info['type']
 
