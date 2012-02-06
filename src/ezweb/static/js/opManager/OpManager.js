@@ -245,14 +245,20 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
-            var workSpaceId = resource.getMashupId();
-
             var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
+            var mergeURL = URIs.MERGE_WORKSPACE.evaluate({'to_ws': active_ws_id});
 
-            var mergeURL = URIs.GET_MERGE_PUBLISHED_WORKSPACE.evaluate({'published_ws': workSpaceId, 'to_ws': active_ws_id});
-
-            PersistenceEngineFactory.getInstance().send_get(mergeURL, this, mergeOk, mergeError);
-        }
+            PersistenceEngineFactory.getInstance().send(mergeURL, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: Object.toJSON({
+                    'workspace': resource.getUriTemplate()
+                }),
+                onSuccess: mergeOk.bind(this),
+                onFailure: mergeError.bind(this),
+                onException: mergeError.bind(this)
+            });
+        };
 
         OpManager.prototype.addMashupResource = function(resource) {
             var cloneOk = function(transport) {
@@ -284,11 +290,17 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
-            var workSpaceId = resource.getMashupId();
-            var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId, 'active': 'true'});
-
-            PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
-        }
+            PersistenceEngineFactory.getInstance().send(URIs.ADD_WORKSPACE, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: Object.toJSON({
+                    'workspace': resource.getUriTemplate(),
+                }),
+                onSuccess: cloneOk.bind(this),
+                onFailure: cloneError.bind(this),
+                onException: cloneError.bind(this)
+            });
+        };
 
         OpManager.prototype.showPlatformPreferences = function () {
             PreferencesManagerFactory.getInstance().show();

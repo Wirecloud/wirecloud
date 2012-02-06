@@ -23,7 +23,9 @@
 #     S.A.Unipersonal (Telefonica I+D)
 
 
-from django.contrib.auth.decorators import user_passes_test
+import urlparse
+
+from django.contrib.auth.decorators import user_passes_test, login_required
 from django.contrib.auth.models import Group, User
 from django.core.urlresolvers import reverse
 from django.db import transaction, IntegrityError
@@ -39,11 +41,12 @@ from catalogue.utils import add_resource_from_template
 from commons.authentication import get_user_authentication, get_public_user, logout_request, relogin_after_public
 from commons.cache import no_cache
 from commons.get_data import get_workspace_data, get_global_workspace_data, get_tab_data
-from commons.http_utils import PUT_parameter
+from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.template import TemplateParser
+from commons.transaction import commit_on_http_success
 from commons.service import Service
 from commons.utils import get_xml_error, json_encode
 from igadget.models import IGadget
@@ -612,44 +615,85 @@ class WorkSpaceClonerEntry(Resource):
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class PublishedWorkSpaceMergerEntry(Resource):
+class MashupMergeService(Service):
 
-    @transaction.commit_on_success
-    @no_cache
-    def read(self, request, published_ws_id, to_ws_id):
-        user = get_user_authentication(request)
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def process(self, request, to_ws_id):
 
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=published_ws_id)
-        to_ws = get_object_or_404(WorkSpace, id=to_ws_id, creator=user)
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
 
-        fillWorkspaceUsingTemplate(to_ws, published_workspace.template)
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            return HttpResponseBadRequest(get_xml_error(_("merge data expected")), mimetype='application/xml; charset=UTF-8')
+
+        data = simplejson.loads(received_json)
+        template_url = data['workspace']
+
+        to_ws = get_object_or_404(WorkSpace, id=to_ws_id)
+        if not request.user.is_staff and to_ws.creator != request.user:
+            return HttpResponseForbidden()
+
+        path = request.build_absolute_uri()
+        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
+        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
+        if ((not login_scheme or login_scheme == current_scheme) and
+            (not login_netloc or login_netloc == current_netloc)):
+            pworkspace_id = template_url.split('/')[-2]
+            template = PublishedWorkSpace.objects.get(id=pworkspace_id).template
+        else:
+            template = download_http_content(template_url, user=request.user)
+
+        fillWorkspaceUsingTemplate(to_ws, template)
 
         result = {'result': 'ok', 'workspace_id': to_ws_id}
         return HttpResponse(json_encode(result), mimetype='application/json; charset=UTF-8')
 
 
-class WorkSpaceAdderEntry(Resource):
+class MashupImportService(Service):
 
-    @transaction.commit_on_success
-    @no_cache
-    def read(self, request, workspace_id):
-        user = get_user_authentication(request)
+    @method_decorator(login_required)
+    @commit_on_http_success
+    def process(self, request):
 
-        published_workspace = get_object_or_404(PublishedWorkSpace, id=workspace_id)
-        workspace, _junk = buildWorkspaceFromTemplate(published_workspace.template, user)
+        content_type = request.META.get('CONTENT_TYPE', '')
+        if content_type == None:
+            content_type = ''
 
-        activate = request.GET.get('active') == "true"
+        if content_type.startswith('application/json'):
+            received_json = request.raw_post_data
+        else:
+            return HttpResponseBadRequest(get_xml_error(_("import data expected")), mimetype='application/xml; charset=UTF-8')
+
+        data = simplejson.loads(received_json)
+        template_url = data['workspace']
+
+        path = request.build_absolute_uri()
+        login_scheme, login_netloc = urlparse.urlparse(template_url)[:2]
+        current_scheme, current_netloc = urlparse.urlparse(path)[:2]
+        if ((not login_scheme or login_scheme == current_scheme) and
+            (not login_netloc or login_netloc == current_netloc)):
+            pworkspace_id = template_url.split('/')[-2]
+            template = PublishedWorkSpace.objects.get(id=pworkspace_id).template
+        else:
+            template = download_http_content(template_url, user=request.user)
+        workspace, _junk = buildWorkspaceFromTemplate(template, request.user)
+
+        activate = data.get('active', False) == "true"
         if not activate:
-            workspaces = UserWorkSpace.objects.filter(user__id=user.id, active=True)
+            workspaces = UserWorkSpace.objects.filter(user__id=request.user.id, active=True)
             if workspaces.count() == 0:
                 # there aren't any active workspace yet
                 activate = True
 
         # Mark the mashup as the active workspace if it's requested. For example, solutions
         if activate:
-            setActiveWorkspace(user, workspace)
+            setActiveWorkspace(request.user, workspace)
 
-        workspace_data = get_global_workspace_data(workspace, user)
+        workspace_data = get_global_workspace_data(workspace, request.user)
 
         return HttpResponse(json_encode(workspace_data.get_data()), mimetype='application/json; charset=UTF-8')
 
