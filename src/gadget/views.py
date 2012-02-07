@@ -37,6 +37,7 @@ from django.db import transaction, IntegrityError
 from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from django.views.static import serve
 
 from commons.authentication import user_authentication, Http403
 from commons.cache import no_cache, patch_cache_headers
@@ -50,7 +51,7 @@ from commons.template import TemplateParser
 from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, wgt_deployer
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 from workspace.utils import create_published_workspace_from_template
@@ -259,3 +260,23 @@ class GadgetCodeEntry(Resource):
             raise TracedServerError(e, {'vendor': vendor, 'name': name, 'version': version}, request, msg)
 
         return HttpResponse('ok')
+
+
+def serve_showcase_media(request, username, vendor, name, version, file_path):
+
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(('GET',))
+
+    local_path = os.path.join(
+        wgt_deployer.get_base_dir(username, vendor, name, version),
+        file_path)
+
+    if not os.path.isfile(local_path):
+        return HttpResponse(status=404)
+
+    if settings.DEBUG:
+        return serve(request, local_path, document_root='/')
+    else:
+        response = HttpResponse()
+        response['X-Sendfile'] = smart_str(local_path)
+        return response

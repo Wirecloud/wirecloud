@@ -35,6 +35,7 @@ from cStringIO import StringIO
 
 from django.contrib.sites.models import Site
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from catalogue.models import CatalogueResource
 from commons import http_utils
@@ -330,7 +331,7 @@ def fix_gadget_code(xhtml_code, base_url, request):
     rootURL = get_site_domain(request)
     force_base = False
     if not base_url.startswith(('http://', 'https://')):
-        base_url = rootURL + '/deployment/gadgets/' + base_url
+        base_url = rootURL + reverse('wirecloud_showcase.media', args=(base_url.split('/', 4)))
         force_base = True
 
     try:

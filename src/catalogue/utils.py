@@ -32,7 +32,6 @@
 
 import os
 from datetime import datetime
-from urllib2 import URLError, HTTPError
 from urlparse import urljoin
 
 from django.conf import settings
@@ -44,12 +43,9 @@ from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import GadgetWiring, CatalogueResource, Tag, UserTag, UserVote
 from commons.user_utils import get_certification_status
 from commons.authentication import Http403
-from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtFile
 from deployment.utils import undeploy_wgt_gadget
-from deployment.wgtPackageUtils import get_wgt_local_path
 from gadget.views import deleteGadget
 from translator.models import Translation
 

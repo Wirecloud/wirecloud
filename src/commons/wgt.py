@@ -85,6 +85,15 @@ class WgtDeployer(object):
 
         self._root_dir = root_dir
 
+    def get_base_dir(self, username, vendor, name, version):
+        return os.path.join(
+            self._root_dir,
+            username,
+            vendor,
+            name,
+            version,
+        )
+
     def deploy(self, wgt_file, user):
 
         template_content = wgt_file.get_template()

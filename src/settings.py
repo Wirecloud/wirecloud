@@ -171,7 +171,6 @@ INSTALLED_APPS = (
     'API',
     'uploader',
     'south',
-    'deployment',
     'compressor',
     'johnny',
     ### openid authentication ###
