@@ -26,8 +26,7 @@
 
             <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/catalogue/resource" id="upload_form">
             <div>
-               <input type="hidden" value="0" name="user_action"></input>
-               <input type="hidden" value="off" name="add_to_ws"></input>
+               <input type="hidden" value="true" name="iframe"></input>
                <input type="file" name="file" id="gadget_uri"></input>
                <button id="gadget_link">{% trans "Add" %}</button>
             </div>

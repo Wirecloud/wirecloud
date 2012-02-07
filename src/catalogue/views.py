@@ -104,6 +104,8 @@ def iframe_error(func):
 
         if error_msg:
             return HttpResponseRedirect(reverse('iframe_error') + '?msg=' + urlquote_plus(str(error_msg)) + '#error')
+        else:
+            return response
 
     return wrapper
 
