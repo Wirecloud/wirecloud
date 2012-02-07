@@ -38,6 +38,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
+USE_XSENDFILE = False
 
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False

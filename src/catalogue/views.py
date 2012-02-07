@@ -79,7 +79,7 @@ def serve_catalogue_media(request, vendor, name, version, file_path):
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
 
-    if settings.DEBUG:
+    if not getattr(settings, 'USE_XSENDFILE', False):
         return serve(request, '/'.join((vendor, name, version, file_path)), document_root=settings.CATALOGUE_MEDIA_ROOT)
     else:
         response = HttpResponse()

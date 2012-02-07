@@ -274,7 +274,7 @@ def serve_showcase_media(request, username, vendor, name, version, file_path):
     if not os.path.isfile(local_path):
         return HttpResponse(status=404)
 
-    if settings.DEBUG:
+    if not getattr(settings, 'USE_XSENDFILE', False):
         return serve(request, local_path, document_root='/')
     else:
         response = HttpResponse()
