@@ -370,6 +370,6 @@ function VarManager (_workSpace) {
 
     this.pendingVariables = {}; //to manage igadgets loaded on demand caused by a wiring propagation
 
-    // Creation of ALL EzWeb variables regarding one workspace
+    // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workSpace.workSpaceGlobalInfo);
 }

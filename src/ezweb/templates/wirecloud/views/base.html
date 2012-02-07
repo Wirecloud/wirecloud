@@ -6,7 +6,7 @@
       xml:lang="{{ LANGUAGE_CODE }}"
       lang="{{ LANGUAGE_CODE }}">
 <head>
-	<title>{% block title %}{% trans "EzWeb Platform" %}{% endblock %}</title>
+	<title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
 
     {% block meta %}
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -59,11 +59,11 @@
   <div id="loading-background"></div>
   <div id="loading-message" class="window_menu">
     <div class="window_top">
-      <div id="loading-task-title" class="window_title">{% trans "Loading EzWeb Platform" %} 0%</div>
+      <div id="loading-task-title" class="window_title">{% trans "Loading Wirecloud Platform" %} 0%</div>
     </div>
     <div class="window_content">
       <div id="loading-indicator"></div>
-      <div id="loading-subtask-title" class="msg">{% trans "Retrieving EzWeb code" %}: 0%</div>
+      <div id="loading-subtask-title" class="msg">{% trans "Retrieving wirecloud code" %}: 0%</div>
     </div>
   </div>
 </div>
@@ -76,7 +76,7 @@
   <div id="ws_banner" class="banner">
 
     <div id="logo_placeholder" class="logo_placeholder">
-      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" />
+      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Wirecloud" />
     </div>
 
     <div id="toolbar_section" class="toolbar_section"></div>
@@ -84,7 +84,7 @@
     <div id="greeting">
       <!-- LOGS LINK -->
       <input type="button" id="logs_link" title="{% trans 'Show errors console' %}" onclick="OpManagerFactory.getInstance().showLogs();"/>
-      <a href="http://forge.morfeo-project.org/wiki/index.php/FAQ" target="_blank" title="{% trans 'About EzWeb' %}">{% trans "About EzWeb" %}</a>
+      <a href="http://github.com/Wirecloud/wirecloud" target="_blank" title="{% trans 'About Wirecloud' %}">{% trans "About Wirecloud" %}</a>
       <span> | </span>
       <a id="preferences_link" href="#" onclick="javascript:OpManagerFactory.getInstance().showPlatformPreferences(); return false;" title="{% trans 'Edit Settings' %}">{% trans "Settings" %}</a>
       <span> | </span>
@@ -136,7 +136,7 @@
 
   <div id="wiring_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" />
+      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Wirecloud" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">
@@ -163,7 +163,7 @@
 <div id="catalogue_header" class="global_header" style="display:none">
   <div id="catalogue_banner" class="banner">
     <div class="logo_placeholder">
-      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Open EzWeb" />
+      <img class="logo_layout" src="{{ STATIC_URL }}images/Open_Ez_Logo.png" alt="Wirecloud" />
     </div>
     <div class="toolbar_section">
       <div class="toolbar_menu">

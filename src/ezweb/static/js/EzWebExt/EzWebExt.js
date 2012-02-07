@@ -1,7 +1,7 @@
 /**
  * @class
  * Esta clase proporciona algunos métodos útiles para el desarrollador de
- * gadgets de EzWeb.
+ * gadgets de Wirecloud.
  */
 var EzWebExt = new Object();
 
