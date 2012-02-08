@@ -85,10 +85,9 @@ class WgtDeployer(object):
 
         self._root_dir = root_dir
 
-    def get_base_dir(self, username, vendor, name, version):
+    def get_base_dir(self, vendor, name, version):
         return os.path.join(
             self._root_dir,
-            username,
             vendor,
             name,
             version,
@@ -100,7 +99,6 @@ class WgtDeployer(object):
         template_parser = TemplateParser(template_content)
 
         gadget_rel_dir = os.path.join(
-            user.username,
             template_parser.get_resource_vendor(),
             template_parser.get_resource_name(),
             template_parser.get_resource_version(),

@@ -51,7 +51,8 @@ from commons.template import TemplateParser
 from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code, wgt_deployer
+import gadget.utils as showcase_utils
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
 from workspace.utils import create_published_workspace_from_template
@@ -108,6 +109,7 @@ def deleteGadget(user, short_name, vendor, version):
             deleteIGadget(igadget, user)
 
         gadget.delete()
+        showcase_utils.wgt_deployer.undeploy(vendor, short_name, version)
 
     except Gadget.DoesNotExist:
         pass

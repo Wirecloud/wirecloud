@@ -14,8 +14,11 @@ from commons import http_utils
 from commons.exceptions import TemplateParseException
 from commons.get_data import get_gadget_data
 from commons.test import LocalizedTestCase
+from commons.wgt import WgtFile, WgtDeployer
 from gadget.models import Gadget
-from gadget.utils import create_gadget_from_template, get_or_add_gadget_from_catalogue
+import gadget.utils
+from gadget.utils import create_gadget_from_template, create_gadget_from_wgt, get_or_add_gadget_from_catalogue
+from gadget.views import deleteGadget
 from workspace.utils import create_published_workspace_from_template
 
 
@@ -109,6 +112,18 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
+    def test_gadget_deletion(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        template = self.read_template('template1.xml')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        create_gadget_from_template(template_uri, self.user)
+
+        deleteGadget(self.user, 'test', 'Morfeo', '0.1')
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
+
+        
     def test_gadget_creation_from_catalogue(self):
         template_uri = "http://example.com/path/gadget.xml"
         template = self.read_template('template1.xml')
@@ -205,3 +220,30 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(workspace.name, 'Test Workspace')
         self.assertEqual(workspace.version, '1')
         self.assertEqual(workspace.creator, self.user)
+
+
+class WGTShowcaseTestCase(TestCase):
+
+    def setUp(self):
+        super(WGTShowcaseTestCase, self).setUp()
+
+        self.old_deployer = gadget.utils.wgt_deployer
+        self.tmp_dir = mkdtemp()
+        gadget.utils.wgt_deployer = WgtDeployer(self.tmp_dir)
+        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+
+    def tearDown(self):
+        rmtree(self.tmp_dir, ignore_errors=True)
+        gadget.utils.wgt_deployer = self.old_deployer
+
+    def test_basic_wgt_deployment(self):
+        wgt_file = WgtFile(os.path.join(os.path.dirname(__file__), 'tests', 'basic_gadget.wgt'))
+        gadget_path = gadget.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
+
+        create_gadget_from_wgt(wgt_file, self.user)
+        Gadget.objects.get(vendor='Morfeo', name='Test', version='0.1')
+        self.assertEqual(os.path.isdir(gadget_path), True)
+
+        deleteGadget(self.user, 'Test', 'Morfeo', '0.1')
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='Test', version='0.1')
+        self.assertEqual(os.path.exists(gadget_path), False)
