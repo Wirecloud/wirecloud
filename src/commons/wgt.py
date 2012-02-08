@@ -20,6 +20,7 @@
 import os
 import zipfile
 from lxml import etree
+from shutil import rmtree
 
 from commons.template import TemplateParser
 
@@ -110,6 +111,13 @@ class WgtDeployer(object):
         wgt_file.extract(gadget_dir)
 
         return template_parser
+
+    def undeploy(self, vendor, name, version):
+
+        base_dir = self.get_base_dir(vendor, name, version)
+
+        if os.path.isdir(base_dir):
+            rmtree(base_dir)
 
     def _create_folders(self, gadget_dir):
 

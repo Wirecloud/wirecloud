@@ -44,11 +44,12 @@ from catalogue.models import GadgetWiring, CatalogueResource, Tag, UserTag, User
 from commons.user_utils import get_certification_status
 from commons.authentication import Http403
 from commons.template import TemplateParser
-from commons.wgt import WgtFile
-from deployment.utils import undeploy_wgt_gadget
+from commons.wgt import WgtFile, WgtDeployer
 from gadget.views import deleteGadget
 from translator.models import Translation
 
+
+wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
 
 def extract_resource_media_from_package(template, package, base_path):
 
@@ -123,6 +124,7 @@ def add_resource_from_template(template_uri, template, user, fromWGT=False, over
         resource_info.update(overrides)
 
     resource = CatalogueResource(
+        creator=user,
         short_name=resource_info['name'],
         display_name=resource_info['display_name'],
         vendor=resource_info['vendor'],
@@ -223,9 +225,9 @@ def delete_resource(resource, user):
         # Remove the gadget from the showcase
         result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
 
-        # Delete the gadget if it is saved in the platform
-        if resource.fromWGT:
-            undeploy_wgt_gadget(resource)
+        # Delete media resources if needed
+        if not resource.template_uri.startswith(('http', 'https')):
+            wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
 
     # Delete the object
     resource.delete()

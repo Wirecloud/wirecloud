@@ -6,13 +6,15 @@ from tempfile import mkdtemp
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import TestCase, Client
+from django.test import TransactionTestCase, TestCase, Client
 from django.utils import simplejson
 
+import catalogue.utils
 from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import GadgetWiring
 from commons.test import LocalizedTestCase
+from commons.wgt import WgtDeployer
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)
@@ -188,7 +190,7 @@ class CatalogueAPITestCase(TestCase):
 
 
 
-class WGTDeploymentTestCase(TestCase):
+class WGTDeploymentTestCase(TransactionTestCase):
 
     urls = 'catalogue.urls'
 
@@ -197,10 +199,13 @@ class WGTDeploymentTestCase(TestCase):
 
         self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
         settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
+        self.old_deployer = catalogue.utils.wgt_deployer
+        catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
 
     def tearDown(self):
         rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
         settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
+        catalogue.utils.wgt_deployer = self.old_deployer
 
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()
@@ -213,6 +218,7 @@ class WGTDeploymentTestCase(TestCase):
 
     def testBasicWGTDeployment(self):
         User.objects.create_user('test', 'test@example.com', 'test')
+        gadget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
@@ -221,3 +227,10 @@ class WGTDeploymentTestCase(TestCase):
         f.close()
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.isdir(gadget_path), True)
+
+        c.login(username='test', password='test')
+        response = c.delete('/resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.exists(gadget_path), False)

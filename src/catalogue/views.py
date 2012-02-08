@@ -174,12 +174,12 @@ class ResourceCollection(Resource):
         return get_resource_response(resources, format, items, user)
 
     @transaction.commit_on_success
-    def delete(self, request, user_name, vendor, name, version=None):
+    def delete(self, request, vendor, name, version=None, user_name=None):
 
         user = user_authentication(request, user_name)
 
         response_json = {'result': 'ok', 'removedIGadgets': []}
-        if version != None:
+        if version is not None:
             #Delete only the specified version of the gadget
             resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)
