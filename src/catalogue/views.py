@@ -29,16 +29,22 @@
 
 #
 
+import os
 from xml.sax import make_parser
 from xml.sax.xmlreader import InputSource
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseForbidden
-from django.http import  HttpResponseBadRequest, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import  HttpResponseBadRequest, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.utils import simplejson
+from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _
+from django.utils.encoding import smart_str
+from django.views.static import serve
 
 from catalogue.models import CatalogueResource
 from catalogue.models import UserTag, UserVote
@@ -50,59 +56,99 @@ from catalogue.catalogue_utils import get_and_filter, get_or_filter, get_not_fil
 from catalogue.catalogue_utils import get_tag_filter, get_event_filter, get_slot_filter, get_paginatedlist
 from catalogue.catalogue_utils import get_tag_response, update_resource_popularity
 from catalogue.catalogue_utils import get_vote_response, group_resources
-from catalogue.utils import add_resource_from_template_uri, delete_resource, get_added_resource_info
+from catalogue.utils import add_gadget_from_wgt, add_resource_from_template, delete_resource, get_added_resource_info
 from catalogue.utils import tag_resource
 from commons.authentication import user_authentication, Http403
 from commons.cache import no_cache
 from commons.exceptions import TemplateParseException
-from commons.http_utils import PUT_parameter
+from commons.http_utils import PUT_parameter, download_http_content
 from commons.logs import log
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.transaction import commit_on_http_success
 from commons.user_utils import get_verified_certification_group
 from commons.utils import get_xml_error, json_encode
 
 
+def serve_catalogue_media(request, vendor, name, version, file_path):
+
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(('GET',))
+
+    local_path = os.path.join(settings.CATALOGUE_MEDIA_ROOT, vendor, name, version, file_path)
+    if not os.path.isfile(local_path):
+        return HttpResponse(status=404)
+
+    if not getattr(settings, 'USE_XSENDFILE', False):
+        return serve(request, '/'.join((vendor, name, version, file_path)), document_root=settings.CATALOGUE_MEDIA_ROOT)
+    else:
+        response = HttpResponse()
+        response['X-Sendfile'] = smart_str(local_path)
+        return response
+
+
+def iframe_error(func):
+
+    def wrapper(self, request, *args, **kwargs):
+        if not request.REQUEST.get('iframe', False):
+            return func(self, request, *args, **kwargs)
+
+        error_msg = response = None
+        try:
+            response = func(self, request, *args, **kwargs)
+        except Exception, e:
+            error_msg = str(e)
+
+        if response is not None and (response.status_code >= 300 or response.status_code < 200):
+            error_msg = response.content
+
+        if error_msg:
+            return HttpResponseRedirect(reverse('iframe_error') + '?msg=' + urlquote_plus(str(error_msg)) + '#error')
+        else:
+            return response
+
+    return wrapper
+
+@no_cache
+def error(request):
+    msg = request.GET.get('msg', 'Gadget could not be added')
+    return HttpResponse(msg, mimetype='text/plain')
+
+
 class ResourceCollection(Resource):
 
-    @transaction.commit_manually
-    def create(self, request, user_name, fromWGT=False):
+    @iframe_error
+    @commit_on_http_success
+    def create(self, request, user_name=None, fromWGT=False):
+
         user = user_authentication(request, user_name)
-        if 'template_uri' not in request.POST:
-            msg = _("template_uri param expected")
-            json = {"message": msg, "result": "error"}
-            return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
-        template_uri = request.POST['template_uri']
-        templateParser = None
+        overrides = None
 
         try:
-            templateParser, resource = add_resource_from_template_uri(template_uri, user, fromWGT=fromWGT)
+            if 'file' in request.FILES:
+
+                request_file = request.FILES['file']
+                resource = add_gadget_from_wgt(request_file, user)
+
+            elif 'template_uri' in request.POST:
+                template_uri = request.POST['template_uri']
+                template = download_http_content(template_uri, user=user)
+                resource = add_resource_from_template(template_uri, template, user, overrides=overrides)
+            else:
+                msg = _("Missing parameter: template_uri or file")
+                json = {"message": msg, "result": "error"}
+                return HttpResponseBadRequest(json_encode(json), mimetype='application/json; charset=UTF-8')
 
         except IntegrityError, e:
             # Resource already exists. Rollback transaction
-            transaction.rollback()
             json_response = {
                 "result": "error",
-                "message": _('Gadget already exists!'),
+                "message": _('Resource already exists'),
             }
-            return HttpResponseBadRequest(simplejson.dumps(json_response),
-                                          mimetype='application/json; charset=UTF-8')
-
-        except TemplateParseException, e:
-            transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': e.msg}
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
-
-        except Exception, e:
-            # Internal error
-            transaction.rollback()
-            msg = _("Problem parsing template xml: %(errorMsg)s") % {'errorMsg': str(e)}
-            raise TracedServerError(e, {'template_uri': template_uri}, request, msg)
+            return HttpResponse(simplejson.dumps(json_response),
+                status=409, mimetype='application/json; charset=UTF-8')
 
         json_response = get_added_resource_info(resource, user)
-
-        # get_added_resource_info can make changes in the db
-        transaction.commit()
 
         return HttpResponse(simplejson.dumps(json_response),
                             mimetype='application/json; charset=UTF-8')
@@ -128,12 +174,12 @@ class ResourceCollection(Resource):
         return get_resource_response(resources, format, items, user)
 
     @transaction.commit_on_success
-    def delete(self, request, user_name, vendor, name, version=None):
+    def delete(self, request, vendor, name, version=None, user_name=None):
 
         user = user_authentication(request, user_name)
 
         response_json = {'result': 'ok', 'removedIGadgets': []}
-        if version != None:
+        if version is not None:
             #Delete only the specified version of the gadget
             resource = get_object_or_404(CatalogueResource, short_name=name,
                                          vendor=vendor, version=version)

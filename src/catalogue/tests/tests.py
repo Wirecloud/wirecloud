@@ -6,33 +6,57 @@ from tempfile import mkdtemp
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.test import TestCase, Client
+from django.test import TransactionTestCase, TestCase, Client
 from django.utils import simplejson
 
-from catalogue.utils import add_resource_from_template_uri
+import catalogue.utils
+from catalogue.utils import add_resource_from_template
 from catalogue.get_json_catalogue_data import get_resource_data
 from catalogue.models import GadgetWiring
 from commons.test import LocalizedTestCase
+from commons.wgt import WgtDeployer
 
 
 # Avoid nose to repeat these tests (they are run through __init__.py)
 __test__ = False
 
 
-class AddGadgetTestCase(TestCase):
+class AddGadgetTestCase(LocalizedTestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
+        super(AddGadgetTestCase, self).setUp()
 
-    def test_add_resource_from_template_uri(self):
-        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
+        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.template_uri = "http://example.com/path/gadget.xml"
+        f = open(os.path.join(os.path.dirname(__file__), 'template1.xml'), 'rb')
+        self.template = f.read()
+        f.close()
+
+    def test_add_resource_from_template(self):
+
+        gadget = add_resource_from_template(self.template_uri, self.template, self.user)
 
         events = GadgetWiring.objects.filter(idResource=gadget, wiring='out')
         self.assertTrue(events.count() == 1 and events[0].friendcode == 'test_friend_code')
 
         slots = GadgetWiring.objects.filter(idResource=gadget, wiring='in')
         self.assertTrue(slots.count() == 1 and slots[0].friendcode == 'test_friend_code')
+
+    def test_add_resource_from_template_translations(self):
+
+        gadget = add_resource_from_template(self.template_uri, self.template, self.user)
+        self.changeLanguage('en')
+        data = get_resource_data(gadget, self.user)
+
+        self.assertEqual(data['displayName'], 'Test Gadget')
+        self.assertEqual(data['description'], 'Test Gadget description')
+
+        self.changeLanguage('es')
+        data = get_resource_data(gadget, self.user)
+
+        self.assertEqual(data['displayName'], u'Gadget de pruebas')
+        self.assertEqual(data['description'], u'Descripción del Gadget de pruebas')
+
 
 
 class CatalogueAPITestCase(TestCase):
@@ -53,7 +77,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 4)
+        self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
         self.assertEqual(result_json['resources'][0]['name'], 'agadget')
 
@@ -62,7 +86,7 @@ class CatalogueAPITestCase(TestCase):
 
         self.assertEqual(result.status_code, 200)
         result_json = simplejson.loads(result.content)
-        self.assertEqual(len(result_json['resources']), 4)
+        self.assertEqual(len(result_json['resources']), 5)
         self.assertTrue(len(result_json['resources'][0]) > 0)
         self.assertEqual(result_json['resources'][0]['name'], 'zgadget')
 
@@ -165,61 +189,48 @@ class CatalogueAPITestCase(TestCase):
         self.assertEqual(result_json['voteData']['user_vote'], 4)
 
 
-class TranslationTestCase(LocalizedTestCase):
+
+class WGTDeploymentTestCase(TransactionTestCase):
+
+    urls = 'catalogue.urls'
 
     def setUp(self):
-        super(TranslationTestCase, self).setUp()
+        super(WGTDeploymentTestCase, self).setUp()
 
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
-        self.template_uri = 'file://' + os.path.join(os.path.dirname(__file__), 'template1.xml')
-
-    def testTranslations(self):
-        _junk, gadget = add_resource_from_template_uri(self.template_uri, self.user)
-        self.changeLanguage('en')
-        data = get_resource_data(gadget, self.user)
-
-        self.assertEqual(data['displayName'], 'Test Gadget')
-        self.assertEqual(data['description'], 'Test Gadget description')
-
-        self.changeLanguage('es')
-        data = get_resource_data(gadget, self.user)
-
-        self.assertEqual(data['displayName'], u'Gadget de pruebas')
-        self.assertEqual(data['description'], u'Descripción del Gadget de pruebas')
-
-
-class WGTDeploymentTestCase(TestCase):
-
-    urls = 'catalogue.tests.urls'
-
-    def setUp(self):
-        self.old_GADGETS_DEPLOYMENT_DIR = settings.GADGETS_DEPLOYMENT_DIR
-        self.old_GADGETS_DEPLOYMENT_TMPDIR = settings.GADGETS_DEPLOYMENT_TMPDIR
-        settings.GADGETS_DEPLOYMENT_DIR = mkdtemp()
-        settings.GADGETS_DEPLOYMENT_TMPDIR = mkdtemp()
-        self.user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.old_CATALOGUE_MEDIA_ROOT = settings.CATALOGUE_MEDIA_ROOT
+        settings.CATALOGUE_MEDIA_ROOT = mkdtemp()
+        self.old_deployer = catalogue.utils.wgt_deployer
+        catalogue.utils.wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
 
     def tearDown(self):
-        rmtree(settings.GADGETS_DEPLOYMENT_DIR, ignore_errors=True)
-        rmtree(settings.GADGETS_DEPLOYMENT_TMPDIR)
-        settings.GADGETS_DEPLOYMENT_DIR = self.old_GADGETS_DEPLOYMENT_DIR
-        settings.GADGETS_DEPLOYMENT_TMPDIR = self.old_GADGETS_DEPLOYMENT_TMPDIR
+        rmtree(settings.CATALOGUE_MEDIA_ROOT, ignore_errors=True)
+        settings.CATALOGUE_MEDIA_ROOT = self.old_CATALOGUE_MEDIA_ROOT
+        catalogue.utils.wgt_deployer = self.old_deployer
 
     def testBasicWGTDeploymentFailsWithoutLogin(self):
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
-        response = c.post('/deployment/gadgets/', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post('/resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertEqual(response.status_code, 403)
 
     def testBasicWGTDeployment(self):
+        User.objects.create_user('test', 'test@example.com', 'test')
+        gadget_path = catalogue.utils.wgt_deployer.get_base_dir('Morfeo', 'Test', '0.1')
         c = Client()
 
         f = open(os.path.join(os.path.dirname(__file__), 'basic_gadget.wgt'))
         c.login(username='test', password='test')
-        response = c.post('/deployment/gadgets/', {'file': f}, HTTP_HOST='www.example.com')
+        response = c.post('/resource', {'file': f}, HTTP_HOST='www.example.com')
         f.close()
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.isdir(gadget_path), True)
+
+        c.login(username='test', password='test')
+        response = c.delete('/resource/Morfeo/Test/0.1', HTTP_HOST='www.example.com')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(os.path.exists(gadget_path), False)

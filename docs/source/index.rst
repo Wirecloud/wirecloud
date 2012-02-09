@@ -16,6 +16,7 @@ Contents:
    user
    platform/index.rst
    gadgets/index.rst
+   mashups/index.rst
 
 
 Indices and tables

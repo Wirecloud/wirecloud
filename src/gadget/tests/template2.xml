@@ -1,0 +1,51 @@
+<?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
+  <!-- Gadget Meta-Info -->
+  <Catalog.ResourceDescription>
+    <Vendor>Morfeo</Vendor>
+    <Name>test</Name>
+    <DisplayName>__MSG_displayName__</DisplayName>
+    <Version>0.2</Version>
+    <Author>admin</Author>
+    <Mail>test@example.com</Mail>
+    <Description>__MSG_description__</Description>
+    <ImageURI>images/catalogue.png</ImageURI>
+    <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+    <WikiURI>doc/index.html</WikiURI>
+  </Catalog.ResourceDescription>
+
+  <Platform.Preferences>
+    <Preference default="value" description="__MSG_prefDescription__" label="__MSG_varLabel__" name="pref" type="text"/>
+  </Platform.Preferences>
+
+  <Platform.StateProperties>
+    <Property label="__MSG_varLabel__" name="prop" type="text"/>
+  </Platform.StateProperties>
+
+  <Platform.Wiring>
+    <Event friendcode="test_friend_code" label="__MSG_varLabel__" name="event" type="text"/>
+    <Slot friendcode="test_friend_code" label="__MSG_varLabel__" name="slot" type="text"/>
+  </Platform.Wiring>
+
+  <Platform.Link>
+    <XHTML href="test.html"/>
+  </Platform.Link>
+
+  <Platform.Rendering height="24" width="10"/>
+  <Platform.Context>
+  </Platform.Context>
+
+  <Translations default="en">
+    <Translation lang="en">
+      <msg name="displayName">Test Gadget</msg>
+      <msg name="description">Test Gadget description</msg>
+      <msg name="prefDescription">Preference description</msg>
+      <msg name="varLabel">Label</msg>
+    </Translation>
+    <Translation lang="es">
+      <msg name="displayName">Gadget de pruebas</msg>
+      <msg name="description">Descripción del Gadget de pruebas</msg>
+      <msg name="prefDescription">Descripción de la preferencia</msg>
+      <msg name="varLabel">Etiqueta</msg>
+    </Translation>
+  </Translations>
+</Template>

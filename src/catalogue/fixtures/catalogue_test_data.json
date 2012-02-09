@@ -65,6 +65,20 @@
         }
     },
     {
+        "model": "catalogue.catalogueresource",
+        "pk": 6,
+        "fields": {
+            "short_name": "test",
+            "vendor": "Morfeo",
+            "version": "0.1",
+            "author": "test",
+            "mail": "test@example.com",
+            "type": 0,
+            "creation_date": "2009-01-01 00:00",
+            "template_uri": "http://example.com/path/gadget.xml"
+        }
+    },
+    {
         "model": "catalogue.GadgetWiring",
         "pk": 1,
         "fields": {

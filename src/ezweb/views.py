@@ -47,10 +47,10 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, loader, RequestContext
 
-from catalogue.templateParser import TemplateParser
 from catalogue.views import ResourceCollection
 from commons.authentication import login_public_user
 from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
 from catalogue.models import CatalogueResource
 from gadget.models import Gadget, XHTML
@@ -144,16 +144,16 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
             c = Context({'msg': _('A template URL must be specified!')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
 
-        if (request.method.lower() == "get"):
+        if request.method.lower() == "get":
             #GET Request: Render HTML interface!
             try:
                 #Parsing gadget info from the template!
-                templateParser = TemplateParser(template_uri, request.user, save=False)
-                templateParser.parse()
-
-                gadget = templateParser.get_gadget()
-
-                params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
+                parser = TemplateParser(download_http_content(template_uri), template_uri)
+                params = {
+                    'msg': _('Adding a gadget to EzWeb!'),
+                    'template_uri': template_uri,
+                    'gadget': parser.get_resource_info(),
+                }
 
                 if 'pingback' in request.REQUEST:
                     params['pingback'] = request.REQUEST['pingback']

@@ -1285,6 +1285,9 @@ var EzWebGadget = function(customSettings) {
     if ((this.resourcesURL == undefined) && (baseElement = document.getElementsByTagName("base"))){
         this.resourcesURL = baseElement[0].href;
     }
+    if (this.resourcesURL[this.resourcesURL.length - 1] != '/') {
+        this.resourcesURL = this.resourcesURL.substr(0, this.resourcesURL.lastIndexOf('/') + 1);
+    }
 
     if (this.settings.translatable) {
         var processLanguageChange = function(prefLang, platformLang) {

@@ -42,6 +42,7 @@ from django.utils import simplejson
 from django.utils.translation import ugettext as _
 
 from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from commons.utils import save_alternative
 from workspace.managers import get_workspace_managers
 from workspace.models import Category, Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
@@ -101,13 +102,18 @@ def get_mashup_gadgets(mashup_id):
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, resource, user):
-    return PublishedWorkSpace.objects.create(name=resource.short_name,
-        vendor=resource.vendor, version=resource.version,
-        author=resource.author, mail=resource.mail,
-        description=resource.description, imageURI=resource.image_uri,
-        wikiURI=resource.wiki_page_uri, params='',
-        creator=user, template=template)
+def create_published_workspace_from_template(template, user):
+
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
+
+    workspace_info = template.get_resource_basic_info()
+    return PublishedWorkSpace.objects.create(name=workspace_info['name'],
+        vendor=workspace_info['vendor'], version=workspace_info['version'],
+        author=workspace_info['author'], mail=workspace_info['mail'],
+        description=workspace_info['description'], imageURI=workspace_info['image_uri'],
+        wikiURI=workspace_info['doc_uri'], params='',
+        creator=user, template=template.get_contents())
 
 
 def encrypt_value(value):

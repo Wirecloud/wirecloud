@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.test import TransactionTestCase, Client
 from django.utils import simplejson
 
@@ -21,6 +22,7 @@ class WiringTests(TransactionTestCase):
         read_only_channel.readOnly = True
         read_only_channel.save()
         self._read_only_channel_id = read_only_channel.pk
+        transaction.commit()
 
         self.wiring_url = '/workspace/' + str(self.workspace_id) + '/wiring'
 

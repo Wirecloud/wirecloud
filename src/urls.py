@@ -64,8 +64,8 @@ urlpatterns = patterns('',
     # WorkSpaces
     (r'^workspace(s)?', include('workspace.urls')),
 
-    # Deployment Tool
-    (r'^deployment/', include('deployment.urls')),
+    # Showcase
+    (r'^showcase/', include('gadget.showcase_urls')),
 
     # IGadgets
     (r'^workspace(s)?/(?P<workspace_id>\d+)/tab(s)?/(?P<tab_id>\d+)/igadget(s)?', include('igadget.urls')),
@@ -84,6 +84,7 @@ urlpatterns = patterns('',
 
     # Catalogue: Changing certification status
     (r'^catalogue/resource/(?P<resource_id>\d+)/activation$', ResourceEnabler(permitted_methods=('GET',))),
+    (r'^catalogue/', include('catalogue.urls')),
 
     #GadgetGenerator
     (r'^gadgetGenerator', include('gadgetGenerator.urls')),

@@ -31,6 +31,7 @@
 #
 
 from commons.get_data import get_concept_values, TemplateValueProcessor
+from commons.template import TemplateParser
 from django.utils import simplejson
 from gadget.utils import get_or_add_gadget_from_catalogue
 from igadget.models import Variable
@@ -40,34 +41,16 @@ from workspace.models import WorkSpace, UserWorkSpace
 from workspace.utils import createTab
 from connectable.models import In, Out, RelatedInOut, Filter
 from connectable.views import createChannel
-from lxml import etree
-
-
-NAME_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/Name')
-INCLUDED_RESOURCES_XPATH = etree.ETXPath('/Template/Catalog.ResourceDescription/IncludedResources')
-TAB_XPATH = etree.ETXPath('Tab')
-RESOURCE_XPATH = etree.ETXPath('Resource')
-POSITION_XPATH = etree.ETXPath('Position')
-RENDERING_XPATH = etree.ETXPath('Rendering')
-PARAM_XPATH = etree.ETXPath('Param')
-PREFERENCE_XPATH = etree.ETXPath('Preference')
-PROPERTIES_XPATH = etree.ETXPath('Property')
-WIRING_XPATH = etree.ETXPath('/Template/Platform.Wiring')
-CHANNEL_XPATH = etree.ETXPath('Channel')
-IN_XPATH = etree.ETXPath('In')
-OUT_XPATH = etree.ETXPath('Out')
 
 
 def buildWorkspaceFromTemplate(template, user):
 
-    if isinstance(template, unicode):
-        # Work around: ValueError: Unicode strings with encoding declaration
-        # are not supported.
-        template = template.encode('utf-8')
+    parser = TemplateParser(template)
 
-    xml = etree.fromstring(template)
+    if parser.get_resource_type() != 'mashup':
+        raise Exception()
 
-    name = NAME_XPATH(xml)[0].text
+    name = parser.get_resource_name()
 
     # Workspace creation
     workspace = WorkSpace(name=name, creator=user)
@@ -77,35 +60,34 @@ def buildWorkspaceFromTemplate(template, user):
     user_workspace = UserWorkSpace(user=user, workspace=workspace, active=False)
     user_workspace.save()
 
-    fillWorkspaceUsingTemplate(workspace, template, xml)
+    fillWorkspaceUsingTemplate(workspace, parser)
 
     return (workspace, user_workspace)
 
 
-def fillWorkspaceUsingTemplate(workspace, template, xml=None):
+def fillWorkspaceUsingTemplate(workspace, template):
 
-    if xml is None:
-        if isinstance(template, unicode):
-            # Work around: ValueError: Unicode strings with encoding
-            # declaration are not supported.
-            template = template.encode('utf-8')
+    if isinstance(template, TemplateParser):
+        parser = template
+    else:
+        parser = TemplateParser(template)
 
-        xml = etree.fromstring(template)
+    if parser.get_resource_type() != 'mashup':
+        raise Exception()
 
     user = workspace.creator
     concept_values = get_concept_values(user)
     processor = TemplateValueProcessor({'user': user, 'context': concept_values})
 
-    workspace_structure = INCLUDED_RESOURCES_XPATH(xml)[0]
-    read_only_workspace = workspace_structure.get('readonly') == 'true'
+    workspace_info = parser.get_resource_info()
+    read_only_workspace = workspace_info['readonly']
 
-    preferences = PREFERENCE_XPATH(workspace_structure)
     new_values = {}
     igadget_id_mapping = {}
-    for preference in preferences:
-        new_values[preference.get('name')] = {
+    for preference_name in workspace_info['preferences']:
+        new_values[preference_name] = {
             'inherit': False,
-            'value': preference.get('value'),
+            'value': workspace_info['preferences'][preference_name],
         }
 
     if len(new_values) > 0:
@@ -115,55 +97,48 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         'extra_prefs': {},
         'igadget': {},
     }
-    params = PARAM_XPATH(workspace_structure)
-    for param in params:
-        forced_values['extra_prefs'][param.get('name')] = {
+    for param_name in workspace_info['params']:
+        param = workspace_info['params'][param_name]
+        forced_values['extra_prefs'][param_name] = {
             'inheritable': False,
             'label': param.get('label'),
-            'type': param.get('type')
+            'type': param.get('type'),
         }
 
-    tabs = TAB_XPATH(workspace_structure)
-    tab_id_mapping = {}
+    for tab_entry in workspace_info['tabs']:
+        tab = createTab(tab_entry.get('name'), user, workspace, allow_renaming=True)
 
-    for tabElement in tabs:
-        tab = createTab(tabElement.get('name'), user, workspace, allow_renaming=True)
-        tab_id_mapping[tabElement.get('id')] = tab
-
-        preferences = PREFERENCE_XPATH(tabElement)
         new_values = {}
-        for preference in preferences:
-            new_values[preference.get('name')] = {
+        for preference_name in tab_entry['preferences']:
+            new_values[preference_name] = {
                 'inherit': False,
-                'value': preference.get('value'),
+                'value': tab_entry['preferences'][preference_name],
             }
 
         if len(new_values) > 0:
             update_tab_preferences(tab, new_values)
 
-        resources = RESOURCE_XPATH(tabElement)
-        for resource in resources:
-            igadget_uri = "/workspace/" + str(workspace.id) + "/tab/" + str(tab.id) + "/igadgets"
+        igadget_uri = "/workspace/" + str(workspace.id) + "/tab/" + str(tab.id) + "/igadgets"
+        for resource in tab_entry['resources']:
 
-            position = POSITION_XPATH(resource)[0]
-            rendering = RENDERING_XPATH(resource)[0]
+            position = resource['position']
+            rendering = resource['rendering']
 
             initial_variable_values = {}
             igadget_forced_values = {}
-            properties = PROPERTIES_XPATH(resource)
-            for prop in properties:
+            for prop_name in resource['properties']:
+                prop = resource['properties'][prop_name]
                 read_only = prop.get('readonly')
-                if read_only and read_only == 'true':
+                if read_only:
                     igadget_forced_values[prop.get('name')] = {'value': prop.get('value')}
                 else:
                     initial_variable_values[prop.get('name')] = processor.process(prop.get('value'))
 
-            preferences = PREFERENCE_XPATH(resource)
-            for pref in preferences:
+            for pref_name in resource['preferences']:
+                pref = resource['preferences'][pref_name]
                 read_only = pref.get('readonly')
-                if read_only and read_only == 'true':
-                    hidden = pref.get('hidden') == 'true'
-                    igadget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': hidden}
+                if read_only:
+                    igadget_forced_values[pref.get('name')] = {'value': pref.get('value'), 'hidden': pref.get('hidden')}
                 else:
                     initial_variable_values[pref.get('name')] = processor.process(pref.get('value'))
 
@@ -181,10 +156,11 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
                 "menu_color": "FFFFFF",
                 "layout": int(rendering.get('layout')),
                 "uri": igadget_uri,
-                "gadget": gadget.uri}
+                "gadget": gadget.uri,
+            }
 
             igadget = SaveIGadget(igadget_data, user, tab, initial_variable_values)
-            if read_only_workspace or resource.get('readonly') == 'true':
+            if read_only_workspace or resource.get('readonly'):
                 igadget.readOnly = True
                 igadget.save()
 
@@ -204,14 +180,13 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
     workspace.save()
 
     # wiring
-    wiring = WIRING_XPATH(xml)[0]
-    channels = CHANNEL_XPATH(wiring)
     channel_connectables = {}
-    for channel in channels:
+    for channel_id in workspace_info['channels']:
+        channel = workspace_info['channels'][channel_id]
         connectable = createChannel(workspace, channel.get('name'))
 
         save = False
-        if read_only_workspace or channel.get('readonly') == 'true':
+        if read_only_workspace or channel.get('readonly'):
             connectable.readOnly = True
             save = True
 
@@ -224,15 +199,14 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
         if save:
             connectable.save()
 
-        channel_connectables[channel.get('id')] = {
+        channel_connectables[channel_id] = {
             'connectable': connectable,
             'element': channel,
         }
 
     for key in channel_connectables:
         channel = channel_connectables[key]
-        ins = IN_XPATH(channel['element'])
-        for in_ in ins:
+        for in_ in channel['element']['ins']:
             igadget_id = in_.get('igadget')
             igadget = igadget_id_mapping[igadget_id]
             name = in_.get('name')
@@ -241,24 +215,18 @@ def fillWorkspaceUsingTemplate(workspace, template, xml=None):
             connectable.inouts.add(channel['connectable'])
             connectable.save()
 
-        outs = OUT_XPATH(channel['element'])
-        for out in outs:
-            if 'igadget' in out.attrib:
-                igadget_id = out.get('igadget')
-                igadget = igadget_id_mapping[igadget_id]
-                name = out.get('name')
+        for out in channel['element']['outs']:
+            igadget_id = out.get('igadget')
+            igadget = igadget_id_mapping[igadget_id]
+            name = out.get('name')
 
-                variable = Variable.objects.get(igadget=igadget, vardef__name=name)
-                connectable = Out.objects.get(variable=variable)
-            else:
-                pass
-
+            variable = Variable.objects.get(igadget=igadget, vardef__name=name)
+            connectable = Out.objects.get(variable=variable)
             connectable.inouts.add(channel['connectable'])
             connectable.save()
 
-        out_channels = CHANNEL_XPATH(channel['element'])
-        for out_channel_element in out_channels:
-            out_channel = channel_connectables[out_channel_element.get('id')]['connectable']
+        for out_channel_id in channel['element']['out_channels']:
+            out_channel = channel_connectables[out_channel_id]['connectable']
             relation = RelatedInOut(in_inout=channel['connectable'], out_inout=out_channel)
             relation.save()
 

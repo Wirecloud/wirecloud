@@ -9,5 +9,6 @@ extending wirecloud platform functionality.
 
     themes.rst
     proxy.rst
+    rest_api.rst
     contributing.rst
     testing.rst

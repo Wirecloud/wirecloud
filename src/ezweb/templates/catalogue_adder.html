@@ -239,14 +239,15 @@ h3{
 	
 	{% if gadget %}
 	<h2 id="warning"> Gadget info:</h2>
-		<p><img src="{{gadget.image_uri}}" /></p>
-		<p><b>Name:</b> {{gadget.short_name}}</p>
-		<p><b>Vendor:</b> {{gadget.vendor}}</p>
-		<p><b>Version:</b> {{gadget.version}}</p>
-		<p><b>Author:</b> {{gadget.author}}</p>
-		<p><b>Email:</b> {{gadget.mail}}</p>
-		<p><b>Description:</b> {{gadget.description}}</p>
-		<p><b>Wiki:</b> {{wiki_page_uri}}</p>
+		<p><img src="{{ gadget.image_uri }}" /></p>
+		<p><b>Name:</b> {{ gadget.name }}</p>
+		<p><b>DisplayName:</b> {{ gadget.display_name }}</p>
+		<p><b>Vendor:</b> {{ gadget.vendor }}</p>
+		<p><b>Version:</b> {{ gadget.version }}</p>
+		<p><b>Author:</b> {{ gadget.author }}</p>
+		<p><b>Email:</b> {{ gadget.mail }}</p>
+		<p><b>Description:</b> {{ gadget.description}}</p>
+		<p><b>Wiki:</b> {{ gadget.doc_uri }}</p>
 	
 		<form id="main_form" action="/interfaces/gadget" method="post">
 		    <input type="hidden" value="{{template_uri}}" name="template_uri" />

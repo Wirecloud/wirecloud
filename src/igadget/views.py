@@ -44,7 +44,7 @@ from commons.logs_exception import TracedServerError
 from commons.resource import Resource
 from commons.utils import get_xml_error, json_encode
 from gadget.models import Gadget
-from gadget.utils import get_or_create_gadget_from_catalogue, get_and_add_gadget
+from gadget.utils import get_or_add_gadget_from_catalogue, get_and_add_gadget
 from igadget.models import IGadget, Variable
 from igadget.utils import SaveIGadget, UpdateIGadget, UpgradeIGadget, deleteIGadget
 from workspace.models import Tab, WorkSpace, UserWorkSpace
@@ -221,7 +221,7 @@ class IGadgetVersion(Resource):
                 users = [user]
 
             if not 'source' in data or data.get('source') == 'catalogue':
-                gadget = get_or_create_gadget_from_catalogue(igadget.gadget.vendor, igadget.gadget.name, new_version, user, users, request)
+                gadget = get_or_add_gadget_from_catalogue(igadget.gadget.vendor, igadget.gadget.name, new_version, user, request, assign_to_users=users)
             elif data.get('source') == 'showcase':
                 gadget = get_and_add_gadget(igadget.gadget.vendor, igadget.gadget.name, new_version, users)
 

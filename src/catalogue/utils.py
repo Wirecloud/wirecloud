@@ -30,64 +30,161 @@
 
 #
 
-from os import path
-from urllib2 import URLError, HTTPError
+import os
+from datetime import datetime
+from urlparse import urljoin
 
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
 
 from catalogue.catalogue_utils import get_latest_resource_version
 from catalogue.get_json_catalogue_data import get_resource_data
-from catalogue.models import GadgetWiring, Tag, UserTag, UserVote
-from catalogue.templateParser import TemplateParser
+from catalogue.models import GadgetWiring, CatalogueResource, Tag, UserTag, UserVote
+from commons.user_utils import get_certification_status
 from commons.authentication import Http403
-from commons.exceptions import TemplateParseException
-from commons.http_utils import download_http_content
-from deployment.utils import undeploy_wgt_gadget
-from deployment.wgtPackageUtils import get_wgt_local_path
+from commons.template import TemplateParser
+from commons.wgt import WgtFile, WgtDeployer
 from gadget.views import deleteGadget
+from translator.models import Translation
 
 
-def add_resource_from_template_uri(template_uri, user, fromWGT=False):
+wgt_deployer = WgtDeployer(settings.CATALOGUE_MEDIA_ROOT)
 
-    if fromWGT:
+def extract_resource_media_from_package(template, package, base_path):
 
-        localPath = get_wgt_local_path(template_uri)
-        if not path.isfile(localPath):
-            raise Exception(_("'%(file)s' is not a file") % {'file': localPath})
+    overrides = {}
+    resource_info = template.get_resource_info()
 
-        f = open(localPath, 'r')
-        template = f.read()
-        f.close()
-
-    else:
-
+    if not resource_info['image_uri'].startswith(('http://', 'https://', '//')):
         try:
-            template = download_http_content(template_uri, user=user)
-        except HTTPError, e:
-            msg = _("Error downloading resource template '%(url)s': code %(errorCode)s (%(errorMsg)s)")
-            raise TemplateParseException(msg % {'url': template_uri, 'errorCode': e.code, 'errorMsg': e.msg})
-        except URLError, e:
-            if isinstance(e.reason, str) or isinstance(e.reason, unicode):
-                context = {'errorMsg': e.reason, 'url': template_uri}
-                msg = _("Bad resource template URL '%(url)s': %(errorMsg)s") % context
-            else:
-                context = {'errorMsg': e.reason.strerror, 'url': template_uri}
-                msg = _("Error downloading resource template '%(url)s': %(errorMsg)s") % context
+            package.extract_file(resource_info['image_uri'], os.path.join(base_path, resource_info['image_uri']), True)
+        except KeyError:
+            overrides['image_uri'] = urljoin(settings.STATIC_URL, '/images/catalogue/gadget_image.png')
 
-            raise TemplateParseException(msg)
-        except ValueError, e:
-            context = {'errorMsg': e, 'url': template_uri}
-            msg = _("Bad resource template URL '%(url)s': %(errorMsg)s") % context
-            raise TemplateParseException(msg)
+        else:
+            overrides['image_uri'] = reverse('wirecloud_catalogue.media', args=(
+                template.get_resource_vendor(),
+                template.get_resource_name(),
+                template.get_resource_version(),
+                resource_info['image_uri']
+            ))
 
-    return add_resource_from_template(template_uri, template, user, fromWGT=fromWGT)
+    return overrides
 
 
-def add_resource_from_template(template_uri, template, user, fromWGT=False):
-    templateParser = TemplateParser(template_uri, template, user, fromWGT=fromWGT)
-    templateParser.parse()
+def add_gadget_from_wgt(file, user, wgt_file=None, template=None, deploy_only=False):
 
-    return templateParser, templateParser.get_gadget()
+    close_wgt = False
+    if wgt_file is None:
+        wgt_file = WgtFile(file)
+        close_wgt = True
+
+    if template is None:
+        template_contents = wgt_file.get_template()
+        template = TemplateParser(template_contents)
+
+    resource_id = (
+        template.get_resource_vendor(),
+        template.get_resource_name(),
+        template.get_resource_version(),
+    )
+    file_name = '_'.join(resource_id) + '.wgt'
+    wgt_dir = os.path.join(*resource_id)
+    local_dir = os.path.join(settings.CATALOGUE_MEDIA_ROOT, wgt_dir)
+    wgt_path = os.path.join(wgt_dir, file_name)
+    local_wgt = os.path.join(settings.CATALOGUE_MEDIA_ROOT, wgt_path)
+
+    if not os.path.exists(local_dir):
+        os.makedirs(local_dir)
+
+    overrides = extract_resource_media_from_package(template, wgt_file, local_dir)
+    template_uri = reverse('wirecloud_catalogue.media', args=resource_id + (file_name,))
+    if close_wgt:
+        wgt_file.close()
+
+    f = open(local_wgt, "wb")
+    file.seek(0)
+    f.write(file.read())
+    f.close()
+
+    if not deploy_only:
+        return add_resource_from_template(template_uri, template, user, overrides=overrides)
+
+
+def add_resource_from_template(template_uri, template, user, fromWGT=False, overrides=None):
+
+    if isinstance(template, TemplateParser):
+        parser = template
+    else:
+        parser = TemplateParser(template, base=template_uri)
+
+    resource_info = parser.get_resource_info()
+    if overrides is not None:
+        resource_info.update(overrides)
+
+    resource = CatalogueResource(
+        creator=user,
+        short_name=resource_info['name'],
+        display_name=resource_info['display_name'],
+        vendor=resource_info['vendor'],
+        version=resource_info['version'],
+        author=resource_info['author'],
+        description=resource_info['description'],
+        mail=resource_info['mail'],
+        image_uri=resource_info['image_uri'],
+        iphone_image_uri=resource_info.get('iphone_image_uri', ''),
+        wiki_page_uri=resource_info['doc_uri'],
+        template_uri=template_uri,
+        creation_date=datetime.today(),
+        popularity='0.0',
+        certification=get_certification_status(user)
+    )
+
+    if resource_info['type'] == 'mashup':
+        resource.type = 1
+    else:
+        resource.type = 0
+
+    resource.save()
+
+    for slot in resource_info['slots']:
+        GadgetWiring.objects.create(
+            idResource=resource,
+            wiring='in',
+            friendcode=slot['friendcode']
+        )
+
+    for event in resource_info['events']:
+        GadgetWiring.objects.create(
+            idResource=resource,
+            wiring='out',
+            friendcode=event['friendcode']
+        )
+
+    resource_table = resource.__class__.__module__ + "." + resource.__class__.__name__
+    for lang in resource_info['translations']:
+        translation = resource_info['translations'][lang]
+        for index in translation:
+            value = translation[index]
+            usages = resource_info['translation_index_usage'][index]
+            for use in usages:
+                if use['type'] != 'resource':
+                    continue
+
+                Translation.objects.create(
+                    text_id=index,
+                    element_id=resource.id,
+                    table=resource_table,
+                    language=lang,
+                    value=value,
+                    default=resource_info['default_lang'] == lang
+                )
+
+                # Create only a translation entry for this index
+                break
+
+    return resource
 
 
 def get_added_resource_info(resource, user):
@@ -128,9 +225,9 @@ def delete_resource(resource, user):
         # Remove the gadget from the showcase
         result = deleteGadget(user, resource.short_name, resource.vendor, resource.version)
 
-        # Delete the gadget if it is saved in the platform
-        if resource.fromWGT:
-            undeploy_wgt_gadget(resource)
+        # Delete media resources if needed
+        if not resource.template_uri.startswith(('http', 'https')):
+            wgt_deployer.undeploy(resource.vendor, resource.short_name, resource.version)
 
     # Delete the object
     resource.delete()

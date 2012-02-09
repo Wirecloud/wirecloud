@@ -97,15 +97,6 @@ function ResourceState(resourceJSON_) {
         return currentVersion.uriWiki;
     };
 
-    this.getMashupId = function () {
-        var index = currentVersion.uriTemplate.lastIndexOf('/');
-        if (index !== -1) {
-            return parseInt(currentVersion.uriTemplate.substr(index + 1), 10);
-        } else {
-            return null;
-        }
-    };
-
     this.isMashup = function () {
         return type === 'mashup';
     };

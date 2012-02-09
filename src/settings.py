@@ -38,6 +38,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
+USE_XSENDFILE = False
 
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False
@@ -171,7 +172,6 @@ INSTALLED_APPS = (
     'API',
     'uploader',
     'south',
-    'deployment',
     'compressor',
     'johnny',
     ### openid authentication ###
@@ -252,6 +252,7 @@ AUTHENTICATION_BACKENDS = (
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 
 # WGT deployment dirs
+CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
