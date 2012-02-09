@@ -4,7 +4,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% trans "EzWeb Platform" %}</title>
+<title>{% trans "Wirecloud Platform" %}</title>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
@@ -197,7 +197,7 @@ h3{
       var browser=navigator.appName;
 
       if (browser.toLowerCase().substring(0, 8) != 'netscape') {
-           alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
+           alert('Currently Wirecloud is only Firefox 2+ compliant! Please, try Wirecloud with this browser!');
 	   return false;
       }      
 
@@ -224,7 +224,7 @@ h3{
 	<div id="banner">
 		<div id="logo"></div>
 		<div id="greeting">
-			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
+			 <span id="help_section"><a href="http://github.com/Wirecloud/wirecloud">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
 		</div>
 	
 	</div>
@@ -260,7 +260,7 @@ h3{
 			<input type="submit" value="Cancel" onclick="javascript:sendCancel();" />
 		</form>
 	{% else %}
-		<a href="/">Go to EzWeb</a>
+		<a href="/">Go to Wirecloud</a>
 	{% endif %}
 	
 </div>

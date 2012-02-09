@@ -57,7 +57,7 @@ def typeCode2typeText(typeCode):
 
 
 def get_igadgets_description(included_igadgets):
-    description = "EzWeb Mashup composed of: "
+    description = "Wirecloud Mashup composed of: "
 
     for igadget in included_igadgets:
         description += igadget.gadget.name + ', '

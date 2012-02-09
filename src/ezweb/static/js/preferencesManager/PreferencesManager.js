@@ -45,7 +45,7 @@ var PreferencesManagerFactory = function () {
 
 			this.preferences = this.preferencesDef['platform'].buildPreferences(response);
 
-			// Continue loading EzWeb Platform
+			// Continue loading Wirecloud Platform
 			OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.PLATFORM_PREFERENCES);
 		}
 
@@ -57,7 +57,7 @@ var PreferencesManagerFactory = function () {
 			// Continue using the defaults preferences
 			this.preferences = this.preferencesDef['platform'].buildPreferences({});
 
-			// Continue loading EzWeb Platform
+			// Continue loading Wirecloud Platform
 			OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.PLATFORM_PREFERENCES);
 		}
 

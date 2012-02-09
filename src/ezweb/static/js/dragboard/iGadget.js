@@ -303,7 +303,7 @@ IGadget.prototype.getHeight = function () {
 
 /**
  * Returns the identifier of this iGadget. This identifier is unique for the
- * current EzWeb Platform. This identifier can be null if this iGadget is not
+ * current Wirecloud Platform. This identifier can be null if this iGadget is not
  * currently presisted.
  *
  * @returns {Number} the identifier for this iGadget.
@@ -1023,7 +1023,7 @@ IGadget.prototype.fillWithInput = function () {
 /**
  * Sets the name of this iGadget. The name of the iGadget is shown at the
  * iGadget's menu bar. Also, this name will be used to refere to this gadget in
- * other parts of the EzWeb Platform, for example it is used in the wiring
+ * other parts of the Wirecloud Platform, for example it is used in the wiring
  * interface.
  *
  * @param {String} igadgetName New name for this iGadget.
@@ -1251,7 +1251,7 @@ IGadget.prototype.destroy = function () {
 /**
  * Removes this igadget form the dragboard.
  *
- * @param {Boolean} orderFromServer true if his gadget is being removed by EzWeb
+ * @param {Boolean} orderFromServer true if his gadget is being removed by Wirecloud
  *   server request.
  */
 IGadget.prototype.remove = function (orderFromServer) {

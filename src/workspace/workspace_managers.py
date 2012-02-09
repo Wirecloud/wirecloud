@@ -12,7 +12,7 @@ def ref_from_workspace(workspace):
 class OrganizationWorkspaceManager:
 
     def get_id(self):
-        return 'ezweb_organizations'
+        return 'wirecloud_organizations'
 
     def update_base_workspaces(self, user, current_workspace_refs):
 

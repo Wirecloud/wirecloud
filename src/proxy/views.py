@@ -161,7 +161,7 @@ class Proxy(Resource):
 
                     cookie_parser = Cookie.SimpleCookie(header[1])
 
-                    # Remove EzWeb cookies
+                    # Remove Wirecloud cookies
                     if hasattr(settings, 'SESSION_COOKIE_NAME'):
                         del cookie_parser[settings.SESSION_COOKIE_NAME]
 
