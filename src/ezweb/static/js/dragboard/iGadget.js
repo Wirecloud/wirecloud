@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window, IE7*/
+/*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
 /*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory*/
 /*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
 /*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
@@ -1526,11 +1526,6 @@ IGadget.prototype._notifyLockEvent = function (newLockStatus, reserveSpace) {
  */
 IGadget.prototype._notifyLoaded = function () {
     var msg, unloadElement, errorCount;
-
-    // ie6 bugs
-    if (window.IE7) {
-        IE7.recalc();
-    }
 
     msg = gettext('iGadget loaded');
     this.log(msg, Constants.Logging.INFO_MSG);

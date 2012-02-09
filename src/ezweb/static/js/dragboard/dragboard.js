@@ -24,7 +24,7 @@
  */
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
-/*global document, window, Error, gettext, interpolate, $, Hash, IE7, Element, Event, isElement*/
+/*global document, window, Error, gettext, interpolate, $, Hash, Element, Event, isElement*/
 /*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory, SmartColumnLayout, URIs*/
 
 /**
@@ -59,10 +59,6 @@ function Dragboard(tab, workSpace, dragboardElement) {
         var oldLength, i;
 
         this.dragboardElement.innerHTML = "";
-
-        if (window.IE7) {
-            IE7.recalc();
-        }
 
         this._recomputeSize();
 

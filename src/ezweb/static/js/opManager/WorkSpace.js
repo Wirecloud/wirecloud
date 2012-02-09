@@ -837,12 +837,6 @@ function WorkSpace (workSpaceState) {
         return this.workSpaceState['owned'];
     };
 
-    // Check if the workspace has to be forced to work as a Shared environment (IE6 only)
-    WorkSpace.prototype.forceRestrictedSharing = function() {
-        return (BrowserUtilsFactory.getInstance().getBrowser() == "IE6");
-    };
-
-
     /**
      * Checks when an action, defined by a basic policy, can be performed.
      */

@@ -496,12 +496,6 @@ var OpManagerFactory = function () {
 
                 this.showActiveWorkSpace();
 
-                //fixes for IE6
-                //Once the theme is set, call recalc function from IE7.js lib to fix ie6 bugs
-                if (BrowserUtilsFactory.getInstance().getBrowser() == "IE6") {
-                    IE7.recalc();
-                }
-
                 layoutManager.logStep('');
                 layoutManager._notifyPlatformReady();
                 this.loadCompleted = true;

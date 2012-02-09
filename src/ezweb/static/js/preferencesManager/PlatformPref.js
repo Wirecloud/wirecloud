@@ -182,7 +182,7 @@ function PreferencesDef(definitions) {
 	this._table.setAttribute('cellspacing', '0');
 	this._table.setAttribute('cellpadding', '0');
 
-	var tbody = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+	var tbody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
 	this._table.appendChild(tbody);
 
 	for (var key in this._preferences) {
@@ -209,7 +209,7 @@ function PreferencesDef(definitions) {
 			complexTable.setAttribute('cellpadding', '0');
 			complexCell.appendChild(complexTable);
 
-			var complexTBody = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+			var complexTBody = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
 			complexTable.appendChild(complexTBody);
 
 			var labelRow = complexTBody.insertRow(-1);

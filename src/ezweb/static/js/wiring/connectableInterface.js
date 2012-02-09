@@ -463,7 +463,7 @@ function ChannelInterface(channel, wiringGUI) {
     // Channel information showed when the channel is selected
     var table = document.createElement("table");
     Element.extend(table);
-    var contentTable = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+    var contentTable = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
     table.appendChild(contentTable)
     Element.extend(contentTable);
     channelContent.appendChild(table);
@@ -522,7 +522,7 @@ function ChannelInterface(channel, wiringGUI) {
 
     var table = document.createElement("table");
     Element.extend(table);
-    var contentTable = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+    var contentTable = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
     Element.extend(contentTable);
     table.appendChild(contentTable)
     table.addClassName("contentTable");

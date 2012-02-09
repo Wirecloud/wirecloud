@@ -531,7 +531,7 @@ FormWindowMenu.prototype._buildFieldTable = function(fields, fieldHash) {
     var table_ = document.createElement('table');
     table_.setAttribute('cellspacing', '0');
     table_.setAttribute('cellpadding', '0');
-    var table = document.createElement('tbody'); // IE6 and IE7 needs a tbody to display dynamic tables
+    var table = document.createElement('tbody'); // IE7 needs a tbody to display dynamic tables
     table_.appendChild(table);
 
     for (var fieldId in fields) {
