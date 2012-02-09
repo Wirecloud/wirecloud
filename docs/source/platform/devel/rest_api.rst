@@ -1,13 +1,15 @@
 HTTP API
 ========
 
-Wirecloud provides an HTTP (almost REST based) API.
+Wirecloud provides an HTTP API for interacting with it. Some of these APIs
+follows the REST paradigm and others are services that does not represent
+Wirecloud resources.
 
 Application Mashup Editor
 -------------------------
 
-Adding a gadget to a workspace
-..............................
+Add a gadget into a workspace
+.............................
 
 Request
 ~~~~~~~
@@ -20,42 +22,8 @@ Parameters
 * *gadget* (required): URI of the gadget to instanciate.
 *
 
-Showcase
---------
-
-Adding gadgets/mashups
-......................
-
-Request
-~~~~~~~
-
-**POST /showcase**
-
-Parameters
-''''''''''
-
-* *url* (required): Template URL of the Gadget/Mashup to add.
-
-Responses
-~~~~~~~~~
-
-* 200 - Gadget/Mashup added successfully
-* 403 - Forbidden
-
-Examples
-~~~~~~~~
-
-Request: ::
-
-    POST /showcase
-    url=http%3A%2F%2Fexample.com%2Ftemplate.xml
-
-Response: ::
-
-    200
-
-Exporting a mashup
-..................
+Export a workspace as mashup
+............................
 
 Request
 ~~~~~~~
@@ -105,3 +73,110 @@ Response: ::
       ...
 
     </Template>
+
+
+Import a mashup
+...............
+
+Reads a mashup description and creates a new workspace following the mashup
+description.
+
+Request
+~~~~~~~
+
+**POST /workspace/import**
+
+Parameters
+''''''''''
+
+* *template_uri* (required): URL of the mashup description (template).
+
+Responses
+~~~~~~~~~
+
+* 200 - Mashup imported successfully
+* 403 - Forbidden
+
+Examples
+~~~~~~~~
+
+Request: ::
+
+    POST /workspace/import
+    {"template_url": "http://server.com/mashup_template.xml"}
+
+Response: ::
+
+
+Merge a mashup in a workspace
+.............................
+
+Reads a mashup description and adds all its resources into an existing
+workspace. Repeated tab and channel names will be adapted to avoid conflicts
+with existing tabs and channels.
+
+Request
+~~~~~~~
+
+**POST /workspace/{workspace_id}/merge**
+
+Parameters
+''''''''''
+
+* *template_uri* (required): URL of the mashup description (template).
+
+Responses
+~~~~~~~~~
+
+* 200 - Mashup merged successfully
+* 403 - Forbidden
+
+Examples
+~~~~~~~~
+
+Request: ::
+
+    POST /workspace/1/merge
+    {"template_url": "http://server.com/mashup_template.xml"}
+
+Response: ::
+
+
+Local catalogue (showcase)
+--------------------------
+
+Add a gadget/mashup into the showcase
+.....................................
+
+Request
+~~~~~~~
+
+**POST /showcase**
+
+Parameters
+''''''''''
+
+* *url*: Template URL of the Gadget/Mashup to add.
+* *file*:
+
+*url* or *file* is required.
+
+Responses
+~~~~~~~~~
+
+* 200 - Gadget/Mashup added successfully
+* 403 - Forbidden
+
+Examples
+~~~~~~~~
+
+Request: ::
+
+    POST /showcase
+    url=http%3A%2F%2Fexample.com%2Ftemplate.xml
+
+Response: ::
+
+
+
+* 200 - Gadget/Mashup added to the showcase successfully
