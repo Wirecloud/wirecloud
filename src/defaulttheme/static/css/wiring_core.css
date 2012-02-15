@@ -18,7 +18,7 @@
 	cursor: pointer;
 }
 
-#wiring .wiring_table.selected_channel .anchor{
+#wiring .wiring_table.selected_channel .anchor {
 	display: block;
 }
 
@@ -297,7 +297,6 @@
   border: 1px solid;
   cursor: pointer;
   height: 25px;
-  padding: 0 8px;
 }
 
 #wiring .channels_list .channel .channelContent {

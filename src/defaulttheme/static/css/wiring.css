@@ -2,6 +2,11 @@
 -webkit-border-radius: 6px;
 -moz-border-radius: 6px;
 -ms-border-radius: 6px;
+
+}
+
+#wiring .icon-channel-settings {
+  float: right;
 }
 
 #wiring .borderLeftCell {
@@ -33,12 +38,22 @@
     background-image: url(../images/icons-sprite.png); background-position: 0px -24px;
 }
 
-#wiring .channels_list .channel.selected .outAnchor, #wiring .channels_list .channel.selected .inAnchor{
-  background: none;
+/* Selected channel */
+#wiring .channels_list .channel.selected .outAnchor, #wiring .channels_list .channel.selected .inAnchor {
+    background: none;
 }
 
 #wiring .channels_list .channel.selected .outAnchor.checked {
     background-image: url(../images/icons-sprite.png); background-position: 0px -409px;
+}
+
+/* Unselected channel */
+#wiring .channels_list .channel .inAnchor {
+    background-image: url(../images/icons-sprite.png); background-position: 0px -47px;
+}
+
+#wiring .channels_list .channel .outAnchor {
+    background-image: url(../images/icons-sprite.png); background-position: 0px -71px;
 }
 
 #wiring .slot_column .igadget .anchor.checked, #wiring .channels_list .channel .inAnchor.checked {
@@ -116,6 +131,7 @@
 #wiring .channelPipe {
   border-color: #2D6F9C;
   background: #97A0A8 url(../images/pipe.png);
+  padding: 0 8px;
 }
 
 .channelPipe * {
@@ -124,12 +140,16 @@
 
 #wiring .channels_list .channel.selected .channelPipe {
   background-color: #2D6F9C;
+  padding: 0 8px;
 }
 
 .channel_window .filter_menu_button {
     background-image: url(../images/icons-sprite.png);
     background-position: 0px -216px;
     background-color: transparent;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
 }
 
 #wiring #wiring_messages {

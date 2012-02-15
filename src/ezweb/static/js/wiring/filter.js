@@ -29,7 +29,7 @@ function Param (name_, label_, type_, index_, required_, defaultValue_){
     this._label = label_;
     this._type = type_;
     this._index = index_;
-    this._required = required_;
+    this._required = !!required_;
     this._defaultValue = defaultValue_;
 }
 
@@ -38,7 +38,7 @@ Param.prototype.Param = function (name_, label_, type_, index_, required_, defau
     this._label = label_;
     this._type = type_;
     this._index = index_;
-    this._required = required_;
+    this._required = !!required_;
     this._defaultValue = defaultValue_;
 }
 
@@ -67,7 +67,48 @@ Param.prototype.getDefaultValue = function() {
 }
 
 
-// This class represents the filter of the a channel
+/**********************************************************************************************************/
+Param.prototype.validate = function(value) {
+    var current_pattern, current_modifiers,interger_value, jpath_exp;
+    if(!value){
+        if(this.getRequired()){
+            throw Error (gettext("Look out! a value for '%(paramName)s' is required"));
+        }
+    }
+    // Checks the type of parameter
+    switch (this.getType()){
+    case 'N': // Param is Number
+        interger_value = Number(value);
+        if (isNaN(interger_value)){
+            throw Error (gettext("Error loading parameter '%(paramName)s'. It must be a number"));
+        }
+        break;
+    case 'regexp': // Param is RegExp
+        if ((value.indexOf('/') == 0) && (value.lastIndexOf('/') > 0)){
+            current_pattern = value.substring(1, value.lastIndexOf('/'));
+            current_modifiers = value.substring(value.lastIndexOf('/') + 1, value.length);
+            //This new RegExp launch exceptions if the ER have any problem.
+            new RegExp(current_pattern, current_modifiers);
+        }else {
+            new RegExp (value);
+        }
+        break;
+    //Carlos: Revisar si es necesario el .parse y el ,replace.
+    case 'jpath': // Param is a JPATH expresion (for JSON)
+        jpath_exp = this.parse(value);
+        break;
+    default: // Otherwise is String
+        value.replace(/"/g,"'");
+        break;
+    }
+};
+/**********************************************************************************************************/
+
+/**
+ * @class
+ *
+ * Description of a filter. Has information about the parameters this filter.
+ */
 function Filter (id_, name_, label_, nature_, code_, category_, params_, helpText_) {
   this._id = id_;
   this._name = name_;
@@ -154,26 +195,14 @@ Filter.prototype.processParams = function(params_) {
 }
 
 Filter.prototype.getInitialValues = function() {
-    var params = [];
+    var params = {}, param;
 
     for (var i = 0; i < this._params.length; i++) {
-        params.push({'index': this._params[i]._index, 'value': this._params[i]._defaultValue})
+        param = this._params[i];
+        params[param._index] = this._params[i]._defaultValue;
     }
 
     return params;
-}
-
-Filter.prototype.fillFilterParamValues = function(filterParams, valueElement) {
-    var paramLayers = valueElement.childElements();
-
-    for (var i = 0; i < paramLayers.length; i++) {
-        var paramInput = paramLayers[i].childElements()[0];
-
-        if(filterParams[i]['value'])
-            paramInput.value = filterParams[i]['value'];
-        else
-            paramInput.value = null;
-    }
 }
 
 Filter.prototype.run = function(channelValue_, paramValues_, channel) {
@@ -189,7 +218,7 @@ Filter.prototype.run = function(channelValue_, paramValues_, channel) {
         // Creates the variables for other params
         for (i=0; i < this._params.length; ++i){
 
-            var paramValue = paramValues_[i]['value'];
+            var paramValue = paramValues_[i];
 
             if(!paramValue){
                 if(this._params[i].getRequired()){

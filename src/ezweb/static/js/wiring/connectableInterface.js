@@ -385,16 +385,6 @@ function ChannelInterface(channel, wiringGUI) {
     this.inAnchor = new OutConnectionAnchor(this);
     this.outAnchor = new InConnectionAnchor(this);
 
-    // Links and tables for structuring channel's info!
-    this.filter_link = null;
-    this.filter_table = null;
-
-    // Label of operation menu
-    this.operations_menu_label = null;
-
-    this.last_clicked_option_link = null;
-    this.opened_optional_table = false;
-
     // HTML interface
     this.htmlElement = document.createElement("div");
     Element.extend(this.htmlElement);
@@ -426,43 +416,18 @@ function ChannelInterface(channel, wiringGUI) {
     });
     edit_button.insertInto(channelPipe);
     edit_button.addEventListener('click', this.wiringGUI._editChannel.bind(this.wiringGUI, this));
+   
     
     this.channelNameInput = document.createElement("span");
     Element.extend(this.channelNameInput);
     channelPipe.appendChild(this.channelNameInput);
     this.channelNameInput.setTextContent(this.name);
     this.channelNameInput.addClassName ("channelNameInput");
-    this.channelNameInput.observe('click',
-                  function(e) {
-                      if (this.wiringGUI.currentChannel == this)
-                          Event.stop(e); //do not propagate to div.
-                  }.bind(this));
-
-    var checkName = function(e) {
-        var target = BrowserUtilsFactory.getInstance().getTarget(e);
-        if (target.value == "" || target.value.match(/^\s$/)) {
-            var msg = gettext("Channel name cannot be empty.");
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-            target.value = this.getName();
-        } else if (this.wiringGUI.channelExists(target.value)) {
-            var msg = gettext("A channel named \"%(channelName)s\" already exists.");
-            msg = interpolate(msg, {channelName: target.value}, true);
-            LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.WARN_MSG);
-            target.value = this.getName();
-        } else {
-            this.setName(target.value)
-        }
-    }
-    this.channelNameInput.observe('change', checkName.bind(this));
-
-   
 
     ////////////////////////////////////////////////
     // MANDATORY AREA!! Impossible to fold!
     // Channel data:
     ////////////////////////////////////////////////
-
-    this.channelNameInput.focus();
 
     // Anchors
     var inAnchorElement = this.inAnchor.getHTMLElement();
@@ -494,6 +459,13 @@ ChannelInterface.prototype.initialize = function() {
     for (var i = 0; i < this.outputs.length; i++)
         this.outputs[i] = this.wiringGUI.getConnectableByQName(this.outputs[i].getQualifiedName());
 }
+
+/**
+ * Updates the channel label with the current name for the channel.
+ */
+ChannelInterface.prototype.update = function() {
+    this.channelNameInput.setTextContent(this.name);
+};
 
 /**
  * Checks whether a loop will be created if the given
@@ -645,7 +617,7 @@ ChannelInterface.prototype.commitChanges = function(wiring, phase) {
         // Update channel name
         this.connectable._name= this.name;
         this.connectable.setFilter(this.filter);
-        this.connectable.setFilterParams(this.paramValues);
+        this.connectable.setFilterParams(this.filterParams);
         break;
 
     case 4:
@@ -696,10 +668,8 @@ ChannelInterface.prototype.getHTMLElement = function() {
 /**
  */
 ChannelInterface.prototype.setFilterParam = function(index, value) {
-    if (this.connectable) {
-        this.connectable.setFilterParam(index, value);
-        this.wiringGUI.setFilterParam();
-    }
+    this.filterParams[index] = value;
+    this.wiringGUI.setFilterParam();
 }
 
 /**

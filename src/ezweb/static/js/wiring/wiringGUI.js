@@ -241,13 +241,19 @@ WiringInterface.prototype.getConnectableByQName = function(qname) {
  * @private used by <code>ChannelInterface</code>
  */
 WiringInterface.prototype._notifyNameChange = function(oldName, newName, channel) {
-    if (this.channelsByName[oldName] == channel) {
-        this.channelsByName[newName] = channel;
+    if (this.channelsByName[oldName] === channel) {
         delete this.channelsByName[oldName];
-        this.changed = true;
+        //console.debug(this.channelsByName);
     } else {
+        //console.debug('error en notifyNameChange');
         // TODO log error
     }
+    if (!(newName in this.channelsByName)) {
+        this.channelsByName[newName] = channel;
+    } else {
+    
+    }
+    this.changed = true;
 }
 
 /**

@@ -46,9 +46,29 @@ span.icon {
     display: inline-block;
 }
 
+.icon-warning-channel.on {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -528px;
+    display: block;
+    background-color: transparent;
+    margin-left: 8px;
+    vertical-align: top;
+    float: right;
+}
+
+.icon-warning-channel {
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -528px;
+    display: none;
+    background-color: transparent;
+    margin-left: 8px;
+    vertical-align: top;
+    float: right;
+}
+
 .icon-tab-menu { background-image: url(../images/icons-sprite.png); background-position: -48px 0; }
 .icon-igadget-settings, .icon-channel-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
-span.icon-igadget-settings { background-position: -48px -408px; }
+span.icon-igadget-settings, .icon-channel-settings{ background-position: -48px -408px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
 .icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
 .icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
@@ -69,7 +89,7 @@ span.icon-igadget-settings { background-position: -48px -408px; }
 .icon-rename { background-image: url(../images/icons-sprite.png); background-position: -48px -260px; }
 .icon-show-floating { background-image: url(../images/icons-sprite.png); background-position: -48px -428px; }
 .icon-tab-preferences { background-image: url(../images/icons-sprite.png); background-position: -48px -332px; }
-.icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -455px; }
+.icon-wiring-filter-param { background-image: url(../images/icons-sprite.png); background-position: -50px -455px; padding-left: 20px;}
 .icon-back { background-image: url(../images/icons-sprite.png); background-position: 0px -192px; display: block; }
 .icon-color, .color_button { background-image: url(../images/icons-sprite.png); background-position: 0px -576px; }
 .icon-igadget-reload { background-image: url(../images/icons-sprite.png); background-position: -24px -571px; }

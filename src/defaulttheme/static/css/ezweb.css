@@ -245,6 +245,8 @@ a, a:visited{
 
 .drop_down_menu {
   border-color: #AAAAAA;
+  z-index: 5;
+  max-height: 367px
 }
 
 .drop_down_menu .border_bottom{
@@ -305,6 +307,23 @@ a, a:visited{
 .window_menu .error {
   color: red;
   font-weight: bold;
+}
+
+.channel_window .error {
+    background-color: #FFDBDB;
+    font-weight: normal;
+}
+
+.on .warning-note {
+    background-color: white;
+    font-size: 8pt;
+    float: left;
+    padding: 3px;
+    display: block
+}
+
+.warning-note{
+    display: none;
 }
 
 .window_menu .warning{

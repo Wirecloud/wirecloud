@@ -209,6 +209,13 @@ StyledElements.StyledElement.prototype.disable = function() {
     this.addClassName('disabled');
 }
 
+/*
+ * @experimental
+ */
+StyledElements.StyledElement.prototype.getBoundingClientRect = function () {
+    return this.wrapperElement.getBoundingClientRect();
+};
+
 /**
  * @abstract
  *

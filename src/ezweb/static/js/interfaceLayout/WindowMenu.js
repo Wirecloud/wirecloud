@@ -426,8 +426,14 @@ function MessageWindowMenu (element) {
 MessageWindowMenu.prototype = new WindowMenu();
 
 MessageWindowMenu.prototype.setFocus = function() {
-    this.button.focus();
-}
+    setTimeout(this.button.focus.bind(this.button), 0);
+    //this.button.focus();
+};
+
+MessageWindowMenu.prototype.show = function (parentWindow) {
+    WindowMenu.prototype.show.call(this, parentWindow);
+    this.setFocus();
+};
 
 MessageWindowMenu.prototype.setType = function(type) {
     var titles = ['', gettext('Error'), gettext('Warning'), gettext('Info')];
