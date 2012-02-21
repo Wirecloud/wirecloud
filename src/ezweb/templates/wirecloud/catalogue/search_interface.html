@@ -1,0 +1,21 @@
+{% load i18n %}
+<div id="catalogue_resources_header" class="resources_header">
+    <div id="simple_search" class="simple_search">
+        <input class="simple_search_text" type="text"></input>
+        <span class="view_all" class="link">{% trans  "View All" %}</span>
+    </div>
+    <div id="paginate" class="paginate"></div>
+    <div id="orderby" class="orderby">
+        <label for="results_order">{% trans 'Order by:' %}</label>
+        <select id="results_order">
+            {% include "wirecloud/catalogue/order_by_template.html" %}
+        </select>
+    </div>
+    <div id="number_of_results" class="paginate_show">
+        <label for="results_per_page">{% trans 'Gadgets per page:' %} </label>
+        <select id="results_per_page">
+            {% include "wirecloud/catalogue/results_per_page_template.html" %}
+        </select>
+    </div>
+</div>
+<div class="resource_list"></div>

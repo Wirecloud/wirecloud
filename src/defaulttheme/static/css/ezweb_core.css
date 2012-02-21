@@ -1,11 +1,11 @@
 body {
-	margin:0;
-    padding:0;
-    /*min-width: 900px;*/ /*TODO: IE6 doesn't deal with min-width! Find a solution*/
+	margin: 0;
+    padding: 0;
+    min-width: 800px;
 }
 
 a, a:visited {
-  text-decoration:none;
+  text-decoration: none;
 }
 
 .application_selector {
@@ -23,10 +23,6 @@ a:hover  {
 
 td {
     padding: 0;
-}
-
-.hidden {
-    display: none !important;
 }
 
 .clickable {
@@ -614,12 +610,12 @@ body.shared .tab_dragger {
     font-size: 85%;
 }
 
-.tabOps_launcher, .closebutton {
+.closebutton {
     border: 0px none;
     cursor: pointer;
     padding: 0px;
-  	width: 16px;
-  	height: 16px;
+    width: 16px;
+    height: 16px;
 }
 
 .tab_dragger{
@@ -710,19 +706,6 @@ button {
     right: 0px;
     z-index: 1;
  	min-width: 600px;
-}
-
-.container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    height: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    z-index: 1;
-    visibility: hidden;
 }
 
 .container_content {

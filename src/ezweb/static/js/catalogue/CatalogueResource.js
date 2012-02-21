@@ -27,7 +27,7 @@
 /*global $, GadgetVersion */
 "use strict";
 
-function ResourceState(resourceJSON_) {
+function CatalogueResource(resourceJSON_) {
 
     ///////////////////////
     // PRIVATE VARIABLES

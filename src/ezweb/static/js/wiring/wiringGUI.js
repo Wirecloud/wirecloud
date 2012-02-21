@@ -24,18 +24,19 @@
  */
 
 
-function WiringInterface(wiring, workspace, wiringContainer) {
+function WiringInterface(id, options) {
+
+    this.view_name = 'wiring';
+    options.id = 'wiring';
+    StyledElements.Alternative.call(this, id, options);
+    this.wrapperElement.innerHTML = $('wirecloud_wiring_template').getTextContent();
 
     // ***********************************
     //  PRIVATE METHODS AND ATTRIBUTES
     // ***********************************
 
-    this.workspace = workspace;
-    this.wiring = wiring;
-    this.wiringContainer = wiringContainer;
-    //banner
-    this.wsLink = null;
-    this.wiring_header = null;
+    this.workspace = null;
+    this.wiring = null;
 
     this.opmanager = OpManagerFactory.getInstance();
     this.currentChannel = null;
@@ -48,21 +49,19 @@ function WiringInterface(wiring, workspace, wiringContainer) {
     this.friend_codes = {};
     this.friend_codes_counter = 0;
     this.channelBaseName = gettext("Channel");
-    this.visible = false; // TODO temporal workarround
 
-    this.eventColumn = $('eventColumn');
-    this.slotColumn = $('slotColumn');
-    this.event_list = $('events_list');
-    this.slot_list = $('slots_list');
-    this.channels_list = $('channels_list');
-    this.newChannel = $('newChannel');
-    this.wiringTable = $('wiring_table');
+    this.eventColumn = this.wrapperElement.getElementsByClassName('event_column')[0];
+    this.slotColumn = this.wrapperElement.getElementsByClassName('slot_column')[0];
+    this.event_list = this.wrapperElement.getElementsByClassName('events_list')[0];
+    this.slot_list = this.wrapperElement.getElementsByClassName('slots_list')[0];
+    this.channels_list = this.wrapperElement.getElementsByClassName('channels_list')[0];
+    this.wiringTable = this.wrapperElement.getElementsByClassName('wiring_table')[0];
 
     // Create the canvas for the connection arrows
     this.canvas = new Canvas();
     this.canvas.addClassName('canvas');
     this.canvasElement = this.canvas.getHTMLElement();
-    $('wiring_wrapper').appendChild(this.canvasElement);
+    this.wrapperElement.appendChild(this.canvasElement);
 
 
     // folding/unfolding all tabs events
@@ -81,41 +80,6 @@ function WiringInterface(wiring, workspace, wiringContainer) {
     this._toggleSlotColumnEvent = function (e) {this.toggleSlotColumn()}.bind(this);
     Event.observe(titleElement, "click", this._toggleSlotColumnEvent);
 
-    Event.observe($('unfold_all_link'), "click",
-                function () {
-                  this.toggleEventColumn(true);
-                  this.toggleSlotColumn(true);
-              }.bind(this));
-
-
-    var platformPreferences = PreferencesManagerFactory.getInstance().getPlatformPreferences();
-    var unfold_chkItem = $('unfold_chkItem');
-    var unfold_chkItem_listener = function (modifiedValues) {
-        if (!('wiring-expand-by-default' in modifiedValues)) {
-            return;
-        }
-
-        if (modifiedValues['wiring-expand-by-default']) {
-            unfold_chkItem.addClassName('chkItem');
-        } else {
-            unfold_chkItem.removeClassName('chkItem');
-        }
-    };
-    platformPreferences.addCommitHandler(unfold_chkItem_listener);
-    unfold_chkItem_listener({'wiring-expand-by-default': platformPreferences.get('wiring-expand-by-default')});
-
-    // Add event listener only once
-    if (!unfold_chkItem.lastEvent) {
-        unfold_chkItem.lastEvent = function(e) {
-            platformPreferences.set({
-                'wiring-expand-by-default': {
-                    value: !unfold_chkItem.hasClassName('chkItem')
-                }
-            });
-        }.bind(this);
-        Event.observe(unfold_chkItem, "click", unfold_chkItem.lastEvent);
-    }
-
     this._eventCreateChannel = function (e) {
         Event.stop(e);
         this._createChannel();
@@ -123,113 +87,43 @@ function WiringInterface(wiring, workspace, wiringContainer) {
         this.toggleSlotColumn(true);
     }.bind(this)
 
-    Event.observe(this.newChannel, 'click', this._eventCreateChannel);
+    this.addEventListener('show', this.renewInterface.bind(this));
+    this.addEventListener('hide', function (gui) {
+        if (gui.currentChannel) {
+            gui.uncheckChannel(gui.currentChannel);
+            gui.currentChannel = null;
+        }
 
-    // Menues
-    this._createFilterMenu();
+        gui.saveWiring();
+    });
 }
+WiringInterface.prototype = new StyledElements.Alternative();
 
-WiringInterface.prototype.show = function () {
-    if (this.visible)
-        return; // Nothing to do
-
-    this.visible = true;
-    this.renewInterface();
-    LayoutManagerFactory.getInstance().showWiring(this);
-}
-
-WiringInterface.prototype.hide = function () {
-    if (!this.visible)
-        return; // Nothing to do
-
-    this.visible = false;
-    if (this.currentChannel) {
-        this.uncheckChannel(this.currentChannel);
-        this.currentChannel = null;
-    }
-
-    this.saveWiring();
-
-    LayoutManagerFactory.getInstance().hideView(this.wiringContainer);
-}
-
-/*
- * banner operations
- */
-
-var _buttonHandler = function () {
-    OpManagerFactory.getInstance().activeWorkSpace.showWiring();
-};
-
-WiringInterface.prototype.getHeader = function(){
-    return this.wiring_header;
-}
-
-/**
- *
- * set the proper handlers to the workspace toolbar buttons
- */
-
-WiringInterface.prototype.initToolbar = function(){
-    this.wiring_header = $('wiring_header');
-    if (this.wiring_header) {
-        this.wsLink = this.wiring_header.getElementsBySelector('#wiring_dragboard_link')[0];
-
-        //set the handlers
-        this.workspace.setToolbarButton(this.wsLink);
-    }
-}
-
-/**
- *
- * unset the handlers of the workspace toolbar buttons
- */
-WiringInterface.prototype.unloadToolbar = function(){
-    if (this.wiring_header) {
-        this.workspace.unsetToolbarButton(this.wsLink);
-    }
-}
-
-/**
- * This function knows which handler matches the wiring link in the toolbar
- * @param {HTML element} wiringLinkElement
- */
-WiringInterface.prototype.setToolbarButton = function (wiringLinkElement) {
-    Event.observe(wiringLinkElement,
-                "click",
-                _buttonHandler,
-                false
-                );
-}
-
-/**
- * This function knows how to stop observing the wiring link event
- * @param {HTML element} wiringLinkElement
- */
-WiringInterface.prototype.unsetToolbarButton = function (wiringLinkElement){
-    Event.stopObserving(wiringLinkElement,
-                        'click',
-                        _buttonHandler
-                        );
-}
-
-
-WiringInterface.prototype.unload = function () {
+WiringInterface.prototype.destroy = function () {
     this._clear();
-
-    Event.stopObserving(this.newChannel, 'click', this._eventCreateChannel);
 
     // Remove canvas
     this.canvas.clear();
-    $('wiring_wrapper').removeChild(this.canvasElement);
+    this.canvasElement.parentNode.removeChild(this.canvasElement);
     this.canvas = null;
     this.canvasElement = null;
 
     // Remove Filter Menu
-    var filterMenu = $('wiring_filter_menu');
-    this.filterMenu.remove();
+    this.filterMenu.destroy();
     this.filterMenu = null;
-}
+
+    StyledElements.Alternative.prototype.destroy.call(this);
+};
+
+WiringInterface.prototype.assignWorkspace = function (workspace) {
+    if (workspace instanceof WorkSpace) {
+        this.workspace = workspace;
+        this.wiring = workspace.wiring;
+    } else {
+        this.workspace = null;
+        this.wiring = null;
+    }
+};
 
 WiringInterface.prototype.setFilterParam = function () {
     this.changed = true;
@@ -277,7 +171,7 @@ WiringInterface.prototype.saveWiring = function () {
  * @param {Tab} tab
  */
 WiringInterface.prototype._addTab = function (tab) {
-    var tabEvents, tabSlots, igadgets, i;
+    var tabEvents, tabSlots, igadgets, i, platformPreferences;
 
     tabEvents = new EventTabInterface(tab, this);
     this.eventTabs.add(tabEvents);
@@ -844,12 +738,31 @@ WiringInterface.prototype.highlightChannel = function (channel) {
     //mark the connections with the channel
     this._highlightChannelInputs(channel);
     this._highlightChannelOutputs(channel);
-}
+};
+
+WiringInterface.prototype.getBreadcrum = function () {
+    var workspace_breadcrum = LayoutManagerFactory.getInstance().viewsByName['workspace'].getBreadcrum().slice();
+
+    workspace_breadcrum.push({
+        'label': 'wiring'
+    });
+
+    return workspace_breadcrum;
+};
+
+/**
+ * Returns the sub menu items for the wirecloud header
+ */
+WiringInterface.prototype.getSubMenuItems = function () {
+    return [
+        {'label': gettext('New channel'), 'callback': this._createChannel}
+    ]
+};
 
 // ***********************************
 //  COLOR SCHEME FOR HIGHLIGHTS
 //  More colors in color_scheme.js file but now it is not used!
-//  Too many colors at that file, it is has been optimized!
+//  Too many colors at that file, it has been optimized!
 // ***********************************
 
 WiringInterface.prototype.color_scheme = [];
@@ -1119,8 +1032,8 @@ TabConnectionAnchor.prototype.setConnectionStatus = EventConnectionAnchor.protot
  * @param {ConnectableAnchor} targetAnchor
  */
 WiringInterface.prototype._buildArrowPointList = function(sourceAnchor, targetAnchor) {
-    var scoordinates = sourceAnchor.getCoordinates(this.wiringContainer);
-    var tcoordinates = targetAnchor.getCoordinates(this.wiringContainer);
+    var scoordinates = sourceAnchor.getCoordinates(this.wrapperElement);
+    var tcoordinates = targetAnchor.getCoordinates(this.wrapperElement);
 
     var pointList = []
 
@@ -1151,7 +1064,7 @@ WiringInterface.prototype._buildArrowPointList = function(sourceAnchor, targetAn
 
         var targetElement = targetAnchor.getConnectableInterface().getHTMLElement();
         var rect = Element.getRelativeBoundingClientRect(targetElement,
-                                                         this.wiringContainer);
+                                                         this.wrapperElement);
 
         if (sourceAnchor.getConnectableInterface() == this.currentChannel) {
             var left = tcoordinates.posX - 50;

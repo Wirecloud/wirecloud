@@ -300,6 +300,7 @@ var LogManagerFactory = function () {
         this.messageBox = $('message_box');
         this.header = $('logs_header');
 
+        /*
         $('logs_all_toolbar').observe('click', function() {
             this.show();
         }.bind(this));
@@ -311,6 +312,7 @@ var LogManagerFactory = function () {
             this.reset();
             this.show();
         }.bind(this));
+        */
 
         this.title = $$('#logs_header .title')[0];
         this.sectionIdentifier = $$('#logs_header .section_identifier')[0];

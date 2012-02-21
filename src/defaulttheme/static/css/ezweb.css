@@ -36,10 +36,6 @@ a, a:visited{
     box-shadow: 0.3ex 0.3ex 0.5ex 0.25ex rgba(0,0,0,0.5);
 }
 
-.hidden {
-    display: none !important;
-}
-
 /* header ------------------------------------------------------------------------------------------ */
 
 .logo_layout {
@@ -409,14 +405,6 @@ button {
 #gadgets .gadget .main table{
   border-color:1px dotted #dfdfdf;
 }
-
-/* containers --------------------------------------------------------------------------------------- */
-
-.container {
-  background-color:#E0E0E0 url(../images/init.dat) no-repeat scroll bottom center;
-  border-top: 1px solid;
-}
-
 
 /* showcase ---------------------------------------------------------------------------------------- */
 

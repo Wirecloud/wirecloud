@@ -26,7 +26,9 @@
 
 <body>
     <div id="wirecloud_header">
-        <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />://{% block path %}{% endblock %}
+        <div class="breadcrum_wrapper">
+            <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />/<span id="wirecloud_breadcrum">{% block path %}{% endblock %}</span>
+        </div>
     </div>
     <div>
     {% block content %}

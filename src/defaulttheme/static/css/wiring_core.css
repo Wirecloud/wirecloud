@@ -6,29 +6,29 @@
   position: relative;
 }
 
-#wiring #wiring_table {
+#wiring .wiring_table {
   position: relative;
   clear:    both;
   z-index:  1;
   margin-top: 10px;
 }
 
-#wiring #wiring_table .anchor{
+#wiring .wiring_table .anchor{
 	display: none;
 	cursor: pointer;
 }
 
-#wiring #wiring_table.selected_channel .anchor{
+#wiring .wiring_table.selected_channel .anchor{
 	display: block;
 }
 
-#wiring #channels_list .channel .inAnchor, #wiring #channels_list .channel .outAnchor {
+#wiring .channels_list .channel .inAnchor, #wiring .channels_list .channel .outAnchor {
 	height:18px;
 	top:3px;
 	width:35px;
 }
 
-#wiring #channels_list {
+#wiring .channels_list {
   margin: 2ex 0px;
   padding: 0px;
 }
@@ -47,14 +47,14 @@
   vertical-align: top;
 }
 
-#wiring .eventColumn, #wiring .slotColumn {
+#wiring .event_column, #wiring .slot_column {
   width: 20%;
   position: relative;
   padding: 0 20px;
   vertical-align: top;
 }
 
-#wiring .inoutColumn {
+#wiring .inout_column {
   width: 20%;
   position: relative;
   left: 20%;
@@ -62,12 +62,12 @@
   vertical-align: top;
 }
 
-#wiring .eventColumn {
+#wiring .event_column {
   float: left;
   left: 0;
 }
 
-#wiring .slotColumn {
+#wiring .slot_column {
   right: 0;
   float: right;
 }
@@ -79,7 +79,7 @@
   margin-bottom: 1ex;
 }
 
-#wiring .eventColumn > .title, .slotColumn > .title{
+#wiring .event_column > .title, .slot_column > .title{
   cursor:pointer;
 }
 
@@ -130,13 +130,13 @@
   line-height: 24px;
 }
 
-#wiring .eventColumn .igadget > .content > div {
+#wiring .event_column .igadget > .content > div {
   padding: 0px 14px 0px 0px;
   text-align: right;
   cursor:pointer;
 }
 
-#wiring .slotColumn .igadget > .content > div {
+#wiring .slot_column .igadget > .content > div {
   padding: 0px 0px 0px 14px;
   text-align: left;
 }
@@ -162,11 +162,11 @@
   top: 3px;
 }
 
-#wiring .eventColumn .igadget .anchor {
+#wiring .event_column .igadget .anchor {
   right: -35px;
 }
 
-#wiring .slotColumn .igadget .anchor {
+#wiring .slot_column .igadget .anchor {
   left: -35px;
 }
 
@@ -174,7 +174,7 @@
   position: relative;
 }
 
-#wiring .eventColumn .tab.empty, #wiring .tab .igadget.empty {
+#wiring .event_column .tab.empty, #wiring .tab .igadget.empty {
   display: none;
 }
 
@@ -202,22 +202,22 @@
   cursor: pointer;
 }
 
-#wiring #channels_list .channel {
+#wiring .channels_list .channel {
   cursor: pointer;
   position: relative;
 }
 
-#wiring #channels_list .channel .inAnchor {
+#wiring .channels_list .channel .inAnchor {
   position: absolute;
   left: -25px;
 }
 
-#wiring #channels_list .channel .outAnchor {
+#wiring .channels_list .channel .outAnchor {
   position: absolute;
   right: -25px;
 }
 
-#wiring #channels_list .channel.selected .inAnchor, #wiring #channels_list .channel.selected .outAnchor {
+#wiring .channels_list .channel.selected .inAnchor, #wiring .channels_list .channel.selected .outAnchor {
   cursor:default;
   height:   18px;
   top:      3px;
@@ -248,16 +248,16 @@
   top: -1px;
 }
 
-#wiring .eventColumn .tab > .header_section, #wiring .slotColumn .tab > .header_section {
+#wiring .event_column .tab > .header_section, #wiring .slot_column .tab > .header_section {
   padding: 6px 24px 2px 24px;
   text-align: right;
 }
 
-#wiring .eventColumn .tab > .header_section{
+#wiring .event_column .tab > .header_section{
   text-align: right;
 }
 
-#wiring .slotColumn .tab > .header_section {
+#wiring .slot_column .tab > .header_section {
   text-align: left;
 }
 
@@ -300,20 +300,20 @@
   display: inline-block;
 }
 
-#wiring #channels_list .channel {
+#wiring .channels_list .channel {
   margin: 20px 1ex;
   padding: 0px;
 }
 
 
-#wiring #channels_list .channel .channelPipe {
+#wiring .channelPipe {
   border: 1px solid;
   cursor: pointer;
   height: 25px;
   padding: 0 8px;
 }
 
-#wiring #channels_list .channel .channelContent {
+#wiring .channels_list .channel .channelContent {
   border-width: 0px 1px 1px 1px;
   margin: 0 8px;
   display: none;
@@ -322,11 +322,11 @@
   cursor: default;
 }
 
-#wiring #channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
+#wiring .channels_list .channel.selected .channelContent, #wiring .newChannel.selected .channelContent {
   display: block;
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+#wiring .channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
 	margin-left: 5px;
 	border: 0;
 	cursor: pointer;
@@ -335,41 +335,41 @@
 	vertical-align: middle;
 }
 
-#wiring #channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {
+#wiring .channels_list .channel.selected .channelContent td, #wiring .newChannel.selected .channelContent td {
 	line-height: 1.5;
 	padding: 0 3px 0 0;
 }
 
-#wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
+#wiring .channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
 	text-align: left;
 	margin: 0px;
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
+#wiring .channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
 	white-space: nowrap;
 }
 
-#wiring #channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
+#wiring .channels_list .channel.selected .channelContent .paramName, #wiring .newChannel.selected .channelContent .paramName {
 	line-height: 1;
 	white-space: nowrap;
 }
 
-#wiring #channels_list .channel.selected .channelContent .paramName label, #wiring .newChannel.selected .channelContent .paramName label{
+#wiring .channels_list .channel.selected .channelContent .paramName label, #wiring .newChannel.selected .channelContent .paramName label{
 	white-space: normal;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column {
+#wiring .channels_list .channel.selected .channelContent .column {
 	vertical-align: top;
 }
 
-#wiring #channels_list .channel.selected .channelContent .column .labelContent {
+#wiring .channels_list .channel.selected .channelContent .column .labelContent {
   vertical-align: top;
   text-align: left;
   white-space: nowrap;
   margin: 0px
 }
 
-#wiring #channels_list .channel.selected .channelContent .paramValueInput {
+#wiring .channels_list .channel.selected .channelContent .paramValueInput {
   border:0px none;
   margin: 0.1ex 0ex;
   padding: 2px;

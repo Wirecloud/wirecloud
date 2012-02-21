@@ -632,8 +632,7 @@ Dragboard.prototype._recomputeSize = function () {
         this.dragboardWidth = parseInt(this.dragboardElement.clientWidth, 10);
     }
 
-    /*
-    Pre reserve scroll bar space
+    /* Pre reserve scroll bar space */
 
     var dragboardElement = this.dragboardElement;
 
@@ -645,9 +644,10 @@ Dragboard.prototype._recomputeSize = function () {
     if (tmp > this.scrollbarSpace)
         this.dragboardWidth-= tmp;
     else
-        this.dragboardWidth-= this.scrollbarSpace;*/
+        this.dragboardWidth-= this.scrollbarSpace;
 
-    this.dragboardHeight = parseInt($("wrapper").clientHeight, 10);
+    // TODO
+    this.dragboardHeight = parseInt(dragboardElement.clientHeight, 10);
 };
 
 /**

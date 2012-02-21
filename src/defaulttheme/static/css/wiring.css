@@ -17,31 +17,31 @@
   -webkit-border-radius: 4px;
 }
 
-#wiring .eventColumn .igadget .anchor {
+#wiring .event_column .igadget .anchor {
     background-image: url(../images/icons-sprite.png); background-position: 0px -71px;
 }
 
-#wiring .slotColumn .igadget .anchor {
+#wiring .slot_column .igadget .anchor {
     background-image: url(../images/icons-sprite.png); background-position: 0px -47px;
 }
 
-#wiring .eventColumn .igadget .anchor.checked, #wiring #channels_list .channel .outAnchor.checked {
+#wiring .event_column .igadget .anchor.checked, #wiring .channels_list .channel .outAnchor.checked {
     background-image: url(../images/icons-sprite.png); background-position: 0px -24px;
 }
 
-#wiring #channels_list .channel.selected .outAnchor, #wiring #channels_list .channel.selected .inAnchor{
+#wiring .channels_list .channel.selected .outAnchor, #wiring .channels_list .channel.selected .inAnchor{
   background: none;
 }
 
-#wiring #channels_list .channel.selected .outAnchor.checked {
+#wiring .channels_list .channel.selected .outAnchor.checked {
     background-image: url(../images/icons-sprite.png); background-position: 0px -409px;
 }
 
-#wiring .slotColumn .igadget .anchor.checked, #wiring #channels_list .channel .inAnchor.checked {
+#wiring .slot_column .igadget .anchor.checked, #wiring .channels_list .channel .inAnchor.checked {
     background-image: url(../images/icons-sprite.png); background-position: 0px 0px;
 }
 
-#wiring #channels_list .channel.selected .inAnchor.checked {
+#wiring .channels_list .channel.selected .inAnchor.checked {
     background-image: url(../images/icons-sprite.png); background-position: 0px -382px;
 }
 
@@ -66,11 +66,11 @@
     margin: 0px;
 }
 
-#wiring .eventColumn .tab > .header_section .header_icon {
+#wiring .event_column .tab > .header_section .header_icon {
     float: left;
 }
 
-#wiring .slotColumn .tab > .header_section .header_icon {
+#wiring .slot_column .tab > .header_section .header_icon {
     float: right;
 }
 
@@ -109,24 +109,12 @@
   font-size: 90%;
 }
 
-#wiring #unfold_chkItem{
-  background: url(../images/icons-sprite.png) no-repeat center right;
-  background-position: -48px 0px;
-  padding: 0px 0px 0px 20px;
- }
-
-#wiring #unfold_chkItem.chkItem{
-  background-position: -48px -24px;
-}
-
-#wiring #channels_list .channel .channelPipe {
+#wiring .channelPipe {
   border-color: #2D6F9C;
   background: #97A0A8 url(../images/pipe.png);
-  -moz-border-radius:5%;
-  -webkit-border-radius: 5%;
 }
 
-#wiring #channels_list .channel .channelContent {
+#wiring .channels_list .channel .channelContent {
   border-style: solid;
   border-color: #525248;
   background: #F7F7F7;
@@ -136,25 +124,25 @@
   -webkit-border-top-right-radius: 9px
 }
 
-#wiring #channels_list .channel.selected .channelPipe {
+#wiring .channels_list .channel.selected .channelPipe {
   background-color: #2D6F9C;
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
+#wiring .channels_list .channel.selected .channelContent .filterMenuLauncher, #wiring .newChannel.selected .channelContent .filterMenuLauncher {
     background-image: url(../images/icons-sprite.png);
     background-position: 0px -216px;
     background-color: transparent;
 }
 
-#wiring #channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
+#wiring .channels_list .channel.selected .channelContent label, #wiring .newChannel.selected .channelContent label {
 	font-size: 95%
 }
 
-#wiring #channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
+#wiring .channels_list .channel.selected .channelContent .filterValue, #wiring .newChannel.selected .channelContent .filterValue {
 	font-size: 90%;
 }
 
-#wiring #channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
+#wiring .channels_list .channel.selected .channelContent .paramValueInput, #wiring .newChannel.selected .channelContent .paramValueInput {
   background: #E0E0E0;
   font-size: 90%;
 }

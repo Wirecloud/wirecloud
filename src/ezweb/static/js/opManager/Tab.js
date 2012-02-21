@@ -24,7 +24,25 @@
  */
 
 
-function Tab (tabInfo, workSpace) {
+/**
+ * @class
+ *
+ * @param id id inside the notebook
+ * @param notebook notebook owner of this Tab
+ * @param options options of this Tab
+ */
+function Tab(id, notebook, options) {
+
+    var tabInfo = options.tab_info;
+    options.name = tabInfo.name;
+    options.closable = false;
+    StyledElements.Tab.call(this, id, notebook, options);
+
+    this.addEventListener('show', function (tab) {
+        if (!tab.is_painted()) {
+            tab.paint();
+        }
+    });
 
     //CALLBACK METHODS
     var renameSuccess = function(transport){
@@ -55,9 +73,8 @@ function Tab (tabInfo, workSpace) {
     Tab.prototype.getId = function(){
         return this.tabInfo.id;
     }
-    Tab.prototype.destroy = function() {
-        LayoutManagerFactory.getInstance().removeFromTabBar(this);
 
+    Tab.prototype.destroy = function() {
         this.preferences.destroy();
         this.preferences = null;
 
@@ -66,8 +83,11 @@ function Tab (tabInfo, workSpace) {
 
         this.dragboard.destroy();
 
-        if (this.FloatingGadgetsMenu)
+        if (this.FloatingGadgetsMenu) {
             this.FloatingGadgetsMenu.remove();
+        }
+
+        StyledElements.Alternative.prototype.destroy.call(this);
     }
 
 
@@ -97,60 +117,12 @@ function Tab (tabInfo, workSpace) {
         }
     }
 
-    Tab.prototype.fillWithLabel = function() {
-        if (this.tabNameHTMLElement != null) {
-            this.tabNameHTMLElement.remove();
-        }
-        var nameToShow = (this.tabInfo.name.length>15)?this.tabInfo.name.substring(0, 15)+"..." : this.tabInfo.name;
-        var spanHTML = "<span>"+nameToShow+"</span>";
-        new Insertion.After($(this.dragger), spanHTML);
-        var difference = this.tabHTMLElement.getWidth() - this.tabWidth;
-        if (difference != 0)
-            LayoutManagerFactory.getInstance().changeTabBarSize(difference);
-        this.tabNameHTMLElement = Element.extend($(this.dragger).nextSibling);
-        this.tabWidth = this.tabHTMLElement.getWidth();
-    }
-
-    Tab.prototype.unmark = function () {
-        //this.hideDragboard();
-        LayoutManagerFactory.getInstance().unmarkTab(this);
-
-    }
-
     Tab.prototype.is_painted = function () {
         return this.painted;
     }
 
     Tab.prototype.paint = function () {
         this.getDragboard().paint();
-    }
-
-        /* if the tab is out of the visible area of the tab bar, slide it to show it */
-    Tab.prototype.makeVisibleInTabBar = function(){
-        var tabLeft = Position.cumulativeOffset(this.tabHTMLElement)[0];
-        var fixedBarLeft = LayoutManagerFactory.getInstance().getFixedBarLeftPosition();
-        var difference = tabLeft - fixedBarLeft;
-        if (difference < 0){
-            LayoutManagerFactory.getInstance().changeScrollBarRightPosition(difference);
-        }
-        else{
-            var fixedBarRight = fixedBarLeft + LayoutManagerFactory.getInstance().getFixedBarWidth();
-            var visibleTabArea = fixedBarRight - tabLeft;
-            difference = visibleTabArea - this.tabHTMLElement.getWidth();
-            if(difference < 0){
-                LayoutManagerFactory.getInstance().changeScrollBarRightPosition(-1*difference);
-            }
-        }
-    }
-
-    Tab.prototype.markAsCurrent = function (){
-        LayoutManagerFactory.getInstance().markTab(this);
-    }
-
-    Tab.prototype.go = function () {
-        this.show();
-        LayoutManagerFactory.getInstance().goTab(this);
-        this.makeVisibleInTabBar();
     }
 
     Tab.prototype.getDragboard = function () {
@@ -191,13 +163,10 @@ function Tab (tabInfo, workSpace) {
     /*constructor*/
 
     // The name of the dragboard HTML elements correspond to the Tab name
-    this.workSpace = workSpace;
+    this.workSpace = options.workspace;
     this.tabInfo = tabInfo;
     this.dragboardLayerName = "dragboard_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
     this.tabName = "tab_" + this.workSpace.workSpaceState.id + "_" + this.tabInfo.id;
-    this.tabHTMLElement;
-    this.tabNameHTMLElement = null;
-    this.tabWidth = 0;
 
     this.FloatingGadgetsMenu = null;
 
@@ -210,224 +179,12 @@ function Tab (tabInfo, workSpace) {
     //By default, the TAB is locked
     this.locked = true;
 
-    //tab event handlers
-    this.changeTabHandler = function(e){
-        this.workSpace.setTab(this);
-        this.makeVisibleInTabBar();
-    }.bind(this);
-
-
-/***
- *** DRAGGABLE TAB***
- ***/
-
-    //draggable only in x axis
-    this.xDelta = 0;
-    this.xStart = 0;
-    this.xOffset = 0;
-    this.x;
-    this.y;
-    this.referenceTab;
-
-
-    Tab.prototype._findTabElement = function(curNode, maxRecursion){
-        if (maxRecursion == 0)
-            return null;
-
-        // Only check elements, skip other dom nodes.
-        if (isElement(curNode) && Element.extend(curNode).hasClassName('tab')) {
-            return curNode;
-        } else {
-            var parentNode = curNode.parentNode;
-            if (isElement(parentNode))
-                return this._findTabElement(parentNode, maxRecursion - 1);
-            else
-                return null;
-        }
-
-    }
-
-    this.startDrag = function(e){
-
-        e = e || window.event; // needed for IE
-        // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
-            return false;
-
-        Event.stop(e);
-        document.oncontextmenu = function() { return false; }; // disable context menu
-        document.onmousedown = function() { return false; }; // disable text selection in Firefox
-        document.onselectstart = function () { return false; }; // disable text selection in IE
-        Event.stopObserving ($(this.dragger), "mousedown", this.startDrag);
-
-        //tab has position relative. OffsetTop/Left are relative
-        this.x = this.tabHTMLElement.offsetLeft;
-        this.y = Position.cumulativeOffset(this.tabHTMLElement)[1];
-        var y = this.tabHTMLElement.offsetTop;
-        this.tabHTMLElement.style.position = "absolute";
-        this.tabHTMLElement.style.zIndex = "999999";
-        this.xStart = parseInt(Event.pointerX(e));
-        this.tabHTMLElement.style.left = this.x + 'px';
-        this.tabHTMLElement.style.top = y + 'px';
-
-        //create an element to mark the room available for the tab
-        this.tabMarker = document.createElement('div');
-        Element.extend(this.tabMarker);
-        this.tabMarker.id = "tab_space";
-        this.tabMarker.addClassName('tab');
-
-        var computedStyle = document.defaultView.getComputedStyle(this.tabHTMLElement, null);
-        var borderWidth= computedStyle.getPropertyCSSValue('border-left-width').getFloatValue(CSSPrimitiveValue.CSS_PX) * 2;
-        var padding = computedStyle.getPropertyCSSValue('padding-left').getFloatValue(CSSPrimitiveValue.CSS_PX) +
-                      computedStyle.getPropertyCSSValue('padding-right').getFloatValue(CSSPrimitiveValue.CSS_PX);
-        var width = this.tabHTMLElement.getWidth() - borderWidth - padding;
-        this.tabMarker.style.width = width + "px";
-        //this.tabMarker.style.visibility = "hidden";
-
-        LayoutManagerFactory.getInstance().insertMarker(this.tabMarker, this);
-
-        //this.referenceTab = this;
-
-        Event.observe (document, "mouseup", this.endDrag);
-        Event.observe (document, "mousemove", this.drag);
-
-        return false;
-
-    }.bind(this);
-
-    this.drag = function(e){
-
-        e = e || window.event; // needed for IE
-
-        var screenX = parseInt(Event.pointerX(e));
-        this.xDelta = this.xStart - screenX;
-        this.xStart = screenX;
-
-        this.x = this.x - this.xDelta;
-        if(this.x < 0)
-            this.x = 0;
-
-        if(this.x > LayoutManagerFactory.getInstance().getScrollTabBarWidth()){
-            //insert at the end
-            this.referenceTab = null;
-            //mark the target position with the separator img
-            LayoutManagerFactory.getInstance().moveIndicator(this.referenceTab);
-            return false;
-        }
-        this.tabHTMLElement.style.left = this.x + 'px';
-
-        // calculate where the user wants to put the tab
-        //y+2: problems with border in IE<8
-        // hide the draggable element
-        // in order not to return it in elementFromPoint()
-        this.tabHTMLElement.hide();
-        var element = document.elementFromPoint(Event.pointerX(e), this.y +2);
-        this.tabHTMLElement.show();
-        if (element != null) {
-            // elementFromPoint may return inner tab elements
-            element = this._findTabElement(element, 4);
-        }
-        var id = null;
-        if (element) {
-            id = element.getAttribute("id");
-            if (id != null) {
-                if(id == "tab_space"){
-                    //same position:do nothing
-                    this.referenceTab = this;
-                }
-                var keys = this.workSpace.tabInstances.keys();
-                for (var i = 0; i < keys.length; i++) {
-                    var tab = this.workSpace.tabInstances.get(keys[i]);
-                    if (tab.tabName == id) {
-                        this.referenceTab = tab;
-                        break;
-                    }
-                }
-                if(this.referenceTab.tabHTMLElement.nextSibling == this.tabHTMLElement){
-                    //same position: do nothing
-                    this.referenceTab = this;
-                }
-
-                //mark the target position with the separator img
-                LayoutManagerFactory.getInstance().moveIndicator(this.referenceTab);
-            }
-        }
-        return false;
-    }.bind(this);
-
-    this.endDrag = function(e){
-
-        e = e || window.event; // needed for IE
-
-        Event.stop(e);
-        // Only attend to left button (or right button for left-handed persons) events
-        if (!BrowserUtilsFactory.getInstance().isLeftButton(e.button))
-            return false;
-
-        Event.stopObserving (document, "mouseup", this.endDrag);
-        Event.stopObserving (document, "mousemove", this.drag);
-
-        Element.remove(this.tabMarker);
-        $('tab_marker').style.display = 'none';
-
-        //move the tab and restore its properties
-        LayoutManagerFactory.getInstance().moveTab(this, this.referenceTab);
-        this.tabHTMLElement.style.position = "relative";
-        this.tabHTMLElement.style.zIndex = "";
-        this.tabHTMLElement.style.left = "";
-        this.tabHTMLElement.style.top = "";
-
-        Event.observe($(this.dragger), "mousedown", this.startDrag);
-
-        document.onmousedown = null; // reenable context menu
-        document.onselectstart = null; // reenable text selection in IE
-        document.oncontextmenu = null; // reenable text selection
-
-        return false;
-
-    }.bind(this)
-//END Draggable tab
-
-    // Dragboard layer creation
-    var wrapper = $("wrapper");
-
-    this.dragboardElement = document.createElement("div");
-    Element.extend(this.dragboardElement);
-    this.dragboardElement.className = "container dragboard";
-    wrapper.insertBefore(this.dragboardElement, wrapper.firstChild);
-
-    this.dragboardElement.setAttribute('id', this.dragboardLayerName);
-
+    this.dragboardElement = this.wrapperElement;
     this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
 
 
-    //LayoutManagerFactory.getInstance().resizeContainer(this.dragboardElement);
-
-    // Tab creation
-    //add a new tab to the tab section
-    this.tabHTMLElement = LayoutManagerFactory.getInstance().addToTabBar(this.tabName);
-
-    //Element for dragging
-    this.dragger = this.tabName + "_dragger";
-    var draggerHTML = '<div id="'+this.dragger+'" class="tab_dragger"></div>';
-    new Insertion.Top(this.tabHTMLElement, draggerHTML);
-    var draggerElement = $(this.dragger);
-    Event.observe(draggerElement, "mousedown", this.startDrag);
-    Event.observe(draggerElement, "click", function(e){Event.stop(e)});
-    draggerElement.setStyle({'display':'none'});
-
-    //fill the tab label with a span tag
-    this.fillWithLabel();
-
-    this.tabOpsLauncher = this.tabName+"_launcher";
-    var tabOpsLauncherHTML = '<input id="'+this.tabOpsLauncher+'" type="button" title="'+gettext("Options")+'" class="tabOps_launcher tabOps_launcher_show"/>';
-    new Insertion.Bottom(this.tabHTMLElement, tabOpsLauncherHTML);
-    var tabOpsLauncherElement = $(this.tabOpsLauncher);
-    Event.observe(tabOpsLauncherElement, "click", function(e){
-                                                    var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                                                    target.blur();Event.stop(e);
-                                                    LayoutManagerFactory.getInstance().showDropDownMenu('tabOps',this.menu, Event.pointerX(e), Event.pointerY(e));}.bind(this), true);
-    tabOpsLauncherElement.setStyle({'display':'none'});
+    this.tabOpsLauncher = new StyledElements.StyledButton({'text': 'v'});
+    // TODO
 
     this.markAsVisibleSuccess = function() {
         var tabIds = this.workSpace.tabInstances.keys();
@@ -492,8 +249,9 @@ function Tab (tabInfo, workSpace) {
             1);
     }.bind(this);
 
-    this._createTabMenu();
+    //this._createTabMenu();
 }
+Tab.prototype = new StyledElements.Tab();
 
 Tab.prototype._createTabMenu = function() {
     var idMenu = 'menu_' + this.tabName;
@@ -606,7 +364,7 @@ Tab.prototype._createTabMenu = function() {
 }
 
 /**
- *
+ * FIXME
  */
 Tab.prototype.show = function() {
     if (!this.painted)
@@ -616,8 +374,6 @@ Tab.prototype.show = function() {
 
     this.dragboard._notifyVisibilityChange(true);
     this.dragboard._notifyWindowResizeEvent();
-    this.markAsCurrent();
-    this.makeVisibleInTabBar();
 };
 
 /**

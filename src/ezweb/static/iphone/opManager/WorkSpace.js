@@ -387,10 +387,6 @@ function WorkSpace(workSpaceState) {
         }
     };
 
-    WorkSpace.prototype.goTab = function (tab) {
-        // DO NOTHING -> to avoid modifying the varManager
-    };
-
     WorkSpace.prototype.tabExists = function (tabName) {
         for (var i = 0; i < this.tabInstances.length; i += 1) {
             if (this.tabInstances[i].tabInfo.name === tabName) {

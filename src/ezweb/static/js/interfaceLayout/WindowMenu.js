@@ -86,8 +86,13 @@ function WindowMenu(title, extra_class) {
     this.htmlElement.appendChild(this.windowBottom);
 
     // Initial title
-    this.titleElement.update(title);
+    this.setTitle(title);
 }
+
+
+WindowMenu.prototype.setTitle = function(title) {
+    this.titleElement.setTextContent(title);
+};
 
 /**
  * @private
@@ -172,7 +177,7 @@ WindowMenu.prototype.show = function (parentWindow) {
         this._parentWindowMenu._addChildWindow(this);
     }
 
-    document.body.insertBefore(this.htmlElement, $("header"));
+    document.body.appendChild(this.htmlElement);
     this.calculatePosition();
     this.htmlElement.style.display = "block";
     this.setFocus();
@@ -979,11 +984,10 @@ PublishWindowMenu.prototype.openUploadWindow = function(targetElementName){
 /**
  * Specific class for sharing windows
  */
-function ShareWindowMenu (element) {
+function ShareWindowMenu () {
 
-    wsName = OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.name;
-    var label1 = interpolate(gettext('Share "%(workspace)s" workspace with everybody through either a public URL or an embed object'), {workspace: wsName}, true)
-    var label2 = interpolate(gettext('Share "%(workspace)s" workspace only with the following groups'), {workspace: wsName}, true)
+    var label1 = gettext('Share current workspace with everybody through either a public URL or an embed object')
+    var label2 = gettext('Share current workspace only with the following groups')
 
     var fields = {
         'public_sharing': {label: label1, type:'radio', defaultValue:true, name:'share', onclick: this.hideGroups.bind(this)},

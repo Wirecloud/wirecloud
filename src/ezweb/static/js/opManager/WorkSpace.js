@@ -26,46 +26,6 @@
 
 function WorkSpace (workSpaceState) {
 
-
-    //set the proper handlers to the workspace toolbar buttons
-    WorkSpace.prototype._initToolbar = function () {
-        if (this.getHeader()) {
-            //set the handlers
-            if (this.wiring_link) {
-                this.wiringInterface.setToolbarButton(this.wiring_link);
-            }
-            if (this.catalogue_link) {
-                CatalogueFactory.getInstance().setToolbarButton(this.catalogue_link);
-            }
-        }
-    }
-
-    //unset the handlers of the workspace toolbar buttons
-    WorkSpace.prototype._unloadToolbar = function() {
-        if (this.getHeader()) {
-            if (this.wiring_link) {
-                this.wiringInterface.unsetToolbarButton(this.wiring_link);
-            }
-            if (this.catalogue_link) {
-                CatalogueFactory.getInstance().unsetToolbarButton(this.catalogue_link);
-            }
-        }
-    }
-
-    WorkSpace.prototype._initAllToolbars = function () {
-        this._initToolbar();                            //workspace toolbar
-        this.wiringInterface.initToolbar();             //wiring toolbar
-        CatalogueFactory.getInstance().initToolbar();   //catalogue toolbar
-    }
-
-    WorkSpace.prototype._unloadAllToolbars = function () {
-        if (this.valid) {
-            this._unloadToolbar();                          //workspace toolbar
-            this.wiringInterface.unloadToolbar();           //wiring toolbar
-            CatalogueFactory.getInstance().unloadToolbar(); //catalogue toolbar
-        }
-    }
-
     WorkSpace.prototype._manageAddTabElement = function(locked){
         if (this.addTabElement) {
             if (this.isAllowed('add_tab')) {
@@ -129,13 +89,12 @@ function WorkSpace (workSpaceState) {
                                      }
                                    };
         this.tabInstances = new Hash();
-        this.tabInstances[0] = new Tab(initialTab, this);
+        // TODO
+        this.notebook.clear()
+        this.tabInstances[0] = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': initialTab, 'workspace': this});
         this.visibleTab = this.tabInstances[0];
 
         this.loaded = true;
-
-        this._createWorkspaceMenu();
-        this._update_creator_options();
 
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
@@ -180,12 +139,13 @@ function WorkSpace (workSpaceState) {
             // Load workspace tabs
             var tabs = this.workSpaceGlobalInfo['workspace']['tabList'];
             var visibleTabId = null;
+            var loading_tab = this.notebook.createTab({'closeable': false});
 
             if (tabs.length > 0) {
                 visibleTabId = tabs[0].id;
                 for (var i = 0; i < tabs.length; i++) {
                     var tab = tabs[i];
-                    var tabInstance = new Tab(tab, this);
+                    var tabInstance = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tab, 'workspace': this});
                     this.tabInstances.set(tab.id, tabInstance);
 
                     if (tab.visible) {
@@ -199,9 +159,13 @@ function WorkSpace (workSpaceState) {
             this.contextManager = new ContextManager(this, this.workSpaceGlobalInfo);
             this.wiring = new Wiring(this, this.workSpaceGlobalInfo);
 
-            this.wiringInterface = new WiringInterface(this.wiring, this, $("wiring"));
+            // FIXME
+            LayoutManagerFactory.getInstance().mainLayout.repaint();
+            LayoutManagerFactory.getInstance().header._paintBreadcrum(this);
+            this.wiringInterface = LayoutManagerFactory.getInstance().viewsByName['wiring'];
+            this.wiringInterface.assignWorkspace(this);
 
-            this.restricted = (!this.isOwned() && this.isShared()) || this.forceRestrictedSharing();
+            this.restricted = !this.isOwned() && this.isShared();
             this.removable = !this.restricted && this.workSpaceGlobalInfo.workspace.removable;
             this.valid = true;
 
@@ -209,13 +173,8 @@ function WorkSpace (workSpaceState) {
                 visibleTabId = this.initial_tab_id;
             }
 
-            if (tabs.length > 0) {
-                //Only painting the "active" tab!
-                this.tabInstances.get(visibleTabId).getDragboard().paint();
-            }
-
-            //set the visible tab. It will be displayed as current tab afterwards
-            this.visibleTab = this.tabInstances.get(visibleTabId);
+            this.notebook.goToTab(this.tabInstances.get(visibleTabId));
+            loading_tab.close();
 
         } catch (error) {
             // Error during initialization
@@ -229,11 +188,7 @@ function WorkSpace (workSpaceState) {
         this._createWorkspaceMenu();
 
         this._update_creator_options();
-        this._lockFunc(true);
-
-        //all the modules have been downloaded. Init now all the toolbars:
-        //catalogue, wiring and workspace.
-        this._initAllToolbars();
+        this._lockFunc(false);
 
         layoutManager.logStep('');
         OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.ACTIVE_WORKSPACE);
@@ -321,11 +276,10 @@ function WorkSpace (workSpaceState) {
         tabInfo.igadgetList = [];
         tabInfo.preferences = {};
 
-        var newTab = new Tab(tabInfo, this);
+        var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
         this.tabInstances.set(tabInfo.id, newTab);
         this.setTab(newTab);
 
-        this.showTabBar();
         newTab.getDragboard().paint();
         newTab.setLock(false);
     }
@@ -394,25 +348,6 @@ function WorkSpace (workSpaceState) {
 
     WorkSpace.prototype.getHeader = function(){
         return this.headerHTML;
-    }
-
-    /**
-     * This function knows which handler matches the workspace link in the toolbar
-     * @param {HTML element} workspaceLinkElement
-     */
-
-    WorkSpace.prototype.setToolbarButton = function (workspaceLinkElement){
-        workspaceLinkElement.onclick = function(){
-                                            OpManagerFactory.getInstance().showActiveWorkSpace(false);
-                                        };
-    }
-
-    /**
-     * This function knows how to stop observing the workspace link event
-     * @param {HTML element} workspaceLinkElement
-     */
-    WorkSpace.prototype.unsetToolbarButton = function (workspaceLinkElement){
-        workspaceLinkElement.onclick = null;
     }
 
     WorkSpace.prototype.fillWithLabel = function() {
@@ -499,17 +434,6 @@ function WorkSpace (workSpaceState) {
         PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
     };
 
-    WorkSpace.prototype.showWiring = function() {
-        if (!this.loaded)
-            return;
-
-        if (!this.isValid())
-            return;
-
-        this.visibleTab.unmark();
-        this.wiringInterface.show();
-    }
-
     WorkSpace.prototype.getIgadget = function(igadgetId) {
         var i, tab_keys = this.tabInstances.keys();
         for (i = 0; i < tab_keys.length; i += 1) {
@@ -530,30 +454,7 @@ function WorkSpace (workSpaceState) {
             return;
         }
 
-        if (this.getHeader()) {
-            //there is a banner
-            this.fillWithLabel();
-        }
 
-        var tabList = this.tabInstances.keys();
-
-        for (var i = 0; i < tabList.length; i++) {
-            var tab = this.tabInstances.get(tabList[i]);
-
-            if (this.visibleTab === tab) {
-                layoutManager.markTab(tab);
-            } else {
-                tab.unmark();
-            }
-        }
-        if (tabList.length == 1) { //hide the tab if only one exists
-            this.hideTabBar();
-        } else {
-            this.showTabBar();
-        }
-
-        // resize tab bar after displaying tabs
-        layoutManager.resizeTabBar();
     };
 
     WorkSpace.prototype.isValid = function() {
@@ -572,18 +473,15 @@ function WorkSpace (workSpaceState) {
             throw new TypeError();
         }
 
-        if (this.visibleTab != null) {
-            this.visibleTab.unmark();
-        }
         this.visibleTab = tab;
-        this.visibleTab.show();
+        this.notebook.goToTab(tab);
     }
 
     WorkSpace.prototype.getVisibleTab = function() {
         if (!this.loaded)
             return;
 
-        return this.visibleTab;
+        return this.notebook.getVisibleTab();
     }
 
     WorkSpace.prototype.tabExists = function(tabName){
@@ -597,7 +495,7 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.addTab = function() {
-	var counter, prefixName, tabName, url, params;
+        var counter, prefixName, tabName, url, params;
 
         if (!this.isValid()) {
             return;
@@ -641,12 +539,6 @@ function WorkSpace (workSpaceState) {
 
         this.unloadTab(tab.getId());
 
-        if (this.tabInstances.keys().length === 1) {
-            this.hideTabBar();
-        }
-        //set the first tab as current
-        this.setTab(this.tabInstances.values()[0]);
-
         return true;
     }
 
@@ -662,29 +554,15 @@ function WorkSpace (workSpaceState) {
         this.visibleTab = null;
     }
 
-    WorkSpace.prototype.hideTabBar = function () {
-        this.tabBar.setStyle({"visibility": "hidden"});
-    };
-
-    WorkSpace.prototype.showTabBar = function () {
-        this.tabBar.setStyle({"visibility": "visible"});
-    };
-
     WorkSpace.prototype.unload = function() {
 
         var layoutManager = LayoutManagerFactory.getInstance();
         layoutManager.logSubTask(gettext("Unloading current workspace"));
 
-        //remove the handlers of the catalogue and wiring buttons
-        //and the reference to this workspace from catalogue and wiring toolbars
-        this._unloadAllToolbars();
-
         // Unload Wiring Interface
         // TODO Wiring Interface should be shared between Workspaces
         if (this.wiringInterface !== null) {
             this.wiringInterface.saveWiring();
-            this.wiringInterface.unload();
-            this.wiringInterface = null;
         }
 
         //layoutManager.unloadCurrentView();
@@ -722,9 +600,8 @@ function WorkSpace (workSpaceState) {
         if (!this.loaded)
             return;
 
-        this.visibleTab.unmark();
         this.visibleTab = tab;
-        this.visibleTab.go();
+        this.notebook.goToTab(tab);
     }
 
 
@@ -736,11 +613,7 @@ function WorkSpace (workSpaceState) {
         options.setDefaultValues.call(this, igadget.id);
 
         igadget.paint();
-
-        // The dragboard must be shown after an igadget insertion
-        //LayoutManagerFactory.getInstance().unMarkGlobalTabs();
-        this.visibleTab.show();
-    }
+    };
 
     WorkSpace.prototype.removeIGadgetData = function(iGadgetId) {
             this.varManager.removeInstance(iGadgetId);
@@ -867,23 +740,6 @@ function WorkSpace (workSpaceState) {
             return this._isAllowed(action);
         }
     }
-
-    /*
-     * General function to create the ToolbarMenu
-     */
-    WorkSpace.prototype._initMenu = function(idMenu, idSubMenu) {
-        // get the current menu to remove it if it already exists
-        var menuHTML = $(idMenu);
-        if (menuHTML) {
-            menuHTML.remove();
-        }
-
-        // add the DOM element and create the menu
-        menuHTML = '<div id="' + idMenu + '" class="toolbar_menu_small"></div>';
-        new Insertion.Bottom(this.toolbarSection, menuHTML);
-        return new ToolbarMenu(idMenu);
-    }
-
 
     /*
      * Menu with the options to configure the workspace
@@ -1079,88 +935,9 @@ function WorkSpace (workSpaceState) {
 
 
     /*
-     *Menu with the "go to" options
-     */
-    WorkSpace.prototype._createGoToMenu = function(){
-        /*var idMenu = 'goto_menu_'+this.workSpaceState.id;
-        var idSubMenu = "submenu_" + idMenu;
-
-        this.goToMenu = this._initMenu(idMenu);
-
-        // Add to the menu the proper options
-        var optionPosition = 0;
-        //NOTE: first positions will be used to access to the main workspaces (filled by the LayoutManager)
-
-        var ws_count = OpManagerFactory.getInstance().getWorkspaceCount();
-
-        if (ws_count > this.goToMenu.MAX_OPTIONS - 1){ // let one hole to prevent larger toolbars
-            //Workspace list option
-            this.goToMenu.addOption("<span class='superindex'>»</span>"+ String(ws_count - 1),
-                                function(e) {
-                                    //show the window with all the workspaces
-                                    LayoutManagerFactory.getInstance().toggleSideBarMenu();
-                                },
-                                optionPosition++);
-        }else{
-            //new workspace option
-            if (this.isAllowed('add_remove_workspaces') && this.isAllowed('create_custom_workspaces')) {
-                // EzWeb IE6 version does not allow creating new Workspaces
-                 this.goToMenu.addOption(gettext("New Application"),
-                            function() {
-                                LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
-                            },
-                            optionPosition++);
-            }
-
-        }
-
-
-        // add the event listener
-        Event.observe(this.goToLauncher, 'click',
-                        function(e){
-                            var target = BrowserUtilsFactory.getInstance().getTarget(e);
-                            target.blur();
-                            LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);
-                        }.bind(this));
-        */
-        //Toggle the sidebar
-        /*Event.observe(this.goToLauncher, 'click',
-                        function(e){
-                            //LayoutManagerFactory.getInstance().clearToolbar(this.toolbarSection, this.goToLauncher);
-                            LayoutManagerFactory.getInstance().toggleSideBarMenu();
-                        }.bind(this));*/
-
-
-    }
-
-    /*
      * Create the necessary menus for the Toolbar
      */
     WorkSpace.prototype._createWorkspaceMenu = function() {
-        LayoutManagerFactory.getInstance().createToolbarSection(this.toolbarSection);
-
-        //this.goToLauncher = $('go_to_link');
-        this.confLauncher = $('conf_link');
-        this.sharingLauncher = $('sharing_link');
-        this.editLauncher = $('edit_link')
-
-        //GoTo menu
-        //this._createGoToMenu();
-
-        //Configuration Menu
-        this._createConfigurationMenu();
-
-        //Sharing menu
-        this._createSharingMenu();
-
-        //Edit Menu
-        this._createEditMenu();
-
-        //Show the initial menu
-        // Show the "My Applications" option unfolded
-        /*LayoutManagerFactory.getInstance().showToolbarMenu(this.goToMenu, this.goToLauncher, this.toolbarSection);*/
-        // hide the add_tab element
-        this._manageAddTabElement(true);
     }
 
     /*
@@ -1210,12 +987,6 @@ function WorkSpace (workSpaceState) {
     this.visibleTab = null;
     this.valid=false;
 
-    this.workSpaceHTMLElement = $('workspace_name');
-    this.addTabElement = $('add_tab_link');
-    this.tabBar = $('fixed_bar');
-    this.toolbarSection = $('toolbar_section')!=null?$('toolbar_section'):$('lite_toolbar_section');
-
-
     // menu DOM elements and objects
     this.goToMenu = null;
     this.confMenu = null;
@@ -1230,13 +1001,13 @@ function WorkSpace (workSpaceState) {
     this.editLauncher = null;
 
     this.unlockEntryPos;
-
-    //toolbar links
-    this.wiring_link = null;
-    this.catalogue_link = null;
-
-    //banner
-    this.headerHTML = $('ws_header');
+    this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
+    this.notebook.addEventListener('change', function (notebook, old_tab, new_tab) {
+        this.visibleTab = new_tab;
+    });
+    // TODO
+    LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
+    LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
     /*
      * OPERATIONS
@@ -1323,4 +1094,21 @@ WorkSpace.prototype.highlightTab = function(tab) {
         tabElement.removeClassName("selected");
         delete this.highlightTimeouts[tab.tabInfo.id];
     }.bind(this), 10000);
+};
+
+/**
+ * Returns the sub menu items for the wirecloud header
+ */
+WorkSpace.prototype.getSubMenuItems = function () {
+    var share_window = new ShareWindowMenu(null);
+
+    return [
+        {
+            'label': gettext('Share'),
+            'callback': function () {
+                share_window.show();
+            },
+        }
+//        {'label': gettext('Export'), 'callback': 5}
+    ]
 };

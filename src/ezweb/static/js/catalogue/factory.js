@@ -33,8 +33,7 @@ var CatalogueFactory = (function () {
     // SINGLETON INSTANCE
     // *********************************
 
-    var catalogue_dom = $('showcase'),
-        persistence_engine = PersistenceEngineFactory.getInstance(),
+    var persistence_engine = PersistenceEngineFactory.getInstance(),
         active_instance = null,
         Singleton;
 
@@ -45,7 +44,7 @@ var CatalogueFactory = (function () {
         this.getInstance = function () {
             if (!active_instance) {
                 var view_factory = new CatalogueViewFactory();
-                active_instance = view_factory.create_catalogue(catalogue_dom, persistence_engine);
+                active_instance = view_factory.create_catalogue($('catalogue'), persistence_engine);
                 OpManagerFactory.getInstance().continueLoadingGlobalModules(Modules.prototype.CATALOGUE);
             }
 

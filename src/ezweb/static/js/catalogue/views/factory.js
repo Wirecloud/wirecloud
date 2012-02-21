@@ -34,8 +34,8 @@ var CatalogueViewFactory = function () {
         '#simple_search input': 'SIMPLE_SEARCH',
         '#results_per_page': 'SIMPLE_SEARCH',
         '#results_order': 'SIMPLE_SEARCH',
-        '#gadgets_button': 'SHOW_GADGETS',
-        '#mashups_button': 'SHOW_MASHUPS',
+//        '#gadgets_button': 'SHOW_GADGETS',
+//        '#mashups_button': 'SHOW_MASHUPS',
         '#developers_button_toolbar': 'SHOW_DEVELOPER_INFO',
         '#search_button_toolbar': 'SHOW_SEARCH_INFO'
     };
@@ -95,7 +95,7 @@ var CatalogueViewFactory = function () {
         this.user_command_manager = new UserCommandManager(this.dom_wrapper);
         this.resp_command_dispatcher = new ResponseCommandDispatcher(this.dom_wrapper, this.user_command_manager);
 
-        this.gadgets_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
+        this.gadgets_painter = new ResourcesPainter(this.resource_str/thiucture_dom.innerHTML);
         this.mashups_painter = new ResourcesPainter(this.resource_structure_dom.innerHTML);
         this.pagination_painter = new PaginationPainter(this.pagination_structure_dom);
         this.resource_details_painter = new ResourceDetailsPainter(this.resource_details_structure_dom);

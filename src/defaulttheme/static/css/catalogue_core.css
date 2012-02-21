@@ -18,7 +18,7 @@
 	cursor: pointer;
 }
 
-#catalogue .center .resources .popularity.no_float, .no_float {
+#catalogue .resource_list .popularity.no_float, .no_float {
   float: none;
 }
 
@@ -202,11 +202,6 @@
 	background:#E6F3FF none repeat scroll 0 0;
 }
 
-#catalogue #left_bar .link {
-	display: block;
-	padding-bottom: 5px;
-}
-
 #catalogue #catalogue_content {
 	float:left;
     padding-left:10px;
@@ -219,14 +214,6 @@
 	float: left;
 	clear: both;
 	width: 100%;
-}
-
-#catalogue .center .resources {
-  position:relative;
-  overflow-y:auto;
-  overflow-x:hidden;
-  float:left;
-  width: 100%;
 }
 
 #catalogue .paginate_show {
@@ -248,13 +235,13 @@
 	margin-right: 10px;
 }
 
-#catalogue .center .resources .resource,  #catalogue .center .resources .resource_details {
-  clear:both;
-  margin-right:10px;
-  position:relative;
+#catalogue .resource_list .resource {
+    clear: both;
+    margin-right: 10px;
+    position: relative;
 }
 
-#catalogue .center .resources .header_resource {
+#catalogue .resource_list .header_resource {
 	border-top: 1px solid;
 }
 
@@ -275,42 +262,42 @@ Resource
 ///////////
 */
 
-#catalogue .center .resources .resource_name,  #catalogue .center .resources .resource_name {
+#catalogue .resource_name {
   padding-bottom: 8px;
   max-width: 350px;
   font-size: 20px;
 }
 
-#catalogue .center .resources .resource .resource_name, #catalogue .center .resources .resource .image {
+#catalogue .resource_list .resource_name, #catalogue .resource_list .resource .image {
   cursor: pointer;
 }
 
-#catalogue .center .resources .resource_name {
+#catalogue .resource_list .resource_name {
   cursor: default;
   float: left;
 }
 
-#catalogue .center .resources .resource_details .image {
+#catalogue .resource_list .resource_details .image {
   cursor: default;
 }
 
-#catalogue .center .resources .resource .image, #catalogue .center .resources .resource_details .image {
+#catalogue .resource_list .resource .image, #catalogue .resource_list .resource_details .image {
   width: 170px;
   height: 80px;
   border: 1px solid;
 }
 
-#catalogue .center .resources .popularity {
+#catalogue .resource .popularity {
   float: left;
   margin-left: 15px;
 }
 
-#catalogue .center .resources .resource_details .voting_label {
+#catalogue .resource_list .resource_details .voting_label {
   float: left;
   margin: 5px;
 }
 
-#catalogue .center .resources .popularity .off {
+#catalogue .popularity .off {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -322,7 +309,7 @@ Resource
   cursor: default;
 }
 
-#catalogue .center .resources .popularity .on {
+#catalogue .popularity .on {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -334,7 +321,7 @@ Resource
   background-position: -24px -168px;
 }
 
-#catalogue .center .resources .popularity .md {
+#catalogue .resource_list .popularity .md {
   -moz-background-clip:border;
   -moz-background-inline-policy:continuous;
   -moz-background-origin:padding;
@@ -361,40 +348,40 @@ Resource
   padding-top:10px;
 }
 
-#catalogue .center .resources .resource .desc, #catalogue .center .resources .resource_details .desc {
+#catalogue .resource_list .resource .desc, #catalogue .resource_list .resource_details .desc {
   clear: both;
   max-width: 650px;
 }
 
-#catalogue .center .resources .resource .tags, #catalogue .center .resources .resource_details .tags {
+#catalogue .resource_list .resource .tags, #catalogue .resource_list .resource_details .tags {
   float: left;
   padding-top: 10px;
 }
 
-#catalogue .center .resources .resource .tags .tags_label, #catalogue .center .resources .resource_details .tags {
+#catalogue .resource_list .resource .tags .tags_label, #catalogue .resource_list .resource_details .tags {
   float: left;
   margin-right:10px;
 }
 
-#catalogue .center .resources .resource .footer_resource {
+#catalogue .resource_list .resource .footer_resource {
   height: 10px;
   clear: both;
   bottom: 0px;
   float: left;
 }
 
-#catalogue .center .resources .left_column_resource, #catalogue .center .resources .left_column_resource {
+#catalogue .resource .left_column_resource {
   float: left;
   width: 25%;
   text-align: center;
 }
 
-#catalogue .center .resources .right_column_resource,  #catalogue .center .resources .right_column_resource {
+#catalogue .resource_list .right_column_resource,  #catalogue .resource_list .right_column_resource {
   float: left;
   width: 75%;
 }
 
-#catalogue .center .resources .header_resource, #catalogue .center .resources .header_resource {
+#catalogue .resource_list .header_resource, #catalogue .resource_list .header_resource {
   height: 10px;
   clear: both;
   top: 0px;

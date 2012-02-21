@@ -1,0 +1,213 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 800px;
+}
+
+#wirecloud_header {
+    font-family: "Courier New", courier;
+    font-size: 14pt;
+    font-weight: bold;
+    margin-bottom: 0.5ex;
+}
+
+.breadcrum_wrapper img {
+    margin-left: 1ex;
+    margin-top: 0.5ex;
+    vertical-align: bottom;
+}
+
+#wrapper {
+    position: relative;
+    left: 0px;
+    right: 0px;
+    z-index: 1;
+    min-width: 600px;
+}
+
+.container_content {
+    position: relative;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#wirecloud_header .menu {
+    text-align: right;
+    background: #F1F1F1;
+    font-family: "Arial";
+    font-size: 9pt;
+    font-weight: normal;
+    padding: 0.5ex;
+    color: #990000;
+}
+
+#wirecloud_header > .menu > span {
+    background: #E4E6E2;
+    padding: 0.5ex 0.75ex;
+    cursor: pointer;
+}
+
+#wirecloud_header > .menu > .user_menu {
+    display: inline-block;
+    width: 30ex;
+}
+
+#wirecloud_header > .menu > .user_menu {
+    display: inline-block;
+    width: 30ex;
+}
+
+#wirecloud_header > .menu > .selected {
+    color: #FFFFFF;
+    cursor: default;
+}
+
+#wirecloud_header > .menu > .workspace.selected {
+    background: #006633;
+}
+
+#wirecloud_header > .menu > .wiring.selected {
+    background: #E8A150;
+}
+
+#wirecloud_header > .menu > .catalogue.selected {
+    background: #990000;
+}
+
+#wirecloud_header > .submenu {
+    color: #990000;
+    font-weight: normal;
+    font-size: 10px;
+    font-family: "Arial";
+    display: 'inline-block';
+    position: absolute;
+    height: 14px;
+    line-height: 14px;
+}
+
+#wirecloud_header > .submenu > .mark {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+#wirecloud_header > .submenu > span {
+    height: 9px;
+    padding: 0 1ex;
+    cursor: pointer;
+    vertical-align: top;
+}
+
+#wirecloud_header > .submenu.wiring > .mark {
+    background: url('../images/wiring_mark.png');
+}
+
+#wirecloud_header > .submenu.wiring {
+    background: #EBE6B1;
+}
+
+#wirecloud_header > .submenu.workspace > .mark {
+    background: url('../images/editor_mark.png');
+}
+
+#wirecloud_header > .submenu.workspace {
+    background: #C6EBBE;
+}
+
+#wirecloud_header > .submenu.catalogue > .mark {
+    background: url('../images/marketplace_mark.png');
+}
+
+#wirecloud_header > .submenu.catalogue {
+    background: #FF6666;
+}
+
+#wirecloud_breadcrum > span {
+    padding: 0px 1ex;
+}
+
+#wirecloud_breadcrum > .first_level {
+    color: #990000;
+}
+
+#wirecloud_breadcrum > .second_level {
+    color: #006633;
+}
+
+#wirecloud_breadcrum > .third_level {
+    color: #E8A150;
+}
+
+/* window_menu */
+
+.window_menu {
+    background: #FFFFFF;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -border-radius: 6px;
+    position: absolute;
+    text-align: left;
+    z-index: 4;
+}
+
+/* Loading window */
+
+#loading-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+}
+
+#loading-window.fadding #loading-background {
+    display: none;
+}
+
+#loading-message {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 70%;
+    max-width: 100%;
+    height: 10ex;
+    z-index: 4;
+    margin: 4ex;
+    height: 8ex;
+}
+
+#loading-message .window_content {
+    margin-top: 1ex;
+}
+
+#loading-subtask-title {
+    margin: 0;
+}
+
+.closebutton {
+    border: 0px none;
+    cursor: pointer;
+    padding: 0px;
+    width: 16px;
+    height: 16px;
+    background: url(../images/icons-sprite.png);
+    background-position: -48px -312px;
+}
+
+.help_button {
+    margin-left: 0px;
+    margin-bottom: 2px;
+    vertical-align: middle;
+    cursor: pointer;
+    border: none;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+

@@ -133,7 +133,7 @@ function IGadget(gadget, iGadgetId, iGadgetName, layout, position, iconPosition,
     this.lowerToBottomOpId = null;
     this.raiseToTopOpId = null;
 
-    // iGadget drop box menu
+    // iGadget menu
     this.menu = null;
 
     // Add the iGadget to the layout
@@ -371,62 +371,7 @@ IGadget.prototype._updateExtractOption = function () {
         return;
     }
 
-    if (this.onFreeLayout()) {
-        this.menu.updateOption(this.extractOptionId,
-            'icon-igadget-snap',
-            gettext("Snap to grid"),
-            function () {
-                this.toggleLayout();
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this), "hide_on_lock hide_on_fulldragboard");
 
-        this.extractButton.removeClassName("extractButton");
-        this.extractButton.addClassName("snapButton");
-        this.extractButton.setAttribute("title", gettext("This iGadget is outside the grid."));
-    } else {
-        this.menu.updateOption(this.extractOptionId,
-            'icon-igadget-extract',
-            gettext("Extract from grid"),
-            function () {
-                this.toggleLayout();
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this), "hide_on_lock hide_on_fulldragboard");
-
-        this.extractButton.removeClassName("snapButton");
-        this.extractButton.addClassName("extractButton");
-        this.extractButton.setAttribute("title", gettext("This iGadget is aligned to the grid."));
-    }
-};
-
-/**
- * Updates the fulldragboard option.
- *
- * @private
- */
-IGadget.prototype._updateFulldragboardOption = function () {
-    if (this.fulldragboardOpId === null) {
-        return;
-    }
-
-    if (this.isInFullDragboardMode()) {
-        this.menu.updateOption(this.fulldragboardOpId,
-            'icon-igadget-exit-fulldragboard',
-            gettext("Exit Full Dragboard"),
-            function () {
-                LayoutManagerFactory.getInstance().hideCover();
-                this.setFullDragboardMode(!this.isInFullDragboardMode());
-            }.bind(this),
-            "hide_on_lock hide_on_minimize");
-    } else {
-        this.menu.updateOption(this.fulldragboardOpId,
-            'icon-igadget-fulldragboard',
-            gettext("Full Dragboard"),
-            function () {
-                LayoutManagerFactory.getInstance().hideCover();
-                this.setFullDragboardMode(!this.isInFullDragboardMode());
-            }.bind(this),
-            "hide_on_lock hide_on_minimize");
-    }
 };
 
 /**
@@ -479,10 +424,7 @@ IGadget.prototype.build = function () {
 
     button.observe("click",
         function (e) {
-            LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-                this.menu,
-                Event.pointerX(e),
-                Event.pointerY(e));
+            this.menu.show({x: Event.pointerX(e), y: Event.pointerY(e)});
         }.bind(this),
         false);
 
@@ -727,9 +669,9 @@ IGadget.prototype.paint = function (onInit) {
 
     this.visible = true;
 
-    // Initialize preferences menu
-    this._createIGadgetMenu();
-
+    // Initialize gadget menu
+    this.menu = new StyledElements.PopupMenu();
+    this.menu.append(new IGadgetMenuItems(this));
 
     // Insert it into the dragboard (initially hidden)
     this.element.style.visibility = "hidden";
@@ -748,7 +690,6 @@ IGadget.prototype.paint = function (onInit) {
     var locked = this.layout.dragboard.isLocked();
     if (locked) {
         this.element.addClassName("gadget_window_locked");
-        this.menu.menu.addClassName("gadget_menu_locked");
     }
 
     // Select the correct representation for this iGadget (iconified, minimized or normal)
@@ -816,126 +757,6 @@ IGadget.prototype.load = function () {
 
 IGadget.prototype.isPainted = function () {
     return this.menu !== null;
-};
-
-IGadget.prototype._createIGadgetMenu = function () {
-    var idMenu = 'igadget_menu_' + this.id;
-
-    var menuHTML = $(idMenu);
-    if (menuHTML) {
-        menuHTML.remove();
-    }
-    this.lowerOpId = null;
-
-    menuHTML = '<div id="' + idMenu + '" class="drop_down_menu"></div>';
-    new Insertion.After($('menu_layer'), menuHTML);
-    this.menu = new DropDownMenu(idMenu);
-
-    var idColorMenu = 'igadget_color_menu_' + this.id;
-    this.colorMenu = IGadgetColorManager.genDropDownMenu(idColorMenu, this.menu, this);
-
-    // Settings
-    this.menu.addOption('icon-igadget-settings',
-                        gettext("Preferences"),
-                        function () {
-                            this.toggleConfigurationVisible();
-                            LayoutManagerFactory.getInstance().hideCover();
-                        }.bind(this),
-                        0);
-
-    this.menu.addOption('icon-igadget-reload',
-                        gettext("Reload"),
-                        function () {
-                            if ('data' in this.content) {
-                                this.contentWrapper.removeChild(this.content);
-                                this.contentWrapper.appendChild(this.content);
-                            } else {
-                                this.content.src = this.codeURL;
-                            }
-                            LayoutManagerFactory.getInstance().hideCover();
-                        }.bind(this),
-                        1);
-
-    if (this.layout.dragboard.getWorkspace().isOwned()) {
-        this.menuColorEntryId = this.menu.addOption('icon-igadget-menu-colors',
-            gettext("Menu Bar Color..."),
-            function (e) {
-                var y, menuEntry;
-
-                menuEntry = $(this.menuColorEntryId);
-                if (menuEntry.getBoundingClientRect !== undefined) {
-                    y = menuEntry.getBoundingClientRect().top;
-                } else {
-                    y = document.getBoxObjectFor(menuEntry).screenY -
-                            document.getBoxObjectFor(document.documentElement).screenY;
-                }
-                LayoutManagerFactory.getInstance().showDropDownMenu('igadgetOps',
-                    this.colorMenu,
-                    Event.pointerX(e),
-                    y + (menuEntry.offsetHeight / 2));
-            }.bind(this),
-            2);
-
-        this.transparencyEntryId = this.menu.addOption('icon-igadget-transparency',
-            gettext("Transparency"),
-            function () {
-                this.toggleTransparency();
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this),
-            3);
-
-        // Extract/Snap from/to grid option (see _updateExtractOption)
-        var extractOptionOrder = 3;
-        this.extractOptionId = this.menu.addOption("",
-            "",
-            function () {},
-            this.extractOptionOrder,
-            "hide_on_lock");
-
-        // Initialize snap/extract options
-        this._updateExtractOption();
-
-        this.lowerOpId = this.menu.addOption('icon-igadget-lower',
-            gettext("Lower"),
-            function () {
-                this.layout.dragboard.lower(this);
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this),
-            this.extractOptionOrder + 1, "hide_on_lock");
-        this.raiseOpId = this.menu.addOption('icon-igadget-raise',
-            gettext("Raise"),
-            function () {
-                this.layout.dragboard.raise(this);
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this),
-            this.extractOptionOrder + 2, "hide_on_lock");
-        this.lowerToBottomOpId = this.menu.addOption('icon-igadget-lower-to-bottom',
-            gettext("Lower To Bottom"),
-            function () {
-                this.layout.dragboard.lowerToBottom(this);
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this),
-            this.extractOptionOrder + 3, "hide_on_lock");
-
-        this.raiseToTopOpId = this.menu.addOption('icon-igadget-raise-to-top',
-            gettext("Raise To Top"),
-            function () {
-                this.layout.dragboard.raiseToTop(this);
-                LayoutManagerFactory.getInstance().hideCover();
-            }.bind(this),
-            this.extractOptionOrder + 4, "hide_on_lock");
-
-        this.fulldragboardOpOrder =  this.extractOptionOrder + 5;
-        this.fulldragboardOpId = this.menu.addOption("",
-            "",
-            function () {},
-            this.fulldragboardOpOrder,
-            "hide_on_lock");
-        this._updateFulldragboardOption();
-        if (this.isInFullDragboardMode()) {
-            this.menu.menu.addClassName("gadget_menu_fulldragboard");
-        }
-    }
 };
 
 IGadget.prototype.fillWithLabel = function () {
@@ -1238,7 +1059,7 @@ IGadget.prototype.destroy = function () {
     }
 
     if (this.menu) {
-        this.menu.remove();
+        this.menu.destroy();
         this.menu = null;
     }
     this.gadget = null;
@@ -1505,10 +1326,8 @@ IGadget.prototype._notifyLockEvent = function (newLockStatus, reserveSpace) {
 
     if (newLockStatus) {
         this.element.addClassName("gadget_window_locked");
-        this.menu.menu.addClassName("gadget_menu_locked");
     } else {
         this.element.removeClassName("gadget_window_locked");
-        this.menu.menu.removeClassName("gadget_menu_locked");
     }
 
     this._updateButtons();
@@ -1795,7 +1614,6 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
     this.minimized = newStatus;
 
     if (this.minimized) {
-        this.menu.menu.addClassName('gadget_menu_minimized');
         this.configurationElement.setStyle({"display": "none"});
 
         if (this.onFreeLayout()) {
@@ -1812,7 +1630,6 @@ IGadget.prototype.setMinimizeStatus = function (newStatus, persistence, reserveS
             this.minimizeButtonElement.addClassName("maximizebutton");
         }
     } else {
-        this.menu.menu.removeClassName('gadget_menu_minimized');
         if (this.configurationVisible === true) {
             this.configurationElement.setStyle({"display": "block"});
         }
@@ -1862,10 +1679,8 @@ IGadget.prototype.setFullDragboardMode = function (enable) {
 
         this.moveToLayout(dragboard.fulldragboardLayout);
         dragboard.raiseToTop(this);
-        this.menu.menu.addClassName("gadget_menu_fulldragboard");
     } else {
         this.moveToLayout(this.previousLayout);
-        this.menu.menu.removeClassName("gadget_menu_fulldragboard");
     }
 };
 
@@ -2194,9 +2009,6 @@ IGadget.prototype.moveToLayout = function (newLayout) {
 
     affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
     this._updateExtractOption();
-    if (oldLayout instanceof FullDragboardLayout || newLayout instanceof FullDragboardLayout) {
-        this._updateFulldragboardOption();
-    }
 
     if (minimizeOnFinish) {
         this.toggleMinimizeStatus();

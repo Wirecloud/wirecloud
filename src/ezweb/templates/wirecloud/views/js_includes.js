@@ -14,6 +14,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/Gadget.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/log/LogManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkSpace.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/opManager/WorkspaceView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/Tab.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/InitialScriptExecuter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/opManager/OpManager.js"></script>
@@ -41,8 +42,15 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiringGUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectableInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/jsonFilter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/UserCommandManager.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/user_commands.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsPainter.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueSearchView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueView.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/DropDownMenu.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WindowMenu.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/WirecloudHeader.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/LayoutManager.js"></script>

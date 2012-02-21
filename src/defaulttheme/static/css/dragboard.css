@@ -23,6 +23,11 @@ div.gadget_menu {
   font-size: 12px;
 }
 
+.notebook.workspace .wrapper {
+    border: 0px none;
+    border-radius: 0px;
+}
+
 /********************************************/
 
 div.dragboard.fixed {
@@ -169,4 +174,62 @@ div.config_interface label.invalid input {
 
 div.gadget_window.highlighted {
     box-shadow: 0px 0px 3px 3px rgba(250, 0, 0, 0.7);
+}
+
+.notebook.full.workspace > div {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.notebook.workspace .tab_wrapper {
+    background: #800D00;
+    top: auto;
+    bottom: 0;
+    border-top: 1px solid #600000;
+    height: 23px;
+}
+
+.notebook.workspace .tab_wrapper .move_left {
+    left: 10px;
+}
+
+.notebook.workspace .tab_wrapper .move_right {
+    right: 4px;
+}
+
+.notebook.workspace .wrapper {
+    top: 0;
+    bottom: 24px;
+}
+
+.notebook.workspace .tab_area {
+    height: 23px;
+    top: -1px;
+}
+
+.notebook.workspace .tab_area .tab {
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background: #E4E6E2;
+    color: #900;
+    height: 15px;
+    line-height: 16px;
+    border: 1px solid #600000;
+    vertical-align: top;
+    padding: 1px 19px 2px 1ex;
+}
+
+.notebook.workspace .tab_area .tab > span {
+    vertical-align: middle;
+}
+
+.notebook.workspace .tab_area .tab.selected {
+    background: #FFFFFF;
+    color: #990000;
+    border-top: 0px none;
+    border-bottom: 1px solid #600000;
+    height: 16px;
 }

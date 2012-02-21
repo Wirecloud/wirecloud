@@ -63,29 +63,6 @@ var OpManagerFactory = function () {
                 }
             }
 
-            //Create the workspace list menu
-            this.wsListMenu = new SideBarMenu(this.sideBarElement.id);
-            //event
-            Event.observe(this.goToLauncher, 'click',
-                        function(e){
-                            LayoutManagerFactory.getInstance().toggleSideBarMenu();
-                        }.bind(this));
-            //close option
-            Event.observe($('close_sidebar'), "click",
-                        function(){
-                            this.wsListMenu.hide();
-                        }.bind(this));
-            //new workspace option
-            if (!EzSteroidsAPI.is_activated() ||
-                (EzSteroidsAPI.evaluePolicy('add_remove_workspaces') && EzSteroidsAPI.evaluePolicy('create_custom_workspaces'))) {
-                // Wirecloud IE6 version does not allow creating new Workspaces
-                Event.observe($('add_workspace'), "click",
-                        function(){
-                            LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
-                        });
-            }
-
-
             // When a profile is set to a user, profile options prevail over user options!
             var active_ws_from_script = ScriptManagerFactory.getInstance().get_ws_id();
             if (active_ws_from_script && this.workSpaceInstances.get(active_ws_from_script)) {
@@ -164,7 +141,6 @@ var OpManagerFactory = function () {
 
         //Workspace List Menu
         this.wsListMenu = null;
-        this.sideBarElement = $('workspace_sidebar');
         this.goToLauncher = $('go_to_link');
 
         /**
@@ -196,15 +172,6 @@ var OpManagerFactory = function () {
         // ****************
         // PUBLIC METHODS
         // ****************
-
-        OpManager.prototype.showCatalogue = function () {
-            if (!this.activeWorkSpace.isValid()) {
-                //Nothing to do!
-                return;
-            }
-
-            CatalogueFactory.getInstance().render();
-        }
 
         OpManager.prototype.showLogs = function (logManager) {
             logManager = arguments.length > 0 ? logManager : LogManagerFactory.getInstance();
@@ -429,7 +396,7 @@ var OpManagerFactory = function () {
 
             if (this.activeWorkSpace) {
                 this.activeWorkSpace.unload();
-                        }
+            }
 
             this.wsListMenu.remove();
 
@@ -449,11 +416,7 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.showActiveWorkSpace = function (refreshMenu) {
-            LayoutManagerFactory.getInstance().showDragboard(this.activeWorkSpace.getActiveDragboard());
-
-            if (refreshMenu != false){ //refreshMenu == true or null
-                this._refreshWorkspaceMenu();
-            }
+            // TODO
         }
 
         OpManager.prototype.preferencesChanged = function (modifiedValues) {
@@ -481,9 +444,6 @@ var OpManagerFactory = function () {
                 break;
 
             case Modules.prototype.SHOWCASE:
-                this.catalogue = CatalogueFactory.getInstance();
-                break;
-
             case Modules.prototype.CATALOGUE:
                 // All singleton modules has been loaded!
                 // It's time for loading tabspace information!
@@ -583,10 +543,6 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.getWsListMenu = function(){
             return this.wsListMenu;
-        }
-
-        OpManager.prototype.getSideBarElement = function(){
-            return this.sideBarElement;
         }
     }
 
