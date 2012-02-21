@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<div id="wiring_table">
+    <div id="eventColumn" class="eventColumn">
+        <div class="title folded">{% trans "EVENTS" %}
+            <input name='event' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
+        </div>
+        <div id="events_list"></div>
+    </div>
+
+    <div class="inoutColumn">
+        <div class="title">{% trans "CHANNELS" %}
+            <input name='channels' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this, event);"/>
+        </div>
+        <div id="channels_list"></div>
+    </div>
+
+    <div id="slotColumn" class="slotColumn">
+        <div class="title folded">{% trans "SLOTS" %}
+            <input name='slot' class='help_button' type='button' onclick="WiringInterface.prototype._displayHelpWiringHeader(this,event);"/>
+        </div>
+        <div id="slots_list"></div>
+    </div>
+    <div class="floatclearer"></div>
+</div>

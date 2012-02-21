@@ -1,0 +1,36 @@
+{% load compress i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="{{ LANGUAGE_CODE }}"
+      lang="{{ LANGUAGE_CODE }}">
+<head>
+    <title>{% block title %}{% trans "Wirecloud Platform" %}{% endblock %}</title>
+
+    {% block meta %}
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+    {% endblock %}
+
+    {% block css %}
+        {% compress css %}
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/wirecloud_core.css" />
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/static_pages.css" />
+        {% endcompress %}
+    {% endblock %}
+
+    {% block js %}
+    {% endblock %}
+</head>
+
+<body>
+    <div id="wirecloud_header">
+        <img src="{{ STATIC_URL }}images/wirecloud_logo.png" alt="Wirecloud" />://{% block path %}{% endblock %}
+    </div>
+    <div>
+    {% block content %}
+    {% endblock %}
+    </div>
+</body>
+</html>
