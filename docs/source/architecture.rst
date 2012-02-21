@@ -16,7 +16,7 @@ to set the interconnection between gadgets, and a catalogue/marketplace where
 end-users can access and look for the gadgets they need.
 
 The **Mashup Execution Engine** offers gadget interconnection, mashup state
-persistance, and cross-domain proxy facilities through an API to the editor. The
+persistence, and cross-domain proxy facilities through an API to the editor. The
 decentralized nature of mashups demands this execution engine to coordinate
 gadget execution and communication within the mashup. Thanks to the plugin API,
 extra functionality can be added to the execution engine as external modules
