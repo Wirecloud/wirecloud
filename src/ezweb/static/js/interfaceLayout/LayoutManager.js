@@ -500,77 +500,94 @@ var LayoutManagerFactory = function () {
             this.currentMenu.show();
         }
 
-        //Shows the asked window menu
-        LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, extra_data) {
-            //the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
+        /**
+         * @private
+         * Only to be used by WindowMenu.
+         */
+        LayoutManager.prototype._showWindowMenu = function (window_menu) {
+            if (!(window_menu instanceof WindowMenu)) {
+                throw TypeError('window_menu must be a WindowMenu instance');
+            }
+
             if (this.currentMenu != null) {
                 // only if the layer is displayed.
                 this.hideCover();
             }
             this.showUnclickableCover();
+            this.currentMenu = window_menu;
+        };
+
+        /**
+         * @deprecated
+         * Shows the asked window menu
+         */
+        LayoutManager.prototype.showWindowMenu = function(window, handlerYesButton, handlerNoButton, extra_data) {
+            var newMenu;
+
+            //the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
             switch (window) {
             case 'createWorkSpace':
                 if (!this.menus['createWorkSpaceMenu']) {
                     this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');
                 }
-                this.currentMenu = this.menus['createWorkSpaceMenu'];
+                newMenu = this.menus['createWorkSpaceMenu'];
                 break;
             case 'renameWorkSpace':
                 if (!this.menus['renameWorkSpaceMenu']) {
                     this.menus['renameWorkSpaceMenu'] = new RenameWindowMenu(null);
                 }
-                this.currentMenu = this.menus['renameWorkSpaceMenu'];
+                newMenu = this.menus['renameWorkSpaceMenu'];
                 break;
             case 'renameTab':
                 if (!this.menus['renameTabMenu']) {
                     this.menus['renameTabMenu'] = new RenameTabWindowMenu(extra_data);
                 }
                 this.menus['renameTabMenu'].setTab(extra_data);
-                this.currentMenu = this.menus['renameTabMenu'];
+                newMenu = this.menus['renameTabMenu'];
                 break;
             case 'useBrokenTheme':
                 if (!this.menus['alertMenu']) {
                     this.menus['alertMenu'] = new AlertWindowMenu();
                 }
-                this.currentMenu = this.menus['alertMenu'];
-                this.currentMenu.setMsg(gettext('Do you really want to remove this tab?'));
-                this.currentMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
+                newMenu = this.menus['alertMenu'];
+                newMenu.setMsg(gettext('Do you really want to remove this tab?'));
+                newMenu.setHandler(function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();}, handlerNoButton);
                 break;
             case 'cancelService':
                 if (!this.menus['alertMenu']) {
                     this.menus['alertMenu'] = new AlertWindowMenu(null);
                 }
-                this.currentMenu = this.menus['alertMenu'];
-                this.currentMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
-                this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
+                newMenu = this.menus['alertMenu'];
+                newMenu.setMsg(gettext('Do you want to cancel the subscription to the service?'));
+                newMenu.setHandler(handlerYesButton, handlerNoButton);
                 break;
             case 'publishWorkSpace':
-                this.currentMenu = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
+                newMenu = new PublishWindowMenu(OpManagerFactory.getInstance().activeWorkSpace);
                 break;
             case 'addFeed':
                 if (!this.menus['addFeedMenu']) {
                     this.menus['addFeedMenu'] = new AddFeedMenu();
                 }
-                this.currentMenu = this.menus['addFeedMenu'];
+                newMenu = this.menus['addFeedMenu'];
                 break;
             case 'addSite':
                 if (!this.menus['addSiteMenu']) {
                     this.menus['addSiteMenu'] = new AddSiteMenu();
                 }
-                this.currentMenu = this.menus['addSiteMenu'];
+                newMenu = this.menus['addSiteMenu'];
                 break;
             case 'addMashup':
                 if (!this.menus['addMashupMenu']) {
                     this.menus['addMashupMenu'] = new AddMashupWindowMenu(null);
                 }
-                this.currentMenu = this.menus['addMashupMenu'];
-                this.currentMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
-                this.currentMenu.setHandler(handlerYesButton, handlerNoButton);
+                newMenu = this.menus['addMashupMenu'];
+                newMenu.setMsg(gettext('You are going to add a Mashup that could be composed by more than one gadget. Do you want to add it to a new Workspace or to the current one?'));
+                newMenu.setHandler(handlerYesButton, handlerNoButton);
                 break;
             default:
                 return;
             }
-            this.currentMenu.show();
+            newMenu.show();
         }
 
         //Shows the background and on click the message on front disappear
@@ -672,20 +689,17 @@ var LayoutManagerFactory = function () {
          *        message type. (default value: Constants.Logging.INFO_MSG)
          */
         LayoutManager.prototype.showMessageMenu = function(msg, type) {
-            // the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
-            if (this.currentMenu != null) {//only if the layer is displayed.
-                this.hideCover();
-            }
-            this.showUnclickableCover();
-
+            var menu;
             if (!this.menus['messageMenu']) {
                 this.menus['messageMenu'] = new MessageWindowMenu(null);
             }
+            menu = this.menus['messageMenu'];
+
             type = type ? type : Constants.Logging.INFO_MSG;
-            this.currentMenu = this.menus['messageMenu'];
-            this.currentMenu.setMsg(msg);
-            this.currentMenu.setType(type);
-            this.currentMenu.show();
+            menu.setMsg(msg);
+            menu.setType(type);
+            // TODO: this.currentMenu???
+            menu.show(this.currentMenu);
         }
 
         /**

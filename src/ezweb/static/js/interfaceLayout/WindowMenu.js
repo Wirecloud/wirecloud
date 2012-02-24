@@ -175,6 +175,8 @@ WindowMenu.prototype.show = function (parentWindow) {
 
     if (this._parentWindowMenu != null) {
         this._parentWindowMenu._addChildWindow(this);
+    } else {
+        LayoutManagerFactory.getInstance()._showWindowMenu(this);
     }
 
     document.body.appendChild(this.htmlElement);
@@ -207,7 +209,11 @@ WindowMenu.prototype.hide = function () {
 }
 
 WindowMenu.prototype._addChildWindow = function (windowMenu) {
-    this.childWindow = windowMenu;
+    if (windowMenu !== this) {
+        this.childWindow = windowMenu;
+    } else {
+        throw TypeError('Window menus cannot be its own child');
+    }
 };
 
 WindowMenu.prototype._removeChildWindow = function (windowMenu) {
