@@ -19,12 +19,14 @@
 
 import re
 import urlparse
+import rdflib
 
 from django.utils.translation import ugettext as _
 from lxml import etree
 
 from commons.exceptions import TemplateParseException
 from commons.translation_utils import get_trans_index
+from rdflib import plugin
 
 
 __all__ = ('TemplateParser',)
@@ -79,8 +81,292 @@ TRANSLATIONS_XPATH = '/t:Template/t:Translations'
 TRANSLATION_XPATH = 't:Translation'
 MSG_XPATH = 't:msg'
 
+# Namespaces used for rdflib
+WIRE=rdflib.Namespace("http://wirecloud/gadget#")
+FOAF=rdflib.Namespace("http://xmlns.com/foaf/0.1/")
+USDL=rdflib.Namespace("http://www.linked-usdl.org/ns/usdl-core#")
+DCTERMS=rdflib.Namespace("http://purl.org/dc/terms/")
+RDF=rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
 
-class TemplateParser(object):
+class USDLTemplateParser(object):
+
+    _graph = None
+    _parsed = False
+    _gadgetURI = None
+
+    def __init__(self, template, base=None):
+        self.base = base
+        self._info = {}
+        self._translation_indexes = {}
+        self._url_fields = []
+
+        self._graph = rdflib.Graph()
+        self._graph.parse(data=template)
+
+        self._parse_basic_info()
+
+        # TODO check if is a mashup or a gadget
+
+        plugin.register(
+            'sparql', rdflib.query.Processor,
+            'rdfextras.sparql.processor', 'Processor')
+        plugin.register(
+            'sparql', rdflib.query.Result,
+            'rdfextras.sparql.query', 'SPARQLQueryResult')
+
+    def _parse_extra_info(self):
+
+        if self._info['type']=='gadget':
+            self._parse_gadget_info()
+        elif self._info['type']=='mashup':
+            self._parse_workspace_info()
+
+        self._parse_translation_catalogue()
+        self._parsed = True
+        self._graph = None
+
+    def _parse_basic_info(self):
+        # SPARQL query that takes basic information
+        # Mising version, display_name, organization, docURI
+        q = self._graph.query(
+         """SELECT DISTINCT ?gadget ?name ?description ?vendorID ?vendor ?authorID ?author ?imageURI
+          WHERE{
+                ?gadget rdf:type wire:Gadget .
+                ?gadget dcterms:title ?name .
+                ?gadget dcterms:description ?description .
+                ?gadget usdl:hasProvider ?vendorID .
+                ?vendorID foaf:name ?vendor .
+                ?gadget dcterms:creator ?authorID
+                ?authorID foaf:name ?author .
+                ?gadget foaf:depiction ?imageURI .
+
+
+          }""",
+          initNs=dict(rdf=RDF,dcterms=DCTERMS,wire=WIRE,foaf=FOAF))
+        self._gadgetURI = q.result[0][0]
+
+        self._info['name']=q.result[0][1]
+        if not re.match(NAME_RE, self._info['name']):
+            raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
+
+        self._info['description']=q.result[0][2]
+
+        self._info['vendor']=q.result[0][4]
+        if not re.match(NAME_RE, self._info['vendor']):
+            raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
+
+        self._info['author']=q.result[0][6]
+        self._url_fields.append['imageURI']
+        self._info['imageURI']=q.results[0][7]
+
+         # TODO check if the fields are required
+
+    def _parse_wiring_info(self,parse_chanels=False):
+
+        self._info['slots']=[]
+        self._info['events']=[]
+
+        # method self._graph.objects always returns an iterable object not subscriptable,
+        # althought only exits one instance
+        wiring=self._graph.objects(self._gadgetURI,WIRE['hasPlatformWiring'])
+        wiring_element=wiring.next()
+
+        for slot in self._graph.objects(wiring_element,WIRE['hasSlot']):
+            self._info['slots'].append({
+                'name':self._graph.objects(slot,WIRE['slotName']).next(),
+                'type':self._graph.objects(slot,WIRE['slotType']).next(),
+                'label':self._graph.label(slot,default=''),
+                'description':self._graph.objects(slot,DCTERMS['description']).next(),
+                'action_label':self._graph.objects(slot,WIRE['slotActionLabel']).next(),
+                'friendcode':self._graph.objects(slot,WIRE['slotFriendcode']).next(),
+            })
+
+        for event in self._graph.objects(wiring_element,WIRE['hasEvent']):
+            self._info['events'].append({
+                'name':self._graph.objects(event,WIRE['eventName']).next(),
+                'type':self._graph.objects(event,WIRE['eventType']).next(),
+                'label':self._graph.label(event,default=''),
+                'description':self._graph.objects(event,DCTERMS['description']).next(),
+                'friendcode':self._graph.objects(event,WIRE['eventFriendcode']).next(),
+            })
+
+        if parse_chanels:
+           self._parse_wiring_channel_info(wiring_element)
+
+    def _parse_wiring_channel_info(self,wiring_element):
+
+        channels={}
+
+        for channel in self._graph.objects(wiring_element,WIRE['hasChannel']):
+            channel_info = {
+                'id':int(self._graph.objects(channel,WIRE['id']).next()),
+                'name':self._graph.objects(channel,WIRE['channelName']).next(),
+                'readonly':self._graph.objects(channel,WIRE['readOnly']).next().lower() == 'true',
+                'filter':self._graph.objects(channel,WIRE['filter']).next(),
+                'filterparams':self._graph.objects(channel,WIRE['filterParams']).next(),
+                'ins':[],
+                'outs':[],
+                'out_channels':[],
+            }
+            for in_ in self._graph.objects(channel,WIRE['ins']):
+                channel_info['ins'].append({
+                    'igadget': self._graph.objects(in_,WIRE['inIgadget']).next(),
+                    'name': self._graph.objects(in_,WIRE['inName']).next(),
+                })
+
+            for out in self._graph.objects(channel,WIRE['outs']):
+                channel_info['outs'].append({
+                    'igadget': self._graph.objects(out,WIRE['outIgadget']).next(),
+                    'name': self._graph.objects(out,WIRE['outName']).next(),
+                })
+
+            for out_channel in self._graph.objects(channel,WIRE['outChannel']):
+                channel_info['out_channels'].append(self._graph.objects(out_channel,WIRE['id']).next())
+
+            channels[channel.get('id')] = channel_info
+
+        self._info['channels']=channels
+
+    def _parse_gadget_info(self):
+        # TODO iphone_image_URI
+
+        # Preference info
+        self._info['preferences']=[]
+
+        for preference in self._graph.objects(self._gadgetURI,WIRE['hasPlatformPreference']):
+            preference_info={
+                'name': self._graph.objects(preference,WIRE['preferenceName']).next(),
+                'type': self._graph.objects(preference,WIRE['preferenceType']).next(),
+                'label': self._graph.label(preference,default=''),
+                'description': self._graph.objects(preference,DCTERMS['description']).next(),
+                'default_value': self._graph.objects(preference,WIRE['preferenceDefault']).next(),
+                'secure': self._graph.objects(preference,WIRE['preferenceSecure']).next().lower() == 'true',
+            }
+            if preference_info['type'] == 'list':
+                preference_info['options']=[]
+
+                for option in self._graph.objects(preference,WIRE['option']):
+                    preference_info['options'].append({
+                        'name': self._graph.objects(option,WIRE['optionName']),
+                        'value': self._graph.objects(option,WIRE['optionValue']),
+                    })
+
+            self._info['preferences'].append(preference_info)
+
+        # State properties info
+        self._info['properties'] = []
+
+        for prop in self._graph.objects(self._gadgetURI,WIRE['hasStateProperty']):
+            self._info['properties'].append({
+                'name': self._graph.objects(prop,WIRE['propertyName']).next(),
+                'type': self._graph.objects(prop,WIRE['propertyName']).next(),
+                'label': self._graph.label(prop,default=''),
+                'description': self._graph.objects(prop,DCTERMS['description']).next(),
+                'default_value': self._graph.objects(prop,WIRE['propertyDefault']).next(),
+                'secure': self._graph.objects(prop,WIRE['propertySecure']).next().lower() == 'true',
+            })
+
+        self._parse_wiring_info()
+
+        self._info['context']=[]
+        context=self._graph.objects(self._gadgetURI,WIRE['hasPlatformContext'])
+        context_element=context.next()
+
+        for gcontext in self._graph.objects(context_element,WIRE['hasContext']):
+            self._info['context'].append({
+                'name': self._graph.objects(gcontext,WIRE['contextName']).next(),
+                'type': self._graph.objects(gcontext,WIRE['contextType']).next(),
+                'concept': self._graph.objects(gcontext,WIRE['contextConcept']).next(),
+                'aspect': 'GCTX',
+            })
+        for pcontext in self._graph.objects(context_element,WIRE['hasGadgetContext']):
+            self._info['context'].append({
+                'name': self._graph.objects(pcontext,WIRE['gadgetContextName']).next(),
+                'type': self._graph.objects(pcontext,WIRE['gadgetContextType']).next(),
+                'concept': self._graph.objects(pcontext,WIRE['gadgetContextConcept']).next(),
+                'aspect': 'ECTX',
+            })
+
+        # It contains the elements gadget code and WikiURI
+        resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
+
+        for res in resources:
+            if self._graph.objects(res,DCTERMS['title']).next() == 'code':
+                xhtml_element=res
+                break
+        else:
+            msg = _('missing gadget code')
+            raise TemplateParseException(msg)
+
+        # TODO xhtml properties, rendering and menu color
+
+
+    def _parse_workspace_info(self):
+        pass
+
+    def typeText2typeCode(self, typeText):
+        pass
+
+    def set_base(self, base):
+        pass
+
+    def get_contents(self):
+        pass
+
+    def get_resource_type(self):
+        return self._info['type']
+
+    def get_resource_uri(self):
+        return '/'.join((
+            '',
+            self._info['type'] + 's',
+            self._info['vendor'],
+            self._info['name'],
+            self._info['version'],
+        ))
+
+    def get_resource_name(self):
+        return self._info['name']
+
+    def get_resource_vendor(self):
+        return self._info['vendor']
+
+    def get_resource_version(self):
+        return self._info['version']
+
+    def get_resource_basic_info(self):
+        return self._info
+
+    def get_resource_info(self):
+        if not self._parsed:
+            self._parse_extra_info()
+
+        return dict(self._info)
+
+    def get_absolute_url(self, url, base=None):
+        if base is None:
+            base = self.base
+
+        return urlparse.urljoin(base, url)
+
+    def get_resource_processed_info(self, base=None):
+        info = self.get_resource_info()
+
+        if base is None:
+            base = self.base
+
+        # process url fields
+        for field in self._url_fields:
+            value = info[field]
+            if value.strip() != '':
+                info[field] = urlparse.urljoin(base, value)
+
+        return info
+
+
+
+
+class WirecloudTemplateParser(object):
 
     _doc = None
     _resource_description = None
@@ -92,23 +378,13 @@ class TemplateParser(object):
         self._info = {}
         self._translation_indexes = {}
         self._url_fields = []
-
-        if isinstance(template, str):
-            self._doc = etree.fromstring(template)
-        elif isinstance(template, unicode):
-            # Work around: ValueError: Unicode strings with encoding
-            # declaration are not supported.
-            self._doc = etree.fromstring(template.encode('utf-8'))
-        else:
-            self._doc = template
+        self._doc = template
 
         prefix = self._doc.prefix
         xmlns = None
         if prefix in self._doc.nsmap:
             xmlns = self._doc.nsmap[prefix]
 
-        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
-            raise TemplateParseException('The template is not a valid wirecloud template')
         self._uses_namespace = xmlns is not None
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
@@ -119,6 +395,7 @@ class TemplateParser(object):
             self._info['type'] = 'mashup'
         else:
             self._info['type'] = 'gadget'
+
 
     def _xpath(self, query, element):
         if self._uses_namespace:
@@ -528,8 +805,81 @@ class TemplateParser(object):
         if base is None:
             base = self.base
 
+        # TODO translate fields
+
         # process url fields
         for field in self._url_fields:
             value = info[field]
             if value.strip() != '':
                 info[field] = urlparse.urljoin(base, value)
+
+        return info
+
+
+class TemplateParser(object):
+
+    _doc = None
+    # This could be an instance of WirecloudTemplateParser
+    # or USDLTemplateParser depending on the type of the document
+    _parser = None
+
+    def __init__(self, template, base=None):
+
+        if isinstance(template, str):
+            self._doc = etree.fromstring(template)
+        elif isinstance(template, unicode):
+            # Work around: ValueError: Unicode strings with encoding
+            # declaration are not supported.
+            self._doc = etree.fromstring(template.encode('utf-8'))
+        else:
+            self._doc = template
+
+        prefix = self._doc.prefix
+        xmlns = None
+        if prefix in self._doc.nsmap:
+            xmlns = self._doc.nsmap[prefix]
+
+        if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
+             # TODO check if the document is a valid usdl document and add an else with rise Exception
+            self._parser = USDLTemplateParser(template,base)
+        else:
+             # The document is a Wirecloud Template so WirecloudTemplateParser is Used
+            self._parser = WirecloudTemplateParser(self._doc,base)
+           #  raise TemplateParseException()
+
+
+    def typeText2typeCode(self, typeText):
+        return self._parser.typeText2typeCode(typeText)
+
+    def set_base(self, base):
+        self._parser.set_base(base)
+
+    def get_contents(self):
+        return self._parser.get_contents()
+
+    def get_resource_type(self):
+        return self._parser.get_resource_type()
+
+    def get_resource_uri(self):
+        return self._parser.get_resource_uri()
+
+    def get_resource_name(self):
+        return self._parser.get_resource_name()
+
+    def get_resource_vendor(self):
+        return self._parser.get_resource_vendor()
+
+    def get_resource_version(self):
+        return self._parser.get_resource_version()
+
+    def get_resource_basic_info(self):
+        return self._parser.get_resource_basic_info()
+
+    def get_resource_info(self):
+        return self._parser.get_resource_info()
+
+    def get_absolute_url(self, url, base=None):
+        return self._parser.get_absolute_url(url,base)
+
+    def get_resource_processed_info(self, base=None):
+        return self._parser.get_resource_processed_info(base)

@@ -112,6 +112,38 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
         self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
+    def test_basic_gadget_creation_from_usdl(self):
+        template_uri = "http://example.com/path/gadget.usdl"
+        template = self.read_template('template1.usdl')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        gadget = create_gadget_from_template(template_uri, self.user)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['prop']['aspect'], 'PROP')
+        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
+        self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
+        self.assertEqual(data['variables']['event']['label'], 'Event label')
+        self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
+        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
+        self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
+
+        self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['language']['concept'], 'language')
+        self.assertEqual(data['variables']['user']['aspect'], 'ECTX')
+        self.assertEqual(data['variables']['user']['concept'], 'username')
+        self.assertEqual(data['variables']['width']['aspect'], 'GCTX')
+        self.assertEqual(data['variables']['width']['concept'], 'widthInPixels')
+        self.assertEqual(data['variables']['lockStatus']['aspect'], 'GCTX')
+        self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
+
     def test_gadget_deletion(self):
         template_uri = "http://example.com/path/gadget.xml"
         template = self.read_template('template1.xml')
