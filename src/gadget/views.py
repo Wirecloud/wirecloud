@@ -264,13 +264,13 @@ class GadgetCodeEntry(Resource):
         return HttpResponse('ok')
 
 
-def serve_showcase_media(request, username, vendor, name, version, file_path):
+def serve_showcase_media(request, vendor, name, version, file_path):
 
     if request.method != 'GET':
         return HttpResponseNotAllowed(('GET',))
 
     local_path = os.path.join(
-        wgt_deployer.get_base_dir(username, vendor, name, version),
+        showcase_utils.wgt_deployer.get_base_dir(vendor, name, version),
         file_path)
 
     if not os.path.isfile(local_path):
