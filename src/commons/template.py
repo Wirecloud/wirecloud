@@ -87,6 +87,8 @@ FOAF=rdflib.Namespace("http://xmlns.com/foaf/0.1/")
 USDL=rdflib.Namespace("http://www.linked-usdl.org/ns/usdl-core#")
 DCTERMS=rdflib.Namespace("http://purl.org/dc/terms/")
 RDF=rdflib.Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+RDFS=rdflib.Namespace("http://www.w3.org/2000/01/rdf-schema#")
+VCARD=rdflib.Namespace("http://www.w3.org/2001/vcard-rdf/3.0#")
 
 class USDLTemplateParser(object):
 
@@ -103,9 +105,10 @@ class USDLTemplateParser(object):
         self._graph = rdflib.Graph()
         self._graph.parse(data=template)
 
-        self._parse_basic_info()
+
 
         # TODO check if is a mashup or a gadget
+        self._info['type']='gadget'
 
         plugin.register(
             'sparql', rdflib.query.Processor,
@@ -113,6 +116,27 @@ class USDLTemplateParser(object):
         plugin.register(
             'sparql', rdflib.query.Result,
             'rdfextras.sparql.query', 'SPARQLQueryResult')
+
+        self._parse_basic_info()
+
+    def _get_field(self,namespace,element,subject,required=True):
+
+        fields = self._graph.objects(subject,namespace[element])
+        for field_element in fields:
+            result =str(field_element)
+            break
+        else:
+            if required:
+                msg = _('missing required field: %(field)s')
+                raise TemplateParseException(msg % {'field': element})
+            else:
+                result= ''
+        return result
+
+    def _get_url_field(self,field,*args,**kwargs):
+
+        self._url_fields.append(field)
+        return self._get_field(*args,**kwargs)
 
     def _parse_extra_info(self):
 
@@ -123,43 +147,53 @@ class USDLTemplateParser(object):
 
         self._parse_translation_catalogue()
         self._parsed = True
-        self._graph = None
+        # self._graph = None
 
     def _parse_basic_info(self):
-        # SPARQL query that takes basic information
-        # Mising version, display_name, organization, docURI
-        q = self._graph.query(
-         """SELECT DISTINCT ?gadget ?name ?description ?vendorID ?vendor ?authorID ?author ?imageURI
-          WHERE{
-                ?gadget rdf:type wire:Gadget .
-                ?gadget dcterms:title ?name .
-                ?gadget dcterms:description ?description .
-                ?gadget usdl:hasProvider ?vendorID .
-                ?vendorID foaf:name ?vendor .
-                ?gadget dcterms:creator ?authorID
-                ?authorID foaf:name ?author .
-                ?gadget foaf:depiction ?imageURI .
 
+        # Mising version, organization
 
-          }""",
-          initNs=dict(rdf=RDF,dcterms=DCTERMS,wire=WIRE,foaf=FOAF))
-        self._gadgetURI = q.result[0][0]
+        self._gadgetURI=self._graph.subjects(RDF['type'],WIRE['Gadget']).next()
 
-        self._info['name']=q.result[0][1]
+        self._info['name']=self._get_field(DCTERMS,'title',self._gadgetURI)
         if not re.match(NAME_RE, self._info['name']):
             raise TemplateParseException(_('ERROR: the format of the name is invalid.'))
 
-        self._info['description']=q.result[0][2]
+        self._info['description']=self._get_field(DCTERMS,'description',self._gadgetURI)
 
-        self._info['vendor']=q.result[0][4]
+        vendor = self._graph.objects(self._gadgetURI,USDL['hasProvider']).next()
+
+        self._info['vendor'] = self._get_field(FOAF,'name',vendor)
         if not re.match(NAME_RE, self._info['vendor']):
             raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
 
-        self._info['author']=q.result[0][6]
-        self._url_fields.append['imageURI']
-        self._info['imageURI']=q.results[0][7]
+        author= self._graph.objects(self._gadgetURI, DCTERMS['creator']).next()
+        self._info['author']=self._get_field(FOAF,'name',author)
 
-         # TODO check if the fields are required
+        # it contains imageURI and iphoneImageURI or only imageURI
+        images = self._graph.objects(self._gadgetURI,FOAF['depiction'])
+
+        for image_element in images:
+            if str(self._graph.objects(image_element,DCTERMS['title']).next()).lower() == 'imageuri':
+                self._info['image_uri']=str(image_element)
+                break
+        else:
+            raise TemplateParseException('missing required field: imageURI')
+
+        # it contains code and docURI if exists
+        resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
+
+        for resource_element in resources:
+            if str(self._graph.objects(resource_element,DCTERMS['title']).next()).lower() == 'wikiuri':
+                self._info['doc_uri']=str(resource_element)
+                break
+        else:
+            self._info['doc_uri']=''
+
+        self._info['display_name']=self._get_field(WIRE,'displayName',self._gadgetURI,required=False)
+
+        self._info['mail']=self._get_field(VCARD,'email',self._gadgetURI)
+
 
     def _parse_wiring_info(self,parse_chanels=False):
 
@@ -173,21 +207,21 @@ class USDLTemplateParser(object):
 
         for slot in self._graph.objects(wiring_element,WIRE['hasSlot']):
             self._info['slots'].append({
-                'name':self._graph.objects(slot,WIRE['slotName']).next(),
-                'type':self._graph.objects(slot,WIRE['slotType']).next(),
-                'label':self._graph.label(slot,default=''),
-                'description':self._graph.objects(slot,DCTERMS['description']).next(),
-                'action_label':self._graph.objects(slot,WIRE['slotActionLabel']).next(),
-                'friendcode':self._graph.objects(slot,WIRE['slotFriendcode']).next(),
+                'name': self._get_field(WIRE,'slotName',slot,required=False),
+                'type': self._get_field(WIRE,'slotType',slot,required=False),
+                'label': self._get_field(RDFS,'label',slot,required=False),
+                'description': self._get_field(DCTERMS,'description',slot,required=False),
+                'action_label': self._get_field(WIRE,'slotActionLabel',slot,required=False),
+                'friendcode': self._get_field(WIRE,'slotFriendcode',slot,required=False),
             })
 
         for event in self._graph.objects(wiring_element,WIRE['hasEvent']):
             self._info['events'].append({
-                'name':self._graph.objects(event,WIRE['eventName']).next(),
-                'type':self._graph.objects(event,WIRE['eventType']).next(),
-                'label':self._graph.label(event,default=''),
-                'description':self._graph.objects(event,DCTERMS['description']).next(),
-                'friendcode':self._graph.objects(event,WIRE['eventFriendcode']).next(),
+                'name': self._get_field(WIRE,'eventName',event,required=False),
+                'type': self._get_field(WIRE,'eventType',event,required=False),
+                'label': self._get_field(RDFS,'label',event,required=False),
+                'description': self._get_field(DCTERMS,'description',event,required=False),
+                'friendcode': self._get_field(WIRE,'eventFriendcode',event,required=False),
             })
 
         if parse_chanels:
@@ -199,56 +233,64 @@ class USDLTemplateParser(object):
 
         for channel in self._graph.objects(wiring_element,WIRE['hasChannel']):
             channel_info = {
-                'id':int(self._graph.objects(channel,WIRE['id']).next()),
-                'name':self._graph.objects(channel,WIRE['channelName']).next(),
-                'readonly':self._graph.objects(channel,WIRE['readOnly']).next().lower() == 'true',
-                'filter':self._graph.objects(channel,WIRE['filter']).next(),
-                'filterparams':self._graph.objects(channel,WIRE['filterParams']).next(),
+                'id': int(self._get_field(WIRE,'id',channel,required=False)),
+                'name': self._get_field(WIRE,'channelName',channel,required=False),
+                'readonly': self._get_field(WIRE,'readOnly',channel,required=False).lower() == 'true',
+                'filter': self._get_field(WIRE,'filter',channel,required=False),
+                'filterparams': self._get_field(WIRE,'filterParams',channel,required=False),
                 'ins':[],
                 'outs':[],
                 'out_channels':[],
             }
             for in_ in self._graph.objects(channel,WIRE['ins']):
                 channel_info['ins'].append({
-                    'igadget': self._graph.objects(in_,WIRE['inIgadget']).next(),
-                    'name': self._graph.objects(in_,WIRE['inName']).next(),
+                    'igadget': self._get_field(WIRE,'inIgadget',in_,required=False),
+                    'name': self._get_field(WIRE,'inName',in_,required=False),
                 })
 
             for out in self._graph.objects(channel,WIRE['outs']):
                 channel_info['outs'].append({
-                    'igadget': self._graph.objects(out,WIRE['outIgadget']).next(),
-                    'name': self._graph.objects(out,WIRE['outName']).next(),
+                    'igadget': self._get_field(WIRE,'outIgadget',out,required=False),
+                    'name': self._get_field(WIRE,'outName',out,required=False),
                 })
 
             for out_channel in self._graph.objects(channel,WIRE['outChannel']):
-                channel_info['out_channels'].append(self._graph.objects(out_channel,WIRE['id']).next())
+                channel_info['out_channels'].append(self._get_field(WIRE,'id',out_channel,required=False))
 
-            channels[channel.get('id')] = channel_info
+            channels[self._get_field(WIRE,'id',channel)] = channel_info
 
         self._info['channels']=channels
 
     def _parse_gadget_info(self):
-        # TODO iphone_image_URI
+
+        images = self._graph.objects(self._gadgetURI,FOAF['depiction'])
+
+        for image_element in images:
+            if str(self._graph.objects(image_element,DCTERMS['title']).next()).lower() == 'iphoneimageuri':
+                self._info['iphone_image_uri']=str(image_element)
+                break
+        else:
+            self._info['iphone_image_uri']=''
 
         # Preference info
         self._info['preferences']=[]
 
         for preference in self._graph.objects(self._gadgetURI,WIRE['hasPlatformPreference']):
             preference_info={
-                'name': self._graph.objects(preference,WIRE['preferenceName']).next(),
-                'type': self._graph.objects(preference,WIRE['preferenceType']).next(),
-                'label': self._graph.label(preference,default=''),
-                'description': self._graph.objects(preference,DCTERMS['description']).next(),
-                'default_value': self._graph.objects(preference,WIRE['preferenceDefault']).next(),
-                'secure': self._graph.objects(preference,WIRE['preferenceSecure']).next().lower() == 'true',
+                'name': self._get_field(WIRE,'preferenceName',preference,required=False),
+                'type': self._get_field(WIRE,'preferenceType',preference,required=False),
+                'label': self._get_field(RDFS,'label',preference,required=False),
+                'description': self._get_field(DCTERMS,'description',preference,required=False),
+                'default_value': self._get_field(WIRE,'preferenceDefault',preference,required=False),
+                'secure': self._get_field(WIRE,'preferenceSecure',preference,required=False).lower() == 'true',
             }
-            if preference_info['type'] == 'list':
+            if str(preference_info['type']) == 'list':
                 preference_info['options']=[]
 
-                for option in self._graph.objects(preference,WIRE['option']):
+                for option in self._graph.objects(preference,WIRE['hasOption']):
                     preference_info['options'].append({
-                        'name': self._graph.objects(option,WIRE['optionName']),
-                        'value': self._graph.objects(option,WIRE['optionValue']),
+                        'name': self._get_field(WIRE,'optionName',option,required=False),
+                        'value': self._get_field(WIRE,'optionValue',option,required=False),
                     })
 
             self._info['preferences'].append(preference_info)
@@ -256,14 +298,14 @@ class USDLTemplateParser(object):
         # State properties info
         self._info['properties'] = []
 
-        for prop in self._graph.objects(self._gadgetURI,WIRE['hasStateProperty']):
+        for prop in self._graph.objects(self._gadgetURI,WIRE['hasPlatformStateProperty']):
             self._info['properties'].append({
-                'name': self._graph.objects(prop,WIRE['propertyName']).next(),
-                'type': self._graph.objects(prop,WIRE['propertyName']).next(),
-                'label': self._graph.label(prop,default=''),
-                'description': self._graph.objects(prop,DCTERMS['description']).next(),
-                'default_value': self._graph.objects(prop,WIRE['propertyDefault']).next(),
-                'secure': self._graph.objects(prop,WIRE['propertySecure']).next().lower() == 'true',
+                'name': self._get_field(WIRE,'statePropertyName',prop,required=False),
+                'type': self._get_field(WIRE,'statePropertyType',prop,required=False),
+                'label': self._get_field(RDFS,'label',prop,required=False),
+                'description': self._get_field(DCTERMS,'description',prop,required=False),
+                'default_value': self._get_field(WIRE,'statePropertyDefault',prop,required=False),
+                'secure': self._get_field(WIRE,'statePropertySecure',prop,required=False).lower() == 'true',
             })
 
         self._parse_wiring_info()
@@ -274,16 +316,16 @@ class USDLTemplateParser(object):
 
         for gcontext in self._graph.objects(context_element,WIRE['hasContext']):
             self._info['context'].append({
-                'name': self._graph.objects(gcontext,WIRE['contextName']).next(),
-                'type': self._graph.objects(gcontext,WIRE['contextType']).next(),
-                'concept': self._graph.objects(gcontext,WIRE['contextConcept']).next(),
+                'name': self._get_field(WIRE,'contextName',gcontext,required=False),
+                'type': self._get_field(WIRE,'contextType',gcontext,required=False),
+                'concept': self._get_field(WIRE,'contextConcept',gcontext,required=False),
                 'aspect': 'GCTX',
             })
         for pcontext in self._graph.objects(context_element,WIRE['hasGadgetContext']):
             self._info['context'].append({
-                'name': self._graph.objects(pcontext,WIRE['gadgetContextName']).next(),
-                'type': self._graph.objects(pcontext,WIRE['gadgetContextType']).next(),
-                'concept': self._graph.objects(pcontext,WIRE['gadgetContextConcept']).next(),
+                'name': self._get_field(WIRE,'gadgetContextName',pcontext,required=False),
+                'type': self._get_field(WIRE,'gadgetContextType',pcontext,required=False),
+                'concept': self._get_field(WIRE,'gadgetContextConcept',pcontext,required=False),
                 'aspect': 'ECTX',
             })
 
@@ -298,8 +340,23 @@ class USDLTemplateParser(object):
             msg = _('missing gadget code')
             raise TemplateParseException(msg)
 
-        # TODO xhtml properties, rendering and menu color
+        self._info['code_url']=str(xhtml_element)
+        self._info['code_content_type']=self._get_field(WIRE,'codeContentType',xhtml_element,required=False)
+        if self._info['code_content_type']=='':
+            self._info['code_content_type']='text/html'
 
+        self._info['code_cacheable'] = self._get_field(WIRE,'codeCacheable',xhtml_element,required=False).lower() == 'true'
+
+
+        rendering_element=self._graph.objects(self._gadgetURI,WIRE['hasPlatformRendering']).next()
+
+        self._info['gadget_width'] = self._get_field(WIRE,'width',rendering_element,required=False)
+        self._info['gadget_height'] = self._get_field(WIRE,'height',rendering_element,required=False)
+
+        self._info['gadget_menucolor']=self._get_field(WIRE,'hasPlatformMenucolor',self._gadgetURI,required=False)
+
+    def _parse_translation_catalogue(self):
+        pass
 
     def _parse_workspace_info(self):
         pass
@@ -308,10 +365,10 @@ class USDLTemplateParser(object):
         pass
 
     def set_base(self, base):
-        pass
+        self.base=base
 
     def get_contents(self):
-        pass
+        return self._graph.serialize()
 
     def get_resource_type(self):
         return self._info['type']
@@ -841,11 +898,14 @@ class TemplateParser(object):
 
         if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
              # TODO check if the document is a valid usdl document and add an else with rise Exception
-            self._parser = USDLTemplateParser(template,base)
+            if str(template).find('rdf:RDF') > 0:
+                self._parser = USDLTemplateParser(template,base)
+            else:
+                raise TemplateParseException('The document is not valid')
         else:
              # The document is a Wirecloud Template so WirecloudTemplateParser is Used
             self._parser = WirecloudTemplateParser(self._doc,base)
-           #  raise TemplateParseException()
+
 
 
     def typeText2typeCode(self, typeText):
