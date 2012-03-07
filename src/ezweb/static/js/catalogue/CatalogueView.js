@@ -8,16 +8,13 @@ var CatalogueView = function(id, options) {
     this.viewsByName = {
         'search': this.alternatives.createAlternative({alternative_constructor: CatalogueSearchView, containerOptions: {catalogue: this}}),
         'developer': this.alternatives.createAlternative(),
-        'details': this.alternatives.createAlternative()
+        'details': this.alternatives.createAlternative({alternative_constructor: ResourceDetailsView, containerOptions: {catalogue: this}})
     };
 
     this.view_all_template = new Template(URIs.GET_POST_RESOURCES + '/#{starting_page}/#{resources_per_page}');
     this.simple_search_template = new Template(URIs.GET_RESOURCES_SIMPLE_SEARCH + '/simple_or/#{starting_page}/#{resources_per_page}');
 
-    this.resource_painter = new ResourcePainter(this, $('catalogue_resource_template').getTextContent());
-    this.resource_details_painter = new ResourceDetailsPainter(this, $('catalogue_resource_details_template').getTextContent());
-
-    this.resource_painter.set_dom_element(this.wrapperElement.getElementsByClassName('resource_list')[0]);
+    this.resource_painter = new ResourcePainter(this, $('catalogue_resource_template').getTextContent(), this.wrapperElement.getElementsByClassName('resource_list')[0]);
 };
 CatalogueView.prototype = new StyledElements.Alternative();
 
@@ -108,7 +105,8 @@ CatalogueView.prototype.instanciate = function(resource) {
 };
 
 CatalogueView.prototype.showDetails = function(resource) {
-    this.resource_details_painter.paint(resource);
+    this.viewsByName['details'].paint(resource);
+    this.alternatives.showAlternative(this.viewsByName['details']);
 };
 
 CatalogueView.prototype.getBreadcrum = function() {

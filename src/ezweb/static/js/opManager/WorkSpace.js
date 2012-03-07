@@ -26,7 +26,7 @@
 
 function WorkSpace (workSpaceState) {
 
-    WorkSpace.prototype._manageAddTabElement = function(locked){
+    WorkSpace.prototype._manageAddTabElement = function(locked) {
         if (this.addTabElement) {
             if (this.isAllowed('add_tab')) {
                 if (locked) {
@@ -161,7 +161,7 @@ function WorkSpace (workSpaceState) {
 
             // FIXME
             LayoutManagerFactory.getInstance().mainLayout.repaint();
-            LayoutManagerFactory.getInstance().header._paintBreadcrum(this);
+            LayoutManagerFactory.getInstance().header._paintBreadcrum(LayoutManagerFactory.getInstance().viewsByName['workspace']);
             this.wiringInterface = LayoutManagerFactory.getInstance().viewsByName['wiring'];
             this.wiringInterface.assignWorkspace(this);
 
@@ -428,6 +428,15 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.downloadWorkSpaceInfo = function (initial_tab) {
+        // TODO
+        this.renameTabWindow = new RenameTabWindowMenu();
+        this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
+        this.notebook.addEventListener('change', function (notebook, old_tab, new_tab) {
+            this.visibleTab = new_tab;
+        });
+        LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
+        LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
+
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
         this.initial_tab_id = initial_tab;
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
@@ -1001,13 +1010,6 @@ function WorkSpace (workSpaceState) {
     this.editLauncher = null;
 
     this.unlockEntryPos;
-    this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
-    this.notebook.addEventListener('change', function (notebook, old_tab, new_tab) {
-        this.visibleTab = new_tab;
-    });
-    // TODO
-    LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
-    LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
     /*
      * OPERATIONS

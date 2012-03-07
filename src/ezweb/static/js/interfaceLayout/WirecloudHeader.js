@@ -47,6 +47,7 @@ WirecloudHeader.prototype._initUserMenu = function() {
 
     this.user_menu = new StyledElements.PopupMenu();
     this.user_menu.append(new StyledElements.MenuItem(gettext('Sign out'), OpManagerFactory.getInstance().logout));
+    this.user_menu.append(new StyledElements.MenuItem(gettext('Settings'), OpManagerFactory.getInstance().showPlatformPreferences));
 
     user_menu = document.createElement('div');
     user_menu.className = 'user_menu';
@@ -91,6 +92,15 @@ WirecloudHeader.prototype._paintBreadcrum = function(newView) {
         breadcrum_part.className = breadcrum_levels[i];
         if ('class' in breadcrum_entry) {
             breadcrum_part.addClassName(breadcrum_entry['class']);
+        }
+        if ('menu' in breadcrum_entry) {
+            breadcrum_part.addEventListener('click', function (e) {
+                var position = {
+                    x: this.element.offsetLeft,
+                    y: this.element.offsetTop + this.element.offsetHeight
+                };
+                this.menu.show(position);
+            }.bind({element: breadcrum_part, menu: breadcrum_entry.menu}), true);
         }
         this.breadcrum.appendChild(breadcrum_part);
     }

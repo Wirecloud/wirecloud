@@ -193,15 +193,6 @@
   display: inline;
 }
 
-#wiring #unfold_chkItem {
-  display: inline;
-  width: 15px;
-  height: 15px;
-  border: 0px;
-  padding: 0 20px 0 0;
-  cursor: pointer;
-}
-
 #wiring .channels_list .channel {
   cursor: pointer;
   position: relative;

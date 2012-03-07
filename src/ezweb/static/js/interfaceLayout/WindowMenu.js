@@ -46,12 +46,12 @@ function WindowMenu(title, extra_class) {
     this.htmlElement.appendChild(windowTop);
 
     this._closeListener = this._closeListener.bind(this);
-    this.closeButton = document.createElement('a');
-    Element.extend(this.closeButton);
-    this.closeButton.type = "button";
-    this.closeButton.className = "closebutton";
-    windowTop.appendChild(this.closeButton);
-    this.closeButton.observe("click", this._closeListener);
+    this.closeButton = new StyledElements.StyledButton({
+        'class': "closebutton",
+        'plain': true
+    });
+    this.closeButton.insertInto(windowTop);
+    this.closeButton.addEventListener("click", this._closeListener);
 
     this.titleElement = document.createElement('div');
     Element.extend(this.titleElement);
@@ -91,7 +91,7 @@ function WindowMenu(title, extra_class) {
 
 
 WindowMenu.prototype.setTitle = function(title) {
-    this.titleElement.setTextContent(title);
+    this.titleElement.setTextContent('/' + title);
 };
 
 /**
@@ -434,7 +434,7 @@ MessageWindowMenu.prototype.setType = function(type) {
     var icons = ['', 'icon-error', 'icon-warning', 'icon-info'];
 
     // Update title
-    this.titleElement.update(titles[type]);
+    this.setTitle(titles[type]);
 
     // Update icon
     this.iconElement.className += ' ' + icons[type];
@@ -1280,7 +1280,6 @@ function RenameTabWindowMenu () {
     }
     FormWindowMenu.call(this, fields, gettext('Rename Tab'));
 }
-
 RenameTabWindowMenu.prototype = new FormWindowMenu();
 
 RenameTabWindowMenu.prototype.setTab = function(tab) {
@@ -1294,7 +1293,6 @@ RenameTabWindowMenu.prototype.setFocus = function() {
 RenameTabWindowMenu.prototype.executeOperation = function(form) {
     var name = form["name"];
     this.tab.updateInfo(name);
-    this.tab.fillWithLabel();
 }
 
 RenameTabWindowMenu.prototype.show = function(parentWindow) {
@@ -1429,11 +1427,10 @@ function PreferencesWindowMenu(scope, manager) {
 PreferencesWindowMenu.prototype = new WindowMenu();
 
 PreferencesWindowMenu.prototype.setCancelable = function(cancelable) {
+    this.closeButton.setDisabled(!cancelable);
     if (cancelable === true) {
-        this.closeButton.style.display = '';
         this.cancelButton.style.display = '';
     } else {
-        this.closeButton.style.display = 'none';
         this.cancelButton.style.display = 'none';
     }
 };
@@ -1457,7 +1454,7 @@ PreferencesWindowMenu.prototype._executeOperation = function() {
 }
 
 PreferencesWindowMenu.prototype.show = function (parentWindow) {
-    this.titleElement.setTextContent(this.manager.buildTitle());
+    this.setTitle(this.manager.buildTitle());
     this.manager.resetInterface('platform');
     WindowMenu.prototype.show.call(this, parentWindow);
 }

@@ -560,6 +560,7 @@ div.styled_numeric_field div.numeric_bottom_button {
   position: absolute;
   z-index: 111112;
   margin: 0;
+  white-space: nowrap;
 }
 
 .popup_menu .menu_item {

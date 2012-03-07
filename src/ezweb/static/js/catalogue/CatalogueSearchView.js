@@ -25,7 +25,7 @@ CatalogueSearchView.prototype._search = function(event) {
         'order_by': $('results_order').value,
         'search_criteria': this.simple_search_input.value,
         'search_boolean': 'AND',
-        'scope': 'gadget',
+        'scope': 'all',
         'starting_page': 1,
         'resources_per_page': $('results_per_page').value
     }

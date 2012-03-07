@@ -51,6 +51,5 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/services_facade.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/factory.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/DropDownMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>

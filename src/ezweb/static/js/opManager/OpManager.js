@@ -132,42 +132,11 @@ var OpManagerFactory = function () {
         this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
         this.loadCompleted = false;
-        this.catalogueIsCurrentTab = false;
 
         // Variables for controlling the collection of wiring and dragboard instances of a user
         this.workSpaceInstances = new Hash();
 
         this.activeWorkSpace = null;
-
-        //Workspace List Menu
-        this.wsListMenu = null;
-        this.goToLauncher = $('go_to_link');
-
-        /**
-         * @private
-         *
-         * This method updates the active workspace menu with the available workspaces.
-         */
-        OpManager.prototype._refreshWorkspaceMenu = function() {
-            var workspace_keys, i, workspace, disabledWorkSpaces = [];
-            workspace_keys = this.workSpaceInstances.keys();
-            for (i = 0; i < workspace_keys.length; i += 1) {
-                workspace = this.workSpaceInstances.get(workspace_keys[i]);
-                if (workspace !== this.activeWorkSpace) {
-                    disabledWorkSpaces.push(workspace);
-                }
-            }
-
-            LayoutManagerFactory.getInstance().refreshChangeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
-            LayoutManagerFactory.getInstance().refreshMergeWorkSpaceMenu(this.activeWorkSpace, disabledWorkSpaces);
-        };
-
-        /**
-         * @private
-         *
-         * This method is called after changing current theme.
-         */
-
 
         // ****************
         // PUBLIC METHODS
@@ -278,7 +247,7 @@ var OpManagerFactory = function () {
 
             state = {
                 workspace: workspace.getId(),
-                view: "dragboard"
+                view: "workspace"
             };
             if (initial_tab) {
                 state.tab = initial_tab;
@@ -397,8 +366,6 @@ var OpManagerFactory = function () {
             if (this.activeWorkSpace) {
                 this.activeWorkSpace.unload();
             }
-
-            this.wsListMenu.remove();
 
             //TODO: unloadCatalogue
         }
@@ -539,10 +506,6 @@ var OpManagerFactory = function () {
 
         OpManager.prototype.getWorkspaceCount = function(){
             return this.workSpaceInstances.keys().length;
-        }
-
-        OpManager.prototype.getWsListMenu = function(){
-            return this.wsListMenu;
         }
     }
 

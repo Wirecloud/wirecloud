@@ -185,7 +185,7 @@ ColumnLayout.prototype.getColumnOffset = function (column) {
 };
 
 ColumnLayout.prototype.getRowOffset = function (row) {
-    return this.fromVCellsToPixels(row) + this.topMargin;
+    return this.dragboardTopMargin + this.fromVCellsToPixels(row) + this.topMargin;
 };
 
 ColumnLayout.prototype._getPositionOn = function (_matrix, gadget) {

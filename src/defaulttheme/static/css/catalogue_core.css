@@ -268,23 +268,18 @@ Resource
   font-size: 20px;
 }
 
-#catalogue .resource_list .resource_name, #catalogue .resource_list .resource .image {
-  cursor: pointer;
+#catalogue .resource .resource_name, #catalogue .resource_list .resource .image {
+    cursor: pointer;
 }
 
-#catalogue .resource_list .resource_name {
-  cursor: default;
-  float: left;
+#catalogue .resource.detailed .resource_name, #catalogue .resource.detailed .image {
+    cursor: default;
 }
 
-#catalogue .resource_list .resource_details .image {
-  cursor: default;
-}
-
-#catalogue .resource_list .resource .image, #catalogue .resource_list .resource_details .image {
-  width: 170px;
-  height: 80px;
-  border: 1px solid;
+#catalogue .resource .image {
+    width: 170px;
+    height: 80px;
+    border: 1px solid;
 }
 
 #catalogue .resource .popularity {
@@ -376,7 +371,7 @@ Resource
   text-align: center;
 }
 
-#catalogue .resource_list .right_column_resource,  #catalogue .resource_list .right_column_resource {
+#catalogue .resource .right_column_resource {
   float: left;
   width: 75%;
 }

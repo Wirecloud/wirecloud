@@ -62,6 +62,7 @@ function DragboardLayout(dragboard) {
 
     this.dragboard = dragboard;
     this.iGadgets = {};
+    this.dragboardTopMargin = 5;
 }
 
 /**
@@ -80,12 +81,6 @@ DragboardLayout.prototype._notifyWindowResizeEvent = function (widthChanged, hei
  *
  */
 DragboardLayout.prototype._notifyResizeEvent = function (iGadget, oldWidth, oldHeight, newWidth, newHeight, resizeLeftSide, persist) {
-};
-
-/**
- *
- */
-DragboardLayout.prototype._notifyDragboardVisibilityChange = function (visibility) {
 };
 
 /**

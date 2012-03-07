@@ -33,7 +33,7 @@
  */
 function Tab(id, notebook, options) {
 
-    var tabInfo = options.tab_info;
+    var button, tabInfo = options.tab_info;
     options.name = tabInfo.name;
     options.closable = false;
     StyledElements.Tab.call(this, id, notebook, options);
@@ -44,10 +44,16 @@ function Tab(id, notebook, options) {
         }
     });
 
-    //CALLBACK METHODS
-    var renameSuccess = function(transport){
+    button = new StyledElements.StyledButton({
+        'class': 'icon-tab-menu',
+        'plain': true
+    });
+    button.insertInto(this.tabElement);
+    button.addEventListener('click', function () {
+        this.menu.show();
+    }.bind(this));
 
-    }
+    //CALLBACK METHODS
     var renameError = function(transport, e) {
         var logManager = LogManagerFactory.getInstance();
         var msg = logManager.formatError(gettext("Error renaming a tab, changes will not be saved: %(errorMsg)s."), transport, e);
@@ -78,17 +84,11 @@ function Tab(id, notebook, options) {
         this.preferences.destroy();
         this.preferences = null;
 
-        this.menu.remove();
-        this.moveMenu.remove();
-
+        this.menu.destroy();
         this.dragboard.destroy();
 
-        if (this.FloatingGadgetsMenu) {
-            this.FloatingGadgetsMenu.remove();
-        }
-
         StyledElements.Alternative.prototype.destroy.call(this);
-    }
+    };
 
 
     Tab.prototype.updateInfo = function (tabName) {
@@ -97,13 +97,9 @@ function Tab(id, notebook, options) {
             var msg = interpolate(gettext("Error updating a tab: invalid name"), true);
             LogManagerFactory.getInstance().log(msg);
         } else if (!this.workSpace.tabExists(tabName)) {
-            this.tabInfo.name = tabName;
             var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-            var o = new Object;
-            o.name = tabName;
-            var tabData = Object.toJSON(o);
-            var params = {'tab': tabData};
-            PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, renameSuccess, renameError);
+            var params = {'tab': Object.toJSON({'name': tabName})};
+            PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, function() { this.tabInfo.name = tabName; this.rename(tabName)}, renameError);
         } else {
             var msg = interpolate(gettext("Error updating a tab: the name %(tabName)s is already in use in workspace %(wsName)s."), {tabName: tabName, wsName: this.workSpace.workSpaceState.name}, true);
             LogManagerFactory.getInstance().log(msg);
@@ -182,33 +178,7 @@ function Tab(id, notebook, options) {
     this.dragboardElement = this.wrapperElement;
     this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
 
-
-    this.tabOpsLauncher = new StyledElements.StyledButton({'text': 'v'});
-    // TODO
-
-    this.markAsVisibleSuccess = function() {
-        var tabIds = this.workSpace.tabInstances.keys();
-        for(var i = 0; i < tabIds.length; i++){
-            var tab = this.workSpace.tabInstances[tabIds[i]];
-            if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
-                tab.firstVisible = false;
-                tab.visibleEntryId = tab.menu.addOption('icon-mark-tab-visible',
-                    gettext("First Visible"),
-                    function() {
-                        LayoutManagerFactory.getInstance().hideCover();
-                        tab.markAsVisible();
-                    }.bind(tab),
-                    1);
-            }
-        }
-        this.firstVisible = true;
-        if(this.visibleEntryId!=null){
-            this.menu.removeOption(this.visibleEntryId);
-            this.visibleEntryId = null;
-        }
-    }.bind(this);
-
-    this.markAsVisible = function (){
+    this.markAsVisible = function () {
         var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
         var o = new Object;
         o.visible = "true";
@@ -219,17 +189,11 @@ function Tab(id, notebook, options) {
 
     this.markAsVisibleSuccess = function() {
         var tabIds = this.workSpace.tabInstances.keys();
-        for(var i = 0; i < tabIds.length; i++){
-            var tab = this.workSpace.tabInstances[tabIds[i]];
-            if ((tab.tabInfo.id != this.tabInfo.id) && tab.firstVisible){
-                tab.addMarkAsVisible();
-            }
+        for (var i = 0; i < tabIds.length; i++){
+            var tab = this.workSpace.tabInstances.get(tabIds[i]);
+            tab.tabInfo.visible = false;
         }
-        this.firstVisible = true;
-        if(this.visibleEntryId!=null){
-            this.menu.removeOption(this.visibleEntryId);
-            this.visibleEntryId = null;
-        }
+        this.tabInfo.visible = true;
     }.bind(this);
 
     this.markAsVisibleError = function(transport, e){
@@ -238,150 +202,18 @@ function Tab(id, notebook, options) {
         logManager.log(msg);
     }.bind(this);
 
-    this.addMarkAsVisible = function () {
-        this.firstVisible = false;
-        this.visibleEntryId = this.menu.addOption('icon-mark-tab-visible',
-            gettext("Mark as Visible"),
-            function() {
-                LayoutManagerFactory.getInstance().hideCover();
-                this.markAsVisible();
-            }.bind(this),
-            1);
-    }.bind(this);
-
-    //this._createTabMenu();
+    this.menu = new StyledElements.PopupMenu();
+    this.menu.append(new TabMenuItems(this));
 }
 Tab.prototype = new StyledElements.Tab();
 
-Tab.prototype._createTabMenu = function() {
-    var idMenu = 'menu_' + this.tabName;
+Tab.prototype.repaint = function(temporal) {
+    StyledElements.Tab.prototype.repaint.call(this, temporal);
 
-    var menuHTML = $(idMenu);
-    if (menuHTML)
-        menuHTML.remove();
-
-    //Tab Menu
-    menuHTML = '<div id="'+idMenu+'" class="drop_down_menu"></div>';
-    new Insertion.After($('menu_layer'), menuHTML);
-    this.menu = new DropDownMenu(idMenu);
-
-    //options for Tab Menu
-    this.menu.addOption('icon-rename',
-        gettext("Rename"),
-        function() {
-            LayoutManagerFactory.getInstance().showWindowMenu("renameTab", null, null, this);
-        }.bind(this),
-        0);
-
-    if (this.tabInfo.visible != "true") {
-        this.addMarkAsVisible();
-    } else {
-        this.firstVisible = true;
-        this.visibleEntryId = null;
+    if (!temporal) {
+        this.dragboard._notifyWindowResizeEvent();
     }
-
-    //move before... Menu
-    var idMoveMenu = 'moveMenu_'+this.tabName;
-    this.moveMenu = LayoutManagerFactory.getInstance().initDropDownMenu(idMoveMenu, this.menu);
-
-
-    //add an option for each tab
-    this._addMoveOptions = function(){
-        var context;
-
-        var tabIds = this.workSpace.tabInstances.keys();
-        if(tabIds.length == 1){
-            this.moveMenu.menu.update(gettext("no more tabs"));
-            return;
-        }
-        //tabs are displayed in inverted order
-        var nextTab = this.tabHTMLElement.previousSibling;
-        var pos = 0;
-        for(var i = 0; i < tabIds.length; i++){
-            //don't allow moving before this tab or next tab
-            if(this.tabInfo.id != tabIds[i] && this.workSpace.tabInstances[tabIds[i]].tabHTMLElement != nextTab){
-                context = {thisTab: this, targetTab: this.workSpace.tabInstances[tabIds[i]]};
-                this.moveMenu.addOption(null,
-                    this.workSpace.tabInstances[tabIds[i]].tabInfo.name,
-                    function() {
-                        LayoutManagerFactory.getInstance().hideCover();
-                        LayoutManagerFactory.getInstance().moveTab(this.thisTab, this.targetTab);
-                    }.bind(context),
-                    pos);
-                pos++;
-            }
-
-        }
-        //move to end option
-        if(nextTab){ //only if there is a next tab
-            this.moveMenu.addOption(null, gettext('move to end'),
-                    function(){
-                        LayoutManagerFactory.getInstance().hideCover();
-                        LayoutManagerFactory.getInstance().moveTab(this, null);
-                    }.bind(this),
-                    pos);
-        }
-    }
-
-    this.menu.addOption('icon-move',
-            gettext("Move before..."),
-            function(e) {
-                this.moveMenu.clearOptions();
-                this._addMoveOptions();
-                LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu', this.moveMenu, Event.pointerX(e), Event.pointerY(e));
-            }.bind(this),
-            2);
-
-    this.menu.addOption('icon-remove',
-        gettext("Remove"),
-        function() {
-            var msg = gettext('Do you really want to remove the "%(tabName)s" tab?');
-            msg = interpolate(msg, {tabName: this.tabInfo.name}, true);
-            LayoutManagerFactory.getInstance().showYesNoDialog(msg, function(){OpManagerFactory.getInstance().activeWorkSpace.getVisibleTab().deleteTab();})
-        }.bind(this),
-        3);
-
-    //Floating Gadgets Menu
-    var floatingGadgetsId = 'floatingGadgetsMenu_'+this.tabName;
-    this.FloatingGadgetsMenu = LayoutManagerFactory.getInstance().initDropDownMenu(floatingGadgetsId, this.menu);
-
-
-    this.menu.addOption('icon-show-floating',
-        gettext("Show Floating Gadget"),
-        function(e) {
-            this.FloatingGadgetsMenu.clearOptions();
-            this.getDragboard().fillFloatingGadgetsMenu(this.FloatingGadgetsMenu);
-            LayoutManagerFactory.getInstance().showDropDownMenu('TabOpsSubMenu',this.FloatingGadgetsMenu, Event.pointerX(e), Event.pointerY(e));
-        }.bind(this),
-        4);
-
-    this.menu.addOption('icon-tab-preferences',
-        gettext("Preferences"),
-        function() {
-            LayoutManagerFactory.getInstance().showPreferencesWindow('tab', this.preferences);
-        }.bind(this),
-        5);
-}
-
-/**
- * FIXME
- */
-Tab.prototype.show = function() {
-    if (!this.painted)
-        this.getDragboard().paint();
-
-    LayoutManagerFactory.getInstance().showDragboard(this.dragboard);
-
-    this.dragboard._notifyVisibilityChange(true);
-    this.dragboard._notifyWindowResizeEvent();
 };
-
-/**
- *
- */
-Tab.prototype.hide = function() {
-    this.dragboard._notifyVisibilityChange(false);
-}
 
 /**
  * @private

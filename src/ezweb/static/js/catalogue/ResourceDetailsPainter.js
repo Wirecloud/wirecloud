@@ -27,26 +27,13 @@
 /*global alert, Constants, Element, document, gettext, interpolate, LayoutManagerFactory, Template */
 "use strict";
 
-var ResourceDetailsPainter = function (catalogue, details_structure_element) {
+var ResourceDetailsPainter = function (catalogue, details_structure_element, dom_element) {
     var get_extra_data, get_all_versions_html;
-
-    HTML_Painter.call(this);
 
     this.catalogue = catalogue;
     this.details_template_element = details_structure_element;
     this.details_template = new Template(this.details_template_element);
-
-    get_extra_data = function (name, extra_data) {
-        if (!extra_data) {
-            return '';
-        }
-
-        if (extra_data[name]) {
-            return extra_data[name];
-        } else {
-            return '';
-        }
-    };
+    this.dom_element = dom_element;
 
     get_all_versions_html = function (versions) {
         var i, html = '';
@@ -58,25 +45,13 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element) {
         return html;
     };
 
-    this.create_simple_command = function (selector, command, _event, handler) {
-        var elements = this.dom_element.getElementsBySelector(selector);
-
-        if (!elements || elements.length !== 1) {
-            alert('Problem rendering resource details (' + selector + ')!');
-        }
-
-        EzWebExt.addEventListener(elements[0], _event, handler);
-    };
 
     this.paint = function (resource, user_command_manager) {
-        var extra_data, ieCompatibleClass, type, button_text,
+        var ieCompatibleClass, type, button_text,
             resource_html, tag_links_list, tag_links, search_options, tags, j,
             tag, tag_element, mytags_area_list, my_tags_area;
 
-        extra_data = resource.getExtraData();
-        resource.setExtraData(null);
-
-        this.dom_element.update('');
+        this.dom_element.innerHTML = '';
 
         if (resource.getIeCompatible()) {
             // Si es IE compatible ocultamos la advertencia
@@ -98,8 +73,6 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element) {
             'versions': get_all_versions_html(resource.getAllVersions()),
             'wiki': resource.getUriWiki(),
             'template_url': resource.getUriTemplate(),
-            'update_result': get_extra_data('update_result', extra_data),
-            'voting_result': get_extra_data('voting_result', extra_data),
             'average_popularity': this.get_popularity_html(resource.getPopularity()),
             'ie_compatible_class': ieCompatibleClass
         });
@@ -112,10 +85,10 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element) {
         ///////////////////////////////
 
         // Go back to list of resources
-        this.create_simple_command('.back_to_resource_list', 'click', UserInterfaceHandler.goback.bind());
+        this.create_simple_command('.back_to_resource_list', 'click', UserInterfaceHandlers.goback.bind());
 
         // "Instantiate"
-        this.create_simple_command('.left_column_resource button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
+        this.create_simple_command('.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
 
         /*
         // Delete resource

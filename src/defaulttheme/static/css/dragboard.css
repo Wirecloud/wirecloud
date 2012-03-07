@@ -220,6 +220,9 @@ div.gadget_window.highlighted {
     border: 1px solid #600000;
     vertical-align: top;
     padding: 1px 19px 2px 1ex;
+    -moz-border-radius: 0 0 3px 3px;
+    -webkit-border-radius: 0 0 3px 3px;
+    border-radius: 0 0 8px 3px;
 }
 
 .notebook.workspace .tab_area .tab > span {

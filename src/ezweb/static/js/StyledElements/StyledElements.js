@@ -2698,10 +2698,11 @@ StyledElements.StyledAlternatives.prototype.showAlternative = function(alternati
  *      - click: evento lanzado cuando se pulsa el botón.
  */
 StyledElements.StyledButton = function(options) {
-    var defaultOptions = {
+    var button, defaultOptions = {
         'text': null,
         'title': '',
         'class': '',
+        'plain': false,
         'iconHeight': 24,
         'iconWidth': 24,
         'icon': null
@@ -2709,17 +2710,25 @@ StyledElements.StyledButton = function(options) {
     options = EzWebExt.merge(defaultOptions, options);
 
     // Necesario para permitir herencia
-    if (options.extending)
+    if (options.extending) {
         return;
+    }
 
     StyledElements.StyledElement.call(this, ['click']);
 
     this.wrapperElement = document.createElement("div");
     this.wrapperElement.className = EzWebExt.appendWord(options['class'], "styled_button");
 
-    var button = document.createElement("div");
-    if (options.title)
+    if (options.plain) {
+        button = this.wrapperElement;
+    } else {
+        button = document.createElement("div");
+        this.wrapperElement.appendChild(button);
+    }
+
+    if (options.title) {
         button.setAttribute('title', options.title);
+    }
 
     if (options.icon != null) {
         this.icon = document.createElement("img");
@@ -2730,7 +2739,6 @@ StyledElements.StyledButton = function(options) {
         button.appendChild(this.icon);
     }
 
-    this.wrapperElement.appendChild(button);
 
     if (options.text !== null) {
         this.label = document.createElement('span');
@@ -2740,7 +2748,7 @@ StyledElements.StyledButton = function(options) {
 
     /* Event handlers */
     EzWebExt.addEventListener(button, 'click', EzWebExt.bind(this._clickCallback, this), true);
-}
+};
 StyledElements.StyledButton.prototype = new StyledElements.StyledElement();
 
 StyledElements.StyledButton.prototype._clickCallback = function(e) {

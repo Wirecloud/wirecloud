@@ -229,23 +229,6 @@ var LayoutManagerFactory = function () {
 
 
         /****VIEW OPERATIONS****/
-        //hide an HTML Element
-        LayoutManager.prototype.hideView = function (viewHTML) {
-            viewHTML.setStyle(hideStyle);
-        }
-
-        //hide the specified banner
-        LayoutManager.prototype.hideHeader = function (headerHTML) {
-            if (headerHTML)
-                headerHTML.hide();
-        }
-
-        //show the specified banner
-        LayoutManager.prototype.showHeader = function (headerHTML) {
-            if (headerHTML)
-                headerHTML.show();
-        }
-
         LayoutManager.prototype.notifyError = function (labelContent) {
             // TODO
         };
@@ -280,199 +263,15 @@ var LayoutManagerFactory = function () {
             }
         };
 
-        // Dragboard operations (usually called together with Tab operations)
-        LayoutManager.prototype.showDragboard = function(dragboard) {
-            dragboard.workSpace.prepareToShow();
-
-            this.currentView = dragboard.tab;
-            this.currentViewType = 'dragboard';
-
-            var state = {
-                workspace: HistoryManager.getCurrentState().workspace,
-                view: "dragboard",
-                tab: dragboard.tab.getId()
-            };
-            HistoryManager.pushState(state);
-
-            this.resizeContainer(dragboard.dragboardElement);
-
-            if (dragboard.getNumberOfIGadgets() == 0) {
-                var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Managing_My_Workspace'>" + gettext("Video Tutorials") + "</a>";
-                var msg = gettext("In the Dragborad you can move and resize all your gadgets in order to perform and use your own application. Check the gadget preferences for further personalization %(settingsIcon)s. Go to the Catalogue to add more gadgets %(catalogueIcon)s. Go to the Wiring interface to make connections among them %(wiringIcon)s. If you need more help visit the %(helpLink)s.");
-                msg = interpolate(msg, {
-                    settingsIcon: "<span class='icon icon-igadget-settings'></span>",
-                    catalogueIcon: "<span class='icon icon-catalogue'></span>",
-                    wiringIcon: "<span class='icon icon-wiring'></span>",
-                    helpLink: videoTutorialMsg
-                }, true);
-                this.showTipMessage(msg, 2);
-            }
-
-            //Firefox 3.6 bug
-            document.childNodes[1].scrollTop = 0
-        }
-
-        // Catalogue operations
-        LayoutManager.prototype.showCatalogue = function() {
-
-            this.catalogue = CatalogueFactory.getInstance();
-
-            if (this.currentView != null) {
-                this.currentView.hide();
-                //if the previous view was different and it had banner, change the banner
-                if (this.currentViewType != 'catalogue' && this.currentView.getHeader) {
-                    this.hideHeader(this.currentView.getHeader());
-                }
-            }
-
-            this.showHeader(this.catalogue.getHeader());
-
-            $(document.body).removeClassName(this.currentViewType+"_view");
-
-            this.currentView = this.catalogue;
-            this.currentViewType = 'catalogue';
-
-            $(document.body).addClassName(this.currentViewType+"_view");
-            var state = {
-                'workspace': HistoryManager.getCurrentState().workspace,
-                'view': 'catalogue'
-            };
-            HistoryManager.pushState(state);
-
-            this.resizeContainer(this.catalogue.get_dom_element());
-            this.catalogue.set_style(showStyle);
-
-            var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Discovering_Gadgets'>" + gettext("Video Tutorials") + "</a>";
-            var msg = gettext("Discover new gadgets, look for descriptions, tag them, make your rating, select the ones that best suit your needs and add them to the Dragboard %(dragboardIcon)s. Don't forget to connect them with other gadgets in the Wiring interface %(wiringIcon)s in order to improve your experience. If you need more help visit the %(helpLink)s.");
-            msg = interpolate(msg, {
-                dragboardIcon: "<span class='icon icon-dragboard'></span>",
-                wiringIcon: "<span class='icon icon-wiring'></span>",
-                helpLink: videoTutorialMsg
-            }, true);
-            this.showTipMessage(msg, 0);
-
-            //Firefox 3.6 bug
-            document.childNodes[1].scrollTop = 0
-        }
-
-        // Logs operations
-        LayoutManager.prototype.showLogs = function(){
-
-            if (this.currentView != null) {
-                this.currentView.hide();
-                //if the previous view had banner change the banner
-                if (this.currentViewType != 'logs' && this.currentView.getHeader) {
-                    this.hideHeader(this.currentView.getHeader());
-                }
-            }
-
-            this.showHeader(this.logs.getHeader());
-
-            $(document.body).removeClassName(this.currentViewType+"_view");
-
-            this.currentView = this.logs;
-            this.currentViewType = 'logs';
-
-            $(document.body).addClassName(this.currentViewType+"_view");
-            var state = {
-                'workspace': HistoryManager.getCurrentState().workspace,
-                'view': 'logs'
-            };
-            HistoryManager.pushState(state);
-
-            this.resizeContainer(this.currentView.logContainer);
-            this.logs.logContainer.setStyle(showStyle);
-
-            //Firefox 3.6 bug
-            document.childNodes[1].scrollTop = 0
-        }
-
-        //Wiring operations
-        LayoutManager.prototype.showWiring = function(wiring){
-
-            if(this.currentView != null){
-                this.currentView.hide();
-                //if the previous view was different and it had banner, change the banner
-                if (this.currentViewType != 'wiring' && this.currentView.getHeader) {
-                    this.hideHeader(this.currentView.getHeader());
-                }
-            }
-
-            this.showHeader(wiring.getHeader());
-
-            $(document.body).removeClassName(this.currentViewType+"_view");
-
-            this.currentView = wiring;
-            this.currentViewType = 'wiring';
-
-            $(document.body).addClassName(this.currentViewType+"_view");
-            var state = {
-                'workspace': HistoryManager.getCurrentState().workspace,
-                'view': 'wiring'
-            };
-            HistoryManager.pushState(state);
-
-            this.resizeContainer(this.currentView.wiringContainer);
-
-            wiring.wiringContainer.setStyle(showStyle);
-            //resizing the wiring table so that the scroll bar does not modify the table width.
-            wiring.wiringTable.setStyle({'width' : (wiring.wiringContainer.getWidth()-20)+"px"});
-
-            var videoTutorialMsg = "<a target='_blank' href='http://forge.morfeo-project.org/wiki/index.php/FAQ#Connecting_Gadgets'>" + gettext("Video Tutorials") + "</a>";
-            var msg = gettext("In the Wiring interface you can connect your gadgets among them. Create or select channels and link (by clicking) Events with Slots. Pay attention to the colours trying to help you, you can create some great wires following it. You can see the results of your wires at the Dragboard interface %(dragboardIcon)s. If you need more help visit the %(helpLink)s.");
-            msg = interpolate(msg, {
-                dragboardIcon: "<span class='icon icon-wiring'></span>",
-                helpLink: videoTutorialMsg
-            }, true);
-            this.showTipMessage(msg, 1);
-
-            //Firefox 3.6 bug
-            document.childNodes[1].scrollTop = 0
-        }
-
         //the disabling layer can be clicable (in order to hide a menu) or not
-        LayoutManager.prototype.showClickableCover = function(){
-            this.coverLayerElement.style.display="block";
-            Event.observe( this.coverLayerElement, "click", this.coverLayerEvent);
-        }
-
-        LayoutManager.prototype.showUnclickableCover = function(){
-            this.coverLayerElement.addClassName('disabled_background');
-            this.coverLayerElement.style.display="block";
-
-        }
-
-        //WorkSpaceMenu is dinamic so the different options must be added.
-        LayoutManager.prototype.refreshChangeWorkSpaceMenu = function(workSpace, workspaces) {
-            var wsListMenu = OpManagerFactory.getInstance().getWsListMenu();
-            if (wsListMenu) {
-                wsListMenu.clearOptions();
-                for (var i = 0; i < workspaces.length; i += 1) {
-                    //Add to the Sidebar Menu
-                    wsListMenu.addOption(workspaces[i].workSpaceState.name,
-                        function () {
-                            LayoutManagerFactory.getInstance().hideCover();
-                            OpManagerFactory.getInstance().changeActiveWorkSpace(this)
-                        }.bind(workspaces[i]), i);
-                }
-            }
+        LayoutManager.prototype.showClickableCover = function() {
+            this.coverLayerElement.style.display = "block";
+            Event.observe(this.coverLayerElement, "click", this.coverLayerEvent);
         };
 
-        //merge Menu is dinamic so the different options must be added.
-        LayoutManager.prototype.refreshMergeWorkSpaceMenu = function(workSpace, workspaces) {
-            if (workSpace.mergeMenu) {
-                workSpace.mergeMenu.clearOptions();
-
-                for (var i = 0; i < workspaces.length; i++) {
-                    var context = {
-                        firstWK: workSpace,
-                        scndWK: workspaces[i]
-                    };
-                    workSpace.mergeMenu.addOption(null, workspaces[i].workSpaceState.name, function(){
-                        this.firstWK.mergeWith(this.scndWK.workSpaceState);
-                    }.bind(context), i);
-                }
-            }
+        LayoutManager.prototype.showUnclickableCover = function() {
+            this.coverLayerElement.addClassName('disabled_background');
+            this.coverLayerElement.style.display="block";
         };
 
         /**
@@ -526,25 +325,6 @@ var LayoutManagerFactory = function () {
 
             //the disabling layer is displayed as long as a menu is shown. If there is not a menu, there is not a layer.
             switch (window) {
-            case 'createWorkSpace':
-                if (!this.menus['createWorkSpaceMenu']) {
-                    this.menus['createWorkSpaceMenu'] = new CreateWindowMenu('workSpace');
-                }
-                newMenu = this.menus['createWorkSpaceMenu'];
-                break;
-            case 'renameWorkSpace':
-                if (!this.menus['renameWorkSpaceMenu']) {
-                    this.menus['renameWorkSpaceMenu'] = new RenameWindowMenu(null);
-                }
-                newMenu = this.menus['renameWorkSpaceMenu'];
-                break;
-            case 'renameTab':
-                if (!this.menus['renameTabMenu']) {
-                    this.menus['renameTabMenu'] = new RenameTabWindowMenu(extra_data);
-                }
-                this.menus['renameTabMenu'].setTab(extra_data);
-                newMenu = this.menus['renameTabMenu'];
-                break;
             case 'useBrokenTheme':
                 if (!this.menus['alertMenu']) {
                     this.menus['alertMenu'] = new AlertWindowMenu();
@@ -742,19 +522,6 @@ var LayoutManagerFactory = function () {
             Event.stopObserving( this.coverLayerElement, "click", this.coverLayerEvent);
         }
 
-        //hides a submenu or a chain of submenus which are children of the specified menu.
-        //The specified menu must become the currentMenu.
-        LayoutManager.prototype.hideSubmenusOfMenu = function(parentMenu){
-
-            var displayedMenu = this.currentMenu;
-            while( this.currentMenu != parentMenu){
-                //hide the submenu one by one (hideParents=false)
-                this.currentMenu.hide(false);
-                this.currentMenu = this.currentMenu.parentMenu;
-            }
-            //now, the current menu is parentMenu
-
-        }
         LayoutManager.prototype.FADE_TAB_INI = "#F0E68C";
         LayoutManager.prototype.FADE_TAB_CUR_END = "#E0E0E0";
         LayoutManager.prototype.FADE_TAB_END = "#97A0A8";

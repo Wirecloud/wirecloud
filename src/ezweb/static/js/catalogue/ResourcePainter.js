@@ -31,15 +31,17 @@ var HTML_Painter = function () {
     this.dom_element = null;
 };
 
-HTML_Painter.prototype.set_dom_element = function (dom_element) {
-    this.dom_element = dom_element;
-};
+HTML_Painter.prototype.create_simple_command = function (selector, _event, handler, required) {
+    var i, elements = this.dom_element.getElementsBySelector(selector);
 
-HTML_Painter.prototype.set_dom_wrapper = function (dom_wrapper) {
-    this.dom_wrapper = dom_wrapper;
-};
+    if (required && elements.length < 1) {
+        throw new Error();
+    }
 
-HTML_Painter.prototype.paint = function (command, user_command_manager) {};
+    for (i = 0; i < elements.length; i += 1) {
+        EzWebExt.addEventListener(elements[i], _event, handler);
+    }
+};
 
 HTML_Painter.prototype.get_popularity_html = function (popularity) {
     var on_stars, md_star, off_stars, result_html, i;
@@ -67,15 +69,14 @@ HTML_Painter.prototype.get_popularity_html = function (popularity) {
     return result_html;
 };
 
-var ResourcePainter = function (catalogue, resource_template) {
+var ResourcePainter = function (catalogue, resource_template, dom_element) {
     if (arguments.length === 0) {
         return;
     }
 
-    HTML_Painter.call(this);
-
     this.catalogue = catalogue;
     this.structure_template = new Template(resource_template);
+    this.dom_element = dom_element;
 };
 ResourcePainter.prototype = new HTML_Painter();
 
@@ -112,14 +113,7 @@ ResourcePainter.prototype.paint = function (command_data) {
         ///////////////////////////////
 
         // "Instantiate"
-        button_list = resource_element.getElementsByClassName('instanciate_button');
-        if (!button_list || button_list.length !== 1) {
-            alert('Problem parsing resource template!');
-        }
-
-        button = button_list[0];
-
-        EzWebExt.addEventListener(button, 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
+        this.create_simple_command('.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
 
         // "Show details"
         click_for_details_list = resource_element.getElementsByClassName('click_for_details');

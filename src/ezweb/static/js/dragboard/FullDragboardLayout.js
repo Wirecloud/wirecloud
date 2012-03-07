@@ -179,19 +179,3 @@ FullDragboardLayout.prototype.cancelMove = function () {
     this.igadgetToMove = null;
     this.newPosition = null;
 };
-
-FullDragboardLayout.prototype._notifyDragboardVisibilityChange = function (visibility) {
-    // Notify each igadget
-    var key, iGadget;
-    if (visibility) {
-        for (key in this.iGadgets) {
-            iGadget = this.iGadgets[key];
-            iGadget.element.style.position = '';
-        }
-    } else {
-        for (key in this.iGadgets) {
-            iGadget = this.iGadgets[key];
-            iGadget.element.style.position = 'absolute';
-        }
-    }
-};
