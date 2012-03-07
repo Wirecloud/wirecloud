@@ -30,10 +30,7 @@ span.icon {
 
 .icon-igadget-settings { background-image: url(../images/icons-sprite.png); background-position: -48px -404px; }
 span.icon-igadget-settings { background-position: -48px -408px; }
-.icon-catalogue { background-image: url(../images/icons-sprite.png); background-position: 0px -504px; }
-.icon-wiring { background-image: url(../images/icons-sprite.png); background-position: -24px -504px; }
 .icon-info{ background-image: url(../images/icons-sprite.png); background-position: -48px -504px; }
-.icon-dragboard { background-image: url(../images/icons-sprite.png); background-position: 0px -528px; }
 .icon-warning{ background-image: url(../images/icons-sprite.png); background-position: -24px -528px; }
 .icon-error { background-image: url(../images/icons-sprite.png); background-position: 0px -552px; }
 .icon-filter { background-image: url(../images/icons-sprite.png); background-position: -48px -164px; }

@@ -102,7 +102,8 @@ body {
 }
 
 #wirecloud_header > .submenu.wiring > .mark {
-    background: url('../images/wiring_mark.png');
+    background-image: url(../images/icons-sprite.png);
+    background-position: 0px -528px;
 }
 
 #wirecloud_header > .submenu.wiring {
@@ -110,7 +111,8 @@ body {
 }
 
 #wirecloud_header > .submenu.workspace > .mark {
-    background: url('../images/editor_mark.png');
+    background-image: url(../images/icons-sprite.png);
+    background-position: 0px -504px;
 }
 
 #wirecloud_header > .submenu.workspace {
@@ -118,7 +120,8 @@ body {
 }
 
 #wirecloud_header > .submenu.catalogue > .mark {
-    background: url('../images/marketplace_mark.png');
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -504px;
 }
 
 #wirecloud_header > .submenu.catalogue {
