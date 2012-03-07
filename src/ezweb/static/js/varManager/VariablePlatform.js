@@ -158,7 +158,9 @@ RVariable.prototype.set = function (newValue) {
                 var opManager = OpManagerFactory.getInstance();
                 if (!this.iGadget.loaded) {
                     this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
-                    this.iGadget.load();
+                    if (!this.iGadget.content) {
+                        this.iGadget.load();
+                    }
                     return;
                 }
                 this.iGadget.notifyEvent();
