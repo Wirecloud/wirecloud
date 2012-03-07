@@ -37,6 +37,7 @@ function WiringInterface(id, options) {
 
     this.workspace = null;
     this.wiring = null;
+    this.filterMenu = null;
 
     this.opmanager = OpManagerFactory.getInstance();
     this.currentChannel = null;
@@ -110,16 +111,24 @@ WiringInterface.prototype.destroy = function () {
     this.canvasElement = null;
 
     // Remove Filter Menu
-    this.filterMenu.destroy();
-    this.filterMenu = null;
+    if (this.filterMenu !== null) {
+        this.filterMenu.destroy();
+        this.filterMenu = null;
+    }
 
     StyledElements.Alternative.prototype.destroy.call(this);
 };
 
 WiringInterface.prototype.assignWorkspace = function (workspace) {
+    if (this.filterMenu !== null) {
+        this.filterMenu.destroy();
+        this.filterMenu = null;
+    }
+
     if (workspace instanceof WorkSpace) {
         this.workspace = workspace;
         this.wiring = workspace.wiring;
+        this._createFilterMenu();
     } else {
         this.workspace = null;
         this.wiring = null;
@@ -1154,33 +1163,29 @@ WiringInterface.prototype._drawArrow = function(sourceAnchor, targetAnchor) {
  * Creates the menu with all the available filters.
  */
 WiringInterface.prototype._createFilterMenu = function () {
-    var filterMenuHTML = '<div id="wiring_filter_menu" class="drop_down_menu"><div id="wiring_filter_submenu" class="submenu"></div></div>';
-    new Insertion.After($('menu_layer'), filterMenuHTML);
-    var filterMenu = new FilterDropDownMenu('wiring_filter_menu');
+
+    this.filterMenu = new StyledElements.PopupMenu();
 
     var callback = function() {
         this.wiringGUI._updateFilterFunc(this.filter);
     };
 
-    filterMenu.addOptionWithHelp (
-        'icon-filter',
+    this.filterMenu.append(new StyledElements.MenuItem(
         gettext('None'),
-        gettext("Returns the value of the channel unfiltered."),
-        callback.bind({wiringGUI:this, filter: null}),
-        0);
+//        gettext("Returns the value of the channel unfiltered."),
+        callback.bind({wiringGUI:this, filter: null})
+    ));
+
     var filters = this.wiring.getFiltersSort();
     for (var i = 0; i < filters.length; i++) {
         var context = {wiringGUI:this, filter:filters[i]};
-        filterMenu.addOptionWithHelp (
-            'icon-filter',
+        this.filterMenu.append(new StyledElements.MenuItem(
             filters[i].getLabel(),
-            filters[i].getHelpText(),
-            callback.bind(context),
-            i+1);
+//            filters[i].getHelpText(),
+            callback.bind(context)
+        ));
     }
-
-    this.filterMenu = filterMenu;
-}
+};
 
 /**
  * Callback used when the user selects a filter in the filter menu.
@@ -1188,11 +1193,8 @@ WiringInterface.prototype._createFilterMenu = function () {
  * @private
  */
 WiringInterface.prototype._updateFilterFunc = function(filter) {
-    // Close Filter Menu
-    LayoutManagerFactory.getInstance().hideCover();
-
     this.changed = this.channel_window_menu.changeFilter(filter) || this.changed;
-}
+};
 
 /**
  * Callback function to display help about the event, channel and slot columns

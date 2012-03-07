@@ -346,12 +346,7 @@ var ChannelWindowMenu = function () {
         filterMenuButton.insertInto(this.filterLabelDiv);
         filterMenuButton.addEventListener('click', function (button) {
             var dim = button.getBoundingClientRect();
-            LayoutManagerFactory.getInstance().showDropDownMenu(
-                'filterMenu',
-                this.wiringGUI.filterMenu,
-                dim.left,
-                dim.top
-            );
+            this.wiringGUI.filterMenu.show({x: dim.left, y: dim.top});
         }.bind(this));
         addRow(this.contentTable, gettext("Filter") + ":", this.filterLabelDiv);
 
