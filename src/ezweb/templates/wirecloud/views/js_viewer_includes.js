@@ -39,17 +39,14 @@
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/connectableInterface.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/wiring/jsonFilter.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/catalogue.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/dom_wrapper.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/user_commands.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/response_command.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/resource.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/html_painters.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/user_command_manager.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/response_command_dispatcher.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/views/list/factory.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/services.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/services_facade.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/catalogue/factory.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/BackgroundFadder.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/WindowMenu.js"></script>
 <script type="text/javascript" src="{{ MEDIA_URL }}js/interfaceLayout/LayoutManager.js"></script>
