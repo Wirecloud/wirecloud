@@ -1,4 +1,25 @@
-/*jslint browser: true, sloppy: true, nomen: true, maxerr: 50, indent: 4 */
+/*
+ *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
 /*global gettext, Element, WindowMenu, BrowserUtilsFactory, Event, LayoutManagerFactory, StyledElements, interpolate */
 
 var ChannelWindowMenu = function () {
@@ -121,9 +142,9 @@ var ChannelWindowMenu = function () {
     checkName = function () {
         var newNameValue;
         newNameValue = this.nameElement.value.strip();
-        if (newNameValue == '') {
+        if (newNameValue === '') {
             throw new Error(gettext("Channel name cannot be empty."));
-        } else if ((newNameValue != this.wiringGUI.currentChannel.getName()) &&
+        } else if ((newNameValue !== this.wiringGUI.currentChannel.getName()) &&
                  this.wiringGUI.channelExists(newNameValue)) {
             throw new Error(gettext("A channel named \"%(channelName)s\" already exists."));
         }
@@ -217,7 +238,7 @@ var ChannelWindowMenu = function () {
         for (i = 0; i < this.param_list.length; i += 1) {
             this.param_list[i].removeClassName('error');
         }
-        if (this.channel_interface.filter != this.initialFilter) {
+        if (this.channel_interface.filter !== this.initialFilter) {
             this.channel_interface.setFilter(this.initialFilter);
         }
         this.hide();
@@ -405,7 +426,7 @@ var ChannelWindowMenu = function () {
     };
 
     ChannelWindowMenu.prototype.changeFilter = function (filter) {
-        if (this.channel_interface.filter == filter) {
+        if (this.channel_interface.filter === filter) {
             return false; // There is not a real change => nothing to do
         }
         this.channel_interface.setFilter(filter);

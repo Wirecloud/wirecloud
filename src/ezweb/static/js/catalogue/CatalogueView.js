@@ -1,4 +1,28 @@
-var CatalogueView = function(id, options) {
+/*
+ *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
+/*global alert, CatalogueResource, CatalogueSearchView, CookieManager, gettext, LayoutManagerFactory, OpManagerFactory, PersistenceEngineFactory, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, URIs*/
+
+var CatalogueView = function (id, options) {
     options.id = 'catalogue';
     StyledElements.Alternative.call(this, id, options);
 
@@ -20,11 +44,11 @@ CatalogueView.prototype = new StyledElements.Alternative();
 
 CatalogueView.prototype.view_name = 'catalogue';
 
-CatalogueView.prototype._onShow = function() {
+CatalogueView.prototype._onShow = function () {
 };
 
-CatalogueView.prototype._onSearchSuccess = function(transport) {
-    var preferred_versions, data, key, raw_data, resources, resource;
+CatalogueView.prototype._onSearchSuccess = function (transport) {
+    var preferred_versions, i, data, key, raw_data, resources, resource;
 
     raw_data = JSON.parse(transport.responseText);
 
@@ -57,7 +81,7 @@ CatalogueView.prototype._onSearchSuccess = function(transport) {
     }
 };
 
-CatalogueView.prototype.search = function(options) {
+CatalogueView.prototype.search = function (options) {
     var params, url, context;
 
     params = {
@@ -80,11 +104,11 @@ CatalogueView.prototype.search = function(options) {
     PersistenceEngineFactory.getInstance().send(url, {
         method: 'GET',
         parameters: params,
-        onSuccess: this._onSearchSuccess.bind(context),
+        onSuccess: this._onSearchSuccess.bind(context)
     });
 };
 
-CatalogueView.prototype.instanciate = function(resource) {
+CatalogueView.prototype.instanciate = function (resource) {
     //is mashup?
     if (resource.isMashup()) {
         LayoutManagerFactory.getInstance().showWindowMenu(
@@ -104,12 +128,12 @@ CatalogueView.prototype.instanciate = function(resource) {
         resource.getVersion().text, resource.getUriTemplate());
 };
 
-CatalogueView.prototype.showDetails = function(resource) {
-    this.viewsByName['details'].paint(resource);
-    this.alternatives.showAlternative(this.viewsByName['details']);
+CatalogueView.prototype.showDetails = function (resource) {
+    this.viewsByName.details.paint(resource);
+    this.alternatives.showAlternative(this.viewsByName.details);
 };
 
-CatalogueView.prototype.getBreadcrum = function() {
+CatalogueView.prototype.getBreadcrum = function () {
     return [
         {
             'label': 'marketplace'
@@ -117,11 +141,11 @@ CatalogueView.prototype.getBreadcrum = function() {
     ];
 };
 
-CatalogueView.prototype.getSubMenuItems = function() {
+CatalogueView.prototype.getSubMenuItems = function () {
     return [
         {
-        'label': gettext('publish'),
-        'callback': alert.bind(null, 'hola')
+            'label': gettext('publish'),
+            'callback': alert.bind(null, 'hola')
         }
     ];
 };

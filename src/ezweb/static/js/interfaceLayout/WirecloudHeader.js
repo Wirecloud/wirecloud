@@ -1,4 +1,25 @@
-var WirecloudHeader = function() {
+/*
+ *     (C) Copyright 2012 Universidad Politécnica de Madrid
+ *
+ *     This file is part of Wirecloud Platform.
+ *
+ *     Wirecloud Platform is free software: you can redistribute it and/or
+ *     modify it under the terms of the GNU Affero General Public License as
+ *     published by the Free Software Foundation, either version 3 of the
+ *     License, or (at your option) any later version.
+ *
+ *     Wirecloud is distributed in the hope that it will be useful, but WITHOUT
+ *     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ *     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public
+ *     License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with Wirecloud Platform.  If not, see
+ *     <http://www.gnu.org/licenses/>.
+ *
+ */
+
+var WirecloudHeader = function () {
     this.wrapperElement = $('wirecloud_header');
     this.breadcrum = $('wirecloud_breadcrum');
 
@@ -16,7 +37,7 @@ var WirecloudHeader = function() {
     this._initUserMenu();
 }
 
-WirecloudHeader.prototype._initMenuBar = function() {
+WirecloudHeader.prototype._initMenuBar = function () {
     var menues, menu, menu_element, i, view_name;
 
     this.menues = {
@@ -42,7 +63,7 @@ WirecloudHeader.prototype._initMenuBar = function() {
     }
 };
 
-WirecloudHeader.prototype._initUserMenu = function() {
+WirecloudHeader.prototype._initUserMenu = function () {
     var user_menu;
 
     this.user_menu = new StyledElements.PopupMenu();
@@ -58,7 +79,7 @@ WirecloudHeader.prototype._initUserMenu = function() {
     }.bind(this));
 };
 
-WirecloudHeader.prototype._paintBreadcrum = function(newView) {
+WirecloudHeader.prototype._paintBreadcrum = function (newView) {
     var i, breadcrum_part, breadcrum, breadcrum_entry, breadcrum_levels;
 
     breadcrum_levels = ['first_level', 'second_level', 'third_level'];
@@ -106,7 +127,7 @@ WirecloudHeader.prototype._paintBreadcrum = function(newView) {
     }
 };
 
-WirecloudHeader.prototype._paintSubMenu = function(newView) {
+WirecloudHeader.prototype._paintSubMenu = function (newView) {
 
     this.submenu.innerHTML = '';
     if ('getSubMenuItems' in newView) {
@@ -133,7 +154,7 @@ WirecloudHeader.prototype._paintSubMenu = function(newView) {
     this.submenu.style.right = startx - this.submenu.offsetWidth + 'px';
 };
 
-WirecloudHeader.prototype._notifyViewChange = function(newView) {
+WirecloudHeader.prototype._notifyViewChange = function (newView) {
     var menuitems, triangle, startx;
 
     if (this.currentMenu !== null) {
