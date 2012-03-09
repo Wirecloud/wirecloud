@@ -32,5 +32,6 @@ More precise documentation of gadgets is explained in the following sections:
     :maxdepth: 1
 
     template.rst
+    javascript_API.rst
     EzWebAPI.rst
     gadget_template_schema.rst
