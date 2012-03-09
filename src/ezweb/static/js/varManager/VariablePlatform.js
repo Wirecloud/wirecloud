@@ -155,20 +155,15 @@ RVariable.prototype.set = function (newValue) {
         switch (this.vardef.aspect) {
             case Variable.prototype.SLOT:
 
-                // On-demand loading of tabs!
-                // Only wiring variables are involved!
-                if (! this.tab.is_painted() ) {
-                    this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
-                    this.tab.paint();
-                    return;
-                }
                 var opManager = OpManagerFactory.getInstance();
-                var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-                if (!iGadget.loaded) { //the tab is being painted due to another variable in the same tab and this gadget isn't fully loaded
+                if (!this.iGadget.loaded) {
                     this.varManager.addPendingVariable(this.iGadget, this.vardef.name, newValue);
+                    if (!this.iGadget.content) {
+                        this.iGadget.load();
+                    }
                     return;
                 }
-                iGadget.notifyEvent();
+                this.iGadget.notifyEvent();
 
             case Variable.prototype.USER_PREF:
             case Variable.prototype.EXTERNAL_CONTEXT:
@@ -184,17 +179,16 @@ RVariable.prototype.set = function (newValue) {
                     try {
                         this.handler(newValue);
                     } catch (e) {
-                        var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name, exceptionMsg: e};
+                        var transObj = {iGadgetId: this.iGadget.getId(), varName: this.vardef.name, exceptionMsg: e};
                         var msg = interpolate(gettext("Error in the handler of the \"%(varName)s\" RVariable in iGadget %(iGadgetId)s: %(exceptionMsg)s."), transObj, true);
-                        OpManagerFactory.getInstance().logIGadgetError(this.iGadget, msg, Constants.Logging.ERROR_MSG);
+                        OpManagerFactory.getInstance().logIGadgetError(this.iGadget.getId(), msg, Constants.Logging.ERROR_MSG);
                     }
                 } else {
-                    var opManager = OpManagerFactory.getInstance();
-                    var iGadget = opManager.activeWorkSpace.getIgadget(this.iGadget);
-                    if (iGadget.loaded) {
-                        var transObj = {iGadgetId: this.iGadget, varName: this.vardef.name};
+                    if (this.iGadget.loaded) {
+                        var opManager = OpManagerFactory.getInstance();
+                        var transObj = {iGadgetId: this.iGadget.getId(), varName: this.vardef.name};
                         var msg = interpolate(gettext("IGadget %(iGadgetId)s does not provide a handler for the \"%(varName)s\" RVariable."), transObj, true);
-                        opManager.logIGadgetError(this.iGadget, msg, Constants.Logging.WARN_MSG);
+                        opManager.logIGadgetError(this.iGadget.getId(), msg, Constants.Logging.WARN_MSG);
                     }
                 }
 

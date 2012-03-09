@@ -107,6 +107,6 @@ def installed_apps(request):
 
 
 def ezweb_organizations(request):
-    """Organizations available in EzWeb"""
+    """Organizations available in Wirecloud"""
     queryGroups = Group.objects.exclude(name__startswith="cert__").order_by('name')
     return {'ezweb_organizations': json_encode([g.name for g in queryGroups])}

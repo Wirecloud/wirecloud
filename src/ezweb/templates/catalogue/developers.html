@@ -24,10 +24,9 @@
                 <div class="developer_description">{% trans "Do you have a gadget stored in a wgt file? Then you can upload it to the catalogue by means of this form." %}</div> 
             </div>
 
-            <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/deployment/gadgets/" id="upload_form">
+            <form target="upload" style="margin: 0px;" class="uploadGadget" enctype="multipart/form-data" method="post" action="/catalogue/resource" id="upload_form">
             <div>
-               <input type="hidden" value="0" name="user_action"></input>
-               <input type="hidden" value="off" name="add_to_ws"></input>
+               <input type="hidden" value="true" name="iframe"></input>
                <input type="file" name="file" id="gadget_uri"></input>
                <button id="gadget_link">{% trans "Add" %}</button>
             </div>
@@ -45,10 +44,9 @@
             <div class="float_left">
                 <div class="developer_description">{% trans "If you have the XML template of a gadget or a composite application, you can add it to the catalogue by writing the URL of the template in the text field below." %}</div>
                 <input type="text" name="template_uri" id="template_uri">
-    		<button class="submit_link" id="submit_link">{% trans "Add" %}</button>
+                <button class="submit_link" id="submit_link">{% trans "Add" %}</button>
             </div>
         </div>
     </div>
-    
 </div>
 

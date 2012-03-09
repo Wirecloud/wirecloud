@@ -34,10 +34,11 @@
 from os import path
 from django.utils.translation import ugettext_lazy as _
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 COMPRESS = not DEBUG
 COMPRESS_OFFLINE = not DEBUG
+USE_XSENDFILE = False
 
 BASEDIR = path.dirname(path.abspath(__file__))
 APPEND_SLASH = False
@@ -127,6 +128,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.gzip.GZipMiddleware',
     'johnny.middleware.LocalStoreClearMiddleware',  # this has to be first
     'johnny.middleware.QueryCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -170,7 +172,6 @@ INSTALLED_APPS = (
     'API',
     'uploader',
     'south',
-    'deployment',
     'compressor',
     'johnny',
     ### openid authentication ###
@@ -251,6 +252,7 @@ AUTHENTICATION_BACKENDS = (
 GADGETS_ROOT = path.join(BASEDIR, 'media', 'gadgets')
 
 # WGT deployment dirs
+CATALOGUE_MEDIA_ROOT = path.join(BASEDIR, 'catalogue', 'media')
 GADGETS_DEPLOYMENT_DIR = path.join(BASEDIR, 'deployment', 'gadgets')
 GADGETS_DEPLOYMENT_TMPDIR = path.join(BASEDIR, 'deployment', 'tmp')
 
@@ -277,14 +279,14 @@ WORKSPACE_MANAGERS = (
 )
 
 # Template Generator URL. This URL is only needed to allow publishing
-# a Workspace when EzWeb is running with the develop server (manage.py)
+# a Workspace when Wirecloud is running with the develop server (manage.py)
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 
 #TEMPLATE_GENERATOR_URL = 'http://localhost:8001'
 
 
 # Gadget Template Generator URL. This URL is only needed to allow creating
-# a Gadget when EzWeb is running with the develop server (manage.py)
+# a Gadget when Wirecloud is running with the develop server (manage.py)
 # or if this application is moved to another server
 # PLEASE DON'T SET ITS VALUE IN ANY OTHER CASE.
 #GADGET_GENERATOR_URL = 'http://localhost:9001'
@@ -306,7 +308,7 @@ PROXY_PROCESSORS = (
 ##### Facebook Connect data #####
 #################################
 
-# To enable Facebook Connect authentication in EzWeb (having your application set up in Facebook) you must:
+# To enable Facebook Connect authentication in Wirecloud (having your application set up in Facebook) you must:
 #    1. Enable the facebook and facebookconnect applications
 #    2. Enable the Middlewares (facebook.djangofb.FacebookMiddleware, facebookconnect.middleware.FacebookConnectMiddleware)
 #    3. Enable the backend facebookconnect.models.FacebookBackend

@@ -15,7 +15,7 @@ var jscolor = {
 
 	dir : '', // location of jscolor directory (leave empty to autodetect)
 	bindClass : 'color', // class name
-	//EzWeb configuration: binding:false we will choose when to create a color picker
+	//Wirecloud configuration: binding:false we will choose when to create a color picker
 	binding : false, // automatic binding via <input class="...">
 	preloading : true, // use image preloading?
 

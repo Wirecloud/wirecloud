@@ -1,4 +1,5 @@
-<?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
+<?xml version="1.0" ?>
+<Template xmlns="http://morfeo-project.org/2007/Template">
   <!-- Gadget Meta-Info -->
   <Catalog.ResourceDescription>
     <Vendor>Morfeo</Vendor>
@@ -18,7 +19,7 @@
   </Platform.Preferences>
 
   <Platform.StateProperties>
-    <Property label="__MSG_popLabel__" name="prop" type="text"/>
+    <Property label="__MSG_propLabel__" name="prop" type="text"/>
   </Platform.StateProperties>
 
   <Platform.Wiring>

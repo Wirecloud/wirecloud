@@ -946,7 +946,7 @@ msgstr ""
 
 #: media/js/interfaceLayout/WindowMenu.js:1587
 msgid ""
-"WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not "
+"WARNING: Your file will be uploaded to a shared space. <br /> Wirecloud is not "
 "responsible for the content of the uploaded files."
 msgstr ""
 
@@ -983,11 +983,11 @@ msgid "iGadget #%(iGadgetId)s Logs"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:108
-msgid "Error loading EzWeb Platform: %(errorMsg)s."
+msgid "Error loading Wirecloud Platform: %(errorMsg)s."
 msgstr ""
 
 #: media/js/opManager/OpManager.js:115
-msgid "Error loading EzWeb Platform"
+msgid "Error loading Wirecloud Platform"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:132
@@ -1019,11 +1019,11 @@ msgid "Changing current workspace"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:361
-msgid "Loading EzWeb Platform"
+msgid "Loading Wirecloud Platform"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:362
-msgid "Retrieving EzWeb code"
+msgid "Retrieving Wirecloud code"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:381
@@ -1033,7 +1033,7 @@ msgid ""
 msgstr ""
 
 #: media/js/opManager/OpManager.js:441
-msgid "Unloading Ezweb Platform"
+msgid "Unloading Wirecloud Platform"
 msgstr ""
 
 #: media/js/opManager/OpManager.js:494
@@ -1043,7 +1043,7 @@ msgstr ""
 #: media/js/opManager/OpManager.js:527
 msgid ""
 "Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when "
-"it did not exist or it was not loaded yet. This is an error in EzWeb "
+"it did not exist or it was not loaded yet. This is an error in Wirecloud "
 "Platform, please notify it.\n"
 "Error Message: %(errorMsg)s"
 msgstr ""

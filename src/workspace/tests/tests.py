@@ -3,7 +3,6 @@
 import codecs
 import os
 
-from lxml import etree
 from django.contrib.auth.models import User, Group
 from django.core.cache import cache
 from django.test import Client, TestCase
@@ -231,6 +230,11 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.workspace = createEmptyWorkSpace('Testing', self.user)
 
+    def assertXPathText(self, root_element, xpath, content):
+        elements = root_element.xpath(xpath)
+        self.assertEquals(len(elements), 1)
+        self.assertEquals(elements[0].text, content)
+
     def testBuildTemplateFromWorkspace(self):
 
         options = {
@@ -242,23 +246,30 @@ class ParamatrizedWorkspaceGenerationTestCase(TestCase):
             'readOnlyGadgets': True,
         }
         template = build_template_from_workspace(options, self.workspace, self.user)
-        etree.fromstring(template)
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Vendor', 'EzWeb Test Suite')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Name', 'Test Workspace')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Version', '1')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Author', 'test')
+        self.assertXPathText(template, '/Template/Catalog.ResourceDescription/Mail', 'a@b.com')
 
 
 class ParametrizedWorkspaceParseTestCase(TestCase):
+
+    fixtures = ('selenium_test_data',)
 
     def setUp(self):
 
         self.user = User.objects.create_user('test', 'test@example.com', 'test')
         self.workspace = createEmptyWorkSpace('Testing', self.user)
+        self.template1 = self.read_template('wt1.xml')
+        self.template2 = self.read_template('wt2.xml')
 
-        f = codecs.open(os.path.join(os.path.dirname(__file__), 'wt1.xml'), 'rb')
-        self.template1 = f.read()
+    def read_template(self, filename):
+        f = codecs.open(os.path.join(os.path.dirname(__file__), filename), 'rb')
+        contents = f.read()
         f.close()
 
-        f = codecs.open(os.path.join(os.path.dirname(__file__), 'wt2.xml'), 'rb')
-        self.template2 = f.read()
-        f.close()
+        return contents
 
     def testFillWorkspaceUsingTemplate(self):
         fillWorkspaceUsingTemplate(self.workspace, self.template1)
@@ -275,6 +286,8 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         fillWorkspaceUsingTemplate(self.workspace, self.template2)
         data = get_global_workspace_data(self.workspace, self.user).get_data()
         self.assertEqual(len(data['workspace']['tabList']), 3)
+        self.assertNotEqual(data['workspace']['tabList'][1]['name'],
+            data['workspace']['tabList'][2]['name'])
 
     def testBuildWorkspaceFromTemplate(self):
         workspace, _junk = buildWorkspaceFromTemplate(self.template1, self.user)
@@ -290,3 +303,19 @@ class ParametrizedWorkspaceParseTestCase(TestCase):
         connectables = InOut.objects.filter(workspace=workspace)
         self.assertEqual(connectables.count(), 1)
         self.assertEqual(connectables[0].readOnly, True)
+
+    def test_complex_workspaces(self):
+        template3 = self.read_template('wt3.xml')
+
+        workspace, _junk = buildWorkspaceFromTemplate(template3, self.user)
+        data = get_global_workspace_data(workspace, self.user).get_data()
+
+        self.assertEqual(len(data['workspace']['tabList']), 4)
+        self.assertEqual(data['workspace']['tabList'][0]['name'], 'Tab')
+        self.assertEqual(len(data['workspace']['tabList'][0]['igadgetList']), 1)
+        self.assertEqual(data['workspace']['tabList'][1]['name'], 'Tab 2')
+        self.assertEqual(len(data['workspace']['tabList'][1]['igadgetList']), 1)
+        self.assertEqual(data['workspace']['tabList'][2]['name'], 'Tab 3')
+        self.assertEqual(len(data['workspace']['tabList'][2]['igadgetList']), 0)
+        self.assertEqual(data['workspace']['tabList'][3]['name'], 'Tab 4')
+        self.assertEqual(len(data['workspace']['tabList'][3]['igadgetList']), 0)

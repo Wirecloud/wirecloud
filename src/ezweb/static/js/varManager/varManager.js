@@ -105,18 +105,16 @@ function VarManager (_workSpace) {
         }
     }
 
-    VarManager.prototype.parseIGadgetVariables = function (igadget, tab) {
-        var name, id, variables, variable, gadget, gadgetId, igadgetId, varInfo,
-        aspect, value, objVars = {};
+    VarManager.prototype.parseIGadgetVariables = function (igadget_info, tab) {
+        var name, id, variables, variable, igadget, varInfo, aspect, value,
+            objVars = {};
 
-        igadgetId = igadget['id'];
-        gadgetId = igadget.gadget.substr(9).split('/').join('_');
-        gadget = ShowcaseFactory.getInstance().getGadget(gadgetId);
-        variables = gadget.getTemplate().getVariables();
+        igadget = this.workSpace.getIgadget(igadget_info['id']);
+        variables = igadget.gadget.getTemplate().getVariables();
 
         for (name in variables) {
             variable = variables[name];
-            varInfo = name in igadget.variables ? igadget.variables[name] : {};
+            varInfo = name in igadget_info.variables ? igadget_info.variables[name] : {};
 
             id = varInfo.id;
             aspect = variable.aspect;
@@ -125,17 +123,17 @@ function VarManager (_workSpace) {
             switch (aspect) {
                 case Variable.prototype.PROPERTY:
                 case Variable.prototype.EVENT:
-                    objVars[name] = new RWVariable(id, igadgetId, variable, this, value, tab);
+                    objVars[name] = new RWVariable(id, igadget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.EXTERNAL_CONTEXT:
                 case Variable.prototype.GADGET_CONTEXT:
                 case Variable.prototype.SLOT:
-                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab);
+                    objVars[name] = new RVariable(id, igadget, variable, this, value, tab);
                     this.variables[id] = objVars[name];
                     break;
                 case Variable.prototype.USER_PREF:
-                    objVars[name] = new RVariable(id, igadgetId, variable, this, value, tab);
+                    objVars[name] = new RVariable(id, igadget, variable, this, value, tab);
                     objVars[name].readOnly = 'readOnly' in varInfo ? varInfo.readOnly : false;
                     objVars[name].hidden = 'hidden' in varInfo ? varInfo.hidden : false;
                     this.variables[id] = objVars[name];
@@ -143,7 +141,7 @@ function VarManager (_workSpace) {
             }
         }
 
-        this.iGadgets[igadget['id']] = objVars;
+        this.iGadgets[igadget_info['id']] = objVars;
     }
 
     VarManager.prototype.registerVariable = function (iGadgetId, variableName, handler) {
@@ -185,11 +183,11 @@ function VarManager (_workSpace) {
         variable.set(value, options);
     }
 
-    VarManager.prototype.addPendingVariable = function (iGadgetId, variableName, value) {
-        var variables = this.pendingVariables[iGadgetId];
+    VarManager.prototype.addPendingVariable = function (iGadget, variableName, value) {
+        var variables = this.pendingVariables[iGadget.getId()];
         if (!variables) {
             variables = [];
-            this.pendingVariables[iGadgetId] = variables;
+            this.pendingVariables[iGadget.getId()] = variables;
         }
         variables.push({
             "name": variableName,
@@ -372,6 +370,6 @@ function VarManager (_workSpace) {
 
     this.pendingVariables = {}; //to manage igadgets loaded on demand caused by a wiring propagation
 
-    // Creation of ALL EzWeb variables regarding one workspace
+    // Creation of ALL Wirecloud variables regarding one workspace
     this.parseVariables(this.workSpace.workSpaceGlobalInfo);
 }

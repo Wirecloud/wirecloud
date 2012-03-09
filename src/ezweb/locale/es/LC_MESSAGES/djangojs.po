@@ -998,10 +998,10 @@ msgstr "Código HTML:"
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:1414
 msgid ""
-"WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not "
+"WARNING: Your file will be uploaded to a shared space. <br /> Wirecloud is not "
 "responsible for the content of the uploaded files."
 msgstr ""
-"AVISO: Su fichero se subirá a un espacio compartido. <br/> EzWeb no se hace "
+"AVISO: Su fichero se subirá a un espacio compartido. <br/> Wirecloud no se hace "
 "responsable del contenido de los ficheros subidos."
 
 #: ezweb/static/js/interfaceLayout/WindowMenu.js:1456
@@ -1054,16 +1054,16 @@ msgid "iGadget #%(iGadgetId)s Logs"
 msgstr "Registros del iGadget #%(iGadgetId)s"
 
 #: ezweb/static/js/log/LogManager.js:378
-msgid "EzWeb Platform Logs"
-msgstr "Registros de la Plataforma EzWeb"
+msgid "Wirecloud Platform Logs"
+msgstr "Registros de la Plataforma Wirecloud"
 
 #: ezweb/static/js/opManager/OpManager.js:108
-msgid "Error loading EzWeb Platform: %(errorMsg)s."
-msgstr "Error al cargar la Plataforma EzWeb: %(errorMsg)s"
+msgid "Error loading Wirecloud Platform: %(errorMsg)s."
+msgstr "Error al cargar la Plataforma Wirecloud: %(errorMsg)s"
 
 #: ezweb/static/js/opManager/OpManager.js:115
-msgid "Error loading EzWeb Platform"
-msgstr "Error al cargar la Plataforma Ezweb"
+msgid "Error loading Wirecloud Platform"
+msgstr "Error al cargar la Plataforma Wirecloud"
 
 #: ezweb/static/js/opManager/OpManager.js:132
 msgid "Error creating a workspace: %(errorMsg)s."
@@ -1095,16 +1095,16 @@ msgid "Changing current workspace"
 msgstr "Cambiando el entorno de trabajo actual"
 
 #: ezweb/static/js/opManager/OpManager.js:334
-msgid "Loading EzWeb Platform"
-msgstr "Cargando la Plataforma Ezweb"
+msgid "Loading Wirecloud Platform"
+msgstr "Cargando la Plataforma Wirecloud"
 
 #: ezweb/static/js/opManager/OpManager.js:335
-msgid "Retrieving EzWeb code"
-msgstr "Descargando el código de la Plataforma EzWeb"
+msgid "Retrieving Wirecloud code"
+msgstr "Descargando el código de la Plataforma Wirecloud"
 
 #: ezweb/static/js/opManager/OpManager.js:394
-msgid "Unloading Ezweb Platform"
-msgstr "Descargando la Plataforma Ezweb"
+msgid "Unloading Wirecloud Platform"
+msgstr "Descargando la Plataforma Wirecloud"
 
 #: ezweb/static/js/opManager/OpManager.js:460
 msgid "Activating current Workspace"
@@ -1113,13 +1113,13 @@ msgstr "Entorno de trabajo actual"
 #: ezweb/static/js/opManager/OpManager.js:493
 msgid ""
 "Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when "
-"it did not exist or it was not loaded yet. This is an error in EzWeb "
+"it did not exist or it was not loaded yet. This is an error in Wirecloud "
 "Platform, please notify it.\n"
 "Error Message: %(errorMsg)s"
 msgstr ""
 "Un fragmento del código ha intentado informar de un error en el iGadget "
 "%(iGadgetId)s cuando éste no existía o no estaba cargado aún. Esto es un "
-"error de la Plataforma EzWeb, por favor informe de ello.\n"
+"error de la Plataforma Wirecloud, por favor informe de ello.\n"
 "Mensaje de error: %(errorMsg)s"
 
 #: ezweb/static/js/opManager/OpManager.js:533

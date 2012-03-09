@@ -46,7 +46,7 @@ class HttpMethodNotAllowed(Exception):
     """
 
 
-class Resource:
+class Resource(object):
 
     def __init__(self, authentication=None, permitted_methods=None, mimetype=None):
 
@@ -106,7 +106,7 @@ class Resource:
         elif request_method == 'POST':
             #PUT and DELETE request are wrapped in a POST request
             #Asking about request type it's needed here!
-            if 'method' in request.POST:
+            if '_method' in request.POST:
                 _method = request.POST['_method'].upper()
                 if _method == 'DELETE':
                     request = self.adaptRequest(request)

@@ -375,7 +375,7 @@ var LogManagerFactory = function () {
     }
 
     GlobalLogManager.prototype.buildTitle = function() {
-        return gettext('EzWeb Platform Logs');
+        return gettext('Wirecloud Platform Logs');
     }
 
     GlobalLogManager.prototype.buildSubTitle = function() {

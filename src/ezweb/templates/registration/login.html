@@ -7,7 +7,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% trans "EzWeb Platform" %}</title>
+<title>{% trans "Wirecloud Platform" %}</title>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
@@ -255,7 +255,7 @@ var installed_apps = {{ installed_apps|safe }};
 /*     var browser=navigator.appName;
 
 		if (browser.toLowerCase().substring(0, 8) != 'netscape') {
-			alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
+			alert('Currently Wirecloud is only Firefox 2+ compliant! Please, try Wirecloud with this browser!');
 			return false;
 		}
 
@@ -300,9 +300,8 @@ var installed_apps = {{ installed_apps|safe }};
 			 </div>
 			 <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
 			 <span> | </span>
-			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span>
+			 <span id="help_section"><a href="http://github.com/Wirecloud/wirecloud">FAQ</a></span>
 		</div>
-	
 	</div>
 </div>
 
@@ -316,55 +315,7 @@ var installed_apps = {{ installed_apps|safe }};
 
 <div id="content-main">
 	
-	<!-- Training -->
-	<div id="training" class="training">
-		<h2 id="title"> {% trans 'Thanks to EzWeb you will be able to combine your favorite services to make your life easier' %}</h2>
-		<div id="training-content" class="training-content">
-			<h3>{% trans 'Watch our videos!' %}</h3>
-			<table cellspacing="0">
-				<tr>
-					<td width="110px" align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Discover"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Discover</b> new gadgets in our catalogue and import them in your workspace.' %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Arrange"/>
-						</a> 
-					</td>
-					<td>{% trans 'Arrange gadgets in your workspace <b>at your will</b>' %}.</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Connect"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Wire</b> gadgets together.' %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
-						</a>
-					</td>
-					<td>{% trans "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue." %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embed"/>
-						</a>
-					</td>
-					<td>{% trans 'Share your own workspace as an object you may <b>embed</b> in your favourite environments.' %}</td>
-				</tr>
-			</table>
-		</div>
-	</div>
+	
 		
 	<!-- Registration -->
 	<div id="right-section">
@@ -395,7 +346,7 @@ var installed_apps = {{ installed_apps|safe }};
 				<input type="submit" id="submit" value="{% trans 'Log in' %}" />
 			</form>
 			<div id="registration" class="registration">
-				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in EzWeb?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}</a>{% endif %}
+				{%if AUTHENTICATION_SERVER_URL%}{% trans 'Your first time in Wirecloud?' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'Sign up now' %}</a>{% endif %}
 			</div>
 			<div id="other-methods">
 				{% if "facebookconnect"|in_list:installed_apps or "twitterauth"|in_list:installed_apps or "openid_auth"|in_list:installed_apps %}
@@ -421,29 +372,53 @@ var installed_apps = {{ installed_apps|safe }};
 			</div>
 
 		</div>
-		<div id="tips">
-			<div id="tip_catalogue" class="tooltip">
-			{% trans '<b>Help us</b> to make our catalogue bigger! Easily add gadgets linked to your favourite feeds and web pages.' %}
-			</div>
-			<div id="tip_grow" class="tooltip">
-			{% trans 'Our <b>catalogue</b> will grow during the next months, giving you access to a richer set of services, targeted to suit your needs and tastes.' %}
-			</div>
-			<div id="tip_contact" class="tooltip">
-			{% trans "Don't hesitate sending us your" %} <a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'opinion and feedback' %}</a>. {% trans 'Keep in touch with us!' %}
-			</div>
-			<div id="tip_training" class="tooltip">
-			{% trans "MORFEO open source community has released some <b>online training material</b> about EzWeb technology." %}
-			<a href="http://www.morfeo-formacion.org">
-				<img id="logo_formacion" src="http://www.aimme.es/imagenes/banners/MorfeoBanner.gif" />
-			</a>
-			</div>
-		</div>
 	</div>
 </div>
 <script type="text/javascript">
-var is_iphone = (navigator.userAgent.indexOf('iPhone') !== -1 || navigator.userAgent.indexOf('iPod') !== -1);
+function getQueryMap(query_string) {
+    var params, i, separator, param_name, param_value, result = {};
 
-if (is_iphone) {
+    if (typeof query_string === 'undefined' || query_string === null) {
+        query_string = document.location.search.substr(1);
+    } else if (typeof query_string !== 'string') {
+        throw new TypeError();
+    }
+
+    params = query_string.split('&');
+    for (i = 0; i < params.length; i += 1) {
+        separator = params[i].indexOf('=');
+        if (separator === -1) {
+            continue;
+        }
+        param_name = decodeURIComponent(params[i].substr(0, separator));
+        param_value = decodeURIComponent(params[i].substr(separator + 1));
+        if (!(param_name in result)) {
+            result[param_name] = [];
+        }
+        result[param_name].push(param_value);
+    }
+    return result;
+}
+
+function is_mobile() {
+    var main_query, next_query_string, next_query = null, separator_index;
+
+    main_query = getQueryMap();
+    separator_index = main_query['next'][0].indexOf('?');
+    if (separator_index !== -1) {
+        next_query_string = main_query['next'][0].substr(separator_index + 1);
+        next_query = getQueryMap(next_query_string);
+    }
+    if (next_query !== null && 'view' in next_query) {
+        return next_query['view'][0] === 'iphone';
+    } else {
+        return navigator.userAgent.indexOf('iPhone') !== -1 ||
+            navigator.userAgent.indexOf('iPod') !== -1 ||
+            navigator.userAgent.indexOf('Android') !== -1;
+    }
+}
+
+if (is_mobile()) {
     document.getElementById('training').style.display = "none";
     document.getElementById('tips').style.display = "none";
     document.getElementById("login-section").style.marginLeft = '25px';

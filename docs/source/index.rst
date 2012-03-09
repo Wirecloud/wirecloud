@@ -12,15 +12,16 @@ Contents:
    :maxdepth: 2
 
    intro
+   architecture
    user
-   admin
-   devel
+   platform/index.rst
+   gadgets/index.rst
+   mashups/index.rst
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
 

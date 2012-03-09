@@ -38,8 +38,8 @@ urlpatterns = patterns('gadget.views',
 
     # Gadgets
     (r'^$', GadgetCollection(permitted_methods=('GET', 'POST'))),
-    (r'^/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[\._-ÑñáéíóúÁÉÍÓÚ\w]+)$',
+    (r'^/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)$',
         GadgetEntry(permitted_methods=('GET', 'DELETE', 'PUT'))),
-    (r'^/(?P<vendor>[^/\t\n\r\f\v]+)/(?P<name>[^/\t\n\r\f\v]+)/(?P<version>[\._-ÑñáéíóúÁÉÍÓÚ\w]+)/xhtml$',
+    (r'^/(?P<vendor>[^/]+)/(?P<name>[^/]+)/(?P<version>[^/]+)/xhtml$',
         GadgetCodeEntry(permitted_methods=('GET', 'PUT'))),
 )

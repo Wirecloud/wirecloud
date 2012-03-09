@@ -1,4 +1,4 @@
-<Template schemaLocation="http://morfeo-project.org/2007/Template">
+<Template xmlns="http://morfeo-project.org/2007/Template">
 <!-- Meta tags define gadgets properties -->
     <Catalog.ResourceDescription>
         <Vendor>Yaco Sistemas S.L.</Vendor>

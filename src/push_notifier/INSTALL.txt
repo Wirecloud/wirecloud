@@ -1,5 +1,0 @@
-This module provides functionality for notifying (in a push way) changes in the values of the external channels.
-
-It has been created as a external tool. It's based on the tornado web server. This software can be downloaded from:
-
-http://www.tornadoweb.org/

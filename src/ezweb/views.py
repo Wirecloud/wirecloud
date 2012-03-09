@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 
 #...............................licence...........................................
 #
@@ -35,49 +35,56 @@ import urlparse
 
 from django.conf import settings
 from django.contrib.auth import load_backend
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
+from django.core.urlresolvers import reverse
 from django.http import HttpResponseServerError, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.utils import simplejson
+from django.utils.http import urlencode
 from django.utils.translation import ugettext as _
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import Context, loader, RequestContext
 
-from catalogue.templateParser import TemplateParser
 from catalogue.views import ResourceCollection
 from commons.authentication import login_public_user
 from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from commons.utils import get_xml_error, get_xhtml_content, json_encode
 from catalogue.models import CatalogueResource
 from gadget.models import Gadget, XHTML
 from workspace.models import WorkSpace
+from workspace.utils import get_workspace_list
+
+
+@user_passes_test(lambda u: u.is_authenticated() and u.username != 'public')
+def select_workspace(request, mode=None):
+    _junk1, active_workspace, _junk2 = get_workspace_list(request.user)
+
+    url = reverse('wirecloud.workspace_view', args=(active_workspace.workspace.id,))
+    if mode:
+        url += '?' + urlencode({'view': mode})
+
+    return HttpResponseRedirect(url)
 
 
 @login_required
-def index(request, user_name=None, template="index.html"):
-    if request.user.username != "public":
-        return render_ezweb(request, user_name, template)
-    else:
-        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
-
-
-@login_required
-def render_workspace_view(request, workspace, template="index.html"):
+def render_workspace_view(request, workspace):
     if request.user.username != "public":
         workspace = get_object_or_404(WorkSpace, pk=int(workspace))
         if request.user not in workspace.users.all():
             return HttpResponseForbidden()
 
         post_load_script = '[{"command": "load_workspace", "ws_id": %s}]' % workspace.id
-        return render_ezweb(request, request.user.username, template, post_load_script=post_load_script)
+        return render_ezweb(request, request.user.username, None, post_load_script=post_load_script)
     else:
-        return HttpResponseRedirect('accounts/login/?next=%s' % request.path)
+        return redirect_to_login(request.get_full_path())
 
 
 @login_required
 def render_lite_workspace_view(request, workspace):
-    return render_workspace_view(request, workspace, "index_lite.html")
+    return render_workspace_view(request, workspace, "lite")
 
 
 def redirected_login(request):
@@ -124,7 +131,7 @@ def send_pingback(request, params):
 
 
 def add_gadget_script(request, fromWGT=False, user_action=True):
-    """ Page for adding gadgets to catalogue without loading EzWeb """
+    """ Page for adding gadgets to catalogue without loading Wirecloud """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('template_uri' in request.REQUEST):
             template_uri = request.REQUEST['template_uri']
@@ -137,16 +144,16 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
             c = Context({'msg': _('A template URL must be specified!')})
             return HttpResponseBadRequest(t.render(c), mimetype="application/xhtml+xml")
 
-        if (request.method.lower() == "get"):
+        if request.method.lower() == "get":
             #GET Request: Render HTML interface!
             try:
                 #Parsing gadget info from the template!
-                templateParser = TemplateParser(template_uri, request.user, save=False)
-                templateParser.parse()
-
-                gadget = templateParser.get_gadget()
-
-                params = {'msg': _('Adding a gadget to EzWeb!'), 'template_uri': template_uri, 'gadget': gadget}
+                parser = TemplateParser(download_http_content(template_uri), template_uri)
+                params = {
+                    'msg': _('Adding a gadget to Wirecloud!'),
+                    'template_uri': template_uri,
+                    'gadget': parser.get_resource_info(),
+                }
 
                 if 'pingback' in request.REQUEST:
                     params['pingback'] = request.REQUEST['pingback']
@@ -206,13 +213,13 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
                 if ('add_to_ws' in request.REQUEST and request.REQUEST['add_to_ws'] == 'on'):
                     #The gadget must be instantiated in the user workspace!
-                    #Loading ezweb for automating gadget instantiation
+                    #Loading wirecloud for automating gadget instantiation
                     vendor = catalogue_response['vendor']
                     version = catalogue_response['version']
                     name = catalogue_response['gadgetName']
                     post_load_script = '[{"command": "instantiate_resource", "template": "%s", "vendor_name": "%s", "name": "%s", "version": "%s"}]' % (template_uri, vendor, name, version)
 
-                    return render_ezweb(request, template="index.html", user_name=request.user.username, post_load_script=post_load_script)
+                    return render_ezweb(request, view_type="classic", user_name=request.user.username, post_load_script=post_load_script)
                 else:
                     # No gadget instantiation, redirecting to information interface!
                     # Gadget added to catalogue only!
@@ -240,7 +247,7 @@ def add_gadget_script(request, fromWGT=False, user_action=True):
 
 
 def update_gadget_script(request, fromWGT=False, user_action=True):
-    """ Page for adding gadgets to catalogue without loading EzWeb """
+    """ Page for adding gadgets to catalogue without loading Wirecloud """
     if (request.user.is_authenticated() and not request.user.username.startswith('anonymous')):
         if ('gadget_vendor' in request.REQUEST and 'gadget_name' in request.REQUEST and 'gadget_version' in  request.REQUEST):
             vendor = request.REQUEST['gadget_vendor']
@@ -333,7 +340,7 @@ def update_gadget_script(request, fromWGT=False, user_action=True):
 
 
 def public_ws_viewer(request, public_ws_id):
-    """ EzWeb viewer """
+    """ Wirecloud viewer """
     try:
         workspace = WorkSpace.objects.get(id=public_ws_id)
     except WorkSpace.DoesNotExist:
@@ -348,7 +355,7 @@ def public_ws_viewer(request, public_ws_id):
     request.user = public_user
 
     if (len(workspace.users.filter(username=public_user.username)) == 1):
-        return render_ezweb(request, template="index_viewer.html", public_workspace=public_ws_id, last_user=last_user)
+        return render_ezweb(request, view_type="viewer", public_workspace=public_ws_id, last_user=last_user)
 
     return HttpResponseServerError(get_xml_error(_('the workspace is not shared')), mimetype='application/xml; charset=UTF-8')
 
@@ -372,47 +379,53 @@ def manage_groups(user, groups):
     user.save()
 
 
-def render_ezweb(request, user_name=None, template='index.html', public_workspace='', last_user='', post_load_script='[]'):
+def render_ezweb(request, user_name=None, view_type=None, public_workspace='', last_user='', post_load_script='[]'):
     """ Main view """
-
-    if request.META['HTTP_USER_AGENT'].find("iPhone") >= 0 or request.META['HTTP_USER_AGENT'].find("iPod") >= 0:
-        request.session['policies'] = "null"
-        return render_to_response('iphone.html', {},
-                  context_instance=RequestContext(request))
-    else:
-        #Checking profile!
-        try:
-            user_profile = request.user.get_profile()
-            user_profile.execute_server_script(request)
-
-            script = user_profile.merge_client_scripts(post_load_script)
-        except Exception:
-            script = post_load_script
-
-        if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
-            url = settings.AUTHENTICATION_SERVER_URL
-
-            if (not url.endswith('/')):
-                url += '/'
-
-            url = "%sapi/user/%s/data.json" % (url, request.user.username)
-
-            try:
-                user_data = simplejson.loads(download_http_content(url))
-
-                manage_groups(request.user, user_data['groups'])
-                request.session['policies'] = json_encode({"user_policies": user_data['user_policies'], "all_policies": user_data['all_policies']})
-            except:
-                request.session['policies'] = "null"
+    if view_type is None:
+        if 'view' in request.GET:
+            view_type = request.GET['view']
         else:
+            user_agent = request.META['HTTP_USER_AGENT']
+            if user_agent.find("iPhone") != -1 or user_agent.find("iPod") != -1 or user_agent.find('Android') != -1:
+                view_type = 'smartphone'
+            else:
+                view_type = 'classic'
+
+    # Checking profile!
+    if hasattr(settings, 'AUTHENTICATION_SERVER_URL'):
+        url = settings.AUTHENTICATION_SERVER_URL
+
+        if (not url.endswith('/')):
+            url += '/'
+
+        url = "%sapi/user/%s/data.json" % (url, request.user.username)
+
+        try:
+            user_data = simplejson.loads(download_http_content(url))
+
+            manage_groups(request.user, user_data['groups'])
+            request.session['policies'] = json_encode({"user_policies": user_data['user_policies'], "all_policies": user_data['all_policies']})
+        except:
             request.session['policies'] = "null"
+    else:
+        request.session['policies'] = "null"
 
-        screen_name = get_user_screen_name(request)
+    try:
+        user_profile = request.user.get_profile()
+        user_profile.execute_server_script(request)
 
-        context = {'screen_name': screen_name,
-                   'current_tab': 'dragboard',
-                   'active_workspace': public_workspace,
-                   'last_user': last_user,
-                   'post_load_script': script}
+        script = user_profile.merge_client_scripts(post_load_script)
+    except Exception:
+        script = post_load_script
 
-        return render_to_response(template, context, context_instance=RequestContext(request))
+    screen_name = get_user_screen_name(request)
+
+    context = {
+        'screen_name': screen_name,
+        'current_tab': 'dragboard',
+        'active_workspace': public_workspace,
+        'last_user': last_user,
+        'post_load_script': script,
+    }
+
+    return render_to_response('wirecloud/views/%s.html' % view_type, context, context_instance=RequestContext(request))

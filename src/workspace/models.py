@@ -30,8 +30,12 @@
 
 #
 
+import socket
+
 from django.conf import settings
 from django.contrib.auth.models import User, Group
+from django.contrib.sites.models import get_current_site
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.translation import ugettext as  _
 
@@ -105,12 +109,15 @@ class PublishedWorkSpace(models.Model):
     template = models.TextField(_('Template'))
     params = models.TextField(_('Params used for publishing'))
 
-    def get_uri(self):
-        baseURL = ""
-        if hasattr(settings, 'TEMPLATE_GENERATOR_URL'):
-            baseURL = settings.TEMPLATE_GENERATOR_URL
+    def get_template_url(self, request=None):
+        try:
+            domain = get_current_site(request).domain
+        except:
+            domain = socket.gethostbyaddr(socket.gethostname())[0]
 
-        return baseURL + "/workspace/templateGenerator/" + str(self.id)
+        protocol = 'http://'
+
+        return protocol + domain + reverse('wirecloud_showcase.mashup_template', args=(self.id,))
 
     def __unicode__(self):
         return unicode(self.pk) + " " + unicode(self.name)

@@ -30,11 +30,14 @@
 
 #
 import time
+import os
 
+from django.conf import settings
 from django.db import transaction, IntegrityError
-from django.http import HttpResponse, HttpResponseServerError
+from django.http import HttpResponse, HttpResponseServerError, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
+from django.views.static import serve
 
 from commons.authentication import user_authentication, Http403
 from commons.cache import no_cache, patch_cache_headers
@@ -44,11 +47,15 @@ from commons.get_data import get_gadget_data
 from commons.http_utils import download_http_content
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.template import TemplateParser
+from commons.transaction import commit_on_http_success
 
 from gadget.models import Gadget, XHTML
-from gadget.utils import get_or_create_gadget, includeTagBase, fix_ezweb_scripts
+import gadget.utils as showcase_utils
+from gadget.utils import get_or_create_gadget, create_gadget_from_template, fix_gadget_code
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
+from workspace.utils import create_published_workspace_from_template
 
 
 def parseAndCreateGadget(request, user, workspaceId):
@@ -70,9 +77,7 @@ def parseAndCreateGadget(request, user, workspaceId):
 
         #get or create the Gadget
         fromWGT = not templateURL.startswith('http') and not templateURL.startswith('https')
-        result = get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
-
-        return result
+        return get_or_create_gadget(templateURL, user, workspaceId, request, fromWGT)
 
     except TemplateParseException, e:
         msg = _("Error parsing the template: %(msg)s" % {"msg": e.msg})
@@ -104,6 +109,7 @@ def deleteGadget(user, short_name, vendor, version):
             deleteIGadget(igadget, user)
 
         gadget.delete()
+        showcase_utils.wgt_deployer.undeploy(vendor, short_name, version)
 
     except Gadget.DoesNotExist:
         pass
@@ -140,17 +146,29 @@ class GadgetCollection(Resource):
         user = user_authentication(request, user_name)
 
         #create the gadget
-        result = parseAndCreateGadget(request, user, request.POST['workspaceId'])
-        templateParser = result["templateParser"]
+        gadget = parseAndCreateGadget(request, user, request.POST['workspaceId'])
 
-        #return the data
-        gadgetName = templateParser.getGadgetName()
-        gadgetVendor = templateParser.getGadgetVendor()
-        gadgetVersion = templateParser.getGadgetVersion()
+        return HttpResponse(json_encode(get_gadget_data(gadget)), mimetype='application/json; charset=UTF-8')
 
-        gadget_entry = GadgetEntry()
-        # POST and GET behavior is alike, both must return a Gadget JSON representation
-        return gadget_entry.read(request, gadgetVendor, gadgetName, gadgetVersion, user_name)
+
+class Showcase(Resource):
+
+    @commit_on_http_success
+    def create(self, request):
+
+        if 'url' not in request.POST:
+            return HttpResponseBadRequest()
+
+        url = request.POST['url']
+        template_content = download_http_content(url, user=request.user)
+        template = TemplateParser(template_content, base=url)
+
+        if template.get_resource_type() == 'gadget':
+            create_gadget_from_template(template, request.user, request)
+        else:
+            create_published_workspace_from_template(template, request.user)
+
+        return HttpResponse(status=201)
 
 
 class GadgetEntry(Resource):
@@ -189,12 +207,12 @@ class GadgetCodeEntry(Resource):
         code = xhtml.code
         if not xhtml.cacheable or code == '':
             try:
-                if xhtml.url.startswith('/deployment/gadgets/'):
-                    code = get_xhtml_content(xhtml.url)
-                    code = includeTagBase(code, xhtml.url, request)
-                else:
+                if xhtml.url.startswith(('http://', 'https://')):
                     code = download_http_content(gadget.get_resource_url(xhtml.url, request), user=request.user)
-                code = fix_ezweb_scripts(code, request)
+                else:
+                    code = download_http_content('file://' + os.path.join(settings.GADGETS_DEPLOYMENT_DIR, xhtml.url), user=request.user)
+
+                code = fix_gadget_code(code, xhtml.url, request)
             except Exception, e:
                 # FIXME: Send the error or use the cached original code?
                 msg = _("XHTML code is not accessible: %(errorMsg)s") % {'errorMsg': e.message}
@@ -244,3 +262,23 @@ class GadgetCodeEntry(Resource):
             raise TracedServerError(e, {'vendor': vendor, 'name': name, 'version': version}, request, msg)
 
         return HttpResponse('ok')
+
+
+def serve_showcase_media(request, vendor, name, version, file_path):
+
+    if request.method != 'GET':
+        return HttpResponseNotAllowed(('GET',))
+
+    local_path = os.path.join(
+        showcase_utils.wgt_deployer.get_base_dir(vendor, name, version),
+        file_path)
+
+    if not os.path.isfile(local_path):
+        return HttpResponse(status=404)
+
+    if not getattr(settings, 'USE_XSENDFILE', False):
+        return serve(request, local_path, document_root='/')
+    else:
+        response = HttpResponse()
+        response['X-Sendfile'] = smart_str(local_path)
+        return response

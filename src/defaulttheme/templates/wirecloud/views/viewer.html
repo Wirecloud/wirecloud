@@ -1,0 +1,12 @@
+{% extends "wirecloud/views/lite.html"%}
+
+{% load compress %}
+
+{% block css %}
+  {{ block.super }}
+  <style>
+  #wiring_header, #catalogue_header, #lite_toolbar_section, #ws_section_identifier {
+    display: none;
+  }
+  </style>
+{% endblock %}

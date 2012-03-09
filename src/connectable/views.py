@@ -30,7 +30,6 @@
 
 #
 
-from django.db import transaction
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
@@ -41,6 +40,7 @@ from commons.cache import no_cache
 from commons.get_data import get_inout_data, get_wiring_data, get_tab_data, get_filter_data
 from commons.logs_exception import TracedServerError
 from commons.resource import Resource
+from commons.transaction import commit_on_http_success
 from commons.utils import json_encode
 from connectable.models import In, Out, RelatedInOut, InOut, Filter
 from connectable.utils import createChannel, deleteChannel
@@ -77,7 +77,7 @@ class ConnectableEntry(Resource):
 
         return HttpResponse(json_encode(wiring), mimetype='application/json; charset=UTF-8')
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def create(self, request, workspace_id):
         user = get_user_authentication(request)
 
@@ -210,6 +210,9 @@ class ConnectableEntry(Resource):
             for deleted_channel in channelsDeletedByUser:
                 deleteChannel(deleted_channel)
 
+            from commons.get_data import _invalidate_cached_variable_values
+            _invalidate_cached_variable_values(workspace)
+
             json_result = {'ids': id_mapping}
 
             return HttpResponse(json_encode(json_result), mimetype='application/json; charset=UTF-8')
@@ -221,9 +224,9 @@ class ConnectableEntry(Resource):
             msg = _('connectables cannot be saved: %(exc)s') % {'exc': e}
             raise TracedServerError(e, json, request, msg)
 
-        return HttpResponse('ok')
+        return HttpResponse(status=201)
 
-    @transaction.commit_on_success
+    @commit_on_http_success
     def update(self, request, workspace_id):
         user = get_user_authentication(request)
 

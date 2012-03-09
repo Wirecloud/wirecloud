@@ -1,0 +1,44 @@
+<?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
+  <!-- Gadget Meta-Info -->
+  <Catalog.ResourceDescription>
+    <Vendor>Morfeo</Vendor>
+    <Name>test</Name>
+    <Version>0.3</Version>
+    <Author>admin</Author>
+    <Mail>test@example.com</Mail>
+    <Description>__MSG_description__</Description>
+    <ImageURI>images/catalogue.png</ImageURI>
+    <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
+    <WikiURI>doc/index.html</WikiURI>
+  </Catalog.ResourceDescription>
+
+  <Platform.Preferences>
+    <Preference default="value" description="__MSG_prefDescription__" label="__MSG_prefLabel__" name="pref" type="list">
+      <Option label="__MSG_optionName__" value="1"/>
+    </Preference>
+  </Platform.Preferences>
+
+  <Platform.StateProperties>
+    <Property label="__MSG_propLabel__" name="prop" type="text"/>
+  </Platform.StateProperties>
+
+  <Platform.Wiring>
+    <Event friendcode="test_friend_code" label="__MSG_eventLabel__" name="event" type="text"/>
+    <Slot friendcode="test_friend_code" label="__MSG_slotLabel__" name="slot" type="text"/>
+  </Platform.Wiring>
+
+  <Platform.Link>
+    <XHTML href="test.html"/>
+  </Platform.Link>
+
+  <Platform.Rendering height="24" width="10"/>
+  <Platform.Context>
+  </Platform.Context>
+
+  <Translations default="en">
+    <Translation lang="en">
+    </Translation>
+    <Translation lang="es">
+    </Translation>
+  </Translations>
+</Template>

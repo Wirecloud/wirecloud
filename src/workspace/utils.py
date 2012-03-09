@@ -39,10 +39,13 @@ from django.conf import settings
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
+from commons.http_utils import download_http_content
+from commons.template import TemplateParser
 from commons.utils import save_alternative
 from workspace.managers import get_workspace_managers
-from workspace.models import Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
+from workspace.models import Category, Tab, PublishedWorkSpace, UserWorkSpace, VariableValue, WorkSpace
 from workspace.packageLinker import PackageLinker
 from igadget.models import IGadget
 from igadget.utils import deleteIGadget
@@ -99,13 +102,18 @@ def get_mashup_gadgets(mashup_id):
     return [i.gadget for i in IGadget.objects.filter(tab__workspace=published_workspace.workspace)]
 
 
-def create_published_workspace_from_template(template, resource, user):
-    return PublishedWorkSpace.objects.create(name=resource.short_name,
-        vendor=resource.vendor, version=resource.version,
-        author=resource.author, mail=resource.mail,
-        description=resource.description, imageURI=resource.image_uri,
-        wikiURI=resource.wiki_page_uri, params='',
-        creator=user, template=template)
+def create_published_workspace_from_template(template, user):
+
+    if not isinstance(template, TemplateParser):
+        template = TemplateParser(template)
+
+    workspace_info = template.get_resource_basic_info()
+    return PublishedWorkSpace.objects.create(name=workspace_info['name'],
+        vendor=workspace_info['vendor'], version=workspace_info['version'],
+        author=workspace_info['author'], mail=workspace_info['mail'],
+        description=workspace_info['description'], imageURI=workspace_info['image_uri'],
+        wikiURI=workspace_info['doc_uri'], params='',
+        creator=user, template=template.get_contents())
 
 
 def encrypt_value(value):
@@ -197,3 +205,84 @@ def sync_base_workspaces(user):
             reload_showcase = True
 
     return reload_showcase
+
+
+def getCategories(user):
+    if 'AUTHENTICATION_SERVER_URL' in settings:
+        # Use EzSteroids
+        url = settings.AUTHENTICATION_SERVER_URL + '/api/user/' + user.username + '/categories.json'
+        received_json = download_http_content(url, user=user)
+        return simplejson.loads(received_json)['category_list']
+    else:
+        # Not use EzSteroids
+        return user.groups.get_query_set()
+
+
+def getCategoryId(category):
+    if category.__class__ == {}.__class__:
+        return category["id"]
+    else:
+        return category.id
+
+
+def get_workspace_list(user):
+
+    from workspace.views import cloneWorkspace, createEmptyWorkSpace, linkWorkspace, setActiveWorkspace
+
+    reload_showcase = sync_base_workspaces(user)
+
+    # updated user workspaces
+    workspaces = WorkSpace.objects.filter(users=user)
+
+    if not reload_showcase and workspaces.count() == 0:
+        # There is no workspace for the user
+
+        cloned_workspace = None
+
+        # it's the first time the user has logged in.
+        # try to assign a default workspace according to user category
+        try:
+            categories = getCategories(user)
+            if len(categories) > 0:
+                #take the first one which has a default workspace
+                for category in categories:
+                    try:
+                        default_workspace = Category.objects.get(category_id=getCategoryId(category)).default_workspace
+                        # duplicate the workspace for the user
+                        cloned_workspace = cloneWorkspace(default_workspace.id, user)
+                        linkWorkspace(user, cloned_workspace.id, default_workspace.workspace.creator)
+                        setActiveWorkspace(user, cloned_workspace)
+                        reload_showcase = True
+                        break
+                    except Category.DoesNotExist:
+                        # the user category doesn't have a default workspace
+                        # try with other categories
+                        continue
+
+        except Exception:
+            pass
+
+        if not cloned_workspace:
+            # create an empty workspace
+            createEmptyWorkSpace(_('WorkSpace'), user)
+
+    # Now we can fetch all the workspaces of an user
+    workspaces = WorkSpace.objects.filter(users__id=user.id)
+
+    # if there is no active workspace
+    active_workspaces = UserWorkSpace.objects.filter(user=user, active=True)
+    if len(active_workspaces) == 0:
+
+        # set the first workspace as active
+        active_workspace = UserWorkSpace.objects.filter(user=user)[0]
+        setActiveWorkspace(user, active_workspace.workspace)
+
+    elif len(active_workspaces) > 1:
+
+        active_workspaces[1:].update(active=False)
+        active_workspace = active_workspaces[0]
+
+    else:
+        active_workspace = active_workspaces[0]
+
+    return workspaces, active_workspace, reload_showcase

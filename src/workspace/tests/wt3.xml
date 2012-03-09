@@ -1,0 +1,44 @@
+<Template xmlns="http://morfeo-project.org/2007/Template">
+  <Catalog.ResourceDescription>
+    <Vendor>yo</Vendor>
+    <Name>test</Name>
+    <Version>1</Version>
+    <Author>admin</Author>
+    <Mail>a@c.com</Mail>
+    <Description>EzWeb Mashup composed of: Test, Test</Description>
+    <ImageURI>/ezweb/images/headshot_mashup.jpg</ImageURI>
+    <WikiURI>http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options</WikiURI>
+    <Organization></Organization>
+    <IncludedResources>
+      <Tab id="1" name="Tab">
+        <Preference name="smart" value="False"/>
+        <Resource title="Test (1)" version="0.9" vendor="Yaco Sistemas S.L." id="1" name="Test">
+          <Position y="0" x="0" z="0"/>
+          <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+          <Preference name="list" value="default" readonly="true" hidden="true"/>
+          <Preference name="text" value="initial text" readonly="true" hidden="false"/>
+        </Resource>
+      </Tab>
+      <Tab id="2" name="Tab 2">
+        <Resource title="Test (2)" version="0.9" vendor="Yaco Sistemas S.L." id="2" name="Test">
+          <Position y="0" x="0" z="0"/>
+          <Rendering width="6" layout="0" minimized="False" fulldragboard="False" height="24"/>
+          <Preference name="list" value="default"/>
+          <Preference name="text" value="initial text" readonly="true" hidden="true"/>
+        </Resource>
+      </Tab>
+      <Tab id="3" name="Tab 3"/>
+      <Tab id="4" name="Tab 4"/>
+    </IncludedResources>
+  </Catalog.ResourceDescription>
+  <Platform.Wiring>
+    <Event label="event" type="text" friendcode="event" name="event"/>
+    <Slot label="slot" type="text" friendcode="slot" name="slot"/>
+    <Event label="event" type="text" friendcode="event" name="event"/>
+    <Slot label="slot" type="text" friendcode="slot" name="slot"/>
+    <Channel name="Channel_1" id="1">
+        <In name="event" igadget="1"/>
+        <Out name="slot" igadget="2"/>
+    </Channel>
+  </Platform.Wiring>
+</Template>

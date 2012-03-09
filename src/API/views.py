@@ -109,8 +109,7 @@ class IGadgetCollection(Resource):
             tabList = Tab.objects.filter(workspace=activeWS)
             activeTab = tabList[0]
 
-        result = parseAndCreateGadget(request, user, activeWS.id)
-        gadget = result["gadget"]
+        gadget = parseAndCreateGadget(request, user, activeWS.id)
 
         # Get the iGadget name
         igadget_name = gadget.name

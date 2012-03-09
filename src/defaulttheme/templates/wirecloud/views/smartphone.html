@@ -1,0 +1,116 @@
+{% load compress i18n %}
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
+<head>
+    <title>{% trans "Wirecloud Platform" %}</title>
+
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+    <link rel="shortcut icon" type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico" />
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/iphone.css" />
+    <link rel="stylesheet" type="text/css" media="screen,projection" href="{{ STATIC_URL }}css/styled_elements_core.css" />
+    {% endcompress %}
+</head>
+
+<body>
+
+<!-- MAIN SECTION -->
+<div class="ezweb_wrapper" style="display: none;">
+
+    <!-- WORKSPACES MENU -->
+    <div id="workspace_menu" class="workspace_menu">
+    	<div class="toolbar anchorTop">
+    		<h1>Workspaces</h1>
+    	</div>
+        <div>
+            <ul id="workspace_list">
+            </ul>
+        </div>
+    </div>
+
+    <!-- CATALOGUE -->
+    <div id="mashup_catalogue" class="mashup tabs_container">
+        <div class="ezweb_container mashup_tab" id="mashup_container">
+            <div class="toolbar anchorTop">
+                <a href="javascript:CatalogueFactory.getInstance().hide()" class="back_button"><span class="menu_text">Menu</span></a>
+                <h1>{% trans "Catalogue" %}</h1>
+            </div>
+            <div id="mashup_catalogue_content" class="tab_content"></div>
+        </div>
+    </div>
+    <div id="mashup_info" class="mashup tabs_container">
+        <div class="ezweb_container mashup_tab" id="mashup_container">
+            <div class="toolbar anchorTop">
+                <a href="javascript:CatalogueFactory.getInstance().show()" class="back_button"><span class="menu_text">Catalogue</span></a>
+                <h1>{% trans "Mashup Info" %}</h1>
+            </div>
+            <div id="mashup_info_content" class="mashup_content"></div>
+        </div>
+    </div>
+
+    <!-- IGADGET VIEW -->
+    <div id="dragboard" class="ezweb_container dragboard">
+        <div id="bar" class="toolbar">
+            <div onclick="javascript:OpManagerFactory.getInstance().showGadgetsMenu();" class="back_button"><span class="menu_text">Back</span></div>
+            <h1 id="tab_name"></h1>
+	</div>
+    </div>
+</div>
+
+<script type="text/javascript" language="javascript">
+    var policy_lists = {{ policies|safe|default:"null" }};
+</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype-1.7.js"></script>
+<script type="text/javascript" src="/jsi18n/?language={{ LANGUAGE_CODE }}"></script>
+{% compress js %}
+      {% include "wirecloud/views/js_smartphone_includes.js" %}
+{% endcompress %}
+<!-- <script src="http://perseo.ls.fi.upm.es:8484/target/target-script-min.js"></script> -->
+
+<script type="text/javascript" language="javascript">
+_URIConstants = function(){}
+_URIConstants.prototype.GET_GADGETS = '/user/{{ user.username }}/gadgets';
+_URIConstants.prototype.GET_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/#{iGadgetId}');
+_URIConstants.prototype.GET_IGADGETS = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets/');
+_URIConstants.prototype.POST_IGADGET = new Template ('/workspace/#{workspaceId}/tab/#{tabId}/igadgets');
+_URIConstants.prototype.PROXY = '/proxy';
+_URIConstants.prototype.PUT_VARIABLES = new Template ('/workspace/#{workspaceId}/variables');
+_URIConstants.prototype.GET_POST_WORKSPACES = '/workspaces';
+_URIConstants.prototype.GET_POST_WIRING = new Template ('/workspaces/#{id}/wiring');
+_URIConstants.prototype.GET_POST_WORKSPACE = new Template ('/workspaces/#{id}/last_user/#{last_user}');
+_URIConstants.prototype.GET_POST_TABS = new Template('/workspace/#{workspace_id}/tabs');
+_URIConstants.prototype.TAB = new Template('/workspace/#{workspace_id}/tab/#{tab_id}');
+_URIConstants.prototype.GET_RESOURCES_SIMPLE_SEARCH = '/user/{{ user.username }}/catalogue/search';
+_URIConstants.prototype.GET_ADD_WORKSPACE = new Template('/workspace/#{workspace_id}/add');
+
+var URIs = new _URIConstants();
+</script>
+
+<!-- Initialization code -->
+<script type="text/javascript">
+
+    setTimeout(function () {
+        ShowcaseFactory.getInstance().init();
+        window.addEventListener('resize', updateLayout, true);
+        window.addEventListener('onorientationchange', updateLayout, true);
+        updateLayout();
+    }, 0);
+
+	var isAnonymousUser = {% if is_anonymous %}true;{% else %}false;{% endif %}
+	var opManager = OpManagerFactory.getInstance();
+
+    var last_logged_user = '{{ last_user }}';
+    var installed_apps = {{ installed_apps|safe }};
+
+	var public_workspace = '{{ active_workspace }}';
+	var last_logged_user = '{{ last_user }}';
+	var post_load_script = '{{ post_load_script|safe }}';
+
+</script>
+</body>
+</html>

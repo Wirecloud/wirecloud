@@ -1478,7 +1478,7 @@ function UploadWindowMenu (title, targetElement) {
     var warning = document.createElement('div');
     Element.extend(warning);
     warning.addClassName('msg warning');
-    warning.update(gettext("WARNING: Your file will be uploaded to a shared space. <br /> EzWeb is not responsible for the content of the uploaded files."));
+    warning.update(gettext("WARNING: Your file will be uploaded to a shared space. <br /> Wirecloud is not responsible for the content of the uploaded files."));
     this.windowContent.appendChild(warning);
 }
 

@@ -78,7 +78,7 @@ var OpManagerFactory = function () {
             //new workspace option
             if (!EzSteroidsAPI.is_activated() ||
                 (EzSteroidsAPI.evaluePolicy('add_remove_workspaces') && EzSteroidsAPI.evaluePolicy('create_custom_workspaces'))) {
-                // EzWeb IE6 version does not allow creating new Workspaces
+                // Wirecloud IE6 version does not allow creating new Workspaces
                 Event.observe($('add_workspace'), "click",
                         function(){
                             LayoutManagerFactory.getInstance().showWindowMenu('createWorkSpace');
@@ -112,14 +112,14 @@ var OpManagerFactory = function () {
             var msg;
             try {
                 var logManager = LogManagerFactory.getInstance();
-                msg = logManager.formatError(gettext("Error loading EzWeb Platform: %(errorMsg)s."), transport, e);
+                msg = logManager.formatError(gettext("Error loading Wirecloud Platform: %(errorMsg)s."), transport, e);
                 LayoutManagerFactory.getInstance().showMessageMenu(msg, Constants.Logging.ERROR_MSG);
                 logManager.log(msg);
             } catch (e) {
                 if (msg != null)
                     alert(msg);
                 else
-                    alert (gettext("Error loading EzWeb Platform"));
+                    alert (gettext("Error loading Wirecloud Platform"));
             }
         }
 
@@ -245,14 +245,20 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Merging with current workspace"));
 
-            var workSpaceId = resource.getMashupId();
-
             var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
+            var mergeURL = URIs.MERGE_WORKSPACE.evaluate({'to_ws': active_ws_id});
 
-            var mergeURL = URIs.GET_MERGE_PUBLISHED_WORKSPACE.evaluate({'published_ws': workSpaceId, 'to_ws': active_ws_id});
-
-            PersistenceEngineFactory.getInstance().send_get(mergeURL, this, mergeOk, mergeError);
-        }
+            PersistenceEngineFactory.getInstance().send(mergeURL, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: Object.toJSON({
+                    'workspace': resource.getUriTemplate()
+                }),
+                onSuccess: mergeOk.bind(this),
+                onFailure: mergeError.bind(this),
+                onException: mergeError.bind(this)
+            });
+        };
 
         OpManager.prototype.addMashupResource = function(resource) {
             var cloneOk = function(transport) {
@@ -284,11 +290,17 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
-            var workSpaceId = resource.getMashupId();
-            var cloneURL = URIs.GET_ADD_WORKSPACE.evaluate({'workspace_id': workSpaceId, 'active': 'true'});
-
-            PersistenceEngineFactory.getInstance().send_get(cloneURL, this, cloneOk, cloneError);
-        }
+            PersistenceEngineFactory.getInstance().send(URIs.ADD_WORKSPACE, {
+                method: 'POST',
+                contentType: 'application/json',
+                postBody: Object.toJSON({
+                    'workspace': resource.getUriTemplate(),
+                }),
+                onSuccess: cloneOk.bind(this),
+                onFailure: cloneError.bind(this),
+                onException: cloneError.bind(this)
+            });
+        };
 
         OpManager.prototype.showPlatformPreferences = function () {
             PreferencesManagerFactory.getInstance().show();
@@ -349,14 +361,14 @@ var OpManagerFactory = function () {
         }
 
         /**
-         * Loads the EzWeb Platform.
+         * Loads the Wirecloud Platform.
          */
         OpManager.prototype.loadEnviroment = function () {
             // Init Layout Manager
             var layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.resizeWrapper();
-            layoutManager._startComplexTask(gettext('Loading EzWeb Platform'), 3);
-            layoutManager.logSubTask(gettext('Retrieving EzWeb code'));
+            layoutManager._startComplexTask(gettext('Loading Wirecloud Platform'), 3);
+            layoutManager.logSubTask(gettext('Retrieving Wirecloud code'));
             layoutManager.logStep('');
 
             // Init log manager
@@ -367,7 +379,7 @@ var OpManagerFactory = function () {
                           this.unloadEnvironment.bind(this),
                           true);
 
-            // EzWeb fly
+            // Wirecloud fly
             if (BrowserUtilsFactory.getInstance().isIE()) {
                 this.flyStyleSheet = document.createStyleSheet();
             } else {
@@ -383,7 +395,7 @@ var OpManagerFactory = function () {
         }
 
         /**
-         * Refresh EzWeb fly using current theme.
+         * Refresh Wirecloud fly using current theme.
          */
         OpManager.prototype.refreshEzWebFly = function() {
             /*var rules = 'background-image: url('+_currentTheme.getIconURL('init-dat')+');' +
@@ -407,13 +419,13 @@ var OpManagerFactory = function () {
 
 
         /**
-         * Unloads the EzWeb Platform. This method is called, by default, when
+         * Unloads the Wirecloud Platform. This method is called, by default, when
          * the unload event is captured.
          */
         OpManager.prototype.unloadEnvironment = function() {
             var layoutManager = LayoutManagerFactory.getInstance();
             layoutManager.hideCover();
-            layoutManager._startComplexTask(gettext('Unloading Ezweb Platform'));
+            layoutManager._startComplexTask(gettext('Unloading Wirecloud Platform'));
 
             if (this.activeWorkSpace) {
                 this.activeWorkSpace.unload();
@@ -509,7 +521,7 @@ var OpManagerFactory = function () {
         OpManager.prototype.logIGadgetError = function(iGadgetId, msg, level) {
             var iGadget = this.activeWorkSpace.getIgadget(iGadgetId);
             if (iGadget == null) {
-                var msg2 = gettext("Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when it did not exist or it was not loaded yet. This is an error in EzWeb Platform, please notify it.\nError Message: %(errorMsg)s");
+                var msg2 = gettext("Some pice of code tried to notify an error in the iGadget %(iGadgetId)s when it did not exist or it was not loaded yet. This is an error in Wirecloud Platform, please notify it.\nError Message: %(errorMsg)s");
                 msg2 = interpolate(msg2, {iGadgetId: iGadgetId, errorMsg: msg}, true);
                 this.logs.log(msg2);
                 return;

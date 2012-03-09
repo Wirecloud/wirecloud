@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global WorkSpace, alert, PersistenceEngineFactory, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, tabview:true, URIs, setTimeout */
+/*global WorkSpace, alert, PersistenceEngineFactory, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, URIs, setTimeout */
 "use strict";
 
 /* 
@@ -56,12 +56,10 @@ var OpManagerFactory = (function () {
                 workSpace = workSpaces[i];
 
                 this.workSpaceInstances.set(workSpace.id, new WorkSpace(workSpace));
-
-                if (workSpace.active) {
-                    this.activeWorkSpace = this.workSpaceInstances.get(workSpace.id);
-                }
-
             }
+
+            HistoryManager.init();
+            this.activeWorkSpace = this.workSpaceInstances.get(parseInt(HistoryManager.getCurrentState().workspace, 10));
 
             // Total information of the active workspace must be downloaded!
             this.activeWorkSpace.downloadWorkSpaceInfo();
@@ -76,22 +74,6 @@ var OpManagerFactory = (function () {
         // PRIVATE VARIABLES AND FUNCTIONS
         // *********************************
 
-        // Singleton modules
-        //this.contextManagerModule = null;
-        this.persistenceEngine = PersistenceEngineFactory.getInstance();
-
-        this.loadCompleted = false;
-        this.visibleLayer = null;
-
-        // Variables for controlling the collection of wiring and dragboard instances of a user
-        this.workSpaceInstances = new Hash();
-        this.activeWorkSpace = null;
-
-        // workspace menu element
-        this.workspaceMenuElement = $('workspace_menu');
-        this.workspaceListElement = $('workspace_list');
-
-
         // ****************
         // PUBLIC METHODS
         // ****************
@@ -103,14 +85,22 @@ var OpManagerFactory = (function () {
             this.activeWorkSpace.sendBufferedVars();
         };
 
-        OpManager.prototype.changeActiveWorkSpace = function (workSpace) {
+        OpManager.prototype.changeActiveWorkSpace = function (workspace) {
+            var state;
+
             if (this.activeWorkSpace !== null && this.activeWorkSpace !== undefined) {
                 this.activeWorkSpace.unload();
             }
 
-            this.activeWorkSpace = workSpace;
-
+            this.loadCompleted = false;
+            this.activeWorkSpace = workspace;
+            state = {
+                workspace: workspace.getId(),
+                view: "dragboard"
+            };
+            HistoryManager.pushState(state);
             this.activeWorkSpace.downloadWorkSpaceInfo();
+            this.showGadgetsMenuFromWorskspaceMenu();
         };
 
         OpManager.prototype.sendEvent = function (gadget, event, value) {
@@ -146,7 +136,7 @@ var OpManagerFactory = (function () {
                     j += 1;
                 }
             }
-            this.activeWorkSpace.paint();
+            this.activeWorkSpace.init();
         };
 
         OpManager.prototype.continueLoadingGlobalModules = function (module) {
@@ -164,8 +154,6 @@ var OpManagerFactory = (function () {
                     this.showActiveWorkSpace(this.activeWorkSpace);
                     this.visibleLayer = "tabs_container";
                 }
-                //TODO: remove this variable when the MYMWTab Framework is updated
-                tabview = this.activeWorkSpace.tabView;
                 return;
             }
         };
@@ -192,16 +180,13 @@ var OpManagerFactory = (function () {
 
 
         OpManager.prototype.showDragboard = function (iGadgetId) {
-            this.activeWorkSpace.getActiveDragboard().paint(iGadgetId);
+            var dragboard = this.activeWorkSpace.getIgadget(iGadgetId).dragboard;
+            dragboard.paint(iGadgetId);
             this.visibleLayer = "dragboard";
         };
 
         OpManager.prototype.showGadgetsMenu = function () {
-            if (this.visibleLayer === "workspace_menu") {
-                this.workspaceMenuElement.setStyle({
-                    display: "none"
-                });
-            }
+            this.alternatives.showAlternative(this.workspaceTabsAlternative);
             this.visibleLayer = "tabs_container";
             this.activeWorkSpace.show();
         };
@@ -211,10 +196,8 @@ var OpManagerFactory = (function () {
                 setTimeout(function () {
                     OpManagerFactory.getInstance().showGadgetsMenuFromWorskspaceMenu();
                 }, 100);
+                return;
             }
-            this.workspaceMenuElement.setStyle({
-                display: "none"
-            });
             this.showActiveWorkSpace(this.activeWorkSpace);
             this.visibleLayer = "tabs_container";
         };
@@ -228,46 +211,56 @@ var OpManagerFactory = (function () {
         };
 
         OpManager.prototype.showWorkspaceMenu = function () {
-            if (this.visibleLayer === "tabs_container") {
-                this.activeWorkSpace.hide();
-            }
-            this.visibleLayer = "workspace_menu";
-            //show the workspace list and the "add mashup" option
-            this.workspaceMenuElement.setStyle({
-                display: "block"
-            });
-
             //generate the workspace list
             var wkeys = this.workSpaceInstances.keys(),
-                html = "<ul>",
-                i, wname, workspace;
+                i, wname, workspace, workspaceEntry;
+
+            this.workspaceListElement.innerHTML = '';
             for (i = 0; i < wkeys.length; i += 1) {
                 workspace = this.workSpaceInstances.get(wkeys[i]);
                 wname = workspace.getName();
+                workspaceEntry = document.createElement('li');
+                workspaceEntry.textContent = wname;
                 if (workspace === this.activeWorkSpace) {
-                    html += "<li id='" + workspace.getId() + "_item' class='selected'>" + wname + "<small>★</small></li>";
+                    workspaceEntry.setAttribute('class', 'selected');
+                    workspaceEntry.addEventListener('click', this.showGadgetsMenuFromWorskspaceMenu.bind(this), false);
                 } else {
-                    html += "<li id='" + workspace.getId() + "_item'><a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + wkeys[i] + ");'>" + wname + "</a></li>";
+                    workspaceEntry.addEventListener('click', this.changeActiveWorkSpace.bind(this, workspace), false);
                 }
+                this.workspaceListElement.appendChild(workspaceEntry);
             }
-            html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
+            //html += "<li class='bold'><a href='javascript:CatalogueFactory.getInstance().loadCatalogue()' class='arrow'>Add Mobile Mashup</a></li>";
 
-            this.workspaceListElement.update(html);
+            this.alternatives.showAlternative(this.workspaceListAlternative);
+            this.visibleLayer = "workspace_menu";
         };
 
-        OpManager.prototype.selectActiveWorkspace = function (workspaceKey) {
-            var newWorkspace = this.workSpaceInstances.get(workspaceKey),
-                newElement = $(newWorkspace.getId() + "_item"),
-                oldElement = $(this.activeWorkSpace.getId() + "_item");
+        // Singleton modules
+        //this.contextManagerModule = null;
+        this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
-            newElement.update(newWorkspace.getName() + "<small>★</small>");
-            newElement.className = "selected";
-            oldElement.update("<a href='javascript:OpManagerFactory.getInstance().selectActiveWorkspace(" + this.activeWorkSpace.workSpaceGlobalInfo.workspace.id + ");'>" + this.activeWorkSpace.getName() + "</a>");
-            oldElement.className = "";
-            this.loadCompleted = false;
-            this.changeActiveWorkSpace(newWorkspace);
-        };
+        this.loadCompleted = false;
+        this.visibleLayer = null;
 
+        // Variables for controlling the collection of wiring and dragboard instances of a user
+        this.workSpaceInstances = new Hash();
+        this.activeWorkSpace = null;
+
+        // workspace menu element
+        this.workspaceMenuElement = $('workspace_menu');
+        this.workspaceListElement = $('workspace_list');
+        this.alternatives = new StyledElements.StyledAlternatives();
+        this.workspaceListAlternative = this.alternatives.createAlternative();
+        this.workspaceListAlternative.appendChild(this.workspaceMenuElement);
+
+        this.workspaceTabsAlternative = this.alternatives.createAlternative({'class': 'tabs_container'});
+
+        this.igadgetViewAlternative = this.alternatives.createAlternative();
+        this.globalDragboard = new MobileDragboard();
+        this.igadgetViewAlternative.appendChild(this.globalDragboard);
+        this.igadgetViewAlternative.addEventListener('hide', this.sendBufferedVars.bind(this));
+
+        this.alternatives.insertInto(document.body);
     }
 
     // *********************************

@@ -4,7 +4,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
 <head>
-<title>{% trans "EzWeb Platform" %}</title>
+<title>{% trans "Wirecloud Platform" %}</title>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
@@ -204,7 +204,7 @@ h3{
       var browser=navigator.appName;
 
       if (browser.toLowerCase().substring(0, 8) != 'netscape') {
-           alert('Currently EzWeb is only Firefox 2+ compliant! Please, try EzWeb with this browser!');
+           alert('Currently Wirecloud is only Firefox 2+ compliant! Please, try Wirecloud with this browser!');
 	   return false;
       }      
       cancel = false;
@@ -232,7 +232,7 @@ h3{
 	<div id="banner">
 		<div id="logo"></div>
 		<div id="greeting">
-			 <span id="help_section"><a href="http://forge.morfeo-project.org/wiki/index.php/FAQ">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
+			 <span id="help_section"><a href="http://github.com/Wirecloud/wirecloud">FAQ</a></span> | <span id="help_section"><a href="mailto:ezwebplatform-movilforum@lists.morfeo-project.org">{% trans 'Contact us' %}</a></span>
 		</div>
 	
 	</div>
@@ -243,57 +243,6 @@ h3{
 
 
 <div id="content-main">
-	
-	<!-- Training -->
-	<h1 id="warning"> {% trans 'This operation requires login. Please sing-in into the EzWeb platform!' %}</h1>
-	<div id="training" class="training">
-		<h2 id="title"> {% trans 'Thanks to EzWeb you will be able to combine your favorite services to make your life easier' %}</h2>
-		<div id="training-content" class="training-content">
-			<h3>{% trans 'Watch our videos!' %}</h3>
-			<table cellspacing="0">
-				<tr>
-					<td width="110px" align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/catalogo/catalogo.png" alt="Discover"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Discover</b> new gadgets in our catalogue and import them in your workspace.' %}</td>
-				</tr>					
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/dragboard/dragboard.png" alt="Arrange"/>
-						</a> 
-					</td>
-					<td>{% trans 'Arrange gadgets in your workspace <b>at your will</b>' %}.</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/wiring/wiring.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/wiring/wiring.png" alt="Connect"/>
-						</a>
-					</td>
-					<td>{% trans '<b>Wire</b> gadgets together.' %}</td>
-				</tr>										
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/publish/publish.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/publish/publish.png" alt="Publish"/>
-						</a> 
-					</td>
-					<td>{% trans "Share your workspaces/<b>mashups</b> as items in EzWeb's catalogue." %}</td>
-				</tr>
-				<tr>
-					<td align="center">
-						<a href="http://ezweb.tid.es/ezweb/videos/share/share.htm" target="_blank">
-							<img src="http://ezweb.tid.es/ezweb/videos/share/share.png" alt="Embed"/>
-						</a>
-					</td>
-					<td>{% trans 'Share your own workspace as an object you may <b>embed</b> in your favourite environments.' %}</td>
-				</tr>			
-			</table>
-		</div>
-	</div>
 		
 	<!-- Registration -->
 	<div id="right-section">
@@ -317,7 +266,7 @@ h3{
 				    <input type="submit" value="{% trans 'Log in' %}" />
 				  </form>
 			<div id="registration" class="registration">
-				{% trans 'Your first time in EzWeb? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
+				{% trans 'Your first time in Wirecloud? Access with your login in' %} <a href="http://open.movilforum.com/?q=user/register" target="_blank">Open movilforum</a> {%if AUTHENTICATION_SERVER_URL%}{% trans 'or' %} <a href="{{AUTHENTICATION_SERVER_URL}}/register/">{% trans 'register' %}{% endif %}</a>
 			</div>
 		</div>
 		<div id="tips">

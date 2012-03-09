@@ -57,7 +57,7 @@ def typeCode2typeText(typeCode):
 
 
 def get_igadgets_description(included_igadgets):
-    description = "EzWeb Mashup composed of: "
+    description = "Wirecloud Mashup composed of: "
 
     for igadget in included_igadgets:
         description += igadget.gadget.name + ', '
@@ -112,7 +112,7 @@ def build_template_from_workspace(options, workspace, user):
     workspace_tabs = Tab.objects.filter(workspace=workspace).order_by('position')
     included_igadgets = IGadget.objects.filter(tab__workspace=workspace)
 
-    template = etree.Element('Template', schemaLocation="http://morfeo-project.org/2007/Template")
+    template = etree.Element('Template', xmlns="http://morfeo-project.org/2007/Template")
     desc = etree.Element('Catalog.ResourceDescription')
     template.append(desc)
     etree.SubElement(desc, 'Vendor').text = vendor
@@ -233,4 +233,4 @@ def build_template_from_workspace(options, workspace, user):
             variable = out.variable
             etree.SubElement(element, 'Out', igadget=str(variable.igadget.id), name=out.name)
 
-    return etree.tostring(template, method='xml', xml_declaration=True, encoding="UTF-8", pretty_print=True)
+    return template

@@ -30,7 +30,7 @@
 
 #
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import patterns, url
 
 from connectable.views import ConnectableEntry
 from workspace import views
@@ -69,9 +69,8 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<workspace_id>\d+)/link?[/]?)?$',
         views.WorkSpaceLinkerEntry(permitted_methods=('GET', ))),
 
-    # Merge a published workspace to a normal one
-    (r'^/published_workspace/(?P<published_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?$',
-        views.PublishedWorkSpaceMergerEntry(permitted_methods=('GET', ))),
+    # Merge resources from a mashup template into a workspace
+    url(r'^/(?P<to_ws_id>\d+)/merge$', views.MashupMergeService()),
 
     # Publish workspace photo to PublishedWorkspaces
     (r'^/((?P<workspace_id>\d+)/publish?[/]?)?$',
@@ -81,11 +80,12 @@ urlpatterns = patterns('workspace.views',
     (r'^/((?P<from_ws_id>\d+)/merge/(?P<to_ws_id>\d+)?[/]?)?$',
         views.WorkSpaceMergerEntry(permitted_methods=('GET', ))),
 
-    # Add workspaces
-    (r'^/((?P<workspace_id>\d+)/add?[/]?)?$',
-        views.WorkSpaceAdderEntry(permitted_methods=('GET', ))),
+    # Export workspace
+    url(r'^/(?P<workspace_id>\d+)/export$', views.WorkspaceExportService()),
 
-    # Create template for mashup
-    (r'^/templateGenerator/((?P<workspace_id>\d+)[/]?)?$',
-        views.GeneratorURL(permitted_methods=('GET', ))),
+    # Add workspaces
+    url(r'^/import/?$', views.MashupImportService()),
+
+    url(r'^/published/(?P<workspace_id>\d+)/template.xml$',
+        views.MashupTemplate(permitted_methods=('GET', )), name='wirecloud_showcase.mashup_template'),
 )
