@@ -113,8 +113,8 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['lockStatus']['concept'], 'lockStatus')
 
     def test_basic_gadget_creation_from_usdl(self):
-        template_uri = "http://example.com/path/gadget.usdl"
-        template = self.read_template('template1.usdl')
+        template_uri = "http://example.com/path/gadget.rdf"
+        template = self.read_template('template1.rdf')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -130,9 +130,9 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertEqual(data['variables']['pref']['label'], 'Preference label')
         self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
         self.assertEqual(data['variables']['pref']['aspect'], 'PREF')
-        self.assertEqual(data['variables']['event']['label'], 'Event label')
+        self.assertEqual(data['variables']['event']['label'], 'event')
         self.assertEqual(data['variables']['event']['aspect'], 'EVEN')
-        self.assertEqual(data['variables']['slot']['label'], 'Slot label')
+        self.assertEqual(data['variables']['slot']['label'], 'slot')
         self.assertEqual(data['variables']['slot']['aspect'], 'SLOT')
 
         self.assertEqual(data['variables']['language']['aspect'], 'ECTX')
@@ -147,6 +147,17 @@ class ShowcaseTestCase(LocalizedTestCase):
     def test_gadget_deletion(self):
         template_uri = "http://example.com/path/gadget.xml"
         template = self.read_template('template1.xml')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        create_gadget_from_template(template_uri, self.user)
+
+        deleteGadget(self.user, 'test', 'Morfeo', '0.1')
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
+
+    def test_gadget_deletion_usdl(self):
+        template_uri = "http://example.com/path/gadget.rdf"
+        template = self.read_template('template1.rdf')
 
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
@@ -176,6 +187,29 @@ class ShowcaseTestCase(LocalizedTestCase):
 
         gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
         self.assertEqual(gadget, gadget2)
+
+    def test_gadget_creation_from_catalogue_usdl(self):
+        template_uri = "http://example.com/path/gadget.xml"
+        template = self.read_template('template1.rdf')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+        gadget = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+
+        self.changeLanguage('en')
+        data = get_gadget_data(gadget)
+        self.assertEqual(data['name'], 'test')
+        self.assertEqual(data['version'], '0.1')
+
+        self.assertEqual(data['variables']['prop']['label'], 'Property label')
+        self.assertEqual(data['variables']['pref']['label'], 'Preference label')
+        self.assertEqual(data['variables']['pref']['value_options'], [['1', 'Option name']])
+        self.assertEqual(data['variables']['event']['label'], 'event')
+        self.assertEqual(data['variables']['slot']['label'], 'slot')
+
+        gadget2 = get_or_add_gadget_from_catalogue('Morfeo', 'test', '0.1', self.user)
+        self.assertEqual(gadget, gadget2)
+
 
     def test_gadget_template_with_missing_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
@@ -253,8 +287,30 @@ class ShowcaseTestCase(LocalizedTestCase):
         self.assertRaises(Exception, create_gadget_from_template, template_uri, self.user)
         self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Example', name='Test', version='0.1')
 
+    def test_gadgets_with_invalid_format_usdl(self):
+        template_uri = "http://example.com/path/gadget.rdf"
+        http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
+
+
+        template = self.read_template('template5.rdf')
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
+        template = self.read_template('template6.rdf')
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
     def test_basic_mashup(self):
         template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')
+        workspace = create_published_workspace_from_template(template, self.user)
+
+        self.assertEqual(workspace.vendor, 'EzWeb Test Suite')
+        self.assertEqual(workspace.name, 'Test Workspace')
+        self.assertEqual(workspace.version, '1')
+        self.assertEqual(workspace.creator, self.user)
+
+    def test_basic_mashup_usdl(self):
+        template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.rdf')
         workspace = create_published_workspace_from_template(template, self.user)
 
         self.assertEqual(workspace.vendor, 'EzWeb Test Suite')

@@ -1,0 +1,56 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+	 xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	 xmlns:dcterms="http://purl.org/dc/terms/"
+	 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	 xmlns:wire="http://wirecloud/gadget#"
+	 xmlns:wire-m="http://wirecloud/mashup#"
+	 xmlns:vCard = "http://www.w3.org/2001/vcard-rdf/3.0#">
+
+	<wire-m:Mashup rdf:about="http://wirecloud.com/test">
+		<dcterms:title>Test Workspace</dcterms:title>
+		<dcterms:description>This template defines an empty workspace</dcterms:description>
+		<dcterms:creator rdf:resource="http://creatoruri/"/>
+		<wire:version>1</wire:version>
+		<wire:hasImageUri rdf:resource="/ezweb/images/headshot_mashup.jpg"/>
+
+		<usdl-core:exposes rdf:resource="http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options"/>
+		<usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+		<vCard:email>a@b.com</vCard:email>
+
+		<wire-m:hasTab>
+		</wire-m:hasTab>
+
+		<wire:hasMashupWiring>
+			<wire:PlatformWiring rdf:ID="wiring">
+				<wire-m:hasChannel>
+					<wire-m:Channel rdf:ID="CH-1">
+						<dcterms:title>channel</dcterms:title>
+					</wire-m:Channel>
+				</wire-m:hasChannel>
+			</wire:PlatformWiring>
+		</wire:hasMashupWiring>
+
+	</wire-m:Mashup>
+
+
+	<foaf:Person rdf:about="http://creatoruri/">
+		<foaf:name>test</foaf:name>
+	</foaf:Person>
+
+	<foaf:Organization rdf:about="http://vendoruri/">
+		<foaf:name>EzWeb Test Suite</foaf:name>
+	</foaf:Organization>
+
+	<usdl-core:Resource rdf:about="http://trac.morfeo-project.org/trac/ezwebplatform/wiki/options">
+		<dcterms:title>WikiURI</dcterms:title>
+	</usdl-core:Resource>
+
+	<foaf:Image rdf:about="/ezweb/images/headshot_mashup.jpg">
+		<dcterms:title>ImageURI</dcterms:title>
+	</foaf:Image>
+
+</rdf:RDF>

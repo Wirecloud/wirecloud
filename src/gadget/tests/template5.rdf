@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:usdl-core="http://www.linked-usdl.org/ns/usdl-core#"
+	 xmlns:foaf="http://xmlns.com/foaf/0.1/"
+	 xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	 xmlns:dcterms="http://purl.org/dc/terms/"
+	 xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	 xmlns:wire="http://wirecloud/gadget#"
+	 xmlns:vCard = "http://www.w3.org/2001/vcard-rdf/3.0#">
+
+	<wire:Gadget rdf:about="http://wirecloud.com/test">
+		<dcterms:title>test</dcterms:title>
+		<dcterms:description>Test Gadget description</dcterms:description>
+		<dcterms:creator rdf:resource="http://creatoruri/"/>
+		<wire:version>0.1</wire:version>
+		<wire:hasImageUri rdf:resource="images/catalogue.png"/>
+		<wire:hasiPhoneImageUri rdf:resource="images/catalogue_iphone.png"/>
+		<usdl-core:exposes rdf:resource="test.html"/>
+		<usdl-core:exposes rdf:resource="doc/index.html"/>
+		<usdl-core:hasProvider rdf:resource="http://vendoruri/"/>
+
+		<vCard:email>test@example.com</vCard:email>
+
+		<wire:hasPlatformPreference>
+			<wire:PlatformPreference rdf:ID="preference_1">
+			</wire:PlatformPreference>
+		</wire:hasPlatformPreference>
+
+		<wire:hasPlatformStateProperty>
+			<wire:PlatformStateProperty rdf:ID="property_1">
+			</wire:PlatformStateProperty>
+		</wire:hasPlatformStateProperty>
+
+		<wire:hasPlatformWiring>
+			<wire:PlatformWiring rdf:ID="wiring">
+			</wire:PlatformWiring>
+		</wire:hasPlatformWiring>
+
+		<wire:hasPlatformRendering>
+			<wire:PlatformRendering>
+				<wire:renderingWidth>24</wire:renderingWidth>
+				<wire:renderingHeight>10</wire:renderingHeight>
+			</wire:PlatformRendering>
+		</wire:hasPlatformRendering>
+
+		<wire:hasContext>
+			<wire:Context>
+			</wire:Context>
+		</wire:hasContext>
+
+	</wire:Gadget>
+
+
+	<foaf:Person rdf:about="http://creatoruri/">
+		<foaf:name>admin</foaf:name>
+	</foaf:Person>
+
+	<foaf:Organization rdf:about="http://vendoruri/">
+		<foaf:name>Morfeo/</foaf:name>
+	</foaf:Organization>
+
+	<usdl-core:Resource rdf:about="test.html">
+		<dcterms:title>code</dcterms:title>
+	</usdl-core:Resource>
+
+	<usdl-core:Resource rdf:about="doc/index.html">
+		<dcterms:title>WikiURI</dcterms:title>
+	</usdl-core:Resource>
+
+	<foaf:Image rdf:about="images/catalogue.png">
+		<dcterms:title>ImageURI</dcterms:title>
+	</foaf:Image>
+
+	<foaf:Image rdf:about="images/catalogue_iphone.png">
+		<dcterms:title>iPhoneImageURI</dcterms:title>
+	</foaf:Image>
+</rdf:RDF>
