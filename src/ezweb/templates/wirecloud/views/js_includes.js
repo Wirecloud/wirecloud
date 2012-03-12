@@ -49,7 +49,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/wiringGUI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/connectableInterface.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/wiring/jsonFilter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/user_commands.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/CatalogueResource.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourcePainter.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/catalogue/ResourceDetailsPainter.js"></script>

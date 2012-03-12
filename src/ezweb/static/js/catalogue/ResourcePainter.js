@@ -113,18 +113,10 @@ ResourcePainter.prototype.paint = function (command_data) {
         ///////////////////////////////
 
         // "Instantiate"
-        this.create_simple_command(resource_element, '.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
+        this.create_simple_command(resource_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
 
         // "Show details"
-        click_for_details_list = resource_element.getElementsByClassName('click_for_details');
-        if (click_for_details_list.length === 0) {
-            alert('Problem parsing resource template!');
-        }
-        for (j = 0; j < click_for_details_list.length; j += 1) {
-            EzWebExt.addEventListener(click_for_details_list[j], 'click', function () {
-                LayoutManagerFactory.getInstance().viewsByName['catalogue'].showDetails(this);
-            }.bind(resource));
-        }
+        this.create_simple_command(resource_element, '.click_for_details', 'click', this.catalogue.createUserCommand('showDetails', resource));
 
         // Full tag list
         tag_links_list = resource_element.getElementsByClassName('tag_links');

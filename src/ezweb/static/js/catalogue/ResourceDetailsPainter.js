@@ -85,10 +85,10 @@ var ResourceDetailsPainter = function (catalogue, details_structure_element, dom
         ///////////////////////////////
 
         // Go back to list of resources
-        this.create_simple_command('.back_to_resource_list', 'click', UserInterfaceHandlers.goback.bind());
+        this.create_simple_command(this.dom_element, '.back_to_resource_list', 'click', this.catalogue.createUserCommand('home'));
 
         // "Instantiate"
-        this.create_simple_command('.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
+        this.create_simple_command(this.dom_element, '.instanciate_button', 'click', this.catalogue.createUserCommand('instanciate', resource));
 
         /*
         // Delete resource

@@ -128,11 +128,6 @@ CatalogueView.prototype.instanciate = function (resource) {
         resource.getVersion().text, resource.getUriTemplate());
 };
 
-CatalogueView.prototype.showDetails = function (resource) {
-    this.viewsByName.details.paint(resource);
-    this.alternatives.showAlternative(this.viewsByName.details);
-};
-
 CatalogueView.prototype.getBreadcrum = function () {
     return [
         {
@@ -148,4 +143,37 @@ CatalogueView.prototype.getSubMenuItems = function () {
             'callback': alert.bind(null, 'hola')
         }
     ];
+};
+
+CatalogueView.prototype.home = function () {
+    this.alternatives.showAlternative(this.viewsByName.search);
+};
+
+CatalogueView.prototype.createUserCommand = function(command) {
+    return this.ui_commands[command].apply(this, Array.prototype.slice.call(arguments, 1));
+};
+
+CatalogueView.prototype.ui_commands = {};
+
+CatalogueView.prototype.ui_commands.home = function () {
+    return function (e) {
+        Event.stop(e);
+        this.alternatives.showAlternative(this.viewsByName.search);
+    }.bind(this)
+};
+
+CatalogueView.prototype.ui_commands.instanciate = function (resource) {
+    return function (e) {
+        Event.stop(e);
+        this.instanciate(resource);
+        LayoutManagerFactory.getInstance().changeCurrentView('workspace');
+    }.bind(this)
+};
+
+CatalogueView.prototype.ui_commands.showDetails = function (resource) {
+    return function (e) {
+        Event.stop(e);
+        this.viewsByName.details.paint(resource);
+        this.alternatives.showAlternative(this.viewsByName.details);
+    }.bind(this)
 };
