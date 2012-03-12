@@ -71,7 +71,7 @@ body {
     background: #E8A150;
 }
 
-#wirecloud_header > .menu > .catalogue.selected {
+#wirecloud_header > .menu > .marketplace.selected {
     background: #990000;
 }
 
@@ -119,12 +119,12 @@ body {
     background: #C6EBBE;
 }
 
-#wirecloud_header > .submenu.catalogue > .mark {
+#wirecloud_header > .submenu.marketplace > .mark {
     background-image: url(../images/icons-sprite.png);
     background-position: -24px -504px;
 }
 
-#wirecloud_header > .submenu.catalogue {
+#wirecloud_header > .submenu.marketplace {
     background: #FF6666;
 }
 

@@ -42,7 +42,7 @@ var CatalogueView = function (id, options) {
 };
 CatalogueView.prototype = new StyledElements.Alternative();
 
-CatalogueView.prototype.view_name = 'catalogue';
+CatalogueView.prototype.view_name = 'marketplace';
 
 CatalogueView.prototype._onShow = function () {
 };

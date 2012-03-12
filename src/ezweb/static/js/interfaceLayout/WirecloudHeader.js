@@ -43,9 +43,9 @@ WirecloudHeader.prototype._initMenuBar = function () {
     this.menues = {
         'workspace': {label: gettext('Editor')},
         'wiring': {label: gettext('Wiring')},
-        'catalogue': {label: gettext('Marketplace')},
+        'marketplace': {label: gettext('Marketplace')},
     };
-    menu_order = ['workspace', 'wiring', 'catalogue'];
+    menu_order = ['workspace', 'wiring', 'marketplace'];
 
     for (i = 0; i < menu_order.length; i += 1) {
         menu = this.menues[menu_order[i]];
