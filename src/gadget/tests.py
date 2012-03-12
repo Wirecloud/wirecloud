@@ -212,6 +212,15 @@ class ShowcaseTestCase(LocalizedTestCase):
         http_utils.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
 
+    def test_gadget_with_unmet_requirements(self):
+
+        template_uri = "http://example.com/path/gadget.xml"
+        template = self.read_template('template8.xml')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(Exception, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Example', name='Test', version='0.1')
+
     def test_basic_mashup(self):
         template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')
         workspace = create_published_workspace_from_template(template, self.user)

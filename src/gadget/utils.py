@@ -44,13 +44,21 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
-from ezweb.plugins import get_gadget_api_extensions
+from ezweb.plugins import get_active_features, get_gadget_api_extensions
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)
 
+
+def check_requirements(resource):
+
+    active_features = get_active_features()
+
+    for requirement in resource['requirements']:
+        if requirement['feature'] not in active_features:
+            raise Exception()
 
 def create_gadget_from_template(template, user, request=None, base=None):
 
@@ -68,6 +76,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         raise Exception()
 
     gadget_info = parser.get_resource_info()
+    check_requirements(gadget_info)
 
     gadget = Gadget()
 

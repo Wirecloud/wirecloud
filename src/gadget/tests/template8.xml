@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><Template schemaLocation="http://morfeo-project.org/2007/Template">
   <!-- Gadget Meta-Info -->
   <Catalog.ResourceDescription>
-    <Vendor>Morfeo</Vendor>
+    <Vendor>Example</Vendor>
     <Name>test</Name>
     <Version>0.1</Version>
     <Author>admin</Author>
@@ -11,7 +11,7 @@
     <iPhoneImageURI>images/catalogue_iphone.png</iPhoneImageURI>
     <WikiURI>doc/index.html</WikiURI>
 
-    <Require feature="Wirecloud" version="0.3.0"/>
+    <Require feature="inexistan-feature" version="0.1"/>
   </Catalog.ResourceDescription>
 
   <Platform.Preferences>
