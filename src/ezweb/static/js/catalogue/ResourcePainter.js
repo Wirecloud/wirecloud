@@ -31,8 +31,8 @@ var HTML_Painter = function () {
     this.dom_element = null;
 };
 
-HTML_Painter.prototype.create_simple_command = function (selector, _event, handler, required) {
-    var i, elements = this.dom_element.getElementsBySelector(selector);
+HTML_Painter.prototype.create_simple_command = function (element, selector, _event, handler, required) {
+    var i, elements = element.getElementsBySelector(selector);
 
     if (required && elements.length < 1) {
         throw new Error();
@@ -113,7 +113,7 @@ ResourcePainter.prototype.paint = function (command_data) {
         ///////////////////////////////
 
         // "Instantiate"
-        this.create_simple_command('.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
+        this.create_simple_command(resource_element, '.instanciate_button', 'click', UserInterfaceHandlers.instanciate(this.catalogue, resource));
 
         // "Show details"
         click_for_details_list = resource_element.getElementsByClassName('click_for_details');
