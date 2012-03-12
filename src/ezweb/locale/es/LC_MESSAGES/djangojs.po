@@ -1382,7 +1382,7 @@ msgstr ""
 
 #: ezweb/static/js/preferencesManager/PreferencesManager.js:117
 msgid "Language"
-msgstr "Lenguaje"
+msgstr "Idioma"
 
 #: ezweb/static/js/preferencesManager/PreferencesManager.js:120
 msgid "Default setting"
