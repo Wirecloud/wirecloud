@@ -67,17 +67,12 @@
     background: white;
 }
 
-#catalogue .resource_list .resource .resource_name,  #catalogue .resource_list .resource_details .resource_name{
-	font-weight: bold;
-}
-
-#catalogue .resource_list .resource .image {
-    border-color: #BBBBBB;
-    background: white;
+#catalogue .resource .resource_name {
+    font-weight: bold;
 }
 
 #catalogue .bold {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 #catalogue .link {

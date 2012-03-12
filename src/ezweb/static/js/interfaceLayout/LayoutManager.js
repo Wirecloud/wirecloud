@@ -55,7 +55,7 @@ var LayoutManagerFactory = function () {
         this.viewsByName = {
             'workspace': this.alternatives.createAlternative({'alternative_constructor': WorkspaceView}),
             'wiring': this.alternatives.createAlternative({'alternative_constructor': WiringInterface}),
-            'marketplace': this.alternatives.createAlternative({'alternative_constructor': CatalogueView}),
+            'marketplace': this.alternatives.createAlternative({'alternative_constructor': MarketplaceView}),
             'logs': this.alternatives.createAlternative()
         };
         this.header._notifyViewChange(this.viewsByName['workspace']);

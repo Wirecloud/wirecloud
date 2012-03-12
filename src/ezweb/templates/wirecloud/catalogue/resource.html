@@ -1,8 +1,10 @@
 {% load i18n %}
 <div class="header_resource"></div>
 <div class="left_column_resource">
-    <div><img src="#{image_url}" class="image click_for_details"></div>
-    <button class="instanciate_button #{type}">#{button_text}</button>
+    <img src="#{image_url}" class="image click_for_details">
+    <div class="buttons">
+        <button class="instanciate_button #{type}">#{button_text}</button>
+    </div>
 </div>
 <div class="right_column_resource">
     <div>

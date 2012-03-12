@@ -262,29 +262,33 @@ Resource
 ///////////
 */
 
-#catalogue .resource_name {
-  padding-bottom: 8px;
-  max-width: 350px;
-  font-size: 20px;
-}
-
-#catalogue .resource .resource_name, #catalogue .resource_list .resource .image {
+#catalogue .resource_list > .resource .resource_name {
+    padding-bottom: 8px;
+    max-width: 350px;
+    font-size: 20px;
     cursor: pointer;
 }
 
-#catalogue .resource.detailed .resource_name, #catalogue .resource.detailed .image {
-    cursor: default;
+#catalogue .resource h2 {
+    display: inline-block;
+}
+
+#catalogue .resource h3 {
+    margin: 0.5ex 0 1ex 0;
 }
 
 #catalogue .resource .image {
     width: 170px;
     height: 80px;
     border: 1px solid;
+    border-color: #BBBBBB;
+    background: white;
+    display: block;
 }
 
-#catalogue .resource .popularity {
-  float: left;
-  margin-left: 15px;
+.resource .popularity {
+    display: inline-block;
+    margin-left: 15px;
 }
 
 #catalogue .resource_list .resource_details .voting_label {
@@ -292,40 +296,40 @@ Resource
   margin: 5px;
 }
 
-#catalogue .popularity .off {
-  -moz-background-clip:border;
-  -moz-background-inline-policy:continuous;
-  -moz-background-origin:padding;
-  background-image: url(../images/icons-sprite.png);
-  background-position: 0px -168px;
-  float:left;
-  height:15px;
-  width:15px;
-  cursor: default;
+.resource .popularity > .off {
+    -moz-background-clip: border;
+    -moz-background-inline-policy: continuous;
+    -moz-background-origin: padding;
+    background-image: url(../images/icons-sprite.png);
+    background-position: 0px -168px;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    cursor: default;
 }
 
-#catalogue .popularity .on {
-  -moz-background-clip:border;
-  -moz-background-inline-policy:continuous;
-  -moz-background-origin:padding;
-  float:left;
-  height:15px;
-  width:15px;
-  cursor: default;
-  background-image: url(../images/icons-sprite.png);
-  background-position: -24px -168px;
+.resource .popularity > .on {
+    -moz-background-clip: border;
+    -moz-background-inline-policy: continuous;
+    -moz-background-origin: padding;
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    cursor: default;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -168px;
 }
 
-#catalogue .resource_list .popularity .md {
-  -moz-background-clip:border;
-  -moz-background-inline-policy:continuous;
-  -moz-background-origin:padding;
-  float:left;
-  height:15px;
-  width:15px;
-  cursor: default;
-  background-image: url(../images/icons-sprite.png);
-  background-position: -24px -144px;
+.resource .popularity > .md {
+    -moz-background-clip:border;
+    -moz-background-inline-policy:continuous;
+    -moz-background-origin:padding;
+    display: inline-block;
+    height: 15px;
+    width:15px;
+    cursor: default;
+    background-image: url(../images/icons-sprite.png);
+    background-position: -24px -144px;
 }
 
 #catalogue .padding_left {
@@ -369,6 +373,10 @@ Resource
   float: left;
   width: 25%;
   text-align: center;
+}
+
+#catalogue .resource > .left_column_resource > img {
+    display: inline;
 }
 
 #catalogue .resource .right_column_resource {
