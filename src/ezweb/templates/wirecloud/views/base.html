@@ -1,4 +1,5 @@
 {% load compress i18n %}
+{% load wirecloud %}
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -383,6 +384,7 @@ var policy_lists = {{ policies|safe|default:"null" }};
 {% compress js %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 {% include "wirecloud/views/js_includes.js" %}
+{% extra_javascripts "index" %}
 {% endcompress %}
 
 {% block extra_scripts %}{% endblock %}
