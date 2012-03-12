@@ -38,6 +38,22 @@ def get_plugins():
         plugins = []
         features = {}
 
+        def add_plugin(module, plugin):
+
+            plugin_features = plugin.get_features()
+            for feature_name in plugin_features:
+                if feature_name in features:
+                    raise ImproperlyConfigured('Feature already declared by wirecloud plugin %s' % features[feature_name]['module'])
+
+                features[feature_name] = {
+                    'module': module,
+                    'version': plugin_features[feature_name],
+                }
+
+            plugins.append(plugin)
+
+        add_plugin('wirecloud.WirecloudCorePlugin', WirecloudCorePlugin())
+
         for path in modules:
             i = path.rfind('.')
             module, attr = path[:i], path[i + 1:]
@@ -51,17 +67,7 @@ def get_plugins():
             except AttributeError:
                 raise ImproperlyConfigured('Module "%s" does not define a "%s" instanciable Wirecloud plugin' % (module, attr))
 
-            plugin_features = plugin.get_features()
-            for feature_name in plugin_features:
-                if feature_name in features:
-                    raise ImproperlyConfigured('Feature already declared by wirecloud plugin %s' % features[feature_name]['module'])
-
-                features[feature_name] = {
-                    'module': module,
-                    'version': plugin_features[feature_name],
-                }
-
-            plugins.append(plugin)
+            add_plugin(module, plugin)
 
         _wirecloud_plugins = tuple(plugins)
         _wirecloud_features = features
@@ -115,8 +121,15 @@ class WirecloudPlugin(object):
     def get_features(self):
         return self.features
 
-    def get_scripts(self):
+    def get_scripts(self, views):
         return ()
 
-    def get_gadget_api_extensions(self):
+    def get_gadget_api_extensions(self, views):
         return ()
+
+
+class WirecloudCorePlugin(WirecloudPlugin):
+
+    features = {
+        'Wirecloud': '0.3.0',
+    }
