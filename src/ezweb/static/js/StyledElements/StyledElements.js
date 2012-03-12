@@ -2670,9 +2670,14 @@ StyledElements.StyledAlternatives.prototype.createAlternative = function(options
     return alt;
 }
 
-StyledElements.StyledAlternatives.prototype.clear = function() {
+StyledElements.StyledAlternatives.prototype.clear = function () {
     this.alternatives = [];
+    this.visibleAlt = null;
     this.contentArea.innerHTML = '';
+};
+
+StyledElements.StyledAlternatives.prototype.getCurrentAlternative = function () {
+    return this.visibleAlt;
 };
 
 /**
