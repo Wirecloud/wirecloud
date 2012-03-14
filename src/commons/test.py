@@ -13,9 +13,10 @@ except:
 from django.utils.importlib import import_module
 from django.test import TestCase
 from django.utils import translation
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class LocalizedTestCase(TestCase):
@@ -42,15 +43,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
     def wait_wirecloud_ready(self):
 
-        for i in range(60):
-            try:
-                if self.is_element_present(By.XPATH, r'//*[@id="loading-window" and @class="fadding"]'):
-                    break
-            except:
-                pass
-            time.sleep(1)
-        else:
-            self.fail("time out")
+        WebDriverWait(self.driver, 60).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and @class="fadding"]'))
 
     def setUp(self):
         super(WirecloudSeleniumTestCase, self).setUp()
@@ -65,7 +58,6 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver = getattr(module, klass_name)(**webdriver_args)
 
         # initialize
-        self.driver.implicitly_wait(30)
         self.wgt_dir = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
 
     def login(self, username='admin', password='admin'):
@@ -77,24 +69,43 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         self.driver.find_element_by_xpath('//*[@id="submit"]').click()
         self.wait_wirecloud_ready()
 
+    def get_current_view(self):
+
+        current_view_menu_entry = self.driver.find_element_by_css_selector('#wirecloud_header .menu > .selected')
+        return current_view_menu_entry.get_attribute('class').split(' ')[0]
+
     def change_main_view(self, view_name):
-        self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
+
+        if self.get_current_view() != view_name:
+            self.driver.find_element_by_css_selector("#wirecloud_header .menu ." + view_name).click()
+
+    def click_submenu_item(self, item_text):
+        submenu_items = self.driver.find_elements_by_css_selector('#wirecloud_header .submenu span')
+        for submenu_item in submenu_items:
+            if submenu_item.text == item_text:
+                submenu_item.click()
+                return
 
     def add_wgt_gadget_to_catalogue(self, wgt_file, gadget_name):
-        self.driver.find_element_by_xpath('//*[@id="developers_button_toolbar"]').click()
 
-        self.driver.find_element_by_xpath('//*[@id="gadget_uri"]').send_keys(self.wgt_dir + os.sep + wgt_file)
-        self.driver.find_element_by_xpath('//*[@id="gadget_link"]').click()
+        self.change_main_view('marketplace')
+        self.click_submenu_item('publish')
+        time.sleep(1)
+
+        self.driver.find_element_by_id('wgt_file').send_keys(self.wgt_dir + os.sep + wgt_file)
+        self.driver.find_element_by_id('upload_wgt_button').click()
 
         self.wait_wirecloud_ready()
         time.sleep(2)
 
+        self.search_gadget(gadget_name)
         gadget = self.search_in_catalogue_results(gadget_name)
         self.assertIsNotNone(gadget)
         return gadget
 
     def search_gadget(self, keyword):
         search_input = self.driver.find_element_by_css_selector('#simple_search input')
+        search_input.clear()
         search_input.send_keys(keyword + Keys.ENTER)
 
         # TODO
@@ -116,7 +127,7 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         # TODO
         time.sleep(2)
 
-    def add_gadget_to_mashup(self, gadget_name):
+    def add_widget_to_mashup(self, gadget_name):
 
         self.change_main_view('marketplace')
         self.search_gadget(gadget_name)
@@ -133,3 +144,33 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     def tearDown(self):
         self.driver.quit()
         super(WirecloudSeleniumTestCase, self).tearDown()
+
+
+browsers = getattr(settings, 'WIRECLOUD_SELENIUM_BROWSER_COMMANDS', {
+    'Firefox': {
+        'CLASS': 'selenium.webdriver.Firefox',
+    },
+    'GoogleChrome': {
+        'CLASS': 'selenium.webdriver.Chrome',
+    },
+})
+
+def build_selenium_test_cases(classes, namespace):
+    for class_name in classes:
+        for browser_name in browsers:
+            browser = browsers[browser_name]
+
+            module_name, klass_name = class_name.rsplit('.', 1)
+            tests_class_name = browser_name + klass_name
+            module = import_module(module_name)
+            klass_instance = getattr(module, klass_name)
+
+            namespace[tests_class_name] = type(
+                tests_class_name,
+                (klass_instance,),
+                {
+                    '__test__': True,
+                    '_webdriver_class': browser['CLASS'],
+                    '_webdriver_args': browser.get('ARGS', None),
+                }
+            )
