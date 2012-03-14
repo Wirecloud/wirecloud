@@ -153,6 +153,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         self.assertRaises(TemplateParseException, get_or_add_gadget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
 
     def test_gadget_template_with_notused_translation_indexes(self):
         template_uri = "http://example.com/path/gadget.xml"
@@ -161,6 +162,7 @@ class ShowcaseTestCase(LocalizedTestCase):
         http_utils.download_http_content.set_response(template_uri, template)
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
         self.assertRaises(TemplateParseException, get_or_add_gadget_from_catalogue, 'Morfeo', 'test', '0.1', self.user)
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Morfeo', name='test', version='0.1')
 
     def testTranslations(self):
         gadget = Gadget.objects.get(pk=1)
@@ -199,7 +201,6 @@ class ShowcaseTestCase(LocalizedTestCase):
         template_uri = "http://example.com/path/gadget.xml"
         http_utils.download_http_content.set_response('http://example.com/path/test.html', BASIC_HTML_GADGET_CODE)
 
-
         template = self.read_template('template5.xml')
         http_utils.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
@@ -211,6 +212,15 @@ class ShowcaseTestCase(LocalizedTestCase):
         template = self.read_template('template7.xml')
         http_utils.download_http_content.set_response(template_uri, template)
         self.assertRaises(TemplateParseException, create_gadget_from_template, template_uri, self.user)
+
+    def test_gadget_with_unmet_requirements(self):
+
+        template_uri = "http://example.com/path/gadget.xml"
+        template = self.read_template('template8.xml')
+
+        http_utils.download_http_content.set_response(template_uri, template)
+        self.assertRaises(Exception, create_gadget_from_template, template_uri, self.user)
+        self.assertRaises(Gadget.DoesNotExist, Gadget.objects.get, vendor='Example', name='Test', version='0.1')
 
     def test_basic_mashup(self):
         template = self.read_template('..', '..', 'workspace', 'tests', 'wt1.xml')

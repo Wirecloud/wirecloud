@@ -44,12 +44,21 @@ from commons.http_utils import download_http_content
 from commons.template import TemplateParser
 from commons.wgt import WgtDeployer, WgtFile
 from gadget.models import ContextOption, VariableDef, UserPrefOption, Gadget, XHTML
+from ezweb.plugins import get_active_features, get_gadget_api_extensions
 from translator.models import Translation
 from workspace.models import WorkSpace, UserWorkSpace
 
 
 wgt_deployer = WgtDeployer(settings.GADGETS_DEPLOYMENT_DIR)
 
+
+def check_requirements(resource):
+
+    active_features = get_active_features()
+
+    for requirement in resource['requirements']:
+        if requirement['feature'] not in active_features:
+            raise Exception()
 
 def create_gadget_from_template(template, user, request=None, base=None):
 
@@ -67,6 +76,7 @@ def create_gadget_from_template(template, user, request=None, base=None):
         raise Exception()
 
     gadget_info = parser.get_resource_info()
+    check_requirements(gadget_info)
 
     gadget = Gadget()
 
@@ -359,9 +369,18 @@ def fix_gadget_code(xhtml_code, base_url, request):
     # Fix scripts
     scripts = xpath(xmltree, '/xhtml:html//xhtml:script', xmlns)
     for script in scripts:
+
         if 'src' in script.attrib:
             script.text = ''
-        if script.get('src', '').startswith('/ezweb/'):
+
+        if script.get('src', '') == '/ezweb/js/EzWebAPI/EzWebAPI.js':
+            script.set('src', rootURL + script.get('src'))
+
+            files = get_gadget_api_extensions('index')
+            files.reverse()
+            for file in files:
+                script.addnext(etree.Element('script', src=rootURL + settings.STATIC_URL + file))
+        elif script.get('src', '').startswith('/ezweb/'):
             script.set('src', rootURL + script.get('src'))
 
     # return modified code

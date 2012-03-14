@@ -62,6 +62,7 @@ GADGET_CONTEXT_XPATH = 't:GadgetContext'
 PLATFORM_CONTEXT_XPATH = 't:Context'
 PLATFORM_RENDERING_XPATH = '/t:Template/t:Platform.Rendering'
 MENUCOLOR_XPATH = '/t:Template/t:MenuColor'
+REQUIRE_XPATH = 't:Require'
 
 INCLUDED_RESOURCES_XPATH = 't:IncludedResources'
 TAB_XPATH = 't:Tab'
@@ -109,7 +110,6 @@ class TemplateParser(object):
         if xmlns is not None and xmlns != WIRECLOUD_TEMPLATE_NS:
             raise TemplateParseException('The template is not a valid wirecloud template')
         self._uses_namespace = xmlns is not None
-
 
         self._resource_description = self._xpath(RESOURCE_DESCRIPTION_XPATH, self._doc)[0]
         self._parse_basic_info()
@@ -189,6 +189,15 @@ class TemplateParser(object):
         self._info['organization'] = self._get_field(ORGANIZATION_XPATH, self._resource_description, required=False)
         self._get_url_field('image_uri', IMAGE_URI_XPATH, self._resource_description)
         self._get_url_field('doc_uri', DOC_URI_XPATH, self._resource_description, required=False)
+        self._parse_requirements()
+
+    def _parse_requirements(self):
+        self._info['requirements'] = []
+        for requirement in self._xpath(REQUIRE_XPATH, self._resource_description):
+            self._info['requirements'].append({
+                'feature': requirement.get('feature'),
+                'version': requirement.get('version'),
+            })
 
     def _parse_wiring_info(self, parse_channels=False):
         self._info['slots'] = []
@@ -414,7 +423,6 @@ class TemplateParser(object):
         self._info['tabs'] = tabs
 
         self._parse_wiring_info(parse_channels=True)
-        wiring_element = self._xpath(WIRING_XPATH, self._doc)[0]
 
     def _parse_translation_catalogue(self):
         self._info['translations'] = {}
