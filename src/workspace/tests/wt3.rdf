@@ -177,13 +177,13 @@
 						<wire-m:hasIn>
 							<wire-m:In>
 								<dcterms:title>event</dcterms:title>
-								<wire-m:IniGadget rdf:resource="iG-1"/>
+								<wire-m:iniGadget rdf:resource="iG-1"/>
 							</wire-m:In>
 						</wire-m:hasIn>
 						<wire-m:hasOut>
 							<wire-m:Out>
 								<dcterms:title>slot</dcterms:title>
-								<wire-m:OutiGadget rdf:resource="iG-2"/>
+								<wire-m:outiGadget rdf:resource="iG-2"/>
 							</wire-m:Out>
 						</wire-m:hasOut>
 					</wire-m:Channel>

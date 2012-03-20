@@ -81,7 +81,7 @@ TRANSLATIONS_XPATH = '/t:Template/t:Translations'
 TRANSLATION_XPATH = 't:Translation'
 MSG_XPATH = 't:msg'
 
-# Namespaces used for rdflib
+# Namespaces used by rdflib
 WIRE=rdflib.Namespace("http://wirecloud/gadget#")
 WIRE_M=rdflib.Namespace("http://wirecloud/mashup#")
 FOAF=rdflib.Namespace("http://xmlns.com/foaf/0.1/")
@@ -115,12 +115,16 @@ class USDLTemplateParser(object):
 
         self._parse_basic_info()
 
-    def _get_field(self,namespace,element,subject,required=True):
+    def _get_field(self,namespace,element,subject,required=True,id_=False):
 
         fields = self._graph.objects(subject,namespace[element])
         for field_element in fields:
-            result =str(field_element)
-            break
+            if not id_:
+                result =str(field_element)
+                break
+            else:
+                result=field_element
+                break
         else:
             if required:
                 msg = _('missing required field: %(field)s')
@@ -147,7 +151,7 @@ class USDLTemplateParser(object):
 
     def _parse_basic_info(self):
 
-        # Mising version, organization
+        # Mising organization
         self._info['translations'] = {}
 
         # ------------------------------------------
@@ -158,7 +162,7 @@ class USDLTemplateParser(object):
 
         self._info['version']=self._get_field(WIRE,'version',self._gadgetURI)
         if not re.match(VERSION_RE, self._info['version']):
-            raise TemplateParseException(_('ERROR: the format of the version is invalid.'))
+            raise TemplateParseException(_('ERROR: the format of the version number is invalid. Format: X.X.X where X is an integer. Ex. "0.1", "1.11" NOTE: "1.01" should be changed to "1.0.1" or "1.1"'))
 
         self._info['name']=self._get_field(DCTERMS,'title',self._gadgetURI)
         if not re.match(NAME_RE, self._info['name']):
@@ -166,25 +170,25 @@ class USDLTemplateParser(object):
 
         self._info['description']=self._get_field(DCTERMS,'description',self._gadgetURI)
 
-        vendor = self._graph.objects(self._gadgetURI,USDL['hasProvider']).next()
+        vendor = self._get_field(USDL,'hasProvider',self._gadgetURI,id_=True)
 
         self._info['vendor'] = self._get_field(FOAF,'name',vendor)
         if not re.match(NAME_RE, self._info['vendor']):
             raise TemplateParseException(_('ERROR: the format of the vendor is invalid.'))
 
-        author= self._graph.objects(self._gadgetURI, DCTERMS['creator']).next()
+        author = self._get_field(DCTERMS,'creator',self._gadgetURI,id_=True)
         self._info['author']=self._get_field(FOAF,'name',author)
 
 
-        self._info['image_uri']=self._get_field(WIRE,'hasImageUri',self._gadgetURI)
+        self._info['image_uri']=self._get_url_field('image_uri',WIRE,'hasImageUri',self._gadgetURI)
 
         # it contains code and docURI if exists
         resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
 
         for resource_element in resources:
-            if str(self._graph.objects(resource_element,DCTERMS['title']).next()).lower() == 'wikiuri':
+            if str(self._get_field(DCTERMS,'title',resource_element,required=False)).lower() == 'wikiuri':
                 self._info['doc_uri']=str(resource_element)
-                self._url_fields.append(resource_element)
+                self._url_fields.append('doc_uri')
                 break
         else:
             self._info['doc_uri']=''
@@ -201,8 +205,7 @@ class USDLTemplateParser(object):
 
         # method self._graph.objects always returns an iterable object not subscriptable,
         # althought only exits one instance
-        wiring=self._graph.objects(self._gadgetURI,WIRE[wiring_property])
-        wiring_element=wiring.next()
+        wiring_element=self._get_field(WIRE,wiring_property,self._gadgetURI,id_=True,required=False)
 
         for slot in self._graph.objects(wiring_element,WIRE['hasSlot']):
             self._info['slots'].append({
@@ -243,18 +246,18 @@ class USDLTemplateParser(object):
             }
             for in_ in self._graph.objects(channel,WIRE_M['hasIn']):
                 channel_info['ins'].append({
-                    'igadget': self._get_field(WIRE_M,'IniGadget',in_,required=False),
+                    'igadget': self._get_field(WIRE_M,'iniGadget',in_,required=False),
                     'name': self._get_field(DCTERMS,'title',in_,required=False),
                 })
 
             for out in self._graph.objects(channel,WIRE_M['hasOut']):
                 channel_info['outs'].append({
-                    'igadget': self._get_field(WIRE_M,'OutiGadget',out,required=False),
+                    'igadget': self._get_field(WIRE_M,'outiGadget',out,required=False),
                     'name': self._get_field(DCTERMS,'title',out,required=False),
                 })
 
             for out_channel in self._graph.objects(channel,WIRE_M['hasOutChannel']):
-                channel_info['out_channels'].append(channel_info['id'])
+                channel_info['out_channels'].append(str(out_channel)[1:])
 
 
             channels[channel_info['id']] = channel_info
@@ -264,7 +267,7 @@ class USDLTemplateParser(object):
     def _parse_gadget_info(self):
 
 
-        self._info['iphone_image_uri']=self._get_field(WIRE,'hasiPhoneImageUri',self._gadgetURI,required=False)
+        self._info['iphone_image_uri']=self._get_url_field('iphone_image_uri',WIRE,'hasiPhoneImageUri',self._gadgetURI,required=False)
         # Preference info
         self._info['preferences']=[]
 
@@ -304,8 +307,8 @@ class USDLTemplateParser(object):
         self._parse_wiring_info()
 
         self._info['context']=[]
-        context=self._graph.objects(self._gadgetURI,WIRE['hasContext'])
-        context_element=context.next()
+
+        context_element=self._get_field(WIRE,'hasContext',self._gadgetURI,id_=True,required=False)
 
         for gcontext in self._graph.objects(context_element,WIRE['hasGadgetContext']):
             self._info['context'].append({
@@ -326,7 +329,7 @@ class USDLTemplateParser(object):
         resources = self._graph.objects(self._gadgetURI,USDL['exposes'])
 
         for res in resources:
-            if self._graph.objects(res,DCTERMS['title']).next() == 'code':
+            if self._get_field(DCTERMS,'title',res,required=False) == 'code':
                 xhtml_element=res
                 break
         else:
@@ -341,7 +344,7 @@ class USDLTemplateParser(object):
         self._info['code_cacheable'] = self._get_field(WIRE,'codeCacheable',xhtml_element,required=False).lower() == 'true'
 
 
-        rendering_element=self._graph.objects(self._gadgetURI,WIRE['hasPlatformRendering']).next()
+        rendering_element=self._get_field(WIRE,'hasPlatformRendering',self._gadgetURI,id_=True,required=False)
 
         self._info['gadget_width'] = self._get_field(WIRE,'renderingWidth',rendering_element,required=False)
         self._info['gadget_height'] = self._get_field(WIRE,'renderingHeight',rendering_element,required=False)
@@ -381,9 +384,9 @@ class USDLTemplateParser(object):
                 tab_info['preferences'][self._get_field(DCTERMS,'title',preference)] = self._get_field(WIRE,'value',preference)
 
             for resource in self._graph.objects(tab,WIRE_M['hasiGadget']):
-                position = self._graph.objects(resource,WIRE_M['hasPosition']).next()
-                rendering = self._graph.objects(resource,WIRE_M['hasiGadgetRendering']).next()
-                vendor=self._graph.objects(resource,USDL['hasProvider']).next()
+                position = self._get_field(WIRE_M,'hasPosition',resource,id_=True,required=False)
+                rendering = self._get_field(WIRE_M,'hasiGadgetRendering',resource,id_=True,required=False)
+                vendor=self._get_field(USDL,'hasProvider',resource,id_=True,required=False)
 
                 resource_info = {
                     'id': str(resource)[1:],
@@ -979,7 +982,7 @@ class TemplateParser(object):
             if str(template).find('rdf:RDF') > 0:
                 self._parser = USDLTemplateParser(template,base)
             else:
-                raise TemplateParseException('The document is not valid')
+                raise TemplateParseException(_('The document is not valid'))
         else:
              # The document is a Wirecloud Template so WirecloudTemplateParser is Used
             self._parser = WirecloudTemplateParser(self._doc,base)
