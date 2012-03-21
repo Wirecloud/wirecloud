@@ -671,7 +671,6 @@ def get_igadget_data(igadget, user, workspace, cache_manager=None):
         'name': igadget.name,
         'tab': igadget.tab.id,
         'layout': igadget.layout,
-        'menu_color': igadget.menu_color,
         'refused_version': igadget.refused_version,
         'gadget': igadget.gadget.uri,
         'top': igadget.position.posY,

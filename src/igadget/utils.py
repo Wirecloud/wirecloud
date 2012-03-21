@@ -122,7 +122,6 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
     icon_left = igadget.get('icon_left')
     zIndex = igadget.get('zIndex')
     layout = igadget.get('layout')
-    menu_color = igadget.get('menu_color')
 
     # Creates IGadget position
     position = Position(posX=left, posY=top, posZ=zIndex, height=height, width=width, minimized=False, fulldragboard=False)
@@ -139,7 +138,7 @@ def SaveIGadget(igadget, user, tab, initial_variable_values):
 
     gadget = Gadget.objects.get(uri=gadget_uri, users=user)
 
-    new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False, menu_color=menu_color)
+    new_igadget = IGadget(name=igadget_name, gadget=gadget, tab=tab, layout=layout, position=position, icon_position=icon_position, transparency=False)
     new_igadget.save()
 
     variableDefs = VariableDef.objects.filter(gadget=gadget)
@@ -175,10 +174,6 @@ def UpdateIGadget(igadget, user, tab):
         if newtab_id != tab.id:
             newtab = Tab.objects.get(workspace__users__id=user.id, workspace__pk=tab.workspace_id, pk=newtab_id)
             ig.tab = newtab
-
-    if 'menu_color' in igadget:
-        menu_color = igadget['menu_color']
-        ig.menu_color = menu_color
 
     if 'layout' in igadget:
         layout = igadget['layout']

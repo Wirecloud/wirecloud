@@ -730,7 +730,6 @@ IGadget.prototype.paint = function (onInit) {
     // Notify Context Manager about the new sizes
     contextManager.notifyModifiedGadgetConcept(this, Concept.prototype.LOCKSTATUS, this.layout.dragboard.isLocked());
 
-    this.setMenuColor(undefined, true);
     this._updateButtons();
     this._updateVersionButton();
 
@@ -994,49 +993,6 @@ IGadget.prototype.upgradeIGadget = function () {
         contentType: 'application/json; UTF-8'
     };
     PersistenceEngineFactory.getInstance().send(igadgetUrl, options);
-};
-
-
-/**
- * Sets the background color of the menu bar.
- *
- * @param {String|Color} newColor
- */
-IGadget.prototype.setMenuColor = function (newColor, temporal) {
-    temporal = !!temporal;
-
-    if (newColor === null || newColor === undefined) {
-        newColor = this.menu_color;
-        temporal = true;
-    }
-
-    this.gadgetMenu.style.backgroundColor = IGadgetColorManager.color2css(newColor);
-
-    if (temporal) {
-        return;
-    }
-
-    function onSuccess() {}
-    function onError(transport, e) {
-        var logManager, msg;
-
-        logManager = LogManagerFactory.getInstance();
-        msg = gettext("Error updating igadget's menu color into persistence: %(errorMsg)s.");
-        msg = logManager.formatError(msg, transport, e);
-        this.log(msg);
-    }
-
-    this.menu_color = newColor;
-    var persistenceEngine = PersistenceEngineFactory.getInstance();
-    var data = Object.toJSON({
-        id: this.id,
-        menu_color: IGadgetColorManager.color2hex(this.menu_color)
-    });
-    var params = {'igadget': data};
-    var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
-                                                tabId: this.layout.dragboard.tabId,
-                                                iGadgetId: this.id});
-    persistenceEngine.send_update(igadgetUrl, params, this, onSuccess, onError);
 };
 
 /**
@@ -1927,7 +1883,6 @@ IGadget.prototype.save = function (options) {
         'width': this.contentWidth,
         'height': this.contentHeight,
         'name': this.name,
-        'menu_color': IGadgetColorManager.color2css(this.menu_color).substring(1, 7), // TODO
         'layout': this.onFreeLayout() ? 1 : 0
     });
     data = {igadget: data};
@@ -2083,62 +2038,3 @@ IGadget.prototype.moveToLayout = function (newLayout) {
         persistenceEngine.send_update(uri, data, this, onSuccess, onError);
     }
 };
-
-var IGadgetColorManager = function () {
-    this.colors = ["FFFFFF", "EFEFEF", "DDDDDD", "97A0A8", "FF9999", "FF3333", "FFD4AA", "FFD42A", "FFFFCC", "FFFF66", "CCFFCC", "A8D914", "D4E6FC", "CCCCFF", "349EE8", "FFCCFF", "FF99FF"];
-};
-
-IGadgetColorManager.prototype._component2hex = function (component) {
-    return "0123456789ABCDEF".charAt(Math.floor(component / 16)) +
-        "0123456789ABCDEF".charAt(component % 16);
-};
-
-IGadgetColorManager.prototype.autogenColor = function (color, seed) {
-    if (color === undefined || color === null) {
-        return this.colors[seed % this.colors.length];
-    } else {
-        return color;
-    }
-};
-
-IGadgetColorManager.prototype.genDropDownMenu = function (idColorMenu, parentMenu, iGadget) {
-    var updateColorFunc = function (newColor) {
-        iGadget.setMenuColor(newColor, true);
-    };
-
-    var endFunc = function (newColor) {
-        iGadget.setMenuColor(newColor, false);
-    };
-
-    var colorMenu = new ColorDropDownMenu(idColorMenu,
-                                          parentMenu,
-                                          endFunc,
-                                          {onMouseOver: updateColorFunc,
-                                           onMouseOut: updateColorFunc});
-
-    for (var i = 0; i < this.colors.length; i++) {
-        colorMenu.appendColor(this.colors[i]);
-    }
-
-    return colorMenu;
-};
-
-IGadgetColorManager.prototype.color2css = function (color) {
-    if (typeof color === "string") {
-        return '#' + color;
-    } else {
-        return "rgb(" + color.red.cssText + ", " + color.green.cssText + ", " + color.blue.cssText + ")";
-    }
-};
-
-IGadgetColorManager.prototype.color2hex = function (color) {
-    if (typeof color === "string") {
-        return color;
-    } else {
-        return this._component2hex(color.red.cssText) +
-               this._component2hex(color.green.cssText) +
-               this._component2hex(color.blue.cssText);
-    }
-};
-
-IGadgetColorManager = new IGadgetColorManager();
