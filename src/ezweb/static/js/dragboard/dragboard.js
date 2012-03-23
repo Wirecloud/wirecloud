@@ -25,7 +25,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global document, window, Error, gettext, interpolate, $, Hash, Element, Event, isElement*/
-/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory, SmartColumnLayout, URIs*/
+/*global BrowserUtilsFactory, Constants, ColumnLayout, DragboardPosition, FreeLayout, FullDragboardLayout, Gadget, IGadget, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory, SmartColumnLayout, URIs*/
 
 /**
  * @author aarranz
@@ -127,9 +127,13 @@ function Dragboard(tab, workSpace, dragboardElement) {
         }
 
         data = {'igadgets': Object.toJSON(data)};
-        var persistenceEngine = PersistenceEngineFactory.getInstance();
         uri = URIs.GET_IGADGETS.evaluate({workspaceId: this.workSpaceId, tabId: this.tabId});
-        persistenceEngine.send_update(uri, data, this, onSuccess, onError);
+        Wirecloud.id.makeRequest(uri, {
+            method: 'POST',
+            parameters: data,
+            onSuccess: onSuccess,
+            onFailure: onError
+        });
     };
 
     /**

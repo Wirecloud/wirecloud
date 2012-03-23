@@ -288,8 +288,12 @@ var PreferencesManagerFactory = function () {
 		this.preferencesDef['tab'] = new TabPreferencesDef(definitions);
 
 		// Init platform preferences
-		PersistenceEngineFactory.getInstance().send_get(URIs.PLATFORM_PREFERENCES, this,
-			_onSuccessInitPreferences, _onErrorInitPreferences);
+		Wirecloud.io.makeRequest(URIs.PLATFORM_PREFERENCES, {
+			method: 'GET',
+			onSuccess: _onSuccessInitPreferences.bind(this),
+			onFailure: _onErrorInitPreferences.bind(this),
+			onException: _onErrorInitPreferences.bind(this)
+		});
 	}
 
 	// *********************************

@@ -180,11 +180,14 @@ function Tab(id, notebook, options) {
 
     this.markAsVisible = function () {
         var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
-        var o = new Object;
-        o.visible = "true";
-        var tabData = Object.toJSON(o);
-        var params = {'tab': tabData};
-        PersistenceEngineFactory.getInstance().send_update(tabUrl, params, this, this.markAsVisibleSuccess, this.markAsVisibleError);
+        var params = {'tab': Object.toJSON({visible: "true"})};
+        Wirecloud.io.makeRequest(tabUrl, {
+            method: 'POST',
+            parameters: params,
+            onSuccess: this.markAsVisibleSuccess,
+            onFailure: this.markAsVisibleError,
+            onException: this.markAsVisibleError
+        });
     }.bind(this);
 
     this.markAsVisibleSuccess = function() {

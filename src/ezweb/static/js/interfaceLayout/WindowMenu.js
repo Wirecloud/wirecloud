@@ -1055,7 +1055,11 @@ ShareWindowMenu.prototype.showGroups = function() {
     }
 
     var url = URIs.GET_SHARE_GROUPS.evaluate({'workspace_id': OpManagerFactory.getInstance().activeWorkSpace.workSpaceState.id});
-    PersistenceEngineFactory.getInstance().send_get(url, this, onSuccess, onError);
+    Wirecloud.io.makeRequest(url, {
+        method: 'GET',
+        onSuccess: onSuccess.bind(this),
+        onFailure: onError.bind(this)
+    });
 }
 
 ShareWindowMenu.prototype.hideGroups = function() {

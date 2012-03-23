@@ -25,7 +25,7 @@
 
 /*jslint white: true, onevar: false, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true, strict: false, forin: true, sub: true*/
 /*global $, CSSPrimitiveValue, Element, Event, Insertion, document, gettext, ngettext, interpolate, window */
-/*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, PersistenceEngineFactory, ShowcaseFactory*/
+/*global Constants, DropDownMenu, URIs, LayoutManagerFactory, LogManagerFactory, OpManagerFactory, Wirecloud, ShowcaseFactory*/
 /*global isElement, IGadgetLogManager, IGadgetResizeHandle, GadgetVersion, DragboardPosition, Concept*/
 /*global IGadgetDraggable, IGadgetIconDraggable, FreeLayout, FullDragboardLayout*/
 /*global ColorDropDownMenu, BrowserUtilsFactory, setTimeout, clearTimeout*/
@@ -358,7 +358,12 @@ IGadget.prototype.toggleTransparency = function () {
     var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
                                                 tabId: this.layout.dragboard.tabId,
                                                 iGadgetId: this.id});
-    PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+    Wirecloud.io.makeRequest(igadgetUrl, {
+        method: 'PUT',
+        parameters: params,
+        onSuccess: onSuccess,
+        onFailure: onError
+    });
 };
 
 /**
@@ -875,7 +880,12 @@ IGadget.prototype.setName = function (igadgetName) {
         var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
                                                     tabId: this.layout.dragboard.tabId,
                                                     iGadgetId: this.id});
-        PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+        Wirecloud.io.makeRequest(igadgetUrl, {
+            method: 'PUT',
+            parameters: params,
+            onSuccess: onSuccess.bind(this),
+            onFailure: onError.bind(this)
+        });
     }
 };
 
@@ -944,7 +954,11 @@ IGadget.prototype.setRefusedVersion = function (v) {
     var igadgetUrl = URIs.GET_IGADGET.evaluate({workspaceId: this.layout.dragboard.workSpaceId,
                                                     tabId: this.layout.dragboard.tabId,
                                                     iGadgetId: this.id});
-    PersistenceEngineFactory.getInstance().send_update(igadgetUrl, params, this, onSuccess, onError);
+    Wirecloud.io.makeRequest(igadgetUrl, {
+        method: 'PUT',
+        parameters: params,
+        onFailure: onError.bind(this)
+    });
 };
 
 /**
@@ -984,15 +998,14 @@ IGadget.prototype.upgradeIGadget = function () {
                                                 tabId: this.layout.dragboard.tabId,
                                                 iGadgetId: this.id});
 
-    var options = {
+    Wirecloud.io.makeRequest(igadgetUrl, {
         method: 'PUT',
         onSuccess: onUpgradeOk.bind(this),
         onFailure: onUpgradeError.bind(this),
         onException: onUpgradeError.bind(this),
         postBody: Object.toJSON(data),
         contentType: 'application/json; UTF-8'
-    };
-    PersistenceEngineFactory.getInstance().send(igadgetUrl, options);
+    });
 };
 
 /**
@@ -1057,11 +1070,13 @@ IGadget.prototype.remove = function (orderFromServer) {
             logManager.log(msg);
         };
 
-        var persistenceEngine = PersistenceEngineFactory.getInstance();
         var uri = URIs.GET_IGADGET.evaluate({workspaceId: dragboard.workSpaceId,
                                              tabId: dragboard.tabId,
                                              iGadgetId: this.id});
-        persistenceEngine.send_delete(uri, this, onSuccess, onError);
+        Wirecloud.io.makeRequest(uri, {
+            method: 'DELETE',
+            onFailure: onError.bind(this)
+        });
     }
 };
 
@@ -1871,7 +1886,6 @@ IGadget.prototype.save = function (options) {
                                                name: this.gadget.getName(),
                                                version: this.gadget.getVersion().text});
 
-    var persistenceEngine = PersistenceEngineFactory.getInstance();
     var data = Object.toJSON({
         'uri': uri,
         'gadget': gadget_uri,
@@ -1886,7 +1900,13 @@ IGadget.prototype.save = function (options) {
         'layout': this.onFreeLayout() ? 1 : 0
     });
     data = {igadget: data};
-    persistenceEngine.send_post(uri, data, this, onSuccess, onError);
+    Wirecloud.io.makeRequest(uri, {
+        method: 'POST',
+        parameters: data,
+        onSuccess: onSuccess.bind(this),
+        onFailure: onError.bind(this),
+        onException: onError.bind(this)
+    });
 };
 
 /**
@@ -2030,11 +2050,15 @@ IGadget.prototype.moveToLayout = function (newLayout) {
         data = {
             'igadgets': Object.toJSON(data)
         };
-        var persistenceEngine = PersistenceEngineFactory.getInstance();
         var uri = URIs.GET_IGADGETS.evaluate({
             workspaceId: oldLayout.dragboard.workSpaceId,
             tabId: oldLayout.dragboard.tabId
         });
-        persistenceEngine.send_update(uri, data, this, onSuccess, onError);
+        Wirecloud.io.makeRequest(uri, {
+            method: 'PUT',
+            parameters: data,
+            onSuccess: onSuccess.bind(this),
+            onFailure: onError.bind(this)
+        });
     }
 };

@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global WorkSpace, alert, PersistenceEngineFactory, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, URIs, setTimeout */
+/*global WorkSpace, alert, Hash, $, console, LayoutManagerFactory, ShowcaseFactory, LogManagerFactory, Modules, URIs, setTimeout, Wirecloud */
 "use strict";
 
 /* 
@@ -162,7 +162,12 @@ var OpManagerFactory = (function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
-            this.persistenceEngine.send_get(URIs.GET_POST_WORKSPACES, this, loadEnvironment, onError);
+            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+                method: 'GET',
+                onSuccess: loadEnvironment.bind(this),
+                onFailure: onError,
+                onException: onError
+            });
         };
 
         //Operations on workspaces
@@ -237,8 +242,6 @@ var OpManagerFactory = (function () {
 
         // Singleton modules
         //this.contextManagerModule = null;
-        this.persistenceEngine = PersistenceEngineFactory.getInstance();
-
         this.loadCompleted = false;
         this.visibleLayer = null;
 

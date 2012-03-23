@@ -377,11 +377,13 @@ function WorkSpace (workSpaceState) {
             this.workSpaceState.name = workSpaceName;
 
             var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-            var o = new Object();
-            o.name = workSpaceName;
-            var workSpaceData = Object.toJSON(o);
-            var params = {'workspace': workSpaceData};
-            PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, renameSuccess, renameError);
+            var params = {'workspace': Object.toJSON({name: workSpaceName})};
+            Wirecloud.io.makeRequest(workSpaceUrl, {
+                method: 'PUT',
+                parameters: params,
+                onSuccess: renameSuccess.bind(this),
+                onFailure: renameError.bind(this)
+            });
         } else {
             var msg = interpolate(gettext("Error updating a workspace: the name %(workSpaceName)s is already in use."), {workSpaceName: workSpaceName}, true);
             LogManagerFactory.getInstance().log(msg);
@@ -389,11 +391,13 @@ function WorkSpace (workSpaceState) {
     }
 
     WorkSpace.prototype.deleteWorkSpace = function() {
-        if (OpManagerFactory.getInstance().removeWorkSpace(this.workSpaceState.id)) {
-            var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-            PersistenceEngineFactory.getInstance().send_delete(workSpaceUrl, this, deleteSuccess, deleteError);
-        }
-    }
+        var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id});
+        Wirecloud.io.makeRequest(workSpaceUrl, {
+            method: 'DELETE',
+            onSuccess: deleteSuccess.bind(this),
+            onFailure: deleteError.bind(this)
+        });
+    };
 
     WorkSpace.prototype.getName = function () {
         return this.workSpaceState.name;
@@ -440,7 +444,11 @@ function WorkSpace (workSpaceState) {
         LayoutManagerFactory.getInstance().logSubTask(gettext("Downloading workspace data"), 1);
         this.initial_tab_id = initial_tab;
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-        PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
+        Wirecloud.io.makeRequest(workSpaceUrl, {
+            method: 'GET',
+            onSuccess: loadWorkSpace.bind(this),
+            onFailure: onError.bind(this)
+        });
     };
 
     WorkSpace.prototype.getIgadget = function(igadgetId) {
@@ -521,7 +529,13 @@ function WorkSpace (workSpaceState) {
         params = {
             tab: Object.toJSON({name: tabName})
         };
-        PersistenceEngineFactory.getInstance().send_post(url, params, this, createTabSuccess, createTabError);
+        Wirecloud.io.makeRequest(url, {
+            method: 'POST',
+            parameters: params,
+            onSuccess: createTabSuccess.bind(this),
+            onFailure: createTabError,
+            onException: createTabError
+        });
     }
 
     //It returns if the tab can be removed and shows an error window if it isn't possible
@@ -666,24 +680,30 @@ function WorkSpace (workSpaceState) {
             var response = transport.responseText;
             var result = JSON.parse(response);
 
-            if (result['result'] != 'ok')
+            if (result['result'] !== 'ok') {
                 LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
-            else
+            } else {
                 LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has been successfully shared."), result);
-        }
+            }
+        };
 
         var share_workspace_error = function (transport) {
             var response = transport.responseText;
             var result = JSON.parse(response);
 
             LayoutManagerFactory.getInstance().showSharingWorkspaceResults(gettext("The Workspace has NOT been successfully shared."), '');
-        }
+        };
 
         var url = URIs.PUT_SHARE_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id, 'share_boolean': value});
         var sharingData = Object.toJSON(groups);
         var params = (groups.length>0)?{'groups':sharingData}:{};
 
-        PersistenceEngineFactory.getInstance().send_update(url, params, this, share_workspace_success, share_workspace_error);
+        Wirecloud.io.makeRequest(url, {
+            method: 'PUT',
+            parameters: params,
+            onSuccess: share_workspace_success,
+            onFailure: share_workspace_error
+        });
     }
 
     WorkSpace.prototype.publish = function(data) {
@@ -693,8 +713,14 @@ function WorkSpace (workSpaceState) {
         var workSpaceUrl = URIs.POST_PUBLISH_WORKSPACE.evaluate({'workspace_id': this.workSpaceState.id});
         publicationData = Object.toJSON(data);
         params = new Hash({data: publicationData});
-        PersistenceEngineFactory.getInstance().send_post(workSpaceUrl, params, {workspace: this, params: data}, publishSuccess, publishError);
-    }
+        Wirecloud.io.makeRequest(workSpaceUrl, {
+            method: 'POST',
+            parameters: params,
+            context: {workspace: this, params: data},
+            onSuccess: publishSuccess,
+            onFailure: publishError
+        });
+    };
 
     WorkSpace.prototype.mergeWith = function(workspace) {
         var workSpaceUrl, layoutManager, msg;
@@ -706,7 +732,11 @@ function WorkSpace (workSpaceState) {
         layoutManager.logSubTask(msg);
 
         workSpaceUrl = URIs.GET_MERGE_WORKSPACE.evaluate({'from_ws_id': workspace.id, 'to_ws_id': this.workSpaceState.id});
-        PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, mergeSuccess, mergeError);
+        Wirecloud.io.markeRequest(workSpaceUrl, {
+            method: 'GET',
+            onSuccess: mergeSuccess,
+            onFailure: mergeError
+        });
     };
 
     // Checks if this workspace is shared with other users
@@ -1035,11 +1065,13 @@ function WorkSpace (workSpaceState) {
 
     this.markAsActive = function () {
         var workSpaceUrl = URIs.GET_POST_WORKSPACE.evaluate({'id': this.workSpaceState.id, 'last_user': last_logged_user});
-        var o = new Object;
-        o.active = "true"
-        var workSpaceData = Object.toJSON(o);
-        var params = {'workspace': workSpaceData};
-        PersistenceEngineFactory.getInstance().send_update(workSpaceUrl, params, this, this.markAsActiveSuccess, this.markAsActiveError);
+        var params = {'workspace': Object.toJSON({active: "true"})};
+        Wirecloud.io.makeRequest(workSpaceUrl, {
+            method: 'PUT',
+            parameters: params,
+            onSuccess: this.markAsActiveSuccess.bind(this),
+            onFailure: this.markAsActiveError.bind(this)
+        });
     }.bind(this);
 
     this.markAsActiveSuccess = function() {

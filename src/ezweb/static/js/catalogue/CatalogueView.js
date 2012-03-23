@@ -20,7 +20,7 @@
  */
 
 /*jshint forin:true, eqnull:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, undef:true, curly:true, browser:true, indent:4, maxerr:50, prototypejs: true */
-/*global alert, CatalogueResource, CatalogueSearchView, CookieManager, gettext, LayoutManagerFactory, OpManagerFactory, PersistenceEngineFactory, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, URIs*/
+/*global alert, CatalogueResource, CatalogueSearchView, CookieManager, gettext, LayoutManagerFactory, OpManagerFactory, Wirecloud, ResourceDetailsView, ResourcePainter, ShowcaseFactory, StyledElements, URIs*/
 
 var CatalogueView = function (id, options) {
     options.id = 'catalogue';
@@ -103,7 +103,7 @@ CatalogueView.prototype.search = function (options) {
     } else {
         url = this.simple_search_template.evaluate({'starting_page': options.starting_page, 'resources_per_page': options.resources_per_page});
     }
-    PersistenceEngineFactory.getInstance().send(url, {
+    Wirecloud.io.makeRequest(url, {
         method: 'GET',
         parameters: params,
         onSuccess: this._onSearchSuccess.bind(context)

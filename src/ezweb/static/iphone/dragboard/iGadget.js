@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LogManagerFactory, LayoutManagerFactory, PersistenceEngineFactory, URIs */
+/*global $, Event, OpManagerFactory, MYMW, window, interpolate, gettext, LogManagerFactory, LayoutManagerFactory, Wirecloud, URIs */
 "use strict";
 
 /* 
@@ -175,8 +175,7 @@ IGadget.prototype.save = function () {
         return;
     }
 
-    var persistenceEngine = PersistenceEngineFactory.getInstance(),
-        data = {},
+    var data = {},
         uri;
 
     data.left = this.position.x;
@@ -200,7 +199,13 @@ IGadget.prototype.save = function () {
     data = {
         igadget: Object.toJSON(data)
     };
-    persistenceEngine.send_post(uri, data, this, onSuccess, onError);
+    Wirecloud.io.makeRequest(uri, {
+        method: 'POST',
+        parameters: data,
+        onSuccess: onSuccess,
+        onFailure: onError,
+        onException: onError
+    });
 };
 
 /*

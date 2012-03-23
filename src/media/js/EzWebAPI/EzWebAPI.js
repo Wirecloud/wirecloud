@@ -149,7 +149,7 @@ _EzWebAPI.prototype.send = function(url, context, options) {
 	}
 
 	var final_url = EzWebAPI.buildProxyURL(url, options);
-	return EzWebAPI.platform.PersistenceEngineFactory.getInstance().send(final_url, options);
+	return EzWebAPI.platform.Wirecloud.io.makeRequest(final_url, options);
 }
 
 _EzWebAPI.prototype.NO_LOG_MSG = 0;

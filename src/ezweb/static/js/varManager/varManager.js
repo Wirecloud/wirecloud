@@ -100,7 +100,7 @@ function VarManager (_workSpace) {
                 onFailure: onError.bind(this),
                 onException: onError.bind(this)
             };
-            PersistenceEngineFactory.getInstance().send(uri, options);
+            Wirecloud.io.makeRequest(uri, options);
             this.resetModifiedVariables();
         }
     }

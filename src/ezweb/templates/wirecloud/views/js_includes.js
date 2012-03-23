@@ -1,6 +1,7 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/lib/prototype/prototype.improvements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/constants.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/ComputedStyle.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/opManager/io.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzWebExt/EzWebExt.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/StyledElements/StyledElements.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/BrowserUtils.js"></script>
@@ -12,7 +13,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/interfaceLayout/InputInterfaces.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PreferencesManager.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/preferencesManager/PlatformPref.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/XHtml.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/Gadget.js"></script>

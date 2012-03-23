@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global setTimeout, window, PersistenceEngineFactory, document, OpManagerFactory, clearInterval, updateInterval */
+/*global setTimeout, window, document, OpManagerFactory, clearInterval, updateInterval, Wirecloud */
 "use strict";
 
 /*
@@ -52,18 +52,22 @@ function slide(backwards, element) {
 
 /* language selection */
 function setLanguage(language) {
-    var onSuccess, onError, persistenceEngine, params;
+    var onSuccess, onError, params;
 
     onSuccess = function () {
         window.location.reload();
     };
     onError = function () {};
 
-    persistenceEngine = PersistenceEngineFactory.getInstance();
     params = {
         language: language
     };
-    persistenceEngine.send_post("/i18n/setlang/", params, window, onSuccess, onError);
+    Wirecloud.io.makeRequest("/i18n/setlang/", {
+        method: 'POST',
+        parameters: params,
+        onSuccess: onSuccess,
+        onFailure: onError
+    });
     return false;
 }
 

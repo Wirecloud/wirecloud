@@ -500,11 +500,16 @@ function Wiring (workspace, workSpaceGlobalInfo) {
         }
 
         // Send data to persistence engine
-        var json = {'inOutList': serialized_channels};
-        var param = {'json': Object.toJSON(json)};
+        var param = {'json': Object.toJSON({'inOutList': serialized_channels})};
 
         var url = URIs.GET_POST_WIRING.evaluate({'id': this.workspace.workSpaceState.id});
-        PersistenceEngineFactory.getInstance().send_post(url, param, this, this.serializationSuccess, this.serializationError);
+        Wirecloud.io.makeRequest(url, {
+            method: 'POST',
+            parameters: param,
+            onSuccess: this.serializationSuccess.bind(this),
+            onFailure: this.serializationError.bind(this),
+            onException: this.serializationError.bind(this)
+        });
     }
 
     // ***************
@@ -513,7 +518,6 @@ function Wiring (workspace, workSpaceGlobalInfo) {
     this.workspace = workspace;
 
     this.loaded = false;
-    this.persistenceEngine = PersistenceEngineFactory.getInstance();
     this.iGadgets = {};
     this.channels = [];
     this.channelsById = {};

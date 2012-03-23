@@ -447,6 +447,21 @@ Preferences.prototype._notifyCommitHandlers = function(modifiedValues) {
     }
 };
 
+Preferences.prototype._save = function(modifiedValues) {
+    var context = {
+        preferences: this,
+        modifiedValues: modifiedValues
+    };
+
+    Wirecloud.io.makeRequest(this._build_save_url(), {
+        method: 'PUT',
+        parameters: {"preferences": JSON.stringify(modifiedValues)},
+        onSuccess: this._onSuccessSavePreferences.bind(context),
+        onFailure: this._onErrorSavePreferences.bind(context),
+        onException: this.onErrorSavePreferences.bind(context)
+    });
+};
+
 /**
  * Saves the modified preferences. The new values are taken from the relevant
  * <code>PreferencesWindowMenu</code>.
@@ -523,15 +538,8 @@ PlatformPreferences.prototype.buildTitle = function() {
 	return gettext("Platform Preferences");
 }
 
-PlatformPreferences.prototype._save = function(modifiedValues) {
-    var context = {
-        preferences: this,
-        modifiedValues: modifiedValues
-    };
-
-    PersistenceEngineFactory.getInstance().send_update(URIs.PLATFORM_PREFERENCES,
-        {"preferences": JSON.stringify(modifiedValues)},
-        context, this._onSuccessSavePreferences, this._onErrorSavePreferences);
+PlatformPreferences.prototype._build_save_url = function () {
+    return URIs.PLATFORM_PREFERENCES;
 };
 
 /**
@@ -554,16 +562,8 @@ WorkSpacePreferences.prototype.getParentValue = function(name) {
 	return PreferencesManagerFactory.getInstance().getPlatformPreferences().get(name);
 }
 
-WorkSpacePreferences.prototype._save = function(modifiedValues) {
-    var url, context = {
-        preferences: this,
-        modifiedValues: modifiedValues
-    };
-
-    url = URIs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
-
-    PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
-         context, this._onSuccessSavePreferences, this._onErrorSavePreferences);
+WorkSpacePreferences.prototype._build_save_url = function () {
+    return URIs.WORKSPACE_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id});
 };
 
 WorkSpacePreferences.prototype.destroy = function() {
@@ -594,16 +594,8 @@ TabPreferences.prototype.getParentValue = function(name) {
 	return this._workspace.preferences.get(name);
 }
 
-TabPreferences.prototype._save = function(modifiedValues) {
-    var url, context = {
-        preferences: this,
-        modifiedValues: modifiedValues
-    };
-
-    url = URIs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
-
-    PersistenceEngineFactory.getInstance().send_update(url, {"preferences": JSON.stringify(modifiedValues)},
-         this, this._onSuccessSavePreferences.bind(modifiedValues), this._onErrorSavePreferences);
+TabPreferences.prototype._build_save_url = function(modifiedValues) {
+    return URIs.TAB_PREFERENCES.evaluate({workspace_id: this._workspace.workSpaceState.id, tab_id: this._tab.tabInfo.id});
 };
 
 TabPreferences.prototype.destroy = function() {

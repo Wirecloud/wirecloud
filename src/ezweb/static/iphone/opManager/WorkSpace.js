@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, URIs, last_logged_user, PersistenceEngineFactory, document, window, Concept, StyledElements, Tab, $ */
+/*global interpolate, isAnonymousUser, VarManager, ContextManager, Wiring, OpManagerFactory, Modules, gettext, alert, URIs, last_logged_user, document, window, Concept, StyledElements, Tab, $, Wirecloud */
 "use strict";
 
  /*
@@ -222,7 +222,12 @@ function WorkSpace(workSpaceState) {
             'id': this.workSpaceState.id,
             'last_user': last_logged_user
         });
-        PersistenceEngineFactory.getInstance().send_get(workSpaceUrl, this, loadWorkSpace, onError);
+        Wirecloud.io.makeRequest(workSpaceUrl, {
+            method: 'GET',
+            onSuccess: loadWorkSpace.bind(this),
+            onFailure: onError.bind(this),
+            onException: onError.bind(this)
+        });
     };
 
     WorkSpace.prototype.getIgadget = function (igadgetId) {

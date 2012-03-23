@@ -110,7 +110,12 @@ var ShowcaseFactory = function () {
             }
 
             // Initial load from persitence system
-            this.persistenceEngine.send_get(URIs.GET_GADGETS, this, onSuccess, onError);
+            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+                method: 'GET',
+                onSuccess: onSuccess.bind(this),
+                onFailure: onError,
+                onException: onError
+            });
         }
 
         Showcase.prototype.init = function () {
@@ -134,8 +139,13 @@ var ShowcaseFactory = function () {
             }
 
             // Initial load from persitence system
-            this.persistenceEngine.send_get(URIs.GET_GADGETS, this, onSuccess, onError);
-        }
+            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+                method: 'GET',
+                onSuccess: onSuccess.bind(this),
+                onFailure: onError.bind(this),
+                onException: onError.bind(this)
+            });
+        };
 
 
         // *******************************
@@ -143,7 +153,6 @@ var ShowcaseFactory = function () {
         // *******************************
         this.gadgets = {};
         this.opManager = OpManagerFactory.getInstance();
-        this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
         // ****************
         // PUBLIC METHODS

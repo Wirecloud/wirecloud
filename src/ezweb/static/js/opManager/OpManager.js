@@ -129,7 +129,6 @@ var OpManagerFactory = function () {
         this.catalogue = null;
         this.logs = null;
         this.platformPreferences = null;
-        this.persistenceEngine = PersistenceEngineFactory.getInstance();
 
         this.loadCompleted = false;
 
@@ -184,7 +183,7 @@ var OpManagerFactory = function () {
             var active_ws_id = OpManagerFactory.getInstance().getActiveWorkspaceId();
             var mergeURL = URIs.MERGE_WORKSPACE.evaluate({'to_ws': active_ws_id});
 
-            PersistenceEngineFactory.getInstance().send(mergeURL, {
+            Wirecloud.io.makeRequest(mergeURL, {
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: Object.toJSON({
@@ -226,7 +225,7 @@ var OpManagerFactory = function () {
             LayoutManagerFactory.getInstance()._startComplexTask(gettext("Adding the mashup"), 1);
             LayoutManagerFactory.getInstance().logSubTask(gettext("Creating a new workspace"));
 
-            PersistenceEngineFactory.getInstance().send(URIs.ADD_WORKSPACE, {
+            Wirecloud.io.makeRequest(URIs.ADD_WORKSPACE, {
                 method: 'POST',
                 contentType: 'application/json',
                 postBody: Object.toJSON({
@@ -436,7 +435,11 @@ var OpManagerFactory = function () {
             // Asynchronous load of modules
             // Each singleton module notifies OpManager it has finished loading!
 
-            this.persistenceEngine.send_get(URIs.GET_POST_WORKSPACES, this, loadEnvironment, onError)
+            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+                method: 'GET',
+                onSuccess: loadEnvironment.bind(this),
+                onFailure: onError.bind(this)
+            });
         }
 
         OpManager.prototype.logIGadgetError = function(iGadgetId, msg, level) {
@@ -470,12 +473,14 @@ var OpManagerFactory = function () {
         }
 
         OpManager.prototype.addWorkSpace = function (newName) {
-            var o = new Object();
-            o.name = newName;
-            var params = {'workspace': Object.toJSON(o)};
-            PersistenceEngineFactory.getInstance().send_post(URIs.GET_POST_WORKSPACES, params, this, createWSSuccess, createWSError);
-
-        }
+            var params = {'workspace': Object.toJSON({name: newName})};
+            Wirecloud.io.makeRequest(URIs.GET_POST_WORKSPACES, {
+                method: 'POST',
+                parameters: params,
+                onSuccess: createWSSuccess.bind(this),
+                onFailure: createWSError.bind(this)
+            });
+        };
 
         OpManager.prototype.unloadWorkSpace = function(workSpaceId) {
             //Unloading the Workspace

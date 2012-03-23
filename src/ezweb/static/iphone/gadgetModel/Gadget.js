@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global interpolate, gettext, LogManagerFactory, URIs, GadgetTemplate, XHtml, ShowcaseFactory, PersistenceEngineFactory */
+/*global interpolate, gettext, LogManagerFactory, URIs, GadgetTemplate, XHtml, ShowcaseFactory, Wirecloud */
 "use strict";
 
 /* 
@@ -191,13 +191,17 @@ function Gadget(gadget_vble, url_vble) {
             ShowcaseFactory.getInstance().gadgetToShowcaseGadgetModel(privatethis);
         };
 
-        persistenceEngine = PersistenceEngineFactory.getInstance();
         // Post Gadget to PersistenceEngine. Asyncrhonous call!
         param = {
             url: url_vble
         };
 
-        persistenceEngine.send_post(URIs.GET_GADGETS, param, this, loadGadget, onError);
+        Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+            method: 'POST',
+            parameters: param,
+            onSuccess: loadGadget,
+            onFailure: onError
+        });
     };
 
     this.getId = function () {

@@ -1,5 +1,5 @@
 /*jslint white: true, onevar: true, undef: true, nomen: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
-/*global OpManagerFactory, PersistenceEngineFactory, Hash, Gadget, Modules, URIs */
+/*global OpManagerFactory, Wirecloud, Hash, Gadget, Modules, URIs */
 "use strict";
 
 /*
@@ -96,7 +96,6 @@ var ShowcaseFactory = (function () {
         private_gadgets = new Hash();
         private_loaded = false;
         private_opManager = OpManagerFactory.getInstance();
-        private_persistenceEngine = PersistenceEngineFactory.getInstance();
 
         // ****************
         // PUBLIC METHODS
@@ -110,7 +109,12 @@ var ShowcaseFactory = (function () {
 
         Showcase.prototype.init = function () {
             // Initial load from persitence system
-            private_persistenceEngine.send_get(URIs.GET_GADGETS, this, loadGadgets, onErrorCallback);
+            Wirecloud.io.makeRequest(URIs.GET_GADGETS, {
+                method: 'GET',
+                onSuccess: loadGadgets,
+                onFailure: onErrorCallback,
+                onException: onErrorCallback
+            });
         };
 
     }
