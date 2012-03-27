@@ -11,7 +11,6 @@
 <script type="text/javascript" src="{{ STATIC_URL }}js/common/modules.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/EzSteroidsAPI/EzSteroidsAPI.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/persistenceEngine/PersistenceEngine.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}iphone/catalogue/Catalogue.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/XHtml.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/gadgetModel/GadgetTemplate.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}iphone/gadgetModel/Gadget.js"></script>
