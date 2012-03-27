@@ -617,7 +617,13 @@ Dragboard.prototype._recomputeSize = function () {
 
     var dragboardElement = this.dragboardElement;
 
+    this.topMargin = cssStyle.getPropertyCSSValue("padding-top").getFloatValue(CSSPrimitiveValue.CSS_PX);
+    this.bottomMargin = cssStyle.getPropertyCSSValue("padding-bottom").getFloatValue(CSSPrimitiveValue.CSS_PX);
+    this.leftMargin = cssStyle.getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
+    this.rightMargin = cssStyle.getPropertyCSSValue("padding-right").getFloatValue(CSSPrimitiveValue.CSS_PX);
+
     this.dragboardWidth = parseInt(dragboardElement.offsetWidth);
+    this.dragboardWidth -= this.leftMargin + this.rightMargin;
 
     var tmp = this.dragboardWidth;
     tmp-= parseInt(dragboardElement.clientWidth);

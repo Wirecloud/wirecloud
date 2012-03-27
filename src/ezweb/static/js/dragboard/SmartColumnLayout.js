@@ -180,7 +180,7 @@ ColumnLayout.prototype.padHeight = function (height) {
 
 ColumnLayout.prototype.getColumnOffset = function (column) {
     var tmp = Math.floor((this.getWidth() * this.fromHCellsToPercentage(column)) / 100);
-    tmp += this.leftMargin;
+    tmp += this.leftMargin + this.dragboardLeftMargin;
     return tmp;
 };
 

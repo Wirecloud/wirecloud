@@ -62,7 +62,6 @@ function DragboardLayout(dragboard) {
 
     this.dragboard = dragboard;
     this.iGadgets = {};
-    this.dragboardTopMargin = 5;
 }
 
 /**
@@ -186,6 +185,18 @@ DragboardLayout.prototype.getWidth = function () {
 DragboardLayout.prototype.getHeight = function () {
     return this.dragboard.getHeight();
 };
+
+Object.defineProperty(DragboardLayout.prototype, "dragboardTopMargin", {
+    get: function () {
+        return this.dragboard.topMargin;
+    }
+});
+
+Object.defineProperty(DragboardLayout.prototype, "dragboardLeftMargin", {
+    get: function () {
+        return this.dragboard.leftMargin;
+    }
+});
 
 /**
  * Adds an iGadget to this layout.
