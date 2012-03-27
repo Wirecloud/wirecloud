@@ -1,3 +1,6 @@
 from proxy.tests import ProxyTests, ProxySecureDataTests
 from ezweb.tests.plugins import WirecloudPluginTestCase
-from ezweb.tests.selenium import *
+
+from commons.test import build_selenium_test_cases
+
+build_selenium_test_cases(('ezweb.tests.selenium.BasicSeleniumTests',), locals())

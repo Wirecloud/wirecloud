@@ -13,7 +13,7 @@ except:
 from django.utils.importlib import import_module
 from django.test import TestCase
 from django.utils import translation
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementNotVisibleException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -41,10 +41,6 @@ class WirecloudSeleniumTestCase(HttpTestCase):
     fixtures = ['extra_data', 'selenium_test_data']
     __test__ = False
 
-    def wait_wirecloud_ready(self):
-
-        WebDriverWait(self.driver, 60).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and @class="fadding"]'))
-
     def setUp(self):
         super(WirecloudSeleniumTestCase, self).setUp()
         cache.clear()
@@ -59,6 +55,16 @@ class WirecloudSeleniumTestCase(HttpTestCase):
 
         # initialize
         self.wgt_dir = os.path.join(settings.BASEDIR, '..', 'tests', 'ezweb-data')
+
+    def wait_wirecloud_ready(self, start_timeout=0, timeout=60):
+
+        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_xpath(r'//*[@id="loading-window" and (@class="" or @class="fadding")]'))
+        WebDriverWait(self.driver, timeout).until(lambda driver: driver.find_element_by_css_selector('#loading-window.fadding'))
+
+        try:
+            self.driver.find_element_by_id('loading-message').click()
+        except ElementNotVisibleException:
+            pass
 
     def login(self, username='admin', password='admin'):
         self.driver.get(self.get_live_server_url() + "accounts/login/?next=/")
@@ -134,6 +140,50 @@ class WirecloudSeleniumTestCase(HttpTestCase):
         resource = self.search_in_catalogue_results(gadget_name)
         self.instanciate(resource)
 
+    def count_iwidgets(self):
+        return len(self.driver.find_elements_by_css_selector('object'))
+
+    def popup_menu_click(self, item_name):
+
+        items = self.driver.find_elements_by_css_selector('.popup_menu > .menu_item > span')
+        for item in items:
+            if item.text == item_name:
+                item.click()
+                return
+
+    def get_current_workspace_name(self):
+
+        self.change_main_view('workspace')
+        return self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').text
+
+    def create_workspace(self, workspace_name):
+        self.change_main_view('workspace')
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.popup_menu_click('New workspace')
+
+        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
+        workspace_name_input.clear()
+        workspace_name_input.send_keys(workspace_name)
+        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Create']").click()
+
+        self.wait_wirecloud_ready()
+        time.sleep(0.5) # work around race condition
+        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+
+    def rename_workspace(self, workspace_name):
+        self.change_main_view('workspace')
+        self.driver.find_element_by_css_selector('#wirecloud_breadcrum .second_level').click()
+        self.popup_menu_click('Rename')
+
+        workspace_name_input = self.driver.find_element_by_css_selector('.window_menu .window_content input')
+        workspace_name_input.clear()
+        workspace_name_input.send_keys(workspace_name)
+        self.driver.find_element_by_xpath("//div[contains(@class, 'window_menu')]//button[text()='Accept']").click()
+
+        self.wait_wirecloud_ready()
+        time.sleep(0.5) # work around race condition
+        self.assertEqual(self.get_current_workspace_name(), workspace_name)
+
     def is_element_present(self, how, what):
         try:
             self.driver.find_element(by=how, value=what)
@@ -174,3 +224,4 @@ def build_selenium_test_cases(classes, namespace):
                     '_webdriver_args': browser.get('ARGS', None),
                 }
             )
+build_selenium_test_cases.__test__ = False
