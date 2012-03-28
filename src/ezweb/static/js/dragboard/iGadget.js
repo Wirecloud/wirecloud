@@ -367,19 +367,6 @@ IGadget.prototype.toggleTransparency = function () {
 };
 
 /**
- * Updates the extract/snap from/to grid option.
- *
- * @private
- */
-IGadget.prototype._updateExtractOption = function () {
-    if (this.extractOptionId === null) {
-        return;
-    }
-
-
-};
-
-/**
  * Builds the structure of the gadget
  */
 IGadget.prototype.build = function () {
@@ -1983,7 +1970,6 @@ IGadget.prototype.moveToLayout = function (newLayout) {
     // ##### END TODO
 
     affectedGadgetsAdding = newLayout.addIGadget(this, dragboardChange);
-    this._updateExtractOption();
 
     if (minimizeOnFinish) {
         this.toggleMinimizeStatus();
