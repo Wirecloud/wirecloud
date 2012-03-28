@@ -92,7 +92,6 @@ function WorkSpace (workSpaceState) {
         // TODO
         this.notebook.clear()
         this.tabInstances[0] = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': initialTab, 'workspace': this});
-        this.visibleTab = this.tabInstances[0];
 
         this.loaded = true;
 
@@ -272,17 +271,15 @@ function WorkSpace (workSpaceState) {
 
         var newTab = this.notebook.createTab({'tab_constructor': Tab, 'tab_info': tabInfo, 'workspace': this});
         this.tabInstances.set(tabInfo.id, newTab);
-        this.setTab(newTab);
 
-        newTab.getDragboard().paint();
         newTab.setLock(false);
-    }
+    };
 
     var createTabError = function(transport, e) {
         var logManager = LogManagerFactory.getInstance();
         var msg = logManager.formatError(gettext("Error creating a tab: %(errorMsg)s."), transport, e);
         logManager.log(msg);
-    }
+    };
 
     // ****************
     // PUBLIC METHODS
@@ -407,9 +404,6 @@ function WorkSpace (workSpaceState) {
         // TODO
         this.renameTabWindow = new RenameTabWindowMenu();
         this.notebook = new StyledElements.StyledNotebook({'class': 'workspace'});
-        this.notebook.addEventListener('change', function (notebook, old_tab, new_tab) {
-            this.visibleTab = new_tab;
-        });
         LayoutManagerFactory.getInstance().viewsByName['workspace'].clear();
         LayoutManagerFactory.getInstance().viewsByName['workspace'].appendChild(this.notebook);
 
@@ -462,7 +456,6 @@ function WorkSpace (workSpaceState) {
             throw new TypeError();
         }
 
-        this.visibleTab = tab;
         this.notebook.goToTab(tab);
     }
 
@@ -512,7 +505,7 @@ function WorkSpace (workSpaceState) {
 
     //It returns if the tab can be removed and shows an error window if it isn't possible
     WorkSpace.prototype.removeTab = function(tab) {
-        var msg=null;
+        var msg = null;
         if (this.tabInstances.keys().length <= 1) {
             msg = gettext("there must be one tab at least");
             msg = interpolate(gettext("Error removing tab: %(errorMsg)s."), {
@@ -546,9 +539,7 @@ function WorkSpace (workSpaceState) {
         this.tabInstances.unset(tabId);
         tab.close();
         tab.destroy();
-
-        this.visibleTab = null;
-    }
+    };
 
     WorkSpace.prototype.unload = function() {
 
@@ -628,14 +619,14 @@ function WorkSpace (workSpaceState) {
         return iGadgets;
     }
 
-    WorkSpace.prototype.getActiveDragboard = function() {
-        if (this.visibleTab) {
-            return this.visibleTab.getDragboard();
+    WorkSpace.prototype.getActiveDragboard = function () {
+        var current_tab = this.notebook.getVisibleTab();
+        if (current_tab) {
+            return current_tab.getDragboard();
         } else {
-            // Shutting down the platform: no tab, no dragboard and no need to change to one
             return null;
         }
-    }
+    };
 
     WorkSpace.prototype.shareWorkspace = function(value, groups) {
         var share_workspace_success = function (transport) {
@@ -727,8 +718,9 @@ function WorkSpace (workSpaceState) {
      */
     WorkSpace.prototype.isAllowed = function (action) {
 
-        if (action != "add_remove_workspaces" && (!this.valid || this.restricted))
+        if (action != "add_remove_workspaces" && (!this.valid || this.restricted)) {
             return false;
+        }
 
         switch (action) {
         case "merge_workspaces":
@@ -757,7 +749,6 @@ function WorkSpace (workSpaceState) {
     this.contextManager = null;
     this.loaded = false;
     this.wiringLayer = null;
-    this.visibleTab = null;
     this.valid=false;
 
     /*

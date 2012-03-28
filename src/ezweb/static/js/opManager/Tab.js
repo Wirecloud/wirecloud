@@ -207,12 +207,9 @@ function Tab(id, notebook, options) {
         return false;
     }
 
-    Tab.prototype.hasReadOnlyIGadgets = function(){
-        if (this.dragboard.hasReadOnlyIGadgets()){
-                return true;
-        }
-        return false;
-    }
+    Tab.prototype.hasReadOnlyIGadgets = function () {
+        return this.dragboard.hasReadOnlyIGadgets();
+    };
 
     // *****************
     //  PRIVATE METHODS
@@ -238,8 +235,7 @@ function Tab(id, notebook, options) {
     //By default, the TAB is locked
     this.locked = true;
 
-    this.dragboardElement = this.wrapperElement;
-    this.dragboard = new Dragboard(this, this.workSpace, this.dragboardElement);
+    this.dragboard = new Dragboard(this, this.workSpace, this.wrapperElement);
 
     this.markAsVisible = function () {
         var tabUrl = URIs.TAB.evaluate({'workspace_id': this.workSpace.workSpaceState.id, 'tab_id': this.tabInfo.id});
